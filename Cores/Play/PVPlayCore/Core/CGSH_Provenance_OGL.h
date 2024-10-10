@@ -2,8 +2,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
-@import PVCoreBridge;
-#import <PVSupport/PVEmulatorCore.h>
+@import PVCoreObjCBridge;
 
 #import "gs/GSH_OpenGL/GSH_OpenGL.h"
 

@@ -72,14 +72,14 @@ public final class PVStellaGameCore: PVEmulatorCore, @unchecked Sendable {
     public var _videoHeight: Int32 = STELLA_HEIGHT
 
     // MARK: Lifecycle
+    lazy var _bridge: PVStellaBridge = PVStellaBridge.init { key in
+        self.get(variable: key)
+    }
 
     @objc
     public required init() {
         super.init()
-        let core = PVStellaBridge.init { key in
-            return self.get(variable: key)
-        }
-        self.bridge = (core as! any ObjCBridgedCoreBridge)
+        self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
 }
 

@@ -1,7 +1,6 @@
 #import <PVRetroArch/PVRetroArchCore.h>
 #import <PVRetroArch/RetroArch-Swift.h>
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
 #import <UIKit/UIKit.h>
 @interface TestRunner : UIApplication<UIApplicationDelegate>
 @property (nonatomic) UIWindow* window;

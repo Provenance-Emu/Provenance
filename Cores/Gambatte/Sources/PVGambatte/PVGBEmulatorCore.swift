@@ -9,32 +9,37 @@
 import Foundation
 import PVSupport
 import PVEmulatorCore
+import PVGambatteBridge
+import PVGambatteOptions
+import PVLogging
 
 @objc
 @objcMembers
-public class PVGBEmulatorCore: PVEmulatorCore, ObjCBridgedCore, @unchecked Sendable {
+public class PVGBEmulatorCore: PVEmulatorCore {
     
-    // PVEmulatorCoreBridged
-    public typealias Bridge = PVGBEmulatorCoreBridge
-    public lazy var bridge: Bridge = {
-        let core = PVGBEmulatorCoreBridge()
-        return core
-    }()
-    
-    //@interface PVGBEmulatorCore()
-    //-(NSInteger)currentDisplayMode;
-    //-(void)changeDisplayMode:(NSInteger)displayMode;
-    //@property (nonatomic, readonly) BOOL isGameboyColor;
-    //@end
-    public var displayMode: GBPalette = .default
+    public var displayMode: GBPalette = .default {
+        didSet {
+            _bridge.changeDisplayMode(displayMode.rawValue)
+        }
+    }
     public var isGameboyColor: Bool = false
+    
+    var _bridge: PVGBEmulatorCoreBridge = .init()
+    
+    public required init() {
+        super.init()
+        self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+    }
+}
 
-//    @objc
-//    public var videoBuffer: [UInt32]?
-//    @objc
-//    public var inSoundBuffer: [UInt32]? = nil
-//    @objc
-//    public var outSoundBuffer: [Int16]? = nil
+extension PVGBEmulatorCore: PVGBSystemResponderClient {
+    public func didPush(_ button: PVCoreBridge.PVGBButton, forPlayer player: Int) {
+        (_bridge as! PVGBSystemResponderClient).didPush(button, forPlayer: player)
+    }
+    
+    public func didRelease(_ button: PVCoreBridge.PVGBButton, forPlayer player: Int) {
+        (_bridge as! PVGBSystemResponderClient).didRelease(button, forPlayer: player)
+    }
 }
 
 extension PVGBEmulatorCore: CoreActions {

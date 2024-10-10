@@ -26,13 +26,13 @@
          location = "group:Cores/emuThree/PVEmuThree.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Play/PVPlayCore.xcodeproj">
@@ -50,6 +50,9 @@
       <Group
          location = "container:"
          name = "Broken">
+         <FileRef
+            location = "group:Cores/NP2Kai/PVNP2Kai.xcodeproj">
+         </FileRef>
          <FileRef
             location = "group:Cores/Hatari/PVHatari.xcodeproj">
          </FileRef>
@@ -107,9 +110,6 @@
       </FileRef>
       <FileRef
          location = "group:Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/NP2Kai/PVNP2Kai.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Opera/PVOpera.xcodeproj">

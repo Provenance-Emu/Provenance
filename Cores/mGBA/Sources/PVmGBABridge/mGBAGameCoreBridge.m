@@ -22,7 +22,14 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "mGBAGameCore.h"
+#import "mGBAGameCoreBridge.h"
+
+@import libmGBA;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVEmulatorCore;
+@import PVAudio;
+
 
 #include <mgba-util/common.h>
 
@@ -37,20 +44,24 @@
 #include <mgba-util/memory.h>
 #include <mgba-util/vfs.h>
 
-#import <OpenEmuBase/OERingBuffer.h>
-#import "OEGBASystemResponderClient.h"
-#import <OpenGL/gl.h>
-
 #define SAMPLES 1024
 
-#ifdef DEBUG
-    #error "Cores should not be compiled in DEBUG! Follow the guide https://github.com/OpenEmu/OpenEmu/wiki/Compiling-From-Source-Guide"
-#endif
+const int GBAMap[] = {
+    GBA_KEY_UP,
+    GBA_KEY_DOWN,
+    GBA_KEY_LEFT,
+    GBA_KEY_RIGHT,
+    GBA_KEY_A,
+    GBA_KEY_B,
+    GBA_KEY_L,
+    GBA_KEY_R,
+    GBA_KEY_START,
+    GBA_KEY_SELECT
+};
 
 const char* const binaryName = "mGBA";
 
-@interface mGBAGameCore () <OEGBASystemResponderClient>
-{
+@interface PVmGBAGameCoreBridge () <PVGBASystemResponderClient> {
 	struct mCore* core;
 	void* outputBuffer;
 	NSMutableDictionary *cheatSets;
@@ -66,40 +77,17 @@ static void _log(struct mLogger* log,
 
 static struct mLogger logger = { .log = _log };
 
-@implementation mGBAGameCore
+@implementation PVmGBAGameCoreBridge
 
-- (id)init
-{
-	if ((self = [super init]))
-	{
-		core = GBACoreCreate();
-		mCoreInitConfig(core, nil);
-
-		struct mCoreOptions opts = {
-			.useBios = true,
-		};
-        
-        // Set up a logger. The default logger prints everything to STDOUT, which is not usually desirable.
-        mLogSetDefaultLogger(&logger);
-
-		mCoreConfigLoadDefaults(&core->config, &opts);
-		core->init(core);
-		outputBuffer = nil;
-
-		unsigned width, height;
-		core->desiredVideoDimensions(core, &width, &height);
-		outputBuffer = malloc(width * height * BYTES_PER_PIXEL);
-		core->setVideoBuffer(core, outputBuffer, width);
-		core->setAudioBufferSize(core, SAMPLES);
-
-		cheatSets = [[NSMutableDictionary alloc] init];
+- (instancetype)init {
+	if ((self = [super init])) {
+	
 	}
 
 	return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     mCoreConfigDeinit(&core->config);
 	core->deinit(core);
 	free(outputBuffer);
@@ -107,9 +95,34 @@ static struct mLogger logger = { .log = _log };
 
 #pragma mark - Execution
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
-{
-	NSString *batterySavesDirectory = [self batterySavesDirectoryPath];
+
+-(void)initialize {
+    [super initialize];
+    core = GBACoreCreate();
+    mCoreInitConfig(core, nil);
+
+    struct mCoreOptions opts = {
+        .useBios = true,
+    };
+    
+    // Set up a logger. The default logger prints everything to STDOUT, which is not usually desirable.
+    mLogSetDefaultLogger(&logger);
+
+    mCoreConfigLoadDefaults(&core->config, &opts);
+    core->init(core);
+    outputBuffer = nil;
+
+    unsigned width, height;
+    core->desiredVideoDimensions(core, &width, &height);
+    outputBuffer = malloc(width * height * BYTES_PER_PIXEL);
+    core->setVideoBuffer(core, outputBuffer, width);
+    core->setAudioBufferSize(core, SAMPLES);
+
+    cheatSets = [[NSMutableDictionary alloc] init];
+}
+
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
+    NSString *batterySavesDirectory = [self batterySavesPath];
 	[[NSFileManager defaultManager] createDirectoryAtURL:[NSURL fileURLWithPath:batterySavesDirectory]
 	                                withIntermediateDirectories:YES
 	                                attributes:nil
@@ -121,7 +134,9 @@ static struct mLogger logger = { .log = _log };
 
 	if (!mCoreLoadFile(core, [path fileSystemRepresentation])) {
 		if (error) {
-			*error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadROMError userInfo:nil];
+            *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                         code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                     userInfo:nil];
 		}
 		return NO;
 	}
@@ -131,56 +146,48 @@ static struct mLogger logger = { .log = _log };
 	return YES;
 }
 
-- (void)executeFrame
-{
+- (void)executeFrame {
 	core->runFrame(core);
 
 	int16_t samples[SAMPLES * 2];
-	size_t available = 0;
+	int available = 0;
 	available = blip_samples_avail(core->getAudioChannel(core, 0));
 	blip_read_samples(core->getAudioChannel(core, 0), samples, available, true);
 	blip_read_samples(core->getAudioChannel(core, 1), samples + 1, available, true);
-	[[self ringBufferAtIndex:0] write:samples maxLength:available * 4];
+	[[self ringBufferAtIndex:0] write:samples size:available * 4];
 }
 
-- (void)resetEmulation
-{
+- (void)resetEmulation {
 	core->reset(core);
 }
 
-- (void)setupEmulation
-{
+- (void)setupEmulation {
 	blip_set_rates(core->getAudioChannel(core, 0), core->frequency(core), 32768);
 	blip_set_rates(core->getAudioChannel(core, 1), core->frequency(core), 32768);
 }
 
 #pragma mark - Video
 
-- (OEIntSize)aspectSize
-{
-	return OEIntSizeMake(3, 2);
+- (CGSize)aspectSize {
+	return CGSizeMake(3, 2);
 }
 
-- (OEIntRect)screenRect
-{
+- (CGRect)screenRect {
 	unsigned width, height;
 	core->desiredVideoDimensions(core, &width, &height);
-    return OEIntRectMake(0, 0, width, height);
+    return CGRectMake(0, 0, width, height);
 }
 
-- (OEIntSize)bufferSize
-{
+- (CGSize)bufferSize {
 	unsigned width, height;
 	core->desiredVideoDimensions(core, &width, &height);
-    return OEIntSizeMake(width, height);
+    return CGSizeMake(width, height);
 }
 
-- (const void *)getVideoBufferWithHint:(void *)hint
-{
-	OEIntSize bufferSize = [self bufferSize];
+- (const void *)getVideoBufferWithHint:(void *)hint {
+	CGSize bufferSize = [self bufferSize];
 
-	if (!hint)
-	{
+	if (!hint) {
 		hint = outputBuffer;
 	}
 
@@ -190,18 +197,19 @@ static struct mLogger logger = { .log = _log };
 	return hint;
 }
 
-- (GLenum)pixelFormat
-{
+- (GLenum)pixelFormat {
     return GL_RGBA;
 }
 
-- (GLenum)pixelType
-{
+- (GLenum)pixelType {
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     return GL_UNSIGNED_INT_8_8_8_8_REV;
+#else
+    return GL_UNSIGNED_INT;
+#endif
 }
 
-- (NSTimeInterval)frameInterval
-{
+- (NSTimeInterval)frameInterval {
 	return core->frequency(core) / (double) core->frameCycles(core);
 }
 
@@ -224,7 +232,7 @@ static struct mLogger logger = { .log = _log };
 	struct VFile* vf = VFileMemChunk(nil, 0);
 	if (!mCoreSaveStateNamed(core, vf, SAVESTATE_SAVEDATA)) {
 		if (outError) {
-			*outError = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadStateError userInfo:nil];
+            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:nil];
 		}
 		vf->close(vf);
 		return nil;
@@ -242,7 +250,7 @@ static struct mLogger logger = { .log = _log };
 	struct VFile* vf = VFileFromConstMemory(state.bytes, state.length);
 	if (!mCoreLoadStateNamed(core, vf, SAVESTATE_SAVEDATA)) {
 		if (outError) {
-			*outError = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadStateError userInfo:nil];
+			*outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:nil];
 		}
 		vf->close(vf);
 		return NO;
@@ -251,43 +259,52 @@ static struct mLogger logger = { .log = _log };
 	return YES;
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
-{
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
 	struct VFile* vf = VFileOpen([fileName fileSystemRepresentation], O_CREAT | O_TRUNC | O_RDWR);
-	block(mCoreSaveStateNamed(core, vf, 0), nil);
+    BOOL success = mCoreSaveStateNamed(core, vf, 0);
+    if(!success) {
+        NSError *error = nil;
+            error = [NSError errorWithDomain:@"org.provenance.GameCore.ErrorDomain"
+                                        code:-5
+                                    userInfo:@{
+                NSLocalizedDescriptionKey : @"Jagar Could not load the current state.",
+                NSFilePathErrorKey : fileName
+            }];
+        block(error);
+    } else {
+        block(nil);
+    }
 	vf->close(vf);
+    return success;
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
-{
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
 	struct VFile* vf = VFileOpen([fileName fileSystemRepresentation], O_RDONLY);
-	block(mCoreLoadStateNamed(core, vf, 0), nil);
+    BOOL success = mCoreLoadStateNamed(core, vf, 0);
+    if(!success) {
+        NSError *error = nil;
+            error = [NSError errorWithDomain:@"org.provenance.GameCore.ErrorDomain"
+                                        code:-5
+                                    userInfo:@{
+                NSLocalizedDescriptionKey : @"Jagar Could not load the current state.",
+                NSFilePathErrorKey : fileName
+            }];
+        block(error);
+    } else {
+        block(nil);
+    }
 	vf->close(vf);
+    return success;
 }
 
 #pragma mark - Input
 
-const int GBAMap[] = {
-	GBA_KEY_UP,
-	GBA_KEY_DOWN,
-	GBA_KEY_LEFT,
-	GBA_KEY_RIGHT,
-	GBA_KEY_A,
-	GBA_KEY_B,
-	GBA_KEY_L,
-	GBA_KEY_R,
-	GBA_KEY_START,
-	GBA_KEY_SELECT
-};
-
-- (oneway void)didPushGBAButton:(OEGBAButton)button forPlayer:(NSUInteger)player
-{
+- (oneway void)didPushGBAButton:(PVGBAButton)button forPlayer:(NSUInteger)player {
 	UNUSED(player);
 	core->addKeys(core, 1 << GBAMap[button]);
 }
 
-- (oneway void)didReleaseGBAButton:(OEGBAButton)button forPlayer:(NSUInteger)player
-{
+- (oneway void)didReleaseGBAButton:(PVGBAButton)button forPlayer:(NSUInteger)player {
 	UNUSED(player);
 	core->clearKeys(core, 1 << GBAMap[button]);
 }

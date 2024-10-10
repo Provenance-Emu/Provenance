@@ -6,12 +6,12 @@ import Foundation
 import UIKit
 import JITManager
 
-@objc final class JitWaitScreenViewController : UIViewController {
-  @objc weak var delegate: JitScreenDelegate?
+@objc public final class JitWaitScreenViewController : UIViewController {
+  @objc public weak var delegate: JitScreenDelegate?
   var cancellation_token = DOLCancellationToken()
   var is_presenting_alert = false
   
-  override func viewDidLoad() {
+    public override func viewDidLoad() {
     NotificationCenter.default.addObserver(self, selector: #selector(jitAcquired), name: NSNotification.Name.DOLJitAcquired, object: nil)
     NotificationCenter.default.addObserver(self, selector: #selector(altJitFailed), name: NSNotification.Name.DOLJitAltJitFailure, object: nil)
     
@@ -28,7 +28,7 @@ import JITManager
     DOLJitManager.shared.attemptToAcquireJitByJitStreamer()
   }
   
-  override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
     if let auxError = DOLJitManager.shared.getAuxiliaryError() {
       self.is_presenting_alert = true
       

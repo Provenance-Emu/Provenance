@@ -1,0 +1,47 @@
+module libmGBA {
+    header "../include/mgba/core/bitmap-cache.h"
+    header "../include/mgba/core/blip_buf.h"
+    header "../include/mgba/core/cache-set.h"
+    header "../include/mgba/core/cheats.h"
+    header "../include/mgba/core/config.h"
+    header "../include/mgba/core/core.h"
+    header "../include/mgba/core/cpu.h"
+    header "../include/mgba/core/directories.h"
+    header "../include/mgba/core/input.h"
+    header "../include/mgba/core/interface.h"
+    header "../include/mgba/core/library.h"
+    header "../include/mgba/core/lockstep.h"
+    header "../include/mgba/core/log.h"
+    header "../include/mgba/core/map-cache.h"
+    header "../include/mgba/core/mem-search.h"
+//    header "../include/mgba/core/rewind.h"
+    header "../include/mgba/core/scripting.h"
+    header "../include/mgba/core/serialize.h"
+//    header "../include/mgba/core/sync.h"
+//    header "../include/mgba/core/thread.h"
+    header "../include/mgba/core/tile-cache.h"
+    header "../include/mgba/core/timing.h"
+    header "../include/mgba/core/version.h"
+    header "../include/mgba/debugger/debugger.h"
+    header "../include/mgba/feature/commandline.h"
+//    header "../include/mgba/feature/thread-proxy.h"
+    header "../include/mgba/feature/video-logger.h"
+    header "../include/mgba/gb/core.h"
+    header "../include/mgba/gb/interface.h"
+    header "../include/mgba/gba/core.h"
+    header "../include/mgba/gba/interface.h"
+
+    export *
+}
+
+//module libmGBA.util {
+//    header "../include/mgba-util/gui/file-select.h"
+//    header "../include/mgba-util/gui/font-metrics.h"
+//    header "../include/mgba-util/gui/font.h"
+//    header "../include/mgba-util/gui/menu.h"
+//    header "../include/mgba-util/patch/fast.h"
+//    header "../include/mgba-util/patch/ips.h"
+//    header "../include/mgba-util/patch/ups.h"
+//
+//    export *
+//}

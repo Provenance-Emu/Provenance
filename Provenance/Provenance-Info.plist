@@ -524,5 +524,7 @@
 	</array>
 	<key>appcenter</key>
 	<string>862ca352-4607-4f8e-8c77-1248fa68ca3a</string>
+	<key>PVAppType</key>
+	<string>standard</string>
 </dict>
 </plist>

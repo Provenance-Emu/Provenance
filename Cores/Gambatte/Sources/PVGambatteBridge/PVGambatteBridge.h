@@ -29,8 +29,9 @@
 
 @protocol ObjCBridgedCoreBridge;
 @protocol PVGBSystemResponderClient;
-typedef enum PVGBButton: NSInteger PVGBButton;
 
+typedef enum PVGBButton: NSInteger PVGBButton NS_TYPED_ENUM;
+typedef enum GBPalette: NSInteger GBPalette NS_TYPED_ENUM;
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 #pragma clang diagnostic push
@@ -38,9 +39,10 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 @interface PVGBEmulatorCoreBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVGBSystemResponderClient>
 #pragma clang diagnostic pop
 
--(NSInteger)currentDisplayMode;
--(void)changeDisplayMode:(NSInteger)displayMode;
 @property (nonatomic, readonly) BOOL isGameboyColor;
+
+-(enum GBPalette)currentDisplayMode;
+-(void)changeDisplayMode:(NSInteger)displayMode;
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

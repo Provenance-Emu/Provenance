@@ -23,7 +23,6 @@
 
 /* Begin PBXBuildFile section */
 		B301797F207C909E0051B93D /* libhatari.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libhatari.a */; };
-		B30E98DB2C6EF08B00C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98DA2C6EF08B00C1431E /* PVLibRetro */; };
 		B30E98DE2C6EF0A500C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98DD2C6EF0A500C1431E /* PVSupport */; };
 		B30E98E02C6EF0B600C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98DF2C6EF0B600C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B30E9A072C6F061100C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9A062C6F061100C1431E /* PVCoreBridge */; };
@@ -56,6 +55,8 @@
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVHatari.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVHatari.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libhatari-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libhatari-libretro.a */; };
+		B3A60E8B2CB7921D001D99C2 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A60E8A2CB7921D001D99C2 /* PVCoreBridgeRetro.framework */; };
+		B3A60E8C2CB7921D001D99C2 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A60E8A2CB7921D001D99C2 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, xros, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3E0AB36289214D900DB1E39 /* hatari.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B3E0AB35289214D900DB1E39 /* hatari.cfg */; };
@@ -203,6 +204,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3A60E8D2CB7921D001D99C2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3A60E8C2CB7921D001D99C2 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -260,6 +272,7 @@
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A60E8A2CB7921D001D99C2 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVHatari.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVHatari.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -968,6 +981,7 @@
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
+				B3A60E8B2CB7921D001D99C2 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B30E9A072C6F061100C1431E /* PVCoreBridge in Frameworks */,
 				B301797F207C909E0051B93D /* libhatari.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
@@ -975,7 +989,6 @@
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B30E98DB2C6EF08B00C1431E /* PVLibRetro in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1070,6 +1083,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3A60E8A2CB7921D001D99C2 /* PVCoreBridgeRetro.framework */,
 				B30E98DF2C6EF0B600C1431E /* OpenGL.framework */,
 				B32C4C0E289223DC001B51AE /* libz.tbd */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
@@ -2446,6 +2460,7 @@
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
+				B3A60E8D2CB7921D001D99C2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2541,6 +2556,8 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/cmake/Makefile",
+				"$(SRCROOT)/cmake/hatari/Makefile",
 			);
 			outputFileListPaths = (
 			);
@@ -3257,10 +3274,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B30E98DA2C6EF08B00C1431E /* PVLibRetro */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLibRetro;
-		};
 		B30E98DD2C6EF0A500C1431E /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23090" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23079"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -22,7 +22,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nqQ-7N-YI4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="127" y="-27"/>
+            <point key="canvasLocation" x="911" y="-273"/>
         </scene>
         <!--Settings-->
         <scene sceneID="8zy-VM-QK4">
@@ -55,11 +55,12 @@
                         <segue destination="BFd-r1-Ceq" kind="push" identifier="appearanceSegue" id="uU3-an-oop"/>
                         <segue destination="mYD-WN-8hF" kind="push" identifier="licensesSegue" id="H4g-UU-BF3"/>
                         <segue destination="o83-ke-qBP" kind="push" identifier="coresSegue" id="CGX-mH-GFQ"/>
+                        <segue destination="GPS-Oh-9Fk" kind="push" identifier="coreOptionsSegue" id="wrQ-eS-fDt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vad-gc-KU5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="929" y="-27"/>
+            <point key="canvasLocation" x="1825" y="-273"/>
         </scene>
         <!--Systems-->
         <scene sceneID="ukM-D2-nbt">
@@ -75,7 +76,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zCc-Pn-1OW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1714" y="-89"/>
+            <point key="canvasLocation" x="2737" y="-273"/>
         </scene>
         <!--Acknowledgements-->
         <scene sceneID="Yih-Dr-Y9e">
@@ -232,6 +233,22 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pku-Wo-Aht" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2886" y="743"/>
+        </scene>
+        <!--Core Options-->
+        <scene sceneID="2iK-wG-kQn">
+            <objects>
+                <viewController storyboardIdentifier="coreOptionsTablewView" title="Core Options" useStoryboardIdentifierAsRestorationIdentifier="YES" id="GPS-Oh-9Fk" customClass="CoreOptionsTableViewController" customModule="PVUIBase" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="xNJ-Au-wqC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="c3g-Us-pN5"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Core Options" id="g6c-Ep-eVk"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IKP-0d-Avi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3636" y="752"/>
         </scene>
     </scenes>
     <color key="tintColor" red="0.51793235540390015" green="0.5159609317779541" blue="0.53913700580596924" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

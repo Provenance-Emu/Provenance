@@ -19,6 +19,11 @@ import PVUIKit
 import PVSwiftUI
 import PVLogging
 
+#if canImport(PVJIT)
+import PVJIT
+import JITManager
+#endif
+
 #if !targetEnvironment(macCatalyst) && !os(macOS)
 #if canImport(SteamController)
 import SteamController
@@ -31,7 +36,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     var shortcutItemGame: PVGame?
     let disposeBag = DisposeBag()
 
-    #if os(iOS) && !APP_STORE
+    #if os(iOS) && !APP_STORE && canImport(PVJIT)
     weak var jitScreenDelegate: JitScreenDelegate?
     weak var jitWaitScreenVC: JitWaitScreenViewController?
     var cancellation_token = DOLCancellationToken()
@@ -113,7 +118,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 
         #if os(iOS) && !APP_STORE
         if Defaults[.autoJIT] {
-            DOLJitManager.shared().attemptToAcquireJitOnStartup()
+            DOLJitManager.shared.attemptToAcquireJitOnStartup()
         }
         DispatchQueue.main.async { [unowned self] in
             self.showJITWaitScreen()

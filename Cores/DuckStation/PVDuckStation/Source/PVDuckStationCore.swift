@@ -5,9 +5,50 @@
 //  Created by Joseph Mattiello on 3/8/18.
 //
 
-import PVSupport
 import Foundation
+import PVCoreBridge
+import GameController
 import PVLogging
+import PVAudio
+import PVEmulatorCore
+
+@objc
+@objcMembers
+open class PVDuckStationCore: PVEmulatorCore, @unchecked Sendable {
+
+    // MARK: Lifecycle
+    
+    let _bridge: PVDuckStationCoreBridge = .init()
+
+    public required init() {
+        super.init()
+        self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+    }
+}
+
+extension PVDuckStationCore: PVPSXSystemResponderClient {
+    public func didMoveJoystick(_ button: PVCoreBridge.PVPSXButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVPSXSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+    }
+    
+    public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVPSXSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+    }
+    
+    public func didPush(_ button: PVCoreBridge.PVPSXButton, forPlayer player: Int) {
+        (_bridge as! PVPSXSystemResponderClient).didPush(button, forPlayer: player)
+    }
+    
+    public func didRelease(_ button: PVCoreBridge.PVPSXButton, forPlayer player: Int) {
+        (_bridge as! PVPSXSystemResponderClient).didRelease(button, forPlayer: player)
+    }
+}
+
+extension PVDuckStationCore: CoreOptional {
+    public static var options: [PVCoreBridge.CoreOption] {
+        PVDuckStationOptions.options
+    }
+}
 
 extension PVDuckStationCore: DiscSwappable {
     public var numberOfDiscs: UInt {
@@ -28,21 +69,6 @@ extension PVDuckStationCore: DiscSwappable {
         }
     }
 }
-
-//extension PVDuckStationCore: CoreActions {
-//    public var coreActions: [CoreAction]? {
-//        return nil
-//    }
-//
-//    public func selected(action: CoreAction) {
-//        switch action.title {
-//        case "Change Palette":
-//            changeDisplayMode()
-//        default:
-//            print("Unknown action: " + action.title)
-//        }
-//    }
-//}
 
 extension PVDuckStationCore: GameWithCheat {
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
@@ -66,36 +92,3 @@ extension PVDuckStationCore: GameWithCheat {
     }
 }
 
-extension PVDuckStationCore: CoreOptional {
-
-    static var gsOption: CoreOption = {
-        .enumeration(.init(title: "Graphics Handler",
-                           description: "(Requires Restart)",
-                           requiresRestart: true),
-                     values: [
-                        .init(title: "OpenGL", description: "OpenGL", value: 0),
-                        .init(title: "Vulkan", description: "Vulkan (Experimental)", value: 1)
-                     ],
-                     defaultValue: 0)
-    }()
-
-    public static var options: [CoreOption] {
-        var options = [CoreOption]()
-        let coreOptions: [CoreOption] = [gsOption]
-        let coreGroup:CoreOption = .group(.init(title: "DuckStation Core",
-                                                description: "Global options for DuckStation"),
-                                          subOptions: coreOptions)
-        options.append(contentsOf: [coreGroup])
-        return options
-    }
-}
-
-@objc public extension PVDuckStationCore {
-    @objc var gs: Int {
-        PVDuckStationCore.valueForOption(PVDuckStationCore.gsOption).asInt ?? 0
-    }
-
-//    func parseOptions() {
-//        self.gsPreference = NSNumber(value: gs).int8Value
-//    }
-}

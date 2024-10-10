@@ -19,7 +19,7 @@
 		933CC5E42951BF680070CF1D /* libpngDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5E12951BB8A0070CF1D /* libpngDolphin.a */; };
 		933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5FE2951FB9F0070CF1D /* GLKit.framework */; platformFilters = (ios, tvos, watchos, ); };
 		933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */; };
-		933CC6032952034E0070CF1D /* PVDolphinCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC6022952034E0070CF1D /* PVDolphinCore.swift */; };
+		933CC6032952034E0070CF1D /* PVDolphinCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC6022952034E0070CF1D /* PVDolphinCoreOptions.swift */; };
 		933CFC26295335B600217F45 /* libvideovulkanDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB072949E94400CC8234 /* libvideovulkanDolphin.a */; };
 		933CFC362953605600217F45 /* DolphinOGLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CFC352953605600217F45 /* DolphinOGLViewController.swift */; };
 		93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93599B4C2955FD520049DAC8 /* QuartzCore.framework */; };
@@ -33,7 +33,6 @@
 		93C33A952952192200CC86C5 /* libdolphin-coreDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libdolphin-coreDolphin.a */; };
 		93CB27D0297CE5DF006A940B /* VulkanLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */; };
 		B30E98FF2C6EF18400C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98FE2C6EF18400C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
-		B30E99022C6EF18E00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99012C6EF18E00C1431E /* PVSupport */; };
 		B30E9B1C2C6FD20400C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B1B2C6FD20400C1431E /* PVCoreBridge */; };
 		B30E9B1F2C6FD20E00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B1E2C6FD20E00C1431E /* PVEmulatorCore */; };
 		B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDolphinCore.mm */; };
@@ -89,6 +88,13 @@
 		B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB532949F73C00CC8234 /* Metal.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0F92CB3C7E600017D1B /* PVPlists */; };
+		B3F8E0FD2CB3C83600017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0FC2CB3C83600017D1B /* PVCoreObjCBridge */; };
+		B3F8E1002CB3C87D00017D1B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0FF2CB3C87D00017D1B /* PVSettings */; };
+		B3F8E1032CB3C95600017D1B /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E1022CB3C95600017D1B /* PVLogging */; };
+		B3F8E1262CB6007700017D1B /* PVDolphinCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1252CB6007700017D1B /* PVDolphinCore.swift */; };
+		B3F8E1292CB6052800017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1282CB6052800017D1B /* CorePlist.swift */; };
+		B3F8E12A2CB6052800017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1272CB6052800017D1B /* CorePlist-Generated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -823,7 +829,7 @@
 		9333C82629895CEF0042CD99 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		933CC5FE2951FB9F0070CF1D /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DolphinVulkanViewController.swift; sourceTree = "<group>"; };
-		933CC6022952034E0070CF1D /* PVDolphinCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCore.swift; sourceTree = "<group>"; };
+		933CC6022952034E0070CF1D /* PVDolphinCoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCoreOptions.swift; sourceTree = "<group>"; };
 		933CFC352953605600217F45 /* DolphinOGLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DolphinOGLViewController.swift; sourceTree = "<group>"; };
 		934FA1B92A7905880019C951 /* libdolphin.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdolphin.a; path = lib/libdolphin.a; sourceTree = "<group>"; };
 		93599B4C2955FD520049DAC8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
@@ -15497,6 +15503,9 @@
 		B3C76223207833DE009950E4 /* PVDolphinCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDolphinCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVDolphinCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDolphinCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3F8E1252CB6007700017D1B /* PVDolphinCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCore.swift; sourceTree = "<group>"; };
+		B3F8E1272CB6052800017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
+		B3F8E1282CB6052800017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -15552,11 +15561,13 @@
 				93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */,
 				B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
+				B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */,
 				B30E9B1F2C6FD20E00C1431E /* PVEmulatorCore in Frameworks */,
 				932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B3F8E1002CB3C87D00017D1B /* PVSettings in Frameworks */,
 				B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */,
-				B30E99022C6EF18E00C1431E /* PVSupport in Frameworks */,
+				B3F8E1032CB3C95600017D1B /* PVLogging in Frameworks */,
 				B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
 				B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */,
@@ -15564,6 +15575,7 @@
 				B30E98FF2C6EF18400C1431E /* OpenGL.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */,
+				B3F8E0FD2CB3C83600017D1B /* PVCoreObjCBridge in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B30E9B1C2C6FD20400C1431E /* PVCoreBridge in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
@@ -39122,7 +39134,10 @@
 				9366AC812959C6D800162286 /* Cheats_GeckoCode.mm */,
 				933CFC352953605600217F45 /* DolphinOGLViewController.swift */,
 				933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */,
-				933CC6022952034E0070CF1D /* PVDolphinCore.swift */,
+				B3F8E1252CB6007700017D1B /* PVDolphinCore.swift */,
+				933CC6022952034E0070CF1D /* PVDolphinCoreOptions.swift */,
+				B3F8E1272CB6052800017D1B /* CorePlist-Generated.swift */,
+				B3F8E1282CB6052800017D1B /* CorePlist.swift */,
 				B3C76223207833DE009950E4 /* PVDolphinCore.h */,
 				B3C76224207833DE009950E4 /* PVDolphinCore.mm */,
 				B3447EB1218BC69700557ACE /* PVDolphinCore+Audio.h */,
@@ -39378,9 +39393,12 @@
 			);
 			name = PVDolphin;
 			packageProductDependencies = (
-				B30E99012C6EF18E00C1431E /* PVSupport */,
 				B30E9B1B2C6FD20400C1431E /* PVCoreBridge */,
 				B30E9B1E2C6FD20E00C1431E /* PVEmulatorCore */,
+				B3F8E0F92CB3C7E600017D1B /* PVPlists */,
+				B3F8E0FC2CB3C83600017D1B /* PVCoreObjCBridge */,
+				B3F8E0FF2CB3C87D00017D1B /* PVSettings */,
+				B3F8E1022CB3C95600017D1B /* PVLogging */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVDolphin.framework */;
@@ -39430,6 +39448,10 @@
 				B30E99002C6EF18E00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E9B1A2C6FD20400C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 				B30E9B1D2C6FD20E00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3F8E0F82CB3C7E600017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3F8E0FB2CB3C83600017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3F8E0FE2CB3C87D00017D1B /* XCLocalSwiftPackageReference "../../PVSettings" */,
+				B3F8E1012CB3C95600017D1B /* XCLocalSwiftPackageReference "../../PVLogging" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -39927,13 +39949,16 @@
 				932931A5297EC81700464B9D /* FastmemUtil.m in Sources */,
 				9366AC842959C6D900162286 /* Cheats_ActionReplay.mm in Sources */,
 				933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */,
+				B3F8E1292CB6052800017D1B /* CorePlist.swift in Sources */,
+				B3F8E12A2CB6052800017D1B /* CorePlist-Generated.swift in Sources */,
 				B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.mm in Sources */,
 				B3135BA526E4CD500047F338 /* PVDolphinCore+Saves.mm in Sources */,
 				933CFC362953605600217F45 /* DolphinOGLViewController.swift in Sources */,
 				93CB27D0297CE5DF006A940B /* VulkanLoader.cpp in Sources */,
 				9366AC832959C6D900162286 /* Cheats_GeckoCode.mm in Sources */,
 				B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */,
-				933CC6032952034E0070CF1D /* PVDolphinCore.swift in Sources */,
+				B3F8E1262CB6007700017D1B /* PVDolphinCore.swift in Sources */,
+				933CC6032952034E0070CF1D /* PVDolphinCoreOptions.swift in Sources */,
 				9366AC80295976D000162286 /* PVDolphinCore+Cheats.mm in Sources */,
 				B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */,
 				B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.mm in Sources */,
@@ -40577,7 +40602,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -40601,6 +40626,7 @@
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Release;
@@ -40758,7 +40784,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -40782,6 +40808,7 @@
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
@@ -40866,13 +40893,25 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVEmulatorCore;
 		};
+		B3F8E0F82CB3C7E600017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B3F8E0FB2CB3C83600017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3F8E0FE2CB3C87D00017D1B /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+		B3F8E1012CB3C95600017D1B /* XCLocalSwiftPackageReference "../../PVLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLogging;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B30E99012C6EF18E00C1431E /* PVSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVSupport;
-		};
 		B30E9B1B2C6FD20400C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
@@ -40880,6 +40919,22 @@
 		B30E9B1E2C6FD20E00C1431E /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
+		};
+		B3F8E0F92CB3C7E600017D1B /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B3F8E0FC2CB3C83600017D1B /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3F8E0FF2CB3C87D00017D1B /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B3F8E1022CB3C95600017D1B /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -35,7 +35,6 @@
 /* Begin PBXBuildFile section */
 		93049A542A930B9700BF257F /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0504298AF1A600BA5157 /* PVDebug.c */; };
 		93BC0505298AF1A600BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0504298AF1A600BA5157 /* PVDebug.c */; };
-		B30E98B62C6EEF6600C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98B52C6EEF6600C1431E /* PVSupport */; };
 		B30E99C22C6F004000C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E99C12C6F004000C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B30E99C92C6F03F300C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99C82C6F03F300C1431E /* PVCoreBridge */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
@@ -149,8 +148,15 @@
 		B3C8A68D28780AE70037A946 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A68C28780AE30037A946 /* libpthread.tbd */; };
 		B3C8A69028780B9A0037A946 /* diskio.c in Sources */ = {isa = PBXBuildFile; fileRef = B33805A62877B5080009C732 /* diskio.c */; };
 		B3C8A69228780D5C0037A946 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B33806B32877B5090009C732 /* encoding_utf.c */; };
-		B3E4FD6B2C6EE8B0002975BA /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B3E4FD6A2C6EE8B0002975BA /* PVLibRetro */; };
+		B3D1C13D2CB70EEE00F1F46B /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1C13C2CB70EEE00F1F46B /* PVCoreBridgeRetro.framework */; };
 		B3E88CC62977B5BE00C90E86 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CC52977B5BE00C90E86 /* PVLogging */; };
+		B3F8E1092CB3CB9D00017D1B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E1082CB3CB9D00017D1B /* PVSettings */; };
+		B3F8E10C2CB3CBD600017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E10B2CB3CBD600017D1B /* PVCoreObjCBridge */; };
+		B3F8E10F2CB3CC0F00017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E10E2CB3CC0F00017D1B /* PVPlists */; };
+		B3F8E1122CB3CC4B00017D1B /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E1112CB3CC4B00017D1B /* PVEmulatorCore */; };
+		B3F8E1162CB3CCEC00017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1152CB3CCEC00017D1B /* CorePlist-Generated.swift */; };
+		B3F8E1172CB3CCEC00017D1B /* PVMelonDSCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1132CB3CCEC00017D1B /* PVMelonDSCore.swift */; };
+		B3F8E1182CB3CCEC00017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1142CB3CCEC00017D1B /* CorePlist.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1620,6 +1626,10 @@
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3C8A68C28780AE30037A946 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libpthread.tbd; sourceTree = DEVELOPER_DIR; };
 		B3C8A68E28780AEF0037A946 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libpthread.tbd; sourceTree = DEVELOPER_DIR; };
+		B3D1C13C2CB70EEE00F1F46B /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F8E1132CB3CCEC00017D1B /* PVMelonDSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMelonDSCore.swift; sourceTree = "<group>"; };
+		B3F8E1142CB3CCEC00017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3F8E1152CB3CCEC00017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1643,6 +1653,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
+				B3F8E1092CB3CB9D00017D1B /* PVSettings in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3E88CC62977B5BE00C90E86 /* PVLogging in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
@@ -1650,11 +1661,13 @@
 				B30E99C22C6F004000C1431E /* OpenGL.framework in Frameworks */,
 				B39313802870FB9A00372EBB /* libMelonDS.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3E4FD6B2C6EE8B0002975BA /* PVLibRetro in Frameworks */,
+				B3F8E10C2CB3CBD600017D1B /* PVCoreObjCBridge in Frameworks */,
+				B3F8E1122CB3CC4B00017D1B /* PVEmulatorCore in Frameworks */,
 				B30E99C92C6F03F300C1431E /* PVCoreBridge in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
+				B3F8E10F2CB3CC0F00017D1B /* PVPlists in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B30E98B62C6EEF6600C1431E /* PVSupport in Frameworks */,
+				B3D1C13D2CB70EEE00F1F46B /* PVCoreBridgeRetro.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5073,6 +5086,9 @@
 				B3447EAA218BC59D00557ACE /* PVMelonDSCore+Saves.m */,
 				B3447E96218B809200557ACE /* PVMelonDSCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVMelonDSCore+Controls.mm */,
+				B3F8E1132CB3CCEC00017D1B /* PVMelonDSCore.swift */,
+				B3F8E1142CB3CCEC00017D1B /* CorePlist.swift */,
+				B3F8E1152CB3CCEC00017D1B /* CorePlist-Generated.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -5114,6 +5130,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3D1C13C2CB70EEE00F1F46B /* PVCoreBridgeRetro.framework */,
 				B30E99C12C6F004000C1431E /* OpenGL.framework */,
 				B3C8A68C28780AE30037A946 /* libpthread.tbd */,
 				B3C8A68E28780AEF0037A946 /* libpthread.tbd */,
@@ -5230,9 +5247,11 @@
 			name = PVMelonDS;
 			packageProductDependencies = (
 				B3E88CC52977B5BE00C90E86 /* PVLogging */,
-				B3E4FD6A2C6EE8B0002975BA /* PVLibRetro */,
-				B30E98B52C6EEF6600C1431E /* PVSupport */,
 				B30E99C82C6F03F300C1431E /* PVCoreBridge */,
+				B3F8E1082CB3CB9D00017D1B /* PVSettings */,
+				B3F8E10B2CB3CBD600017D1B /* PVCoreObjCBridge */,
+				B3F8E10E2CB3CC0F00017D1B /* PVPlists */,
+				B3F8E1112CB3CC4B00017D1B /* PVEmulatorCore */,
 			);
 			productName = PVMelonDS;
 			productReference = B3C7621020783162009950E4 /* PVMelonDS.framework */;
@@ -5258,6 +5277,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
@@ -5274,6 +5294,11 @@
 			packageReferences = (
 				B30E98B42C6EEF6600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E99C72C6F03F300C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3F8E1042CB3CB6100017D1B /* XCLocalSwiftPackageReference "../../PVLogging" */,
+				B3F8E1072CB3CB9D00017D1B /* XCLocalSwiftPackageReference "../../PVSettings" */,
+				B3F8E10A2CB3CBD600017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3F8E10D2CB3CC0F00017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3F8E1102CB3CC4B00017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -5477,6 +5502,9 @@
 				B338055D287582CE0009C732 /* PVMelonDSCore+Audio.m in Sources */,
 				B338055B28757C3A0009C732 /* PVMelonDSCore+Controls.mm in Sources */,
 				B338055F287583AD0009C732 /* PVMelonDSCore+Video.m in Sources */,
+				B3F8E1162CB3CCEC00017D1B /* CorePlist-Generated.swift in Sources */,
+				B3F8E1172CB3CCEC00017D1B /* PVMelonDSCore.swift in Sources */,
+				B3F8E1182CB3CCEC00017D1B /* CorePlist.swift in Sources */,
 				B3C76226207833DE009950E4 /* PVMelonDSCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5527,7 +5555,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				INFOPLIST_FILE = "${SRCROOT}/PVMelonDS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5651,7 +5679,7 @@
 					"\"$(SRCROOT)/melonDS/src/dolphin\"",
 					"\"$(SRCROOT)/melonDS/src/teakra/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
@@ -5659,7 +5687,7 @@
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos xros appletvsimulator appletvos xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = "${SRCROOT}/cmake";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -5670,6 +5698,7 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
@@ -5682,7 +5711,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				INFOPLIST_FILE = "${SRCROOT}/PVMelonDS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5697,6 +5726,7 @@
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -5762,7 +5792,7 @@
 					"\"$(SRCROOT)/melonDS/src/dolphin\"",
 					"\"$(SRCROOT)/melonDS/src/teakra/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
@@ -5770,7 +5800,7 @@
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos xros appletvsimulator appletvos xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = "${SRCROOT}/cmake";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -5793,7 +5823,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				INFOPLIST_FILE = "${SRCROOT}/PVMelonDS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5815,6 +5845,7 @@
 		B3D0678E2BC4EA3200A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
@@ -5827,7 +5858,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				INFOPLIST_FILE = "${SRCROOT}/PVMelonDS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5842,6 +5873,7 @@
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -5957,24 +5989,52 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3F8E1042CB3CB6100017D1B /* XCLocalSwiftPackageReference "../../PVLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLogging;
+		};
+		B3F8E1072CB3CB9D00017D1B /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+		B3F8E10A2CB3CBD600017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3F8E10D2CB3CC0F00017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B3F8E1102CB3CC4B00017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B30E98B52C6EEF6600C1431E /* PVSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVSupport;
-		};
 		B30E99C82C6F03F300C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
 		};
-		B3E4FD6A2C6EE8B0002975BA /* PVLibRetro */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLibRetro;
-		};
 		B3E88CC52977B5BE00C90E86 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B3F8E1082CB3CB9D00017D1B /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B3F8E10B2CB3CBD600017D1B /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3F8E10E2CB3CC0F00017D1B /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B3F8E1112CB3CC4B00017D1B /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

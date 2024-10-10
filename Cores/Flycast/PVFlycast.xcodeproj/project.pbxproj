@@ -23331,8 +23331,6 @@
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
 					"-fno-operator-names",
 					"-fno-rtti",
 					"-ffast-math",
@@ -24021,8 +24019,6 @@
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
 					"-fno-operator-names",
 					"-fno-rtti",
 					"-ffast-math",

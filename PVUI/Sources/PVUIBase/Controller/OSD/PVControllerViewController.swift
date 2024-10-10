@@ -234,7 +234,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 let size: CGFloat = 28
                 #endif
 				label.font = UIFont.italicSystemFont(ofSize: size)
-				label.text = "Drag buttons to Move.\nTap 2 fingers 4 times to close."
+				label.text = "Drag buttons to Move.\nTap 3 fingers 3 times to close."
+                label.textAlignment = .center
 				moveLabel = label
                 // Build the view heirachry
 				vibrancyView.contentView.addSubview(label)
@@ -287,7 +288,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 			let tripleTapGesture = UITapGestureRecognizer(target: self, action: #selector(PVControllerViewController.tripleTapRecognized(_:)))
 
 			tripleTapGesture.numberOfTapsRequired = 3
-			tripleTapGesture.numberOfTouchesRequired = 2
+			tripleTapGesture.numberOfTouchesRequired = 3
 			view.addGestureRecognizer(tripleTapGesture)
 		}
 		if Defaults[.volumeHUD] {

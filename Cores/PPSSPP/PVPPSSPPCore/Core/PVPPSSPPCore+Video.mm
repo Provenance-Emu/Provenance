@@ -274,10 +274,10 @@ static bool threadStopped = false;
 #if TARGET_OS_TV
     [gl_view_controller addChildViewController:rootController];
     [rootController didMoveToParentViewController:gl_view_controller];
-    if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
-        self.renderDelegate.mtlview.autoresizesSubviews = true;
-        self.renderDelegate.mtlview.clipsToBounds = true;
-        [self.renderDelegate.mtlview addSubview:m_view];
+    if ([gl_view_controller respondsToSelector:@selector(mtlView)]) {
+        self.renderDelegate.mtlView.autoresizesSubviews = true;
+        self.renderDelegate.mtlView.clipsToBounds = true;
+        [self.renderDelegate.mtlView addSubview:m_view];
     } else {
         gl_view_controller.view.autoresizesSubviews = true;
         gl_view_controller.view.clipsToBounds = true;
@@ -309,7 +309,7 @@ static bool threadStopped = false;
     } else {
         [gl_view_controller addChildViewController:rootController];
         [rootController didMoveToParentViewController:gl_view_controller];
-        if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
+        if ([gl_view_controller respondsToSelector:@selector(mtlView)]) {
             self.renderDelegate.mtlView.autoresizesSubviews=true;
             self.renderDelegate.mtlView.clipsToBounds=true;
             [self.renderDelegate.mtlView addSubview:m_view];

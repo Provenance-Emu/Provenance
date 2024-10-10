@@ -13,8 +13,7 @@
 #import "PVRetroArchCore+Archive.h"
 #import <PVRetroArch/RetroArch-Swift.h>
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
@@ -141,7 +140,7 @@ int argc =  1;
 
 - (void)stopEmulation {
 	[super stopEmulation];
-	self->shouldStop = YES;
+	self.shouldStop = YES;
 	if (iterate_observer) {
 		CFRunLoopObserverInvalidate(iterate_observer);
 		CFRelease(iterate_observer);

@@ -7,12 +7,12 @@
 //
 
 // All
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) __LIBRETRO__=1 EMU_SUPPORT_PALM_OS5=1 IS_IOS_BUILD=1 IOS=1 INLINE=inline -fmodules -fcxx-modules
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) __LIBRETRO__=1 EMU_SUPPORT_PALM_OS5=1 IS_IOS_BUILD=1 IOS=1 INLINE=inline
 //GCC_PREPROCESSOR_DEFINITIONS[configuration=Debug] = $(inherited) DEBUG=1
 //GCC_PREPROCESSOR_DEFINITIONS[configuration=Release] = $(inherited) NDEBUG=1 EMU_NO_SAFETY=1
 // LOG_PERFORMANCE
 // NO_TRANSLATION=1
-OTHER_CFLAGS = $(inherited) -fstrict-aliasing -I$(PROJECT_DIR)/Mu/libretroBuildsSystem/fixIncludes/stdbool
+OTHER_CFLAGS = $(inherited) -fstrict-aliasing -fmodules -fcxx-modules -I$(PROJECT_DIR)/Mu/libretroBuildsSystem/fixIncludes/stdbool
 
 // translate_aarch64.cpp
 // translate_x86_64.c

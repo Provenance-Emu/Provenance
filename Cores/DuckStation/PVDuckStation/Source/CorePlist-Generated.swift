@@ -15,12 +15,13 @@ import Foundation
 
 // swiftlint:disable identifier_name line_length number_separator type_body_length
 public enum CorePlist {
-  public static let pvCoreIdentifier: String = "com.provenance.core.gambatte"
-  public static let pvPrincipleClass: String = "PVGB.PVGBEmulatorCore"
-  public static let pvProjectName: String = "Gambatte"
-  public static let pvProjectURL: String = "https://github.com/sinamas/gambatte"
-  public static let pvProjectVersion: String = "0.5.0"
-  public static let pvSupportedSystems: [String] = ["com.provenance.gb", "com.provenance.gbc"]
+  public static let pvCoreIdentifier: String = "com.provenance.core.duckstation"
+  public static let pvPrincipleClass: String = "PVDuckStation.PVDuckStationCore"
+  public static let pvProjectName: String = "DuckStation"
+  public static let pvProjectURL: String = "https://github.com/stenzek/duckstation/"
+  public static let pvProjectVersion: String = "2023.01.11"
+  public static let pvSupportedSystems: [String] = ["com.provenance.psx"]
+  public static let pvDisabled: Bool = true
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
@@ -30,7 +31,8 @@ public enum CorePlist {
             supportedSystems: CorePlist.pvSupportedSystems,
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
-            projectVersion: CorePlist.pvProjectVersion)
+            projectVersion: CorePlist.pvProjectVersion,
+            disabled: CorePlist.pvDisabled)
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }

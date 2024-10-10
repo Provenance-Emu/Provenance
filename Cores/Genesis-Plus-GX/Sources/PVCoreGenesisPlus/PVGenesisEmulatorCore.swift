@@ -62,22 +62,21 @@ open class PVCoreGenesisPlus: PVEmulatorCore, @unchecked Sendable {
 //    }
 
     // MARK: Lifecycle
+    
+    let _bridge: PVCoreGenesisPlusBridge = .init()
 
     public required init() {
         super.init()
-        self.bridge = (PVCoreGenesisPlusBridge() as! any ObjCBridgedCoreBridge)
+        self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
 }
 
 extension PVCoreGenesisPlus: PVGenesisSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVGenesisButton, forPlayer player: Int) {
-        (bridge as! PVGenesisSystemResponderClient).didPush(button, forPlayer: player)
+        (_bridge as! PVGenesisSystemResponderClient).didPush(button, forPlayer: player)
     }
     
     public func didRelease(_ button: PVCoreBridge.PVGenesisButton, forPlayer player: Int) {
-        (bridge as! PVGenesisSystemResponderClient).didRelease(button, forPlayer: player)
-
+        (_bridge as! PVGenesisSystemResponderClient).didRelease(button, forPlayer: player)
     }
-    
-    
 }

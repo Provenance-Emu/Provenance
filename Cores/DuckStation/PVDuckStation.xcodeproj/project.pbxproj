@@ -60,6 +60,9 @@
 		B3D8A52F26BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52526BE48C90096A354 /* PVDuckStation.h */; };
 		B3D8A53126BE48CA0096A354 /* DuckStation-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */; };
 		B3D8A53326BE48CA0096A354 /* PVDuckStationCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52826BE48C90096A354 /* PVDuckStationCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3E2A9FD2CB619B100E2636D /* PVDuckStationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2A9FC2CB619B100E2636D /* PVDuckStationOptions.swift */; };
+		B3E2AA002CB61A5900E2636D /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2A9FE2CB61A5900E2636D /* CorePlist.swift */; };
+		B3E2AA012CB61A5900E2636D /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2A9FF2CB61A5900E2636D /* CorePlist-Generated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -536,6 +539,9 @@
 		B3D8A52A26BE48CA0096A354 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3D8A53926BE4A6D0096A354 /* PVDuckStationCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDuckStationCore.swift; sourceTree = "<group>"; };
 		B3D8A54026BE55780096A354 /* libduckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libduckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E2A9FC2CB619B100E2636D /* PVDuckStationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDuckStationOptions.swift; sourceTree = "<group>"; };
+		B3E2A9FE2CB61A5900E2636D /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3E2A9FF2CB61A5900E2636D /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -816,9 +822,12 @@
 				B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */,
 				B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */,
 				B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */,
-				B3D8A53926BE4A6D0096A354 /* PVDuckStationCore.swift */,
 				B3D8A52826BE48C90096A354 /* PVDuckStationCoreBridge.h */,
 				B3D8A52926BE48CA0096A354 /* PVDuckStationCoreBridge.mm */,
+				B3D8A53926BE4A6D0096A354 /* PVDuckStationCore.swift */,
+				B3E2A9FC2CB619B100E2636D /* PVDuckStationOptions.swift */,
+				B3E2A9FE2CB61A5900E2636D /* CorePlist.swift */,
+				B3E2A9FF2CB61A5900E2636D /* CorePlist-Generated.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1154,9 +1163,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3E2A9FD2CB619B100E2636D /* PVDuckStationOptions.swift in Sources */,
 				B34C2BF4296F9B24002146BB /* OpenGLHostDisplay.mm in Sources */,
 				B34C2C14296FBFBD002146BB /* PlayStationGameHacks.m in Sources */,
 				B373CD98296F99B6005D110B /* PVDuckStationCoreBridge.mm in Sources */,
+				B3E2AA002CB61A5900E2636D /* CorePlist.swift in Sources */,
+				B3E2AA012CB61A5900E2636D /* CorePlist-Generated.swift in Sources */,
 				B373CD99296F99B6005D110B /* PVDuckStationCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

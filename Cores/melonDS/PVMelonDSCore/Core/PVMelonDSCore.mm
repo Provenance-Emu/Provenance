@@ -16,6 +16,8 @@
 #import <Foundation/Foundation.h>
 
 #import <PVLogging/PVLogging.h>
+
+@import PVCoreBridge;
 // MelonDS imports
 //#include "types.h"
 ////#include "profiler/profiler.h"
@@ -68,7 +70,7 @@
 //    return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
 //}
 
-@implementation PVMelonDSCore {
+@implementation PVMelonDSCoreBridge {
 //	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
 //	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
 //    dispatch_semaphore_t coreWaitForExitSemaphore;

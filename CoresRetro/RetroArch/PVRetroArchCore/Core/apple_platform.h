@@ -1,8 +1,7 @@
 // Local Changes:
 // Add PVRetroArchCore.h
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>

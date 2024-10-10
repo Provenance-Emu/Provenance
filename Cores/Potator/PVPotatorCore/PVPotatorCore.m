@@ -27,10 +27,8 @@
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 #define OpenEmu 1
 
-PVPotatorCore *_current;
-
 #pragma mark - Private
-@interface PVPotatorCore() {
+@interface PVPotatorCoreBridge() {
 
 }
 
@@ -38,7 +36,7 @@ PVPotatorCore *_current;
 
 #pragma mark - PVPotatorCore Begin
 
-@implementation PVPotatorCore (ObjC)
+@implementation PVPotatorCoreBridge
 
 - (instancetype)init {
 	if (self = [super init]) {
@@ -52,43 +50,43 @@ PVPotatorCore *_current;
 }
 
 #pragma mark - PVEmulatorCore
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
-#warning "Finish me"
-
-    struct retro_game_info game;
-//    game.size = 0;
-//    game.data = nil;
-//    game.meta = "";
-    game.path = [path cStringUsingEncoding:kCFStringEncodingUTF8];
-
-    retro_load_game(&game);
-    return YES;
-}
-
-#pragma mark - Running
-- (void)startEmulation {
-    retro_run();
-}
-
-- (void)setPauseEmulation:(BOOL)flag {
-	[super setPauseEmulation:flag];
-}
-
-- (void)stopEmulation {
-#warning "Finish me"
-}
-
-- (void)resetEmulation {
-    retro_reset();
-}
-
-//# pragma mark - Cheats
-//- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
+//- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
+//#warning "Finish me"
+//
+//    struct retro_game_info game;
+////    game.size = 0;
+////    game.data = nil;
+////    game.meta = "";
+//    game.path = [path cStringUsingEncoding:kCFStringEncodingUTF8];
+//
+//    retro_load_game(&game);
+//    return YES;
 //}
 //
-- (BOOL)supportsRumble { return NO; }
-- (BOOL)supportsCheatCode { return NO; }
-
+//#pragma mark - Running
+//- (void)startEmulation {
+//    retro_run();
+//}
+//
+//- (void)setPauseEmulation:(BOOL)flag {
+//	[super setPauseEmulation:flag];
+//}
+//
+//- (void)stopEmulation {
+//#warning "Finish me"
+//}
+//
+//- (void)resetEmulation {
+//    retro_reset();
+//}
+//
+# pragma mark - Cheats
+////- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
+////}
+////
+//- (BOOL)supportsRumble { return NO; }
+//- (BOOL)supportsCheatCode { return NO; }
+//
 - (NSTimeInterval)frameInterval {
     return 60.0;
 }
@@ -242,7 +240,7 @@ PVPotatorCore *_current;
 
 @end
 
-@implementation PVPotatorCore (PVSupervisionSystemResponderClient)
+@implementation PVPotatorCoreBridge (PVSupervisionSystemResponderClient)
 
 -(void)didPushSupervisionButton:(enum PVSupervisionButton)button forPlayer:(NSInteger)player {
 #warning "Finish me"

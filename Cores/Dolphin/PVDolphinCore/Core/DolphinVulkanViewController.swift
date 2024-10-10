@@ -12,11 +12,11 @@ import MetalKit
 import os
 
 @objc public class DolphinVulkanViewController: UIViewController {
-	private var core: PVDolphinCore!
+	private var core: PVDolphinCoreBridge!
 	private var metalView: MTKView!
 	private var dev: MTLDevice!
 
-	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVDolphinCore) {
+	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVDolphinCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
 		self.core = core;
 		self.dev = MTLCreateSystemDefaultDevice()!

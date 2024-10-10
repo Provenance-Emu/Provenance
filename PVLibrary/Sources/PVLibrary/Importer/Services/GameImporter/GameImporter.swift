@@ -79,7 +79,7 @@ public final class GameImporter {
     public var romsImportPath: URL { Paths.romsImportPath }
     public var romsPath: URL { get { Paths.romsPath }}
 
-    public let conflictPath: URL = URL.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
+    public let conflictPath: URL = URL.documentsPath.appendingPathComponent("Conflicts/", isDirectory: true)
 
     public func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]

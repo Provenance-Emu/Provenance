@@ -1,6 +1,5 @@
 #import <PVRetroArch/PVRetroArch.h>
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
 
 /* RetroArch Includes */
 #include "core.h"

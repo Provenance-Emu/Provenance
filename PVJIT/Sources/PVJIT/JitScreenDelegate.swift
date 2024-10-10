@@ -4,7 +4,6 @@
 
 import Foundation
 
-@objc
-protocol JitScreenDelegate : AnyObject {
+@objc public protocol JitScreenDelegate : AnyObject {
   func didFinishJitScreen(result: Bool, sender: Any)
 }

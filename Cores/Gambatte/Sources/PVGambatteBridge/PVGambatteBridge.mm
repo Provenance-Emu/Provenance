@@ -41,24 +41,30 @@
 #import <GLUT/GLUT.h>
 #endif
 
-#import <PVGB/PVGB-Swift.h>
+@import PVGambatteOptions;
+@import libgambatte;
+@import libresample;
+//#include "gambatte.h"
+//#include "resamplerinfo.h"
+//#include "resampler.h"
 
-#include "gambatte.h"
 #include "gbcpalettes.h"
-#include "resamplerinfo.h"
-#include "resampler.h"
 
 gambatte::GB gb;
 Resampler *resampler;
 uint32_t gb_pad[PVGBButtonCount];
 
-@interface PVGBEmulatorCoreBridge (SWIFT_EXTENSION(PVGB))
-
+@interface PVGBEmulatorCoreBridge ()
+{
+    uint32_t *videoBuffer;
+    uint32_t *inSoundBuffer;
+    int16_t *outSoundBuffer;
+    double sampleRate;
+    GBPalette displayMode;
+}
 - (void)outputAudio:(unsigned)frames;
 - (void)applyCheat:(NSString *)code;
 - (void)loadPalette;
-
-- (void)updateControllers;
 @end
 
 @implementation PVGBEmulatorCoreBridge
@@ -70,7 +76,7 @@ class GetInput : public gambatte::InputGetter
 public:
     unsigned operator()()
     {
-        __strong PVGBEmulatorCore *strongCurrent = _current;
+        __strong PVGBEmulatorCoreBridge *strongCurrent = _current;
         if (strongCurrent.controller1)
         {
             [strongCurrent updateControllers];
@@ -82,10 +88,10 @@ public:
 
 - (instancetype) init {
     if((self = [super init])) {
-        self.videoBuffer = (uint32_t *)malloc(160 * 144 * 4);
-        self.inSoundBuffer = (uint32_t *)malloc(2064 * 2 * 4);
-        self.outSoundBuffer = (int16_t *)malloc(2064 * 2 * 2);
-        self.displayMode = GBPalettePeaSoupGreen;
+        videoBuffer = (uint32_t *)malloc(160 * 144 * 4);
+        inSoundBuffer = (uint32_t *)malloc(2064 * 2 * 4);
+        outSoundBuffer = (int16_t *)malloc(2064 * 2 * 2);
+        displayMode = GBPalettePeaSoupGreen;
     }
 
 	_current = self;
@@ -93,8 +99,7 @@ public:
 	return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     free(videoBuffer);
     free(inSoundBuffer);
     free(outSoundBuffer);
@@ -102,8 +107,7 @@ public:
 
 # pragma mark - Execution
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
-{
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     memset(gb_pad, 0, sizeof(uint32_t) * PVGBButtonCount);
 
     // Set battery save dir
@@ -146,7 +150,7 @@ public:
 
     // Load built-in GBC palette for monochrome games if supported
 	if (gb.isCgb()) {
-		[self setPalette];
+        displayMode = [PVGBEmulatorCoreOptions getPalette];
 	} else {
 		[self loadPalette];
 	}
@@ -164,16 +168,18 @@ public:
 
 - (void)executeFrameSkippingFrame:(BOOL)skip
 {
-    size_t samples = 2064;
+    std::size_t samples = 2064;
 
-    while (gb.runFor(videoBuffer, 160, inSoundBuffer, samples) == -1)
-    {
+    // Note: 2 symbols (possibly due to incorrect pointer casting?) don't
+    // link in dynamic mode
+    // Undefined symbol: gambatte::GB::runFor(unsigned long*, long, unsigned long*, unsigned long&)
+    while (gb.runFor(videoBuffer, 160, inSoundBuffer, samples) == -1) {
         [self outputAudio:samples];
     }
 
     [self outputAudio:samples];
 }
-
+    
 - (void)resetEmulation
 {
     gb.reset();
@@ -251,7 +257,12 @@ public:
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error  
 {
     @synchronized(self) {
-        BOOL success = gb.saveState(0, 0, [fileName UTF8String]);
+        // Note: 2 symbols (possibly due to incorrect pointer casting?) don't
+        // link in dynamic mode
+        // Undefined symbol: gambatte::GB::runFor(unsigned long*, long, unsigned long*, unsigned long&)
+        // Undefined symbol: gambatte::GB::saveState(unsigned long const*, long, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)
+
+        BOOL success = gb.saveState(nil, 0, [fileName UTF8String]);
 		if (!success) {
             if (error) {
                 NSDictionary *userInfo = @{
@@ -409,7 +420,7 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
     }
 
     unsigned short *gbc_bios_palette = NULL;
-    self.displayMode = displayMode;
+    self->displayMode = displayMode;
     switch (displayMode)
     {
         case GBPalettePeaSoupGreen:
@@ -513,15 +524,16 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
 
 # pragma mark - Misc Helper Methods
 
-- (void)outputAudio:(unsigned)frames
-{
-    if (!frames)
+- (void)outputAudio:(unsigned)frames {
+    if (!frames) {
         return;
+    }
 
     size_t len = resampler->resample(outSoundBuffer, reinterpret_cast<const int16_t *>(inSoundBuffer), frames);
 
-    if (len)
-        [[self ringBufferAtIndex:0] writeBuffer:outSoundBuffer maxLength:len << 2];
+    if (len) {
+        [[self ringBufferAtIndex:0] write:outSoundBuffer size:len << 2];
+    }
 }
 
 - (void)applyCheat:(NSString *)code

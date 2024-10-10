@@ -22,7 +22,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		B30E98BF2C6EEFB200C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98BE2C6EEFB200C1431E /* PVLibRetro */; };
 		B30E98C22C6EEFBE00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98C12C6EEFBE00C1431E /* PVSupport */; };
 		B30E99EF2C6F057400C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99EE2C6F057400C1431E /* PVCoreBridge */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
@@ -63,6 +62,8 @@
 		B3AEE30F293F35D80050BDB6 /* missing.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AEE2D3293F35B10050BDB6 /* missing.c */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3E2AA7A2CB66BD300E2636D /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA792CB66BD300E2636D /* PVCoreObjCBridge */; };
+		B3E2AA7D2CB66C1600E2636D /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA7C2CB66C1600E2636D /* PVPlists */; };
 		B3EBB1FD2872B1A000EAEB37 /* libFuse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libFuse.a */; };
 /* End PBXBuildFile section */
 
@@ -1266,9 +1267,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
-				B30E98BF2C6EEFB200C1431E /* PVLibRetro in Frameworks */,
+				B3E2AA7A2CB66BD300E2636D /* PVCoreObjCBridge in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B3E2AA7D2CB66C1600E2636D /* PVPlists in Frameworks */,
 				B30E99EF2C6F057400C1431E /* PVCoreBridge in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
@@ -3449,6 +3451,8 @@
 			packageReferences = (
 				B30E98C02C6EEFBE00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E99ED2C6F057400C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3E2AA782CB66BD300E2636D /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3E2AA7B2CB66C1600E2636D /* XCLocalSwiftPackageReference "../../PVPlists" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -3985,13 +3989,17 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3E2AA782CB66BD300E2636D /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3E2AA7B2CB66C1600E2636D /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B30E98BE2C6EEFB200C1431E /* PVLibRetro */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLibRetro;
-		};
 		B30E98C12C6EEFBE00C1431E /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;
@@ -3999,6 +4007,14 @@
 		B30E99EE2C6F057400C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B3E2AA792CB66BD300E2636D /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3E2AA7C2CB66C1600E2636D /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

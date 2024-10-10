@@ -23,7 +23,6 @@
 
 /* Begin PBXBuildFile section */
 		B30E98E32C6EF0D200C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98E22C6EF0D200C1431E /* PVSupport */; };
-		B30E98E62C6EF0DB00C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98E52C6EF0DB00C1431E /* PVLibRetro */; };
 		B30E98E82C6EF0E800C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98E72C6EF0E700C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B30E9A042C6F05FF00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9A032C6F05FF00C1431E /* PVCoreBridge */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
@@ -565,6 +564,7 @@
 		B32296C92878373E00585AD8 /* retro_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3DBD92871408D008A0E2F /* retro_memory.cpp */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
+		B35AB42F2CB6E377003273D4 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35AB42E2CB6E377003273D4 /* PVCoreBridgeRetro.framework */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
@@ -1089,6 +1089,7 @@
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
+		B35AB42E2CB6E377003273D4 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -3619,9 +3620,9 @@
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B30E98E82C6EF0E800C1431E /* OpenGL.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
-				B30E98E62C6EF0DB00C1431E /* PVLibRetro in Frameworks */,
 				B379CE9B2971299A00AF0621 /* libfbneo.a in Frameworks */,
 				B30E9A042C6F05FF00C1431E /* PVCoreBridge in Frameworks */,
+				B35AB42F2CB6E377003273D4 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
@@ -8266,6 +8267,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B35AB42E2CB6E377003273D4 /* PVCoreBridgeRetro.framework */,
 				B30E98E72C6EF0E700C1431E /* OpenGL.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
@@ -10096,10 +10098,6 @@
 		B30E98E22C6EF0D200C1431E /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;
-		};
-		B30E98E52C6EF0DB00C1431E /* PVLibRetro */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLibRetro;
 		};
 		B30E9A032C6F05FF00C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;

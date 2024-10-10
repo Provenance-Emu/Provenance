@@ -65,7 +65,7 @@ ONLY_ACTIVE_ARCH = YES
 // characters, such as path names that may contain spaces. Use this setting if Xcode does
 // not already provide UI for a particular C or Objective-C compiler flag.
 
-OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant
+OTHER_CFLAGS = $(inherited) -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant
 
 
 

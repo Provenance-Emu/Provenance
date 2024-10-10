@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
-#import <PVLogging/PVLogging.h>
+@import PVCoreObjCBridge;
+@import PVEmulatorCore;
+@import PVLoggingObjC;
 
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
@@ -49,7 +51,7 @@ CPS2VM *_ps2VM = nullptr;
 CAMetalLayer* m_metal_layer = nullptr;
 CAEAGLLayer *m_gl_layer = nullptr;
 
-__weak PVPlayCore *_current = nil;
+__weak PVPlayCoreBridge *_current = nil;
 
 class CPH_OpenEmu : public CPadHandler
 {
@@ -109,7 +111,7 @@ private:
 
 
 #pragma mark - Private
-@interface PVPlayCore()<PVPS2SystemResponderClient> {
+@interface PVPlayCoreBridge()<PVPS2SystemResponderClient> {
 
 }
 
@@ -117,7 +119,7 @@ private:
 
 #pragma mark - PVPlayCore Begin
 
-@implementation PVPlayCore
+@implementation PVPlayCoreBridge
 {
 @public
     // ivars
@@ -358,8 +360,8 @@ private:
 }
 
 - (void)stopEmulation {
-    NSLog(@"PS2VM: stopEmulation Called\n");
-    shouldStop=true;
+    VLOG(@"PS2VM: stopEmulation Called\n");
+    self.shouldStop=true;
     [super stopEmulation];
     if (_ps2VM) {
         [[NSNotificationCenter defaultCenter] removeObserver:self];

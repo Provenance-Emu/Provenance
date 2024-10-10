@@ -81,7 +81,7 @@ extension Defaults.Keys {
     static let sort = Key<SortOptions>("sort", default: SortOptions.title)
     
     static let haveWarnedAboutDebug = Key<Bool>("haveWarnedAboutDebug", default: false)
-    static let collapsedSystems = Key<Array<String>>("collapsedSystems", default: [])
+    static let collapsedSystems = Key<Set<String>>("collapsedSystems", default: [])
     
     
 #if os(tvOS) || targetEnvironment(macCatalyst)

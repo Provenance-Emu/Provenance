@@ -10,12 +10,15 @@ import Foundation
 import PVSupport
 import UIKit
 import PVSettings
+import PVJIT
+import JITManager
+import PVLogging
 
 // MARK: - JIT
 extension PVAppDelegate {
     public func enableJIT() {
 #if os(iOS)
-        guard !DOLJitManager.shared().appHasAcquiredJit() else {
+        guard !DOLJitManager.shared.appHasAcquiredJit() else {
             ILOG("JIT: JIT already enabled")
             return
         }
@@ -30,7 +33,7 @@ extension PVAppDelegate {
 #if os(iOS)
     public func showJITWaitScreen() {
         if Defaults[.autoJIT] {
-            guard !DOLJitManager.shared().appHasAcquiredJit() else {
+            guard !DOLJitManager.shared.appHasAcquiredJit() else {
                 ILOG("JIT: JIT already enabled")
                 return
             }
@@ -52,7 +55,7 @@ extension PVAppDelegate {
     }
     
     fileprivate func _enableJIT() {
-        guard !DOLJitManager.shared().appHasAcquiredJit() else {
+        guard !DOLJitManager.shared.appHasAcquiredJit() else {
             ILOG("JIT: JIT already enabled")
             return
         }
@@ -61,17 +64,17 @@ extension PVAppDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(altJitFailed), name: NSNotification.Name.DOLJitAltJitFailure, object: nil)
         jitScreenDelegate = self
 
-        DOLJitManager.shared().attemptToAcquireJitByWaitingForDebugger(using: self.cancellation_token)
+        DOLJitManager.shared.attemptToAcquireJitByWaitingForDebugger(using: self.cancellation_token)
 
         let device_id = Bundle.main.object(forInfoDictionaryKey: "ALTDeviceID") as! String
         if (device_id != "dummy") {
             // ALTDeviceID has been set, so we should attempt to acquire by AltJIT instead
             // of just sitting around and waiting for a debugger.
-            DOLJitManager.shared().attemptToAcquireJitByAltJIT()
+            DOLJitManager.shared.attemptToAcquireJitByAltJIT()
         }
 
         // We can always try this. If the device is not connected to the VPN, then this request will just silently fail.
-        DOLJitManager.shared().attemptToAcquireJitByJitStreamer()
+        DOLJitManager.shared.attemptToAcquireJitByJitStreamer()
     }
     
     @objc func jitAcquired(notification: Notification) {
@@ -105,7 +108,7 @@ extension PVAppDelegate {
             alert.addAction(UIAlertAction.init(title: "Retry AltJIT", style: .default, handler: { _ in
                 self.is_presenting_alert = false
                 
-                DOLJitManager.shared().attemptToAcquireJitByAltJIT()
+                DOLJitManager.shared.attemptToAcquireJitByAltJIT()
             }))
             
             alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { _ in

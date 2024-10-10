@@ -8,6 +8,9 @@
 
 #import "PVFreeIntvCore.h"
 #include <stdatomic.h>
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVCoreBridgeRetro;
 //#import "PVFreeIntvCore+Controls.h"
 //#import "PVFreeIntvCore+Audio.h"
 //#import "PVFreeIntvCore+Video.h"
@@ -15,7 +18,6 @@
 //#import "PVFreeIntvCore+Audio.h"
 
 #import <Foundation/Foundation.h>
-@import PVSupport;
 #import <PVLogging/PVLoggingObjC.h>
 
 #define SAMPLERATE 48000

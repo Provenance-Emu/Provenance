@@ -9,7 +9,7 @@
 #import <PVDolphin/PVDolphinCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
-@interface PVDolphinCore (Controls) <PVGameCubeSystemResponderClient>
+@interface PVDolphinCoreBridge (Controls) <PVGameCubeSystemResponderClient>
 #pragma mark - Control
 - (void)initControllBuffers;
 - (void)pollControllers;

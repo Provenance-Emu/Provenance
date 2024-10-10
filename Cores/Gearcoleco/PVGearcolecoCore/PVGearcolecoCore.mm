@@ -28,7 +28,7 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVGearcolecoCore() {
+@interface PVGearcolecoCoreBridge() {
 
 }
 
@@ -36,7 +36,7 @@
 
 #pragma mark - PVGearcolecoCore Begin
 
-@implementation PVGearcolecoCore
+@implementation PVGearcolecoCoreBridge
 {
 }
 

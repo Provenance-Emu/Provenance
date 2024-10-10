@@ -42,10 +42,28 @@ struct ConsoleGamesView: SwiftUI.View {
     let console: PVSystem
     weak var rootDelegate: PVRootDelegate?
 
+    let gamesForSystemPredicate: NSPredicate
+
     @ObservedResults(
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var games
+    
+    @ObservedResults(
+        PVRecentGame.self,
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+    ) var recentlyPlayedGames
+    
+    @ObservedResults(
+        PVGame.self,
+        filter: NSPredicate(format: "\(#keyPath(PVGame.isFavorite)) == %@", NSNumber(value: true)),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+    ) var favorites
+    
+    @ObservedResults(
+        PVGame.self,
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
+    ) var mostPlayed
 
 //    @ObservedResults(
 //        PVGame.self,
@@ -57,13 +75,12 @@ struct ConsoleGamesView: SwiftUI.View {
         self.console = console
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
+        self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
     }
 
     func filteredAndSortedGames() -> Results<PVGame> {
         // TODO: if filters are on, apply them here before returning
-        
-        let gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
-        
+                
         // Build predate based on self.filter
 //        let filterPredicate: NSPredicate = {
 //            var predicates: [String] = []
@@ -120,6 +137,19 @@ struct ConsoleGamesView: SwiftUI.View {
                 toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() })
             .padding(.top, 16)
             ScrollView {
+//                HomeSection(title: "Recently Played") {
+//                    ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
+//                        GameItemView(game: game, constrainHeight: true) {
+//                            Task.detached { @MainActor in
+//                                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)}
+//                        }
+//                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+//                    }
+//                }
+                HomeDividerView()
+                HomeView(delegate: rootDelegate)
+                HomeDividerView()
+                
                 if viewModel.viewGamesAsGrid {
                     LazyVGrid(columns: columns, spacing: 20) {
                         ForEach(filteredAndSortedGames(), id: \.self) { game in

@@ -5150,7 +5150,7 @@ void core_options_flush(void)
 void runloop_msg_queue_push(const char *msg,
       unsigned prio, unsigned duration,
       bool flush,
-      char *title,
+      const char *title,
       enum message_queue_icon icon,
       enum message_queue_category category)
 {

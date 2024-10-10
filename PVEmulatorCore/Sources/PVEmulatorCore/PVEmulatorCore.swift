@@ -193,6 +193,7 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
         frontBufferLock = .init()
         frontBufferCondition = .init()
         emulationLoopThreadLock = .init()
+        bridge.initialize()
     }
     
     //    @nonobjc

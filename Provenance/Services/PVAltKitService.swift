@@ -8,8 +8,9 @@
 
 import Foundation
 import PVSupport
-import AltKit
-import os
+#if canImport(SideKit)
+import SideKit
+import PVLogging
 
 struct PVAltKitService {
     static let shared = PVAltKitService()
@@ -17,23 +18,28 @@ struct PVAltKitService {
     private init() {}
 
     func start() {
-#if !targetEnvironment(macCatalyst) && !targetEnvironment(tvOS)
-        ALTServerManager.shared.startDiscovering()
+#if !targetEnvironment(macCatalyst) && !os(tvOS)
+        SideKit.ServerManager.shared.startDiscovering()
 
-        ALTServerManager.shared.autoconnect { connection, error in
-            if let error = error as NSError? {
-                os_log("Could not auto-connect to server: %@", log: .altKitService, type: .error, error)
+        SideKit.ServerManager.shared.autoconnect { result in
+            let connection = try? result.get()
+            if connection == nil {
+                let error = result.error as? NSError
+                ELOG("Could not auto-connect to server. \(error?.localizedDescription ?? "Unknown error")")
+                return
             }
 
             DispatchQueue.global().async {
-                connection?.enableUnsignedCodeExecution { success, _ in
-                    if success {
-                        os_log("Successfully enabled JIT compilation!", log: .altKitService, type: .info)
-                        ALTServerManager.shared.stopDiscovering()
-                    } else {
-                        os_log("Could not enable JIT compilation.", log: .altKitService, type: .error)
+                connection?.enableUnsignedCodeExecution { result in
+                    guard let success = try? result.get() else {
+                        let error = result.error as? NSError
+                        ELOG("Could not enable JIT compilation. \(error?.localizedDescription ?? "Unknown error")")
+                        return
                     }
 
+                    ILOG("Successfully enabled JIT compilation!")
+                    SideKit.ServerManager.shared.stopDiscovering()
+                    
                     DispatchQueue.main.async {
                         connection?.disconnect()
                     }
@@ -45,3 +51,4 @@ struct PVAltKitService {
 #endif
     }
 }
+#endif

@@ -22,7 +22,6 @@
 
 /* Begin PBXBuildFile section */
 		B30E98B02C6EEF4000C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98AF2C6EEF4000C1431E /* PVSupport */; };
-		B30E98B32C6EEF4C00C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98B22C6EEF4C00C1431E /* PVLibRetro */; };
 		B30E99E32C6F04AC00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99E22C6F04AC00C1431E /* PVCoreBridge */; };
 		B32296E828783C1200585AD8 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A59D2877D0BA0037A946 /* callbacks.c */; };
 		B32296EA28783C2300585AD8 /* debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A5962877D0BA0037A946 /* debugger.c */; };
@@ -327,6 +326,9 @@
 		B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AE1DD320731F2700AD06D4 /* libdl.tbd */; };
 		B3C8A65A2877D1A80037A946 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A0492877D0B80037A946 /* libretro.c */; };
 		B3C8A65D2877D2A30037A946 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A64D2877D0BB0037A946 /* main.c */; };
+		B3F8E11E2CB3DBB400017D1B /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E11D2CB3DBB400017D1B /* PVEmulatorCore */; };
+		B3F8E1212CB3DC6300017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E1202CB3DC6300017D1B /* PVPlists */; };
+		B3F8E1242CB3DC9D00017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E1232CB3DC9D00017D1B /* PVCoreObjCBridge */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2643,11 +2645,13 @@
 			files = (
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
+				B3F8E1212CB3DC6300017D1B /* PVPlists in Frameworks */,
 				B30E99E32C6F04AC00C1431E /* PVCoreBridge in Frameworks */,
+				B3F8E1242CB3DC9D00017D1B /* PVCoreObjCBridge in Frameworks */,
 				B30E98B02C6EEF4000C1431E /* PVSupport in Frameworks */,
 				B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */,
 				B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */,
-				B30E98B32C6EEF4C00C1431E /* PVLibRetro in Frameworks */,
+				B3F8E11E2CB3DBB400017D1B /* PVEmulatorCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7499,6 +7503,9 @@
 			packageReferences = (
 				B30E98AE2C6EEF4000C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E99E12C6F04AC00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3F8E11C2CB3DBB400017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3F8E11F2CB3DC6300017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3F8E1222CB3DC9D00017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 			);
 			projectDirPath = "";
 			projectRoot = "";
@@ -8379,6 +8386,18 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3F8E11C2CB3DBB400017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B3F8E11F2CB3DC6300017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B3F8E1222CB3DC9D00017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -8386,13 +8405,21 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;
 		};
-		B30E98B22C6EEF4C00C1431E /* PVLibRetro */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLibRetro;
-		};
 		B30E99E22C6F04AC00C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B3F8E11D2CB3DBB400017D1B /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B3F8E1202CB3DC6300017D1B /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B3F8E1232CB3DC9D00017D1B /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

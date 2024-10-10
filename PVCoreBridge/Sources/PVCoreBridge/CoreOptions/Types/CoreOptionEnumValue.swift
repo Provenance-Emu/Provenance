@@ -20,4 +20,24 @@ public struct CoreOptionEnumValue {
     }
 }
 
+extension CoreOptionEnumValue {
+    public static func values(fromArray a: [[String]]) -> [CoreOptionEnumValue] {
+        return a.enumerated().compactMap {
+            if $0.element.count == 1 {
+                return .init(title: $0.element[0], description: nil, value: $0.offset)
+            } else if $0.element.count >= 2 {
+                return .init(title: $0.element[0], description: $0.element[1], value: $0.offset)
+            } else {
+                return nil
+            }
+        }
+    }
+
+    public static func values(fromArray a: [String]) -> [CoreOptionEnumValue] {
+        return a.enumerated().map {
+            .init(title: $0.element, description: nil, value: $0.offset)
+        }
+    }
+}
+
 extension CoreOptionEnumValue: Codable, Equatable, Hashable {}

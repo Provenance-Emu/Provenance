@@ -19,7 +19,7 @@
 
 #define TABLE_LOOKUP_START(COMPARATOR, LIST) \
 	size_t i; \
-	for (i = 0; i < LIST->nEntries; ++i) { \
+	for (i = 0; i <= LIST->nEntries; ++i) { \
 		if (COMPARATOR(LIST, i)) { \
 			struct TableTuple* lookupResult = &LIST->list[i]; \
 			UNUSED(lookupResult);

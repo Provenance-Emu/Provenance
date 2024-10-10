@@ -9,7 +9,7 @@
 #import "PVMelonDSCore+Saves.h"
 #import "PVMelonDSCore.h"
 
-@implementation PVMelonDSCore (Saves)
+@implementation PVMelonDSCoreBridge (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {

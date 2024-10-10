@@ -8,7 +8,6 @@
 
 #import <PVRetroArch/PVRetroArch.h>
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
 #import "PVRetroArchCore.h"
 #import "PVRetroArchCore+Controls.h"
 #import "./cocoa_common.h"
@@ -601,7 +600,7 @@ static void apple_gamecontroller_joypad_poll(void)
 /* GCGamepad is deprecated */
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
-static void apple_gamecontroller_joypad_register(GCExtendedGamepad *gamepad)
+static void apple_gamecontroller_joypad_register(GCExtendedGamepad * _Nullable __strong gamepad)
 {
 #ifdef __IPHONE_14_0
 	/* Don't let tvOS or iOS do anything with **our** buttons!!
@@ -708,7 +707,7 @@ void apple_gamecontroller_joypad_connect(GCController *controller)
 		/* desired slot is unused, take it */
 		if (!mfi_controllers[desired_index])
 		{
-			controller.playerIndex = desired_index;
+			controller.playerIndex = (GCControllerPlayerIndex)desired_index;
 			mfi_controllers[desired_index] = (uint32_t)controller.hash;
 		}
 		else
@@ -722,7 +721,7 @@ void apple_gamecontroller_joypad_connect(GCController *controller)
 					continue;
 
 				mfi_controllers[i] = (uint32_t)controller.hash;
-				controller.playerIndex = i;
+				controller.playerIndex = (GCControllerPlayerIndex)i;
 				break;
 			}
 		}
@@ -749,7 +748,7 @@ void apple_gamecontroller_joypad_connect(GCController *controller)
 			  [mfiControllers addObject:nonGameController];
 		   }
 		   for (GCController *gc in mfiControllers)
-			  gc.playerIndex = newPlayerIndex++;
+			  gc.playerIndex = (GCControllerPlayerIndex)newPlayerIndex++;
 		}
         if (controller.extendedGamepad)
             apple_gamecontroller_joypad_register(controller.extendedGamepad);
@@ -785,7 +784,7 @@ void *apple_gamecontroller_joypad_init(void *data) {
     }
     if (!touch_controller) {
         touch_controller=[[GCController controllerWithExtendedGamepad] init];
-        touch_controller.playerIndex=0;
+        touch_controller.playerIndex=(GCControllerPlayerIndex)0;
         apple_gamecontroller_joypad_connect(touch_controller);
     }
     [_current refresh_gamecontrollers];
@@ -920,7 +919,7 @@ input_device_driver_t mfi_joypad = {
 @implementation CocoaView (Utility)
 // A native swift wrapper around displaying notifications
 -(void) showRetroArchNotification:_:(NSString *)title _:(NSString *)message _:(enum message_queue_icon)icon _:(enum message_queue_category)category {
-	runloop_msg_queue_push([message UTF8String], 1, 100, true, [title UTF8String], icon, category);
+    runloop_msg_queue_push([message UTF8String], 1, 100, true, [title UTF8String], icon, category);
 }
 @end
 

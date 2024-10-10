@@ -1,54 +1,19 @@
-# DEVELOPER.MD
-_My personal development notes_
+# DEVELOPER.md
 
-## Show stoppers
-
-- [X] Fix Repo submodules
-- [ ] Conflicts folder is weird
-- [ ] Possible race condition in importer
-- [ ] SwiftUI not seeing conflicts
-- [X] Audio broken
-- [X] Loading save states crashes realm
-- [X] Creating save states crashes realm
-- [X] SwiftUI not importing roms correctly
-- [X] compiling with Mupen+Rumble.swift breaks device release builds
-
-## Major bugs
-
-- [ ] Intellivision (PVBliss) audio crashes on button press
-- [ ] Stella pixel types are wrong - video is distorted
-- [ ] Mednafen GB crashing
-- [ ] Game gear dimensions wrong
-- [ ] Colicovision roms are blank screen
-- [ ] Odyssey2 needs a way to enter game number 1,2 (3,4)?
-- [ ] Zip files cause conflicts, not always handled correctly
-- [ ] Loading the app is very slow now (release mode not that bad)
-- [ ] Jaguar not working in Metal mode
-- [ ] Vectrex needs PVVecXCore:LibRetroCore (or rollback to older code?)
-- [ ] ZX Spectrum needs PVLibRetroCore (or rollback to older code?)
-- [X] Mednafen controller input broken
-- [X] Test intellivisoin and check proper bios
-- [X] Pokemini crashes on load
-- [X] PokeMini butons don't work
-- [X] Intellivision doesn't load
-
-## Minor bugs
-
-- [ ] 3D0 crashes on load
-- [ ] 7Zip support not working
-- [ ] See if psx mednafen has more options
-- [X] Nes fix button layout
-- [ ] Short names are abreviations not shortname
-- [ ] Sega Master System short name showing as SMS
-- [ ] Mupen CoreOptions code is trash 
-- [ ] Test/fix CrabEMU save states
-- [ ] Opening roms from md5/siri search doesn't work
-- [ ] Swift UI should open on home and be scrollable to systems
-- [ ] Swift UI sort consoles by bits/brand/name/year order ascend/descend
-- [ ] Legacy UI removed collapsing systems
-- [ ] Swift UI long press on roms menu missing actions {artwork, sharing...}
+__Developers should start here first for breif instructions for building and working with the source code__
 
 ## Documentation
+
+## Building
+
+### Setup Code Signing
+
+- Copy `CodeSigning.xcconfig.sample` to `CodeSigning.xcconfig` and edit your relevent developer account details
+- Accept any XCode / Swift Packagage Manager plugins (this will be presented to you by XCode at first build)
+- Select scheme to build
+    - I suggest building `Lite` first and working your way up to `XL` as you resolve any issues you may encouter in less time with the `Lite` app target.
+    - Most users will want wither `Provenance-Release` or `Provenacne-XL (Release)`. The XL build includes more `RetroArch` and native local cores. See the build target and `./CoresRetro/RetroArch/Scripts/` build file lists for the most accurate list of cores for each target.
+- If initial build fails, try again, as some source code files are generated lazily at compile time and sometimes XCode doesn't get the build order corrct 
 
 ### Realm Threading
 

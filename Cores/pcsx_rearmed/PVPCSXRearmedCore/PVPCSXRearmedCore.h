@@ -15,9 +15,10 @@
 /*(
  TODO: Look into THREAD_RENDERING=1
  */
+@protocol PVPSXSystemResponderClient;
 
 __attribute__((visibility("default")))
-@interface PVPCSXRearmedCore : PVLibRetroGLESCore <PVPSXSystemResponderClient> {
+@interface PVPCSXRearmedCoreBridge : PVLibRetroGLESCoreBridge <PVPSXSystemResponderClient> {
 //	uint8_t padData[4][PVDOSButtonCount];
 //	int8_t xAxis[4];
 //	int8_t yAxis[4];

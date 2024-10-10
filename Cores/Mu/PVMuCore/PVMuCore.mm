@@ -16,6 +16,10 @@
 
 #import <Foundation/Foundation.h>
 
+@import PVEmulatorCore;
+@import PVCoreBridgeRetro;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4

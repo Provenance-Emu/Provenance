@@ -9,6 +9,7 @@
 #import <PVDolphin/PVDolphin.h>
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
+@import PVCoreObjCBridge;
 
 /* Dolphin Includes */
 #include "Common/CPUDetect.h"
@@ -302,7 +303,7 @@ u8 lt[4];
 u32 vks[4];
 s8 joyx[4], joyy[4];
 
-@implementation PVDolphinCore (Controls)
+@implementation PVDolphinCoreBridge (Controls)
 
 - (void)initControllBuffers {
 	memset(&kcode, 0xFFFF, sizeof(kcode));

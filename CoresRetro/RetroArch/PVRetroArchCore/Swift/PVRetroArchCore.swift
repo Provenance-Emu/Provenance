@@ -108,19 +108,19 @@ extension PVRetroArchCore: CoreOptional {
                      ],
                      defaultValue: 125)
     }
-    static var analogKeyControllerOption: CoreOption {
+    static var analogKeyControllerOption: CoreOption = {
         .bool(.init(
             title: ENABLE_ANALOG_KEY,
             description: nil,
             requiresRestart: false),
-              defaultValue: true)}
-    static var analogDpadControllerOption: CoreOption {
+              defaultValue: true)}()
+    static var analogDpadControllerOption: CoreOption = {
         .bool(.init(
             title: ENABLE_ANALOG_DPAD,
             description: nil,
             requiresRestart: false),
               defaultValue: false)
-    }
+    }()
     static var numKeyControllerOption: CoreOption {
         .bool(.init(
             title: ENABLE_NUM_KEY,
@@ -174,7 +174,7 @@ extension PVRetroArchCore: CoreOptional {
             isDOS=true
             coreOptions.append(numKeyControllerOption)
         }
-        if let status = PVEmulatorCore.status["isOn"], status,
+        if let status = PVEmulatorCore.status["isOn"] as? Bool, status,
            self.systemName.contains("appleII") {
             coreOptions.append(apple2MachineOption)
         }

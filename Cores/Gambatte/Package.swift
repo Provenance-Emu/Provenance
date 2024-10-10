@@ -38,7 +38,6 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
-        
         // MARK: ------- CORE --------
         .target(
             name: "PVGambatte",
@@ -49,7 +48,9 @@ let package = Package(
                 "PVSupport",
                 "PVObjCUtils",
                 "PVGambatteBridge",
+                "PVGambatteOptions",
                 "libgambatte",
+                "libresample"
             ],
             resources: [
                 .process("Resources/Core.plist")
@@ -65,9 +66,7 @@ let package = Package(
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
-
         // MARK: ------- Bridge --------
-
         .target(
             name: "PVGambatteBridge",
             dependencies: [
@@ -77,9 +76,19 @@ let package = Package(
                 "PVLogging",
                 "PVAudio",
                 "PVSupport",
+                "PVGambatteOptions",
                 "libgambatte",
+                "libresample"
             ],
             cSettings: [
+                .define("INT_LEAST_32"),
+                .define("HAVE_STDINT_H", to: "1"),
+                .headerSearchPath("../libgambatte/libgambatte/include"),
+                .headerSearchPath("../libresample/common/resample"),
+                .unsafeFlags([
+                    "-fmodules",
+                    "-fcxx-modules"
+                ])
             ],
             cxxSettings: [
             ],
@@ -87,10 +96,32 @@ let package = Package(
                 .interoperabilityMode(.Cxx)
             ]
         ),
-        
+        // MARK: ------- Options --------
+        .target(
+            name: "PVGambatteOptions",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVLogging",
+                "PVAudio",
+                "PVSupport",
+                "libgambatte",
+                "libresample"
+            ],
+            cSettings: [
+                .unsafeFlags([
+                    "-fmodules",
+                    "-fcxx-modules"
+                ])
+            ],
+            cxxSettings: [
+            ],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ]
+        ),
         // MARK: ------- gambatte --------
-
-
         .target(
             name: "libgambatte",
             dependencies: [
@@ -99,6 +130,8 @@ let package = Package(
             sources: Sources.gambatte,
             packageAccess: true,
             cSettings: [
+                .define("INT_LEAST_32"),
+                .define("HAVE_STDINT_H", to: "1"),
                 .headerSearchPath("libgambatte/include"),
                 .headerSearchPath("libgambatte/src"),
                 .headerSearchPath("libgambatte/src/file"),
@@ -109,30 +142,48 @@ let package = Package(
                 .headerSearchPath("../libresample/common/resample")
             ],
             cxxSettings: [
+                .unsafeFlags([
+                    "-fno-exceptions",
+                    "-fno-rtti"
+                ])
             ]
         ),
-        
         // MARK: ------- resample --------
-
-
         .target(
             name: "libresample",
             sources: Sources.resample,
             packageAccess: true,
             cSettings: [
+                .define("HAVE_STDINT_H", to: "1"),
                 .headerSearchPath("common/"),
                 .headerSearchPath("common/resample"),
                 .headerSearchPath("common/resample/src")
             ],
             cxxSettings: [
+            ],
+            linkerSettings: [
+                .unsafeFlags(["-lc++"])
             ]
-        )
-        
+        ),
         // MARK: ------- Tests -------
+        .testTarget(
+            name: "PVGambaTests",
+            dependencies: [
+                "PVGambatte",
+                "PVGambatteBridge",
+                "PVCoreBridge",
+                "PVEmulatorCore",
+                "libgambatte",
+                "libresample"
+            ],
+            resources: [],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ])
     ],
     swiftLanguageModes: [.v5, .v6],
-    cLanguageStandard: .gnu99,
-    cxxLanguageStandard: .gnucxx17
+    cLanguageStandard: .c99,
+    cxxLanguageStandard: .gnucxx11
 )
 
 enum Sources {
@@ -180,4 +231,48 @@ enum Sources {
     ]
 }
 
+/*
+ 
+ PVGB files:
 
+ common/resample/src/chainresampler.cpp
+ common/resample/src/i0.cpp
+ common/resample/src/kaiser50sinc.cpp
+ common/resample/src/kaiser70sinc.cpp
+ common/resample/src/makesinckernel.cpp
+ common/resample/src/resamplerinfo.cpp
+ common/resample/src/u48div.cpp
+ 
+ libgambatte/src/bitmap_font.cpp
+ libgambatte/src/cpu.cpp
+ libgambatte/src/file/file.cpp
+ libgambatte/src/gambatte.cpp
+ libgambatte/src/initstate.cpp
+ libgambatte/src/interrupter.cpp
+ libgambatte/src/interruptrequester.cpp
+ libgambatte/src/loadres.cpp
+ libgambatte/src/mem/cartridge.cpp
+ libgambatte/src/mem/memptrs.cpp
+ libgambatte/src/mem/pakinfo.cpp
+ libgambatte/src/mem/rtc.cpp
+ libgambatte/src/memory.cpp
+ libgambatte/src/sound.cpp
+ libgambatte/src/sound/channel1.cpp
+ libgambatte/src/sound/channel2.cpp
+ libgambatte/src/sound/channel3.cpp
+ libgambatte/src/sound/channel4.cpp
+ libgambatte/src/sound/duty_unit.cpp
+ libgambatte/src/sound/envelope_unit.cpp
+ libgambatte/src/sound/length_counter.cpp
+ libgambatte/src/state_osd_elements.cpp
+ libgambatte/src/statesaver.cpp
+ libgambatte/src/tima.cpp
+ libgambatte/src/video.cpp
+ libgambatte/src/video/ly_counter.cpp
+ libgambatte/src/video/lyc_irq.cpp
+ libgambatte/src/video/next_m0_time.cpp
+ libgambatte/src/video/ppu.cpp
+ libgambatte/src/video/sprite_mapper.cpp
+
+
+ */

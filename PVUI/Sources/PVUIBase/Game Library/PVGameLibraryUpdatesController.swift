@@ -20,7 +20,7 @@ import PVFileSystem
 import DirectoryWatcher
 
 // Responsible for handling updates to game library, finding conflicts and resolving them
-public struct PVGameLibraryUpdatesController {
+public final class PVGameLibraryUpdatesController: Sendable {
     public let hudState: Observable<HudState>
     public let hudStateWatcher: Observable<HudState>
     public let conflicts: Observable<[Conflict]>

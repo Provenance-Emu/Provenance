@@ -22,7 +22,7 @@
 #import <UIKit/UIKit.h>
 #endif
 
-@implementation PVMelonDSCore (Video)
+@implementation PVMelonDSCoreBridge (Video)
 
 # pragma mark - Methods
 

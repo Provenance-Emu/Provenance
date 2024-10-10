@@ -31,7 +31,7 @@ extern os_log_t OE_CORE_LOG;
 - (BOOL)getCheatSupport;
 @end
 
-__weak static PVDuckStationCore * _current;
+__weak static PVDuckStationCoreBridge * _current;
 
 #ifdef __cplusplus
 extern "C" {

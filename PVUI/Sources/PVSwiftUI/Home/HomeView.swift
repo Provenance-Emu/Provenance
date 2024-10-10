@@ -23,7 +23,7 @@ enum PVHomeSection: Int, CaseIterable, Sendable {
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
     
-    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
+//    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
     
     weak var rootDelegate: PVRootDelegate?
     
@@ -49,8 +49,8 @@ struct HomeView: SwiftUI.View {
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
     
-    init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, delegate: PVRootDelegate) {
-        self.gameLibrary = gameLibrary
+    init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil) {
+//        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
     }
     

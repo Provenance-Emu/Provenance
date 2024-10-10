@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B30E988C2C6EEE3A00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E988B2C6EEE3A00C1431E /* PVSupport */; };
-		B30E988F2C6EEE4500C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E988E2C6EEE4500C1431E /* PVLibRetro */; };
 		B30E99EC2C6F056300C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99EB2C6F056300C1431E /* PVCoreBridge */; };
 		B30F13FD289672B6004D40BF /* ColecoVisionIOPorts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30F13D82896727B004D40BF /* ColecoVisionIOPorts.cpp */; };
 		B30F13FE289672B6004D40BF /* Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30F13C32896727B004D40BF /* Memory.cpp */; };
@@ -41,6 +40,13 @@
 		B3AFCF8A2977A76900A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF892977A76900A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3F8E0252CB388F200017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0232CB388F200017D1B /* CorePlist.swift */; };
+		B3F8E0262CB388F200017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0242CB388F200017D1B /* CorePlist-Generated.swift */; };
+		B3F8E0272CB388F200017D1B /* PVGearcolecoCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0222CB388F200017D1B /* PVGearcolecoCore.swift */; };
+		B3F8E02A2CB38A8200017D1B /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0292CB38A8200017D1B /* PVEmulatorCore */; };
+		B3F8E02D2CB38AD200017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E02C2CB38AD200017D1B /* PVPlists */; };
+		B3F8E0302CB38B1100017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E02F2CB38B1100017D1B /* PVCoreObjCBridge */; };
+		B3F8E0322CB38C8300017D1B /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0312CB38C8300017D1B /* PVCoreBridgeRetro.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -388,6 +394,10 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F8E0222CB388F200017D1B /* PVGearcolecoCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGearcolecoCore.swift; sourceTree = "<group>"; };
+		B3F8E0232CB388F200017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3F8E0242CB388F200017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
+		B3F8E0312CB38C8300017D1B /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -410,17 +420,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				B30E988C2C6EEE3A00C1431E /* PVSupport in Frameworks */,
+				B3F8E0302CB38B1100017D1B /* PVCoreObjCBridge in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B30E99EC2C6F056300C1431E /* PVCoreBridge in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
-				B30E988F2C6EEE4500C1431E /* PVLibRetro in Frameworks */,
+				B3F8E02A2CB38A8200017D1B /* PVEmulatorCore in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B30F141F289673D6004D40BF /* libGearcoleco.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39768F82859E23200558958 /* libGearcoleco-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
+				B3F8E0322CB38C8300017D1B /* PVCoreBridgeRetro.framework in Frameworks */,
+				B3F8E02D2CB38AD200017D1B /* PVPlists in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3AFCF8A2977A76900A01010 /* PVLogging in Frameworks */,
 			);
@@ -1041,6 +1054,9 @@
 			children = (
 				B37022C5287253B300B3F6DA /* PVGearcolecoCore.h */,
 				B37022C6287253B300B3F6DA /* PVGearcolecoCore.mm */,
+				B3F8E0222CB388F200017D1B /* PVGearcolecoCore.swift */,
+				B3F8E0232CB388F200017D1B /* CorePlist.swift */,
+				B3F8E0242CB388F200017D1B /* CorePlist-Generated.swift */,
 			);
 			path = PVGearcolecoCore;
 			sourceTree = "<group>";
@@ -1071,6 +1087,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3F8E0312CB38C8300017D1B /* PVCoreBridgeRetro.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
@@ -1161,8 +1178,10 @@
 			packageProductDependencies = (
 				B3AFCF892977A76900A01010 /* PVLogging */,
 				B30E988B2C6EEE3A00C1431E /* PVSupport */,
-				B30E988E2C6EEE4500C1431E /* PVLibRetro */,
 				B30E99EB2C6F056300C1431E /* PVCoreBridge */,
+				B3F8E0292CB38A8200017D1B /* PVEmulatorCore */,
+				B3F8E02C2CB38AD200017D1B /* PVPlists */,
+				B3F8E02F2CB38B1100017D1B /* PVCoreObjCBridge */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVGearcoleco.framework */;
@@ -1185,6 +1204,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
@@ -1212,6 +1232,9 @@
 			packageReferences = (
 				B30E988A2C6EEE3A00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E99EA2C6F056300C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3F8E0282CB38A8200017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3F8E02B2CB38AD200017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3F8E02E2CB38B1100017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -1271,6 +1294,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B37022C82872553E00B3F6DA /* PVGearcolecoCore.mm in Sources */,
+				B3F8E0252CB388F200017D1B /* CorePlist.swift in Sources */,
+				B3F8E0262CB388F200017D1B /* CorePlist-Generated.swift in Sources */,
+				B3F8E0272CB388F200017D1B /* PVGearcolecoCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1402,6 +1428,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1412,7 +1439,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVGearcoleco/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1422,8 +1449,9 @@
 				PRODUCT_NAME = PVGearcoleco;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Archive;
@@ -1651,6 +1679,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1661,7 +1690,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVGearcoleco/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1671,8 +1700,10 @@
 				PRODUCT_NAME = PVGearcoleco;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
@@ -1681,6 +1712,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1691,7 +1723,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVGearcoleco/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1701,8 +1733,9 @@
 				PRODUCT_NAME = PVGearcoleco;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
@@ -1761,16 +1794,24 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3F8E0282CB38A8200017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B3F8E02B2CB38AD200017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B3F8E02E2CB38B1100017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		B30E988B2C6EEE3A00C1431E /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;
-		};
-		B30E988E2C6EEE4500C1431E /* PVLibRetro */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLibRetro;
 		};
 		B30E99EB2C6F056300C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1779,6 +1820,18 @@
 		B3AFCF892977A76900A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B3F8E0292CB38A8200017D1B /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B3F8E02C2CB38AD200017D1B /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B3F8E02F2CB38B1100017D1B /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

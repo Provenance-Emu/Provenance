@@ -118,25 +118,25 @@ public extension UIGestureRecognizer {
         static var multiDelegateKey = "BCMultiDelegateKey"
     }
 
-    private var block:((_ recognizer:UIGestureRecognizer) -> Void) {
+    private var block:((_ recognizer:UIGestureRecognizer) -> Void)? {
         get {
-            return Associator.getAssociatedObject(object: self, associativeKey:PropertyKeys.blockKey)!
+            return Associator.getAssociatedObject(object: self, associativeKey:PropertyKeys.blockKey)
         }
         set {
             Associator.setAssociatedObject(object: self, value: newValue, associativeKey:PropertyKeys.blockKey, policy: .OBJC_ASSOCIATION_RETAIN)
         }
     }
 
-    private var multiDelegate:MultiDelegate {
+    private var multiDelegate:MultiDelegate? {
         get {
-            return Associator.getAssociatedObject(object: self, associativeKey:PropertyKeys.multiDelegateKey)!
+            return Associator.getAssociatedObject(object: self, associativeKey:PropertyKeys.multiDelegateKey)
         }
         set {
             Associator.setAssociatedObject(object: self, value: newValue, associativeKey:PropertyKeys.multiDelegateKey, policy: .OBJC_ASSOCIATION_RETAIN)
         }
     }
 
-    convenience init(block:@escaping (_ recognizer:UIGestureRecognizer) -> Void) {
+    convenience init(block:@escaping (_ recognizer:UIGestureRecognizer?) -> Void) {
         self.init()
         self.block = block
         self.multiDelegate = MultiDelegate()
@@ -145,7 +145,7 @@ public extension UIGestureRecognizer {
     }
 
     @objc func didInteractWithGestureRecognizer(_ sender:UIGestureRecognizer) {
-        self.block(sender)
+        self.block?(sender)
     }
 }
 
@@ -232,7 +232,7 @@ public extension Moveable {
                 let pan = recognizer as! UIPanGestureRecognizer
                 let velocity = pan.velocity(in: self.superview)
                 let translation = pan.translation(in: self.superview)
-                switch recognizer.state {
+                switch recognizer?.state {
                 case .began:
                     startPoint = self.center
                     currentPoint = self.center

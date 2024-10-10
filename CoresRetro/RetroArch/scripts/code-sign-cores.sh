@@ -1,10 +1,22 @@
 #!/bin/sh
 
-# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY! 
+# Parse command line arguments
+SIGN_DYLIBS=true
+for arg in "$@"
+do
+    case $arg in
+        -no-dylib)
+        SIGN_DYLIBS=false
+        shift # Remove -no-dylib from processing
+        ;;
+    esac
+done
+
+# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
 
 # Verify that $CODE_SIGN_IDENTITY is set
 if [ -z "${CODE_SIGN_IDENTITY}" ] ; then
-    echo "CODE_SIGN_IDENTITY needs to be set for code-signing!"
+    echo "Warning: CODE_SIGN_IDENTITY needs to be set for code-signing!"
 
     if [ "${CONFIGURATION}" = "Release" ] ; then
         exit 0
@@ -15,14 +27,18 @@ if [ -z "${CODE_SIGN_IDENTITY}" ] ; then
 fi
 
 if [ "${CODE_SIGNING_ALLOWED}" = "NO" ] ; then
-	exit 0
+    exit 0
 fi
 
 ITEMS=""
 CORES_DIR="${SRCROOT}/CoresRetro/RetroArch/modules/"
 echo "Cores dir: ${CORES_DIR}"
 if [ -d "$CORES_DIR" ] ; then
-    CORES=$(find "${CORES_DIR}" -depth -type d -name "*.framework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)/\1\/Versions\/A\//")
+    if [ "$SIGN_DYLIBS" = true ] ; then
+        CORES=$(find "${CORES_DIR}" -depth -type d -name "*.framework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)//")
+    else
+        CORES=$(find "${CORES_DIR}/FrameworksRetro" -depth -type d -name "*.framework" -or -name "*.bundle" | sed -e "s/\(.*framework\)//")
+    fi
     RESULT=$?
     if [ "$RESULT" != 0 ] ; then
         exit 1
@@ -57,7 +73,7 @@ do
     codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "${ITEM}"
     RESULT=$?
     if [ "$RESULT" != 0 ] ; then
-        echo "Failed to sign '${ITEM}'."
+        echo "Error: Failed to sign '${ITEM}'."
         IFS=$SAVED_IFS
         exit 1
     fi

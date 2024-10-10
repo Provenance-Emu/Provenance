@@ -15,7 +15,7 @@ extern CPH_Generic *padHandler;
 extern UIView *m_view;
 extern CPS2VM *_ps2VM;
 
-@implementation PVPlayCore (Cheats)
+@implementation PVPlayCoreBridge (Cheats)
 
 #pragma mark - Cheats
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType: (NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled  error:(NSError**)error {

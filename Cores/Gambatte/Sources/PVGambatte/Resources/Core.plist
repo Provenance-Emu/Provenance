@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.gambatte</string>
 	<key>PVPrincipleClass</key>
-	<string>PVGB.PVGBEmulatorCore</string>
+	<string>PVGambatte.PVGBEmulatorCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.gb</string>

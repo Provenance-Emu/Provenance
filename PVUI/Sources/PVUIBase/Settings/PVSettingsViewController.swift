@@ -1,5 +1,3 @@
-//  Converted to Swift 4 by Swiftify v4.1.6613 - https://objectivec2swift.com/
-//
 //  PVSettingsViewController.swift
 //  Provenance
 //
@@ -169,28 +167,17 @@ final class PVSettingsViewController: QuickTableViewController {
         let appSection = Section(title: NSLocalizedString("App", comment: "App"), rows: appRows)
         
         // MARK: -- Core Options
-        let realm = try! Realm()
-        let cores: [NavigationRow] = realm.objects(PVCore.self).sorted(byKeyPath: "projectName").compactMap { pvcore in
-            guard let coreClassMaybe = NSClassFromString(pvcore.principleClass) else {
-                ELOG("Class <\(pvcore.principleClass)> does not exist!")
-                return .none
-            }
-            guard let coreClass = coreClassMaybe as? OptionalCore.Type else {
-                VLOG("Class <\(pvcore.principleClass)> does not implement CoreOptional")
-                return .none
-            }
-            return NavigationRow(text: pvcore.projectName,
-                                 detailText: .none,
-                                 icon: nil, customization: nil, action: { [weak self] row in
-                coreClass.coreClassName = pvcore.identifier
-                coreClass.systemName = (pvcore.supportedSystems.map { $0.identifier }).joined(separator: ",")
-                let coreOptionsVC = CoreOptionsViewController(withCore: coreClass)
-                coreOptionsVC.title = row.text
-                self?.navigationController?.pushViewController(coreOptionsVC, animated: true)
-            })
-        }
+        // Extra Info Section
+        let coreOptionsRows: [TableRow] = [
+            SegueNavigationRow(text: NSLocalizedString("Core Options", comment: "Core Options"),
+                               detailText: .subtitle("Additional options for the cores."),
+                               icon: .sfSymbol("gearshape.2"),
+                               viewController: self,
+                               segue: "coreOptionsSegue",
+                               customization: nil),
+        ]
         
-        let coreOptionsSection = Section(title: NSLocalizedString("Core Options", comment: "Core Options"), rows: cores)
+        let coreOptionsSection = Section(title: nil, rows: coreOptionsRows)
         
         // MARK: -- Section : Saves
         var saveRows: [TableRow] = [
@@ -433,7 +420,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                 key: .iCloudSync, icon: .sfSymbol("icloud")),
             
             PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
-                                detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 2-fingers 4 times to toggle."),
+                                detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 3-fingers 3 times to toggle."),
                                 key: .movableButtons, icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right")),
             
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
@@ -475,7 +462,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                 key: .unsupportedCores, icon: .sfSymbol("testtube.2"))
         ]
         
-        let betaRows: [TableRow] = IsAppStore ? appStoreRows : (appStoreRows + nonAppStoreRows)
+        let betaRows: [TableRow] = !IsAppStore ? appStoreRows : (appStoreRows + nonAppStoreRows)
 #else // tvOS
         let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
@@ -653,6 +640,8 @@ final class PVSettingsViewController: QuickTableViewController {
         let modeLabel = "RELEASE"
 #endif
         
+        // Note: If you get an error here, run the build again.
+        // Blame Swift PM / XCode @JoeMatt
         let gitInfo: PackageBuild = PackageBuild.info
         
         let branchName = gitInfo.branch?.lowercased() ?? "Unknown"

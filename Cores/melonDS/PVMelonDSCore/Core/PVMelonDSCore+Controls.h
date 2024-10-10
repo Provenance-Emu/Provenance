@@ -8,9 +8,12 @@
 
 #import <PVMelonDS/PVMelonDSCore.h>
 
+@protocol PVDSSystemResponderClient;
+typedef enum PVDSButton: NSInteger PVGenesisButton;
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVMelonDSCore (Controls) <PVDSSystemResponderClient>
+@interface PVMelonDSCoreBridge (Controls) <PVDSSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;

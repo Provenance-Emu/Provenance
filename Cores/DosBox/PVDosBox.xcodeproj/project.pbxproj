@@ -36,7 +36,6 @@
 		93049A022A93093A00BF257F /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0502298AECE200BA5157 /* PVDebug.c */; };
 		93BC0503298AECE300BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0502298AECE200BA5157 /* PVDebug.c */; };
 		B301797F207C909E0051B93D /* libdos-box.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdos-box.a */; };
-		B30E98922C6EEE6700C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98912C6EEE6700C1431E /* PVLibRetro */; };
 		B30E98952C6EEE7700C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98942C6EEE7700C1431E /* PVSupport */; };
 		B30E99B32C6EF90000C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99B22C6EF90000C1431E /* PVEmulatorCore */; };
 		B30E99F82C6F05B900C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99F72C6F05B900C1431E /* PVCoreBridge */; };
@@ -154,6 +153,7 @@
 		B3344BC52859E0E5006E6B3A /* keyb2joypad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B02859D566006E6B3A /* keyb2joypad.cpp */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
+		B35AB4232CB6E123003273D4 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35AB4222CB6E123003273D4 /* PVCoreBridgeRetro.framework */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
@@ -503,6 +503,7 @@
 		B3447EB1218BC69700557ACE /* PVDosBoxCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVDosBoxCore+Audio.h"; sourceTree = "<group>"; };
 		B3447EB2218BC69700557ACE /* PVDosBoxCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVDosBoxCore+Audio.m"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
+		B35AB4222CB6E123003273D4 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -558,6 +559,7 @@
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libdos-box.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
+				B35AB4232CB6E123003273D4 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B30E99F82C6F05B900C1431E /* PVCoreBridge in Frameworks */,
 				B39768F82859E23200558958 /* libdos-box-libretro.a in Frameworks */,
 				B30E99B32C6EF90000C1431E /* PVEmulatorCore in Frameworks */,
@@ -565,7 +567,6 @@
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3E88CC42977B53F00C90E86 /* PVLogging in Frameworks */,
-				B30E98922C6EEE6700C1431E /* PVLibRetro in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1099,6 +1100,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B35AB4222CB6E123003273D4 /* PVCoreBridgeRetro.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
@@ -1227,7 +1229,6 @@
 			name = PVDosBox;
 			packageProductDependencies = (
 				B3E88CC32977B53F00C90E86 /* PVLogging */,
-				B30E98912C6EEE6700C1431E /* PVLibRetro */,
 				B30E98942C6EEE7700C1431E /* PVSupport */,
 				B30E99B22C6EF90000C1431E /* PVEmulatorCore */,
 				B30E99F72C6F05B900C1431E /* PVCoreBridge */,
@@ -2057,10 +2058,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B30E98912C6EEE6700C1431E /* PVLibRetro */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLibRetro;
-		};
 		B30E98942C6EEE7700C1431E /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;

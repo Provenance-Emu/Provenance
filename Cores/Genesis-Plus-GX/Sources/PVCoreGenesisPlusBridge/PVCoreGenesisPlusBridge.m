@@ -701,9 +701,10 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 - (CGRect)screenRect {
+    BOOL isGamegear = [[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"];
     float ratio = 8.0/7.0;
 
-    if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"]) {
+    if(isGamegear) {
         return config.gg_extra ? CGRectMake(0, 0, 256, 192): CGRectMake(0, 0, 160, 144);
     } else {
         return CGRectMake(0, 0, _videoWidth, _videoHeight);

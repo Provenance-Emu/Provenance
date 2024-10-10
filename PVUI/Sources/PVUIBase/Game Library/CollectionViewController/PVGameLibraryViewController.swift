@@ -371,21 +371,20 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                 }()
                 header.viewModel = .init(title: section.header, collapsible: section.collapsible != nil, collapsed: collapsed)
 #if os(iOS)
-#warning("Fix me")
-//                header.collapseButton.rx.tap
-//                    .withLatestFrom(self.collapsedSystems)
-//                    .map({ (collapsedSystems: Set<String>) in
-//                        switch section.collapsible {
-//                        case .collapsed(let token):
-//                            return collapsedSystems.subtracting([token])
-//                        case .notCollapsed(let token):
-//                            return collapsedSystems.union([token])
-//                        case nil:
-//                            return collapsedSystems
-//                        }
-//                    })
-//                    .bind(to: self.collapsedSystems)
-//                    .disposed(by: header.disposeBag)
+                header.collapseButton.rx.tap
+                    .withLatestFrom(self.collapsedSystems)
+                    .map({ (collapsedSystems: Set<String>) in
+                        switch section.collapsible {
+                        case .collapsed(let token):
+                            return collapsedSystems.subtracting([token])
+                        case .notCollapsed(let token):
+                            return collapsedSystems.union([token])
+                        case nil:
+                            return collapsedSystems
+                        }
+                    })
+                    .bind(to: self.collapsedSystems)
+                    .disposed(by: header.disposeBag)
 #endif
 #if os(tvOS)
                 header.collapseButton.rx.primaryAction

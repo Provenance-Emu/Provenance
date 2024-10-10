@@ -146,6 +146,10 @@ extension PVRootViewController: PVMenuDelegate {
         #endif
         actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
+        
+        actionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
+//        actionSheet.popoverPresentationController?.sourceView = self.view
+//        actionSheet.popoverPresentationController?.sourceRect = self.view?.bounds ?? UIScreen.main.bounds
 
         present(actionSheet, animated: true, completion: nil)
         #endif
