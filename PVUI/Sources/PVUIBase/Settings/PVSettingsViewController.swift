@@ -634,11 +634,7 @@ final class PVSettingsViewController: QuickTableViewController {
         
         // - Build Information
         
-#if DEBUG
-        let modeLabel = "DEBUG"
-#else
-        let modeLabel = "RELEASE"
-#endif
+        let modeLabel = BuildEnvironment.config.uppercased()
         
         // Note: If you get an error here, run the build again.
         // Blame Swift PM / XCode @JoeMatt
@@ -674,7 +670,7 @@ final class PVSettingsViewController: QuickTableViewController {
         let buildDate = gitInfo.timeStamp
         let buildDateString: String = outputDateFormatter.string(from: buildDate)
         
-        let builtByUser = gitInfo.builtBy ?? "Unknown"
+        let builtByUser = BuildEnvironment.userName
         
         let buildInformationRows: [TableRow] = [
             NavigationRow(

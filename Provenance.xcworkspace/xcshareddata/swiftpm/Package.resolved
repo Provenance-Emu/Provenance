@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "BuildEnvironment",
+        "repositoryURL": "https://github.com/DimaRU/BuildEnvironment.git",
+        "state": {
+          "branch": null,
+          "revision": "5f7dc4a7f9bde8414764b8a342b091b2e987e674",
+          "version": "1.0.0"
+        }
+      },
+      {
         "package": "Checksum",
         "repositoryURL": "https://github.com/JoeMatt/Checksum.git",
         "state": {

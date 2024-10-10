@@ -3,6 +3,8 @@
 
 import PackageDescription
 
+let USE_DISPLAY_LINK = false
+
 let package = Package(
     name: "PVUI",
     defaultLocalization: "en",
@@ -34,8 +36,12 @@ let package = Package(
         .package(url: "https://github.com/RxSwiftCommunity/RxDataSources.git", from: "5.0.2"),
         .package(url: "https://github.com/jdg/MBProgressHUD.git", from: "1.2.0"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0"),
+        /// https://github.com/DimaRU/BuildEnvironment
+        .package(url: "https://github.com/DimaRU/BuildEnvironment.git", from: "1.0.0"),
 //        .package(path: "../PackageBuildInfo")
+        /// https://github.com/DimaRU/PackageBuildInfo
         .package(url: "https://github.com/JoeMatt/PackageBuildInfo", branch: "master")
+        
     ],
     targets: [
         
@@ -72,7 +78,6 @@ let package = Package(
                 .define("CI_SILENCE_GL_DEPRECATION", to: "1")
             ],
             swiftSettings: [
-//                .define("USE_DISPLAY_LINK"),
                 .define("USE_OPENGL", .when(platforms: [.macCatalyst, .macOS])),
                 .define("USE_OPENGLES", .when(platforms: [.iOS, .tvOS, .visionOS])),
                 .define("USE_METAL", .when(platforms: [.macCatalyst, .macOS])),
@@ -80,9 +85,11 @@ let package = Package(
                 .define("GL_SILENCE_DEPRECATION"),
                 .define("GLES_SILENCE_DEPRECATION"),
                 .define("CI_SILENCE_GL_DEPRECATION")
-            ],
+            ] +
+            (USE_DISPLAY_LINK ? [.define("USE_DISPLAY_LINK")] : []),
             plugins: [
-                .plugin(name: "PackageBuildInfoPlugin", package: "PackageBuildInfo")
+                .plugin(name: "PackageBuildInfoPlugin", package: "PackageBuildInfo"),
+                .plugin(name: "BuildEnvPlugin", package: "BuildEnvironment")
             ]
         ),
         

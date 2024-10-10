@@ -1,5 +1,5 @@
 {
-  "originHash" : "b50ec7aa2bdd2c37f06ce696bf87f30c0d6dfa53c62551332056a3d619c319df",
+  "originHash" : "0dea812f49d8531273e7c85ad2827a26432d90d17760e938dab7b3efc10a7997",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
         "version" : "2.0.4"
+      }
+    },
+    {
+      "identity" : "buildenvironment",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DimaRU/BuildEnvironment.git",
+      "state" : {
+        "revision" : "5f7dc4a7f9bde8414764b8a342b091b2e987e674",
+        "version" : "1.0.0"
       }
     },
     {
