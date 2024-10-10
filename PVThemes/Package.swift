@@ -30,7 +30,7 @@ let package = Package(
         /// Macros
 
         /// https://github.com/alvmo/HexColors
-        .package(url: "https://github.com/JoeMatt/HexColors.git", branch: "main"),
+        .package(url: "https://github.com/JoeMatt/HexColors.git", from: "1.1.0"),
         .package(url: "https://github.com/JoeMatt/SwiftMacros.git", branch: "main"),
     ],
 
