@@ -10,6 +10,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/fuse_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gambatte_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gearcoleco_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/genesis_plus_gx_libretro_ios.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/gme_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/hatari_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/mame2010_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/mame_libretro_ios.dylib
