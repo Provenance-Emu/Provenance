@@ -1,0 +1,33 @@
+{
+  "originHash" : "386266d5f3b9451b9a6a9d1eabfd8211ae969a96bfa80a2d9b366e986c6d650b",
+  "pins" : [
+    {
+      "identity" : "hexcolors",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/HexColors.git",
+      "state" : {
+        "revision" : "96bcc8d806e58cf31ee32d419cabccd827ce6550",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
+      }
+    },
+    {
+      "identity" : "swiftmacros",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/SwiftMacros.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "cb30be65a3f121d756c98d442194c41eb24e9f09"
+      }
+    }
+  ],
+  "version" : 3
+}
