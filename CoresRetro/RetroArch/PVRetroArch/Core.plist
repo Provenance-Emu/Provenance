@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.retroarch</string>
 	<key>PVPrincipleClass</key>
-	<string>PVRetroArchCore</string>
+	<string>PVRetroArch.PVRetroArchCoreCore</string>
 	<key>PVProjectName</key>
 	<string>RetroArch</string>
 	<key>PVSupportedSystems</key>
@@ -20,9 +20,9 @@
 	<array>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>mednafen_psx_hw_libretro_ios.dylib</string>
+			<string>mednafen_psx_hw_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>RetroArch - Beetle PSX (HW Renderer)</string>
 			<key>PVSupportedSystems</key>
@@ -36,9 +36,9 @@
 		</dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mednafen_psx_libretro_ios.dylib</string>
+                        <string>mednafen_psx_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - Beetle PSX (SW Renderer)</string>
                         <key>PVSupportedSystems</key>
@@ -52,9 +52,9 @@
                 </dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>snes9x_libretro_ios.dylib</string>
+			<string>snes9x_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Snes9x (RetroArch)</string>
 			<key>PVSupportedSystems</key>
@@ -68,9 +68,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>flycast_libretro_ios.dylib</string>
+			<string>flycast_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Flycast (RetroArch)</string>
 			<key>PVSupportedSystems</key>
@@ -84,9 +84,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>mupen64plus_next_libretro_ios.dylib</string>
+			<string>mupen64plus_next_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Mupen64Plus-Next (RetroArch)</string>
 			<key>PVSupportedSystems</key>
@@ -100,9 +100,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>fuse_libretro.dylib</string>
+			<string>fuse_libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Fuse (RetroArch)</string>
 			<key>PVSupportedSystems</key>
@@ -116,9 +116,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>minivmac_libretro_ios.dylib</string>
+			<string>minivmac_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.macintosh</string>
@@ -132,9 +132,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>dosbox_pure_libretro_ios.dylib</string>
+			<string>dosbox_pure_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dos</string>
@@ -148,9 +148,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>melonds_libretro_ios.dylib</string>
+			<string>melonds_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.ds</string>
@@ -164,9 +164,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>opera_libretro_ios.dylib</string>
+			<string>opera_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.3DO</string>
@@ -180,9 +180,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>np2kai_libretro_ios.dylib</string>
+			<string>np2kai_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.pc98</string>
@@ -196,9 +196,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>mednafen_supergrafx_libretro_ios.dylib</string>
+			<string>mednafen_supergrafx_libretro_ios.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.sgfx</string>
@@ -214,15 +214,15 @@
 		</dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>nestopia_libretro_ios.dylib</string>
+                        <string>nestopia_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.nes</string>
                         </array>
                         <key>PVProjectName</key>
-                        <string>RetroArch - Nestopia</string> 
+                        <string>RetroArch - Nestopia</string>
                         <key>PVProjectURL</key>
                         <string>https://github.com/libretro/nestopia</string>
                         <key>PVProjectVersion</key>
@@ -230,9 +230,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mednafen_saturn_libretro_ios.dylib</string>
+                        <string>mednafen_saturn_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
 				<string>com.provenance.saturn</string>
@@ -246,9 +246,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>yabause_libretro_ios.dylib</string>
+                        <string>yabause_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.saturn</string>
@@ -262,9 +262,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>genesis_plus_gx_libretro_ios.dylib</string>
+                        <string>genesis_plus_gx_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.segacd</string>
@@ -282,9 +282,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>fbneo_libretro_ios.dylib</string>
+                        <string>fbneo_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.mame</string>
@@ -299,9 +299,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mednafen_gba_libretro_ios.dylib</string>
+                        <string>mednafen_gba_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.gba</string>
@@ -315,9 +315,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mednafen_vb_libretro_ios.dylib</string>
+                        <string>mednafen_vb_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.vb</string>
@@ -331,11 +331,11 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mgba_libretro_ios.dylib</string>
+                        <string>mgba_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
-                        <array>   
+                        <array>
                                 <string>com.provenance.gb</string>
                                 <string>com.provenance.gbc</string>
                                 <string>com.provenance.gba</string>
@@ -349,14 +349,14 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>sameboy_libretro_ios.dylib</string>
+                        <string>sameboy_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.gb</string>
                                 <string>com.provenance.gbc</string>
-                        </array>  
+                        </array>
                         <key>PVProjectName</key>
                         <string>RetroArch - SameBoy</string>
                         <key>PVProjectURL</key>
@@ -366,9 +366,9 @@
         </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mame2010_libretro_ios.dylib</string>
+                        <string>mame2010_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.mame</string>
@@ -383,9 +383,9 @@
         </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mame_libretro_ios.dylib</string>
+                        <string>mame_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.appleII</string>
@@ -401,9 +401,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>pcsx_rearmed_libretro_ios.dylib</string>
+                        <string>pcsx_rearmed_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - PCSX ReARMed</string>
                         <key>PVSupportedSystems</key>
@@ -417,9 +417,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>ppsspp_libretro.dylib</string>
+                        <string>ppsspp_libretro.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - PPSSPP</string>
                         <key>PVSupportedSystems</key>
@@ -433,9 +433,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>atari800_libretro_ios.dylib</string>
+                        <string>atari800_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - Atari 400/800/600XL/800XL/130XE</string>
                         <key>PVSupportedSystems</key>
@@ -449,9 +449,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>a5200_libretro_ios.dylib</string>
+                        <string>a5200_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - Atari 5200</string>
                         <key>PVSupportedSystems</key>
@@ -465,9 +465,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>stella2014_libretro_ios.dylib</string>
+                        <string>stella2014_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - Atari 2600</string>
                         <key>PVSupportedSystems</key>
@@ -481,9 +481,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>prosystem_libretro_ios.dylib</string>
+                        <string>prosystem_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - Atari 7800</string>
                         <key>PVSupportedSystems</key>
@@ -497,9 +497,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>hatari_libretro_ios.dylib</string>
+                        <string>hatari_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - Atari ST/STE/TT/Falcon</string>
                         <key>PVSupportedSystems</key>
@@ -513,9 +513,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mednafen_lynx_libretro_ios.dylib</string>
+                        <string>mednafen_lynx_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - Atari Lynx</string>
                         <key>PVSupportedSystems</key>
@@ -529,9 +529,9 @@
                 </dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>virtualjaguar_libretro_ios.dylib</string>
+                        <string>virtualjaguar_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVProjectName</key>
                         <string>RetroArch - Atari Jaguar (Virtual Jaguar)</string>
                         <key>PVSupportedSystems</key>
@@ -545,9 +545,9 @@
         </dict>
         <dict>
                         <key>PVCoreIdentifier</key>
-                        <string>race_libretro_ios.dylib</string>
+                        <string>race_libretro_ios.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.ngp</string>
@@ -562,9 +562,9 @@
         </dict>
         <dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mednafen_ngp_libretro.dylib</string>
+                        <string>mednafen_ngp_libretro.framework</string>
                         <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
+                        <string>PVRetroArch.PVRetroArchCoreCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
                                 <string>com.provenance.ngp</string>

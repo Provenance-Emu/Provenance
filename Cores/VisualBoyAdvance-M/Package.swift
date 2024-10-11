@@ -54,11 +54,11 @@ let package = Package(
                 "PVLogging",
                 "PVAudio",
                 "PVVisualBoyAdvanceBridge",
+                "PVVisualBoyAdvanceOptions",
                 "libvisualboyadvance",
             ],
             resources: [
                 .process("Resources/Core.plist"),
-                .copy("Resources/vba-over.ini")
             ],
             cSettings: [
                 .define("C_CORE"),
@@ -102,7 +102,11 @@ let package = Package(
                 "PVCoreObjCBridge",
                 "PVPlists",
                 "PVObjCUtils",
+                "PVVisualBoyAdvanceOptions",
                 "libvisualboyadvance",
+            ],
+            resources: [
+                .copy("Resources/vba-over.ini")
             ],
             cSettings: [
                 .define("C_CORE"),
@@ -146,9 +150,18 @@ let package = Package(
                 .interoperabilityMode(.Cxx)
             ]
         ),
-
+        // MARK: --------- Options -----------
+        .target(
+            name: "PVVisualBoyAdvanceOptions",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVPlists",
+                "PVObjCUtils",
+            ]
+        ),
         // MARK: --------- libvisualboyadvance -----------
-
         .target(
             name: "libvisualboyadvance",
             sources: [

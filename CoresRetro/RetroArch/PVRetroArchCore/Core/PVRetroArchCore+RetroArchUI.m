@@ -384,7 +384,29 @@ void extract_bundles();
 		argv=param;
 		NSLog(@"Loading %s\n", param[0]);
 	} else {
-		NSString *sysPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"modules/%@", [self coreIdentifier]] ofType:nil];
+
+        NSString *coreIdentifier = [self coreIdentifier];
+        NSString *coreBinary = [coreIdentifier stringByDeletingPathExtension];
+        NSString *resourceName = [NSString stringWithFormat:@"%@/%@", coreIdentifier, coreBinary];
+        NSString *resourcePath = [NSString stringWithFormat:@"Frameworks/%@", resourceName];
+        NSString *sysPath = [[NSBundle mainBundle] pathForResource:resourcePath ofType:nil];
+
+        /// Check if the module is found at the expected path
+        if ([fm fileExistsAtPath: sysPath]) {
+            NSLog(@"Found Module %@\n", sysPath);
+        } else {
+            NSLog(@"Error: No module found at %@\n", sysPath);
+            /// Try another dir
+            resourcePath = [NSString stringWithFormat:@"FrameworksRetro/%@", resourceName];
+            sysPath = [[NSBundle mainBundle] pathForResource:resourcePath ofType:nil];
+            if([fm fileExistsAtPath: sysPath]) {
+                NSLog(@"Found Module %@\n", sysPath);
+            } else {
+                NSLog(@"Error: No module found at %@\n", sysPath);
+            }
+        }
+        
+        /// Check if the ROM is found at the expected path
 		if ([fm fileExistsAtPath: sysPath]) {
 			NSLog(@"Found Module %s\n", sysPath.UTF8String);
 		}
@@ -393,7 +415,7 @@ void extract_bundles();
 			NSLog(@"Found Game %s\n", romPath.UTF8String);
 		}
 		// Core Identifier is the dylib file name
-		char *param[] = { "retroarch", "-L", [self coreIdentifier].UTF8String, [romPath UTF8String], "--appendconfig", optConfig.UTF8String, "--verbose", NULL };
+		char *param[] = { "retroarch", "-L", resourceName.UTF8String, [romPath UTF8String], "--appendconfig", optConfig.UTF8String, "--verbose", NULL };
 		argc=7;
 		argv=param;
 		NSLog(@"Loading %s %s\n", param[2], param[3]);

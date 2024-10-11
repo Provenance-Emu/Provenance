@@ -66,11 +66,17 @@ SAVED_IFS=$IFS
 IFS="
 "
 
+BUNDLE_ID_PREFIX="${2:-org.provenance-emu}"
+
 # Loop through all items.
 for ITEM in $ITEMS;
 do
     echo "Signing '${ITEM}'"
-    codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "${ITEM}"
+    # Remove file extension from ITEM for the identifier
+    ITEM_WITHOUT_EXT=$(basename "${ITEM%.*}")
+    echo "Identifier: ${BUNDLE_ID_PREFIX}.${ITEM_WITHOUT_EXT}"
+
+    codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --identifier "${BUNDLE_ID_PREFIX}.${ITEM_WITHOUT_EXT}" --timestamp=none "${ITEM}"
     RESULT=$?
     if [ "$RESULT" != 0 ] ; then
         echo "Error: Failed to sign '${ITEM}'."

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY! 
+# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
 
 # Verify that $CODE_SIGN_IDENTITY is set
 if [ -z "${CODE_SIGN_IDENTITY}" ] ; then
@@ -52,11 +52,13 @@ SAVED_IFS=$IFS
 IFS="
 "
 
+BUNDLE_ID_PREFIX="${2:-org.provenance-emu}"
+
 # Loop through all items.
 for ITEM in $ITEMS;
 do
     echo "Signing '${ITEM}'"
-    codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" "${ITEM}"
+    codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --identifier "org.provenance-emu.${ITEM}" --timestamp=none "${ITEM}"
     RESULT=$?
     if [ "$RESULT" != 0 ] ; then
         echo "Failed to sign '${ITEM}'."

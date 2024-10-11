@@ -951,6 +951,7 @@
 		B3A610272CB8865C001D99C2 /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3A610252CB8865C001D99C2 /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3AAFB562949F9B800CC8234 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, tvos, ); };
 		B3AAFB572949F9B800CC8234 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3AD52E32CB8F20100200395 /* FrameworksRetro in Embed RetroArch Frameworks */ = {isa = PBXBuildFile; fileRef = B3A60E852CB7707F001D99C2 /* FrameworksRetro */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B3AED2F82BE355BB003A9290 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B3AED2F92BE355C3003A9290 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
@@ -1210,7 +1211,7 @@
 		B3F7E542297736C200362B92 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		B3F7E544297736C200362B92 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		B3F7E545297736C200362B92 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDA276B8B2E0031AECC /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
-		B3F7E546297736C200362B92 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		B3F7E546297736C200362B92 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B3F7E548297736C200362B92 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		B3F7E54B297736C200362B92 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B3F7E430297736C200362B92 /* Introspect */; };
 		B3F7E54D297736C200362B92 /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; };
@@ -1248,7 +1249,7 @@
 		B3F7E587297736C200362B92 /* PVEP128Emu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D72878384A00585AD8 /* PVEP128Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E58C297736C200362B92 /* PVFuse.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B33155E32971D34D008767C5 /* PVFuse.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E58D297736C200362B92 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F7E58E297736C200362B92 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F7E58E297736C200362B92 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E58F297736C200362B92 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E590297736C200362B92 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E593297736C200362B92 /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2037,12 +2038,12 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B3F7E58E297736C200362B92 /* PVRetroArch.framework in Embed Frameworks */,
 				9361E6FE2BD62C7200E3891A /* libMoltenVK_emuThree_iOS.dylib in Embed Frameworks */,
 				9361E6FB2BD62C1300E3891A /* PVEmuThree.framework in Embed Frameworks */,
 				93049A8A2A931E5E00BF257F /* PVDosBoxRetro.framework in Embed Frameworks */,
 				93049A892A931E4E00BF257F /* PVMelonDSRetro.framework in Embed Frameworks */,
 				93049A882A931E3A00BF257F /* PVMiniVMacRetro.framework in Embed Frameworks */,
-				B3F7E58E297736C200362B92 /* PVRetroArch.framework in Embed Frameworks */,
 				93DB7D362A7509A5005F8B26 /* libavcodec.framework in Embed Frameworks */,
 				B3A610122CB88610001D99C2 /* PVProSystem-Dynamic in Embed Frameworks */,
 				B3FC97282CB8B69200C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
@@ -2108,6 +2109,17 @@
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		B3FC97482CB8C8BA00C6DB31 /* Embed RetroArch Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3AD52E32CB8F20100200395 /* FrameworksRetro in Embed RetroArch Frameworks */,
+			);
+			name = "Embed RetroArch Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -5157,6 +5169,7 @@
 				B3F7E500297736C200362B92 /* Frameworks */,
 				B3A60E802CB76E39001D99C2 /* Script: Generate Frameworks */,
 				B3F7E54F297736C200362B92 /* Script: Code Sign libretro.h Cores */,
+				B3FC97482CB8C8BA00C6DB31 /* Embed RetroArch Frameworks */,
 				B3F7E550297736C200362B92 /* Resources */,
 				B3F7E573297736C200362B92 /* Script: Set Build Number */,
 			);

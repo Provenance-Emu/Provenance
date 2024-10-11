@@ -14,6 +14,7 @@ import PVCoreBridge
 import PVLogging
 import PVAudio
 import PVEmulatorCore
+import PVVisualBoyAdvanceOptions
 import PVVisualBoyAdvanceBridge
 import libvisualboyadvance
 
@@ -70,6 +71,12 @@ open class PVVisualBoyAdvanceCore: PVEmulatorCore {
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+    }
+}
+
+extension PVVisualBoyAdvanceCore: CoreOptional {
+    public static var options: [CoreOption] {
+        return VisualBoyAdvanceOptions.options
     }
 }
 

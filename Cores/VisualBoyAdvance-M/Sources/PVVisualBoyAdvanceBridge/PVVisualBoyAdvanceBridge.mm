@@ -31,6 +31,7 @@
 #import "PVVisualBoyAdvanceBridge.h"
 
 @import PVAudio;
+@import PVVisualBoyAdvanceOptions;
 @import libvisualboyadvance;
 @import PVLoggingObjC;
 
@@ -170,6 +171,13 @@ static __weak PVVisualBoyAdvanceBridge *_current;
     mirroringEnable = self->_enableMirroring;
     doMirroring(mirroringEnable);
     cpuSaveType = (int)self->_cpuSaveType;
+    
+    // Load core options
+    skipBios = VisualBoyAdvanceOptions.skipBios;
+    cpuDisableSfx = VisualBoyAdvanceOptions.cpuDisableSfx;
+    speedHack = VisualBoyAdvanceOptions.speedHack;
+    skipSaveGameBattery = VisualBoyAdvanceOptions.skipSaveGameBattery;
+    skipSaveGameCheats = VisualBoyAdvanceOptions.skipSaveGameCheats;
 
     if(self->_flashSize == 0x10000 || self->_flashSize == 0x20000) {
         flashSetSize((int)self->_flashSize);
