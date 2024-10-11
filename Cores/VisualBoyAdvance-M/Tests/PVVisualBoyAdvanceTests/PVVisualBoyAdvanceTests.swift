@@ -1,35 +1,35 @@
 //
-//  PVVisualBoyAdvanceTests.swift
-//  PVVisualBoyAdvance
+//  Test.swift
+//  PVVirtualJaguar
 //
 //  Created by Joseph Mattiello on 8/5/24.
 //
 
-import XCTest
+import Testing
+import PVEmulatorCore
+@testable import libvisualboyadvance
 @testable import PVVisualBoyAdvance
 
-final class PVVisualBoyAdvanceTests: XCTestCase {
+struct Test {
+    
+    let testRomFilename: String = ""
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    @Test func VisualBoyAdvanceCoreTest() async throws {
+        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+        let core = PVVisualBoyAdvanceCore()
+        #expect(core != nil)
     }
+    
+    @Test func LoadFileTest() async throws {
+        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+        let core = PVVisualBoyAdvanceCore()
+        #expect(core != nil)
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+//        do {
+//            try core.loadFile(atPath: testRomFilename)
+//        } catch {
+//            print("Failed to load file: \(error.localizedDescription)")
+//            throw error
+//        }
     }
 }

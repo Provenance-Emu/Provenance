@@ -1,1 +1,0 @@
-../../GBACore/gba/Globals.h
