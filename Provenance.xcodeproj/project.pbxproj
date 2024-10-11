@@ -1367,6 +1367,10 @@
 		B3FC973F2CB8BDB900C6DB31 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC973E2CB8BDB900C6DB31 /* Defaults */; };
 		B3FC97412CB8C0DA00C6DB31 /* snes9x.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FC97402CB8C0DA00C6DB31 /* snes9x.framework */; };
 		B3FC97422CB8C0DA00C6DB31 /* snes9x.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FC97402CB8C0DA00C6DB31 /* snes9x.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3FC97432CB8C18400C6DB31 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */; };
+		B3FC97442CB8C18400C6DB31 /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3FC97462CB8C24600C6DB31 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FC97452CB8C24600C6DB31 /* PVCoreBridgeRetro.framework */; };
+		B3FC97472CB8C24600C6DB31 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FC97452CB8C24600C6DB31 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FE6DB22C93E60900792419 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FE6DB12C93E60900792419 /* PVO2EM.framework */; };
 		B3FE6DB32C93E60900792419 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FE6DB12C93E60900792419 /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
@@ -2049,6 +2053,7 @@
 				9348D7522A32166A00CC7998 /* libMoltenVK_PPSSPP.dylib in Embed Frameworks */,
 				B3A610212CB88646001D99C2 /* PVStella-Dynamic in Embed Frameworks */,
 				B3F7E576297736C200362B92 /* PVBeetlePSX.framework in Embed Frameworks */,
+				B3FC97472CB8C24600C6DB31 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
 				B3F7E577297736C200362B92 /* libMoltenVK_Play.dylib in Embed Frameworks */,
 				B3F7E578297736C200362B92 /* PVFCEU.framework in Embed Frameworks */,
 				B3A610072CB885D5001D99C2 /* PVGambatte-Dynamic in Embed Frameworks */,
@@ -2068,6 +2073,7 @@
 				B3A6100D2CB885F2001D99C2 /* PVBliss-Dynamic in Embed Frameworks */,
 				B3F7E58C297736C200362B92 /* PVFuse.framework in Embed Frameworks */,
 				B3F7E58D297736C200362B92 /* PVGenesis.framework in Embed Frameworks */,
+				B3FC97442CB8C18400C6DB31 /* MoltenVK.xcframework in Embed Frameworks */,
 				B3F7E58F297736C200362B92 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3F7E590297736C200362B92 /* PVDolphin.framework in Embed Frameworks */,
 				B3F7E593297736C200362B92 /* PVGME.framework in Embed Frameworks */,
@@ -2719,6 +2725,7 @@
 		B3F8E12B2CB6098100017D1B /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F9049D2C1FE9D8002283B3 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		B3FC97402CB8C0DA00C6DB31 /* snes9x.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = snes9x.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3FC97452CB8C24600C6DB31 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FE6DB12C93E60900792419 /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FF641C2873EAEB00829C14 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FF642F2873EC8000829C14 /* PVPotator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPotator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3467,6 +3474,7 @@
 				B3F7E526297736C200362B92 /* Security.framework in Frameworks */,
 				B3A610012CB88492001D99C2 /* PVJIT in Frameworks */,
 				B3F7E546297736C200362B92 /* PVRetroArch.framework in Frameworks */,
+				B3FC97432CB8C18400C6DB31 /* MoltenVK.xcframework in Frameworks */,
 				B3FC973F2CB8BDB900C6DB31 /* Defaults in Frameworks */,
 				B3A610092CB885EB001D99C2 /* PVAtari800-Dynamic in Frameworks */,
 				B3A6101D2CB8863C001D99C2 /* PVPokeMini-Dynamic in Frameworks */,
@@ -3500,6 +3508,7 @@
 				B3F7E54B297736C200362B92 /* Introspect in Frameworks */,
 				B3E88CBC2977AB6C00C90E86 /* Reachability in Frameworks */,
 				93049A252A9309FB00BF257F /* PVDosBoxRetro.framework in Frameworks */,
+				B3FC97462CB8C24600C6DB31 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B3F7E54D297736C200362B92 /* PVGME.framework in Frameworks */,
 				9348D7512A32093900CC7998 /* PVPPSSPP.framework in Frameworks */,
 			);
@@ -3590,6 +3599,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3FC97452CB8C24600C6DB31 /* PVCoreBridgeRetro.framework */,
 				B3FC97402CB8C0DA00C6DB31 /* snes9x.framework */,
 				B35AB44A2CB6F815003273D4 /* PVMelonDS.framework */,
 				B35AB4472CB6F7DA003273D4 /* PVEmuThree.framework */,
