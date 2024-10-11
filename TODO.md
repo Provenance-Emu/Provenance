@@ -6,7 +6,6 @@ _My personal TODO notes_
 - [ ] Conflicts folder is weird
 - [ ] Possible race condition in importer
 - [ ] SwiftUI not seeing conflicts
-- [ ] Jaguar not working in Metal mode (dimensions off slightly?)
 - [ ] emuThreeDS and other metal based cores have wrong layout contraints
 - [ ] Copy the framework loader from old branch, fix it too!
 - [X] Gambatte swift module not done
@@ -20,6 +19,7 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [ ] Jaguar not working in Metal mode (dimensions off slightly?)
 - [ ] Stella Metal is right but GLES is blank
 - [ ] Stella no buttons work
 - [ ] CrabEMU no buttons work
