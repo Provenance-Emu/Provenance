@@ -38,15 +38,6 @@
         }
       },
       {
-        "package": "combine-schedulers",
-        "repositoryURL": "https://github.com/pointfreeco/combine-schedulers",
-        "state": {
-          "branch": null,
-          "revision": "9fa31f4403da54855f1e2aeaeff478f4f0e40b13",
-          "version": "1.0.2"
-        }
-      },
-      {
         "package": "Defaults",
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
@@ -209,39 +200,12 @@
         }
       },
       {
-        "package": "swift-clocks",
-        "repositoryURL": "https://github.com/pointfreeco/swift-clocks",
-        "state": {
-          "branch": null,
-          "revision": "b9b24b69e2adda099a1fa381cda1eeec272d5b53",
-          "version": "1.0.5"
-        }
-      },
-      {
         "package": "swift-collections",
         "repositoryURL": "https://github.com/apple/swift-collections.git",
         "state": {
           "branch": null,
           "revision": "671108c96644956dddcd89dd59c203dcdb36cec7",
           "version": "1.1.4"
-        }
-      },
-      {
-        "package": "swift-concurrency-extras",
-        "repositoryURL": "https://github.com/pointfreeco/swift-concurrency-extras",
-        "state": {
-          "branch": null,
-          "revision": "6054df64b55186f08b6d0fd87152081b8ad8d613",
-          "version": "1.2.0"
-        }
-      },
-      {
-        "package": "swift-dependencies",
-        "repositoryURL": "https://github.com/pointfreeco/swift-dependencies",
-        "state": {
-          "branch": null,
-          "revision": "0fc0255e780bf742abeef29dec80924f5f0ae7b9",
-          "version": "1.4.1"
         }
       },
       {
@@ -314,15 +278,6 @@
           "branch": "master",
           "revision": "8195ad501aa970e7b9cbe26bc6800f4e3e6e192a",
           "version": null
-        }
-      },
-      {
-        "package": "xctest-dynamic-overlay",
-        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
-        "state": {
-          "branch": null,
-          "revision": "770f990d3e4eececb57ac04a6076e22f8c97daeb",
-          "version": "1.4.2"
         }
       },
       {

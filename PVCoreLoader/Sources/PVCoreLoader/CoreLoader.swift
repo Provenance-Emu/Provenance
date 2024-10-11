@@ -20,8 +20,11 @@ public enum CoreLoaderError: Error {
     case noCoresFound
 }
 
-@Singleton
 public final class CoreLoader: Sendable {
+    
+    public static let shared: CoreLoader = .init()
+    private init() {}
+    
     fileprivate let ThisBundle: Bundle = Bundle.module
 
 //    public func parseCoresPlists(plists: [URL]) async -> [EmulatorCoreInfoPlist] {

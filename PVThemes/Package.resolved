@@ -1,13 +1,13 @@
 {
-  "originHash" : "386266d5f3b9451b9a6a9d1eabfd8211ae969a96bfa80a2d9b366e986c6d650b",
+  "originHash" : "88e8713d5e52693953d3e0e0d61b49c3936957368009ed0106d983101fbe09b0",
   "pins" : [
     {
       "identity" : "hexcolors",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoeMatt/HexColors.git",
       "state" : {
-        "revision" : "96bcc8d806e58cf31ee32d419cabccd827ce6550",
-        "version" : "1.1.0"
+        "branch" : "main",
+        "revision" : "96bcc8d806e58cf31ee32d419cabccd827ce6550"
       }
     },
     {

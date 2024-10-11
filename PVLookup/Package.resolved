@@ -1,13 +1,13 @@
 {
-  "originHash" : "fbe844a77ab336193825dfd4e12003617815af351e3fe0bc051750356859c95f",
+  "originHash" : "5852cae5dad4d606f758ad5ea7f4edc7ece0eebd01c0f15b9ab7cd124e37c813",
   "pins" : [
     {
       "identity" : "lighter",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Lighter-swift/Lighter.git",
+      "location" : "https://github.com/JoeMatt/Lighter.git",
       "state" : {
-        "revision" : "4fd43bbfa2099f7b189a8bf899afbc818430647a",
-        "version" : "1.4.4"
+        "branch" : "develop",
+        "revision" : "b1c78989db429349427cd90b9b99925ff3253853"
       }
     },
     {

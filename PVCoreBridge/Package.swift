@@ -47,7 +47,7 @@ let package = Package(
 
         // SwiftMacros
         // https://github.com/ShenghaiWang/SwiftMacros?tab=readme-ov-file
-        .package(url: "https://github.com/JoeMatt/SwiftMacros.git", branch: "main"),
+//        .package(url: "https://github.com/JoeMatt/SwiftMacros.git", branch: "main"),
     ],
 
     // MARK: - Targets
@@ -58,7 +58,7 @@ let package = Package(
                 "PVAudio",
                 "PVLogging",
                 "PVPlists",
-                "SwiftMacros"
+//                "SwiftMacros"
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")],
             cSettings: [
