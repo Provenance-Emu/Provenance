@@ -142,7 +142,6 @@ public final class GameImporter {
         @Sendable func updateSystemToPathMap() async -> [String: URL] {
             let systems = PVSystem.all
             return await systems.async.reduce(into: [String: URL]()) {partialResult, system in
-                var partialResult = partialResult
                 partialResult[system.identifier] = system.romsDirectory
             }
         }
