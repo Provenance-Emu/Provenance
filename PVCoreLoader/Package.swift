@@ -28,6 +28,7 @@ let package = Package(
 
         // MARK: Cores
         .package(path: "../Cores/Atari800/"),
+        .package(path: "../Cores/Menafen/"),
         .package(path: "../Cores/PicoDrive/"),
         .package(path: "../Cores/PokeMini/"),
         .package(path: "../Cores/Stella/"),
