@@ -37,7 +37,8 @@ extension GameLaunchingViewController {
     func openSaveState(withID objectId: String) async {
         let realm = RomDatabase.sharedInstance
         if let object = realm.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: objectId) {
-            await openSaveState(object)
+            @ThreadSafe var threadObject = object
+            await openSaveState(threadObject!)
         }
     }
 }
