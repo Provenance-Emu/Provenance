@@ -72,9 +72,11 @@ let package = Package(
     ],
     
     targets: [
-        
-        // MARK: - Library
-        
+        // MARK: ------------ SwiftCloudDrive ------------
+        .target(
+            name: "SwiftCloudDrive"
+        ),
+        // MARK: ------------ PVLibrary ------------
         .target(
             name: "PVLibrary",
             dependencies: [
@@ -108,90 +110,91 @@ let package = Package(
             plugins: [
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]),
-        
-            .target(
-                name: "PVRealm",
-                dependencies: [
-                    "PVSupport",
-                    "PLzmaSDK",
-                    "SWCompression",
-                    "PVLogging",
-                    "PVHashing",
-                    "PVPlists",
-                    "PVLookup",
-                    "Systems",
-                    "PVPrimitives",
-                    "PVMediaCache",
-                    .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
-                    .product(name: "PVCoreLoader", package: "PVCoreLoader"),
-                    .product(name: "SQLite", package: "SQLite.swift"),
-                    .product(name: "RxCocoa", package: "RxSwift"),
-                    .product(name: "RxSwift", package: "RxSwift"),
-                    .product(name: "RxRealm", package: "RxRealm"),
-                    .product(name: "ZipArchive", package: "ZipArchive"),
-                    .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-                ]),
-        
-            .target(
-                name: "PVMediaCache",
-                dependencies: [
-                    "PVSupport",
-                    "PVLogging",
-                    "PVHashing",
-                    "PVLookup",
-                    "PVPrimitives",
-                    "PVFileSystem",
-                    .product(name: "RxCocoa", package: "RxSwift"),
-                    .product(name: "RxSwift", package: "RxSwift"),
-                    .product(name: "RxRealm", package: "RxRealm"),
-                    .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+        // MARK: ------------ PVRealm ------------
+        .target(
+            name: "PVRealm",
+            dependencies: [
+                "PVSupport",
+                "PLzmaSDK",
+                "SWCompression",
+                "PVLogging",
+                "PVHashing",
+                "PVPlists",
+                "PVLookup",
+                "Systems",
+                "PVPrimitives",
+                "PVMediaCache",
+                .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
+                .product(name: "PVCoreLoader", package: "PVCoreLoader"),
+                .product(name: "SQLite", package: "SQLite.swift"),
+                .product(name: "RxCocoa", package: "RxSwift"),
+                .product(name: "RxSwift", package: "RxSwift"),
+                .product(name: "RxRealm", package: "RxRealm"),
+                .product(name: "ZipArchive", package: "ZipArchive"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ]),
-        
-            .target(
-                name: "PVFileSystem",
-                dependencies: [
-                    "PVSupport",
-                    "PVLogging",
-                    "PVHashing",
-                    "PVLookup",
-                    "PVPrimitives",
-                    .product(name: "RxCocoa", package: "RxSwift"),
-                    .product(name: "RxSwift", package: "RxSwift"),
-                    .product(name: "RxRealm", package: "RxRealm"),
-                    .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-            ]),
-        
-            .target(
-                name: "Systems",
-                dependencies: [
-                    "PVSupport",
-                    "PVLogging",
-                    "PVHashing",
-                    "PVLookup",
-                    "PVPrimitives",
-                    .product(name: "RxCocoa", package: "RxSwift"),
-                    .product(name: "RxSwift", package: "RxSwift"),
-                    .product(name: "RxRealm", package: "RxRealm"),
-                    .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-            ]),
-
-            .target(
-                name: "DirectoryWatcher",
-                dependencies: [
-                    "PVSupport",
-                    "PVLogging",
-                    "PVHashing",
-                    "PVLookup",
-                    "PVPrimitives",
-                    "Extractor",
-                    "PVFileSystem",
-                    .product(name: "RxCocoa", package: "RxSwift"),
-                    .product(name: "RxSwift", package: "RxSwift"),
-                    .product(name: "RxRealm", package: "RxRealm"),
-                    .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-            ]),
-        
-            .target(
+        // MARK: ------------ PVMediaCache ------------
+        .target(
+            name: "PVMediaCache",
+            dependencies: [
+                "PVSupport",
+                "PVLogging",
+                "PVHashing",
+                "PVLookup",
+                "PVPrimitives",
+                "PVFileSystem",
+                .product(name: "RxCocoa", package: "RxSwift"),
+                .product(name: "RxSwift", package: "RxSwift"),
+                .product(name: "RxRealm", package: "RxRealm"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+        ]),
+        // MARK: ------------ PVFileSystem ------------
+        .target(
+            name: "PVFileSystem",
+            dependencies: [
+                "PVSupport",
+                "PVLogging",
+                "PVHashing",
+                "PVLookup",
+                "PVPrimitives",
+                "SwiftCloudDrive",
+                .product(name: "RxCocoa", package: "RxSwift"),
+                .product(name: "RxSwift", package: "RxSwift"),
+                .product(name: "RxRealm", package: "RxRealm"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+        ]),
+        // MARK: ------------ Systems ------------
+        .target(
+            name: "Systems",
+            dependencies: [
+                "PVSupport",
+                "PVLogging",
+                "PVHashing",
+                "PVLookup",
+                "PVPrimitives",
+                .product(name: "RxCocoa", package: "RxSwift"),
+                .product(name: "RxSwift", package: "RxSwift"),
+                .product(name: "RxRealm", package: "RxRealm"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+        ]),
+        // MARK: ------------ DirectoryWatcher ------------
+        .target(
+            name: "DirectoryWatcher",
+            dependencies: [
+                "PVSupport",
+                "PVLogging",
+                "PVHashing",
+                "PVLookup",
+                "PVPrimitives",
+                "Extractor",
+                "PVFileSystem",
+                .product(name: "RxCocoa", package: "RxSwift"),
+                .product(name: "RxSwift", package: "RxSwift"),
+                .product(name: "RxRealm", package: "RxRealm"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+        ]),
+        // MARK: ------------ Extractor ------------
+        .target(
             name: "Extractor",
             dependencies: [
                 "PVSupport",
@@ -211,9 +214,7 @@ let package = Package(
                 .product(name: "ZipArchive", package: "ZipArchive"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ]),
-        
-        // MARK: PVLibraryTests tests
-        
+        // MARK: ------------ Tests ------------
         .testTarget(
             name: "PVLibraryTests",
             dependencies: ["PVLibrary"]

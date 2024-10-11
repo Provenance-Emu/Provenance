@@ -7,8 +7,10 @@
 
 import Foundation
 
-struct Constants {
-    struct iCloud {
+package enum Constants {}
+
+package extension Constants {
+    enum iCloud {
         static let defaultProvenanceContainerIdentifier = "iCloud.org.provenance-emu.provenance"
         // Dynamic version based off of bundle Identifier
 		static let containerIdentifier =  (Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject])?.keys.first ?? defaultProvenanceContainerIdentifier

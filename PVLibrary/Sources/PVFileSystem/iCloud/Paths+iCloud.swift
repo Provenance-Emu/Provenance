@@ -64,5 +64,4 @@ public extension URL {
     static var documentsiCloudOrLocalPath: URL { get {
         return iCloudDocumentsDirectory ?? documentsPath
     }}
-
 }

@@ -24,6 +24,7 @@ public extension NSNotification.Name {
     static let PVArchiveInflationFailed = NSNotification.Name(rawValue: "PVArchiveInflationFailedNotification")
 }
 
+@Observable
 public final class DirectoryWatcher {
     private let watchedDirectory: URL
     
