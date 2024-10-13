@@ -417,6 +417,22 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
+			<string>play.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Play!</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.ps2</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/play/</string>
+			<key>PVProjectVersion</key>
+			<string>0.66</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
 			<string>ppsspp.libretro.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>

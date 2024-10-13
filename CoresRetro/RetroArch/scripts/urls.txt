@@ -40,6 +40,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/numero_libretro_ios
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/o2em_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/opera_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/parallel_n64_libretro_ios.dylib.zip
+https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/play_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/pcsx_rearmed_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/ppsspp_libretro.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/prosystem_libretro_ios.dylib.zip

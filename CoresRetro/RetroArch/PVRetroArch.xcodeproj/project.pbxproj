@@ -244,6 +244,7 @@
 		B3C439532BF442920021B9C3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C439522BF442920021B9C3 /* PVSupport */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */; };
 		B3CC631D2BEF17A5002F3C8B /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */; };
 		B3E2AA6B2CB65E9A00E2636D /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA6A2CB65E9A00E2636D /* PVLogging */; };
 		B3F8DFFF2CB3741500017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFFE2CB3741500017D1B /* PVCoreObjCBridge */; };
@@ -853,6 +854,7 @@
 		B3C76223207833DE009950E4 /* PVRetroArchCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVRetroArchCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVRetroArchCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PS2.m"; sourceTree = "<group>"; };
 		B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRetroArchCoreCore.swift; sourceTree = "<group>"; };
@@ -1688,6 +1690,7 @@
 				93654F79298F4A2C0046503F /* PVRetroArchCore+Controls+DS.m */,
 				93654F78298F4A2C0046503F /* PVRetroArchCore+Controls+PCE.m */,
 				93448E552980043E002F87BB /* PVRetroArchCore+Controls+PSX.m */,
+				B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */,
 				9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */,
 				9328B14E2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m */,
 				93AC9F662A48952700D3F4D6 /* runloop.c */,
@@ -2348,6 +2351,7 @@
 				93448E562980043F002F87BB /* PVRetroArchCore+Controls+PSX.m in Sources */,
 				93FF38242965FF9C00772659 /* PVRetroArchCore+Video.mm in Sources */,
 				93FF38252965FF9C00772659 /* PVRetroArchCore+Saves.h in Sources */,
+				B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */,
 				93C372692A8B68000007671D /* PVRetroArchCore+Controls+3DO.m in Sources */,
 				93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */,
 				93C372682A8B68000007671D /* PVRetroArchCore+Controls+Dreamcast.m in Sources */,
