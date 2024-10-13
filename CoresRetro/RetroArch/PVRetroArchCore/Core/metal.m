@@ -19,6 +19,7 @@
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 #include <QuartzCore/QuartzCore.h>
+#import <PVRetroArch/RetroArch-Swift.h>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -853,7 +854,7 @@ font_renderer_t metal_raster_font = {
 {
    //_library = [_device newDefaultLibrary];
    NSError *error;
-   _library=[_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:[PVRetroArchCore class]] error:&error];
+   _library=[_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:[PVRetroArchCoreCore class]] error:&error];
    _context = [[Context alloc] initWithDevice:_device
                                         layer:_layer
                                       library:_library];

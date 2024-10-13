@@ -825,6 +825,7 @@
 		B367FFFD289627AF00F75595 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
 		B367FFFE289627AF00F75595 /* Makefile.wii */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.wii; sourceTree = "<group>"; };
 		B3A9F41F1DE7EB67008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B3BCD6BD2CBB8ACA009EDD2A /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B3E432041DE6917700D3C91E /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C66E09372586D34B00EA6170 /* scrc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrc32.c; sourceTree = "<group>"; };
 		C66E09382586D34B00EA6170 /* scrc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrc32.h; sourceTree = "<group>"; };
@@ -896,6 +897,7 @@
 		1ACEA6A317F74D140031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				B3BCD6BD2CBB8ACA009EDD2A /* Config.xcconfig */,
 				1ACEA6B117F74D150031B1C9 /* Sources */,
 				1ACEA6AE17F74D150031B1C9 /* Frameworks */,
 				1ACEA6AD17F74D150031B1C9 /* Products */,
@@ -2476,6 +2478,7 @@
 /* Begin XCBuildConfiguration section */
 		1ACEA6CD17F74D150031B1C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3BCD6BD2CBB8ACA009EDD2A /* Config.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -2533,8 +2536,8 @@
 					"-DLSB_FIRST",
 					"-DHAVE_ZLIB",
 					"-DUSE_32BPP_RENDERING",
-					"-DNDEBUG",
 					"-D__LIBRETRO__",
+					"-DHAVE_OVERCLOCK",
 					"$(inherited)",
 				);
 				SDKROOT = auto;
@@ -2549,6 +2552,7 @@
 		};
 		1ACEA6CE17F74D150031B1C9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3BCD6BD2CBB8ACA009EDD2A /* Config.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -2625,6 +2629,7 @@
 		};
 		B324C51A2191A3E4009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3BCD6BD2CBB8ACA009EDD2A /* Config.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -2685,6 +2690,7 @@
 					"-DINLINE=\"static inline\"",
 					"-DZ80_OVERCLOCK_SHIFT=20",
 					"-DM68K_OVERCLOCK_SHIFT=20",
+					"-DHAVE_OVERCLOCK",
 					"$(inherited)",
 				);
 				SDKROOT = auto;

@@ -355,12 +355,9 @@ public final class PVCoreFactory: NSObject {
             }
             break;
         }
-        #warning("Remember to fix / remove me when adding retroarch to appstore")
-        #if !APP_STORE
         if let core = core as? PVRetroArchCoreResponderClient {
             return PVRetroArchControllerViewController(controlLayout: [], system: system, responder: core)
         }
-        #endif
         return nil
     }
 }

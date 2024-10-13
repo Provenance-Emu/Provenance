@@ -1,71 +1,78 @@
 #!/bin/sh
 
-# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
+# Parse command line arguments
+SIGN_DYLIBS=true
+BUNDLE_ID_PREFIX="org.provenance-emu"
 
-# Verify that $CODE_SIGN_IDENTITY is set
-if [ -z "${CODE_SIGN_IDENTITY}" ] ; then
-    echo "CODE_SIGN_IDENTITY needs to be set for code-signing!"
-
-    if [ "${CONFIGURATION}" = "Release" ] ; then
-        exit 1
-    else
-        # Code-signing is optional for non-release builds.
-        exit 0
-    fi
-fi
-
-ITEMS=""
-
-if [ "$1" = "tvos" ]; then
-    CORES_DIR="${SRCROOT}/modules/"
-else
-    CORES_DIR="${SRCROOT}/modules/"
-fi
-
-echo "Cores dir: ${CORES_DIR}"
-if [ -d "$CORES_DIR" ] ; then
-    CORES=$(find "${CORES_DIR}" -depth -type d -name "*.framework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)/\1\/Versions\/A\//")
-    RESULT=$?
-    if [ "$RESULT" != 0 ] ; then
-        exit 1
-    fi
-
-    ITEMS="${CORES}"
-fi
-
-# Prefer the expanded name, if available.
-CODE_SIGN_IDENTITY_FOR_ITEMS="${EXPANDED_CODE_SIGN_IDENTITY_NAME}"
-if [ "${CODE_SIGN_IDENTITY_FOR_ITEMS}" = "" ] ; then
-    # Fall back to old behavior.
-    CODE_SIGN_IDENTITY_FOR_ITEMS="${CODE_SIGN_IDENTITY}"
-fi
-
-echo "Identity:"
-echo "${CODE_SIGN_IDENTITY_FOR_ITEMS}"
-
-echo "Found:"
-echo "${ITEMS}"
-
-# Change the Internal Field Separator (IFS) so that spaces in paths will not cause problems below.
-SAVED_IFS=$IFS
-# Doing IFS=$(echo -en "\n") does not work on Xcode 10 for some reason
-IFS="
-"
-
-BUNDLE_ID_PREFIX="${2:-org.provenance-emu}"
-
-# Loop through all items.
-for ITEM in $ITEMS;
+for arg in "$@"
 do
-    echo "Signing '${ITEM}'"
-    codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --identifier "org.provenance-emu.${ITEM}" --timestamp=none "${ITEM}"
-    RESULT=$?
-    if [ "$RESULT" != 0 ] ; then
-        echo "Failed to sign '${ITEM}'."
-        IFS=$SAVED_IFS
-        exit 1
-    fi
+    case $arg in
+        -no-dylib)
+        SIGN_DYLIBS=false
+        shift
+        ;;
+        --org-identifier=*)
+        NEW_PREFIX="${arg#*=}"
+        if [ -n "$NEW_PREFIX" ]; then
+            BUNDLE_ID_PREFIX="$NEW_PREFIX"
+        fi
+        shift
+        ;;
+    esac
 done
 
-# Restore $IFS.
-IFS=$SAVED_IFS
+# Set up variables
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+BUILD_DIR="$PROJECT_DIR/build"
+DERIVED_DATA_DIR="$BUILD_DIR/DerivedData"
+CORES_DIR="$PROJECT_DIR/Cores"
+
+# Find the most recently modified .app bundle
+APP_BUNDLE=$(find "$DERIVED_DATA_DIR" -name "*.app" -type d -print0 | xargs -0 stat -f "%m %N" | sort -rn | head -1 | cut -d" " -f2-)
+
+if [ -z "$APP_BUNDLE" ]; then
+    echo "Error: No .app bundle found in $DERIVED_DATA_DIR"
+    exit 1
+fi
+
+FRAMEWORKS_PATH="$APP_BUNDLE/Frameworks"
+
+# Get the signing identity
+SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "iPhone Developer" | head -1 | awk '{print $2}')
+
+if [ -z "$SIGNING_IDENTITY" ]; then
+    echo "Error: No iPhone Developer signing identity found"
+    exit 1
+fi
+
+echo "Using signing identity: $SIGNING_IDENTITY"
+echo "Signing cores in: $FRAMEWORKS_PATH"
+
+# Sign the frameworks (cores)
+find "$FRAMEWORKS_PATH" -name "*.framework" -type d | while read -r framework
+do
+    framework_name=$(basename "$framework" .framework)
+    framework_id="$BUNDLE_ID_PREFIX.framework.$framework_name"
+
+    echo "Signing framework: $framework_name"
+    codesign --force --sign "$SIGNING_IDENTITY" --verbose \
+             --identifier "$framework_id" \
+             "$framework"
+done
+
+# Sign the dynamic libraries if SIGN_DYLIBS is true
+if [ "$SIGN_DYLIBS" = true ] ; then
+    find "$FRAMEWORKS_PATH" -name "*.dylib" -type f | while read -r dylib
+    do
+        dylib_name=$(basename "$dylib" .dylib)
+        dylib_id="$BUNDLE_ID_PREFIX.dylib.$dylib_name"
+
+        echo "Signing dylib: $dylib_name"
+        codesign --force --sign "$SIGNING_IDENTITY" --verbose \
+                 --identifier "$dylib_id" \
+                 "$dylib"
+    done
+fi
+
+echo "Core signing complete."

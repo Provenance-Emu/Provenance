@@ -168,7 +168,7 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
     {
        case RETRO_PIXEL_FORMAT_0RGB1555:
             return GL_RGB5_A1; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
-#if !TARGET_OS_MAC
+#if !TARGET_OS_OSX
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_RGB565;
 #else
@@ -187,7 +187,7 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
     {
        case RETRO_PIXEL_FORMAT_0RGB1555:
             return GL_RGB5_A1;
-#if !TARGET_OS_MAC
+#if !TARGET_OS_OSX
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_RGB565;
 #else

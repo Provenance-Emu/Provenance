@@ -142,7 +142,6 @@ public final class GameImporter {
         @Sendable func updateSystemToPathMap() async -> [String: URL] {
             let systems = PVSystem.all
             return await systems.async.reduce(into: [String: URL]()) {partialResult, system in
-                var partialResult = partialResult
                 partialResult[system.identifier] = system.romsDirectory
             }
         }
@@ -734,7 +733,7 @@ public extension GameImporter {
         }
     }
 
-    func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) async {
+    func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) {
         // If directory, map out sub directories if folder
         let paths: [URL] = paths.compactMap { (url) -> [URL]? in
             if url.hasDirectoryPath {
@@ -745,7 +744,7 @@ public extension GameImporter {
         }.joined().map { $0 }
 
         let sortedPaths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
-        await sortedPaths.asyncForEach { path in
+        sortedPaths.forEach { path in
             do {
                 try self._handlePath(path: path, userChosenSystem: chosenSystem)
             } catch {

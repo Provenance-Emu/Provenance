@@ -13,12 +13,14 @@ import GameController
 import PVLogging
 import PVAudio
 
-#warning("Finish me before app store release vc viu on Twitter would like it.")
+#warning("Finish me before app store release bcs viu on Twitter would like it.")
 
 @objc extension PVEmulatorCore: EmulatorCoreRumbleDataSource {
-    open var supportsRumble: Bool { return false }
+    open var supportsRumble: Bool { bridge.supportsRumble }
+    
+    @MainActor
     open func rumble(player: Int) {
-        
+        bridge.rumble(player: player)
     }
 
     #if os(iOS)

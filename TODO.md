@@ -4,10 +4,10 @@ _My personal TODO notes_
 ## Show stoppers
 
 - [ ] Conflicts folder is weird
-- [ ] Possible race condition in importer
-- [ ] SwiftUI not seeing conflicts
-- [ ] emuThreeDS and other metal based cores have wrong layout contraints
-- [ ] Copy the framework loader from old branch, fix it too!
+- [X] SwiftUI not seeing conflicts
+- [X] Copy the framework loader from old branch, fix it too!
+- [X] emuThreeDS and other metal based cores have wrong layout contraints
+- [X] Possible race condition in importer
 - [X] Gambatte swift module not done
 - [X] PVmGBA swift module is not done
 - [X] Fix Repo submodules
@@ -25,11 +25,11 @@ _My personal TODO notes_
 - [ ] CrabEMU no buttons work
 - [ ] Intellivision (PVBliss) audio crashes on button press
 - [ ] Mednafen GB crashing
-- [ ] Game gear dimensions wrong
 - [ ] Odyssey2 needs a way to enter game number 1,2 (3,4)?
 - [ ] Zip files cause conflicts, not always handled correctly
 - [ ] Vectrex needs PVVecXCore:LibRetroCore (or rollback to older code?)
 - [ ] ZX Spectrum needs PVLibRetroCore (or rollback to older code?)
+- [X] Game gear dimensions wrong
 - [X] Colicovision roms are blank screen
 - [X] iPad swiftui opening web server doesn't have a cgrect
 - [X] Stella pixel types are wrong - video is distorted

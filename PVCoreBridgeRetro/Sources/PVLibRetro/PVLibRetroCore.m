@@ -2168,8 +2168,9 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 - (instancetype)init {
     if((self = [super init])) {
         pitch_shift = PITCH_SHIFT;
-        _current = self;
-        const char* path = [[NSBundle bundleForClass:[self class]].bundlePath fileSystemRepresentation];
+        NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
+        NSAssert(myBundle, @"myBundle was nil");
+        const char* path = [myBundle.bundlePath fileSystemRepresentation];
         config_set_active_core_path(path);
         //        load_dynamic_core();
         core = malloc(sizeof(retro_core_t));
@@ -2192,7 +2193,8 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         videoBufferB = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBuffer = videoBufferA;
     }
-    
+    _current = self;
+
     return self;
 }
 
@@ -2375,7 +2377,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     {
        case RETRO_PIXEL_FORMAT_0RGB1555:
             return GL_RGB5_A1; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
-#if !TARGET_OS_MAC
+#if !TARGET_OS_OSX
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_RGB565;
 #else
@@ -2394,7 +2396,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     {
        case RETRO_PIXEL_FORMAT_0RGB1555:
             return GL_RGB5_A1;
-#if !TARGET_OS_MAC
+#if !TARGET_OS_OSX
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_RGB565;
 #else

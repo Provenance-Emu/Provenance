@@ -89,13 +89,41 @@ public final class PVControllerManager: NSObject {
             }
         }
     }
+    public private(set) var player5: GCController? {
+        didSet {
+            if player5 != oldValue {
+                setController(player5, toPlayer: 5)
+            }
+        }
+    }
+    public private(set) var player6: GCController? {
+        didSet {
+            if player6 != oldValue {
+                setController(player6, toPlayer: 6)
+            }
+        }
+    }
+    public private(set) var player7: GCController? {
+        didSet {
+            if player7 != oldValue {
+                setController(player7, toPlayer: 7)
+            }
+        }
+    }
+    public private(set) var player8: GCController? {
+        didSet {
+            if player8 != oldValue {
+                setController(player8, toPlayer: 8)
+            }
+        }
+    }
 
 #if canImport(UIKit) && canImport(GameController)
     public private(set) var iCadeController: PViCadeController?
 #endif
     public private(set) var keyboardController: GCController?
     public var hasControllers: Bool {
-        return player1 != nil || player2 != nil || player3 != nil || player4 != nil
+        return player1 != nil || player2 != nil || player3 != nil || player4 != nil  || player5 != nil || player6 != nil || player7 != nil || player8 != nil
     }
     var isKeyboardConnected: Bool {
         return keyboardController != nil
@@ -130,7 +158,7 @@ public final class PVControllerManager: NSObject {
                     } else if self.player3 == nil || self.player3?.microGamepad != nil {
                         player = 3
                     } else if self.player4 == nil || self.player4?.microGamepad != nil {
-                        player = 1
+                        player = 4
                     } else {
                         completion?()
                         return
@@ -143,7 +171,7 @@ public final class PVControllerManager: NSObject {
                     } else if self.player3 == nil {
                         player = 3
                     } else if self.player4 == nil {
-                        player = 1
+                        player = 4
                     } else {
                         completion?()
                         return
@@ -311,8 +339,15 @@ public final class PVControllerManager: NSObject {
             player3 = nil
         } else if controller == player4 {
             player4 = nil
+        } else if controller == player5 {
+            player5 = nil
+        } else if controller == player6 {
+            player6 = nil
+        } else if controller == player7 {
+            player7 = nil
+        } else if controller == player8 {
+            player8 = nil
         }
-
         var assigned = false
         if controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController {
             // For 8Bitdo, we set to listen again for controllers after disconnecting
@@ -332,7 +367,7 @@ public final class PVControllerManager: NSObject {
         }
     }
 
-    @available(iOS 14.0, tvOS 14.0, *)
+    @MainActor
     @objc func handleKeyboardConnect(_ note: Notification?) {
 //        #if !targetEnvironment(simulator)
         ILOG("Keyboard Connected\n");
@@ -348,7 +383,7 @@ public final class PVControllerManager: NSObject {
 //        #endif
     }
 
-    @available(iOS 14.0, tvOS 14.0, *)
+    @MainActor
     @objc func handleKeyboardDisconnect(_ note: Notification?) {
         ILOG("Keyboard Disconnected\n");
         if let controller = keyboardController {
@@ -420,8 +455,16 @@ public final class PVControllerManager: NSObject {
             player3 = controller
         } else if player == 4 {
             player4 = controller
+        } else if player == 5 {
+            player5 = controller
+        } else if player == 6 {
+            player6 = controller
+        } else if player == 7 {
+            player7 = controller
+        } else if player == 8 {
+            player8 = controller
         }
-
+        
         if let controller = controller {
             ILOG("Controller [\(controller.vendorName ?? "No Vendor")] assigned to player \(player)")
         }
@@ -748,6 +791,7 @@ extension ControllerButtonPressTableView {
 //
 @available(iOS 14.0, tvOS 14.0, *)
 public extension GCKeyboard {
+    @MainActor
     func createController() -> GCController? {
         guard let keyboard = self.keyboardInput else {return nil}
 

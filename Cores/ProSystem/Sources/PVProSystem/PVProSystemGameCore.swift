@@ -24,14 +24,6 @@ import PVProSystemBridge
 @objc
 @objcMembers
 open class PVProSystemCore: PVEmulatorCore, @unchecked Sendable {
-    
-    // PVEmulatorCoreBridged
-//    public typealias Bridge = PVProSystemGameCore
-//    public lazy var bridge: Bridge = {
-//        let core = PVProSystemGameCore()
-//        return core
-//    }()
-
 
 //    @MainActor
 //    @objc public var jagVideoBuffer: UnsafeMutablePointer<JagBuffer>?
@@ -79,41 +71,30 @@ open class PVProSystemCore: PVEmulatorCore, @unchecked Sendable {
 //    @objc public override var aspectSize: CGSize { .init(width: Int(TOMGetVideoModeWidth()), height: Int(TOMGetVideoModeHeight())) }
 
     // MARK: Lifecycle
+    var _bridge: PVProSystemGameCore = .init()
     
     public required init() {
         super.init()
-        self.bridge = PVProSystemGameCore() as! any ObjCBridgedCoreBridge
+        self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
 }
 
 extension PVProSystemCore: PV7800SystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PV7800Button, forPlayer player: Int) {
-        (bridge as! PV7800SystemResponderClient).didPush(button, forPlayer: player)
+        (_bridge as! PV7800SystemResponderClient).didPush(button, forPlayer: player)
     }
-    
     public func didRelease(_ button: PVCoreBridge.PV7800Button, forPlayer player: Int) {
-        (bridge as! PV7800SystemResponderClient).didRelease(button, forPlayer: player)
+        (_bridge as! PV7800SystemResponderClient).didRelease(button, forPlayer: player)
     }
-    
     public func mouseMoved(at point: CGPoint) {
-        (bridge as! PV7800SystemResponderClient).mouseMoved(at: point)
+        (_bridge as! PV7800SystemResponderClient).mouseMoved(at: point)
     }
-    
     public func leftMouseDown(at point: CGPoint) {
-        (bridge as! PV7800SystemResponderClient).leftMouseDown(at: point)
+        (_bridge as! PV7800SystemResponderClient).leftMouseDown(at: point)
     }
-    
     public func leftMouseUp() {
-        (bridge as! PV7800SystemResponderClient).leftMouseUp()
+        (_bridge as! PV7800SystemResponderClient).leftMouseUp()
     }
-    
-//    public func rightMouseDown(at point: CGPoint) {
-//        (bridge as! PV7800SystemResponderClient).rightMouseDown(at: point)
-//    }
-//    
-//    public func rightMouseUp() {
-//        (bridge as! PV7800SystemResponderClient).rightMouseUp()
-//    }
 }
 
 @objc

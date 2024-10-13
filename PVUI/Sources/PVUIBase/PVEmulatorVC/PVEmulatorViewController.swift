@@ -60,9 +60,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var menuButton: MenuButton?
     
     var use_metal: Bool { Defaults[.useMetal] }
+
     private(set) lazy var gpuViewController: PVGPUViewController = {
         return use_metal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
     }()
+
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = {
         let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
         return controller
@@ -227,10 +229,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.saveStatesPath = saveStatePath.path
         core.batterySavesPath = batterySavesPath.path
         core.BIOSPath = BIOSPath.path
+        
         core.controller1 = PVControllerManager.shared.player1
         core.controller2 = PVControllerManager.shared.player2
         core.controller3 = PVControllerManager.shared.player3
         core.controller4 = PVControllerManager.shared.player4
+        core.controller5 = PVControllerManager.shared.player5
+        core.controller6 = PVControllerManager.shared.player6
+        core.controller7 = PVControllerManager.shared.player7
+        core.controller8 = PVControllerManager.shared.player8
         
         let md5Hash: String = game.md5Hash
         core.romMD5 = md5Hash
@@ -245,6 +252,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         if let aView = controllerViewController?.view {
             view.addSubview(aView)
+            print("controllerViewController \(controllerViewController), core: \(core)")
             core.touchViewController = controllerViewController
         }
         controllerViewController?.didMove(toParent: self)
@@ -406,9 +414,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         
         try gameAudio.setupAudioGraph(for: core)
         try startAudio()
-        //        gameAudio.volume = Defaults[.volume]
-        //        gameAudio.outputDeviceID = 0
-        //        gameAudio.startAudio()
         
         core.startEmulation()
         
@@ -619,6 +624,7 @@ extension PVEmulatorViewController {
     }
     
     fileprivate func startAudio() throws {
+//        gameAudio.outputDeviceID = 0
         gameAudio.setVolume(Defaults[.volume])
         do {
             try gameAudio.startAudio()

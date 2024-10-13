@@ -173,8 +173,8 @@ static bool _isOff = false;
 
 - (void)refreshScreenSize {
     NSLog(@"refreshScreenSize: Window Size %f %f\n", self.touchViewController.view.frame.size.width, self.touchViewController.view.frame.size.height);
-    if ([[UIDevice currentDevice] orientation] == UIInterfaceOrientationPortrait ||
-        [[UIDevice currentDevice] orientation] == UIInterfaceOrientationPortraitUpsideDown) {
+    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationPortrait ||
+        [[UIDevice currentDevice] orientation] == UIDeviceOrientationPortraitUpsideDown) {
         if (m_view.frame.size.width > m_view.frame.size.height) {
             m_view.frame =  CGRectMake(0, 0, m_view.frame.size.height, m_view.frame.size.width);
         }
@@ -254,23 +254,29 @@ static bool _isOff = false;
             [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
         }
         if ([gl_view_controller respondsToSelector:@selector(mtlView)]) {
-            self.renderDelegate.mtlView.autoresizesSubviews=true;
-            self.renderDelegate.mtlView.clipsToBounds=true;
-            [self.renderDelegate.mtlView addSubview:m_view];
-            [m_view.topAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.topAnchor constant:0].active = true;
-            [m_view.leadingAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.leadingAnchor constant:0].active = true;
-            [m_view.trailingAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.trailingAnchor constant:0].active = true;
-            [m_view.bottomAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.bottomAnchor constant:0].active = true;
+            MTKView* mtlView = self.renderDelegate.mtlView;
+            NSAssert(mtlView, @"mtlView was nil");
+            mtlView.autoresizesSubviews=true;
+            mtlView.clipsToBounds=true;
+            [mtlView addSubview:m_view];
+            [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:mtlView.widthAnchor].active=true;
+            [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:mtlView.heightAnchor constant: 0].active=true;
+            [m_view.topAnchor constraintEqualToAnchor:mtlView.topAnchor constant:0].active = true;
+            [m_view.leadingAnchor constraintEqualToAnchor:mtlView.leadingAnchor constant:0].active = true;
+            [m_view.trailingAnchor constraintEqualToAnchor:mtlView.trailingAnchor constant:0].active = true;
+            [m_view.bottomAnchor constraintEqualToAnchor:mtlView.bottomAnchor constant:0].active = true;
         } else {
-            gl_view_controller.view.autoresizesSubviews=true;
-            gl_view_controller.view.clipsToBounds=true;
-            [gl_view_controller.view addSubview:m_view];
-            [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor].active=true;
-            [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;
-            [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
-            [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
-            [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
-            [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+            UIView* glView = gl_view_controller.view;
+            NSAssert(glView, @"glView was nil");
+            glView.autoresizesSubviews=true;
+            glView.clipsToBounds=true;
+            [glView addSubview:m_view];
+            [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:glView.widthAnchor].active=true;
+            [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:glView.heightAnchor constant: 0].active=true;
+            [m_view.topAnchor constraintEqualToAnchor:glView.topAnchor constant:0].active = true;
+            [m_view.leadingAnchor constraintEqualToAnchor:glView.leadingAnchor constant:0].active = true;
+            [m_view.trailingAnchor constraintEqualToAnchor:glView.trailingAnchor constant:0].active = true;
+            [m_view.bottomAnchor constraintEqualToAnchor:glView.bottomAnchor constant:0].active = true;
         }
     }
 }

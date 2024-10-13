@@ -261,7 +261,7 @@ static void bram_save(void)
 	int _videoWidth, _videoHeight;
 	int16_t _pad[2][12];
 }
-
+@property (nonatomic, assign) GenesisCoreType subCoreType;
 @end
 
 __weak PVCoreGenesisPlusBridge *_current;
@@ -383,7 +383,7 @@ static bool environment_callback(unsigned cmd, void *data)
 	return true;
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self = [super init])) {
         videoBufferA = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
         videoBufferB = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
@@ -392,6 +392,22 @@ static bool environment_callback(unsigned cmd, void *data)
 	_current = self;
 	
 	return self;
+}
+- (void)initialize {
+    [super initialize];
+    NSString *coreID = [self systemIdentifier];
+    if ([coreID isEqualToString:@"com.provenance.mastersystem"]) {
+        self.subCoreType = GenesisCoreTypeMasterSystem;
+    } else if ([coreID isEqualToString:@"com.provenance.sg1000"]) {
+        self.subCoreType = GenesisCoreTypeSG1000;
+    } else if ([coreID isEqualToString:@"com.provenance.gamegear"]) {
+        self.subCoreType = GenesisCoreTypeGameGear;
+    } else if ([coreID isEqualToString:@"com.provenance.genesis"]) {
+        self.subCoreType = GenesisCoreTypeGenesis;
+    } else {
+        ELOG(@"Unknown sub core type %@", coreID);
+        NSAssert(false, @"Unknown sub core type %@", coreID);
+    }
 }
 
 - (void)dealloc {
@@ -462,8 +478,7 @@ static bool environment_callback(unsigned cmd, void *data)
     audio_batch_callback(soundbuffer, aud >> 1);
 }
 
-- (BOOL)loadFileAtPath:(NSString*)path error:(NSError**)error
-{
+- (BOOL)loadFileAtPath:(NSString*)path error:(NSError**)error {
 	memset(_pad, 0, sizeof(int16_t) * 10);
     
     const void *data;
@@ -582,8 +597,6 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 -(void)readOptions {
-    
-    
     //    0 : enable only PSG output (power-on default)
     //    1 : enable only FM output
     //    2 : disable both PSG & FM output
@@ -593,17 +606,17 @@ static bool environment_callback(unsigned cmd, void *data)
   //      config.psg_preamp     = 150;
   //      config.fm_preamp      = 100;
     config.hq_fm              = PVCoreGenesisPlusOptions.hq_fm; /* high-quality FM resampling (slower) */
-        config.hq_psg         = PVCoreGenesisPlusOptions.hq_psg; /* high-quality PSG resampling (slower) */
-        config.filter         = PVCoreGenesisPlusOptions.filter; /* 0=off, 1=low pass, 2=3 band eq */
+    config.hq_psg         = PVCoreGenesisPlusOptions.hq_psg; /* high-quality PSG resampling (slower) */
+    config.filter         = PVCoreGenesisPlusOptions.filter; /* 0=off, 1=low pass, 2=3 band eq */
   //      config.lp_range       = 0x8ccd; /* = 55% in 0.16 fixed point to match a Model1 VA2 US Genesis, was 0x7fff */
   //      config.low_freq       = 880;
   //      config.high_freq      = 5000;
   //      config.lg             = 100;
   //      config.mg             = 100;
   //      config.hg             = 100;
-      config.ym2612         = PVCoreGenesisPlusOptions.ym2612; //YM2612_DISCRETE;
-      config.ym2413         = PVCoreGenesisPlusOptions.ym2413; /* 0: Off, 1:On, 2:AUTO */
-  //      config.mono           = 0; /* STEREO output */
+    config.ym2612         = PVCoreGenesisPlusOptions.ym2612; //YM2612_DISCRETE;
+    config.ym2413         = PVCoreGenesisPlusOptions.ym2413; /* 0: Off, 1:On, 2:AUTO */
+    config.mono           = PVCoreGenesisPlusOptions.mono; /* STEREO output */
 
     #ifdef HAVE_YM3438_CORE
        OPN2_SetChipType(ym3438_mode_ym2612);
@@ -623,7 +636,7 @@ static bool environment_callback(unsigned cmd, void *data)
   //      config.bios           = 0;
   //      config.lock_on        = 0;
      #ifdef HAVE_OVERCLOCK
-        config.overclock      = 100;
+        config.overclock      = PVCoreGenesisPlusOptions.overclock;
      #endif
         config.no_sprite_limit = PVCoreGenesisPlusOptions.no_sprite_limit;
 
@@ -677,22 +690,17 @@ static bool environment_callback(unsigned cmd, void *data)
 
 #pragma mark - Video
 
-- (void)swapBuffers
-{
-    if (bitmap.data == (uint8_t*)videoBufferA)
-    {
+- (void)swapBuffers {
+    if (bitmap.data == (uint8_t*)videoBufferA) {
         videoBuffer = videoBufferA;
         bitmap.data = (uint8_t*)videoBufferB;
-    }
-    else
-    {
+    } else {
         videoBuffer = videoBufferB;
         bitmap.data = (uint8_t*)videoBufferA;
     }
 }
 
-- (const void *)videoBuffer
-{
+- (const void *)videoBuffer {
     return videoBuffer;
 }
 
@@ -700,104 +708,134 @@ static bool environment_callback(unsigned cmd, void *data)
     return YES;
 }
 
+- (float)screenRatio {
+    /* According to Chat GPT
+     To express these as the lowest integer values:
+
+     Sega Master System: 4:3
+     SG-1000: 4:3 (assumed)
+     Game Gear: 5:4
+     Genesis/Megadrive: 10:7
+     
+     With overscan:
+     Sega Master System: 4:3 (maintained)
+     SG-1000: 4:3 (assumed, maintained)
+     Game Gear: 5:4 (unchanged due to being a handheld LCD)
+     Genesis/Megadrive: 4:3 (adjusted from 10:7 due to overscan)
+     */
+    switch (self.subCoreType) {
+        case GenesisCoreTypeGameGear:
+            if (config.overscan == 0 && config.gg_extra == 0 )
+                return 6.0/5.0;
+            else
+                return 5.0/4.0;
+        case GenesisCoreTypeSG1000:
+            return 8.0/7.0;
+        case GenesisCoreTypeMasterSystem:
+            return 8.0/7.0;
+        case GenesisCoreTypeGenesis:
+            return 32.0 / 35.0;
+    }
+}
+
+/// Note: This is working when the following options are on
+/// GameGear extra space: true/false
+/// Video Overscan: full/none
 - (CGRect)screenRect {
-    BOOL isGamegear = [[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"];
-    float ratio = 8.0/7.0;
+    // OEIntRectMake(bitmap.viewport.x, bitmap.viewport.y, bitmap.viewport.w, bitmap.viewport.h);
+
+    BOOL isGamegear = self.subCoreType == GenesisCoreTypeGameGear;
+    float ratio = self.screenRatio;
 
     if(isGamegear) {
-        return config.gg_extra ? CGRectMake(0, 0, 256, 192): CGRectMake(0, 0, 160, 144);
+        // 6/5
+//        return config.gg_extra ?
+//        CGRectMake(0, 0, 256, 192) :
+//        CGRectMake(0, 0, 160, 144);
+//        return CGRectMake(bitmap.viewport.x, bitmap.viewport.y, bitmap.viewport.w, bitmap.viewport.h);
+        return CGRectMake(0, 0, _videoWidth, _videoHeight);
     } else {
         return CGRectMake(0, 0, _videoWidth, _videoHeight);
     }
 }
 
-- (CGSize)aspectSize
-{
+- (CGSize)aspectSize {
     int width = bitmap.viewport.w;
     int height = bitmap.viewport.h;
 
     // GameGear
-    if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"]) {
-        
+    if(self.subCoreType == GenesisCoreTypeGameGear) {
+        int vwidth  = bitmap.viewport.w + (bitmap.viewport.x * 2);
+        int vheight = bitmap.viewport.h + (bitmap.viewport.y * 2);
+
+        if (config.aspect_ratio == 0 && config.overscan == 0 && config.gg_extra == 0) {
+            return CGSizeMake(vwidth * (6.0 / 5.0), vheight);
+        }
         return config.gg_extra ? CGSizeMake(256.0, 192.0): CGSizeMake(160.0, 144.0);
     }
-    // Master System
-    else if([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sg1000"]) {
-        float ratio = 8.0 / 7.0;
+    // Master System & SG1000
+    else if(self.subCoreType == GenesisCoreTypeMasterSystem
+            || self.subCoreType == GenesisCoreTypeSG1000) {
+        float ratio = self.screenRatio;
         return CGSizeMake(256.0 * ratio, 192.0);
     }
     // Genesis/Megadrive
     else {
-        float ratio =  32.0 / 35.0;
-        return CGSizeMake( ((320.0 / 224.0) * ratio), 1.0);
+        return CGSizeMake(292, 224);
     }
 }
  
-- (CGSize)bufferSize
-{
-	return CGSizeMake(720, 576);
+- (CGSize)bufferSize {
+    return CGSizeMake(720, 576);
 }
 
-- (GLenum)pixelFormat
-{
+- (GLenum)pixelFormat {
     return GL_BGRA;
 }
 
-- (GLenum)pixelType
-{
+- (GLenum)pixelType {
     return GL_UNSIGNED_BYTE;
 }
 
-- (GLenum)internalPixelFormat
-{
+- (GLenum)internalPixelFormat {
     return GL_RGBA;
 }
 
-- (NSTimeInterval)frameInterval
-{
-    return _frameInterval; // ? _frameInterval : 59.92;
+- (NSTimeInterval)frameInterval {
+    return _frameInterval ? _frameInterval : 59.92;
 }
 
 #pragma mark - Audio
 
-- (double)audioSampleRate
-{
-	return _sampleRate ? _sampleRate : 44100;
+- (double)audioSampleRate {
+	return _sampleRate ? _sampleRate : 48000;
 }
 
-- (NSUInteger)channelCount
-{
-    return 2;
+- (NSUInteger)channelCount {
+    return PVCoreGenesisPlusOptions.mono ? 1 : 2;
 }
 
 #pragma mark - Input
 
-- (void)didPushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player
-{
+- (void)didPushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player {
 	_pad[player][button] = 1;
 }
 
-- (void)didReleaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player
-{
+- (void)didReleaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player {
 	_pad[player][button] = 0;
 }
 
-- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
-{
+- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player {
     GCController *controller = nil;
 
-    if (player == 0)
-    {
+    if (player == 0) {
         controller = self.controller1;
-    }
-    else
-    {
-        controller = self.controller2;
+    } else {
+        controller = self.controller2 ?: self.controller3 ?: self.controller4;
     }
 
     // Sega SG-1000…
-    if ([[self systemIdentifier] isEqualToString:@"com.provenance.sg1000"]) {
-        
+    if (self.subCoreType == GenesisCoreTypeSG1000) {
         if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -871,8 +909,7 @@ static bool environment_callback(unsigned cmd, void *data)
 #endif
         
     // Sega Master System…
-    } else if ([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"]) {
-       
+    } else if (self.subCoreType == GenesisCoreTypeMasterSystem) {
        if ([controller extendedGamepad]) {
            GCExtendedGamepad *gamepad = [controller extendedGamepad];
            GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -894,9 +931,7 @@ static bool environment_callback(unsigned cmd, void *data)
                default:
                    break;
            }
-           
        } else if ([controller gamepad]) {
-           
            GCGamepad *gamepad = [controller gamepad];
            GCControllerDirectionPad *dpad = [gamepad dpad];
            switch (buttonID) {
@@ -918,9 +953,7 @@ static bool environment_callback(unsigned cmd, void *data)
                    break;
            }
        }
-       
 #if TARGET_OS_TV
-
        else if ([controller microGamepad]) {
            GCMicroGamepad *gamepad = [controller microGamepad];
            GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -949,10 +982,8 @@ static bool environment_callback(unsigned cmd, void *data)
        }
            
 #endif
-    
         // Game Gear…
-    } else if ([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"]) {
-        
+    } else if (self.subCoreType == GenesisCoreTypeGameGear) {
         if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];

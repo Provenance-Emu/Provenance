@@ -57,7 +57,7 @@
 @import GLKit;
 #endif
 
-#if TARGET_OS_MAC
+#if TARGET_OS_OSX
 @interface MupenGameNXCore () <PVN64SystemResponderClient>
 #else
 @interface MupenGameNXCore () <PVN64SystemResponderClient, GLKViewDelegate>

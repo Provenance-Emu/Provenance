@@ -123,7 +123,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 #endif
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
-//    UIViewController* _Nullable _touchViewController;
+    UIViewController* _Nullable _touchViewController;
 #endif
 }
 
@@ -134,7 +134,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, copy, nullable) NSString *coreIdentifier;
 @property (nonatomic, copy, nullable) NSString *romMD5;
 @property (nonatomic, copy, nullable) NSString *romSerial;
-@property (nonatomic, copy, nullable) NSString *screenType;
+//@property (nonatomic, copy, nullable) NSString *screenType;
 
 
 @property (class, retain, nonnull, nonatomic) NSString *systemName;

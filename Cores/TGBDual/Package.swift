@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "PVTGBDual",
+    name: "PVCoreTGBDual",
     platforms: [
         .iOS(.v17),
         .tvOS("15.4"),

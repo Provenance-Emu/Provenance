@@ -2,12 +2,21 @@
 
 # Parse command line arguments
 SIGN_DYLIBS=true
+BUNDLE_ID_PREFIX="org.provenance-emu"
+
 for arg in "$@"
 do
     case $arg in
         -no-dylib)
         SIGN_DYLIBS=false
-        shift # Remove -no-dylib from processing
+        shift
+        ;;
+        --org-identifier=*)
+        NEW_PREFIX="${arg#*=}"
+        if [ -n "$NEW_PREFIX" ]; then
+            BUNDLE_ID_PREFIX="$NEW_PREFIX"
+        fi
+        shift
         ;;
     esac
 done
@@ -66,22 +75,24 @@ SAVED_IFS=$IFS
 IFS="
 "
 
-BUNDLE_ID_PREFIX="${2:-org.provenance-emu}"
-
 # Loop through all items.
 for ITEM in $ITEMS;
 do
-    echo "Signing '${ITEM}'"
-    # Remove file extension from ITEM for the identifier
-    ITEM_WITHOUT_EXT=$(basename "${ITEM%.*}")
-    echo "Identifier: ${BUNDLE_ID_PREFIX}.${ITEM_WITHOUT_EXT}"
+    if codesign --display -r- "${ITEM}" | grep -q "${CODE_SIGN_IDENTITY_FOR_ITEMS}" ; then
+        echo "Skipping '${ITEM}', already signed"
+    else
+        echo "Signing '${ITEM}'"
+        # Remove file extension from ITEM for the identifier
+        ITEM_WITHOUT_EXT=$(basename "${ITEM%.*}")
+        echo "Signing with Identifier: ${BUNDLE_ID_PREFIX}.${ITEM_WITHOUT_EXT}"
 
-    codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --identifier "${BUNDLE_ID_PREFIX}.${ITEM_WITHOUT_EXT}" --timestamp=none "${ITEM}"
-    RESULT=$?
-    if [ "$RESULT" != 0 ] ; then
-        echo "Error: Failed to sign '${ITEM}'."
-        IFS=$SAVED_IFS
-        exit 1
+        codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --verbose --identifier "${BUNDLE_ID_PREFIX}.${ITEM_WITHOUT_EXT}" "${ITEM}"
+        RESULT=$?
+        if [ "$RESULT" != 0 ] ; then
+            echo "Error: Failed to sign '${ITEM}'."
+            IFS=$SAVED_IFS
+            exit 1
+        fi
     fi
 done
 

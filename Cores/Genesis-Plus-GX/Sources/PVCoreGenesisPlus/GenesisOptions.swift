@@ -9,6 +9,13 @@
 import Foundation
 import PVSupport
 
+@objc public enum GenesisCoreType: Int, CaseIterable {
+    case SG1000
+    case masterSystem
+    case gameGear
+    case genesis
+}
+
 extension PVCoreGenesisPlus: CoreOptional {
     public static var options: [PVCoreBridge.CoreOption] {
         PVCoreGenesisPlusOptions.options
@@ -26,8 +33,16 @@ public class PVCoreGenesisPlusOptions: NSObject, CoreOptions {
                     description: "Allow more sprites on screen per scanline than original hardware. May cause glitching in some games, reduce sprite flicker in others.",
                     requiresRestart: true),
                 defaultValue: false)
+            
+            static let overClock: CoreOption =
+                .range(.init(
+                    title: "Overclock",
+                    description: "Increase clock speed by this amount (in %).",
+                    requiresRestart: true),
+                       range: .init(defaultValue: 100, min: 100, max: 500),
+                       defaultValue: 100)
 
-            static var allOptions: [CoreOption] = [noSpriteLimit]
+            static var allOptions: [CoreOption] = [noSpriteLimit, overClock]
         }
         
         enum Video {
@@ -101,6 +116,13 @@ public class PVCoreGenesisPlusOptions: NSObject, CoreOptions {
                              ],
                 defaultValue: 0)
             
+            static let mono: CoreOption =
+                .bool(.init(
+                    title: "Mono",
+                    description: "Mono audio output",
+                    requiresRestart: true),
+                      defaultValue: true)
+            
         //            static var filter_range: CoreOption = {
 //                .enumeration(.init(
 //                    title: "Video Overscan",
@@ -112,7 +134,7 @@ public class PVCoreGenesisPlusOptions: NSObject, CoreOptions {
 //                             ])
 //            }()
             
-            static var allOptions: [CoreOption] = [hq_fm, hq_pqg, filter, ym2413, ym2612]
+            static var allOptions: [CoreOption] = [hq_fm, hq_pqg, filter, ym2413, ym2612, mono]
         }
     }
     
@@ -147,9 +169,11 @@ extension PVCoreGenesisPlusOptions {
     @objc public static var filter: Int { valueForOption(Options.Sound.hq_fm).asInt! }
     @objc public static var ym2413: Int { valueForOption(Options.Sound.ym2413).asInt! }
     @objc public static var ym2612: Int { valueForOption(Options.Sound.ym2612).asInt! }
+    @objc public static var mono: Bool { valueForOption(Options.Sound.mono).asBool }
 
     @objc public static var no_sprite_limit: Bool { valueForOption(Options.System.noSpriteLimit).asBool }
-    
+    @objc public static var overclock: Int { valueForOption(Options.System.overClock) }
+
     @objc public static var gg_extra: Bool { valueForOption(Options.Video.gg_extra).asBool }
     @objc public static var overscan: Int { valueForOption(Options.Video.overscan).asInt! }
 }

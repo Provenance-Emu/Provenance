@@ -3,7 +3,7 @@
 # Function to print usage
 print_usage() {
     echo "Usage: $0 <source_folder> [bundle_identifier_prefix] [output_folder]"
-    echo "If bundle_identifier_prefix is not provided, it defaults to 'com.joemattiello'"
+    echo "If bundle_identifier_prefix is not provided, it defaults to 'org.provenance-emu'"
     echo "If output_folder is not provided, it defaults to the current directory"
 }
 
@@ -24,16 +24,13 @@ mkdir -p "$OUTPUT_FOLDER"
 # Function to create a dynamic framework from a dylib
 create_framework() {
     local dylib_path="$1"
-    local framework_name=$(basename "${dylib_path%.*}")
+    local framework_name=$(basename "${dylib_path%.*}" | tr '_' '.' | sed -E 's/(ios|tvos)$//g' | sed 's/\.$//')
     local framework_path="$OUTPUT_FOLDER/${framework_name}.framework"
 
     echo "Creating framework for $framework_name..."
 
-    # Create framework structure
+    # Create framework structure and copy dylib
     mkdir -p "$framework_path"
-    # mkdir -p "$framework_path/Headers"
-
-    # Copy dylib to framework and rename it
     cp "$dylib_path" "$framework_path/${framework_name}"
 
     # Create Info.plist

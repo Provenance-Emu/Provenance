@@ -5,7 +5,7 @@
 import Foundation
 
 @objc
-public enum CheatCodeTypes: Int {
+public enum CheatCodeTypes: Int, CaseIterable {
     case codeBreaker
     case gameGenie
     case gameShark

@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "PVStella",
+    name: "PCoreStella",
     platforms: [
         .iOS(.v17),
         .tvOS("15.4"),

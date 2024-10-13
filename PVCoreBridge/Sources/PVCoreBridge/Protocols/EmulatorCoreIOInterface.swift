@@ -14,6 +14,8 @@ import Foundation
     @objc var coreIdentifier: String? { get set }
     @objc var romMD5: String? { get set }
     @objc var romSerial: String? { get set }
+    @objc var extractArchive: Bool{ get set }
+
     @objc var discCount: UInt { get }
 
 //    @objc var screenType: ScreenTypeObjC { get }

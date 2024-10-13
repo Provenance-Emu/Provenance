@@ -20,15 +20,12 @@ import OpenGLES.ES3
 @objc
 extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     
-    open var alwaysUseMetal: Bool { false }
+    open var alwaysUseMetal: Bool {
+        return bridge.alwaysUseMetal
+    }
     
     open var aspectSize: CGSize {
-        if let objcBridge = self as? (any ObjCBridgedCore), let bridge = objcBridge.bridge as? EmulatorCoreVideoDelegate{
-            return bridge.aspectSize
-        } else {
-            fatalError("Fucked")
-            return .zero
-        }
+        return bridge.aspectSize
     }
 
     open var emulationFPS: Double {

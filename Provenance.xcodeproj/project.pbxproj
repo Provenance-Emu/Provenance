@@ -192,7 +192,6 @@
 		93102A4A2A30E879002C86C6 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93102A492A30E879002C86C6 /* PVLogging */; };
 		93102A4B2A30E879002C86C6 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 93102A492A30E879002C86C6 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9328B14C2A31837B0094C712 /* libMoltenVK_PPSSPP.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9328B14B2A31837A0094C712 /* libMoltenVK_PPSSPP.dylib */; platformFilter = ios; };
-		9328B14D2A3183C80094C712 /* libMoltenVK_PPSSPP.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9328B14B2A31837A0094C712 /* libMoltenVK_PPSSPP.dylib */; platformFilter = ios; };
 		9348D7502A32092900CC7998 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9348D7512A32093900CC7998 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */; };
 		9348D7522A32166A00CC7998 /* libMoltenVK_PPSSPP.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9328B14B2A31837A0094C712 /* libMoltenVK_PPSSPP.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -205,10 +204,6 @@
 		9368551E2A8956220087FE6B /* modules in Resources */ = {isa = PBXBuildFile; fileRef = 934BE9B3296F178400FB9933 /* modules */; };
 		936BFD852986A6CA001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; platformFilter = ios; };
 		936BFD862986A6CA001FF097 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		936BFD872986A719001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; platformFilter = ios; };
-		936BFD882986A719001FF097 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		936FDBEB295855670073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; platformFilter = ios; };
-		936FDBEC295855A50073628A /* libMoltenVK_Play.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93943E892A36DEF800E06513 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		939A43092A35ADE2001AFF6B /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -218,8 +213,6 @@
 		93AC9F572A7F75E300484B9E /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93CB27D2297CE664006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; };
 		93CB27D3297CE666006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		93CB27DA297CF017006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; };
-		93CB27DB297CF019006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93DB7D312A750967005F8B26 /* libswscale.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93DB7D2C2A750966005F8B26 /* libswscale.framework */; platformFilter = ios; };
 		93DB7D322A750967005F8B26 /* libavutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93DB7D2D2A750967005F8B26 /* libavutil.framework */; platformFilter = ios; };
 		93DB7D332A750967005F8B26 /* libavcodec.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93DB7D2E2A750967005F8B26 /* libavcodec.framework */; platformFilter = ios; };
@@ -240,7 +233,6 @@
 		93DB7D422A750AE5005F8B26 /* libavutil.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93DB7D2D2A750967005F8B26 /* libavutil.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93DB7D432A750AE7005F8B26 /* libswresample.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93DB7D302A750967005F8B26 /* libswresample.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93DB7D442A750AE9005F8B26 /* libswscale.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93DB7D2C2A750966005F8B26 /* libswscale.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		93DC577F2A3582C4008645AB /* libMoltenVK_PPSSPP.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9328B14B2A31837A0094C712 /* libMoltenVK_PPSSPP.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; platformFilters = (ios, tvos, ); };
 		93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B300593D2C794D6B003010F5 /* Provenance Mini Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B300593C2C794D6B003010F5 /* Provenance Mini Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -263,6 +255,8 @@
 		B307830728924D6B007E7A2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B30FC95E2C8A928400E42892 /* MoltenVK-Dynamic in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B30FC95D2C8A928400E42892 /* MoltenVK-Dynamic */; };
 		B30FC95F2C8A928500E42892 /* MoltenVK-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B30FC95D2C8A928400E42892 /* MoltenVK-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B3122A422CBB2F4900005705 /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3122A412CBB2F4900005705 /* PVMelonDS.framework */; };
+		B3122A432CBB2F4900005705 /* PVMelonDS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3122A412CBB2F4900005705 /* PVMelonDS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B312805F274C60EC00550720 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
 		B313647C2970095B00C34FED /* PVPCSXRearmed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */; };
 		B313647D2970095B00C34FED /* PVPCSXRearmed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -603,8 +597,8 @@
 		B347B3982BC4CD80006A3B2D /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B347B3972BC4CD80006A3B2D /* CoreData.framework */; };
 		B34969582C4E64AD00D37F79 /* PVThemes in Frameworks */ = {isa = PBXBuildFile; productRef = B34969572C4E64AD00D37F79 /* PVThemes */; };
 		B34A20152C62F96100E34059 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B34A20142C62F96100E34059 /* PVPlists */; };
-		B34CFF5D295F2BE90014C8AF /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; platformFilter = ios; };
-		B34CFF5E295F2BE90014C8AF /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B34CFF5D295F2BE90014C8AF /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
+		B34CFF5E295F2BE90014C8AF /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B34E4F4A2C11796B001559E8 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B34E4F492C11796B001559E8 /* PVLogging */; };
 		B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
@@ -815,8 +809,8 @@
 		B377ECAC2CB33EC700E9B750 /* PVEP128Emu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECAA2CB33EC700E9B750 /* PVEP128Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377ECC92CB3533C00E9B750 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; };
 		B377ECCA2CB3533C00E9B750 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); };
-		B37CE66A293F23C30010B746 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
+		B37CE66A293F23C30010B746 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE66F293F23F70010B746 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE66E293F23F70010B746 /* PVfMSX.framework */; };
 		B37CE670293F23F70010B746 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE66E293F23F70010B746 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE7C1293F287D0010B746 /* PVFreeIntv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; };
@@ -921,7 +915,6 @@
 		B3A4FB64278FFA5100A65248 /* PublishedPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB63278FFA5100A65248 /* PublishedPipeline.swift */; };
 		B3A4FB66278FFB6600A65248 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */; };
 		B3A60E862CB77080001D99C2 /* FrameworksRetro in Resources */ = {isa = PBXBuildFile; fileRef = B3A60E852CB7707F001D99C2 /* FrameworksRetro */; };
-		B3A60E892CB77AE3001D99C2 /* FrameworksRetro in Resources */ = {isa = PBXBuildFile; fileRef = B3A60E852CB7707F001D99C2 /* FrameworksRetro */; };
 		B3A60FFF2CB880BE001D99C2 /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B3A60FFE2CB880BE001D99C2 /* PVUI */; };
 		B3A610012CB88492001D99C2 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B3A610002CB88492001D99C2 /* PVJIT */; };
 		B3A610032CB885BD001D99C2 /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3A610022CB885BD001D99C2 /* PVCoremGBA-Dynamic */; };
@@ -960,8 +953,8 @@
 		B3AED2FC2BE355C3003A9290 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B3AED3002BE355DE003A9290 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
 		B3AED3042BE35C52003A9290 /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; platformFilters = (tvos, ); };
-		B3AEDE1C293F2FF10050BDB6 /* PVPlay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilter = ios; };
-		B3AEDE1D293F2FF10050BDB6 /* PVPlay.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3AEDE1C293F2FF10050BDB6 /* PVPlay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilter = maccatalyst; };
+		B3AEDE1D293F2FF10050BDB6 /* PVPlay.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AEDE2B293F34CA0050BDB6 /* PVPicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE2A293F34CA0050BDB6 /* PVPicoDrive.framework */; };
 		B3AEDE2C293F34CB0050BDB6 /* PVPicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE2A293F34CA0050BDB6 /* PVPicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AEDE2E293F34D90050BDB6 /* PVProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE2D293F34D90050BDB6 /* PVProSystem.framework */; };
@@ -1690,9 +1683,7 @@
 				B35AB40F2CB6DBF4003273D4 /* PVBliss-Dynamic in Embed Frameworks */,
 				93DB7D432A750AE7005F8B26 /* libswresample.framework in Embed Frameworks */,
 				93DB7D442A750AE9005F8B26 /* libswscale.framework in Embed Frameworks */,
-				93DC577F2A3582C4008645AB /* libMoltenVK_PPSSPP.dylib in Embed Frameworks */,
 				B35AB4462CB6EF74003273D4 /* MoltenVK.xcframework in Embed Frameworks */,
-				936FDBEC295855A50073628A /* libMoltenVK_Play.dylib in Embed Frameworks */,
 				B3FAC92A292B4505005E8B11 /* PVFCEU.framework in Embed Frameworks */,
 				B3FC97252CB8B68400C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
 				B35AB4442CB6EDD2003273D4 /* snes9x.framework in Embed Frameworks */,
@@ -1717,14 +1708,12 @@
 				B3FAC936292B451F005E8B11 /* PVGME.framework in Embed Frameworks */,
 				B34CFF5E295F2BE90014C8AF /* PVFlycast.framework in Embed Frameworks */,
 				B3FAC944292B4596005E8B11 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
-				936BFD882986A719001FF097 /* libMoltenVK.dylib in Embed Frameworks */,
 				B36B853629599A9700FDEA29 /* PVOpera.framework in Embed Frameworks */,
 				B35AB4182CB6DC46003273D4 /* PVStella-Dynamic in Embed Frameworks */,
 				B37CE7C2293F287D0010B746 /* PVFreeIntv.framework in Embed Frameworks */,
 				B35AB4282CB6E14D003273D4 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
 				B35AB4032CB6D976003273D4 /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 				93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */,
-				93CB27DB297CF019006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */,
 				B35AB44C2CB6F815003273D4 /* PVMelonDS.framework in Embed Frameworks */,
 				B3FAC946292B4599005E8B11 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3FAC948292B459C005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
@@ -2047,6 +2036,7 @@
 				93DB7D362A7509A5005F8B26 /* libavcodec.framework in Embed Frameworks */,
 				B3A610122CB88610001D99C2 /* PVProSystem-Dynamic in Embed Frameworks */,
 				B3FC97282CB8B69200C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
+				B3122A432CBB2F4900005705 /* PVMelonDS.framework in Embed Frameworks */,
 				93DB7D372A7509A6005F8B26 /* libavformat.framework in Embed Frameworks */,
 				93DB7D382A7509A7005F8B26 /* libavutil.framework in Embed Frameworks */,
 				93DB7D392A7509A9005F8B26 /* libswresample.framework in Embed Frameworks */,
@@ -2290,6 +2280,7 @@
 		B311B1EE27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B311B1FA27A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Strings.strings; sourceTree = "<group>"; };
 		B311B1FB27A53FF000D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3122A412CBB2F4900005705 /* PVMelonDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMelonDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313544926E4C3B90047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B31364762970092D00C34FED /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2808,7 +2799,6 @@
 				B35AB44B2CB6F815003273D4 /* PVMelonDS.framework in Frameworks */,
 				93DB7D3F2A750AC9005F8B26 /* libswscale.framework in Frameworks */,
 				B35AB40E2CB6DBF4003273D4 /* PVBliss-Dynamic in Frameworks */,
-				9328B14D2A3183C80094C712 /* libMoltenVK_PPSSPP.dylib in Frameworks */,
 				93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */,
 				B3271BDD276B8B660031AECC /* CoreTelephony.framework in Frameworks */,
 				B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */,
@@ -2830,9 +2820,7 @@
 				B3FC97242CB8B68400C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
 				B35AB42D2CB6E1AC003273D4 /* Defaults in Frameworks */,
 				B32987D72B661C7A00728996 /* TVUIKit.framework in Frameworks */,
-				936BFD872986A719001FF097 /* libMoltenVK.dylib in Frameworks */,
 				B3FAC94D292B45A3005E8B11 /* PVPotator.framework in Frameworks */,
-				936FDBEB295855670073628A /* libMoltenVK_Play.dylib in Frameworks */,
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				B36B853529599A9600FDEA29 /* PVOpera.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
@@ -2866,7 +2854,6 @@
 				B3AAFB562949F9B800CC8234 /* PVDolphin.framework in Frameworks */,
 				B35AB43F2CB6E795003273D4 /* PVLogging in Frameworks */,
 				B35AB43D2CB6E78C003273D4 /* PVLibrary in Frameworks */,
-				93CB27DA297CF017006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */,
 				B3FAC943292B4596005E8B11 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3FAC945292B4598005E8B11 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3AEE312293F3BA30050BDB6 /* PVMu.framework in Frameworks */,
@@ -3504,6 +3491,7 @@
 				B3F7E53C297736C200362B92 /* PVDolphin.framework in Frameworks */,
 				B3F7E53D297736C200362B92 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3F7E53E297736C200362B92 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				B3122A422CBB2F4900005705 /* PVMelonDS.framework in Frameworks */,
 				B3F7E53F297736C200362B92 /* PVMu.framework in Frameworks */,
 				B3F7E540297736C200362B92 /* SteamController in Frameworks */,
 				B3F7E541297736C200362B92 /* Metal.framework in Frameworks */,
@@ -3611,6 +3599,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3122A412CBB2F4900005705 /* PVMelonDS.framework */,
 				B3FC97452CB8C24600C6DB31 /* PVCoreBridgeRetro.framework */,
 				B3FC97402CB8C0DA00C6DB31 /* snes9x.framework */,
 				B35AB44A2CB6F815003273D4 /* PVMelonDS.framework */,
@@ -4766,7 +4755,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B347B3852BC4CA98006A3B2D /* Build configuration list for PBXNativeTarget "ProvennaceTV-Lite" */;
 			buildPhases = (
-				B347B2452BC4CA98006A3B2D /* Script: Get RetroArch Modules */,
 				B347B2462BC4CA98006A3B2D /* Sources */,
 				B347B3112BC4CA98006A3B2D /* Embed Frameworks */,
 				B347B3312BC4CA98006A3B2D /* Embed Foundation Extensions */,
@@ -5124,12 +5112,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3F7E41D297736BE00362B92 /* Build configuration list for PBXNativeTarget "Provenance-Lite" */;
 			buildPhases = (
-				9304F96A2AB3563200A92418 /* Script: Get RetroArch Modules */,
 				B3F7E2A5297736BE00362B92 /* Sources */,
 				B3F7E3E7297736BE00362B92 /* Embed Frameworks */,
 				B3F7E41B297736BE00362B92 /* Embed Foundation Extensions */,
 				B3F7E373297736BE00362B92 /* Frameworks */,
-				B3F7E3C2297736BE00362B92 /* Code Sign libretro.h Cores */,
 				B3F7E3C3297736BE00362B92 /* Resources */,
 				B3F7E3E6297736BE00362B92 /* Script: Set Build Number */,
 			);
@@ -5477,7 +5463,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3A60E892CB77AE3001D99C2 /* FrameworksRetro in Resources */,
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
 				B36703642896314200F75595 /* SmoothBilinear.fsh in Resources */,
 				B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */,
@@ -5945,7 +5930,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/code-sign-cores.sh\n";
+			shellScript = "echo \"Begin: Code Signing Cores\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/code-sign-cores.sh --no-dylib --org-identifie=${ORG_IDENTIFIER}\necho \"End: Code Signing Cores\"\n";
 		};
 		930499EA2A93073800BF257F /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6029,25 +6014,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\"\n";
 		};
-		9304F96A2AB3563200A92418 /* Script: Get RetroArch Modules */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Script: Get RetroArch Modules";
-			outputFileListPaths = (
-				"$(SRCROOT)/CoresRetro/RetroArch/scripts/output_modules.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\"\n";
-		};
 		9304F96B2AB3564B00A92418 /* Script: Get RetroArch Modules */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -6083,7 +6049,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Begin: Code Signing Cores\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/code-sign-cores.sh --no-dylib\necho \"End: Code Signing Cores\"\n";
+			shellScript = "#echo \"Begin: Code Signing Cores\"\n#sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/code-sign-test-cores.sh\" --no-dylib --org-identifie=${ORG_IDENTIFIER}\n#echo \"End: Code Signing Cores\"\n";
 		};
 		B300F064212512310010299E /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6143,25 +6109,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "#. Scripts/set_bundle_build_number.sh ProvenanceTV\n";
-		};
-		B347B2452BC4CA98006A3B2D /* Script: Get RetroArch Modules */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Script: Get RetroArch Modules";
-			outputFileListPaths = (
-				"$(SRCROOT)/CoresRetro/RetroArch/scripts/output_modules_tv.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\" tvos\n";
 		};
 		B347B3842BC4CA98006A3B2D /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6282,7 +6229,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks.sh \"${SRCROOT}\"/CoresRetro/RetroArch/modules/ ${ORG_IDENTIFIER} \"${SRCROOT}\"/CoresRetro/RetroArch/modules/FrameworksRetro\necho \"End: Generate Frameworks\"\n";
+			shellScript = "echo \"Begin: Generate Frameworks\"\n#sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks.sh \"${SRCROOT}\"/CoresRetro/RetroArch/modules/ ${ORG_IDENTIFIER} \"${SRCROOT}\"/CoresRetro/RetroArch/modules/FrameworksRetro\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch\necho \"End: Generate Frameworks\"\n";
 		};
 		B3B29D442156177500903290 /* Create Version.swift and Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6371,24 +6318,6 @@
 			shellPath = /bin/bash;
 			shellScript = "#. Scripts/set_bundle_build_number.sh TopShelf\n";
 		};
-		B3F7E3C2297736BE00362B92 /* Code Sign libretro.h Cores */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Code Sign libretro.h Cores";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/code-sign-cores.sh\n";
-		};
 		B3F7E3E6297736BE00362B92 /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -6428,7 +6357,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/code-sign-cores.sh --no-dylib\n";
+			shellScript = "echo \"Begin: Code Signing Cores\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/code-sign-cores.sh --no-dylib --org-identifie=${ORG_IDENTIFIER}\necho \"End: Code Signing Cores\"\n";
 		};
 		B3F7E573297736C200362B92 /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;

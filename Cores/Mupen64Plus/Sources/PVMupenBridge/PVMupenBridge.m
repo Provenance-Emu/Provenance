@@ -71,7 +71,7 @@
 #import <UIKit/UIKit.h>
 #endif
 
-#if TARGET_OS_MAC
+#if TARGET_OS_OSX
 @interface PVMupenBridge () <PVN64SystemResponderClient>
 #else
 @interface PVMupenBridge () <PVN64SystemResponderClient, GLKViewDelegate>

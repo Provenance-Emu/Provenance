@@ -25,11 +25,11 @@ import GameController
 
 @objc
 @objcMembers
-public final class PVStellaGameCore: PVEmulatorCore, @unchecked Sendable {
+public final class PVStellaGameCore: PVEmulatorCore {
     
     // MARK: Cheats
-    @objc
-    public let cheats: NSMutableArray = .init()
+//    @objc
+//    public let cheats: NSMutableArray = .init()
 
     @objc
     public var supportsCheatCode: Bool { true }
@@ -62,14 +62,14 @@ public final class PVStellaGameCore: PVEmulatorCore, @unchecked Sendable {
 //    @objc
 //    public override var videoBuffer: UnsafeMutableRawPointer { UnsafeMutableRawPointer.init(_videoBuffer) }
 //    
-    @objc
-    public var videoWidth: Int32 { _videoWidth }
-    @objc
-    public var _videoWidth: Int32 = STELLA_WIDTH
-    @objc
-    public var videoHeight: Int32 { _videoHeight }
-    @objc
-    public var _videoHeight: Int32 = STELLA_HEIGHT
+//    @objc
+//    public var videoWidth: Int32 { _videoWidth }
+//    @objc
+//    public var _videoWidth: Int32 = STELLA_WIDTH
+//    @objc
+//    public var videoHeight: Int32 { _videoHeight }
+//    @objc
+//    public var _videoHeight: Int32 = STELLA_HEIGHT
 
     // MARK: Lifecycle
     lazy var _bridge: PVStellaBridge = PVStellaBridge.init { key in

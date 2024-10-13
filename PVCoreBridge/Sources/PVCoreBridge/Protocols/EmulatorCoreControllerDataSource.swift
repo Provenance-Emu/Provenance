@@ -30,7 +30,7 @@ import PVLogging
     func controller(forPlayer: UInt) -> GCController?
 #endif
 #if canImport(UIKit) && !os(watchOS)
-    var touchViewController: UIViewController? { get }
+    var touchViewController: UIViewController? { get set }
 #endif
 }
 
@@ -88,7 +88,7 @@ public extension EmulatorCoreRumbleDataSource {
     }
     
     @MainActor
-    func rumble(player: Int) async {
+    func rumble(player: Int) {
         guard self.supportsRumble else {
             WLOG("Rumble called on core that doesn't support it")
             return

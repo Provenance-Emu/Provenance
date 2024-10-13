@@ -16,7 +16,7 @@ import PVCoreBridgeRetro
 @objcMembers
 open class PVMelonDSCore: PVEmulatorCore {
 
-    let _bridge: PVMelonDSCoreBridge = .init()
+    lazy var _bridge: PVMelonDSCoreBridge = .init()
     
     public required init() {
         super.init()

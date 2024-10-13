@@ -2333,7 +2333,14 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
 #ifdef _WIN32
       vulkan_library = dylib_load("vulkan-1.dll");
 #elif __APPLE__
-      vulkan_library = dylib_load("MoltenVK.framework/MoltenVK");
+      vulkan_library = dylib_load("MoltenVK");
+       if (!vulkan_library) {
+           vulkan_library = dylib_load("MoltenVK.framework");
+       }
+       if (!vulkan_library) {
+           vulkan_library = dylib_load("MoltenVK.framework/MoltenVK");
+       }
+
 #else
       vulkan_library = dylib_load("libvulkan.so.1");
       if (!vulkan_library)

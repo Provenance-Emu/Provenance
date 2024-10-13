@@ -71,20 +71,17 @@ public final class PVGameLibraryUpdatesController: Sendable {
                 }
                 return nil
             })
-        #warning("TODO: Finish this, using combine instead of Rx")
-        #if false
+
         Task.detached {
             let _systemDirsConflicts = Observable
                 .just(PVSystem.all.map { $0 })
                 .map({ systems -> [(System, [URL])] in
-                    Task {
-                        await systems
-                            .asyncMap { await $0.asDomain() }
+                        systems
+                            .map { $0.asDomain() }
                             .compactMap { system in
                                 guard let candidates = FileManager.default.candidateROMs(for: system) else { return nil }
                                 return (system, candidates)
                             }
-                    }.value
                 })
                 .flatMap({ systems -> Observable<Void> in
                     Observable.concat(systems.map { system, paths in
@@ -113,9 +110,6 @@ public final class PVGameLibraryUpdatesController: Sendable {
             })
             .map { conflicts in conflicts.filter { !$0.candidates.isEmpty }}
             .share(replay: 1, scope: .forever)
-        #else
-        conflicts = .just([])
-        #endif
     }
     
     public func importROMDirectories() async {

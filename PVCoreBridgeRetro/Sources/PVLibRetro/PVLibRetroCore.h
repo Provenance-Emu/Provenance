@@ -57,6 +57,7 @@ __attribute__((weak_import))
     struct retro_system_av_info av_info;
     enum retro_pixel_format pix_fmt;
 }
+- (instancetype _Nonnull )init;
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
 - (void)pollControllers;
 

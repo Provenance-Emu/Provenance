@@ -17,16 +17,11 @@ import GameController
 
 public class PVPicoDrive: PVEmulatorCore, @unchecked Sendable {
 
-    // PVEmulatorCoreBridged
-//    public typealias Bridge = PVPicoDriveBridge
-//    public lazy var bridge: Bridge = {
-//        let core = PVPicoDriveBridge()
-//        return core
-//    }()
-//    
+    let _bridge: PVPicoDriveBridge = .init()
+
     required init() {
         super.init()
-        self.bridge = PVPicoDriveBridge() as! any ObjCBridgedCoreBridge
+        self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
 
     public override func initialize() {
@@ -64,10 +59,10 @@ extension PVPicoDrive {
 
 extension PVPicoDrive: PVSega32XSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVSega32XButton, forPlayer player: Int) {
-        (bridge as! PVSega32XSystemResponderClient).didPush(button, forPlayer: player)
+        (_bridge as! PVSega32XSystemResponderClient).didPush(button, forPlayer: player)
     }
     
     public func didRelease(_ button: PVCoreBridge.PVSega32XButton, forPlayer player: Int) {
-        (bridge as! PVSega32XSystemResponderClient).didRelease(button, forPlayer: player)
+        (_bridge as! PVSega32XSystemResponderClient).didRelease(button, forPlayer: player)
     }
 }

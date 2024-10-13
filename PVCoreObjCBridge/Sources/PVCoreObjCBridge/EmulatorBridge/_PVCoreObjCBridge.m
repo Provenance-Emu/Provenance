@@ -412,13 +412,13 @@ static NSString *_systemName;
 
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
-//- (UIViewController *)touchViewController {
-//    return _touchViewController;
-//}
+- (UIViewController *)touchViewController {
+    return _touchViewController;
+}
 
 - (void)setTouchViewController:(UIViewController *)touchViewController {
-    if (self.touchViewController != touchViewController) {
-        self.touchViewController = touchViewController;
+    if (_touchViewController != touchViewController) {
+        _touchViewController = touchViewController;
     }
 }
 #endif
@@ -472,6 +472,42 @@ static NSString *_systemName;
         _controller4 = controller4;
     }
 }
+- (GCController *)controller5 {
+    return _controller5;
+}
+
+- (void)setController5:(GCController *)controller5 {
+    if (_controller5 != controller5) {
+        _controller5 = controller5;
+    }
+}
+- (GCController *)controller6 {
+    return _controller6;
+}
+
+- (void)setController6:(GCController *)controller6 {
+    if (_controller6 != controller6) {
+        _controller6 = controller6;
+    }
+}
+- (GCController *)controller7 {
+    return _controller7;
+}
+
+- (void)setController7:(GCController *)controller7 {
+    if (_controller7 != controller7) {
+        _controller7 = controller7;
+    }
+}
+- (GCController *)controller8 {
+    return _controller8;
+}
+
+- (void)setController8:(GCController *)controller8 {
+    if (_controller8 != controller8) {
+        _controller8 = controller8;
+    }
+}
 #endif
 
 #if !TARGET_OS_OSX  && !TARGET_OS_WATCH
@@ -481,6 +517,7 @@ static NSString *_systemName;
 
 - (void)updateControllers {
     //subclasses may implement for polling
+    VLOG(@"STUB");
 }
 
 //@end

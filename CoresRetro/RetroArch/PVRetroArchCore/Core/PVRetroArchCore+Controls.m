@@ -307,6 +307,22 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
         {
             controller = _current.controller4;
         }
+        else if (_current.controller5 && player == 4)
+        {
+            controller = _current.controller5;
+        }
+        else if (_current.controller6 && player == 5)
+        {
+            controller = _current.controller6;
+        }
+        else if (_current.controller7 && player == 6)
+        {
+            controller = _current.controller7;
+        }
+        else if (_current.controller8 && player == 7)
+        {
+            controller = _current.controller8;
+        }
         if (controller) {
             apple_gamecontroller_joypad_connect(controller);
         }

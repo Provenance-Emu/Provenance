@@ -83,11 +83,13 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 #endif
     
 #if !os(macOS) && !os(watchOS)
-    @objc dynamic open var touchViewController: UIViewController? = nil
+    @objc open var touchViewController: UIViewController?
+    { didSet { bridge.touchViewController = touchViewController} }
+//    { get{ bridge.touchViewController } set { bridge.touchViewController = newValue } }
 #endif
     
-    // MARK: EmulatorCoreRumbleDataSource
-    //    var supportsRumble: Bool = false
+//    // MARK: EmulatorCoreRumbleDataSource
+//    var supportsRumble: Bool { bridge.supportsRumble }
     
     // MARK: EmulatorCoreSavesDataSource
     
@@ -108,6 +110,7 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     
     // PVRenderDelegate
     @objc open weak var renderDelegate: (any PVCoreBridge.PVRenderDelegate)?
+//    { didSet { bridge.renderDelegate = renderDelegate } }
     { get{ bridge.renderDelegate } set { bridge.renderDelegate = newValue } }
     
     // MARK: EmulatorCoreRunLoop
@@ -131,6 +134,7 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     { get { bridge.isFrontBufferReady } set { bridge.isFrontBufferReady = newValue } }
 
     @objc dynamic open var gameSpeed: PVCoreBridge.GameSpeed = .normal
+    { didSet { bridge.gameSpeed = gameSpeed }}
     
     @objc dynamic open var emulationLoopThreadLock: NSLock
     { get { bridge.emulationLoopThreadLock } set { bridge.emulationLoopThreadLock = newValue } }
@@ -143,42 +147,31 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 
     
     // MARK: EmulatorCoreIOInterface
-    @objc dynamic open var romName: String? = nil {
-        didSet {
-            bridge.romName = romName
-        }
-    }
-    @objc dynamic open var BIOSPath: String? = nil {
-        didSet {
-            bridge.BIOSPath = BIOSPath
-        }
-    }
-    @objc dynamic open var systemIdentifier: String? = nil {
-        didSet {
-            bridge.systemIdentifier = systemIdentifier
-        }
-    }
-    @objc dynamic open var coreIdentifier: String? {
-        didSet {
-            bridge.coreIdentifier = coreIdentifier
-        }
-    }
-    @objc dynamic open var romMD5: String? = nil {
-        didSet {
-            bridge.romMD5 = romMD5
-        }
-    }
-    @objc dynamic open var romSerial: String? {
-        didSet {
-            bridge.romSerial = romSerial
-        }
-    }
-    
+    @objc dynamic open var romName: String?
+    { get { bridge.romName } set { bridge.romName = newValue } }
+
+    @objc dynamic open var BIOSPath: String?
+    { get { bridge.BIOSPath } set { bridge.BIOSPath = newValue } }
+
+    @objc dynamic open var systemIdentifier: String?
+    { get { bridge.systemIdentifier } set { bridge.systemIdentifier = newValue } }
+
+    @objc dynamic open var coreIdentifier: String?
+    { get { bridge.coreIdentifier } set { bridge.coreIdentifier = newValue } }
+
+    @objc dynamic open var romMD5: String?
+    { get { bridge.romMD5 } set { bridge.romMD5 = newValue } }
+
+    @objc dynamic open var romSerial: String?
+    { get { bridge.romSerial } set { bridge.romMD5 = romSerial } }
+
     @objc dynamic open var discCount: UInt { bridge.discCount }
     
     @objc dynamic open var screenType: ScreenTypeObjC = .crt
     
-    @objc dynamic open var extractArchive: Bool = true
+    @objc dynamic open var extractArchive: Bool
+    { get { bridge.extractArchive } set { bridge.extractArchive = newValue } }
+
     
     // MARK: Audio
     @objc dynamic open var audioDelegate: (any PVAudioDelegate)?
@@ -188,12 +181,13 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     
     @objc open func initialize() {
 //        buildRingBuffers()
-        
+        /// Fixes a race condition
+        bridge.touchViewController = touchViewController
+        bridge.initialize()
         
         frontBufferLock = .init()
         frontBufferCondition = .init()
         emulationLoopThreadLock = .init()
-        bridge.initialize()
     }
     
     //    @nonobjc
@@ -239,7 +233,8 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 @objc
 extension PVEmulatorCore : ResponderClient {
     open func send(event: UIEvent?) {
-#warning("This is empty in the ObjC version too, but why does this exist? @JoeMatt")
+        #warning("This is empty in the ObjC version too, but why does this exist? @JoeMatt")
+        print("sendEvent: is empty \(String(describing: event))")
     }
 }
 #endif

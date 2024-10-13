@@ -2,6 +2,12 @@ import Foundation
 import PVSupport
 import PVEmulatorCore
 
+extension PVRetroArchCoreCore: CoreOptional {
+    public static var options: [PVCoreBridge.CoreOption] {
+        PVRetroArchCore.options
+    }
+}
+
 extension PVRetroArchCore: CoreOptional {
     static var gsOption: CoreOption {
          .enumeration(.init(title: "Graphics Handler",
@@ -359,11 +365,11 @@ extension PVRetroArchCore: CoreOptional {
     }
 }
 
-extension PVRetroArchCore: GameWithCheat {
+extension PVRetroArchCoreCore: GameWithCheat {
 	@objc public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
 		do {
 			NSLog("Calling setCheat \(code) \(type) \(codeType)")
-			try self.setCheat(code, setType: type, setCodeType: codeType, setIndex: cheatIndex, setEnabled: enabled)
+            try self._bridge.setCheat(code, setType: type, setCodeType: codeType, setIndex: cheatIndex, setEnabled: enabled)
 			return true
 		} catch let error {
             NSLog("Error setCheat \(error)")
@@ -400,7 +406,7 @@ extension PVRetroArchCore: GameWithCheat {
     }
 }
 
-extension PVRetroArchCore: CoreActions {
+extension PVRetroArchCoreCore: CoreActions {
     public var coreActions: [CoreAction]? {
         return [CoreAction(title: "Game Options (RetroArch Options Menu)", options: nil, style:.default)]
     }

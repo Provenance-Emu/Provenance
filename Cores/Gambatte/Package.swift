@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "PVGambatte",
+    name: "PVCoreGambatte",
     platforms: [
         .iOS(.v17),
         .tvOS(.v13),

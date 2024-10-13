@@ -56,6 +56,11 @@ extension PVEmulatorViewController {
         core.controller2 = PVControllerManager.shared.player2
         core.controller3 = PVControllerManager.shared.player3
         core.controller4 = PVControllerManager.shared.player4
+        core.controller5 = PVControllerManager.shared.player5
+        core.controller6 = PVControllerManager.shared.player6
+        core.controller7 = PVControllerManager.shared.player7
+        core.controller8 = PVControllerManager.shared.player8
+
         hideOrShowMenuButton()
         #if os(tvOS)
         PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
