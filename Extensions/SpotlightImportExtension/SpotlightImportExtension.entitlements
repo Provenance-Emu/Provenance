@@ -6,7 +6,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.org.provenance-emu.provenance</string>
+		<string>group.$(CFBundleIdentifier)</string>
 	</array>
 	<key>com.apple.security.assets.pictures.read-only</key>
 	<true/>

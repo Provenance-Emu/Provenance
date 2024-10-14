@@ -39,3 +39,13 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = TARGET_IPHONE_SIMULATOR=1 I
 // tvOS Simulator
 GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1 IOS=1 HAVE_OPENGLES3=1
 // HAVE_OPENGLES_3_1=1
+
+// Vars to be overwritten by `CodeSigning.xcconfig` if exists
+DEVELOPMENT_TEAM = S32Z3HMYVQ
+ORG_IDENTIFIER = org.provenance-emu
+
+#include? "../../CodeSigning.xcconfig"
+
+ORG_PREFIX = $(ORG_IDENTIFIER)
+
+PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PROJECT_NAME:lower)
