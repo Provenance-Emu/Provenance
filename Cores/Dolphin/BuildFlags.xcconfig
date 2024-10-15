@@ -46,3 +46,13 @@ OBJROOT = $(SRCROOT)/lib/dolphin-emu
 SYMROOT = $(SRCROOT)/lib/dolphin-emu
 PROJECT_TEMP_DIR = $(SRCROOT)/lib/dolphin-emu/build/$(PROJECT_NAME).build
 VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES
+
+// Vars to be overwritten by `CodeSigning.xcconfig` if exists
+DEVELOPMENT_TEAM = S32Z3HMYVQ
+ORG_IDENTIFIER = org.provenance-emu
+
+#include? "../../CodeSigning.xcconfig"
+
+ORG_PREFIX = $(ORG_IDENTIFIER)
+
+PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PROJECT_NAME:lower)

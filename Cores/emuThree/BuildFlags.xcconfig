@@ -38,3 +38,13 @@ SYMROOT = $(SRCROOT)/lib/emuthree
 PROJECT_TEMP_DIR = $(SRCROOT)/lib/emuthree/build/$(PROJECT_NAME).build
 CACHE_ROOT = $(SRCROOT)/lib/cache
 DERIVED_FILE_DIR = $(SRCROOT)/lib/emuthree/build/derived/$(PROJECT_NAME).build
+
+// Vars to be overwritten by `CodeSigning.xcconfig` if exists
+DEVELOPMENT_TEAM = S32Z3HMYVQ
+ORG_IDENTIFIER = org.provenance-emu
+
+#include? "../../CodeSigning.xcconfig"
+
+ORG_PREFIX = $(ORG_IDENTIFIER)
+
+PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PROJECT_NAME:lower)

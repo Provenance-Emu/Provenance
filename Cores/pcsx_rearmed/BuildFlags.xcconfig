@@ -47,3 +47,13 @@ OTHER_CFLAGS[sdk=appletvos*] = $(inherited)
 GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1 TVOS=1
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
 INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = ../Debug/PVDebug.m
+
+// Vars to be overwritten by `CodeSigning.xcconfig` if exists
+DEVELOPMENT_TEAM = S32Z3HMYVQ
+ORG_IDENTIFIER = org.provenance-emu
+
+#include? "../../CodeSigning.xcconfig"
+
+ORG_PREFIX = $(ORG_IDENTIFIER)
+
+PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PROJECT_NAME:lower)

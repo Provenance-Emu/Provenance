@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
-		<string>iCloud.org.provenance-emu.provenance</string>
+		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>
@@ -38,7 +38,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.org.provenance-emu.provenance</string>
+		<string>$(APP_GROUP_IDENTIFIER)</string>
 	</array>
 	<key>com.apple.security.assets.pictures.read-write</key>
 	<true/>

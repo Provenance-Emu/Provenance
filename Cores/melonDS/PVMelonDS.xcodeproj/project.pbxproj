@@ -740,8 +740,8 @@
 		93C36E292A8B403C0007671D /* net_ifinfo_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_ifinfo_test.c; sourceTree = "<group>"; };
 		93C36E2A2A8B403C0007671D /* udp-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "udp-test.c"; sourceTree = "<group>"; };
 		93C36E2B2A8B403C0007671D /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		93C36E2C2A8B403C0007671D /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = file; path = net_ifinfo; sourceTree = "<group>"; };
-		93C36E2D2A8B403C0007671D /* http_test */ = {isa = PBXFileReference; lastKnownFileType = file; path = http_test; sourceTree = "<group>"; };
+		93C36E2C2A8B403C0007671D /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = text; path = net_ifinfo; sourceTree = "<group>"; };
+		93C36E2D2A8B403C0007671D /* http_test */ = {isa = PBXFileReference; lastKnownFileType = text; path = http_test; sourceTree = "<group>"; };
 		93C36E2E2A8B403C0007671D /* net_http_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_http_test.c; sourceTree = "<group>"; };
 		93C36E312A8B403C0007671D /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		93C36E322A8B403C0007671D /* rpng_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rpng_test.c; sourceTree = "<group>"; };
@@ -5703,7 +5703,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "${DEVELOPMENT_TEAM}";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -5718,7 +5718,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_dylib;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMelonDS";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVMelonDS;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
@@ -5850,7 +5850,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "${DEVELOPMENT_TEAM}";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -5865,7 +5865,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = mh_dylib;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMelonDS";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVMelonDS;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
