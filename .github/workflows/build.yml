@@ -16,6 +16,7 @@ concurrency:
 env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY: ${{ github.workspace }}
 
 jobs:
   build:
@@ -120,6 +121,7 @@ jobs:
           CODE_SIGNING_REQUIRED=NO \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
           CODE_SIGNING_ALLOWED=NO \
+          SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY=${{ env.SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY }} \
           DEVELOPMENT_TEAM=S32Z3HMYVQ \
           ORG_IDENTIFIER=org.provenance-emu \
           | xcpretty && exit ${PIPESTATUS[0]}
