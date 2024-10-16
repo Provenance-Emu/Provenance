@@ -116,6 +116,7 @@ jobs:
           -workspace Provenance.xcworkspace \
           -scheme "${{ matrix.scheme }}" \
           -sdk ${{ matrix.sdk }} \
+          -skipPackagePluginValidation \
           archive \
           -archivePath ./archive \
           CODE_SIGNING_REQUIRED=NO \
