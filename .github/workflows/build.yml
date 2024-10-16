@@ -80,7 +80,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: '15.1'
+          xcode-version: '16.0'
           # xcode-select-path: /Applications/Xcode_${{ matrix.version }}.app/Contents/Developer
 
       - uses: actions/cache@v3
