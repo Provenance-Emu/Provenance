@@ -63,7 +63,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var use_metal: Bool { Defaults[.useMetal] }
 
     private(set) lazy var gpuViewController: PVGPUViewController = {
-        return use_metal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
+        let useMetal = (use_metal && !core.alwaysUseGL) || core.alwaysUseMetal
+        return useMetal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
     }()
 
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = {
@@ -143,7 +144,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         PVControllerManager.shared.hasLayout=false
         if core.skipLayout {
             gpuViewController.dismiss(animated: false)
-        } else if core.alwaysUseMetal {
+        } else if core.alwaysUseMetal && !core.alwaysUseGL {
             gpuViewController = PVMetalViewController(withEmulatorCore: core)
         }
         

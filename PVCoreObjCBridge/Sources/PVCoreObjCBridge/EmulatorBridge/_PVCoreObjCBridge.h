@@ -189,6 +189,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 //@interface PVCoreObjCBridge (Video) // <EmulatorCoreVideoDelegate>
 
 @property (nonatomic, assign) BOOL alwaysUseMetal;
+@property (nonatomic, assign) BOOL alwaysUseGL;
 
 @property (nonatomic, assign) double emulationFPS;
 @property (nonatomic, assign) double renderFPS;

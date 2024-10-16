@@ -24,6 +24,10 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
         return bridge.alwaysUseMetal
     }
     
+    open var alwaysUseGL: Bool {
+        return bridge.alwaysUseGL
+    }
+    
     open var aspectSize: CGSize {
         return bridge.aspectSize
     }

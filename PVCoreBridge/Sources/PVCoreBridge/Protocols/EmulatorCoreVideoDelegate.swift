@@ -20,6 +20,7 @@ import Foundation
 
 @objc public protocol EmulatorCoreVideoDelegate {
     @objc dynamic var alwaysUseMetal: Bool { get }
+    @objc dynamic var alwaysUseGL: Bool { get }
     @objc dynamic var aspectSize: CGSize  { get }
     @objc dynamic var emulationFPS: Double { get }
     @objc dynamic var isDoubleBuffered: Bool { get }
