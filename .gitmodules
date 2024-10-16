@@ -175,9 +175,6 @@
 [submodule "CoresRetro/RetroArch/lhasa"]
 	path = CoresRetro/RetroArch/lhasa
 	url = https://github.com/fragglet/lhasa.git
-[submodule "CoresRetro/RetroArch/ZipArchive"]
-	path = CoresRetro/RetroArch/ZipArchive
-	url = https://github.com/ZipArchive/ZipArchive.git
 [submodule "Cores/emuThree/cmake/zstd"]
 	path = Cores/emuThree/cmake/zstd
 	url = https://github.com/facebook/zstd.git
@@ -187,3 +184,6 @@
 [submodule "Cores/mGBA/Sources/libmGBA"]
 	path = Cores/mGBA/Sources/libmGBA
 	url = https://github.com/Provenance-Emu/mGBA-Core.git
+[submodule "CoresRetro/RetroArch/ZipArchive"]
+	path = CoresRetro/RetroArch/ZipArchive
+	url = https://github.com/ZipArchive/ZipArchive.git
