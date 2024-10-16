@@ -32,7 +32,7 @@ extern "C" {
 /**
  * This header is obsolete and deprecated, and is provided for legacy compatibility only.
  *
- * To configure MoltenVK, use one of the following mechanisms, 
+ * To configure MoltenVK, use one of the following mechanisms,
  * as documented in MoltenVK_Configuration_Parameters.md:
  *
  *   - The standard Vulkan VK_EXT_layer_settings extension (layer name "MoltenVK").

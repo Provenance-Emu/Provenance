@@ -648,7 +648,7 @@ protocol ControllerButtonPressTableView: ControllerButtonPress {
 public
 extension ControllerButtonPressTableView {
 
-    public func controllerButtonPress(_ type: ButtonType) {
+    func controllerButtonPress(_ type: ButtonType) {
         switch type {
         case .select:
             if let indexPath = tableView.indexPathForSelectedRow {
@@ -659,6 +659,7 @@ extension ControllerButtonPressTableView {
                     if cell.accessoryType != .none {
                         tableView.delegate?.tableView?(tableView, accessoryButtonTappedForRowWith: indexPath)
                     }
+                    #if !os(tvOS)
                     if let sw = cell.accessoryView as? UISwitch {
                         sw.isOn = !sw.isOn
                         sw.sendActions(for: .valueChanged)
@@ -667,6 +668,7 @@ extension ControllerButtonPressTableView {
                         // TODO: do we care?
                         WLOG("UISlider not implimented")
                     }
+                    #endif
                 }
             }
         case .up:

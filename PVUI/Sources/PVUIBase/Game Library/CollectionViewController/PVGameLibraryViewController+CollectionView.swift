@@ -83,7 +83,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     #endif
 
     #if os(tvOS)
-        func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    public func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
             let item: Section.Item? = firstModel(in: collectionView, at: section)
             switch item {
             case .none:

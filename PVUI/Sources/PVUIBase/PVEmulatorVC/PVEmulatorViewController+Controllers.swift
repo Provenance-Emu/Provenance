@@ -2,6 +2,9 @@
 import PVLogging
 import GameController
 import PVSupport
+#if canImport(SteamController)
+import SteamController
+#endif
 
 extension PVEmulatorViewController {
     @objc func handlePause(_ note: Notification?) {
@@ -62,7 +65,7 @@ extension PVEmulatorViewController {
         core.controller8 = PVControllerManager.shared.player8
 
         hideOrShowMenuButton()
-        #if os(tvOS)
+        #if os(tvOS) && canImport(SteamController)
         PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
         #endif
     }

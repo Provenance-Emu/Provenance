@@ -143,7 +143,7 @@
 #define HAVE_FENV_H 1
 
 /* Define to 1 if you have the `fork' function. */
-#define HAVE_FORK 1
+//#define HAVE_FORK 1
 
 /* Define to 1 if you have the `freeaddrinfo' function. */
 #define HAVE_FREEADDRINFO 1

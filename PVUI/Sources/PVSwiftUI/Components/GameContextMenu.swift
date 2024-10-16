@@ -26,7 +26,7 @@ struct GameMoreInfoViewController : UIViewControllerRepresentable {
    func makeUIViewController(context: Context) -> GameMoreInfoPageViewController {
        let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
        firstVC.game = game
-       
+
        let moreInfoCollectionVC = GameMoreInfoPageViewController.init() //segue.destination as! GameMoreInfoPageViewController
        moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
         return moreInfoCollectionVC
@@ -89,46 +89,54 @@ struct GameContextMenu: SwiftUI.View {
 }
 
 extension GameContextMenu {
-    
+
     func showMoreInfo(forGame game: PVGame) {
         let moreInfoCollectionVC = GameMoreInfoViewController(game: game)
-        
+
     }
-    
+
     func promptUserToRename(game: PVGame) {
         #warning("TODO: Rename button action")
         self.rootDelegate?.showUnderConstructionAlert()
     }
-    
+
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
         // Get the MD5 of the game
         let md5 = game.md5
         // Copy to pasteboard
+#if !os(tvOS)
         UIPasteboard.general.string = md5
+        #endif
         // Alert the user that the MD5 has been copied to the clipboard
-        self.rootDelegate?.showUnderConstructionAlert()
-//        self.alert(title: "MD5 Copied", message: "The MD5 for \(game.title) has been copied to the clipboard.")
+
     }
-    
+
     func promptUserToSelectArtwork(forGame game: PVGame) {
 #warning("TODO: Select artwork button action")
         self.rootDelegate?.showUnderConstructionAlert()
     }
-    
+
     func pasteArtwork(forGame game: PVGame) {
+        #if !os(tvOS)
         guard let artwork = UIPasteboard.general.image else {
             // Alert user Pasteboard did not contain image
             artworkNotFoundAlert()
             return
         }
+        #endif
 #warning("TODO: Paste artwork button action")
         self.rootDelegate?.showUnderConstructionAlert()
     }
-    
+
     func artworkNotFoundAlert() {
-        self.rootDelegate?.showUnderConstructionAlert()
+//        let alert = Alert(
+//            title: Text("No Artwork Found"),
+//            message: Text("The clipboard does not contain an image that can be used as artwork."),
+//            dismissButton: .default(Text("OK"))
+//        )
+//        rootDelegate?.presentAlert(alert)
     }
-    
+
     func share(game: PVGame) {
     #warning("TODO: Share button action")
     self.rootDelegate?.showUnderConstructionAlert()

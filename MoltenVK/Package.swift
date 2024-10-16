@@ -6,7 +6,7 @@ let package = Package(
     name: "MoltenVK",
     platforms: [
         .iOS(.v17),
-        .tvOS("15.4"),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),
@@ -51,7 +51,7 @@ let package = Package(
             path: "MoltenVK/static/MoltenVK.xcframework"
         )
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx20
 )

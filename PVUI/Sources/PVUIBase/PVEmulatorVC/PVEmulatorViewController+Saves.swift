@@ -70,6 +70,7 @@ public extension PVEmulatorViewController {
         })
     }
 
+    @discardableResult
     public func autoSaveState() async throws(SaveStateError) -> Bool {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")

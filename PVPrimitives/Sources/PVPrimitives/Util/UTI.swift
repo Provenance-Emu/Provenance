@@ -7,7 +7,6 @@
 //
 
 import Foundation
-
 import CoreServices
 
 public extension UTI {
@@ -37,7 +36,6 @@ public extension UTType {
 #endif
 
 /// Instances of the UTI class represent a specific Universal Type Identifier, e.g. kUTTypeMPEG4.
-
 public final class UTI: RawRepresentable, Equatable {
     /**
      The TagClass enum represents the supported tag classes.

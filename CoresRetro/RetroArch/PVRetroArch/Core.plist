@@ -609,6 +609,22 @@
 			<key>PVProjectVersion</key>
 			<string>v0.6.3</string>
 		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>potator.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.supervision</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Potator</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/potator</string>
+			<key>PVProjectVersion</key>
+			<string>v20200223</string>
+		</dict>
 	</array>
 </dict>
 </plist>

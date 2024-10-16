@@ -15,7 +15,7 @@ import GameController
 #endif
 import PVLogging
 
-@objc public protocol EmulatorCoreControllerDataSource {
+@objc public protocol EmulatorCoreControllerDataSource: ResponderClient {
 #if canImport(GameController)
     var controller1: GCController? { get set }
     var controller2: GCController? { get set }

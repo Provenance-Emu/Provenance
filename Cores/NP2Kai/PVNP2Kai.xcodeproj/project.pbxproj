@@ -252,7 +252,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-np2kai | head -n1 | awk '{print $1;}'`iOS1.000\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-np2kai/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/\"Makefile.libretro \"${SRCROOT}/cmake/build/sdl/\"Makefile\n    cp \"${SRCROOT}/cmake/\"statsave.c \"${SRCROOT}/cmake/build/\"statsave.c\n    make clean\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build/sdl\"\n\nmake\n\nexit 0\n";
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-np2kai | head -n1 | awk '{print $1;}'`iOS1.000\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-np2kai/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/\"Makefile.libretro \"${SRCROOT}/cmake/build/sdl/\"Makefile\n    cp \"${SRCROOT}/cmake/\"statsave.c \"${SRCROOT}/cmake/build/\"statsave.c\n    make clean\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build/sdl\"\n\nmake -j5\n\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -270,14 +270,22 @@
 		9312496C298CE744002DE0C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilters = (
+				ios,
+				maccatalyst,
 				tvos,
+				watchos,
 			);
 			target = 93124966298CE6A5002DE0C2 /* NP2KaiRetroArchTV */;
 			targetProxy = 9312496B298CE744002DE0C2 /* PBXContainerItemProxy */;
 		};
 		9396AEFA2973078600B1EA1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				watchos,
+			);
 			target = 9396AEEB297305F700B1EA1C /* NP2KaiRetroArchCore */;
 			targetProxy = 9396AEF92973078600B1EA1C /* PBXContainerItemProxy */;
 		};
@@ -399,7 +407,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -409,9 +417,12 @@
 				PRODUCT_NAME = PVNP2Kai;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -504,7 +515,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -514,9 +525,12 @@
 				PRODUCT_NAME = PVNP2Kai;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};

@@ -2377,7 +2377,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     {
        case RETRO_PIXEL_FORMAT_0RGB1555:
             return GL_RGB5_A1; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_RGB565;
 #else
@@ -2396,7 +2396,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     {
        case RETRO_PIXEL_FORMAT_0RGB1555:
             return GL_RGB5_A1;
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_RGB565;
 #else

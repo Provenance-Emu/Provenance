@@ -410,7 +410,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     }
 
     #if os(tvOS)
-        override var canBecomeFocused: Bool {
+    public override var canBecomeFocused: Bool {
             return true
         }
 
@@ -871,7 +871,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     }
 
     #if os(tvOS)
-        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+    public override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
             super.didUpdateFocus(in: context, with: coordinator)
 
             //		struct wrapper {

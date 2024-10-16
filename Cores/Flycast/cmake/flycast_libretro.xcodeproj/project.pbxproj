@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -4589,6 +4589,13 @@
 /* Begin PBXTargetDependency section */
 		0DC6267786B04AC89AE89FEF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				watchos,
+				xros,
+			);
 			target = 1FE77D070658490AA68362CA /* zlibFlycast */;
 			targetProxy = 4C1A2A5845C54199974E9928 /* PBXContainerItemProxy */;
 		};
@@ -4609,26 +4616,51 @@
 		};
 		30B02692C16C4BC982285AD6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 1FE77D070658490AA68362CA /* zlibFlycast */;
 			targetProxy = 597BB51AF61F44299EF22431 /* PBXContainerItemProxy */;
 		};
 		32B5348917FF4B5385171468 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 57F2ED5348B04DDCBC9040FB /* OSDependentFlycast */;
 			targetProxy = 5420A6B227CF4C47AC46E100 /* PBXContainerItemProxy */;
 		};
 		415122F5D3FC468CB5AE942A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 67DE5011573F4325979612A1 /* libminiupnpc-staticFlycast */;
 			targetProxy = A060BE921A74424883D1A06F /* PBXContainerItemProxy */;
 		};
 		5AD871E71D284189815A9415 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 82D74A25B94742398F672774 /* lzmaFlycast */;
 			targetProxy = B336EC3DE5AE42E0A18E44F6 /* PBXContainerItemProxy */;
 		};
 		7A626F715A0547D382A44A60 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 2783C44DED5549229CC05AA9 /* SPIRVFlycast */;
 			targetProxy = 46BB8F2E55C84DF1962E2DB8 /* PBXContainerItemProxy */;
 		};
@@ -4639,6 +4671,11 @@
 		};
 		848DA6E4DBAA4717B21F04E9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = F7047F3319E14AC1A7D5748C /* OGLCompilerFlycast */;
 			targetProxy = D13B5462A702478BBA80E902 /* PBXContainerItemProxy */;
 		};
@@ -4649,11 +4686,21 @@
 		};
 		931C04A92A89C80A00759ACB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = C146CCF4D8944A0DAA498D60 /* flycast-resourcesFlycast */;
 			targetProxy = 931C04A82A89C80A00759ACB /* PBXContainerItemProxy */;
 		};
 		95AC493D768B4FD38123548E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 0560677F7ECE45648E12DC92 /* elfFlycast */;
 			targetProxy = 486E65ECA5A94CA19F61B865 /* PBXContainerItemProxy */;
 		};
@@ -4664,6 +4711,11 @@
 		};
 		9A04FF11F7DD45259B5CF93A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 7D8489F6631F4445B4403B9C /* glslang-default-resource-limitsFlycast */;
 			targetProxy = 89638A5E920144B1BAB33C98 /* PBXContainerItemProxy */;
 		};
@@ -4674,6 +4726,13 @@
 		};
 		A76A9113969C4834AF9F88D7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				watchos,
+				xros,
+			);
 			target = 82D74A25B94742398F672774 /* lzmaFlycast */;
 			targetProxy = D113C8E0122B45F79219DE28 /* PBXContainerItemProxy */;
 		};
@@ -4684,11 +4743,21 @@
 		};
 		BF3F709BCEAD4B43910EAD0D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 8E293971E43046A1844D854E /* nowideFlycast */;
 			targetProxy = 619286982007433AA4338900 /* PBXContainerItemProxy */;
 		};
 		C71D90A5E2A7463FBC6BC9D6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = D24A4A289BBC44EABFA48453 /* MachineIndependentFlycast */;
 			targetProxy = 5A86EB0F5BA645C581BA25A3 /* PBXContainerItemProxy */;
 		};
@@ -4699,6 +4768,11 @@
 		};
 		CD5AF04CABB04E0192677634 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 2BE0B7D344A44A6D8225277F /* chdr-staticFlycast */;
 			targetProxy = 54A1BB53105D4B70A6FEDFEB /* PBXContainerItemProxy */;
 		};
@@ -4709,11 +4783,21 @@
 		};
 		E002FAEE47F241B58511B877 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = 610F9722E29840489C8C5CBC /* zipFlycast */;
 			targetProxy = DE4E09C9FF064D4FBC4294BF /* PBXContainerItemProxy */;
 		};
 		E7F774ED80114272B997FE3B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = EAA894986E4A4372B8C4C466 /* GenericCodeGenFlycast */;
 			targetProxy = BC8F8301537F4C188249D652 /* PBXContainerItemProxy */;
 		};
@@ -4724,6 +4808,11 @@
 		};
 		F62F7375EAB74CED9381F6DE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = EF2A289BF8CA43069E7D2636 /* xxhashFlycast */;
 			targetProxy = 7A6CB19FEDDF4C2DB577F783 /* PBXContainerItemProxy */;
 		};
@@ -4776,6 +4865,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glslangFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -4827,6 +4919,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SPIRVFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -4893,6 +4988,10 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "chdr-staticFlycast";
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -4932,6 +5031,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "flycast-resourcesFlycast";
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -4970,6 +5072,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzmaFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5016,6 +5121,10 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = nowideFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5062,6 +5171,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OSDependentFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5112,6 +5224,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "glslang-default-resource-limitsFlycast";
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5158,6 +5273,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OGLCompilerFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5201,6 +5319,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = miniupnpcFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5239,6 +5360,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5276,6 +5400,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = elfFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5326,6 +5453,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MachineIndependentFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5364,7 +5494,13 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zipFlycast;
 				SECTORDER_FLAGS = "";
-				SYSTEM_HEADER_SEARCH_PATHS = "../flycast/core/deps/libchdr/deps/zlib-1.2.11 $(inherited)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SYSTEM_HEADER_SEARCH_PATHS = (
+					"../flycast/core/deps/libchdr/deps/zlib-1.2.11",
+					"$(inherited)",
+				);
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5516,7 +5652,10 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = flycast_libretroFlycast;
 				SECTORDER_FLAGS = "";
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5564,6 +5703,9 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = GenericCodeGenFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5611,6 +5753,10 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = xxhashFlycast;
 				SECTORDER_FLAGS = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};

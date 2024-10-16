@@ -66,7 +66,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>$(ORG_PREFIX).$(PROJECT_NAME:lower)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
@@ -219,6 +219,8 @@
 		<string>org.provenance-emu.game.play</string>
 		<string>org.provenance-emu.webserver</string>
 	</array>
+	<key>PVAppType</key>
+	<string>standard</string>
 	<key>Revision</key>
 	<string>f9c61252</string>
 	<key>UIBackgroundModes</key>
@@ -319,7 +321,5 @@
 	</array>
 	<key>appcenter</key>
 	<string>7d623115-99d6-439e-8e3a-9f2d0b1fbc02</string>
-	<key>PVAppType</key>
-	<string>standard</string>
 </dict>
 </plist>

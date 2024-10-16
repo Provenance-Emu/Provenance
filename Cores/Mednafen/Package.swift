@@ -87,6 +87,7 @@ let CSETTINGS: [CSetting] = [
 //    .define("INLINE", to: "inline"),
     .define("MDFN_PSS_STYLE", to: "1"),
     .define("HAVE_CONFIG_H", to: "1"),
+    .define("HAVE_FORK", to: "1", .when(platforms: [.iOS, .macOS, .watchOS, .macCatalyst, .visionOS])),
     
 //    .define("MDFN_ENABLE_DEV_BUILD", .when(configuration: .debug)),
     .define("DEBUG", to: "1", .when(configuration: .debug)),
@@ -115,7 +116,7 @@ let package = Package(
     name: "PVCoreMednafen",
     platforms: [
         .iOS(.v17),
-        .tvOS("15.4"),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),

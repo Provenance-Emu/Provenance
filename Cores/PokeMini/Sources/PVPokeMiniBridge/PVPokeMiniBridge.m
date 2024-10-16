@@ -506,29 +506,29 @@ int saveEEPROM(const char *filename) {
         else if ([self.controller1 microGamepad]) {
             GCMicroGamepad *microGamepad = [self.controller1 microGamepad];
             
-            __weak PVPokeMiniEmulatorCore* weakSelf = self;
+            __weak PVPokeMiniBridge* weakSelf = self;
             
             self.controller1.microGamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad * _Nonnull dpad, float xValue, float yValue) {
-                __strong PVPokeMiniEmulatorCore* strongSelf = weakSelf;
+                __strong PVPokeMiniBridge* strongSelf = weakSelf;
                 
                 [strongSelf dpadValueChanged:dpad];
             };
 
             
             microGamepad.valueChangedHandler = ^(GCMicroGamepad * _Nonnull gamepad, GCControllerElement * _Nonnull element) {
-                __strong PVPokeMiniEmulatorCore* strongSelf = weakSelf;
+                __strong PVPokeMiniBridge* strongSelf = weakSelf;
 
                 // Buttons
                 if (element == gamepad.buttonA) {
-                    if (strongSelf.controllerState.a != gamepad.buttonA.isPressed) {
+                    if (strongSelf->controllerState.a != gamepad.buttonA.isPressed) {
                         JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
-                        strongSelf.controllerState.a = gamepad.buttonA.isPressed;
+                        strongSelf->controllerState.a = gamepad.buttonA.isPressed;
                     }
                 }
                 else if (element == gamepad.buttonX) {
-                    if (strongSelf.controllerState.b != gamepad.buttonX.isPressed) {
+                    if (strongSelf->controllerState.b != gamepad.buttonX.isPressed) {
                         JoystickButtonsEvent(PVPMButtonB, gamepad.buttonX.isPressed ? 1 : 0);
-                        strongSelf.controllerState.b = gamepad.buttonX.isPressed;
+                        strongSelf->controllerState.b = gamepad.buttonX.isPressed;
                     }
                 }
             };

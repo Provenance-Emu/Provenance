@@ -169,7 +169,7 @@
 		B301797C207C908F0051B93D /* zip_entry_new.c in Sources */ = {isa = PBXBuildFile; fileRef = B339427120783CBC008DBAB4 /* zip_entry_new.c */; };
 		B301797D207C908F0051B93D /* zip_open.c in Sources */ = {isa = PBXBuildFile; fileRef = B339428220783CBC008DBAB4 /* zip_open.c */; };
 		B301797E207C908F0051B93D /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B339414220783CBB008DBAB4 /* driver.cpp */; };
-		B301797F207C909E0051B93D /* libreicast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libreicast.a */; };
+		B301797F207C909E0051B93D /* libreicast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libreicast.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
 		B30E99212C6EF28000C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E99202C6EF28000C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B30E99242C6EF28900C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99232C6EF28900C1431E /* PVSupport */; };
 		B30E9ADE2C6FB26900C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9ADD2C6FB26900C1431E /* PVEmulatorCore */; };
@@ -3931,6 +3931,12 @@
 /* Begin PBXTargetDependency section */
 		B383226826EDAB130029D12F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			target = B30178D2207C901D0051B93D /* reicast */;
 			targetProxy = B383226726EDAB130029D12F /* PBXContainerItemProxy */;
 		};
@@ -3963,6 +3969,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -3970,8 +3977,12 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Debug;
 		};
@@ -3982,6 +3993,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -3989,8 +4001,12 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Release;
 		};
@@ -4076,7 +4092,6 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				SYMROOT = "${SRCROOT}/build/${CONFIGURATION}";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -4091,7 +4106,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4112,8 +4127,12 @@
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Archive;
 		};
@@ -4124,6 +4143,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -4131,8 +4151,12 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Archive;
 		};
@@ -4208,7 +4232,6 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				SYMROOT = "${SRCROOT}/build/${CONFIGURATION}";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -4299,7 +4322,6 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				SYMROOT = "${SRCROOT}/build/${CONFIGURATION}";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -4314,7 +4336,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4335,8 +4357,12 @@
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Debug;
 		};
@@ -4346,7 +4372,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4367,8 +4393,12 @@
 				PRODUCT_NAME = PVReicast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Release;
 		};

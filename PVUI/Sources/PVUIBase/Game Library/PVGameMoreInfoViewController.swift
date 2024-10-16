@@ -807,11 +807,11 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
 //        return artworkImageView
 //    }
 
-        override var preferredFocusEnvironments: [UIFocusEnvironment] {
+        public override var preferredFocusEnvironments: [UIFocusEnvironment] {
             return [artworkImageView, nameLabel, developerLabel, publishDateLabel, regionLabel, genresLabel, playCountLabel, timeSpentLabel, descriptionTextView]
         }
 
-        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        public override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
             if context.previouslyFocusedView?.isDescendant(of: descriptionTextView) == true {
                 if descriptionTextView.contentOffset.y > 0 {
                     UIView.animate(withDuration: 0.2, delay: 0, animations: {

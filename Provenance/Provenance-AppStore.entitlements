@@ -9,10 +9,6 @@
 		<string>applinks:provenance-emu.com</string>
 		<string>applinks:provenance.app</string>
 	</array>
-	<key>com.apple.developer.driverkit.communicates-with-drivers</key>
-	<true/>
-	<key>com.apple.developer.group-session</key>
-	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
 		<string>iCloud.org.provenance-emu.provenance</string>
@@ -22,8 +18,6 @@
 		<string>CloudDocuments</string>
 		<string>CloudKit</string>
 	</array>
-	<key>com.apple.developer.kernel.increased-debugging-memory-limit</key>
-	<true/>
 	<key>com.apple.developer.nfc.readersession.formats</key>
 	<array>
 		<string>TAG</string>
@@ -48,6 +42,8 @@
 	<key>com.apple.security.device.audio-input</key>
 	<true/>
 	<key>com.apple.security.device.bluetooth</key>
+	<true/>
+	<key>com.apple.security.device.camera</key>
 	<true/>
 	<key>com.apple.security.device.usb</key>
 	<true/>

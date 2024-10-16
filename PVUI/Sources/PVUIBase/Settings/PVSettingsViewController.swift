@@ -92,7 +92,7 @@ final class PVSettingsViewController: QuickTableViewController {
         return height ?? UITableView.automaticDimension
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
@@ -101,6 +101,7 @@ final class PVSettingsViewController: QuickTableViewController {
     }
 #endif
     
+    @MainActor
     func generateTableViewViewModels() {
         typealias TableRow = Row & RowStyle
         
@@ -121,14 +122,15 @@ final class PVSettingsViewController: QuickTableViewController {
             ThemeOptionsStandard.themes.forEach { mode in
                 let modeLabel = mode == .auto ? mode.description + " (\(systemMode))" : mode.description
                 let action = UIAlertAction(title: modeLabel, style: .default, handler: { _ in
-                    let darkTheme = (mode == .auto && self.traitCollection.userInterfaceStyle == .dark) || mode == .dark
-                    let newTheme = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
-                    ThemeManager.shared.setCurrentTheme(newTheme)
-                    UIApplication.shared.windows.first?.overrideUserInterfaceStyle = darkTheme ? .dark : .light
-                    
-                    Defaults[.theme] = mode
-                    
-                    self.generateTableViewViewModels()
+                    Task { @MainActor in
+                        let darkTheme = (mode == .auto && self.traitCollection.userInterfaceStyle == .dark) || mode == .dark
+                        let newTheme = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
+                        ThemeManager.shared.setCurrentTheme(newTheme)
+                        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = darkTheme ? .dark : .light
+                        
+                        Defaults[.theme] = mode
+                        self.generateTableViewViewModels()
+                    }
                 })
                 alert.addAction(action)
             }

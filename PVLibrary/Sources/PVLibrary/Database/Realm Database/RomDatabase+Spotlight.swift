@@ -8,7 +8,7 @@
 
 // MARK: - Spotlight
 
-#if canImport(CoreSpotlight)
+#if canImport(CoreSpotlight) && !os(tvOS)
 import PVRealm
 import PVLogging
 import CoreSpotlight

@@ -43,7 +43,6 @@
 		9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57E294CB5E6000322B9 /* number_theory.c */; };
 		9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57F294CB5E6000322B9 /* memory_manager.c */; };
 		9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */; };
-		936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; platformFilters = (ios, maccatalyst, macos, xros, ); };
 		936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; platformFilters = (ios, maccatalyst, macos, xros, ); };
 		939AAF6E2A791EF0007709E5 /* libplay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libplay.a */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
@@ -77,31 +76,32 @@
 		B3A6209129478A7600ED28E3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209029478A7600ED28E3 /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209229478A7F00ED28E3 /* CoreGraphics.framework */; };
 		B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209429478A9B00ED28E3 /* MetalKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
-		B3ABAEFD2BCCF93900D77B8C /* libAltKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */; };
-		B3ABAEFE2BCCF93900D77B8C /* libCAltKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */; };
-		B3ABAEFF2BCCF93900D77B8C /* libchdr-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */; };
-		B3ABAF002BCCF93900D77B8C /* libCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */; };
-		B3ABAF012BCCF93900D77B8C /* libFramework_Amazon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */; };
-		B3ABAF022BCCF93900D77B8C /* libFramework_Http.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED42BCCF87F00D77B8C /* libFramework_Http.a */; };
-		B3ABAF032BCCF93900D77B8C /* libFramework_OpenAl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */; };
-		B3ABAF042BCCF93900D77B8C /* libFramework_OpenGl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */; };
-		B3ABAF052BCCF93900D77B8C /* libFramework_Vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */; };
-		B3ABAF062BCCF93900D77B8C /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECE2BCCF87F00D77B8C /* libFramework.a */; };
-		B3ABAF072BCCF93900D77B8C /* libgsh_opengl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */; };
-		B3ABAF082BCCF93900D77B8C /* libgsh_vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */; };
-		B3ABAF092BCCF93900D77B8C /* libiCade_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEA2BCCF87F00D77B8C /* libiCade_Static.a */; };
-		B3ABAF0A2BCCF93900D77B8C /* liblibzstd_zlibwrapper_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEE2BCCF87F00D77B8C /* liblibzstd_zlibwrapper_static.a */; };
-		B3ABAF0B2BCCF93900D77B8C /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF02BCCF87F00D77B8C /* liblzma.a */; };
-		B3ABAF0C2BCCF93900D77B8C /* libNuanceur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */; };
-		B3ABAF0D2BCCF93900D77B8C /* libPlayCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */; };
-		B3ABAF0E2BCCF93900D77B8C /* libSDWebImage_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */; };
-		B3ABAF0F2BCCF93900D77B8C /* libsh_openal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF22BCCF87F00D77B8C /* libsh_openal.a */; };
-		B3ABAF102BCCF93900D77B8C /* libui_shared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF42BCCF87F00D77B8C /* libui_shared.a */; };
-		B3ABAF112BCCF93900D77B8C /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF62BCCF87F00D77B8C /* libxxhash.a */; };
-		B3ABAF122BCCF93900D77B8C /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF82BCCF87F00D77B8C /* libz.a */; };
-		B3ABAF132BCCF93900D77B8C /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */; };
+		B3ABAEFD2BCCF93900D77B8C /* libAltKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAEFE2BCCF93900D77B8C /* libCAltKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAEFF2BCCF93900D77B8C /* libchdr-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF002BCCF93900D77B8C /* libCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF012BCCF93900D77B8C /* libFramework_Amazon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF022BCCF93900D77B8C /* libFramework_Http.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED42BCCF87F00D77B8C /* libFramework_Http.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF032BCCF93900D77B8C /* libFramework_OpenAl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF042BCCF93900D77B8C /* libFramework_OpenGl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF052BCCF93900D77B8C /* libFramework_Vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF062BCCF93900D77B8C /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECE2BCCF87F00D77B8C /* libFramework.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF072BCCF93900D77B8C /* libgsh_opengl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF082BCCF93900D77B8C /* libgsh_vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF092BCCF93900D77B8C /* libiCade_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEA2BCCF87F00D77B8C /* libiCade_Static.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0A2BCCF93900D77B8C /* liblibzstd_zlibwrapper_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEE2BCCF87F00D77B8C /* liblibzstd_zlibwrapper_static.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0B2BCCF93900D77B8C /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF02BCCF87F00D77B8C /* liblzma.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0C2BCCF93900D77B8C /* libNuanceur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0D2BCCF93900D77B8C /* libPlayCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0E2BCCF93900D77B8C /* libSDWebImage_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0F2BCCF93900D77B8C /* libsh_openal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF22BCCF87F00D77B8C /* libsh_openal.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF102BCCF93900D77B8C /* libui_shared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF42BCCF87F00D77B8C /* libui_shared.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF112BCCF93900D77B8C /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF62BCCF87F00D77B8C /* libxxhash.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF122BCCF93900D77B8C /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF82BCCF87F00D77B8C /* libz.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF132BCCF93900D77B8C /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
 		B3AFCF602977A69F00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF5F2977A69F00A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, xros, ); };
+		B3CC2E212CBC243000D90EB1 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B3CC2E202CBC243000D90EB1 /* MoltenVK */; };
 		B3E2AA042CB61B9E00E2636D /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA032CB61B9E00E2636D /* PVCoreObjCBridge */; };
 		B3E2AA072CB61D1700E2636D /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA062CB61D1700E2636D /* PVPlists */; };
 		B3E2AA0A2CB61E4C00E2636D /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA092CB61E4C00E2636D /* PVEmulatorCore */; };
@@ -1773,7 +1773,6 @@
 				9333C7E3298932970042CD99 /* Foundation.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
-				936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */,
 				B3E2AA0A2CB61E4C00E2636D /* PVEmulatorCore in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
@@ -1783,6 +1782,7 @@
 				B30E991A2C6EF24000C1431E /* PVSupport in Frameworks */,
 				B3E2AA072CB61D1700E2636D /* PVPlists in Frameworks */,
 				B3E2AA682CB65D0C00E2636D /* PVCoreBridge in Frameworks */,
+				B3CC2E212CBC243000D90EB1 /* MoltenVK in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3E2AA102CB61EC500E2636D /* PVLogging in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
@@ -4163,6 +4163,7 @@
 				B3E2AA0C2CB61E8500E2636D /* PVSettings */,
 				B3E2AA0F2CB61EC500E2636D /* PVLogging */,
 				B3E2AA672CB65D0C00E2636D /* PVCoreBridge */,
+				B3CC2E202CBC243000D90EB1 /* MoltenVK */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVPlay.framework */;
@@ -4210,6 +4211,7 @@
 				B3E2AA0B2CB61E8500E2636D /* XCLocalSwiftPackageReference "../../PVSettings" */,
 				B3E2AA0E2CB61EC500E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3E2AA662CB65D0C00E2636D /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3CC2E122CBC0F9300D90EB1 /* XCLocalSwiftPackageReference "../../MoltenVK" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -4491,6 +4493,12 @@
 		B3ABAEFC2BCCF91B00D77B8C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Framework_VulkanPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3ABAEFB2BCCF91B00D77B8C /* PBXContainerItemProxy */;
 		};
 		B3B2546C27842B7B00F97E55 /* PBXTargetDependency */ = {
@@ -4501,111 +4509,243 @@
 		B3EA207C2BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AltKitPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA207B2BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA207E2BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = CAltKitPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA207D2BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20802BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = CodeGenPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA207F2BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20822BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = FrameworkPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20812BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20842BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Framework_AmazonPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20832BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20862BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Framework_HttpPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20852BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20882BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Framework_OpenAlPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20872BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA208A2BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Framework_OpenGlPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20892BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA208C2BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = NuanceurPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA208B2BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA208E2BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = PlayCorePlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA208D2BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20902BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SDWebImage_StaticPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA208F2BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20922BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "chdr-staticPlay";
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20912BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20942BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = gsh_openglPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20932BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20962BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = gsh_vulkanPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20952BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20982BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = iCade_StaticPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20972BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA209A2BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = libzstd_staticPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20992BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA209C2BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = libzstd_zlibwrapper_staticPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA209B2BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA209E2BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = lzmaPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA209D2BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20A02BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = sh_openalPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA209F2BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20A22BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = ui_sharedPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20A12BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20A42BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = xxhashPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20A32BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 		B3EA20A62BDDDEFF003D0239 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = zlibPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = B3EA20A52BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -4655,6 +4795,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/../PPSSPP/ppsspp/ext/\"",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/lib";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -4662,8 +4803,12 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Release;
 		};
@@ -4751,7 +4896,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4792,7 +4937,7 @@
 				PRODUCT_NAME = PVPlay;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -4889,7 +5034,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4927,7 +5072,7 @@
 				PRODUCT_NAME = PVPlay;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -4956,6 +5101,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/../PPSSPP/ppsspp/ext/\"",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/lib";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -4963,8 +5109,12 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Debug;
 		};
@@ -5023,6 +5173,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVSupport;
 		};
+		B3CC2E122CBC0F9300D90EB1 /* XCLocalSwiftPackageReference "../../MoltenVK" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../MoltenVK;
+		};
 		B3E2AA022CB61B9E00E2636D /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreObjCBridge;
@@ -5057,6 +5211,11 @@
 		B3AFCF5F2977A69F00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B3CC2E202CBC243000D90EB1 /* MoltenVK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3CC2E122CBC0F9300D90EB1 /* XCLocalSwiftPackageReference "../../MoltenVK" */;
+			productName = MoltenVK;
 		};
 		B3E2AA032CB61B9E00E2636D /* PVCoreObjCBridge */ = {
 			isa = XCSwiftPackageProductDependency;

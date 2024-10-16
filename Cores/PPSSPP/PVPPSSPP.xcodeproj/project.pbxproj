@@ -23,39 +23,39 @@
 /* Begin PBXBuildFile section */
 		933430432A32467B001C35C2 /* DarwinFileSystemServices.mm in Sources */ = {isa = PBXBuildFile; fileRef = 933430422A32467B001C35C2 /* DarwinFileSystemServices.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		933430452A3246F9001C35C2 /* DarwinFileSystemServices.h in Headers */ = {isa = PBXBuildFile; fileRef = 933430442A3246F8001C35C2 /* DarwinFileSystemServices.h */; };
-		934D87562A777B0400C3107A /* libarmipsPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86A02A777A3600C3107A /* libarmipsPPSSPP.a */; };
-		934D87572A777B0400C3107A /* libbasis_universalPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86A22A777A3600C3107A /* libbasis_universalPPSSPP.a */; };
-		934D87582A777B0400C3107A /* libcityhashPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86A42A777A3600C3107A /* libcityhashPPSSPP.a */; };
-		934D87592A777B0400C3107A /* libCommonPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16A42A35DDDB007E89E1 /* libCommonPPSSPP.a */; };
-		934D875A2A777B0400C3107A /* libCorePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16A62A35DDDB007E89E1 /* libCorePPSSPP.a */; };
-		934D875C2A777B0400C3107A /* libgasonPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86A82A777A3600C3107A /* libgasonPPSSPP.a */; };
-		934D875D2A777B0400C3107A /* libGenericCodeGenPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16A82A35DDDB007E89E1 /* libGenericCodeGenPPSSPP.a */; };
-		934D875E2A777B0400C3107A /* libglslang-default-resource-limitsPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16722A35D279007E89E1 /* libglslang-default-resource-limitsPPSSPP.a */; };
-		934D875F2A777B0400C3107A /* libglslangPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16702A35D279007E89E1 /* libglslangPPSSPP.a */; };
-		934D87602A777B0400C3107A /* libHLSLPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA166C2A35D279007E89E1 /* libHLSLPPSSPP.a */; };
-		934D87612A777B0400C3107A /* libkirkPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86AA2A777A3600C3107A /* libkirkPPSSPP.a */; };
-		934D87622A777B0400C3107A /* liblibzipPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86AC2A777A3600C3107A /* liblibzipPPSSPP.a */; };
-		934D87632A777B0400C3107A /* libMachineIndependentPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16AA2A35DDDB007E89E1 /* libMachineIndependentPPSSPP.a */; };
-		934D87642A777B0400C3107A /* libminiupnpcPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B02A777A3600C3107A /* libminiupnpcPPSSPP.a */; };
-		934D87652A777B0400C3107A /* libnativePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B02A35DDDB007E89E1 /* libnativePPSSPP.a */; };
-		934D87662A777B0400C3107A /* libOGLCompilerPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16AC2A35DDDB007E89E1 /* libOGLCompilerPPSSPP.a */; };
-		934D87672A777B0400C3107A /* libOSDependentPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D869E2A777A3600C3107A /* libOSDependentPPSSPP.a */; };
-		934D87682A777B0400C3107A /* libpng17PPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B22A777A3600C3107A /* libpng17PPSSPP.a */; };
-		934D87692A777B0400C3107A /* libsfmt19937PPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B22A35DDDB007E89E1 /* libsfmt19937PPSSPP.a */; };
-		934D876A2A777B0400C3107A /* libsnappyPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B42A777A3600C3107A /* libsnappyPPSSPP.a */; };
-		934D876B2A777B0400C3107A /* libspirv-cross-corePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16742A35D279007E89E1 /* libspirv-cross-corePPSSPP.a */; };
-		934D876C2A777B0400C3107A /* libspirv-cross-cppPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16762A35D279007E89E1 /* libspirv-cross-cppPPSSPP.a */; };
-		934D876D2A777B0400C3107A /* libspirv-cross-glslPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16782A35D279007E89E1 /* libspirv-cross-glslPPSSPP.a */; };
-		934D876E2A777B0400C3107A /* libspirv-cross-hlslPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA167A2A35D279007E89E1 /* libspirv-cross-hlslPPSSPP.a */; };
-		934D876F2A777B0400C3107A /* libspirv-cross-mslPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA167C2A35D279007E89E1 /* libspirv-cross-mslPPSSPP.a */; };
-		934D87702A777B0400C3107A /* libSPIRVPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA166E2A35D279007E89E1 /* libSPIRVPPSSPP.a */; };
-		934D87712A777B0400C3107A /* libudis86PPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B62A777A3600C3107A /* libudis86PPSSPP.a */; };
-		934D87722A777B0400C3107A /* libunix_based_hardware_detectionPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B82A777A3600C3107A /* libunix_based_hardware_detectionPPSSPP.a */; };
-		934D87732A777B0400C3107A /* libutilsPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B42A35DDDB007E89E1 /* libutilsPPSSPP.a */; };
-		934D87742A777B0400C3107A /* libvmaPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B62A35DDDB007E89E1 /* libvmaPPSSPP.a */; };
-		934D87752A777B0400C3107A /* libxbrzPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B82A35DDDB007E89E1 /* libxbrzPPSSPP.a */; };
-		934D87762A777B0400C3107A /* libxxhashPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99C02A358C0A00B1D0F8 /* libxxhashPPSSPP.a */; };
-		934D87772A777B0400C3107A /* libzstd_staticPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16AE2A35DDDB007E89E1 /* libzstd_staticPPSSPP.a */; };
+		934D87562A777B0400C3107A /* libarmipsPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86A02A777A3600C3107A /* libarmipsPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87572A777B0400C3107A /* libbasis_universalPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86A22A777A3600C3107A /* libbasis_universalPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87582A777B0400C3107A /* libcityhashPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86A42A777A3600C3107A /* libcityhashPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87592A777B0400C3107A /* libCommonPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16A42A35DDDB007E89E1 /* libCommonPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D875A2A777B0400C3107A /* libCorePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16A62A35DDDB007E89E1 /* libCorePPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D875C2A777B0400C3107A /* libgasonPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86A82A777A3600C3107A /* libgasonPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D875D2A777B0400C3107A /* libGenericCodeGenPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16A82A35DDDB007E89E1 /* libGenericCodeGenPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D875E2A777B0400C3107A /* libglslang-default-resource-limitsPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16722A35D279007E89E1 /* libglslang-default-resource-limitsPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D875F2A777B0400C3107A /* libglslangPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16702A35D279007E89E1 /* libglslangPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87602A777B0400C3107A /* libHLSLPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA166C2A35D279007E89E1 /* libHLSLPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87612A777B0400C3107A /* libkirkPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86AA2A777A3600C3107A /* libkirkPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87622A777B0400C3107A /* liblibzipPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86AC2A777A3600C3107A /* liblibzipPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87632A777B0400C3107A /* libMachineIndependentPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16AA2A35DDDB007E89E1 /* libMachineIndependentPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87642A777B0400C3107A /* libminiupnpcPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B02A777A3600C3107A /* libminiupnpcPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87652A777B0400C3107A /* libnativePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B02A35DDDB007E89E1 /* libnativePPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87662A777B0400C3107A /* libOGLCompilerPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16AC2A35DDDB007E89E1 /* libOGLCompilerPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87672A777B0400C3107A /* libOSDependentPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D869E2A777A3600C3107A /* libOSDependentPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87682A777B0400C3107A /* libpng17PPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B22A777A3600C3107A /* libpng17PPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87692A777B0400C3107A /* libsfmt19937PPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B22A35DDDB007E89E1 /* libsfmt19937PPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D876A2A777B0400C3107A /* libsnappyPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B42A777A3600C3107A /* libsnappyPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D876B2A777B0400C3107A /* libspirv-cross-corePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16742A35D279007E89E1 /* libspirv-cross-corePPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D876C2A777B0400C3107A /* libspirv-cross-cppPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16762A35D279007E89E1 /* libspirv-cross-cppPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D876D2A777B0400C3107A /* libspirv-cross-glslPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16782A35D279007E89E1 /* libspirv-cross-glslPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D876E2A777B0400C3107A /* libspirv-cross-hlslPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA167A2A35D279007E89E1 /* libspirv-cross-hlslPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D876F2A777B0400C3107A /* libspirv-cross-mslPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA167C2A35D279007E89E1 /* libspirv-cross-mslPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87702A777B0400C3107A /* libSPIRVPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA166E2A35D279007E89E1 /* libSPIRVPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87712A777B0400C3107A /* libudis86PPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B62A777A3600C3107A /* libudis86PPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87722A777B0400C3107A /* libunix_based_hardware_detectionPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86B82A777A3600C3107A /* libunix_based_hardware_detectionPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87732A777B0400C3107A /* libutilsPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B42A35DDDB007E89E1 /* libutilsPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87742A777B0400C3107A /* libvmaPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B62A35DDDB007E89E1 /* libvmaPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87752A777B0400C3107A /* libxbrzPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B82A35DDDB007E89E1 /* libxbrzPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87762A777B0400C3107A /* libxxhashPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99C02A358C0A00B1D0F8 /* libxxhashPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		934D87772A777B0400C3107A /* libzstd_staticPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16AE2A35DDDB007E89E1 /* libzstd_staticPPSSPP.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
 		938A1B6E2A779FAC00F76417 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 938A1B6D2A779FAC00F76417 /* UIKit.framework */; };
 		9399CF592A787EFD00D745E9 /* SPVRemapperPPSSPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9399CF502A787EFD00D745E9 /* SPVRemapperPPSSPP.cpp */; };
 		9399CF5B2A787EFD00D745E9 /* docPPSSPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9399CF522A787EFD00D745E9 /* docPPSSPP.cpp */; };
@@ -94,7 +94,7 @@
 		9399CFB12A788C5700D745E9 /* PpContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9399CF922A788C5700D745E9 /* PpContext.cpp */; };
 		9399CFB22A788C5700D745E9 /* PpScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9399CF932A788C5700D745E9 /* PpScanner.cpp */; };
 		9399CFB32A788C5700D745E9 /* ParseContextBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9399CF942A788C5700D745E9 /* ParseContextBase.cpp */; };
-		939AAF6F2A791F25007709E5 /* libpsp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libpsp.a */; };
+		939AAF6F2A791F25007709E5 /* libpsp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libpsp.a */; platformFilters = (ios, maccatalyst, tvos, ); };
 		939FFC652A32327B007970EB /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 939FFC642A32327B007970EB /* assets */; };
 		93BDF7532A335F4D00264477 /* MemArenaDarwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C33C24295F84EF008DFADD /* MemArenaDarwin.cpp */; };
 		93BDF7562A3363D800264477 /* iOSCoreAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93BDF7542A3363D700264477 /* iOSCoreAudio.mm */; };
@@ -102,12 +102,12 @@
 		93CD1E1F2A59AB9B00DE2A5C /* libpsp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libpsp.a */; };
 		93CD1E202A59ACBF00DE2A5C /* MemArenaDarwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C33C24295F84EF008DFADD /* MemArenaDarwin.cpp */; };
 		93CD1E242A59AE3800DE2A5C /* libretro_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93CD1E222A59AE0C00DE2A5C /* libretro_stub.mm */; };
-		93CFE6902BE93F89009B2220 /* libavcodecPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA52A77146A00F1C0A8 /* libavcodecPPSSPP.a */; platformFilter = ios; };
-		93CFE6912BE93F89009B2220 /* libavdevicePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA72A77146B00F1C0A8 /* libavdevicePPSSPP.a */; platformFilter = ios; };
-		93CFE6922BE93F89009B2220 /* libavformatPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA82A77146C00F1C0A8 /* libavformatPPSSPP.a */; platformFilter = ios; };
-		93CFE6932BE93F89009B2220 /* libavutilPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA42A77146A00F1C0A8 /* libavutilPPSSPP.a */; platformFilter = ios; };
-		93CFE6942BE93F89009B2220 /* libswresamplePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA62A77146B00F1C0A8 /* libswresamplePPSSPP.a */; platformFilter = ios; };
-		93CFE6952BE93F89009B2220 /* libswscalePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA32A77146A00F1C0A8 /* libswscalePPSSPP.a */; platformFilter = ios; };
+		93CFE6902BE93F89009B2220 /* libavcodecPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA52A77146A00F1C0A8 /* libavcodecPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93CFE6912BE93F89009B2220 /* libavdevicePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA72A77146B00F1C0A8 /* libavdevicePPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93CFE6922BE93F89009B2220 /* libavformatPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA82A77146C00F1C0A8 /* libavformatPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93CFE6932BE93F89009B2220 /* libavutilPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA42A77146A00F1C0A8 /* libavutilPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93CFE6942BE93F89009B2220 /* libswresamplePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA62A77146B00F1C0A8 /* libswresamplePPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93CFE6952BE93F89009B2220 /* libswscalePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FB8DA32A77146A00F1C0A8 /* libswscalePPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
 		93CFE6962BE93FC3009B2220 /* libavcodecPPSSPPTV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CFCFBE2BE924D5009B2220 /* libavcodecPPSSPPTV.a */; platformFilters = (tvos, ); };
 		93CFE6972BE93FC3009B2220 /* libavdevicePPSSPPTV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CFCFB92BE924D4009B2220 /* libavdevicePPSSPPTV.a */; platformFilters = (tvos, ); };
 		93CFE6982BE93FC3009B2220 /* libavformatPPSSPPTV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CFCFBC2BE924D5009B2220 /* libavformatPPSSPPTV.a */; platformFilters = (tvos, ); };
@@ -134,7 +134,7 @@
 		93E741F1295B67C70028EB94 /* PVPPSSPPCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPPSSPPCore.mm */; };
 		93E741F2295B67C70028EB94 /* PVPPSSPPCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVPPSSPPCore+Audio.mm */; };
 		93E741F9295B67C70028EB94 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		93E741FA295B67C70028EB94 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); };
+		93E741FA295B67C70028EB94 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		93E741FB295B67C70028EB94 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		93E741FF295B67C70028EB94 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		93E74203295B67C70028EB94 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -148,7 +148,7 @@
 		93E74243295B70280028EB94 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		93E7427B295C53890028EB94 /* OGLGraphicsContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 93E7427A295C53890028EB94 /* OGLGraphicsContext.h */; };
 		93F6EC61298AC9FA00397536 /* PVDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F6EC60298AC9FA00397536 /* PVDebug.m */; };
-		93F9BDA72A77A23200A7B438 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F9BDA52A77A23100A7B438 /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		93F9BDA72A77A23200A7B438 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F9BDA52A77A23100A7B438 /* Metal.framework */; };
 		93F9BDA82A77A23200A7B438 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F9BDA62A77A23100A7B438 /* MetalKit.framework */; };
 		93F9BDAA2A77A23D00A7B438 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F9BDA92A77A23D00A7B438 /* CoreGraphics.framework */; };
 		93F9BDAE2A77A26E00A7B438 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F9BDAD2A77A26D00A7B438 /* QuartzCore.framework */; };
@@ -1752,31 +1752,67 @@
 		9334303A2A32411C001C35C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = basis_universal;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 933430392A32411C001C35C2 /* PBXContainerItemProxy */;
 		};
 		9334303C2A32411C001C35C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "glslang-default-resource-limits";
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 9334303B2A32411C001C35C2 /* PBXContainerItemProxy */;
 		};
 		9334303E2A32411C001C35C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = unix_based_hardware_detection;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 9334303D2A32411C001C35C2 /* PBXContainerItemProxy */;
 		};
 		933430402A32411C001C35C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = utils;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 9334303F2A32411C001C35C2 /* PBXContainerItemProxy */;
 		};
 		934D2E1B294B4D8800BDEBA5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			target = 934D2DFF294B4D4600BDEBA5 /* PPSSPPLibAdjustments */;
 			targetProxy = 934D2E1A294B4D8800BDEBA5 /* PBXContainerItemProxy */;
 		};
 		93AA16E02A35E193007E89E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = libzstd_staticPPSSPP;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93AA16DF2A35E193007E89E1 /* PBXContainerItemProxy */;
 		};
 		93D05DC62A59A8C900F3631F /* PBXTargetDependency */ = {
@@ -1787,145 +1823,318 @@
 		93DC57822A358B48008645AB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = xxhashPPSSPP;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93DC57812A358B48008645AB /* PBXContainerItemProxy */;
 		};
 		93E7412A295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Common;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74129295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7412C295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Core;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7412B295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7412E295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = GenericCodeGen;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7412D295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74130295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = HLSL;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7412F295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74132295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MachineIndependent;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74131295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74134295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = OGLCompiler;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74133295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74136295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = OSDependent;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74135295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74138295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SPIRV;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74137295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7413A295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = armips;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74139295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7413C295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = cityhash;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7413B295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7413E295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = gason;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7413D295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74140295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = glslang;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7413F295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74142295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = kirk;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74141295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74144295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = libzip;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74143295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74148295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = miniupnpc;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74147295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7414A295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = native;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74149295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7414C295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = png17;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7414B295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7414E295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = sfmt19937;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7414D295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74150295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = snappy;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7414F295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74152295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "spirv-cross-core";
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74151295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74154295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "spirv-cross-cpp";
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74153295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74156295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "spirv-cross-glsl";
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74155295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74158295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "spirv-cross-hlsl";
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74157295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7415A295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "spirv-cross-msl";
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E74159295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7415C295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = udis86;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7415B295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E7415E295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = vma;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7415D295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E74160295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = xbrz;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
 			targetProxy = 93E7415F295B34350028EB94 /* PBXContainerItemProxy */;
 		};
 		93E741E5295B67C70028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = B30178D2207C901D0051B93D /* psp */;
 			targetProxy = 93E741E6295B67C70028EB94 /* PBXContainerItemProxy */;
 		};
@@ -1954,7 +2163,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2009,6 +2218,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2060,9 +2270,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Release;
 		};
@@ -2073,7 +2287,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2088,7 +2302,7 @@
 					"\"$(SRCROOT)/cmake/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2116,11 +2330,15 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Release;
 		};
@@ -2147,6 +2365,7 @@
 					"\"$(SRCROOT)/libretro_ppsspp/ext/glslang/glslang/MachineIndependent\"",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib\"",
 					"\"$(SRCROOT)/lib\"",
@@ -2166,8 +2385,12 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Release;
 		};
@@ -2253,7 +2476,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2268,7 +2491,7 @@
 					"\"$(SRCROOT)/cmake/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2296,11 +2519,15 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Debug;
 		};
@@ -2327,6 +2554,7 @@
 					"\"$(SRCROOT)/libretro_ppsspp/ext/glslang/glslang/MachineIndependent\"",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib\"",
 					"\"$(SRCROOT)/lib\"",
@@ -2346,8 +2574,12 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Debug;
 		};
@@ -2373,7 +2605,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2428,6 +2660,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2479,9 +2712,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Debug;
 		};

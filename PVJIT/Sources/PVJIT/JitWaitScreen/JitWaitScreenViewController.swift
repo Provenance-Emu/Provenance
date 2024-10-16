@@ -10,6 +10,8 @@ import JITManager
   @objc public weak var delegate: JitScreenDelegate?
   var cancellation_token = DOLCancellationToken()
   var is_presenting_alert = false
+    
+    public static let module: Bundle = .module
   
     public override func viewDidLoad() {
     NotificationCenter.default.addObserver(self, selector: #selector(jitAcquired), name: NSNotification.Name.DOLJitAcquired, object: nil)

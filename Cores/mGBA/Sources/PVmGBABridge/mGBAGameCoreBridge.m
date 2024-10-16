@@ -30,6 +30,10 @@
 @import PVEmulatorCore;
 @import PVAudio;
 
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+#import <OpenGL/OpenGL.h>
+#import <GLUT/glut.h>
+#endif
 
 #include <mgba-util/common.h>
 

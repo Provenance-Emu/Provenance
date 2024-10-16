@@ -3679,7 +3679,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status opera-libretro | head -n1 | awk '{print $1;}'`\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/opera-libretro/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/\"Makefile \"${SRCROOT}/cmake/build/\"Makefile\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build/\"\n#make clean\nmake\n\nexit 0\n";
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status opera-libretro | head -n1 | awk '{print $1;}'`\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/opera-libretro/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/\"Makefile \"${SRCROOT}/cmake/build/\"Makefile\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build/\"\n#make clean\nmake -j5\n\nexit 0\n";
 		};
 		937557832A811A9300ECC97D /* Copy Opera RetroArch */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3722,6 +3722,9 @@
 		9337CFB9298CE05F007CDDB6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
 				tvos,
 			);
 			target = 9337CFB2298CDFEF007CDDB6 /* OperaRetroArchTV */;
@@ -3733,7 +3736,7 @@
 				ios,
 				maccatalyst,
 				macos,
-				watchos,
+				tvos,
 			);
 			target = 935BB0502985469B00AA68DC /* OperaRetroArch */;
 			targetProxy = 935BB0562985484E00AA68DC /* PBXContainerItemProxy */;
@@ -3850,7 +3853,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVOpera/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3860,11 +3863,14 @@
 				PRODUCT_NAME = PVOpera;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Debug;
 		};
@@ -3963,7 +3969,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3974,7 +3980,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVOpera/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3984,10 +3990,13 @@
 				PRODUCT_NAME = PVOpera;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Release;
 		};

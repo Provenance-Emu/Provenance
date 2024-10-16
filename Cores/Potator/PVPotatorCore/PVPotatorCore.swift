@@ -16,7 +16,7 @@ import PVCoreBridgeRetro
 @objcMembers
 open class PVPotatorCore: PVEmulatorCore {
 
-    let _bridge: PVPotatorCoreBridge = .init()
+    lazy var _bridge: PVPotatorCoreBridge = .init()
     
     public required init() {
         super.init()

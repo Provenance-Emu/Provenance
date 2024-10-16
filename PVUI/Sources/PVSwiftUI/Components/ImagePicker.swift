@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if !os(tvOS)
 struct ImagePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) private var presentationMode
     @Binding var selectedImage: UIImage
@@ -46,7 +47,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         }
     }
 }
-
+#endif
 /*
 // Sample usage
 

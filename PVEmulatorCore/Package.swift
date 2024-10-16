@@ -21,7 +21,7 @@ let package = Package(
     name: "PVEmulatorCore",
     platforms: [
         .iOS(.v15),
-        .tvOS("15.4"),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),

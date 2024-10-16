@@ -157,7 +157,7 @@ extension PVEmulatorViewController {
                 }))
             }
         }
-#if os(iOS)
+#if os(iOS) || targetEnvironment(macCatalyst)
         actionSheet.addAction(UIAlertAction(title: "Save Screenshot", style: .default, handler: { action in
             self.perform(#selector(self.takeScreenshot), with: nil, afterDelay: 0.1)
         }))

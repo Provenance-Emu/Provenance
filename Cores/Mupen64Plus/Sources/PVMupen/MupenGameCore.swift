@@ -22,7 +22,7 @@ import PVMupen64PlusBridge
 import UIKit
 #endif
 
-#if os(macOS)
+#if os(macOS) || targetEnvironment(macCatalyst)
 import OpenGL.GL3
 import GLUT
 #elseif !os(watchOS)

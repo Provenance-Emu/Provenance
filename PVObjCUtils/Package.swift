@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
     name: "PVObjCUtils",
     platforms: [
-        .iOS(.v17),
-        .tvOS("15.4"),
+        .iOS(.v15),
+        .tvOS(.v15),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="JitWaitScreenViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="JitWaitScreenViewController" customModule="PVJIT">
             <connections>
                 <outlet property="view" destination="r55-Fn-aBI" id="r9r-Zd-Dn7"/>
             </connections>
@@ -19,7 +19,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="W3E-IV-CzC" userLabel="Header Stack">
-                    <rect key="frame" x="0.0" y="66.999999999999986" width="375" height="182.66666666666663"/>
+                    <rect key="frame" x="0.0" y="70" width="375" height="182"/>
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gearshape" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="IUQ-qk-Kke">
                             <rect key="frame" x="0.0" y="0.3333333333333357" width="375" height="99.666666666666671"/>
@@ -29,7 +29,7 @@
                             </constraints>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting for JIT" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MKg-MP-jJG">
-                            <rect key="frame" x="0.0" y="100" width="375" height="82.666666666666686"/>
+                            <rect key="frame" x="0.0" y="100" width="375" height="82"/>
                             <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="34"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -37,7 +37,7 @@
                     </subviews>
                 </stackView>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uo7-Aa-Z1e">
-                    <rect key="frame" x="0.0" y="249.66666666666666" width="375" height="388.33333333333337"/>
+                    <rect key="frame" x="0.0" y="252" width="375" height="386"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="90n-Az-9Cs" userLabel="Content Stack">
                             <rect key="frame" x="20" y="0.0" width="335" height="324.33333333333331"/>

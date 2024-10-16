@@ -29,7 +29,7 @@ final class PVControllerSelectionViewController: UITableViewController {
     }
 
     override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return 4
+        return 8
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -49,6 +49,14 @@ final class PVControllerSelectionViewController: UITableViewController {
             controller = PVControllerManager.shared.player3
         case 3:
             controller = PVControllerManager.shared.player4
+        case 4:
+            controller = PVControllerManager.shared.player5
+        case 5:
+            controller = PVControllerManager.shared.player6
+        case 6:
+            controller = PVControllerManager.shared.player7
+        case 7:
+            controller = PVControllerManager.shared.player8
         default:
             controller = nil
         }
@@ -98,6 +106,14 @@ final class PVControllerSelectionViewController: UITableViewController {
                 title.append(" (Player 3)")
             } else if controller == PVControllerManager.shared.player4 {
                 title.append(" (Player 4)")
+            } else if controller == PVControllerManager.shared.player5 {
+                title.append(" (Player 5)")
+            } else if controller == PVControllerManager.shared.player6 {
+                title.append(" (Player 6)")
+            } else if controller == PVControllerManager.shared.player7 {
+                title.append(" (Player 7)")
+            } else if controller == PVControllerManager.shared.player8 {
+                title.append(" (Player 8)")
             }
 
             actionSheet.addAction(UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
@@ -109,6 +125,14 @@ final class PVControllerSelectionViewController: UITableViewController {
                     PVControllerManager.shared.setController(controller, toPlayer: 3)
                 } else if indexPath.row == 3 {
                     PVControllerManager.shared.setController(controller, toPlayer: 4)
+                } else if indexPath.row == 4 {
+                    PVControllerManager.shared.setController(controller, toPlayer: 5)
+                } else if indexPath.row == 5 {
+                    PVControllerManager.shared.setController(controller, toPlayer: 6)
+                } else if indexPath.row == 6 {
+                    PVControllerManager.shared.setController(controller, toPlayer: 7)
+                } else if indexPath.row == 7 {
+                    PVControllerManager.shared.setController(controller, toPlayer: 8)
                 }
 
                 DispatchQueue.main.async {
@@ -128,6 +152,14 @@ final class PVControllerSelectionViewController: UITableViewController {
                 PVControllerManager.shared.setController(nil, toPlayer: 3)
             } else if indexPath.row == 3 {
                 PVControllerManager.shared.setController(nil, toPlayer: 4)
+            } else if indexPath.row == 4 {
+                PVControllerManager.shared.setController(nil, toPlayer: 5)
+            } else if indexPath.row == 5 {
+                PVControllerManager.shared.setController(nil, toPlayer: 6)
+            } else if indexPath.row == 6 {
+                PVControllerManager.shared.setController(nil, toPlayer: 7)
+            } else if indexPath.row == 7 {
+                PVControllerManager.shared.setController(nil, toPlayer: 8)
             }
 
             DispatchQueue.main.async {

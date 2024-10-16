@@ -7,6 +7,7 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
+#if os(tvOS)
 import PVLibrary
 import PVSupport
 import RxSwift
@@ -47,7 +48,7 @@ public final class PVSearchViewController: UICollectionViewController, GameLaunc
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.delegate = nil
         collectionView?.dataSource = nil
@@ -119,3 +120,4 @@ public final class PVSearchViewController: UICollectionViewController, GameLaunc
         }
     }
 }
+#endif

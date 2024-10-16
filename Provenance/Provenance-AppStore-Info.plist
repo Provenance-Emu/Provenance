@@ -2,10 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>APP_GROUP_IDENTIFIER</key>
-	<string>$(APP_GROUP_IDENTIFIER)</string>
 	<key>ALTDeviceID</key>
 	<string></string>
+	<key>APP_GROUP_IDENTIFIER</key>
+	<string>$(APP_GROUP_IDENTIFIER)</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -97,7 +97,7 @@
 	<key>CFBundleIcons~ipad</key>
 	<dict/>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>$(ORG_PREFIX).$(PROJECT_NAME:lower)</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>Spanish</string>
@@ -276,6 +276,8 @@
 		<string>org.provenance-emu.game.play</string>
 		<string>org.provenance-emu.webserver</string>
 	</array>
+	<key>PVAppType</key>
+	<string>standard.appstore</string>
 	<key>Revision</key>
 	<string>78dc628</string>
 	<key>TVTopShelflmage</key>
@@ -300,6 +302,8 @@
 		<key>UIImageName</key>
 		<string>LaunchImage.png</string>
 	</dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen.storyboard</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -614,7 +618,5 @@
 	</array>
 	<key>appcenter</key>
 	<string>862ca352-4607-4f8e-8c77-1248fa68ca3a</string>
-	<key>PVAppType</key>
-	<string>standard.appstore</string>
 </dict>
 </plist>

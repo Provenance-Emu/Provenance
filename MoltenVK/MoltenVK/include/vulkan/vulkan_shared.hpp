@@ -8,8 +8,11 @@
 #ifndef VULKAN_SHARED_HPP
 #define VULKAN_SHARED_HPP
 
-#include <atomic>  // std::atomic_size_t
 #include <vulkan/vulkan.hpp>
+
+#if !( defined( VULKAN_HPP_ENABLE_STD_MODULE ) && defined( VULKAN_HPP_STD_MODULE ) )
+#  include <atomic>  // std::atomic_size_t
+#endif
 
 namespace VULKAN_HPP_NAMESPACE
 {
@@ -50,6 +53,28 @@ namespace VULKAN_HPP_NAMESPACE
   template <class HandleType>
   struct HasDestructor : std::integral_constant<bool, !std::is_same<DestructorTypeOf<HandleType>, NoDestructor>::value>
   {
+  };
+
+  template <typename HandleType, typename = void>
+  struct HasPoolType : std::false_type
+  {
+  };
+
+  template <typename HandleType>
+  struct HasPoolType<HandleType, decltype( (void)typename SharedHandleTraits<HandleType>::deleter::PoolTypeExport() )> : std::true_type
+  {
+  };
+
+  template <typename HandleType, typename Enable = void>
+  struct GetPoolType
+  {
+    using type = NoDestructor;
+  };
+
+  template <typename HandleType>
+  struct GetPoolType<HandleType, typename std::enable_if<HasPoolType<HandleType>::value>::type>
+  {
+    using type = typename SharedHandleTraits<HandleType>::deleter::PoolTypeExport;
   };
 
   //=====================================================================================================================
@@ -257,9 +282,20 @@ namespace VULKAN_HPP_NAMESPACE
   public:
     SharedHandle() = default;
 
-    template <typename T = HandleType, typename = typename std::enable_if<HasDestructor<T>::value>::type>
+    template <typename T = HandleType, typename = typename std::enable_if<HasDestructor<T>::value && !HasPoolType<T>::value>::type>
     explicit SharedHandle( HandleType handle, SharedHandle<DestructorTypeOf<HandleType>> parent, DeleterType deleter = DeleterType() ) VULKAN_HPP_NOEXCEPT
       : BaseType( handle, std::move( parent ), std::move( deleter ) )
+    {
+    }
+
+    template <typename Dispatcher = VULKAN_HPP_DEFAULT_DISPATCHER_TYPE,
+              typename T          = HandleType,
+              typename            = typename std::enable_if<HasDestructor<T>::value && HasPoolType<T>::value>::type>
+    explicit SharedHandle( HandleType                                           handle,
+                           SharedHandle<DestructorTypeOf<HandleType>>           parent,
+                           SharedHandle<typename GetPoolType<HandleType>::type> pool,
+                           const Dispatcher & dispatch                          VULKAN_HPP_DEFAULT_DISPATCHER_ASSIGNMENT ) VULKAN_HPP_NOEXCEPT
+      : BaseType( handle, std::move( parent ), DeleterType{ std::move( pool ), dispatch } )
     {
     }
 
@@ -390,6 +426,8 @@ namespace VULKAN_HPP_NAMESPACE
   public:
     using DestructorType = typename SharedHandleTraits<HandleType>::DestructorType;
 
+    using PoolTypeExport = PoolType;
+
     template <class Dispatcher>
     using ReturnType = decltype( std::declval<DestructorType>().free( PoolType(), 0u, nullptr, Dispatcher() ) );
 
@@ -409,7 +447,7 @@ namespace VULKAN_HPP_NAMESPACE
   public:
     void destroy( DestructorType parent, HandleType handle ) const VULKAN_HPP_NOEXCEPT
     {
-      VULKAN_HPP_ASSERT( m_destroy && m_dispatch );
+      VULKAN_HPP_ASSERT( m_destroy && m_dispatch && m_pool );
       ( parent.*m_destroy )( m_pool.get(), 1u, &handle, *m_dispatch );
     }
 
@@ -924,6 +962,38 @@ namespace VULKAN_HPP_NAMESPACE
   };
 
   using SharedShaderEXT = SharedHandle<ShaderEXT>;
+
+  //=== VK_KHR_pipeline_binary ===
+  template <>
+  class SharedHandleTraits<PipelineBinaryKHR>
+  {
+  public:
+    using DestructorType = Device;
+    using deleter        = ObjectDestroyShared<PipelineBinaryKHR>;
+  };
+
+  using SharedPipelineBinaryKHR = SharedHandle<PipelineBinaryKHR>;
+
+  //=== VK_EXT_device_generated_commands ===
+  template <>
+  class SharedHandleTraits<IndirectCommandsLayoutEXT>
+  {
+  public:
+    using DestructorType = Device;
+    using deleter        = ObjectDestroyShared<IndirectCommandsLayoutEXT>;
+  };
+
+  using SharedIndirectCommandsLayoutEXT = SharedHandle<IndirectCommandsLayoutEXT>;
+
+  template <>
+  class SharedHandleTraits<IndirectExecutionSetEXT>
+  {
+  public:
+    using DestructorType = Device;
+    using deleter        = ObjectDestroyShared<IndirectExecutionSetEXT>;
+  };
+
+  using SharedIndirectExecutionSetEXT = SharedHandle<IndirectExecutionSetEXT>;
 
   enum class SwapchainOwns
   {

@@ -23,6 +23,7 @@ import PVThemes
 import PVSettings
 import PVRealm
 import PVLogging
+import MBProgressHUD
 
 private weak var staticSelf: PVEmulatorViewController?
 
@@ -160,7 +161,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     
     public override func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
         if keyPath == "isRunning" {
-#if os(tvOS)
+#if os(tvOS) && canImport(SteamController)
             PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
 #endif
             if core.isRunning {
@@ -357,11 +358,21 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         
         let path = romPath.path(percentEncoded: false)
-        guard FileManager.default.fileExists(atPath: path) else {
+        if needsDownload(romPath) {
+            let hud = MBProgressHUD.showAdded(to: view, animated: true)
+            hud.label.text = "Downloading \(romPath.lastPathComponent) from iCloud..."
+            Task {
+                try? await downloadFileIfNeeded(romPath)
+            }
+            hud.hide(animated: true)
+        }
+        guard FileManager.default.fileExists(atPath: path), !needsDownload(romPath) else {
             ELOG("File doesn't exist at path \(path)")
             
             // Copy path to Pasteboard
+            #if !os(tvOS)
             UIPasteboard.general.string = path
+            #endif
             
             throw CreateEmulatorError.fileDoesNotExist(path: path)
         }

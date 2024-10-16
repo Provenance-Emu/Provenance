@@ -6,7 +6,7 @@ let package = Package(
     name: "PVmemcpy",
     platforms: [
         .iOS(.v17),
-        .tvOS("15.4"),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),
@@ -41,7 +41,7 @@ let package = Package(
             resources: [.copy("PrivacyInfo.xcprivacy")]
         )
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu18,
     cxxLanguageStandard: .gnucxx20
 )

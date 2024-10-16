@@ -10,7 +10,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [
         .iOS(.v17),
-        .tvOS("15.4"),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),
@@ -202,6 +202,9 @@ let package = Package(
         .target(
             name: "PVUI_TV",
             dependencies: [
+                "PVLibrary",
+                "PVSupport",
+                "RxDataSources"
 //                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [

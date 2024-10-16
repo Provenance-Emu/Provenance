@@ -108,7 +108,11 @@
 }
 
 - (GLenum)internalPixelFormat {
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
     return GL_RGB565;
+#else
+    return GL_UNSIGNED_SHORT_5_6_5;
+#endif
 }
 
 # pragma mark - Audio

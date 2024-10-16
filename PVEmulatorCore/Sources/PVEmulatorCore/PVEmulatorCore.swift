@@ -110,7 +110,6 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     
     // PVRenderDelegate
     @objc open weak var renderDelegate: (any PVCoreBridge.PVRenderDelegate)?
-//    { didSet { bridge.renderDelegate = renderDelegate } }
     { get{ bridge.renderDelegate } set { bridge.renderDelegate = newValue } }
     
     // MARK: EmulatorCoreRunLoop
@@ -232,9 +231,10 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 #if !os(macOS) && !os(watchOS)
 @objc
 extension PVEmulatorCore : ResponderClient {
-    open func send(event: UIEvent?) {
+    open func sendEvent(_ event: UIEvent?) {
         #warning("This is empty in the ObjC version too, but why does this exist? @JoeMatt")
         print("sendEvent: is empty \(String(describing: event))")
+        bridge.sendEvent(event)
     }
 }
 #endif

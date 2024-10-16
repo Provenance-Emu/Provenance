@@ -94,8 +94,6 @@ import PVLogging
 
 //    @MainActor
     @objc open func emulationLoopThread() {
-        #warning("TODO: Should bring back the swift version?")
-
         bridge.emulationLoopThread?()
     }
 }

@@ -62,7 +62,7 @@ extension SaveState: Equatable {
 #if canImport(CoreTransferable)
 import CoreTransferable
 import UniformTypeIdentifiers
-@available(iOS 16.0, macOS 13, *)
+@available(iOS 16.0, macOS 13, tvOS 16.0, *)
 extension SaveState: Transferable {
     public static var transferRepresentation: some TransferRepresentation {
         CodableRepresentation(contentType: .savestate)

@@ -19,14 +19,14 @@ final class PVApplication: UIApplication {
     var isInBackground: Bool = false
     public override func sendEvent(_ event: UIEvent) {
         if let core=self.core {
-            core.send(event:event)
+            core.sendEvent(event)
         }
         super.sendEvent(event)
     }
     
     public override func sendAction(_ action: Selector, to target: Any?, from sender: Any?, for event: UIEvent?) -> Bool {
         if let core=self.core {
-            core.send(event: event)
+            core.sendEvent(event)
         }
         return super.sendAction(action, to: target, from: sender, for: event)
     }

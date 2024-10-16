@@ -16,7 +16,6 @@ import AppKit
 
 //@Singleton
 @available(macOS 14.0, *)
-@Observable
 public final class ThemeManager {
 
     nonisolated(unsafe) public static let shared: ThemeManager = .init()

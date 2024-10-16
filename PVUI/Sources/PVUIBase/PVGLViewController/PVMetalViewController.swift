@@ -198,7 +198,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 metalView.depthStencilPixelFormat = .depth16Unorm
             case GL_DEPTH_COMPONENT24:
                 metalView.depthStencilPixelFormat = .x32_stencil8
-#if !(targetEnvironment(macCatalyst) || os(iOS))
+#if !(targetEnvironment(macCatalyst) || os(iOS) || os(tvOS) || os(watchOS))
                 if device?.isDepth24Stencil8PixelFormatSupported ?? false {
                     view.depthStencilPixelFormat = .x24_stencil8
                 }

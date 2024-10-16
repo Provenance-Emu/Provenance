@@ -116,8 +116,14 @@ public extension Equatable where Self: UXThemePalette {
     // MARK: Equatable
 #if canImport(UIKit)
     static func == (lhs: Self, rhs: Self) -> Bool {
+        #if !os(tvOS)
+        let stausBarColor: Bool = lhs.statusBarColor == rhs.statusBarColor
+        #else
+        let stausBarColor: Bool = true
+        #endif
+        
         return lhs.name == rhs.name &&
-        lhs.statusBarColor == rhs.statusBarColor &&
+        stausBarColor &&
         lhs.gameLibraryBackground == rhs.gameLibraryBackground &&
         lhs.gameLibraryText == rhs.gameLibraryText &&
         lhs.gameLibraryHeaderBackground == rhs.gameLibraryHeaderBackground &&

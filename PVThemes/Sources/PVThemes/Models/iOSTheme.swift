@@ -45,8 +45,6 @@ public struct iOSTheme: UXThemePalette, Codable, Sendable, Hashable, Observable 
 
 #if !os(tvOS)
     public var statusBarColor: UIColor? { palette.statusBarColor }
-#else
-    public var statusBarColor: UIColor { palette.statusBarColor }
 #endif
 
     public var switchON: UIColor? { palette.switchON }

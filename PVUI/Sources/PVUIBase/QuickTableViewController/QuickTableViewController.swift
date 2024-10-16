@@ -52,13 +52,15 @@ open class QuickTableViewController: UIViewController, TableViewDataSource, Tabl
             return TableView(frame: .zero, style: .insetGrouped)
         }()
     #else
-        open var tableView: TableView = TableView(frame: .zero, style: .grouped)
+        open var tableView: TableView! = TableView(frame: .zero, style: .grouped)
     #endif
 
   /// The layout of sections and rows to display in the table view.
   open var tableContents: [Section] = [] {
     didSet {
-      tableView.reloadData()
+        Task.detached { @MainActor in
+            self.tableView.reloadData()
+        }
     }
   }
 

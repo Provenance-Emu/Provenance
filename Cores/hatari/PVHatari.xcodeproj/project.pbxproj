@@ -11,8 +11,8 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 931481FE2AA88ECA002DA906 /* Build configuration list for PBXAggregateTarget "HatariRetroArch" */;
 			buildPhases = (
-				931482022AA88EF2002DA906 /* ShellScript */,
-				931482052AA88F8A002DA906 /* ShellScript */,
+				931482022AA88EF2002DA906 /* Build */,
+				931482052AA88F8A002DA906 /* Copy */,
 			);
 			dependencies = (
 			);
@@ -22,7 +22,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		B301797F207C909E0051B93D /* libhatari.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libhatari.a */; };
+		B301797F207C909E0051B93D /* libhatari.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libhatari.a */; platformFilters = (ios, maccatalyst, tvos, ); };
 		B30E98DE2C6EF0A500C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98DD2C6EF0A500C1431E /* PVSupport */; };
 		B30E98E02C6EF0B600C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98DF2C6EF0B600C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B30E9A072C6F061100C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9A062C6F061100C1431E /* PVCoreBridge */; };
@@ -54,9 +54,8 @@
 		B37022C92872554300B3F6DA /* PVHatariCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVHatariCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVHatari.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVHatari.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B39768F82859E23200558958 /* libhatari-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libhatari-libretro.a */; };
+		B39768F82859E23200558958 /* libhatari-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libhatari-libretro.a */; platformFilters = (ios, maccatalyst, tvos, ); };
 		B3A60E8B2CB7921D001D99C2 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A60E8A2CB7921D001D99C2 /* PVCoreBridgeRetro.framework */; };
-		B3A60E8C2CB7921D001D99C2 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A60E8A2CB7921D001D99C2 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, xros, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3E0AB36289214D900DB1E39 /* hatari.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B3E0AB35289214D900DB1E39 /* hatari.cfg */; };
@@ -202,17 +201,6 @@
 			dstSubfolderSpec = 16;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A60E8D2CB7921D001D99C2 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B3A60E8C2CB7921D001D99C2 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -2460,7 +2448,6 @@
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
-				B3A60E8D2CB7921D001D99C2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2548,7 +2535,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		931482022AA88EF2002DA906 /* ShellScript */ = {
+		931482022AA88EF2002DA906 /* Build */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2559,6 +2546,7 @@
 				"$(SRCROOT)/cmake/Makefile",
 				"$(SRCROOT)/cmake/hatari/Makefile",
 			);
+			name = Build;
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -2566,9 +2554,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/hatari\" ]; then\n    mkdir \"${SRCROOT}/cmake/hatari\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status hatari | head -n1 | awk '{print $1;}'`iOS1.007\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/hatari/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/hatari/\"* \"${SRCROOT}/cmake/hatari/\"\n    cp \"${SRCROOT}/cmake/\"Makefile \"${SRCROOT}/cmake/hatari/\"Makefile\n    make clean\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/hatari/\"\nmake EXTERNAL_ZLIB=1\n\nexit 0\n";
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/hatari\" ]; then\n    mkdir \"${SRCROOT}/cmake/hatari\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status hatari | head -n1 | awk '{print $1;}'`iOS1.007\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/hatari/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/hatari/\"* \"${SRCROOT}/cmake/hatari/\"\n    cp \"${SRCROOT}/cmake/\"Makefile \"${SRCROOT}/cmake/hatari/\"Makefile\n    make clean\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/hatari/\"\nmake -j5 EXTERNAL_ZLIB=1\n\nexit 0\n";
 		};
-		931482052AA88F8A002DA906 /* ShellScript */ = {
+		931482052AA88F8A002DA906 /* Copy */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2578,6 +2566,7 @@
 			inputPaths = (
 				"$(SRCROOT)/cmake/hatari/hatari_libretro_ios.dylib",
 			);
+			name = Copy;
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -2746,12 +2735,22 @@
 /* Begin PBXTargetDependency section */
 		931482042AA88F1F002DA906 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				watchos,
+			);
 			target = 931481FD2AA88EC9002DA906 /* HatariRetroArch */;
 			targetProxy = 931482032AA88F1F002DA906 /* PBXContainerItemProxy */;
 		};
 		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = B3344B522859E088006E6B3A /* hatari-libretro */;
 			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
 		};
@@ -2839,13 +2838,14 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2855,8 +2855,12 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -2876,6 +2880,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -2883,8 +2888,12 @@
 				PRODUCT_NAME = hatari;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -2895,6 +2904,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -2902,8 +2912,12 @@
 				PRODUCT_NAME = "hatari-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -2997,13 +3011,14 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3013,8 +3028,12 @@
 				PRODUCT_NAME = PVHatari;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -3108,13 +3127,14 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3124,8 +3144,12 @@
 				PRODUCT_NAME = PVHatari;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -3136,6 +3160,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -3143,8 +3168,12 @@
 				PRODUCT_NAME = "hatari-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -3155,6 +3184,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -3162,8 +3192,12 @@
 				PRODUCT_NAME = hatari;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -3173,13 +3207,14 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3189,8 +3224,12 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};

@@ -62,7 +62,7 @@
 	<key>CFBundleIcons~ipad</key>
 	<dict/>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>$(ORG_PREFIX).$(PROJECT_NAME:lower)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
@@ -239,6 +239,8 @@
 		<string>org.provenance-emu.game.play</string>
 		<string>org.provenance-emu.webserver</string>
 	</array>
+	<key>PVAppType</key>
+	<string>standard</string>
 	<key>Revision</key>
 	<string>78dc628</string>
 	<key>UIBackgroundModes</key>
@@ -524,7 +526,5 @@
 	</array>
 	<key>appcenter</key>
 	<string>862ca352-4607-4f8e-8c77-1248fa68ca3a</string>
-	<key>PVAppType</key>
-	<string>standard</string>
 </dict>
 </plist>

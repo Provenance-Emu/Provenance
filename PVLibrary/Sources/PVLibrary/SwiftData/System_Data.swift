@@ -16,6 +16,10 @@ import PVPlists
 import PVPrimitives
 import Systems
 
+#if os(tvOS)
+import TVServices
+#endif
+
 @Model
 public class System_Data {
     public typealias BIOSInfoProviderType = BIOS_Data

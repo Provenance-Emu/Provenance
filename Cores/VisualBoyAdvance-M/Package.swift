@@ -14,10 +14,10 @@ let package = Package(
     name: "PVVisualBoyAdvance",
     platforms: [
         .iOS(.v17),
-        .tvOS("15.4"),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
-        .macCatalyst(.v14),
+        .macCatalyst(.v17),
         .visionOS(.v1)
     ],
     products: [

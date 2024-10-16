@@ -167,9 +167,8 @@ extension UIViewController {
 
 }
 
-#if os(iOS)
+#if os(iOS) || targetEnvironment(macCatalyst)
 // MARK: - UIDocumentPickerDelegate
-@available(iOS 14.0.0, *)
 extension PVRootViewController: UIDocumentPickerDelegate {
     // copied from PVGameLibraryViewController#documentPicker()
     public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {

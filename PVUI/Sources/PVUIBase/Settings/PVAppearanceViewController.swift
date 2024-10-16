@@ -118,13 +118,13 @@ public final class PVAppearanceViewController: UITableViewController {
 
         if indexPath.section == 0 {
                 if indexPath.row == 0 {
-                    settings.showGameTitles = !Defaults[.showGameTitles]
+                    Defaults[.showGameTitles] = !Defaults[.showGameTitles]
                     cell?.detailTextLabel?.text = Defaults[.showGameTitles] ? "On" : "Off"
                 } else if indexPath.row == 1 {
-                    settings.showRecentGames = !Defaults[.showRecentGames]
+                    Defaults[.showRecentGames] = !Defaults[.showRecentGames]
                     cell?.detailTextLabel?.text = Defaults[.showRecentGames] ? "On" : "Off"
                 } else if indexPath.row == 2 {
-                    settings.showRecentSaveStates = !Defaults[.showRecentSaveStates]
+                    Defaults[.showRecentSaveStates] = !Defaults[.showRecentSaveStates]
                     cell?.detailTextLabel?.text = Defaults[.showRecentGames] ? "On" : "Off"
                 }
             }

@@ -24,7 +24,7 @@ let package = Package(
     name: "PVLibrary",
     platforms: [
         .iOS(.v17),
-        .tvOS("15.4"),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),
@@ -48,7 +48,10 @@ let package = Package(
         ),
     ],
     dependencies:
-        ["Support", "Logging", "Hashing", "EmulatorCore", "CoreLoader", "Primitives", "Plists", "Lookup"].map { .package(path: "../PV\($0)") }
+        ["Support", "Logging", "Hashing",
+         "EmulatorCore", "CoreLoader", "Primitives",
+         "Plists", "Lookup", "Settings"]
+        .map { .package(path: "../PV\($0)") }
         + [
         .package(url: "https://github.com/ReactiveX/RxSwift.git",
                  .upToNextMajor(from: "6.7.1")),
@@ -93,6 +96,7 @@ let package = Package(
                 "Extractor",
                 "PVFileSystem",
                 "PVMediaCache",
+                "PVSettings",
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
                 .product(name: "PVCoreLoader", package: "PVCoreLoader"),
                 .product(name: "SQLite", package: "SQLite.swift"),

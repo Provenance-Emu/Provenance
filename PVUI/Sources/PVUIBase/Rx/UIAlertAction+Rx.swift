@@ -8,7 +8,7 @@
 import RxSwift
 import UIKit
 
-private extension UIAlertAction {
+package extension UIAlertAction {
     static func createReactive(title: String?, style: Style) -> (UIAlertAction, Observable<Void>) {
         let didSelect = PublishSubject<UIAlertAction>()
         let action = UIAlertAction(title: title, style: style, handler: didSelect.onNext)

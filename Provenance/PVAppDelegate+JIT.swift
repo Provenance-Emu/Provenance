@@ -42,7 +42,7 @@ extension PVAppDelegate {
     }
     
     fileprivate func _showJITWaitScreen() {
-        let controller = JitWaitScreenViewController(nibName: "JitWaitScreen", bundle: nil)
+        let controller = JitWaitScreenViewController(nibName: "JitWaitScreen", bundle: JitWaitScreenViewController.module)
         self.jitWaitScreenVC = controller
         controller.delegate = self
         jitScreenDelegate = self

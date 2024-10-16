@@ -15,6 +15,7 @@ import RxRealm
 import PVPlists
 import PVRealm
 import Systems
+import PVFileSystem
 
 private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
 
@@ -74,14 +75,25 @@ extension GameLaunchingViewController where Self: UIViewController {
         if saveState != nil {
             let path = saveState!.file.url.path
             ILOG("Opening with save state at path: \(path)")
+            do {
+                try await downloadFileIfNeeded(saveState!.file.url)
+            } catch {
+                ELOG("Save state was not downloaded")
+                // TODO: Re-throw
+                saveState = nil
+            }
         }
 
         // Check if file exists
-        let online: Bool = !(game.file.online)
-        if  online {
-            displayAndLogError(withTitle: "Cannot open game",
-                               message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file.fileName)")
-            return
+        let offline: Bool = !(game.file.online)
+        if  offline {
+            do {
+                try await downloadFileIfNeeded(game.file.url)
+            } catch {
+                displayAndLogError(withTitle: "Cannot open game",
+                                   message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file.fileName)")
+                return
+            }
         }
 
         // Pre-flight
@@ -91,6 +103,8 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
 
         do {
+            try await downloadFileIfNeeded(game.file.url)
+
             try await canLoad(game)
             VLOG("canLoad \(game.title)")
             // Init emulator VC
@@ -444,6 +458,9 @@ extension GameLaunchingViewController where Self: UIViewController {
                 if biosPathContentsMD5Cache == nil {
                     biosPathContentsMD5Cache = biosPathContents.reduce([String: String](), { (hashDictionary, filename) -> [String: String] in
                         let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
+                        Task {
+                            try await downloadFileIfNeeded(fullBIOSFileURL)
+                        }
                         if let hash = FileManager.default.md5ForFile(atPath: fullBIOSFileURL.path, fromOffset: 0), !hash.isEmpty {
                             // Make mutable
                             var hashDictionary = hashDictionary

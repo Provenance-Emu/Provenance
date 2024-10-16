@@ -77,7 +77,7 @@ public class RxRealmDataSourceSection<E: Object> {
     }
 }
 
-#if os(iOS)
+#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
     // MARK: - iOS / UIKi
 

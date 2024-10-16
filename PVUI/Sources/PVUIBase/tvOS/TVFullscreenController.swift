@@ -9,6 +9,7 @@
 //  Created by Todd Laney on 22/01/2022.
 //
 
+#if os(tvOS)
 import UIKit
 
 public class TVFullscreenController: UIViewController {
@@ -50,7 +51,7 @@ public class TVFullscreenController: UIViewController {
         modalTransitionStyle = .crossDissolve
     }
 
-    override func viewWillLayoutSubviews() {
+    public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
         if let content = view.subviews.first {
@@ -65,7 +66,7 @@ public class TVFullscreenController: UIViewController {
         }
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         // get the content view, bail if none
@@ -80,3 +81,4 @@ public class TVFullscreenController: UIViewController {
         }
     }
 }
+#endif

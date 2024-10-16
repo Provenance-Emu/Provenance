@@ -39,6 +39,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/o2em_libretro_ios.dylib
 #$(SRCROOT)/CoresRetro/RetroArch/modules/opera_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/parallel_n64_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/pcsx_rearmed_libretro_ios.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/play_libretro.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/ppsspp_libretro.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/prosystem_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/race_libretro_ios.dylib

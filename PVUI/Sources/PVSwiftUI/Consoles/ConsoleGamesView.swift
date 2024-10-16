@@ -146,9 +146,9 @@ struct ConsoleGamesView: SwiftUI.View {
 //                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
 //                    }
 //                }
-                HomeDividerView()
-                HomeView(delegate: rootDelegate)
-                HomeDividerView()
+//                HomeDividerView()
+//                HomeView(delegate: rootDelegate)
+//                HomeDividerView()
                 
                 if viewModel.viewGamesAsGrid {
                     LazyVGrid(columns: columns, spacing: 20) {

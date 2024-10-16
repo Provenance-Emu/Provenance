@@ -8,7 +8,9 @@
 
 import Foundation
 
-@objc public protocol ResponderClient: AnyObject {}
+@objc public protocol ResponderClient: AnyObject {
+    func sendEvent(_ event: UIEvent?)
+}
 
 #if canImport(GameController)
 @_exported import GameController

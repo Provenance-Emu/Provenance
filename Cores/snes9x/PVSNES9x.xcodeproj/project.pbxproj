@@ -91,8 +91,7 @@
 		B3A478E82C9649680052500A /* sdsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3650FEB21770245008FDB7B /* sdsp.cpp */; };
 		B3A478E92C9649680052500A /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA94A17F760390031B1C9 /* dma.cpp */; };
 		B3A478EA2C9649680052500A /* sdd1emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97717F760390031B1C9 /* sdd1emu.cpp */; };
-		B3A478EB2C964B640052500A /* snes9x.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A478AC2C9649540052500A /* snes9x.framework */; };
-		B3A478EC2C964B640052500A /* snes9x.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A478AC2C9649540052500A /* snes9x.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A478EB2C964B640052500A /* snes9x.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A478AC2C9649540052500A /* snes9x.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
 		B3A478F42C964C120052500A /* SNESOESupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */; };
 		B3A478F72C964C590052500A /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3A478F62C964C590052500A /* PVCoreObjCBridge */; };
 		B3A478FA2C964C6A0052500A /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3A478F92C964C6A0052500A /* PVLogging */; };
@@ -134,20 +133,6 @@
 			remoteInfo = snes9x;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		B3A478EF2C964B640052500A /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B3A478EC2C964B640052500A /* snes9x.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1ACEA8E717F75F350031B1C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -673,7 +658,6 @@
 				B3C9D52D1DEA83DE0068D057 /* Sources */,
 				B3C9D52E1DEA83DE0068D057 /* Frameworks */,
 				B3C9D5301DEA83DE0068D057 /* Resources */,
-				B3A478EF2C964B640052500A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -926,27 +910,27 @@
 /* Begin PBXTargetDependency section */
 		9312497F298CEE2A002DE0C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				tvos,
-			);
 			target = 93124977298CECEA002DE0C2 /* SNES9x RetroArch TV */;
 			targetProxy = 9312497E298CEE2A002DE0C2 /* PBXContainerItemProxy */;
 		};
 		934BE9A4296F094900FB9933 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilters = (
-				driverkit,
 				ios,
 				maccatalyst,
-				macos,
 				watchos,
-				xros,
 			);
 			target = 934BE99D296F080300FB9933 /* SNES9x RetroArch */;
 			targetProxy = 934BE9A3296F094900FB9933 /* PBXContainerItemProxy */;
 		};
 		B3A478EE2C964B640052500A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				watchos,
+			);
 			target = B3A478AB2C9649540052500A /* snes9x */;
 			targetProxy = B3A478ED2C964B640052500A /* PBXContainerItemProxy */;
 		};
@@ -1144,11 +1128,13 @@
 				PRODUCT_NAME = PVSNES;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1206,7 +1192,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -1226,11 +1212,15 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				XROS_DEPLOYMENT_TARGET = 1.3;
@@ -1266,7 +1256,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -1286,11 +1276,15 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				XROS_DEPLOYMENT_TARGET = 1.3;
@@ -1331,7 +1325,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -1351,12 +1345,16 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				XROS_DEPLOYMENT_TARGET = 1.3;
@@ -1405,11 +1403,13 @@
 				PRODUCT_NAME = PVSNES;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1524,11 +1524,13 @@
 				PRODUCT_NAME = PVSNES;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

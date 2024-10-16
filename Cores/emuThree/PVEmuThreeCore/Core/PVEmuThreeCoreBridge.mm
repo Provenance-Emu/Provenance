@@ -9,6 +9,7 @@
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
+@import PVLoggingObjC;
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 /* Citra Includes */
@@ -129,7 +130,7 @@ static bool _isOff = false;
 }
 
 - (void)startVM:(UIView *)view {
-    NSLog(@"Starting VM\n");
+    DLOG(@"Starting VM\n");
     m_view=view;
     [self startEmuThree];
 }
@@ -139,7 +140,7 @@ static bool _isOff = false;
     [CitraWrapper.sharedInstance useMetalLayer:m_view.layer];
     [CitraWrapper.sharedInstance load:_romPath];
     [self setupControllers];
-    NSLog(@"VM Started\n");
+    DLOG(@"VM Started\n");
     [CitraWrapper.sharedInstance run];
     [self refreshScreenSize];
     _isInitialized = true;

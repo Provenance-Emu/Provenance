@@ -166,7 +166,9 @@ public extension PVFile {
 
     // TODO: Make this live update and observable
     var online: Bool { get {
-        return FileManager.default.fileExists(atPath: url.path)
+        let exists = FileManager.default.fileExists(atPath: url.path)
+        let needsDownload = isICloudFile(url) && needsDownload(url)
+        return exists && !needsDownload
     }}
 
     var pathExtension: String {get {
