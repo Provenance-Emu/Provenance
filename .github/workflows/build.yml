@@ -98,6 +98,15 @@ jobs:
           key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
           restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
 
+      - name: Install Swift Package Cache
+        run: |
+          mkdir -p ${{ env.SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY }}
+          chmod -R u+w ${{ env.SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY }}
+
+      - name: Activate IDESkipMacroFingerprintValidation
+        run: |
+          defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+
       # - name: Import Codesign Certificates
       #   uses: apple-actions/import-codesign-certs@v1
       #   with:
@@ -117,6 +126,7 @@ jobs:
           -scheme "${{ matrix.scheme }}" \
           -sdk ${{ matrix.sdk }} \
           -skipPackagePluginValidation \
+          -skipMacroValidation \
           archive \
           -archivePath ./archive \
           CODE_SIGNING_REQUIRED=NO \
