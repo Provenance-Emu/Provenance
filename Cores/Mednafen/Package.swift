@@ -238,6 +238,7 @@ let package = Package(
             dependencies: [
                 /// Cores
                 "apple2",
+                "gb",
                 "gba",
                 "lynx",
                 "neogeopocket",
