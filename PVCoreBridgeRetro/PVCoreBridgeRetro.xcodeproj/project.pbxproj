@@ -21,6 +21,7 @@
 		B322996E28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
 		B342325B286EB4060033EFA5 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
 		B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
+		B345EAF72CC10F3600DE822B /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B345EAF62CC10F3600DE822B /* PVCoreBridge */; };
 		B364D4B42870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36C41052898776C00EAEF59 /* retro_netplay.m in Sources */ = {isa = PBXBuildFile; fileRef = B36C41042898776C00EAEF59 /* retro_netplay.m */; };
 		B36C41062898776C00EAEF59 /* retro_netplay.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B36C41032898776C00EAEF59 /* retro_netplay.h */; };
@@ -906,6 +907,7 @@
 			files = (
 				B377E9FA2CB25FA000E9B750 /* PVCoreObjCBridge in Frameworks */,
 				B377EBDF2CB2A18A00E9B750 /* PVSettings in Frameworks */,
+				B345EAF72CC10F3600DE822B /* PVCoreBridge in Frameworks */,
 				B377E9F72CB25F8800E9B750 /* PVLogging in Frameworks */,
 				B3EA6C91292617F300010224 /* libretro.a in Frameworks */,
 			);
@@ -2913,6 +2915,7 @@
 				B377E9F62CB25F8800E9B750 /* PVLogging */,
 				B377E9F92CB25FA000E9B750 /* PVCoreObjCBridge */,
 				B377EBDE2CB2A18A00E9B750 /* PVSettings */,
+				B345EAF62CC10F3600DE822B /* PVCoreBridge */,
 			);
 			productName = PVLibRetro;
 			productReference = B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */;
@@ -2956,6 +2959,7 @@
 				B377E9F52CB25F8800E9B750 /* XCLocalSwiftPackageReference "../PVLogging" */,
 				B377E9F82CB25FA000E9B750 /* XCLocalSwiftPackageReference "../PVCoreObjCBridge" */,
 				B377EBDD2CB2A18A00E9B750 /* XCLocalSwiftPackageReference "../PVSettings" */,
+				B345EAF52CC10F3600DE822B /* XCLocalSwiftPackageReference "../PVCoreBridge" */,
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
@@ -3682,6 +3686,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		B345EAF52CC10F3600DE822B /* XCLocalSwiftPackageReference "../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVCoreBridge;
+		};
 		B377E9F52CB25F8800E9B750 /* XCLocalSwiftPackageReference "../PVLogging" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVLogging;
@@ -3697,6 +3705,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B345EAF62CC10F3600DE822B /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
 		B377E9F62CB25F8800E9B750 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

@@ -2247,6 +2247,21 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     }
     
     self->loaded = loaded;
+    
+    if(!loaded) {
+        NSString *coreName = [self coreIdentifier];
+        NSString *errorMessage = FORMAT(@"%@ failed to load ROM for unknown reasons.", coreName);
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load ROM.",
+                                   NSLocalizedFailureReasonErrorKey:errorMessage,
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Try a different ROM and check required BIOSes."
+                                   };
+
+        NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                            userInfo:userInfo];
+        *error = newError;
+    }
 
     return loaded;
 }
