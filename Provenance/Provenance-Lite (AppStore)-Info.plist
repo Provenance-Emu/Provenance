@@ -105,7 +105,7 @@
 	<key>CFBundleIcons~ipad</key>
 	<dict/>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER_LITE)</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>Spanish</string>
