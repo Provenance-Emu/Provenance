@@ -24,6 +24,15 @@ open class PVGMECore: PVEmulatorCore {
     }
 }
 
+extension PVGMECore: PVNESSystemResponderClient {
+    public func didPush(_ button: PVCoreBridge.PVNESButton, forPlayer player: Int) {
+        (_bridge as! PVNESSystemResponderClient).didPush(button, forPlayer: player)
+    }
+    public func didRelease(_ button: PVCoreBridge.PVNESButton, forPlayer player: Int) {
+        (_bridge as! PVNESSystemResponderClient).didRelease(button, forPlayer: player)
+    }
+}
+
 extension PVGMECore: PVDOSSystemResponderClient {
     public func mouseMoved(at point: CGPoint) {
         (_bridge as! PVDOSSystemResponderClient).mouseMoved(at: point)
