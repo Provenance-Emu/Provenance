@@ -19,6 +19,7 @@ let GCC_PREPROCESSOR_DEFINITIONS: [CSetting] = [
     .define("MPC_FIXED_POINT"),
     .define("STDC_HEADERS", to: "1"),
     .define("WANT_APPLE2_EMU"),
+    .define("WANT_GB_EMU"),
     .define("WANT_GBA_EMU"),
     .define("WANT_LYNX_EMU"),
     .define("WANT_NES_EMU"),
