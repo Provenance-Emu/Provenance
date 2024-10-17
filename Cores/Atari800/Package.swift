@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "PVAtari800",
+    name: "PVCoreAtari800",
     platforms: [
         .iOS(.v17),
         .tvOS(.v17),
