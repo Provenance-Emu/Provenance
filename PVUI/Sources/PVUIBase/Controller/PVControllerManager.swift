@@ -511,7 +511,7 @@ public final class PVControllerManager: NSObject {
         ILOG("Assign controller \(controller.vendorName ?? "nil")")
         // Assign the controller to the first player without a controller assigned, or
         // if this is an extended controller, replace the first controller which is not extended (the Siri remote on tvOS).
-        for i in 1 ... 4 {
+        for i in 1 ... 8 {
             let previouslyAssignedController: GCController? = self.controller(forPlayer: i)
             let newGamepadNotRemote = !(controller.isRemote || controller.isKeyboard)
             let previousGamepadNotRemote = !((previouslyAssignedController?.isRemote == true) || (previouslyAssignedController?.isKeyboard == true))
