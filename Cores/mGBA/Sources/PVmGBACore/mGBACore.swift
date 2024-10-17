@@ -20,15 +20,14 @@ import PVAudio
 import PVEmulatorCore
 import PVCoreObjCBridge
 import PVmGBABridge
-import libmGBA
+//import libmGBA
 
 @objc
 @objcMembers
 public class PVmGBACore: PVEmulatorCore {
     
     @objc public override var isDoubleBuffered: Bool { false }
-    
-    @objc public override dynamic var rendersToOpenGL: Bool { false }
+    @objc public override var rendersToOpenGL: Bool { false }
     
     // MARK: Lifecycle
     package var _bridge: PVmGBAGameCoreBridge = .init()
@@ -42,11 +41,9 @@ public class PVmGBACore: PVEmulatorCore {
 extension PVmGBACore: PVGBASystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVGBAButton, forPlayer player: Int) {
         (_bridge as! PVGBASystemResponderClient).didPush(button, forPlayer: player)
-        
     }
     
     public func didRelease(_ button: PVCoreBridge.PVGBAButton, forPlayer player: Int) {
         (_bridge as! PVGBASystemResponderClient).didRelease(button, forPlayer: player)
-        
     }
 }
