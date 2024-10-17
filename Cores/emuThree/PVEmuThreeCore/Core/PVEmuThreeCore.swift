@@ -17,7 +17,7 @@ import GameController
 
 @objc
 @objcMembers
-open class PVEmuThreeCore: PVEmulatorCore, @unchecked Sendable {
+public final class PVEmuThreeCore: PVEmulatorCore {
 
     let _bridge: PVEmuThreeCoreBridge = .init()
     
@@ -74,8 +74,7 @@ extension PVEmuThreeCore: GameWithCheat {
         }
     }
 
-    public var supportsCheatCode: Bool
-    {
+    public var supportsCheatCode: Bool {
         return true
     }
 

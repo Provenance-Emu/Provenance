@@ -46,6 +46,7 @@ static bool _isOff = false;
     if (self = [super init]) {
         self.alwaysUseMetal = true;
         self.skipLayout = true;
+        _current=self;
         _videoWidth  = 640;
         _videoHeight = 480;
         _videoBitDepth = 32; // ignored
@@ -55,7 +56,6 @@ static bool _isOff = false;
         _isInitialized = false;
         [self parseOptions];
     }
-    _current=self;
     return self;
 }
 
