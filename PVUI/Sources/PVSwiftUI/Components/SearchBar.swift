@@ -10,20 +10,34 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 14, tvOS 14, *)
 class SearchBar: NSObject, ObservableObject {
 
     @Published var text: String = ""
-    let searchController: UISearchController = UISearchController(searchResultsController: nil)
+    let searchController: UISearchController
+    
 
-    override init() {
+    #if os(tvOS)
+    // Cannot be nil on tvOS,
+    required init(searchResultsController searchResultsController: UIViewController) {
+        searchController = UISearchController(searchResultsController: searchResultsController)
+
         super.init()
+
         self.searchController.obscuresBackgroundDuringPresentation = false
         self.searchController.searchResultsUpdater = self
     }
+    #else
+    required init(searchResultsController searchResultsController: UIViewController? = nil) {
+        searchController = UISearchController(searchResultsController: searchResultsController)
+
+        super.init()
+
+        self.searchController.obscuresBackgroundDuringPresentation = false
+        self.searchController.searchResultsUpdater = self
+    }
+    #endif
 }
 
-@available(iOS 14, tvOS 14, *)
 extension SearchBar: UISearchResultsUpdating {
 
     func updateSearchResults(for searchController: UISearchController) {
@@ -35,7 +49,6 @@ extension SearchBar: UISearchResultsUpdating {
     }
 }
 
-@available(iOS 14, tvOS 14, *)
 struct SearchBarModifier: ViewModifier {
 
     let searchBar: SearchBar
@@ -55,7 +68,6 @@ struct SearchBarModifier: ViewModifier {
     }
 }
 
-@available(iOS 14, tvOS 14, *)
 extension SwiftUI.View {
     func add(_ searchBar: SearchBar) -> some SwiftUI.View {
         return self.modifier(SearchBarModifier(searchBar: searchBar))

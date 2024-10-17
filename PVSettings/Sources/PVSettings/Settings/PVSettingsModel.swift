@@ -99,7 +99,9 @@ public extension Defaults.Keys {
     static let useMetal = Key<Bool>("useMetal", default: true)
 #endif
     static let autoJIT = Key<Bool>("autoJIT", default: false)
-#if os(macOS) || targetEnvironment(macCatalyst) || APP_STORE
+#if os(tvOS)
+    static let useSwiftUI = Key<Bool>("useSwiftUI", default: false)
+#elseif os(macOS) || targetEnvironment(macCatalyst) || APP_STORE
     static let useSwiftUI = Key<Bool>("useSwiftUI", default: true)
 #elseif os(visionOS)
     static let useSwiftUI = Key<Bool>("useSwiftUI", default: true)

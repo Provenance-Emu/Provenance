@@ -38,7 +38,6 @@ public final class GameControllerManager: ObservableObject {
         }
     }
     
-    
     func handleDPadInput(x: Float, y: Float) {
         if x > 0 {
             moveFocus(.right)

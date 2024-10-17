@@ -43,13 +43,19 @@ public struct SideMenuView: SwiftUI.View {
         filter: NSPredicate(format: "games.@count > 0")
     ) var consoles
 
-    @ObservedObject var searchBar: SearchBar = SearchBar()
+    @ObservedObject var searchBar: SearchBar
 
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.viewModel = viewModel
         self.delegate = delegate
         self.rootDelegate = rootDelegate
+        
+        #if os(tvOS)
+        searchBar = SearchBar(searchResultsController: rootDelegate as! UIViewController)
+        #else
+        searchBar = SearchBar(searchResultsController: nil)
+        #endif
     }
 
     public static func instantiate(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
