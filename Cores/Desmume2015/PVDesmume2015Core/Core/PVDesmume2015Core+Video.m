@@ -9,6 +9,8 @@
 #import "PVDesmume2015Core+Video.h"
 #import "PVDesmume2015Core.h"
 
+#import <PVLogging/PVLoggingObjC.h>
+
 #if !__has_include(<OpenGL/OpenGL.h>)
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
@@ -42,18 +44,36 @@
 //}
 
 # pragma mark - Properties
-//
+
 //- (CGSize)bufferSize {
-//    return CGSizeMake(1024, 512);
+//    CGSize size = CGSizeMake(av_info.geometry.max_width, av_info.geometry.max_height);
+//    DLOG(@"<%i, %i>", size.width, size.height);
+//    return size;
 //}
-//
 //- (CGRect)screenRect {
-//    return CGRectMake(0, 0, self.videoWidth, self.videoHeight);
+//    CGRect rect = CGRectMake(0, 0, av_info.geometry.base_width, av_info.geometry.base_height);
+//    DLOG(@"<%i, %i>", rect.size.width, rect.size.height * 2);
+//    return rect;
+//}
+
+//- (CGSize)aspectSize {
+//    CGSize size = CGSizeMake(1, av_info.geometry.aspect_ratio);
+//    DLOG(@"<%i, %i>", size.width, size.height);
+//    return size;
 //}
 //
-//- (CGSize)aspectSize {
-//    return CGSizeMake(256, 192);
+- (CGSize)bufferSize {
+    return CGSizeMake(2048, 2048);
+}
+////
+/// 1024 / 1536
+//- (CGRect)screenRect {
+//    return CGRectMake(0, 0, 256, 512);
 //}
+////
+- (CGSize)aspectSize {
+    return CGSizeMake(1, 2);
+}
 //
 //- (BOOL)rendersToOpenGL {
 //    return YES;

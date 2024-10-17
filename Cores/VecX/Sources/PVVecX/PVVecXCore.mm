@@ -39,7 +39,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-        pitch_shift = 4;
+        pitch_shift = 1;
 	}
 
 	_current = self;

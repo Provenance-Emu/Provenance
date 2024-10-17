@@ -15,6 +15,8 @@ import PVCoreBridgeRetro
 @objc
 @objcMembers
 open class PVVecXCore: PVEmulatorCore {
+    
+    override open var alwaysUseGL: Bool { true }
 
     let _bridge: PVVecXCoreBridge = .init()
     

@@ -28,7 +28,7 @@
 //#include "hw/maple/maple_if.h"
 //#include "hw/maple/maple_cfg.h"
 
-//__weak PVMelonDSCore *_current = 0;
+//__weak PVMelonDSCoreBridge *_current = 0;
 //
 //@interface PVMelonDSCore() {
 //

@@ -56,9 +56,9 @@
 //    return CGRectMake(0, 0, self.videoWidth, self.videoHeight);
 //}
 //
-- (CGSize)aspectSize {
-    return CGSizeMake(256, 192);
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(256, 192);
+//}
 //
 //- (BOOL)rendersToOpenGL {
 //    return YES;

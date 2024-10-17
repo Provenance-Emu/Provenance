@@ -1409,7 +1409,10 @@ void retro_set_environment(retro_environment_t cb)
 {
     GET_CURRENT_OR_RETURN();
     environ_cb = cb;
-    current->core->retro_set_environment(cb);
+    if (current->core) {
+        current->core->retro_set_environment(cb);
+    }
+
 }
 
 static void core_log(enum retro_log_level level, const char * fmt, ...) {

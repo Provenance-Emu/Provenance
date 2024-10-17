@@ -91,13 +91,13 @@
     return 60.0;
 }
 
-- (CGSize)aspectSize {
-    return CGSizeMake(1, 1);
-}
-
-- (CGSize)bufferSize {
-    return CGSizeMake(160, 160);
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(1, 1);
+//}
+//
+//- (CGSize)bufferSize {
+//    return CGSizeMake(160, 160);
+//}
 
 - (GLenum)pixelFormat {
     return GL_RGB;
@@ -154,90 +154,6 @@
         ELOG(@"Unprocessed var: %s", variable);
         return nil;
     }
-    
-    /*
-     "dosbox_pure_mouse_wheel",
-     "Bind Mouse Wheel To Key", NULL,
-     "Bind mouse wheel up and down to two keyboard keys to be able to use it in DOS games.", NULL,
-     "Input",
-     {
-         { "67/68", "Left-Bracket/Right-Bracket" },
-         { "72/71", "Comma/Period" },
-         { "79/82", "Page-Up/Page-Down" },
-         { "78/81", "Home/End" },
-         { "80/82", "Delete/Page-Down" },
-         { "64/65", "Minus/Equals" },
-         { "69/70", "Semicolon/Quote" },
-         { "99/100", "Numpad Minus/Plus" },
-         { "97/98", "Numpad Divide/Multiply" },
-         { "84/85", "Up/Down" },
-         { "83/86", "Left/Right" },
-         { "11/13", "Q/E" },
-         { "none", "Disable" },
-     },
-     "67/68"
-     
-     "dosbox_pure_cycles",
-     "Emulated Performance", NULL,
-     "The raw performance that DOSBox will try to emulate." "\n\n", NULL, //end of Performance section
-     "Performance",
-     {
-         { "auto",    "AUTO - DOSBox will try to detect performance needs (default)" },
-         { "max",     "MAX - Emulate as many instructions as possible" },
-         { "315",     "8086/8088, 4.77 MHz from 1980 (315 cps)" },
-         { "1320",    "286, 6 MHz from 1982 (1320 cps)" },
-         { "2750",    "286, 12.5 MHz from 1985 (2750 cps)" },
-         { "4720",    "386, 20 MHz from 1987 (4720 cps)" },
-         { "7800",    "386DX, 33 MHz from 1989 (7800 cps)" },
-         { "13400",   "486DX, 33 MHz from 1990 (13400 cps)" },
-         { "26800",   "486DX2, 66 MHz from 1992 (26800 cps)" },
-         { "77000",   "Pentium, 100 MHz from 1995 (77000 cps)" },
-         { "200000",  "Pentium II, 300 MHz from 1997 (200000 cps)" },
-         { "500000",  "Pentium III, 600 MHz from 1999 (500000 cps)" },
-         { "1000000", "AMD Athlon, 1.2 GHz from 2000 (1000000 cps)" },
-     },
-     
-         "dosbox_pure_cpu_type",
-         "CPU Type", NULL,
-         "Emulated CPU type. Auto is the fastest choice." "\n"
-             "Games that require specific CPU type selection:" "\n"
-             "386 (prefetch): X-Men: Madness in The Murderworld, Terminator 1, Contra, Fifa International Soccer 1994" "\n"
-             "486 (slow): Betrayal in Antara" "\n"
-             "Pentium (slow): Fifa International Soccer 1994, Windows 95/Windows 3.x games" "\n\n", NULL, //end of System section
-         "System",
-         {
-             { "auto", "Auto - Mixed feature set with maximum performance and compatibility" },
-             { "386", "386 - 386 instruction with fast memory access" },
-             { "386_slow", "386 (slow) - 386 instruction set with memory privilege checks" },
-             { "386_prefetch", "386 (prefetch) - With prefetch queue emulation (only on 'auto' and 'normal' core)" },
-             { "486_slow", "486 (slow) - 486 instruction set with memory privilege checks" },
-             { "pentium_slow", "Pentium (slow) - 586 instruction set with memory privilege checks" },
-         },
-         "auto"
-     },
-     {
-         "dosbox_pure_cpu_core",
-         "Advanced > CPU Core", NULL,
-         "Emulation method (DOSBox CPU core) used.", NULL,
-         "System",
-         {
-             #if defined(C_DYNAMIC_X86)
-             { "auto", "Auto - Real-mode games use normal, protected-mode games use dynamic" },
-             { "dynamic", "Dynamic - Dynamic recompilation (fast, using dynamic_x86 implementation)" },
-             #elif defined(C_DYNREC)
-             { "auto", "Auto - Real-mode games use normal, protected-mode games use dynamic" },
-             { "dynamic", "Dynamic - Dynamic recompilation (fast, using dynrec implementation)" },
-             #endif
-             { "normal", "Normal (interpreter)" },
-             { "simple", "Simple (interpreter optimized for old real-mode games)" },
-         },
-         #if defined(C_DYNAMIC_X86) || defined(C_DYNREC)
-         "auto"
-         #else
-         "normal"
-         #endif
-     },
-     */
 #undef V
     return NULL;
 }
@@ -248,6 +164,20 @@
 
 -(void)didPushSupervisionButton:(enum PVSupervisionButton)button forPlayer:(NSInteger)player {
 #warning "Finish me"
+    uint8_t controls_state = 0;
+    unsigned joypad_bits = 0;
+    size_t i;
+
+//    controls_state |= joypad_bits & (1 << RETRO_DEVICE_ID_JOYPAD_UP)     ? 0x08 : 0;
+//    controls_state |= joypad_bits & (1 << RETRO_DEVICE_ID_JOYPAD_RIGHT)  ? 0x01 : 0;
+//    controls_state |= joypad_bits & (1 << RETRO_DEVICE_ID_JOYPAD_LEFT)   ? 0x02 : 0;
+//    controls_state |= joypad_bits & (1 << RETRO_DEVICE_ID_JOYPAD_DOWN)   ? 0x04 : 0;
+//    controls_state |= joypad_bits & (1 << RETRO_DEVICE_ID_JOYPAD_A)      ? 0x20 : 0;
+//    controls_state |= joypad_bits & (1 << RETRO_DEVICE_ID_JOYPAD_B)      ? 0x10 : 0;
+//    controls_state |= joypad_bits & (1 << RETRO_DEVICE_ID_JOYPAD_SELECT) ? 0x40 : 0;
+//    controls_state |= joypad_bits & (1 << RETRO_DEVICE_ID_JOYPAD_START)  ? 0x80 : 0;
+//
+//    supervision_set_input(controls_state);
 //    retro_input_state_t state;
 //    retro_set_input_state(state);
 }

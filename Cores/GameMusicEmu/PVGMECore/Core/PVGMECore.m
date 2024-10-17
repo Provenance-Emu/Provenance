@@ -63,6 +63,7 @@
 
 - (void)stopEmulation {
     close_file();
+    // TODO: This crashes
     [super stopEmulation];
 }
 

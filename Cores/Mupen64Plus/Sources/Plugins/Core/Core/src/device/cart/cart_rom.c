@@ -31,7 +31,7 @@
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 
-#define CART_ROM_ADDR_MASK UINT32_C(0x03ffffff);
+#define CART_ROM_ADDR_MASK UINT32_C(0x0fffffff);
 
 
 void init_cart_rom(struct cart_rom* cart_rom,

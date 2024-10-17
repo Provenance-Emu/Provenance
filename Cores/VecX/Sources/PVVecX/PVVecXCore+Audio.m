@@ -11,7 +11,7 @@
 @implementation PVVecXCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
-    return 59.72;
+    return 50;
 }
 
 - (NSUInteger)channelCount {
