@@ -445,7 +445,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         switch pixelFormat {
         case GL_BGRA, GL_RGBA:
             switch pixelType {
-            case GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT_4_4_4_4, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_SHORT_5_6_5:
+            case GL_UNSIGNED_BYTE:
+                return 2 * typeWidth
+            case GL_UNSIGNED_SHORT_4_4_4_4, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_SHORT_5_6_5:
                 return 2 * typeWidth
             default:
                 return 4 * typeWidth
@@ -472,44 +474,111 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         assertionFailure("Unknown GL pixelFormat %x. Add me: \(pixelFormat)")
         return 1
     }
+    
+    func getByteWidth2(for pixelFormat: Int32, type pixelType: Int32) -> UInt {
+        let componentSize: Int
+        switch pixelType {
+        case GL_BYTE, GL_UNSIGNED_BYTE:
+            componentSize = 1
+        case GL_SHORT, GL_UNSIGNED_SHORT, GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4, GL_UNSIGNED_SHORT_5_5_5_1:
+            componentSize = 2
+        case GL_INT, GL_UNSIGNED_INT, GL_FLOAT:
+            componentSize = 4
+        default:
+            assertionFailure("Unknown GL pixelType: \(pixelType)")
+            return 0
+        }
+
+        let componentsPerPixel: Int
+        switch pixelFormat {
+        case GL_RGBA, GL_BGRA:
+            componentsPerPixel = 4
+        case GL_RGB, GL_RGB565:
+            componentsPerPixel = 3
+        case GL_LUMINANCE_ALPHA:
+            componentsPerPixel = 2
+        case GL_LUMINANCE, GL_ALPHA:
+            componentsPerPixel = 1
+        case GL_RGBA8, GL_RGB8:
+            return 4  // These are always 4 bytes per pixel
+        case GL_RGB5_A1:
+            return 2  // This is always 2 bytes per pixel
+        default:
+            assertionFailure("Unknown GL pixelFormat: \(pixelFormat)")
+            return 0
+        }
+
+        // Special cases for packed formats
+        if pixelFormat == GL_RGB565 && pixelType == GL_UNSIGNED_SHORT_5_6_5 {
+            return 2
+        }
+        if pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_4_4_4_4 {
+            return 2
+        }
+        if pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_5_5_5_1 {
+            return 2
+        }
+
+        return UInt(componentSize * componentsPerPixel)
+    }
 
     func getMTLPixelFormat(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
         if pixelFormat == GLenum(GL_BGRA),
-           pixelType == GLenum(GL_UNSIGNED_BYTE) || pixelType == GLenum(0x8367) {
+           pixelType == GLenum(GL_UNSIGNED_BYTE) ||
+            pixelType == GLenum(0x8367) {
             return .bgra8Unorm
-        } else if pixelFormat == GLenum(GL_BGRA),
-                  pixelType == GLenum(GL_UNSIGNED_INT) || pixelType == GLenum(GL_UNSIGNED_BYTE) {
+        }
+        else if pixelFormat == GLenum(GL_BGRA),
+                    pixelType == GLenum(GL_UNSIGNED_BYTE) {
             return .bgra8Unorm
-        } else if pixelFormat == GLenum(GL_BGRA),
+        }
+        else if pixelFormat == GLenum(GL_BGRA),
+                pixelType == GLenum(GL_UNSIGNED_INT) {
+            return .bgra8Unorm_srgb
+        }
+        else if pixelFormat == GLenum(GL_BGRA),
                   pixelType == GLenum(GL_FLOAT_32_UNSIGNED_INT_24_8_REV) {
             return .bgra8Unorm_srgb
-        } else if pixelFormat == GLenum(GL_RGB), pixelType == GLenum(GL_UNSIGNED_BYTE) {
+        }
+        else if pixelFormat == GLenum(GL_RGBA),
+                    pixelType == GLenum(GL_UNSIGNED_BYTE) {
             return .rgba8Unorm
-        } else if pixelFormat == GLenum(GL_RGBA), pixelType == GLenum(GL_UNSIGNED_BYTE) {
-            return .rgba8Unorm
-        } else if pixelFormat == GLenum(GL_RGBA), pixelType == GLenum(GL_BYTE) {
+        }
+        else if pixelFormat == GLenum(GL_RGBA),
+                    pixelType == GLenum(GL_BYTE) {
             return .rgba8Snorm
-        } else if pixelFormat == GLenum(GL_RGB), pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
-            if #available(iOS 8, tvOS 8, macOS 11, macCatalyst 14, *) {
-                return .b5g6r5Unorm
-            }
+        }
+        else if pixelFormat == GLenum(GL_RGB),
+                    pixelType == GLenum(GL_UNSIGNED_BYTE) {
+            return .rgba8Unorm
+        }
+        else if pixelFormat == GLenum(GL_RGB),
+                    pixelType == GLenum(GL_UNSIGNED_SHORT) {
+            return .rgba16Uint
+        }
+        else if pixelFormat == GLenum(GL_RGB),
+                    pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
+            return .b5g6r5Unorm
+        }
+        else if pixelFormat == GLenum(GL_RGB),
+                    pixelType == GLenum(GL_UNSIGNED_INT) {
             return .rgba16Unorm
-        } else if pixelType == GLenum(GL_UNSIGNED_SHORT_8_8_APPLE) {
+        }
+        else if pixelType == GLenum(GL_UNSIGNED_SHORT_8_8_APPLE) {
             return .rgba16Unorm
-        } else if pixelType == GLenum(GL_UNSIGNED_SHORT_5_5_5_1) {
-            if #available(iOS 8, tvOS 8, macOS 11, macCatalyst 14, *) {
-                return .a1bgr5Unorm
-            }
-            return .rgba16Unorm
-        } else if pixelType == GLenum(GL_UNSIGNED_SHORT_4_4_4_4) {
-            if #available(iOS 8, tvOS 8, macOS 11, macCatalyst 14, *) {
-                return .abgr4Unorm
-            }
-            return .rgba16Unorm
-        } else if pixelFormat == GLenum(GL_RGBA8) {
+        }
+        else if pixelType == GLenum(GL_UNSIGNED_SHORT_5_5_5_1) {
+            return .a1bgr5Unorm
+        }
+        else if pixelType == GLenum(GL_UNSIGNED_SHORT_4_4_4_4) {
+            return .abgr4Unorm
+        }
+        else if pixelFormat == GLenum(GL_RGBA8) {
             if pixelType == GLenum(GL_UNSIGNED_BYTE) {
                 return .rgba8Unorm
             } else if pixelType == GLenum(GL_UNSIGNED_SHORT) {
+                return .rgba16Uint
+            } else if pixelType == GLenum(GL_UNSIGNED_INT) {
                 return .rgba32Uint
             }
         }
@@ -523,6 +592,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 #endif
 
+        print("Error: Unknown GL pixelFormat. Add pixelFormat: \(pixelFormat) pixelType: \(pixelType)")
         assertionFailure("Unknown GL pixelFormat. Add pixelFormat: \(pixelFormat) pixelType: \(pixelType)")
         return .invalid
     }
