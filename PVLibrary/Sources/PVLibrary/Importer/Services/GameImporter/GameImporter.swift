@@ -135,8 +135,8 @@ public final class GameImporter {
 
     public func initSystems() async {
         initialized.enter()
-        Task {
-            await initCorePlists()
+        Task.detached {
+            await self.initCorePlists()
         }
 
         @Sendable func updateSystemToPathMap() async -> [String: URL] {
@@ -163,20 +163,20 @@ public final class GameImporter {
         }
 
         // Observe Results Notifications
-        Task { @MainActor in
+        Task.detached { @MainActor in
             let systems = PVSystem.all
 
-            notificationToken = systems.observe { [unowned self] (changes: RealmCollectionChange) in
+            self.notificationToken = systems.observe { [unowned self] (changes: RealmCollectionChange) in
                 switch changes {
                 case .initial:
-                    Task {
+                    Task.detached {
                         // Results are now populated and can be accessed without blocking the UI
                         self.systemToPathMap = await updateSystemToPathMap()
                         self.romExtensionToSystemsMap = updateromExtensionToSystemsMap()
                         self.initialized.leave()
                     }
                 case .update:
-                    Task {
+                    Task.detached {
                         self.systemToPathMap = await updateSystemToPathMap()
                         self.romExtensionToSystemsMap = updateromExtensionToSystemsMap()
                     }
