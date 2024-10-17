@@ -20,7 +20,12 @@ public enum CorePlist {
   public static let pvProjectName: String = "Genesis Plus GX"
   public static let pvProjectURL: String = "https://github.com/ekeeke/Genesis-Plus-GX"
   public static let pvProjectVersion: String = "1.7.4 12.13.2020"
-  public static let pvSupportedSystems: [String] = ["com.provenance.genesis", "com.provenance.gamegear", "com.provenance.mastersystem", "com.provenance.sg1000", "com.provenance.segacd"]
+  public static let pvSupportedSystems: [String] = [
+    "com.provenance.genesis",
+    "com.provenance.gamegear",
+    "com.provenance.mastersystem",
+    "com.provenance.sg1000",
+    "com.provenance.segacd"]
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {

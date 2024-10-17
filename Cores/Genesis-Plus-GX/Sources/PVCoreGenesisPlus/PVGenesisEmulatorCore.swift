@@ -71,6 +71,15 @@ open class PVCoreGenesisPlus: PVEmulatorCore, @unchecked Sendable {
     }
 }
 
+extension PVCoreGenesisPlus: PVSG1000SystemResponderClient {
+    public func didPush(_ button: PVCoreBridge.PVSG1000Button, forPlayer player: Int) {
+        (_bridge as! PVSG1000SystemResponderClient).didPush(button, forPlayer: player)
+    }
+    public func didRelease(_ button: PVCoreBridge.PVSG1000Button, forPlayer player: Int) {
+        (_bridge as! PVSG1000SystemResponderClient).didRelease(button, forPlayer: player)
+    }
+}
+
 extension PVCoreGenesisPlus: PVGenesisSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVGenesisButton, forPlayer player: Int) {
         (_bridge as! PVGenesisSystemResponderClient).didPush(button, forPlayer: player)
