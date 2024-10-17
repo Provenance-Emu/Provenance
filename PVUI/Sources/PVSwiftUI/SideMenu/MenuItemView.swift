@@ -28,14 +28,21 @@ struct MenuItemView: SwiftUI.View {
             action()
         } label: {
             HStack(spacing: 0) {
-                Image(imageName, bundle: PVUIBase.BundleLoader.myBundle).resizable().scaledToFit().cornerRadius(4).padding(8).tint(ThemeManager.shared.currentTheme.barButtonItemTint?.swiftUIColor ?? Color.gray)
+                Image(imageName, bundle: PVUIBase.BundleLoader.myBundle)
+                    .resizable().scaledToFit().cornerRadius(4).padding(8)
+                    .tint(ThemeManager.shared.currentTheme.barButtonItemTint?.swiftUIColor ?? Color.gray)
                 
-                Text(rowTitle).foregroundColor(ThemeManager.shared.currentTheme.settingsCellText?.swiftUIColor ?? Color.white)
+                Text(rowTitle)
+                    .foregroundColor(ThemeManager.shared.currentTheme.settingsCellText?.swiftUIColor ?? Color.white)
+                    .background(Color.clear) // Clear background
+
                 Spacer()
             }
             .frame(height: 40.0)
             .background(ThemeManager.shared.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
         }
+        .buttonStyle(PlainButtonStyle()) // Use PlainButtonStyle to remove default button styling
+
     }
 }
 #endif

@@ -150,6 +150,8 @@ public struct CGACyanThemePalette: UXThemePalette, Codable, Sendable, Hashable {
 }
 
 public struct CGAGreenThemePalette: UXThemePalette, Codable, Sendable, Hashable {
+    
+    var backgroundBritness: CGFloat = 0.05
     public var name: String { "CGA Green" }
     public var group: String { "CGA" }
 
@@ -165,7 +167,7 @@ public struct CGAGreenThemePalette: UXThemePalette, Codable, Sendable, Hashable 
     public var switchThumb: UIColor? { .CGA.greenShadow }
     public var switchON: UIColor? { .CGA.green }
 
-    public var gameLibraryBackground: UIColor { .CGA.greenShadow }
+    public var gameLibraryBackground: UIColor { .CGA.greenShadow.brightness(backgroundBritness) }
     public var gameLibraryText: UIColor { .CGA.green }
 
     public var gameLibraryHeaderBackground: UIColor { .CGA.greenShadow }
@@ -174,10 +176,10 @@ public struct CGAGreenThemePalette: UXThemePalette, Codable, Sendable, Hashable 
     public var navigationBarBackgroundColor: UIColor? { .CGA.greenShadow }
     public var barButtonItemTint: UIColor? { .CGA.green }
 
-    public var settingsHeaderBackground: UIColor? { .CGA.greenShadow }
+    public var settingsHeaderBackground: UIColor? { .CGA.greenShadow.brightness(backgroundBritness) }
     public var settingsHeaderText: UIColor? { .CGA.green }
 
-    public var settingsCellBackground: UIColor? { .CGA.greenShadow }
+    public var settingsCellBackground: UIColor? { .CGA.greenShadow.brightness(backgroundBritness) }
     public var settingsCellText: UIColor? { .CGA.green }
 }
 

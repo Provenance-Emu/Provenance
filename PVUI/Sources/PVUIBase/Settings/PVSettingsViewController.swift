@@ -352,7 +352,7 @@ final class PVSettingsViewController: QuickTableViewController {
         let library2Rows: [TableRow] = [
             NavigationRow(
                 text: NSLocalizedString("Re-import all ROMs Directories", comment: ""),
-                detailText: .subtitle("Re-import all ROMs from all ROM Directories (e.g. com.provenance.snes)"),
+                detailText: .subtitle("Re-import all ROMs from the ROMs Directory"),
                 icon: .sfSymbol("triangle.circle.fill"),
                 customization: nil,
                 action: { [weak self] _ in
@@ -409,32 +409,6 @@ final class PVSettingsViewController: QuickTableViewController {
                                 detailText: .subtitle("Use newer Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
                                 key: .useMetal, icon: .sfSymbol("m.square.fill")),
             
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy Audio Engine", comment: "Use Legacy Audio Engine"),
-                                detailText: .subtitle("Use the older CoreAudio audio engine instead of AVAudioEngine"),
-                                key: .useLegacyAudioEngine, icon: .sfSymbol("waveform")),
-            
-            PVSettingsSwitchRow(text: NSLocalizedString("Mono Audio", comment: "Mono Audio"),
-                                detailText: .subtitle("Mix all audio in mono. The Legacy Audio Engine is not supported."),
-                                key: .monoAudio, icon: .sfSymbol("ear.badge.waveform")),
-            
-            PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
-                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
-                                key: .iCloudSync, icon: .sfSymbol("icloud")),
-            
-            PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
-                                detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 3-fingers 3 times to toggle."),
-                                key: .movableButtons, icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right")),
-            
-            PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
-                                detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
-                                key: .onscreenJoypad, icon: .sfSymbol("l.joystick.tilt.left.fill")),
-            
-            PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad with keyboard", comment: ""),
-                                detailText: .subtitle("Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)"),
-                                key: .onscreenJoypadWithKeyboard, icon: .sfSymbol("keyboard.badge.eye"))
-        ]
-        
-        let nonAppStoreRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
                                 detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet. iOS 14.0+ recommended."),
                                 key: .useSwiftUI, icon: .sfSymbol("swift")) { cell, row in
@@ -455,6 +429,32 @@ final class PVSettingsViewController: QuickTableViewController {
                                     //                                    }
                                 },
             
+//            PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy Audio Engine", comment: "Use Legacy Audio Engine"),
+//                                detailText: .subtitle("Use the older CoreAudio audio engine instead of AVAudioEngine"),
+//                                key: .useLegacyAudioEngine, icon: .sfSymbol("waveform")),
+//            
+//            PVSettingsSwitchRow(text: NSLocalizedString("Mono Audio", comment: "Mono Audio"),
+//                                detailText: .subtitle("Mix all audio in mono. The Legacy Audio Engine is not supported."),
+//                                key: .monoAudio, icon: .sfSymbol("ear.badge.waveform")),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
+                                key: .iCloudSync, icon: .sfSymbol("icloud")),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
+                                detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 3-fingers 3 times to toggle."),
+                                key: .movableButtons, icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right")),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
+                                detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
+                                key: .onscreenJoypad, icon: .sfSymbol("l.joystick.tilt.left.fill")),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad with keyboard", comment: ""),
+                                detailText: .subtitle("Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)"),
+                                key: .onscreenJoypadWithKeyboard, icon: .sfSymbol("keyboard.badge.eye"))
+        ]
+        
+        let nonAppStoreRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Auto JIT", comment: "Auto JIT"),
                                 detailText: .subtitle("Attempt to automatically enable Just In Time OS support. Requires ZeroConf VPN to be active. See JITStreamer.com for more info."),
                                 key: .autoJIT, icon: .sfSymbol("figure.run")),
@@ -464,7 +464,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                 key: .unsupportedCores, icon: .sfSymbol("testtube.2"))
         ]
         
-        let betaRows: [TableRow] = !IsAppStore ? appStoreRows : (appStoreRows + nonAppStoreRows)
+        let betaRows: [TableRow] = IsAppStore ? appStoreRows : (appStoreRows + nonAppStoreRows)
 #else // tvOS
         let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
@@ -773,7 +773,7 @@ final class PVSettingsViewController: QuickTableViewController {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
         let alert = UIAlertController(title: "Re-Scan all ROM Directories?",
                                       message: """
-                                        Attempt scan all ROM Directories (e.g. com.provenance.snes),
+                                        Attempt scan all ROM Directories,
                                         import all new ROMs found, and update existing ROMs
                                       """,
                                       preferredStyle: .alert)

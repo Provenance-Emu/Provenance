@@ -72,27 +72,25 @@ public final class PVGameLibraryUpdatesController: Sendable {
                 return nil
             })
 
-        Task.detached {
-            let _systemDirsConflicts = Observable
-                .just(PVSystem.all.map { $0 })
-                .map({ systems -> [(System, [URL])] in
-                        systems
-                            .map { $0.asDomain() }
-                            .compactMap { system in
-                                guard let candidates = FileManager.default.candidateROMs(for: system) else { return nil }
-                                return (system, candidates)
-                            }
-                })
-                .flatMap({ systems -> Observable<Void> in
-                    Observable.concat(systems.map { system, paths in
-                        Observable.create { observer in
-                            gameImporter.getRomInfoForFiles(atPaths: paths, userChosenSystem: system)
-                            observer.onCompleted()
-                            return Disposables.create()
+        let _systemDirsConflicts = Observable
+            .just(PVSystem.all.map { $0 })
+            .map({ systems -> [(System, [URL])] in
+                    systems
+                        .map { $0.asDomain() }
+                        .compactMap { system in
+                            guard let candidates = FileManager.default.candidateROMs(for: system) else { return nil }
+                            return (system, candidates)
                         }
-                    })
+            })
+            .flatMap({ systems -> Observable<Void> in
+                Observable.concat(systems.map { system, paths in
+                    Observable.create { observer in
+                        gameImporter.getRomInfoForFiles(atPaths: paths, userChosenSystem: system)
+                        observer.onCompleted()
+                        return Disposables.create()
+                    }
                 })
-        }
+            })
         
         let potentialConflicts = Observable.merge( gameImporterConflicts, updateConflicts ).startWith(())
         conflicts = potentialConflicts
@@ -131,7 +129,9 @@ public final class PVGameLibraryUpdatesController: Sendable {
                 ILOG("PVGameLibraryUpdatesController: Importing \(newGames)")
                 await GameImporter.shared.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
 #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-                addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
+                Task.detached { @MainActor in
+                    self.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
+                }
 #endif
             }
             ILOG("PVGameLibrary: Imported OK \(system.identifier)")
@@ -141,6 +141,7 @@ public final class PVGameLibraryUpdatesController: Sendable {
     }
     
 #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+    @MainActor
     public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) -> Disposable {
         gameImporterEvents
             .compactMap({ event -> String? in

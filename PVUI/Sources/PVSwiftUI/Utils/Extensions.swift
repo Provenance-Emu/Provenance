@@ -10,7 +10,6 @@ import Foundation
 #if canImport(SwiftUI)
 import SwiftUI
 
-@available(iOS 14, tvOS 14, *)
 extension SwiftUI.View {
     @ViewBuilder
     func `if`<Content: SwiftUI.View>(_ condition: @autoclosure () -> Bool, transform: (Self) -> Content) -> some SwiftUI.View {
@@ -22,7 +21,6 @@ extension SwiftUI.View {
    }
 }
 
-@available(iOS 14, tvOS 14, *)
 extension UIColor {
     var swiftUIColor: Color {
         return Color(self)
