@@ -67,8 +67,6 @@
 
 static __weak PVStellaBridge *_current;
 
-int16_t _pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];
-
 @implementation PVStellaBridge
 
 #pragma mark - Static callbacks
@@ -113,24 +111,24 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
 }
 
 static void input_poll_callback(void) {
-	//DLOG(@"poll callback");
+	DLOG(@"poll callback");
 }
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id) {
-//    NSLog(@"polled input: port: %d device: %d id: %d", port, device, _id);
+    NSLog(@"polled input: port: %d device: %d id: %d", port, device, _id);
     
     __strong PVStellaBridge *strongCurrent = _current;
     int16_t value = 0;
     
     if (port == 0 & device == RETRO_DEVICE_JOYPAD)
     {
-        value = _pad[0][_id];
+        value = strongCurrent->_pad[0][_id];
     }
     else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
     {
         if (value == 0)
         {
-            value = _pad[1][_id];
+            value = strongCurrent->_pad[1][_id];
         }
     }
     
@@ -579,23 +577,23 @@ static void writeSaveFile(const char* path, int type) {
     }
 }
 
-- (void)loadStateFromFileAtPath:(nonnull NSString *)fileName completionHandler:(nonnull void (^)(BOOL, NSError * _Nonnull __strong))block {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSError *error = nil;
-        BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
-        block(success, error);
-    });
-}
-
-
-- (void)saveStateToFileAtPath:(nonnull NSString *)fileName completionHandler:(nonnull void (^)(BOOL, NSError * _Nonnull __strong))block {
-    // Async call the sync version
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSError *error = nil;
-        BOOL success = [self saveStateToFileAtPath:fileName error:&error];
-        block(success, error);
-    });
-}
+//- (void)loadStateFromFileAtPath:(nonnull NSString *)fileName completionHandler:(nonnull void (^)(BOOL, NSError * _Nonnull __strong))block {
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        NSError *error = nil;
+//        BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
+//        block(success, error);
+//    });
+//}
+//
+//
+//- (void)saveStateToFileAtPath:(nonnull NSString *)fileName completionHandler:(nonnull void (^)(BOOL, NSError * _Nonnull __strong))block {
+//    // Async call the sync version
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        NSError *error = nil;
+//        BOOL success = [self saveStateToFileAtPath:fileName error:&error];
+//        block(success, error);
+//    });
+//}
 
 
 - (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {

@@ -85,10 +85,10 @@ public final class PVStellaGameCore: PVEmulatorCore {
 
 extension PVStellaGameCore: PV2600SystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PV2600Button, forPlayer player: Int) {
-        (bridge as! PV2600SystemResponderClient).didPush(button, forPlayer: player)
+        (_bridge as! PV2600SystemResponderClient).didPush(button, forPlayer: player)
     }
     
     public func didRelease(_ button: PVCoreBridge.PV2600Button, forPlayer player: Int) {
-        (bridge as! PV2600SystemResponderClient).didRelease(button, forPlayer: player)
+        (_bridge as! PV2600SystemResponderClient).didRelease(button, forPlayer: player)
     }
 }
