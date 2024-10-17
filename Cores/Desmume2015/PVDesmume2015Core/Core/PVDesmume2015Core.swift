@@ -16,24 +16,20 @@ import PVCoreBridgeRetro
 @objcMembers
 open class PVDesmume2015Core: PVEmulatorCore {
 
+    lazy var _bridge: PVDesmume2015CoreBridge = .init()
     
     public required init() {
         super.init()
-        self.bridge = (PVDesmume2015CoreBridge() as! any ObjCBridgedCoreBridge)
+        self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
-//
-//    @objc open var padData : [[UInt8]] = Array(repeating: Array(repeating: 0, count: PVDSButtonCount), count: 4)
-//
-//    @objc open var _callbackQueue: dispatch_queue_t?
 }
 
 extension PVDesmume2015Core: PVDSSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVDSButton, forPlayer player: Int) {
-        (bridge as! PVDSSystemResponderClient).didPush(button, forPlayer: player)
+        (_bridge as! PVDSSystemResponderClient).didPush(button, forPlayer: player)
     }
-
     public func didRelease(_ button: PVCoreBridge.PVDSButton, forPlayer player: Int) {
-        (bridge as! PVDSSystemResponderClient).didRelease(button, forPlayer: player)
+        (_bridge as! PVDSSystemResponderClient).didRelease(button, forPlayer: player)
     }
 }
 

@@ -2716,7 +2716,6 @@
 			<string>sms</string>
 			<string>bms</string>
 			<string>gg</string>
-			<string>sg</string>
 			<string>68k</string>
 			<string>sgd</string>
 			<string>chd</string>
@@ -4030,7 +4029,6 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>nes</string>
-			<string>fds</string>
 			<string>unf</string>
 			<string>unif</string>
 			<string>zip</string>

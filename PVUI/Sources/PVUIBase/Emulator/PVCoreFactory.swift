@@ -50,11 +50,18 @@ public final class PVCoreFactory: NSObject {
             skipError = true;
         }
         switch system.enumValue {
-        case .Genesis, .GameGear, .SegaCD, .MasterSystem, .SG1000:
+        case .Genesis, .GameGear, .SegaCD, .MasterSystem:
             if let core = core as? PVGenesisSystemResponderClient {
                 return PVGenesisControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
                 fatalError("Core doesn't implement PVGenesisSystemResponderClient")
+            }
+            break;
+        case .SG1000:
+            if let core = core as? PVSG1000SystemResponderClient {
+                return PVSG1000ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if (!skipError) {
+                fatalError("Core doesn't implement PVSG1000SystemResponderClient")
             }
             break;
         case .Dreamcast:

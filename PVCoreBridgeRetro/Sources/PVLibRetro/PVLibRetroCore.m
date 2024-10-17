@@ -2168,6 +2168,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 - (instancetype)init {
     if((self = [super init])) {
         pitch_shift = PITCH_SHIFT;
+        _current = self;
         NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
         NSAssert(myBundle, @"myBundle was nil");
         const char* path = [myBundle.bundlePath fileSystemRepresentation];
@@ -2193,7 +2194,6 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         videoBufferB = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBuffer = videoBufferA;
     }
-    _current = self;
 
     return self;
 }

@@ -25,53 +25,8 @@ import PVProSystemBridge
 @objcMembers
 open class PVProSystemCore: PVEmulatorCore, @unchecked Sendable {
 
-//    @MainActor
-//    @objc public var jagVideoBuffer: UnsafeMutablePointer<JagBuffer>?
-//    @MainActor
-//    @objc public var videoWidth: UInt32 = UInt32(VIDEO_WIDTH)
-//    @MainActor
-//    @objc public var videoHeight: Int = Int(VIDEO_HEIGHT)
-//    @MainActor
-    @objc public var frameTime: Float = 0.0
-    @objc public var multithreaded: Bool { true }
-
-    // MARK: Audio
-//    @objc public override var sampleRate: Double {
-//        get { Double(AUDIO_SAMPLERATE) }
-//        set {}
-//    }
-
-    @objc dynamic public override var audioBufferCount: UInt { 1 }
-
-//    @MainActor
-    @objc public var audioBufferSize: Int16 = 0
-
-    // MARK: Queues
-    @objc  public let audioQueue: DispatchQueue = .init(label: "com.provenance.jaguar.audio", qos: .userInteractive, autoreleaseFrequency: .inherit)
-    @objc public let videoQueue: DispatchQueue = .init(label: "com.provenance.jaguar.video", qos: .userInteractive, autoreleaseFrequency: .inherit)
-    @objc public let renderGroup: DispatchGroup = .init()
-
-    @objc  public let waitToBeginFrameSemaphore: DispatchSemaphore = .init(value: 0)
-
-    // MARK: Video
-
-    @objc public override var isDoubleBuffered: Bool {
-        // TODO: Fix graphics tearing when this is on
-        // return self.virtualjaguar_double_buffer
-        return false
-    }
-    
-    @objc public override dynamic var rendersToOpenGL: Bool { false }
-
-
-//    @MainActor
-//    @objc public override var videoBufferSize: CGSize { .init(width: Int(videoWidth), height: videoHeight) }
-
-//    @MainActor
-//    @objc public override var aspectSize: CGSize { .init(width: Int(TOMGetVideoModeWidth()), height: Int(TOMGetVideoModeHeight())) }
-
     // MARK: Lifecycle
-    var _bridge: PVProSystemGameCore = .init()
+    lazy var _bridge: PVProSystemGameCore = .init()
     
     public required init() {
         super.init()
@@ -175,29 +130,8 @@ public extension PVProSystemCore {
             return -1
         }
     }
-
-
-//    @objc func didReleaseJaguarButton(_ button: PVJaguarButton, forPlayer player: Int) {
-//
-//        // Function to set a value at a specific index
-//        func setButtonValue(_ player: UInt32, at index: Int32, to value: UInt8) {
-//            guard index >= 0 && index < 21 else {
-//                print("Index out of bounds")
-//                return
-//            }
-//
-//            SetJoyPadValue(player, index, value)
-//        }
-//
-//        let index = getIndexForPVJaguarButton(button)
-//        setButtonValue(UInt32(player), at: Int32(index), to: 0x00)
-//     }
     
-//    @objc override var screenRect: CGRect {
-//        return .init(x: 0, y: 0, width: Int(TOMGetVideoModeWidth()), height: Int(TOMGetVideoModeHeight()))
-//    }
-    
-    @objc override var supportsSaveStates: Bool { return false }
+    @objc override var supportsSaveStates: Bool { return true }
     
 #if canImport(OpenGLES) || canImport(OpenGL)
     @objc override var pixelFormat: GLenum { GLenum(GL_BGRA) }

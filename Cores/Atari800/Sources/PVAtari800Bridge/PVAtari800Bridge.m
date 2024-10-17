@@ -290,13 +290,9 @@ __weak static PVAtari800Bridge * _currentCore;
 
 #pragma mark - Video
 
-- (const void *)videoBuffer {
-    return self.atariVideoBuffer;
-}
+- (const void *)videoBuffer { return self.atariVideoBuffer; }
 
-- (CGSize)bufferSize {
-    return CGSizeMake(Screen_WIDTH, Screen_HEIGHT);
-}
+- (CGSize)bufferSize { return CGSizeMake(Screen_WIDTH, Screen_HEIGHT); }
 
 - (CGRect)screenRect {
     /*
@@ -307,37 +303,25 @@ __weak static PVAtari800Bridge * _currentCore;
 //    return CGRectMake(24, 0, Screen_WIDTH, Screen_HEIGHT);
 }
 
-- (CGSize)aspectSize
-{
+- (CGSize)aspectSize {
     // TODO: fix PAR
     //return CGSizeMake(336 * (6.0 / 7.0), 240);
     return CGSizeMake(Screen_WIDTH, Screen_HEIGHT);
 }
 
-- (GLenum)pixelFormat
-{
-    return GL_BGRA;
-}
+- (GLenum)pixelFormat { return GL_BGRA; }
 
-- (GLenum)pixelType
-{
-    return GL_UNSIGNED_BYTE;
-}
+- (GLenum)pixelType { return GL_UNSIGNED_BYTE; }
 
-- (GLenum)internalPixelFormat
-{
-    return GL_RGBA;
-}
+- (GLenum)internalPixelFormat { return GL_RGBA; }
 
 #pragma mark - Audio
 
-- (double)audioSampleRate
-{
+- (double)audioSampleRate {
     return 44100;
 }
 
-- (NSUInteger)channelCount
-{
+- (NSUInteger)channelCount {
     return 1;
 }
 
@@ -346,7 +330,7 @@ __weak static PVAtari800Bridge * _currentCore;
     NSAssert(NO, @"Shouldn't be here since we overload the async version");
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))__attribute__((noescape)) block {
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))__attribute__((noescape)) block {
     BOOL success = StateSav_SaveAtariState([fileName UTF8String], "wb", TRUE);
     if (!success) {
         NSDictionary *userInfo = @{
@@ -358,9 +342,9 @@ __weak static PVAtari800Bridge * _currentCore;
         NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                 code:PVEmulatorCoreErrorCodeCouldNotSaveState
                                             userInfo:userInfo];
-        block(NO, newError);
+        block(newError);
     } else {
-        block(YES, nil);
+        block(nil);
     }
 }
 
@@ -369,7 +353,7 @@ __weak static PVAtari800Bridge * _currentCore;
 }
 
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))__attribute__((noescape)) block  {
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))__attribute__((noescape)) block  {
     BOOL success = StateSav_ReadAtariState([fileName UTF8String], "rb");
     if (!success) {
         NSDictionary *userInfo = @{
@@ -382,9 +366,9 @@ __weak static PVAtari800Bridge * _currentCore;
                                                 code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                             userInfo:userInfo];
 
-        block(NO, newError);
+        block(newError);
     } else {
-        block(YES, nil);
+        block(nil);
     }
 }
 

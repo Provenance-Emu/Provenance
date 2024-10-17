@@ -138,8 +138,7 @@
 #if USE_565
     return GL_RGB565;
 #else
-//    return GL_RGBA;
-    return GL_RGB5_A1; // RETRO_PIXEL_FORMAT_0RGB1555
+    return GL_RGB5_A1; // GL_RGBA RETRO_PIXEL_FORMAT_0RGB1555
 #endif
 #endif
 }
