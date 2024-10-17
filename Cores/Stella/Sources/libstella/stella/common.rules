@@ -1,0 +1,10 @@
+# Common build rules, used by the sub modules and their module.mk files
+
+# Copy the list of objects to a new variable. The name of the new variable
+# contains the module name, a trick we use so we can keep multiple different
+# module object lists, one for each module.
+MODULE_OBJS-$(MODULE) := $(MODULE_OBJS)
+
+# If not building as a plugin, add the object files to the main OBJS list
+#OBJS += $(MODULE_LIB-$(MODULE))
+OBJS += $(MODULE_OBJS)

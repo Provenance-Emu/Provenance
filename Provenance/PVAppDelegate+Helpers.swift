@@ -9,6 +9,11 @@
 import Foundation
 import PVSupport
 import PVLogging
+import PVSettings
+
+#if canImport(PVWebServer)
+import PVWebServer
+#endif
 
 // MARK: - Helpers
 extension PVAppDelegate {
@@ -23,15 +28,17 @@ extension PVAppDelegate {
     }
 
     func startOptionalWebDavServer() {
+#if canImport(PVWebServer)
         // Check if the user setting is set or the optional ENV variable
-        if PVSettingsModel.shared.webDavAlwaysOn || isWebDavServerEnvironmentVariableSet() {
+        if Defaults[.webDavAlwaysOn] || isWebDavServerEnvironmentVariableSet() {
             PVWebServer.shared.startWebDavServer()
         }
+#endif
     }
 
     func _initLogging() {
         // Initialize logging
-        PVLogging.shared
+        _ = PVLogging.shared
 
 //        fileLogger.maximumFileSize = (1024 * 64) // 64 KByte
 //        fileLogger.logFileManager.maximumNumberOfLogFiles = 1

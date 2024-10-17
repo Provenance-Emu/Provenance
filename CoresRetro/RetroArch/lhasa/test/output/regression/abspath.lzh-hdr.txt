@@ -1,0 +1,13 @@
+path: /tmp/
+filename: absolute_path.txt
+compress_method: -lh0-
+compressed_length: 46
+length: 46
+header_level: 1
+os_type: 85 ('U')
+crc: 6bc0
+timestamp: 1333657298
+unix_perms: 0100644
+unix_uid: 1000
+unix_gid: 1000
+--

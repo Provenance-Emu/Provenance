@@ -8,21 +8,26 @@
 
 #import "PVPCSXRearmedCore.h"
 #include <stdatomic.h>
+
 //#import "PVPCSXRearmedCore+Controls.h"
 //#import "PVPCSXRearmedCore+Audio.h"
 //#import "PVPCSXRearmedCore+Video.h"
 //
 //#import "PVPCSXRearmedCore+Audio.h"
 
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+#import <PVLogging/PVLoggingObjC.h>
+
 
 #define SAMPLERATE 44100
 #define SIZESOUNDBUFFER 44100 / 60 * 4
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVPCSXRearmedCore() {
+@interface PVPCSXRearmedCoreBridge() {
 
 }
 
@@ -30,7 +35,7 @@
 
 #pragma mark - PVPCSXRearmedCore Begin
 
-@implementation PVPCSXRearmedCore
+@implementation PVPCSXRearmedCoreBridge
 {
 }
 
@@ -215,3 +220,10 @@
     return NULL;
 }
 @end
+
+static void flipEGL(void)
+{
+    GET_CURRENT_OR_RETURN();
+    [current swapBuffers];
+// eglSwapBuffers(display, surface);
+}

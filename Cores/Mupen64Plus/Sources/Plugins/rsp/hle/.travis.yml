@@ -1,0 +1,46 @@
+sudo: required
+dist: xenial
+language: cpp
+compiler:
+  - gcc
+  - clang
+addons:
+  apt:
+    packages:
+    - git
+before_install:
+  - git clone --depth=1 --branch=master git://github.com/mupen64plus/mupen64plus-core.git deps/mupen64plus-core
+env:
+ - DUMP=0
+ - DUMP=1
+script:
+ - make -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 clean && LDFLAGS="-Wl,--no-add-needed -Wl,--no-undefined" OPTFLAGS="-O2" make CC="${CC}" CXX="${CXX}" -j$(nproc) -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 all
+
+# extra mxe build entries
+matrix:
+  include:
+    - env:
+      - MXE_CPU=i686
+      - PATH="/usr/lib/mxe/usr/bin/:$PATH"
+      before_install:
+      - curl -sSL "https://mirror.mxe.cc/repos/apt/client-conf/mxeapt.gpg" | sudo -E apt-key add -
+      - echo "deb https://mirror.mxe.cc/repos/apt xenial main" | sudo tee -a /etc/apt/sources.list
+      - sudo apt-get update -qq
+      - sudo apt-get -y --allow-unauthenticated install mxe-i686-w64-mingw32.shared-gcc
+      - git clone --depth=1 --branch=master git://github.com/mupen64plus/mupen64plus-core.git deps/mupen64plus-core
+      script:
+      - make UNAME=MINGW CROSS_COMPILE="${MXE_CPU}-w64-mingw32.shared-" CC="${MXE_CPU}-w64-mingw32.shared-gcc" CXX="${MXE_CPU}-w64-mingw32.shared-g++" HOST_CPU="${MXE_CPU}" -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/"  V=1  clean && 
+        make UNAME=MINGW CROSS_COMPILE="${MXE_CPU}-w64-mingw32.shared-" CC="${MXE_CPU}-w64-mingw32.shared-gcc" CXX="${MXE_CPU}-w64-mingw32.shared-g++" HOST_CPU="${MXE_CPU}" -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/"  V=1 -j$(nproc) all
+
+    - env:
+      - MXE_CPU=x86_64
+      - PATH="/usr/lib/mxe/usr/bin/:$PATH"
+      before_install:
+      - curl -sSL "https://mirror.mxe.cc/repos/apt/client-conf/mxeapt.gpg" | sudo -E apt-key add -
+      - echo "deb https://mirror.mxe.cc/repos/apt xenial main" | sudo tee -a /etc/apt/sources.list
+      - sudo apt-get update -qq
+      - sudo apt-get -y --allow-unauthenticated install mxe-x86-64-w64-mingw32.shared-gcc
+      - git clone --depth=1 --branch=master git://github.com/mupen64plus/mupen64plus-core.git deps/mupen64plus-core
+      script:
+      - make UNAME=MINGW CROSS_COMPILE="${MXE_CPU}-w64-mingw32.shared-" CC="${MXE_CPU}-w64-mingw32.shared-gcc" CXX="${MXE_CPU}-w64-mingw32.shared-g++" HOST_CPU="${MXE_CPU}" -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/"  V=1  clean && 
+        make UNAME=MINGW CROSS_COMPILE="${MXE_CPU}-w64-mingw32.shared-" CC="${MXE_CPU}-w64-mingw32.shared-gcc" CXX="${MXE_CPU}-w64-mingw32.shared-g++" HOST_CPU="${MXE_CPU}" -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/"  V=1 -j$(nproc) all

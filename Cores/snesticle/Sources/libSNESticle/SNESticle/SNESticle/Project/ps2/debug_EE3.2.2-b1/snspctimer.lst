@@ -1,0 +1,220 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Source/common/snspctimer.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _Z15SNSpcTimerResetP12SNSpcTimer_tj
+   8              	.ent _Z15SNSpcTimerResetP12SNSpcTimer_tj
+   9              	_Z15SNSpcTimerResetP12SNSpcTimer_tj:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 00120500 	sll $2,$5,8
+  14 0004 040080AC 	sw $0,4($4)
+  15 0008 080082AC 	sw $2,8($4)
+  16 000c 120080A0 	sb $0,18($4)
+  17 0010 110080A0 	sb $0,17($4)
+  18 0014 100080A0 	sb $0,16($4)
+  19 0018 0C0085AC 	sw $5,12($4)
+  20              	.set noreorder
+  21              	.set nomacro
+  22 001c 0800E003 	j $31
+  23 0020 000080AC 	sw $0,0($4)
+  24              	.set macro
+  25              	.set reorder
+  26              	
+  27              	.end _Z15SNSpcTimerResetP12SNSpcTimer_tj
+  28              	$Lfe1:
+  29              	.size _Z15SNSpcTimerResetP12SNSpcTimer_tj,$Lfe1-_Z15SNSpcTimerResetP12SNSpcTimer_tj
+  30              	.align 2
+  31 0024 00000000 	.p2align 3,,7
+  32              	.globl _Z14SNSpcTimerSyncP12SNSpcTimer_ti
+  33              	.ent _Z14SNSpcTimerSyncP12SNSpcTimer_ti
+  34              	_Z14SNSpcTimerSyncP12SNSpcTimer_ti:
+  35              	.frame $sp,0,$31
+  36              	.mask 0x00000000,0
+  37              	.fmask 0x00000000,0
+  38 0028 12008290 	lbu $2,18($4)
+  39              	
+  40              	.set noreorder
+  41              	.set nomacro
+  42 002c 13004010 	beq $2,$0,$L3
+  43 0030 2D308000 	move $6,$4
+  44              	.set macro
+  45              	.set reorder
+  46              	
+  47 0034 0000828C 	lw $2,0($4)
+  48 0038 0400848C 	lw $4,4($4)
+  49 003c 2310A200 	subu $2,$5,$2
+  50 0040 0800C78C 	lw $7,8($6)
+  51 0044 21408200 	addu $8,$4,$2
+  52 0048 2A180701 	slt $3,$8,$7
+  53              	.set noreorder
+  54              	.set nomacro
+  55 004c 0B006014 	bne $3,$0,$L3
+  56 0050 0400C8AC 	sw $8,4($6)
+  57              	.set macro
+GAS LISTING  			page 2
+
+
+  58              	.set reorder
+  59              	
+  60 0054 1A000701 	div $0,$8,$7
+  61              	.set noreorder
+  62 0058 0100E050 	beql $7,$0,1f
+  63 005c CD010000 	break 7
+  64              	1:
+  65              	.set reorder
+  66 0060 1100C290 	lbu $2,17($6)
+  67 0064 12200000 	mflo $4
+  68              	
+  69              	
+  70 0068 18188700 	mult $3,$4,$7
+  71 006c 21104400 	addu $2,$2,$4
+  72 0070 1100C2A0 	sb $2,17($6)
+  73 0074 23180301 	subu $3,$8,$3
+  74 0078 0400C3AC 	sw $3,4($6)
+  75              	$L3:
+  76              	.set noreorder
+  77              	.set nomacro
+  78 007c 0800E003 	j $31
+  79 0080 0000C5AC 	sw $5,0($6)
+  80              	.set macro
+  81              	.set reorder
+  82              	
+  83              	.end _Z14SNSpcTimerSyncP12SNSpcTimer_ti
+  84              	$Lfe2:
+  85              	.size _Z14SNSpcTimerSyncP12SNSpcTimer_ti,$Lfe2-_Z14SNSpcTimerSyncP12SNSpcTimer_ti
+  86              	.align 2
+  87 0084 00000000 	.p2align 3,,7
+  88              	.globl _Z19SNSpcTimerSetEnableP12SNSpcTimer_tih
+  89              	.ent _Z19SNSpcTimerSetEnableP12SNSpcTimer_tih
+  90              	_Z19SNSpcTimerSetEnableP12SNSpcTimer_tih:
+  91              	.frame $sp,48,$31
+  92              	.mask 0x80030000,-16
+  93              	.fmask 0x00000000,0
+  94 0088 D0FFBD27 	subu $sp,$sp,48
+  95 008c 1000B1FF 	sd $17,16($sp)
+  96 0090 0000B0FF 	sd $16,0($sp)
+  97 0094 FF00D030 	andi $16,$6,0x00ff
+  98 0098 2000BFFF 	sd $31,32($sp)
+  99 009c 12008290 	lbu $2,18($4)
+ 100              	
+ 101              	.set noreorder
+ 102              	.set nomacro
+ 103 00a0 06005010 	beq $2,$16,$L5
+ 104 00a4 2D888000 	move $17,$4
+ 105              	.set macro
+ 106              	.set reorder
+ 107              	
+ 108 00a8 0000000C 	jal _Z14SNSpcTimerSyncP12SNSpcTimer_ti
+ 108      00000000 
+ 109              	.set noreorder
+ 110              	.set nomacro
+ 111 00b0 01000056 	bnel $16,$0,$L7
+ 112 00b4 110020A2 	sb $0,17($17)
+ 113              	.set macro
+GAS LISTING  			page 3
+
+
+ 114              	.set reorder
+ 115              	
+ 116              	$L7:
+ 117 00b8 120030A2 	sb $16,18($17)
+ 118              	$L5:
+ 119 00bc 2000BFDF 	ld $31,32($sp)
+ 120 00c0 1000B1DF 	ld $17,16($sp)
+ 121 00c4 0000B0DF 	ld $16,0($sp)
+ 122              	
+ 123              	.set noreorder
+ 124              	.set nomacro
+ 125 00c8 0800E003 	j $31
+ 126 00cc 3000BD27 	addu $sp,$sp,48
+ 127              	.set macro
+ 128              	.set reorder
+ 129              	
+ 130              	.end _Z19SNSpcTimerSetEnableP12SNSpcTimer_tih
+ 131              	$Lfe3:
+ 132              	.size _Z19SNSpcTimerSetEnableP12SNSpcTimer_tih,$Lfe3-_Z19SNSpcTimerSetEnableP12SNSpcTimer_tih
+ 133              	.align 2
+ 134              	.p2align 3,,7
+ 135              	.globl _Z18SNSpcTimerSetTimerP12SNSpcTimer_th
+ 136              	.ent _Z18SNSpcTimerSetTimerP12SNSpcTimer_th
+ 137              	_Z18SNSpcTimerSetTimerP12SNSpcTimer_th:
+ 138              	.frame $sp,0,$31
+ 139              	.mask 0x00000000,0
+ 140              	.fmask 0x00000000,0
+ 141 00d0 FF00A530 	andi $5,$5,0x00ff
+ 142              	.set noreorder
+ 143              	.set nomacro
+ 144 00d4 0600A010 	beq $5,$0,$L9
+ 145 00d8 100085A0 	sb $5,16($4)
+ 146              	.set macro
+ 147              	.set reorder
+ 148              	
+ 149 00dc 0C00828C 	lw $2,12($4)
+ 150              	
+ 151 00e0 18104500 	mult $2,$2,$5
+ 152              	$L11:
+ 153              	.set noreorder
+ 154              	.set nomacro
+ 155 00e4 0800E003 	j $31
+ 156 00e8 080082AC 	sw $2,8($4)
+ 157              	.set macro
+ 158              	.set reorder
+ 159              	
+ 160 00ec 00000000 	.p2align 3
+ 161              	$L9:
+ 162 00f0 0C00828C 	lw $2,12($4)
+ 163              	.set noreorder
+ 164              	.set nomacro
+ 165 00f4 FBFF0010 	b $L11
+ 166 00f8 00120200 	sll $2,$2,8
+ 167              	.set macro
+ 168              	.set reorder
+ 169              	
+ 170              	.end _Z18SNSpcTimerSetTimerP12SNSpcTimer_th
+GAS LISTING  			page 4
+
+
+ 171              	$Lfe4:
+ 172              	.size _Z18SNSpcTimerSetTimerP12SNSpcTimer_th,$Lfe4-_Z18SNSpcTimerSetTimerP12SNSpcTimer_th
+ 173              	.align 2
+ 174 00fc 00000000 	.p2align 3,,7
+ 175              	.globl _Z20SNSpcTimerGetCounterP12SNSpcTimer_ti
+ 176              	.ent _Z20SNSpcTimerGetCounterP12SNSpcTimer_ti
+ 177              	_Z20SNSpcTimerGetCounterP12SNSpcTimer_ti:
+ 178              	.frame $sp,32,$31
+ 179              	.mask 0x80010000,-16
+ 180              	.fmask 0x00000000,0
+ 181 0100 E0FFBD27 	subu $sp,$sp,32
+ 182 0104 0000B0FF 	sd $16,0($sp)
+ 183 0108 1000BFFF 	sd $31,16($sp)
+ 184              	.set noreorder
+ 185              	.set nomacro
+ 186 010c 0000000C 	jal _Z14SNSpcTimerSyncP12SNSpcTimer_ti
+ 187 0110 2D808000 	move $16,$4
+ 188              	.set macro
+ 189              	.set reorder
+ 190              	
+ 191 0114 11000292 	lbu $2,17($16)
+ 192 0118 1000BFDF 	ld $31,16($sp)
+ 193 011c 110000A2 	sb $0,17($16)
+ 194 0120 0F004230 	andi $2,$2,0xf
+ 195 0124 0000B0DF 	ld $16,0($sp)
+ 196              	
+ 197              	.set noreorder
+ 198              	.set nomacro
+ 199 0128 0800E003 	j $31
+ 200 012c 2000BD27 	addu $sp,$sp,32
+ 201              	.set macro
+ 202              	.set reorder
+ 203              	
+ 204              	.end _Z20SNSpcTimerGetCounterP12SNSpcTimer_ti
+ 205              	$Lfe5:
+ 206              	.size _Z20SNSpcTimerGetCounterP12SNSpcTimer_ti,$Lfe5-_Z20SNSpcTimerGetCounterP12SNSpcTimer_ti
+ 207              	.ident "GCC: (GNU) 3.2.2"

@@ -1,0 +1,51 @@
+{
+  "originHash" : "3cff162edb542dc5266204e318bcd5cec16c816c60d5c654ee71b00b3cd660ab",
+  "pins" : [
+    {
+      "identity" : "checksum",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
+      "state" : {
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
+      }
+    },
+    {
+      "identity" : "swiftgenplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
+      }
+    },
+    {
+      "identity" : "swiftmacros",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/SwiftMacros.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "cb30be65a3f121d756c98d442194c41eb24e9f09"
+      }
+    }
+  ],
+  "version" : 3
+}

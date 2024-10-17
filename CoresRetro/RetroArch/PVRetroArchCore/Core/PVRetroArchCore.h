@@ -1,14 +1,17 @@
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+
 #import <PVLogging/PVLogging.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
+
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 
-@interface PVRetroArchCore : PVEmulatorCore<PVRetroArchCoreResponderClient, UIApplicationDelegate> {
+@protocol PVRetroArchCoreResponderClient;
+@protocol ObjCBridgedCoreBridge;
+
+@interface PVRetroArchCore : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVRetroArchCoreResponderClient, UIApplicationDelegate> {
     int videoWidth;
     int videoHeight;
     int videoBitDepth;
@@ -49,7 +52,7 @@
 @property (nonatomic, assign) bool bindAnalogDpad;
 @property (nonatomic, assign) bool hasSecondScreen;
 @property (nonatomic, assign) int machineType;
-@property (nonatomic) NSString* coreIdentifier;
+@property (nonatomic, retain) NSString* coreIdentifier;
 @property (nonatomic) NSString* coreOptionConfigPath;
 @property (nonatomic) NSString* coreOptionConfig;
 @property (nonatomic) bool coreOptionOverwrite;
@@ -331,12 +334,18 @@ enum
 	KEY_RightAlt = 230,
 	KEY_RightGUI = 231
 };
+#ifdef __cplusplus
+extern "C" {
+#endif
 void apple_input_keyboard_event(bool down,
-		unsigned code, uint32_t character, uint32_t mod, unsigned device);
+                                unsigned code, uint32_t character, uint32_t mod, unsigned device);
 void apple_direct_input_keyboard_event(bool down,
-		unsigned code, uint32_t character, uint32_t mod, unsigned device);
+                                       unsigned code, uint32_t character, uint32_t mod, unsigned device);
 void apple_init_small_keyboard();
 void menuToggle();
+#ifdef __cplusplus
+}
+#endif
 #endif
 
 // Options

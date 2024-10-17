@@ -1,0 +1,314 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/emurom.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN7CEmuRomC2Ev
+   8              	.ent _ZN7CEmuRomC2Ev
+   9              	_ZN7CEmuRomC2Ev:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 0000023C 	lui $2,%hi(_ZTV7CEmuRom+8)
+  14 0004 040080A0 	sb $0,4($4)
+  15 0008 08004224 	addiu $2,$2,%lo(_ZTV7CEmuRom+8)
+  16              	.set noreorder
+  17              	.set nomacro
+  18 000c 0800E003 	j $31
+  19 0010 000082AC 	sw $2,0($4)
+  20              	.set macro
+  21              	.set reorder
+  22              	
+  23              	.end _ZN7CEmuRomC2Ev
+  24              	$Lfe1:
+  25              	.size _ZN7CEmuRomC2Ev,$Lfe1-_ZN7CEmuRomC2Ev
+  26              	.align 2
+  27 0014 00000000 	.p2align 3,,7
+  28              	.globl _ZN7CEmuRomC1Ev
+  29              	.ent _ZN7CEmuRomC1Ev
+  30              	_ZN7CEmuRomC1Ev:
+  31              	.frame $sp,0,$31
+  32              	.mask 0x00000000,0
+  33              	.fmask 0x00000000,0
+  34 0018 0000023C 	lui $2,%hi(_ZTV7CEmuRom+8)
+  35 001c 040080A0 	sb $0,4($4)
+  36 0020 08004224 	addiu $2,$2,%lo(_ZTV7CEmuRom+8)
+  37              	.set noreorder
+  38              	.set nomacro
+  39 0024 0800E003 	j $31
+  40 0028 000082AC 	sw $2,0($4)
+  41              	.set macro
+  42              	.set reorder
+  43              	
+  44              	.end _ZN7CEmuRomC1Ev
+  45              	$Lfe2:
+  46              	.size _ZN7CEmuRomC1Ev,$Lfe2-_ZN7CEmuRomC1Ev
+  47              	.align 2
+  48 002c 00000000 	.p2align 3,,7
+  49              	.globl _ZN7CEmuRomD2Ev
+  50              	.ent _ZN7CEmuRomD2Ev
+  51              	_ZN7CEmuRomD2Ev:
+  52              	.frame $sp,0,$31
+  53              	.mask 0x00000000,0
+  54              	.fmask 0x00000000,0
+  55 0030 0000023C 	lui $2,%hi(_ZTV7CEmuRom+8)
+  56 0034 08004224 	addiu $2,$2,%lo(_ZTV7CEmuRom+8)
+  57              	.set noreorder
+GAS LISTING  			page 2
+
+
+  58              	.set nomacro
+  59 0038 0800E003 	j $31
+  60 003c 000082AC 	sw $2,0($4)
+  61              	.set macro
+  62              	.set reorder
+  63              	
+  64              	.end _ZN7CEmuRomD2Ev
+  65              	$Lfe3:
+  66              	.size _ZN7CEmuRomD2Ev,$Lfe3-_ZN7CEmuRomD2Ev
+  67              	.align 2
+  68              	.p2align 3,,7
+  69              	.globl _ZN7CEmuRomD1Ev
+  70              	.ent _ZN7CEmuRomD1Ev
+  71              	_ZN7CEmuRomD1Ev:
+  72              	.frame $sp,0,$31
+  73              	.mask 0x00000000,0
+  74              	.fmask 0x00000000,0
+  75 0040 0000023C 	lui $2,%hi(_ZTV7CEmuRom+8)
+  76 0044 08004224 	addiu $2,$2,%lo(_ZTV7CEmuRom+8)
+  77              	.set noreorder
+  78              	.set nomacro
+  79 0048 0800E003 	j $31
+  80 004c 000082AC 	sw $2,0($4)
+  81              	.set macro
+  82              	.set reorder
+  83              	
+  84              	.end _ZN7CEmuRomD1Ev
+  85              	$Lfe4:
+  86              	.size _ZN7CEmuRomD1Ev,$Lfe4-_ZN7CEmuRomD1Ev
+  87              	.align 2
+  88              	.p2align 3,,7
+  89              	.globl _ZN7CEmuRomD0Ev
+  90              	.ent _ZN7CEmuRomD0Ev
+  91              	_ZN7CEmuRomD0Ev:
+  92              	.frame $sp,16,$31
+  93              	.mask 0x80000000,-16
+  94              	.fmask 0x00000000,0
+  95 0050 0000023C 	lui $2,%hi(_ZTV7CEmuRom+8)
+  96 0054 F0FFBD27 	subu $sp,$sp,16
+  97 0058 08004224 	addiu $2,$2,%lo(_ZTV7CEmuRom+8)
+  98 005c 0000BFFF 	sd $31,0($sp)
+  99              	.set noreorder
+ 100              	.set nomacro
+ 101 0060 0000000C 	jal _ZdlPv
+ 102 0064 000082AC 	sw $2,0($4)
+ 103              	.set macro
+ 104              	.set reorder
+ 105              	
+ 106 0068 0000BFDF 	ld $31,0($sp)
+ 107              	
+ 108              	.set noreorder
+ 109              	.set nomacro
+ 110 006c 0800E003 	j $31
+ 111 0070 1000BD27 	addu $sp,$sp,16
+ 112              	.set macro
+ 113              	.set reorder
+ 114              	
+GAS LISTING  			page 3
+
+
+ 115              	.end _ZN7CEmuRomD0Ev
+ 116              	$Lfe5:
+ 117              	.size _ZN7CEmuRomD0Ev,$Lfe5-_ZN7CEmuRomD0Ev
+ 118              	.align 2
+ 119 0074 00000000 	.p2align 3,,7
+ 120              	.globl _ZN7CEmuRom7LoadRomEP7CDataIOPhj
+ 121              	.ent _ZN7CEmuRom7LoadRomEP7CDataIOPhj
+ 122              	_ZN7CEmuRom7LoadRomEP7CDataIOPhj:
+ 123              	.frame $sp,0,$31
+ 124              	.mask 0x00000000,0
+ 125              	.fmask 0x00000000,0
+ 126              	.set noreorder
+ 127              	.set nomacro
+ 128 0078 0800E003 	j $31
+ 129 007c 01000224 	li $2,1
+ 130              	.set macro
+ 131              	.set reorder
+ 132              	
+ 133              	.end _ZN7CEmuRom7LoadRomEP7CDataIOPhj
+ 134              	$Lfe6:
+ 135              	.size _ZN7CEmuRom7LoadRomEP7CDataIOPhj,$Lfe6-_ZN7CEmuRom7LoadRomEP7CDataIOPhj
+ 136              	.align 2
+ 137              	.p2align 3,,7
+ 138              	.globl _ZN7CEmuRom6UnloadEv
+ 139              	.ent _ZN7CEmuRom6UnloadEv
+ 140              	_ZN7CEmuRom6UnloadEv:
+ 141              	.frame $sp,0,$31
+ 142              	.mask 0x00000000,0
+ 143              	.fmask 0x00000000,0
+ 144 0080 0800E003 	j $31
+ 144      00000000 
+ 145              	.end _ZN7CEmuRom6UnloadEv
+ 146              	$Lfe7:
+ 147              	.size _ZN7CEmuRom6UnloadEv,$Lfe7-_ZN7CEmuRom6UnloadEv
+ 148              	.align 2
+ 149              	.p2align 3,,7
+ 150              	.globl _ZN7CEmuRom16GetNumRomRegionsEv
+ 151              	.ent _ZN7CEmuRom16GetNumRomRegionsEv
+ 152              	_ZN7CEmuRom16GetNumRomRegionsEv:
+ 153              	.frame $sp,0,$31
+ 154              	.mask 0x00000000,0
+ 155              	.fmask 0x00000000,0
+ 156              	.set noreorder
+ 157              	.set nomacro
+ 158 0088 0800E003 	j $31
+ 159 008c 2D100000 	move $2,$0
+ 160              	.set macro
+ 161              	.set reorder
+ 162              	
+ 163              	.end _ZN7CEmuRom16GetNumRomRegionsEv
+ 164              	$Lfe8:
+ 165              	.size _ZN7CEmuRom16GetNumRomRegionsEv,$Lfe8-_ZN7CEmuRom16GetNumRomRegionsEv
+ 166              	.align 2
+ 167              	.p2align 3,,7
+ 168              	.globl _ZN7CEmuRom16GetRomRegionNameEj
+ 169              	.ent _ZN7CEmuRom16GetRomRegionNameEj
+ 170              	_ZN7CEmuRom16GetRomRegionNameEj:
+GAS LISTING  			page 4
+
+
+ 171              	.frame $sp,0,$31
+ 172              	.mask 0x00000000,0
+ 173              	.fmask 0x00000000,0
+ 174              	.set noreorder
+ 175              	.set nomacro
+ 176 0090 0800E003 	j $31
+ 177 0094 2D100000 	move $2,$0
+ 178              	.set macro
+ 179              	.set reorder
+ 180              	
+ 181              	.end _ZN7CEmuRom16GetRomRegionNameEj
+ 182              	$Lfe9:
+ 183              	.size _ZN7CEmuRom16GetRomRegionNameEj,$Lfe9-_ZN7CEmuRom16GetRomRegionNameEj
+ 184              	.align 2
+ 185              	.p2align 3,,7
+ 186              	.globl _ZN7CEmuRom16GetRomRegionSizeEj
+ 187              	.ent _ZN7CEmuRom16GetRomRegionSizeEj
+ 188              	_ZN7CEmuRom16GetRomRegionSizeEj:
+ 189              	.frame $sp,0,$31
+ 190              	.mask 0x00000000,0
+ 191              	.fmask 0x00000000,0
+ 192              	.set noreorder
+ 193              	.set nomacro
+ 194 0098 0800E003 	j $31
+ 195 009c 2D100000 	move $2,$0
+ 196              	.set macro
+ 197              	.set reorder
+ 198              	
+ 199              	.end _ZN7CEmuRom16GetRomRegionSizeEj
+ 200              	$Lfe10:
+ 201              	.size _ZN7CEmuRom16GetRomRegionSizeEj,$Lfe10-_ZN7CEmuRom16GetRomRegionSizeEj
+ 202              	.align 2
+ 203              	.p2align 3,,7
+ 204              	.globl _ZN7CEmuRom10GetNumExtsEv
+ 205              	.ent _ZN7CEmuRom10GetNumExtsEv
+ 206              	_ZN7CEmuRom10GetNumExtsEv:
+ 207              	.frame $sp,0,$31
+ 208              	.mask 0x00000000,0
+ 209              	.fmask 0x00000000,0
+ 210              	.set noreorder
+ 211              	.set nomacro
+ 212 00a0 0800E003 	j $31
+ 213 00a4 2D100000 	move $2,$0
+ 214              	.set macro
+ 215              	.set reorder
+ 216              	
+ 217              	.end _ZN7CEmuRom10GetNumExtsEv
+ 218              	$Lfe11:
+ 219              	.size _ZN7CEmuRom10GetNumExtsEv,$Lfe11-_ZN7CEmuRom10GetNumExtsEv
+ 220              	.align 2
+ 221              	.p2align 3,,7
+ 222              	.globl _ZN7CEmuRom10GetExtNameEj
+ 223              	.ent _ZN7CEmuRom10GetExtNameEj
+ 224              	_ZN7CEmuRom10GetExtNameEj:
+ 225              	.frame $sp,0,$31
+ 226              	.mask 0x00000000,0
+ 227              	.fmask 0x00000000,0
+GAS LISTING  			page 5
+
+
+ 228              	.set noreorder
+ 229              	.set nomacro
+ 230 00a8 0800E003 	j $31
+ 231 00ac 2D100000 	move $2,$0
+ 232              	.set macro
+ 233              	.set reorder
+ 234              	
+ 235              	.end _ZN7CEmuRom10GetExtNameEj
+ 236              	$Lfe12:
+ 237              	.size _ZN7CEmuRom10GetExtNameEj,$Lfe12-_ZN7CEmuRom10GetExtNameEj
+ 238              	.weak _ZTV7CEmuRom
+ 239              	.section .gnu.linkonce.d._ZTV7CEmuRom,"aw",@progbits
+ 240              	.align 3
+ 241              	.type _ZTV7CEmuRom,@object
+ 242              	.size _ZTV7CEmuRom,52
+ 243              	_ZTV7CEmuRom:
+ 244 0000 00000000 	.word 0
+ 245 0004 00000000 	.word 0
+ 246 0008 00000000 	.word _ZN7CEmuRomD1Ev
+ 247 000c 00000000 	.word _ZN7CEmuRomD0Ev
+ 248 0010 00000000 	.word _ZN7CEmuRom7LoadRomEP7CDataIOPhj
+ 249 0014 00000000 	.word _ZN7CEmuRom6UnloadEv
+ 250 0018 00000000 	.word _ZN7CEmuRom10GetNumExtsEv
+ 251 001c 00000000 	.word _ZN7CEmuRom10GetExtNameEj
+ 252 0020 00000000 	.word _ZN7CEmuRom16GetNumRomRegionsEv
+ 253 0024 00000000 	.word _ZN7CEmuRom16GetRomRegionNameEj
+ 254 0028 00000000 	.word _ZN7CEmuRom16GetRomRegionSizeEj
+ 255 002c 00000000 	.word _ZN7CEmuRom11GetRomTitleEv
+ 256 0030 00000000 	.word _ZN7CEmuRom13GetMapperNameEv
+ 257 0034 00000000 	.section .gnu.linkonce.t._ZN7CEmuRom11GetRomTitleEv,"ax",@progbits
+ 258              	.align 2
+ 259              	.p2align 3,,7
+ 260              	.weak _ZN7CEmuRom11GetRomTitleEv
+ 261              	.ent _ZN7CEmuRom11GetRomTitleEv
+ 262              	_ZN7CEmuRom11GetRomTitleEv:
+ 263              	.frame $sp,0,$31
+ 264              	.mask 0x00000000,0
+ 265              	.fmask 0x00000000,0
+ 266              	.set noreorder
+ 267              	.set nomacro
+ 268 0000 0800E003 	j $31
+ 269 0004 2D100000 	move $2,$0
+ 270              	.set macro
+ 271              	.set reorder
+ 272              	
+ 273              	.end _ZN7CEmuRom11GetRomTitleEv
+ 274              	$Lfe13:
+ 275              	.size _ZN7CEmuRom11GetRomTitleEv,$Lfe13-_ZN7CEmuRom11GetRomTitleEv
+ 276              	.section .gnu.linkonce.t._ZN7CEmuRom13GetMapperNameEv,"ax",@progbits
+ 277              	.align 2
+ 278              	.p2align 3,,7
+ 279              	.weak _ZN7CEmuRom13GetMapperNameEv
+ 280              	.ent _ZN7CEmuRom13GetMapperNameEv
+ 281              	_ZN7CEmuRom13GetMapperNameEv:
+ 282              	.frame $sp,0,$31
+ 283              	.mask 0x00000000,0
+ 284              	.fmask 0x00000000,0
+GAS LISTING  			page 6
+
+
+ 285              	.set noreorder
+ 286              	.set nomacro
+ 287 0000 0800E003 	j $31
+ 288 0004 2D100000 	move $2,$0
+ 289              	.set macro
+ 290              	.set reorder
+ 291              	
+ 292              	.end _ZN7CEmuRom13GetMapperNameEv
+ 293              	$Lfe14:
+ 294              	.size _ZN7CEmuRom13GetMapperNameEv,$Lfe14-_ZN7CEmuRom13GetMapperNameEv
+ 295              	.ident "GCC: (GNU) 3.2.2"

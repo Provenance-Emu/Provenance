@@ -1,0 +1,13 @@
+module libprosystem {
+    header "../ProSystem/core/Archive.h"
+    header "../ProSystem/core/Bios.h"
+    header "../ProSystem/core/Cartridge.h"
+    header "../ProSystem/core/Database.h"
+    header "../ProSystem/core/Maria.h"
+    header "../ProSystem/core/Memory.h"
+    header "../ProSystem/core/Palette.h"
+    header "../ProSystem/core/Pokey.h"
+    header "../ProSystem/core/Sound.h"
+    header "../ProSystem/core/Tia.h"
+    export *
+}

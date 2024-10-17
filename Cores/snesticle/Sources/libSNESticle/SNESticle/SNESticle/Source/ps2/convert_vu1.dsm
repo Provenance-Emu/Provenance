@@ -1,0 +1,795 @@
+
+
+
+.global ConvertVU1DMA_LoadMPG
+.global ConvertVU1DMA_ExecConvert
+
+
+.data
+.align 4 
+ConvertVU1DMA_ExecConvert:
+DMAend * 
+
+unpack[u] 1, 1, V4_8, 0x000, *
+ConvertVU1_MainData:
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+.byte 0xF0,0xF0,0xF0,0xF0
+
+.EndUnpack
+
+
+unpack[u] 1, 1, V4_8, 0x050, *
+ConvertVU1_SubData:
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+.byte 0x38,0x38,0x38,0x38
+
+.EndUnpack
+
+
+
+
+
+; palette data
+unpack[u] 1, 1, V4_5, 0x200, *
+ConvertVU1_PaletteData:
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.short 0x7CFC,0x7BAB,0x7DCD,0x3111, 0x7CFC,0x7BAB,0x7DCD,0x3111
+.EndUnpack
+
+
+
+
+
+
+
+
+
+
+MSCAL 0
+FLUSH
+
+.EndDmaData 
+ 
+
+.align 4 
+ConvertVU1DMA_LoadMPG:
+DMAend * 
+MPG 0, * 
+
+
+ConvertVU1_ConvertPlanar:	
+			nop								loi			0x39800000     ; 1 / 4096
+			nop								lq.xyzw		vf30,0xFE(vi00)
+			nop								lq.xyzw		vf31,0xFF(vi00)
+            muli.xyzw	vf30,vf30,i			nop
+            muli.xyzw	vf31,vf31,i			nop
+
+			; convert main screen
+			nop								iaddiu		vi01,vi00,0x000      
+            nop								bal			vi15,_ConvertVU1_DecodePlanes
+			nop								iaddiu		vi02,vi00,0x100      
+
+			; convert subscreen
+			nop								iaddiu		vi01,vi00,0x050      
+            nop								bal			vi15,_ConvertVU1_DecodePlanes
+			nop								iaddiu		vi02,vi00,0x180      
+
+			nop								iaddiu		vi01,vi00,0x100      
+			nop								iaddiu		vi02,vi00,0x180      
+            nop								bal			vi15,_ConvertVU1_ColorAdd
+			nop								iaddiu		vi03,vi00,0x00      
+
+            nop[e]							nop
+            nop								nop
+
+
+
+
+
+; vi01 -> main
+; vi02 -> sub
+; vi03 -> output
+
+_ConvertVU1_ColorAdd:
+            nop                             iaddiu      vi13,vi00, 63
+
+_ColorAddLoop:
+            nop                             iaddiu      vi14,vi00,0xFF
+
+			nop								ilw.x		vi04,0x00(vi01)     ; load 4 main 8-bit indices
+			nop								ilw.y		vi05,0x00(vi01)
+			nop								ilw.z		vi06,0x00(vi01)
+			nop								ilw.w		vi07,0x00(vi01)
+
+			nop								ilw.x		vi08,0x00(vi02)     ; load 4 sub 8-bit indices
+			nop								ilw.y		vi09,0x00(vi02)
+			nop								ilw.z		vi10,0x00(vi02)
+			nop								ilw.w		vi11,0x00(vi02)
+            nop                             iand        vi04,vi04,vi14
+            nop                             iand        vi05,vi05,vi14
+            nop                             iand        vi06,vi06,vi14
+            nop                             iand        vi07,vi07,vi14
+            nop                             iand        vi08,vi08,vi14
+            nop                             iand        vi09,vi09,vi14
+            nop                             iand        vi10,vi10,vi14
+            nop                             iand        vi11,vi11,vi14
+			nop								lq.xyzw		vf04,0x200(vi04)    ; lookup 8 color values
+			nop								lq.xyzw		vf05,0x200(vi05)
+			nop								lq.xyzw		vf06,0x200(vi06)
+			nop								lq.xyzw		vf07,0x200(vi07)
+            itof0.xyzw		vf04,vf04		lq.xyzw		vf08,0x200(vi08)
+            itof0.xyzw		vf05,vf05		lq.xyzw		vf09,0x200(vi09)
+            itof0.xyzw		vf06,vf06		lq.xyzw		vf10,0x200(vi10)
+            itof0.xyzw		vf07,vf07		lq.xyzw		vf11,0x200(vi11)
+            itof0.xyzw		vf08,vf08		nop
+            itof0.xyzw		vf09,vf09		nop
+            itof0.xyzw		vf10,vf10		nop
+            itof0.xyzw		vf11,vf11		nop
+            add.xyzw        vf04,vf04,vf08  nop                             ; add
+            add.xyzw        vf05,vf05,vf09  nop
+            add.xyzw        vf06,vf06,vf10  nop
+            add.xyzw        vf07,vf07,vf11  loi         255.0
+            minii.xyzw       vf04,vf04,I     nop
+            minii.xyzw       vf05,vf05,I     nop
+            minii.xyzw       vf06,vf06,I     nop
+            minii.xyzw       vf07,vf07,I     nop
+            ftoi0.xyzw		vf04,vf04		nop
+            ftoi0.xyzw		vf05,vf05		nop
+            ftoi0.xyzw		vf06,vf06		nop
+            ftoi0.xyzw		vf07,vf07		nop
+            nop                             sq          vf04,0x00(vi03)
+            nop                             sq          vf05,0x01(vi03)
+            nop                             sq          vf06,0x02(vi03)
+            nop                             sq          vf07,0x03(vi03)
+
+
+            nop                             iaddiu      vi01,vi01,2
+            nop								iaddiu		vi02,vi02,2
+            nop								iaddiu		vi03,vi03,4
+            
+            nop                             ibgtz       vi13,_ColorAddLoop
+            nop                             iaddi       vi13,vi13,-1
+            
+            nop								jr			vi15
+            nop								nop
+
+
+
+
+
+;
+; Inputs:
+;	  vi01->input  10 256-bit planes
+;	  vi02->output 32 x 4 chunky 8-bit pixel data
+;
+_ConvertVU1_DecodePlanes:
+            nop                             iaddiu      vi03,vi00, 7
+_DecodeLoop:
+			nop								ilw.x		vi04,0x00(vi01)
+			nop								ilw.x		vi05,0x08(vi01)
+			nop								ilw.x		vi06,0x10(vi01)
+			nop								ilw.x		vi07,0x18(vi01)
+			nop								ilw.x		vi08,0x20(vi01)
+			nop								ilw.x		vi09,0x28(vi01)
+			nop								ilw.x		vi10,0x30(vi01)
+			nop								ilw.x		vi11,0x38(vi01)
+			nop								ilw.x		vi12,0x40(vi01)
+			nop								ilw.x		vi13,0x48(vi01)
+
+			nop								lq.xyzw		vf04,0x300(vi04)
+			nop								lq.xyzw		vf05,0x300(vi05)
+			nop								lq.xyzw		vf06,0x300(vi06)
+			nop								lq.xyzw		vf07,0x300(vi07)
+			nop								lq.xyzw		vf08,0x300(vi08)
+			nop								lq.xyzw		vf09,0x300(vi09)
+			nop								lq.xyzw		vf10,0x300(vi10)
+			nop								lq.xyzw		vf11,0x300(vi11)
+			nop								lq.xyzw		vf12,0x300(vi12)
+			nop								lq.xyzw		vf13,0x300(vi13)
+
+			mulax.xyzw		acc,vf04,vf30x	ilw.y		vi04,0x00(vi01)
+			madday.xyzw		acc,vf05,vf30y	ilw.y		vi05,0x08(vi01)
+			maddaz.xyzw		acc,vf06,vf30z	ilw.y		vi06,0x10(vi01)
+			maddaw.xyzw		acc,vf07,vf30w	ilw.y		vi07,0x18(vi01)
+			maddax.xyzw		acc,vf08,vf31x	ilw.y		vi08,0x20(vi01)
+			madday.xyzw		acc,vf09,vf31y	ilw.y		vi09,0x28(vi01)
+			maddaz.xyzw		acc,vf10,vf31z	ilw.y		vi10,0x30(vi01)
+			maddw.xyzw	   vf16,vf11,vf31w	ilw.y		vi11,0x38(vi01)
+			mulax.xyzw		acc,vf12,vf30x	ilw.y		vi12,0x40(vi01)
+			maddy.xyzw	   vf17,vf13,vf30y	ilw.y		vi13,0x48(vi01)
+
+			nop								lq.xyzw		vf04,0x300(vi04)
+			ftoi12.xyzw  vf18,vf16			lq.xyzw		vf05,0x300(vi05)
+			ftoi0.xyzw   vf19,vf16			lq.xyzw		vf06,0x300(vi06)
+			ftoi12.xyzw  vf20,vf17			lq.xyzw		vf07,0x300(vi07)
+			ftoi0.xyzw   vf21,vf17			lq.xyzw		vf08,0x300(vi08)
+			nop								lq.xyzw		vf09,0x300(vi09)
+			nop								lq.xyzw		vf10,0x300(vi10)
+			nop								lq.xyzw		vf11,0x300(vi11)
+			nop								lq.xyzw		vf12,0x300(vi12)
+			nop								lq.xyzw		vf13,0x300(vi13)
+
+			nop								sq.xyzw		vf18,0x00(vi02)
+			nop								sq.xyzw		vf20,0x01(vi02)
+			nop								sq.xyzw		vf19,0x02(vi02)
+			nop								sq.xyzw		vf21,0x03(vi02)
+
+			mulax.xyzw		acc,vf04,vf30x	ilw.z		vi04,0x00(vi01)
+			madday.xyzw		acc,vf05,vf30y	ilw.z		vi05,0x08(vi01)
+			maddaz.xyzw		acc,vf06,vf30z	ilw.z		vi06,0x10(vi01)
+			maddaw.xyzw		acc,vf07,vf30w	ilw.z		vi07,0x18(vi01)
+			maddax.xyzw		acc,vf08,vf31x	ilw.z		vi08,0x20(vi01)
+			madday.xyzw		acc,vf09,vf31y	ilw.z		vi09,0x28(vi01)
+			maddaz.xyzw		acc,vf10,vf31z	ilw.z		vi10,0x30(vi01)
+			maddw.xyzw	   vf16,vf11,vf31w	ilw.z		vi11,0x38(vi01)
+			mulax.xyzw		acc,vf12,vf30x	ilw.z		vi12,0x40(vi01)
+			maddy.xyzw	   vf17,vf13,vf30y	ilw.z		vi13,0x48(vi01)
+
+			nop								lq.xyzw		vf04,0x300(vi04)
+			ftoi12.xyzw  vf18,vf16			lq.xyzw		vf05,0x300(vi05)
+			ftoi0.xyzw   vf19,vf16			lq.xyzw		vf06,0x300(vi06)
+			ftoi12.xyzw  vf20,vf17			lq.xyzw		vf07,0x300(vi07)
+			ftoi0.xyzw   vf21,vf17			lq.xyzw		vf08,0x300(vi08)
+			nop								lq.xyzw		vf09,0x300(vi09)
+			nop								lq.xyzw		vf10,0x300(vi10)
+			nop								lq.xyzw		vf11,0x300(vi11)
+			nop								lq.xyzw		vf12,0x300(vi12)
+			nop								lq.xyzw		vf13,0x300(vi13)
+
+			nop								sq.xyzw		vf18,0x04(vi02)
+			nop								sq.xyzw		vf20,0x05(vi02)
+			nop								sq.xyzw		vf19,0x06(vi02)
+			nop								sq.xyzw		vf21,0x07(vi02)
+
+			mulax.xyzw		acc,vf04,vf30x	ilw.w		vi04,0x00(vi01)
+			madday.xyzw		acc,vf05,vf30y	ilw.w		vi05,0x08(vi01)
+			maddaz.xyzw		acc,vf06,vf30z	ilw.w		vi06,0x10(vi01)
+			maddaw.xyzw		acc,vf07,vf30w	ilw.w		vi07,0x18(vi01)
+			maddax.xyzw		acc,vf08,vf31x	ilw.w		vi08,0x20(vi01)
+			madday.xyzw		acc,vf09,vf31y	ilw.w		vi09,0x28(vi01)
+			maddaz.xyzw		acc,vf10,vf31z	ilw.w		vi10,0x30(vi01)
+			maddw.xyzw	   vf16,vf11,vf31w	ilw.w		vi11,0x38(vi01)
+			mulax.xyzw		acc,vf12,vf30x	ilw.w		vi12,0x40(vi01)
+			maddy.xyzw	   vf17,vf13,vf30y	ilw.w		vi13,0x48(vi01)
+
+			nop								lq.xyzw		vf04,0x300(vi04)
+			ftoi12.xyzw  vf18,vf16			lq.xyzw		vf05,0x300(vi05)
+			ftoi0.xyzw   vf19,vf16			lq.xyzw		vf06,0x300(vi06)
+			ftoi12.xyzw  vf20,vf17			lq.xyzw		vf07,0x300(vi07)
+			ftoi0.xyzw   vf21,vf17			lq.xyzw		vf08,0x300(vi08)
+			nop								lq.xyzw		vf09,0x300(vi09)
+			nop								lq.xyzw		vf10,0x300(vi10)
+			nop								lq.xyzw		vf11,0x300(vi11)
+			nop								lq.xyzw		vf12,0x300(vi12)
+			nop								lq.xyzw		vf13,0x300(vi13)
+
+            mulax.xyzw		acc,vf04,vf30x	sq.xyzw		vf18,0x08(vi02)
+            madday.xyzw		acc,vf05,vf30y	sq.xyzw		vf20,0x09(vi02)
+            maddaz.xyzw		acc,vf06,vf30z	sq.xyzw		vf19,0x0A(vi02)
+            maddaw.xyzw		acc,vf07,vf30w	sq.xyzw		vf21,0x0B(vi02)
+            maddax.xyzw		acc,vf08,vf31x	nop
+            madday.xyzw		acc,vf09,vf31y	nop
+            maddaz.xyzw		acc,vf10,vf31z	nop
+            maddw.xyzw	   vf16,vf11,vf31w	nop
+            mulax.xyzw		acc,vf12,vf30x	nop
+            maddy.xyzw	   vf17,vf13,vf30y	nop
+            
+            nop								nop
+            ftoi12.xyzw  vf18,vf16			nop
+            ftoi0.xyzw   vf19,vf16			nop
+            ftoi12.xyzw  vf20,vf17			nop
+            ftoi0.xyzw   vf21,vf17			nop
+            
+            nop								sq.xyzw		vf18,0x0C(vi02)
+            nop								sq.xyzw		vf20,0x0D(vi02)
+            nop								sq.xyzw		vf19,0x0E(vi02)
+            nop								sq.xyzw		vf21,0x0F(vi02)
+            
+            nop                             iaddiu      vi01,vi01,1
+            nop								iaddiu		vi02,vi02,0x10
+            
+            nop                             ibgtz       vi03,_DecodeLoop
+            nop                             iaddi       vi03,vi03,-1
+            
+            nop								jr			vi15
+            nop								nop
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.EndMPG 
+
+
+unpack 1, 1, V4_32, 0xFE, *
+.float 1,2,4,8
+.float 16,32,64,128
+.EndUnpack
+
+
+; unpack planar translation table
+unpack 1, 1, V4_32, 0x300, *
+.float 0, 0, 0, 0
+.float 1, 0, 0, 0
+.float 0, 1, 0, 0
+.float 1, 1, 0, 0
+.float 0, 0, 1, 0
+.float 1, 0, 1, 0
+.float 0, 1, 1, 0
+.float 1, 1, 1, 0
+.float 0, 0, 0, 1
+.float 1, 0, 0, 1
+.float 0, 1, 0, 1
+.float 1, 1, 0, 1
+.float 0, 0, 1, 1
+.float 1, 0, 1, 1
+.float 0, 1, 1, 1
+.float 1, 1, 1, 1
+.float 4096, 0, 0, 0
+.float 4097, 0, 0, 0
+.float 4096, 1, 0, 0
+.float 4097, 1, 0, 0
+.float 4096, 0, 1, 0
+.float 4097, 0, 1, 0
+.float 4096, 1, 1, 0
+.float 4097, 1, 1, 0
+.float 4096, 0, 0, 1
+.float 4097, 0, 0, 1
+.float 4096, 1, 0, 1
+.float 4097, 1, 0, 1
+.float 4096, 0, 1, 1
+.float 4097, 0, 1, 1
+.float 4096, 1, 1, 1
+.float 4097, 1, 1, 1
+.float 0, 4096, 0, 0
+.float 1, 4096, 0, 0
+.float 0, 4097, 0, 0
+.float 1, 4097, 0, 0
+.float 0, 4096, 1, 0
+.float 1, 4096, 1, 0
+.float 0, 4097, 1, 0
+.float 1, 4097, 1, 0
+.float 0, 4096, 0, 1
+.float 1, 4096, 0, 1
+.float 0, 4097, 0, 1
+.float 1, 4097, 0, 1
+.float 0, 4096, 1, 1
+.float 1, 4096, 1, 1
+.float 0, 4097, 1, 1
+.float 1, 4097, 1, 1
+.float 4096, 4096, 0, 0
+.float 4097, 4096, 0, 0
+.float 4096, 4097, 0, 0
+.float 4097, 4097, 0, 0
+.float 4096, 4096, 1, 0
+.float 4097, 4096, 1, 0
+.float 4096, 4097, 1, 0
+.float 4097, 4097, 1, 0
+.float 4096, 4096, 0, 1
+.float 4097, 4096, 0, 1
+.float 4096, 4097, 0, 1
+.float 4097, 4097, 0, 1
+.float 4096, 4096, 1, 1
+.float 4097, 4096, 1, 1
+.float 4096, 4097, 1, 1
+.float 4097, 4097, 1, 1
+.float 0, 0, 4096, 0
+.float 1, 0, 4096, 0
+.float 0, 1, 4096, 0
+.float 1, 1, 4096, 0
+.float 0, 0, 4097, 0
+.float 1, 0, 4097, 0
+.float 0, 1, 4097, 0
+.float 1, 1, 4097, 0
+.float 0, 0, 4096, 1
+.float 1, 0, 4096, 1
+.float 0, 1, 4096, 1
+.float 1, 1, 4096, 1
+.float 0, 0, 4097, 1
+.float 1, 0, 4097, 1
+.float 0, 1, 4097, 1
+.float 1, 1, 4097, 1
+.float 4096, 0, 4096, 0
+.float 4097, 0, 4096, 0
+.float 4096, 1, 4096, 0
+.float 4097, 1, 4096, 0
+.float 4096, 0, 4097, 0
+.float 4097, 0, 4097, 0
+.float 4096, 1, 4097, 0
+.float 4097, 1, 4097, 0
+.float 4096, 0, 4096, 1
+.float 4097, 0, 4096, 1
+.float 4096, 1, 4096, 1
+.float 4097, 1, 4096, 1
+.float 4096, 0, 4097, 1
+.float 4097, 0, 4097, 1
+.float 4096, 1, 4097, 1
+.float 4097, 1, 4097, 1
+.float 0, 4096, 4096, 0
+.float 1, 4096, 4096, 0
+.float 0, 4097, 4096, 0
+.float 1, 4097, 4096, 0
+.float 0, 4096, 4097, 0
+.float 1, 4096, 4097, 0
+.float 0, 4097, 4097, 0
+.float 1, 4097, 4097, 0
+.float 0, 4096, 4096, 1
+.float 1, 4096, 4096, 1
+.float 0, 4097, 4096, 1
+.float 1, 4097, 4096, 1
+.float 0, 4096, 4097, 1
+.float 1, 4096, 4097, 1
+.float 0, 4097, 4097, 1
+.float 1, 4097, 4097, 1
+.float 4096, 4096, 4096, 0
+.float 4097, 4096, 4096, 0
+.float 4096, 4097, 4096, 0
+.float 4097, 4097, 4096, 0
+.float 4096, 4096, 4097, 0
+.float 4097, 4096, 4097, 0
+.float 4096, 4097, 4097, 0
+.float 4097, 4097, 4097, 0
+.float 4096, 4096, 4096, 1
+.float 4097, 4096, 4096, 1
+.float 4096, 4097, 4096, 1
+.float 4097, 4097, 4096, 1
+.float 4096, 4096, 4097, 1
+.float 4097, 4096, 4097, 1
+.float 4096, 4097, 4097, 1
+.float 4097, 4097, 4097, 1
+.float 0, 0, 0, 4096
+.float 1, 0, 0, 4096
+.float 0, 1, 0, 4096
+.float 1, 1, 0, 4096
+.float 0, 0, 1, 4096
+.float 1, 0, 1, 4096
+.float 0, 1, 1, 4096
+.float 1, 1, 1, 4096
+.float 0, 0, 0, 4097
+.float 1, 0, 0, 4097
+.float 0, 1, 0, 4097
+.float 1, 1, 0, 4097
+.float 0, 0, 1, 4097
+.float 1, 0, 1, 4097
+.float 0, 1, 1, 4097
+.float 1, 1, 1, 4097
+.float 4096, 0, 0, 4096
+.float 4097, 0, 0, 4096
+.float 4096, 1, 0, 4096
+.float 4097, 1, 0, 4096
+.float 4096, 0, 1, 4096
+.float 4097, 0, 1, 4096
+.float 4096, 1, 1, 4096
+.float 4097, 1, 1, 4096
+.float 4096, 0, 0, 4097
+.float 4097, 0, 0, 4097
+.float 4096, 1, 0, 4097
+.float 4097, 1, 0, 4097
+.float 4096, 0, 1, 4097
+.float 4097, 0, 1, 4097
+.float 4096, 1, 1, 4097
+.float 4097, 1, 1, 4097
+.float 0, 4096, 0, 4096
+.float 1, 4096, 0, 4096
+.float 0, 4097, 0, 4096
+.float 1, 4097, 0, 4096
+.float 0, 4096, 1, 4096
+.float 1, 4096, 1, 4096
+.float 0, 4097, 1, 4096
+.float 1, 4097, 1, 4096
+.float 0, 4096, 0, 4097
+.float 1, 4096, 0, 4097
+.float 0, 4097, 0, 4097
+.float 1, 4097, 0, 4097
+.float 0, 4096, 1, 4097
+.float 1, 4096, 1, 4097
+.float 0, 4097, 1, 4097
+.float 1, 4097, 1, 4097
+.float 4096, 4096, 0, 4096
+.float 4097, 4096, 0, 4096
+.float 4096, 4097, 0, 4096
+.float 4097, 4097, 0, 4096
+.float 4096, 4096, 1, 4096
+.float 4097, 4096, 1, 4096
+.float 4096, 4097, 1, 4096
+.float 4097, 4097, 1, 4096
+.float 4096, 4096, 0, 4097
+.float 4097, 4096, 0, 4097
+.float 4096, 4097, 0, 4097
+.float 4097, 4097, 0, 4097
+.float 4096, 4096, 1, 4097
+.float 4097, 4096, 1, 4097
+.float 4096, 4097, 1, 4097
+.float 4097, 4097, 1, 4097
+.float 0, 0, 4096, 4096
+.float 1, 0, 4096, 4096
+.float 0, 1, 4096, 4096
+.float 1, 1, 4096, 4096
+.float 0, 0, 4097, 4096
+.float 1, 0, 4097, 4096
+.float 0, 1, 4097, 4096
+.float 1, 1, 4097, 4096
+.float 0, 0, 4096, 4097
+.float 1, 0, 4096, 4097
+.float 0, 1, 4096, 4097
+.float 1, 1, 4096, 4097
+.float 0, 0, 4097, 4097
+.float 1, 0, 4097, 4097
+.float 0, 1, 4097, 4097
+.float 1, 1, 4097, 4097
+.float 4096, 0, 4096, 4096
+.float 4097, 0, 4096, 4096
+.float 4096, 1, 4096, 4096
+.float 4097, 1, 4096, 4096
+.float 4096, 0, 4097, 4096
+.float 4097, 0, 4097, 4096
+.float 4096, 1, 4097, 4096
+.float 4097, 1, 4097, 4096
+.float 4096, 0, 4096, 4097
+.float 4097, 0, 4096, 4097
+.float 4096, 1, 4096, 4097
+.float 4097, 1, 4096, 4097
+.float 4096, 0, 4097, 4097
+.float 4097, 0, 4097, 4097
+.float 4096, 1, 4097, 4097
+.float 4097, 1, 4097, 4097
+.float 0, 4096, 4096, 4096
+.float 1, 4096, 4096, 4096
+.float 0, 4097, 4096, 4096
+.float 1, 4097, 4096, 4096
+.float 0, 4096, 4097, 4096
+.float 1, 4096, 4097, 4096
+.float 0, 4097, 4097, 4096
+.float 1, 4097, 4097, 4096
+.float 0, 4096, 4096, 4097
+.float 1, 4096, 4096, 4097
+.float 0, 4097, 4096, 4097
+.float 1, 4097, 4096, 4097
+.float 0, 4096, 4097, 4097
+.float 1, 4096, 4097, 4097
+.float 0, 4097, 4097, 4097
+.float 1, 4097, 4097, 4097
+.float 4096, 4096, 4096, 4096
+.float 4097, 4096, 4096, 4096
+.float 4096, 4097, 4096, 4096
+.float 4097, 4097, 4096, 4096
+.float 4096, 4096, 4097, 4096
+.float 4097, 4096, 4097, 4096
+.float 4096, 4097, 4097, 4096
+.float 4097, 4097, 4097, 4096
+.float 4096, 4096, 4096, 4097
+.float 4097, 4096, 4096, 4097
+.float 4096, 4097, 4096, 4097
+.float 4097, 4097, 4096, 4097
+.float 4096, 4096, 4097, 4097
+.float 4097, 4096, 4097, 4097
+.float 4096, 4097, 4097, 4097
+.float 4097, 4097, 4097, 4097
+.EndUnpack
+
+
+;strow  0x3F800000,0x3F800000,0x3F800000,0x3F800000
+;stmod 1
+
+
+.EndDmaData 
+ 
+

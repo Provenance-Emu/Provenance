@@ -81,89 +81,89 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		05ABEEEB7C9746B2B2CA9BBC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/clevels.h */ = {isa = PBXBuildFile; fileRef = 37A3AEAAFF33467694B55A79 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/clevels.h */; };
-		0D590BD2C6494C46AC0C3E35 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h */ = {isa = PBXBuildFile; fileRef = 4B37F2248B9C4081A12996CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h */; };
-		103D0352137542D4AB578295 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */ = {isa = PBXBuildFile; fileRef = 81175EF5BB2E4F9599F712AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */; };
-		108A27FDF3784AFAAD9932FC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.h */ = {isa = PBXBuildFile; fileRef = 3804B97323334FE6829BAA87 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.h */; };
-		1118176D692E4997BC55BD2E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */ = {isa = PBXBuildFile; fileRef = 9FAC8C8F731644F58A57A273 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */; };
-		156CC11CBC674D66934720C6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h */ = {isa = PBXBuildFile; fileRef = E0AD9903928441468F2DA317 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h */; };
-		180A7689696047138E0C6E59 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h */ = {isa = PBXBuildFile; fileRef = A9C37D6699E940F0B4D9B743 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h */; };
-		1DA59D80B6794CB092669E23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */ = {isa = PBXBuildFile; fileRef = FC0BD32E0E524C57817BBBBC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */; };
-		1EE5E7F8C27241C79A9D7917 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 5675666BA6AB474AA6EAEB6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist */; };
-		2BA020192B6844779D89F4B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */ = {isa = PBXBuildFile; fileRef = 767882BECB154DD4B836DBAD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */; };
-		2C2FBA5D4A5E4FC29207719D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h */ = {isa = PBXBuildFile; fileRef = 4833447774804395AAECC350 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h */; };
-		2E22B2E84DA347F1837A49B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h */ = {isa = PBXBuildFile; fileRef = 101C170132C94EB4889184D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h */; };
-		33BBE148BFA744359DFBCEF5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h */ = {isa = PBXBuildFile; fileRef = 62521F35AE374E1087E441D2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h */; };
-		33EDE5DB306B48A6AB813D0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXBuildFile; fileRef = 3F1F2E86212D4DBF953D887B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */; };
-		35CE2D07967F44CB898FAB23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXBuildFile; fileRef = 6D69A9E2435E493896DFCE0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h */; };
-		3973B8A2767F453B97450FCC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */ = {isa = PBXBuildFile; fileRef = 80A1EC5801F54215B0D18D29 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */; };
-		39E165AFC7E146649EFD3A93 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXBuildFile; fileRef = EA4212AD34F04E78A4555676 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h */; };
-		3A1934555B4F4001A554E130 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */ = {isa = PBXBuildFile; fileRef = 72401F51C2D3461E972FC746 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */; };
-		3C27B7C1090647D3A96A199C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */ = {isa = PBXBuildFile; fileRef = 5D129AB5565A463C9DFD1939 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */; };
-		3D20AA1935BD42149442FE7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/compiler.h */ = {isa = PBXBuildFile; fileRef = 2C63C3EA710047ABAF23F7F1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/compiler.h */; };
-		3DED1C8CA50546C49AAC1450 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXBuildFile; fileRef = 1E29C198EAE94EA5A49D432B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */; };
-		571640EFFE6842D4B0ABFD91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXBuildFile; fileRef = 7A5B000713124132B181B7B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h */; };
-		5ABDDDEE78B941D9A15AEC03 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXBuildFile; fileRef = 7E3EE435F5E044BE89EF8E64 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h */; };
-		5C3D190D8B624E099D9E9D74 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h */ = {isa = PBXBuildFile; fileRef = 4B55CC726DEB4C80A761153A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h */; };
-		5FA1B6A4F0B543A89379F6E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse.h */ = {isa = PBXBuildFile; fileRef = 2D04C59503DE40FDADD4B553 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse.h */; };
-		6261A7F9BE19481684E7F723 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXBuildFile; fileRef = 724C99B116514A60833B743B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h */; };
-		65A872ECEBE74C7F838E0ECC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.c */ = {isa = PBXBuildFile; fileRef = E73AEFC02343468796AF31A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.c */; };
-		65BD8F728AF04827A6025582 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */ = {isa = PBXBuildFile; fileRef = 783AABDF1B1F4FDDB093BF44 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */; };
-		681D24C4F00D4E62835873F9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/cpu.h */ = {isa = PBXBuildFile; fileRef = F4DA8D54D2724C25BE42FF21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/cpu.h */; };
-		6DF1449EE58147A79EACB5D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bits.h */ = {isa = PBXBuildFile; fileRef = 7825C41682C742C8ACFD204B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bits.h */; };
-		709D582DD7C04E7EAD62641B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */ = {isa = PBXBuildFile; fileRef = 04F5F1DFF24D4B48B4EDFC86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */; };
-		728526A65CE94120888FA961 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */ = {isa = PBXBuildFile; fileRef = 5D04270122DF4893A9ACC9DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */; };
-		72CD5A215A454D728BD52647 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.c */ = {isa = PBXBuildFile; fileRef = 55528CDE1BD945B3B9E36A90 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.c */; };
-		743AC492CAC646D58307684E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXBuildFile; fileRef = FCBF307CD4A444CDB72FB962 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */; };
-		805EB1FA881A4127B3B0E970 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bitstream.h */ = {isa = PBXBuildFile; fileRef = 737C3DE1F2614890B0C18578 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bitstream.h */; };
-		812EF1A741524436B31D98E8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h */ = {isa = PBXBuildFile; fileRef = 9E160F2A8C15409283E2AFC0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h */; };
-		82777ABBF62F487EB53BED7A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h */ = {isa = PBXBuildFile; fileRef = C1017B10A9194605B8C3BC37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h */; };
-		84E113ADB5E044EAB292F7BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/mem.h */ = {isa = PBXBuildFile; fileRef = 8F2019305FDF4943A099D8F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/mem.h */; };
-		8940DAADB3C44BD1A035DCC1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXBuildFile; fileRef = 8ED657320FC842739D5EE27A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */; };
-		8AFF06DAF0DD4F54A4956010 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXBuildFile; fileRef = DBFC9C1DBBBD47B7B9F25D17 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */; };
-		91ABBB1ED6FC48EFB277923D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 55A558A40526479F8F10D02F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */; };
-		948DFA5ABB024EDC8A76B27A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h */ = {isa = PBXBuildFile; fileRef = B704955006624F5DAB80DD39 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h */; };
-		9A2FB935FFE04DAD8B28F6CE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */ = {isa = PBXBuildFile; fileRef = 2580548D2B3C420186B67135 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */; };
-		9A74B62531164B8C9EC2F6AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */ = {isa = PBXBuildFile; fileRef = 364B1744F41B44CEA1E25E8E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */; };
-		9ABF41BB1B35468C9BAE8AB7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXBuildFile; fileRef = 3DC4BF58E6074DEAA3CC6914 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h */; };
-		9BAC05D1CA764ABA9B0C35E4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXBuildFile; fileRef = 12545A7F966D4885B6A15EF8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */; };
-		9D0A3340082648AEA5D365FE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.h */ = {isa = PBXBuildFile; fileRef = 0E87E47A86A34A369821AE64 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.h */; };
-		9E2C997BA5CF4FCC92B800BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXBuildFile; fileRef = 4B41D0C181E54424B16D2154 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */; };
-		9E59801A96FB4C7399BCDF01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */ = {isa = PBXBuildFile; fileRef = 2D81E8E6F060456B85431B84 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */; };
-		9F2269F639C84E5D88C4B1F0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h */ = {isa = PBXBuildFile; fileRef = FEE425FC76444D8184A9D4A4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h */; };
-		A27C10FADD5144D7A74AC337 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/zstd.h */ = {isa = PBXBuildFile; fileRef = 08A2DCCB6C67403FA74955DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/zstd.h */; };
-		A4A9F733473D430AA04EB9E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXBuildFile; fileRef = 02A18594B2CB4C30BD9184E7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */; };
-		A559485C213D4441A0805E2A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */ = {isa = PBXBuildFile; fileRef = B1043E52632D4DF2A19722C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */; };
-		A5D02CF11A354AA5990A8178 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/huf.h */ = {isa = PBXBuildFile; fileRef = 58ECF95832EB47EC8E583B65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/huf.h */; };
-		AFCF4336B5BD4AC6A724A99B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h */ = {isa = PBXBuildFile; fileRef = 763DBA4814004C80A8A26D86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h */; };
-		B0B398BF70FB474493AEF542 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h */ = {isa = PBXBuildFile; fileRef = 43877076D91747A88B2D6C7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h */; };
-		B40206968A3145B1BFBDEB48 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXBuildFile; fileRef = D4C617D9204F497486DFC8BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h */; };
-		B48C5B5C21894666BBF4013C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */ = {isa = PBXBuildFile; fileRef = 1EB45354B86146608A3C7D61 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */; };
-		B6525B5A641645B983810FE9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.c */ = {isa = PBXBuildFile; fileRef = 988CF01CAF9649E8B9EB7902 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.c */; };
-		C5C5216889554E5DA7D19866 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXBuildFile; fileRef = 7966F5B1C73A41DDA933D731 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h */; };
-		C5D782DEF2954708A1DA8E1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXBuildFile; fileRef = 2529BA132B224844A020D122 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h */; };
-		C64C63502D8743C6853C560A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */ = {isa = PBXBuildFile; fileRef = 1C54B71644B641FC9C4FC549 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */; };
-		C66818D5D3AD46DBA7EB0CE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */ = {isa = PBXBuildFile; fileRef = DFE2324D51C44965BDFFFB3D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */; };
-		C787F5C1EA4D43878CD3CF60 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/portability_macros.h */ = {isa = PBXBuildFile; fileRef = 46701599BC694EA39B59F7DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/portability_macros.h */; };
-		C8469A2337104FAAA9F9DEA2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */ = {isa = PBXBuildFile; fileRef = 0648E49551EA4E2ABA73BC81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */; };
-		CBAC404F702E4736A9DAC8A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXBuildFile; fileRef = 8391BFD4C434418888D2EFA8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h */; };
-		CBDBF9B91C3A4A7F97FF5DED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXBuildFile; fileRef = 2F2E5D6FA87841EF88D872F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h */; };
-		CD2EFA5C0F4E4D00B89695C8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.h */ = {isa = PBXBuildFile; fileRef = 0FA85B4B7E7A4A4C8783D79F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.h */; };
-		CD7E6FA7769E416DAA3773CA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h */ = {isa = PBXBuildFile; fileRef = D05E12C0434F41C88A033FD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h */; };
-		D076F15384E1432B8B14223B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.c */ = {isa = PBXBuildFile; fileRef = D3C01E2199784180AE099EA4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.c */; };
-		D65CF2740719436B8947F18A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXBuildFile; fileRef = 60331BB10BA54B34B7213DA6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */; };
-		D8C4F61C93F746BCB1331D7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */ = {isa = PBXBuildFile; fileRef = A43062BED0404444A4F3B6C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */; };
-		DB3A52D87CF440CDA73F9157 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.h */ = {isa = PBXBuildFile; fileRef = 6A4B515EE8E74D439A319C19 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.h */; };
-		DCEA618B6D784D93BF592125 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h */ = {isa = PBXBuildFile; fileRef = C2FC80B60FB744DB8C174930 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h */; };
-		EB5824B13E39455184549045 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.h */ = {isa = PBXBuildFile; fileRef = 4F5C136B3404496D84215F8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.h */; };
-		ED6B0C8026BE436CB9771072 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.c */ = {isa = PBXBuildFile; fileRef = 44B07D672BBF445788579B80 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.c */; };
-		EDA567A31FD548DF877D8FF1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h */ = {isa = PBXBuildFile; fileRef = C3E8689CA6044B7198E2D88E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h */; };
-		EE5569FCE285435294252180 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */ = {isa = PBXBuildFile; fileRef = 8B894EBA929C4101B9D1306A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */; };
-		F06E645FFAD5482298F143CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.c */ = {isa = PBXBuildFile; fileRef = 11F01D2E8DF34FF2AEAC8FDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.c */; };
-		F4D434C5A9B049B78EAA7AB7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h */ = {isa = PBXBuildFile; fileRef = D68AE8F03FCA40C3A97DB44C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h */; };
-		F632DD55E62A45949A32B775 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.h */ = {isa = PBXBuildFile; fileRef = B9786C6974BA442C9E379478 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.h */; };
-		FB6BE76A8353407EBE0BD641 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXBuildFile; fileRef = FFD37EBBCE424B7B9374A240 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */; };
-		FB87ABB53A624C9690AB839A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */ = {isa = PBXBuildFile; fileRef = 2ED962C796934CE7B55F8D31 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */; };
+		05ABEEEB7C9746B2B2CA9BBC /* ../Play-/deps/Dependencies/zstd/lib/compress/clevels.h */ = {isa = PBXBuildFile; fileRef = 37A3AEAAFF33467694B55A79 /* ../Play-/deps/Dependencies/zstd/lib/compress/clevels.h */; };
+		0D590BD2C6494C46AC0C3E35 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h */ = {isa = PBXBuildFile; fileRef = 4B37F2248B9C4081A12996CF /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h */; };
+		103D0352137542D4AB578295 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */ = {isa = PBXBuildFile; fileRef = 81175EF5BB2E4F9599F712AB /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */; };
+		108A27FDF3784AFAAD9932FC /* ../Play-/deps/Dependencies/zstd/lib/common/threading.h */ = {isa = PBXBuildFile; fileRef = 3804B97323334FE6829BAA87 /* ../Play-/deps/Dependencies/zstd/lib/common/threading.h */; };
+		1118176D692E4997BC55BD2E /* ../Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */ = {isa = PBXBuildFile; fileRef = 9FAC8C8F731644F58A57A273 /* ../Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */; };
+		156CC11CBC674D66934720C6 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h */ = {isa = PBXBuildFile; fileRef = E0AD9903928441468F2DA317 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h */; };
+		180A7689696047138E0C6E59 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h */ = {isa = PBXBuildFile; fileRef = A9C37D6699E940F0B4D9B743 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h */; };
+		1DA59D80B6794CB092669E23 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */ = {isa = PBXBuildFile; fileRef = FC0BD32E0E524C57817BBBBC /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */; };
+		1EE5E7F8C27241C79A9D7917 /* ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 5675666BA6AB474AA6EAEB6B /* ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist */; };
+		2BA020192B6844779D89F4B7 /* ../Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */ = {isa = PBXBuildFile; fileRef = 767882BECB154DD4B836DBAD /* ../Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */; };
+		2C2FBA5D4A5E4FC29207719D /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h */ = {isa = PBXBuildFile; fileRef = 4833447774804395AAECC350 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h */; };
+		2E22B2E84DA347F1837A49B9 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h */ = {isa = PBXBuildFile; fileRef = 101C170132C94EB4889184D9 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h */; };
+		33BBE148BFA744359DFBCEF5 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h */ = {isa = PBXBuildFile; fileRef = 62521F35AE374E1087E441D2 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h */; };
+		33EDE5DB306B48A6AB813D0A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXBuildFile; fileRef = 3F1F2E86212D4DBF953D887B /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */; };
+		35CE2D07967F44CB898FAB23 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXBuildFile; fileRef = 6D69A9E2435E493896DFCE0A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h */; };
+		3973B8A2767F453B97450FCC /* ../Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */ = {isa = PBXBuildFile; fileRef = 80A1EC5801F54215B0D18D29 /* ../Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */; };
+		39E165AFC7E146649EFD3A93 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXBuildFile; fileRef = EA4212AD34F04E78A4555676 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h */; };
+		3A1934555B4F4001A554E130 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */ = {isa = PBXBuildFile; fileRef = 72401F51C2D3461E972FC746 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */; };
+		3C27B7C1090647D3A96A199C /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */ = {isa = PBXBuildFile; fileRef = 5D129AB5565A463C9DFD1939 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */; };
+		3D20AA1935BD42149442FE7D /* ../Play-/deps/Dependencies/zstd/lib/common/compiler.h */ = {isa = PBXBuildFile; fileRef = 2C63C3EA710047ABAF23F7F1 /* ../Play-/deps/Dependencies/zstd/lib/common/compiler.h */; };
+		3DED1C8CA50546C49AAC1450 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXBuildFile; fileRef = 1E29C198EAE94EA5A49D432B /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */; };
+		571640EFFE6842D4B0ABFD91 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXBuildFile; fileRef = 7A5B000713124132B181B7B7 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h */; };
+		5ABDDDEE78B941D9A15AEC03 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXBuildFile; fileRef = 7E3EE435F5E044BE89EF8E64 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h */; };
+		5C3D190D8B624E099D9E9D74 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h */ = {isa = PBXBuildFile; fileRef = 4B55CC726DEB4C80A761153A /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h */; };
+		5FA1B6A4F0B543A89379F6E5 /* ../Play-/deps/Dependencies/zstd/lib/common/fse.h */ = {isa = PBXBuildFile; fileRef = 2D04C59503DE40FDADD4B553 /* ../Play-/deps/Dependencies/zstd/lib/common/fse.h */; };
+		6261A7F9BE19481684E7F723 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXBuildFile; fileRef = 724C99B116514A60833B743B /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h */; };
+		65A872ECEBE74C7F838E0ECC /* ../Play-/deps/Dependencies/zstd/lib/compress/hist.c */ = {isa = PBXBuildFile; fileRef = E73AEFC02343468796AF31A2 /* ../Play-/deps/Dependencies/zstd/lib/compress/hist.c */; };
+		65BD8F728AF04827A6025582 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */ = {isa = PBXBuildFile; fileRef = 783AABDF1B1F4FDDB093BF44 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */; };
+		681D24C4F00D4E62835873F9 /* ../Play-/deps/Dependencies/zstd/lib/common/cpu.h */ = {isa = PBXBuildFile; fileRef = F4DA8D54D2724C25BE42FF21 /* ../Play-/deps/Dependencies/zstd/lib/common/cpu.h */; };
+		6DF1449EE58147A79EACB5D3 /* ../Play-/deps/Dependencies/zstd/lib/common/bits.h */ = {isa = PBXBuildFile; fileRef = 7825C41682C742C8ACFD204B /* ../Play-/deps/Dependencies/zstd/lib/common/bits.h */; };
+		709D582DD7C04E7EAD62641B /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */ = {isa = PBXBuildFile; fileRef = 04F5F1DFF24D4B48B4EDFC86 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */; };
+		728526A65CE94120888FA961 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */ = {isa = PBXBuildFile; fileRef = 5D04270122DF4893A9ACC9DD /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */; };
+		72CD5A215A454D728BD52647 /* ../Play-/deps/Dependencies/zstd/lib/common/threading.c */ = {isa = PBXBuildFile; fileRef = 55528CDE1BD945B3B9E36A90 /* ../Play-/deps/Dependencies/zstd/lib/common/threading.c */; };
+		743AC492CAC646D58307684E /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXBuildFile; fileRef = FCBF307CD4A444CDB72FB962 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */; };
+		805EB1FA881A4127B3B0E970 /* ../Play-/deps/Dependencies/zstd/lib/common/bitstream.h */ = {isa = PBXBuildFile; fileRef = 737C3DE1F2614890B0C18578 /* ../Play-/deps/Dependencies/zstd/lib/common/bitstream.h */; };
+		812EF1A741524436B31D98E8 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h */ = {isa = PBXBuildFile; fileRef = 9E160F2A8C15409283E2AFC0 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h */; };
+		82777ABBF62F487EB53BED7A /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h */ = {isa = PBXBuildFile; fileRef = C1017B10A9194605B8C3BC37 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h */; };
+		84E113ADB5E044EAB292F7BF /* ../Play-/deps/Dependencies/zstd/lib/common/mem.h */ = {isa = PBXBuildFile; fileRef = 8F2019305FDF4943A099D8F7 /* ../Play-/deps/Dependencies/zstd/lib/common/mem.h */; };
+		8940DAADB3C44BD1A035DCC1 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXBuildFile; fileRef = 8ED657320FC842739D5EE27A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */; };
+		8AFF06DAF0DD4F54A4956010 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXBuildFile; fileRef = DBFC9C1DBBBD47B7B9F25D17 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */; };
+		91ABBB1ED6FC48EFB277923D /* ../Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 55A558A40526479F8F10D02F /* ../Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */; };
+		948DFA5ABB024EDC8A76B27A /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h */ = {isa = PBXBuildFile; fileRef = B704955006624F5DAB80DD39 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h */; };
+		9A2FB935FFE04DAD8B28F6CE /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */ = {isa = PBXBuildFile; fileRef = 2580548D2B3C420186B67135 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */; };
+		9A74B62531164B8C9EC2F6AC /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */ = {isa = PBXBuildFile; fileRef = 364B1744F41B44CEA1E25E8E /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */; };
+		9ABF41BB1B35468C9BAE8AB7 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXBuildFile; fileRef = 3DC4BF58E6074DEAA3CC6914 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h */; };
+		9BAC05D1CA764ABA9B0C35E4 /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXBuildFile; fileRef = 12545A7F966D4885B6A15EF8 /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */; };
+		9D0A3340082648AEA5D365FE /* ../Play-/deps/Dependencies/zstd/lib/compress/hist.h */ = {isa = PBXBuildFile; fileRef = 0E87E47A86A34A369821AE64 /* ../Play-/deps/Dependencies/zstd/lib/compress/hist.h */; };
+		9E2C997BA5CF4FCC92B800BB /* ../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXBuildFile; fileRef = 4B41D0C181E54424B16D2154 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */; };
+		9E59801A96FB4C7399BCDF01 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */ = {isa = PBXBuildFile; fileRef = 2D81E8E6F060456B85431B84 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */; };
+		9F2269F639C84E5D88C4B1F0 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h */ = {isa = PBXBuildFile; fileRef = FEE425FC76444D8184A9D4A4 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h */; };
+		A27C10FADD5144D7A74AC337 /* ../Play-/deps/Dependencies/zstd/lib/zstd.h */ = {isa = PBXBuildFile; fileRef = 08A2DCCB6C67403FA74955DA /* ../Play-/deps/Dependencies/zstd/lib/zstd.h */; };
+		A4A9F733473D430AA04EB9E0 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXBuildFile; fileRef = 02A18594B2CB4C30BD9184E7 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */; };
+		A559485C213D4441A0805E2A /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */ = {isa = PBXBuildFile; fileRef = B1043E52632D4DF2A19722C2 /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */; };
+		A5D02CF11A354AA5990A8178 /* ../Play-/deps/Dependencies/zstd/lib/common/huf.h */ = {isa = PBXBuildFile; fileRef = 58ECF95832EB47EC8E583B65 /* ../Play-/deps/Dependencies/zstd/lib/common/huf.h */; };
+		AFCF4336B5BD4AC6A724A99B /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h */ = {isa = PBXBuildFile; fileRef = 763DBA4814004C80A8A26D86 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h */; };
+		B0B398BF70FB474493AEF542 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h */ = {isa = PBXBuildFile; fileRef = 43877076D91747A88B2D6C7D /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h */; };
+		B40206968A3145B1BFBDEB48 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXBuildFile; fileRef = D4C617D9204F497486DFC8BF /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h */; };
+		B48C5B5C21894666BBF4013C /* ../Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */ = {isa = PBXBuildFile; fileRef = 1EB45354B86146608A3C7D61 /* ../Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */; };
+		B6525B5A641645B983810FE9 /* ../Play-/deps/Dependencies/zstd/lib/common/pool.c */ = {isa = PBXBuildFile; fileRef = 988CF01CAF9649E8B9EB7902 /* ../Play-/deps/Dependencies/zstd/lib/common/pool.c */; };
+		C5C5216889554E5DA7D19866 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXBuildFile; fileRef = 7966F5B1C73A41DDA933D731 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h */; };
+		C5D782DEF2954708A1DA8E1A /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXBuildFile; fileRef = 2529BA132B224844A020D122 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h */; };
+		C64C63502D8743C6853C560A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */ = {isa = PBXBuildFile; fileRef = 1C54B71644B641FC9C4FC549 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */; };
+		C66818D5D3AD46DBA7EB0CE5 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */ = {isa = PBXBuildFile; fileRef = DFE2324D51C44965BDFFFB3D /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */; };
+		C787F5C1EA4D43878CD3CF60 /* ../Play-/deps/Dependencies/zstd/lib/common/portability_macros.h */ = {isa = PBXBuildFile; fileRef = 46701599BC694EA39B59F7DF /* ../Play-/deps/Dependencies/zstd/lib/common/portability_macros.h */; };
+		C8469A2337104FAAA9F9DEA2 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */ = {isa = PBXBuildFile; fileRef = 0648E49551EA4E2ABA73BC81 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */; };
+		CBAC404F702E4736A9DAC8A9 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXBuildFile; fileRef = 8391BFD4C434418888D2EFA8 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h */; };
+		CBDBF9B91C3A4A7F97FF5DED /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXBuildFile; fileRef = 2F2E5D6FA87841EF88D872F7 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h */; };
+		CD2EFA5C0F4E4D00B89695C8 /* ../Play-/deps/Dependencies/zstd/lib/common/pool.h */ = {isa = PBXBuildFile; fileRef = 0FA85B4B7E7A4A4C8783D79F /* ../Play-/deps/Dependencies/zstd/lib/common/pool.h */; };
+		CD7E6FA7769E416DAA3773CA /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h */ = {isa = PBXBuildFile; fileRef = D05E12C0434F41C88A033FD3 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h */; };
+		D076F15384E1432B8B14223B /* ../Play-/deps/Dependencies/zstd/lib/common/xxhash.c */ = {isa = PBXBuildFile; fileRef = D3C01E2199784180AE099EA4 /* ../Play-/deps/Dependencies/zstd/lib/common/xxhash.c */; };
+		D65CF2740719436B8947F18A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXBuildFile; fileRef = 60331BB10BA54B34B7213DA6 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */; };
+		D8C4F61C93F746BCB1331D7D /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */ = {isa = PBXBuildFile; fileRef = A43062BED0404444A4F3B6C2 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */; };
+		DB3A52D87CF440CDA73F9157 /* ../Play-/deps/Dependencies/zstd/lib/common/error_private.h */ = {isa = PBXBuildFile; fileRef = 6A4B515EE8E74D439A319C19 /* ../Play-/deps/Dependencies/zstd/lib/common/error_private.h */; };
+		DCEA618B6D784D93BF592125 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h */ = {isa = PBXBuildFile; fileRef = C2FC80B60FB744DB8C174930 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h */; };
+		EB5824B13E39455184549045 /* ../Play-/deps/Dependencies/zstd/lib/common/debug.h */ = {isa = PBXBuildFile; fileRef = 4F5C136B3404496D84215F8B /* ../Play-/deps/Dependencies/zstd/lib/common/debug.h */; };
+		ED6B0C8026BE436CB9771072 /* ../Play-/deps/Dependencies/zstd/lib/common/debug.c */ = {isa = PBXBuildFile; fileRef = 44B07D672BBF445788579B80 /* ../Play-/deps/Dependencies/zstd/lib/common/debug.c */; };
+		EDA567A31FD548DF877D8FF1 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h */ = {isa = PBXBuildFile; fileRef = C3E8689CA6044B7198E2D88E /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h */; };
+		EE5569FCE285435294252180 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */ = {isa = PBXBuildFile; fileRef = 8B894EBA929C4101B9D1306A /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */; };
+		F06E645FFAD5482298F143CD /* ../Play-/deps/Dependencies/zstd/lib/common/error_private.c */ = {isa = PBXBuildFile; fileRef = 11F01D2E8DF34FF2AEAC8FDC /* ../Play-/deps/Dependencies/zstd/lib/common/error_private.c */; };
+		F4D434C5A9B049B78EAA7AB7 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h */ = {isa = PBXBuildFile; fileRef = D68AE8F03FCA40C3A97DB44C /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h */; };
+		F632DD55E62A45949A32B775 /* ../Play-/deps/Dependencies/zstd/lib/common/xxhash.h */ = {isa = PBXBuildFile; fileRef = B9786C6974BA442C9E379478 /* ../Play-/deps/Dependencies/zstd/lib/common/xxhash.h */; };
+		FB6BE76A8353407EBE0BD641 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXBuildFile; fileRef = FFD37EBBCE424B7B9374A240 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */; };
+		FB87ABB53A624C9690AB839A /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */ = {isa = PBXBuildFile; fileRef = 2ED962C796934CE7B55F8D31 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -243,92 +243,92 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		005166BB456E46EFB5FCF593 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		02A18594B2CB4C30BD9184E7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress_block.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c"; sourceTree = "<absolute>"; };
-		04F5F1DFF24D4B48B4EDFC86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_common.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_common.c"; sourceTree = "<absolute>"; };
-		0648E49551EA4E2ABA73BC81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_opt.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c"; sourceTree = "<absolute>"; };
-		08A2DCCB6C67403FA74955DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/zstd.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/zstd.h"; sourceTree = "<absolute>"; };
-		0E87E47A86A34A369821AE64 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = hist.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.h"; sourceTree = "<absolute>"; };
-		0FA85B4B7E7A4A4C8783D79F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pool.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.h"; sourceTree = "<absolute>"; };
-		101C170132C94EB4889184D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_superblock.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h"; sourceTree = "<absolute>"; };
-		11F01D2E8DF34FF2AEAC8FDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = error_private.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.c"; sourceTree = "<absolute>"; };
-		12545A7F966D4885B6A15EF8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_decompress.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c"; sourceTree = "<absolute>"; };
-		1C54B71644B641FC9C4FC549 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_fast.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c"; sourceTree = "<absolute>"; };
-		1E29C198EAE94EA5A49D432B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ddict.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c"; sourceTree = "<absolute>"; };
-		1EB45354B86146608A3C7D61 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_compress.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c"; sourceTree = "<absolute>"; };
-		2529BA132B224844A020D122 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_internal.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h"; sourceTree = "<absolute>"; };
-		2580548D2B3C420186B67135 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v05.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c"; sourceTree = "<absolute>"; };
-		2C63C3EA710047ABAF23F7F1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compiler.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/compiler.h"; sourceTree = "<absolute>"; };
-		2D04C59503DE40FDADD4B553 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fse.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse.h"; sourceTree = "<absolute>"; };
-		2D81E8E6F060456B85431B84 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v06.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c"; sourceTree = "<absolute>"; };
-		2ED962C796934CE7B55F8D31 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v03.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c"; sourceTree = "<absolute>"; };
-		2F2E5D6FA87841EF88D872F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_literals.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h"; sourceTree = "<absolute>"; };
-		364B1744F41B44CEA1E25E8E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v04.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c"; sourceTree = "<absolute>"; };
-		37A3AEAAFF33467694B55A79 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/clevels.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = clevels.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/clevels.h"; sourceTree = "<absolute>"; };
-		3804B97323334FE6829BAA87 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = threading.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.h"; sourceTree = "<absolute>"; };
-		3DC4BF58E6074DEAA3CC6914 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_lazy.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h"; sourceTree = "<absolute>"; };
-		3F1F2E86212D4DBF953D887B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_double_fast.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c"; sourceTree = "<absolute>"; };
-		43877076D91747A88B2D6C7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v04.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h"; sourceTree = "<absolute>"; };
-		44B07D672BBF445788579B80 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.c"; sourceTree = "<absolute>"; };
-		46701599BC694EA39B59F7DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/portability_macros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = portability_macros.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/portability_macros.h"; sourceTree = "<absolute>"; };
+		005166BB456E46EFB5FCF593 /* ../Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		02A18594B2CB4C30BD9184E7 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress_block.c; path = "../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c"; sourceTree = "<absolute>"; };
+		04F5F1DFF24D4B48B4EDFC86 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_common.c; path = "../Play-/deps/Dependencies/zstd/lib/common/zstd_common.c"; sourceTree = "<absolute>"; };
+		0648E49551EA4E2ABA73BC81 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_opt.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c"; sourceTree = "<absolute>"; };
+		08A2DCCB6C67403FA74955DA /* ../Play-/deps/Dependencies/zstd/lib/zstd.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd.h; path = "../Play-/deps/Dependencies/zstd/lib/zstd.h"; sourceTree = "<absolute>"; };
+		0E87E47A86A34A369821AE64 /* ../Play-/deps/Dependencies/zstd/lib/compress/hist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = hist.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/hist.h"; sourceTree = "<absolute>"; };
+		0FA85B4B7E7A4A4C8783D79F /* ../Play-/deps/Dependencies/zstd/lib/common/pool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pool.h; path = "../Play-/deps/Dependencies/zstd/lib/common/pool.h"; sourceTree = "<absolute>"; };
+		101C170132C94EB4889184D9 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_superblock.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h"; sourceTree = "<absolute>"; };
+		11F01D2E8DF34FF2AEAC8FDC /* ../Play-/deps/Dependencies/zstd/lib/common/error_private.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = error_private.c; path = "../Play-/deps/Dependencies/zstd/lib/common/error_private.c"; sourceTree = "<absolute>"; };
+		12545A7F966D4885B6A15EF8 /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_decompress.c; path = "../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c"; sourceTree = "<absolute>"; };
+		1C54B71644B641FC9C4FC549 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_fast.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c"; sourceTree = "<absolute>"; };
+		1E29C198EAE94EA5A49D432B /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ddict.c; path = "../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c"; sourceTree = "<absolute>"; };
+		1EB45354B86146608A3C7D61 /* ../Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_compress.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c"; sourceTree = "<absolute>"; };
+		2529BA132B224844A020D122 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_internal.h; path = "../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h"; sourceTree = "<absolute>"; };
+		2580548D2B3C420186B67135 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v05.c; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c"; sourceTree = "<absolute>"; };
+		2C63C3EA710047ABAF23F7F1 /* ../Play-/deps/Dependencies/zstd/lib/common/compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compiler.h; path = "../Play-/deps/Dependencies/zstd/lib/common/compiler.h"; sourceTree = "<absolute>"; };
+		2D04C59503DE40FDADD4B553 /* ../Play-/deps/Dependencies/zstd/lib/common/fse.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fse.h; path = "../Play-/deps/Dependencies/zstd/lib/common/fse.h"; sourceTree = "<absolute>"; };
+		2D81E8E6F060456B85431B84 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v06.c; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c"; sourceTree = "<absolute>"; };
+		2ED962C796934CE7B55F8D31 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v03.c; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c"; sourceTree = "<absolute>"; };
+		2F2E5D6FA87841EF88D872F7 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_literals.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h"; sourceTree = "<absolute>"; };
+		364B1744F41B44CEA1E25E8E /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v04.c; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c"; sourceTree = "<absolute>"; };
+		37A3AEAAFF33467694B55A79 /* ../Play-/deps/Dependencies/zstd/lib/compress/clevels.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = clevels.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/clevels.h"; sourceTree = "<absolute>"; };
+		3804B97323334FE6829BAA87 /* ../Play-/deps/Dependencies/zstd/lib/common/threading.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = threading.h; path = "../Play-/deps/Dependencies/zstd/lib/common/threading.h"; sourceTree = "<absolute>"; };
+		3DC4BF58E6074DEAA3CC6914 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_lazy.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h"; sourceTree = "<absolute>"; };
+		3F1F2E86212D4DBF953D887B /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_double_fast.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c"; sourceTree = "<absolute>"; };
+		43877076D91747A88B2D6C7D /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v04.h; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h"; sourceTree = "<absolute>"; };
+		44B07D672BBF445788579B80 /* ../Play-/deps/Dependencies/zstd/lib/common/debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = "../Play-/deps/Dependencies/zstd/lib/common/debug.c"; sourceTree = "<absolute>"; };
+		46701599BC694EA39B59F7DF /* ../Play-/deps/Dependencies/zstd/lib/common/portability_macros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = portability_macros.h; path = "../Play-/deps/Dependencies/zstd/lib/common/portability_macros.h"; sourceTree = "<absolute>"; };
 		478D54557B7D452A970A6D10 /* libzstd_static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzstd.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4833447774804395AAECC350 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_deps.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h"; sourceTree = "<absolute>"; };
-		4B37F2248B9C4081A12996CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v07.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h"; sourceTree = "<absolute>"; };
-		4B41D0C181E54424B16D2154 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstdmt_compress.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c"; sourceTree = "<absolute>"; };
-		4B55CC726DEB4C80A761153A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v05.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h"; sourceTree = "<absolute>"; };
-		4F5C136B3404496D84215F8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = debug.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.h"; sourceTree = "<absolute>"; };
-		55528CDE1BD945B3B9E36A90 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = threading.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.c"; sourceTree = "<absolute>"; };
-		55A558A40526479F8F10D02F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		5675666BA6AB474AA6EAEB6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist; sourceTree = "<absolute>"; };
-		58ECF95832EB47EC8E583B65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/huf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = huf.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/huf.h"; sourceTree = "<absolute>"; };
-		5D04270122DF4893A9ACC9DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v07.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c"; sourceTree = "<absolute>"; };
-		5D129AB5565A463C9DFD1939 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = divsufsort.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c"; sourceTree = "<absolute>"; };
-		60331BB10BA54B34B7213DA6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ldm.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c"; sourceTree = "<absolute>"; };
-		62521F35AE374E1087E441D2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = divsufsort.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h"; sourceTree = "<absolute>"; };
-		6A4B515EE8E74D439A319C19 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = error_private.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.h"; sourceTree = "<absolute>"; };
-		6D69A9E2435E493896DFCE0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_cwksp.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h"; sourceTree = "<absolute>"; };
-		6F7428617FDA4231B39CFAD6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		72401F51C2D3461E972FC746 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v02.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c"; sourceTree = "<absolute>"; };
-		724C99B116514A60833B743B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_internal.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h"; sourceTree = "<absolute>"; };
-		737C3DE1F2614890B0C18578 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bitstream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitstream.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bitstream.h"; sourceTree = "<absolute>"; };
-		763DBA4814004C80A8A26D86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v06.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h"; sourceTree = "<absolute>"; };
-		767882BECB154DD4B836DBAD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = entropy_common.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/entropy_common.c"; sourceTree = "<absolute>"; };
-		7825C41682C742C8ACFD204B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bits.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bits.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bits.h"; sourceTree = "<absolute>"; };
-		783AABDF1B1F4FDDB093BF44 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_superblock.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c"; sourceTree = "<absolute>"; };
-		7966F5B1C73A41DDA933D731 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h"; sourceTree = "<absolute>"; };
-		7A5B000713124132B181B7B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_double_fast.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h"; sourceTree = "<absolute>"; };
-		7E3EE435F5E044BE89EF8E64 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ddict.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h"; sourceTree = "<absolute>"; };
-		80A1EC5801F54215B0D18D29 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_compress.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c"; sourceTree = "<absolute>"; };
-		81175EF5BB2E4F9599F712AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v01.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c"; sourceTree = "<absolute>"; };
-		8391BFD4C434418888D2EFA8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstdmt_compress.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h"; sourceTree = "<absolute>"; };
-		8B894EBA929C4101B9D1306A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fastcover.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c"; sourceTree = "<absolute>"; };
-		8ED657320FC842739D5EE27A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_sequences.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c"; sourceTree = "<absolute>"; };
-		8F2019305FDF4943A099D8F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/mem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mem.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/mem.h"; sourceTree = "<absolute>"; };
-		988CF01CAF9649E8B9EB7902 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pool.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.c"; sourceTree = "<absolute>"; };
-		9E160F2A8C15409283E2AFC0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_trace.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h"; sourceTree = "<absolute>"; };
-		9FAC8C8F731644F58A57A273 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_decompress.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c"; sourceTree = "<absolute>"; };
-		A43062BED0404444A4F3B6C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cover.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c"; sourceTree = "<absolute>"; };
-		A9C37D6699E940F0B4D9B743 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm_geartab.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h"; sourceTree = "<absolute>"; };
-		B1043E52632D4DF2A19722C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */ = {isa = PBXFileReference; explicitFileType = sourcecode.asm; fileEncoding = 4; name = huf_decompress_amd64.S; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S"; sourceTree = "<absolute>"; };
-		B704955006624F5DAB80DD39 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v01.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h"; sourceTree = "<absolute>"; };
-		B9786C6974BA442C9E379478 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xxhash.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.h"; sourceTree = "<absolute>"; };
-		C1017B10A9194605B8C3BC37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v02.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h"; sourceTree = "<absolute>"; };
-		C2FC80B60FB744DB8C174930 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_internal.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h"; sourceTree = "<absolute>"; };
-		C3E8689CA6044B7198E2D88E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v03.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h"; sourceTree = "<absolute>"; };
-		D05E12C0434F41C88A033FD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cover.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h"; sourceTree = "<absolute>"; };
-		D3C01E2199784180AE099EA4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.c"; sourceTree = "<absolute>"; };
-		D4C617D9204F497486DFC8BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_sequences.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h"; sourceTree = "<absolute>"; };
-		D68AE8F03FCA40C3A97DB44C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_fast.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h"; sourceTree = "<absolute>"; };
-		DBFC9C1DBBBD47B7B9F25D17 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_lazy.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c"; sourceTree = "<absolute>"; };
-		DFE2324D51C44965BDFFFB3D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c"; sourceTree = "<absolute>"; };
-		E0AD9903928441468F2DA317 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_legacy.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h"; sourceTree = "<absolute>"; };
-		E73AEFC02343468796AF31A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hist.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.c"; sourceTree = "<absolute>"; };
-		EA4212AD34F04E78A4555676 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_block.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h"; sourceTree = "<absolute>"; };
-		F4DA8D54D2724C25BE42FF21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/cpu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/cpu.h"; sourceTree = "<absolute>"; };
-		FC0BD32E0E524C57817BBBBC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zdict.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c"; sourceTree = "<absolute>"; };
-		FCBF307CD4A444CDB72FB962 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c"; sourceTree = "<absolute>"; };
-		FEE425FC76444D8184A9D4A4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_opt.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h"; sourceTree = "<absolute>"; };
-		FFD37EBBCE424B7B9374A240 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_literals.c; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c"; sourceTree = "<absolute>"; };
+		4833447774804395AAECC350 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_deps.h; path = "../Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h"; sourceTree = "<absolute>"; };
+		4B37F2248B9C4081A12996CF /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v07.h; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h"; sourceTree = "<absolute>"; };
+		4B41D0C181E54424B16D2154 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstdmt_compress.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c"; sourceTree = "<absolute>"; };
+		4B55CC726DEB4C80A761153A /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v05.h; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h"; sourceTree = "<absolute>"; };
+		4F5C136B3404496D84215F8B /* ../Play-/deps/Dependencies/zstd/lib/common/debug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = debug.h; path = "../Play-/deps/Dependencies/zstd/lib/common/debug.h"; sourceTree = "<absolute>"; };
+		55528CDE1BD945B3B9E36A90 /* ../Play-/deps/Dependencies/zstd/lib/common/threading.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = threading.c; path = "../Play-/deps/Dependencies/zstd/lib/common/threading.c"; sourceTree = "<absolute>"; };
+		55A558A40526479F8F10D02F /* ../Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		5675666BA6AB474AA6EAEB6B /* ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist; sourceTree = "<absolute>"; };
+		58ECF95832EB47EC8E583B65 /* ../Play-/deps/Dependencies/zstd/lib/common/huf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = huf.h; path = "../Play-/deps/Dependencies/zstd/lib/common/huf.h"; sourceTree = "<absolute>"; };
+		5D04270122DF4893A9ACC9DD /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v07.c; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c"; sourceTree = "<absolute>"; };
+		5D129AB5565A463C9DFD1939 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = divsufsort.c; path = "../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c"; sourceTree = "<absolute>"; };
+		60331BB10BA54B34B7213DA6 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ldm.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c"; sourceTree = "<absolute>"; };
+		62521F35AE374E1087E441D2 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = divsufsort.h; path = "../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h"; sourceTree = "<absolute>"; };
+		6A4B515EE8E74D439A319C19 /* ../Play-/deps/Dependencies/zstd/lib/common/error_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = error_private.h; path = "../Play-/deps/Dependencies/zstd/lib/common/error_private.h"; sourceTree = "<absolute>"; };
+		6D69A9E2435E493896DFCE0A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_cwksp.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h"; sourceTree = "<absolute>"; };
+		6F7428617FDA4231B39CFAD6 /* ../Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		72401F51C2D3461E972FC746 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v02.c; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c"; sourceTree = "<absolute>"; };
+		724C99B116514A60833B743B /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_internal.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h"; sourceTree = "<absolute>"; };
+		737C3DE1F2614890B0C18578 /* ../Play-/deps/Dependencies/zstd/lib/common/bitstream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitstream.h; path = "../Play-/deps/Dependencies/zstd/lib/common/bitstream.h"; sourceTree = "<absolute>"; };
+		763DBA4814004C80A8A26D86 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v06.h; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h"; sourceTree = "<absolute>"; };
+		767882BECB154DD4B836DBAD /* ../Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = entropy_common.c; path = "../Play-/deps/Dependencies/zstd/lib/common/entropy_common.c"; sourceTree = "<absolute>"; };
+		7825C41682C742C8ACFD204B /* ../Play-/deps/Dependencies/zstd/lib/common/bits.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bits.h; path = "../Play-/deps/Dependencies/zstd/lib/common/bits.h"; sourceTree = "<absolute>"; };
+		783AABDF1B1F4FDDB093BF44 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_superblock.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c"; sourceTree = "<absolute>"; };
+		7966F5B1C73A41DDA933D731 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h"; sourceTree = "<absolute>"; };
+		7A5B000713124132B181B7B7 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_double_fast.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h"; sourceTree = "<absolute>"; };
+		7E3EE435F5E044BE89EF8E64 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ddict.h; path = "../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h"; sourceTree = "<absolute>"; };
+		80A1EC5801F54215B0D18D29 /* ../Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_compress.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c"; sourceTree = "<absolute>"; };
+		81175EF5BB2E4F9599F712AB /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_v01.c; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c"; sourceTree = "<absolute>"; };
+		8391BFD4C434418888D2EFA8 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstdmt_compress.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h"; sourceTree = "<absolute>"; };
+		8B894EBA929C4101B9D1306A /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fastcover.c; path = "../Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c"; sourceTree = "<absolute>"; };
+		8ED657320FC842739D5EE27A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_sequences.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c"; sourceTree = "<absolute>"; };
+		8F2019305FDF4943A099D8F7 /* ../Play-/deps/Dependencies/zstd/lib/common/mem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mem.h; path = "../Play-/deps/Dependencies/zstd/lib/common/mem.h"; sourceTree = "<absolute>"; };
+		988CF01CAF9649E8B9EB7902 /* ../Play-/deps/Dependencies/zstd/lib/common/pool.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pool.c; path = "../Play-/deps/Dependencies/zstd/lib/common/pool.c"; sourceTree = "<absolute>"; };
+		9E160F2A8C15409283E2AFC0 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_trace.h; path = "../Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h"; sourceTree = "<absolute>"; };
+		9FAC8C8F731644F58A57A273 /* ../Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_decompress.c; path = "../Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c"; sourceTree = "<absolute>"; };
+		A43062BED0404444A4F3B6C2 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cover.c; path = "../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c"; sourceTree = "<absolute>"; };
+		A9C37D6699E940F0B4D9B743 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm_geartab.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h"; sourceTree = "<absolute>"; };
+		B1043E52632D4DF2A19722C2 /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */ = {isa = PBXFileReference; explicitFileType = sourcecode.asm; fileEncoding = 4; name = huf_decompress_amd64.S; path = "../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S"; sourceTree = "<absolute>"; };
+		B704955006624F5DAB80DD39 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v01.h; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h"; sourceTree = "<absolute>"; };
+		B9786C6974BA442C9E379478 /* ../Play-/deps/Dependencies/zstd/lib/common/xxhash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xxhash.h; path = "../Play-/deps/Dependencies/zstd/lib/common/xxhash.h"; sourceTree = "<absolute>"; };
+		C1017B10A9194605B8C3BC37 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v02.h; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h"; sourceTree = "<absolute>"; };
+		C2FC80B60FB744DB8C174930 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_internal.h; path = "../Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h"; sourceTree = "<absolute>"; };
+		C3E8689CA6044B7198E2D88E /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_v03.h; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h"; sourceTree = "<absolute>"; };
+		D05E12C0434F41C88A033FD3 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cover.h; path = "../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h"; sourceTree = "<absolute>"; };
+		D3C01E2199784180AE099EA4 /* ../Play-/deps/Dependencies/zstd/lib/common/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = "../Play-/deps/Dependencies/zstd/lib/common/xxhash.c"; sourceTree = "<absolute>"; };
+		D4C617D9204F497486DFC8BF /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_sequences.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h"; sourceTree = "<absolute>"; };
+		D68AE8F03FCA40C3A97DB44C /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_fast.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h"; sourceTree = "<absolute>"; };
+		DBFC9C1DBBBD47B7B9F25D17 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_lazy.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c"; sourceTree = "<absolute>"; };
+		DFE2324D51C44965BDFFFB3D /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c"; sourceTree = "<absolute>"; };
+		E0AD9903928441468F2DA317 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_legacy.h; path = "../Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h"; sourceTree = "<absolute>"; };
+		E73AEFC02343468796AF31A2 /* ../Play-/deps/Dependencies/zstd/lib/compress/hist.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hist.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/hist.c"; sourceTree = "<absolute>"; };
+		EA4212AD34F04E78A4555676 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_block.h; path = "../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h"; sourceTree = "<absolute>"; };
+		F4DA8D54D2724C25BE42FF21 /* ../Play-/deps/Dependencies/zstd/lib/common/cpu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu.h; path = "../Play-/deps/Dependencies/zstd/lib/common/cpu.h"; sourceTree = "<absolute>"; };
+		FC0BD32E0E524C57817BBBBC /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zdict.c; path = "../Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c"; sourceTree = "<absolute>"; };
+		FCBF307CD4A444CDB72FB962 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress.c; path = "../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c"; sourceTree = "<absolute>"; };
+		FEE425FC76444D8184A9D4A4 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_opt.h; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h"; sourceTree = "<absolute>"; };
+		FFD37EBBCE424B7B9374A240 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_literals.c; path = "../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -346,7 +346,7 @@
 			isa = PBXGroup;
 			children = (
 				572C385A08474C3D959EB782 /* CMake Rules */,
-				005166BB456E46EFB5FCF593 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */,
+				005166BB456E46EFB5FCF593 /* ../Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */,
 			);
 			name = uninstall;
 			sourceTree = "<group>";
@@ -387,42 +387,42 @@
 		A2517E11D1B042ECAB701FB6 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				44B07D672BBF445788579B80 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.c */,
-				767882BECB154DD4B836DBAD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */,
-				11F01D2E8DF34FF2AEAC8FDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.c */,
-				9FAC8C8F731644F58A57A273 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */,
-				988CF01CAF9649E8B9EB7902 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.c */,
-				55528CDE1BD945B3B9E36A90 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.c */,
-				D3C01E2199784180AE099EA4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.c */,
-				04F5F1DFF24D4B48B4EDFC86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */,
-				80A1EC5801F54215B0D18D29 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */,
-				E73AEFC02343468796AF31A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.c */,
-				1EB45354B86146608A3C7D61 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */,
-				DFE2324D51C44965BDFFFB3D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */,
-				FFD37EBBCE424B7B9374A240 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */,
-				8ED657320FC842739D5EE27A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */,
-				783AABDF1B1F4FDDB093BF44 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */,
-				3F1F2E86212D4DBF953D887B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */,
-				1C54B71644B641FC9C4FC549 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */,
-				DBFC9C1DBBBD47B7B9F25D17 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */,
-				60331BB10BA54B34B7213DA6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */,
-				0648E49551EA4E2ABA73BC81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */,
-				4B41D0C181E54424B16D2154 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */,
-				12545A7F966D4885B6A15EF8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */,
-				1E29C198EAE94EA5A49D432B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */,
-				FCBF307CD4A444CDB72FB962 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */,
-				02A18594B2CB4C30BD9184E7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */,
-				A43062BED0404444A4F3B6C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */,
-				5D129AB5565A463C9DFD1939 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */,
-				8B894EBA929C4101B9D1306A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */,
-				FC0BD32E0E524C57817BBBBC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */,
-				81175EF5BB2E4F9599F712AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */,
-				72401F51C2D3461E972FC746 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */,
-				2ED962C796934CE7B55F8D31 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */,
-				364B1744F41B44CEA1E25E8E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */,
-				2580548D2B3C420186B67135 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */,
-				2D81E8E6F060456B85431B84 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */,
-				5D04270122DF4893A9ACC9DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */,
+				44B07D672BBF445788579B80 /* ../Play-/deps/Dependencies/zstd/lib/common/debug.c */,
+				767882BECB154DD4B836DBAD /* ../Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */,
+				11F01D2E8DF34FF2AEAC8FDC /* ../Play-/deps/Dependencies/zstd/lib/common/error_private.c */,
+				9FAC8C8F731644F58A57A273 /* ../Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */,
+				988CF01CAF9649E8B9EB7902 /* ../Play-/deps/Dependencies/zstd/lib/common/pool.c */,
+				55528CDE1BD945B3B9E36A90 /* ../Play-/deps/Dependencies/zstd/lib/common/threading.c */,
+				D3C01E2199784180AE099EA4 /* ../Play-/deps/Dependencies/zstd/lib/common/xxhash.c */,
+				04F5F1DFF24D4B48B4EDFC86 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */,
+				80A1EC5801F54215B0D18D29 /* ../Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */,
+				E73AEFC02343468796AF31A2 /* ../Play-/deps/Dependencies/zstd/lib/compress/hist.c */,
+				1EB45354B86146608A3C7D61 /* ../Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */,
+				DFE2324D51C44965BDFFFB3D /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */,
+				FFD37EBBCE424B7B9374A240 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */,
+				8ED657320FC842739D5EE27A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */,
+				783AABDF1B1F4FDDB093BF44 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */,
+				3F1F2E86212D4DBF953D887B /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */,
+				1C54B71644B641FC9C4FC549 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */,
+				DBFC9C1DBBBD47B7B9F25D17 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */,
+				60331BB10BA54B34B7213DA6 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */,
+				0648E49551EA4E2ABA73BC81 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */,
+				4B41D0C181E54424B16D2154 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */,
+				12545A7F966D4885B6A15EF8 /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */,
+				1E29C198EAE94EA5A49D432B /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */,
+				FCBF307CD4A444CDB72FB962 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */,
+				02A18594B2CB4C30BD9184E7 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */,
+				A43062BED0404444A4F3B6C2 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */,
+				5D129AB5565A463C9DFD1939 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */,
+				8B894EBA929C4101B9D1306A /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */,
+				FC0BD32E0E524C57817BBBBC /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */,
+				81175EF5BB2E4F9599F712AB /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */,
+				72401F51C2D3461E972FC746 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */,
+				2ED962C796934CE7B55F8D31 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */,
+				364B1744F41B44CEA1E25E8E /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */,
+				2580548D2B3C420186B67135 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */,
+				2D81E8E6F060456B85431B84 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */,
+				5D04270122DF4893A9ACC9DD /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -431,7 +431,7 @@
 			isa = PBXGroup;
 			children = (
 				6A0D4238894849C5B2370640 /* CMake Rules */,
-				6F7428617FDA4231B39CFAD6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */,
+				6F7428617FDA4231B39CFAD6 /* ../Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -454,7 +454,7 @@
 		DB7149B0EABC4A0FAEACB4BB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				5675666BA6AB474AA6EAEB6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist */,
+				5675666BA6AB474AA6EAEB6B /* ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/libzstd_static.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -465,8 +465,8 @@
 				A2517E11D1B042ECAB701FB6 /* Source Files */,
 				FCC44032596E422F90DFAE61 /* Header Files */,
 				DB7149B0EABC4A0FAEACB4BB /* Resources */,
-				55A558A40526479F8F10D02F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */,
-				B1043E52632D4DF2A19722C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */,
+				55A558A40526479F8F10D02F /* ../Play-/deps/Dependencies/zstd/build/cmake/lib/CMakeLists.txt */,
+				B1043E52632D4DF2A19722C2 /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */,
 			);
 			name = libzstd_static;
 			sourceTree = "<group>";
@@ -474,50 +474,50 @@
 		FCC44032596E422F90DFAE61 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				7825C41682C742C8ACFD204B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bits.h */,
-				737C3DE1F2614890B0C18578 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/bitstream.h */,
-				2C63C3EA710047ABAF23F7F1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/compiler.h */,
-				F4DA8D54D2724C25BE42FF21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/cpu.h */,
-				4F5C136B3404496D84215F8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.h */,
-				6A4B515EE8E74D439A319C19 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.h */,
-				2D04C59503DE40FDADD4B553 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse.h */,
-				58ECF95832EB47EC8E583B65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/huf.h */,
-				8F2019305FDF4943A099D8F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/mem.h */,
-				0FA85B4B7E7A4A4C8783D79F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.h */,
-				46701599BC694EA39B59F7DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/portability_macros.h */,
-				3804B97323334FE6829BAA87 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.h */,
-				B9786C6974BA442C9E379478 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.h */,
-				4833447774804395AAECC350 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h */,
-				C2FC80B60FB744DB8C174930 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h */,
-				9E160F2A8C15409283E2AFC0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h */,
-				37A3AEAAFF33467694B55A79 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/clevels.h */,
-				0E87E47A86A34A369821AE64 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.h */,
-				724C99B116514A60833B743B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h */,
-				2F2E5D6FA87841EF88D872F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h */,
-				D4C617D9204F497486DFC8BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h */,
-				101C170132C94EB4889184D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h */,
-				6D69A9E2435E493896DFCE0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h */,
-				7A5B000713124132B181B7B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h */,
-				D68AE8F03FCA40C3A97DB44C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h */,
-				3DC4BF58E6074DEAA3CC6914 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h */,
-				7966F5B1C73A41DDA933D731 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h */,
-				A9C37D6699E940F0B4D9B743 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h */,
-				FEE425FC76444D8184A9D4A4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h */,
-				8391BFD4C434418888D2EFA8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h */,
-				7E3EE435F5E044BE89EF8E64 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h */,
-				EA4212AD34F04E78A4555676 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h */,
-				2529BA132B224844A020D122 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h */,
-				D05E12C0434F41C88A033FD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h */,
-				62521F35AE374E1087E441D2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h */,
-				E0AD9903928441468F2DA317 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h */,
-				B704955006624F5DAB80DD39 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h */,
-				C1017B10A9194605B8C3BC37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h */,
-				C3E8689CA6044B7198E2D88E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h */,
-				43877076D91747A88B2D6C7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h */,
-				4B55CC726DEB4C80A761153A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h */,
-				763DBA4814004C80A8A26D86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h */,
-				4B37F2248B9C4081A12996CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h */,
-				08A2DCCB6C67403FA74955DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/zstd.h */,
+				7825C41682C742C8ACFD204B /* ../Play-/deps/Dependencies/zstd/lib/common/bits.h */,
+				737C3DE1F2614890B0C18578 /* ../Play-/deps/Dependencies/zstd/lib/common/bitstream.h */,
+				2C63C3EA710047ABAF23F7F1 /* ../Play-/deps/Dependencies/zstd/lib/common/compiler.h */,
+				F4DA8D54D2724C25BE42FF21 /* ../Play-/deps/Dependencies/zstd/lib/common/cpu.h */,
+				4F5C136B3404496D84215F8B /* ../Play-/deps/Dependencies/zstd/lib/common/debug.h */,
+				6A4B515EE8E74D439A319C19 /* ../Play-/deps/Dependencies/zstd/lib/common/error_private.h */,
+				2D04C59503DE40FDADD4B553 /* ../Play-/deps/Dependencies/zstd/lib/common/fse.h */,
+				58ECF95832EB47EC8E583B65 /* ../Play-/deps/Dependencies/zstd/lib/common/huf.h */,
+				8F2019305FDF4943A099D8F7 /* ../Play-/deps/Dependencies/zstd/lib/common/mem.h */,
+				0FA85B4B7E7A4A4C8783D79F /* ../Play-/deps/Dependencies/zstd/lib/common/pool.h */,
+				46701599BC694EA39B59F7DF /* ../Play-/deps/Dependencies/zstd/lib/common/portability_macros.h */,
+				3804B97323334FE6829BAA87 /* ../Play-/deps/Dependencies/zstd/lib/common/threading.h */,
+				B9786C6974BA442C9E379478 /* ../Play-/deps/Dependencies/zstd/lib/common/xxhash.h */,
+				4833447774804395AAECC350 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_deps.h */,
+				C2FC80B60FB744DB8C174930 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_internal.h */,
+				9E160F2A8C15409283E2AFC0 /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_trace.h */,
+				37A3AEAAFF33467694B55A79 /* ../Play-/deps/Dependencies/zstd/lib/compress/clevels.h */,
+				0E87E47A86A34A369821AE64 /* ../Play-/deps/Dependencies/zstd/lib/compress/hist.h */,
+				724C99B116514A60833B743B /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_internal.h */,
+				2F2E5D6FA87841EF88D872F7 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.h */,
+				D4C617D9204F497486DFC8BF /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.h */,
+				101C170132C94EB4889184D9 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.h */,
+				6D69A9E2435E493896DFCE0A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_cwksp.h */,
+				7A5B000713124132B181B7B7 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.h */,
+				D68AE8F03FCA40C3A97DB44C /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.h */,
+				3DC4BF58E6074DEAA3CC6914 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.h */,
+				7966F5B1C73A41DDA933D731 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.h */,
+				A9C37D6699E940F0B4D9B743 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm_geartab.h */,
+				FEE425FC76444D8184A9D4A4 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.h */,
+				8391BFD4C434418888D2EFA8 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.h */,
+				7E3EE435F5E044BE89EF8E64 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.h */,
+				EA4212AD34F04E78A4555676 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.h */,
+				2529BA132B224844A020D122 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_internal.h */,
+				D05E12C0434F41C88A033FD3 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.h */,
+				62521F35AE374E1087E441D2 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.h */,
+				E0AD9903928441468F2DA317 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_legacy.h */,
+				B704955006624F5DAB80DD39 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.h */,
+				C1017B10A9194605B8C3BC37 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.h */,
+				C3E8689CA6044B7198E2D88E /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.h */,
+				43877076D91747A88B2D6C7D /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.h */,
+				4B55CC726DEB4C80A761153A /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.h */,
+				763DBA4814004C80A8A26D86 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.h */,
+				4B37F2248B9C4081A12996CF /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.h */,
+				08A2DCCB6C67403FA74955DA /* ../Play-/deps/Dependencies/zstd/lib/zstd.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -591,19 +591,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -619,25 +619,25 @@ fi
 			);
 			name = "Generate CMakeFiles/uninstall";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/uninstall			);
+../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/uninstall			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
-  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/cmake_uninstall.cmake
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -P ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/cmake_uninstall.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
-  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/cmake_uninstall.cmake
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -P ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/cmake_uninstall.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
-  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/cmake_uninstall.cmake
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -P ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/cmake_uninstall.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
-  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/cmake_uninstall.cmake
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -P ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/cmake_uninstall.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -685,19 +685,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -761,19 +761,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -804,24 +804,24 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/ALL_BUILD			);
+../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
   echo Build\\ all\\ projects
 fi
 ";
@@ -837,25 +837,25 @@ fi
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/ZERO_CHECK			);
+../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  make -f ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  make -f ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  make -f ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib
+  make -f ../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -867,43 +867,43 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ED6B0C8026BE436CB9771072 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/debug.c */,
-				2BA020192B6844779D89F4B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */,
-				F06E645FFAD5482298F143CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/error_private.c */,
-				1118176D692E4997BC55BD2E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */,
-				B6525B5A641645B983810FE9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/pool.c */,
-				72CD5A215A454D728BD52647 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/threading.c */,
-				D076F15384E1432B8B14223B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/xxhash.c */,
-				709D582DD7C04E7EAD62641B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */,
-				3973B8A2767F453B97450FCC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */,
-				65A872ECEBE74C7F838E0ECC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/hist.c */,
-				B48C5B5C21894666BBF4013C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */,
-				C66818D5D3AD46DBA7EB0CE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */,
-				FB6BE76A8353407EBE0BD641 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */,
-				8940DAADB3C44BD1A035DCC1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */,
-				65BD8F728AF04827A6025582 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */,
-				33EDE5DB306B48A6AB813D0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */,
-				C64C63502D8743C6853C560A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */,
-				8AFF06DAF0DD4F54A4956010 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */,
-				D65CF2740719436B8947F18A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */,
-				C8469A2337104FAAA9F9DEA2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */,
-				9E2C997BA5CF4FCC92B800BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */,
-				9BAC05D1CA764ABA9B0C35E4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */,
-				A559485C213D4441A0805E2A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */,
-				3DED1C8CA50546C49AAC1450 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */,
-				743AC492CAC646D58307684E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */,
-				A4A9F733473D430AA04EB9E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */,
-				D8C4F61C93F746BCB1331D7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */,
-				3C27B7C1090647D3A96A199C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */,
-				EE5569FCE285435294252180 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */,
-				1DA59D80B6794CB092669E23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */,
-				103D0352137542D4AB578295 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */,
-				3A1934555B4F4001A554E130 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */,
-				FB87ABB53A624C9690AB839A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */,
-				9A74B62531164B8C9EC2F6AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */,
-				9A2FB935FFE04DAD8B28F6CE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */,
-				9E59801A96FB4C7399BCDF01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */,
-				728526A65CE94120888FA961 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */,
+				ED6B0C8026BE436CB9771072 /* ../Play-/deps/Dependencies/zstd/lib/common/debug.c */,
+				2BA020192B6844779D89F4B7 /* ../Play-/deps/Dependencies/zstd/lib/common/entropy_common.c */,
+				F06E645FFAD5482298F143CD /* ../Play-/deps/Dependencies/zstd/lib/common/error_private.c */,
+				1118176D692E4997BC55BD2E /* ../Play-/deps/Dependencies/zstd/lib/common/fse_decompress.c */,
+				B6525B5A641645B983810FE9 /* ../Play-/deps/Dependencies/zstd/lib/common/pool.c */,
+				72CD5A215A454D728BD52647 /* ../Play-/deps/Dependencies/zstd/lib/common/threading.c */,
+				D076F15384E1432B8B14223B /* ../Play-/deps/Dependencies/zstd/lib/common/xxhash.c */,
+				709D582DD7C04E7EAD62641B /* ../Play-/deps/Dependencies/zstd/lib/common/zstd_common.c */,
+				3973B8A2767F453B97450FCC /* ../Play-/deps/Dependencies/zstd/lib/compress/fse_compress.c */,
+				65A872ECEBE74C7F838E0ECC /* ../Play-/deps/Dependencies/zstd/lib/compress/hist.c */,
+				B48C5B5C21894666BBF4013C /* ../Play-/deps/Dependencies/zstd/lib/compress/huf_compress.c */,
+				C66818D5D3AD46DBA7EB0CE5 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress.c */,
+				FB6BE76A8353407EBE0BD641 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_literals.c */,
+				8940DAADB3C44BD1A035DCC1 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_sequences.c */,
+				65BD8F728AF04827A6025582 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_compress_superblock.c */,
+				33EDE5DB306B48A6AB813D0A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_double_fast.c */,
+				C64C63502D8743C6853C560A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_fast.c */,
+				8AFF06DAF0DD4F54A4956010 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_lazy.c */,
+				D65CF2740719436B8947F18A /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_ldm.c */,
+				C8469A2337104FAAA9F9DEA2 /* ../Play-/deps/Dependencies/zstd/lib/compress/zstd_opt.c */,
+				9E2C997BA5CF4FCC92B800BB /* ../Play-/deps/Dependencies/zstd/lib/compress/zstdmt_compress.c */,
+				9BAC05D1CA764ABA9B0C35E4 /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress.c */,
+				A559485C213D4441A0805E2A /* ../Play-/deps/Dependencies/zstd/lib/decompress/huf_decompress_amd64.S */,
+				3DED1C8CA50546C49AAC1450 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_ddict.c */,
+				743AC492CAC646D58307684E /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress.c */,
+				A4A9F733473D430AA04EB9E0 /* ../Play-/deps/Dependencies/zstd/lib/decompress/zstd_decompress_block.c */,
+				D8C4F61C93F746BCB1331D7D /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/cover.c */,
+				3C27B7C1090647D3A96A199C /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/divsufsort.c */,
+				EE5569FCE285435294252180 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/fastcover.c */,
+				1DA59D80B6794CB092669E23 /* ../Play-/deps/Dependencies/zstd/lib/dictBuilder/zdict.c */,
+				103D0352137542D4AB578295 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v01.c */,
+				3A1934555B4F4001A554E130 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v02.c */,
+				FB87ABB53A624C9690AB839A /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v03.c */,
+				9A74B62531164B8C9EC2F6AC /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v04.c */,
+				9A2FB935FFE04DAD8B28F6CE /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v05.c */,
+				9E59801A96FB4C7399BCDF01 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v06.c */,
+				728526A65CE94120888FA961 /* ../Play-/deps/Dependencies/zstd/lib/legacy/zstd_v07.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1055,7 +1055,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ZSTD_MULTITHREAD,"'PLAY_VERSION=\"0.30\"'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=5'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib/common","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib/legacy","$(inherited)");
+				HEADER_SEARCH_PATHS = (../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib,"../Play-/deps/Dependencies/zstd/build/cmake/lib","../Play-/deps/Dependencies/zstd/build/cmake/../../lib","../Play-/deps/Dependencies/zstd/build/cmake/../../lib/common","../Play-/deps/Dependencies/zstd/build/cmake/../../lib/legacy","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1104,7 +1104,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ZSTD_MULTITHREAD,"'PLAY_VERSION=\"0.30\"'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=5'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib/common","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib/legacy","$(inherited)");
+				HEADER_SEARCH_PATHS = (../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib,"../Play-/deps/Dependencies/zstd/build/cmake/lib","../Play-/deps/Dependencies/zstd/build/cmake/../../lib","../Play-/deps/Dependencies/zstd/build/cmake/../../lib/common","../Play-/deps/Dependencies/zstd/build/cmake/../../lib/legacy","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1173,7 +1173,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ZSTD_MULTITHREAD,"'PLAY_VERSION=\"0.30\"'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=5'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib/common","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib/legacy","$(inherited)");
+				HEADER_SEARCH_PATHS = (../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib,"../Play-/deps/Dependencies/zstd/build/cmake/lib","../Play-/deps/Dependencies/zstd/build/cmake/../../lib","../Play-/deps/Dependencies/zstd/build/cmake/../../lib/common","../Play-/deps/Dependencies/zstd/build/cmake/../../lib/legacy","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1535,7 +1535,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ZSTD_MULTITHREAD,"'PLAY_VERSION=\"0.30\"'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=5'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib/common","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/zstd/build/cmake/../../lib/legacy","$(inherited)");
+				HEADER_SEARCH_PATHS = (../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib,"../Play-/deps/Dependencies/zstd/build/cmake/lib","../Play-/deps/Dependencies/zstd/build/cmake/../../lib","../Play-/deps/Dependencies/zstd/build/cmake/../../lib/common","../Play-/deps/Dependencies/zstd/build/cmake/../../lib/legacy","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;

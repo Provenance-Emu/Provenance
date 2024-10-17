@@ -14,7 +14,7 @@
 #import "PVFlycast+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 // Flycast imports
 #include "types.h"

@@ -1,0 +1,1 @@
+../../../stella/src/os/libretro/EventHandlerLIBRETRO.hxx

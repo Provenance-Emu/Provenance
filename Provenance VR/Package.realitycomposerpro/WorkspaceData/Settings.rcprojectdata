@@ -1,0 +1,17 @@
+{
+  "cameraPresets" : {
+
+  },
+  "secondaryToolbarData" : {
+    "isGridVisible" : true
+  },
+  "unitDefaults" : {
+    "kg" : "g",
+    "kg⋅m²" : "kg⋅m²",
+    "m" : "cm",
+    "m\/s" : "m\/s",
+    "m\/s²" : "m\/s²",
+    "s" : "s",
+    "°" : "°"
+  }
+}

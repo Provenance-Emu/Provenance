@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVMelonDSCore (Saves)
+@interface PVMelonDSCoreBridge (Saves)
 
 @end
 

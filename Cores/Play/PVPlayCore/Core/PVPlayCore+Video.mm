@@ -39,7 +39,7 @@ extern CPS2VM *_ps2VM;
 //#import "StdStream.h"
 void MakeCurrentThreadRealTime();
 
-@implementation PVPlayCore (Video)
+@implementation PVPlayCoreBridge (Video)
 
 # pragma mark - Methods
 

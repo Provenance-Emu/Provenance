@@ -1,0 +1,227 @@
+[[Mupen64Plus v2.0 Core API v1.0|Mupen64Plus v2.0 API]]
+
+= Core Parameters =
+
+These are standard parameters which are used by the Mupen64Plus Core library.  They are stored in a configuration section called "Core" and may be altered by the front-end in order to adjust the behaviour of the emulator.  These may be adjusted at any time and the effect of the change should occur immediately.
+
+{| border="1"
+!Parameter Name!!Type!!Usage
+|-
+|Version
+|M64TYPE_FLOAT
+|Mupen64Plus Core config parameter set version number.  Please don't change.
+|-
+|OnScreenDisplay
+|M64TYPE_BOOL
+|Draw on-screen display if True, otherwise don't draw OSD
+|-
+|R4300Emulator
+|M64TYPE_INT
+|Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
+|-
+|NoCompiledJump
+|M64TYPE_BOOL
+|Disable compiled jump commands in dynamic recompiler (should be set to False)
+|-
+|DisableExtraMem
+|M64TYPE_BOOL
+|Disable 4MB expansion RAM pack.  May be necessary for some games.
+|-
+|AutoStateSlotIncrement
+|M64TYPE_BOOL
+|Increment the save state slot after each save operation.
+|-
+|EnableDebugger
+|M64TYPE_BOOL
+|Activate the R4300 debugger when ROM execution begins, if core was built with Debugger support.
+|-
+|CurrentStateSlot
+|M64TYPE_INT
+|Save state slot (0-9) to use when saving/loading the emulator state
+|-
+|ScreenshotPath
+|M64TYPE_STRING
+|Path to directory where screenshots are saved.  If this is blank, the default value of "<tt>GetConfigUserDataPath()</tt>"/screenshot will be used.
+|-
+|SaveStatePath
+|M64TYPE_STRING
+|Path to directory where emulator save states (snapshots) are saved.  If this is blank, the default value of "<tt>GetConfigUserDataPath()</tt>"/save will be used.
+|-
+|SaveSRAMPath
+|M64TYPE_STRING
+|Path to directory where SRAM/EEPROM data (in-game saves) are stored.  If this is blank, the default value of "<tt>GetConfigUserDataPath()</tt>"/save will be used.
+|-
+|SharedDataPath
+|M64TYPE_STRING
+|Path to a directory to search when looking for shared data files in the <tt>ConfigGetSharedDataFilepath()</tt> function.
+|-
+|CountPerOp
+|M64TYPE_INT
+|Force number of cycles per emulated instruction when set greater than 0.
+|-
+|DelaySI
+|M64TYPE_BOOL
+|Delay interrupt after DMA SI read/write.
+|-
+|DisableSpecRecomp
+|M64TYPE_BOOL
+|Disable speculative precompilation in new dynarec.
+|-
+|}
+
+These configuration parameters are used in the Core's event loop to detect keyboard and joystick commands.  They are stored in a configuration section called "CoreEvents" and may be altered by the front-end in order to adjust the behaviour of the emulator.  These may be adjusted at any time and the effect of the change should occur immediately.  The Keysym value stored is actually <tt>(SDLMod << 16) || SDLKey</tt>, so that keypresses with modifiers like shift, control, or alt may be used.
+
+{| border="1"
+!Parameter Name!!Type!!Usage
+|-
+|Kbd Mapping Stop
+|M64TYPE_INT
+|SDL keysym for stopping the emulator
+|-
+|Kbd Mapping Fullscreen
+|M64TYPE_INT
+|SDL keysym for switching between fullscreen/windowed modes
+|-
+|Kbd Mapping Save State
+|M64TYPE_INT
+|SDL keysym for saving the emulator state
+|-
+|Kbd Mapping Load State
+|M64TYPE_INT
+|SDL keysym for loading the emulator state
+|-
+|Kbd Mapping Increment Slot
+|M64TYPE_INT
+|SDL keysym for advancing the save state slot
+|-
+|Kbd Mapping Reset
+|M64TYPE_INT
+|SDL keysym for resetting the emulator
+|-
+|Kbd Mapping Speed Down
+|M64TYPE_INT
+|SDL keysym for slowing down the emulator
+|-
+|Kbd Mapping Speed Up
+|M64TYPE_INT
+|SDL keysym for speeding up the emulator
+|-
+|Kbd Mapping Screenshot
+|M64TYPE_INT
+|SDL keysym for taking a screenshot
+|-
+|Kbd Mapping Pause
+|M64TYPE_INT
+|SDL keysym for pausing the emulator
+|-
+|Kbd Mapping Mute
+|M64TYPE_INT
+|SDL keysym for muting/unmuting the sound
+|-
+|Kbd Mapping Increase Volume
+|M64TYPE_INT
+|SDL keysym for increasing the volume
+|-
+|Kbd Mapping Decrease Volume
+|M64TYPE_INT
+|SDL keysym for decreasing the volume
+|-
+|Kbd Mapping Fast Forward
+|M64TYPE_INT
+|SDL keysym for temporarily going really fast
+|-
+|Kbd Mapping Frame Advance
+|M64TYPE_INT
+|SDL keysym for advancing by one frame when paused
+|-
+|Kbd Mapping Gameshark
+|M64TYPE_INT
+|SDL keysym for pressing the game shark button
+|-
+|}
+
+These configuration parameters are used in the Core's event loop to detect joystick commands.
+
+The command strings use a simple format described here. Note that you cannot have any spaces in the command string.  For commands activated by pressing a joystick axis, the format is "J'''x'''A'''y'''+" or "J'''x'''A'''y'''-", where '''x''' is the SDL joystick number (must be between 0 and 9) and '''y''' is the axis number.  For the last character, '''+''' represents movement in the positive direction, while '''-''' represents movement in the negative direction.  For commands activated by pressing a button, the format is "J'''x'''B'''y'''", where '''x''' is the SDL joystick number (must be between 0 and 9) and '''y''' is the button number.  For commands activated by pressing a ''hat'' (a directional switch) on the joystick, the format is "J'''x'''H'''y'''V'''z'''", where '''x''' is the SDL joystick number (must be between 0 and 9), '''y''' is the hat number, and '''z''' is the hat value.  The hat value corresponds with the SDL_HAT_ enumerated types: Up is 1, Right is 2, Down is 4, and Left is 8.  For diagonal directions, these values may be ''or''d together.
+
+After the 2.5 release, several new features were added to these Joystick Mapping command strings.  You can now specify more than one joystick action which will activate a given command.  To specify several actions, use a comma-separated string containing multiple action phrases as given above ("J'''x'''A'''y'''+" or "J'''x'''B'''y'''" or "J'''x'''H'''y'''V'''z'''").  Make sure there are no spaces in your command string.  Another new feature is that the "*" character can be used as a wildcard in the '''x''' joystick number field in order to activate this command for any joystick.  Finally, you can also use a hotkey specifier to require that two distinct joystick actions must be pressed simultaneously in order to activate a command.  The format for the hoykey feature is like "J'''x'''''Action''/''Action''" where ''Action'' is either "A'''y'''+", "A'''y'''-", "B'''y'''", or "H'''y'''V'''z'''".
+
+Here's an example of a joystick command parameter which uses all three of these new features:
+
+<pre>Joy Mapping Stop = "J0B6,J*B9,J1B5/A0-"</pre>
+
+With this joystick event string, the emulator will shut down when joystick 0 button 6 is pressed, or when button 9 is pressed on any joystick, or when button 5 is pressed on joystick 1 at the same time as axis 0 is moved left.
+
+{| border="1"
+!Parameter Name!!Type!!Usage
+|-
+|Version
+|M64TYPE_FLOAT
+|Mupen64Plus CoreEvents config parameter set version number.  Please don't change.
+|-
+|Joy Mapping Stop
+|M64TYPE_STRING
+|Joystick event string for stopping the emulator
+|-
+|Joy Mapping Fullscreen
+|M64TYPE_STRING
+|Joystick event string for switching between fullscreen/windowed modes
+|-
+|Joy Mapping Save State
+|M64TYPE_STRING
+|Joystick event string for saving the emulator state
+|-
+|Joy Mapping Load State
+|M64TYPE_STRING
+|Joystick event string for loading the emulator state
+|-
+|Joy Mapping Increment Slot
+|M64TYPE_STRING
+|Joystick event string for advancing the save state slot
+|-
+|Joy Mapping Reset
+|M64TYPE_STRING
+|Joystick event string for resetting the emulator
+|-
+|Joy Mapping Speed Down
+|M64TYPE_STRING
+|Joystick event string for slowing down the emulator
+|-
+|Joy Mapping Speed Up
+|M64TYPE_STRING
+|Joystick event string for speeding up the emulator
+|-
+|Joy Mapping Screenshot
+|M64TYPE_STRING
+|Joystick event string for taking a screenshot
+|-
+|Joy Mapping Pause
+|M64TYPE_STRING
+|Joystick event string for pausing or resuming the emulator
+|-
+|Joy Mapping Mute
+|M64TYPE_STRING
+|Joystick event string for muting/unmuting the sound
+|-
+|Joy Mapping Increase Volume
+|M64TYPE_STRING
+|Joystick event string for increasing the volume
+|-
+|Joy Mapping Decrease Volume
+|M64TYPE_STRING
+|Joystick event string for decreasing the volume
+|-
+|Joy Mapping Fast Forward
+|M64TYPE_STRING
+|Joystick event string for temporarily going really fast
+|-
+|Joy Mapping Frame Advance
+|M64TYPE_STRING
+|Joystick event string for advancing by one frame when paused
+|-
+|Joy Mapping Gameshark
+|M64TYPE_STRING
+|Joystick event string for pressing the game shark button
+|-
+|}
+

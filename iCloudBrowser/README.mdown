@@ -1,0 +1,4 @@
+
+## iCloud Browser App
+
+This is a basic app to test and develop the iCloud sync feature.

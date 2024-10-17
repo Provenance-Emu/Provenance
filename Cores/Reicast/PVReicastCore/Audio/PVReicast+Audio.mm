@@ -10,7 +10,7 @@
 #import "PVReicast+CoreAudio.h"
 #import "PVReicast+AudioTypes.h"
 
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 #include "oslib/audiobackend_coreaudio.h"
 

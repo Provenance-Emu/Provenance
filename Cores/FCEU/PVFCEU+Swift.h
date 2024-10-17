@@ -9,6 +9,6 @@
 #import <PVFCEUEmulatorCore/PVFCEUEmulatorCore.h>
 
     // For swift
-@interface PVFCEUEmulatorCore()
+@interface PVFCEUEmulatorCoreBridge()
 - (void)internalSwapDisc:(NSUInteger)discNumber;
 @end

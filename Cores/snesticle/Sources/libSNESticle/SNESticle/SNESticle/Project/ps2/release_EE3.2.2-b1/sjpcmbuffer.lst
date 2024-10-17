@@ -1,0 +1,610 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/sjpcmbuffer.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN14SJPCMMixBufferC2Ejh
+   8              	.ent _ZN14SJPCMMixBufferC2Ejh
+   9              	_ZN14SJPCMMixBufferC2Ejh:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 0000023C 	lui $2,%hi(_ZTV14SJPCMMixBuffer+8)
+  14 0004 A03E86A0 	sb $6,16032($4)
+  15 0008 08004224 	addiu $2,$2,%lo(_ZTV14SJPCMMixBuffer+8)
+  16 000c 9C3E85AC 	sw $5,16028($4)
+  17 0010 000082AC 	sw $2,0($4)
+  18 0014 943E80AC 	sw $0,16020($4)
+  19 0018 983E80AC 	sw $0,16024($4)
+  20              	.set noreorder
+  21              	.set nomacro
+  22 001c 0800E003 	j $31
+  23 0020 903E80AC 	sw $0,16016($4)
+  24              	.set macro
+  25              	.set reorder
+  26              	
+  27              	.end _ZN14SJPCMMixBufferC2Ejh
+  28              	$Lfe1:
+  29              	.size _ZN14SJPCMMixBufferC2Ejh,$Lfe1-_ZN14SJPCMMixBufferC2Ejh
+  30              	.align 2
+  31 0024 00000000 	.p2align 3,,7
+  32              	.globl _ZN14SJPCMMixBufferC1Ejh
+  33              	.ent _ZN14SJPCMMixBufferC1Ejh
+  34              	_ZN14SJPCMMixBufferC1Ejh:
+  35              	.frame $sp,0,$31
+  36              	.mask 0x00000000,0
+  37              	.fmask 0x00000000,0
+  38 0028 0000023C 	lui $2,%hi(_ZTV14SJPCMMixBuffer+8)
+  39 002c A03E86A0 	sb $6,16032($4)
+  40 0030 08004224 	addiu $2,$2,%lo(_ZTV14SJPCMMixBuffer+8)
+  41 0034 9C3E85AC 	sw $5,16028($4)
+  42 0038 000082AC 	sw $2,0($4)
+  43 003c 943E80AC 	sw $0,16020($4)
+  44 0040 983E80AC 	sw $0,16024($4)
+  45              	.set noreorder
+  46              	.set nomacro
+  47 0044 0800E003 	j $31
+  48 0048 903E80AC 	sw $0,16016($4)
+  49              	.set macro
+  50              	.set reorder
+  51              	
+  52              	.end _ZN14SJPCMMixBufferC1Ejh
+  53              	$Lfe2:
+  54              	.size _ZN14SJPCMMixBufferC1Ejh,$Lfe2-_ZN14SJPCMMixBufferC1Ejh
+  55              	.align 2
+  56 004c 00000000 	.p2align 3,,7
+  57              	.globl _ZN14SJPCMMixBuffer9GetFormatEPjS0_S0_
+GAS LISTING  			page 2
+
+
+  58              	.ent _ZN14SJPCMMixBuffer9GetFormatEPjS0_S0_
+  59              	_ZN14SJPCMMixBuffer9GetFormatEPjS0_S0_:
+  60              	.frame $sp,0,$31
+  61              	.mask 0x00000000,0
+  62              	.fmask 0x00000000,0
+  63 0050 9C3E838C 	lw $3,16028($4)
+  64 0054 10000224 	li $2,16
+  65 0058 0000A3AC 	sw $3,0($5)
+  66 005c 02000324 	li $3,2
+  67 0060 0000C2AC 	sw $2,0($6)
+  68              	.set noreorder
+  69              	.set nomacro
+  70 0064 0800E003 	j $31
+  71 0068 0000E3AC 	sw $3,0($7)
+  72              	.set macro
+  73              	.set reorder
+  74              	
+  75              	.end _ZN14SJPCMMixBuffer9GetFormatEPjS0_S0_
+  76              	$Lfe3:
+  77              	.size _ZN14SJPCMMixBuffer9GetFormatEPjS0_S0_,$Lfe3-_ZN14SJPCMMixBuffer9GetFormatEPjS0_S0_
+  78              	.align 2
+  79 006c 00000000 	.p2align 3,,7
+  80              	.globl _ZN14SJPCMMixBuffer16GetOutputSamplesEv
+  81              	.ent _ZN14SJPCMMixBuffer16GetOutputSamplesEv
+  82              	_ZN14SJPCMMixBuffer16GetOutputSamplesEv:
+  83              	.frame $sp,32,$31
+  84              	.mask 0x80010000,-16
+  85              	.fmask 0x00000000,0
+  86 0070 E0FFBD27 	subu $sp,$sp,32
+  87 0074 0000B0FF 	sd $16,0($sp)
+  88 0078 1000BFFF 	sd $31,16($sp)
+  89              	.set noreorder
+  90              	.set nomacro
+  91 007c 0000000C 	jal SjPCM_IsInitialized
+  92 0080 2D808000 	move $16,$4
+  93              	.set macro
+  94              	.set reorder
+  95              	
+  96              	.set noreorder
+  97              	.set nomacro
+  98 0084 1D004010 	beq $2,$0,$L6
+  99 0088 2D180000 	move $3,$0
+ 100              	.set macro
+ 101              	.set reorder
+ 102              	
+ 103 008c A03E0292 	lbu $2,16032($16)
+ 104              	
+ 105 0090 27004010 	beq $2,$0,$L8
+ 105      00000000 
+ 106 0098 0000000C 	jal SjPCM_BufferedAsyncGet
+ 106      00000000 
+ 107 00a0 2D184000 	move $3,$2
+ 108              	$L21:
+ 109 00a4 9C3E068E 	lw $6,16028($16)
+ 110 00a8 800C0224 	li $2,3200
+ 111 00ac 23284300 	subu $5,$2,$3
+ 112 00b0 FCFF0224 	li $2,-4
+GAS LISTING  			page 3
+
+
+ 113 00b4 2428A200 	and $5,$5,$2
+ 114 00b8 007D0224 	li $2,32000
+ 115 00bc 0000A328 	slt $3,$5,0
+ 116              	.set noreorder
+ 117              	.set nomacro
+ 118 00c0 1300C210 	beq $6,$2,$L13
+ 119 00c4 0B280300 	movn $5,$0,$3
+ 120              	.set macro
+ 121              	.set reorder
+ 122              	
+ 123 00c8 017DC22C 	sltu $2,$6,32001
+ 124              	.set noreorder
+ 125              	.set nomacro
+ 126 00cc 07004010 	beq $2,$0,$L20
+ 127 00d0 80BB0234 	li $2,48000
+ 128              	.set macro
+ 129              	.set reorder
+ 130              	
+ 131 00d4 0000A228 	slt $2,$5,0
+ 132 00d8 0700A424 	addu $4,$5,7
+ 133 00dc 0B288200 	movn $5,$4,$2
+ 134 00e0 C05D0224 	li $2,24000
+ 135 00e4 C3180500 	sra $3,$5,3
+ 136 00e8 80280300 	sll $5,$3,2
+ 137              	$L20:
+ 138              	.set noreorder
+ 139              	.set nomacro
+ 140 00ec 0100C254 	bnel $6,$2,$L11
+ 141 00f0 2D280000 	move $5,$0
+ 142              	.set macro
+ 143              	.set reorder
+ 144              	
+ 145              	$L11:
+ 146 00f4 A43E05AE 	sw $5,16036($16)
+ 147 00f8 2D18A000 	move $3,$5
+ 148              	$L6:
+ 149 00fc 1000BFDF 	ld $31,16($sp)
+ 150 0100 2D106000 	move $2,$3
+ 151 0104 0000B0DF 	ld $16,0($sp)
+ 152              	
+ 153              	.set noreorder
+ 154              	.set nomacro
+ 155 0108 0800E003 	j $31
+ 156 010c 2000BD27 	addu $sp,$sp,32
+ 157              	.set macro
+ 158              	.set reorder
+ 159              	
+ 160              	.p2align 3
+ 161              	$L13:
+ 162 0110 06000224 	li $2,6
+ 163 0114 1A00A200 	div $0,$5,$2
+ 164              	.set noreorder
+ 165 0118 01004050 	beql $2,$0,1f
+ 166 011c CD010000 	break 7
+ 167              	1:
+ 168              	.set reorder
+ 169 0120 12180000 	mflo $3
+GAS LISTING  			page 4
+
+
+ 170              	
+ 171              	.set noreorder
+ 172              	.set nomacro
+ 173 0124 F3FF0010 	b $L11
+ 174 0128 80280300 	sll $5,$3,2
+ 175              	.set macro
+ 176              	.set reorder
+ 177              	
+ 178 012c 00000000 	.p2align 3
+ 179              	$L8:
+ 180 0130 0000000C 	jal SjPCM_Buffered
+ 180      00000000 
+ 181              	.set noreorder
+ 182              	.set nomacro
+ 183 0138 DAFF0010 	b $L21
+ 184 013c 2D184000 	move $3,$2
+ 185              	.set macro
+ 186              	.set reorder
+ 187              	
+ 188              	.end _ZN14SJPCMMixBuffer16GetOutputSamplesEv
+ 189              	$Lfe4:
+ 190              	.size _ZN14SJPCMMixBuffer16GetOutputSamplesEv,$Lfe4-_ZN14SJPCMMixBuffer16GetOutputSamplesEv
+ 191              	.align 2
+ 192              	.p2align 3,,7
+ 193              	.globl _ZN14SJPCMMixBuffer18ConvertSamples2to3EPsS0_iPi
+ 194              	.ent _ZN14SJPCMMixBuffer18ConvertSamples2to3EPsS0_iPi
+ 195              	_ZN14SJPCMMixBuffer18ConvertSamples2to3EPsS0_iPi:
+ 196              	.frame $sp,0,$31
+ 197              	.mask 0x00000000,0
+ 198              	.fmask 0x00000000,0
+ 199 0140 AAAA0A34 	li $10,43690
+ 200 0144 56550924 	li $9,21846
+ 201 0148 2D58A000 	move $11,$5
+ 202              	.set noreorder
+ 203              	.set nomacro
+ 204 014c 1400E018 	blez $7,$L28
+ 205 0150 0000048D 	lw $4,0($8)
+ 206              	.set macro
+ 207              	.set reorder
+ 208              	
+ 209 0154 00000000 	.p2align 3
+ 210              	$L26:
+ 211 0158 0000C284 	lh $2,0($6)
+ 212 015c 18608900 	mult $12,$4,$9
+ 213 0160 0200C384 	lh $3,2($6)
+ 214 0164 FEFFE724 	addu $7,$7,-2
+ 215 0168 18684A00 	mult $13,$2,$10
+ 216 016c 0000A4A4 	sh $4,0($5)
+ 217 0170 2D206000 	move $4,$3
+ 218 0174 0400C624 	addu $6,$6,4
+ 219 0178 1300A001 	mtlo $13
+ 220              	
+ 221 017c 21108D01 	addu $2,$12,$13
+ 222 0180 00006970 	madd $3,$9
+ 223 0184 03140200 	sra $2,$2,16
+ 224 0188 0200A2A4 	sh $2,2($5)
+ 225 018c 12600000 	mflo $12
+GAS LISTING  			page 5
+
+
+ 226              	
+ 227              	
+ 228 0190 031C0C00 	sra $3,$12,16
+ 229 0194 0400A3A4 	sh $3,4($5)
+ 230              	.set noreorder
+ 231              	.set nomacro
+ 232 0198 EFFFE01C 	bgtz $7,$L26
+ 233 019c 0600A524 	addu $5,$5,6
+ 234              	.set macro
+ 235              	.set reorder
+ 236              	
+ 237              	$L28:
+ 238 01a0 2310AB00 	subu $2,$5,$11
+ 239 01a4 000004AD 	sw $4,0($8)
+ 240              	.set noreorder
+ 241              	.set nomacro
+ 242 01a8 0800E003 	j $31
+ 243 01ac 43100200 	sra $2,$2,1
+ 244              	.set macro
+ 245              	.set reorder
+ 246              	
+ 247              	.end _ZN14SJPCMMixBuffer18ConvertSamples2to3EPsS0_iPi
+ 248              	$Lfe5:
+ 249              	.size _ZN14SJPCMMixBuffer18ConvertSamples2to3EPsS0_iPi,$Lfe5-_ZN14SJPCMMixBuffer18ConvertSamples2to3EPsS0_iPi
+ 250              	.align 2
+ 251              	.p2align 3,,7
+ 252              	.globl _ZN14SJPCMMixBuffer26ConvertSamplesStereo_32000EPsS0_S0_S0_i
+ 253              	.ent _ZN14SJPCMMixBuffer26ConvertSamplesStereo_32000EPsS0_S0_S0_i
+ 254              	_ZN14SJPCMMixBuffer26ConvertSamplesStereo_32000EPsS0_S0_S0_i:
+ 255              	.frame $sp,80,$31
+ 256              	.mask 0x800f0000,-16
+ 257              	.fmask 0x00000000,0
+ 258 01b0 B0FFBD27 	subu $sp,$sp,80
+ 259 01b4 6B0A2329 	slt $3,$9,2667
+ 260 01b8 0000B0FF 	sd $16,0($sp)
+ 261 01bc 6A0A0224 	li $2,2666
+ 262 01c0 2D802001 	move $16,$9
+ 263 01c4 3000B3FF 	sd $19,48($sp)
+ 264 01c8 0A804300 	movz $16,$2,$3
+ 265 01cc 2D48A000 	move $9,$5
+ 266 01d0 943E8224 	addu $2,$4,16020
+ 267 01d4 2000B2FF 	sd $18,32($sp)
+ 268 01d8 1000B1FF 	sd $17,16($sp)
+ 269 01dc 2D28E000 	move $5,$7
+ 270 01e0 2D888000 	move $17,$4
+ 271 01e4 2D98C000 	move $19,$6
+ 272 01e8 2D900001 	move $18,$8
+ 273 01ec 2D380002 	move $7,$16
+ 274 01f0 2D302001 	move $6,$9
+ 275 01f4 4000BFFF 	sd $31,64($sp)
+ 276              	.set noreorder
+ 277              	.set nomacro
+ 278 01f8 0000000C 	jal _ZN14SJPCMMixBuffer18ConvertSamples2to3EPsS0_iPi
+ 279 01fc 2D404000 	move $8,$2
+ 280              	.set macro
+ 281              	.set reorder
+ 282              	
+GAS LISTING  			page 6
+
+
+ 283 0200 2D380002 	move $7,$16
+ 284 0204 983E2826 	addu $8,$17,16024
+ 285 0208 2D202002 	move $4,$17
+ 286 020c 2D284002 	move $5,$18
+ 287              	.set noreorder
+ 288              	.set nomacro
+ 289 0210 0000000C 	jal _ZN14SJPCMMixBuffer18ConvertSamples2to3EPsS0_iPi
+ 290 0214 2D306002 	move $6,$19
+ 291              	.set macro
+ 292              	.set reorder
+ 293              	
+ 294 0218 0000B0DF 	ld $16,0($sp)
+ 295 021c 4000BFDF 	ld $31,64($sp)
+ 296 0220 3000B3DF 	ld $19,48($sp)
+ 297 0224 2000B2DF 	ld $18,32($sp)
+ 298 0228 1000B1DF 	ld $17,16($sp)
+ 299              	
+ 300              	.set noreorder
+ 301              	.set nomacro
+ 302 022c 0800E003 	j $31
+ 303 0230 5000BD27 	addu $sp,$sp,80
+ 304              	.set macro
+ 305              	.set reorder
+ 306              	
+ 307              	.end _ZN14SJPCMMixBuffer26ConvertSamplesStereo_32000EPsS0_S0_S0_i
+ 308              	$Lfe6:
+ 309              	.size _ZN14SJPCMMixBuffer26ConvertSamplesStereo_32000EPsS0_S0_S0_i,$Lfe6-_ZN14SJPCMMixBuffer26ConvertSamplesStereo_32000EPsS0_S0_S0_i
+ 310              	.align 2
+ 311 0234 00000000 	.p2align 3,,7
+ 312              	.globl _ZN14SJPCMMixBuffer19OutputSamplesStereoEPsS0_i
+ 313              	.ent _ZN14SJPCMMixBuffer19OutputSamplesStereoEPsS0_i
+ 314              	_ZN14SJPCMMixBuffer19OutputSamplesStereoEPsS0_i:
+ 315              	.frame $sp,96,$31
+ 316              	.mask 0x801f0000,-16
+ 317              	.fmask 0x00000000,0
+ 318 0238 06000324 	li $3,6
+ 319 023c A0FFBD27 	subu $sp,$sp,96
+ 320 0240 1818E300 	mult $3,$7,$3
+ 321 0244 4000B4FF 	sd $20,64($sp)
+ 322 0248 1000B1FF 	sd $17,16($sp)
+ 323 024c 2D58A000 	move $11,$5
+ 324 0250 0000B0FF 	sd $16,0($sp)
+ 325 0254 2D88E000 	move $17,$7
+ 326 0258 5000BFFF 	sd $31,80($sp)
+ 327 025c 2D808000 	move $16,$4
+ 328 0260 3000B3FF 	sd $19,48($sp)
+ 329 0264 00006228 	slt $2,$3,0
+ 330 0268 2000B2FF 	sd $18,32($sp)
+ 331 026c 2DA0C000 	move $20,$6
+ 332 0270 9C3E8A8C 	lw $10,16028($4)
+ 333 0274 03006424 	addu $4,$3,3
+ 334 0278 0B188200 	movn $3,$4,$2
+ 335 027c 007D0224 	li $2,32000
+ 336 0280 017D452D 	sltu $5,$10,32001
+ 337              	.set noreorder
+ 338              	.set nomacro
+ 339 0284 07004211 	beq $10,$2,$L32
+GAS LISTING  			page 7
+
+
+ 340 0288 83200300 	sra $4,$3,2
+ 341              	.set macro
+ 342              	.set reorder
+ 343              	
+ 344              	.set noreorder
+ 345              	.set nomacro
+ 346 028c 0500A010 	beq $5,$0,$L32
+ 347 0290 2D202002 	move $4,$17
+ 348              	.set macro
+ 349              	.set reorder
+ 350              	
+ 351 0294 C05D0224 	li $2,24000
+ 352              	.set noreorder
+ 353              	.set nomacro
+ 354 0298 02004211 	beq $10,$2,$L32
+ 355 029c 40200700 	sll $4,$7,1
+ 356              	.set macro
+ 357              	.set reorder
+ 358              	
+ 359 02a0 2D202002 	move $4,$17
+ 360              	$L32:
+ 361 02a4 903E038E 	lw $3,16016($16)
+ 362              	
+ 363 02a8 40100300 	sll $2,$3,1
+ 364 02ac 21186400 	addu $3,$3,$4
+ 365 02b0 21100202 	addu $2,$16,$2
+ 366 02b4 A10F6328 	slt $3,$3,4001
+ 367 02b8 501F5324 	addu $19,$2,8016
+ 368              	.set noreorder
+ 369              	.set nomacro
+ 370 02bc 14006010 	beq $3,$0,$L31
+ 371 02c0 10004724 	addu $7,$2,16
+ 372              	.set macro
+ 373              	.set reorder
+ 374              	
+ 375 02c4 40101100 	sll $2,$17,1
+ 376 02c8 2D20E000 	move $4,$7
+ 377 02cc 3C100200 	dsll $2,$2,32
+ 378 02d0 2D286001 	move $5,$11
+ 379 02d4 3E900200 	dsrl $18,$2,32
+ 380 02d8 2D308002 	move $6,$20
+ 381 02dc 007D0224 	li $2,32000
+ 382 02e0 2D406002 	move $8,$19
+ 383              	.set noreorder
+ 384              	.set nomacro
+ 385 02e4 12004211 	beq $10,$2,$L50
+ 386 02e8 2D482002 	move $9,$17
+ 387              	.set macro
+ 388              	.set reorder
+ 389              	
+ 390              	.set noreorder
+ 391              	.set nomacro
+ 392 02ec 0000000C 	jal memcpy
+ 393 02f0 2D304002 	move $6,$18
+ 394              	.set macro
+ 395              	.set reorder
+ 396              	
+GAS LISTING  			page 8
+
+
+ 397 02f4 2D304002 	move $6,$18
+ 398 02f8 2D206002 	move $4,$19
+ 399              	.set noreorder
+ 400              	.set nomacro
+ 401 02fc 0000000C 	jal memcpy
+ 402 0300 2D288002 	move $5,$20
+ 403              	.set macro
+ 404              	.set reorder
+ 405              	
+ 406 0304 903E038E 	lw $3,16016($16)
+ 407              	
+ 408 0308 21187100 	addu $3,$3,$17
+ 409              	$L49:
+ 410 030c 903E03AE 	sw $3,16016($16)
+ 411              	$L31:
+ 412 0310 5000BFDF 	ld $31,80($sp)
+ 413 0314 4000B4DF 	ld $20,64($sp)
+ 414 0318 3000B3DF 	ld $19,48($sp)
+ 415 031c 2000B2DF 	ld $18,32($sp)
+ 416 0320 1000B1DF 	ld $17,16($sp)
+ 417 0324 0000B0DF 	ld $16,0($sp)
+ 418              	
+ 419              	.set noreorder
+ 420              	.set nomacro
+ 421 0328 0800E003 	j $31
+ 422 032c 6000BD27 	addu $sp,$sp,96
+ 423              	.set macro
+ 424              	.set reorder
+ 425              	
+ 426              	.p2align 3
+ 427              	$L50:
+ 428              	.set noreorder
+ 429              	.set nomacro
+ 430 0330 0000000C 	jal _ZN14SJPCMMixBuffer26ConvertSamplesStereo_32000EPsS0_S0_S0_i
+ 431 0334 2D200002 	move $4,$16
+ 432              	.set macro
+ 433              	.set reorder
+ 434              	
+ 435 0338 903E038E 	lw $3,16016($16)
+ 436              	.set noreorder
+ 437              	.set nomacro
+ 438 033c F3FF0010 	b $L49
+ 439 0340 21186200 	addu $3,$3,$2
+ 440              	.set macro
+ 441              	.set reorder
+ 442              	
+ 443              	.end _ZN14SJPCMMixBuffer19OutputSamplesStereoEPsS0_i
+ 444              	$Lfe7:
+ 445              	.size _ZN14SJPCMMixBuffer19OutputSamplesStereoEPsS0_i,$Lfe7-_ZN14SJPCMMixBuffer19OutputSamplesStereoEPsS0_i
+ 446              	.align 2
+ 447 0344 00000000 	.p2align 3,,7
+ 448              	.globl _ZN14SJPCMMixBuffer5FlushEv
+ 449              	.ent _ZN14SJPCMMixBuffer5FlushEv
+ 450              	_ZN14SJPCMMixBuffer5FlushEv:
+ 451              	.frame $sp,32,$31
+ 452              	.mask 0x80010000,-16
+ 453              	.fmask 0x00000000,0
+GAS LISTING  			page 9
+
+
+ 454 0348 E0FFBD27 	subu $sp,$sp,32
+ 455 034c 0000B0FF 	sd $16,0($sp)
+ 456 0350 2D808000 	move $16,$4
+ 457 0354 1000BFFF 	sd $31,16($sp)
+ 458 0358 903E898C 	lw $9,16016($4)
+ 459              	
+ 460              	.set noreorder
+ 461              	.set nomacro
+ 462 035c 11002019 	blez $9,$L52
+ 463 0360 01002231 	andi $2,$9,0x1
+ 464              	.set macro
+ 465              	.set reorder
+ 466              	
+ 467 0364 10008424 	addu $4,$4,16
+ 468 0368 501F0526 	addu $5,$16,8016
+ 469 036c 2D508000 	move $10,$4
+ 470 0370 2D58A000 	move $11,$5
+ 471              	.set noreorder
+ 472              	.set nomacro
+ 473 0374 03004010 	beq $2,$0,$L53
+ 474 0378 01000724 	li $7,1
+ 475              	.set macro
+ 476              	.set reorder
+ 477              	
+ 478 037c FEFF0224 	li $2,-2
+ 479 0380 24482201 	and $9,$9,$2
+ 480              	$L53:
+ 481 0384 A10F2329 	slt $3,$9,4001
+ 482 0388 A00F0224 	li $2,4000
+ 483 038c A03E0892 	lbu $8,16032($16)
+ 484 0390 0A484300 	movz $9,$2,$3
+ 485              	.set noreorder
+ 486              	.set nomacro
+ 487 0394 08000011 	beq $8,$0,$L55
+ 488 0398 2D302001 	move $6,$9
+ 489              	.set macro
+ 490              	.set reorder
+ 491              	
+ 492 039c 0000000C 	jal SjPCM_EnqueueAsync
+ 492      00000000 
+ 493              	$L52:
+ 494 03a4 903E00AE 	sw $0,16016($16)
+ 495              	$L57:
+ 496 03a8 1000BFDF 	ld $31,16($sp)
+ 497 03ac 0000B0DF 	ld $16,0($sp)
+ 498              	
+ 499              	.set noreorder
+ 500              	.set nomacro
+ 501 03b0 0800E003 	j $31
+ 502 03b4 2000BD27 	addu $sp,$sp,32
+ 503              	.set macro
+ 504              	.set reorder
+ 505              	
+ 506              	.p2align 3
+ 507              	$L55:
+ 508 03b8 2D204001 	move $4,$10
+ 509 03bc 2D286001 	move $5,$11
+GAS LISTING  			page 10
+
+
+ 510              	.set noreorder
+ 511              	.set nomacro
+ 512 03c0 0000000C 	jal SjPCM_Enqueue
+ 513 03c4 2D302001 	move $6,$9
+ 514              	.set macro
+ 515              	.set reorder
+ 516              	
+ 517              	.set noreorder
+ 518              	.set nomacro
+ 519 03c8 F7FF0010 	b $L57
+ 520 03cc 903E00AE 	sw $0,16016($16)
+ 521              	.set macro
+ 522              	.set reorder
+ 523              	
+ 524              	.end _ZN14SJPCMMixBuffer5FlushEv
+ 525              	$Lfe8:
+ 526              	.size _ZN14SJPCMMixBuffer5FlushEv,$Lfe8-_ZN14SJPCMMixBuffer5FlushEv
+ 527              	.align 2
+ 528              	.p2align 3,,7
+ 529              	.globl _ZN14SJPCMMixBuffer17OutputSamplesMonoEPsi
+ 530              	.ent _ZN14SJPCMMixBuffer17OutputSamplesMonoEPsi
+ 531              	_ZN14SJPCMMixBuffer17OutputSamplesMonoEPsi:
+ 532              	.frame $sp,16,$31
+ 533              	.mask 0x80000000,-16
+ 534              	.fmask 0x00000000,0
+ 535 03d0 F0FFBD27 	subu $sp,$sp,16
+ 536 03d4 0000838C 	lw $3,0($4)
+ 537 03d8 0000BFFF 	sd $31,0($sp)
+ 538 03dc 2D38C000 	move $7,$6
+ 539 03e0 0C00628C 	lw $2,12($3)
+ 540              	
+ 541              	.set noreorder
+ 542              	.set nomacro
+ 543 03e4 09F84000 	jal $31,$2
+ 544 03e8 2D30A000 	move $6,$5
+ 545              	.set macro
+ 546              	.set reorder
+ 547              	
+ 548 03ec 0000BFDF 	ld $31,0($sp)
+ 549              	
+ 550              	.set noreorder
+ 551              	.set nomacro
+ 552 03f0 0800E003 	j $31
+ 553 03f4 1000BD27 	addu $sp,$sp,16
+ 554              	.set macro
+ 555              	.set reorder
+ 556              	
+ 557              	.end _ZN14SJPCMMixBuffer17OutputSamplesMonoEPsi
+ 558              	$Lfe9:
+ 559              	.size _ZN14SJPCMMixBuffer17OutputSamplesMonoEPsi,$Lfe9-_ZN14SJPCMMixBuffer17OutputSamplesMonoEPsi
+ 560              	.weak _ZTV14SJPCMMixBuffer
+ 561              	.section .gnu.linkonce.d._ZTV14SJPCMMixBuffer,"aw",@progbits
+ 562              	.align 3
+ 563              	.type _ZTV14SJPCMMixBuffer,@object
+ 564              	.size _ZTV14SJPCMMixBuffer,28
+ 565              	_ZTV14SJPCMMixBuffer:
+ 566 0000 00000000 	.word 0
+GAS LISTING  			page 11
+
+
+ 567 0004 00000000 	.word 0
+ 568 0008 00000000 	.word _ZN14SJPCMMixBuffer9GetFormatEPjS0_S0_
+ 569 000c 00000000 	.word _ZN14SJPCMMixBuffer16GetOutputSamplesEv
+ 570 0010 00000000 	.word _ZN14SJPCMMixBuffer17OutputSamplesMonoEPsi
+ 571 0014 00000000 	.word _ZN14SJPCMMixBuffer19OutputSamplesStereoEPsS0_i
+ 572 0018 00000000 	.word _ZN14SJPCMMixBuffer5FlushEv
+ 573 001c 00000000 	.ident "GCC: (GNU) 3.2.2"

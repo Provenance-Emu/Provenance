@@ -1,0 +1,5 @@
+module PVGambatteBridge {
+    header "../PVGambatteBridge.h"
+    header "../gbcpalettes.h"
+    export *
+}

@@ -1,0 +1,16 @@
+=User Documentation=
+== Configuration Parameters ==
+=== [[Mupen64Plus Core Parameters|Core Parameters]] ===
+
+This section lists the names and descriptions of all of the configuration parameters used by the Core library.
+
+=== [[Mupen64Plus Plugin Parameters|Plugin Parameters]] ===
+
+This section lists the names and descriptions of all of the configuration parameters used by the Plugin libraries.
+
+=Developer Documentation=
+
+== [[Mupen64Plus v2.0 Core API v1.0|Mupen64Plus v2.0 API]] ==
+
+The interface between Mupen64Plus and its compatible plugins is (slightly) different from other N64 emulators. The new API is described in detail in the documentation here.
+

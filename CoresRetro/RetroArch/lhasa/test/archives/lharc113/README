@@ -1,0 +1,10 @@
+Archives generated using LHArc v1.13c (LHArc was later renamed to LHA):
+
+    http://cdmirror.textfiles.com/hof91/ARC/LH113C.EXE
+
+lh0.lzh     - Archive containing uncompressed (stored) file.
+lh1.lzh     - Archive containing -lh1- compressed file.
+long.lzh    - Archive containing a large -lh1- compressed file.
+sfx.com     - Self-extracting archive.
+subdir.lzh  - Archive containing subdirectories.
+

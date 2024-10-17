@@ -8,7 +8,10 @@
 
 #import <PVPPSSPP/PVPPSSPP.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVSupport;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
 
 /* PPSSPP Includes */
 #import <Foundation/Foundation.h>
@@ -59,7 +62,7 @@
 
 extern bool _isInitialized;
 
-@implementation PVPPSSPPCore (Controls)
+@implementation PVPPSSPPCoreBridge (Controls)
 
 - (void)initControllBuffers {
 }

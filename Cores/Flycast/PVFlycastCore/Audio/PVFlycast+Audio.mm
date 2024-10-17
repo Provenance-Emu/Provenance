@@ -11,7 +11,7 @@
 #import "PVFlycast+CoreAudio.h"
 #import "PVFlycast+AudioTypes.h"
 
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 #include "oslib/audiobackend_coreaudio.h"
 

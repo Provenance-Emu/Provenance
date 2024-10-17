@@ -6,7 +6,9 @@
 //
 //
 
-// iOS
+SWIFT_VERSION = 5.0
+
+ // iOS
 // TODO: Find a way to make -D_SVP_DRC only on arm64 builds, or fix the crashes related to -D_SVP_DRC on __arm__
 // D_SVP_DRC is required to get playable performance on modern devices (tested iPad Air 2)
 // It works on Apple TV, because it ONLY builds arm64. But iOS also builds armv7 which breaks since __arm__ is defined.

@@ -1,0 +1,9 @@
+Archives generated using LHA v2.55e:
+
+   http://ftp.riken.go.jp/pub/pc/simtelnet/msdos/arcers/lha255e.exe
+
+lh0.lzh     - Archive containing uncompressed (stored) file.
+lh5.lzh     - Archive containing -lh5- compressed file.
+sfx.exe     - Self-extracting archive.
+subdir.lzh  - Archive containing subdirectories.
+

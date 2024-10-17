@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.gearcoleco</string>
 	<key>PVPrincipleClass</key>
-	<string>PVGearcolecoCore</string>
+	<string>PVGearcoleco.PVGearcolecoCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.colecovision</string>
@@ -15,6 +15,6 @@
 	<key>PVProjectURL</key>
 	<string>https://github.com/drhelius/Gearcoleco</string>
 	<key>PVProjectVersion</key>
-	<string>1.0.0</string>
+	<string>1.0.1</string>
 </dict>
 </plist>

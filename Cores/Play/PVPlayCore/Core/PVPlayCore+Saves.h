@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVPlayCore (Saves)
+@interface PVPlayCoreBridge (Saves)
 
 @end
 

@@ -1,0 +1,1 @@
+( cat license.dat ; dd if=$1.iso bs=2048 skip=16 ) > $1_licensed.iso

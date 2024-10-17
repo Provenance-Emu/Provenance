@@ -1,0 +1,95 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/profctr.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl ProfCtrStartCounter
+   8              	.ent ProfCtrStartCounter
+   9              	ProfCtrStartCounter:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 0080023C 	li $2,-2147483648
+  14 0004 C02B0500 	sll $5,$5,15
+  15 0008 1C704234 	ori $2,$2,0x701c
+  16 000c 40210400 	sll $4,$4,5
+  17 0010 2510A200 	or $2,$5,$2
+  18 0014 25104400 	or $2,$2,$4
+  19              	
+  20 0018 00C88240 	mtc0 $2,$25
+  21 001c 0F040000 	sync.p
+  22              	
+  23 0020 0800E003 	j $31
+  23      00000000 
+  24              	.end ProfCtrStartCounter
+  25              	$Lfe1:
+  26              	.size ProfCtrStartCounter,$Lfe1-ProfCtrStartCounter
+  27              	.align 2
+  28              	.p2align 3,,7
+  29              	.globl ProfCtrInit
+  30              	.ent ProfCtrInit
+  31              	ProfCtrInit:
+  32              	.frame $sp,16,$31
+  33              	.mask 0x80000000,-16
+  34              	.fmask 0x00000000,0
+  35 0028 F0FFBD27 	subu $sp,$sp,16
+  36 002c 06000424 	li $4,6
+  37 0030 0000BFFF 	sd $31,0($sp)
+  38              	.set noreorder
+  39              	.set nomacro
+  40 0034 0000000C 	jal ProfCtrStartCounter
+  41 0038 06000524 	li $5,6
+  42              	.set macro
+  43              	.set reorder
+  44              	
+  45 003c 0000BFDF 	ld $31,0($sp)
+  46              	
+  47              	.set noreorder
+  48              	.set nomacro
+  49 0040 0800E003 	j $31
+  50 0044 1000BD27 	addu $sp,$sp,16
+  51              	.set macro
+  52              	.set reorder
+  53              	
+  54              	.end ProfCtrInit
+  55              	$Lfe2:
+  56              	.size ProfCtrInit,$Lfe2-ProfCtrInit
+GAS LISTING  			page 2
+
+
+  57              	.align 2
+  58              	.p2align 3,,7
+  59              	.globl ProfCtrShutdown
+  60              	.ent ProfCtrShutdown
+  61              	ProfCtrShutdown:
+  62              	.frame $sp,0,$31
+  63              	.mask 0x00000000,0
+  64              	.fmask 0x00000000,0
+  65 0048 0800E003 	j $31
+  65      00000000 
+  66              	.end ProfCtrShutdown
+  67              	$Lfe3:
+  68              	.size ProfCtrShutdown,$Lfe3-ProfCtrShutdown
+  69              	.align 2
+  70              	.p2align 3,,7
+  71              	.globl ProfCtrReset
+  72              	.ent ProfCtrReset
+  73              	ProfCtrReset:
+  74              	.frame $sp,0,$31
+  75              	.mask 0x00000000,0
+  76              	.fmask 0x00000000,0
+  77              	
+  78 0050 01C88040 	mtpc $0,0
+  79 0054 03C88040 	mtpc $0,1
+  80 0058 0F040000 	sync.p
+  81              	
+  82 005c 0800E003 	j $31
+  82      00000000 
+  83              	.end ProfCtrReset
+  84              	$Lfe4:
+  85              	.size ProfCtrReset,$Lfe4-ProfCtrReset
+  86 0064 00000000 	.ident "GCC: (GNU) 3.2.2"

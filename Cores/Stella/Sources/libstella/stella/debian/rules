@@ -1,0 +1,29 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+include /usr/share/dpkg/architecture.mk
+DPKG_EXPORT_BUILDTOOLS=1
+-include /usr/share/dpkg/buildtools.mk
+
+%:
+	dh $@ --with autotools_dev
+
+override_dh_auto_clean:
+# Generate the minimal config.mak required for "make distclean"
+	test -f config.mak || echo "RM_REC := rm -f -r" > config.mak
+	dh_auto_clean
+
+override_dh_auto_configure:
+	./configure --prefix=/usr $(if $(filter $(DEB_BUILD_ARCH),$(DEB_HOST_ARCH)),,--host=$(DEB_HOST_GNU_TYPE)) --enable-release
+
+override_dh_auto_install:
+	dh_auto_install
+	# This is also installed as the upstream changelog
+	rm $(CURDIR)/debian/stella/usr/share/doc/stella/Changes.txt
+	# This is overridden by the copyright file
+	rm $(CURDIR)/debian/stella/usr/share/doc/stella/License.txt

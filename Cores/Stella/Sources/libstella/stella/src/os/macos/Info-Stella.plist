@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDisplayName</key>
+	<string>Stella</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>bin</string>
+				<string>BIN</string>
+				<string>rom</string>
+				<string>ROM</string>
+				<string>zip</string>
+				<string>ZIP</string>
+				<string>a26</string>
+				<string>A26</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>Cart</string>
+			<key>CFBundleTypeName</key>
+			<string>Atari 2600 Cartridge File</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>Cart</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Stella</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>docs</string>
+	<key>CFBundleHelpBookName</key>
+	<string>docs</string>
+	<key>CFBundleIconFile</key>
+	<string>Stella</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.7</string>
+	<key>CFBundleName</key>
+	<string>Stella</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>StLa</string>
+	<key>CFBundleVersion</key>
+	<string>6.7</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.games</string>
+	<key>LSMinimumSystemVersionByArchitecture</key>
+	<dict>
+		<key>x86_64</key>
+		<string>10.7.0</string>
+	</dict>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSMainNibFile</key>
+	<string>SDLMain</string>
+	<key>NSPrincipalClass</key>
+	<string>SDLApplication</string>
+</dict>
+</plist>

@@ -1,0 +1,4 @@
+::::::::
+subdir/subdir2/hello.txt
+::::::::
+hello world

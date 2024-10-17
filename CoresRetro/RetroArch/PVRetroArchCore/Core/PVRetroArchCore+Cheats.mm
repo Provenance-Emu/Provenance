@@ -1,6 +1,5 @@
 #import <PVRetroArch/PVRetroArch.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
 
 /* RetroArch Includes */
 #include "core.h"

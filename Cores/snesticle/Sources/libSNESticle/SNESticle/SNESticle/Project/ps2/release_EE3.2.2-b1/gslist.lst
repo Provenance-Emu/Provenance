@@ -1,0 +1,1447 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/gslist.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.rdata
+   5              	.align 3
+   6              	$LC0:
+   7 0000 47504669 	.ascii "GPFifoOverflow: %d %d\n\000"
+   7      666F4F76 
+   7      6572666C 
+   7      6F773A20 
+   7      25642025 
+   8 0017 00       	.align 3
+   9              	$LC2:
+  10 0018 3000     	.ascii "0\000"
+  11 001a 00000000 	.align 3
+  11      0000
+  12              	$LC1:
+  13 0020 2E2E2F2E 	.ascii "../../../Gep/Source/ps2/gslist.c\000"
+  13      2E2F2E2E 
+  13      2F476570 
+  13      2F536F75 
+  13      7263652F 
+  14              	.text
+  15              	.align 2
+  16              	.p2align 3,,7
+  17              	.globl GSListSpace
+  18              	.ent GSListSpace
+  19              	GSListSpace:
+  20              	.frame $sp,32,$31
+  21              	.mask 0x80010000,-16
+  22              	.fmask 0x00000000,0
+  23 0000 E0FFBD27 	subu $sp,$sp,32
+  24 0004 0000B0FF 	sd $16,0($sp)
+  25 0008 1000BFFF 	sd $31,16($sp)
+  26              	.set noreorder
+  27              	.set nomacro
+  28 000c 0000000C 	jal GSListGetSpace
+  29 0010 2D808000 	move $16,$4
+  30              	.set macro
+  31              	.set reorder
+  32              	
+  33 0014 2B105000 	sltu $2,$2,$16
+  34              	.set noreorder
+  35              	.set nomacro
+  36 0018 0C004010 	beq $2,$0,$L1
+  37 001c 01000224 	li $2,1
+  38              	.set macro
+  39              	.set reorder
+  40              	
+  41 0020 0000023C 	lui $2,%hi(_GSList_List)
+  42 0024 00004224 	addiu $2,$2,%lo(_GSList_List)
+  43 0028 1800428C 	lw $2,24($2)
+  44              	
+  45 002c 1C004014 	bne $2,$0,$L5
+  45      00000000 
+  46              	$L3:
+  47 0034 0000000C 	jal GSListGetSpace
+GAS LISTING  			page 2
+
+
+  47      00000000 
+  48 003c 2B105000 	sltu $2,$2,$16
+  49 0040 07004014 	bne $2,$0,$L6
+  49      00000000 
+  50 0048 01000224 	li $2,1
+  51              	$L1:
+  52 004c 1000BFDF 	ld $31,16($sp)
+  53 0050 0000B0DF 	ld $16,0($sp)
+  54              	
+  55              	.set noreorder
+  56              	.set nomacro
+  57 0054 0800E003 	j $31
+  58 0058 2000BD27 	addu $sp,$sp,32
+  59              	.set macro
+  60              	.set reorder
+  61              	
+  62 005c 00000000 	.p2align 3
+  63              	$L6:
+  64 0060 0000000C 	jal GSListGetSpace
+  64      00000000 
+  65 0068 2D300002 	move $6,$16
+  66 006c 0000043C 	lui $4,%hi($LC0)
+  67 0070 2D284000 	move $5,$2
+  68              	.set noreorder
+  69              	.set nomacro
+  70 0074 0000000C 	jal printf
+  71 0078 00008424 	addiu $4,$4,%lo($LC0)
+  72              	.set macro
+  73              	.set reorder
+  74              	
+  75 007c 0000063C 	lui $6,%hi($LC2)
+  76 0080 0000043C 	lui $4,%hi($LC1)
+  77 0084 2D000524 	li $5,45
+  78 0088 20008424 	addiu $4,$4,%lo($LC1)
+  79              	.set noreorder
+  80              	.set nomacro
+  81 008c 0000000C 	jal __assert
+  82 0090 1800C624 	addiu $6,$6,%lo($LC2)
+  83              	.set macro
+  84              	.set reorder
+  85              	
+  86              	.set noreorder
+  87              	.set nomacro
+  88 0094 EDFF0010 	b $L1
+  89 0098 2D100000 	move $2,$0
+  90              	.set macro
+  91              	.set reorder
+  92              	
+  93 009c 00000000 	.p2align 3
+  94              	$L5:
+  95 00a0 09F84000 	jal $31,$2
+  95      00000000 
+  96 00a8 E2FF0010 	b $L3
+  96      00000000 
+  97              	.end GSListSpace
+  98              	$Lfe1:
+  99              	.size GSListSpace,$Lfe1-GSListSpace
+GAS LISTING  			page 3
+
+
+ 100              	.rdata
+ 101 0041 00000000 	.align 3
+ 101      000000
+ 102              	$LC3:
+ 103 0048 21704C69 	.ascii "!pList->pPtr\000"
+ 103      73742D3E 
+ 103      70507472 
+ 103      00
+ 104              	.text
+ 105              	.align 2
+ 106              	.p2align 3,,7
+ 107              	.globl GSListBegin
+ 108              	.ent GSListBegin
+ 109              	GSListBegin:
+ 110              	.frame $sp,96,$31
+ 111              	.mask 0x801f0000,-16
+ 112              	.fmask 0x00000000,0
+ 113 00b0 A0FFBD27 	subu $sp,$sp,96
+ 114 00b4 3000B3FF 	sd $19,48($sp)
+ 115 00b8 0000133C 	lui $19,%hi(_GSList_List)
+ 116 00bc 0000628E 	lw $2,%lo(_GSList_List)($19)
+ 117 00c0 2000B2FF 	sd $18,32($sp)
+ 118 00c4 2D90C000 	move $18,$6
+ 119 00c8 1000B1FF 	sd $17,16($sp)
+ 120 00cc 0000063C 	lui $6,%hi($LC3)
+ 121 00d0 2D888000 	move $17,$4
+ 122 00d4 4000B4FF 	sd $20,64($sp)
+ 123 00d8 0000043C 	lui $4,%hi($LC1)
+ 124 00dc 0000B0FF 	sd $16,0($sp)
+ 125 00e0 2DA0A000 	move $20,$5
+ 126 00e4 5000BFFF 	sd $31,80($sp)
+ 127 00e8 20008424 	addiu $4,$4,%lo($LC1)
+ 128 00ec 3A000524 	li $5,58
+ 129 00f0 00007026 	addiu $16,$19,%lo(_GSList_List)
+ 130              	.set noreorder
+ 131              	.set nomacro
+ 132 00f4 12004014 	bne $2,$0,$L10
+ 133 00f8 4800C624 	addiu $6,$6,%lo($LC3)
+ 134              	.set macro
+ 135              	.set reorder
+ 136              	
+ 137 00fc 00111400 	sll $2,$20,4
+ 138              	$L11:
+ 139 0100 000071AE 	sw $17,%lo(_GSList_List)($19)
+ 140 0104 21102202 	addu $2,$17,$2
+ 141 0108 180012AE 	sw $18,24($16)
+ 142 010c 040011AE 	sw $17,4($16)
+ 143 0110 140000AE 	sw $0,20($16)
+ 144 0114 0C0000AE 	sw $0,12($16)
+ 145 0118 100000AE 	sw $0,16($16)
+ 146 011c 080002AE 	sw $2,8($16)
+ 147 0120 5000BFDF 	ld $31,80($sp)
+ 148 0124 4000B4DF 	ld $20,64($sp)
+ 149 0128 3000B3DF 	ld $19,48($sp)
+ 150 012c 2000B2DF 	ld $18,32($sp)
+ 151 0130 1000B1DF 	ld $17,16($sp)
+ 152 0134 0000B0DF 	ld $16,0($sp)
+GAS LISTING  			page 4
+
+
+ 153              	
+ 154              	.set noreorder
+ 155              	.set nomacro
+ 156 0138 0800E003 	j $31
+ 157 013c 6000BD27 	addu $sp,$sp,96
+ 158              	.set macro
+ 159              	.set reorder
+ 160              	
+ 161              	.p2align 3
+ 162              	$L10:
+ 163 0140 0000000C 	jal __assert
+ 163      00000000 
+ 164              	.set noreorder
+ 165              	.set nomacro
+ 166 0148 EDFF0010 	b $L11
+ 167 014c 00111400 	sll $2,$20,4
+ 168              	.set macro
+ 169              	.set reorder
+ 170              	
+ 171              	.end GSListBegin
+ 172              	$Lfe2:
+ 173              	.size GSListBegin,$Lfe2-GSListBegin
+ 174              	.rdata
+ 175 0055 000000   	.align 3
+ 176              	$LC4:
+ 177 0058 704C6973 	.ascii "pList->pPtr\000"
+ 177      742D3E70 
+ 177      50747200 
+ 178 0064 00000000 	.align 3
+ 179              	$LC5:
+ 180 0068 21704C69 	.ascii "!pList->pDmaCnt\000"
+ 180      73742D3E 
+ 180      70446D61 
+ 180      436E7400 
+ 181              	.align 3
+ 182              	$LC6:
+ 183 0078 21704C69 	.ascii "!pList->pGifTag\000"
+ 183      73742D3E 
+ 183      70476966 
+ 183      54616700 
+ 184              	.text
+ 185              	.align 2
+ 186              	.p2align 3,,7
+ 187              	.globl GSListEnd
+ 188              	.ent GSListEnd
+ 189              	GSListEnd:
+ 190              	.frame $sp,48,$31
+ 191              	.mask 0x80030000,-16
+ 192              	.fmask 0x00000000,0
+ 193 0150 D0FFBD27 	subu $sp,$sp,48
+ 194 0154 0000043C 	lui $4,%hi($LC1)
+ 195 0158 1000B1FF 	sd $17,16($sp)
+ 196 015c 0000063C 	lui $6,%hi($LC4)
+ 197 0160 0000113C 	lui $17,%hi(_GSList_List)
+ 198 0164 0000B0FF 	sd $16,0($sp)
+ 199 0168 0000228E 	lw $2,%lo(_GSList_List)($17)
+ 200 016c 20008424 	addiu $4,$4,%lo($LC1)
+GAS LISTING  			page 5
+
+
+ 201 0170 2000BFFF 	sd $31,32($sp)
+ 202 0174 5800C624 	addiu $6,$6,%lo($LC4)
+ 203 0178 4C000524 	li $5,76
+ 204              	.set noreorder
+ 205              	.set nomacro
+ 206 017c 24004010 	beq $2,$0,$L19
+ 207 0180 00003026 	addiu $16,$17,%lo(_GSList_List)
+ 208              	.set macro
+ 209              	.set reorder
+ 210              	
+ 211 0184 0C00028E 	lw $2,12($16)
+ 212              	$L24:
+ 213 0188 0000043C 	lui $4,%hi($LC1)
+ 214 018c 0000063C 	lui $6,%hi($LC5)
+ 215 0190 4D000524 	li $5,77
+ 216 0194 20008424 	addiu $4,$4,%lo($LC1)
+ 217              	.set noreorder
+ 218              	.set nomacro
+ 219 0198 19004014 	bne $2,$0,$L20
+ 220 019c 6800C624 	addiu $6,$6,%lo($LC5)
+ 221              	.set macro
+ 222              	.set reorder
+ 223              	
+ 224 01a0 1000028E 	lw $2,16($16)
+ 225              	$L23:
+ 226 01a4 0000043C 	lui $4,%hi($LC1)
+ 227 01a8 0000063C 	lui $6,%hi($LC6)
+ 228 01ac 4E000524 	li $5,78
+ 229 01b0 20008424 	addiu $4,$4,%lo($LC1)
+ 230              	.set noreorder
+ 231              	.set nomacro
+ 232 01b4 0E004014 	bne $2,$0,$L21
+ 233 01b8 7800C624 	addiu $6,$6,%lo($LC6)
+ 234              	.set macro
+ 235              	.set reorder
+ 236              	
+ 237 01bc 0800028E 	lw $2,8($16)
+ 238              	$L22:
+ 239 01c0 0400038E 	lw $3,4($16)
+ 240 01c4 000020AE 	sw $0,%lo(_GSList_List)($17)
+ 241 01c8 23104300 	subu $2,$2,$3
+ 242 01cc 180000AE 	sw $0,24($16)
+ 243 01d0 040000AE 	sw $0,4($16)
+ 244 01d4 03110200 	sra $2,$2,4
+ 245 01d8 080000AE 	sw $0,8($16)
+ 246 01dc 2000BFDF 	ld $31,32($sp)
+ 247 01e0 1000B1DF 	ld $17,16($sp)
+ 248 01e4 0000B0DF 	ld $16,0($sp)
+ 249              	
+ 250              	.set noreorder
+ 251              	.set nomacro
+ 252 01e8 0800E003 	j $31
+ 253 01ec 3000BD27 	addu $sp,$sp,48
+ 254              	.set macro
+ 255              	.set reorder
+ 256              	
+ 257              	.p2align 3
+GAS LISTING  			page 6
+
+
+ 258              	$L21:
+ 259 01f0 0000000C 	jal __assert
+ 259      00000000 
+ 260              	.set noreorder
+ 261              	.set nomacro
+ 262 01f8 F1FF0010 	b $L22
+ 263 01fc 0800028E 	lw $2,8($16)
+ 264              	.set macro
+ 265              	.set reorder
+ 266              	
+ 267              	.p2align 3
+ 268              	$L20:
+ 269 0200 0000000C 	jal __assert
+ 269      00000000 
+ 270              	.set noreorder
+ 271              	.set nomacro
+ 272 0208 E6FF0010 	b $L23
+ 273 020c 1000028E 	lw $2,16($16)
+ 274              	.set macro
+ 275              	.set reorder
+ 276              	
+ 277              	.p2align 3
+ 278              	$L19:
+ 279 0210 0000000C 	jal __assert
+ 279      00000000 
+ 280              	.set noreorder
+ 281              	.set nomacro
+ 282 0218 DBFF0010 	b $L24
+ 283 021c 0C00028E 	lw $2,12($16)
+ 284              	.set macro
+ 285              	.set reorder
+ 286              	
+ 287              	.end GSListEnd
+ 288              	$Lfe3:
+ 289              	.size GSListEnd,$Lfe3-GSListEnd
+ 290              	.align 2
+ 291              	.p2align 3,,7
+ 292              	.globl GSListGetPtr
+ 293              	.ent GSListGetPtr
+ 294              	GSListGetPtr:
+ 295              	.frame $sp,0,$31
+ 296              	.mask 0x00000000,0
+ 297              	.fmask 0x00000000,0
+ 298 0220 0000033C 	lui $3,%hi(_GSList_List)
+ 299              	.set noreorder
+ 300              	.set nomacro
+ 301 0224 0800E003 	j $31
+ 302 0228 0000628C 	lw $2,%lo(_GSList_List)($3)
+ 303              	.set macro
+ 304              	.set reorder
+ 305              	
+ 306              	.end GSListGetPtr
+ 307              	$Lfe4:
+ 308              	.size GSListGetPtr,$Lfe4-GSListGetPtr
+ 309              	.align 2
+ 310 022c 00000000 	.p2align 3,,7
+ 311              	.globl GSListGetUncachedPtr
+GAS LISTING  			page 7
+
+
+ 312              	.ent GSListGetUncachedPtr
+ 313              	GSListGetUncachedPtr:
+ 314              	.frame $sp,0,$31
+ 315              	.mask 0x00000000,0
+ 316              	.fmask 0x00000000,0
+ 317 0230 0000033C 	lui $3,%hi(_GSList_List)
+ 318 0234 0020043C 	li $4,536870912
+ 319 0238 0000628C 	lw $2,%lo(_GSList_List)($3)
+ 320              	.set noreorder
+ 321              	.set nomacro
+ 322 023c 0800E003 	j $31
+ 323 0240 25104400 	or $2,$2,$4
+ 324              	.set macro
+ 325              	.set reorder
+ 326              	
+ 327              	.end GSListGetUncachedPtr
+ 328              	$Lfe5:
+ 329              	.size GSListGetUncachedPtr,$Lfe5-GSListGetUncachedPtr
+ 330              	.align 2
+ 331 0244 00000000 	.p2align 3,,7
+ 332              	.globl GSListGetStart
+ 333              	.ent GSListGetStart
+ 334              	GSListGetStart:
+ 335              	.frame $sp,0,$31
+ 336              	.mask 0x00000000,0
+ 337              	.fmask 0x00000000,0
+ 338 0248 0000033C 	lui $3,%hi(_GSList_List+4)
+ 339              	.set noreorder
+ 340              	.set nomacro
+ 341 024c 0800E003 	j $31
+ 342 0250 0400628C 	lw $2,%lo(_GSList_List+4)($3)
+ 343              	.set macro
+ 344              	.set reorder
+ 345              	
+ 346              	.end GSListGetStart
+ 347              	$Lfe6:
+ 348              	.size GSListGetStart,$Lfe6-GSListGetStart
+ 349              	.rdata
+ 350              	.align 3
+ 351              	$LC7:
+ 352 0088 70507472 	.ascii "pPtr < pList->pEnd\000"
+ 352      203C2070 
+ 352      4C697374 
+ 352      2D3E7045 
+ 352      6E6400
+ 353              	.text
+ 354              	.align 2
+ 355 0254 00000000 	.p2align 3,,7
+ 356              	.globl GSListSetPtr
+ 357              	.ent GSListSetPtr
+ 358              	GSListSetPtr:
+ 359              	.frame $sp,48,$31
+ 360              	.mask 0x80030000,-16
+ 361              	.fmask 0x00000000,0
+ 362 0258 D0FFBD27 	subu $sp,$sp,48
+ 363 025c 0000063C 	lui $6,%hi($LC7)
+ 364 0260 1000B1FF 	sd $17,16($sp)
+GAS LISTING  			page 8
+
+
+ 365 0264 8800C624 	addiu $6,$6,%lo($LC7)
+ 366 0268 0000113C 	lui $17,%hi(_GSList_List)
+ 367 026c 0000B0FF 	sd $16,0($sp)
+ 368 0270 00002226 	addiu $2,$17,%lo(_GSList_List)
+ 369 0274 2D808000 	move $16,$4
+ 370 0278 0800438C 	lw $3,8($2)
+ 371 027c 71000524 	li $5,113
+ 372 0280 2000BFFF 	sd $31,32($sp)
+ 373 0284 2B188300 	sltu $3,$4,$3
+ 374 0288 0000043C 	lui $4,%hi($LC1)
+ 375              	.set noreorder
+ 376              	.set nomacro
+ 377 028c 08006010 	beq $3,$0,$L31
+ 378 0290 20008424 	addiu $4,$4,%lo($LC1)
+ 379              	.set macro
+ 380              	.set reorder
+ 381              	
+ 382 0294 000030AE 	sw $16,%lo(_GSList_List)($17)
+ 383              	$L32:
+ 384 0298 2000BFDF 	ld $31,32($sp)
+ 385 029c 1000B1DF 	ld $17,16($sp)
+ 386 02a0 0000B0DF 	ld $16,0($sp)
+ 387              	
+ 388              	.set noreorder
+ 389              	.set nomacro
+ 390 02a4 0800E003 	j $31
+ 391 02a8 3000BD27 	addu $sp,$sp,48
+ 392              	.set macro
+ 393              	.set reorder
+ 394              	
+ 395 02ac 00000000 	.p2align 3
+ 396              	$L31:
+ 397 02b0 0000000C 	jal __assert
+ 397      00000000 
+ 398              	.set noreorder
+ 399              	.set nomacro
+ 400 02b8 F7FF0010 	b $L32
+ 401 02bc 000030AE 	sw $16,%lo(_GSList_List)($17)
+ 402              	.set macro
+ 403              	.set reorder
+ 404              	
+ 405              	.end GSListSetPtr
+ 406              	$Lfe7:
+ 407              	.size GSListSetPtr,$Lfe7-GSListSetPtr
+ 408              	.align 2
+ 409              	.p2align 3,,7
+ 410              	.globl GSListGetSpace
+ 411              	.ent GSListGetSpace
+ 412              	GSListGetSpace:
+ 413              	.frame $sp,0,$31
+ 414              	.mask 0x00000000,0
+ 415              	.fmask 0x00000000,0
+ 416 02c0 0000023C 	lui $2,%hi(_GSList_List)
+ 417 02c4 00004324 	addiu $3,$2,%lo(_GSList_List)
+ 418 02c8 0000448C 	lw $4,%lo(_GSList_List)($2)
+ 419 02cc 0800628C 	lw $2,8($3)
+ 420              	
+GAS LISTING  			page 9
+
+
+ 421 02d0 23104400 	subu $2,$2,$4
+ 422              	.set noreorder
+ 423              	.set nomacro
+ 424 02d4 0800E003 	j $31
+ 425 02d8 03110200 	sra $2,$2,4
+ 426              	.set macro
+ 427              	.set reorder
+ 428              	
+ 429              	.end GSListGetSpace
+ 430              	$Lfe8:
+ 431              	.size GSListGetSpace,$Lfe8-GSListGetSpace
+ 432              	.align 2
+ 433 02dc 00000000 	.p2align 3,,7
+ 434              	.globl GSListGetSize
+ 435              	.ent GSListGetSize
+ 436              	GSListGetSize:
+ 437              	.frame $sp,0,$31
+ 438              	.mask 0x00000000,0
+ 439              	.fmask 0x00000000,0
+ 440 02e0 0000043C 	lui $4,%hi(_GSList_List)
+ 441 02e4 00008524 	addiu $5,$4,%lo(_GSList_List)
+ 442 02e8 0000828C 	lw $2,%lo(_GSList_List)($4)
+ 443 02ec 0400A38C 	lw $3,4($5)
+ 444              	
+ 445 02f0 23104300 	subu $2,$2,$3
+ 446              	.set noreorder
+ 447              	.set nomacro
+ 448 02f4 0800E003 	j $31
+ 449 02f8 03110200 	sra $2,$2,4
+ 450              	.set macro
+ 451              	.set reorder
+ 452              	
+ 453              	.end GSListGetSize
+ 454              	$Lfe9:
+ 455              	.size GSListGetSize,$Lfe9-GSListGetSize
+ 456              	.align 2
+ 457 02fc 00000000 	.p2align 3,,7
+ 458              	.globl GSDmaCntOpen
+ 459              	.ent GSDmaCntOpen
+ 460              	GSDmaCntOpen:
+ 461              	.frame $sp,48,$31
+ 462              	.mask 0x80030000,-16
+ 463              	.fmask 0x00000000,0
+ 464 0300 D0FFBD27 	subu $sp,$sp,48
+ 465 0304 0000043C 	lui $4,%hi($LC1)
+ 466 0308 0000B0FF 	sd $16,0($sp)
+ 467 030c 0000063C 	lui $6,%hi($LC5)
+ 468 0310 0000103C 	lui $16,%hi(_GSList_List)
+ 469 0314 1000B1FF 	sd $17,16($sp)
+ 470 0318 00001126 	addiu $17,$16,%lo(_GSList_List)
+ 471 031c 2000BFFF 	sd $31,32($sp)
+ 472 0320 0C00228E 	lw $2,12($17)
+ 473 0324 20008424 	addiu $4,$4,%lo($LC1)
+ 474 0328 6800C624 	addiu $6,$6,%lo($LC5)
+ 475              	.set noreorder
+ 476              	.set nomacro
+ 477 032c 12004014 	bne $2,$0,$L38
+GAS LISTING  			page 10
+
+
+ 478 0330 86000524 	li $5,134
+ 479              	.set macro
+ 480              	.set reorder
+ 481              	
+ 482 0334 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 483              	$L39:
+ 484 0338 2000BFDF 	ld $31,32($sp)
+ 485 033c 2D184000 	move $3,$2
+ 486 0340 10004224 	addu $2,$2,16
+ 487 0344 000002AE 	sw $2,%lo(_GSList_List)($16)
+ 488 0348 00100224 	li $2,4096
+ 489 034c 0C0023AE 	sw $3,12($17)
+ 490 0350 0000B0DF 	ld $16,0($sp)
+ 491 0354 1000B1DF 	ld $17,16($sp)
+ 492 0358 020062A4 	sh $2,2($3)
+ 493 035c 040060AC 	sw $0,4($3)
+ 494 0360 000060A4 	sh $0,0($3)
+ 495 0364 080060AC 	sw $0,8($3)
+ 496 0368 0C0060AC 	sw $0,12($3)
+ 497              	.set noreorder
+ 498              	.set nomacro
+ 499 036c 0800E003 	j $31
+ 500 0370 3000BD27 	addu $sp,$sp,48
+ 501              	.set macro
+ 502              	.set reorder
+ 503              	
+ 504 0374 00000000 	.p2align 3
+ 505              	$L38:
+ 506 0378 0000000C 	jal __assert
+ 506      00000000 
+ 507              	.set noreorder
+ 508              	.set nomacro
+ 509 0380 EDFF0010 	b $L39
+ 510 0384 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 511              	.set macro
+ 512              	.set reorder
+ 513              	
+ 514              	.end GSDmaCntOpen
+ 515              	$Lfe10:
+ 516              	.size GSDmaCntOpen,$Lfe10-GSDmaCntOpen
+ 517              	.rdata
+ 518 009b 00000000 	.align 3
+ 518      00
+ 519              	$LC8:
+ 520 00a0 70546167 	.ascii "pTag\000"
+ 520      00
+ 521              	.text
+ 522              	.align 2
+ 523              	.p2align 3,,7
+ 524              	.globl GSDmaCntClose
+ 525              	.ent GSDmaCntClose
+ 526              	GSDmaCntClose:
+ 527              	.frame $sp,64,$31
+ 528              	.mask 0x80070000,-16
+ 529              	.fmask 0x00000000,0
+ 530 0388 C0FFBD27 	subu $sp,$sp,64
+ 531 038c 0000043C 	lui $4,%hi($LC1)
+GAS LISTING  			page 11
+
+
+ 532 0390 2000B2FF 	sd $18,32($sp)
+ 533 0394 0000063C 	lui $6,%hi($LC8)
+ 534 0398 0000123C 	lui $18,%hi(_GSList_List)
+ 535 039c 1000B1FF 	sd $17,16($sp)
+ 536 03a0 00005126 	addiu $17,$18,%lo(_GSList_List)
+ 537 03a4 0000B0FF 	sd $16,0($sp)
+ 538 03a8 0C00308E 	lw $16,12($17)
+ 539 03ac 20008424 	addiu $4,$4,%lo($LC1)
+ 540 03b0 3000BFFF 	sd $31,48($sp)
+ 541 03b4 A000C624 	addiu $6,$6,%lo($LC8)
+ 542              	.set noreorder
+ 543              	.set nomacro
+ 544 03b8 0D000012 	beq $16,$0,$L43
+ 545 03bc 9B000524 	li $5,155
+ 546              	.set macro
+ 547              	.set reorder
+ 548              	
+ 549 03c0 0000428E 	lw $2,%lo(_GSList_List)($18)
+ 550              	$L44:
+ 551 03c4 0C0020AE 	sw $0,12($17)
+ 552 03c8 23105000 	subu $2,$2,$16
+ 553 03cc 3000BFDF 	ld $31,48($sp)
+ 554 03d0 03110200 	sra $2,$2,4
+ 555 03d4 2000B2DF 	ld $18,32($sp)
+ 556 03d8 FFFF4224 	addu $2,$2,-1
+ 557 03dc 1000B1DF 	ld $17,16($sp)
+ 558 03e0 000002A6 	sh $2,0($16)
+ 559 03e4 0000B0DF 	ld $16,0($sp)
+ 560              	
+ 561              	.set noreorder
+ 562              	.set nomacro
+ 563 03e8 0800E003 	j $31
+ 564 03ec 4000BD27 	addu $sp,$sp,64
+ 565              	.set macro
+ 566              	.set reorder
+ 567              	
+ 568              	$L43:
+ 569 03f0 0000000C 	jal __assert
+ 569      00000000 
+ 570              	.set noreorder
+ 571              	.set nomacro
+ 572 03f8 F2FF0010 	b $L44
+ 573 03fc 0000428E 	lw $2,%lo(_GSList_List)($18)
+ 574              	.set macro
+ 575              	.set reorder
+ 576              	
+ 577              	.end GSDmaCntClose
+ 578              	$Lfe11:
+ 579              	.size GSDmaCntClose,$Lfe11-GSDmaCntClose
+ 580              	.align 2
+ 581              	.p2align 3,,7
+ 582              	.globl GSDmaRef
+ 583              	.ent GSDmaRef
+ 584              	GSDmaRef:
+ 585              	.frame $sp,64,$31
+ 586              	.mask 0x80070000,-16
+ 587              	.fmask 0x00000000,0
+GAS LISTING  			page 12
+
+
+ 588 0400 C0FFBD27 	subu $sp,$sp,64
+ 589 0404 0000063C 	lui $6,%hi($LC5)
+ 590 0408 2000B2FF 	sd $18,32($sp)
+ 591 040c 6800C624 	addiu $6,$6,%lo($LC5)
+ 592 0410 1000B1FF 	sd $17,16($sp)
+ 593 0414 2D908000 	move $18,$4
+ 594 0418 0000B0FF 	sd $16,0($sp)
+ 595 041c 0000043C 	lui $4,%hi($LC1)
+ 596 0420 3000BFFF 	sd $31,48($sp)
+ 597 0424 0000103C 	lui $16,%hi(_GSList_List)
+ 598 0428 00000226 	addiu $2,$16,%lo(_GSList_List)
+ 599 042c 20008424 	addiu $4,$4,%lo($LC1)
+ 600 0430 0C00438C 	lw $3,12($2)
+ 601              	
+ 602              	.set noreorder
+ 603              	.set nomacro
+ 604 0434 12006014 	bne $3,$0,$L48
+ 605 0438 2D88A000 	move $17,$5
+ 606              	.set macro
+ 607              	.set reorder
+ 608              	
+ 609 043c 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 610              	$L49:
+ 611 0440 3000BFDF 	ld $31,48($sp)
+ 612 0444 2D184000 	move $3,$2
+ 613 0448 10004224 	addu $2,$2,16
+ 614 044c 000002AE 	sw $2,%lo(_GSList_List)($16)
+ 615 0450 00300224 	li $2,12288
+ 616 0454 040072AC 	sw $18,4($3)
+ 617 0458 000071A4 	sh $17,0($3)
+ 618 045c 2000B2DF 	ld $18,32($sp)
+ 619 0460 1000B1DF 	ld $17,16($sp)
+ 620 0464 0000B0DF 	ld $16,0($sp)
+ 621 0468 020062A4 	sh $2,2($3)
+ 622 046c 0C0060AC 	sw $0,12($3)
+ 623 0470 080060AC 	sw $0,8($3)
+ 624              	.set noreorder
+ 625              	.set nomacro
+ 626 0474 0800E003 	j $31
+ 627 0478 4000BD27 	addu $sp,$sp,64
+ 628              	.set macro
+ 629              	.set reorder
+ 630              	
+ 631 047c 00000000 	.p2align 3
+ 632              	$L48:
+ 633              	.set noreorder
+ 634              	.set nomacro
+ 635 0480 0000000C 	jal __assert
+ 636 0484 AC000524 	li $5,172
+ 637              	.set macro
+ 638              	.set reorder
+ 639              	
+ 640              	.set noreorder
+ 641              	.set nomacro
+ 642 0488 EDFF0010 	b $L49
+ 643 048c 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 644              	.set macro
+GAS LISTING  			page 13
+
+
+ 645              	.set reorder
+ 646              	
+ 647              	.end GSDmaRef
+ 648              	$Lfe12:
+ 649              	.size GSDmaRef,$Lfe12-GSDmaRef
+ 650              	.align 2
+ 651              	.p2align 3,,7
+ 652              	.globl GSDmaEnd
+ 653              	.ent GSDmaEnd
+ 654              	GSDmaEnd:
+ 655              	.frame $sp,32,$31
+ 656              	.mask 0x80010000,-16
+ 657              	.fmask 0x00000000,0
+ 658 0490 E0FFBD27 	subu $sp,$sp,32
+ 659 0494 0000043C 	lui $4,%hi($LC1)
+ 660 0498 0000B0FF 	sd $16,0($sp)
+ 661 049c 0000063C 	lui $6,%hi($LC5)
+ 662 04a0 1000BFFF 	sd $31,16($sp)
+ 663 04a4 0000103C 	lui $16,%hi(_GSList_List)
+ 664 04a8 00000226 	addiu $2,$16,%lo(_GSList_List)
+ 665 04ac 20008424 	addiu $4,$4,%lo($LC1)
+ 666 04b0 0C00438C 	lw $3,12($2)
+ 667 04b4 6800C624 	addiu $6,$6,%lo($LC5)
+ 668              	.set noreorder
+ 669              	.set nomacro
+ 670 04b8 0F006014 	bne $3,$0,$L53
+ 671 04bc BE000524 	li $5,190
+ 672              	.set macro
+ 673              	.set reorder
+ 674              	
+ 675 04c0 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 676              	$L54:
+ 677 04c4 00700324 	li $3,28672
+ 678 04c8 1000BFDF 	ld $31,16($sp)
+ 679 04cc 2D204000 	move $4,$2
+ 680 04d0 10004224 	addu $2,$2,16
+ 681 04d4 000002AE 	sw $2,%lo(_GSList_List)($16)
+ 682 04d8 0000B0DF 	ld $16,0($sp)
+ 683 04dc 020083A4 	sh $3,2($4)
+ 684 04e0 0C0080AC 	sw $0,12($4)
+ 685 04e4 040080AC 	sw $0,4($4)
+ 686 04e8 000080A4 	sh $0,0($4)
+ 687 04ec 080080AC 	sw $0,8($4)
+ 688              	.set noreorder
+ 689              	.set nomacro
+ 690 04f0 0800E003 	j $31
+ 691 04f4 2000BD27 	addu $sp,$sp,32
+ 692              	.set macro
+ 693              	.set reorder
+ 694              	
+ 695              	.p2align 3
+ 696              	$L53:
+ 697 04f8 0000000C 	jal __assert
+ 697      00000000 
+ 698              	.set noreorder
+ 699              	.set nomacro
+ 700 0500 F0FF0010 	b $L54
+GAS LISTING  			page 14
+
+
+ 701 0504 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 702              	.set macro
+ 703              	.set reorder
+ 704              	
+ 705              	.end GSDmaEnd
+ 706              	$Lfe13:
+ 707              	.size GSDmaEnd,$Lfe13-GSDmaEnd
+ 708              	.rdata
+ 709 00a5 000000   	.align 3
+ 710              	$LC9:
+ 711 00a8 6E51776F 	.ascii "nQwords < 0x8000\000"
+ 711      72647320 
+ 711      3C203078 
+ 711      38303030 
+ 711      00
+ 712              	.text
+ 713              	.align 2
+ 714              	.p2align 3,,7
+ 715              	.globl GSGifTagImage
+ 716              	.ent GSGifTagImage
+ 717              	GSGifTagImage:
+ 718              	.frame $sp,48,$31
+ 719              	.mask 0x80030000,-16
+ 720              	.fmask 0x00000000,0
+ 721 0508 D0FFBD27 	subu $sp,$sp,48
+ 722 050c 0000063C 	lui $6,%hi($LC6)
+ 723 0510 1000B1FF 	sd $17,16($sp)
+ 724 0514 D1000524 	li $5,209
+ 725 0518 0000B0FF 	sd $16,0($sp)
+ 726 051c 0000113C 	lui $17,%hi(_GSList_List)
+ 727 0520 2000BFFF 	sd $31,32($sp)
+ 728 0524 00002226 	addiu $2,$17,%lo(_GSList_List)
+ 729 0528 2D808000 	move $16,$4
+ 730 052c 7800C624 	addiu $6,$6,%lo($LC6)
+ 731 0530 1000438C 	lw $3,16($2)
+ 732 0534 0000043C 	lui $4,%hi($LC1)
+ 733              	.set noreorder
+ 734              	.set nomacro
+ 735 0538 1B006014 	bne $3,$0,$L60
+ 736 053c 20008424 	addiu $4,$4,%lo($LC1)
+ 737              	.set macro
+ 738              	.set reorder
+ 739              	
+ 740 0540 FF7F0224 	li $2,32767
+ 741              	$L63:
+ 742 0544 0000063C 	lui $6,%hi($LC9)
+ 743 0548 0000043C 	lui $4,%hi($LC1)
+ 744 054c 2B105000 	sltu $2,$2,$16
+ 745 0550 D2000524 	li $5,210
+ 746 0554 A800C624 	addiu $6,$6,%lo($LC9)
+ 747              	.set noreorder
+ 748              	.set nomacro
+ 749 0558 0F004014 	bne $2,$0,$L61
+ 750 055c 20008424 	addiu $4,$4,%lo($LC1)
+ 751              	.set macro
+ 752              	.set reorder
+ 753              	
+GAS LISTING  			page 15
+
+
+ 754 0560 0000228E 	lw $2,%lo(_GSList_List)($17)
+ 755              	$L62:
+ 756 0564 2000BFDF 	ld $31,32($sp)
+ 757 0568 2D184000 	move $3,$2
+ 758 056c 10004224 	addu $2,$2,16
+ 759 0570 000022AE 	sw $2,%lo(_GSList_List)($17)
+ 760 0574 0008023C 	li $2,134217728
+ 761 0578 000070A4 	sh $16,0($3)
+ 762 057c 1000B1DF 	ld $17,16($sp)
+ 763 0580 0000B0DF 	ld $16,0($sp)
+ 764 0584 040062AC 	sw $2,4($3)
+ 765 0588 080060FC 	sd $0,8($3)
+ 766 058c 020060A4 	sh $0,2($3)
+ 767              	.set noreorder
+ 768              	.set nomacro
+ 769 0590 0800E003 	j $31
+ 770 0594 3000BD27 	addu $sp,$sp,48
+ 771              	.set macro
+ 772              	.set reorder
+ 773              	
+ 774              	.p2align 3
+ 775              	$L61:
+ 776 0598 0000000C 	jal __assert
+ 776      00000000 
+ 777              	.set noreorder
+ 778              	.set nomacro
+ 779 05a0 F0FF0010 	b $L62
+ 780 05a4 0000228E 	lw $2,%lo(_GSList_List)($17)
+ 781              	.set macro
+ 782              	.set reorder
+ 783              	
+ 784              	.p2align 3
+ 785              	$L60:
+ 786 05a8 0000000C 	jal __assert
+ 786      00000000 
+ 787              	.set noreorder
+ 788              	.set nomacro
+ 789 05b0 E4FF0010 	b $L63
+ 790 05b4 FF7F0224 	li $2,32767
+ 791              	.set macro
+ 792              	.set reorder
+ 793              	
+ 794              	.end GSGifTagImage
+ 795              	$Lfe14:
+ 796              	.size GSGifTagImage,$Lfe14-GSGifTagImage
+ 797              	.align 2
+ 798              	.p2align 3,,7
+ 799              	.globl GSGifTagOpenAD
+ 800              	.ent GSGifTagOpenAD
+ 801              	GSGifTagOpenAD:
+ 802              	.frame $sp,48,$31
+ 803              	.mask 0x80030000,-16
+ 804              	.fmask 0x00000000,0
+ 805 05b8 D0FFBD27 	subu $sp,$sp,48
+ 806 05bc 0000043C 	lui $4,%hi($LC1)
+ 807 05c0 0000B0FF 	sd $16,0($sp)
+ 808 05c4 0000063C 	lui $6,%hi($LC6)
+GAS LISTING  			page 16
+
+
+ 809 05c8 0000103C 	lui $16,%hi(_GSList_List)
+ 810 05cc 1000B1FF 	sd $17,16($sp)
+ 811 05d0 00001126 	addiu $17,$16,%lo(_GSList_List)
+ 812 05d4 2000BFFF 	sd $31,32($sp)
+ 813 05d8 1000228E 	lw $2,16($17)
+ 814 05dc 20008424 	addiu $4,$4,%lo($LC1)
+ 815 05e0 7800C624 	addiu $6,$6,%lo($LC6)
+ 816              	.set noreorder
+ 817              	.set nomacro
+ 818 05e4 12004014 	bne $2,$0,$L67
+ 819 05e8 E4000524 	li $5,228
+ 820              	.set macro
+ 821              	.set reorder
+ 822              	
+ 823 05ec 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 824              	$L68:
+ 825 05f0 0E000324 	dli $3,0xe
+ 826 05f4 2000BFDF 	ld $31,32($sp)
+ 827 05f8 2D204000 	move $4,$2
+ 828 05fc 10004224 	addu $2,$2,16
+ 829 0600 000002AE 	sw $2,%lo(_GSList_List)($16)
+ 830 0604 0010023C 	li $2,268435456
+ 831 0608 100024AE 	sw $4,16($17)
+ 832 060c 0000B0DF 	ld $16,0($sp)
+ 833 0610 1000B1DF 	ld $17,16($sp)
+ 834 0614 040082AC 	sw $2,4($4)
+ 835 0618 080083FC 	sd $3,8($4)
+ 836 061c 000080A4 	sh $0,0($4)
+ 837 0620 020080A4 	sh $0,2($4)
+ 838              	.set noreorder
+ 839              	.set nomacro
+ 840 0624 0800E003 	j $31
+ 841 0628 3000BD27 	addu $sp,$sp,48
+ 842              	.set macro
+ 843              	.set reorder
+ 844              	
+ 845 062c 00000000 	.p2align 3
+ 846              	$L67:
+ 847 0630 0000000C 	jal __assert
+ 847      00000000 
+ 848              	.set noreorder
+ 849              	.set nomacro
+ 850 0638 EDFF0010 	b $L68
+ 851 063c 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 852              	.set macro
+ 853              	.set reorder
+ 854              	
+ 855              	.end GSGifTagOpenAD
+ 856              	$Lfe15:
+ 857              	.size GSGifTagOpenAD,$Lfe15-GSGifTagOpenAD
+ 858              	.rdata
+ 859 00b9 00000000 	.align 3
+ 859      000000
+ 860              	$LC10:
+ 861 00c0 704C6973 	.ascii "pList->pGifTag\000"
+ 861      742D3E70 
+ 861      47696654 
+GAS LISTING  			page 17
+
+
+ 861      616700
+ 862              	.text
+ 863              	.align 2
+ 864              	.p2align 3,,7
+ 865              	.globl GSGifTagCloseAD
+ 866              	.ent GSGifTagCloseAD
+ 867              	GSGifTagCloseAD:
+ 868              	.frame $sp,64,$31
+ 869              	.mask 0x80070000,-16
+ 870              	.fmask 0x00000000,0
+ 871 0640 C0FFBD27 	subu $sp,$sp,64
+ 872 0644 0000043C 	lui $4,%hi($LC1)
+ 873 0648 2000B2FF 	sd $18,32($sp)
+ 874 064c 0000063C 	lui $6,%hi($LC10)
+ 875 0650 0000123C 	lui $18,%hi(_GSList_List)
+ 876 0654 1000B1FF 	sd $17,16($sp)
+ 877 0658 00005126 	addiu $17,$18,%lo(_GSList_List)
+ 878 065c 0000B0FF 	sd $16,0($sp)
+ 879 0660 1000308E 	lw $16,16($17)
+ 880 0664 20008424 	addiu $4,$4,%lo($LC1)
+ 881 0668 3000BFFF 	sd $31,48($sp)
+ 882 066c C000C624 	addiu $6,$6,%lo($LC10)
+ 883              	.set noreorder
+ 884              	.set nomacro
+ 885 0670 0F000012 	beq $16,$0,$L72
+ 886 0674 F8000524 	li $5,248
+ 887              	.set macro
+ 888              	.set reorder
+ 889              	
+ 890 0678 0000428E 	lw $2,%lo(_GSList_List)($18)
+ 891              	$L73:
+ 892 067c 00800324 	li $3,-32768
+ 893 0680 100020AE 	sw $0,16($17)
+ 894 0684 23105000 	subu $2,$2,$16
+ 895 0688 3000BFDF 	ld $31,48($sp)
+ 896 068c 03110200 	sra $2,$2,4
+ 897 0690 2000B2DF 	ld $18,32($sp)
+ 898 0694 FFFF4224 	addu $2,$2,-1
+ 899 0698 1000B1DF 	ld $17,16($sp)
+ 900 069c 25104300 	or $2,$2,$3
+ 901 06a0 000002A6 	sh $2,0($16)
+ 902 06a4 0000B0DF 	ld $16,0($sp)
+ 903              	
+ 904              	.set noreorder
+ 905              	.set nomacro
+ 906 06a8 0800E003 	j $31
+ 907 06ac 4000BD27 	addu $sp,$sp,64
+ 908              	.set macro
+ 909              	.set reorder
+ 910              	
+ 911              	$L72:
+ 912 06b0 0000000C 	jal __assert
+ 912      00000000 
+ 913              	.set noreorder
+ 914              	.set nomacro
+ 915 06b8 F0FF0010 	b $L73
+ 916 06bc 0000428E 	lw $2,%lo(_GSList_List)($18)
+GAS LISTING  			page 18
+
+
+ 917              	.set macro
+ 918              	.set reorder
+ 919              	
+ 920              	.end GSGifTagCloseAD
+ 921              	$Lfe16:
+ 922              	.size GSGifTagCloseAD,$Lfe16-GSGifTagCloseAD
+ 923              	.align 2
+ 924              	.p2align 3,,7
+ 925              	.globl GSGifRegAD
+ 926              	.ent GSGifRegAD
+ 927              	GSGifRegAD:
+ 928              	.frame $sp,64,$31
+ 929              	.mask 0x80070000,-16
+ 930              	.fmask 0x00000000,0
+ 931 06c0 C0FFBD27 	subu $sp,$sp,64
+ 932 06c4 0000063C 	lui $6,%hi($LC10)
+ 933 06c8 2000B2FF 	sd $18,32($sp)
+ 934 06cc C000C624 	addiu $6,$6,%lo($LC10)
+ 935 06d0 1000B1FF 	sd $17,16($sp)
+ 936 06d4 2D90A000 	move $18,$5
+ 937 06d8 0000B0FF 	sd $16,0($sp)
+ 938 06dc 0000113C 	lui $17,%hi(_GSList_List)
+ 939 06e0 3000BFFF 	sd $31,48($sp)
+ 940 06e4 00002226 	addiu $2,$17,%lo(_GSList_List)
+ 941 06e8 2D808000 	move $16,$4
+ 942 06ec 0000043C 	lui $4,%hi($LC1)
+ 943 06f0 1000438C 	lw $3,16($2)
+ 944              	
+ 945              	.set noreorder
+ 946              	.set nomacro
+ 947 06f4 10006010 	beq $3,$0,$L77
+ 948 06f8 20008424 	addiu $4,$4,%lo($LC1)
+ 949              	.set macro
+ 950              	.set reorder
+ 951              	
+ 952 06fc 0000228E 	lw $2,%lo(_GSList_List)($17)
+ 953              	$L78:
+ 954 0700 3C181000 	dsll $3,$16,32
+ 955 0704 3000BFDF 	ld $31,48($sp)
+ 956 0708 3E180300 	dsrl $3,$3,32
+ 957 070c 2D204000 	move $4,$2
+ 958 0710 0000B0DF 	ld $16,0($sp)
+ 959 0714 10004224 	addu $2,$2,16
+ 960 0718 000092FC 	sd $18,0($4)
+ 961 071c 000022AE 	sw $2,%lo(_GSList_List)($17)
+ 962 0720 2000B2DF 	ld $18,32($sp)
+ 963 0724 1000B1DF 	ld $17,16($sp)
+ 964 0728 080083FC 	sd $3,8($4)
+ 965              	.set noreorder
+ 966              	.set nomacro
+ 967 072c 0800E003 	j $31
+ 968 0730 4000BD27 	addu $sp,$sp,64
+ 969              	.set macro
+ 970              	.set reorder
+ 971              	
+ 972 0734 00000000 	.p2align 3
+ 973              	$L77:
+GAS LISTING  			page 19
+
+
+ 974              	.set noreorder
+ 975              	.set nomacro
+ 976 0738 0000000C 	jal __assert
+ 977 073c 09010524 	li $5,265
+ 978              	.set macro
+ 979              	.set reorder
+ 980              	
+ 981              	.set noreorder
+ 982              	.set nomacro
+ 983 0740 EFFF0010 	b $L78
+ 984 0744 0000228E 	lw $2,%lo(_GSList_List)($17)
+ 985              	.set macro
+ 986              	.set reorder
+ 987              	
+ 988              	.end GSGifRegAD
+ 989              	$Lfe17:
+ 990              	.size GSGifRegAD,$Lfe17-GSGifRegAD
+ 991              	.align 2
+ 992              	.p2align 3,,7
+ 993              	.globl GSGifTagOpen
+ 994              	.ent GSGifTagOpen
+ 995              	GSGifTagOpen:
+ 996              	.frame $sp,80,$31
+ 997              	.mask 0x800f0000,-16
+ 998              	.fmask 0x00000000,0
+ 999 0748 B0FFBD27 	subu $sp,$sp,80
+ 1000 074c 0000063C 	lui $6,%hi($LC6)
+ 1001 0750 0000B0FF 	sd $16,0($sp)
+ 1002 0754 7800C624 	addiu $6,$6,%lo($LC6)
+ 1003 0758 0000103C 	lui $16,%hi(_GSList_List)
+ 1004 075c 1000B1FF 	sd $17,16($sp)
+ 1005 0760 00001126 	addiu $17,$16,%lo(_GSList_List)
+ 1006 0764 2000B2FF 	sd $18,32($sp)
+ 1007 0768 1000228E 	lw $2,16($17)
+ 1008 076c 2D908000 	move $18,$4
+ 1009 0770 0000043C 	lui $4,%hi($LC1)
+ 1010 0774 3000B3FF 	sd $19,48($sp)
+ 1011 0778 4000BFFF 	sd $31,64($sp)
+ 1012 077c 20008424 	addiu $4,$4,%lo($LC1)
+ 1013 0780 2D98A000 	move $19,$5
+ 1014              	.set noreorder
+ 1015              	.set nomacro
+ 1016 0784 10004014 	bne $2,$0,$L82
+ 1017 0788 1A010524 	li $5,282
+ 1018              	.set macro
+ 1019              	.set reorder
+ 1020              	
+ 1021 078c 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 1022              	$L83:
+ 1023 0790 4000BFDF 	ld $31,64($sp)
+ 1024 0794 2D184000 	move $3,$2
+ 1025 0798 10004224 	addu $2,$2,16
+ 1026 079c 140022AE 	sw $2,20($17)
+ 1027 07a0 000002AE 	sw $2,%lo(_GSList_List)($16)
+ 1028 07a4 000072FC 	sd $18,0($3)
+ 1029 07a8 080073FC 	sd $19,8($3)
+ 1030 07ac 100023AE 	sw $3,16($17)
+GAS LISTING  			page 20
+
+
+ 1031 07b0 3000B3DF 	ld $19,48($sp)
+ 1032 07b4 2000B2DF 	ld $18,32($sp)
+ 1033 07b8 1000B1DF 	ld $17,16($sp)
+ 1034 07bc 0000B0DF 	ld $16,0($sp)
+ 1035              	
+ 1036              	.set noreorder
+ 1037              	.set nomacro
+ 1038 07c0 0800E003 	j $31
+ 1039 07c4 5000BD27 	addu $sp,$sp,80
+ 1040              	.set macro
+ 1041              	.set reorder
+ 1042              	
+ 1043              	.p2align 3
+ 1044              	$L82:
+ 1045 07c8 0000000C 	jal __assert
+ 1045      00000000 
+ 1046              	.set noreorder
+ 1047              	.set nomacro
+ 1048 07d0 EFFF0010 	b $L83
+ 1049 07d4 0000028E 	lw $2,%lo(_GSList_List)($16)
+ 1050              	.set macro
+ 1051              	.set reorder
+ 1052              	
+ 1053              	.end GSGifTagOpen
+ 1054              	$Lfe18:
+ 1055              	.size GSGifTagOpen,$Lfe18-GSGifTagOpen
+ 1056              	.rdata
+ 1057 00cf 00       	.align 3
+ 1058              	$LC11:
+ 1059 00d0 704C6973 	.ascii "pList->pGifData\000"
+ 1059      742D3E70 
+ 1059      47696644 
+ 1059      61746100 
+ 1060              	.text
+ 1061              	.align 2
+ 1062              	.p2align 3,,7
+ 1063              	.globl GSGifReg
+ 1064              	.ent GSGifReg
+ 1065              	GSGifReg:
+ 1066              	.frame $sp,48,$31
+ 1067              	.mask 0x80030000,-16
+ 1068              	.fmask 0x00000000,0
+ 1069 07d8 D0FFBD27 	subu $sp,$sp,48
+ 1070 07dc 0000023C 	lui $2,%hi(_GSList_List)
+ 1071 07e0 1000B1FF 	sd $17,16($sp)
+ 1072 07e4 0000063C 	lui $6,%hi($LC11)
+ 1073 07e8 00005124 	addiu $17,$2,%lo(_GSList_List)
+ 1074 07ec 0000B0FF 	sd $16,0($sp)
+ 1075 07f0 1400238E 	lw $3,20($17)
+ 1076 07f4 2D808000 	move $16,$4
+ 1077 07f8 0000043C 	lui $4,%hi($LC1)
+ 1078 07fc 2000BFFF 	sd $31,32($sp)
+ 1079 0800 D000C624 	addiu $6,$6,%lo($LC11)
+ 1080 0804 2B010524 	li $5,299
+ 1081              	.set noreorder
+ 1082              	.set nomacro
+ 1083 0808 09006010 	beq $3,$0,$L87
+GAS LISTING  			page 21
+
+
+ 1084 080c 20008424 	addiu $4,$4,%lo($LC1)
+ 1085              	.set macro
+ 1086              	.set reorder
+ 1087              	
+ 1088              	$L86:
+ 1089 0810 08006224 	addu $2,$3,8
+ 1090 0814 000070FC 	sd $16,0($3)
+ 1091 0818 140022AE 	sw $2,20($17)
+ 1092 081c 2000BFDF 	ld $31,32($sp)
+ 1093 0820 1000B1DF 	ld $17,16($sp)
+ 1094 0824 0000B0DF 	ld $16,0($sp)
+ 1095              	
+ 1096              	.set noreorder
+ 1097              	.set nomacro
+ 1098 0828 0800E003 	j $31
+ 1099 082c 3000BD27 	addu $sp,$sp,48
+ 1100              	.set macro
+ 1101              	.set reorder
+ 1102              	
+ 1103              	.p2align 3
+ 1104              	$L87:
+ 1105 0830 0000000C 	jal __assert
+ 1105      00000000 
+ 1106              	.set noreorder
+ 1107              	.set nomacro
+ 1108 0838 F5FF0010 	b $L86
+ 1109 083c 1400238E 	lw $3,20($17)
+ 1110              	.set macro
+ 1111              	.set reorder
+ 1112              	
+ 1113              	.end GSGifReg
+ 1114              	$Lfe19:
+ 1115              	.size GSGifReg,$Lfe19-GSGifReg
+ 1116              	.align 2
+ 1117              	.p2align 3,,7
+ 1118              	.globl GSGifTagCloseNLoop
+ 1119              	.ent GSGifTagCloseNLoop
+ 1120              	GSGifTagCloseNLoop:
+ 1121              	.frame $sp,80,$31
+ 1122              	.mask 0x800f0000,-16
+ 1123              	.fmask 0x00000000,0
+ 1124 0840 B0FFBD27 	subu $sp,$sp,80
+ 1125 0844 0000063C 	lui $6,%hi($LC10)
+ 1126 0848 3000B3FF 	sd $19,48($sp)
+ 1127 084c C000C624 	addiu $6,$6,%lo($LC10)
+ 1128 0850 0000133C 	lui $19,%hi(_GSList_List)
+ 1129 0854 0000B0FF 	sd $16,0($sp)
+ 1130 0858 00007026 	addiu $16,$19,%lo(_GSList_List)
+ 1131 085c 1000B1FF 	sd $17,16($sp)
+ 1132 0860 1000118E 	lw $17,16($16)
+ 1133 0864 36010524 	li $5,310
+ 1134 0868 2000B2FF 	sd $18,32($sp)
+ 1135 086c 2D908000 	move $18,$4
+ 1136 0870 0000043C 	lui $4,%hi($LC1)
+ 1137 0874 4000BFFF 	sd $31,64($sp)
+ 1138              	.set noreorder
+ 1139              	.set nomacro
+GAS LISTING  			page 22
+
+
+ 1140 0878 1F002012 	beq $17,$0,$L94
+ 1141 087c 20008424 	addiu $4,$4,%lo($LC1)
+ 1142              	.set macro
+ 1143              	.set reorder
+ 1144              	
+ 1145 0880 1400078E 	lw $7,20($16)
+ 1146              	$L96:
+ 1147 0884 0000063C 	lui $6,%hi($LC11)
+ 1148 0888 0000043C 	lui $4,%hi($LC1)
+ 1149 088c 37010524 	li $5,311
+ 1150 0890 D000C624 	addiu $6,$6,%lo($LC11)
+ 1151              	.set noreorder
+ 1152              	.set nomacro
+ 1153 0894 1400E010 	beq $7,$0,$L95
+ 1154 0898 20008424 	addiu $4,$4,%lo($LC1)
+ 1155              	.set macro
+ 1156              	.set reorder
+ 1157              	
+ 1158              	$L92:
+ 1159 089c 00800224 	li $2,-32768
+ 1160 08a0 0700E330 	andi $3,$7,0x7
+ 1161 08a4 0800E524 	addu $5,$7,8
+ 1162              	.set noreorder
+ 1163              	.set nomacro
+ 1164 08a8 04006010 	beq $3,$0,$L93
+ 1165 08ac 25204202 	or $4,$18,$2
+ 1166              	.set macro
+ 1167              	.set reorder
+ 1168              	
+ 1169 08b0 140005AE 	sw $5,20($16)
+ 1170 08b4 0000E0FC 	sd $0,0($7)
+ 1171 08b8 2D38A000 	move $7,$5
+ 1172              	$L93:
+ 1173 08bc 000067AE 	sw $7,%lo(_GSList_List)($19)
+ 1174 08c0 000024A6 	sh $4,0($17)
+ 1175 08c4 140000AE 	sw $0,20($16)
+ 1176 08c8 100000AE 	sw $0,16($16)
+ 1177 08cc 4000BFDF 	ld $31,64($sp)
+ 1178 08d0 3000B3DF 	ld $19,48($sp)
+ 1179 08d4 2000B2DF 	ld $18,32($sp)
+ 1180 08d8 1000B1DF 	ld $17,16($sp)
+ 1181 08dc 0000B0DF 	ld $16,0($sp)
+ 1182              	
+ 1183              	.set noreorder
+ 1184              	.set nomacro
+ 1185 08e0 0800E003 	j $31
+ 1186 08e4 5000BD27 	addu $sp,$sp,80
+ 1187              	.set macro
+ 1188              	.set reorder
+ 1189              	
+ 1190              	.p2align 3
+ 1191              	$L95:
+ 1192 08e8 0000000C 	jal __assert
+ 1192      00000000 
+ 1193              	.set noreorder
+ 1194              	.set nomacro
+ 1195 08f0 EAFF0010 	b $L92
+GAS LISTING  			page 23
+
+
+ 1196 08f4 1400078E 	lw $7,20($16)
+ 1197              	.set macro
+ 1198              	.set reorder
+ 1199              	
+ 1200              	$L94:
+ 1201 08f8 0000000C 	jal __assert
+ 1201      00000000 
+ 1202              	.set noreorder
+ 1203              	.set nomacro
+ 1204 0900 E0FF0010 	b $L96
+ 1205 0904 1400078E 	lw $7,20($16)
+ 1206              	.set macro
+ 1207              	.set reorder
+ 1208              	
+ 1209              	.end GSGifTagCloseNLoop
+ 1210              	$Lfe20:
+ 1211              	.size GSGifTagCloseNLoop,$Lfe20-GSGifTagCloseNLoop
+ 1212              	.align 2
+ 1213              	.p2align 3,,7
+ 1214              	.globl GSGifTagClose
+ 1215              	.ent GSGifTagClose
+ 1216              	GSGifTagClose:
+ 1217              	.frame $sp,48,$31
+ 1218              	.mask 0x80030000,-16
+ 1219              	.fmask 0x00000000,0
+ 1220 0908 D0FFBD27 	subu $sp,$sp,48
+ 1221 090c 0000043C 	lui $4,%hi($LC1)
+ 1222 0910 1000B1FF 	sd $17,16($sp)
+ 1223 0914 0000063C 	lui $6,%hi($LC10)
+ 1224 0918 0000113C 	lui $17,%hi(_GSList_List)
+ 1225 091c 0000B0FF 	sd $16,0($sp)
+ 1226 0920 00003026 	addiu $16,$17,%lo(_GSList_List)
+ 1227 0924 2000BFFF 	sd $31,32($sp)
+ 1228 0928 1000028E 	lw $2,16($16)
+ 1229 092c 20008424 	addiu $4,$4,%lo($LC1)
+ 1230 0930 C000C624 	addiu $6,$6,%lo($LC10)
+ 1231              	.set noreorder
+ 1232              	.set nomacro
+ 1233 0934 1A004010 	beq $2,$0,$L103
+ 1234 0938 4F010524 	li $5,335
+ 1235              	.set macro
+ 1236              	.set reorder
+ 1237              	
+ 1238 093c 1400038E 	lw $3,20($16)
+ 1239              	$L105:
+ 1240 0940 0000043C 	lui $4,%hi($LC1)
+ 1241 0944 0000063C 	lui $6,%hi($LC11)
+ 1242 0948 50010524 	li $5,336
+ 1243 094c 20008424 	addiu $4,$4,%lo($LC1)
+ 1244              	.set noreorder
+ 1245              	.set nomacro
+ 1246 0950 0F006010 	beq $3,$0,$L104
+ 1247 0954 D000C624 	addiu $6,$6,%lo($LC11)
+ 1248              	.set macro
+ 1249              	.set reorder
+ 1250              	
+ 1251              	$L101:
+GAS LISTING  			page 24
+
+
+ 1252 0958 07006230 	andi $2,$3,0x7
+ 1253              	.set noreorder
+ 1254              	.set nomacro
+ 1255 095c 04004010 	beq $2,$0,$L102
+ 1256 0960 08006424 	addu $4,$3,8
+ 1257              	.set macro
+ 1258              	.set reorder
+ 1259              	
+ 1260 0964 140004AE 	sw $4,20($16)
+ 1261 0968 000060FC 	sd $0,0($3)
+ 1262 096c 2D188000 	move $3,$4
+ 1263              	$L102:
+ 1264 0970 000023AE 	sw $3,%lo(_GSList_List)($17)
+ 1265 0974 140000AE 	sw $0,20($16)
+ 1266 0978 100000AE 	sw $0,16($16)
+ 1267 097c 2000BFDF 	ld $31,32($sp)
+ 1268 0980 1000B1DF 	ld $17,16($sp)
+ 1269 0984 0000B0DF 	ld $16,0($sp)
+ 1270              	
+ 1271              	.set noreorder
+ 1272              	.set nomacro
+ 1273 0988 0800E003 	j $31
+ 1274 098c 3000BD27 	addu $sp,$sp,48
+ 1275              	.set macro
+ 1276              	.set reorder
+ 1277              	
+ 1278              	.p2align 3
+ 1279              	$L104:
+ 1280 0990 0000000C 	jal __assert
+ 1280      00000000 
+ 1281              	.set noreorder
+ 1282              	.set nomacro
+ 1283 0998 EFFF0010 	b $L101
+ 1284 099c 1400038E 	lw $3,20($16)
+ 1285              	.set macro
+ 1286              	.set reorder
+ 1287              	
+ 1288              	.p2align 3
+ 1289              	$L103:
+ 1290 09a0 0000000C 	jal __assert
+ 1290      00000000 
+ 1291              	.set noreorder
+ 1292              	.set nomacro
+ 1293 09a8 E5FF0010 	b $L105
+ 1294 09ac 1400038E 	lw $3,20($16)
+ 1295              	.set macro
+ 1296              	.set reorder
+ 1297              	
+ 1298              	.end GSGifTagClose
+ 1299              	$Lfe21:
+ 1300              	.size GSGifTagClose,$Lfe21-GSGifTagClose
+ 1301              	.section .bss
+ 1302              	_GSList_List:
+ 1303              	.align 3
+ 1304 0000 00000000 	.space 28
+ 1304      00000000 
+ 1304      00000000 
+GAS LISTING  			page 25
+
+
+ 1304      00000000 
+ 1304      00000000 
+ 1305 001c 00000000 	.previous
+ 1306              	.ident "GCC: (GNU) 3.2.2"

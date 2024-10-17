@@ -25,19 +25,23 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVCoreObjCBridge;
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+@protocol ObjCBridgedCoreBridge;
+@protocol PVNESSystemResponderClient;
 
 #pragma clang diagnostic push
-#pragma clang diagnostic error "-Wall"
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
+@interface PVFCEUEmulatorCoreBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVNESSystemResponderClient> {
+#pragma clang diagnostic pop
 
-@interface PVFCEUEmulatorCore : PVEmulatorCore {
-    uint32_t pad[2][PVNESButtonCount];
+    uint32_t pad[2][12];
 }
 
 - (void)internalSwapDisc:(NSUInteger)discNumber;
 
 @end
 
-#pragma clang diagnostic pop
-
+NS_HEADER_AUDIT_END(nullability, sendability)

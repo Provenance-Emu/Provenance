@@ -69,12 +69,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0DCED3C60E6F419B9BE0DEDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */ = {isa = PBXBuildFile; fileRef = 524343652FF24D29A5AD11E6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */; };
-		3CE7D8D7F7D747F5A221C480 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 107B1C9001014F4C935EB92D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */; };
-		91ECCF112B81439180A4066A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */ = {isa = PBXBuildFile; fileRef = A1577BEFBFFC42D7894AC733 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */; };
-		A466C1E0D4524A6A901C8112 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */ = {isa = PBXBuildFile; fileRef = 523F4567AB88424AA7DE1B86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */; };
-		E677BBE5322746B481850A61 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 72E99EE8AD8D40409D77D94D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */; };
-		F013FE26B8214451B8ABF0B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */ = {isa = PBXBuildFile; fileRef = B2748D211F6840C2B53089A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */; };
+		0DCED3C60E6F419B9BE0DEDC /* ../Play-/deps/Framework/src/openal/Source.cpp */ = {isa = PBXBuildFile; fileRef = 524343652FF24D29A5AD11E6 /* ../Play-/deps/Framework/src/openal/Source.cpp */; };
+		3CE7D8D7F7D747F5A221C480 /* ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 107B1C9001014F4C935EB92D /* ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */; };
+		91ECCF112B81439180A4066A /* ../Play-/deps/Framework/src/openal/Context.cpp */ = {isa = PBXBuildFile; fileRef = A1577BEFBFFC42D7894AC733 /* ../Play-/deps/Framework/src/openal/Context.cpp */; };
+		A466C1E0D4524A6A901C8112 /* ../Play-/deps/Framework/src/openal/Buffer.cpp */ = {isa = PBXBuildFile; fileRef = 523F4567AB88424AA7DE1B86 /* ../Play-/deps/Framework/src/openal/Buffer.cpp */; };
+		E677BBE5322746B481850A61 /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 72E99EE8AD8D40409D77D94D /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */; };
+		F013FE26B8214451B8ABF0B5 /* ../Play-/deps/Framework/src/openal/Device.cpp */ = {isa = PBXBuildFile; fileRef = B2748D211F6840C2B53089A2 /* ../Play-/deps/Framework/src/openal/Device.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -147,14 +147,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		107B1C9001014F4C935EB92D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist; sourceTree = "<absolute>"; };
+		107B1C9001014F4C935EB92D /* ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist; sourceTree = "<absolute>"; };
 		4149F9E28C1C4FEFA1AF8925 /* Framework_OpenAl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFramework_OpenAl.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		523F4567AB88424AA7DE1B86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Buffer.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp"; sourceTree = "<absolute>"; };
-		524343652FF24D29A5AD11E6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Source.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp"; sourceTree = "<absolute>"; };
-		72E99EE8AD8D40409D77D94D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		A1577BEFBFFC42D7894AC733 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Context.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp"; sourceTree = "<absolute>"; };
-		B2748D211F6840C2B53089A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Device.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp"; sourceTree = "<absolute>"; };
-		E3E2F8FFCEBC4B3FA6C015A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		523F4567AB88424AA7DE1B86 /* ../Play-/deps/Framework/src/openal/Buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Buffer.cpp; path = "../Play-/deps/Framework/src/openal/Buffer.cpp"; sourceTree = "<absolute>"; };
+		524343652FF24D29A5AD11E6 /* ../Play-/deps/Framework/src/openal/Source.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Source.cpp; path = "../Play-/deps/Framework/src/openal/Source.cpp"; sourceTree = "<absolute>"; };
+		72E99EE8AD8D40409D77D94D /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		A1577BEFBFFC42D7894AC733 /* ../Play-/deps/Framework/src/openal/Context.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Context.cpp; path = "../Play-/deps/Framework/src/openal/Context.cpp"; sourceTree = "<absolute>"; };
+		B2748D211F6840C2B53089A2 /* ../Play-/deps/Framework/src/openal/Device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Device.cpp; path = "../Play-/deps/Framework/src/openal/Device.cpp"; sourceTree = "<absolute>"; };
+		E3E2F8FFCEBC4B3FA6C015A5 /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,7 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				D97624A318B44371B1806F24 /* CMake Rules */,
-				E3E2F8FFCEBC4B3FA6C015A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */,
+				E3E2F8FFCEBC4B3FA6C015A5 /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -191,10 +191,10 @@
 		6E0AB595C1A24EF786905A89 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				523F4567AB88424AA7DE1B86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */,
-				A1577BEFBFFC42D7894AC733 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */,
-				B2748D211F6840C2B53089A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */,
-				524343652FF24D29A5AD11E6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */,
+				523F4567AB88424AA7DE1B86 /* ../Play-/deps/Framework/src/openal/Buffer.cpp */,
+				A1577BEFBFFC42D7894AC733 /* ../Play-/deps/Framework/src/openal/Context.cpp */,
+				B2748D211F6840C2B53089A2 /* ../Play-/deps/Framework/src/openal/Device.cpp */,
+				524343652FF24D29A5AD11E6 /* ../Play-/deps/Framework/src/openal/Source.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -209,7 +209,7 @@
 		925D0D77C5264575AEE99B26 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				107B1C9001014F4C935EB92D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */,
+				107B1C9001014F4C935EB92D /* ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -241,7 +241,7 @@
 			children = (
 				6E0AB595C1A24EF786905A89 /* Source Files */,
 				925D0D77C5264575AEE99B26 /* Resources */,
-				72E99EE8AD8D40409D77D94D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */,
+				72E99EE8AD8D40409D77D94D /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */,
 			);
 			name = Framework_OpenAl;
 			sourceTree = "<group>";
@@ -314,19 +314,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -360,19 +360,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -388,25 +388,25 @@ fi
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/ZERO_CHECK			);
+../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  make -f ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  make -f ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  make -f ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  make -f ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -469,19 +469,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -512,24 +512,24 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/ALL_BUILD			);
+../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
+  cd ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl
   echo Build\\ all\\ projects
 fi
 ";
@@ -542,10 +542,10 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A466C1E0D4524A6A901C8112 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */,
-				91ECCF112B81439180A4066A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */,
-				F013FE26B8214451B8ABF0B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */,
-				0DCED3C60E6F419B9BE0DEDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */,
+				A466C1E0D4524A6A901C8112 /* ../Play-/deps/Framework/src/openal/Buffer.cpp */,
+				91ECCF112B81439180A4066A /* ../Play-/deps/Framework/src/openal/Context.cpp */,
+				F013FE26B8214451B8ABF0B5 /* ../Play-/deps/Framework/src/openal/Device.cpp */,
+				0DCED3C60E6F419B9BE0DEDC /* ../Play-/deps/Framework/src/openal/Source.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -596,7 +596,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -860,7 +860,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -891,7 +891,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -980,7 +980,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;

@@ -1,0 +1,252 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/prof.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 2
+   6              	.type _Prof_nFrames,@object
+   7              	.size _Prof_nFrames,4
+   8              	_Prof_nFrames:
+   9 0000 00000000 	.word 0
+  10              	.text
+  11              	.align 2
+  12              	.p2align 3,,7
+  13              	.globl ProfInit
+  14              	.ent ProfInit
+  15              	ProfInit:
+  16              	.frame $sp,48,$31
+  17              	.mask 0x80030000,-16
+  18              	.fmask 0x00000000,0
+  19 0000 D0FFBD27 	subu $sp,$sp,48
+  20 0004 0000B0FF 	sd $16,0($sp)
+  21 0008 0000103C 	lui $16,%hi(_Prof_Log)
+  22 000c 1000B1FF 	sd $17,16($sp)
+  23 0010 00001026 	addiu $16,$16,%lo(_Prof_Log)
+  24 0014 2000BFFF 	sd $31,32($sp)
+  25              	.set noreorder
+  26              	.set nomacro
+  27 0018 0000000C 	jal ProfCtrInit
+  28 001c 2D888000 	move $17,$4
+  29              	.set macro
+  30              	.set reorder
+  31              	
+  32 0020 2D200002 	move $4,$16
+  33              	.set noreorder
+  34              	.set nomacro
+  35 0024 0000000C 	jal ProfLogNew
+  36 0028 2D282002 	move $5,$17
+  37              	.set macro
+  38              	.set reorder
+  39              	
+  40              	.set noreorder
+  41              	.set nomacro
+  42 002c 0000000C 	jal ProfLogBegin
+  43 0030 2D200002 	move $4,$16
+  44              	.set macro
+  45              	.set reorder
+  46              	
+  47 0034 0000B0DF 	ld $16,0($sp)
+  48 0038 2000BFDF 	ld $31,32($sp)
+  49 003c 0000033C 	lui $3,%hi(Prof_pLogEntry)
+  50 0040 1000B1DF 	ld $17,16($sp)
+  51 0044 000062AC 	sw $2,%lo(Prof_pLogEntry)($3)
+  52              	.set noreorder
+  53              	.set nomacro
+  54 0048 0800E003 	j $31
+  55 004c 3000BD27 	addu $sp,$sp,48
+  56              	.set macro
+  57              	.set reorder
+GAS LISTING  			page 2
+
+
+  58              	
+  59              	.end ProfInit
+  60              	$Lfe1:
+  61              	.size ProfInit,$Lfe1-ProfInit
+  62              	.align 2
+  63              	.p2align 3,,7
+  64              	.globl ProfShutdown
+  65              	.ent ProfShutdown
+  66              	ProfShutdown:
+  67              	.frame $sp,32,$31
+  68              	.mask 0x80010000,-16
+  69              	.fmask 0x00000000,0
+  70 0050 E0FFBD27 	subu $sp,$sp,32
+  71 0054 0000023C 	lui $2,%hi(Prof_pLogEntry)
+  72 0058 0000B0FF 	sd $16,0($sp)
+  73 005c 0000103C 	lui $16,%hi(_Prof_Log)
+  74 0060 0000458C 	lw $5,%lo(Prof_pLogEntry)($2)
+  75 0064 00001026 	addiu $16,$16,%lo(_Prof_Log)
+  76 0068 1000BFFF 	sd $31,16($sp)
+  77              	.set noreorder
+  78              	.set nomacro
+  79 006c 0000000C 	jal ProfLogEnd
+  80 0070 2D200002 	move $4,$16
+  81              	.set macro
+  82              	.set reorder
+  83              	
+  84              	.set noreorder
+  85              	.set nomacro
+  86 0074 0000000C 	jal ProfLogDelete
+  87 0078 2D200002 	move $4,$16
+  88              	.set macro
+  89              	.set reorder
+  90              	
+  91 007c 0000000C 	jal ProfCtrShutdown
+  91      00000000 
+  92 0084 0000B0DF 	ld $16,0($sp)
+  93 0088 1000BFDF 	ld $31,16($sp)
+  94              	
+  95              	.set noreorder
+  96              	.set nomacro
+  97 008c 0800E003 	j $31
+  98 0090 2000BD27 	addu $sp,$sp,32
+  99              	.set macro
+ 100              	.set reorder
+ 101              	
+ 102              	.end ProfShutdown
+ 103              	$Lfe2:
+ 104              	.size ProfShutdown,$Lfe2-ProfShutdown
+ 105              	.align 2
+ 106 0094 00000000 	.p2align 3,,7
+ 107              	.globl ProfStartProfile
+ 108              	.ent ProfStartProfile
+ 109              	ProfStartProfile:
+ 110              	.frame $sp,0,$31
+ 111              	.mask 0x00000000,0
+ 112              	.fmask 0x00000000,0
+ 113 0098 0000023C 	lui $2,%hi(_Prof_nFrames)
+GAS LISTING  			page 3
+
+
+ 114              	.set noreorder
+ 115              	.set nomacro
+ 116 009c 0800E003 	j $31
+ 117 00a0 000044AC 	sw $4,%lo(_Prof_nFrames)($2)
+ 118              	.set macro
+ 119              	.set reorder
+ 120              	
+ 121              	.end ProfStartProfile
+ 122              	$Lfe3:
+ 123              	.size ProfStartProfile,$Lfe3-ProfStartProfile
+ 124              	.align 2
+ 125 00a4 00000000 	.p2align 3,,7
+ 126              	.globl ProfProcess
+ 127              	.ent ProfProcess
+ 128              	ProfProcess:
+ 129              	.frame $sp,48,$31
+ 130              	.mask 0x80030000,-16
+ 131              	.fmask 0x00000000,0
+ 132 00a8 D0FFBD27 	subu $sp,$sp,48
+ 133 00ac 1000B1FF 	sd $17,16($sp)
+ 134 00b0 0000B0FF 	sd $16,0($sp)
+ 135 00b4 2000BFFF 	sd $31,32($sp)
+ 136              	.set noreorder
+ 137              	.set nomacro
+ 138 00b8 0000000C 	jal ProfCtrReset
+ 139 00bc 0000113C 	lui $17,%hi(Prof_pLogEntry)
+ 140              	.set macro
+ 141              	.set reorder
+ 142              	
+ 143 00c0 0000063C 	lui $6,%hi(_Prof_nFrames)
+ 144 00c4 0000023C 	lui $2,%hi(_Prof_Log)
+ 145 00c8 0000C38C 	lw $3,%lo(_Prof_nFrames)($6)
+ 146 00cc 00005024 	addiu $16,$2,%lo(_Prof_Log)
+ 147 00d0 2D200002 	move $4,$16
+ 148              	.set noreorder
+ 149              	.set nomacro
+ 150 00d4 12006018 	blez $3,$L5
+ 151 00d8 FFFF6524 	addu $5,$3,-1
+ 152              	.set macro
+ 153              	.set reorder
+ 154              	
+ 155              	.set noreorder
+ 156              	.set nomacro
+ 157 00dc 0600A010 	beq $5,$0,$L9
+ 158 00e0 0000C5AC 	sw $5,%lo(_Prof_nFrames)($6)
+ 159              	.set macro
+ 160              	.set reorder
+ 161              	
+ 162              	$L4:
+ 163 00e4 2000BFDF 	ld $31,32($sp)
+ 164 00e8 1000B1DF 	ld $17,16($sp)
+ 165 00ec 0000B0DF 	ld $16,0($sp)
+ 166              	
+ 167              	.set noreorder
+ 168              	.set nomacro
+ 169 00f0 0800E003 	j $31
+ 170 00f4 3000BD27 	addu $sp,$sp,48
+GAS LISTING  			page 4
+
+
+ 171              	.set macro
+ 172              	.set reorder
+ 173              	
+ 174              	.p2align 3
+ 175              	$L9:
+ 176              	.set noreorder
+ 177              	.set nomacro
+ 178 00f8 0000000C 	jal ProfLogEnd
+ 179 00fc 0000258E 	lw $5,%lo(Prof_pLogEntry)($17)
+ 180              	.set macro
+ 181              	.set reorder
+ 182              	
+ 183              	
+ 184 0100 2D280000 	move $5,$0
+ 185 0104 2D200002 	move $4,$16
+ 186              	.set noreorder
+ 187              	.set nomacro
+ 188 0108 0000000C 	jal ProfLogPrint
+ 189 010c 01000624 	li $6,1
+ 190              	.set macro
+ 191              	.set reorder
+ 192              	
+ 193              	$L8:
+ 194              	.set noreorder
+ 195              	.set nomacro
+ 196 0110 0000000C 	jal ProfLogBegin
+ 197 0114 2D200002 	move $4,$16
+ 198              	.set macro
+ 199              	.set reorder
+ 200              	
+ 201              	.set noreorder
+ 202              	.set nomacro
+ 203 0118 F2FF0010 	b $L4
+ 204 011c 000022AE 	sw $2,%lo(Prof_pLogEntry)($17)
+ 205              	.set macro
+ 206              	.set reorder
+ 207              	
+ 208              	.p2align 3
+ 209              	$L5:
+ 210              	.set noreorder
+ 211              	.set nomacro
+ 212 0120 0000000C 	jal ProfLogEnd
+ 213 0124 0000258E 	lw $5,%lo(Prof_pLogEntry)($17)
+ 214              	.set macro
+ 215              	.set reorder
+ 216              	
+ 217 0128 F9FF0010 	b $L8
+ 217      00000000 
+ 218              	.end ProfProcess
+ 219              	$Lfe4:
+ 220              	.size ProfProcess,$Lfe4-ProfProcess
+ 221              	.globl Prof_pLogEntry
+ 222              	.data
+ 223              	.align 2
+ 224              	.type Prof_pLogEntry,@object
+ 225              	.size Prof_pLogEntry,4
+ 226              	Prof_pLogEntry:
+GAS LISTING  			page 5
+
+
+ 227 0004 00000000 	.space 4
+ 228              	.section .bss
+ 229              	_Prof_Log:
+ 230              	.align 3
+ 231 0000 00000000 	.space 12
+ 231      00000000 
+ 231      00000000 
+ 232 000c 00000000 	.previous
+ 233              	.ident "GCC: (GNU) 3.2.2"

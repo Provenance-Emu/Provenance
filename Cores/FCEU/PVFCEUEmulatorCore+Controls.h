@@ -7,11 +7,13 @@
 //
 
 #import <PVFCEU/PVFCEU.h>
-#import <PVSupport/PVSupport-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVFCEUEmulatorCore (Controls) <PVNESSystemResponderClient>
+@protocol PVNESSystemResponderClient;
+typedef enum PVNESButton: NSInteger PVNESButton;
+
+@interface PVFCEUEmulatorCoreBridge (Controls) <PVNESSystemResponderClient>
 
 - (void)didPushNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
 - (void)didReleaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player;

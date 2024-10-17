@@ -1,0 +1,125 @@
+name: Continuous Integration
+
+on: [push, pull_request]
+
+jobs:
+  build_and_coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: configure
+      run: |
+        LDFLAGS="$CFLAGS" ./autogen.sh  \
+            --enable-coverage
+    - name: make
+      run: make -j
+    - name: make check
+      run: |
+        make -j check || (cat test/test-suite.log; false)
+    - name: Generate coverage reports
+      run: |
+        ./gencov lib/*.c src/*.c
+        mkdir artifacts
+        tar cf - lib/*.gcov src/*.gcov | tar -C artifacts -xf -
+    - name: Upload coverage-annotated source files
+      uses: actions/upload-artifact@v1
+      with:
+        path: "artifacts"
+        name: coverage_reports
+
+  ubsan_build:
+    runs-on: ubuntu-latest
+    env:
+      CC: clang
+      # TODO: Add -fsanitize=address and memory too.
+      CFLAGS: "-fsanitize=undefined
+               -fno-omit-frame-pointer
+               -fno-sanitize-recover=all
+               -fno-sanitize=shift-base"
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: sudo apt -q install valgrind
+    - name: configure
+      run: |
+        LDFLAGS="$CFLAGS" ./autogen.sh
+    - name: make check
+      run: |
+        make -j check || (cat test/test-suite.log; false)
+
+  windows_x86_build:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - name: Setup msys2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW32
+        update: true
+        install: base-devel git autoconf automake libtool groff zip dos2unix mingw-w64-i686-gcc
+    - uses: actions/checkout@v3
+    - name: Find Git version
+      id: version
+      run: |
+        export VERSION=$(git rev-parse --short HEAD)
+        echo "VERSION=$VERSION-win32" >> $GITHUB_OUTPUT
+
+    # TODO: --disable-shared is here because pkg/win32 doesn't package the dll..
+    - name: configure
+      run: ./autogen.sh --disable-shared --host=i686-w64-mingw32
+    - name: make
+      run: make -j
+    # TODO: Tests are not currently run on Windows
+    - name: Make windows package
+      run: |
+        cd pkg/win32
+        make
+    - name: Upload build
+      uses: actions/upload-artifact@v1
+      with:
+        path: "pkg/win32/staging"
+        name: lhasa-${{steps.version.outputs.VERSION}}
+
+  windows_x64_build:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - name: Setup msys2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: base-devel git autoconf automake libtool groff zip dos2unix mingw-w64-x86_64-gcc
+    - uses: actions/checkout@v3
+    - name: Find Git version
+      id: version
+      run: |
+        export VERSION=$(git rev-parse --short HEAD)
+        echo "VERSION=$VERSION-win64" >> $GITHUB_OUTPUT
+
+    # TODO: --disable-shared is here because pkg/win64 doesn't package the dll..
+    - name: configure
+      run: ./autogen.sh --disable-shared --host=x86_64-w64-mingw32
+    - name: make
+      run: make -j
+    # TODO: Tests are not currently run on Windows
+    # TODO: win64 packaging requires updated pkg directory
+    #- name: Make windows package
+    #  run: |
+    #    cd pkg/win64
+    #    make
+    #- name: Upload build
+    #  uses: actions/upload-artifact@v1
+    #  with:
+    #    path: "pkg/win64/staging"
+    #    name: lhasa-${{steps.version.outputs.VERSION}}

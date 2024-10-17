@@ -176,9 +176,9 @@ else ifneq (,$(findstring ios,$(platform)))
 			CXX = c++ -arch armv7 -isysroot $(IOSSDK)
 		endif
 		ifeq ($(platform),$(filter $(platform),ios9 ios-arm64))
-			CFLAGS += -miphoneos-version-min=8.0
-			CXXFLAGS += -miphoneos-version-min=8.0 -stdlib=libc++
-			LDFLAGS += -miphoneos-version-min=8.0 -stdlib=libc++
+			CFLAGS += -miphoneos-version-min=12.0
+			CXXFLAGS += -miphoneos-version-min=12.0 -stdlib=libc++
+			LDFLAGS += -miphoneos-version-min=12.0 -stdlib=libc++
 		else
 			CFLAGS += -miphoneos-version-min=5.0
 			CXXFLAGS += -miphoneos-version-min=5.0 -stdlib=libc++
@@ -534,8 +534,8 @@ else ifneq (,$(findstring armv,$(platform)))
 	# Platform affix = classic_<ISA>_<ﾂｵARCH>
 	# Help at https://modmyclassic.com/comp
 
-	# (armv7 a7, hard point, neon based) ### 
-	# NESC, SNESC, C64 mini 
+	# (armv7 a7, hard point, neon based) ###
+	# NESC, SNESC, C64 mini
 	ifeq ($(platform), classic_armv7_a7)
 		TARGET := $(TARGET_NAME)_libretro.so
 		fpic := -fPIC
@@ -626,8 +626,8 @@ else ifeq ($(platform), gcw0)
 else ifeq ($(platform), wincross64)
 	AR = x86_64-w64-mingw32-ar
 	CC = x86_64-w64-mingw32-gcc
-	CXX = x86_64-w64-mingw32-g++ 
-	CFLAGS += -D_WIN32 -D__WIN32__ -DHAVE_SNPRINTF -DHAVE_VSNPRINTF -D__USE_MINGW_ANSI_STDIO=1 -DDEBUG_MAIN=1 -DDEBUG_CMDLINE=1 -DHAVE_NETWORK 
+	CXX = x86_64-w64-mingw32-g++
+	CFLAGS += -D_WIN32 -D__WIN32__ -DHAVE_SNPRINTF -DHAVE_VSNPRINTF -D__USE_MINGW_ANSI_STDIO=1 -DDEBUG_MAIN=1 -DDEBUG_CMDLINE=1 -DHAVE_NETWORK
 
 	TARGET := $(TARGET_NAME)_libretro.dll
 	LDFLAGS += --shared -static-libgcc -static-libstdc++ -Wl,--version-script=link.T -L/usr/x86_64-w64-mingw32/lib
@@ -914,7 +914,7 @@ ifeq ($(HAS_GCC), 1)
 endif
 
 OBJOUT = -o
-LINKOUT = -o 
+LINKOUT = -o
 
 ifneq (,$(findstring msvc,$(platform)))
 	OBJOUT = -Fo
@@ -973,4 +973,3 @@ uninstall:
 
 .PHONY: clean clean-objs
 endif
-

@@ -1,0 +1,8 @@
+filename: gpl-2.gz
+compress_method: -pm0-
+compressed_length: 6912
+length: 6912
+header_level: 0
+os_type: 0
+crc: 39cc
+--
