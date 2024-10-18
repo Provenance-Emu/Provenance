@@ -447,7 +447,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                 return Section(header: "Search Results", items: games.map { .game($0) }, collapsible: nil)
             })
             .startWith(nil)
-        let hideBios:[String:Bool] = RomDatabase.sharedInstance.getBIOSCache().values.joined()
+        let hideBios:[String:Bool] = RomDatabase.sharedInstance.getBIOSCacheSync().values.joined()
             .reduce(into: [:]){
                 (hideBios, bios) in
                 let biosInfo=bios.components(separatedBy: "|")

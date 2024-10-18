@@ -203,16 +203,18 @@ extension PVRootViewController: UIDocumentPickerDelegate {
 
         let importPath = Paths.romsImportPath
 
+        var securityScoped = false
+        
         sortedUrls.forEach { url in
             defer {
-                url.stopAccessingSecurityScopedResource()
+                if securityScoped {
+                    url.stopAccessingSecurityScopedResource()
+                }
             }
-
+            
             // Doesn't seem we need access in dev builds?
-            guard url.startAccessingSecurityScopedResource() else {
-                ELOG("startAccessingSecurityScopedResource failed")
-                return
-            }
+            // if this returns false, we don't need to balance with a stop call, so just hang on to the value
+            securityScoped = url.startAccessingSecurityScopedResource()
 
             let fileName = url.lastPathComponent
             let destination: URL

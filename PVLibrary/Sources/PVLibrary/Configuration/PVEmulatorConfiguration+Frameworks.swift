@@ -73,7 +73,8 @@ public extension PVEmulatorConfiguration {
                 ELOG("Failed to register core \(corePlist.identifier)")
             }
         }
-        RomDatabase.sharedInstance.refresh()
+        //this calls refresh anyway
+        RomDatabase.sharedInstance.reloadCache()
     }
 
     class func updateSystems(fromPlists plists: [URL]) async {
@@ -171,7 +172,8 @@ public extension PVEmulatorConfiguration {
                     database.realm.add(newBIOS)
                 } else {
                     database.refresh()
-                    try! database.add(newBIOS)
+                    //avoids conflicts if two BIOS share the same name - looking at you jagboot.rom
+                    try! database.add(newBIOS, update: true)
                 }
             }
         }

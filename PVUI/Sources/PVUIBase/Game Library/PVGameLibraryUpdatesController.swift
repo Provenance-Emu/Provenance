@@ -99,7 +99,7 @@ public final class PVGameLibraryUpdatesController: Sendable {
                 PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
                     .map { file in (
                         path: file,
-                        candidates: RomDatabase.sharedInstance.getSystemCache().values
+                        candidates: RomDatabase.sharedInstance.getSystemCacheSync().values
                             .filter{ $0.supportedExtensions.contains(file.pathExtension.lowercased() )}
                             .map{ $0.asDomain() }
                         //PVSystem.all.filter { $0.supportedExtensions.contains(file.pathExtension.lowercased() )}.map { $0.asDomain() }
@@ -114,8 +114,8 @@ public final class PVGameLibraryUpdatesController: Sendable {
         ILOG("PVGameLibrary: Starting Import")
         RomDatabase.sharedInstance.reloadCache()
         RomDatabase.sharedInstance.reloadFileSystemROMCache()
-        let dbGames: [AnyHashable: PVGame] = RomDatabase.sharedInstance.getGamesCache()
-        let dbSystems: [AnyHashable: PVSystem] = RomDatabase.sharedInstance.getSystemCache()
+        let dbGames: [AnyHashable: PVGame] = await RomDatabase.sharedInstance.getGamesCache()
+        let dbSystems: [AnyHashable: PVSystem] = await RomDatabase.sharedInstance.getSystemCache()
         let disposeBag = DisposeBag()
         await dbSystems.values.asyncForEach({ system in
             ILOG("PVGameLibrary: Importing \(system.identifier)")
