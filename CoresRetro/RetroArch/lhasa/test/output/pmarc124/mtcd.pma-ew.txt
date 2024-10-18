@@ -1,0 +1,2 @@
+/tmp/extract2/dir/mtcd.doc	- Melting  :  ./tmp/extract2/dir/mtcd.doc	- Melting  :  o/tmp/extract2/dir/mtcd.doc	- Melted  
+/tmp/extract2/dir/cd.mtc	- Melting  :  ./tmp/extract2/dir/cd.mtc	- Melting  :  o/tmp/extract2/dir/cd.mtc	- Melted  

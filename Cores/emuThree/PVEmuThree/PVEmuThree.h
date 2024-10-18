@@ -15,4 +15,4 @@ FOUNDATION_EXPORT double PVEmuThreeVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVEmuThreeVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVEmuThree/PublicHeader.h>
-#import <PVEmuThree/PVEmuThreeCore.h>
+#import <PVEmuThree/PVEmuThreeCoreBridge.h>

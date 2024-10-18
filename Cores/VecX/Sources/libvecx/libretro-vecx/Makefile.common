@@ -1,0 +1,41 @@
+LIBRETRO_COMM_DIR := $(CORE_DIR)/libretro-common
+INCFLAGS     := -I$(CORE_DIR) \
+                -I$(LIBRETRO_COMM_DIR)/include
+
+COREDEFINES   = -D__LIBRETRO__ -DHAVE_STRINGS_H -DHAVE_STDINT_H -DHAVE_INTTYPES_H 
+
+ifneq (,$(findstring msvc2003,$(platform)))
+   INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
+endif
+
+ifneq (,$(findstring msvc,$(platform)))
+   COREDEFINES += -DINLINE=_inline
+else
+   COREDEFINES += -DINLINE=inline
+endif
+
+ifeq ($(HAS_GPU), 1)
+	COREDEFINES += -DHAS_GPU
+endif
+
+SOURCES_C  := $(CORE_DIR)/e6809.c \
+              $(CORE_DIR)/e8910.c \
+              $(CORE_DIR)/libretro.c \
+              $(CORE_DIR)/vecx.c
+
+ifeq ($(HAS_GPU), 1)
+   INCFLAGS   += -I$(LIBRETRO_COMM_DIR)/include
+   SOURCES_C  += $(LIBRETRO_COMM_DIR)/glsym/rglgen.c
+
+   ifeq ($(GLES), 1)
+      COREDEFINES += -DHAVE_OPENGLES2
+   endif
+ifneq ($(STATIC_LINKING),1)
+   ifeq ($(GLES), 1)
+      SOURCES_C += $(LIBRETRO_COMM_DIR)/glsym/glsym_es2.c
+   else
+      SOURCES_C += $(LIBRETRO_COMM_DIR)/glsym/glsym_gl.c
+   endif
+endif
+
+endif

@@ -8,7 +8,8 @@
 
 #import <PVMelonDS/PVMelonDS.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
+@import PVCoreBridge;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
@@ -51,7 +52,7 @@ typedef unsigned int   u32;
 //u32 vks[4];
 //s8 joyx[4], joyy[4];
 
-@implementation PVMelonDSCore (Controls)
+@implementation PVMelonDSCoreBridge (Controls)
 
 - (void)initControllBuffers {
 //    memset(&kcode, 0xFFFF, sizeof(kcode));

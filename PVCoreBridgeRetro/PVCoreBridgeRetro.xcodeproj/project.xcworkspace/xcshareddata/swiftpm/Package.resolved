@@ -1,0 +1,33 @@
+{
+  "originHash" : "55d31b41d4c65024c1ce9c2ce3497f1e331942e43f0bc89b32d1c75df4124cfa",
+  "pins" : [
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
+      }
+    },
+    {
+      "identity" : "swiftmacros",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/SwiftMacros.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c7430902f056432a07803f8580263b4acd7753f1"
+      }
+    }
+  ],
+  "version" : 3
+}

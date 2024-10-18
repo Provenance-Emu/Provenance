@@ -1,0 +1,140 @@
+-------------------------
+Hardware scaling+rotation
+-------------------------
+
+All Japan Female Pro Wrestling
+	Crazy zoom effects in the intro.
+
+Anime Freak FX Vol. 1
+	Staff List text special effects.
+
+Anime Freak FX Vol. 2
+	Crazy zoom effects in the intro.
+
+Anime Freak FX Vol. 3
+	Staff List text special effects.
+
+Chip Chan Kick
+	Name entry screen.
+
+Cutey Honey FX
+	Map zoomin/zoomout.
+
+Der Langrisser FX
+	Progress/Map(?) when starting a new scenario.
+
+First Kiss Monogatari
+	Billboard current-day transition screen.
+
+Kishin Douji Zenki Vajura Fight FX
+	Screen blorping after defeating Marubasu. Outside level where you fight the
+	possessed frog for effects on one of the backgrounds. (Other places too???)
+
+Kokuu Hyouryuu Nirgends
+	While flying.
+
+Konpeki no Kantai
+	Overhead map screen.
+
+Last Imperial Prince
+	Title screen is flipped into place.
+
+Lunatic Dawn
+	Map screen.
+
+Megami Paradise II
+	Area transitions.
+
+Miraculum
+	Title screen, and in the air ship.
+
+Return to Zork
+	Background scaling.
+
+Super Power League FX
+	Baseball field.
+
+Tonari no Princess Rolfee
+	Scene transitions(sometimes).
+
+Tyoushin Heiki Zeroigar
+	Second stage boss.
+
+
+
+------------------
+256 color VDC mode
+------------------
+
+Angelique Tenkuu no Requim
+
+Angelique Special 2
+
+Chip Chan Kick
+	Cybertech Custom screen, cutscenes.
+
+Ojousama Sousamou
+
+Tokimeki Card Paradise
+
+
+
+---------------
+Back cellophane
+---------------
+
+Last Imperial Prince
+	Screen darkening during dialogue, and upper/lower screen greenish tint bug afterwards...uses a non-black CCR value!
+
+Lunatic Dawn
+	Background fadeouts.
+
+PCE Fan Special CDROM Vol 2
+	Fadeouts and fadeins.
+
+Sotsuguyou 2
+	Fadeouts and fadeins.
+
+Team Innocent
+	Background fadeins.
+
+
+
+------------------------------------------------
+Bitstring Hardware I/O Map Mirrors in Memory Map
+------------------------------------------------
+
+Boundary Gate
+
+Super Power League FX
+
+
+
+----------------------------------
+KING BG mode/microprogram mismatch
+----------------------------------
+
+Megami Paradise II
+
+Tonari no Princess Rolfee
+
+
+
+------------------
+KING BG0 Subscreen
+------------------
+
+Angelique Special
+	Overhead map(probably a coding error on the game developers' part, but it's still
+	used to the extent that if it's not emulated, the map won't show).
+
+
+
+----------
+BIOS Notes
+----------
+
+CD+G Playback
+	Pausing/unpausing playback when playing a CD+G disc will cause corruption of the CD+G graphics.
+
+	Using the scan forward/reverse when playing a CD+G disc will cause massive corruption of the CD+G graphics. 

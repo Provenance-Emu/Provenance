@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -519,10 +519,9 @@
 		94E45B9E17E67C630079D59E /* sh2soc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sh2soc.c; sourceTree = "<group>"; };
 		B3411B57276B30AC00D85327 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3411B5C276B312C00D85327 /* libpicodrive.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpicodrive.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B34CB0EB2274B173009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3547B5C205858D800CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37937AC1D6BCF8100EBAE81 /* PVPicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B37937AE1D6BCF8100EBAE81 /* PVPicoDrive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPicoDrive.h; sourceTree = "<group>"; };
+		B37937AE1D6BCF8100EBAE81 /* PVPicoDrive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PVPicoDrive.h; path = ../include/PVPicoDrive.h; sourceTree = "<group>"; };
 		B37937AF1D6BCF8100EBAE81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B37937F81D6BDF4E00EBAE81 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -584,9 +583,11 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
+				B3547B5C205858D800CFF7D8 /* Core.plist */,
+				B37937AF1D6BCF8100EBAE81 /* Info.plist */,
 			);
 			name = Resources;
+			path = Sources/PVPicoDrive/Resources;
 			sourceTree = "<group>";
 		};
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
@@ -597,6 +598,7 @@
 				82287C34101E9DB40072172D /* PicodriveGameCore.m */,
 			);
 			name = Classes;
+			path = Sources/PVPicoDrive;
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -626,6 +628,7 @@
 				946B963417829B4600A212AC /* zlib */,
 			);
 			name = picodrive;
+			path = ../libpicodrive;
 			sourceTree = "<group>";
 		};
 		946B948C17829B4400A212AC /* cpu */ = {
@@ -1380,10 +1383,9 @@
 			isa = PBXGroup;
 			children = (
 				B37937AE1D6BCF8100EBAE81 /* PVPicoDrive.h */,
-				B3547B5C205858D800CFF7D8 /* Core.plist */,
-				B37937AF1D6BCF8100EBAE81 /* Info.plist */,
 			);
-			path = PicoDrive;
+			name = PicoDrive;
+			path = Sources/PVPicoDrive/include;
 			sourceTree = "<group>";
 		};
 		B37937F71D6BDF4E00EBAE81 /* Frameworks */ = {
@@ -1473,7 +1475,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				LastUpgradeCheck = 1300;
-				ORGANIZATIONNAME = "Provenance Emu";
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B3411B5B276B312C00D85327 = {
 						CreatedOnToolsVersion = 13.2;
@@ -1484,7 +1486,7 @@
 				};
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "PVPicoDrive" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -1492,6 +1494,7 @@
 				Base,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* GenesisPlus */;
+			minimizedProjectReferenceProxies = 1;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -1602,17 +1605,6 @@
 			targetProxy = B3411BA7276B315E00D85327 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B34CB0EB2274B173009134B4 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB913F08733D840010E9CD /* Debug */ = {
@@ -1806,7 +1798,7 @@
 					"\"$(SRCROOT)/pico\"",
 					"\"$(SRCROOT)\"",
 				);
-				INFOPLIST_FILE = PicoDrive/Info.plist;
+				INFOPLIST_FILE = PVPicoDrive/Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -1864,11 +1856,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../OpenEmu\"/**",
-					"\"$(SRCROOT)/openemu\"/**",
-					"\"$(SRCROOT)/platform/linux\"",
-					"\"$(SRCROOT)/pico\"",
-					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Sources/libpicodrive//platform/linux\"",
+					"\"$(SRCROOT)/Sources/libpicodrive/pico\"",
+					"\"$(SRCROOT)/Sources/libpicodrive/\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -1909,11 +1899,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../OpenEmu\"/**",
-					"\"$(SRCROOT)/openemu\"/**",
-					"\"$(SRCROOT)/platform/linux\"",
-					"\"$(SRCROOT)/pico\"",
-					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Sources/libpicodrive//platform/linux\"",
+					"\"$(SRCROOT)/Sources/libpicodrive/pico\"",
+					"\"$(SRCROOT)/Sources/libpicodrive/\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -1958,11 +1946,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../OpenEmu\"/**",
-					"\"$(SRCROOT)/openemu\"/**",
-					"\"$(SRCROOT)/platform/linux\"",
-					"\"$(SRCROOT)/pico\"",
-					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Sources/libpicodrive//platform/linux\"",
+					"\"$(SRCROOT)/Sources/libpicodrive/pico\"",
+					"\"$(SRCROOT)/Sources/libpicodrive/\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -2025,7 +2011,7 @@
 					"\"$(SRCROOT)/pico\"",
 					"\"$(SRCROOT)\"",
 				);
-				INFOPLIST_FILE = PicoDrive/Info.plist;
+				INFOPLIST_FILE = PVPicoDrive/Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -2087,7 +2073,7 @@
 					"\"$(SRCROOT)/pico\"",
 					"\"$(SRCROOT)\"",
 				);
-				INFOPLIST_FILE = PicoDrive/Info.plist;
+				INFOPLIST_FILE = PVPicoDrive/Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;

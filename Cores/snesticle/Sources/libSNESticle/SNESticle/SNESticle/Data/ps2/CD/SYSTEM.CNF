@@ -1,0 +1,3 @@
+BOOT2 = cdrom0:\SLPS_999.99;1
+VER = 1.10
+VMODE = NTSC

@@ -1,0 +1,199 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/zlib/zutil.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.globl z_errmsg
+   5              	.rdata
+   6              	.align 3
+   7              	$LC0:
+   8 0000 6E656564 	.ascii "need dictionary\000"
+   8      20646963 
+   8      74696F6E 
+   8      61727900 
+   9              	.align 3
+  10              	$LC1:
+  11 0010 73747265 	.ascii "stream end\000"
+  11      616D2065 
+  11      6E6400
+  12 001b 00000000 	.align 3
+  12      00
+  13              	$LC2:
+  14 0020 00       	.ascii "\000"
+  15 0021 00000000 	.align 3
+  15      000000
+  16              	$LC3:
+  17 0028 66696C65 	.ascii "file error\000"
+  17      20657272 
+  17      6F7200
+  18 0033 00000000 	.align 3
+  18      00
+  19              	$LC4:
+  20 0038 73747265 	.ascii "stream error\000"
+  20      616D2065 
+  20      72726F72 
+  20      00
+  21 0045 000000   	.align 3
+  22              	$LC5:
+  23 0048 64617461 	.ascii "data error\000"
+  23      20657272 
+  23      6F7200
+  24 0053 00000000 	.align 3
+  24      00
+  25              	$LC6:
+  26 0058 696E7375 	.ascii "insufficient memory\000"
+  26      66666963 
+  26      69656E74 
+  26      206D656D 
+  26      6F727900 
+  27 006c 00000000 	.align 3
+  28              	$LC7:
+  29 0070 62756666 	.ascii "buffer error\000"
+  29      65722065 
+  29      72726F72 
+  29      00
+  30 007d 000000   	.align 3
+  31              	$LC8:
+  32 0080 696E636F 	.ascii "incompatible version\000"
+  32      6D706174 
+  32      69626C65 
+GAS LISTING  			page 2
+
+
+  32      20766572 
+  32      73696F6E 
+  33              	.data
+  34              	.align 3
+  35              	.type z_errmsg,@object
+  36              	.size z_errmsg,40
+  37              	z_errmsg:
+  38 0000 00000000 	.word $LC0
+  39 0004 10000000 	.word $LC1
+  40 0008 20000000 	.word $LC2
+  41 000c 28000000 	.word $LC3
+  42 0010 38000000 	.word $LC4
+  43 0014 48000000 	.word $LC5
+  44 0018 58000000 	.word $LC6
+  45 001c 70000000 	.word $LC7
+  46 0020 80000000 	.word $LC8
+  47 0024 20000000 	.word $LC2
+  48              	.rdata
+  49 0095 000000   	.align 3
+  50              	$LC9:
+  51 0098 312E312E 	.ascii "1.1.3\000"
+  51      3300
+  52 009e 0000     	.text
+  53              	.align 2
+  54              	.p2align 3,,7
+  55              	.globl zlibVersion
+  56              	.ent zlibVersion
+  57              	zlibVersion:
+  58              	.frame $sp,0,$31
+  59              	.mask 0x00000000,0
+  60              	.fmask 0x00000000,0
+  61 0000 0000023C 	lui $2,%hi($LC9)
+  62              	.set noreorder
+  63              	.set nomacro
+  64 0004 0800E003 	j $31
+  65 0008 98004224 	addiu $2,$2,%lo($LC9)
+  66              	.set macro
+  67              	.set reorder
+  68              	
+  69              	.end zlibVersion
+  70              	$Lfe1:
+  71              	.size zlibVersion,$Lfe1-zlibVersion
+  72              	.align 2
+  73 000c 00000000 	.p2align 3,,7
+  74              	.globl zError
+  75              	.ent zError
+  76              	zError:
+  77              	.frame $sp,0,$31
+  78              	.mask 0x00000000,0
+  79              	.fmask 0x00000000,0
+  80 0010 02000324 	li $3,2
+  81 0014 0000023C 	lui $2,%hi(z_errmsg)
+  82 0018 23186400 	subu $3,$3,$4
+  83 001c 00004224 	addiu $2,$2,%lo(z_errmsg)
+  84 0020 80180300 	sll $3,$3,2
+  85 0024 21186200 	addu $3,$3,$2
+  86              	.set noreorder
+GAS LISTING  			page 3
+
+
+  87              	.set nomacro
+  88 0028 0800E003 	j $31
+  89 002c 0000628C 	lw $2,0($3)
+  90              	.set macro
+  91              	.set reorder
+  92              	
+  93              	.end zError
+  94              	$Lfe2:
+  95              	.size zError,$Lfe2-zError
+  96              	.align 2
+  97              	.p2align 3,,7
+  98              	.globl zcalloc
+  99              	.ent zcalloc
+ 100              	zcalloc:
+ 101              	.frame $sp,16,$31
+ 102              	.mask 0x80000000,-16
+ 103              	.fmask 0x00000000,0
+ 104 0030 2D20A000 	move $4,$5
+ 105 0034 F0FFBD27 	subu $sp,$sp,16
+ 106 0038 2D28C000 	move $5,$6
+ 107 003c 3C200400 	dsll $4,$4,32
+ 108 0040 3C280500 	dsll $5,$5,32
+ 109 0044 3E200400 	dsrl $4,$4,32
+ 110 0048 0000BFFF 	sd $31,0($sp)
+ 111              	.set noreorder
+ 112              	.set nomacro
+ 113 004c 0000000C 	jal calloc
+ 114 0050 3E280500 	dsrl $5,$5,32
+ 115              	.set macro
+ 116              	.set reorder
+ 117              	
+ 118 0054 0000BFDF 	ld $31,0($sp)
+ 119              	
+ 120              	.set noreorder
+ 121              	.set nomacro
+ 122 0058 0800E003 	j $31
+ 123 005c 1000BD27 	addu $sp,$sp,16
+ 124              	.set macro
+ 125              	.set reorder
+ 126              	
+ 127              	.end zcalloc
+ 128              	$Lfe3:
+ 129              	.size zcalloc,$Lfe3-zcalloc
+ 130              	.align 2
+ 131              	.p2align 3,,7
+ 132              	.globl zcfree
+ 133              	.ent zcfree
+ 134              	zcfree:
+ 135              	.frame $sp,16,$31
+ 136              	.mask 0x80000000,-16
+ 137              	.fmask 0x00000000,0
+ 138 0060 F0FFBD27 	subu $sp,$sp,16
+ 139 0064 0000BFFF 	sd $31,0($sp)
+ 140              	.set noreorder
+ 141              	.set nomacro
+ 142 0068 0000000C 	jal free
+ 143 006c 2D20A000 	move $4,$5
+GAS LISTING  			page 4
+
+
+ 144              	.set macro
+ 145              	.set reorder
+ 146              	
+ 147 0070 0000BFDF 	ld $31,0($sp)
+ 148              	
+ 149              	.set noreorder
+ 150              	.set nomacro
+ 151 0074 0800E003 	j $31
+ 152 0078 1000BD27 	addu $sp,$sp,16
+ 153              	.set macro
+ 154              	.set reorder
+ 155              	
+ 156              	.end zcfree
+ 157              	$Lfe4:
+ 158              	.size zcfree,$Lfe4-zcfree
+ 159 007c 00000000 	.ident "GCC: (GNU) 3.2.2"

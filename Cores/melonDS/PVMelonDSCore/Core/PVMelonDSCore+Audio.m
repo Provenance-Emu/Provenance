@@ -8,7 +8,7 @@
 
 #import "PVMelonDSCore+Audio.h"
 
-@implementation PVMelonDSCore (Audio)
+@implementation PVMelonDSCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
     return 60;

@@ -8,9 +8,11 @@
 
 #import <PVDesmume2015/PVDesmume2015Core.h>
 
+typedef enum PVDSButton: NSInteger PVDSButton;
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVDesmume2015Core (Controls) <PVDSSystemResponderClient>
+@interface PVDesmume2015CoreBridge (Controls) <PVDSSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;

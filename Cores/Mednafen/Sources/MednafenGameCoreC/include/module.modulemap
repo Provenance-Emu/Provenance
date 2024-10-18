@@ -1,0 +1,18 @@
+//module MednafenGameCoreC {
+//    header "MednafenControllerMappings.h"
+//    header "SwiftCXXStringConversion.h"
+//    
+//    export *
+//        
+//    requires cplusplus
+//}
+
+framework module MednafenGameCoreC {
+    umbrella "./MednafenGameCoreC/"
+    
+    export *
+    
+    module * { export * }
+    
+    requires cplusplus
+}

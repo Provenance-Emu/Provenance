@@ -1,0 +1,103 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Source/ps2/version.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _Z14VersionGetInfov
+   8              	.ent _Z14VersionGetInfov
+   9              	_Z14VersionGetInfov:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 0000023C 	lui $2,%hi(_Version_Info)
+  14              	.set noreorder
+  15              	.set nomacro
+  16 0004 0800E003 	j $31
+  17 0008 78004224 	addiu $2,$2,%lo(_Version_Info)
+  18              	.set macro
+  19              	.set reorder
+  20              	
+  21              	.end _Z14VersionGetInfov
+  22              	$Lfe1:
+  23              	.size _Z14VersionGetInfov,$Lfe1-_Z14VersionGetInfov
+  24              	.align 2
+  25 000c 00000000 	.p2align 3,,7
+  26              	.globl _Z17VersionGetElfNamev
+  27              	.ent _Z17VersionGetElfNamev
+  28              	_Z17VersionGetElfNamev:
+  29              	.frame $sp,0,$31
+  30              	.mask 0x00000000,0
+  31              	.fmask 0x00000000,0
+  32 0010 0000033C 	lui $3,%hi(_Version_Info+20)
+  33              	.set noreorder
+  34              	.set nomacro
+  35 0014 0800E003 	j $31
+  36 0018 8C00628C 	lw $2,%lo(_Version_Info+20)($3)
+  37              	.set macro
+  38              	.set reorder
+  39              	
+  40              	.end _Z17VersionGetElfNamev
+  41              	$Lfe2:
+  42              	.size _Z17VersionGetElfNamev,$Lfe2-_Z17VersionGetElfNamev
+  43 001c 00000000 	.rdata
+  44              	.align 3
+  45              	$LC0:
+  46 0000 534E4553 	.ascii "SNESticlePS2\000"
+  46      7469636C 
+  46      65505332 
+  46      00
+  47 000d 000000   	.align 3
+  48              	$LC1:
+  49 0010 44656275 	.ascii "Debug\000"
+  49      6700
+  50 0016 0000     	.align 3
+  51              	$LC2:
+  52 0018 534C5053 	.ascii "SLPS_999.99\000"
+  52      5F393939 
+GAS LISTING  			page 2
+
+
+  52      2E393900 
+  53 0024 00000000 	.align 3
+  54              	$LC3:
+  55 0028 436F7079 	.ascii "Copyright (c) 1997-2004 Icer Addis\000"
+  55      72696768 
+  55      74202863 
+  55      29203139 
+  55      39372D32 
+  56 004b 00000000 	.align 3
+  56      00
+  57              	$LC4:
+  58 0050 4A756C20 	.ascii "Jul 10 2004\000"
+  58      31302032 
+  58      30303400 
+  59 005c 00000000 	.align 3
+  60              	$LC5:
+  61 0060 31383A31 	.ascii "18:11:33\000"
+  61      313A3333 
+  61      00
+  62 0069 00000000 	.align 3
+  62      000000
+  63              	$LC6:
+  64 0070 47434300 	.ascii "GCC\000"
+  65 0074 00000000 	.align 3
+  66              	.type _Version_Info,@object
+  67              	.size _Version_Info,48
+  68              	_Version_Info:
+  69 0078 00000000 	.word $LC0
+  70 007c 00000000 	.word 0
+  71 0080 03000000 	.word 3
+  72 0084 04000000 	.word 4
+  73 0088 10000000 	.word $LC1
+  74 008c 18000000 	.word $LC2
+  75 0090 28000000 	.word $LC3
+  76 0094 50000000 	.word $LC4
+  77 0098 60000000 	.word $LC5
+  78 009c 70000000 	.word $LC6
+  79 00a0 03000000 	.word 3
+  80 00a4 02000000 	.word 2
+  81              	.ident "GCC: (GNU) 3.2.2"

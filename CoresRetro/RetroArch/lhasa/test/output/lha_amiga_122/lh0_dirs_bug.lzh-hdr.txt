@@ -1,0 +1,54 @@
+path: MainDir/
+filename: 00_File.txt
+compress_method: -lh0-
+compressed_length: 6
+length: 6
+header_level: 1
+os_type: 65 ('A')
+crc: 348a
+timestamp: 1641934778
+common_crc: db2b
+--
+path: MainDir/01_Dir/
+filename: File01.txt
+compress_method: -lh0-
+compressed_length: 6
+length: 6
+header_level: 1
+os_type: 65 ('A')
+crc: 348a
+timestamp: 1641934778
+common_crc: 53c6
+--
+path: MainDir/02_EmptyDir/
+compress_method: -lhd-
+compressed_length: 0
+length: 0
+header_level: 1
+os_type: 65 ('A')
+crc: 0000
+timestamp: 1641934718
+common_crc: 310f
+--
+path: MainDir/03_Dir/
+filename: File01.txt
+compress_method: -lh0-
+compressed_length: 6
+length: 6
+header_level: 1
+os_type: 65 ('A')
+crc: 348a
+timestamp: 1641934778
+common_crc: 11c1
+--
+path: MainDir/
+filename: 04_File.txt
+compress_method: -lh0-
+compressed_length: 6
+length: 6
+header_level: 1
+os_type: 65 ('A')
+crc: 348a
+timestamp: 1641934778
+common_crc: 23c0
+--

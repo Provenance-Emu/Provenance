@@ -1,0 +1,9 @@
+filename: long.txt
+compress_method: -lk7-
+compressed_length: 146716
+length: 399527
+header_level: 1
+os_type: 32 (' ')
+crc: 6dc1
+timestamp: 1659215542
+--

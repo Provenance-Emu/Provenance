@@ -1,0 +1,13 @@
+filename: gpl-2.gz
+compress_method: -lh0-
+compressed_length: 6829
+length: 6829
+header_level: 2
+os_type: 77 ('M')
+crc: b6d5
+timestamp: 1262304000
+win_creation_time: 129067776000000000
+win_modification_time: 129067776000000000
+win_access_time: 129799136010000000
+common_crc: e941
+--

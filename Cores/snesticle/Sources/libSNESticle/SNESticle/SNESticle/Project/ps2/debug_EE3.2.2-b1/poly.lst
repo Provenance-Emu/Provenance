@@ -1,0 +1,633 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/poly.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.section .bss
+   5              	_Poly_Color:
+   6              	.align 3
+   7 0000 00000000 	.space 16
+   7      00000000 
+   7      00000000 
+   7      00000000 
+   8              	.previous
+   9              	.section .bss
+  10              	_Poly_Color32:
+  11              	.align 2
+  12 0010 00000000 	.space 4
+  13              	.previous
+  14              	.data
+  15              	.align 2
+  16              	.type _Poly_Z,@object
+  17              	.size _Poly_Z,4
+  18              	_Poly_Z:
+  19 0000 00002041 	.word 1092616192
+  20              	.section .bss
+  21              	_Poly_UV:
+  22 0014 00000000 	.align 3
+  23 0018 00000000 	.space 16
+  23      00000000 
+  23      00000000 
+  23      00000000 
+  24              	.previous
+  25              	.align 2
+  26              	.type _Poly_pTexture,@object
+  27              	.size _Poly_pTexture,4
+  28              	_Poly_pTexture:
+  29 0004 00000000 	.word 0
+  30              	.section .bss
+  31              	_Poly_uMode:
+  32              	.align 2
+  33 0028 00000000 	.space 4
+  34 002c 00000000 	.previous
+  35              	.align 2
+  36              	.type _Poly_uBlend,@object
+  37              	.size _Poly_uBlend,4
+  38              	_Poly_uBlend:
+  39 0008 00000000 	.word 0
+  40              	.text
+  41              	.align 2
+  42              	.p2align 3,,7
+  43              	.ent _Z11_PolyRect_cffff
+  44              	_Z11_PolyRect_cffff:
+  45              	.frame $sp,16,$31
+  46              	.mask 0x80000000,-16
+  47              	.fmask 0x00000000,0
+  48 0000 F0FFBD27 	subu $sp,$sp,16
+  49 0004 80680F46 	add.s $f2,$f13,$f15
+  50 0008 0000BFFF 	sd $31,0($sp)
+  51 000c 80630E46 	add.s $f14,$f12,$f14
+GAS LISTING  			page 2
+
+
+  52 0010 0000023C 	lui $2,%hi(_Poly_Z)
+  53 0014 8041013C 	li.s $f0,1.60000000000000000000e1
+  53      00008144 
+  54 001c 000046C4 	l.s $f6,%lo(_Poly_Z)($2)
+  55 0020 0000023C 	lui $2,%hi(_Poly_Color32)
+  56 0024 02630046 	mul.s $f12,$f12,$f0
+  57 0028 1000468C 	lw $6,%lo(_Poly_Color32)($2)
+  58 002c 82310046 	mul.s $f6,$f6,$f0
+  59 0030 0000023C 	lui $2,%hi(_Poly_uBlend)
+  60 0034 02690046 	mul.s $f4,$f13,$f0
+  61 0038 08004B8C 	lw $11,%lo(_Poly_uBlend)($2)
+  62 003c 82730046 	mul.s $f14,$f14,$f0
+  63 0040 82100046 	mul.s $f2,$f2,$f0
+  64 0044 24600046 	cvt.w.s $f0,$f12
+  65 0048 00000444 	mfc1 $4,$f0
+  66 004c 24200046 	cvt.w.s $f0,$f4
+  67 0050 00000544 	mfc1 $5,$f0
+  68 0054 24700046 	cvt.w.s $f0,$f14
+  69 0058 00000744 	mfc1 $7,$f0
+  70 005c 24100046 	cvt.w.s $f0,$f2
+  71 0060 00000844 	mfc1 $8,$f0
+  72 0064 24300046 	cvt.w.s $f0,$f6
+  73 0068 00000A44 	mfc1 $10,$f0
+  74              	.set noreorder
+  75              	.set nomacro
+  76 006c 0000000C 	jal GPPrimRect
+  77 0070 2D48C000 	move $9,$6
+  78              	.set macro
+  79              	.set reorder
+  80              	
+  81 0074 0000BFDF 	ld $31,0($sp)
+  82              	
+  83              	.set noreorder
+  84              	.set nomacro
+  85 0078 0800E003 	j $31
+  86 007c 1000BD27 	addu $sp,$sp,16
+  87              	.set macro
+  88              	.set reorder
+  89              	
+  90              	.end _Z11_PolyRect_cffff
+  91              	$Lfe1:
+  92              	.size _Z11_PolyRect_cffff,$Lfe1-_Z11_PolyRect_cffff
+  93              	.align 2
+  94              	.p2align 3,,7
+  95              	.ent _Z12_PolyRect_tcffff
+  96              	_Z12_PolyRect_tcffff:
+  97              	.frame $sp,64,$31
+  98              	.mask 0x80000000,-32
+  99              	.fmask 0x00100000,-16
+ 100 0080 C0FFBD27 	subu $sp,$sp,64
+ 101 0084 0000033C 	lui $3,%hi(_Poly_UV)
+ 102 0088 3000B4E7 	s.s $f20,48($sp)
+ 103 008c 18006224 	addiu $2,$3,%lo(_Poly_UV)
+ 104 0090 2000BFFF 	sd $31,32($sp)
+ 105 0094 806A0F46 	add.s $f10,$f13,$f15
+ 106 0098 8041013C 	li.s $f0,1.60000000000000000000e1
+ 106      00008144 
+GAS LISTING  			page 3
+
+
+ 107 00a0 80630E46 	add.s $f14,$f12,$f14
+ 108 00a4 180066C4 	l.s $f6,%lo(_Poly_UV)($3)
+ 109 00a8 0C0048C4 	l.s $f8,12($2)
+ 110 00ac 02630046 	mul.s $f12,$f12,$f0
+ 111 00b0 040042C4 	l.s $f2,4($2)
+ 112 00b4 82310046 	mul.s $f6,$f6,$f0
+ 113 00b8 080044C4 	l.s $f4,8($2)
+ 114 00bc 02420046 	mul.s $f8,$f8,$f0
+ 115 00c0 82100046 	mul.s $f2,$f2,$f0
+ 116 00c4 0000023C 	lui $2,%hi(_Poly_Z)
+ 117 00c8 02210046 	mul.s $f4,$f4,$f0
+ 118 00cc 000052C4 	l.s $f18,%lo(_Poly_Z)($2)
+ 119 00d0 026C0046 	mul.s $f16,$f13,$f0
+ 120 00d4 0000023C 	lui $2,%hi(_Poly_Color32)
+ 121 00d8 82730046 	mul.s $f14,$f14,$f0
+ 122 00dc 1000448C 	lw $4,%lo(_Poly_Color32)($2)
+ 123 00e0 82520046 	mul.s $f10,$f10,$f0
+ 124 00e4 0000023C 	lui $2,%hi(_Poly_uBlend)
+ 125 00e8 0800438C 	lw $3,%lo(_Poly_uBlend)($2)
+ 126 00ec 82940046 	mul.s $f18,$f18,$f0
+ 127 00f0 24350046 	cvt.w.s $f20,$f6
+ 128 00f4 00A00644 	mfc1 $6,$f20
+ 129 00f8 0800A4AF 	sw $4,8($sp)
+ 130 00fc A4110046 	cvt.w.s $f6,$f2
+ 131 0100 00300744 	mfc1 $7,$f6
+ 132 0104 1000A3AF 	sw $3,16($sp)
+ 133 0108 A4200046 	cvt.w.s $f2,$f4
+ 134 010c 00100A44 	mfc1 $10,$f2
+ 135 0110 A4400046 	cvt.w.s $f2,$f8
+ 136 0114 00100B44 	mfc1 $11,$f2
+ 137 0118 0800C624 	addu $6,$6,8
+ 138 011c A4600046 	cvt.w.s $f2,$f12
+ 139 0120 00100444 	mfc1 $4,$f2
+ 140 0124 0800E724 	addu $7,$7,8
+ 141 0128 A4800046 	cvt.w.s $f2,$f16
+ 142 012c 00100544 	mfc1 $5,$f2
+ 143 0130 08004A25 	addu $10,$10,8
+ 144 0134 A4700046 	cvt.w.s $f2,$f14
+ 145 0138 00100844 	mfc1 $8,$f2
+ 146 013c A4500046 	cvt.w.s $f2,$f10
+ 147 0140 00100944 	mfc1 $9,$f2
+ 148 0144 24900046 	cvt.w.s $f0,$f18
+ 149 0148 0000A0E7 	s.s $f0,0($sp)
+ 150              	.set noreorder
+ 151              	.set nomacro
+ 152 014c 0000000C 	jal GPPrimTexRect
+ 153 0150 08006B25 	addu $11,$11,8
+ 154              	.set macro
+ 155              	.set reorder
+ 156              	
+ 157 0154 3000B4C7 	l.s $f20,48($sp)
+ 158 0158 2000BFDF 	ld $31,32($sp)
+ 159              	
+ 160              	.set noreorder
+ 161              	.set nomacro
+ 162 015c 0800E003 	j $31
+ 163 0160 4000BD27 	addu $sp,$sp,64
+GAS LISTING  			page 4
+
+
+ 164              	.set macro
+ 165              	.set reorder
+ 166              	
+ 167              	.end _Z12_PolyRect_tcffff
+ 168              	$Lfe2:
+ 169              	.size _Z12_PolyRect_tcffff,$Lfe2-_Z12_PolyRect_tcffff
+ 170              	.align 2
+ 171 0164 00000000 	.p2align 3,,7
+ 172              	.globl _Z8PolyInitv
+ 173              	.ent _Z8PolyInitv
+ 174              	_Z8PolyInitv:
+ 175              	.frame $sp,0,$31
+ 176              	.mask 0x00000000,0
+ 177              	.fmask 0x00000000,0
+ 178 0168 0800E003 	j $31
+ 178      00000000 
+ 179              	.end _Z8PolyInitv
+ 180              	$Lfe3:
+ 181              	.size _Z8PolyInitv,$Lfe3-_Z8PolyInitv
+ 182              	.align 2
+ 183              	.p2align 3,,7
+ 184              	.globl _Z12PolyShutdownv
+ 185              	.ent _Z12PolyShutdownv
+ 186              	_Z12PolyShutdownv:
+ 187              	.frame $sp,0,$31
+ 188              	.mask 0x00000000,0
+ 189              	.fmask 0x00000000,0
+ 190 0170 0800E003 	j $31
+ 190      00000000 
+ 191              	.end _Z12PolyShutdownv
+ 192              	$Lfe4:
+ 193              	.size _Z12PolyShutdownv,$Lfe4-_Z12PolyShutdownv
+ 194              	.align 2
+ 195              	.p2align 3,,7
+ 196              	.globl _Z11PolyTextureP8TextureT
+ 197              	.ent _Z11PolyTextureP8TextureT
+ 198              	_Z11PolyTextureP8TextureT:
+ 199              	.frame $sp,48,$31
+ 200              	.mask 0x80010000,-16
+ 201              	.fmask 0x00000000,0
+ 202 0178 D0FFBD27 	subu $sp,$sp,48
+ 203 017c 0000023C 	lui $2,%hi(_Poly_pTexture)
+ 204 0180 1000B0FF 	sd $16,16($sp)
+ 205 0184 2D280000 	move $5,$0
+ 206 0188 2D808000 	move $16,$4
+ 207 018c 2000BFFF 	sd $31,32($sp)
+ 208 0190 2D200000 	move $4,$0
+ 209              	.set noreorder
+ 210              	.set nomacro
+ 211 0194 0E000012 	beq $16,$0,$L5
+ 212 0198 040050AC 	sw $16,%lo(_Poly_pTexture)($2)
+ 213              	.set macro
+ 214              	.set reorder
+ 215              	
+ 216 019c 0800068E 	lw $6,8($16)
+ 217              	.set noreorder
+ 218              	.set nomacro
+GAS LISTING  			page 5
+
+
+ 219 01a0 0000000C 	jal _Z6PolyUViiii
+ 220 01a4 0C00078E 	lw $7,12($16)
+ 221              	.set macro
+ 222              	.set reorder
+ 223              	
+ 224              	
+ 225 01a8 0400078E 	lw $7,4($16)
+ 226 01ac 1000088E 	lw $8,16($16)
+ 227 01b0 02000B24 	li $11,2
+ 228 01b4 1800048E 	lw $4,24($16)
+ 229 01b8 2D480000 	move $9,$0
+ 230 01bc 0800058E 	lw $5,8($16)
+ 231 01c0 00010A24 	li $10,256
+ 232 01c4 0000068E 	lw $6,0($16)
+ 233              	.set noreorder
+ 234              	.set nomacro
+ 235 01c8 0000000C 	jal GPPrimSetTex
+ 236 01cc 0000A0AF 	sw $0,0($sp)
+ 237              	.set macro
+ 238              	.set reorder
+ 239              	
+ 240              	$L5:
+ 241 01d0 2000BFDF 	ld $31,32($sp)
+ 242 01d4 1000B0DF 	ld $16,16($sp)
+ 243              	
+ 244              	.set noreorder
+ 245              	.set nomacro
+ 246 01d8 0800E003 	j $31
+ 247 01dc 3000BD27 	addu $sp,$sp,48
+ 248              	.set macro
+ 249              	.set reorder
+ 250              	
+ 251              	.end _Z11PolyTextureP8TextureT
+ 252              	$Lfe5:
+ 253              	.size _Z11PolyTextureP8TextureT,$Lfe5-_Z11PolyTextureP8TextureT
+ 254              	.align 2
+ 255              	.p2align 3,,7
+ 256              	.globl _Z11PolyColor4fffff
+ 257              	.ent _Z11PolyColor4fffff
+ 258              	_Z11PolyColor4fffff:
+ 259              	.frame $sp,0,$31
+ 260              	.mask 0x00000000,0
+ 261              	.fmask 0x00000000,0
+ 262 01e0 0043013C 	li.s $f0,1.28000000000000000000e2
+ 262      00008144 
+ 263 01e8 0000043C 	lui $4,%hi(_Poly_Color)
+ 264 01ec 00008624 	addiu $6,$4,%lo(_Poly_Color)
+ 265 01f0 00008CE4 	s.s $f12,%lo(_Poly_Color)($4)
+ 266 01f4 02610046 	mul.s $f4,$f12,$f0
+ 267 01f8 0C00CFE4 	s.s $f15,12($6)
+ 268 01fc 82690046 	mul.s $f6,$f13,$f0
+ 269 0200 0400CDE4 	s.s $f13,4($6)
+ 270 0204 02720046 	mul.s $f8,$f14,$f0
+ 271 0208 0800CEE4 	s.s $f14,8($6)
+ 272 020c 02780046 	mul.s $f0,$f15,$f0
+ 273 0210 24240046 	cvt.w.s $f16,$f4
+ 274 0214 00800244 	mfc1 $2,$f16
+GAS LISTING  			page 6
+
+
+ 275 0218 24310046 	cvt.w.s $f4,$f6
+ 276 021c 00200344 	mfc1 $3,$f4
+ 277 0220 A4400046 	cvt.w.s $f2,$f8
+ 278 0224 00100444 	mfc1 $4,$f2
+ 279 0228 A4000046 	cvt.w.s $f2,$f0
+ 280 022c 00100544 	mfc1 $5,$f2
+ 281 0230 3C100200 	dsll $2,$2,32
+ 282 0234 3C180300 	dsll $3,$3,32
+ 283 0238 3E100200 	dsrl $2,$2,32
+ 284 023c 3A1E0300 	dsrl $3,$3,24
+ 285 0240 3C200400 	dsll $4,$4,32
+ 286 0244 25104300 	or $2,$2,$3
+ 287 0248 3A240400 	dsrl $4,$4,16
+ 288 024c 3C280500 	dsll $5,$5,32
+ 289 0250 25104400 	or $2,$2,$4
+ 290 0254 3A2A0500 	dsrl $5,$5,8
+ 291 0258 0000033C 	lui $3,%hi(_Poly_Color32)
+ 292 025c 25104500 	or $2,$2,$5
+ 293 0260 3C100200 	dsll $2,$2,32
+ 294 0264 3F100200 	dsra $2,$2,32
+ 295              	.set noreorder
+ 296              	.set nomacro
+ 297 0268 0800E003 	j $31
+ 298 026c 100062AC 	sw $2,%lo(_Poly_Color32)($3)
+ 299              	.set macro
+ 300              	.set reorder
+ 301              	
+ 302              	.end _Z11PolyColor4fffff
+ 303              	$Lfe6:
+ 304              	.size _Z11PolyColor4fffff,$Lfe6-_Z11PolyColor4fffff
+ 305              	.align 2
+ 306              	.p2align 3,,7
+ 307              	.globl _Z6PolySTffff
+ 308              	.ent _Z6PolySTffff
+ 309              	_Z6PolySTffff:
+ 310              	.frame $sp,0,$31
+ 311              	.mask 0x00000000,0
+ 312              	.fmask 0x00000000,0
+ 313 0270 0000023C 	lui $2,%hi(_Poly_pTexture)
+ 314 0274 86680046 	mov.s $f2,$f13
+ 315 0278 0400438C 	lw $3,%lo(_Poly_pTexture)($2)
+ 316              	
+ 317 027c 0800628C 	lw $2,8($3)
+ 318              	
+ 319              	.set noreorder
+ 320              	.set nomacro
+ 321 0280 45004004 	bltz $2,$L10
+ 322 0284 06790046 	mov.s $f4,$f15
+ 323              	.set macro
+ 324              	.set reorder
+ 325              	
+ 326 0288 00008244 	mtc1 $2,$f0
+ 326      00000000 
+ 327 0290 20008046 	cvt.s.w $f0,$f0
+ 328              	$L9:
+ 329 0294 02600046 	mul.s $f0,$f12,$f0
+ 330 0298 0000023C 	lui $2,%hi(_Poly_pTexture)
+GAS LISTING  			page 7
+
+
+ 331 029c 0000033C 	lui $3,%hi(_Poly_UV)
+ 332 02a0 0400448C 	lw $4,%lo(_Poly_pTexture)($2)
+ 333 02a4 180060E4 	s.s $f0,%lo(_Poly_UV)($3)
+ 334 02a8 0C00828C 	lw $2,12($4)
+ 335              	
+ 336              	.set noreorder
+ 337              	.set nomacro
+ 338 02ac 32004004 	bltz $2,$L12
+ 339 02b0 42180200 	srl $3,$2,1
+ 340              	.set macro
+ 341              	.set reorder
+ 342              	
+ 343 02b4 00008244 	mtc1 $2,$f0
+ 343      00000000 
+ 344 02bc 20008046 	cvt.s.w $f0,$f0
+ 345              	$L11:
+ 346 02c0 02100046 	mul.s $f0,$f2,$f0
+ 347 02c4 0000023C 	lui $2,%hi(_Poly_UV)
+ 348 02c8 18004224 	addiu $2,$2,%lo(_Poly_UV)
+ 349 02cc 0000033C 	lui $3,%hi(_Poly_pTexture)
+ 350 02d0 0400648C 	lw $4,%lo(_Poly_pTexture)($3)
+ 351 02d4 040040E4 	s.s $f0,4($2)
+ 352 02d8 0800828C 	lw $2,8($4)
+ 353              	
+ 354              	.set noreorder
+ 355              	.set nomacro
+ 356 02dc 1E004004 	bltz $2,$L14
+ 357 02e0 42180200 	srl $3,$2,1
+ 358              	.set macro
+ 359              	.set reorder
+ 360              	
+ 361 02e4 00008244 	mtc1 $2,$f0
+ 361      00000000 
+ 362 02ec 20008046 	cvt.s.w $f0,$f0
+ 363              	$L13:
+ 364 02f0 02700046 	mul.s $f0,$f14,$f0
+ 365 02f4 0000023C 	lui $2,%hi(_Poly_UV)
+ 366 02f8 18004224 	addiu $2,$2,%lo(_Poly_UV)
+ 367 02fc 0000033C 	lui $3,%hi(_Poly_pTexture)
+ 368 0300 0400648C 	lw $4,%lo(_Poly_pTexture)($3)
+ 369 0304 080040E4 	s.s $f0,8($2)
+ 370 0308 0C00828C 	lw $2,12($4)
+ 371              	
+ 372              	.set noreorder
+ 373              	.set nomacro
+ 374 030c 0A004204 	bltzl $2,$L16
+ 375 0310 42180200 	srl $3,$2,1
+ 376              	.set macro
+ 377              	.set reorder
+ 378              	
+ 379 0314 00008244 	mtc1 $2,$f0
+ 379      00000000 
+ 380 031c 20008046 	cvt.s.w $f0,$f0
+ 381              	$L15:
+ 382 0320 02200046 	mul.s $f0,$f4,$f0
+ 383 0324 0000023C 	lui $2,%hi(_Poly_UV)
+ 384 0328 18004224 	addiu $2,$2,%lo(_Poly_UV)
+GAS LISTING  			page 8
+
+
+ 385              	.set noreorder
+ 386              	.set nomacro
+ 387 032c 0800E003 	j $31
+ 388 0330 0C0040E4 	s.s $f0,12($2)
+ 389              	.set macro
+ 390              	.set reorder
+ 391              	
+ 392 0334 00000000 	.p2align 3
+ 393              	$L16:
+ 394 0338 01004230 	andi $2,$2,0x1
+ 395 033c 25104300 	or $2,$2,$3
+ 396 0340 00008244 	mtc1 $2,$f0
+ 396      00000000 
+ 397 0348 20008046 	cvt.s.w $f0,$f0
+ 398              	.set noreorder
+ 399              	.set nomacro
+ 400 034c F4FF0010 	b $L15
+ 401 0350 00000046 	add.s $f0,$f0,$f0
+ 402              	.set macro
+ 403              	.set reorder
+ 404              	
+ 405 0354 00000000 	.p2align 3
+ 406              	$L14:
+ 407 0358 01004230 	andi $2,$2,0x1
+ 408 035c 25104300 	or $2,$2,$3
+ 409 0360 00008244 	mtc1 $2,$f0
+ 409      00000000 
+ 410 0368 20008046 	cvt.s.w $f0,$f0
+ 411              	.set noreorder
+ 412              	.set nomacro
+ 413 036c E0FF0010 	b $L13
+ 414 0370 00000046 	add.s $f0,$f0,$f0
+ 415              	.set macro
+ 416              	.set reorder
+ 417              	
+ 418 0374 00000000 	.p2align 3
+ 419              	$L12:
+ 420 0378 01004230 	andi $2,$2,0x1
+ 421 037c 25104300 	or $2,$2,$3
+ 422 0380 00008244 	mtc1 $2,$f0
+ 422      00000000 
+ 423 0388 20008046 	cvt.s.w $f0,$f0
+ 424              	.set noreorder
+ 425              	.set nomacro
+ 426 038c CCFF0010 	b $L11
+ 427 0390 00000046 	add.s $f0,$f0,$f0
+ 428              	.set macro
+ 429              	.set reorder
+ 430              	
+ 431 0394 00000000 	.p2align 3
+ 432              	$L10:
+ 433 0398 42180200 	srl $3,$2,1
+ 434 039c 01004230 	andi $2,$2,0x1
+ 435 03a0 25104300 	or $2,$2,$3
+ 436 03a4 00008244 	mtc1 $2,$f0
+ 436      00000000 
+ 437 03ac 20008046 	cvt.s.w $f0,$f0
+GAS LISTING  			page 9
+
+
+ 438              	.set noreorder
+ 439              	.set nomacro
+ 440 03b0 B8FF0010 	b $L9
+ 441 03b4 00000046 	add.s $f0,$f0,$f0
+ 442              	.set macro
+ 443              	.set reorder
+ 444              	
+ 445              	.end _Z6PolySTffff
+ 446              	$Lfe7:
+ 447              	.size _Z6PolySTffff,$Lfe7-_Z6PolySTffff
+ 448              	.align 2
+ 449              	.p2align 3,,7
+ 450              	.globl _Z6PolyUViiii
+ 451              	.ent _Z6PolyUViiii
+ 452              	_Z6PolyUViiii:
+ 453              	.frame $sp,0,$31
+ 454              	.mask 0x00000000,0
+ 455              	.fmask 0x00000000,0
+ 456 03b8 21308600 	addu $6,$4,$6
+ 457 03bc 2138A700 	addu $7,$5,$7
+ 458 03c0 00308644 	mtc1 $6,$f6
+ 458      00000000 
+ 459 03c8 A0318046 	cvt.s.w $f6,$f6
+ 460 03cc 0000033C 	lui $3,%hi(_Poly_UV)
+ 461 03d0 00208744 	mtc1 $7,$f4
+ 461      00000000 
+ 462 03d8 20218046 	cvt.s.w $f4,$f4
+ 463 03dc 18006224 	addiu $2,$3,%lo(_Poly_UV)
+ 464 03e0 00008444 	mtc1 $4,$f0
+ 464      00000000 
+ 465 03e8 20008046 	cvt.s.w $f0,$f0
+ 466 03ec 00108544 	mtc1 $5,$f2
+ 466      00000000 
+ 467 03f4 A0108046 	cvt.s.w $f2,$f2
+ 468 03f8 080046E4 	s.s $f6,8($2)
+ 469 03fc 0C0044E4 	s.s $f4,12($2)
+ 470 0400 180060E4 	s.s $f0,%lo(_Poly_UV)($3)
+ 471              	.set noreorder
+ 472              	.set nomacro
+ 473 0404 0800E003 	j $31
+ 474 0408 040042E4 	s.s $f2,4($2)
+ 475              	.set macro
+ 476              	.set reorder
+ 477              	
+ 478              	.end _Z6PolyUViiii
+ 479              	$Lfe8:
+ 480              	.size _Z6PolyUViiii,$Lfe8-_Z6PolyUViiii
+ 481              	.align 2
+ 482 040c 00000000 	.p2align 3,,7
+ 483              	.globl _Z8PolyModej
+ 484              	.ent _Z8PolyModej
+ 485              	_Z8PolyModej:
+ 486              	.frame $sp,0,$31
+ 487              	.mask 0x00000000,0
+ 488              	.fmask 0x00000000,0
+ 489 0410 0000023C 	lui $2,%hi(_Poly_uMode)
+ 490              	.set noreorder
+GAS LISTING  			page 10
+
+
+ 491              	.set nomacro
+ 492 0414 0800E003 	j $31
+ 493 0418 280044AC 	sw $4,%lo(_Poly_uMode)($2)
+ 494              	.set macro
+ 495              	.set reorder
+ 496              	
+ 497              	.end _Z8PolyModej
+ 498              	$Lfe9:
+ 499              	.size _Z8PolyModej,$Lfe9-_Z8PolyModej
+ 500              	.align 2
+ 501 041c 00000000 	.p2align 3,,7
+ 502              	.globl _Z9PolyBlendj
+ 503              	.ent _Z9PolyBlendj
+ 504              	_Z9PolyBlendj:
+ 505              	.frame $sp,0,$31
+ 506              	.mask 0x00000000,0
+ 507              	.fmask 0x00000000,0
+ 508 0420 01008430 	andi $4,$4,0x1
+ 509 0424 0000023C 	lui $2,%hi(_Poly_uBlend)
+ 510              	.set noreorder
+ 511              	.set nomacro
+ 512 0428 0800E003 	j $31
+ 513 042c 080044AC 	sw $4,%lo(_Poly_uBlend)($2)
+ 514              	.set macro
+ 515              	.set reorder
+ 516              	
+ 517              	.end _Z9PolyBlendj
+ 518              	$Lfe10:
+ 519              	.size _Z9PolyBlendj,$Lfe10-_Z9PolyBlendj
+ 520              	.align 2
+ 521              	.p2align 3,,7
+ 522              	.globl _Z8PolyRectffff
+ 523              	.ent _Z8PolyRectffff
+ 524              	_Z8PolyRectffff:
+ 525              	.frame $sp,16,$31
+ 526              	.mask 0x80000000,-16
+ 527              	.fmask 0x00000000,0
+ 528 0430 0000023C 	lui $2,%hi(_Poly_pTexture)
+ 529 0434 F0FFBD27 	subu $sp,$sp,16
+ 530 0438 0400438C 	lw $3,%lo(_Poly_pTexture)($2)
+ 531              	
+ 532              	.set noreorder
+ 533              	.set nomacro
+ 534 043c 06006010 	beq $3,$0,$L21
+ 535 0440 0000BFFF 	sd $31,0($sp)
+ 536              	.set macro
+ 537              	.set reorder
+ 538              	
+ 539 0444 2000000C 	jal _Z12_PolyRect_tcffff
+ 539      00000000 
+ 540 044c 0000BFDF 	ld $31,0($sp)
+ 541              	$L23:
+ 542              	.set noreorder
+ 543              	.set nomacro
+ 544 0450 0800E003 	j $31
+ 545 0454 1000BD27 	addu $sp,$sp,16
+ 546              	.set macro
+GAS LISTING  			page 11
+
+
+ 547              	.set reorder
+ 548              	
+ 549              	.p2align 3
+ 550              	$L21:
+ 551 0458 0000000C 	jal _Z11_PolyRect_cffff
+ 551      00000000 
+ 552              	.set noreorder
+ 553              	.set nomacro
+ 554 0460 FBFF0010 	b $L23
+ 555 0464 0000BFDF 	ld $31,0($sp)
+ 556              	.set macro
+ 557              	.set reorder
+ 558              	
+ 559              	.end _Z8PolyRectffff
+ 560              	$Lfe11:
+ 561              	.size _Z8PolyRectffff,$Lfe11-_Z8PolyRectffff
+ 562              	.align 2
+ 563              	.p2align 3,,7
+ 564              	.globl _Z10PolySpriteffff
+ 565              	.ent _Z10PolySpriteffff
+ 566              	_Z10PolySpriteffff:
+ 567              	.frame $sp,0,$31
+ 568              	.mask 0x00000000,0
+ 569              	.fmask 0x00000000,0
+ 570 0468 0800E003 	j $31
+ 570      00000000 
+ 571              	.end _Z10PolySpriteffff
+ 572              	$Lfe12:
+ 573              	.size _Z10PolySpriteffff,$Lfe12-_Z10PolySpriteffff
+ 574              	.ident "GCC: (GNU) 3.2.2"

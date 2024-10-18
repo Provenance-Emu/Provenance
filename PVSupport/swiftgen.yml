@@ -1,0 +1,9 @@
+input_dir: Sources/PVSupport/Resources
+output_dir: ${DERIVED_SOURCES_DIR}
+
+files:
+  inputs: AHAP/
+  filter: .+\.(wav|ahap)$
+  outputs:
+    output: AHAPFiles.swift
+    templateName: flat-swift5

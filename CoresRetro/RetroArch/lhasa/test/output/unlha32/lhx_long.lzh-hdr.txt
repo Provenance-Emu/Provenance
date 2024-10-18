@@ -1,0 +1,13 @@
+filename: long.txt
+compress_method: -lhx-
+compressed_length: 77318
+length: 1241658
+header_level: 2
+os_type: 77 ('M')
+crc: 6a7c
+timestamp: 1374673340
+win_creation_time: 130191469400000000
+win_modification_time: 130191469400000000
+win_access_time: 130191469440000000
+common_crc: 7160
+--

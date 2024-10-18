@@ -1,0 +1,1493 @@
+------- FILE F8SC.asm LEVEL 1 PASS 2
+      1  10000 ????						;;A bankswitching demo for the F8SC scheme.  2 4K banks of ROM + 128 bytes of RAM
+      2  10000 ????						;;By: Rick Skrbina 3/29/09
+      3  10000 ????
+      4  10000 ????				       processor	6502
+------- FILE vcs.h LEVEL 2 PASS 2
+      0  10000 ????				       include	"vcs.h"
+      1  10000 ????						;
+      2  10000 ????						; VCS system equates
+      3  10000 ????						;
+      4  10000 ????						; Vertical blank registers
+      5  10000 ????						;
+      6  10000 ????		00 00	    VSYNC      =	$00
+      7  10000 ????		00 02	    VS_Enable  =	2
+      8  10000 ????						;
+      9  10000 ????		00 01	    VBLANK     =	$01
+     10  10000 ????		00 02	    VB_Enable  =	2
+     11  10000 ????		00 00	    VB_Disable =	0
+     12  10000 ????		00 40	    VB_LatchEnable =	64
+     13  10000 ????		00 00	    VB_LatchDisable =	0
+     14  10000 ????		00 80	    VB_DumpPots =	128
+     15  10000 ????						; I don't know a good name to un-dump the pots,
+     16  10000 ????						; at least that makes sense.
+     17  10000 ????
+     18  10000 ????		00 02	    WSYNC      =	$02
+     19  10000 ????		00 03	    RSYNC      =	$03	;for sadists
+     20  10000 ????						;
+     21  10000 ????						; Size registers for players and missiles
+     22  10000 ????						;
+     23  10000 ????		00 04	    NUSIZ0     =	$04
+     24  10000 ????		00 05	    NUSIZ1     =	$05
+     25  10000 ????		00 00	    P_Single   =	0
+     26  10000 ????		00 01	    P_TwoClose =	1
+     27  10000 ????		00 02	    P_TwoMedium =	2
+     28  10000 ????		00 03	    P_ThreeClose =	3
+     29  10000 ????		00 04	    P_TwoFar   =	4
+     30  10000 ????		00 05	    P_Double   =	5
+     31  10000 ????		00 06	    P_ThreeMedium =	6
+     32  10000 ????		00 07	    P_Quad     =	7
+     33  10000 ????
+     34  10000 ????		00 00	    M_Single   =	$00
+     35  10000 ????		00 10	    M_Double   =	$10
+     36  10000 ????		00 20	    M_Quad     =	$20
+     37  10000 ????		00 40	    M_Oct      =	$40
+     38  10000 ????
+     39  10000 ????						;
+     40  10000 ????						; Color registers
+     41  10000 ????						;
+     42  10000 ????		00 06	    COLUP0     =	$06
+     43  10000 ????		00 07	    COLUP1     =	$07
+     44  10000 ????		00 08	    COLUPF     =	$08
+     45  10000 ????		00 09	    COLUBK     =	$09
+     46  10000 ????
+     47  10000 ????						;
+     48  10000 ????						; Playfield Control
+     49  10000 ????						;
+     50  10000 ????		00 0a	    CTRLPF     =	$0A
+     51  10000 ????		00 01	    PF_Reflect =	$01
+     52  10000 ????		00 02	    PF_Score   =	$02
+     53  10000 ????		00 04	    PF_Priority =	$04
+     54  10000 ????						; Use missile equates to set ball width.
+     55  10000 ????
+     56  10000 ????		00 0b	    REFP0      =	$0B
+     57  10000 ????		00 0c	    REFP1      =	$0C
+     58  10000 ????		00 08	    P_Reflect  =	$08
+     59  10000 ????
+     60  10000 ????		00 0d	    PF0        =	$0D
+     61  10000 ????		00 0e	    PF1        =	$0E
+     62  10000 ????		00 0f	    PF2        =	$0F
+     63  10000 ????		00 10	    RESP0      =	$10
+     64  10000 ????		00 11	    RESP1      =	$11
+     65  10000 ????		00 12	    RESM0      =	$12
+     66  10000 ????		00 13	    RESM1      =	$13
+     67  10000 ????		00 14	    RESBL      =	$14
+     68  10000 ????		00 15	    AUDC0      =	$15
+     69  10000 ????		00 16	    AUDC1      =	$16
+     70  10000 ????		00 17	    AUDF0      =	$17
+     71  10000 ????		00 18	    AUDF1      =	$18
+     72  10000 ????		00 19	    AUDV0      =	$19
+     73  10000 ????		00 1a	    AUDV1      =	$1A	;duh
+     74  10000 ????
+     75  10000 ????						;
+     76  10000 ????						; Players
+     77  10000 ????						;
+     78  10000 ????		00 1b	    GRP0       =	$1B
+     79  10000 ????		00 1c	    GRP1       =	$1C
+     80  10000 ????
+     81  10000 ????						;
+     82  10000 ????						; Single-bit objects
+     83  10000 ????						;
+     84  10000 ????		00 1d	    ENAM0      =	$1D
+     85  10000 ????		00 1e	    ENAM1      =	$1E
+     86  10000 ????		00 1f	    ENABL      =	$1F
+     87  10000 ????		00 02	    M_Enable   =	2
+     88  10000 ????
+     89  10000 ????		00 20	    HMP0       =	$20
+     90  10000 ????		00 21	    HMP1       =	$21
+     91  10000 ????		00 22	    HMM0       =	$22
+     92  10000 ????		00 23	    HMM1       =	$23
+     93  10000 ????		00 24	    HMBL       =	$24
+     94  10000 ????
+     95  10000 ????						; Miscellaneous
+     96  10000 ????		00 25	    VDELP0     =	$25
+     97  10000 ????		00 26	    VDEL01     =	$26
+     98  10000 ????		00 26	    VDELP1     =	$26
+     99  10000 ????		00 27	    VDELBL     =	$27
+    100  10000 ????		00 28	    RESMP0     =	$28
+    101  10000 ????		00 29	    RESMP1     =	$29
+    102  10000 ????		00 2a	    HMOVE      =	$2A
+    103  10000 ????		00 2b	    HMCLR      =	$2B
+    104  10000 ????		00 2c	    CXCLR      =	$2C
+    105  10000 ????		00 30	    CXM0P      =	$30
+    106  10000 ????		00 31	    CXM1P      =	$31
+    107  10000 ????		00 32	    CXP0FB     =	$32
+    108  10000 ????		00 33	    CXP1FB     =	$33
+    109  10000 ????		00 34	    CXM0FB     =	$34
+    110  10000 ????		00 35	    CXM1FB     =	$35
+    111  10000 ????		00 36	    CXBLPF     =	$36
+    112  10000 ????		00 37	    CXPPMM     =	$37
+    113  10000 ????		00 38	    INPT0      =	$38
+    114  10000 ????		00 39	    INPT1      =	$39
+    115  10000 ????		00 3a	    INPT2      =	$3A
+    116  10000 ????		00 3b	    INPT3      =	$3B
+    117  10000 ????		00 3c	    INPT4      =	$3C
+    118  10000 ????		00 3d	    INPT5      =	$3D
+    119  10000 ????
+    120  10000 ????						;
+    121  10000 ????						; Switch A equates.
+    122  10000 ????						;
+    123  10000 ????						; There are more elegant ways than using all eight of these.  :-)
+    124  10000 ????						;
+    125  10000 ????		02 80	    SWCHA      =	$0280
+    126  10000 ????		00 80	    J0_Right   =	$80
+    127  10000 ????		00 40	    J0_Left    =	$40
+    128  10000 ????		00 20	    J0_Down    =	$20
+    129  10000 ????		00 10	    J0_Up      =	$10
+    130  10000 ????		00 08	    J1_Right   =	$08
+    131  10000 ????		00 04	    J1_Left    =	$04
+    132  10000 ????		00 02	    J1_Down    =	$02
+    133  10000 ????		00 01	    J1_up      =	$01
+    134  10000 ????						;
+    135  10000 ????						; Switch B equates
+    136  10000 ????						;
+    137  10000 ????		02 82	    SWCHB      =	$0282
+    138  10000 ????		00 80	    P0_Diff    =	$80
+    139  10000 ????		00 40	    P1_Diff    =	$40
+    140  10000 ????		00 08	    Con_Color  =	$08
+    141  10000 ????		00 02	    Con_Select =	$02
+    142  10000 ????		00 01	    Con_Start  =	$01
+    143  10000 ????
+    144  10000 ????						;
+    145  10000 ????						; Timer
+    146  10000 ????						;
+    147  10000 ????		02 80	    SWCHA      =	$0280
+    148  10000 ????		02 81	    SWACNT     =	$0281
+    149  10000 ????		02 82	    SWCHB      =	$0282
+    150  10000 ????		02 83	    SWBCNT     =	$0283
+    151  10000 ????		02 84	    INTIM      =	$0284
+    152  10000 ????		02 94	    TIM1T      =	$0294
+    153  10000 ????		02 95	    TIM8T      =	$0295
+    154  10000 ????		02 96	    TIM64T     =	$0296
+    155  10000 ????		02 97	    TIM1024T   =	$0297
+    156  10000 ????
+    157  10000 ????
+------- FILE F8SC.asm
+------- FILE macro.h LEVEL 2 PASS 2
+      0  10000 ????				       include	"macro.h"
+      1  10000 ????						; MACRO.H
+      2  10000 ????						; Version 1.06, 3/SEPTEMBER/2004
+      3  10000 ????
+      4  10000 ????		00 6a	    VERSION_MACRO =	106
+      5  10000 ????
+      6  10000 ????						;
+      7  10000 ????						; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
+      8  10000 ????						; PLEASE DO *NOT* REDISTRIBUTE MODIFIED VERSIONS OF THIS FILE!
+      9  10000 ????						;
+     10  10000 ????						; This file defines DASM macros useful for development for the Atari 2600.
+     11  10000 ????						; It is distributed as a companion machine-specific support package
+     12  10000 ????						; for the DASM compiler. Updates to this file, DASM, and associated tools are
+     13  10000 ????						; available at at http://www.atari2600.org/dasm
+     14  10000 ????						;
+     15  10000 ????						; Many thanks to the people who have contributed.  If you take issue with the
+     16  10000 ????						; contents, or would like to add something, please write to me
+     17  10000 ????						; (atari2600@taswegian.com) with your contribution.
+     18  10000 ????						;
+     19  10000 ????						; Latest Revisions...
+     20  10000 ????						;
+     21  10000 ????						; 1.06  03/SEP/2004	 - nice revision of VERTICAL_BLANK (Edwin Blink)
+     22  10000 ????						; 1.05  14/NOV/2003	 - Added VERSION_MACRO equate (which will reflect 100x version #)
+     23  10000 ????						;			   This will allow conditional code to verify MACRO.H being
+     24  10000 ????						;			   used for code assembly.
+     25  10000 ????						; 1.04  13/NOV/2003	 - SET_POINTER macro added (16-bit address load)
+     26  10000 ????						;
+     27  10000 ????						; 1.03  23/JUN/2003	 - CLEAN_START macro added - clears TIA, RAM, registers
+     28  10000 ????						;
+     29  10000 ????						; 1.02  14/JUN/2003	 - VERTICAL_SYNC macro added
+     30  10000 ????						;			   (standardised macro for vertical synch code)
+     31  10000 ????						; 1.01  22/MAR/2003	 - SLEEP macro added. 
+     32  10000 ????						;			 - NO_ILLEGAL_OPCODES switch implemented
+     33  10000 ????						; 1.0	22/MAR/2003		Initial release
+     34  10000 ????
+     35  10000 ????						; Note: These macros use illegal opcodes.  To disable illegal opcode usage, 
+     36  10000 ????						;   define the symbol NO_ILLEGAL_OPCODES (-DNO_ILLEGAL_OPCODES=1 on command-line).
+     37  10000 ????						;   If you do not allow illegal opcode usage, you must include this file 
+     38  10000 ????						;   *after* including VCS.H (as the non-illegal opcodes access hardware
+     39  10000 ????						;   registers and require them to be defined first).
+     40  10000 ????
+     41  10000 ????						; Available macros...
+     42  10000 ????						;   SLEEP n		 - sleep for n cycles
+     43  10000 ????						;   VERTICAL_SYNC	 - correct 3 scanline vertical synch code
+     44  10000 ????						;   CLEAN_START	 - set machine to known state on startup
+     45  10000 ????						;   SET_POINTER	 - load a 16-bit absolute to a 16-bit variable
+     46  10000 ????
+     47  10000 ????						;-------------------------------------------------------------------------------
+     48  10000 ????						; SLEEP duration
+     49  10000 ????						; Original author: Thomas Jentzsch
+     50  10000 ????						; Inserts code which takes the specified number of cycles to execute.	This is
+     51  10000 ????						; useful for code where precise timing is required.
+     52  10000 ????						; ILLEGAL-OPCODE VERSION DOES NOT AFFECT FLAGS OR REGISTERS.
+     53  10000 ????						; LEGAL OPCODE VERSION MAY AFFECT FLAGS
+     54  10000 ????						; Uses illegal opcode (DASM 2.20.01 onwards).
+     55  10000 ????
+     56  10000 ????				       MAC	sleep
+     57  10000 ????			    .CYCLES    SET	{1}
+     58  10000 ????
+     59  10000 ????				       IF	.CYCLES < 2
+     60  10000 ????				       ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+     61  10000 ????				       ERR
+     62  10000 ????				       ENDIF
+     63  10000 ????
+     64  10000 ????				       IF	.CYCLES & 1
+     65  10000 ????				       IFNCONST	NO_ILLEGAL_OPCODES
+     66  10000 ????				       nop	0
+     67  10000 ????				       ELSE
+     68  10000 ????				       bit	VSYNC
+     69  10000 ????				       ENDIF
+     70  10000 ????			    .CYCLES    SET	.CYCLES - 3
+     71  10000 ????				       ENDIF
+     72  10000 ????
+     73  10000 ????				       REPEAT	.CYCLES / 2
+     74  10000 ????				       nop
+     75  10000 ????				       REPEND
+     76  10000 ????				       ENDM		;usage: SLEEP n (n>1)
+     77  10000 ????
+     78  10000 ????						;-------------------------------------------------------------------------------
+     79  10000 ????						; VERTICAL_SYNC
+     80  10000 ????						; revised version by Edwin Blink -- saves bytes!
+     81  10000 ????						; Inserts the code required for a proper 3 scanline vertical sync sequence
+     82  10000 ????						; Note: Alters the accumulator
+     83  10000 ????
+     84  10000 ????						; OUT: A = 0
+     85  10000 ????
+     86  10000 ????				       MAC	vertical_sync
+     87  10000 ????				       lda	#%1110	; each '1' bits generate a VSYNC ON line (bits 1..3)
+     88  10000 ????			    .VSLP1     sta	WSYNC	; 1st '0' bit resets Vsync, 2nd '0' bit exit loop
+     89  10000 ????				       sta	VSYNC
+     90  10000 ????				       lsr
+     91  10000 ????				       bne	.VSLP1	; branch until VYSNC has been reset
+     92  10000 ????				       ENDM
+     93  10000 ????
+     94  10000 ????						;-------------------------------------------------------------------------------
+     95  10000 ????						; CLEAN_START
+     96  10000 ????						; Original author: Andrew Davie
+     97  10000 ????						; Standardised start-up code, clears stack, all TIA registers and RAM to 0
+     98  10000 ????						; Sets stack pointer to $FF, and all registers to 0
+     99  10000 ????						; Sets decimal mode off, sets interrupt flag (kind of un-necessary)
+    100  10000 ????						; Use as very first section of code on boot (ie: at reset)
+    101  10000 ????						; Code written to minimise total ROM usage - uses weird 6502 knowledge :)
+    102  10000 ????
+    103  10000 ????				       MAC	clean_start
+    104  10000 ????				       sei
+    105  10000 ????				       cld
+    106  10000 ????
+    107  10000 ????				       ldx	#0
+    108  10000 ????				       txa
+    109  10000 ????				       tay
+    110  10000 ????			    .CLEAR_STACK dex
+    111  10000 ????				       txs
+    112  10000 ????				       pha
+    113  10000 ????				       bne	.CLEAR_STACK	; SP=$FF, X = A = Y = 0
+    114  10000 ????
+    115  10000 ????				       ENDM
+    116  10000 ????
+    117  10000 ????						;-------------------------------------------------------
+    118  10000 ????						; SET_POINTER
+    119  10000 ????						; Original author: Manuel Rotschkar
+    120  10000 ????						;
+    121  10000 ????						; Sets a 2 byte RAM pointer to an absolute address.
+    122  10000 ????						;
+    123  10000 ????						; Usage: SET_POINTER pointer, address
+    124  10000 ????						; Example: SET_POINTER SpritePTR, SpriteData
+    125  10000 ????						;
+    126  10000 ????						; Note: Alters the accumulator, NZ flags
+    127  10000 ????						; IN 1: 2 byte RAM location reserved for pointer
+    128  10000 ????						; IN 2: absolute address
+    129  10000 ????
+    130  10000 ????				       MAC	set_pointer
+    131  10000 ????			    .POINTER   SET	{1}
+    132  10000 ????			    .ADDRESS   SET	{2}
+    133  10000 ????
+    134  10000 ????				       LDA	#<.ADDRESS	; Get Lowbyte of Address
+    135  10000 ????				       STA	.POINTER	; Store in pointer
+    136  10000 ????				       LDA	#>.ADDRESS	; Get Hibyte of Address
+    137  10000 ????				       STA	.POINTER+1	; Store in pointer+1
+    138  10000 ????
+    139  10000 ????				       ENDM
+    140  10000 ????
+    141  10000 ????						;-------------------------------------------------------
+    142  10000 ????						; BOUNDARY byte#
+    143  10000 ????						; Original author: Denis Debro (borrowed from Bob Smith / Thomas)
+    144  10000 ????						;
+    145  10000 ????						; Push data to a certain position inside a page and keep count of how
+    146  10000 ????						; many free bytes the programmer will have.
+    147  10000 ????						;
+    148  10000 ????						; eg: BOUNDARY 5    ; position at byte #5 in page
+    149  10000 ????
+    150  10000 ????			    __DASM__TOTAL_FREE_MEMORY SET	0
+    151  10000 ????			    .FREE_BYTES SET	0
+    152  10000 ????				       MAC	boundary
+    153  10000 ????				       REPEAT	256
+    154  10000 ????				       IF	<. % {1} = 0
+    155  10000 ????				       MEXIT
+    156  10000 ????				       ELSE
+    157  10000 ????			    .FREE_BYTES SET	.FREE_BYTES + 1
+    158  10000 ????				       .byte	$00
+    159  10000 ????				       ENDIF
+    160  10000 ????				       REPEND
+    161  10000 ????			    __DASM__TOTAL_FREE_MEMORY SET	__DASM__TOTAL_FREE_MEMORY + .FREE_BYTES
+    162  10000 ????				       ENDM
+    163  10000 ????
+    164  10000 ????
+    165  10000 ????						; EOF
+------- FILE F8SC.asm
+      7  10000 ????
+      8  10000 ????		10 80	    PF_Color_Read equ	PF_Color_Write+128
+      9 U0080 ????				      seg.u	vars
+     10 U0080					      org	$80
+     11 U0080
+     12 U0080
+     13 U0080
+     14 U1001 ????				      seg.u	SC_RAM_vars
+     15 U1000					      org	$1000
+     16 U1000		       00	   PF_Color_Write ds	1
+     17 U1001
+     18  f000 ????				      seg	Bank_0
+     19  f000 ????
+     20  e000					      org	$E000
+     21  e000					      rorg	$F000
+     22  e000
+     23  e000					      repeat	256
+     24  e000		       00		      .byte.b	$00
+     23  e000					      repend
+     24  e001		       00		      .byte.b	$00
+     23  e001					      repend
+     24  e002		       00		      .byte.b	$00
+     23  e002					      repend
+     24  e003		       00		      .byte.b	$00
+     23  e003					      repend
+     24  e004		       00		      .byte.b	$00
+     23  e004					      repend
+     24  e005		       00		      .byte.b	$00
+     23  e005					      repend
+     24  e006		       00		      .byte.b	$00
+     23  e006					      repend
+     24  e007		       00		      .byte.b	$00
+     23  e007					      repend
+     24  e008		       00		      .byte.b	$00
+     23  e008					      repend
+     24  e009		       00		      .byte.b	$00
+     23  e009					      repend
+     24  e00a		       00		      .byte.b	$00
+     23  e00a					      repend
+     24  e00b		       00		      .byte.b	$00
+     23  e00b					      repend
+     24  e00c		       00		      .byte.b	$00
+     23  e00c					      repend
+     24  e00d		       00		      .byte.b	$00
+     23  e00d					      repend
+     24  e00e		       00		      .byte.b	$00
+     23  e00e					      repend
+     24  e00f		       00		      .byte.b	$00
+     23  e00f					      repend
+     24  e010		       00		      .byte.b	$00
+     23  e010					      repend
+     24  e011		       00		      .byte.b	$00
+     23  e011					      repend
+     24  e012		       00		      .byte.b	$00
+     23  e012					      repend
+     24  e013		       00		      .byte.b	$00
+     23  e013					      repend
+     24  e014		       00		      .byte.b	$00
+     23  e014					      repend
+     24  e015		       00		      .byte.b	$00
+     23  e015					      repend
+     24  e016		       00		      .byte.b	$00
+     23  e016					      repend
+     24  e017		       00		      .byte.b	$00
+     23  e017					      repend
+     24  e018		       00		      .byte.b	$00
+     23  e018					      repend
+     24  e019		       00		      .byte.b	$00
+     23  e019					      repend
+     24  e01a		       00		      .byte.b	$00
+     23  e01a					      repend
+     24  e01b		       00		      .byte.b	$00
+     23  e01b					      repend
+     24  e01c		       00		      .byte.b	$00
+     23  e01c					      repend
+     24  e01d		       00		      .byte.b	$00
+     23  e01d					      repend
+     24  e01e		       00		      .byte.b	$00
+     23  e01e					      repend
+     24  e01f		       00		      .byte.b	$00
+     23  e01f					      repend
+     24  e020		       00		      .byte.b	$00
+     23  e020					      repend
+     24  e021		       00		      .byte.b	$00
+     23  e021					      repend
+     24  e022		       00		      .byte.b	$00
+     23  e022					      repend
+     24  e023		       00		      .byte.b	$00
+     23  e023					      repend
+     24  e024		       00		      .byte.b	$00
+     23  e024					      repend
+     24  e025		       00		      .byte.b	$00
+     23  e025					      repend
+     24  e026		       00		      .byte.b	$00
+     23  e026					      repend
+     24  e027		       00		      .byte.b	$00
+     23  e027					      repend
+     24  e028		       00		      .byte.b	$00
+     23  e028					      repend
+     24  e029		       00		      .byte.b	$00
+     23  e029					      repend
+     24  e02a		       00		      .byte.b	$00
+     23  e02a					      repend
+     24  e02b		       00		      .byte.b	$00
+     23  e02b					      repend
+     24  e02c		       00		      .byte.b	$00
+     23  e02c					      repend
+     24  e02d		       00		      .byte.b	$00
+     23  e02d					      repend
+     24  e02e		       00		      .byte.b	$00
+     23  e02e					      repend
+     24  e02f		       00		      .byte.b	$00
+     23  e02f					      repend
+     24  e030		       00		      .byte.b	$00
+     23  e030					      repend
+     24  e031		       00		      .byte.b	$00
+     23  e031					      repend
+     24  e032		       00		      .byte.b	$00
+     23  e032					      repend
+     24  e033		       00		      .byte.b	$00
+     23  e033					      repend
+     24  e034		       00		      .byte.b	$00
+     23  e034					      repend
+     24  e035		       00		      .byte.b	$00
+     23  e035					      repend
+     24  e036		       00		      .byte.b	$00
+     23  e036					      repend
+     24  e037		       00		      .byte.b	$00
+     23  e037					      repend
+     24  e038		       00		      .byte.b	$00
+     23  e038					      repend
+     24  e039		       00		      .byte.b	$00
+     23  e039					      repend
+     24  e03a		       00		      .byte.b	$00
+     23  e03a					      repend
+     24  e03b		       00		      .byte.b	$00
+     23  e03b					      repend
+     24  e03c		       00		      .byte.b	$00
+     23  e03c					      repend
+     24  e03d		       00		      .byte.b	$00
+     23  e03d					      repend
+     24  e03e		       00		      .byte.b	$00
+     23  e03e					      repend
+     24  e03f		       00		      .byte.b	$00
+     23  e03f					      repend
+     24  e040		       00		      .byte.b	$00
+     23  e040					      repend
+     24  e041		       00		      .byte.b	$00
+     23  e041					      repend
+     24  e042		       00		      .byte.b	$00
+     23  e042					      repend
+     24  e043		       00		      .byte.b	$00
+     23  e043					      repend
+     24  e044		       00		      .byte.b	$00
+     23  e044					      repend
+     24  e045		       00		      .byte.b	$00
+     23  e045					      repend
+     24  e046		       00		      .byte.b	$00
+     23  e046					      repend
+     24  e047		       00		      .byte.b	$00
+     23  e047					      repend
+     24  e048		       00		      .byte.b	$00
+     23  e048					      repend
+     24  e049		       00		      .byte.b	$00
+     23  e049					      repend
+     24  e04a		       00		      .byte.b	$00
+     23  e04a					      repend
+     24  e04b		       00		      .byte.b	$00
+     23  e04b					      repend
+     24  e04c		       00		      .byte.b	$00
+     23  e04c					      repend
+     24  e04d		       00		      .byte.b	$00
+     23  e04d					      repend
+     24  e04e		       00		      .byte.b	$00
+     23  e04e					      repend
+     24  e04f		       00		      .byte.b	$00
+     23  e04f					      repend
+     24  e050		       00		      .byte.b	$00
+     23  e050					      repend
+     24  e051		       00		      .byte.b	$00
+     23  e051					      repend
+     24  e052		       00		      .byte.b	$00
+     23  e052					      repend
+     24  e053		       00		      .byte.b	$00
+     23  e053					      repend
+     24  e054		       00		      .byte.b	$00
+     23  e054					      repend
+     24  e055		       00		      .byte.b	$00
+     23  e055					      repend
+     24  e056		       00		      .byte.b	$00
+     23  e056					      repend
+     24  e057		       00		      .byte.b	$00
+     23  e057					      repend
+     24  e058		       00		      .byte.b	$00
+     23  e058					      repend
+     24  e059		       00		      .byte.b	$00
+     23  e059					      repend
+     24  e05a		       00		      .byte.b	$00
+     23  e05a					      repend
+     24  e05b		       00		      .byte.b	$00
+     23  e05b					      repend
+     24  e05c		       00		      .byte.b	$00
+     23  e05c					      repend
+     24  e05d		       00		      .byte.b	$00
+     23  e05d					      repend
+     24  e05e		       00		      .byte.b	$00
+     23  e05e					      repend
+     24  e05f		       00		      .byte.b	$00
+     23  e05f					      repend
+     24  e060		       00		      .byte.b	$00
+     23  e060					      repend
+     24  e061		       00		      .byte.b	$00
+     23  e061					      repend
+     24  e062		       00		      .byte.b	$00
+     23  e062					      repend
+     24  e063		       00		      .byte.b	$00
+     23  e063					      repend
+     24  e064		       00		      .byte.b	$00
+     23  e064					      repend
+     24  e065		       00		      .byte.b	$00
+     23  e065					      repend
+     24  e066		       00		      .byte.b	$00
+     23  e066					      repend
+     24  e067		       00		      .byte.b	$00
+     23  e067					      repend
+     24  e068		       00		      .byte.b	$00
+     23  e068					      repend
+     24  e069		       00		      .byte.b	$00
+     23  e069					      repend
+     24  e06a		       00		      .byte.b	$00
+     23  e06a					      repend
+     24  e06b		       00		      .byte.b	$00
+     23  e06b					      repend
+     24  e06c		       00		      .byte.b	$00
+     23  e06c					      repend
+     24  e06d		       00		      .byte.b	$00
+     23  e06d					      repend
+     24  e06e		       00		      .byte.b	$00
+     23  e06e					      repend
+     24  e06f		       00		      .byte.b	$00
+     23  e06f					      repend
+     24  e070		       00		      .byte.b	$00
+     23  e070					      repend
+     24  e071		       00		      .byte.b	$00
+     23  e071					      repend
+     24  e072		       00		      .byte.b	$00
+     23  e072					      repend
+     24  e073		       00		      .byte.b	$00
+     23  e073					      repend
+     24  e074		       00		      .byte.b	$00
+     23  e074					      repend
+     24  e075		       00		      .byte.b	$00
+     23  e075					      repend
+     24  e076		       00		      .byte.b	$00
+     23  e076					      repend
+     24  e077		       00		      .byte.b	$00
+     23  e077					      repend
+     24  e078		       00		      .byte.b	$00
+     23  e078					      repend
+     24  e079		       00		      .byte.b	$00
+     23  e079					      repend
+     24  e07a		       00		      .byte.b	$00
+     23  e07a					      repend
+     24  e07b		       00		      .byte.b	$00
+     23  e07b					      repend
+     24  e07c		       00		      .byte.b	$00
+     23  e07c					      repend
+     24  e07d		       00		      .byte.b	$00
+     23  e07d					      repend
+     24  e07e		       00		      .byte.b	$00
+     23  e07e					      repend
+     24  e07f		       00		      .byte.b	$00
+     23  e07f					      repend
+     24  e080		       00		      .byte.b	$00
+     23  e080					      repend
+     24  e081		       00		      .byte.b	$00
+     23  e081					      repend
+     24  e082		       00		      .byte.b	$00
+     23  e082					      repend
+     24  e083		       00		      .byte.b	$00
+     23  e083					      repend
+     24  e084		       00		      .byte.b	$00
+     23  e084					      repend
+     24  e085		       00		      .byte.b	$00
+     23  e085					      repend
+     24  e086		       00		      .byte.b	$00
+     23  e086					      repend
+     24  e087		       00		      .byte.b	$00
+     23  e087					      repend
+     24  e088		       00		      .byte.b	$00
+     23  e088					      repend
+     24  e089		       00		      .byte.b	$00
+     23  e089					      repend
+     24  e08a		       00		      .byte.b	$00
+     23  e08a					      repend
+     24  e08b		       00		      .byte.b	$00
+     23  e08b					      repend
+     24  e08c		       00		      .byte.b	$00
+     23  e08c					      repend
+     24  e08d		       00		      .byte.b	$00
+     23  e08d					      repend
+     24  e08e		       00		      .byte.b	$00
+     23  e08e					      repend
+     24  e08f		       00		      .byte.b	$00
+     23  e08f					      repend
+     24  e090		       00		      .byte.b	$00
+     23  e090					      repend
+     24  e091		       00		      .byte.b	$00
+     23  e091					      repend
+     24  e092		       00		      .byte.b	$00
+     23  e092					      repend
+     24  e093		       00		      .byte.b	$00
+     23  e093					      repend
+     24  e094		       00		      .byte.b	$00
+     23  e094					      repend
+     24  e095		       00		      .byte.b	$00
+     23  e095					      repend
+     24  e096		       00		      .byte.b	$00
+     23  e096					      repend
+     24  e097		       00		      .byte.b	$00
+     23  e097					      repend
+     24  e098		       00		      .byte.b	$00
+     23  e098					      repend
+     24  e099		       00		      .byte.b	$00
+     23  e099					      repend
+     24  e09a		       00		      .byte.b	$00
+     23  e09a					      repend
+     24  e09b		       00		      .byte.b	$00
+     23  e09b					      repend
+     24  e09c		       00		      .byte.b	$00
+     23  e09c					      repend
+     24  e09d		       00		      .byte.b	$00
+     23  e09d					      repend
+     24  e09e		       00		      .byte.b	$00
+     23  e09e					      repend
+     24  e09f		       00		      .byte.b	$00
+     23  e09f					      repend
+     24  e0a0		       00		      .byte.b	$00
+     23  e0a0					      repend
+     24  e0a1		       00		      .byte.b	$00
+     23  e0a1					      repend
+     24  e0a2		       00		      .byte.b	$00
+     23  e0a2					      repend
+     24  e0a3		       00		      .byte.b	$00
+     23  e0a3					      repend
+     24  e0a4		       00		      .byte.b	$00
+     23  e0a4					      repend
+     24  e0a5		       00		      .byte.b	$00
+     23  e0a5					      repend
+     24  e0a6		       00		      .byte.b	$00
+     23  e0a6					      repend
+     24  e0a7		       00		      .byte.b	$00
+     23  e0a7					      repend
+     24  e0a8		       00		      .byte.b	$00
+     23  e0a8					      repend
+     24  e0a9		       00		      .byte.b	$00
+     23  e0a9					      repend
+     24  e0aa		       00		      .byte.b	$00
+     23  e0aa					      repend
+     24  e0ab		       00		      .byte.b	$00
+     23  e0ab					      repend
+     24  e0ac		       00		      .byte.b	$00
+     23  e0ac					      repend
+     24  e0ad		       00		      .byte.b	$00
+     23  e0ad					      repend
+     24  e0ae		       00		      .byte.b	$00
+     23  e0ae					      repend
+     24  e0af		       00		      .byte.b	$00
+     23  e0af					      repend
+     24  e0b0		       00		      .byte.b	$00
+     23  e0b0					      repend
+     24  e0b1		       00		      .byte.b	$00
+     23  e0b1					      repend
+     24  e0b2		       00		      .byte.b	$00
+     23  e0b2					      repend
+     24  e0b3		       00		      .byte.b	$00
+     23  e0b3					      repend
+     24  e0b4		       00		      .byte.b	$00
+     23  e0b4					      repend
+     24  e0b5		       00		      .byte.b	$00
+     23  e0b5					      repend
+     24  e0b6		       00		      .byte.b	$00
+     23  e0b6					      repend
+     24  e0b7		       00		      .byte.b	$00
+     23  e0b7					      repend
+     24  e0b8		       00		      .byte.b	$00
+     23  e0b8					      repend
+     24  e0b9		       00		      .byte.b	$00
+     23  e0b9					      repend
+     24  e0ba		       00		      .byte.b	$00
+     23  e0ba					      repend
+     24  e0bb		       00		      .byte.b	$00
+     23  e0bb					      repend
+     24  e0bc		       00		      .byte.b	$00
+     23  e0bc					      repend
+     24  e0bd		       00		      .byte.b	$00
+     23  e0bd					      repend
+     24  e0be		       00		      .byte.b	$00
+     23  e0be					      repend
+     24  e0bf		       00		      .byte.b	$00
+     23  e0bf					      repend
+     24  e0c0		       00		      .byte.b	$00
+     23  e0c0					      repend
+     24  e0c1		       00		      .byte.b	$00
+     23  e0c1					      repend
+     24  e0c2		       00		      .byte.b	$00
+     23  e0c2					      repend
+     24  e0c3		       00		      .byte.b	$00
+     23  e0c3					      repend
+     24  e0c4		       00		      .byte.b	$00
+     23  e0c4					      repend
+     24  e0c5		       00		      .byte.b	$00
+     23  e0c5					      repend
+     24  e0c6		       00		      .byte.b	$00
+     23  e0c6					      repend
+     24  e0c7		       00		      .byte.b	$00
+     23  e0c7					      repend
+     24  e0c8		       00		      .byte.b	$00
+     23  e0c8					      repend
+     24  e0c9		       00		      .byte.b	$00
+     23  e0c9					      repend
+     24  e0ca		       00		      .byte.b	$00
+     23  e0ca					      repend
+     24  e0cb		       00		      .byte.b	$00
+     23  e0cb					      repend
+     24  e0cc		       00		      .byte.b	$00
+     23  e0cc					      repend
+     24  e0cd		       00		      .byte.b	$00
+     23  e0cd					      repend
+     24  e0ce		       00		      .byte.b	$00
+     23  e0ce					      repend
+     24  e0cf		       00		      .byte.b	$00
+     23  e0cf					      repend
+     24  e0d0		       00		      .byte.b	$00
+     23  e0d0					      repend
+     24  e0d1		       00		      .byte.b	$00
+     23  e0d1					      repend
+     24  e0d2		       00		      .byte.b	$00
+     23  e0d2					      repend
+     24  e0d3		       00		      .byte.b	$00
+     23  e0d3					      repend
+     24  e0d4		       00		      .byte.b	$00
+     23  e0d4					      repend
+     24  e0d5		       00		      .byte.b	$00
+     23  e0d5					      repend
+     24  e0d6		       00		      .byte.b	$00
+     23  e0d6					      repend
+     24  e0d7		       00		      .byte.b	$00
+     23  e0d7					      repend
+     24  e0d8		       00		      .byte.b	$00
+     23  e0d8					      repend
+     24  e0d9		       00		      .byte.b	$00
+     23  e0d9					      repend
+     24  e0da		       00		      .byte.b	$00
+     23  e0da					      repend
+     24  e0db		       00		      .byte.b	$00
+     23  e0db					      repend
+     24  e0dc		       00		      .byte.b	$00
+     23  e0dc					      repend
+     24  e0dd		       00		      .byte.b	$00
+     23  e0dd					      repend
+     24  e0de		       00		      .byte.b	$00
+     23  e0de					      repend
+     24  e0df		       00		      .byte.b	$00
+     23  e0df					      repend
+     24  e0e0		       00		      .byte.b	$00
+     23  e0e0					      repend
+     24  e0e1		       00		      .byte.b	$00
+     23  e0e1					      repend
+     24  e0e2		       00		      .byte.b	$00
+     23  e0e2					      repend
+     24  e0e3		       00		      .byte.b	$00
+     23  e0e3					      repend
+     24  e0e4		       00		      .byte.b	$00
+     23  e0e4					      repend
+     24  e0e5		       00		      .byte.b	$00
+     23  e0e5					      repend
+     24  e0e6		       00		      .byte.b	$00
+     23  e0e6					      repend
+     24  e0e7		       00		      .byte.b	$00
+     23  e0e7					      repend
+     24  e0e8		       00		      .byte.b	$00
+     23  e0e8					      repend
+     24  e0e9		       00		      .byte.b	$00
+     23  e0e9					      repend
+     24  e0ea		       00		      .byte.b	$00
+     23  e0ea					      repend
+     24  e0eb		       00		      .byte.b	$00
+     23  e0eb					      repend
+     24  e0ec		       00		      .byte.b	$00
+     23  e0ec					      repend
+     24  e0ed		       00		      .byte.b	$00
+     23  e0ed					      repend
+     24  e0ee		       00		      .byte.b	$00
+     23  e0ee					      repend
+     24  e0ef		       00		      .byte.b	$00
+     23  e0ef					      repend
+     24  e0f0		       00		      .byte.b	$00
+     23  e0f0					      repend
+     24  e0f1		       00		      .byte.b	$00
+     23  e0f1					      repend
+     24  e0f2		       00		      .byte.b	$00
+     23  e0f2					      repend
+     24  e0f3		       00		      .byte.b	$00
+     23  e0f3					      repend
+     24  e0f4		       00		      .byte.b	$00
+     23  e0f4					      repend
+     24  e0f5		       00		      .byte.b	$00
+     23  e0f5					      repend
+     24  e0f6		       00		      .byte.b	$00
+     23  e0f6					      repend
+     24  e0f7		       00		      .byte.b	$00
+     23  e0f7					      repend
+     24  e0f8		       00		      .byte.b	$00
+     23  e0f8					      repend
+     24  e0f9		       00		      .byte.b	$00
+     23  e0f9					      repend
+     24  e0fa		       00		      .byte.b	$00
+     23  e0fa					      repend
+     24  e0fb		       00		      .byte.b	$00
+     23  e0fb					      repend
+     24  e0fc		       00		      .byte.b	$00
+     23  e0fc					      repend
+     24  e0fd		       00		      .byte.b	$00
+     23  e0fd					      repend
+     24  e0fe		       00		      .byte.b	$00
+     23  e0fe					      repend
+     24  e0ff		       00		      .byte.b	$00
+     25  e100					      repend
+     26  e100
+     27  e100				   Start_0
+     28  e100		       ea		      nop
+     29  e101		       ea		      nop
+     30  e102		       ea		      nop
+     31  e103
+      0  e103					      CLEAN_START
+      1  e103		       78		      sei
+      2  e104		       d8		      cld
+      3  e105
+      4  e105		       a2 00		      ldx	#0
+      5  e107		       8a		      txa
+      6  e108		       a8		      tay
+      7  e109		       ca	   .CLEAR_STACK dex
+      8  e10a		       9a		      txs
+      9  e10b		       48		      pha
+     10  e10c		       d0 fb		      bne	.CLEAR_STACK
+     11  e10e
+     33  e10e							;	jsr Call_1
+     34  e10e		       a9 ff		      lda	#$FF
+     35  e110		       85 0e		      sta	PF1
+     36  e112				   StartFrame
+     37  e112		       a9 02		      lda	#2
+     38  e114		       85 01		      sta	VBLANK
+     39  e116		       85 00		      sta	VSYNC
+     40  e118
+     41  e118		       85 02		      sta	WSYNC
+     42  e11a		       85 02		      sta	WSYNC
+     43  e11c		       85 02		      sta	WSYNC
+     44  e11e
+     45  e11e		       a9 00		      lda	#0
+     46  e120		       85 00		      sta	VSYNC
+     47  e122
+     48  e122		       a0 25		      ldy	#37
+     49  e124				   Vert
+     50  e124		       85 02		      sta	WSYNC
+     51  e126		       88		      dey
+     52  e127		       d0 fb		      bne	Vert
+     53  e129
+     54  e129		       a9 00		      lda	#0
+     55  e12b		       85 01		      sta	VBLANK
+     56  e12d
+     57  e12d		       a0 c0		      ldy	#192
+     58  e12f				   Pic
+     59  e12f		       85 02		      sta	WSYNC
+     60  e131		       88		      dey
+     61  e132		       d0 fb		      bne	Pic
+     62  e134
+     63  e134		       a9 02		      lda	#2
+     64  e136		       85 01		      sta	VBLANK
+     65  e138
+     66  e138		       a0 1e		      ldy	#30
+     67  e13a				   Over
+     68  e13a		       85 02		      sta	WSYNC
+     69  e13c		       88		      dey
+     70  e13d		       d0 fb		      bne	Over
+     71  e13f
+     72  e13f		       20 e0 ff 	      jsr	Call_1
+     73  e142
+     74  e142		       ad 80 10 	      lda	PF_Color_Read
+     75  e145		       85 08		      sta	COLUPF
+     76  e147
+     77  e147
+     78  e147		       4c 12 f1 	      jmp	StartFrame
+     79  e14a
+     80  e14a
+     81  e14a
+     82  e14a
+     83  efe0					      org	$EFE0
+     84  efe0					      rorg	$FFE0
+     85  efe0				   Call_1
+     86  efe0		       8e f9 ff 	      stx	$FFF9
+     87  efe3
+     88  efe3		       ea		      nop
+     89  efe4		       ea		      nop
+     90  efe5		       ea		      nop
+     91  efe6		       ea		      nop
+     92  efe7		       ea		      nop
+     93  efe8		       ea		      nop
+     94  efe9
+     95  efe9		       60		      rts
+     96  efea
+     97  eff8					      org	$EFF8
+     98  eff8					      rorg	$FFF8
+     99  eff8		       ff ff		      .word.w	$FFFF
+    100  effa		       00 f1		      .word.w	Start_0
+    101  effc		       00 f1		      .word.w	Start_0
+    102  effe		       00 f1		      .word.w	Start_0
+    103  f000
+    104  10000 ????				       seg	Bank_1
+    105  10000 ????
+    106  f000					      org	$F000
+    107  f000					      rorg	$F000
+    108  f000
+    109  f000					      repeat	256
+    110  f000		       00		      .byte.b	$00
+    109  f000					      repend
+    110  f001		       00		      .byte.b	$00
+    109  f001					      repend
+    110  f002		       00		      .byte.b	$00
+    109  f002					      repend
+    110  f003		       00		      .byte.b	$00
+    109  f003					      repend
+    110  f004		       00		      .byte.b	$00
+    109  f004					      repend
+    110  f005		       00		      .byte.b	$00
+    109  f005					      repend
+    110  f006		       00		      .byte.b	$00
+    109  f006					      repend
+    110  f007		       00		      .byte.b	$00
+    109  f007					      repend
+    110  f008		       00		      .byte.b	$00
+    109  f008					      repend
+    110  f009		       00		      .byte.b	$00
+    109  f009					      repend
+    110  f00a		       00		      .byte.b	$00
+    109  f00a					      repend
+    110  f00b		       00		      .byte.b	$00
+    109  f00b					      repend
+    110  f00c		       00		      .byte.b	$00
+    109  f00c					      repend
+    110  f00d		       00		      .byte.b	$00
+    109  f00d					      repend
+    110  f00e		       00		      .byte.b	$00
+    109  f00e					      repend
+    110  f00f		       00		      .byte.b	$00
+    109  f00f					      repend
+    110  f010		       00		      .byte.b	$00
+    109  f010					      repend
+    110  f011		       00		      .byte.b	$00
+    109  f011					      repend
+    110  f012		       00		      .byte.b	$00
+    109  f012					      repend
+    110  f013		       00		      .byte.b	$00
+    109  f013					      repend
+    110  f014		       00		      .byte.b	$00
+    109  f014					      repend
+    110  f015		       00		      .byte.b	$00
+    109  f015					      repend
+    110  f016		       00		      .byte.b	$00
+    109  f016					      repend
+    110  f017		       00		      .byte.b	$00
+    109  f017					      repend
+    110  f018		       00		      .byte.b	$00
+    109  f018					      repend
+    110  f019		       00		      .byte.b	$00
+    109  f019					      repend
+    110  f01a		       00		      .byte.b	$00
+    109  f01a					      repend
+    110  f01b		       00		      .byte.b	$00
+    109  f01b					      repend
+    110  f01c		       00		      .byte.b	$00
+    109  f01c					      repend
+    110  f01d		       00		      .byte.b	$00
+    109  f01d					      repend
+    110  f01e		       00		      .byte.b	$00
+    109  f01e					      repend
+    110  f01f		       00		      .byte.b	$00
+    109  f01f					      repend
+    110  f020		       00		      .byte.b	$00
+    109  f020					      repend
+    110  f021		       00		      .byte.b	$00
+    109  f021					      repend
+    110  f022		       00		      .byte.b	$00
+    109  f022					      repend
+    110  f023		       00		      .byte.b	$00
+    109  f023					      repend
+    110  f024		       00		      .byte.b	$00
+    109  f024					      repend
+    110  f025		       00		      .byte.b	$00
+    109  f025					      repend
+    110  f026		       00		      .byte.b	$00
+    109  f026					      repend
+    110  f027		       00		      .byte.b	$00
+    109  f027					      repend
+    110  f028		       00		      .byte.b	$00
+    109  f028					      repend
+    110  f029		       00		      .byte.b	$00
+    109  f029					      repend
+    110  f02a		       00		      .byte.b	$00
+    109  f02a					      repend
+    110  f02b		       00		      .byte.b	$00
+    109  f02b					      repend
+    110  f02c		       00		      .byte.b	$00
+    109  f02c					      repend
+    110  f02d		       00		      .byte.b	$00
+    109  f02d					      repend
+    110  f02e		       00		      .byte.b	$00
+    109  f02e					      repend
+    110  f02f		       00		      .byte.b	$00
+    109  f02f					      repend
+    110  f030		       00		      .byte.b	$00
+    109  f030					      repend
+    110  f031		       00		      .byte.b	$00
+    109  f031					      repend
+    110  f032		       00		      .byte.b	$00
+    109  f032					      repend
+    110  f033		       00		      .byte.b	$00
+    109  f033					      repend
+    110  f034		       00		      .byte.b	$00
+    109  f034					      repend
+    110  f035		       00		      .byte.b	$00
+    109  f035					      repend
+    110  f036		       00		      .byte.b	$00
+    109  f036					      repend
+    110  f037		       00		      .byte.b	$00
+    109  f037					      repend
+    110  f038		       00		      .byte.b	$00
+    109  f038					      repend
+    110  f039		       00		      .byte.b	$00
+    109  f039					      repend
+    110  f03a		       00		      .byte.b	$00
+    109  f03a					      repend
+    110  f03b		       00		      .byte.b	$00
+    109  f03b					      repend
+    110  f03c		       00		      .byte.b	$00
+    109  f03c					      repend
+    110  f03d		       00		      .byte.b	$00
+    109  f03d					      repend
+    110  f03e		       00		      .byte.b	$00
+    109  f03e					      repend
+    110  f03f		       00		      .byte.b	$00
+    109  f03f					      repend
+    110  f040		       00		      .byte.b	$00
+    109  f040					      repend
+    110  f041		       00		      .byte.b	$00
+    109  f041					      repend
+    110  f042		       00		      .byte.b	$00
+    109  f042					      repend
+    110  f043		       00		      .byte.b	$00
+    109  f043					      repend
+    110  f044		       00		      .byte.b	$00
+    109  f044					      repend
+    110  f045		       00		      .byte.b	$00
+    109  f045					      repend
+    110  f046		       00		      .byte.b	$00
+    109  f046					      repend
+    110  f047		       00		      .byte.b	$00
+    109  f047					      repend
+    110  f048		       00		      .byte.b	$00
+    109  f048					      repend
+    110  f049		       00		      .byte.b	$00
+    109  f049					      repend
+    110  f04a		       00		      .byte.b	$00
+    109  f04a					      repend
+    110  f04b		       00		      .byte.b	$00
+    109  f04b					      repend
+    110  f04c		       00		      .byte.b	$00
+    109  f04c					      repend
+    110  f04d		       00		      .byte.b	$00
+    109  f04d					      repend
+    110  f04e		       00		      .byte.b	$00
+    109  f04e					      repend
+    110  f04f		       00		      .byte.b	$00
+    109  f04f					      repend
+    110  f050		       00		      .byte.b	$00
+    109  f050					      repend
+    110  f051		       00		      .byte.b	$00
+    109  f051					      repend
+    110  f052		       00		      .byte.b	$00
+    109  f052					      repend
+    110  f053		       00		      .byte.b	$00
+    109  f053					      repend
+    110  f054		       00		      .byte.b	$00
+    109  f054					      repend
+    110  f055		       00		      .byte.b	$00
+    109  f055					      repend
+    110  f056		       00		      .byte.b	$00
+    109  f056					      repend
+    110  f057		       00		      .byte.b	$00
+    109  f057					      repend
+    110  f058		       00		      .byte.b	$00
+    109  f058					      repend
+    110  f059		       00		      .byte.b	$00
+    109  f059					      repend
+    110  f05a		       00		      .byte.b	$00
+    109  f05a					      repend
+    110  f05b		       00		      .byte.b	$00
+    109  f05b					      repend
+    110  f05c		       00		      .byte.b	$00
+    109  f05c					      repend
+    110  f05d		       00		      .byte.b	$00
+    109  f05d					      repend
+    110  f05e		       00		      .byte.b	$00
+    109  f05e					      repend
+    110  f05f		       00		      .byte.b	$00
+    109  f05f					      repend
+    110  f060		       00		      .byte.b	$00
+    109  f060					      repend
+    110  f061		       00		      .byte.b	$00
+    109  f061					      repend
+    110  f062		       00		      .byte.b	$00
+    109  f062					      repend
+    110  f063		       00		      .byte.b	$00
+    109  f063					      repend
+    110  f064		       00		      .byte.b	$00
+    109  f064					      repend
+    110  f065		       00		      .byte.b	$00
+    109  f065					      repend
+    110  f066		       00		      .byte.b	$00
+    109  f066					      repend
+    110  f067		       00		      .byte.b	$00
+    109  f067					      repend
+    110  f068		       00		      .byte.b	$00
+    109  f068					      repend
+    110  f069		       00		      .byte.b	$00
+    109  f069					      repend
+    110  f06a		       00		      .byte.b	$00
+    109  f06a					      repend
+    110  f06b		       00		      .byte.b	$00
+    109  f06b					      repend
+    110  f06c		       00		      .byte.b	$00
+    109  f06c					      repend
+    110  f06d		       00		      .byte.b	$00
+    109  f06d					      repend
+    110  f06e		       00		      .byte.b	$00
+    109  f06e					      repend
+    110  f06f		       00		      .byte.b	$00
+    109  f06f					      repend
+    110  f070		       00		      .byte.b	$00
+    109  f070					      repend
+    110  f071		       00		      .byte.b	$00
+    109  f071					      repend
+    110  f072		       00		      .byte.b	$00
+    109  f072					      repend
+    110  f073		       00		      .byte.b	$00
+    109  f073					      repend
+    110  f074		       00		      .byte.b	$00
+    109  f074					      repend
+    110  f075		       00		      .byte.b	$00
+    109  f075					      repend
+    110  f076		       00		      .byte.b	$00
+    109  f076					      repend
+    110  f077		       00		      .byte.b	$00
+    109  f077					      repend
+    110  f078		       00		      .byte.b	$00
+    109  f078					      repend
+    110  f079		       00		      .byte.b	$00
+    109  f079					      repend
+    110  f07a		       00		      .byte.b	$00
+    109  f07a					      repend
+    110  f07b		       00		      .byte.b	$00
+    109  f07b					      repend
+    110  f07c		       00		      .byte.b	$00
+    109  f07c					      repend
+    110  f07d		       00		      .byte.b	$00
+    109  f07d					      repend
+    110  f07e		       00		      .byte.b	$00
+    109  f07e					      repend
+    110  f07f		       00		      .byte.b	$00
+    109  f07f					      repend
+    110  f080		       00		      .byte.b	$00
+    109  f080					      repend
+    110  f081		       00		      .byte.b	$00
+    109  f081					      repend
+    110  f082		       00		      .byte.b	$00
+    109  f082					      repend
+    110  f083		       00		      .byte.b	$00
+    109  f083					      repend
+    110  f084		       00		      .byte.b	$00
+    109  f084					      repend
+    110  f085		       00		      .byte.b	$00
+    109  f085					      repend
+    110  f086		       00		      .byte.b	$00
+    109  f086					      repend
+    110  f087		       00		      .byte.b	$00
+    109  f087					      repend
+    110  f088		       00		      .byte.b	$00
+    109  f088					      repend
+    110  f089		       00		      .byte.b	$00
+    109  f089					      repend
+    110  f08a		       00		      .byte.b	$00
+    109  f08a					      repend
+    110  f08b		       00		      .byte.b	$00
+    109  f08b					      repend
+    110  f08c		       00		      .byte.b	$00
+    109  f08c					      repend
+    110  f08d		       00		      .byte.b	$00
+    109  f08d					      repend
+    110  f08e		       00		      .byte.b	$00
+    109  f08e					      repend
+    110  f08f		       00		      .byte.b	$00
+    109  f08f					      repend
+    110  f090		       00		      .byte.b	$00
+    109  f090					      repend
+    110  f091		       00		      .byte.b	$00
+    109  f091					      repend
+    110  f092		       00		      .byte.b	$00
+    109  f092					      repend
+    110  f093		       00		      .byte.b	$00
+    109  f093					      repend
+    110  f094		       00		      .byte.b	$00
+    109  f094					      repend
+    110  f095		       00		      .byte.b	$00
+    109  f095					      repend
+    110  f096		       00		      .byte.b	$00
+    109  f096					      repend
+    110  f097		       00		      .byte.b	$00
+    109  f097					      repend
+    110  f098		       00		      .byte.b	$00
+    109  f098					      repend
+    110  f099		       00		      .byte.b	$00
+    109  f099					      repend
+    110  f09a		       00		      .byte.b	$00
+    109  f09a					      repend
+    110  f09b		       00		      .byte.b	$00
+    109  f09b					      repend
+    110  f09c		       00		      .byte.b	$00
+    109  f09c					      repend
+    110  f09d		       00		      .byte.b	$00
+    109  f09d					      repend
+    110  f09e		       00		      .byte.b	$00
+    109  f09e					      repend
+    110  f09f		       00		      .byte.b	$00
+    109  f09f					      repend
+    110  f0a0		       00		      .byte.b	$00
+    109  f0a0					      repend
+    110  f0a1		       00		      .byte.b	$00
+    109  f0a1					      repend
+    110  f0a2		       00		      .byte.b	$00
+    109  f0a2					      repend
+    110  f0a3		       00		      .byte.b	$00
+    109  f0a3					      repend
+    110  f0a4		       00		      .byte.b	$00
+    109  f0a4					      repend
+    110  f0a5		       00		      .byte.b	$00
+    109  f0a5					      repend
+    110  f0a6		       00		      .byte.b	$00
+    109  f0a6					      repend
+    110  f0a7		       00		      .byte.b	$00
+    109  f0a7					      repend
+    110  f0a8		       00		      .byte.b	$00
+    109  f0a8					      repend
+    110  f0a9		       00		      .byte.b	$00
+    109  f0a9					      repend
+    110  f0aa		       00		      .byte.b	$00
+    109  f0aa					      repend
+    110  f0ab		       00		      .byte.b	$00
+    109  f0ab					      repend
+    110  f0ac		       00		      .byte.b	$00
+    109  f0ac					      repend
+    110  f0ad		       00		      .byte.b	$00
+    109  f0ad					      repend
+    110  f0ae		       00		      .byte.b	$00
+    109  f0ae					      repend
+    110  f0af		       00		      .byte.b	$00
+    109  f0af					      repend
+    110  f0b0		       00		      .byte.b	$00
+    109  f0b0					      repend
+    110  f0b1		       00		      .byte.b	$00
+    109  f0b1					      repend
+    110  f0b2		       00		      .byte.b	$00
+    109  f0b2					      repend
+    110  f0b3		       00		      .byte.b	$00
+    109  f0b3					      repend
+    110  f0b4		       00		      .byte.b	$00
+    109  f0b4					      repend
+    110  f0b5		       00		      .byte.b	$00
+    109  f0b5					      repend
+    110  f0b6		       00		      .byte.b	$00
+    109  f0b6					      repend
+    110  f0b7		       00		      .byte.b	$00
+    109  f0b7					      repend
+    110  f0b8		       00		      .byte.b	$00
+    109  f0b8					      repend
+    110  f0b9		       00		      .byte.b	$00
+    109  f0b9					      repend
+    110  f0ba		       00		      .byte.b	$00
+    109  f0ba					      repend
+    110  f0bb		       00		      .byte.b	$00
+    109  f0bb					      repend
+    110  f0bc		       00		      .byte.b	$00
+    109  f0bc					      repend
+    110  f0bd		       00		      .byte.b	$00
+    109  f0bd					      repend
+    110  f0be		       00		      .byte.b	$00
+    109  f0be					      repend
+    110  f0bf		       00		      .byte.b	$00
+    109  f0bf					      repend
+    110  f0c0		       00		      .byte.b	$00
+    109  f0c0					      repend
+    110  f0c1		       00		      .byte.b	$00
+    109  f0c1					      repend
+    110  f0c2		       00		      .byte.b	$00
+    109  f0c2					      repend
+    110  f0c3		       00		      .byte.b	$00
+    109  f0c3					      repend
+    110  f0c4		       00		      .byte.b	$00
+    109  f0c4					      repend
+    110  f0c5		       00		      .byte.b	$00
+    109  f0c5					      repend
+    110  f0c6		       00		      .byte.b	$00
+    109  f0c6					      repend
+    110  f0c7		       00		      .byte.b	$00
+    109  f0c7					      repend
+    110  f0c8		       00		      .byte.b	$00
+    109  f0c8					      repend
+    110  f0c9		       00		      .byte.b	$00
+    109  f0c9					      repend
+    110  f0ca		       00		      .byte.b	$00
+    109  f0ca					      repend
+    110  f0cb		       00		      .byte.b	$00
+    109  f0cb					      repend
+    110  f0cc		       00		      .byte.b	$00
+    109  f0cc					      repend
+    110  f0cd		       00		      .byte.b	$00
+    109  f0cd					      repend
+    110  f0ce		       00		      .byte.b	$00
+    109  f0ce					      repend
+    110  f0cf		       00		      .byte.b	$00
+    109  f0cf					      repend
+    110  f0d0		       00		      .byte.b	$00
+    109  f0d0					      repend
+    110  f0d1		       00		      .byte.b	$00
+    109  f0d1					      repend
+    110  f0d2		       00		      .byte.b	$00
+    109  f0d2					      repend
+    110  f0d3		       00		      .byte.b	$00
+    109  f0d3					      repend
+    110  f0d4		       00		      .byte.b	$00
+    109  f0d4					      repend
+    110  f0d5		       00		      .byte.b	$00
+    109  f0d5					      repend
+    110  f0d6		       00		      .byte.b	$00
+    109  f0d6					      repend
+    110  f0d7		       00		      .byte.b	$00
+    109  f0d7					      repend
+    110  f0d8		       00		      .byte.b	$00
+    109  f0d8					      repend
+    110  f0d9		       00		      .byte.b	$00
+    109  f0d9					      repend
+    110  f0da		       00		      .byte.b	$00
+    109  f0da					      repend
+    110  f0db		       00		      .byte.b	$00
+    109  f0db					      repend
+    110  f0dc		       00		      .byte.b	$00
+    109  f0dc					      repend
+    110  f0dd		       00		      .byte.b	$00
+    109  f0dd					      repend
+    110  f0de		       00		      .byte.b	$00
+    109  f0de					      repend
+    110  f0df		       00		      .byte.b	$00
+    109  f0df					      repend
+    110  f0e0		       00		      .byte.b	$00
+    109  f0e0					      repend
+    110  f0e1		       00		      .byte.b	$00
+    109  f0e1					      repend
+    110  f0e2		       00		      .byte.b	$00
+    109  f0e2					      repend
+    110  f0e3		       00		      .byte.b	$00
+    109  f0e3					      repend
+    110  f0e4		       00		      .byte.b	$00
+    109  f0e4					      repend
+    110  f0e5		       00		      .byte.b	$00
+    109  f0e5					      repend
+    110  f0e6		       00		      .byte.b	$00
+    109  f0e6					      repend
+    110  f0e7		       00		      .byte.b	$00
+    109  f0e7					      repend
+    110  f0e8		       00		      .byte.b	$00
+    109  f0e8					      repend
+    110  f0e9		       00		      .byte.b	$00
+    109  f0e9					      repend
+    110  f0ea		       00		      .byte.b	$00
+    109  f0ea					      repend
+    110  f0eb		       00		      .byte.b	$00
+    109  f0eb					      repend
+    110  f0ec		       00		      .byte.b	$00
+    109  f0ec					      repend
+    110  f0ed		       00		      .byte.b	$00
+    109  f0ed					      repend
+    110  f0ee		       00		      .byte.b	$00
+    109  f0ee					      repend
+    110  f0ef		       00		      .byte.b	$00
+    109  f0ef					      repend
+    110  f0f0		       00		      .byte.b	$00
+    109  f0f0					      repend
+    110  f0f1		       00		      .byte.b	$00
+    109  f0f1					      repend
+    110  f0f2		       00		      .byte.b	$00
+    109  f0f2					      repend
+    110  f0f3		       00		      .byte.b	$00
+    109  f0f3					      repend
+    110  f0f4		       00		      .byte.b	$00
+    109  f0f4					      repend
+    110  f0f5		       00		      .byte.b	$00
+    109  f0f5					      repend
+    110  f0f6		       00		      .byte.b	$00
+    109  f0f6					      repend
+    110  f0f7		       00		      .byte.b	$00
+    109  f0f7					      repend
+    110  f0f8		       00		      .byte.b	$00
+    109  f0f8					      repend
+    110  f0f9		       00		      .byte.b	$00
+    109  f0f9					      repend
+    110  f0fa		       00		      .byte.b	$00
+    109  f0fa					      repend
+    110  f0fb		       00		      .byte.b	$00
+    109  f0fb					      repend
+    110  f0fc		       00		      .byte.b	$00
+    109  f0fc					      repend
+    110  f0fd		       00		      .byte.b	$00
+    109  f0fd					      repend
+    110  f0fe		       00		      .byte.b	$00
+    109  f0fe					      repend
+    110  f0ff		       00		      .byte.b	$00
+    111  f100					      repend
+    112  f100
+    113  f100				   Init_1
+    114  f100		       8d f8 ff 	      sta	$FFF8
+    115  f103				   Bank1_Sub
+    116  f103							;	lda #$0F
+    117  f103							;	sta COLUPF
+    118  f103							;	inc PF_Color
+    119  f103		       18		      clc
+    120  f104		       ad 80 10 	      lda	PF_Color_Read
+    121  f107		       69 01		      adc	#1
+    122  f109		       8d 00 10 	      sta	PF_Color_Write
+    123  f10c		       60		      rts
+    124  f10d
+    125  ffe3					      org	$FFE3
+    126  ffe3					      rorg	$FFE3
+    127  ffe3		       20 03 f1 	      jsr	Bank1_Sub
+    128  ffe6		       8e f8 ff 	      stx	$FFF8
+    129  ffe9
+    130  fff8					      org	$FFF8
+    131  fff8		       ff ff		      .word.w	$FFFF
+    132  fffa		       00 f1		      .word.w	Init_1
+    133  fffc		       00 f1		      .word.w	Init_1
+    134  fffe		       00 f1		      .word.w	Init_1
+    135  10000

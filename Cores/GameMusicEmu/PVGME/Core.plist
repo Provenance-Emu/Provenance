@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.GME</string>
 	<key>PVPrincipleClass</key>
-	<string>PVGMECore</string>
+	<string>PVGME.PVGMECore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.music</string>

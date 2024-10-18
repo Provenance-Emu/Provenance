@@ -1,0 +1,235 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/emusys.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN10CEmuSystemC2Ev
+   8              	.ent _ZN10CEmuSystemC2Ev
+   9              	_ZN10CEmuSystemC2Ev:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 0000023C 	lui $2,%hi(_ZTV10CEmuSystem+8)
+  14 0004 040080AC 	sw $0,4($4)
+  15 0008 08004224 	addiu $2,$2,%lo(_ZTV10CEmuSystem+8)
+  16 000c 080080AC 	sw $0,8($4)
+  17              	.set noreorder
+  18              	.set nomacro
+  19 0010 0800E003 	j $31
+  20 0014 000082AC 	sw $2,0($4)
+  21              	.set macro
+  22              	.set reorder
+  23              	
+  24              	.end _ZN10CEmuSystemC2Ev
+  25              	$Lfe1:
+  26              	.size _ZN10CEmuSystemC2Ev,$Lfe1-_ZN10CEmuSystemC2Ev
+  27              	.align 2
+  28              	.p2align 3,,7
+  29              	.globl _ZN10CEmuSystemC1Ev
+  30              	.ent _ZN10CEmuSystemC1Ev
+  31              	_ZN10CEmuSystemC1Ev:
+  32              	.frame $sp,0,$31
+  33              	.mask 0x00000000,0
+  34              	.fmask 0x00000000,0
+  35 0018 0000023C 	lui $2,%hi(_ZTV10CEmuSystem+8)
+  36 001c 040080AC 	sw $0,4($4)
+  37 0020 08004224 	addiu $2,$2,%lo(_ZTV10CEmuSystem+8)
+  38 0024 080080AC 	sw $0,8($4)
+  39              	.set noreorder
+  40              	.set nomacro
+  41 0028 0800E003 	j $31
+  42 002c 000082AC 	sw $2,0($4)
+  43              	.set macro
+  44              	.set reorder
+  45              	
+  46              	.end _ZN10CEmuSystemC1Ev
+  47              	$Lfe2:
+  48              	.size _ZN10CEmuSystemC1Ev,$Lfe2-_ZN10CEmuSystemC1Ev
+  49              	.align 2
+  50              	.p2align 3,,7
+  51              	.globl _ZN10CEmuSystemD2Ev
+  52              	.ent _ZN10CEmuSystemD2Ev
+  53              	_ZN10CEmuSystemD2Ev:
+  54              	.frame $sp,0,$31
+  55              	.mask 0x00000000,0
+  56              	.fmask 0x00000000,0
+  57 0030 0000023C 	lui $2,%hi(_ZTV10CEmuSystem+8)
+GAS LISTING  			page 2
+
+
+  58 0034 08004224 	addiu $2,$2,%lo(_ZTV10CEmuSystem+8)
+  59              	.set noreorder
+  60              	.set nomacro
+  61 0038 0800E003 	j $31
+  62 003c 000082AC 	sw $2,0($4)
+  63              	.set macro
+  64              	.set reorder
+  65              	
+  66              	.end _ZN10CEmuSystemD2Ev
+  67              	$Lfe3:
+  68              	.size _ZN10CEmuSystemD2Ev,$Lfe3-_ZN10CEmuSystemD2Ev
+  69              	.align 2
+  70              	.p2align 3,,7
+  71              	.globl _ZN10CEmuSystemD1Ev
+  72              	.ent _ZN10CEmuSystemD1Ev
+  73              	_ZN10CEmuSystemD1Ev:
+  74              	.frame $sp,0,$31
+  75              	.mask 0x00000000,0
+  76              	.fmask 0x00000000,0
+  77 0040 0000023C 	lui $2,%hi(_ZTV10CEmuSystem+8)
+  78 0044 08004224 	addiu $2,$2,%lo(_ZTV10CEmuSystem+8)
+  79              	.set noreorder
+  80              	.set nomacro
+  81 0048 0800E003 	j $31
+  82 004c 000082AC 	sw $2,0($4)
+  83              	.set macro
+  84              	.set reorder
+  85              	
+  86              	.end _ZN10CEmuSystemD1Ev
+  87              	$Lfe4:
+  88              	.size _ZN10CEmuSystemD1Ev,$Lfe4-_ZN10CEmuSystemD1Ev
+  89              	.align 2
+  90              	.p2align 3,,7
+  91              	.globl _ZN10CEmuSystemD0Ev
+  92              	.ent _ZN10CEmuSystemD0Ev
+  93              	_ZN10CEmuSystemD0Ev:
+  94              	.frame $sp,16,$31
+  95              	.mask 0x80000000,-16
+  96              	.fmask 0x00000000,0
+  97 0050 0000023C 	lui $2,%hi(_ZTV10CEmuSystem+8)
+  98 0054 F0FFBD27 	subu $sp,$sp,16
+  99 0058 08004224 	addiu $2,$2,%lo(_ZTV10CEmuSystem+8)
+ 100 005c 0000BFFF 	sd $31,0($sp)
+ 101              	.set noreorder
+ 102              	.set nomacro
+ 103 0060 0000000C 	jal _ZdlPv
+ 104 0064 000082AC 	sw $2,0($4)
+ 105              	.set macro
+ 106              	.set reorder
+ 107              	
+ 108 0068 0000BFDF 	ld $31,0($sp)
+ 109              	
+ 110              	.set noreorder
+ 111              	.set nomacro
+ 112 006c 0800E003 	j $31
+ 113 0070 1000BD27 	addu $sp,$sp,16
+ 114              	.set macro
+GAS LISTING  			page 3
+
+
+ 115              	.set reorder
+ 116              	
+ 117              	.end _ZN10CEmuSystemD0Ev
+ 118              	$Lfe5:
+ 119              	.size _ZN10CEmuSystemD0Ev,$Lfe5-_ZN10CEmuSystemD0Ev
+ 120              	.weak _ZTV10CEmuSystem
+ 121 0074 00000000 	.section .gnu.linkonce.d._ZTV10CEmuSystem,"aw",@progbits
+ 122              	.align 3
+ 123              	.type _ZTV10CEmuSystem,@object
+ 124              	.size _ZTV10CEmuSystem,60
+ 125              	_ZTV10CEmuSystem:
+ 126 0000 00000000 	.word 0
+ 127 0004 00000000 	.word 0
+ 128 0008 00000000 	.word _ZN10CEmuSystemD1Ev
+ 129 000c 00000000 	.word _ZN10CEmuSystemD0Ev
+ 130 0010 00000000 	.word __cxa_pure_virtual
+ 131 0014 00000000 	.word __cxa_pure_virtual
+ 132 0018 00000000 	.word __cxa_pure_virtual
+ 133 001c 00000000 	.word __cxa_pure_virtual
+ 134 0020 00000000 	.word __cxa_pure_virtual
+ 135 0024 00000000 	.word __cxa_pure_virtual
+ 136 0028 00000000 	.word __cxa_pure_virtual
+ 137 002c 00000000 	.word _ZN10CEmuSystem12GetSRAMBytesEv
+ 138 0030 00000000 	.word _ZN10CEmuSystem11GetSRAMDataEv
+ 139 0034 00000000 	.word _ZN10CEmuSystem9GetStringE13EmuSysStringE
+ 140 0038 00000000 	.word _ZN10CEmuSystem13GetSampleRateEv
+ 141 003c 00000000 	.section .gnu.linkonce.t._ZN10CEmuSystem12GetSRAMBytesEv,"ax",@progbits
+ 142              	.align 2
+ 143              	.p2align 3,,7
+ 144              	.weak _ZN10CEmuSystem12GetSRAMBytesEv
+ 145              	.ent _ZN10CEmuSystem12GetSRAMBytesEv
+ 146              	_ZN10CEmuSystem12GetSRAMBytesEv:
+ 147              	.frame $sp,0,$31
+ 148              	.mask 0x00000000,0
+ 149              	.fmask 0x00000000,0
+ 150              	.set noreorder
+ 151              	.set nomacro
+ 152 0000 0800E003 	j $31
+ 153 0004 2D100000 	move $2,$0
+ 154              	.set macro
+ 155              	.set reorder
+ 156              	
+ 157              	.end _ZN10CEmuSystem12GetSRAMBytesEv
+ 158              	$Lfe6:
+ 159              	.size _ZN10CEmuSystem12GetSRAMBytesEv,$Lfe6-_ZN10CEmuSystem12GetSRAMBytesEv
+ 160              	.section .gnu.linkonce.t._ZN10CEmuSystem11GetSRAMDataEv,"ax",@progbits
+ 161              	.align 2
+ 162              	.p2align 3,,7
+ 163              	.weak _ZN10CEmuSystem11GetSRAMDataEv
+ 164              	.ent _ZN10CEmuSystem11GetSRAMDataEv
+ 165              	_ZN10CEmuSystem11GetSRAMDataEv:
+ 166              	.frame $sp,0,$31
+ 167              	.mask 0x00000000,0
+ 168              	.fmask 0x00000000,0
+ 169              	.set noreorder
+ 170              	.set nomacro
+ 171 0000 0800E003 	j $31
+GAS LISTING  			page 4
+
+
+ 172 0004 2D100000 	move $2,$0
+ 173              	.set macro
+ 174              	.set reorder
+ 175              	
+ 176              	.end _ZN10CEmuSystem11GetSRAMDataEv
+ 177              	$Lfe7:
+ 178              	.size _ZN10CEmuSystem11GetSRAMDataEv,$Lfe7-_ZN10CEmuSystem11GetSRAMDataEv
+ 179              	.rdata
+ 180              	.align 3
+ 181              	$LC0:
+ 182 0000 00       	.ascii "\000"
+ 183 0001 00000000 	.section .gnu.linkonce.t._ZN10CEmuSystem9GetStringE13EmuSysStringE,"ax",@progbits
+ 183      000000
+ 184              	.align 2
+ 185              	.p2align 3,,7
+ 186              	.weak _ZN10CEmuSystem9GetStringE13EmuSysStringE
+ 187              	.ent _ZN10CEmuSystem9GetStringE13EmuSysStringE
+ 188              	_ZN10CEmuSystem9GetStringE13EmuSysStringE:
+ 189              	.frame $sp,0,$31
+ 190              	.mask 0x00000000,0
+ 191              	.fmask 0x00000000,0
+ 192 0000 0000023C 	lui $2,%hi($LC0)
+ 193              	.set noreorder
+ 194              	.set nomacro
+ 195 0004 0800E003 	j $31
+ 196 0008 00004224 	addiu $2,$2,%lo($LC0)
+ 197              	.set macro
+ 198              	.set reorder
+ 199              	
+ 200              	.end _ZN10CEmuSystem9GetStringE13EmuSysStringE
+ 201              	$Lfe8:
+ 202              	.size _ZN10CEmuSystem9GetStringE13EmuSysStringE,$Lfe8-_ZN10CEmuSystem9GetStringE13EmuSysStringE
+ 203 000c 00000000 	.section .gnu.linkonce.t._ZN10CEmuSystem13GetSampleRateEv,"ax",@progbits
+ 204              	.align 2
+ 205              	.p2align 3,,7
+ 206              	.weak _ZN10CEmuSystem13GetSampleRateEv
+ 207              	.ent _ZN10CEmuSystem13GetSampleRateEv
+ 208              	_ZN10CEmuSystem13GetSampleRateEv:
+ 209              	.frame $sp,0,$31
+ 210              	.mask 0x00000000,0
+ 211              	.fmask 0x00000000,0
+ 212              	.set noreorder
+ 213              	.set nomacro
+ 214 0000 0800E003 	j $31
+ 215 0004 2D100000 	move $2,$0
+ 216              	.set macro
+ 217              	.set reorder
+ 218              	
+ 219              	.end _ZN10CEmuSystem13GetSampleRateEv
+ 220              	$Lfe9:
+ 221              	.size _ZN10CEmuSystem13GetSampleRateEv,$Lfe9-_ZN10CEmuSystem13GetSampleRateEv
+ 222              	.ident "GCC: (GNU) 3.2.2"

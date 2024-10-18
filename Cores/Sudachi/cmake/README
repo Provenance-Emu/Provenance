@@ -1,0 +1,7 @@
+* build OpenMP, run update.sh
+* rename libs with postfix Flycast
+* remove cmake/make files
+
+* add TARGET_NO_EXCEPTIONS / _OPENMP / IOS / __APPLE__ / APPLE / USE_OPENMP to preprocessor macros 
+* adjust directories as needed
+* adjust pvr_mem / libretro.cpp to latest code, add to flycast_libretro

@@ -1,0 +1,130 @@
+-------------------------------------------------------------------------------------------------------------------------
+List of games that have been historically problematic and are likely to break easily on emulation model changes/screwups:
+-------------------------------------------------------------------------------------------------------------------------
+
+Captain Commando
+	First stage's boss' graphics are all kinds of corrupt if CD sector buffering is incorrect(particularly in relation of GetLocL vs GetLocP vs raw
+	sector data time fields).
+
+Tekken 2
+	Requires emulation of coprocessor(GTE)->CPU transfer delay slots, or else severe graphical glitching.
+
+Skullmonkeys
+	Requires correct load delay slot handling.
+
+Next Tetris
+	Requires proper GPU CLUT wrapping.
+
+Threads of Fate
+	Requires correctish CPU branch delay slot emulation(it has branch instructions in previous branch instructions' delay slots), otherwise lockups
+	and graphical glitches.
+
+Shadow Master
+	Branches in branch delay slots.
+
+Legacy of Kain - Soul Reaver
+	Uses clever DMA tricks, including linked-list DMA with blocks larger than the GPU FIFO size.
+
+Final Fantasy 7
+Final Fantasy 9
+Chrono Cross
+Dragon Quest 7
+	Pause/resume linked-list DMA.
+
+Battle Arena Toshinden
+NBA Jam Extreme
+Zero Divide
+	Run too fast if CPU and(/or?) GPU operations execute too fast.  Probably not an issue anymore, but still
+	listed here for reference.
+
+iS: Internal Section
+Arcade Party Pak (Toobin)
+Next Tetris, The
+	Extremely sensitive about interlacing semantics, especially in regards to the high bit of the GPU status register when entering
+	interlaced 480-height mode.
+
+X-Men Mutant Academy
+	Sensitive to interlacing semantics and timing.
+
+Ballblazer Champions
+	Excessively sensitive to timing issues; might lock up during startup sometimes.
+
+FIFA - Road to Worldcup 98 (USA)
+	Used to lock up during startup; probably CPU instruction timing-related, or MDEC timing related,
+	or CDC timing related, or DMA timing related, or maybe the moon phase is to blame!
+
+	[CDC] WARNING: Interrupting command 0x02, phase=0, timeleft=1195 with command=0x02
+	[CDC] Bad number(5) of args(first check) for command 0x02
+	 0x39 0x23 0x22 0x41 0x67
+
+Freestyle Motocross: McGrath vs. Pastrana
+	Used to suffer from random fairly long(but finite) freezes during gameplay.  Possibly CPU instruction-timing
+	related.  Possibly CDC-timing related.
+
+	[CDC] Command: ReadN --- 
+	[CDC] Command: Standby --- 
+	[CDC] Command: Nop --- 
+	[CDC] Command: Setmode ---  0xa0
+	[CDC] Command: Setloc ---  0x08 0x13 0x53
+	[CDC] Command: ReadN --- 
+	20076
+	[CDC] Command: Standby --- 
+	[CDC] Command: Nop --- 
+	[CDC] Command: Setmode ---  0xa0
+	[CDC] Command: Setloc ---  0x08 0x13 0x61
+		0x800668B8
+
+Resident Evil 2
+	Lockup on second disc in a certain place; probably related to seek timing.  Seems to be fixed now, but still listed
+	here for reference.
+
+Nightmare Creatures
+	Shoddy CD reading code that's unreasonably sensitive to CD access timings.  It's a wonder it even ever works on an actual
+	PS1(my copy of it certainly doesn't).
+
+Capcom games(MMX4, MMX5, etc)
+	Sensitive about CD access and XA ADPCM timing(XA ADPCM early cutoff problems in early versions of Mednafen's PS1 emulation).
+
+Viewpoint
+	Extra-sensitive about GPU LL DMA timing.  (It was generating exceptions for some timings...)
+
+Valkyrie Profile
+	Battle scenes will go all kaka with no graphics updates if GPU LL DMA completes too soon.
+
+Pro Pinball (series)
+	Sensitive to correct interlace and draw line skipping emulation.
+
+Dukes of Hazzard: Racing For Home
+	Sensitive about the GPU busy status flag being set long enough; double-check if we ever make CPU emulation 
+	more timing-accurate(the fix will likely just involve reducing the timing granularity for DMA and GPU updates).
+
+Resident Evil - Director's Cut(non-Dual Shock-version)
+	Controller configuration screen pops up on some screen transitions if timing is too far off and we're unlucky(all-timing issue, particularly
+	CPU instruction timing and MDEC decode timing).
+
+Parasite Eve II
+	Early 3D-models-on-top-of-FMV sequence with police cars outside building is a jerky mess if MDEC timing/overall throughput is too far off.
+
+Wing Commander 3 and 4
+	Will quasi-randomly lock up during FMVs if SeekL completes too fast.
+
+Cybersled (Japan)
+	Reads too many bytes from CDC results FIFO, causing wraparound(and will lock up if the "wrong" values are present in the FIFO's memory).
+
+This Is Football 2
+	Relies on resetting Mode parameter to correct value on Reset CDC command execution.
+
+Harukanaru Toki no Naka de - Banjou Yuugi (Japan)
+	Locks up if GetLocL vs ReadS isn't emulated properly.
+
+Gran Turismo
+	No music if GetLocL vs ReadS vs Reading/Seeking status bits aren't emulated properly.
+
+MLB 99
+	Crashes during startup in 0.9.37.1, started working in 0.9.38; possibly CD Read*/Seek timing related?
+
+Wu-Tang - Shaolin Style
+	Requires proper handling of the case of CD-DA playing into the leadout area.
+
+Tomb Raider
+	Relies on low-level CD drive behavior in regards to Q subchannel data(read via GetlocP) after a SeekP.

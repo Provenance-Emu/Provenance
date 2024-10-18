@@ -1,0 +1,10 @@
+*.asm
+*.s
+
+*.o
+*.so
+obj
+
+*.obj
+*.dll
+*.exe

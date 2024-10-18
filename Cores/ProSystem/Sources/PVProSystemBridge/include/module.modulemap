@@ -1,0 +1,4 @@
+module PVProSystemBridge {
+    header "../PVProSystemCoreBridge.h"
+    export *
+}

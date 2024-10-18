@@ -37,16 +37,16 @@ extension PatreonAPI {
 
 extension Patron {
     public enum Status: String, Codable, CaseIterable {
-        case active = "active_patron"
-        case declined = "declined_patron"
-        case former = "former_patron"
-        case unknown = "unknown"
+        case active     = "active_patron"
+        case declined   = "declined_patron"
+        case former     = "former_patron"
+        case unknown    = "unknown"
     }
 }
 
-public class Patron: Identifiable, Codable, Equatable {
+public class Patron: Identifiable, Codable {
     public var name: String
-    public var identifier: String
+    public var id: String
     
     public var status: Status
     
@@ -54,12 +54,24 @@ public class Patron: Identifiable, Codable, Equatable {
     
     init(response: PatreonAPI.PatronResponse) {
         self.name = response.attributes.full_name
-        self.identifier = response.id
+        self.id = response.id
         
         if let status = response.attributes.patron_status {
             self.status = Status(rawValue: status) ?? .unknown
         } else {
             self.status = .unknown
         }
+    }
+    
+    init(name: String, id: String, status: Status) {
+        self.name = name
+        self.id = id
+        self.status = status
+    }
+}
+
+extension Patron: Equatable {
+    static public func == (lhs: Patron, rhs: Patron) -> Bool {
+        return lhs.id == rhs.id
     }
 }

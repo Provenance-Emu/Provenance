@@ -7,7 +7,7 @@
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 import Foundation
 
 public final class PViCade8BitdoController: PViCadeController {

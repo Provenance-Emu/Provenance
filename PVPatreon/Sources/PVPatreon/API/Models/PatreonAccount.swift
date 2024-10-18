@@ -31,7 +31,7 @@ extension PatreonAPI {
 
 
 public struct PatreonAccount: Identifiable, Codable, Equatable, Hashable {
-    public let identifier: String
+    public let id: String
     
 	public let name: String
 	public let firstName: String?
@@ -39,7 +39,7 @@ public struct PatreonAccount: Identifiable, Codable, Equatable, Hashable {
 	public let isPatron: Bool
     
     init(response: PatreonAPI.AccountResponse) {
-        self.identifier = response.data.id
+        self.id = response.data.id
         self.name = response.data.attributes.full_name
         self.firstName = response.data.attributes.first_name
         

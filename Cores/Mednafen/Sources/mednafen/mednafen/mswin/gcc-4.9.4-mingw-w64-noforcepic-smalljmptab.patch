@@ -1,0 +1,63 @@
+diff -rupN gcc-4.9.4.orig/gcc/config/i386/cygming.h gcc-4.9.4/gcc/config/i386/cygming.h
+--- gcc-4.9.4.orig/gcc/config/i386/cygming.h	2014-01-02 14:23:26.000000000 -0800
++++ gcc-4.9.4/gcc/config/i386/cygming.h	2016-12-28 15:08:27.729481265 -0800
+@@ -198,9 +198,8 @@ along with GCC; see the file COPYING3.
+ #undef  SUBTARGET_OVERRIDE_OPTIONS
+ #define SUBTARGET_OVERRIDE_OPTIONS					\
+ do {									\
+-  if (TARGET_64BIT && flag_pic != 1)					\
++  if (TARGET_64BIT && flag_pic > 1)					\
+     {									\
+-      if (flag_pic > 1)							\
+         warning (0,							\
+ 	         "-fPIC ignored for target (all code is position independent)"\
+                  );                         				\
+diff -rupN gcc-4.9.4.orig/gcc/config/i386/i386.c gcc-4.9.4/gcc/config/i386/i386.c
+--- gcc-4.9.4.orig/gcc/config/i386/i386.c	2016-08-01 09:03:41.000000000 -0700
++++ gcc-4.9.4/gcc/config/i386/i386.c	2016-12-28 15:08:27.749481265 -0800
+@@ -16679,7 +16679,12 @@ ix86_output_addr_vec_elt (FILE *file, in
+ 
+ #ifdef ASM_QUAD
+   if (TARGET_LP64)
++  {
++   if (ix86_cmodel == CM_SMALL)
++    directive = ASM_LONG;
++   else
+     directive = ASM_QUAD;
++  }
+ #else
+   gcc_assert (!TARGET_64BIT);
+ #endif
+diff -rupN gcc-4.9.4.orig/gcc/config/i386/i386.h gcc-4.9.4/gcc/config/i386/i386.h
+--- gcc-4.9.4.orig/gcc/config/i386/i386.h	2014-08-21 11:03:49.000000000 -0700
++++ gcc-4.9.4/gcc/config/i386/i386.h	2016-12-28 15:08:27.749481265 -0800
+@@ -1844,7 +1844,7 @@ do {									\
+ /* Specify the machine mode that this machine uses
+    for the index in the tablejump instruction.  */
+ #define CASE_VECTOR_MODE \
+- (!TARGET_LP64 || (flag_pic && ix86_cmodel != CM_LARGE_PIC) ? SImode : DImode)
++ ((!TARGET_LP64 || (flag_pic && ix86_cmodel != CM_LARGE_PIC) || (ix86_cmodel == CM_SMALL)) ? SImode : DImode)
+ 
+ /* Define this as 1 if `char' should by default be signed; else as 0.  */
+ #define DEFAULT_SIGNED_CHAR 1
+diff -rupN gcc-4.9.4.orig/gcc/config/i386/i386.md gcc-4.9.4/gcc/config/i386/i386.md
+--- gcc-4.9.4.orig/gcc/config/i386/i386.md	2016-06-16 04:38:24.000000000 -0700
++++ gcc-4.9.4/gcc/config/i386/i386.md	2016-12-28 15:08:27.757481265 -0800
+@@ -11157,7 +11157,7 @@
+   [(set (pc) (match_operand 0 "indirect_branch_operand"))]
+   ""
+ {
+-  if (TARGET_X32)
++  if (TARGET_X32 || (TARGET_LP64 && (ix86_cmodel == CM_SMALL)))
+     operands[0] = convert_memory_address (word_mode, operands[0]);
+ })
+ 
+@@ -11205,7 +11205,7 @@
+ 					 OPTAB_DIRECT);
+     }
+ 
+-  if (TARGET_X32)
++  if (TARGET_X32 || (TARGET_LP64 && (ix86_cmodel == CM_SMALL)))
+     operands[0] = convert_memory_address (word_mode, operands[0]);
+ })
+ 

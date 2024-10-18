@@ -8,7 +8,7 @@
 
 #import "PVGMECore+Audio.h"
 
-@implementation PVGMECore (Audio)
+@implementation PVGMECoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
     return 60;

@@ -1,0 +1,880 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Source/common/snmemmap.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 3
+   6              	.type _SnesMemMap_LoRom,@object
+   7              	.size _SnesMemMap_LoRom,208
+   8              	_SnesMemMap_LoRom:
+   9 0000 00       	.byte 0
+  10 0001 6F       	.byte 111
+  11 0002 0080     	.half -32768
+  12 0004 FFFF     	.half -1
+  13 0006 08       	.byte 8
+  14 0007 00       	.space 1
+  15 0008 02000000 	.word 2
+  16 000c 00000000 	.space 4
+  17 0010 80       	.byte -128
+  18 0011 EF       	.byte -17
+  19 0012 0080     	.half -32768
+  20 0014 FFFF     	.half -1
+  21 0016 08       	.byte 8
+  22 0017 00       	.space 1
+  23 0018 02000000 	.word 2
+  24 001c 00000000 	.space 4
+  25 0020 40       	.byte 64
+  26 0021 6F       	.byte 111
+  27 0022 0000     	.half 0
+  28 0024 FF7F     	.half 32767
+  29 0026 08       	.byte 8
+  30 0027 00       	.space 1
+  31 0028 02000000 	.word 2
+  32 002c 00000000 	.space 4
+  33 0030 C0       	.byte -64
+  34 0031 EF       	.byte -17
+  35 0032 0000     	.half 0
+  36 0034 FF7F     	.half 32767
+  37 0036 08       	.byte 8
+  38 0037 00       	.space 1
+  39 0038 02000000 	.word 2
+  40 003c 00000000 	.space 4
+  41 0040 70       	.byte 112
+  42 0041 77       	.byte 119
+  43 0042 0000     	.half 0
+  44 0044 FF7F     	.half 32767
+  45 0046 08       	.byte 8
+  46 0047 00       	.space 1
+  47 0048 05000000 	.word 5
+  48 004c 00000000 	.space 4
+  49 0050 7E       	.byte 126
+  50 0051 7F       	.byte 127
+  51 0052 0000     	.half 0
+  52 0054 FFFF     	.half -1
+  53 0056 08       	.byte 8
+  54 0057 00       	.space 1
+  55 0058 03000000 	.word 3
+  56 005c 00000000 	.space 4
+  57 0060 00       	.byte 0
+GAS LISTING  			page 2
+
+
+  58 0061 3F       	.byte 63
+  59 0062 0000     	.half 0
+  60 0064 FF1F     	.half 8191
+  61 0066 08       	.byte 8
+  62 0067 00       	.space 1
+  63 0068 04000000 	.word 4
+  64 006c 00000000 	.space 4
+  65 0070 00       	.byte 0
+  66 0071 3F       	.byte 63
+  67 0072 0020     	.half 8192
+  68 0074 FF3F     	.half 16383
+  69 0076 06       	.byte 6
+  70 0077 00       	.space 1
+  71 0078 06000000 	.word 6
+  72 007c 00000000 	.space 4
+  73 0080 00       	.byte 0
+  74 0081 3F       	.byte 63
+  75 0082 0040     	.half 16384
+  76 0084 FF5F     	.half 24575
+  77 0086 06       	.byte 6
+  78 0087 00       	.space 1
+  79 0088 07000000 	.word 7
+  80 008c 00000000 	.space 4
+  81 0090 80       	.byte -128
+  82 0091 BF       	.byte -65
+  83 0092 0000     	.half 0
+  84 0094 FF1F     	.half 8191
+  85 0096 08       	.byte 8
+  86 0097 00       	.space 1
+  87 0098 04000000 	.word 4
+  88 009c 00000000 	.space 4
+  89 00a0 80       	.byte -128
+  90 00a1 BF       	.byte -65
+  91 00a2 0020     	.half 8192
+  92 00a4 FF3F     	.half 16383
+  93 00a6 06       	.byte 6
+  94 00a7 00       	.space 1
+  95 00a8 06000000 	.word 6
+  96 00ac 00000000 	.space 4
+  97 00b0 80       	.byte -128
+  98 00b1 BF       	.byte -65
+  99 00b2 0040     	.half 16384
+ 100 00b4 FF5F     	.half 24575
+ 101 00b6 06       	.byte 6
+ 102 00b7 00       	.space 1
+ 103 00b8 07000000 	.word 7
+ 104 00bc 00000000 	.space 4
+ 105 00c0 00       	.byte 0
+ 106 00c1 00       	.byte 0
+ 107 00c2 0000     	.half 0
+ 108 00c4 0000     	.half 0
+ 109 00c6 00       	.byte 0
+ 110 00c7 00000000 	.space 9
+ 110      00000000 
+ 110      00
+ 111              	.align 3
+ 112              	.type _SnesMemMap_HiRom,@object
+GAS LISTING  			page 3
+
+
+ 113              	.size _SnesMemMap_HiRom,336
+ 114              	_SnesMemMap_HiRom:
+ 115 00d0 00       	.byte 0
+ 116 00d1 3F       	.byte 63
+ 117 00d2 0000     	.half 0
+ 118 00d4 FFFF     	.half -1
+ 119 00d6 08       	.byte 8
+ 120 00d7 00       	.space 1
+ 121 00d8 02000000 	.word 2
+ 122 00dc 00000000 	.space 4
+ 123 00e0 40       	.byte 64
+ 124 00e1 6F       	.byte 111
+ 125 00e2 0000     	.half 0
+ 126 00e4 FFFF     	.half -1
+ 127 00e6 08       	.byte 8
+ 128 00e7 00       	.space 1
+ 129 00e8 02000000 	.word 2
+ 130 00ec 00000000 	.space 4
+ 131 00f0 80       	.byte -128
+ 132 00f1 BF       	.byte -65
+ 133 00f2 0000     	.half 0
+ 134 00f4 FFFF     	.half -1
+ 135 00f6 08       	.byte 8
+ 136 00f7 00       	.space 1
+ 137 00f8 02000000 	.word 2
+ 138 00fc 00000000 	.space 4
+ 139 0100 C0       	.byte -64
+ 140 0101 FF       	.byte -1
+ 141 0102 0000     	.half 0
+ 142 0104 FFFF     	.half -1
+ 143 0106 08       	.byte 8
+ 144 0107 00       	.space 1
+ 145 0108 02000000 	.word 2
+ 146 010c 00000000 	.space 4
+ 147 0110 70       	.byte 112
+ 148 0111 77       	.byte 119
+ 149 0112 0000     	.half 0
+ 150 0114 FF7F     	.half 32767
+ 151 0116 08       	.byte 8
+ 152 0117 00       	.space 1
+ 153 0118 05000000 	.word 5
+ 154 011c 00000000 	.space 4
+ 155 0120 00       	.byte 0
+ 156 0121 0F       	.byte 15
+ 157 0122 0060     	.half 24576
+ 158 0124 FF7F     	.half 32767
+ 159 0126 08       	.byte 8
+ 160 0127 00       	.space 1
+ 161 0128 05000000 	.word 5
+ 162 012c 00000000 	.space 4
+ 163 0130 10       	.byte 16
+ 164 0131 1F       	.byte 31
+ 165 0132 0060     	.half 24576
+ 166 0134 FF7F     	.half 32767
+ 167 0136 08       	.byte 8
+ 168 0137 00       	.space 1
+ 169 0138 05000000 	.word 5
+GAS LISTING  			page 4
+
+
+ 170 013c 00000000 	.space 4
+ 171 0140 20       	.byte 32
+ 172 0141 2F       	.byte 47
+ 173 0142 0060     	.half 24576
+ 174 0144 FF7F     	.half 32767
+ 175 0146 08       	.byte 8
+ 176 0147 00       	.space 1
+ 177 0148 05000000 	.word 5
+ 178 014c 00000000 	.space 4
+ 179 0150 30       	.byte 48
+ 180 0151 3F       	.byte 63
+ 181 0152 0060     	.half 24576
+ 182 0154 FF7F     	.half 32767
+ 183 0156 08       	.byte 8
+ 184 0157 00       	.space 1
+ 185 0158 05000000 	.word 5
+ 186 015c 00000000 	.space 4
+ 187 0160 80       	.byte -128
+ 188 0161 8F       	.byte -113
+ 189 0162 0060     	.half 24576
+ 190 0164 FF7F     	.half 32767
+ 191 0166 08       	.byte 8
+ 192 0167 00       	.space 1
+ 193 0168 05000000 	.word 5
+ 194 016c 00000000 	.space 4
+ 195 0170 90       	.byte -112
+ 196 0171 9F       	.byte -97
+ 197 0172 0060     	.half 24576
+ 198 0174 FF7F     	.half 32767
+ 199 0176 08       	.byte 8
+ 200 0177 00       	.space 1
+ 201 0178 05000000 	.word 5
+ 202 017c 00000000 	.space 4
+ 203 0180 A0       	.byte -96
+ 204 0181 AF       	.byte -81
+ 205 0182 0060     	.half 24576
+ 206 0184 FF7F     	.half 32767
+ 207 0186 08       	.byte 8
+ 208 0187 00       	.space 1
+ 209 0188 05000000 	.word 5
+ 210 018c 00000000 	.space 4
+ 211 0190 B0       	.byte -80
+ 212 0191 BF       	.byte -65
+ 213 0192 0060     	.half 24576
+ 214 0194 FF7F     	.half 32767
+ 215 0196 08       	.byte 8
+ 216 0197 00       	.space 1
+ 217 0198 05000000 	.word 5
+ 218 019c 00000000 	.space 4
+ 219 01a0 7E       	.byte 126
+ 220 01a1 7F       	.byte 127
+ 221 01a2 0000     	.half 0
+ 222 01a4 FFFF     	.half -1
+ 223 01a6 08       	.byte 8
+ 224 01a7 00       	.space 1
+ 225 01a8 03000000 	.word 3
+ 226 01ac 00000000 	.space 4
+GAS LISTING  			page 5
+
+
+ 227 01b0 00       	.byte 0
+ 228 01b1 3F       	.byte 63
+ 229 01b2 0000     	.half 0
+ 230 01b4 FF1F     	.half 8191
+ 231 01b6 08       	.byte 8
+ 232 01b7 00       	.space 1
+ 233 01b8 04000000 	.word 4
+ 234 01bc 00000000 	.space 4
+ 235 01c0 00       	.byte 0
+ 236 01c1 3F       	.byte 63
+ 237 01c2 0020     	.half 8192
+ 238 01c4 FF3F     	.half 16383
+ 239 01c6 06       	.byte 6
+ 240 01c7 00       	.space 1
+ 241 01c8 06000000 	.word 6
+ 242 01cc 00000000 	.space 4
+ 243 01d0 00       	.byte 0
+ 244 01d1 3F       	.byte 63
+ 245 01d2 0040     	.half 16384
+ 246 01d4 FF5F     	.half 24575
+ 247 01d6 06       	.byte 6
+ 248 01d7 00       	.space 1
+ 249 01d8 07000000 	.word 7
+ 250 01dc 00000000 	.space 4
+ 251 01e0 80       	.byte -128
+ 252 01e1 BF       	.byte -65
+ 253 01e2 0000     	.half 0
+ 254 01e4 FF1F     	.half 8191
+ 255 01e6 08       	.byte 8
+ 256 01e7 00       	.space 1
+ 257 01e8 04000000 	.word 4
+ 258 01ec 00000000 	.space 4
+ 259 01f0 80       	.byte -128
+ 260 01f1 BF       	.byte -65
+ 261 01f2 0020     	.half 8192
+ 262 01f4 FF3F     	.half 16383
+ 263 01f6 06       	.byte 6
+ 264 01f7 00       	.space 1
+ 265 01f8 06000000 	.word 6
+ 266 01fc 00000000 	.space 4
+ 267 0200 80       	.byte -128
+ 268 0201 BF       	.byte -65
+ 269 0202 0040     	.half 16384
+ 270 0204 FF5F     	.half 24575
+ 271 0206 06       	.byte 6
+ 272 0207 00       	.space 1
+ 273 0208 07000000 	.word 7
+ 274 020c 00000000 	.space 4
+ 275 0210 00       	.byte 0
+ 276 0211 00       	.byte 0
+ 277 0212 0000     	.half 0
+ 278 0214 0000     	.half 0
+ 279 0216 00       	.byte 0
+ 280 0217 00000000 	.space 9
+ 280      00000000 
+ 280      00
+ 281              	.rdata
+GAS LISTING  			page 6
+
+
+ 282              	.align 3
+ 283              	$LC0:
+ 284 0000 2E2E2F2E 	.ascii "../../Source/common/snmemmap.cpp\000"
+ 284      2E2F536F 
+ 284      75726365 
+ 284      2F636F6D 
+ 284      6D6F6E2F 
+ 285 0021 00000000 	.align 3
+ 285      000000
+ 286              	$LC1:
+ 287 0028 75537461 	.ascii "uStartAddr <= uEndAddr\000"
+ 287      72744164 
+ 287      6472203C 
+ 287      3D207545 
+ 287      6E644164 
+ 288              	.text
+ 289              	.align 2
+ 290              	.p2align 3,,7
+ 291              	.globl _ZN10SnesSystem6MapMemEP11SnesMemMapT
+ 292              	.ent _ZN10SnesSystem6MapMemEP11SnesMemMapT
+ 293              	_ZN10SnesSystem6MapMemEP11SnesMemMapT:
+ 294              	.frame $sp,224,$31
+ 295              	.mask 0xc0ff0000,-16
+ 296              	.fmask 0x00000000,0
+ 297 0000 20FFBD27 	subu $sp,$sp,224
+ 298 0004 0200023C 	li $2,131072
+ 299 0008 3000A4AF 	sw $4,48($sp)
+ 300 000c 00804234 	ori $2,$2,0x8000
+ 301 0010 B000B7FF 	sd $23,176($sp)
+ 302 0014 21108200 	addu $2,$4,$2
+ 303 0018 8000B4FF 	sd $20,128($sp)
+ 304 001c 0300033C 	li $3,196608
+ 305 0020 D000BFFF 	sd $31,208($sp)
+ 306 0024 00806334 	ori $3,$3,0x8000
+ 307 0028 C000BEFF 	sd $fp,192($sp)
+ 308 002c 21208300 	addu $4,$4,$3
+ 309 0030 A000B6FF 	sd $22,160($sp)
+ 310 0034 0400063C 	li $6,262144
+ 311 0038 9000B5FF 	sd $21,144($sp)
+ 312 003c 2DA0A000 	move $20,$5
+ 313 0040 7000B3FF 	sd $19,112($sp)
+ 314 0044 6000B2FF 	sd $18,96($sp)
+ 315 0048 5000B1FF 	sd $17,80($sp)
+ 316 004c 4000B0FF 	sd $16,64($sp)
+ 317 0050 3000A38F 	lw $3,48($sp)
+ 318 0054 5437428C 	lw $2,14164($2)
+ 319 0058 0C007724 	addu $23,$3,12
+ 320 005c 3400A2AF 	sw $2,52($sp)
+ 321 0060 2801428C 	lw $2,296($2)
+ 322              	
+ 323 0064 80120200 	sll $2,$2,10
+ 324 0068 C2100200 	srl $2,$2,3
+ 325 006c 2B18C200 	sltu $3,$6,$2
+ 326              	.set noreorder
+ 327              	.set nomacro
+ 328 0070 02006010 	beq $3,$0,$L3
+ 329 0074 E02482AC 	sw $2,9440($4)
+GAS LISTING  			page 7
+
+
+ 330              	.set macro
+ 331              	.set reorder
+ 332              	
+ 333 0078 E02486AC 	sw $6,9440($4)
+ 334              	$L3:
+ 335 007c 00200424 	li $4,8192
+ 336 0080 2D18A003 	move $3,$sp
+ 337 0084 08000224 	li $2,8
+ 338              	.p2align 3
+ 339              	$L8:
+ 340 0088 FFFF4224 	addu $2,$2,-1
+ 341 008c 000064AC 	sw $4,0($3)
+ 342              	.set noreorder
+ 343 0090 00000000 	nop
+ 344              	.set reorder
+ 345              	.set noreorder
+ 346 0094 00000000 	nop
+ 347              	.set reorder
+ 348              	.set noreorder
+ 349 0098 00000000 	nop
+ 350              	.set reorder
+ 351              	.set noreorder
+ 352 009c 00000000 	nop
+ 353              	.set reorder
+ 354              	.set noreorder
+ 355              	.set nomacro
+ 356 00a0 F9FF4104 	bgez $2,$L8
+ 357 00a4 04006324 	addu $3,$3,4
+ 358              	.set macro
+ 359              	.set reorder
+ 360              	
+ 361 00a8 3000A48F 	lw $4,48($sp)
+ 362 00ac 0300023C 	li $2,196608
+ 363 00b0 0000A0AF 	sw $0,0($sp)
+ 364 00b4 00804234 	ori $2,$2,0x8000
+ 365 00b8 0400A0AF 	sw $0,4($sp)
+ 366 00bc 21108200 	addu $2,$4,$2
+ 367 00c0 E024448C 	lw $4,9440($2)
+ 368 00c4 3400A28F 	lw $2,52($sp)
+ 369 00c8 0800858E 	lw $5,8($20)
+ 370 00cc 0800438C 	lw $3,8($2)
+ 371 00d0 0200023C 	li $2,131072
+ 372 00d4 0C00A2AF 	sw $2,12($sp)
+ 373 00d8 0800A3AF 	sw $3,8($sp)
+ 374              	.set noreorder
+ 375              	.set nomacro
+ 376 00dc 2200A010 	beq $5,$0,$L44
+ 377 00e0 1400A4AF 	sw $4,20($sp)
+ 378              	.set macro
+ 379              	.set reorder
+ 380              	
+ 381 00e4 00009592 	lbu $21,0($20)
+ 382              	$L56:
+ 383 00e8 01008292 	lbu $2,1($20)
+ 384              	
+ 385 00ec 2B105500 	sltu $2,$2,$21
+ 386              	.set noreorder
+GAS LISTING  			page 8
+
+
+ 387              	.set nomacro
+ 388 00f0 19004014 	bne $2,$0,$L46
+ 389 00f4 0C00938E 	lw $19,12($20)
+ 390              	.set macro
+ 391              	.set reorder
+ 392              	
+ 393              	.p2align 3
+ 394              	$L39:
+ 395 00f8 04008496 	lhu $4,4($20)
+ 396 00fc 00141500 	sll $2,$21,16
+ 397 0100 02008396 	lhu $3,2($20)
+ 398 0104 25884400 	or $17,$2,$4
+ 399 0108 25904300 	or $18,$2,$3
+ 400 010c 01003126 	addu $17,$17,1
+ 401 0110 2B103202 	sltu $2,$17,$18
+ 402              	.set noreorder
+ 403              	.set nomacro
+ 404 0114 7C004014 	bne $2,$0,$L51
+ 405 0118 0000043C 	lui $4,%hi($LC0)
+ 406              	.set macro
+ 407              	.set reorder
+ 408              	
+ 409 011c 0800828E 	lw $2,8($20)
+ 410              	$L55:
+ 411 0120 23803202 	subu $16,$17,$18
+ 412 0124 80100200 	sll $2,$2,2
+ 413 0128 21105D00 	addu $2,$2,$sp
+ 414 012c 0000438C 	lw $3,0($2)
+ 415              	
+ 416 0130 2B200302 	sltu $4,$16,$3
+ 417 0134 2B106302 	sltu $2,$19,$3
+ 418 0138 0A806400 	movz $16,$3,$4
+ 419              	.set noreorder
+ 420              	.set nomacro
+ 421 013c 16000016 	bne $16,$0,$L52
+ 422 0140 0A980200 	movz $19,$0,$2
+ 423              	.set macro
+ 424              	.set reorder
+ 425              	
+ 426              	$L21:
+ 427 0144 01008292 	lbu $2,1($20)
+ 428              	$L54:
+ 429 0148 0100B526 	addu $21,$21,1
+ 430 014c 2B105500 	sltu $2,$2,$21
+ 431              	.set noreorder
+ 432              	.set nomacro
+ 433 0150 E9FF4010 	beq $2,$0,$L39
+ 434 0154 21987002 	addu $19,$19,$16
+ 435              	.set macro
+ 436              	.set reorder
+ 437              	
+ 438              	$L46:
+ 439 0158 10009426 	addu $20,$20,16
+ 440 015c 0800828E 	lw $2,8($20)
+ 441              	
+ 442              	.set noreorder
+ 443              	.set nomacro
+GAS LISTING  			page 9
+
+
+ 444 0160 E1FF4054 	bnel $2,$0,$L56
+ 445 0164 00009592 	lbu $21,0($20)
+ 446              	.set macro
+ 447              	.set reorder
+ 448              	
+ 449              	$L44:
+ 450 0168 D000BFDF 	ld $31,208($sp)
+ 451 016c C000BEDF 	ld $fp,192($sp)
+ 452 0170 B000B7DF 	ld $23,176($sp)
+ 453 0174 A000B6DF 	ld $22,160($sp)
+ 454 0178 9000B5DF 	ld $21,144($sp)
+ 455 017c 8000B4DF 	ld $20,128($sp)
+ 456 0180 7000B3DF 	ld $19,112($sp)
+ 457 0184 6000B2DF 	ld $18,96($sp)
+ 458 0188 5000B1DF 	ld $17,80($sp)
+ 459 018c 4000B0DF 	ld $16,64($sp)
+ 460              	
+ 461              	.set noreorder
+ 462              	.set nomacro
+ 463 0190 0800E003 	j $31
+ 464 0194 E000BD27 	addu $sp,$sp,224
+ 465              	.set macro
+ 466              	.set reorder
+ 467              	
+ 468              	.p2align 3
+ 469              	$L52:
+ 470 0198 FF1F0326 	addu $3,$16,8191
+ 471 019c 00E00224 	li $2,-8192
+ 472 01a0 24B06200 	and $22,$3,$2
+ 473 01a4 06008792 	lbu $7,6($20)
+ 474 01a8 2D20E002 	move $4,$23
+ 475 01ac 2D284002 	move $5,$18
+ 476              	.set noreorder
+ 477              	.set nomacro
+ 478 01b0 0000000C 	jal SNCPUSetMemSpeed
+ 479 01b4 2D30C002 	move $6,$22
+ 480              	.set macro
+ 481              	.set reorder
+ 482              	
+ 483 01b8 0800838E 	lw $3,8($20)
+ 484              	
+ 485 01bc 0900622C 	sltu $2,$3,9
+ 486              	.set noreorder
+ 487              	.set nomacro
+ 488 01c0 E1FF4050 	beql $2,$0,$L54
+ 489 01c4 01008292 	lbu $2,1($20)
+ 490              	.set macro
+ 491              	.set reorder
+ 492              	
+ 493              	
+ 494 01c8 80100300 	sll $2,$3,2
+ 495 01cc 0000033C 	lui $3,%hi($L38)
+ 496 01d0 40006324 	addiu $3,$3,%lo($L38)
+ 497 01d4 21104300 	addu $2,$2,$3
+ 498 01d8 0000448C 	lw $4,0($2)
+ 499              	
+ 500 01dc 08008000 	j $4
+GAS LISTING  			page 10
+
+
+ 500      00000000 
+ 501              	.rdata
+ 502 003f 00       	.align 2
+ 503              	$L38:
+ 504 0040 44010000 	.word $L21
+ 505 0044 44010000 	.word $L21
+ 506 0048 E4010000 	.word $L23
+ 507 004c 10020000 	.word $L33
+ 508 0050 10020000 	.word $L33
+ 509 0054 38020000 	.word $L25
+ 510 0058 B4020000 	.word $L34
+ 511 005c D4020000 	.word $L35
+ 512 0060 EC020000 	.word $L36
+ 513 0064 00000000 	.text
+ 514              	$L23:
+ 515 01e4 3400A38F 	lw $3,52($sp)
+ 516 01e8 2D284002 	move $5,$18
+ 517 01ec 2D20E002 	move $4,$23
+ 518 01f0 2D300002 	move $6,$16
+ 519 01f4 1000678C 	lw $7,16($3)
+ 520 01f8 2D400000 	move $8,$0
+ 521 01fc 2138F300 	addu $7,$7,$19
+ 522              	$L50:
+ 523 0200 0000000C 	jal SNCPUSetBank
+ 523      00000000 
+ 524              	.set noreorder
+ 525              	.set nomacro
+ 526 0208 CFFF0010 	b $L54
+ 527 020c 01008292 	lbu $2,1($20)
+ 528              	.set macro
+ 529              	.set reorder
+ 530              	
+ 531              	$L33:
+ 532 0210 3000A38F 	lw $3,48($sp)
+ 533 0214 0300023C 	li $2,196608
+ 534 0218 F0A44234 	ori $2,$2,0xa4f0
+ 535 021c 2D284002 	move $5,$18
+ 536 0220 21387300 	addu $7,$3,$19
+ 537 0224 2D20E002 	move $4,$23
+ 538 0228 2138E200 	addu $7,$7,$2
+ 539 022c 2D300002 	move $6,$16
+ 540              	.set noreorder
+ 541              	.set nomacro
+ 542 0230 F3FF0010 	b $L50
+ 543 0234 01000824 	li $8,1
+ 544              	.set macro
+ 545              	.set reorder
+ 546              	
+ 547              	$L25:
+ 548 0238 FF1F0232 	andi $2,$16,0x1fff
+ 549              	.set noreorder
+ 550              	.set nomacro
+ 551 023c 13004014 	bne $2,$0,$L53
+ 552 0240 0000073C 	lui $7,%hi(_ZN10SnesSystem8ReadSRAMEP7SNCpu_tj)
+ 553              	.set macro
+ 554              	.set reorder
+ 555              	
+GAS LISTING  			page 11
+
+
+ 556 0244 2B105102 	sltu $2,$18,$17
+ 557              	.set noreorder
+ 558              	.set nomacro
+ 559 0248 BEFF4010 	beq $2,$0,$L21
+ 560 024c 3000A48F 	lw $4,48($sp)
+ 561              	.set macro
+ 562              	.set reorder
+ 563              	
+ 564 0250 05001E3C 	li $fp,327680
+ 565 0254 F0A4DE37 	ori $fp,$fp,0xa4f0
+ 566 0258 21B09300 	addu $22,$4,$19
+ 567 025c 2D284002 	move $5,$18
+ 568              	$L57:
+ 569 0260 2D20E002 	move $4,$23
+ 570 0264 2D300002 	move $6,$16
+ 571 0268 2138DE02 	addu $7,$22,$fp
+ 572 026c 01000824 	li $8,1
+ 573              	.set noreorder
+ 574              	.set nomacro
+ 575 0270 0000000C 	jal SNCPUSetBank
+ 576 0274 21905002 	addu $18,$18,$16
+ 577              	.set macro
+ 578              	.set reorder
+ 579              	
+ 580 0278 2B105102 	sltu $2,$18,$17
+ 581              	.set noreorder
+ 582              	.set nomacro
+ 583 027c F8FF4014 	bne $2,$0,$L57
+ 584 0280 2D284002 	move $5,$18
+ 585              	.set macro
+ 586              	.set reorder
+ 587              	
+ 588              	.set noreorder
+ 589              	.set nomacro
+ 590 0284 B0FF0010 	b $L54
+ 591 0288 01008292 	lbu $2,1($20)
+ 592              	.set macro
+ 593              	.set reorder
+ 594              	
+ 595              	$L53:
+ 596 028c 0000083C 	lui $8,%hi(_ZN10SnesSystem9WriteSRAMEP7SNCpu_tjh)
+ 597 0290 2D284002 	move $5,$18
+ 598 0294 2D30C002 	move $6,$22
+ 599 0298 0000E724 	addiu $7,$7,%lo(_ZN10SnesSystem8ReadSRAMEP7SNCpu_tj)
+ 600 029c 00000825 	addiu $8,$8,%lo(_ZN10SnesSystem9WriteSRAMEP7SNCpu_tjh)
+ 601 02a0 2D20E002 	move $4,$23
+ 602              	$L49:
+ 603 02a4 0000000C 	jal SNCPUSetTrap
+ 603      00000000 
+ 604              	.set noreorder
+ 605              	.set nomacro
+ 606 02ac A6FF0010 	b $L54
+ 607 02b0 01008292 	lbu $2,1($20)
+ 608              	.set macro
+ 609              	.set reorder
+ 610              	
+ 611              	$L34:
+GAS LISTING  			page 12
+
+
+ 612 02b4 0000073C 	lui $7,%hi(_ZN10SnesSystem8Read2000EP7SNCpu_tj)
+ 613 02b8 0000083C 	lui $8,%hi(_ZN10SnesSystem9Write2000EP7SNCpu_tjh)
+ 614 02bc 2D284002 	move $5,$18
+ 615 02c0 0000E724 	addiu $7,$7,%lo(_ZN10SnesSystem8Read2000EP7SNCpu_tj)
+ 616 02c4 00000825 	addiu $8,$8,%lo(_ZN10SnesSystem9Write2000EP7SNCpu_tjh)
+ 617              	$L48:
+ 618 02c8 2D20E002 	move $4,$23
+ 619              	.set noreorder
+ 620              	.set nomacro
+ 621 02cc F5FF0010 	b $L49
+ 622 02d0 2D300002 	move $6,$16
+ 623              	.set macro
+ 624              	.set reorder
+ 625              	
+ 626              	$L35:
+ 627 02d4 0000073C 	lui $7,%hi(_ZN10SnesSystem8Read4000EP7SNCpu_tj)
+ 628 02d8 0000083C 	lui $8,%hi(_ZN10SnesSystem9Write4000EP7SNCpu_tjh)
+ 629 02dc 2D284002 	move $5,$18
+ 630 02e0 0000E724 	addiu $7,$7,%lo(_ZN10SnesSystem8Read4000EP7SNCpu_tj)
+ 631              	.set noreorder
+ 632              	.set nomacro
+ 633 02e4 F8FF0010 	b $L48
+ 634 02e8 00000825 	addiu $8,$8,%lo(_ZN10SnesSystem9Write4000EP7SNCpu_tjh)
+ 635              	.set macro
+ 636              	.set reorder
+ 637              	
+ 638              	$L36:
+ 639 02ec 0000073C 	lui $7,%hi(_ZN10SnesSystem8ReadDSP1EP7SNCpu_tj)
+ 640 02f0 0000083C 	lui $8,%hi(_ZN10SnesSystem9WriteDSP1EP7SNCpu_tjh)
+ 641 02f4 2D284002 	move $5,$18
+ 642 02f8 0000E724 	addiu $7,$7,%lo(_ZN10SnesSystem8ReadDSP1EP7SNCpu_tj)
+ 643              	.set noreorder
+ 644              	.set nomacro
+ 645 02fc F2FF0010 	b $L48
+ 646 0300 00000825 	addiu $8,$8,%lo(_ZN10SnesSystem9WriteDSP1EP7SNCpu_tjh)
+ 647              	.set macro
+ 648              	.set reorder
+ 649              	
+ 650 0304 00000000 	.p2align 3
+ 651              	$L51:
+ 652 0308 0000063C 	lui $6,%hi($LC1)
+ 653 030c 00008424 	addiu $4,$4,%lo($LC0)
+ 654 0310 2800C624 	addiu $6,$6,%lo($LC1)
+ 655              	.set noreorder
+ 656              	.set nomacro
+ 657 0314 0000000C 	jal __assert
+ 658 0318 81000524 	li $5,129
+ 659              	.set macro
+ 660              	.set reorder
+ 661              	
+ 662              	.set noreorder
+ 663              	.set nomacro
+ 664 031c 80FF0010 	b $L55
+ 665 0320 0800828E 	lw $2,8($20)
+ 666              	.set macro
+ 667              	.set reorder
+ 668              	
+GAS LISTING  			page 13
+
+
+ 669              	.end _ZN10SnesSystem6MapMemEP11SnesMemMapT
+ 670              	$Lfe1:
+ 671              	.size _ZN10SnesSystem6MapMemEP11SnesMemMapT,$Lfe1-_ZN10SnesSystem6MapMemEP11SnesMemMapT
+ 672              	.align 2
+ 673 0324 00000000 	.p2align 3,,7
+ 674              	.globl _ZN10SnesSystem6MapMemE13SNRomMappingEj
+ 675              	.ent _ZN10SnesSystem6MapMemE13SNRomMappingEj
+ 676              	_ZN10SnesSystem6MapMemE13SNRomMappingEj:
+ 677              	.frame $sp,64,$31
+ 678              	.mask 0x80070000,-16
+ 679              	.fmask 0x00000000,0
+ 680 0328 C0FFBD27 	subu $sp,$sp,64
+ 681 032c 0000083C 	lui $8,%hi(_ZN10SnesSystem8WriteMemEP7SNCpu_tjh)
+ 682 0330 0000B0FF 	sd $16,0($sp)
+ 683 0334 0000073C 	lui $7,%hi(_ZN10SnesSystem7ReadMemEP7SNCpu_tj)
+ 684 0338 0C009024 	addu $16,$4,12
+ 685 033c 2000B2FF 	sd $18,32($sp)
+ 686 0340 1000B1FF 	sd $17,16($sp)
+ 687 0344 00000825 	addiu $8,$8,%lo(_ZN10SnesSystem8WriteMemEP7SNCpu_tjh)
+ 688 0348 2D888000 	move $17,$4
+ 689 034c 0000E724 	addiu $7,$7,%lo(_ZN10SnesSystem7ReadMemEP7SNCpu_tj)
+ 690 0350 2D200002 	move $4,$16
+ 691 0354 0101063C 	li $6,16842752
+ 692 0358 2D90A000 	move $18,$5
+ 693 035c 3000BFFF 	sd $31,48($sp)
+ 694              	.set noreorder
+ 695              	.set nomacro
+ 696 0360 0000000C 	jal SNCPUSetTrap
+ 697 0364 2D280000 	move $5,$0
+ 698              	.set macro
+ 699              	.set reorder
+ 700              	
+ 701 0368 2D280000 	move $5,$0
+ 702 036c 2D200002 	move $4,$16
+ 703 0370 08000724 	li $7,8
+ 704              	.set noreorder
+ 705              	.set nomacro
+ 706 0374 0000000C 	jal SNCPUSetMemSpeed
+ 707 0378 0101063C 	li $6,16842752
+ 708              	.set macro
+ 709              	.set reorder
+ 710              	
+ 711              	.set noreorder
+ 712              	.set nomacro
+ 713 037c 04004012 	beq $18,$0,$L61
+ 714 0380 2D202002 	move $4,$17
+ 715              	.set macro
+ 716              	.set reorder
+ 717              	
+ 718 0384 01000224 	li $2,1
+ 719              	.set noreorder
+ 720              	.set nomacro
+ 721 0388 0B004212 	beq $18,$2,$L65
+ 722 038c 0000053C 	lui $5,%hi(_SnesMemMap_HiRom)
+ 723              	.set macro
+ 724              	.set reorder
+ 725              	
+GAS LISTING  			page 14
+
+
+ 726              	$L61:
+ 727 0390 0000053C 	lui $5,%hi(_SnesMemMap_LoRom)
+ 728 0394 0000A524 	addiu $5,$5,%lo(_SnesMemMap_LoRom)
+ 729              	$L64:
+ 730 0398 0000000C 	jal _ZN10SnesSystem6MapMemEP11SnesMemMapT
+ 730      00000000 
+ 731 03a0 0000B0DF 	ld $16,0($sp)
+ 732 03a4 3000BFDF 	ld $31,48($sp)
+ 733 03a8 2000B2DF 	ld $18,32($sp)
+ 734 03ac 1000B1DF 	ld $17,16($sp)
+ 735              	
+ 736              	.set noreorder
+ 737              	.set nomacro
+ 738 03b0 0800E003 	j $31
+ 739 03b4 4000BD27 	addu $sp,$sp,64
+ 740              	.set macro
+ 741              	.set reorder
+ 742              	
+ 743              	$L65:
+ 744              	.set noreorder
+ 745              	.set nomacro
+ 746 03b8 F7FF0010 	b $L64
+ 747 03bc D000A524 	addiu $5,$5,%lo(_SnesMemMap_HiRom)
+ 748              	.set macro
+ 749              	.set reorder
+ 750              	
+ 751              	.end _ZN10SnesSystem6MapMemE13SNRomMappingEj
+ 752              	$Lfe2:
+ 753              	.size _ZN10SnesSystem6MapMemE13SNRomMappingEj,$Lfe2-_ZN10SnesSystem6MapMemE13SNRomMappingEj
+ 754              	.align 2
+ 755              	.p2align 3,,7
+ 756              	.globl _ZN10SnesSystem10SetFastRomEv
+ 757              	.ent _ZN10SnesSystem10SetFastRomEv
+ 758              	_ZN10SnesSystem10SetFastRomEv:
+ 759              	.frame $sp,16,$31
+ 760              	.mask 0x80000000,-16
+ 761              	.fmask 0x00000000,0
+ 762 03c0 F0FFBD27 	subu $sp,$sp,16
+ 763 03c4 8000053C 	li $5,8388608
+ 764 03c8 0C008424 	addu $4,$4,12
+ 765 03cc 8000063C 	li $6,8388608
+ 766 03d0 0000BFFF 	sd $31,0($sp)
+ 767              	.set noreorder
+ 768              	.set nomacro
+ 769 03d4 0000000C 	jal SNCPUSetRomSpeed
+ 770 03d8 06000724 	li $7,6
+ 771              	.set macro
+ 772              	.set reorder
+ 773              	
+ 774 03dc 0000BFDF 	ld $31,0($sp)
+ 775              	
+ 776              	.set noreorder
+ 777              	.set nomacro
+ 778 03e0 0800E003 	j $31
+ 779 03e4 1000BD27 	addu $sp,$sp,16
+ 780              	.set macro
+ 781              	.set reorder
+GAS LISTING  			page 15
+
+
+ 782              	
+ 783              	.end _ZN10SnesSystem10SetFastRomEv
+ 784              	$Lfe3:
+ 785              	.size _ZN10SnesSystem10SetFastRomEv,$Lfe3-_ZN10SnesSystem10SetFastRomEv
+ 786              	.align 2
+ 787              	.p2align 3,,7
+ 788              	.globl _ZN10SnesSystem10SetSlowRomEv
+ 789              	.ent _ZN10SnesSystem10SetSlowRomEv
+ 790              	_ZN10SnesSystem10SetSlowRomEv:
+ 791              	.frame $sp,16,$31
+ 792              	.mask 0x80000000,-16
+ 793              	.fmask 0x00000000,0
+ 794 03e8 F0FFBD27 	subu $sp,$sp,16
+ 795 03ec 8000053C 	li $5,8388608
+ 796 03f0 0C008424 	addu $4,$4,12
+ 797 03f4 8000063C 	li $6,8388608
+ 798 03f8 0000BFFF 	sd $31,0($sp)
+ 799              	.set noreorder
+ 800              	.set nomacro
+ 801 03fc 0000000C 	jal SNCPUSetRomSpeed
+ 802 0400 08000724 	li $7,8
+ 803              	.set macro
+ 804              	.set reorder
+ 805              	
+ 806 0404 0000BFDF 	ld $31,0($sp)
+ 807              	
+ 808              	.set noreorder
+ 809              	.set nomacro
+ 810 0408 0800E003 	j $31
+ 811 040c 1000BD27 	addu $sp,$sp,16
+ 812              	.set macro
+ 813              	.set reorder
+ 814              	
+ 815              	.end _ZN10SnesSystem10SetSlowRomEv
+ 816              	$Lfe4:
+ 817              	.size _ZN10SnesSystem10SetSlowRomEv,$Lfe4-_ZN10SnesSystem10SetSlowRomEv
+ 818              	.ident "GCC: (GNU) 3.2.2"

@@ -9,8 +9,8 @@ import GLKit
 import os
 
 @objc public class DolphinOGLViewController: GLKViewController {
-	private var core: PVDolphinCore!
-	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVDolphinCore) {
+	private var core: PVDolphinCoreBridge!
+	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVDolphinCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
 		self.core = core;
 		self.view.isUserInteractionEnabled = false

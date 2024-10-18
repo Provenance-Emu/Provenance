@@ -1,0 +1,560 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU_MAIN MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            IDM_FILE_OPEN
+        MENUITEM "&Close",                      IDM_FILE_CLOSE
+        POPUP "&Recent"
+        BEGIN
+            MENUITEM "&0",                          IDM_RECENT_SLOT0
+            MENUITEM "&1",                          IDM_RECENT_SLOT1
+            MENUITEM "&2",                          IDM_RECENT_SLOT2
+            MENUITEM "&3",                          IDM_RECENT_SLOT3
+            MENUITEM "&4",                          IDM_RECENT_SLOT4
+            MENUITEM "&5",                          IDM_RECENT_SLOT5
+            MENUITEM "&6",                          IDM_RECENT_SLOT6
+            MENUITEM "&7",                          IDM_RECENT_SLOT7
+            MENUITEM "&8",                          IDM_RECENT_SLOT8
+            MENUITEM "&9",                          IDM_RECENT_SLOT9
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Save...\tCtrl+S",             IDM_FILE_SAVE
+        MENUITEM "&Load...\tCtrl+L",            IDM_FILE_LOAD
+        MENUITEM SEPARATOR
+        MENUITEM "&Exit",                       IDM_FILE_EXIT
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "&Reset\tCtrl+R",              IDM_OPTIONS_RESET
+        MENUITEM "&Pause\tCtrl+P",              IDM_OPTIONS_PAUSE
+        MENUITEM SEPARATOR
+        POPUP "&Display"
+        BEGIN
+            MENUITEM "&Full Screen\tCtrl+F",        IDM_DISPLAY_FULLSCREEN
+            POPUP "&Modes"
+            BEGIN
+                MENUITEM " ",                           IDM_BLANK
+            END
+            MENUITEM "&Stretched",                  IDM_DISPLAY_STRETCHED
+            MENUITEM "&Palette...",                 IDM_DISPLAY_PALETTE
+            MENUITEM SEPARATOR
+            MENUITEM "x&1",                         IDM_DISPLAY_ZOOM1
+            MENUITEM "x&2",                         IDM_DISPLAY_ZOOM2
+            MENUITEM "x&3",                         IDM_DISPLAY_ZOOM3
+            MENUITEM "x&4",                         IDM_DISPLAY_ZOOM4
+            MENUITEM SEPARATOR
+            POPUP "S&creenshot...\tF12"
+            BEGIN
+                MENUITEM "Remove non-web symbols",      ID_OPTIONS_DISPLAY_SCREENSHOT_REMOVENONWEBSYMBOLS
+
+                MENUITEM "Replace spaces by ""_""",     ID_OPTIONS_DISPLAY_SCREENSHOT_REPLACESPACESBY
+
+            END
+        END
+        POPUP "&Sound"
+        BEGIN
+            MENUITEM "&Mute\tCtrl+M",               IDM_SOUND_MUTE
+            MENUITEM SEPARATOR
+            POPUP "&Sample Rate"
+            BEGIN
+                MENUITEM "11025",                       IDM_SAMPLERATE_11025
+                MENUITEM "22050",                       IDM_SAMPLERATE_22050
+                MENUITEM "31440",                       IDM_SAMPLERATE_31440
+                MENUITEM "44100",                       IDM_SAMPLERATE_44100
+                MENUITEM "48000",                       IDM_SAMPLERATE_48000
+                MENUITEM "96000",                       IDM_SAMPLERATE_96000
+            END
+            POPUP "&Latency"
+            BEGIN
+                MENUITEM "&None",                       IDM_LATENCY_NONE
+                MENUITEM "&Very Low",                   IDM_LATENCY_VERYLOW
+                MENUITEM "&Low",                        IDM_LATENCY_LOW
+                MENUITEM "&Medium",                     IDM_LATENCY_MEDIUM
+                MENUITEM "&High",                       IDM_LATENCY_HIGH
+                MENUITEM "&Very High",                  IDM_LATENCY_VERYHIGH
+            END
+        END
+        POPUP "&Emulation"
+        BEGIN
+            POPUP "&Region"
+            BEGIN
+                MENUITEM "&Auto",                       IDM_REGION_AUTO
+                MENUITEM SEPARATOR
+                MENUITEM "&NTSC",                       IDM_REGION_NTSC
+                MENUITEM "&PAL",                        IDM_REGION_PAL
+            END
+            POPUP "&Frame Skip"
+            BEGIN
+                MENUITEM "0",                           IDM_FRAMESKIP_0
+                MENUITEM "1",                           IDM_FRAMESKIP_1
+                MENUITEM "2",                           IDM_FRAMESKIP_2
+                MENUITEM "3",                           IDM_FRAMESKIP_3
+                MENUITEM "4",                           IDM_FRAMESKIP_4
+                MENUITEM "5",                           IDM_FRAMESKIP_5
+                MENUITEM "6",                           IDM_FRAMESKIP_6
+                MENUITEM "7",                           IDM_FRAMESKIP_7
+                MENUITEM "8",                           IDM_FRAMESKIP_8
+                MENUITEM "9",                           IDM_FRAMESKIP_9
+                MENUITEM "10",                          IDM_FRAMESKIP_10
+                MENUITEM "15",                          IDM_FRAMESKIP_15
+                MENUITEM "20",                          IDM_FRAMESKIP_20
+                MENUITEM "25",                          IDM_FRAMESKIP_25
+                MENUITEM "30",                          IDM_FRAMESKIP_30
+            END
+            MENUITEM "&BIOS...",                    IDM_EMULATION_BIOS
+            MENUITEM "&Database...",                IDM_EMULATION_DATABASE
+        END
+        POPUP "&Input"
+        BEGIN
+            MENUITEM "Controller &1...",            IDM_INPUT_CONTROLLER1
+            MENUITEM "Controller &2...",            IDM_INPUT_CONTROLLER2
+            MENUITEM "&Console...",                 IDM_INPUT_CONSOLE
+            MENUITEM "&User...",                    IDM_INPUT_USER
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Menu\tEsc",                  IDM_OPTIONS_MENU
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Contents...\tF1",            IDM_HELP_CONTENTS
+        MENUITEM SEPARATOR
+        MENUITEM "&About...",                   IDM_HELP_ABOUT
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR ACCELERATORS DISCARDABLE 
+BEGIN
+    "F",            IDM_DISPLAY_FULLSCREEN, VIRTKEY, CONTROL, NOINVERT
+    "L",            IDM_FILE_LOAD,          VIRTKEY, CONTROL, NOINVERT
+    "M",            IDM_SOUND_MUTE,         VIRTKEY, CONTROL, NOINVERT
+    "O",            IDM_FILE_OPEN,          VIRTKEY, CONTROL, NOINVERT
+    "P",            IDM_OPTIONS_PAUSE,      VIRTKEY, CONTROL, NOINVERT
+    "R",            IDM_OPTIONS_RESET,      VIRTKEY, CONTROL, NOINVERT
+    "S",            IDM_FILE_SAVE,          VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          IDM_HELP_CONTENTS,      VIRTKEY, NOINVERT
+    VK_F12,         IDM_DISPLAY_SCREENSHOT, VIRTKEY, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON_PROSYSTEM      ICON    DISCARDABLE     "ProSystem.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG_ABOUT DIALOG DISCARDABLE  0, 0, 161, 94
+STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "About ProSystem"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ICON_PROSYSTEM,IDC_STATIC,5,4,20,20
+    CTEXT           "ProSystem Emulator",IDC_STATIC,33,6,73,8
+    DEFPUSHBUTTON   "OK",IDC_BUTTON_ABOUT_OK,60,69,45,14
+    CTEXT           "Copyright 2005 Greg Stanton",IDC_STATIC,19,33,125,8,
+                    SS_CENTERIMAGE
+    CTEXT           "Atari 7800",IDC_STATIC,35,15,68,8
+    CTEXT           "",IDC_STATIC_VERSION2,20,59,125,8,SS_CENTERIMAGE
+    CTEXT           "modified by Leonis, 2008",IDC_STATIC_VERSION3,19,43,125,
+                    8,SS_CENTERIMAGE
+END
+
+IDD_DIALOG_CONTROLLER DIALOG DISCARDABLE  0, 0, 242, 154
+STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_CONTROLLER_UP,165,24,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Up",IDC_STATIC,7,26,36,10,SS_CENTERIMAGE
+    LTEXT           "Down",IDC_STATIC,7,41,36,10,SS_CENTERIMAGE
+    LTEXT           "Left",IDC_STATIC,7,56,36,10,SS_CENTERIMAGE
+    LTEXT           "Right",IDC_STATIC,7,71,36,10,SS_CENTERIMAGE
+    LTEXT           "Button 1",IDC_STATIC,7,86,36,10,SS_CENTERIMAGE
+    LTEXT           "Button 2",IDC_STATIC,7,101,36,10,SS_CENTERIMAGE
+    PUSHBUTTON      "OK",IDC_BUTTON_CONTROLLER_OK,80,124,40,14
+    COMBOBOX        IDC_COMBO_CONTROLLER_DOWN,165,39,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONTROLLER_LEFT,165,54,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONTROLLER_RIGHT,165,69,57,151,
+                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONTROLLER_BUTTON1,165,85,57,151,
+                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONTROLLER_BUTTON2,165,99,57,151,
+                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Cancel",IDC_BUTTON_CONTROLLER_CANCEL,122,124,40,14
+    COMBOBOX        IDC_COMBO_DEVICE_UP,45,24,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_DOWN,45,39,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_LEFT,45,54,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_RIGHT,45,69,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_BUTTON1,45,84,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_BUTTON2,45,99,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Part / Key",IDC_STATIC,165,13,36,10,SS_CENTERIMAGE
+    LTEXT           "Device",IDC_STATIC,45,13,50,10,SS_CENTERIMAGE
+END
+
+IDD_DIALOG_CONSOLE DIALOG DISCARDABLE  0, 0, 240, 135
+STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "Console"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_CONSOLE_RESET,163,25,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Reset",-1,7,27,36,10,SS_CENTERIMAGE
+    LTEXT           "Select",-1,7,42,36,10,SS_CENTERIMAGE
+    LTEXT           "Pause",-1,7,57,36,10,SS_CENTERIMAGE
+    LTEXT           "R Difficulty",-1,7,72,36,10,SS_CENTERIMAGE
+    LTEXT           "L Difficulty",-1,7,87,36,10,SS_CENTERIMAGE
+    PUSHBUTTON      "OK",IDC_BUTTON_CONSOLE_OK,79,114,40,14
+    COMBOBOX        IDC_COMBO_CONSOLE_SELECT,163,39,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONSOLE_PAUSE,163,54,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONSOLE_RIGHT,163,70,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONSOLE_LEFT,163,86,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Cancel",IDC_BUTTON_CONSOLE_CANCEL,121,114,40,14
+    COMBOBOX        IDC_COMBO_DEVICE_RESET,46,25,110,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_SELECT,46,39,110,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_PAUSE,46,54,110,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_RIGHTD,46,70,110,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_LEFTD,46,86,110,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Device",-1,45,13,52,10,SS_CENTERIMAGE
+    LTEXT           "Part / Key",-1,165,13,36,10,SS_CENTERIMAGE
+END
+
+IDD_DIALOG_USER DIALOG DISCARDABLE  0, 0, 311, 94
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDC_BUTTON_USER_OK,105,73,50,14
+    PUSHBUTTON      "Cancel",IDC_BUTTON_USER_CANCEL,160,73,50,14
+    COMBOBOX        IDC_COMBO_MOD_MENU,171,27,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Menu",IDC_STATIC,13,29,36,10,SS_CENTERIMAGE
+    LTEXT           "Exit",IDC_STATIC,13,44,36,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_COMBO_MOD_EXIT,171,42,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_MENU,51,27,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_EXIT,51,42,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Modifier",IDC_STATIC,171,16,52,10,SS_CENTERIMAGE
+    LTEXT           "Device",IDC_STATIC,51,16,49,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_COMBO_PART_MENU,237,27,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_PART_EXIT,237,42,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Part / Key",IDC_STATIC,237,16,36,10,SS_CENTERIMAGE
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_DIALOG_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 154
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 87
+    END
+
+    IDD_DIALOG_CONTROLLER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 235
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
+
+    IDD_DIALOG_CONSOLE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 233
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 128
+    END
+
+    IDD_DIALOG_USER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 304
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 87
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ZIP1                "Zip filename is invalid."
+    IDS_ZIP2                "It is not a valid zip file:"
+    IDS_ZIP3                "Failed to find the first file within the zip file."
+    IDS_ZIP5                "Failed to retrieve the current zipped file info."
+    IDS_ZIP6                "Data parameter is invalid."
+    IDS_ZIP8                "Failed to read first file data within the zip file"
+    IDS_ZIP9                "Filename is invalid."
+    IDS_ZIP10               "Failed to create the zip file"
+    IDS_ZIP11               "Failed to open a new file within the zip file"
+    IDS_ZIP12               "Failed to write data to the zip file"
+    IDS_BIOS1               "Bios filename is invalid."
+    IDS_BIOS2               "Opening bios file"
+    IDS_BIOS3               "Failed to open the bios file"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_BIOS4               "Failed to find the end of the bios file."
+    IDS_BIOS5               "Failed to find the size of the bios file."
+    IDS_BIOS6               "Failed to read the bios data."
+    IDS_CARTRIDGE1          "Cartridge data is invalid."
+    IDS_CARTRIDGE2          "Cartridge filename is invalid."
+    IDS_CARTRIDGE3          "Failed to open the cartridge file for reading:"
+    IDS_CARTRIDGE4          "Failed to find the end of the cartridge file."
+    IDS_CARTRIDGE5          "Failed to find the size of the cartridge file."
+    IDS_CARTRIDGE6          "Failed to read the cartridge data."
+    IDS_CARTRIDGE7          "Failed to load the cartridge data into memory."
+    IDS_PALETTE1            "Palette filename is invalid."
+    IDS_PALETTE2            "Opening palette file:"
+    IDS_PALETTE3            "Failed to open the palette file for reading:"
+    IDS_PALETTE4            "Failed to read the palette data."
+    IDS_PROSYSTEM1          "Filename is invalid."
+    IDS_PROSYSTEM2          "Saving game state to file"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_SOUND14             "Failed to reset the position of the sound pointer in the sound buffer."
+    IDS_SOUND15             "Failed to start playing the sound buffer."
+    IDS_SOUND16             "Failed to stop the sound buffer."
+    IDS_CARTRIDGE8          "Opening cartridge file"
+    IDS_CARTRIDGE9          "ProSystem don't want to execute CC2 hacks."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_PROSYSTEM3          "Failed to open the file for writing:"
+    IDS_PROSYSTEM4          "Failed to write the save state data to the file"
+    IDS_PROSYSTEM5          "Failed to compress the save state data to the file:"
+    IDS_PROSYSTEM6          "Loading game state from file "
+    IDS_PROSYSTEM7          "Failed to open the file for reading:"
+    IDS_PROSYSTEM8          "Failed to find the end of the file."
+    IDS_PROSYSTEM9          "Failed to find the size of the file."
+    IDS_PROSYSTEM10         "Save state file has an invalid size."
+    IDS_PROSYSTEM11         "Failed to read the file data."
+    IDS_PROSYSTEM12         "Save state file has an invalid size."
+    IDS_PROSYSTEM13         "File is not a valid ProSystem save state."
+    IDS_PROSYSTEM14         "Load state digest does not match loaded cartridge digest"
+    IDS_PROSYSTEM15         "Save state file has an invalid size."
+    IDS_CONSOLE1            "Failed to save the screenshot to a file."
+    IDS_CONSOLE2            "Failed to register the window class."
+    IDS_CONSOLE3            "Failed to initialize the main menu."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CONSOLE4            "Failed to initialize the display."
+    IDS_CONSOLE5            "Failed to set the display to windowed mode."
+    IDS_CONSOLE6            "Failed to initialize the sound."
+    IDS_CONSOLE7            "Failed to save the state to a file."
+    IDS_DATABASE1           "Accessing database"
+    IDS_DATABASE2           "Failed to open the database for reading."
+    IDS_DISPLAY1            "Failed to create the clipper."
+    IDS_DISPLAY2            "Failed to attach the window handle to the clipper."
+    IDS_DISPLAY3            "Failed to attach the clipper to the primary surface."
+    IDS_DISPLAY4            "Failed to restore the primary surface."
+    IDS_DISPLAY5            "Failed to restore the offscreen surface."
+    IDS_DISPLAY6            "Direct draw has not been initialized."
+    IDS_DISPLAY7            "Direct draw primary surface is invalid."
+    IDS_DISPLAY8            "Direct draw offscreen surface is invalid."
+    IDS_DISPLAY9            "Direct draw palette is invalid."
+    IDS_DISPLAY10           "Failed to set the palette entries into the palette."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DISPLAY11           "Failed to retrieve the display mode."
+    IDS_DISPLAY12           "Window handle is invalid."
+    IDS_DISPLAY13           "Failed to initialize direct draw."
+    IDS_DISPLAY14           "Failed to enumerate display modes."
+    IDS_DISPLAY15           "Failed to set the cooperative level to fullscreen/exclusive."
+    IDS_DISPLAY16           "Failed to set the display mode to"
+    IDS_DISPLAY17           "Failed to create the primary surface."
+    IDS_DISPLAY18           "Failed to create the offscreen surface."
+    IDS_DISPLAY19           "Failed to set the clipper."
+    IDS_DISPLAY20           "Failed to create the 8-bit palette."
+    IDS_DISPLAY21           "Failed to attach the palette to the primary surface."
+    IDS_DISPLAY22           "Failed to reset the palette."
+    IDS_DISPLAY23           "Failed to set the cooperative level to normal."
+    IDS_DISPLAY24           "Failed to create the offscreen surface."
+    IDS_DISPLAY25           "Failed to lock the offscreen surface."
+    IDS_DISPLAY26           "Failed to unlock the offscreen surface."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DISPLAY27           "Failed to blit the offscreen surface data to the primary surface."
+    IDS_DISPLAY28           "Failed to reset the palette for 16 bit per pixel modes."
+    IDS_DISPLAY29           "Failed to reset the palette for 8 bit per pixel modes."
+    IDS_DISPLAY30           "Screenshot filename is invalid."
+    IDS_DISPLAY31           "Failed to open the screenshot file for writing:"
+    IDS_DISPLAY32           "Failed to perform clear on offscreen surface."
+    IDS_DISPLAY33           "Failed to perform clear on primary surface."
+    IDS_INPUT1              "Handle to the window is invalid."
+    IDS_INPUT2              "Handle to the application instance is invalid."
+    IDS_INPUT3              "Failed to initialize direct input."
+    IDS_INPUT4              "Failed to create the keyboard device."
+    IDS_INPUT5              "Failed to set the keyboard format."
+    IDS_INPUT6              "Failed to set the cooperative level."
+    IDS_INPUT7              "Failed to aquire the keyboard."
+    IDS_INPUT8              "Direct input has not been initialized."
+    IDS_INPUT9              "Direct input keyboard has not been initialized."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_INPUT10             "Keyboard input buffer is invalid."
+    IDS_INPUT11             "Failed to retrieve the keyboard state."
+    IDS_INPUT12             "Failed to retrieve the joystick state."
+    IDS_MENU1               "Failed to load the menu resource."
+    IDS_MENU2               "Failed to load the menu resource."
+    IDS_MENU3               "Failed to attach the menu to the console."
+    IDS_MENU4               "Failed to load the menu accelerator resource."
+    IDS_MENU5               "Failed to retrieve a handle to the file menu."
+    IDS_MENU6               "Failed to retrieve a handle to the recent menu."
+    IDS_MENU7               "Failed to retrieve a handle to the opetions menu."
+    IDS_MENU8               "Failed to retrieve a handle to the display menu."
+    IDS_MENU9               "Failed to retrieve a handle to the modes menu."
+    IDS_MENU10              "Failed to retrieve a handle to the sound menu."
+    IDS_MENU11              "Failed to retrieve a handle to the latency menu."
+    IDS_MENU12              "Failed to retrieve a handle to the emulation menu."
+    IDS_MENU13              "Failed to retrieve a handle to the regions menu."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_MENU14              "Failed to retrieve a handle to the frame skip menu."
+    IDS_MENU15              "Failed to retrieve a handle to the input menu."
+    IDS_MENU16              "Failed to retrieve a handle to the help menu."
+    IDS_SOUND1              "Failed to restore the sound buffer."
+    IDS_SOUND2              "Failed to release the sound buffer."
+    IDS_SOUND3              "Failed to release direct sound."
+    IDS_SOUND4              "Failed to initialize direct sound."
+    IDS_SOUND5              "Failed to create the primary sound buffer."
+    IDS_SOUND6              "Failed to set the default format."
+    IDS_SOUND7              "Direct sound has not been initialized."
+    IDS_SOUND8              "Direct sound primary buffer has not been initialized."
+    IDS_SOUND9              "Failed to set the primary sound buffer's format."
+    IDS_SOUND10             "Failed to create the sound buffer."
+    IDS_SOUND11             "Direct sound buffer has not been initialized."
+    IDS_SOUND12             "Failed to lock the sound buffer."
+    IDS_SOUND13             "Failed to unlock the sound buffer."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

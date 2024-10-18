@@ -1,0 +1,10 @@
+input_dir: Sources/PVCoreLoader/Resources/
+#output_dir: Sources/PVCoreLoader/
+output_dir: ${DERIVED_SOURCES_DIR}
+
+plist:
+  inputs: systems.plist
+  outputs:
+#    templateName: inline-swift6
+    templatePath: ../Stencils/Plists/inline-swift6.stencil
+    output: Systems-Generated.swift

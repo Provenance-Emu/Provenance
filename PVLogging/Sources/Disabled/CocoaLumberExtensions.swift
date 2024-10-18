@@ -6,9 +6,9 @@
 //  Copyright © 2015 Joe Mattiello. All rights reserved.
 //
 
-@_exported import CocoaLumberjack
+//@_exported import CocoaLumberjack
 @_exported import CocoaLumberjackSwift
-@_exported import CocoaLumberjackSwiftSupport
+//@_exported import CocoaLumberjackSwiftSupport
 
 import Foundation
 

@@ -7,18 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
-#import <PVLibRetro/PVLibRetro.h>
+
+#import <PVCoreBridgeRetro/PVCoreBridgeRetro.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
+
+@protocol PVDSSystemResponderClient;
 
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
 __attribute__((visibility("default")))
-@interface PVDesmume2015Core : PVLibRetroCore <PVDSSystemResponderClient>
+@interface PVDesmume2015CoreBridge : PVLibRetroCoreBridge <PVDSSystemResponderClient>
 {
-	uint8_t padData[4][PVDSButtonCount];
+    uint8_t padData[4][14]; //[PVDSButton.count];
 @public
     dispatch_queue_t _callbackQueue;
 }

@@ -10,6 +10,6 @@
 #import <AVFoundation/AVFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-@interface PVPPSSPPCore (Audio)
+@interface PVPPSSPPCoreBridge (Audio)
 @end
 NS_ASSUME_NONNULL_END

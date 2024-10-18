@@ -1,0 +1,8 @@
+filename: copying.txt
+compress_method: -pm1-
+compressed_length: 9829
+length: 25284
+header_level: 0
+os_type: 0
+crc: e582
+--

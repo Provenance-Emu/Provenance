@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import PVSupport
+import PVLogging
 
 @objc
 extension PVAppDelegate {

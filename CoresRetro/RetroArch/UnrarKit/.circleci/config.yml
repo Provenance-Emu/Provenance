@@ -1,0 +1,79 @@
+version: 2.1
+
+executors:
+  my-xcode:
+    macos:
+      xcode: 13.2.1
+
+workflows:
+  version: 2
+  test-validate-release:
+    jobs:
+      # Testing
+      - test-Mac
+      - test-iOS
+      - test-ExampleApp
+
+      # Validation
+      - validate-CocoaPods:
+          requires:
+            - test-Mac
+            - test-iOS
+            - test-ExampleApp
+      - validate-Carthage:
+          requires:
+            - test-Mac
+            - test-iOS
+            - test-ExampleApp
+
+      # Release
+#      - release:
+#          # Only run for tags
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /.*/
+#          requires:
+#            - validate-CocoaPods
+#            - validate-Carthage
+
+jobs:
+  test-Mac:
+    executor: my-xcode
+    steps:
+      - checkout
+      # The CLANG arguments and find command fail the build on analyzer errors
+      - run: xcodebuild -workspace UnrarKit.xcworkspace -scheme UnrarKit -sdk macosx -configuration Release -quiet analyze test CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+
+  test-iOS:
+    executor: my-xcode
+    steps:
+      - checkout
+      # The CLANG arguments and find command fail the build on analyzer errors
+      - run: xcodebuild -workspace UnrarKit.xcworkspace -scheme UnrarKit -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' -configuration Release analyze test CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+
+  test-ExampleApp:
+    executor: my-xcode
+    steps:
+      - checkout
+      # The CLANG arguments and find command fail the build on analyzer errors
+      - run: xcodebuild -workspace UnrarKit.xcworkspace -scheme UnrarExample -sdk iphonesimulator -configuration Release analyze CLANG_ANALYZER_OUTPUT=html CLANG_ANALYZER_OUTPUT_DIR=analyzer-output && [[ -z `find analyzer-output -name "*.html"` ]]
+
+  validate-CocoaPods:
+    executor: my-xcode
+    steps:
+      - checkout
+      - run: ./Scripts/cocoapod-validate.sh
+
+  validate-Carthage:
+    executor: my-xcode
+    steps:
+      - checkout
+      - run: ./Scripts/carthage-validate.sh
+
+#  release:
+#    executor: my-xcode
+#    steps:
+#      - checkout
+#      - run: ./Scripts/push-output.sh

@@ -1,0 +1,10 @@
+ PERMSSN    UID  GID      SIZE  RATIO     STAMP     LV
+---------- ----------- ------- ------ ------------ ---
+subdir/
+[MS-DOS]                     0 ****** Jul 17 02:07 [2]
+subdir/subdir2/
+[MS-DOS]                     0 ****** Jul 17 02:07 [2]
+subdir/subdir2/hello.txt
+[MS-DOS]                    12 100.0% Jan  1  2010 [2]
+---------- ----------- ------- ------ ------------ ---
+ Total         3 files      12 100.0% Jan  1  2000

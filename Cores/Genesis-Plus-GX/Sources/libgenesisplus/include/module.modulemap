@@ -1,0 +1,28 @@
+module libgenesisplus {
+
+    header "../Genesis-Plus-GX/core/shared.h"
+    header "../Genesis-Plus-GX/core/state.h"
+    header "../Genesis-Plus-GX/core/genesis.h"
+    
+    header "../Genesis-Plus-GX/core/ntsc/md_ntsc.h"
+    header "../Genesis-Plus-GX/core/ntsc/sms_ntsc.h"
+    
+//    header "../Genesis-Plus-GX/libretro/osd/libretro.h"
+//    header "../libretro/libretro.h"
+//    header "../Genesis-Plus-GX/libretro/scrc32.h"
+
+//    header "../other/config.h"
+//    header "../other/error.h"
+//    header "../other/fileio.h"
+//    header "../other/osd.h"
+
+    
+    export *
+}
+
+//module libretro {
+//    header "../libretro/libretro.h"
+//    header "../libretro/scrc32.h"
+//    
+//    export *
+//}

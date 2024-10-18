@@ -1,0 +1,5 @@
+This directory contains files with raw compressed data for different
+algorithms, without the surrounding LHA file container.
+
+lh0.bin is actually uncompressed!
+

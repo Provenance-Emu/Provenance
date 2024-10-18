@@ -25,12 +25,18 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import Foundation;
+@import PVCoreObjCBridge;
 
-PVCORE
-@interface PVSNESEmulatorCore : PVEmulatorCore <PVSNESSystemResponderClient>
+@protocol ObjCBridgedCoreBridge;
+@protocol PVSNESSystemResponderClient;
+typedef enum PVSNESButton: NSInteger PVSNESButton;
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
+@interface PVSNESEmulatorCoreBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVSNESSystemResponderClient>
+#pragma clang diagnostic pop
 
 - (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;
 - (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;
@@ -40,3 +46,5 @@ PVCORE
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
 
 @end
+
+NS_HEADER_AUDIT_END(nullability, sendability)

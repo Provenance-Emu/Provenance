@@ -66,7 +66,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>$(ORG_PREFIX).$(PROJECT_NAME:lower).lite</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
@@ -202,11 +202,25 @@
 	<true/>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Provenance uses the local network to find and communicate with AltServer.</string>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.org.provenance-emu.provenance</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>provenance</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>Any</string>
+		</dict>
+	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>org.provenance-emu.game.play</string>
 		<string>org.provenance-emu.webserver</string>
 	</array>
+	<key>PVAppType</key>
+	<string>lite</string>
 	<key>Revision</key>
 	<string>f9c61252</string>
 	<key>UIBackgroundModes</key>
@@ -280,6 +294,7 @@
 					<string>7z</string>
 					<string>cdi</string>
 					<string>gdi</string>
+					<string>j64</string>
 				</array>
 			</dict>
 		</dict>

@@ -1,0 +1,489 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/main.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.globl updateloader
+   5              	.rdata
+   6              	.align 3
+   7              	$LC0:
+   8 0000 726F6D30 	.ascii "rom0:UDNL \000"
+   8      3A55444E 
+   8      4C2000
+   9              	.data
+  10              	.align 2
+  11              	.type updateloader,@object
+  12              	.size updateloader,4
+  13              	updateloader:
+  14 0000 00000000 	.word $LC0
+  15              	.globl eeloadcnf
+  16              	.rdata
+  17 000b 00000000 	.align 3
+  17      00
+  18              	$LC1:
+  19 0010 726F6D30 	.ascii "rom0:EELOADCNF\000"
+  19      3A45454C 
+  19      4F414443 
+  19      4E4600
+  20              	.data
+  21              	.align 2
+  22              	.type eeloadcnf,@object
+  23              	.size eeloadcnf,4
+  24              	eeloadcnf:
+  25 0004 10000000 	.word $LC1
+  26              	.section .bss
+  27              	_Main_pBootPath:
+  28              	.align 2
+  29 0000 00000000 	.space 4
+  30              	.previous
+  31              	.section .bss
+  32              	_Main_BootDir:
+  33 0004 00000000 	.align 3
+  34 0008 00000000 	.space 256
+  34      00000000 
+  34      00000000 
+  34      00000000 
+  34      00000000 
+  35              	.previous
+  36              	.text
+  37              	.align 2
+  38              	.p2align 3,,7
+  39              	.globl _Z14MainGetBootDirv
+  40              	.ent _Z14MainGetBootDirv
+  41              	_Z14MainGetBootDirv:
+  42              	.frame $sp,0,$31
+  43              	.mask 0x00000000,0
+  44              	.fmask 0x00000000,0
+  45 0000 0000023C 	lui $2,%hi(_Main_BootDir)
+  46              	.set noreorder
+  47              	.set nomacro
+GAS LISTING  			page 2
+
+
+  48 0004 0800E003 	j $31
+  49 0008 08004224 	addiu $2,$2,%lo(_Main_BootDir)
+  50              	.set macro
+  51              	.set reorder
+  52              	
+  53              	.end _Z14MainGetBootDirv
+  54              	$Lfe1:
+  55              	.size _Z14MainGetBootDirv,$Lfe1-_Z14MainGetBootDirv
+  56              	.align 2
+  57 000c 00000000 	.p2align 3,,7
+  58              	.globl _Z15MainGetBootPathv
+  59              	.ent _Z15MainGetBootPathv
+  60              	_Z15MainGetBootPathv:
+  61              	.frame $sp,0,$31
+  62              	.mask 0x00000000,0
+  63              	.fmask 0x00000000,0
+  64 0010 0000033C 	lui $3,%hi(_Main_pBootPath)
+  65              	.set noreorder
+  66              	.set nomacro
+  67 0014 0800E003 	j $31
+  68 0018 0000628C 	lw $2,%lo(_Main_pBootPath)($3)
+  69              	.set macro
+  70              	.set reorder
+  71              	
+  72              	.end _Z15MainGetBootPathv
+  73              	$Lfe2:
+  74              	.size _Z15MainGetBootPathv,$Lfe2-_Z15MainGetBootPathv
+  75              	.align 2
+  76 001c 00000000 	.p2align 3,,7
+  77              	.globl _Z14MainSetBootDirPKc
+  78              	.ent _Z14MainSetBootDirPKc
+  79              	_Z14MainSetBootDirPKc:
+  80              	.frame $sp,32,$31
+  81              	.mask 0x80010000,-16
+  82              	.fmask 0x00000000,0
+  83 0020 E0FFBD27 	subu $sp,$sp,32
+  84 0024 2D288000 	move $5,$4
+  85 0028 0000B0FF 	sd $16,0($sp)
+  86 002c 0000103C 	lui $16,%hi(_Main_BootDir)
+  87 0030 08001026 	addiu $16,$16,%lo(_Main_BootDir)
+  88 0034 1000BFFF 	sd $31,16($sp)
+  89              	.set noreorder
+  90              	.set nomacro
+  91 0038 0000000C 	jal strcpy
+  92 003c 2D200002 	move $4,$16
+  93              	.set macro
+  94              	.set reorder
+  95              	
+  96              	.set noreorder
+  97              	.set nomacro
+  98 0040 0000000C 	jal strlen
+  99 0044 2D200002 	move $4,$16
+ 100              	.set macro
+ 101              	.set reorder
+ 102              	
+ 103 0048 5C000424 	li $4,92
+ 104 004c 2D184000 	move $3,$2
+GAS LISTING  			page 3
+
+
+ 105 0050 3A000624 	li $6,58
+ 106 0054 2F000524 	li $5,47
+ 107              	.p2align 3
+ 108              	$L4:
+ 109              	.set noreorder
+ 110              	.set nomacro
+ 111 0058 0A006018 	blez $3,$L5
+ 112 005c 21107000 	addu $2,$3,$16
+ 113              	.set macro
+ 114              	.set reorder
+ 115              	
+ 116 0060 00004280 	lb $2,0($2)
+ 117              	
+ 118              	.set noreorder
+ 119              	.set nomacro
+ 120 0064 08004550 	beql $2,$5,$L9
+ 121 0068 0000023C 	lui $2,%hi(_Main_BootDir)
+ 122              	.set macro
+ 123              	.set reorder
+ 124              	
+ 125              	.set noreorder
+ 126              	.set nomacro
+ 127 006c 06004450 	beql $2,$4,$L9
+ 128 0070 0000023C 	lui $2,%hi(_Main_BootDir)
+ 129              	.set macro
+ 130              	.set reorder
+ 131              	
+ 132              	.set noreorder
+ 133              	.set nomacro
+ 134 0074 04004610 	beq $2,$6,$L9
+ 135 0078 0000023C 	lui $2,%hi(_Main_BootDir)
+ 136              	.set macro
+ 137              	.set reorder
+ 138              	
+ 139              	.set noreorder
+ 140              	.set nomacro
+ 141 007c F6FF0010 	b $L4
+ 142 0080 FFFF6324 	addu $3,$3,-1
+ 143              	.set macro
+ 144              	.set reorder
+ 145              	
+ 146              	$L5:
+ 147 0084 0000023C 	lui $2,%hi(_Main_BootDir)
+ 148              	$L9:
+ 149 0088 1000BFDF 	ld $31,16($sp)
+ 150 008c 08004224 	addiu $2,$2,%lo(_Main_BootDir)
+ 151 0090 0000B0DF 	ld $16,0($sp)
+ 152 0094 21106200 	addu $2,$3,$2
+ 153 0098 010040A0 	sb $0,1($2)
+ 154              	.set noreorder
+ 155              	.set nomacro
+ 156 009c 0800E003 	j $31
+ 157 00a0 2000BD27 	addu $sp,$sp,32
+ 158              	.set macro
+ 159              	.set reorder
+ 160              	
+ 161              	.end _Z14MainSetBootDirPKc
+GAS LISTING  			page 4
+
+
+ 162              	$Lfe3:
+ 163              	.size _Z14MainSetBootDirPKc,$Lfe3-_Z14MainSetBootDirPKc
+ 164              	.align 2
+ 165 00a4 00000000 	.p2align 3,,7
+ 166              	.globl _Z10full_resetv
+ 167              	.ent _Z10full_resetv
+ 168              	_Z10full_resetv:
+ 169              	.frame $sp,96,$31
+ 170              	.mask 0x80010000,-16
+ 171              	.fmask 0x00000000,0
+ 172 00a8 A0FFBD27 	subu $sp,$sp,96
+ 173 00ac 01000424 	li $4,1
+ 174 00b0 5000BFFF 	sd $31,80($sp)
+ 175              	.set noreorder
+ 176              	.set nomacro
+ 177 00b4 0000000C 	jal cdvdInit
+ 178 00b8 4000B0FF 	sd $16,64($sp)
+ 179              	.set macro
+ 180              	.set reorder
+ 181              	
+ 182              	.set noreorder
+ 183              	.set nomacro
+ 184 00bc 2B004004 	bltz $2,$L10
+ 185 00c0 FFFF0324 	li $3,-1
+ 186              	.set macro
+ 187              	.set reorder
+ 188              	
+ 189 00c4 0000103C 	lui $16,%hi(eeloadcnf)
+ 190 00c8 01000524 	li $5,1
+ 191 00cc 0000048E 	lw $4,%lo(eeloadcnf)($16)
+ 192              	.set noreorder
+ 193              	.set nomacro
+ 194 00d0 0000000C 	jal fioOpen
+ 195 00d4 0000A0A3 	sb $0,0($sp)
+ 196              	.set macro
+ 197              	.set reorder
+ 198              	
+ 199 00d8 0A004004 	bltz $2,$L12
+ 199      00000000 
+ 200              	.set noreorder
+ 201              	.set nomacro
+ 202 00e0 0000000C 	jal fioClose
+ 203 00e4 2D204000 	move $4,$2
+ 204              	.set macro
+ 205              	.set reorder
+ 206              	
+ 207 00e8 0000023C 	lui $2,%hi(updateloader)
+ 208 00ec 0000458C 	lw $5,%lo(updateloader)($2)
+ 209              	.set noreorder
+ 210              	.set nomacro
+ 211 00f0 0000000C 	jal strcpy
+ 212 00f4 2D20A003 	move $4,$sp
+ 213              	.set macro
+ 214              	.set reorder
+ 215              	
+ 216 00f8 0000058E 	lw $5,%lo(eeloadcnf)($16)
+ 217              	.set noreorder
+GAS LISTING  			page 5
+
+
+ 218              	.set nomacro
+ 219 00fc 0000000C 	jal strcat
+ 220 0100 2D20A003 	move $4,$sp
+ 221              	.set macro
+ 222              	.set reorder
+ 223              	
+ 224              	$L12:
+ 225              	.set noreorder
+ 226              	.set nomacro
+ 227 0104 0000000C 	jal cdvdInit
+ 228 0108 05000424 	li $4,5
+ 229              	.set macro
+ 230              	.set reorder
+ 231              	
+ 232              	.set noreorder
+ 233              	.set nomacro
+ 234 010c 17004004 	bltz $2,$L10
+ 235 0110 FFFF0324 	li $3,-1
+ 236              	.set macro
+ 237              	.set reorder
+ 238              	
+ 239 0114 0000000C 	jal cdvdExit
+ 239      00000000 
+ 240 011c 0000000C 	jal fioExit
+ 240      00000000 
+ 241 0124 0000000C 	jal SifExitIopHeap
+ 241      00000000 
+ 242 012c 0000000C 	jal SifLoadFileExit
+ 242      00000000 
+ 243 0134 0000000C 	jal SifExitRpc
+ 243      00000000 
+ 244 013c 2D280000 	move $5,$0
+ 245              	.set noreorder
+ 246              	.set nomacro
+ 247 0140 0000000C 	jal SifIopReset
+ 248 0144 2D20A003 	move $4,$sp
+ 249              	.set macro
+ 250              	.set reorder
+ 251              	
+ 252              	.p2align 3
+ 253              	$L14:
+ 254 0148 0000000C 	jal SifIopSync
+ 254      00000000 
+ 255 0150 FDFF4010 	beq $2,$0,$L14
+ 255      00000000 
+ 256              	.set noreorder
+ 257              	.set nomacro
+ 258 0158 0000000C 	jal SifInitRpc
+ 259 015c 2D200000 	move $4,$0
+ 260              	.set macro
+ 261              	.set reorder
+ 262              	
+ 263              	.set noreorder
+ 264              	.set nomacro
+ 265 0160 0000000C 	jal FlushCache
+ 266 0164 2D200000 	move $4,$0
+ 267              	.set macro
+GAS LISTING  			page 6
+
+
+ 268              	.set reorder
+ 269              	
+ 270 0168 2D180000 	move $3,$0
+ 271              	$L10:
+ 272 016c 5000BFDF 	ld $31,80($sp)
+ 273 0170 2D106000 	move $2,$3
+ 274 0174 4000B0DF 	ld $16,64($sp)
+ 275              	
+ 276              	.set noreorder
+ 277              	.set nomacro
+ 278 0178 0800E003 	j $31
+ 279 017c 6000BD27 	addu $sp,$sp,96
+ 280              	.set macro
+ 281              	.set reorder
+ 282              	
+ 283              	.end _Z10full_resetv
+ 284              	$Lfe4:
+ 285              	.size _Z10full_resetv,$Lfe4-_Z10full_resetv
+ 286              	.rdata
+ 287 001f 00       	.align 3
+ 288              	$LC2:
+ 289 0020 25643A20 	.ascii "%d: %s\n\000"
+ 289      25730A00 
+ 290              	.text
+ 291              	.align 2
+ 292              	.p2align 3,,7
+ 293              	.globl main
+ 294              	.ent main
+ 295              	main:
+ 296              	.frame $sp,80,$31
+ 297              	.mask 0x800f0000,-16
+ 298              	.fmask 0x00000000,0
+ 299 0180 B0FFBD27 	subu $sp,$sp,80
+ 300 0184 3000B3FF 	sd $19,48($sp)
+ 301 0188 2D98A000 	move $19,$5
+ 302 018c 2000B2FF 	sd $18,32($sp)
+ 303 0190 2D908000 	move $18,$4
+ 304 0194 4000BFFF 	sd $31,64($sp)
+ 305 0198 1000B1FF 	sd $17,16($sp)
+ 306              	.set noreorder
+ 307              	.set nomacro
+ 308 019c 3F008018 	blez $4,$L33
+ 309 01a0 0000B0FF 	sd $16,0($sp)
+ 310              	.set macro
+ 311              	.set reorder
+ 312              	
+ 313 01a4 0000A28C 	lw $2,0($5)
+ 314 01a8 0000103C 	lui $16,%hi(_Main_pBootPath)
+ 315 01ac 000002AE 	sw $2,%lo(_Main_pBootPath)($16)
+ 316              	$L19:
+ 317              	.set noreorder
+ 318              	.set nomacro
+ 319 01b0 0000000C 	jal _Z14MainSetBootDirPKc
+ 320 01b4 0000048E 	lw $4,%lo(_Main_pBootPath)($16)
+ 321              	.set macro
+ 322              	.set reorder
+ 323              	
+GAS LISTING  			page 7
+
+
+ 324              	.set noreorder
+ 325              	.set nomacro
+ 326 01b8 0000000C 	jal SifInitRpc
+ 327 01bc 2D200000 	move $4,$0
+ 328              	.set macro
+ 329              	.set reorder
+ 330              	
+ 331 01c0 6D000224 	li $2,109
+ 332 01c4 0000048E 	lw $4,%lo(_Main_pBootPath)($16)
+ 333              	
+ 334 01c8 00008380 	lb $3,0($4)
+ 335              	
+ 336              	.set noreorder
+ 337              	.set nomacro
+ 338 01cc 2C006250 	beql $3,$2,$L34
+ 339 01d0 01008380 	lb $3,1($4)
+ 340              	.set macro
+ 341              	.set reorder
+ 342              	
+ 343 01d4 01000424 	li $4,1
+ 344              	$L35:
+ 345              	.set noreorder
+ 346              	.set nomacro
+ 347 01d8 0000000C 	jal cdvdInit
+ 348 01dc 2D880000 	move $17,$0
+ 349              	.set macro
+ 350              	.set reorder
+ 351              	
+ 352 01e0 0B00401A 	blez $18,$L32
+ 352      00000000 
+ 353 01e8 2D806002 	move $16,$19
+ 354 01ec 0000133C 	lui $19,%hi($LC2)
+ 355              	.p2align 3
+ 356              	$L25:
+ 357 01f0 0000068E 	lw $6,0($16)
+ 358 01f4 2D282002 	move $5,$17
+ 359 01f8 20006426 	addiu $4,$19,%lo($LC2)
+ 360              	.set noreorder
+ 361              	.set nomacro
+ 362 01fc 0000000C 	jal printf
+ 363 0200 01003126 	addu $17,$17,1
+ 364              	.set macro
+ 365              	.set reorder
+ 366              	
+ 367 0204 2A103202 	slt $2,$17,$18
+ 368              	.set noreorder
+ 369              	.set nomacro
+ 370 0208 F9FF4014 	bne $2,$0,$L25
+ 371 020c 04001026 	addu $16,$16,4
+ 372              	.set macro
+ 373              	.set reorder
+ 374              	
+ 375              	$L32:
+ 376 0210 0000000C 	jal DmaReset
+ 376      00000000 
+ 377 0218 0000000C 	jal install_VRstart_handler
+ 377      00000000 
+GAS LISTING  			page 8
+
+
+ 378 0220 0000000C 	jal ConInit
+ 378      00000000 
+ 379 0228 0000000C 	jal _Z12MainLoopInitv
+ 379      00000000 
+ 380 0230 0B004014 	bne $2,$0,$L27
+ 380      00000000 
+ 381              	$L26:
+ 382 0238 0000000C 	jal ConShutdown
+ 382      00000000 
+ 383 0240 0000B0DF 	ld $16,0($sp)
+ 384 0244 4000BFDF 	ld $31,64($sp)
+ 385 0248 2D100000 	move $2,$0
+ 386 024c 3000B3DF 	ld $19,48($sp)
+ 387 0250 2000B2DF 	ld $18,32($sp)
+ 388 0254 1000B1DF 	ld $17,16($sp)
+ 389              	
+ 390              	.set noreorder
+ 391              	.set nomacro
+ 392 0258 0800E003 	j $31
+ 393 025c 5000BD27 	addu $sp,$sp,80
+ 394              	.set macro
+ 395              	.set reorder
+ 396              	
+ 397              	.p2align 3
+ 398              	$L27:
+ 399 0260 0000000C 	jal _Z15MainLoopProcessv
+ 399      00000000 
+ 400 0268 FDFF4014 	bne $2,$0,$L27
+ 400      00000000 
+ 401 0270 0000000C 	jal _Z16MainLoopShutdownv
+ 401      00000000 
+ 402 0278 EFFF0010 	b $L26
+ 402      00000000 
+ 403              	$L34:
+ 404 0280 63000224 	li $2,99
+ 405              	.set noreorder
+ 406              	.set nomacro
+ 407 0284 D4FF6254 	bnel $3,$2,$L35
+ 408 0288 01000424 	li $4,1
+ 409              	.set macro
+ 410              	.set reorder
+ 411              	
+ 412 028c 0000000C 	jal _Z10full_resetv
+ 412      00000000 
+ 413              	.set noreorder
+ 414              	.set nomacro
+ 415 0294 D0FF0010 	b $L35
+ 416 0298 01000424 	li $4,1
+ 417              	.set macro
+ 418              	.set reorder
+ 419              	
+ 420              	$L33:
+ 421              	.set noreorder
+ 422              	.set nomacro
+ 423 029c C4FF0010 	b $L19
+ 424 02a0 0000103C 	lui $16,%hi(_Main_pBootPath)
+ 425              	.set macro
+GAS LISTING  			page 9
+
+
+ 426              	.set reorder
+ 427              	
+ 428              	.end main
+ 429              	$Lfe5:
+ 430              	.size main,$Lfe5-main
+ 431 02a4 00000000 	.ident "GCC: (GNU) 3.2.2"

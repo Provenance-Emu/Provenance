@@ -1,0 +1,19 @@
+{
+  "images" : [
+    {
+      "filename" : "prov_settings_gear.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "prov_settings_gear-1.pdf",
+      "idiom" : "iphone"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

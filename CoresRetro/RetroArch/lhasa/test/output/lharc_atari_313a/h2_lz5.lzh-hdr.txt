@@ -1,0 +1,9 @@
+filename: gpl2
+compress_method: -lz5-
+compressed_length: 8480
+length: 18092
+header_level: 2
+os_type: 97 ('a')
+crc: a33a
+timestamp: 1326306636
+--

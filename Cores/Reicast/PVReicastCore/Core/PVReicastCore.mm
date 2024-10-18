@@ -14,7 +14,7 @@
 #import "PVReicast+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 // Reicast imports
 #include "types.h"

@@ -10,7 +10,7 @@
 #import "PVMelonDS+CoreAudio.h"
 #import "PVMelonDS+AudioTypes.h"
 
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 #include "oslib/audiobackend_coreaudio.h"
 

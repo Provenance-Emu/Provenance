@@ -1,0 +1,12 @@
+These are test archives for testing -lzs- decompression. It seems that this
+was an algorithm used by early versions of LArc, although I can't find any
+that actually encode it. These archives have therefore been generated using
+the lz5-to-lzs Python script, with hand-crafted headers.
+
+These archives have been tested using DOS LHA v2.13 and extracted
+successfully. These can therefore be considered "known good" -lzs-
+compressed files.
+
+lzs.lzs             - Archive containing -lzs- compressed file.
+long.lzs            - Archive containing a large compressed file.
+

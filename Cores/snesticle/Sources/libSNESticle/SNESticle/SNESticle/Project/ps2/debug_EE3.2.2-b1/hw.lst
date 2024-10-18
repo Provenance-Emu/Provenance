@@ -1,0 +1,364 @@
+GAS LISTING ../../../Gep/Source/ps2/hw.s 			page 1
+
+
+   1              	# By Vzzrzzn, modifications by Sjeep
+   2              	
+   3              	.file   1 "hw.s"
+   4              	
+   5              	.set nomips16
+   6              	.set noat
+   7              	
+   8              	
+   9              	
+  10              	
+  11              	.data 1
+  12              	.p2align 4
+  13              	
+  14 0000 00000000 	VRendf:     .word 0
+  15 0004 00000000 	VRendid:    .word 0
+  16 0008 00000000 	VRcount:    .word 0
+  17 000c 00000000 	VRstartid:  .word 0
+  18              	
+  19              	
+  20              	# ----------------------------
+  21              	# ----------------------------
+  22              	# ----------------------------
+  23              	
+  24              	
+  25              	.text
+  26              	.p2align 4
+  27              	.set noreorder
+  28              	
+  29              	
+  30              	# ----------------------------
+  31              	
+  32              	# void install_VRstart_handler();
+  33              	    .globl install_VRstart_handler
+  34              	    .ent install_VRstart_handler
+  35              	install_VRstart_handler:
+  36 0000 39000042 	    di
+  37              	
+  38              	    # install handler
+  39 0004 03000424 	    li $4, 3
+  40 0008 0000053C 	    la $5, VRstart_handler
+  40      8000A524 
+  41 0010 00000624 	    addiu $6, $0, 0
+  42 0014 10000324 	    li $3, 16
+  43 0018 0C000000 	    syscall
+  44 001c 00000000 	    nop
+  45              	
+  46 0020 0000043C 	    la $4, VRstartid
+  46      0C008424 
+  47 0028 000082AC 	    sw $2, 0($4)
+  48              	
+  49              	    # enable the handler
+  50 002c 03000424 	    li $4, 3
+  51 0030 14000324 	    li $3, 20
+  52 0034 0C000000 	    syscall
+  53 0038 00000000 	    nop
+  54              	
+  55 003c 0000043C 	    la $4, VRcount
+GAS LISTING ../../../Gep/Source/ps2/hw.s 			page 2
+
+
+  55      08008424 
+  56 0044 000080AC 	    sw $0, 0($4)
+  57              	
+  58 0048 38000042 	    ei
+  59              	
+  60 004c 0800E003 	    jr $31
+  61 0050 00000000 	    nop
+  62              	
+  63              	    .end install_VRstart_handler
+  64              	
+  65              	# untested
+  66              	# void remove_VRstart_handler();
+  67              	    .globl remove_VRstart_handler
+  68              	    .ent remove_VRstart_handler
+  69              	remove_VRstart_handler:
+  70 0054 39000042 	    di
+  71              	
+  72 0058 0000023C 	    lui $2, %hi(VRstartid)
+  73 005c 02000424 	    addiu $4, $0, 2
+  74 0060 0C004234 	    ori $2, %lo(VRstartid)
+  75 0064 11000324 	    addiu $3, $0, 17
+  76 0068 0000458C 	    lw $5, 0($2)
+  77 006c 0C000000 	    syscall
+  78 0070 00000000 	    nop
+  79              	
+  80 0074 38000042 	    ei
+  81              	
+  82 0078 0800E003 	    jr $31
+  83 007c 00000000 	    nop
+  84              	
+  85              	    .end remove_VRstart_handler
+  86              	# untested
+  87              	
+  88              	    .ent VRstart_handler
+  89              	VRstart_handler:
+  90 0080 0000023C 	    la $2, VRcount
+  90      08004224 
+  91 0088 0000438C 	    lw $3, 0($2)
+  92 008c 00000000 	    nop
+  93 0090 01006324 	    addiu $3, 1
+  94 0094 000043AC 	    sw $3, 0($2)
+  95              	
+  96 0098 2D100000 	    daddu $2, $0, $0
+  97              	
+  98 009c 0800E003 	    jr $31
+  99 00a0 00000000 	    nop
+ 100              	
+ 101              	    .end VRstart_handler
+ 102              	
+ 103              	    .set at
+ 104              	# clears flag and waits until it gets reset (blocking call)
+ 105              	# void WaitForNextVRstart(int numvrs);
+ 106              	# numvrs = number of vertical retraces to wait for
+ 107              	    .globl WaitForNextVRstart
+ 108              	    .ent WaitForNextVRstart
+ 109              	WaitForNextVRstart:
+ 110 00a4 0000023C 	    la $2, VRcount
+GAS LISTING ../../../Gep/Source/ps2/hw.s 			page 3
+
+
+ 110      08004224 
+ 111 00ac 000040AC 	    sw $0, 0($2)
+ 112              	
+ 113              	WaitForNextVRstart.lp:
+ 114 00b0 0000438C 	    lw $3, 0($2)
+ 115 00b4 00000000 	    nop
+ 116 00b8 2A086400 	    blt $3, $4, WaitForNextVRstart.lp
+ 116      FCFF2014 
+ 117 00c0 00000000 	    nop
+ 118              	
+ 119 00c4 0800E003 	    jr $31
+ 120 00c8 00000000 	    nop
+ 121              	
+ 122              	    .end WaitForNextVRstart
+ 123              	    .set noat
+ 124              	
+ 125              	# has start-of-Vertical-Retrace occurred since the flag was last cleared ?
+ 126              	# (non-blocking call)
+ 127              	# int TestVRstart();
+ 128              	    .globl TestVRstart
+ 129              	    .ent TestVRstart
+ 130              	TestVRstart:
+ 131 00cc 0000033C 	    la $3, VRcount
+ 131      08006324 
+ 132 00d4 0000628C 	    lw $2, 0($3)
+ 133              	
+ 134 00d8 0800E003 	    jr $31
+ 135 00dc 00000000 	    nop
+ 136              	
+ 137              	    .end TestVRstart
+ 138              	
+ 139              	
+ 140              	# clear the start-of-Vertical-Retrace flag
+ 141              	# void ClearVRcount();
+ 142              	    .globl ClearVRcount
+ 143              	    .ent ClearVRcount
+ 144              	ClearVRcount:
+ 145 00e0 0000023C 	    la $2, VRcount
+ 145      08004224 
+ 146 00e8 000040AC 	    sw $0, 0($2)
+ 147              	
+ 148 00ec 0800E003 	    jr $31
+ 149 00f0 00000000 	    nop
+ 150              	
+ 151              	    .end ClearVRcount
+ 152              	
+ 153              	# ----------------------------
+ 154              	# ----------------------------
+ 155              	
+ 156              	# DMA stuff
+ 157              	
+ 158              	
+ 159              	    .set at
+ 160              	# Dukes DmaReset
+ 161              	# void DmaReset();
+ 162              	    .globl DmaReset
+ 163              	    .ent DmaReset
+GAS LISTING ../../../Gep/Source/ps2/hw.s 			page 4
+
+
+ 164              	DmaReset:																   
+ 165 00f4 0110013C 	    sw  $0, 0x1000a080
+ 165      80A020AC 
+ 166 00fc 0110013C 	    sw  $0, 0x1000a000
+ 166      00A020AC 
+ 167 0104 0110013C 	    sw  $0, 0x1000a030
+ 167      30A020AC 
+ 168 010c 0110013C 	    sw  $0, 0x1000a010
+ 168      10A020AC 
+ 169 0114 0110013C 	    sw  $0, 0x1000a050
+ 169      50A020AC 
+ 170 011c 0110013C 	    sw  $0, 0x1000a040
+ 170      40A020AC 
+ 171 0124 1FFF0234 	    li  $2, 0xff1f
+ 172 0128 0110013C 	    sw  $2, 0x1000e010
+ 172      10E022AC 
+ 173 0130 0110013C 	    sw  $0, 0x1000e000
+ 173      00E020AC 
+ 174 0138 0110013C 	    sw  $0, 0x1000e020
+ 174      20E020AC 
+ 175 0140 0110013C 	    sw  $0, 0x1000e030
+ 175      30E020AC 
+ 176 0148 0110013C 	    sw  $0, 0x1000e050
+ 176      50E020AC 
+ 177 0150 0110013C 	    sw  $0, 0x1000e040
+ 177      40E020AC 
+ 178 0158 0110023C 	    lw  $2, 0x1000e000
+ 178      00E0428C 
+ 179 0160 01004334 	    ori $3,$2,1
+ 180 0164 00000000 	    nop
+ 181 0168 0110013C 	    sw  $3, 0x1000e000
+ 181      00E023AC 
+ 182 0170 00000000 	    nop
+ 183 0174 0800E003 	    jr  $31
+ 184 0178 00000000 	    nop
+ 185              	
+ 186              	    .end DmaReset
+ 187              	    .set noat
+ 188              	
+ 189              	
+ 190              	# the same as Dukes "SendPrim"
+ 191              	# void SendDma02(void *DmaTag);
+ 192              	    .globl SendDma02
+ 193              	    .ent SendDma02
+ 194              	SendDma02:
+ 195 017c 0010033C 	    li $3, 0x1000a000
+ 195      00A06334 
+ 196              	
+ 197 0184 300064AC 	    sw $4, 0x0030($3)
+ 198 0188 200060AC 	    sw $0, 0x0020($3)
+ 199 018c 0000628C 	    lw $2, 0x0000($3)
+ 200 0190 05014234 	    ori $2, 0x0105
+ 201 0194 000062AC 	    sw $2, 0x0000($3)
+ 202              	
+ 203 0198 0800E003 	    jr $31
+ 204 019c 00000000 	    nop
+ 205              	    .end SendDma02
+GAS LISTING ../../../Gep/Source/ps2/hw.s 			page 5
+
+
+ 206              	
+ 207              	
+ 208              	# Dukes Dma02Wait !
+ 209              	# void Dma02Wait();
+ 210              	    .globl Dma02Wait
+ 211              	    .ent Dma02Wait
+ 212              	Dma02Wait:
+ 213 01a0 FCFFBD27 	    addiu $29, -4
+ 214 01a4 0000A8AF 	    sw $8, 0($29)
+ 215              	
+ 216              	Dma02Wait.poll:
+ 217 01a8 0110083C 	    lw $8, 0x1000a000
+ 217      00A0088D 
+ 218 01b0 00000000 	    nop
+ 219 01b4 00010831 	    andi $8, $8, 0x0100
+ 220 01b8 FBFF0015 	    bnez $8, Dma02Wait.poll
+ 221 01bc 00000000 	    nop
+ 222              	
+ 223 01c0 0000A88F 	    lw $8, 0($29)
+ 224 01c4 0400BD27 	    addiu $29, 4
+ 225              	
+ 226 01c8 0800E003 	    jr  $31
+ 227 01cc 00000000 	    nop
+ 228              	
+ 229              	    .end Dma02Wait
+ 230              	
+ 231              	# ----------------------------
+ 232              	# ----------------------------
+ 233              	
+ 234              	
+ 235              	    .globl qmemcpy
+ 236              	    .ent qmemcpy
+ 237              	# void qmemcpy(void *dest, void *src, int numqwords);
+ 238              	qmemcpy:
+ 239 01d0 0000A278 	    lq $2, 0($5)
+ 240 01d4 FFFFC624 	    addiu $6, -1
+ 241 01d8 0000827C 	    sq $2, 0($4)
+ 242 01dc 10008424 	    addiu $4, 0x0010
+ 243 01e0 FBFFC014 	    bnez $6, qmemcpy
+ 244 01e4 1000A524 	    addiu $5, 0x0010
+ 245              	
+ 246 01e8 0800E003 	    jr $31
+ 247 01ec 00000000 	    nop
+ 248              	    .end qmemcpy
+ 249              	
+ 250              	
+ 251              	    .globl dmemcpy
+ 252              	    .ent dmemcpy
+ 253              	# void dmemcpy(void *dest, void *src, int numdwords);
+ 254              	dmemcpy:
+ 255 01f0 0000A2DC 	    ld $2, 0($5)
+ 256 01f4 FFFFC624 	    addiu $6, -1
+ 257 01f8 000082FC 	    sd $2, 0($4)
+ 258 01fc 10008424 	    addiu $4, 0x0010
+ 259 0200 FBFFC014 	    bnez $6, dmemcpy
+ 260 0204 1000A524 	    addiu $5, 0x0010
+ 261              	
+GAS LISTING ../../../Gep/Source/ps2/hw.s 			page 6
+
+
+ 262 0208 0800E003 	    jr $31
+ 263 020c 00000000 	    nop
+ 264              	    .end dmemcpy
+ 265              	
+ 266              	
+ 267              	    .globl wmemcpy
+ 268              	    .ent wmemcpy
+ 269              	# void wmemcpy(void *dest, void *src, int numwords);
+ 270              	wmemcpy:
+ 271 0210 0000A28C 	    lw $2, 0($5)
+ 272 0214 FFFFC624 	    addiu $6, -1
+ 273 0218 000082AC 	    sw $2, 0($4)
+ 274 021c 10008424 	    addiu $4, 0x0010
+ 275 0220 FBFFC014 	    bnez $6, wmemcpy
+ 276 0224 1000A524 	    addiu $5, 0x0010
+ 277              	
+ 278 0228 0800E003 	    jr $31
+ 279 022c 00000000 	    nop
+ 280              	    .end wmemcpy
+ 281              	
+ 282              	# Dukes pal/ntsc auto-detection. Returns 3 for PAL, 2 for NTSC.
+ 283              	.globl	pal_ntsc
+ 284              	.ent	pal_ntsc
+ 285              	pal_ntsc:
+ 286 0230 C81F083C 		lui     $8,0x1fc8
+ 287 0234 52FF0881 		lb      $8,-0xae($8)
+ 288 0238 45000924 		li      $9,'E'
+ 289 023c 02000951 		beql    $8,$9,pal_mode
+ 290 0240 03000224 		li      $2,3                  # 2=NTSC, 3=PAL
+ 291              	
+ 292 0244 02000224 		li		$2,2
+ 293              	pal_mode:
+ 294 0248 0800E003 		jr		$31
+ 295 024c 00000000 		nop
+ 296              	.end	pal_ntsc
+GAS LISTING ../../../Gep/Source/ps2/hw.s 			page 7
+
+
+DEFINED SYMBOLS
+../../../Gep/Source/ps2/hw.s:14     .data:0000000000000000 VRendf
+../../../Gep/Source/ps2/hw.s:15     .data:0000000000000004 VRendid
+../../../Gep/Source/ps2/hw.s:16     .data:0000000000000008 VRcount
+../../../Gep/Source/ps2/hw.s:17     .data:000000000000000c VRstartid
+../../../Gep/Source/ps2/hw.s:35     .text:0000000000000000 install_VRstart_handler
+../../../Gep/Source/ps2/hw.s:89     .text:0000000000000080 VRstart_handler
+../../../Gep/Source/ps2/hw.s:69     .text:0000000000000054 remove_VRstart_handler
+../../../Gep/Source/ps2/hw.s:109    .text:00000000000000a4 WaitForNextVRstart
+../../../Gep/Source/ps2/hw.s:113    .text:00000000000000b0 WaitForNextVRstart.lp
+../../../Gep/Source/ps2/hw.s:130    .text:00000000000000cc TestVRstart
+../../../Gep/Source/ps2/hw.s:144    .text:00000000000000e0 ClearVRcount
+../../../Gep/Source/ps2/hw.s:164    .text:00000000000000f4 DmaReset
+../../../Gep/Source/ps2/hw.s:194    .text:000000000000017c SendDma02
+../../../Gep/Source/ps2/hw.s:212    .text:00000000000001a0 Dma02Wait
+../../../Gep/Source/ps2/hw.s:216    .text:00000000000001a8 Dma02Wait.poll
+../../../Gep/Source/ps2/hw.s:238    .text:00000000000001d0 qmemcpy
+../../../Gep/Source/ps2/hw.s:254    .text:00000000000001f0 dmemcpy
+../../../Gep/Source/ps2/hw.s:270    .text:0000000000000210 wmemcpy
+../../../Gep/Source/ps2/hw.s:285    .text:0000000000000230 pal_ntsc
+../../../Gep/Source/ps2/hw.s:293    .text:0000000000000248 pal_mode
+
+NO UNDEFINED SYMBOLS

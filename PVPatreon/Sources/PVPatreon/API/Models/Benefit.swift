@@ -10,11 +10,11 @@ import Foundation
 import PVLogging
 
 public enum PVPatreonBenefitType: String, Codable, Equatable, CaseIterable, Hashable {
-	case betaAccess = "7585304"
-	case credits = "8490206"
-    case cloudSaves = "12039757"
-    case cloudROMs = "12218444"
-    case cloudISOs = "12423258"
+	case betaAccess =   "7585304"
+	case credits =      "8490206"
+    case cloudSaves =   "12039757"
+    case cloudROMs =    "12218444"
+    case cloudISOs =    "12423258"
 }
 
 extension PatreonAPI {

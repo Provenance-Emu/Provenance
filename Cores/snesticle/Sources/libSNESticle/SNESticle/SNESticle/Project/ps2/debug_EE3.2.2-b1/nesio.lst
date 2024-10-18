@@ -1,0 +1,210 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../NESticle/Source/common/nesio.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN5NesIOC2Ev
+   8              	.ent _ZN5NesIOC2Ev
+   9              	_ZN5NesIOC2Ev:
+  10              	.frame $sp,16,$31
+  11              	.mask 0x80000000,-16
+  12              	.fmask 0x00000000,0
+  13 0000 F0FFBD27 	subu $sp,$sp,16
+  14 0004 0000BFFF 	sd $31,0($sp)
+  15 0008 0000000C 	jal _ZN5NesIO5ResetEv
+  15      00000000 
+  16 0010 0000BFDF 	ld $31,0($sp)
+  17              	
+  18              	.set noreorder
+  19              	.set nomacro
+  20 0014 0800E003 	j $31
+  21 0018 1000BD27 	addu $sp,$sp,16
+  22              	.set macro
+  23              	.set reorder
+  24              	
+  25              	.end _ZN5NesIOC2Ev
+  26              	$Lfe1:
+  27              	.size _ZN5NesIOC2Ev,$Lfe1-_ZN5NesIOC2Ev
+  28              	.align 2
+  29 001c 00000000 	.p2align 3,,7
+  30              	.globl _ZN5NesIOC1Ev
+  31              	.ent _ZN5NesIOC1Ev
+  32              	_ZN5NesIOC1Ev:
+  33              	.frame $sp,16,$31
+  34              	.mask 0x80000000,-16
+  35              	.fmask 0x00000000,0
+  36 0020 F0FFBD27 	subu $sp,$sp,16
+  37 0024 0000BFFF 	sd $31,0($sp)
+  38 0028 0000000C 	jal _ZN5NesIO5ResetEv
+  38      00000000 
+  39 0030 0000BFDF 	ld $31,0($sp)
+  40              	
+  41              	.set noreorder
+  42              	.set nomacro
+  43 0034 0800E003 	j $31
+  44 0038 1000BD27 	addu $sp,$sp,16
+  45              	.set macro
+  46              	.set reorder
+  47              	
+  48              	.end _ZN5NesIOC1Ev
+  49              	$Lfe2:
+  50              	.size _ZN5NesIOC1Ev,$Lfe2-_ZN5NesIOC1Ev
+  51              	.align 2
+  52 003c 00000000 	.p2align 3,,7
+  53              	.globl _ZN5NesIO5ResetEv
+  54              	.ent _ZN5NesIO5ResetEv
+  55              	_ZN5NesIO5ResetEv:
+GAS LISTING  			page 2
+
+
+  56              	.frame $sp,0,$31
+  57              	.mask 0x00000000,0
+  58              	.fmask 0x00000000,0
+  59 0040 0C0080AC 	sw $0,12($4)
+  60 0044 000080AC 	sw $0,0($4)
+  61 0048 040080AC 	sw $0,4($4)
+  62              	.set noreorder
+  63              	.set nomacro
+  64 004c 0800E003 	j $31
+  65 0050 080080AC 	sw $0,8($4)
+  66              	.set macro
+  67              	.set reorder
+  68              	
+  69              	.end _ZN5NesIO5ResetEv
+  70              	$Lfe3:
+  71              	.size _ZN5NesIO5ResetEv,$Lfe3-_ZN5NesIO5ResetEv
+  72              	.align 2
+  73 0054 00000000 	.p2align 3,,7
+  74              	.globl _ZN5NesIO10LatchInputEP12EmuSysInputT
+  75              	.ent _ZN5NesIO10LatchInputEP12EmuSysInputT
+  76              	_ZN5NesIO10LatchInputEP12EmuSysInputT:
+  77              	.frame $sp,0,$31
+  78              	.mask 0x00000000,0
+  79              	.fmask 0x00000000,0
+  80 0058 0000A394 	lhu $3,0($5)
+  81 005c FFFF0234 	li $2,65535
+  82 0060 2D388000 	move $7,$4
+  83              	.set noreorder
+  84              	.set nomacro
+  85 0064 02006210 	beq $3,$2,$L6
+  86 0068 2D480000 	move $9,$0
+  87              	.set macro
+  88              	.set reorder
+  89              	
+  90 006c 0000A990 	lbu $9,0($5)
+  91              	$L6:
+  92 0070 0200A394 	lhu $3,2($5)
+  93 0074 FFFF0234 	li $2,65535
+  94              	.set noreorder
+  95              	.set nomacro
+  96 0078 02006210 	beq $3,$2,$L8
+  97 007c 2D400000 	move $8,$0
+  98              	.set macro
+  99              	.set reorder
+ 100              	
+ 101 0080 0200A890 	lbu $8,2($5)
+ 102              	$L8:
+ 103 0084 0400A394 	lhu $3,4($5)
+ 104 0088 FFFF0234 	li $2,65535
+ 105              	.set noreorder
+ 106              	.set nomacro
+ 107 008c 02006210 	beq $3,$2,$L10
+ 108 0090 2D300000 	move $6,$0
+ 109              	.set macro
+ 110              	.set reorder
+ 111              	
+ 112 0094 0400A690 	lbu $6,4($5)
+GAS LISTING  			page 3
+
+
+ 113              	$L10:
+ 114 0098 0600A394 	lhu $3,6($5)
+ 115 009c FFFF0234 	li $2,65535
+ 116              	.set noreorder
+ 117              	.set nomacro
+ 118 00a0 02006210 	beq $3,$2,$L12
+ 119 00a4 2D200000 	move $4,$0
+ 120              	.set macro
+ 121              	.set reorder
+ 122              	
+ 123 00a8 0600A490 	lbu $4,6($5)
+ 124              	$L12:
+ 125 00ac 002A0600 	sll $5,$6,8
+ 126 00b0 00220400 	sll $4,$4,8
+ 127 00b4 2528A900 	or $5,$5,$9
+ 128 00b8 25208800 	or $4,$4,$8
+ 129 00bc 0800023C 	li $2,524288
+ 130 00c0 0400033C 	li $3,262144
+ 131 00c4 2528A200 	or $5,$5,$2
+ 132 00c8 25208300 	or $4,$4,$3
+ 133 00cc 0C00E4AC 	sw $4,12($7)
+ 134              	.set noreorder
+ 135              	.set nomacro
+ 136 00d0 0800E003 	j $31
+ 137 00d4 0800E5AC 	sw $5,8($7)
+ 138              	.set macro
+ 139              	.set reorder
+ 140              	
+ 141              	.end _ZN5NesIO10LatchInputEP12EmuSysInputT
+ 142              	$Lfe4:
+ 143              	.size _ZN5NesIO10LatchInputEP12EmuSysInputT,$Lfe4-_ZN5NesIO10LatchInputEP12EmuSysInputT
+ 144              	.align 2
+ 145              	.p2align 3,,7
+ 146              	.globl _ZN5NesIO6StrobeEj
+ 147              	.ent _ZN5NesIO6StrobeEj
+ 148              	_ZN5NesIO6StrobeEj:
+ 149              	.frame $sp,0,$31
+ 150              	.mask 0x00000000,0
+ 151              	.fmask 0x00000000,0
+ 152 00d8 80280500 	sll $5,$5,2
+ 153 00dc 2128A400 	addu $5,$5,$4
+ 154 00e0 0800A28C 	lw $2,8($5)
+ 155              	
+ 156 00e4 40100200 	sll $2,$2,1
+ 157              	.set noreorder
+ 158              	.set nomacro
+ 159 00e8 0800E003 	j $31
+ 160 00ec 0000A2AC 	sw $2,0($5)
+ 161              	.set macro
+ 162              	.set reorder
+ 163              	
+ 164              	.end _ZN5NesIO6StrobeEj
+ 165              	$Lfe5:
+ 166              	.size _ZN5NesIO6StrobeEj,$Lfe5-_ZN5NesIO6StrobeEj
+ 167              	.align 2
+ 168              	.p2align 3,,7
+ 169              	.globl _ZN5NesIO4ReadEj
+GAS LISTING  			page 4
+
+
+ 170              	.ent _ZN5NesIO4ReadEj
+ 171              	_ZN5NesIO4ReadEj:
+ 172              	.frame $sp,0,$31
+ 173              	.mask 0x00000000,0
+ 174              	.fmask 0x00000000,0
+ 175 00f0 80280500 	sll $5,$5,2
+ 176 00f4 2128A400 	addu $5,$5,$4
+ 177 00f8 0000A38C 	lw $3,0($5)
+ 178              	
+ 179 00fc 42100300 	srl $2,$3,1
+ 180 0100 021A0300 	srl $3,$3,8
+ 181 0104 0000A2AC 	sw $2,0($5)
+ 182 0108 02006330 	andi $3,$3,0x2
+ 183 010c 0000A290 	lbu $2,0($5)
+ 184              	
+ 185 0110 01004230 	andi $2,$2,0x1
+ 186              	.set noreorder
+ 187              	.set nomacro
+ 188 0114 0800E003 	j $31
+ 189 0118 25104300 	or $2,$2,$3
+ 190              	.set macro
+ 191              	.set reorder
+ 192              	
+ 193              	.end _ZN5NesIO4ReadEj
+ 194              	$Lfe6:
+ 195              	.size _ZN5NesIO4ReadEj,$Lfe6-_ZN5NesIO4ReadEj
+ 196 011c 00000000 	.ident "GCC: (GNU) 3.2.2"
