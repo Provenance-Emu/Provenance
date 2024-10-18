@@ -130,7 +130,7 @@ public extension PVEmulatorConfiguration {
     }
     
     class func systemsFromCache(forFileExtension fileExtension: String) -> [PVSystem]? {
-        let systems = RomDatabase.sharedInstance.getSystemCache().values
+        let systems = RomDatabase.sharedInstance.getSystemCacheSync().values
         return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
                 var newSystems: [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist
