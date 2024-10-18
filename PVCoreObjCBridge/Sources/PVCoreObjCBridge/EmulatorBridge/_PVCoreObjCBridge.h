@@ -32,7 +32,7 @@
 
 #pragma mark -
 
-typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );
+typedef void (^SaveStateCompletion)(NSError * _Nullable );
 
 /*!
  * @function GET_CURRENT_OR_RETURN
@@ -276,7 +276,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 
 - (BOOL)loadStateFromFileAtPath:(NSString *_Nonnull)path
                           error:(NSError * __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use loadStateFromFileAtPath:completionHandler: instead.");
-typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );
+typedef void (^SaveStateCompletion)(NSError * _Nullable );
 
 - (void)saveStateToFileAtPath:(NSString * _Nonnull)fileName
             completionHandler:(nonnull SaveStateCompletion)block;

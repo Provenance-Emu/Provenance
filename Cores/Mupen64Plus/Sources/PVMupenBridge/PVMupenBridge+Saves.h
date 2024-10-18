@@ -12,9 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PVMupenBridge (Saves)
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error;
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block;
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block;
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error;
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block;
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block;
 
 @end
 

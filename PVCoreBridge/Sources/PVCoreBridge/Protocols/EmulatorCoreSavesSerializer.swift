@@ -8,7 +8,7 @@
 import Foundation
 
 @objc public protocol EmulatorCoreSavesSerializer {
-    typealias SaveStateCompletion = (Bool, Error?) -> Void
+    typealias SaveStateCompletion = (Error?) -> Void
 
     @objc(saveStateToFileAtPath:error:)
     func saveStateSync(toFileAtPath path: String) throws

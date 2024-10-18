@@ -18,8 +18,7 @@
     NSAssert(NO, @"Shouldn't be here since we overwrite the async call");
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
-{
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     __block BOOL wasPaused = [self isEmulationPaused];
     [self OE_addHandlerForType:M64CORE_STATE_SAVECOMPLETE usingBlock:
      ^ BOOL (m64p_core_param paramType, int newValue)
@@ -38,7 +37,7 @@
                                                              }];
 
                  dispatch_async(dispatch_get_main_queue(), ^{
-                     block(YES, nil);
+                     block(nil);
                  });
 
              }
@@ -47,14 +46,13 @@
 
          if (block) {
              dispatch_async(dispatch_get_main_queue(), ^{
-                 block(YES, nil);
+                 block(nil);
              });
          }
          return NO;
      }];
 
-    BOOL (^scheduleSaveState)(void) =
-    ^ BOOL {
+    BOOL (^scheduleSaveState)(void) = ^ BOOL {
         if(CoreDoCommand(M64CMD_STATE_SAVE, 1, (void *)[fileName fileSystemRepresentation]) == M64ERR_SUCCESS)
         {
             // Mupen needs to run for a bit for the state saving to take place.
@@ -85,7 +83,7 @@
     NSAssert(NO, @"Shouldn't be here since we overwrite the async call");
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block
 {
     __block BOOL wasPaused = [self isEmulationPaused];
     [self OE_addHandlerForType:M64CORE_STATE_LOADCOMPLETE usingBlock:
@@ -104,13 +102,13 @@
                                                              NSLocalizedRecoverySuggestionErrorKey : @"The loaded file is probably corrupted.",
                                                              NSFilePathErrorKey : fileName
                                                              }];
-                 block(NO, error);
+                 block(error);
              });
              return NO;
          }
 
          dispatch_async(dispatch_get_main_queue(), ^{
-             block(YES, nil);
+             block(nil);
          });
 
          return NO;
