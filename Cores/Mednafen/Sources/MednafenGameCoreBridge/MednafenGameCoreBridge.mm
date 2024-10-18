@@ -541,6 +541,23 @@ static void emulation_run(BOOL skipFrame) {
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
+    
+    if( [[path pathExtension].lowercaseString isEqualToString:@"chd"]) {
+        if (error) {
+            NSDictionary *userInfo = @{
+                NSLocalizedDescriptionKey: @"Failed to CHD game.",
+                NSLocalizedFailureReasonErrorKey: @"Mednafen does not support CHD files.",
+                NSLocalizedRecoverySuggestionErrorKey: @"CHD is not supported in Mednafen. Use bin/cue or ISO."
+            };
+            
+            NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                                userInfo:userInfo];
+            
+            *error = newError;
+        }
+        return NO;
+    }
 
     self.video_opengl = MednafenGameCoreOptions.video_opengl;
     
