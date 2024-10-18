@@ -21,41 +21,46 @@ import AsyncAlgorithms
 
 public extension RomDatabase {
     // MARK: - Reloads
+    func reloadCaches() async {
+        await self.reloadSystemsCache()
+        await self.reloadBIOSCache()
+        await self.reloadCoresCache()
+        await self.reloadGamesCache()
+    }
+    
     func reloadCache() {
         VLOG("RomDatabase:reloadCache")
         self.refresh()
-        reloadSystemsCache()
-        reloadBIOSCache()
-        reloadCoresCache()
-        reloadGamesCache()
-    }
-    func reloadBIOSCache() {
-        Task.detached(priority: .medium) { [self] in
-            var files:[String:[String]]=[:]
-            await self.getSystemCache().values.asyncForEach { system in
-                files = addFileSystemBIOSCache(system, files:files)
-            }
-            RomDatabase.biosCache = files
+        Task.detached { @MainActor in
+            await self.reloadCaches()
         }
     }
-    func reloadCoresCache() {
+    func reloadBIOSCache() async {
+        var files:[String:[String]]=[:]
+        await self.getSystemCache().values.asyncForEach { system in
+            files = addFileSystemBIOSCache(system, files:files)
+        }
+        RomDatabase.biosCache = files
+    }
+    func reloadCoresCache() async {
         let cores = PVCore.all.toArray()
         RomDatabase.coreCache = cores.reduce(into: [:]) {
             dbCore, core in
             dbCore[core.identifier] = core.detached()
         }
     }
-    func reloadSystemsCache() {
-        Task {
+    func reloadSystemsCache() async {
+        await Task {
             let systems = PVSystem.all.toArray()
-            RomDatabase.systemCache = await systems.async.reduce(into: [:]) {
+            let cache = await systems.async.reduce(into: [:]) {
                 dbSystem, system in
                 dbSystem[system.identifier] = system.detached()
             }
+            RomDatabase.systemCache = cache
         }
     }
-    func reloadGamesCache() {
-        Task {
+    func reloadGamesCache() async {
+        await Task {
             let games = PVGame.all.toArray()
             RomDatabase.gamesCache = await games.async.reduce(into: [:]) {
                 dbGames, game in
@@ -88,7 +93,7 @@ public extension RomDatabase {
     func addGamesCache(_ game:PVGame) {
         Task {
             if RomDatabase.gamesCache == nil {
-                self.reloadCache()
+                await self.reloadCache()
             }
             RomDatabase.gamesCache = await addGameCache(game, cache: RomDatabase.gamesCache ?? [:])
         }
@@ -98,44 +103,61 @@ public extension RomDatabase {
         similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)
         return (systemIdentifier as NSString).appendingPathComponent(similarName)
     }
-    func getGamesCache() -> [String:PVGame] {
+    
+    //variant that only returns what we currently have - use when you cannot use async
+    func getGamesCacheSync() -> [String:PVGame] {
+        return RomDatabase.gamesCache ?? [:]
+    }
+    
+    func getGamesCache() async -> [String:PVGame] {
         if RomDatabase.gamesCache == nil {
             self.reloadCache()
         }
         if let gamesCache = RomDatabase.gamesCache {
             return gamesCache
         } else {
-            reloadGamesCache()
+            await reloadGamesCache()
             return RomDatabase.gamesCache ?? [:]
         }
     }
-    func getSystemCache() -> [String:PVSystem] {
+    
+    //variant that only returns what we currently have - use when you cannot use async
+    func getSystemCacheSync() -> [String:PVSystem] {
+        return RomDatabase.systemCache ?? [:]
+    }
+    
+    func getSystemCache() async -> [String:PVSystem] {
         if RomDatabase.systemCache == nil {
             self.reloadCache()
         }
         if let systemCache = RomDatabase.systemCache {
             return systemCache
         } else {
-            reloadSystemsCache()
+            await reloadSystemsCache()
             return RomDatabase.systemCache ?? [:]
         }
     }
-    func getCoreCache() -> [String:PVCore] {
+    func getCoreCache() async -> [String:PVCore] {
         if RomDatabase.coreCache == nil {
             self.reloadCache()
         }
         if let coreCache = RomDatabase.coreCache {
             return coreCache
         } else {
-            reloadCoresCache()
+            await reloadCoresCache()
             return RomDatabase.coreCache ?? [:]
         }
     }
-    func getBIOSCache() -> [String:[String]] {
+    
+    func getBIOSCacheSync() -> [String:[String]] {
+        return RomDatabase.biosCache ?? [:]
+    }
+    
+    func getBIOSCache() async -> [String:[String]] {
         if let biosCache = RomDatabase.biosCache {
             return biosCache
         } else {
-            reloadBIOSCache()
+            await reloadBIOSCache()
             return RomDatabase.biosCache ?? [:]
         }
     }
@@ -143,7 +165,8 @@ public extension RomDatabase {
         Task {
             ILOG("RomDatabase: reloadFileSystemROMCache")
             var files:[URL:PVSystem]=[:]
-            getSystemCache().values.forEach { system in
+            let systems = await getSystemCache()
+            systems.values.forEach { system in
                 files = addFileSystemROMCache(system, files:files)
             }
             RomDatabase.fileSystemROMCache = files

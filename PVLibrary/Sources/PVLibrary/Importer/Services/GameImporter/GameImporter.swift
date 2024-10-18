@@ -78,6 +78,7 @@ public final class GameImporter {
     public var documentsPath: URL { get { URL.documentsPath }}
     public var romsImportPath: URL { Paths.romsImportPath }
     public var romsPath: URL { get { Paths.romsPath }}
+    public var biosPath: URL { get { Paths.biosesPath }}
 
     public let conflictPath: URL = URL.documentsPath.appendingPathComponent("Conflicts/", isDirectory: true)
 
@@ -114,30 +115,36 @@ public final class GameImporter {
     fileprivate var notificationToken: NotificationToken?
     public let initialized = DispatchGroup()
 
-    fileprivate init() {
-        let fm = FileManager.default
-        if !FileManager.default.fileExists(atPath: conflictPath.path, isDirectory: nil) {
-            ILOG("Path <\(conflictPath)> doesn't exist. Creating.")
+    fileprivate func createDefaultDirectory(_ fm: FileManager, url: URL) {
+        if !FileManager.default.fileExists(atPath: url.path, isDirectory: nil) {
+            ILOG("Path <\(url)> doesn't exist. Creating.")
             do {
-                try fm.createDirectory(at: conflictPath, withIntermediateDirectories: true, attributes: nil)
+                try fm.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                ELOG("Error making conflicts dir <\(conflictPath)>")
-                assertionFailure("Error making conflicts dir <\(conflictPath)>")
+                ELOG("Error making conflicts dir <\(url)>")
+                assertionFailure("Error making conflicts dir <\(url)>")
             }
         }
-
-        Task.detached {
-            await self.initSystems()
-        }
+    }
+    
+    fileprivate init() {
+        let fm = FileManager.default
+        //we really should create default directories here to ensure there's no issue later
+        //ideally some of this shouldn't be the responsibility of GameImporter, but at least for now this guarantees the directories are created.
+        createDefaultDirectory(fm, url: conflictPath)
+        createDefaultDirectory(fm, url: romsPath)
+        createDefaultDirectory(fm, url: romsImportPath)
+        createDefaultDirectory(fm, url: biosPath)
     }
 
     var coreLoader: CoreLoader { .shared }
 
     public func initSystems() async {
         initialized.enter()
-        Task.detached {
-            await self.initCorePlists()
-        }
+        
+        //this is already an async function, just await the response of this
+        await self.initCorePlists()
+        
 
         @Sendable func updateSystemToPathMap() async -> [String: URL] {
             let systems = PVSystem.all
@@ -430,7 +437,7 @@ public final class GameImporter {
             importOperation.addExecutionBlock {
                 Task {
                     ILOG("Import Files at \(destinationPath)")
-                    if let system = RomDatabase.sharedInstance.getSystemCache()[system.identifier] {
+                    if let system = await RomDatabase.sharedInstance.getSystemCache()[system.identifier] {
                         RomDatabase.sharedInstance.addFileSystemROMCache(system)
                     }
                     await self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
@@ -712,7 +719,7 @@ public extension GameImporter {
     fileprivate class func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem]?, romFilename: String) -> [PVGame]? {
         // Check if existing ROM
 
-        let allGames = RomDatabase.sharedInstance.getGamesCache().values.filter ({
+        let allGames = RomDatabase.sharedInstance.getGamesCacheSync().values.filter ({
             $0.romPath.lowercased() == romFilename.lowercased()
         })
         /*
@@ -754,7 +761,7 @@ public extension GameImporter {
     }
 
     func saveRelativePath(_ existingGame: PVGame, partialPath:String, file:URL) {
-        if RomDatabase.sharedInstance.getGamesCache()[partialPath] == nil {
+        if RomDatabase.sharedInstance.getGamesCacheSync()[partialPath] == nil {
             RomDatabase.sharedInstance.addRelativeFileCache(file, game:existingGame)
         }
     }
@@ -775,19 +782,19 @@ public extension GameImporter {
             let partialPath: String = (chosenSystem.identifier as NSString).appendingPathComponent(filename)
             // TODO: Better to use MD5 instead?
             let similarName = RomDatabase.sharedInstance.altName(path, systemIdentifier: chosenSystem.identifier)
-            if let existingGame = RomDatabase.sharedInstance.getGamesCache()[partialPath], chosenSystem.identifier == existingGame.systemIdentifier {
+            if let existingGame = RomDatabase.sharedInstance.getGamesCacheSync()[partialPath], chosenSystem.identifier == existingGame.systemIdentifier {
                 //if let existingGame = database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [partialPath])).first ?? // Exact filename match
                 //database.all(PVGame.self, filter: NSPredicate(format: "ANY relatedFiles.partialPath = %@", argumentArray: [partialPath])).first, // Check if it's an associated file of another game
                 //chosenSystem.identifier == existingGame.system.identifier { // Check it's a same system too
                 //finishUpdateOrImport(ofGame: existingGame, path: path)
                 // Matched, Return
                 return
-            } else if let existingGame = RomDatabase.sharedInstance.getGamesCache()[similarName], chosenSystem.identifier == existingGame.systemIdentifier {
+            } else if let existingGame = RomDatabase.sharedInstance.getGamesCacheSync()[similarName], chosenSystem.identifier == existingGame.systemIdentifier {
                 saveRelativePath(existingGame, partialPath: partialPath, file:path)
                 // Matched, Return
                 return
             } else {
-                if let system = RomDatabase.sharedInstance.getSystemCache()[chosenSystem.identifier] {
+                if let system = RomDatabase.sharedInstance.getSystemCacheSync()[chosenSystem.identifier] {
                     Task.detached(priority: .utility) {
                         try await self.importToDatabaseROM(atPath: path, system: system, relatedFiles: nil)
                     }
@@ -823,7 +830,7 @@ public extension GameImporter {
             }
         }
         if let chosenSystem = chosenSystem {
-            if let system = RomDatabase.sharedInstance.getSystemCache()[chosenSystem.identifier] {
+            if let system = RomDatabase.sharedInstance.getSystemCacheSync()[chosenSystem.identifier] {
                 systemsMaybe = [system]
             }
             // First check if it's a chosen system that supports CDs and this is a non-cd extension
@@ -849,7 +856,7 @@ public extension GameImporter {
         if systems.count > 1 {
             // Try to match by MD5 first
             if let systemIDMatch = systemIdFromCache(forROMCandidate: ImportCandidateFile(filePath: urlPath)),
-               let system = RomDatabase.sharedInstance.getSystemCache()[systemIDMatch]
+               let system = RomDatabase.sharedInstance.getSystemCacheSync()[systemIDMatch]
             //let system = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemIDMatch)
             {
                 systems = [system]
@@ -902,7 +909,7 @@ public extension GameImporter {
         // Would instead see if contains first, then query for the full object
         // If we have a matching game from a multi-match above, use that, or run a query by path and see if there's a match there
 
-        let gamesCache = RomDatabase.sharedInstance.getGamesCache()
+        let gamesCache = RomDatabase.sharedInstance.getGamesCacheSync()
 
         // For multi-cd games, make the most inert version of the filename
         let similarName = RomDatabase.sharedInstance.altName(path, systemIdentifier: system.identifier)
@@ -970,7 +977,7 @@ public extension GameImporter {
 
     private func finishUpdateOrImport(ofGame game: PVGame, path: URL) async throws {
         // Only process if rom doensn't exist in DB
-        if RomDatabase.sharedInstance.getGamesCache()[game.romPath] != nil {
+        if await RomDatabase.sharedInstance.getGamesCache()[game.romPath] != nil {
             throw GameImporterError.romAlreadyExistsInDatabase
         }
         var modified = false

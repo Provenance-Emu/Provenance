@@ -24,7 +24,7 @@ public extension PVGame {
         return relatedFiles
             .filter({ $0.pathExtension.lowercased() != "m3u" })
             .filter({
-                if let extensions = RomDatabase.sharedInstance.getSystemCache()[self.systemIdentifier]?.supportedExtensions {
+                if let extensions = RomDatabase.sharedInstance.getSystemCacheSync()[self.systemIdentifier]?.supportedExtensions {
                     return extensions.contains($0.pathExtension.lowercased())
                 }
                 return false
