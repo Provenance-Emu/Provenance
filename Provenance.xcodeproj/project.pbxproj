@@ -258,6 +258,8 @@
 		B313CEB32C4E876E001D9E4D /* AppTheming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313CEAD2C4E876E001D9E4D /* AppTheming.swift */; };
 		B313CEB42C4E876E001D9E4D /* AppTheming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313CEAD2C4E876E001D9E4D /* AppTheming.swift */; };
 		B313CEB52C4E876E001D9E4D /* AppTheming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313CEAD2C4E876E001D9E4D /* AppTheming.swift */; };
+		B31553622CC2FD5500C472CA /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B31553612CC2FD5500C472CA /* PVPPSSPP.framework */; };
+		B31553632CC2FD5500C472CA /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B31553612CC2FD5500C472CA /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E2772CAB4B3F00D0E599 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2762CAB4B3F00D0E599 /* PVGenesis.framework */; };
 		B318E2782CAB4B3F00D0E599 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2762CAB4B3F00D0E599 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E27A2CAB4C2400D0E599 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2792CAB4C2400D0E599 /* PVO2EM.framework */; };
@@ -1892,6 +1894,7 @@
 				B3A1868C2CBCBAF900BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */,
 				B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */,
 				B3F8E0372CB38D1400017D1B /* PVGearcoleco.framework in Embed Frameworks */,
+				B31553632CC2FD5500C472CA /* PVPPSSPP.framework in Embed Frameworks */,
 				B3A477C62C941F120052500A /* PVFCEU.framework in Embed Frameworks */,
 				B351E7CF2CBE072D0000E087 /* libavformat.xcframework in Embed Frameworks */,
 				B377ECCA2CB3533C00E9B750 /* PVVecX.framework in Embed Frameworks */,
@@ -2303,6 +2306,7 @@
 		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B31364762970092D00C34FED /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313CEAD2C4E876E001D9E4D /* AppTheming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheming.swift; sourceTree = "<group>"; };
+		B31553612CC2FD5500C472CA /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D12192652000693472 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D62192659900693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4DB219265B700693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3222,6 +3226,7 @@
 				B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */,
 				B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */,
 				B351E7CE2CBE072D0000E087 /* libavformat.xcframework in Frameworks */,
+				B31553622CC2FD5500C472CA /* PVPPSSPP.framework in Frameworks */,
 				B35EEFD72C6C6D1A00EBD1A8 /* Metal.framework in Frameworks */,
 				B35EEFD82C6C6D1A00EBD1A8 /* OpenGLES.framework in Frameworks */,
 				B37321A42C900A9F00CF59EF /* PVCrabEmu-Dynamic in Frameworks */,
@@ -3587,6 +3592,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B31553612CC2FD5500C472CA /* PVPPSSPP.framework */,
 				B3F65B5B2CC0946800DB762D /* PVCoreBridgeRetro.framework */,
 				B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */,
 				B3B0C01A2CBE37E100E72CAF /* PVEmuThree.framework */,
