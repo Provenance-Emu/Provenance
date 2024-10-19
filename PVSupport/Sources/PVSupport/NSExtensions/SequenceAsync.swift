@@ -33,7 +33,7 @@ extension Sequence {
             case .none:
                 continue
             case .some(let value):
-                try await values.append(value)
+                values.append(value)
             }
         }
         return values
@@ -49,7 +49,7 @@ extension Sequence {
 
         for element in self {
             if try await isIncluded(element) {
-                try await values.append(element)
+                try values.append(element)
             }
         }
 
@@ -63,7 +63,7 @@ extension Sequence where Self.Element: Sendable {
         _ transform: @escaping @Sendable (Self.Element) async throws -> T
     ) async throws -> [T] {
         let tasks = map { element in
-            Task { @Sendable in
+            Task {
                 try await transform(element)
             }
         }
@@ -91,7 +91,7 @@ public extension Sequence where Self.Element: Sendable {
     ) async {
         await withTaskGroup(of: Void.self) { group in
             for element in self {
-                group.addTask { @Sendable in
+                group.addTask {
                     await operation(element)
                 }
             }

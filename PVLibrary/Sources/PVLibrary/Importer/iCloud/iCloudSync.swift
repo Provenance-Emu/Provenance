@@ -374,8 +374,8 @@ public enum iCloudSync {
             }
 
             Task.detached { // @MainActor in
-                let realm = try! await Realm()
                 await jsonFiles.concurrentForEach { @MainActor json in
+                    let realm = try! await Realm()
                     do {
                         guard json.startAccessingSecurityScopedResource() else {
                             ELOG("startAccessingSecurityScopedResource failed")

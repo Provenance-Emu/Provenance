@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 @objc public protocol ResponderClient: AnyObject {
     func sendEvent(_ event: UIEvent?)
@@ -36,7 +37,7 @@ import Foundation
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func keyDown(_ key: GCKeyCode)
     //	func keyDown(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
-    
+
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func keyUp(_ key: GCKeyCode)
     //	func keyUp(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)

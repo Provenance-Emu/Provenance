@@ -25,14 +25,14 @@ public protocol ObjCBridgedCore {
 
 // This will probably never be used?
 public extension ObjCBridgedCore where Self.Bridge: EmulatorCoreIOInterface {
-    public var romName: String? { bridge.romName ?? nil }
-    public var BIOSPath: String? { bridge.BIOSPath }
-    public var systemIdentifier: String? { bridge.systemIdentifier }
-    public var coreIdentifier: String? { bridge.coreIdentifier }
-    public var romMD5: String? { bridge.romMD5 }
-    public var romSerial: String? { bridge.romSerial }
-    
-    public func loadFile(atPath path: String) throws {
+    var romName: String? { bridge.romName ?? nil }
+    var BIOSPath: String? { bridge.BIOSPath }
+    var systemIdentifier: String? { bridge.systemIdentifier }
+    var coreIdentifier: String? { bridge.coreIdentifier }
+    var romMD5: String? { bridge.romMD5 }
+    var romSerial: String? { bridge.romSerial }
+
+    func loadFile(atPath path: String) throws {
         do {
             try bridge.loadFile(atPath: path)
         } catch {

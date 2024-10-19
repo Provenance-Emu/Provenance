@@ -72,7 +72,7 @@ public extension EmulatorCoreRumbleDataSource {
     @MainActor
     func rumble() {
         Task {
-            await rumble(player: 0)
+            rumble(player: 0)
         }
     }
 }
@@ -86,7 +86,7 @@ public extension EmulatorCoreRumbleDataSource {
     func hapticEngine(for player: Int) async -> CHHapticEngine? {
         return await HapticsManager.shared.hapticsEngine(forPlayer: player)
     }
-    
+
     @MainActor
     func rumble(player: Int) {
         guard self.supportsRumble else {

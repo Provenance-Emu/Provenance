@@ -15,7 +15,7 @@ public protocol CommonSyncer {
 
 public extension CommonSyncer {
     var containerIdentifier: String { "iCloud.org.provenance-emu.provenance" }
-    public var storage: CloudDrive.Storage {
+    var storage: CloudDrive.Storage {
         return .iCloudContainer(containerIdentifier: containerIdentifier)
     }
 }

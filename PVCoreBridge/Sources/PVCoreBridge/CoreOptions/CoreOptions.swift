@@ -13,21 +13,21 @@ public protocol CoreOptions: CoreOptional {
 }
 
 public extension CoreOptions {
-    static public func bool(forOption option: String) -> Bool {
+    static func bool(forOption option: String) -> Bool {
         return storedValueForOption(Bool.self, option) ?? false
     }
-    
-    static public func int(forOption option: String) -> Int {
+
+    static func int(forOption option: String) -> Int {
         let value = storedValueForOption(Int.self, option)
         return value ?? 0
     }
-    
-    static public func float(forOption option: String) -> Float {
+
+    static func float(forOption option: String) -> Float {
         let value = storedValueForOption(Float.self, option)
         return value ?? 0
     }
-    
-    static public func string(forOption option: String) -> String? {
+
+    static func string(forOption option: String) -> String? {
         let value = storedValueForOption(String.self, option)
         return value
     }
@@ -36,10 +36,10 @@ public extension CoreOptions {
 @objc @objcMembers public class CoreOptionAccessor: NSObject {
     public typealias OptionSetter = (AnyObject) -> Void
     public typealias OptionGetter = () -> AnyObject?
-    
+
     @objc public let getOption: OptionGetter
     @objc public let setOption: OptionSetter
-    
+
     public init(getOption: @escaping OptionGetter, setOption: @escaping OptionSetter) {
         self.getOption = getOption
         self.setOption = setOption

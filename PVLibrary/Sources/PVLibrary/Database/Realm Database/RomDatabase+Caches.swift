@@ -50,7 +50,7 @@ public extension RomDatabase {
         }
     }
     func reloadSystemsCache() async {
-        await Task {
+        Task {
             let systems = PVSystem.all.toArray()
             let cache = await systems.async.reduce(into: [:]) {
                 dbSystem, system in
@@ -60,7 +60,7 @@ public extension RomDatabase {
         }
     }
     func reloadGamesCache() async {
-        await Task {
+        Task {
             let games = PVGame.all.toArray()
             RomDatabase.gamesCache = await games.async.reduce(into: [:]) {
                 dbGames, game in
@@ -93,7 +93,7 @@ public extension RomDatabase {
     func addGamesCache(_ game:PVGame) {
         Task {
             if RomDatabase.gamesCache == nil {
-                await self.reloadCache()
+                self.reloadCache()
             }
             RomDatabase.gamesCache = await addGameCache(game, cache: RomDatabase.gamesCache ?? [:])
         }

@@ -322,7 +322,7 @@ public final class GameImporter {
             Task {
                 do {
                     let newPaths = try await self.importFiles(atPaths: paths)
-                    await self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
+                    self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
                 } catch {
                     ELOG("\(error)")
                 }
@@ -440,7 +440,7 @@ public final class GameImporter {
                     if let system = await RomDatabase.sharedInstance.getSystemCache()[system.identifier] {
                         RomDatabase.sharedInstance.addFileSystemROMCache(system)
                     }
-                    await self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
+                    self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
                 }
             }
         } // End forEach

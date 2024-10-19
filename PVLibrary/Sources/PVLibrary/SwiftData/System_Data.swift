@@ -79,6 +79,7 @@ public class System_Data {
 //    }
 
     public var userPreferredCore: Core? {
+        
         #warning("TODO: Implement this")
 //        guard let userPreferredCoreID = userPreferredCoreID,
 //            let realm = try? Realm(),
