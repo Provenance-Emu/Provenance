@@ -825,6 +825,14 @@ static bool environment_callback(unsigned cmd, void *data)
 	_pad[player][button] = 0;
 }
 
+- (void)didPushSG1000Button:(PVSG1000Button)button forPlayer:(NSInteger)player {
+    _pad[player][button] = 1;
+}
+
+- (void)didReleaseSG1000Button:(PVSG1000Button)button forPlayer:(NSInteger)player {
+    _pad[player][button] = 0;
+}
+
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player {
     GCController *controller = nil;
 

@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="23094" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="appleTV" appearance="dark"/>
     <dependencies>
-        <deployment identifier="tvOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -11,7 +10,7 @@
         <!--Settings-->
         <scene sceneID="FmV-8E-kTS">
             <objects>
-                <splitViewController storyboardIdentifier="settingsSplitVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0as-LN-cS4" customClass="PVTVSplitViewController" customModule="PVUI_TV" sceneMemberID="viewController">
+                <splitViewController storyboardIdentifier="settingsSplitVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0as-LN-cS4" customClass="PVTVSplitViewController" customModule="PVUIBase" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Settings" id="CO1-nQ-39N"/>
                     <connections>
                         <segue destination="ech-XT-alx" kind="relationship" relationship="masterViewController" id="Sfz-Qr-C2s"/>

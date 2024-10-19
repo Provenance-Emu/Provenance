@@ -17,10 +17,9 @@
 
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
-
+#import <PVPCSXRearmed/PVPCSXRearmed-Swift.h>
 #import <Foundation/Foundation.h>
 #import <PVLogging/PVLoggingObjC.h>
-
 
 #define SAMPLERATE 44100
 #define SIZESOUNDBUFFER 44100 / 60 * 4
@@ -43,6 +42,7 @@
 	if (self = [super init]) {
 	}
 
+//    Config.Cpu = CPU_INTERPRETER;
 	_current = self;
 	return self;
 }
@@ -165,15 +165,40 @@
 #define V(x) strcmp(variable, ESYM(x)) == 0
 
     if (V(frameskip_type)) {
-        char *value = strdup("auto");
+        char *value;
+        switch(PCSXRearmedOptions.frameSkip) {
+            case 0:
+                value = strdup("off");
+                break;
+            case 1:
+                value = strdup("auto");
+                break;
+            case 2:
+                value = strdup("manual");
+                break;
+        }
+        
         return value;
     }
     else if (V(gpu_thread_rendering)) {
         char *value = strdup("async"); //disabled, sync, async
+        switch(PCSXRearmedOptions.frameDuplication) {
+            case 0:
+                value = strdup("disabled");
+                break;
+            case 1:
+                value = strdup("sync");
+                break;
+            case 2:
+                value = strdup("async");
+                break;
+        }
         return value;
     }
     else if (V(duping_enable)) {
-        char *value = strdup("enabled"); //disabled, sync, async
+        char *value = PCSXRearmedOptions.frameDuplication ?
+        strdup("enabled") : strdup("disabled") ; //disabled, enabled
+        
         return value;
     }
     else if (V(neon_interlace_enable)) {
@@ -182,17 +207,21 @@
     }
     else if (V(neon_enhancement_enable)) {
             // Might be slow
-        char *value = strdup("enabled");
+        char *value = PCSXRearmedOptions.gpuNeonEnhancment ?
+        strdup("enabled") : strdup("disabled");
+
         return value;
     }
     else if (V(neon_enhancement_no_main)) {
             // "Improves performance when 'Enhanced Resolution (Slow)' is enabled, but reduces compatibility and may cause rendering errors."
-        char *value = strdup("enabled");
+        char *value = PCSXRearmedOptions.gpuNeonEnhancmenSpeedHack ?
+        strdup("enabled") : strdup("disabled");
+
         return value;
     }
     else if (V(drc)) {
             //       "Dynamically recompile PSX CPU instructions to native instructions. Much faster than using an interpreter, but may be less accurate on some platforms.",
-        char *value = strdup("enabled");
+        char *value = PCSXRearmedOptions.jit ? strdup("enabled") : strdup("disabled");
         return value;
     }
     else if (V(async_cd)) {
@@ -201,7 +230,7 @@
         return value;
     }
     else if (V(show_bios_bootlogo)) {
-        char *value = strdup("enabled");
+        char *value = PCSXRearmedOptions.showBootLogo ? strdup("enabled") : strdup("disabled");
         return value;
     }
     else if (V(memcard2)) {

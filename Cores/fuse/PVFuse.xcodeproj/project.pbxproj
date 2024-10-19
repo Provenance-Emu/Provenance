@@ -3631,7 +3631,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "";
@@ -3922,7 +3921,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "";
@@ -3935,7 +3933,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				LD_MAP_FILE_PATH = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -3947,7 +3944,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				LD_MAP_FILE_PATH = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";

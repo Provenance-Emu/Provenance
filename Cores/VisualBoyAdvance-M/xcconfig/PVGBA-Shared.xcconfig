@@ -75,7 +75,7 @@ DEFINES_MODULE = YES
 // The team ID of a development team to use for signing certificates and provisioning
 // profiles.
 
-DEVELOPMENT_TEAM = S32Z3HMYVQ
+DEVELOPMENT_TEAM = 
 
 
 

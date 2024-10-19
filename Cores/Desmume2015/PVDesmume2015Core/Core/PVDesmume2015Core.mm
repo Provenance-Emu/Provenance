@@ -80,6 +80,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
+        pitch_shift = 1;
 //		mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
 //		coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
 //        coreWaitForExitSemaphore       = dispatch_semaphore_create(0);

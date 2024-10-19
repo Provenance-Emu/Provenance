@@ -34,29 +34,41 @@ typealias iCadeListenCompletion = () -> Void
 public final class PVControllerManager: NSObject {
     
     // a filtered and augmented version of CGControllers.controllers()
-    public var allLiveControllers: [Int: GCController] {
-        return controllers.reduce(into: [:]) { (result, controller) in
-            result[controller.playerIndex.rawValue] = controller
-        }
-    }
-    
 //    public var allLiveControllers: [Int: GCController] {
-//        var allLiveControllers = [Int: GCController]()
-//        if let player1 = player1 {
-//            allLiveControllers[1] = player1
+//        return controllers.reduce(into: [:]) { (result, controller) in
+//            result[controller.playerIndex.rawValue] = controller
 //        }
-//        if let player2 = player2 {
-//            allLiveControllers[2] = player2
-//        }
-//        if let player3 = player3 {
-//            allLiveControllers[3] = player3
-//        }
-//        if let player4 = player4 {
-//            allLiveControllers[4] = player4
-//        }
-//
-//        return allLiveControllers
 //    }
+    
+    public var allLiveControllers: [Int: GCController] {
+        var allLiveControllers = [Int: GCController]()
+        if let player1 = player1 {
+            allLiveControllers[1] = player1
+        }
+        if let player2 = player2 {
+            allLiveControllers[2] = player2
+        }
+        if let player3 = player3 {
+            allLiveControllers[3] = player3
+        }
+        if let player4 = player4 {
+            allLiveControllers[4] = player4
+        }
+        if let player5 = player5 {
+            allLiveControllers[4] = player4
+        }
+        if let player6 = player6 {
+            allLiveControllers[4] = player4
+        }
+        if let player7 = player7 {
+            allLiveControllers[4] = player4
+        }
+        if let player8 = player8 {
+            allLiveControllers[4] = player4
+        }
+
+        return allLiveControllers
+    }
 
     public private(set) var player1: GCController? {
         didSet {
@@ -206,11 +218,9 @@ public final class PVControllerManager: NSObject {
     @MainActor
     override init() {
         super.init()
-
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardConnect(_:)), name: .GCKeyboardDidConnect, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardDisconnect(_:)), name: .GCKeyboardDidDisconnect, object: nil)
-        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardConnect(_:)), name: .GCKeyboardDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardDisconnect(_:)), name: .GCKeyboardDidDisconnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         UserDefaults.standard.addObserver(self as NSObject, forKeyPath: "kICadeControllerSettingKey", options: .new, context: nil)

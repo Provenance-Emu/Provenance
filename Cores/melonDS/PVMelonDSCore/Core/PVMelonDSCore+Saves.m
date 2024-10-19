@@ -22,16 +22,16 @@
     return NO;
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    block(NO, nil);
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
+    block(nil);
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
     return NO;
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    block(NO, nil);
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
+    block(nil);
 }
 
 @end
