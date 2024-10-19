@@ -46,7 +46,8 @@ public final class DirectoryWatcher {
 
     private let extractors: [ArchiveType: ArchiveExtractor] = [
         .zip: ZipExtractor(),
-        .sevenZip: SevenZipExtractor()
+        .sevenZip: SevenZipExtractor(),
+        .tar: TarExtractor()
     ]
 
     public init(directory: URL,

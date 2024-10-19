@@ -49,7 +49,7 @@ extension Sequence {
 
         for element in self {
             if try await isIncluded(element) {
-                try values.append(element)
+                values.append(element)
             }
         }
 

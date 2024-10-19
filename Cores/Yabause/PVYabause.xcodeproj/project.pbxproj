@@ -1020,8 +1020,8 @@
 		B3EB9EFB2872964F00EAEB37 /* udp-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "udp-test.c"; sourceTree = "<group>"; };
 		B3EB9EFC2872964F00EAEB37 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B3EB9EFD2872964F00EAEB37 /* net_http_parse_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_http_parse_test.c; sourceTree = "<group>"; };
-		B3EB9EFE2872964F00EAEB37 /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = file; path = net_ifinfo; sourceTree = "<group>"; };
-		B3EB9EFF2872964F00EAEB37 /* http_test */ = {isa = PBXFileReference; lastKnownFileType = file; path = http_test; sourceTree = "<group>"; };
+		B3EB9EFE2872964F00EAEB37 /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = text; path = net_ifinfo; sourceTree = "<group>"; };
+		B3EB9EFF2872964F00EAEB37 /* http_test */ = {isa = PBXFileReference; lastKnownFileType = text; path = http_test; sourceTree = "<group>"; };
 		B3EB9F002872964F00EAEB37 /* net_http_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_http_test.c; sourceTree = "<group>"; };
 		B3EB9F032872964F00EAEB37 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B3EB9F042872964F00EAEB37 /* rpng_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rpng_test.c; sourceTree = "<group>"; };

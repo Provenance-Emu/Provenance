@@ -195,8 +195,8 @@
         "repositoryURL": "https://github.com/apple/swift-async-algorithms",
         "state": {
           "branch": null,
-          "revision": "6ae9a051f76b81cc668305ceed5b0e0a7fd93d20",
-          "version": "1.0.1"
+          "revision": "5c8bd186f48c16af0775972700626f0b74588278",
+          "version": "1.0.2"
         }
       },
       {

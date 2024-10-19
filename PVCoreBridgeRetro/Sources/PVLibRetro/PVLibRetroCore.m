@@ -1412,7 +1412,6 @@ void retro_set_environment(retro_environment_t cb)
     if (current->core) {
         current->core->retro_set_environment(cb);
     }
-
 }
 
 static void core_log(enum retro_log_level level, const char * fmt, ...) {
@@ -2176,22 +2175,22 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         NSAssert(myBundle, @"myBundle was nil");
         const char* path = [myBundle.bundlePath fileSystemRepresentation];
         config_set_active_core_path(path);
-        //        load_dynamic_core();
+//        load_dynamic_core();
         core = malloc(sizeof(retro_core_t));
         init_libretro_sym(CORE_TYPE_PLAIN, core);
         retro_set_environment(environment_callback);
         
         memset(_pad, 0, sizeof(int16_t) * 24);
 
-//        struct retro_system_info info;
 //        core_get_info(&info);
 //        std::cout << "Loaded core " << info.library_name << " version " << info.library_version << std::endl;
 //        std::cout << "Core needs fullpath " << info.need_fullpath << std::endl;
 //        std::cout << "Running for " << maxframes << " frames with frame timeout of ";
 //        std::cout << frametimeout << " seconds" << std::endl;
         
-        //        libretro_get_system_info(path,
-        //        libretro_get_system_info_lib
+//        struct retro_system_info info;
+//        bool load_no_info;
+//        libretro_get_system_info("", &info, &load_no_info);
         
         videoBufferA = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBufferB = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
