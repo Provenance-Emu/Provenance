@@ -44,7 +44,7 @@
 #include "Common/Thread/ThreadManager.h"
 #include "Common/File/VFS/VFS.h"
 #include "Common/Data/Text/I18n.h"
-#include "Common/StringUtils.h""
+#include "Common/StringUtils.h"
 #include "Common/System/Display.h"
 #include "Common/System/NativeApp.h"
 #include "Common/System/System.h"
@@ -95,11 +95,24 @@ static bool processed;
 }
 #pragma mark - Methods
 
-- (void) saveComplete:(void (^)(BOOL, NSError *))block {
+- (void) saveComplete:(void (^)(NSError *))block {
     while (!isComplete && processed) {
         sleep_ms(WAIT_INTERVAL);
     }
-    block(success, nil);
+    if(!success) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to save game.",
+                                   NSLocalizedFailureReasonErrorKey: @"PPSSPP failed to save game."
+                                   };
+
+        NSError *saveError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        block(saveError);
+
+    } else {
+        block(nil);
+    }
 }
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
@@ -122,7 +135,7 @@ static bool processed;
     return success;
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     success=false;
     isComplete=false;
     SaveState::Save(Path([fileName fileSystemRepresentation]), 0, [&block] (SaveState::Status status, const std::string &message, void *userdata) mutable {
@@ -153,7 +166,7 @@ static bool processed;
     return true;
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     bool success=false;
     if (!_isInitialized || GetUIState() != UISTATE_INGAME) {
         autoLoadStatefileName = fileName;
@@ -162,9 +175,21 @@ static bool processed;
         SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0, (__bridge void*)self);
         success=true;
     }
-    block(true, nil);
-}
+    
+    if(!success) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load save game.",
+                                   NSLocalizedFailureReasonErrorKey: @"PPSSPP failed load save game."
+                                   };
 
+        NSError *saveError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        block(saveError);
+    } else {
+        block(nil);
+    }
+}
 
 - (void)autoloadWaitThread
 {
