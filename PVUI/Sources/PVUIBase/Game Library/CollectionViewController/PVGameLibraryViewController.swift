@@ -706,7 +706,6 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        _ = PVControllerManager.shared
 #if os(iOS)
         PVControllerManager.shared.controllerUserInteractionEnabled = true
 #else
@@ -743,6 +742,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
             present(alert, animated: true)
         }
 #endif
+        _ = PVControllerManager.shared
     }
     
     fileprivate lazy var officialBundleID: Bool = Bundle.main.bundleIdentifier!.contains("org.provenance-emu.")

@@ -150,13 +150,11 @@ public final class PVControllerManager: NSObject {
     var hasLayout:Bool = false
 
     @MainActor
-    public
-    static let shared: PVControllerManager = PVControllerManager()
+    public static let shared: PVControllerManager = PVControllerManager()
 
 #if canImport(UIKit) && canImport(GameController)
     @MainActor
-    package
-    func listenForICadeControllers(window: UIWindow?, preferredPlayer: Int = -1, completion: iCadeListenCompletion? = nil) {
+    package func listenForICadeControllers(window: UIWindow?, preferredPlayer: Int = -1, completion: iCadeListenCompletion? = nil) {
         iCadeController?.controllerPressedAnyKey = { [unowned self] (_) -> Void in
             var player = 0
 
@@ -227,7 +225,7 @@ public final class PVControllerManager: NSObject {
         // automatically assign the first connected controller to player 1
         // prefer gamepad or extendedGamepad over a microGamepad
         assignControllers()
-        setupICade()
+//        setupICade()
     }
 
     deinit {
