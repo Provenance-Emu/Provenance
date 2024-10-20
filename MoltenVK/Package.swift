@@ -13,6 +13,8 @@ let package = Package(
         .visionOS(.v1)
     ],
     products: [
+        .library(name: "MoltenVK-Catalyst",
+                 targets: ["MoltenVK-Catalyst.xcframework"]),
         .library(
             name: "MoltenVK",
             targets: ["MoltenVK", "MoltenVK.xcframework"]),
@@ -42,14 +44,28 @@ let package = Package(
             ],
             path: "MoltenVK/static"
         ),
+//        .target(
+//            name: "MoltenVK-Catalyst",
+//            dependencies: [
+//                "MoltenVK-Catalyst.xcframework"
+//            ],
+//            path: "MoltenVK/dynamic/dylib/macOS/"),
+        /// Catalyst framework
+        /// Note: dylibs aren't supported
+        /// need to make a .framework with Scripts/dylibsToFramework.sh
+        /// then make an XCFramework with
+        ///  xcodebuild -create-xcframework -framework MoltenVK-Catalyst.framework -output MoltenVK-Catalyst.
+        .binaryTarget(
+            name: "MoltenVK-Catalyst.xcframework",
+            path: "MoltenVK/dynamic/dylib/macOS/MoltenVK-Catalyst.xcframework"),
+        /// Multi-platform dynamic XCFramework
         .binaryTarget(
             name: "MoltenVK.xcframework",
-            path: "MoltenVK/dynamic/MoltenVK.xcframework"
-        ),
+            path: "MoltenVK/dynamic/MoltenVK.xcframework"),
+        /// Multi-platform static XCFramework
         .binaryTarget(
             name: "MoltenVK-Static.xcframework",
-            path: "MoltenVK/static/MoltenVK.xcframework"
-        )
+            path: "MoltenVK/static/MoltenVK.xcframework")
     ],
     swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu11,

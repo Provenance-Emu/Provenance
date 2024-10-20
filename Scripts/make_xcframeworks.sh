@@ -3,7 +3,7 @@
 # Function to print usage
 print_usage() {
     echo "Usage: $0 <source_folder> [bundle_identifier_prefix] [output_folder]"
-    echo "If bundle_identifier_prefix is not provided, it defaults to 'com.joemattiello'"
+    echo "If bundle_identifier_prefix is not provided, it defaults to 'org.provenance-emu'"
     echo "If output_folder is not provided, it defaults to the current directory"
 }
 
@@ -15,7 +15,7 @@ fi
 
 # Assign input arguments to variables
 SOURCE_FOLDER="$1"
-BUNDLE_ID_PREFIX="${2:-com.joemattiello}"
+BUNDLE_ID_PREFIX="${2:-org.provenance-emu}"
 OUTPUT_FOLDER="${3:-.}"
 
 # Ensure output folder exists

@@ -3,7 +3,7 @@
 # Function to print usage
 print_usage() {
     echo "Usage: $0 <source_folder> <framework_name> [bundle_identifier_prefix]"
-    echo "If bundle_identifier_prefix is not provided, it defaults to 'com.joemattiello'"
+    echo "If bundle_identifier_prefix is not provided, it defaults to 'org.provenance-emu'"
 }
 
 # Check if the minimum number of arguments is provided
@@ -15,7 +15,7 @@ fi
 # Assign input arguments to variables
 SOURCE_FOLDER="$1"
 FRAMEWORK_NAME="$2"
-BUNDLE_ID_PREFIX="${3:-com.joemattiello}"
+BUNDLE_ID_PREFIX="${3:-org.provenance-emu}"
 
 # Create temporary directories for iOS and tvOS frameworks
 TEMP_IOS_FRAMEWORK="${FRAMEWORK_NAME}_iOS.framework"
