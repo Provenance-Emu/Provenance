@@ -7,3 +7,8 @@
 //
 
 import Foundation
+import SiriusRating
+
+extension PVAppDelegate {
+    
+}

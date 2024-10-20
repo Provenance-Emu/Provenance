@@ -892,17 +892,11 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
             let documentPicker: UIDocumentPickerViewController
             
-            if #available(iOS 14, *) {
-                let utis: [UTType] = [UTType.rom, UTType.artwork, UTType.savestate, UTType.zip, UTType.sevenZipArchive, UTType.gzip, UTType.image, UTType.jpeg, UTType.png, UTType.bios, UTType.data, UTType.rar]
+            let utis: [UTType] = [UTType.rom, UTType.artwork, UTType.savestate, UTType.zip, UTType.sevenZipArchive, UTType.gzip, UTType.image, UTType.jpeg, UTType.png, UTType.bios, UTType.data, UTType.rar]
                 
-                documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: utis, asCopy: true)
-            } else {
-                let utis: [UTI] = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data, UTI.rar]
-                
-                let extensions = utis.map { $0.rawValue }
-                documentPicker = UIDocumentPickerViewController(documentTypes: extensions, in: .import)
-            }
+            documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: utis, asCopy: true)
             
+            documentPicker.allowsMultipleSelection = true
             documentPicker.delegate = self
             self.present(documentPicker, animated: true, completion: nil)
         }))
@@ -1638,9 +1632,8 @@ extension PVGameLibraryViewController: UIDocumentMenuDelegate {
 
 extension PVGameLibraryViewController: UIDocumentPickerDelegate {
     public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        Task {
-            await updatesController.handlePickedDocuments(urls)
-        }
+        // Must be on the same thread for security restrictions
+        updatesController.handlePickedDocuments(urls)
     }
     
     public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {

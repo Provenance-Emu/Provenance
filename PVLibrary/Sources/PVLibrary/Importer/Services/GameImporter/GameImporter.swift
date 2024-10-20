@@ -1186,7 +1186,8 @@ extension GameImporter {
 
     /// Moves a file to the conflicts directory
     private func moveToConflictsDirectory(path: URL) throws {
-        try moveAndOverWrite(sourcePath: path, destinationPath: conflictPath)
+        let destination = conflictPath.appendingPathComponent(path.lastPathComponent)
+        try moveAndOverWrite(sourcePath: path, destinationPath: destination)
     }
 
     /// Imports a ROM to the database

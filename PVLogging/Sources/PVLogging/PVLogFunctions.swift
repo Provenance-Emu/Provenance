@@ -1,13 +1,12 @@
 //
 //  PVLogFunctions.swift
-//  
+//
 //
 //  Created by Joseph Mattiello on 1/17/23.
 //
 
 import OSLog
 
-@available(iOS 14.0, tvOS 14.0, *)
 extension os.Logger: Sendable {
     /// Using your bundle identifier is a great way to ensure a unique identifier.
     private static let subsystem: String = Bundle.main.bundleIdentifier ?? ""
@@ -41,72 +40,68 @@ extension os.Logger: Sendable {
     static let general = Logger(subsystem: subsystem, category: "general")
 }
 
-@usableFromInline
-let USE_PVLOG_ENTRY: Bool = false
-
-@_transparent
 @inlinable
-public func DLOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = true) {
-    let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
-    if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {
-        Logger.general.debug( "\(logEntry.offset)@[\(logEntry.functionString):\(logEntry.lineNumberString)] \(logEntry.text)\n\(file)")
-    } else {
-        PVLogging.shared.add(logEntry)
+public func log(_ message: @autoclosure () -> String,
+                level: OSLogType = .debug,
+                category: Logger = .general,
+                file: String = #file,
+                function: String = #function,
+                line: Int = #line) {
+    let fileName = URL(fileURLWithPath: file).lastPathComponent
+    let emoji: String
+    switch level {
+    case .debug:
+        emoji = "🔍"
+    case .info:
+        emoji = "ℹ️"
+    case .error:
+        emoji = "❌"
+    case .fault:
+        emoji = "💥"
+    default:
+        emoji = "📝"
+    }
+    let logMessage = "\(emoji) \(fileName):\(line) - \(function): \(message())"
+
+    switch level {
+    case .debug:
+        category.debug("\(logMessage, privacy: .public)")
+    case .info:
+        category.info("\(logMessage, privacy: .public)")
+    case .error:
+        category.error("\(logMessage, privacy: .public)")
+    case .fault:
+        category.fault("\(logMessage, privacy: .public)")
+    default:
+        category.log(level: level, "\(logMessage, privacy: .public)")
     }
 }
 
-@_transparent
+// Update convenience functions to include emojis
 @inlinable
-public func ILOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = true) {
-    let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
-    if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {
-        Logger.general.info( "\(logEntry.offset)@[\(logEntry.functionString):\(logEntry.lineNumberString)] \(logEntry.text)\n\(file)")
-    } else {
-        PVLogging.shared.add(logEntry)
-    }
+public func DLOG(_ message: @autoclosure () -> String, file: String = #file, function: String = #function, line: Int = #line) {
+    log(message(), level: .debug, file: file, function: function, line: line)
 }
 
-@_transparent
 @inlinable
-public func WLOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = true) {
-    let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
-    if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {
-        Logger.general.warning( "\(logEntry.offset)@[\(logEntry.functionString):\(logEntry.lineNumberString)] \(logEntry.text)\n\(file)")
-    } else {
-        PVLogging.shared.add(logEntry)
-    }
+public func ILOG(_ message: @autoclosure () -> String, file: String = #file, function: String = #function, line: Int = #line) {
+    log(message(), level: .info, file: file, function: function, line: line)
 }
 
-@_transparent
 @inlinable
-public func VLOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = true) {
-    let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
-    if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {
-        Logger.general.trace( "\(logEntry.offset)@[\(logEntry.functionString):\(logEntry.lineNumberString)] \(logEntry.text)\n\(file)")
-    } else {
-        PVLogging.shared.add(logEntry)
-    }
+public func ELOG(_ message: @autoclosure () -> String, file: String = #file, function: String = #function, line: Int = #line) {
+    log(message(), level: .error, file: file, function: function, line: line)
 }
 
-@_transparent
 @inlinable
-public func ELOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = false) {
-    let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
-    if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {
-        Logger.general.error( "\(logEntry.offset)@[\(logEntry.functionString):\(logEntry.lineNumberString)] \(logEntry.text)\n\(file)")
-    } else {
-        PVLogging.shared.add(logEntry)
-    }
+public func WLOG(_ message: @autoclosure () -> String, file: String = #file, function: String = #function, line: Int = #line) {
+    let warningPrefix = "⚠️"
+    log(warningPrefix + " " + message(), level: .info, file: file, function: function, line: line)
 }
 
-@_transparent
-fileprivate func CurrentFileName(_ fileName: StaticString = #file) -> String {
-    var str = String(describing: fileName)
-    if let idx = str.range(of: "/", options: .backwards)?.upperBound {
-        str = String(str.suffix(from: idx))
-    }
-    if let idx = str.range(of: ".", options: .backwards)?.lowerBound {
-        str = String(str.prefix(through: idx))
-    }
-    return str
+@inlinable
+public func VLOG(_ message: @autoclosure () -> String, file: String = #file, function: String = #function, line: Int = #line) {
+    #if DEBUG
+    log("🔬 " + message(), level: .debug, file: file, function: function, line: line)
+    #endif
 }

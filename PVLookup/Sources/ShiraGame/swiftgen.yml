@@ -3,7 +3,7 @@ output_dir: ${DERIVED_SOURCES_DIR}
 
 files:
   inputs:
-    - shiragame.sqlite3
+    - shiragame_schema.sql
   outputs:
     output: SQLiteFiles.swift
     templateName: flat-swift5

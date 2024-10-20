@@ -179,9 +179,7 @@ extension UIViewController {
 // MARK: - UIDocumentPickerDelegate
 extension PVGameLibraryViewController: UIDocumentPickerDelegate {
     public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        Task {
-            await updatesController.handlePickedDocuments(urls)
-        }
+        updatesController.handlePickedDocuments(urls)
     }
     
     public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {

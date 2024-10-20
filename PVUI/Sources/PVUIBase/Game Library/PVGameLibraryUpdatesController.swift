@@ -23,16 +23,17 @@ import Observation
 
 //@Observable
 public final class PVGameLibraryUpdatesController {
-    
+
     @Published
     public var hudState: HudState = .hidden
-    
+
     @Published
     public var conflicts: [ConflictsController.ConflictItem] = []
 
     private let gameImporter: GameImporter
     private let directoryWatcher: DirectoryWatcher
-    
+    private let conflictsWatcher: ConflictsWatcher
+
     public enum HudState {
         case hidden
         case title(String)
@@ -41,10 +42,13 @@ public final class PVGameLibraryUpdatesController {
 
     public init(gameImporter: GameImporter, importPath: URL? = nil) {
         let importPath = importPath ?? Paths.romsImportPath
-        
+
         self.gameImporter = gameImporter
         self.directoryWatcher = DirectoryWatcher(directory: importPath)
-        
+        directoryWatcher.delayedStartMonitoring()
+
+        self.conflictsWatcher = .shared
+
         setupObservers()
         handleFileImports(importPath: importPath)
     }
@@ -53,11 +57,11 @@ public final class PVGameLibraryUpdatesController {
         gameImporter.importStartedHandler = { [weak self] path in
             self?.hudState = .title("Checking Import: \(URL(fileURLWithPath: path).lastPathComponent)")
         }
-        
+
         gameImporter.finishedImportHandler = { [weak self] _, _ in
             self?.hudState = .title("Import Successful")
         }
-        
+
         gameImporter.completionHandler = { [weak self] encounteredConflicts in
             if encounteredConflicts {
                 Task { @MainActor in
@@ -67,12 +71,26 @@ public final class PVGameLibraryUpdatesController {
                 self?.hudState = .hidden
             }
         }
-        
+
         Task {
             for await status in directoryWatcherStatusStream() {
                 await MainActor.run {
                     self.hudState = Self.handleExtractionStatus(status)
                 }
+            }
+        }
+
+        Task {
+            for await status in directoryWatcherStatusStream() {
+                await MainActor.run {
+                    self.hudState = Self.handleExtractionStatus(status)
+                }
+            }
+        }
+
+        Task {
+            for await completedFiles in directoryWatcher.completedFilesSequence {
+                await processCompletedFiles(completedFiles)
             }
         }
     }
@@ -86,13 +104,13 @@ public final class PVGameLibraryUpdatesController {
                     } onChange: {
                         continuation.yield(self.directoryWatcher.extractionStatus)
                     }
-                    
+
                     continuation.yield(status)
-                    
+
                     try? await Task.sleep(for: .seconds(0.1))
                 }
             }
-            
+
             continuation.onTermination = { _ in
                 task.cancel()
             }
@@ -105,13 +123,13 @@ public final class PVGameLibraryUpdatesController {
             if !initialScan.isEmpty {
                 gameImporter.startImport(forPaths: initialScan)
             }
-            
+
             for await extractedFiles in directoryWatcher.extractedFilesStream(at: importPath) {
                 gameImporter.startImport(forPaths: extractedFiles)
             }
         }
     }
-    
+
     private func scanInitialFiles(at path: URL) async -> [URL] {
         do {
             return try await FileManager.default.contentsOfDirectory(at: path,
@@ -129,7 +147,7 @@ public final class PVGameLibraryUpdatesController {
         RomDatabase.sharedInstance.reloadFileSystemROMCache()
         let dbGames: [AnyHashable: PVGame] = await RomDatabase.sharedInstance.getGamesCache()
         let dbSystems: [AnyHashable: PVSystem] = await RomDatabase.sharedInstance.getSystemCache()
-        
+
         for system in dbSystems.values {
             ILOG("PVGameLibrary: Importing \(system.identifier)")
             let files = await RomDatabase.sharedInstance.getFileSystemROMCache(for: system)
@@ -187,23 +205,34 @@ public final class PVGameLibraryUpdatesController {
     /// Assitant for Spotlight indexing
     private func addGameToSpotlight(md5: String, spotlightIndex: CSSearchableIndex, database: RomDatabase) async {
         do {
-            let realm = try await Realm()
-            let game = await realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-            guard let game = game else {
-                DLOG("No game found for MD5: \(md5)")
-                return
+            let game = try await withCheckedThrowingContinuation { continuation in
+                DispatchQueue.main.async {
+                    do {
+                        let realm = try Realm()
+                        if let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
+                            // Create a detached copy of the game object
+                            let detachedGame = game.detached()
+                            continuation.resume(returning: detachedGame)
+                        } else {
+                            continuation.resume(throwing: NSError(domain: "GameNotFound", code: 404, userInfo: nil))
+                        }
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
             }
-            
-            // Create a detached copy of the game object
-            let detachedGame = game.detached()
-            
-            let item = CSSearchableItem(uniqueIdentifier: detachedGame.spotlightUniqueIdentifier,
+
+            let item = CSSearchableItem(uniqueIdentifier: game.spotlightUniqueIdentifier,
                                         domainIdentifier: "org.provenance-emu.game",
-                                        attributeSet: detachedGame.spotlightContentSet)
-            
+                                        attributeSet: game.spotlightContentSet)
+
             try await spotlightIndex.indexSearchableItems([item])
         } catch {
-            ELOG("Error indexing game (MD5: \(md5)): \(error)")
+            if (error as NSError).domain == "GameNotFound" {
+                DLOG("No game found for MD5: \(md5)")
+            } else {
+                ELOG("Error indexing game (MD5: \(md5)): \(error)")
+            }
         }
     }
     #endif
@@ -221,7 +250,7 @@ public final class PVGameLibraryUpdatesController {
             return .hidden
         }
     }
-    
+
     /// Assistant for `HudState` titles.
     private static func labelMaker(_ path: URL) -> String {
         #if os(tvOS)
@@ -230,6 +259,22 @@ public final class PVGameLibraryUpdatesController {
         return "Extracting Archive\n\(path.lastPathComponent)"
         #endif
     }
+
+    private func processCompletedFiles(_ files: [URL]) async {
+        // Process files in batches, prioritizing .m3u and .cue files
+        let priorityFiles = files.filter { ["m3u", "cue"].contains($0.pathExtension.lowercased()) }
+        let otherFiles = files.filter { !["m3u", "cue"].contains($0.pathExtension.lowercased()) }
+
+        // Process priority files first
+        if !priorityFiles.isEmpty {
+            gameImporter.startImport(forPaths: priorityFiles)
+        }
+
+        // Then process other files
+        if !otherFiles.isEmpty {
+            gameImporter.startImport(forPaths: otherFiles)
+        }
+    }
 }
 
 extension PVGameLibraryUpdatesController: ConflictsController {
@@ -237,7 +282,7 @@ extension PVGameLibraryUpdatesController: ConflictsController {
         await gameImporter.resolveConflicts(withSolutions: solutions)
         await updateConflicts()
     }
-    
+
     public func deleteConflict(path: URL) async {
         do {
             try FileManager.default.removeItem(at: path)
@@ -246,17 +291,23 @@ extension PVGameLibraryUpdatesController: ConflictsController {
         }
         await updateConflicts()
     }
-    
+
     public func updateConflicts() async {
         await MainActor.run {
-            let filesInConflictsFolder = gameImporter.encounteredConflicts ?? []
+//            let conflictsPath = gameImporter.conflictPath
+//            guard let filesInConflictsFolder = try? FileManager.default.contentsOfDirectory(at: conflictsPath, includingPropertiesForKeys: nil, options: []) else {
+//                self.conflicts = []
+//                return
+//            }
+            let filesInConflictsFolder = conflictsWatcher.conflictFiles
+
             let sortedFiles = PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
-            
+
             self.conflicts = sortedFiles.compactMap { file -> (path: URL, candidates: [System])? in
                 let candidates = RomDatabase.sharedInstance.getSystemCacheSync().values
                     .filter { $0.supportedExtensions.contains(file.pathExtension.lowercased()) }
                     .map { $0.asDomain() }
-                
+
                 return candidates.isEmpty ? nil : .init((path: file, candidates: candidates))
             }
         }
@@ -265,89 +316,30 @@ extension PVGameLibraryUpdatesController: ConflictsController {
 
 /// Picked documents controller handler
 public extension PVGameLibraryUpdatesController {
-    func handlePickedDocuments(_ urls: [URL]) async {
-        let flattenedUrls = await flattenDirectories(urls)
-        let sortedUrls = PVEmulatorConfiguration.sortImportURLs(urls: flattenedUrls)
-        
-        for url in sortedUrls {
-            await importFile(from: url)
+    func handlePickedDocuments(_ urls: [URL]) {
+        for url in urls {
+            copyFileToImports(from: url)
         }
     }
-    
-    private func flattenDirectories(_ urls: [URL]) async -> [URL] {
-        await withTaskGroup(of: [URL].self) { group in
-            for url in urls {
-                group.addTask {
-                    await self.getContentsOfDirectory(url)
-                }
-            }
-            
-            var result: [URL] = []
-            for await urls in group {
-                result.append(contentsOf: urls)
-            }
-            return result
-        }
-    }
-    
-    private func getContentsOfDirectory(_ url: URL) async -> [URL] {
-        guard url.hasDirectoryPath else { return [url] }
-        
-        guard url.startAccessingSecurityScopedResource() else {
-            ELOG("startAccessingSecurityScopedResource failed for \(url.path)")
-            return []
-        }
-        defer { url.stopAccessingSecurityScopedResource() }
-        
-        do {
-            let subFiles = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: [.isDirectoryKey, .parentDirectoryURLKey, .fileSecurityKey], options: .skipsHiddenFiles)
-            return subFiles
-        } catch {
-            ELOG("Subdir scan failed for \(url.path). Error: \(error)")
-            return [url]
-        }
-    }
-    
-    private func importFile(from sourceURL: URL) async {
+
+    private func copyFileToImports(from sourceURL: URL) {
         guard sourceURL.startAccessingSecurityScopedResource() else {
             ELOG("startAccessingSecurityScopedResource failed for \(sourceURL.path)")
             return
         }
         defer { sourceURL.stopAccessingSecurityScopedResource() }
-        
-        let coordinator = NSFileCoordinator()
-        var error: NSError?
-        
-        coordinator.coordinate(readingItemAt: sourceURL, options: .forUploading, error: &error) { newURL in
-             let destinationURL = Paths.romsImportPath.appendingPathComponent(newURL.lastPathComponent)
-             
-             do {
-                 try FileManager.default.moveItem(at: newURL, to: destinationURL)
-                 ILOG("Moved file from \(newURL.path) to \(destinationURL.path)")
-                 
-                 // If it's an archive, extract it
-                 if directoryWatcher.isArchive(destinationURL) {
-                     Task {
-                         await self.extractArchive(at: destinationURL)
-                     }
-                 }
-             } catch {
-                 ELOG("Failed to move file from \(newURL.path) to \(destinationURL.path). Error: \(error)")
-             }
-         }
-        
-        if let error = error {
-            ELOG("File coordination error: \(error)")
+
+        let destinationURL = Paths.romsImportPath.appendingPathComponent(sourceURL.lastPathComponent)
+
+        do {
+            if sourceURL.hasDirectoryPath {
+                try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
+            } else {
+                try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
+            }
+            ILOG("Copied file from \(sourceURL.path) to \(destinationURL.path)")
+        } catch {
+            ELOG("Failed to copy file from \(sourceURL.path) to \(destinationURL.path). Error: \(error)")
         }
-    }
-    
-    private func isArchive(_ url: URL) -> Bool {
-//        let archiveExtensions = ["zip", "7z", "rar", "tar", "gz"]
-//        return archiveExtensions.contains(url.pathExtension.lowercased())
-        return directoryWatcher.isArchive(url)
-    }
-    
-    private func extractArchive(at url: URL) async {
-         try? await directoryWatcher.extractArchive(at: url)
     }
 }

@@ -541,7 +541,7 @@
 		</dict>
 		<dict>
 			<key>CFBundleIdentifier</key>
-			<string>/com.provenance.rom.atari.jaguar</string>
+			<string>com.provenance.savestate</string>
 			<key>UTITagTypeSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>

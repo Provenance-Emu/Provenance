@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PVLogging",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v14),
         .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
