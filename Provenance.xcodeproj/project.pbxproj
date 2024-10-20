@@ -589,7 +589,7 @@
 		B351E7D72CBE072E0000E087 /* libswscale.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
-		B35573742CC4843600A4BA16 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B35573732CC4843600A4BA16 /* MoltenVK */; };
+		B35573742CC4843600A4BA16 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B35573732CC4843600A4BA16 /* MoltenVK */; };
 		B355DF8B292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */; };
 		B355DF8C292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */; };
 		B355DF8E29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */; };
@@ -832,6 +832,7 @@
 		B39342162CC5784D008AA673 /* MoltenVK-Catalyst in Frameworks */ = {isa = PBXBuildFile; platformFilter = maccatalyst; productRef = B39342152CC5784D008AA673 /* MoltenVK-Catalyst */; };
 		B39343962CC5B202008AA673 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39343952CC5B202008AA673 /* PVDolphin.framework */; };
 		B39343972CC5B202008AA673 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39343952CC5B202008AA673 /* PVDolphin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B39343992CC5C432008AA673 /* MoltenVK-Catalyst in Frameworks */ = {isa = PBXBuildFile; platformFilter = maccatalyst; productRef = B39343982CC5C432008AA673 /* MoltenVK-Catalyst */; };
 		B394CC722BDEE53A006B63E8 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
 		B394CC742BDEE53A006B63E8 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
 		B394CC762BDEE53A006B63E8 /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
@@ -3211,6 +3212,7 @@
 				B38FB4A12CBEF57B006786C6 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B3EF26F02BE7F9690066D4B6 /* libc.tbd in Frameworks */,
 				B3EF26EE2BE7F8EC0066D4B6 /* libc++.tbd in Frameworks */,
+				B39343992CC5C432008AA673 /* MoltenVK-Catalyst in Frameworks */,
 				B3EF26EC2BE7F8DD0066D4B6 /* libxml2.tbd in Frameworks */,
 				B3E0CF9F2C054DEB00F45074 /* RxDataSources in Frameworks */,
 				B318E29A2CAB586800D0E599 /* snes9x.framework in Frameworks */,
@@ -4862,6 +4864,7 @@
 				B3FC97292CB8B6AD00C6DB31 /* PVVisualBoyAdvance-Dynamic */,
 				B382362B2CC4623100DCE080 /* SiriusRating */,
 				B35573732CC4843600A4BA16 /* MoltenVK */,
+				B39343982CC5C432008AA673 /* MoltenVK-Catalyst */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -12296,6 +12299,11 @@
 			productName = MoltenVK;
 		};
 		B39342152CC5784D008AA673 /* MoltenVK-Catalyst */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */;
+			productName = "MoltenVK-Catalyst";
+		};
+		B39343982CC5C432008AA673 /* MoltenVK-Catalyst */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */;
 			productName = "MoltenVK-Catalyst";
