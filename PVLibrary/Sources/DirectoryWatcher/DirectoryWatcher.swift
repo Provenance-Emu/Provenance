@@ -55,9 +55,12 @@ public extension NSNotification.Name {
     static let PVArchiveInflationFailed = NSNotification.Name("PVArchiveInflationFailedNotification")
 }
 
+let TIMER_DELAY_IN_SECONDS = 2.0
+
 /// The directory watcher class
 @Observable
 public final class DirectoryWatcher {
+    
     private let watchedDirectory: URL
 
     /// The dispatch source for the file system object
@@ -68,6 +71,7 @@ public final class DirectoryWatcher {
     private var fileWatchers: [URL: DispatchSourceFileSystemObject] = [:]
     private var lastKnownSizes: [URL: Int64] = [:]
     private var fileTimers: [URL: Timer] = [:]
+    private var lastKnownModificationDates: [URL: Date] = [:]
 
     /// The extractors for the supported archive types
     private let extractors: [ArchiveType: ArchiveExtractor] = [
@@ -259,8 +263,11 @@ public final class DirectoryWatcher {
         fileWatchers[path]?.cancel()
         fileWatchers[path] = nil
         fileTimers[path]?.invalidate()
+        ILOG("Timer invalidated for file: \(path.lastPathComponent)")
         fileTimers[path] = nil
         lastKnownSizes[path] = nil
+        lastKnownModificationDates[path] = nil
+        ILOG("File watcher, timer, last known size, and last known modification date removed for: \(path.lastPathComponent)")
     }
 
     /// Cleanup nonexistent file watchers
@@ -383,22 +390,45 @@ fileprivate extension DirectoryWatcher {
         source.resume()
         fileWatchers[path] = source
 
-        // Start a timer to check if the file has stopped changing
-        let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
-            self?.checkFileStatus(at: path)
+        // Start a repeating task to check if the file has stopped changing
+        Task {
+            ILOG("Starting repeating task for file: \(path.lastPathComponent)")
+            var checkCount = 0
+            while checkCount < 30 { // Check for up to 1 minute (30 * 2 seconds)
+                await try Task.sleep(for: .seconds(2))
+                ILOG("Repeating task fired for file: \(path.lastPathComponent)")
+                await MainActor.run {
+                    self.checkFileStatus(at: path)
+                }
+                checkCount += 1
+                if fileWatchers[path] == nil {
+                    ILOG("File watcher removed for: \(path.lastPathComponent)")
+                    break
+                }
+            }
+            ILOG("Repeating task ended for file: \(path.lastPathComponent)")
         }
-        fileTimers[path] = timer
 
-        ILOG("File watcher and timer set up for: \(path.lastPathComponent)")
+        ILOG("File watcher and repeating task set up for: \(path.lastPathComponent)")
     }
 
     private func handleFileChange(at path: URL) {
         ILOG("File change detected for: \(path.lastPathComponent)")
+        do {
+            let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
+            let currentSize = attributes[.size] as? Int64 ?? 0
+            ILOG("Current size of changed file \(path.lastPathComponent): \(currentSize)")
+        } catch {
+            ELOG("Error getting attributes for changed file: \(error)")
+        }
         // Reset the timer when the file changes
         fileTimers[path]?.invalidate()
-        fileTimers[path] = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+        ILOG("Timer invalidated for file: \(path.lastPathComponent)")
+        fileTimers[path] = Timer.scheduledTimer(withTimeInterval: TIMER_DELAY_IN_SECONDS, repeats: true) { [weak self] _ in
+            ILOG("New timer fired for file: \(path.lastPathComponent)")
             self?.checkFileStatus(at: path)
         }
+        ILOG("New timer scheduled for file: \(path.lastPathComponent)")
     }
 
     private func checkFileStatus(at path: URL) {
@@ -406,14 +436,40 @@ fileprivate extension DirectoryWatcher {
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
             let currentSize = attributes[.size] as? Int64 ?? 0
+            let currentModificationDate = attributes[.modificationDate] as? Date
 
-            // If the file size hasn't changed in 5 seconds, consider it done
-            if let lastSize = lastKnownSizes[path], lastSize == currentSize {
+            ILOG("Current size of file \(path.lastPathComponent): \(currentSize)")
+            ILOG("Current modification date of file \(path.lastPathComponent): \(String(describing: currentModificationDate))")
+
+            if let lastSize = lastKnownSizes[path] {
+                ILOG("Last known size of file \(path.lastPathComponent): \(lastSize)")
+            } else {
+                ILOG("No last known size for file \(path.lastPathComponent)")
+            }
+
+            if let lastModDate = lastKnownModificationDates[path] {
+                ILOG("Last known modification date of file \(path.lastPathComponent): \(lastModDate)")
+            } else {
+                ILOG("No last known modification date for file \(path.lastPathComponent)")
+            }
+
+            // If the file size and modification date haven't changed in 2 seconds, consider it done
+            if let lastSize = lastKnownSizes[path],
+               let lastModDate = lastKnownModificationDates[path],
+               lastSize == currentSize,
+               lastModDate == currentModificationDate {
                 ILOG("File upload completed: \(path.lastPathComponent)")
                 stopWatchingFile(at: path)
                 handleCompletedFile(at: path)
             } else {
+                if lastKnownSizes[path] != currentSize {
+                    ILOG("File size changed for \(path.lastPathComponent)")
+                }
+                if lastKnownModificationDates[path] != currentModificationDate {
+                    ILOG("File modification date changed for \(path.lastPathComponent)")
+                }
                 lastKnownSizes[path] = currentSize
+                lastKnownModificationDates[path] = currentModificationDate
                 VLOG("File still uploading: \(path.lastPathComponent), current size: \(currentSize)")
             }
         } catch {
