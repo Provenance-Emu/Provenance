@@ -66,6 +66,11 @@ _My personal TODO notes_
 - [ ] PVFreeIntV
 - [ ] PVfMSX
 
+## AppStore Review
+
+- [ ] Screenshots
+- [ ] Remove "beta" text
+
 ## Provenance Plus
 
 - [ ] Add in-app purchase and screen
