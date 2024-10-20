@@ -55,16 +55,16 @@ public final class PVControllerManager: NSObject {
             allLiveControllers[4] = player4
         }
         if let player5 = player5 {
-            allLiveControllers[4] = player4
+            allLiveControllers[5] = player5
         }
         if let player6 = player6 {
-            allLiveControllers[4] = player4
+            allLiveControllers[6] = player6
         }
         if let player7 = player7 {
-            allLiveControllers[4] = player4
+            allLiveControllers[7] = player7
         }
         if let player8 = player8 {
-            allLiveControllers[4] = player4
+            allLiveControllers[8] = player8
         }
 
         return allLiveControllers
@@ -279,6 +279,7 @@ public final class PVControllerManager: NSObject {
     }
 #endif
     
+    @MainActor
     @objc func handleControllerDidConnect(_ note: Notification?) {
         guard !PVControllerManager.shared.skipControllerBinding else {
             return
@@ -290,6 +291,7 @@ public final class PVControllerManager: NSObject {
         PVControllerManager.shared.connectController(controller);
     }
     
+    @MainActor
     @objc func connectController(_ controller:GCController) {
         guard !PVControllerManager.shared.skipControllerBinding else {
             return
@@ -325,6 +327,7 @@ public final class PVControllerManager: NSObject {
         #endif
     }
 
+    @MainActor
     @objc func handleControllerDidDisconnect(_ note: Notification?) {
         guard !PVControllerManager.shared.skipControllerBinding else {
             return

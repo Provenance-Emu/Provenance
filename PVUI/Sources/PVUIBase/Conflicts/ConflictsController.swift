@@ -12,9 +12,17 @@ import PVPrimitives
 import RxSwift
 import RxCocoa
 
-public protocol ConflictsController {
-    typealias Conflict = (path: URL, candidates: [System])
-    var conflicts: Observable<[Conflict]> { get }
-    func resolveConflicts(withSolutions: [URL: System])
-    func deleteConflict(path: URL)
+//public struct Conflict {
+//    let path: URL
+//    let candidates: [System]
+//}
+
+public protocol ConflictsController: AnyObject {
+    typealias ConflictItem = (path: URL, candidates: [System])
+    
+    var conflicts: [ConflictItem] { get }
+    
+    func resolveConflicts(withSolutions: [URL: System]) async
+    func deleteConflict(path: URL) async
+    func updateConflicts() async
 }

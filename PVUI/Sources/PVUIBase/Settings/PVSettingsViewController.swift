@@ -23,6 +23,7 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVThemes
 import PVSettings
+import Combine
 
 #if canImport(PVWebServer)
 import PVWebServer
@@ -32,23 +33,30 @@ fileprivate var IsAppStore: Bool {
     Bundle.main.infoDictionary?["ALTDeviceID"] != nil
 }
 
-public
-final class PVSettingsViewController: QuickTableViewController {
+public final class PVSettingsViewController: QuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
     let reachability: Reachability = try! Reachability()
     
-    public var conflictsController: ConflictsController? {
+    private var cancellables = Set<AnyCancellable>()
+    
+    public var conflictsController: PVGameLibraryUpdatesController? {
         didSet {
-            conflictsController?.conflicts.bind(onNext: {
-                self.numberOfConflicts = $0.count
-                self.generateTableViewViewModels()
-                self.tableView.reloadData()
-            })
-            .disposed(by: disposeBag)
+            setupConflictsObserver()
         }
     }
     private var numberOfConflicts = 0
-    private let disposeBag = DisposeBag()
+
+    private func setupConflictsObserver() {
+        conflictsController?.$conflicts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] conflicts in
+                self?.numberOfConflicts = conflicts.count
+                self?.generateTableViewViewModels()
+                self?.tableView.reloadData()
+            }
+            .store(in: &cancellables)
+    }
+
     
     public override func viewDidLoad() {
         super.viewDidLoad()

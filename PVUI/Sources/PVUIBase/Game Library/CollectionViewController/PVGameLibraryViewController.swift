@@ -557,90 +557,56 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         layout.sectionInsetReference = .fromSafeArea
 #endif
         
-        updatesController.hudState
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { state in
-                switch state {
-                case .hidden:
-                    self.hud.hide(animated: true, afterDelay: 1.0)
-                    break;
-                case .title(let title):
-                    self.hud.mode = .indeterminate
-                    self.hud.label.text = title
-                    self.hud.label.numberOfLines = 2
-                    self.hud.show(animated: true)
-                    self.hud.hide(animated: true, afterDelay: 1.0)
-                    break;
-                case .titleAndProgress(let title, let progress):
-                    self.hud.mode = .annularDeterminate
-                    self.hud.progress = progress
-                    self.hud.label.text = title
-                    self.hud.label.numberOfLines = 2
-                    self.hud.show(animated: true)
-                    if (progress == 1.0) {
-                        self.hud.hide(animated: true, afterDelay: 1.0)
-                    }
-                    break;
-                }
-            }, onError: { (err) in
-                ELOG("\(err.localizedDescription)")
-            }, onCompleted: {
-                ILOG("Completed")
-            }) {
-                ILOG("Disposed")
-            }
-            .disposed(by: disposeBag)
-        
-        updatesController.hudStateWatcher
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { state in
-                switch state {
-                case .hidden:
-                    self.hud.hide(animated: true, afterDelay: 1.0)
-                    break;  
-                case .title(let title):
-                    self.hud.mode = .indeterminate
-                    self.hud.label.text = title
-                    self.hud.label.numberOfLines = 2
-                    self.hud.show(animated:true)
-                    self.hud.hide(animated:true, afterDelay: 1.0)
-                    break;
-                case .titleAndProgress(let title, let progress):
-                    self.hud.mode = .annularDeterminate
-                    self.hud.progress = progress
-                    self.hud.label.text = title
-                    self.hud.label.numberOfLines = 2
-                    self.hud.show(animated:true)
-                    if (progress == 1) {
-                        self.hud.hide(animated:true, afterDelay: 1.0)
-                    }
-                    break;
-                }
-            }, onError: { (err) in
-                print("Error")
-            }, onCompleted: {
-                print("Completed")
-            }) {
-                print("Disposed")
-            }
-            .disposed(by: disposeBag)
-        
-        updatesController.conflicts
-            .map { !$0.isEmpty }
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { hasConflicts in
-                self.updateConflictsButton(hasConflicts)
-                if hasConflicts {
-                    DispatchQueue.main.async {
-                        self.showConflictsAlert()
-                    }
-                }
-            })
-            .disposed(by: disposeBag)
-        
+        setupObservers()
         becomeFirstResponder()
     }
     
+    func setupObservers() {
+        Task { @MainActor in
+            for await state in updatesController.$hudState.values {
+                handleHudState(state)
+            }
+        }
+
+        Task { @MainActor in
+            for await state in updatesController.$hudState.values {
+                handleHudState(state)
+            }
+        }
+
+        Task { @MainActor in
+            for await conflicts in updatesController.$conflicts.values {
+                let hasConflicts = !conflicts.isEmpty
+                updateConflictsButton(hasConflicts)
+                if hasConflicts {
+                    showConflictsAlert()
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func handleHudState(_ state: PVGameLibraryUpdatesController.HudState) {
+        switch state {
+        case .hidden:
+            self.hud.hide(animated: true, afterDelay: 1.0)
+        case .title(let title):
+            self.hud.mode = .indeterminate
+            self.hud.label.text = title
+            self.hud.label.numberOfLines = 2
+            self.hud.show(animated: true)
+            self.hud.hide(animated: true, afterDelay: 1.0)
+        case .titleAndProgress(let title, let progress):
+            self.hud.mode = .annularDeterminate
+            self.hud.progress = progress
+            self.hud.label.text = title
+            self.hud.label.numberOfLines = 2
+            self.hud.show(animated: true)
+            if progress == 1.0 {
+                self.hud.hide(animated: true, afterDelay: 1.0)
+            }
+        }
+    }
     public func checkROMs(_ once:Bool) {
         self.hud.mode = .indeterminate
         self.hud.label.text = "Initializing ROM Database..."

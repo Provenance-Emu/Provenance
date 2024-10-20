@@ -14,6 +14,7 @@ import PVFileSystem
 import SWCompression
 @_exported import ZipArchive
 import Combine
+import Observation
 
 extension FileManager {
     func removeItem(at url: URL) async throws {
@@ -23,9 +24,12 @@ extension FileManager {
     }
 }
 
-public typealias PVExtractionStartedHandler = (URL) -> Void
-public typealias PVExtractionUpdatedHandler = (URL, Int, Int, Float) -> Void
-public typealias PVExtractionCompleteHandler = ([URL]?) -> Void
+public enum ExtractionStatus {
+    case idle
+    case started(path: URL)
+    case updated(path: URL)
+    case completed(paths: [URL])
+}
 
 public extension NSNotification.Name {
     static let PVArchiveInflationFailed = NSNotification.Name("PVArchiveInflationFailedNotification")
@@ -34,9 +38,6 @@ public extension NSNotification.Name {
 @Observable
 public final class DirectoryWatcher {
     private let watchedDirectory: URL
-    private let extractionStartedHandler: PVExtractionStartedHandler?
-    private let extractionUpdatedHandler: PVExtractionUpdatedHandler?
-    private let extractionCompleteHandler: PVExtractionCompleteHandler?
 
     private var dispatchSource: DispatchSourceFileSystemObject?
     private let serialQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
@@ -47,44 +48,21 @@ public final class DirectoryWatcher {
     private let extractors: [ArchiveType: ArchiveExtractor] = [
         .zip: ZipExtractor(),
         .sevenZip: SevenZipExtractor(),
-        .tar: TarExtractor()
+        .tar: TarExtractor(),
+        .bzip2: BZip2Extractor(),
+        .gzip: GZipExtractor()
     ]
 
-    public init(directory: URL,
-                extractionStartedHandler: PVExtractionStartedHandler? = nil,
-                extractionUpdatedHandler: PVExtractionUpdatedHandler? = nil,
-                extractionCompleteHandler: PVExtractionCompleteHandler? = nil) {
+    public var extractionStatus: ExtractionStatus = .idle
+
+    public init(directory: URL) {
         self.watchedDirectory = directory
-        self.extractionStartedHandler = extractionStartedHandler
-        self.extractionUpdatedHandler = extractionUpdatedHandler
-        self.extractionCompleteHandler = extractionCompleteHandler
 
         createDirectoryIfNeeded()
         processExistingArchives()
     }
 
-    private func createDirectoryIfNeeded() {
-        do {
-            try FileManager.default.createDirectory(at: watchedDirectory, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            DLOG("Unable to create directory at: \(watchedDirectory.path), because: \(error.localizedDescription)")
-        }
-    }
-
-    private func processExistingArchives() {
-        Task {
-            do {
-                let contents = try FileManager.default.contentsOfDirectory(at: watchedDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
-                for file in contents where Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) {
-                    await extractArchive(at: file)
-                }
-            } catch {
-                ELOG("Error processing existing archives: \(error.localizedDescription)")
-            }
-        }
-    }
-
-    public func startMonitoring() {
+    public func startMonitoring() throws {
         DLOG("Start Monitoring \(watchedDirectory.path)")
         stopMonitoring()
 
@@ -93,7 +71,11 @@ public final class DirectoryWatcher {
         dispatchSource = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: .write, queue: serialQueue)
 
         dispatchSource?.setEventHandler { [weak self] in
-            self?.handleFileSystemEvent()
+            do {
+                try self?.handleFileSystemEvent()
+            } catch {
+                ELOG("Error handling file system event: \(error)")
+            }
         }
 
         dispatchSource?.setCancelHandler {
@@ -101,38 +83,9 @@ public final class DirectoryWatcher {
         }
 
         dispatchSource?.resume()
-        triggerInitialImport()
+        try triggerInitialImport()
     }
 
-    private func handleFileSystemEvent() {
-        do {
-            let contents = try FileManager.default.contentsOfDirectory(at: watchedDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
-            let newContents = Set(contents).subtracting(previousContents)
-
-            for file in newContents where isValidFile(file) {
-                watchFile(at: file)
-            }
-
-            previousContents = Set(contents)
-        } catch {
-            ELOG("Error handling file system event: \(error.localizedDescription)")
-        }
-    }
-
-    private func isValidFile(_ url: URL) -> Bool {
-        let filename = url.lastPathComponent
-        return !filename.starts(with: ".") && !url.path.contains("_MACOSX") && filename != "0"
-    }
-
-    private func triggerInitialImport() {
-        let triggerPath = watchedDirectory.appendingPathComponent("0")
-        do {
-            try "0".write(to: triggerPath, atomically: false, encoding: .utf8)
-            try FileManager.default.removeItem(at: triggerPath)
-        } catch {
-            ELOG("Error triggering initial import: \(error.localizedDescription)")
-        }
-    }
 
     public func stopMonitoring() {
         DLOG("Stop Monitoring \(watchedDirectory.path)")
@@ -140,7 +93,104 @@ public final class DirectoryWatcher {
         dispatchSource = nil
     }
 
-    private func watchFile(at path: URL) {
+    static var handlerQueue: DispatchQueue {
+        .global(qos: .utility)
+    }
+
+    public func extractArchive(at filePath: URL) async throws {
+        guard !filePath.path.contains("MACOSX"),
+              FileManager.default.fileExists(atPath: filePath.path) else {
+            return
+        }
+
+        guard let archiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased()),
+              let extractor = extractors[archiveType] else {
+            try startMonitoring()
+            return
+        }
+
+        extractionStatus = .started(path: filePath)
+
+        do {
+            var extractedFiles: [URL] = []
+            for try await extractedFile in extractor.extract(at: filePath, to: watchedDirectory) {
+                extractedFiles.append(extractedFile)
+                extractionStatus = .updated(path: extractedFile)
+            }
+
+            try await FileManager.default.removeItem(at: filePath)
+
+            extractionStatus = .completed(paths: extractedFiles)
+
+            unzippedFiles.removeAll()
+            delayedStartMonitoring()
+        } catch {
+            ELOG("Extraction error: \(error.localizedDescription)")
+            DirectoryWatcher.handlerQueue.async {
+                NotificationCenter.default.post(name: .PVArchiveInflationFailed, object: self)
+            }
+            try startMonitoring()
+        }
+    }
+
+
+    private func delayedStartMonitoring() {
+        Task {
+            try await delay(2) {
+                try self.startMonitoring()
+            }
+        }
+    }
+}
+
+fileprivate extension DirectoryWatcher {
+
+    func createDirectoryIfNeeded() {
+        do {
+            try FileManager.default.createDirectory(at: watchedDirectory, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            DLOG("Unable to create directory at: \(watchedDirectory.path), because: \(error.localizedDescription)")
+        }
+    }
+
+    func processExistingArchives() {
+        Task.detached {
+            do {
+                let contents = try FileManager.default.contentsOfDirectory(at: self.watchedDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+                for file in contents where Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) {
+                    try await self.extractArchive(at: file)
+                }
+            } catch {
+                ELOG("Error processing existing archives: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    func handleFileSystemEvent() throws {
+        let contents = try FileManager.default.contentsOfDirectory(at: watchedDirectory,
+                                                                   includingPropertiesForKeys: nil,
+                                                                   options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+        let newContents = Set(contents).subtracting(previousContents)
+
+        newContents.filter( {isValidFile($0)} ).forEach { file in
+            watchFile(at: file)
+        }
+
+        previousContents = Set(contents)
+    }
+
+    func isValidFile(_ url: URL) -> Bool {
+        let filename = url.lastPathComponent
+        return !filename.starts(with: ".") && !url.path.contains("_MACOSX") && filename != "0"
+    }
+
+    func triggerInitialImport() throws {
+        let triggerPath = watchedDirectory.appendingPathComponent("0")
+        try "0".write(to: triggerPath, atomically: false, encoding: .utf8)
+        try FileManager.default.removeItem(at: triggerPath)
+    }
+
+    func watchFile(at path: URL) {
         DLOG("Start watching \(path.lastPathComponent)")
 
         guard let attributes = try? FileManager.default.attributesOfItem(atPath: path.path),
@@ -181,12 +231,12 @@ public final class DirectoryWatcher {
         if Extensions.archiveExtensions.contains(path.pathExtension) {
             serialQueue.async {
                 Task {
-                    await self.extractArchive(at: path)
+                    try await self.extractArchive(at: path)
                 }
             }
         } else {
             DirectoryWatcher.handlerQueue.async {
-                self.extractionCompleteHandler?([path])
+                self.extractionStatus = .completed(paths: [path])
             }
         }
     }
@@ -198,54 +248,6 @@ public final class DirectoryWatcher {
             "wasZeroBefore": currentFilesize == 0
         ]
         Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(checkFileProgress(_:)), userInfo: newUserInfo, repeats: false)
-    }
-
-    static var handlerQueue: DispatchQueue {
-        .main
-    }
-
-    public func extractArchive(at filePath: URL) async {
-        guard !filePath.path.contains("MACOSX"),
-              FileManager.default.fileExists(atPath: filePath.path) else {
-            return
-        }
-
-        guard let archiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased()),
-              let extractor = extractors[archiveType] else {
-            startMonitoring()
-            return
-        }
-
-        DirectoryWatcher.handlerQueue.async { [weak self] in
-            self?.extractionStartedHandler?(filePath)
-        }
-
-        do {
-            let extractedFiles = try await extractor.extract(at: filePath, to: watchedDirectory)
-
-            try await FileManager.default.removeItem(at: filePath)
-
-            DirectoryWatcher.handlerQueue.async { [weak self] in
-                self?.extractionCompleteHandler?(extractedFiles)
-            }
-
-            unzippedFiles.removeAll()
-            delayedStartMonitoring()
-        } catch {
-            ELOG("Extraction error: \(error.localizedDescription)")
-            DirectoryWatcher.handlerQueue.async { [weak self] in
-                self?.extractionCompleteHandler?(nil)
-                NotificationCenter.default.post(name: .PVArchiveInflationFailed, object: self)
-            }
-            startMonitoring()
-        }
-    }
-
-    private func delayedStartMonitoring() {
-        Task {
-            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-            self.startMonitoring()
-        }
     }
 }
 
@@ -276,7 +278,7 @@ struct TimerSequence: AsyncSequence {
     }
 }
 
-func delay(_ duration: TimeInterval, operation: @escaping () async -> Void) async {
+func delay(_ duration: TimeInterval, operation: @escaping () async throws -> Void) async rethrows {
     try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
-    await operation()
+    try await operation()
 }

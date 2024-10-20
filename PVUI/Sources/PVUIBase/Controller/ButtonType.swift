@@ -53,11 +53,11 @@ public extension GCExtendedGamepad {
 
 // MARK: - Controller type detection
 public extension GCController {
-    public var isRemote: Bool {
+    var isRemote: Bool {
         return self.extendedGamepad == nil && self.microGamepad != nil
     }
     
-    public var isKeyboard: Bool {
+    var isKeyboard: Bool {
         if #available(iOS 14.0, tvOS 14.0, *) {
             return isSnapshot && vendorName?.contains("Keyboard") == true
         } else {

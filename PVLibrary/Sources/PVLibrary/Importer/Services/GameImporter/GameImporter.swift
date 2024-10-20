@@ -45,6 +45,7 @@ public typealias GameImporterCompletionHandler = (_ encounteredConflicts: Bool) 
 public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, _ modified: Bool) -> Void
 public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
+@Observable
 public final class GameImporter {
     public var importStartedHandler: GameImporterImportStartedHandler?
     public var completionHandler: GameImporterCompletionHandler?
@@ -54,7 +55,7 @@ public final class GameImporter {
 
     public static let shared: GameImporter = GameImporter()
     
-    lazy var openVGDB = OpenVGDB.init()
+    var openVGDB = OpenVGDB.init()
 
     let workQueue: OperationQueue = {
         let q = OperationQueue()
@@ -70,8 +71,8 @@ public final class GameImporter {
         return queue
     }()
 
-    public private(set) lazy var systemToPathMap = [String: URL]()
-    public private(set) lazy var romExtensionToSystemsMap = [String: [String]]()
+    public private(set) var systemToPathMap = [String: URL]()
+    public private(set) var romExtensionToSystemsMap = [String: [String]]()
 
     // MARK: - Paths
 

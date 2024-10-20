@@ -70,8 +70,7 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
                  branch: "develop"),
         .package(url: "https://github.com/stephencelis/SQLite.swift.git",
-                 .upToNextMajor(from: "0.15.3")
-        )
+                 .upToNextMajor(from: "0.15.3"))
     ],
     
     targets: [
@@ -97,13 +96,13 @@ let package = Package(
                 "PVFileSystem",
                 "PVMediaCache",
                 "PVSettings",
+//                "ZipArchive",
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
                 .product(name: "PVCoreLoader", package: "PVCoreLoader"),
                 .product(name: "SQLite", package: "SQLite.swift"),
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
-                .product(name: "ZipArchive", package: "ZipArchive"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ],
             resources: [

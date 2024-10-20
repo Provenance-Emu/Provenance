@@ -39,7 +39,7 @@ public enum PVNavOption {
     case settings
     case home
     case console(consoleId: String, title: String)
-
+    
     var title: String {
         switch self {
         case .settings: return "Settings"
@@ -51,20 +51,19 @@ public enum PVNavOption {
 
 @available(iOS 14, tvOS 14, *)
 public class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
-
+    
     let containerView = UIView()
     var viewModel: PVRootViewModel!
-
+    
     var updatesController: PVGameLibraryUpdatesController!
     var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
     var gameImporter: GameImporter!
-
-    let disposeBag = DisposeBag()
+    
     var selectedTabCancellable: AnyCancellable?
-
+    
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
-
+    
     public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary<RealmDatabaseDriver>, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
@@ -73,52 +72,61 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         controller.viewModel = viewModel
         return controller
     }
-
+    
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.view.addSubview(containerView)
         self.fillParentView(child: containerView, parent: self.view)
-
+        
         self.determineInitialView()
-
+        
         let hud = MBProgressHUD(view: view)
         hud.isUserInteractionEnabled = false
         view.addSubview(hud)
-        updatesController.hudState
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { state in
-                switch state {
-                case .hidden:
-                    hud.hide(animated:true)
-                case .title(let title):
-                    hud.show(animated:true)
-                    hud.mode = .indeterminate
-                    hud.label.text = title
-                    hud.label.numberOfLines = 2
-                case .titleAndProgress(let title, let progress):
-                    hud.show(animated:true)
-                    hud.mode = .annularDeterminate
-                    hud.progress = progress
-                    hud.label.text = title
-                    hud.label.numberOfLines = 2
-                }
-            })
-            .disposed(by: disposeBag)
+        
+        setupHUDObserver(hud: hud)
     }
-
+    
+    private var cancellables = Set<AnyCancellable>()
+    private func setupHUDObserver(hud: MBProgressHUD) {
+        Task { @MainActor in
+            for try await state in updatesController.$hudState.values {
+                updateHUD(hud: hud, state: state)
+            }
+        }
+    }
+    private func updateHUD(hud: MBProgressHUD, state: PVGameLibraryUpdatesController.HudState) {
+        switch state {
+        case .hidden:
+            hud.hide(animated: true)
+        case .title(let title):
+            hud.show(animated: true)
+            hud.mode = .indeterminate
+            hud.label.text = title
+            hud.label.numberOfLines = 2
+        case .titleAndProgress(let title, let progress):
+            hud.show(animated: true)
+            hud.mode = .annularDeterminate
+            hud.progress = progress
+            hud.label.text = title
+            hud.label.numberOfLines = 2
+        }
+    }
+    
     deinit {
         selectedTabCancellable?.cancel()
     }
-
+    
     func showMenu() {
         self.sideNavigationController?.showLeftSide()
     }
-
+    
     func closeMenu() {
         self.sideNavigationController?.closeSide()
     }
-
+    
     func determineInitialView() {
         if let console = gameLibrary.activeSystems.first {
             didTapConsole(with: console.identifier)
@@ -126,7 +134,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             didTapHome()
         }
     }
-
+    
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
         // remove old view
         self.containerView.subviews.forEach { $0.removeFromSuperview() }
@@ -148,13 +156,13 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
 // MARK: - Helpers
 extension UIViewController {
-
+    
     func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
         addChild(child)
         containerView.addSubview(child.view)
         child.didMove(toParent: self)
     }
-
+    
     func fillParentView(child: UIView, parent: UIView) {
         child.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -164,7 +172,7 @@ extension UIViewController {
             child.trailingAnchor.constraint(equalTo: parent.trailingAnchor)
         ])
     }
-
+    
 }
 
 #if os(iOS) || targetEnvironment(macCatalyst)
@@ -185,7 +193,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
                     defer {
                         url.stopAccessingSecurityScopedResource()
                     }
-
+                    
                     let subFiles = try FileManager.default.contentsOfDirectory(at: url,
                                                                                includingPropertiesForKeys: [URLResourceKey.isDirectoryKey, URLResourceKey.parentDirectoryURLKey, URLResourceKey.fileSecurityKey],
                                                                                options: .skipsHiddenFiles)
@@ -198,11 +206,11 @@ extension PVRootViewController: UIDocumentPickerDelegate {
                 return [url]
             }
         }.joined().map { $0 }
-
+        
         let sortedUrls = PVEmulatorConfiguration.sortImportURLs(urls: urls)
-
+        
         let importPath = Paths.romsImportPath
-
+        
         var securityScoped = false
         
         sortedUrls.forEach { url in
@@ -215,7 +223,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
             // Doesn't seem we need access in dev builds?
             // if this returns false, we don't need to balance with a stop call, so just hang on to the value
             securityScoped = url.startAccessingSecurityScopedResource()
-
+            
             let fileName = url.lastPathComponent
             let destination: URL
             destination = importPath.appendingPathComponent(fileName, isDirectory: url.hasDirectoryPath)
@@ -228,7 +236,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
                 ELOG("Failed to move file from \(url.path) to \(destination.path)")
             }
         }
-
+        
         // Test for moving directory subcontents
         //                    if #available(iOS 9.0, *) {
         //                        if url.hasDirectoryPath {
@@ -246,14 +254,14 @@ extension PVRootViewController: UIDocumentPickerDelegate {
         //                    } else {
         //                        try FileManager.default.moveItem(at: url, to: destination)
         //                    }
-//                } catch {
-//                    ELOG("Failed to move file from \(url.path) to \(destination.path)")
-//                }
-//            } else {
-//                ELOG("Wasn't granded access to \(url.path)")
-//            }
+        //                } catch {
+        //                    ELOG("Failed to move file from \(url.path) to \(destination.path)")
+        //                }
+        //            } else {
+        //                ELOG("Wasn't granded access to \(url.path)")
+        //            }
     }
-
+    
     public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
         ILOG("Document picker was cancelled")
     }

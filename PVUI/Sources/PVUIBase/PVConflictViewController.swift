@@ -6,9 +6,9 @@
 //  Created by James Addyman on 17/04/2015.
 //  Copyright (c) 2015 James Addyman. All rights reserved.
 //
-
 import PVLibrary
 import PVSupport
+import Observation
 #if canImport(UIKit)
 import UIKit
 typealias BaseContoller = UITableViewController
@@ -16,15 +16,13 @@ typealias BaseContoller = UITableViewController
 import AppKit
 typealias BaseContoller = NSTableViewController
 #endif
-import RxSwift
-import RxDataSources
 import PVSettings
 
 final class PVConflictViewController: BaseContoller {
-    let conflictsController: ConflictsController
-    private let disposeBag = DisposeBag()
+    let conflictsController: PVGameLibraryUpdatesController
+    @Published private var rows: [Row] = []
 
-    init(conflictsController: ConflictsController) {
+    init(conflictsController: PVGameLibraryUpdatesController) {
         self.conflictsController = conflictsController
         super.init(style: .plain)
     }
@@ -34,7 +32,7 @@ final class PVConflictViewController: BaseContoller {
     }
 
     enum Row {
-        case conflict(ConflictsController.Conflict)
+        case conflict(ConflictsController.ConflictItem)
         case empty(title: String)
     }
 
@@ -42,93 +40,31 @@ final class PVConflictViewController: BaseContoller {
         super.viewDidLoad()
         title = "Solve Conflicts"
         #if !os(tvOS)
-            let currentTableview = tableView!
-            tableView = UITableView(frame: currentTableview.frame, style: currentTableview.style)
-            tableView.separatorColor = UIColor.clear
+        let currentTableview = tableView!
+        tableView = UITableView(frame: currentTableview.frame, style: currentTableview.style)
+        tableView.separatorColor = UIColor.clear
         #endif
 
-		tableView.delegate = nil
-		tableView.dataSource = nil
+        tableView.delegate = self
+        tableView.dataSource = self
 
         let cellIdentifier = "Cell"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
 
-        let rows = conflictsController.conflicts
-            .map({ conflicts -> [Row] in
-                if conflicts.isEmpty {
-                    return [.empty(title: "No Conflicts…")]
-                } else {
-                    return conflicts.map { .conflict($0) }
-                }
-            })
+        setupObservers()
+    }
 
-        rows.bind(to: tableView.rx.items(cellIdentifier: cellIdentifier, cellType: UITableViewCell.self)) { _, row, cell in
-            switch row {
-            case .conflict(let conflict):
-                cell.editingAccessoryType = .checkmark
-                cell.textLabel?.text = conflict.path    .lastPathComponent
-                cell.accessoryType = .disclosureIndicator
-            case .empty(let title):
-                cell.textLabel?.text = title
-                cell.textLabel?.textAlignment = .center
-                cell.accessoryType = .none
-                cell.isUserInteractionEnabled = false
+    private func setupObservers() {
+        Task { @MainActor in
+            for await conflicts in conflictsController.$conflicts.values {
+                if conflicts.isEmpty {
+                    self.rows = [.empty(title: "No Conflicts…")]
+                } else {
+                    self.rows = conflicts.map { .conflict($0) }
+                }
+                self.tableView.reloadData()
             }
         }
-        .disposed(by: disposeBag)
-
-        tableView.rx.itemDeleted
-            .do(onNext: {
-                self.tableView.deselectRow(at: $0, animated: true)
-            })
-                .compactMap({ indexPath -> (ConflictsController.Conflict, IndexPath)? in
-                    let row: Row = try self.tableView.rx.model(at: indexPath)
-                    switch row {
-                    case .conflict(let conflict):
-                        return (conflict, indexPath)
-                    case .empty:
-                        return nil
-                    }
-                })
-                .bind(onNext: { conflict, indexPath in
-                    self.conflictsController.deleteConflict(path: conflict.path)
-                    self.tableView.reloadData()
-                })
-            .disposed(by: disposeBag)
-
-        tableView.rx.itemSelected
-            .do(onNext: { self.tableView.deselectRow(at: $0, animated: true) })
-            .compactMap({ indexPath -> (ConflictsController.Conflict, IndexPath)? in
-                let row: Row = try self.tableView.rx.model(at: indexPath)
-                switch row {
-                case .conflict(let conflict):
-                    return (conflict, indexPath)
-                case .empty:
-                    return nil
-                }
-            })
-            .bind(onNext: { conflict, indexPath in
-                let showsUnsupportedSystems = Defaults[.unsupportedCores]
-                let alertController = UIAlertController(title: "Choose a System", message: nil, preferredStyle: .actionSheet)
-                alertController.popoverPresentationController?.sourceView = self.view
-                alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
-                conflict.candidates
-                    .filter { $0.supported || showsUnsupportedSystems }
-                    .sorted(by: { sys1,sys2 in sys1.identifier < sys2.identifier })
-                    .forEach { system in
-                        alertController.addAction(.init(title: system.name, style: .default, handler: { _ in
-                            self.conflictsController.resolveConflicts(withSolutions: [conflict.path: system])
-                        }))
-                    }
-                alertController.addAction(.init(title: NSLocalizedString("Delete", comment: "Delete file"), style: .destructive, handler: { _ in
-                    self.conflictsController.deleteConflict(path: conflict.path)
-                }))
-                alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
-                self.present(alertController, animated: true) { () -> Void in
-                    self.tableView.reloadData()
-                }
-            })
-            .disposed(by: disposeBag)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -146,10 +82,74 @@ final class PVConflictViewController: BaseContoller {
     }
 }
 
-extension PVConflictViewController {
+extension PVConflictViewController { // : UITableViewDataSource, UITableViewDelegate {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return rows.count
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let row = rows[indexPath.row]
+        switch row {
+        case .conflict(let conflict):
+            cell.editingAccessoryType = .checkmark
+            cell.textLabel?.text = conflict.path.lastPathComponent
+            cell.accessoryType = .disclosureIndicator
+            cell.isUserInteractionEnabled = true
+        case .empty(let title):
+            cell.textLabel?.text = title
+            cell.textLabel?.textAlignment = .center
+            cell.accessoryType = .none
+            cell.isUserInteractionEnabled = false
+        }
+        return cell
+    }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
+    }
+
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            if case .conflict(let conflict) = rows[indexPath.row] {
+                Task {
+                    await conflictsController.deleteConflict(path: conflict.path)
+                }
+            }
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if case .conflict(let conflict) = rows[indexPath.row] {
+            showSystemSelectionAlert(for: conflict, at: indexPath)
+        }
+    }
+
+    private func showSystemSelectionAlert(for conflict: ConflictsController.ConflictItem, at indexPath: IndexPath) {
+        let showsUnsupportedSystems = Defaults[.unsupportedCores]
+        let alertController = UIAlertController(title: "Choose a System", message: nil, preferredStyle: .actionSheet)
+        alertController.popoverPresentationController?.sourceView = self.view
+        alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
+        conflict.candidates
+            .filter { $0.supported || showsUnsupportedSystems }
+            .sorted(by: { sys1,sys2 in sys1.identifier < sys2.identifier })
+            .forEach { system in
+                alertController.addAction(.init(title: system.name, style: .default, handler: { _ in
+                    Task {
+                        await self.conflictsController.resolveConflicts(withSolutions: [conflict.path: system])
+                    }
+                }))
+            }
+        alertController.addAction(.init(title: NSLocalizedString("Delete", comment: "Delete file"), style: .destructive, handler: { _ in
+            Task {
+                await self.conflictsController.deleteConflict(path: conflict.path)
+            }
+        }))
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
+        self.present(alertController, animated: true) { () -> Void in
+            self.tableView.reloadData()
+        }
     }
 
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
@@ -161,24 +161,22 @@ extension PVConflictViewController {
     }
 
     @objc private func toggleEditing() {
-        tableView.setEditing(!tableView.isEditing, animated: true) // Set opposite value of current editing status
-        navigationItem.rightBarButtonItem?.title = tableView.isEditing ? "Done" : "Edit" // Set title depending on the editing status
+        tableView.setEditing(!tableView.isEditing, animated: true)
+        navigationItem.rightBarButtonItem?.title = tableView.isEditing ? "Done" : "Edit"
     }
 
     @objc func showEditing(sender: UIBarButtonItem) {
-       if self.tableView.isEditing {
-           self.tableView.isEditing = false
-           self.navigationItem.rightBarButtonItem?.title = "Done"
-       } else {
-           self.tableView.isEditing = true
-           self.navigationItem.rightBarButtonItem?.title = "Edit"
-       }
-   }
+        if self.tableView.isEditing {
+            self.tableView.isEditing = false
+            self.navigationItem.rightBarButtonItem?.title = "Done"
+        } else {
+            self.tableView.isEditing = true
+            self.navigationItem.rightBarButtonItem?.title = "Edit"
+        }
+    }
 
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-
-        // Toggle table view editing.
-         tableView.setEditing(editing, animated: true)
+        tableView.setEditing(editing, animated: true)
     }
 }
