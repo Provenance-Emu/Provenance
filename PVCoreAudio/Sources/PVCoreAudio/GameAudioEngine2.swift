@@ -190,6 +190,8 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     // MARK: - Helpers
 
+    private var converter: AudioConverterRef?
+
     private func updateSourceNode() {
         if let src {
             engine.detach(src)
@@ -197,22 +199,60 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         }
 
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
-        var sd   = streamDescription
-        let bytesPerFrame = sd.mBytesPerFrame
-        let channelCount  = sd.mChannelsPerFrame
+        let originalSD = streamDescription
+        let channelCount = originalSD.mChannelsPerFrame
 
-        // Try to create a compatible format
+        // Always use 32-bit float as the intermediate format
+        var sd = AudioStreamBasicDescription(
+            mSampleRate: originalSD.mSampleRate,
+            mFormatID: kAudioFormatLinearPCM,
+            mFormatFlags: kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked,
+            mBytesPerPacket: 4 * channelCount,
+            mFramesPerPacket: 1,
+            mBytesPerFrame: 4 * channelCount,
+            mChannelsPerFrame: channelCount,
+            mBitsPerChannel: 32,
+            mReserved: 0
+        )
+
         guard let format = AVAudioFormat(streamDescription: &sd) else {
             ELOG("Failed to create AVAudioFormat from stream description")
             return
         }
 
-        src = AVAudioSourceNode(format: format) { _, _, frameCount, inputData in
-            let bytesRequested = UInt(frameCount * bytesPerFrame)
-            let bytesCopied    = read(inputData.pointee.mBuffers.mData!, Int(bytesRequested))
+        src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, inputData in
+            guard let self = self else { return noErr }
 
-            inputData.pointee.mBuffers.mDataByteSize    = UInt32(bytesCopied)
-            inputData.pointee.mBuffers.mNumberChannels  = channelCount
+            let bytesPerFrame = originalSD.mBytesPerFrame
+            let bytesRequested = Int(frameCount) * Int(bytesPerFrame)
+
+            let tempBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bytesRequested)
+            defer { tempBuffer.deallocate() }
+
+            let bytesCopied = read(tempBuffer, bytesRequested)
+
+            let outputBuffer = inputData.pointee.mBuffers.mData!.assumingMemoryBound(to: Float32.self)
+            let framesToProcess = bytesCopied / Int(bytesPerFrame)
+
+            switch originalSD.mBitsPerChannel {
+            case 8:
+                for i in 0..<(framesToProcess * Int(channelCount)) {
+                    outputBuffer[i] = Float32(Int16(tempBuffer[i]) - 128) / 128.0
+                }
+            case 16:
+                let int16Buffer = tempBuffer.withMemoryRebound(to: Int16.self, capacity: framesToProcess * Int(channelCount)) { $0 }
+                for i in 0..<(framesToProcess * Int(channelCount)) {
+                    outputBuffer[i] = Float32(int16Buffer[i]) / 32768.0
+                }
+            case 32:
+                memcpy(outputBuffer, tempBuffer, bytesCopied)
+            default:
+                ELOG("Unsupported bit depth: \(originalSD.mBitsPerChannel)")
+                return kAudio_ParamError
+            }
+
+            inputData.pointee.mBuffers.mDataByteSize = UInt32(framesToProcess * 4 * Int(channelCount))
+            inputData.pointee.mBuffers.mNumberChannels = channelCount
 
             return noErr
         }
