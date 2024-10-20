@@ -48,7 +48,7 @@
 @property(readonly) BufferSize availableBytesForReading;
 @property(readonly) BufferSize bytesWritten;
 @property(readonly) BufferSize bytesRead;
-
+@property(readonly) BufferSize availableBytes;
 
 /// Reads available bytes into a buffer
 /// - Parameters:

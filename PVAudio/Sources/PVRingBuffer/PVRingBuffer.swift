@@ -81,6 +81,10 @@ public final class PVRingBuffer: NSObject, RingBufferProtocol
     public private(set) var headOffset = 0
     public private(set) var usedBytesCount: Int32 = 0
 
+    public var availableBytes: RingBufferSize {
+        return availableBytesForReading
+    }
+
     public init?(withLength length: Int) {
         guard length > 0 else { return nil }
 //        assert(length > 0)
@@ -150,7 +154,7 @@ public extension PVRingBuffer
         memcpy(self.head, buffer, size)
 
         self.decrementAvailableBytes(by: size)
-        
+
 //        print("wrote \(size) bytes on thread \(Thread.current.name ?? Thread.current.debugDescription)")
 
         return size
@@ -175,7 +179,7 @@ public extension PVRingBuffer
         memcpy(buffer, self.tail, size)
 
         self.incrementAvailableBytes(by: size)
-        
+
 //        print("read \(size) bytes on thread \(Thread.current.name ?? Thread.current.debugDescription)")
 
         return size

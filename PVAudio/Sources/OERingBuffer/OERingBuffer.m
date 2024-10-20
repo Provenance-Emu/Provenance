@@ -93,4 +93,8 @@ __attribute__((objc_direct_members))
     [self setLength:buffer.length];
 }
 
+- (BufferSize)availableBytes {
+    return [self availableBytesForReading];
+}
+
 @end
