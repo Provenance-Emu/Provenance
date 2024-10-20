@@ -191,7 +191,7 @@ public final class PVGameLibraryUpdatesController {
         for await event in eventStream {
             switch event {
             case .finished(let md5, _):
-                await addGameToSpotlight(md5: md5, spotlightIndex: spotlightIndex, database: database)
+                addGameToSpotlight(md5: md5, spotlightIndex: spotlightIndex, database: database)
             case .completed:
                 break
             }
@@ -203,36 +203,28 @@ public final class PVGameLibraryUpdatesController {
     }
 
     /// Assitant for Spotlight indexing
-    private func addGameToSpotlight(md5: String, spotlightIndex: CSSearchableIndex, database: RomDatabase) async {
+    private func addGameToSpotlight(md5: String, spotlightIndex: CSSearchableIndex, database: RomDatabase) {
         do {
-            let game = try await withCheckedThrowingContinuation { continuation in
-                DispatchQueue.main.async {
-                    do {
-                        let realm = try Realm()
-                        if let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
-                            // Create a detached copy of the game object
-                            let detachedGame = game.detached()
-                            continuation.resume(returning: detachedGame)
-                        } else {
-                            continuation.resume(throwing: NSError(domain: "GameNotFound", code: 404, userInfo: nil))
-                        }
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
+            let realm = try Realm()
+            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
+                DLOG("No game found for MD5: \(md5)")
+                return
+            }
+            
+            // Create a detached copy of the game object
+            let detachedGame = game.detached()
+
+            let item = CSSearchableItem(uniqueIdentifier: detachedGame.spotlightUniqueIdentifier,
+                                        domainIdentifier: "org.provenance-emu.game",
+                                        attributeSet: detachedGame.spotlightContentSet)
+
+            spotlightIndex.indexSearchableItems([item]) { error in
+                if let error = error {
+                    ELOG("Error indexing game (MD5: \(md5)): \(error)")
                 }
             }
-
-            let item = CSSearchableItem(uniqueIdentifier: game.spotlightUniqueIdentifier,
-                                        domainIdentifier: "org.provenance-emu.game",
-                                        attributeSet: game.spotlightContentSet)
-
-            try await spotlightIndex.indexSearchableItems([item])
         } catch {
-            if (error as NSError).domain == "GameNotFound" {
-                DLOG("No game found for MD5: \(md5)")
-            } else {
-                ELOG("Error indexing game (MD5: \(md5)): \(error)")
-            }
+            ELOG("Error accessing Realm or indexing game (MD5: \(md5)): \(error)")
         }
     }
     #endif

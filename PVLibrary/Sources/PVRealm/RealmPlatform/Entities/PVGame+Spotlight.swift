@@ -29,7 +29,7 @@ public extension PVGame {
         return file.url
     }}
 
-    #if os(iOS)
+#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
     var spotlightContentSet: CSSearchableItemAttributeSet {
             let systemName = self.systemName
 
@@ -72,7 +72,9 @@ public extension PVGame {
 
             //            contentSet.authorNames             = [data.authorName]
             // Could generate small thumbnail here
-            if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
+            if let p = pathOfCachedImage?.path,
+               let t = UIImage(contentsOfFile: p),
+               let s = t.scaledImage(withMaxResolution: 270) {
                 contentSet.thumbnailData = s.jpegData(compressionQuality: 0.85)
             }
             return contentSet
@@ -110,7 +112,8 @@ public extension PVGame {
         return activity
     }
 
-    // Don't want to have to import GameLibraryConfiguration in Spotlight extension so copying this required code to map id to short name
+    // Don't want to have to import GameLibraryConfiguration in Spotlight
+    // extension so copying this required code to map id to short name
     private var systemName: String? {
         return system.name
     }
