@@ -105,7 +105,6 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         return message
     }
 
-    public
     func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?) {
         // Start Webserver
         // Check to see if we are connected to WiFi. Cannot continue otherwise.

@@ -9,4 +9,7 @@ public enum GameImporterError: Error, Sendable {
     case couldNotCalculateMD5
     case romAlreadyExistsInDatabase
     case noSystemMatched
+    case unsupportedSystem
+    case failedToMoveCDROM(Error)
+    case failedToMoveROM(Error)
 }

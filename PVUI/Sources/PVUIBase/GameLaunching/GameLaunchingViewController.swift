@@ -49,7 +49,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
     //MARK: Default protocol implementation `GameLaunchingViewController`
     @MainActor
-    public
+    
     func canLoad(_ game: PVGame) async throws {
         guard let system = game.system else {
             throw GameLaunchingError.systemNotFound
@@ -59,16 +59,16 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
     @MainActor
-    public
+    
     func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
         
         @ThreadSafe var game: PVGame! = game
         @ThreadSafe var core = core
         @ThreadSafe var saveState = saveState
         
-        guard await !(presentedViewController is PVEmulatorViewController) else {
-            let currentGameVC = await presentedViewController as! PVEmulatorViewController
-            displayAndLogError(withTitle: "Cannot open new game", message: "A game is already running the game \(await currentGameVC.game.title).")
+        guard !(presentedViewController is PVEmulatorViewController) else {
+            let currentGameVC = presentedViewController as! PVEmulatorViewController
+            displayAndLogError(withTitle: "Cannot open new game", message: "A game is already running the game \(currentGameVC.game.title).")
             return
         }
 
@@ -156,7 +156,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                 if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID,
                     let chosenCore = cores.first(where: { $0.identifier == userSelecion }) {
                     ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
-                    let presentingView = await self.view
+                    let presentingView = self.view
                     Task { @MainActor in
                         await presentEMU(withCore: chosenCore, forGame: game, source: sender as? UIView ?? presentingView)
                     }
@@ -170,7 +170,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                     displayAndLogError(withTitle: "Cannot open game", message: "No core found.")
                     return
                 }
-                let presentingView = await self.view
+                let presentingView = self.view
                 @ThreadSafe var core = core
                 @ThreadSafe var theadsafeCore = game
                 @ThreadSafe var saveState = saveState
@@ -185,14 +185,14 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
         } catch let GameLaunchingError.missingBIOSes(missingBIOSes) {
             // Create missing BIOS directory to help user out
-            await PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
+            PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
 
             let missingFilesString = missingBIOSes.joined(separator: "\n")
             let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
 
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
             #if os(iOS)
-            let guideAction = await UIAlertAction(title: "Guide", style: .default, handler: { _ in
+            let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
                 Task {@MainActor in
                     UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
                 }
@@ -211,7 +211,7 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
     @MainActor
-    public
+    
     func openSaveState(_ saveState: PVSaveState) async {
         
         if let gameVC = presentedViewController as? PVEmulatorViewController {
@@ -240,7 +240,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
     }
     
-    public
+    
     func updateRecentGames(_ game: PVGame) {
         let database = RomDatabase.sharedInstance
         database.refresh()
@@ -290,7 +290,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
     }
     
-    public
+    
     func presentCoreSelection(forGame game: PVGame, sender: Any?) {
         guard let system = game.system else {
             ELOG("No system for game \(game.title)")
@@ -413,7 +413,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         } catch {
             try? FileManager.default.createDirectory(at: system.biosDirectory, withIntermediateDirectories: true, attributes: nil)
             let biosFiles = await biosEntries.toArray().asyncMap {
-                return await self.getExpectedFilename($0.asDomain())
+                return self.getExpectedFilename($0.asDomain())
             }.joined(separator: ", ")
 
             let documentsPath = URL.documentsPath.path
@@ -429,10 +429,10 @@ extension GameLaunchingViewController where Self: UIViewController {
         var biosPathContentsMD5Cache: [String: String]?
 
         var missingBIOSES = [String]()
-        var entries = await biosEntries.toArray().asyncMap({ await $0.asDomain() })
+        var entries = await biosEntries.toArray().asyncMap({ $0.asDomain() })
         // Search for additional conditional bios requirements stored as JSON file
-        if await FileManager.default.fileExists(atPath: system.biosDirectory.appendingPathComponent("requirements.json").path) {
-            let additionalBios=try await LibrarySerializer.retrieve(system.biosDirectory.appendingPathComponent("requirements.json"), as: [String:[String:Int]].self)
+        if FileManager.default.fileExists(atPath: system.biosDirectory.appendingPathComponent("requirements.json").path) {
+            let additionalBios = try LibrarySerializer.retrieve(system.biosDirectory.appendingPathComponent("requirements.json"), as: [String:[String:Int]].self)
             await additionalBios.keys.concurrentForEach({
                 file in
                 if let biosInfo = additionalBios[file],
@@ -440,7 +440,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                    let size = biosInfo[md5] {
                     let bios = PVBIOS(withSystem: system, descriptionText: file, expectedMD5: md5, expectedSize: size, expectedFilename: file)
                     bios.optional = false
-                    await entries.append(bios.asDomain())
+                    entries.append(bios.asDomain())
                 }
             })
         }

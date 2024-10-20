@@ -215,14 +215,16 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             await gameImporter.initSystems()
             database.reloadCache()
             
-            let libraryUpdatesController = await PVGameLibraryUpdatesController(gameImporter: gameImporter)
-#if os(iOS) || os(macOS)
-            libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: self.disposeBag)
-#endif
+            let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
 
             // Handle refreshing library
             self._initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
             self.window!.makeKeyAndVisible()
+#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+            Task.detached {
+                await libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
+            }
+#endif
         }
     }
     

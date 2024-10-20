@@ -484,7 +484,6 @@ static void mednafen_init(MednafenGameCoreBridge* current)
 //        free(inputBuffer[i]);
 //    }
     
-    
     if (_current == self) {
         _current = nil;
         delete backBufferSurf;

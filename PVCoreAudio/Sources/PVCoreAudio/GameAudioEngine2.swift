@@ -110,6 +110,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     
     public func pauseAudio() {
         engine.pause()
+        engine.reset()
         isRunning = false
     }
     

@@ -104,7 +104,7 @@ public extension PVEmulatorConfiguration {
      and iterate those and create SystemConfiguration structions based off of parsing them
      instead of key / value matching a single plist
      */
-    fileprivate static var systems: [PVSystem] {
+    static var systems: [PVSystem] {
         return Array(RomDatabase.sharedInstance.all(PVSystem.self))
     }
 
@@ -154,6 +154,16 @@ public extension PVEmulatorConfiguration {
 // MARK: - System queries
 
 public extension PVEmulatorConfiguration {
+    
+    
+    @objc
+    class func system(forDatabaseID databaseID : Int) -> PVSystem? {
+        let systemID = systemID(forDatabaseID: databaseID)
+        let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
+        return system
+    }
+    
+    
     @objc
     class func system(forIdentifier systemID: String) -> PVSystem? {
         let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)

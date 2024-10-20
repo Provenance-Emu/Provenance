@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 9/8/24.
 //
 
-
 public enum Extensions: String, CaseIterable {
     
     case sevenZip = "7z"
@@ -39,17 +38,17 @@ public enum Extensions: String, CaseIterable {
     case bin = "bin"
     case sub = "sub"
     
-    public static var _archiveExtensions: [Extensions] { [.sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip] }
-    public static var _artworkExtensions: [Extensions] { [.png, .jpg, .jpeg] }
-    public static var _discImageExtensions: [Extensions] { [.ccd, .img, .iso, .chd, .img] }
-    public static var _playlistExtensions: [Extensions] { [.m3u, .cue] }
-    public static var _specialExtensions: [Extensions] { [.svs, .mcr, .plist, .ccd, .sub, .bin] }
+    private static let _archiveExtensions: Set<Extensions> = [.sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip]
+    private static let _artworkExtensions: Set<Extensions> = [.png, .jpg, .jpeg]
+    private static let _discImageExtensions: Set<Extensions> = [.ccd, .img, .iso, .chd]
+    private static let _playlistExtensions: Set<Extensions> = [.m3u, .cue]
+    private static let _specialExtensions: Set<Extensions> = [.svs, .mcr, .plist, .ccd, .sub, .bin]
     
-    public static let archiveExtensions: [String] = _archiveExtensions.map { $0.rawValue }
-    public static let artworkExtensions: [String] = _artworkExtensions.map { $0.rawValue }
-    public static let discImageExtensions: [String] = _discImageExtensions.map { $0.rawValue }
-    public static let playlistExtensions: [String] = _playlistExtensions.map { $0.rawValue }
-    public static let specialExtensions: [String] = _specialExtensions.map { $0.rawValue }
+    public static let archiveExtensions: Set<String> = Set(_archiveExtensions.map { $0.rawValue })
+    public static let artworkExtensions: Set<String> = Set(_artworkExtensions.map { $0.rawValue })
+    public static let discImageExtensions: Set<String> = Set(_discImageExtensions.map { $0.rawValue })
+    public static let playlistExtensions: Set<String> = Set(_playlistExtensions.map { $0.rawValue })
+    public static let specialExtensions: Set<String> = Set(_specialExtensions.map { $0.rawValue })
     
-    public static let allKnownExtensions: [String] = archiveExtensions + artworkExtensions + discImageExtensions + playlistExtensions + specialExtensions
+    public static let allKnownExtensions: Set<String> = archiveExtensions.union(artworkExtensions).union(discImageExtensions).union(playlistExtensions).union(specialExtensions)
 }

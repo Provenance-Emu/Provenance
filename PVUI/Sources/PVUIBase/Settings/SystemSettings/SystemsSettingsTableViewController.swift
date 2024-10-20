@@ -19,7 +19,7 @@ public final class SystemsSettingsTableViewController: QuickTableViewController 
     func generateViewModels() throws {
 
         let systems = RomDatabase.sharedInstance.all(PVSystem.self).sorted(byKeyPath: "identifier")
-        let systemsModels = try systems.map { SystemOverviewViewModel(withSystem: $0) }
+        let systemsModels = systems.map { SystemOverviewViewModel(withSystem: $0) }
 
         tableContents = systemsModels
             .filter {
@@ -80,7 +80,7 @@ public final class SystemsSettingsTableViewController: QuickTableViewController 
 
                             var accessoryType: UITableViewCell.AccessoryType = .none
 
-                            let biosStatus = await Task {await (bios as! BIOSStatusProvider).status}.value
+                            let biosStatus = await Task {(bios as! BIOSStatusProvider).status}.value
 
                             switch biosStatus.state {
                             case .match:
@@ -139,7 +139,7 @@ public final class SystemsSettingsTableViewController: QuickTableViewController 
         systemsToken = RomDatabase.sharedInstance.realm.objects(PVSystem.self).observe { _ in
             Task {
                 do {
-                    try await self.generateViewModels()
+                    try self.generateViewModels()
                     self.tableView.reloadData()
                 } catch {
                     ELOG("Error making systems view mdoels: \(error.localizedDescription)")

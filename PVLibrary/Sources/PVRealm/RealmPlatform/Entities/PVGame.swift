@@ -114,7 +114,7 @@ public extension PVGame {
 public extension PVGame {
     var isCD: Bool {
         let ext = (romPath as NSString).pathExtension
-        let exts = Extensions.discImageExtensions + Extensions.playlistExtensions
+        let exts = Extensions.discImageExtensions.union(Extensions.playlistExtensions)
         return exts.contains(ext.lowercased())
     }
 

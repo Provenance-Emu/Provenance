@@ -26,7 +26,7 @@ import MetalKit
      * this will return the FBO which game pixels eventually go to. This
      * allows porting of cores that overwrite GL_DRAW_FRAMEBUFFER.
      */
-    @objc optional var presentationFramebuffer: AnyObject? { get }
+    @objc optional var presentationFramebuffer: AnyObject? { get } // GLuint
 
     // Optional property
 //#if USE_METAL

@@ -18,7 +18,7 @@ class SearchBar: NSObject, ObservableObject {
 
     #if os(tvOS)
     // Cannot be nil on tvOS,
-    required init(searchResultsController searchResultsController: UIViewController) {
+    required init(searchResultsController: UIViewController) {
         searchController = UISearchController(searchResultsController: searchResultsController)
 
         super.init()
@@ -27,7 +27,7 @@ class SearchBar: NSObject, ObservableObject {
         self.searchController.searchResultsUpdater = self
     }
     #else
-    required init(searchResultsController searchResultsController: UIViewController? = nil) {
+    required init(searchResultsController: UIViewController? = nil) {
         searchController = UISearchController(searchResultsController: searchResultsController)
 
         super.init()

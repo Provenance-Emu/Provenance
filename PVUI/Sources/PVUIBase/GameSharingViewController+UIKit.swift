@@ -49,20 +49,20 @@ public extension GameSharingViewController where Self: UIViewController {
         // - Add save states and images
         // - Use symlinks to images so we can modify the filenames
         var files = await game.saveStates.async.reduce([URL](), { (arr, save) -> [URL] in
-            guard await save.file.online else {
+            guard save.file.online else {
                 WLOG("Save file is missing. Can't add to zip")
                 return arr
             }
             var arr = arr
-            await arr.append(save.file.url)
-            if let image = save.image, await image.online {
+            arr.append(save.file.url)
+            if let image = save.image, image.online {
                 // Construct destination url "{SAVEFILE}.{EXT}"
-                let destination = await tempDirURL.appendingPathComponent(save.file.fileNameWithoutExtension + "." + image.url.pathExtension, isDirectory: false)
+                let destination = tempDirURL.appendingPathComponent(save.file.fileNameWithoutExtension + "." + image.url.pathExtension, isDirectory: false)
                 if FileManager.default.fileExists(atPath: destination.path) {
                     arr.append(destination)
                 } else {
                     do {
-                        try await FileManager.default.createSymbolicLink(at: destination, withDestinationURL: image.url)
+                        try FileManager.default.createSymbolicLink(at: destination, withDestinationURL: image.url)
                         arr.append(destination)
                     } catch {
                         ELOG("Failed to make symlink: " + error.localizedDescription)
@@ -123,14 +123,14 @@ public extension GameSharingViewController where Self: UIViewController {
         
         for screenShot in game.screenShots {
             let dateString = PVEmulatorConfiguration.string(fromDate: screenShot.createdDate)
-            await addImageFromURL(screenShot.url, "-Screenshot " + dateString)
+            addImageFromURL(screenShot.url, "-Screenshot " + dateString)
         }
         
         // - Add main game file
-        await files.append(game.file.url)
+        files.append(game.file.url)
         
         // Check for and add battery saves
-        if await FileManager.default.fileExists(atPath: game.batterSavesPath.path), let batterySaves = try? await FileManager.default.contentsOfDirectory(at: game.batterSavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !batterySaves.isEmpty {
+        if FileManager.default.fileExists(atPath: game.batterSavesPath.path), let batterySaves = try? await FileManager.default.contentsOfDirectory(at: game.batterSavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !batterySaves.isEmpty {
             ILOG("Adding \(batterySaves.count) battery saves to zip")
             files.append(contentsOf: batterySaves)
         }
@@ -141,7 +141,7 @@ public extension GameSharingViewController where Self: UIViewController {
         Task { @MainActor in
             
 #if canImport(MBProgressHUD)
-            let hud = await MBProgressHUD.showAdded(to: view, animated: true)
+            let hud = MBProgressHUD.showAdded(to: view, animated: true)
             hud.isUserInteractionEnabled = false
             hud.mode = .indeterminate
             hud.label.text = "Creating ZIP"

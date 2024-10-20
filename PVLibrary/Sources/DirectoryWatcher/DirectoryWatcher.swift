@@ -24,11 +24,26 @@ extension FileManager {
     }
 }
 
-public enum ExtractionStatus {
+public enum ExtractionStatus: Equatable {
     case idle
     case started(path: URL)
     case updated(path: URL)
     case completed(paths: [URL])
+
+    public static func == (lhs: ExtractionStatus, rhs: ExtractionStatus) -> Bool {
+        switch (lhs, rhs) {
+        case (.idle, .idle):
+            return true
+        case let (.started(lhsPath), .started(rhsPath)):
+            return lhsPath == rhsPath
+        case let (.updated(lhsPath), .updated(rhsPath)):
+            return lhsPath == rhsPath
+        case let (.completed(lhsPaths), .completed(rhsPaths)):
+            return lhsPaths == rhsPaths
+        default:
+            return false
+        }
+    }
 }
 
 public extension NSNotification.Name {
@@ -41,9 +56,8 @@ public final class DirectoryWatcher {
 
     private var dispatchSource: DispatchSourceFileSystemObject?
     private let serialQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
+    private var fileWatchers: [URL: DispatchSourceFileSystemObject] = [:]
 
-    private var previousContents: Set<URL> = []
-    private var unzippedFiles: [URL] = []
 
     private let extractors: [ArchiveType: ArchiveExtractor] = [
         .zip: ZipExtractor(),
@@ -53,92 +67,133 @@ public final class DirectoryWatcher {
         .gzip: GZipExtractor()
     ]
 
+    public var extractionProgress: Double = 0
+
     public var extractionStatus: ExtractionStatus = .idle
+    @ObservationIgnored private var statusContinuation: AsyncStream<ExtractionStatus>.Continuation?
+
+    public var extractionStatusSequence: AsyncStream<ExtractionStatus> {
+        AsyncStream { continuation in
+            statusContinuation = continuation
+            continuation.onTermination = { @Sendable _ in
+                self.statusContinuation = nil
+            }
+        }
+    }
 
     public init(directory: URL) {
         self.watchedDirectory = directory
-
         createDirectoryIfNeeded()
         processExistingArchives()
+        delayedStartMonitoring()
     }
 
     public func startMonitoring() throws {
-        DLOG("Start Monitoring \(watchedDirectory.path)")
         stopMonitoring()
-
         let fileDescriptor = open(watchedDirectory.path, O_EVTONLY)
+        guard fileDescriptor >= 0 else { throw NSError(domain: POSIXError.errorDomain, code: Int(errno)) }
 
         dispatchSource = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: .write, queue: serialQueue)
-
         dispatchSource?.setEventHandler { [weak self] in
-            do {
-                try self?.handleFileSystemEvent()
-            } catch {
-                ELOG("Error handling file system event: \(error)")
-            }
+            self?.handleFileSystemEvent()
         }
-
         dispatchSource?.setCancelHandler {
             close(fileDescriptor)
         }
-
         dispatchSource?.resume()
-        try triggerInitialImport()
     }
-
 
     public func stopMonitoring() {
-        DLOG("Stop Monitoring \(watchedDirectory.path)")
         dispatchSource?.cancel()
         dispatchSource = nil
+        fileWatchers.keys.forEach { stopWatchingFile(at: $0) }
     }
 
-    static var handlerQueue: DispatchQueue {
-        .global(qos: .utility)
-    }
 
     public func extractArchive(at filePath: URL) async throws {
+        stopMonitoring() // Stop monitoring to avoid interference
+
+        defer {
+            Task {
+                try? await delay(2) {
+                    try self.startMonitoring()
+                }
+            }
+        }
+
         guard !filePath.path.contains("MACOSX"),
               FileManager.default.fileExists(atPath: filePath.path) else {
+            DLOG("Invalid file path or file doesn't exist: \(filePath.path)")
             return
         }
 
         guard let archiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased()),
               let extractor = extractors[archiveType] else {
-            try startMonitoring()
+            DLOG("Unsupported archive type or no extractor available for: \(filePath.pathExtension)")
             return
         }
 
-        extractionStatus = .started(path: filePath)
-
         do {
+            updateExtractionStatus(.started(path: filePath))
+
             var extractedFiles: [URL] = []
-            for try await extractedFile in extractor.extract(at: filePath, to: watchedDirectory) {
+            for try await extractedFile in extractor.extract(at: filePath, to: watchedDirectory) { progress in
+                DLOG("Extraction progress: \(Int(progress * 100))%")
+            } {
                 extractedFiles.append(extractedFile)
-                extractionStatus = .updated(path: extractedFile)
+                updateExtractionStatus(.updated(path: extractedFile))
             }
 
             try await FileManager.default.removeItem(at: filePath)
-
-            extractionStatus = .completed(paths: extractedFiles)
-
-            unzippedFiles.removeAll()
-            delayedStartMonitoring()
+            updateExtractionStatus(.completed(paths: extractedFiles))
         } catch {
-            ELOG("Extraction error: \(error.localizedDescription)")
-            DirectoryWatcher.handlerQueue.async {
-                NotificationCenter.default.post(name: .PVArchiveInflationFailed, object: self)
-            }
-            try startMonitoring()
+            ELOG("Error during archive extraction: \(error.localizedDescription)")
+            // Handle the error appropriately, maybe update the UI or retry the operation
         }
     }
 
+    private func updateExtractionStatus(_ newStatus: ExtractionStatus) {
+        extractionStatus = newStatus
+        statusContinuation?.yield(newStatus)
+    }
 
     private func delayedStartMonitoring() {
         Task {
             try await delay(2) {
                 try self.startMonitoring()
             }
+        }
+    }
+
+    private func stopWatchingFile(at path: URL) {
+        if let watcher = fileWatchers[path] {
+            watcher.cancel()
+            fileWatchers[path] = nil
+            DLOG("Stopped watching file: \(path.lastPathComponent)")
+        }
+    }
+
+    private func cleanupNonexistentFileWatchers() {
+        for path in fileWatchers.keys {
+            if !FileManager.default.fileExists(atPath: path.path) {
+                stopWatchingFile(at: path)
+            }
+        }
+    }
+}
+
+public extension DirectoryWatcher {
+
+    public func isArchive(_ url: URL) -> Bool {
+//        // Method 1: Using ArchiveType
+//        if let fileExtension = url.pathExtension.lowercased() as String?,
+//           let _ = ArchiveType(rawValue: fileExtension) {
+//            return true
+//        }
+
+        // Method 2: Using installed extractors
+        return extractors.keys.contains { archiveType in
+            url.pathExtension.lowercased() == archiveType.rawValue
         }
     }
 }
@@ -166,17 +221,21 @@ fileprivate extension DirectoryWatcher {
         }
     }
 
-    func handleFileSystemEvent() throws {
-        let contents = try FileManager.default.contentsOfDirectory(at: watchedDirectory,
-                                                                   includingPropertiesForKeys: nil,
-                                                                   options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
-        let newContents = Set(contents).subtracting(previousContents)
+    private func handleFileSystemEvent() {
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(at: watchedDirectory,
+                                                                       includingPropertiesForKeys: nil,
+                                                                       options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+            contents.filter(isValidFile).forEach { file in
+                if !isWatchingFile(at: file) {
+                    watchFile(at: file)
+                }
+            }
+            cleanupNonexistentFileWatchers()
 
-        newContents.filter( {isValidFile($0)} ).forEach { file in
-            watchFile(at: file)
+        } catch {
+            ELOG("Error handling file system event: \(error.localizedDescription)")
         }
-
-        previousContents = Set(contents)
     }
 
     func isValidFile(_ url: URL) -> Bool {
@@ -190,65 +249,97 @@ fileprivate extension DirectoryWatcher {
         try FileManager.default.removeItem(at: triggerPath)
     }
 
-    func watchFile(at path: URL) {
-        DLOG("Start watching \(path.lastPathComponent)")
-
-        guard let attributes = try? FileManager.default.attributesOfItem(atPath: path.path),
-              let filesize = attributes[.size] as? UInt64 else {
-            ELOG("Error getting file attributes for \(path.path)")
+    private func watchFile(at path: URL) {
+        let fileDescriptor = open(path.path, O_EVTONLY)
+        guard fileDescriptor != -1 else {
+            ELOG("Error opening file for watching: \(path.path), error: \(String(cString: strerror(errno)))")
             return
         }
 
-        let userInfo: [String: Any] = ["path": path, "filesize": filesize, "wasZeroBefore": false]
-        DispatchQueue.main.async { [weak self] in
-            Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { [weak self] timer in
-                self?.checkFileProgress(timer)
-            }
+        let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: [.write, .extend], queue: serialQueue)
+        source.setEventHandler { [weak self] in
+            self?.checkFileProgress(at: path)
         }
+        source.setCancelHandler {
+            close(fileDescriptor)
+        }
+        source.resume()
+        fileWatchers[path] = source
     }
 
-    @objc private func checkFileProgress(_ timer: Timer) {
-        guard let userInfo = timer.userInfo as? [String: Any],
-              let path = userInfo["path"] as? URL,
-              let previousFilesize = userInfo["filesize"] as? UInt64,
-              FileManager.default.fileExists(atPath: path.path),
-              let attributes = try? FileManager.default.attributesOfItem(atPath: path.path),
-              let currentFilesize = attributes[.size] as? UInt64 else {
+    private func checkFileProgress(at path: URL) {
+        guard let attributes = try? FileManager.default.attributesOfItem(atPath: path.path),
+              let filesize = attributes[.size] as? UInt64 else {
             return
         }
 
-        let wasZeroBefore = userInfo["wasZeroBefore"] as? Bool ?? false
-        let sizeHasntChanged = previousFilesize == currentFilesize
-
-        if sizeHasntChanged && (currentFilesize > 0 || wasZeroBefore) {
+        if filesize > 0 && !isFileChanging(at: path) {
             handleCompletedFile(at: path)
-        } else {
-            scheduleNextCheck(for: path, currentFilesize: currentFilesize)
         }
     }
 
     private func handleCompletedFile(at path: URL) {
-        if Extensions.archiveExtensions.contains(path.pathExtension) {
-            serialQueue.async {
-                Task {
-                    try await self.extractArchive(at: path)
-                }
+        stopWatchingFile(at: path)
+
+        if Extensions.archiveExtensions.contains(path.pathExtension.lowercased()) {
+            Task {
+                try await extractArchive(at: path)
             }
         } else {
-            DirectoryWatcher.handlerQueue.async {
-                self.extractionStatus = .completed(paths: [path])
-            }
+            updateExtractionStatus(.completed(paths: [path]))
         }
     }
 
-    private func scheduleNextCheck(for path: URL, currentFilesize: UInt64) {
-        let newUserInfo: [String: Any] = [
-            "path": path,
-            "filesize": currentFilesize,
-            "wasZeroBefore": currentFilesize == 0
-        ]
-        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(checkFileProgress(_:)), userInfo: newUserInfo, repeats: false)
+    private func isFileChanging(at path: URL) -> Bool {
+        // Wait a short time and check if the file size has changed
+        Thread.sleep(forTimeInterval: 0.5)
+        guard let newAttributes = try? FileManager.default.attributesOfItem(atPath: path.path),
+              let newFilesize = newAttributes[.size] as? UInt64 else {
+            return false
+        }
+        return newFilesize != (try? FileManager.default.attributesOfItem(atPath: path.path)[.size] as? UInt64)
     }
+
+    private func isWatchingFile(at path: URL) -> Bool {
+        return fileWatchers[path] != nil
+    }
+}
+
+
+extension DirectoryWatcher {
+    public func handleImportedFile(at url: URL) {
+        guard url.startAccessingSecurityScopedResource() else {
+            ELOG("Failed to access security scoped resource")
+            return
+        }
+
+        defer {
+            url.stopAccessingSecurityScopedResource()
+        }
+
+        let coordinator = NSFileCoordinator()
+        var error: NSError?
+
+        coordinator.coordinate(readingItemAt: url, options: .forUploading, error: &error) { (newURL) in
+            do {
+                let destinationURL = watchedDirectory.appendingPathComponent(newURL.lastPathComponent)
+                try FileManager.default.moveItem(at: newURL, to: destinationURL)
+
+                Task {
+                    // Delay starting the extraction to allow the file system to settle
+                    try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+                    try await self.extractArchive(at: destinationURL)
+                }
+            } catch {
+                ELOG("Error handling imported file: \(error.localizedDescription)")
+            }
+        }
+
+        if let error = error {
+            ELOG("File coordination error: \(error.localizedDescription)")
+        }
+    }
+
 }
 
 // MARK: - Utility Functions
@@ -275,6 +366,26 @@ struct TimerSequence: AsyncSequence {
 
     func makeAsyncIterator() -> AsyncIterator {
         AsyncIterator(interval: interval)
+    }
+}
+
+public extension DirectoryWatcher {
+    public func extractedFilesStream(at path: URL) -> AsyncStream<[URL]> {
+        AsyncStream { continuation in
+            Task {
+                for await status in self.extractionStatusSequence {
+                    switch status {
+                    case .completed(let paths):
+                        continuation.yield(paths)
+                    case .updated(let path):
+                        continuation.yield([path])
+                    case .started, .idle:
+                        break
+                    }
+                }
+                continuation.finish()
+            }
+        }
     }
 }
 
