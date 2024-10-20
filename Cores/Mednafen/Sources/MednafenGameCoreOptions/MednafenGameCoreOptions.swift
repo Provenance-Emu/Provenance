@@ -186,7 +186,7 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
         .bool(.init(
             title: "Cache CD in memory",
             description: "Reads the entire CD image(s) into memory at startup(which will cause a small delay). Can help obviate emulation hiccups due to emulated CD access. May cause more harm than good on low memory systems.",
-            requiresRestart: true), defaultValue: false)
+            requiresRestart: true), defaultValue: true)
     }
 
     // MARK: PCE

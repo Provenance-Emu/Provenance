@@ -35,7 +35,7 @@ public protocol GameLaunchingViewController: AnyObject {
 }
 
 extension GameLaunchingViewController {
-    func openSaveState(withID objectId: String) async {
+    @MainActor func openSaveState(withID objectId: String) async {
         let realm = RomDatabase.sharedInstance
         if let object = realm.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: objectId) {
             @ThreadSafe var threadObject = object
@@ -210,6 +210,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
     }
 
+    @MainActor
     public
     func openSaveState(_ saveState: PVSaveState) async {
         
