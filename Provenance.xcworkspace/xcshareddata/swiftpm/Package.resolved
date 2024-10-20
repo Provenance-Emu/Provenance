@@ -164,6 +164,15 @@
         }
       },
       {
+        "package": "SiriusRating",
+        "repositoryURL": "https://github.com/theappcapital/SiriusRating-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
+          "version": "1.0.8"
+        }
+      },
+      {
         "package": "SQLite.swift",
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
         "state": {
