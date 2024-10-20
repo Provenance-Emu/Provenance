@@ -35,6 +35,12 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     internal var window: UIWindow?
     var shortcutItemGame: PVGame?
     let disposeBag = DisposeBag()
+    
+    var isAppStore: Bool {
+        // Test if Info.plist has PVAppType containing appstore
+        guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
+        return appType.lowercased().contains("appstore")
+    }
 
     #if os(iOS) && !APP_STORE && canImport(PVJIT)
     weak var jitScreenDelegate: JitScreenDelegate?
@@ -159,6 +165,10 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                     self.window?.rootViewController = UIViewController()
                     self.window?.makeKeyAndVisible()
                     self.window?.rootViewController?.present(alert, animated: true, completion: nil)
+                    
+                    if self.isAppStore {
+                        self._initAppRating()
+                    }
                 }
             }
         }
@@ -249,6 +259,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                 print("changed: ", ThemeManager.shared.currentTheme)
                 Task.detached { @MainActor in
                     self._initUITheme()
+                    if isAppStore {
+                        appRatingSignifigantEvent()
+                    }
                 }
             }
         } else {
@@ -265,6 +278,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                 }
             }
         }
+        if isAppStore {
+            appRatingSignifigantEvent()
+        }
     }
 
     func pauseCore(_ application: PVApplication) {
@@ -273,6 +289,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                 ILOG("PVAppDelegate: Pausing Core\n")
                 core.setPauseEmulation(true)
             }
+        }
+        if isAppStore {
+            appRatingSignifigantEvent()
         }
     }
 

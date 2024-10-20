@@ -56,6 +56,9 @@ extension Array<URLQueryItem> {
 
 extension PVAppDelegate {
     func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        if isAppStore {
+            appRatingSignifigantEvent()
+        }
 #if os(tvOS)
         importFile(atURL: url)
         return true
@@ -84,6 +87,11 @@ extension PVAppDelegate {
 
 #if os(iOS) || os(macOS)
     func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        defer {
+            if isAppStore {
+                appRatingSignifigantEvent()
+            }
+        }
         if shortcutItem.type == "kRecentGameShortcut",
            let md5Value = shortcutItem.userInfo?["PVGameHash"] as? String,
            let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
@@ -96,6 +104,11 @@ extension PVAppDelegate {
 #endif
 
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        defer {
+            if isAppStore {
+                appRatingSignifigantEvent()
+            }
+        }
         // Spotlight search click-through
 #if os(iOS) || os(macOS)
         if userActivity.activityType == CSSearchableItemActionType {
