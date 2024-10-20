@@ -3,7 +3,8 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] Conflicts folder is weird
+- [ ] Swift UI long press on roms menu missing actions {artwork, sharing...}
+- [X] Conflicts folder is weird
 - [X] SwiftUI not seeing conflicts
 - [X] Copy the framework loader from old branch, fix it too!
 - [X] emuThreeDS and other metal based cores have wrong layout contraints
@@ -19,16 +20,18 @@ _My personal TODO notes_
 
 ## Major bugs
 
-- [ ] Jaguar not working in Metal mode (dimensions off slightly?)
-- [ ] Stella Metal is right but GLES is blank
-- [ ] Stella no buttons work
-- [ ] CrabEMU no buttons work
 - [ ] Intellivision (PVBliss) audio crashes on button press
-- [ ] Mednafen GB crashing
+- [ ] Intellivision video is glitched
+- [ ] SuperVision video dimensions wrong
 - [ ] Odyssey2 needs a way to enter game number 1,2 (3,4)?
-- [ ] Zip files cause conflicts, not always handled correctly
-- [ ] Vectrex needs PVVecXCore:LibRetroCore (or rollback to older code?)
-- [ ] ZX Spectrum needs PVLibRetroCore (or rollback to older code?)
+- [X] CrabEMU (Genesis) no buttons work
+- [X] Mednafen GB crashing
+- [X] Vectrex needs PVVecXCore:LibRetroCore (or rollback to older code?)
+- [X] ZX Spectrum needs PVLibRetroCore (or rollback to older code?)
+- [X] Zip files cause conflicts, not always handled correctly
+- [X] Jaguar not working in Metal mode (dimensions off slightly?)
+- [X] Stella Metal is right but GLES is blank
+- [X] Stella no buttons work
 - [X] Game gear dimensions wrong
 - [X] Colicovision roms are blank screen
 - [X] iPad swiftui opening web server doesn't have a cgrect
@@ -42,23 +45,31 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] Spotlignt/extensions can't build with spm modules
 - [ ] Add Show recent saves on console itself
-- [ ] 3D0 crashes on load
-- [ ] 7Zip support not working
 - [ ] See if psx mednafen has more options
-- [X] Nes fix button layout
 - [ ] Short names are abreviations not shortname
 - [ ] Sega Master System short name showing as SMS
 - [ ] Mupen CoreOptions code is trash 
-- [ ] Test/fix CrabEMU save states
 - [ ] Opening roms from md5/siri search doesn't work
 - [ ] Swift UI should open on home and be scrollable to systems
 - [ ] Swift UI sort consoles by bits/brand/name/year order ascend/descend
-- [ ] Legacy UI removed collapsing systems
-- [ ] Swift UI long press on roms menu missing actions {artwork, sharing...}
 - [ ] Dolphin won't build due to stdint.h in extern C
+- [X] Nes fix button layout
+- [X] Test/fix CrabEMU save states
+- [X] Legacy UI removed collapsing systems
+- [X] 3D0 crashes on load
+- [X] 7Zip support not working
 
 ## Cores to translate
 
 - [ ] PVFreeIntV
 - [ ] PVfMSX
+
+## Provenance Plus
+
+- [ ] Add in-app purchase and screen
+- [ ] Add new logo
+- [ ] Add Shiragame
+- [ ] Finish themes
+- [ ] Add app rating with SiruisRating

@@ -59,6 +59,10 @@ extension PVRootViewController: PVRootDelegate {
     public func showUnderConstructionAlert() {
         self.presentMessage("Please try again in a future update.", title: "⚠️ Under Construction ⚠️", source: self.view)
     }
+
+    public func showMessage(_ message: String, title: String) {
+        self.presentMessage(message, title: title, source: self.view)
+    }
 }
 
 // MARK: - Methods from PVGameLibraryViewController
@@ -71,7 +75,7 @@ extension PVRootViewController {
 }
 
 extension PVRootViewController: WebServerActivatorController {
-    
+
 }
 
 #if canImport(SafariServices)

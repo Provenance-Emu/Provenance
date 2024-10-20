@@ -192,74 +192,79 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     private var converter: AudioConverterRef?
 
+    private var intermediateFormat: AVAudioFormat?
+
     private func updateSourceNode() {
+        DLOG("Entering updateSourceNode")
         if let src {
             engine.detach(src)
             self.src = nil
+            DLOG("Detached existing source node")
         }
 
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
         let originalSD = streamDescription
         let channelCount = originalSD.mChannelsPerFrame
 
-        // Always use 32-bit float as the intermediate format
-        var sd = AudioStreamBasicDescription(
-            mSampleRate: originalSD.mSampleRate,
-            mFormatID: kAudioFormatLinearPCM,
-            mFormatFlags: kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked,
-            mBytesPerPacket: 4 * channelCount,
-            mFramesPerPacket: 1,
-            mBytesPerFrame: 4 * channelCount,
-            mChannelsPerFrame: channelCount,
-            mBitsPerChannel: 32,
-            mReserved: 0
-        )
+        DLOG("Original stream description: \(describeAudioFormat(originalSD))")
+
+        // Create an intermediate 16-bit format for 8-bit audio
+        var sd = originalSD
+        if sd.mBitsPerChannel == 8 {
+            sd.mBitsPerChannel = 16
+            sd.mBytesPerPacket *= 2
+            sd.mBytesPerFrame *= 2
+            DLOG("Converting 8-bit to 16-bit format")
+        }
+        sd.mFormatID = kAudioFormatLinearPCM
+        sd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked
+
+        DLOG("Modified stream description: \(describeAudioFormat(sd))")
 
         guard let format = AVAudioFormat(streamDescription: &sd) else {
             ELOG("Failed to create AVAudioFormat from stream description")
             return
         }
 
-        src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, inputData in
-            guard let self = self else { return noErr }
+        intermediateFormat = format
+        DLOG("Created intermediate AVAudioFormat: \(format)")
 
-            let bytesPerFrame = originalSD.mBytesPerFrame
-            let bytesRequested = Int(frameCount) * Int(bytesPerFrame)
+        src = AVAudioSourceNode(format: format) { _, _, frameCount, audioBufferList -> OSStatus in
+            let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
+            for i in 0..<ablPointer.count {
+                var audioBuffer = ablPointer[i]
+                let bytesToRead = Int(frameCount) * Int(originalSD.mBytesPerFrame)
+                var bytesRead = 0
 
-            let tempBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bytesRequested)
-            defer { tempBuffer.deallocate() }
+                if originalSD.mBitsPerChannel == 8 {
+                    // Read 8-bit data into a temporary buffer
+                    let tempBuffer = UnsafeMutablePointer<Int8>.allocate(capacity: bytesToRead)
+                    defer { tempBuffer.deallocate() }
+                    bytesRead = read(tempBuffer, bytesToRead)
 
-            let bytesCopied = read(tempBuffer, bytesRequested)
-
-            let outputBuffer = inputData.pointee.mBuffers.mData!.assumingMemoryBound(to: Float32.self)
-            let framesToProcess = bytesCopied / Int(bytesPerFrame)
-
-            switch originalSD.mBitsPerChannel {
-            case 8:
-                for i in 0..<(framesToProcess * Int(channelCount)) {
-                    outputBuffer[i] = Float32(Int16(tempBuffer[i]) - 128) / 128.0
+                    // Convert 8-bit to 16-bit
+                    let output = audioBuffer.mData!.assumingMemoryBound(to: Int16.self)
+                    for j in 0..<bytesRead {
+                        output[j] = Int16(tempBuffer[j]) << 8
+                    }
+                    audioBuffer.mDataByteSize = UInt32(bytesRead * 2)
+                } else {
+                    bytesRead = read(audioBuffer.mData!, bytesToRead)
+                    audioBuffer.mDataByteSize = UInt32(bytesRead)
                 }
-            case 16:
-                let int16Buffer = tempBuffer.withMemoryRebound(to: Int16.self, capacity: framesToProcess * Int(channelCount)) { $0 }
-                for i in 0..<(framesToProcess * Int(channelCount)) {
-                    outputBuffer[i] = Float32(int16Buffer[i]) / 32768.0
-                }
-            case 32:
-                memcpy(outputBuffer, tempBuffer, bytesCopied)
-            default:
-                ELOG("Unsupported bit depth: \(originalSD.mBitsPerChannel)")
-                return kAudio_ParamError
+
+//                VLOG("Read \(bytesRead) bytes for buffer \(i)")
             }
-
-            inputData.pointee.mBuffers.mDataByteSize = UInt32(framesToProcess * 4 * Int(channelCount))
-            inputData.pointee.mBuffers.mNumberChannels = channelCount
-
             return noErr
         }
 
         if let src {
             engine.attach(src)
+            DLOG("Attached new source node")
+        } else {
+            ELOG("Failed to create source node")
         }
+        DLOG("Exiting updateSourceNode")
     }
 
     private func destroyNodes() {
@@ -272,29 +277,37 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     private var sampleRateConverter: AVAudioUnitVarispeed?
 
     private func connectNodes() {
-        guard let src else { fatalError("Expected src node") }
+        DLOG("Entering connectNodes")
+        guard let src else {
+            ELOG("Source node is nil")
+            fatalError("Expected src node")
+        }
         if isMonoOutput {
             updateMonoSetting()
+            DLOG("Updated mono setting")
         }
 
         let outputFormat = engine.outputNode.inputFormat(forBus: 0)
+        DLOG("Output format: \(outputFormat)")
 
-        // Try to connect with the original format
-        do {
-            try engine.connect(src, to: engine.mainMixerNode, format: renderFormat)
-        } catch {
-            ELOG("Failed to connect with original format: \(error.localizedDescription)")
-
-            // If that fails, try to connect with the output format
+        // Use the intermediate format for connection
+        if let intermediateFormat = intermediateFormat {
             do {
-                try engine.connect(src, to: engine.mainMixerNode, format: outputFormat)
+                DLOG("Attempting to connect with intermediate format: \(intermediateFormat)")
+                try engine.connect(src, to: engine.mainMixerNode, format: intermediateFormat)
+                DLOG("Successfully connected with intermediate format")
             } catch {
-                ELOG("Failed to connect with output format: \(error.localizedDescription)")
+                ELOG("Failed to connect with intermediate format: \(error.localizedDescription)")
                 return
             }
+        } else {
+            ELOG("Intermediate format is nil")
+            return
         }
 
         engine.mainMixerNode.outputVolume = volume
+        DLOG("Set main mixer node output volume to \(volume)")
+        DLOG("Exiting connectNodes")
     }
 
     private func updateSampleRateConversion() {
@@ -454,6 +467,19 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             engine.attach(sourceNode)
             engine.connect(sourceNode, to: engine.mainMixerNode, format: renderFormat)
         }
+    }
+
+    private func describeAudioFormat(_ format: AudioStreamBasicDescription) -> String {
+        return """
+        Sample Rate: \(format.mSampleRate),
+        Format ID: \(format.mFormatID),
+        Format Flags: \(format.mFormatFlags),
+        Bytes Per Packet: \(format.mBytesPerPacket),
+        Frames Per Packet: \(format.mFramesPerPacket),
+        Bytes Per Frame: \(format.mBytesPerFrame),
+        Channels Per Frame: \(format.mChannelsPerFrame),
+        Bits Per Channel: \(format.mBitsPerChannel)
+        """
     }
 }
 

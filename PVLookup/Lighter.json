@@ -1,0 +1,19 @@
+{
+  "databaseExtensions" : [ "sqlite3", "db", "sqlite" ],
+  "sqlExtensions"      : [ "sql" ],
+
+  "CodeStyle": {
+    "functionCommentStyle" : "**",
+    "indent"               : "  ",
+    "lineLength"           : 80
+  },
+  "EmbeddedLighter": {
+    "inserts": 6
+  },
+  "CodeGeneration": {
+        "Raw"                            : "none",
+        "readOnly"                       : true,
+        "generateAsyncFunctions"         : true,
+        "embedRecordTypesInDatabaseType" : true
+  }
+}

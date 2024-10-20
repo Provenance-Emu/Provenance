@@ -39,7 +39,7 @@ struct ConsoleGamesFilterModeFlags: OptionSet {
 struct ConsoleGamesView: SwiftUI.View {
 
     @ObservedObject var viewModel: PVRootViewModel
-    let console: PVSystem
+    @ObservedRealmObject var console: PVSystem
     weak var rootDelegate: PVRootDelegate?
 
     let gamesForSystemPredicate: NSPredicate

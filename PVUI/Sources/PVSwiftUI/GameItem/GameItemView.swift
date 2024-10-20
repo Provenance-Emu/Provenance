@@ -8,15 +8,16 @@
 import SwiftUI
 import PVRealm
 import PVMediaCache
+import RealmSwift
 
-@available(iOS 14, tvOS 14, *)
+@available(iOS 17, tvOS 17, *)
 struct GameItemView: SwiftUI.View {
 
-    var game: PVGame
+    @ObservedRealmObject var game: PVGame
     var constrainHeight: Bool = false
     var viewType: GameItemViewType = .cell
 
-    @State var artwork: SwiftImage?
+    @State private var artwork: SwiftImage?
     var action: () -> Void
 
     var body: some SwiftUI.View {
@@ -31,12 +32,18 @@ struct GameItemView: SwiftUI.View {
             }
         }
         .onAppear {
-            PVMediaCache.shareInstance().image(forKey: game.trueArtworkURL, completion: { _, image in
-                Task { @MainActor in
-                    self.artwork = image
-                }
-            })
+            updateArtwork()
+        }
+        .onChange(of: game.trueArtworkURL) { _, newValue in
+            updateArtwork()
         }
     }
-}
 
+    private func updateArtwork() {
+        PVMediaCache.shareInstance().image(forKey: game.trueArtworkURL, completion: { _, image in
+            Task { @MainActor in
+                self.artwork = image
+            }
+        })
+    }
+}

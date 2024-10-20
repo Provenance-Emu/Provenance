@@ -192,7 +192,7 @@ public final class GameMoreInfoPageViewController: GameMoreInfoPageViewControlle
 
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
         if let game = game?.validatedGame {
-            Task.detached { [weak self] in
+            Task.detached { @MainActor [weak self] in
                 guard let self = self else { return }
                 await load(game, sender: sender, core: nil)
             }
@@ -357,9 +357,10 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
         #endif
 
         nameLabel.text = game?.title ?? ""
+        let fileName = game?.file.fileName ?? ""
         Task.detached { @MainActor [weak self] in
             guard let self = self else { return }
-            filenameLabel.text = await game?.file.fileName ?? ""
+            filenameLabel.text = fileName
         }
         systemLabel.text = game?.system.name ?? ""
         developerLabel.text = game?.developer ?? ""
@@ -1025,7 +1026,6 @@ extension PVGameMoreInfoViewController {
                 }
 
                 do {
-                    try PVMediaCache.writeImage(toDisk: pastedImage, withKey: key)
                     try RomDatabase.sharedInstance.writeTransaction {
                         game.customArtworkURL = key
                     }

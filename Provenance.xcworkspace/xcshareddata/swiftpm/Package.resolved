@@ -218,33 +218,6 @@
         }
       },
       {
-        "package": "swift-http-types",
-        "repositoryURL": "https://github.com/apple/swift-http-types",
-        "state": {
-          "branch": null,
-          "revision": "ae67c8178eb46944fd85e4dc6dd970e1f3ed6ccd",
-          "version": "1.3.0"
-        }
-      },
-      {
-        "package": "swift-openapi-runtime",
-        "repositoryURL": "https://github.com/apple/swift-openapi-runtime",
-        "state": {
-          "branch": null,
-          "revision": "26e8ae3515d1ff3607e924ac96fc0094775f55e8",
-          "version": "1.5.0"
-        }
-      },
-      {
-        "package": "swift-openapi-urlsession",
-        "repositoryURL": "https://github.com/apple/swift-openapi-urlsession",
-        "state": {
-          "branch": null,
-          "revision": "9bf4c712ad7989d6a91dbe68748b8829a50837e4",
-          "version": "1.0.2"
-        }
-      },
-      {
         "package": "swift-syntax",
         "repositoryURL": "https://github.com/swiftlang/swift-syntax.git",
         "state": {

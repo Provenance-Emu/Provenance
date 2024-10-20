@@ -413,13 +413,17 @@ public final class PVSettingsViewController: QuickTableViewController {
 #if !os(tvOS)
         
         let appStoreRows: [TableRow] = [
+            PVSettingsSwitchRow(text: NSLocalizedString("Advanced Impoter", comment: "Advanced Importer"),
+                                detailText: .subtitle("Use larger database for looking up games. Requires an additional 330MB of disk space."),
+                                key: .useMetal, icon: .sfSymbol("sparkle.magnifyingglass")),
+            
             PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
                                 detailText: .subtitle("Use newer Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
                                 key: .useMetal, icon: .sfSymbol("m.square.fill")),
             
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet. iOS 14.0+ recommended."),
-                                key: .useSwiftUI, icon: .sfSymbol("swift")) { cell, row in
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy UIKit UI", comment: "Use UIKit UI"),
+                                detailText: .subtitle("Alternative legacy UI in UIKit  UI. Supports game controller navigation."),
+                                key: .useUIKit, icon: .sfSymbol("swift")) { cell, row in
                                     //                                    let swiftUIDetailText: DetailText
                                     //                                    if #available(iOS 14, tvOS 14, *) {
                                     //                                        row.

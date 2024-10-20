@@ -22,4 +22,5 @@ public protocol PVRootDelegate: AnyObject {
     func root_openSaveState(_ saveState: PVSaveState) async
     func root_updateRecentGames(_ game: PVGame)
     func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
+    func showMessage(_ message: String, title: String)
 }

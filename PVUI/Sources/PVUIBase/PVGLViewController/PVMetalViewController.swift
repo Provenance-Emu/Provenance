@@ -521,8 +521,64 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         return UInt(componentSize * componentsPerPixel)
     }
-
     func getMTLPixelFormat(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
+        return getMTLPixelFormatNeo(from: pixelFormat, type: pixelType)
+    }
+    
+    func getMTLPixelFormatNeo(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
+        switch (pixelFormat, pixelType) {
+        case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_BYTE)),
+             (GLenum(GL_BGRA), GLenum(0x8367)): // GL_UNSIGNED_INT_8_8_8_8_REV
+            return .bgra8Unorm
+        case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_INT)):
+            return .bgra8Unorm_srgb
+        case (GLenum(GL_BGRA), GLenum(GL_FLOAT_32_UNSIGNED_INT_24_8_REV)):
+            return .bgra8Unorm_srgb
+        case (GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE)):
+            return .rgba8Unorm
+        case (GLenum(GL_RGBA), GLenum(GL_BYTE)):
+            return .rgba8Snorm
+        case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_BYTE)):
+            // Note: Metal doesn't have a direct RGB8 format, using RGBA8 and ignoring alpha
+            return .rgba8Unorm
+        case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT)):
+            return .rgb10a2Unorm // Better match for RGB unsigned short
+        case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT_5_6_5)):
+            return .b5g6r5Unorm
+        case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_INT)):
+            return .rgba32Uint // Approximation, might lose precision
+        case (_, GLenum(GL_UNSIGNED_SHORT_8_8_APPLE)):
+            return .rg8Unorm // Approximation, might need custom handling
+        case (_, GLenum(GL_UNSIGNED_SHORT_5_5_5_1)):
+            return .a1bgr5Unorm
+        case (_, GLenum(GL_UNSIGNED_SHORT_4_4_4_4)):
+            return .abgr4Unorm
+        case (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_BYTE)):
+            return .rgba8Unorm
+        case (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_SHORT)):
+            return .rgba16Uint
+        case (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_INT)):
+            return .rgba32Uint
+        case (GLenum(GL_R8), _):
+            return .r8Unorm
+        case (GLenum(GL_RG8), _):
+            return .rg8Unorm
+        #if !targetEnvironment(macCatalyst) && !os(macOS)
+        case (GLenum(GL_RGB565), _):
+            return .b5g6r5Unorm
+        #else
+        case (GLenum(GL_UNSIGNED_SHORT_5_6_5), _):
+            return .b5g6r5Unorm
+        #endif
+        // Add more cases as needed for your specific use cases
+        default:
+            print("Warning: Unknown GL pixelFormat. Add pixelFormat: \(pixelFormat) pixelType: \(pixelType)")
+            // Instead of assertionFailure, return a default format or handle the error as appropriate for your application
+            return .rgba8Unorm // Default to a common format, or return nil if you prefer
+        }
+    }
+    
+    func getMTLPixelFormatOld(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
         if pixelFormat == GLenum(GL_BGRA),
            pixelType == GLenum(GL_UNSIGNED_BYTE) ||
             pixelType == GLenum(0x8367) {

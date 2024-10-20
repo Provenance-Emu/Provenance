@@ -77,7 +77,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         #endif
 
         if #available(iOS 14, tvOS 14, macCatalyst 15.0, visionOS 1.0, *),
-           Defaults[.useSwiftUI] {
+           !Defaults[.useUIKit] {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,

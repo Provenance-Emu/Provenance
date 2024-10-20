@@ -39,7 +39,7 @@ public enum PVNavOption {
     case settings
     case home
     case console(consoleId: String, title: String)
-    
+
     var title: String {
         switch self {
         case .settings: return "Settings"
@@ -51,19 +51,19 @@ public enum PVNavOption {
 
 @available(iOS 14, tvOS 14, *)
 public class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
-    
+
     let containerView = UIView()
     var viewModel: PVRootViewModel!
-    
+
     var updatesController: PVGameLibraryUpdatesController!
     var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
     var gameImporter: GameImporter!
-    
+
     var selectedTabCancellable: AnyCancellable?
-    
+
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
-    
+
     public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary<RealmDatabaseDriver>, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
@@ -72,23 +72,23 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         controller.viewModel = viewModel
         return controller
     }
-    
-    
+
+
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.view.addSubview(containerView)
         self.fillParentView(child: containerView, parent: self.view)
-        
+
         self.determineInitialView()
-        
+
         let hud = MBProgressHUD(view: view)
         hud.isUserInteractionEnabled = false
         view.addSubview(hud)
-        
+
         setupHUDObserver(hud: hud)
     }
-    
+
     private var cancellables = Set<AnyCancellable>()
     private func setupHUDObserver(hud: MBProgressHUD) {
         Task { @MainActor in
@@ -114,19 +114,19 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             hud.label.numberOfLines = 2
         }
     }
-    
+
     deinit {
         selectedTabCancellable?.cancel()
     }
-    
+
     func showMenu() {
         self.sideNavigationController?.showLeftSide()
     }
-    
+
     func closeMenu() {
         self.sideNavigationController?.closeSide()
     }
-    
+
     func determineInitialView() {
         if let console = gameLibrary.activeSystems.first {
             didTapConsole(with: console.identifier)
@@ -134,7 +134,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             didTapHome()
         }
     }
-    
+
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
         // remove old view
         self.containerView.subviews.forEach { $0.removeFromSuperview() }
@@ -156,13 +156,13 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
 // MARK: - Helpers
 extension UIViewController {
-    
+
     func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
         addChild(child)
         containerView.addSubview(child.view)
         child.didMove(toParent: self)
     }
-    
+
     func fillParentView(child: UIView, parent: UIView) {
         child.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -172,7 +172,7 @@ extension UIViewController {
             child.trailingAnchor.constraint(equalTo: parent.trailingAnchor)
         ])
     }
-    
+
 }
 
 #if os(iOS) || targetEnvironment(macCatalyst)
@@ -181,7 +181,7 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
     public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         updatesController.handlePickedDocuments(urls)
     }
-    
+
     public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
         ILOG("Document picker was cancelled")
     }

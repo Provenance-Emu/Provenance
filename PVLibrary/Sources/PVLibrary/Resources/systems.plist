@@ -6504,7 +6504,7 @@
 				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
-				<string>{200,180}</string>
+				<string>{180,180}</string>
 				<key>PVGroupedButtons</key>
 				<array>
 					<dict>

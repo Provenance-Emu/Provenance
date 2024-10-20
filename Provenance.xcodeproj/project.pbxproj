@@ -826,6 +826,12 @@
 		B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38FB4B22CBEF961006786C6 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B39342112CC5771B008AA673 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39342102CC5771B008AA673 /* MoltenVK.xcframework */; };
+		B39342122CC5771B008AA673 /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39342102CC5771B008AA673 /* MoltenVK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B39342142CC57837008AA673 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B39342132CC57837008AA673 /* MoltenVK */; };
+		B39342162CC5784D008AA673 /* MoltenVK-Catalyst in Frameworks */ = {isa = PBXBuildFile; platformFilter = maccatalyst; productRef = B39342152CC5784D008AA673 /* MoltenVK-Catalyst */; };
+		B39343962CC5B202008AA673 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39343952CC5B202008AA673 /* PVDolphin.framework */; };
+		B39343972CC5B202008AA673 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39343952CC5B202008AA673 /* PVDolphin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CC722BDEE53A006B63E8 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
 		B394CC742BDEE53A006B63E8 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
 		B394CC762BDEE53A006B63E8 /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
@@ -1005,7 +1011,6 @@
 		B3C65E632CA53668000E37B0 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C65E592CA53666000E37B0 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CE94B7293446AC0053B891 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B3CE94B6293446AC0053B891 /* Introspect */; };
 		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
-		B3D1679F2CC481D600EBB132 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B3D1679E2CC481D600EBB132 /* MoltenVK */; };
 		B3D1C1312CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */; };
 		B3D1C1322CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3D1C1342CB70D6000F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1332CB70D6000F1F46B /* PVCoremGBA-Dynamic */; };
@@ -1811,6 +1816,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B3D1C13B2CB70D7000F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */,
+				B39343972CC5B202008AA673 /* PVDolphin.framework in Embed Frameworks */,
 				B39CE2892C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 				B38436362C9FC2EC00E32EB1 /* snes9x.framework in Embed Frameworks */,
 				B3C65E632CA53668000E37B0 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
@@ -1831,6 +1837,7 @@
 				B3A479CF2C96507B0052500A /* PVSNES.framework in Embed Frameworks */,
 				B3F8E0212CB379E500017D1B /* PVGME.framework in Embed Frameworks */,
 				B3E2AA4F2CB638F400E2636D /* PVDesmume2015.framework in Embed Frameworks */,
+				B39342122CC5771B008AA673 /* MoltenVK.xcframework in Embed Frameworks */,
 				B3C65E612CA53668000E37B0 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3A1868C2CBCBAF900BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */,
 				B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */,
@@ -2489,6 +2496,9 @@
 		B3918FDB2873EE5F000838F6 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3918FDE2873EEA8000838F6 /* PVMiniVMac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMiniVMac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39313832870FCFC00372EBB /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B393420D2CC5760C008AA673 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = Cores/emuThree/lib/libMoltenVK.dylib; sourceTree = "<group>"; };
+		B39342102CC5771B008AA673 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = Cores/emuThree/cmake/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
+		B39343952CC5B202008AA673 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B394CDDF2BDEE53A006B63E8 /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B394CDE22BDF0BCE006B63E8 /* Provenance-AppStore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-AppStore-Info.plist"; sourceTree = "<group>"; };
 		B394CDE32BDF22A2006B63E8 /* Provenance-AppStore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-AppStore.entitlements"; path = "../Provenance-AppStore.entitlements"; sourceTree = "<group>"; };
@@ -3100,6 +3110,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3FE6DB22C93E60900792419 /* PVO2EM.framework in Frameworks */,
+				B39343962CC5B202008AA673 /* PVDolphin.framework in Frameworks */,
 				B35EEFB12C6C6D1A00EBD1A8 /* libbz2.tbd in Frameworks */,
 				B33A763B2CC5168C00FC746F /* SiriusRating in Frameworks */,
 				B35EEFB22C6C6D1A00EBD1A8 /* RealmSwift in Frameworks */,
@@ -3127,6 +3138,7 @@
 				B35EEFBD2C6C6D1A00EBD1A8 /* PVPlists in Frameworks */,
 				B35EEFBE2C6C6D1A00EBD1A8 /* PVWebServer in Frameworks */,
 				B3F8E11A2CB3CE4600017D1B /* PVMelonDS.framework in Frameworks */,
+				B39342142CC57837008AA673 /* MoltenVK in Frameworks */,
 				B373219E2C900A5200CF59EF /* PVPicoDrive-Dynamic in Frameworks */,
 				B3E2AA4E2CB638F400E2636D /* PVDesmume2015.framework in Frameworks */,
 				B35EEFBF2C6C6D1A00EBD1A8 /* PVEmulatorCore in Frameworks */,
@@ -3148,7 +3160,6 @@
 				B3F8E0F62CB3BA8500017D1B /* PVPCSXRearmed.framework in Frameworks */,
 				B35EEFCC2C6C6D1A00EBD1A8 /* SystemConfiguration.framework in Frameworks */,
 				B35EEFCF2C6C6D1A00EBD1A8 /* CoreData.framework in Frameworks */,
-				B3D1679F2CC481D600EBB132 /* MoltenVK in Frameworks */,
 				B39CE2882C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Frameworks */,
 				B35EEFD02C6C6D1A00EBD1A8 /* AudioToolbox.framework in Frameworks */,
 				B3F8E0362CB38D1400017D1B /* PVGearcoleco.framework in Frameworks */,
@@ -3165,6 +3176,7 @@
 				B35EEFD62C6C6D1A00EBD1A8 /* SteamController in Frameworks */,
 				B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */,
 				B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */,
+				B39342162CC5784D008AA673 /* MoltenVK-Catalyst in Frameworks */,
 				B351E7CE2CBE072D0000E087 /* libavformat.xcframework in Frameworks */,
 				B31553622CC2FD5500C472CA /* PVPPSSPP.framework in Frameworks */,
 				B35EEFD72C6C6D1A00EBD1A8 /* Metal.framework in Frameworks */,
@@ -3176,6 +3188,7 @@
 				B37321A12C900A6400CF59EF /* PVAtari800-Dynamic in Frameworks */,
 				B35D52822C96C83E006BE5BF /* PVFreeDO-Dynamic in Frameworks */,
 				B3E1BF942C96F21400EB4238 /* PVBliss-Dynamic in Frameworks */,
+				B39342112CC5771B008AA673 /* MoltenVK.xcframework in Frameworks */,
 				B35EEFDD2C6C6D1A00EBD1A8 /* OpenGL.framework in Frameworks */,
 				B35EEFDE2C6C6D1A00EBD1A8 /* CoreGraphics.framework in Frameworks */,
 				B3F8E0C82CB3996100017D1B /* PVPotator.framework in Frameworks */,
@@ -3533,6 +3546,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B39343952CC5B202008AA673 /* PVDolphin.framework */,
+				B39342102CC5771B008AA673 /* MoltenVK.xcframework */,
 				B31553612CC2FD5500C472CA /* PVPPSSPP.framework */,
 				B3F65B5B2CC0946800DB762D /* PVCoreBridgeRetro.framework */,
 				B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */,
@@ -3557,6 +3572,7 @@
 				B35AB4472CB6F7DA003273D4 /* PVEmuThree.framework */,
 				B35AB4422CB6EDD2003273D4 /* snes9x.framework */,
 				B35AB4262CB6E14D003273D4 /* PVCoreBridgeRetro.framework */,
+				B393420D2CC5760C008AA673 /* libMoltenVK.dylib */,
 				B3E2AA562CB63AD500E2636D /* PVBeetlePSX.framework */,
 				B3E2AA532CB63A7B00E2636D /* PVBeetlePSX.framework */,
 				B3E2AA502CB63A6200E2636D /* PVBeetlePSX.framework */,
@@ -4782,8 +4798,9 @@
 				B3D1C1392CB70D7000F1F46B /* PVCoremGBA-Dynamic */,
 				B32D45BC2CB730AE006B76C2 /* PVGambatte */,
 				B3FC972F2CB8B6BA00C6DB31 /* PVVisualBoyAdvance-Dynamic */,
-				B3D1679E2CC481D600EBB132 /* MoltenVK */,
 				B33A763A2CC5168C00FC746F /* SiriusRating */,
+				B39342132CC57837008AA673 /* MoltenVK */,
+				B39342152CC5784D008AA673 /* MoltenVK-Catalyst */,
 			);
 			productName = Provenance;
 			productReference = B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */;
@@ -12273,6 +12290,16 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = "PVFreeDO-Dynamic";
 		};
+		B39342132CC57837008AA673 /* MoltenVK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */;
+			productName = MoltenVK;
+		};
+		B39342152CC5784D008AA673 /* MoltenVK-Catalyst */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */;
+			productName = "MoltenVK-Catalyst";
+		};
 		B394CC5F2BDEE53A006B63E8 /* SteamController */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B394CC602BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "SteamController" */;
@@ -12472,10 +12499,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
-		};
-		B3D1679E2CC481D600EBB132 /* MoltenVK */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MoltenVK;
 		};
 		B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -26,10 +26,8 @@ extension BIOSStatus.State {
     }
 }
 
-@available(iOS 14, tvOS 14, *)
 struct BiosRowView: SwiftUI.View {
 
-    @MainActor
     var bios: PVBIOS
 
     @MainActor

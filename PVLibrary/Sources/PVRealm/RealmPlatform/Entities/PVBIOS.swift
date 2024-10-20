@@ -11,8 +11,9 @@ import RealmSwift
 import PVPrimitives
 
 @objcMembers
-public final class PVBIOS: Object, BIOSFileProvider {
+public final class PVBIOS: Object, Identifiable, BIOSFileProvider {
 //    public var status: BIOSStatus
+    public var id: String { expectedMD5 }
     
     public dynamic var system: PVSystem!
 

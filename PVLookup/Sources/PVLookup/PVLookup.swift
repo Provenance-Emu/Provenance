@@ -26,7 +26,7 @@ public enum LocalDatabases: CaseIterable {
     case openVGDB
 #endif
 #if canImport(ShiraGame)
-    case shireGame
+    case shiraGame
 #endif
 }
 

@@ -15,40 +15,47 @@ import PVRealm
 
 @_exported import PVUIBase
 
-struct GameMoreInfoViewController : UIViewControllerRepresentable {
+struct GameMoreInfoViewController: UIViewControllerRepresentable {
     typealias UIViewControllerType = GameMoreInfoPageViewController
 
-    var game: PVGame
+    let game: PVGame
 
-   func updateUIViewController(_ uiViewController: GameMoreInfoPageViewController, context: Context) {
-   }
+    func updateUIViewController(_ uiViewController: GameMoreInfoPageViewController, context: Context) {
+        // No need to update anything here
+    }
 
-   func makeUIViewController(context: Context) -> GameMoreInfoPageViewController {
-       let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
-       firstVC.game = game
+    func makeUIViewController(context: Context) -> GameMoreInfoPageViewController {
+        let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
 
-       let moreInfoCollectionVC = GameMoreInfoPageViewController.init() //segue.destination as! GameMoreInfoPageViewController
-       moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
+        // Ensure we're using a frozen copy of the game
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        firstVC.game = frozenGame
+
+        let moreInfoCollectionVC = GameMoreInfoPageViewController()
+        moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
         return moreInfoCollectionVC
-   }
+    }
 }
 
-@available(iOS 14, tvOS 14, *)
 struct GameContextMenu: SwiftUI.View {
 
     var game: PVGame
 
     weak var rootDelegate: PVRootDelegate?
+    @State private var showingRenameAlert = false
+    @State private var newGameTitle = ""
+    @State private var showImagePicker = false
+    @State private var selectedImage: UIImage?
 
     var body: some SwiftUI.View {
         Group {
-//            game.system.cores.count > 1 {
+            if game.system.cores.count > 1 {
                 Button {
                     Task { @MainActor in
                         await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                     }
                 } label: { Label("Open in...", systemImage: "gamecontroller") }
-//            }
+            }
             Button {
                 showMoreInfo(forGame: game)
             } label: { Label("Game Info", systemImage: "info.circle") }
@@ -60,7 +67,8 @@ struct GameContextMenu: SwiftUI.View {
                 }
             } label: { Label("Favorite", systemImage: "heart") }
             Button {
-                promptUserToRename(game: game)
+                showingRenameAlert = true
+                newGameTitle = game.title
             } label: { Label("Rename", systemImage: "rectangle.and.pencil.and.ellipsis") }
             Button {
                 promptUserMD5CopiedToClipboard(forGame: game)
@@ -85,6 +93,33 @@ struct GameContextMenu: SwiftUI.View {
                 } label: { Label("Delete", systemImage: "trash") }
             }
         }
+        .alert("Rename Game", isPresented: $showingRenameAlert) {
+            TextField("New name", text: $newGameTitle)
+            Button("Cancel", role: .cancel) {}
+            Button("OK") {
+                if !newGameTitle.isEmpty {
+                    RomDatabase.sharedInstance.renameGame(game, toTitle: newGameTitle)
+                } else {
+                    rootDelegate?.showMessage("Cannot set a blank title.", title: "Error")
+                }
+            }
+        } message: {
+            Text("Enter a new name for \(game.title)")
+        }
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker(selectedImage: Binding(
+                get: { self.selectedImage ?? UIImage() },
+                set: { self.selectedImage = $0 }
+            ), didSet: Binding(
+                get: { self.selectedImage != nil },
+                set: { _ in }
+            ))
+            .onDisappear {
+                if let image = selectedImage {
+                    saveArtwork(image: image, forGame: game)
+                }
+            }
+        }
     }
 }
 
@@ -92,12 +127,15 @@ extension GameContextMenu {
 
     func showMoreInfo(forGame game: PVGame) {
         let moreInfoCollectionVC = GameMoreInfoViewController(game: game)
+        if let rootDelegate = rootDelegate as? UIViewController {
 
-    }
+            let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+            firstVC.game = game
 
-    func promptUserToRename(game: PVGame) {
-        #warning("TODO: Rename button action")
-        self.rootDelegate?.showUnderConstructionAlert()
+            let moreInfoCollectionVC = GameMoreInfoPageViewController()
+            moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
+            rootDelegate.present(moreInfoCollectionVC, animated: true)
+        }
     }
 
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
@@ -107,13 +145,12 @@ extension GameContextMenu {
 #if !os(tvOS)
         UIPasteboard.general.string = md5
         #endif
-        // Alert the user that the MD5 has been copied to the clipboard
 
+        rootDelegate?.showMessage("The MD5 hash for \(game.title) has been copied to the clipboard.", title: "MD5 Copied")
     }
 
     func promptUserToSelectArtwork(forGame game: PVGame) {
-#warning("TODO: Select artwork button action")
-        self.rootDelegate?.showUnderConstructionAlert()
+        showImagePicker = true
     }
 
     func pasteArtwork(forGame game: PVGame) {
@@ -129,16 +166,25 @@ extension GameContextMenu {
     }
 
     func artworkNotFoundAlert() {
-//        let alert = Alert(
-//            title: Text("No Artwork Found"),
-//            message: Text("The clipboard does not contain an image that can be used as artwork."),
-//            dismissButton: .default(Text("OK"))
-//        )
-//        rootDelegate?.presentAlert(alert)
+        rootDelegate?.showMessage("Pasteboard did not contain an image.", title: "Artwork Not Found")
     }
 
     func share(game: PVGame) {
     #warning("TODO: Share button action")
     self.rootDelegate?.showUnderConstructionAlert()
+    }
+
+    private func saveArtwork(image: UIImage, forGame game: PVGame) {
+        do {
+            let uniqueFileName = UUID().uuidString + ".png"
+            let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(uniqueFileName)
+            try image.pngData()?.write(to: fileURL)
+
+            try RomDatabase.sharedInstance.writeTransaction {
+                game.customArtworkURL = fileURL.absoluteString
+            }
+        } catch {
+            rootDelegate?.showMessage("Failed to save artwork: \(error.localizedDescription)", title: "Error")
+        }
     }
 }

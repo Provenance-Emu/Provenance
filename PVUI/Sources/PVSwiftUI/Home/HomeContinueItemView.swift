@@ -7,11 +7,11 @@
 
 import SwiftUI
 import PVThemes
+import RealmSwift
 
-@available(iOS 15, tvOS 15, *)
 struct HomeContinueItemView: SwiftUI.View {
 
-    var continueState: PVSaveState
+    @ObservedRealmObject var continueState: PVSaveState
     let height: CGFloat // match image height to section height, else the fill content mode messes up the zstack
     var action: () -> Void
 

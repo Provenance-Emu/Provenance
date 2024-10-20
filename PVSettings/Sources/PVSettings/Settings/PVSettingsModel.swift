@@ -100,13 +100,13 @@ public extension Defaults.Keys {
 #endif
     static let autoJIT = Key<Bool>("autoJIT", default: false)
 #if os(tvOS)
-    static let useSwiftUI = Key<Bool>("useSwiftUI", default: false)
+    static let useUIKit = Key<Bool>("useUIKit", default: true)
 #elseif os(macOS) || targetEnvironment(macCatalyst) || APP_STORE
-    static let useSwiftUI = Key<Bool>("useSwiftUI", default: true)
+    static let useUIKit = Key<Bool>("useUIKit", default: false)
 #elseif os(visionOS)
-    static let useSwiftUI = Key<Bool>("useSwiftUI", default: true)
+    static let useUIKit = Key<Bool>("useUIKit", default: false)
 #else
-    static let useSwiftUI = Key<Bool>("useSwiftUI", default: true)
+    static let useUIKit = Key<Bool>("useUIKit", default:false)
 #endif
     static let iCloudSync = Key<Bool>("iCloudSync", default: false)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
