@@ -132,14 +132,17 @@ extension PVAppDelegate {
     func handle(fileURL url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         let filename = url.lastPathComponent
         let destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
-
+        var secureDocument = false
         do {
             defer {
-                url.stopAccessingSecurityScopedResource()
+                if secureDocument {
+                    url.stopAccessingSecurityScopedResource()
+                }
+                
             }
 
             // Doesn't seem we need access in dev builds?
-            _ = url.startAccessingSecurityScopedResource()
+            secureDocument = url.startAccessingSecurityScopedResource()
 
             if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
                 try FileManager.default.copyItem(at: url, to: destinationPath)

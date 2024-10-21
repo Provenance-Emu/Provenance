@@ -315,11 +315,12 @@ public extension PVGameLibraryUpdatesController {
     }
 
     private func copyFileToImports(from sourceURL: URL) {
-        guard sourceURL.startAccessingSecurityScopedResource() else {
-            ELOG("startAccessingSecurityScopedResource failed for \(sourceURL.path)")
-            return
+        let secureDoc = sourceURL.startAccessingSecurityScopedResource()
+        defer {
+            if secureDoc {
+                sourceURL.stopAccessingSecurityScopedResource()
+            }
         }
-        defer { sourceURL.stopAccessingSecurityScopedResource() }
 
         let destinationURL = Paths.romsImportPath.appendingPathComponent(sourceURL.lastPathComponent)
 
