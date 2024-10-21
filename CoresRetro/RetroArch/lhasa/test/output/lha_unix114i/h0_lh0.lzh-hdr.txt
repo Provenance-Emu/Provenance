@@ -1,0 +1,12 @@
+filename: gpl-2.gz
+compress_method: -lh0-
+compressed_length: 6829
+length: 6829
+header_level: 0
+os_type: 85 ('U')
+crc: b6d5
+timestamp: 1262304000
+unix_perms: 0100600
+unix_uid: 1000
+unix_gid: 1000
+--

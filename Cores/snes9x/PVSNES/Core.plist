@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.snes9x</string>
 	<key>PVPrincipleClass</key>
-	<string>PVSNESEmulatorCore</string>
+	<string>PVSNES.PVSNES9xEmulatorCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.snes</string>

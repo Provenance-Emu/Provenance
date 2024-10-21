@@ -1,0 +1,51 @@
+Mednafen's DOS port is NOT FINISHED YET RAWR!
+
+Set "sound.volume" to "150" for moooostly better sound quality with 8-bit Sound Blaster cards.
+
+Set "cd.image_memcache" to "1" to play CD games(requires a lot of RAM, though).
+
+For EMU10K(SB Live, Audigy, Audigy 2):
+	http://easymamecab.mameworld.info/html/snddosdr.htm
+	http://sourceforge.net/projects/mpxplay/files/Audigy12/Audigy12%20v1.0/AUDIGY12.ZIP/download?use_mirror=tcpdiag&download=
+
+
+Miscellaneous DOS-related notes.
+---------------
+
+DJGPP build notes:
+ make am__cd="cd"
+
+ES1370 and ES1371/ES1373/CT5880/EV1938 cards:
+ Audio PCI 1000: ES1370
+
+ Audio PCI 3000: ES1370
+
+ Audio PCI 5000: ES1371
+	Notes: Good frequency response with 48KHz playback.
+
+ Audio PCI 5200: ES1373
+
+ CT4700(Sound Blaster PCI 128): Creative 5507(rebranded ES1370?) - AK4531
+
+ CT4730: EV1938
+	Notes: Has questionable frequency response(too strong of a lowpass effect) on my card, and doesn't work
+	completely correctly with Mednafen's ES1371 driver code.
+
+ CT4740(Sound Blaster 16 PCI): CT5880
+ CT4750(Sound Blaster Vibra128): CT5880
+ CT4810: CT5880 - STAC 9721T or Creative CT1297-TAT or ???
+
+ CT5800:
+ CT5801:  - STAC972(or 3?)1T
+ CT5803: ES1373
+ CT5805: ES1373?
+ CT5806: ES1373 - CS4297A-JQ
+ CT5807: ES1373
+ CT5808: CT5880
+ CT5810:
+
+ DCS S727: ES1370
+
+eBay queries:
+ (es1370,es1371,es1373,ct4700,ct4730,ct4740,ct4750,ct4810,"dcs s727", "audio pci 1000", "audio pci 3000", "audio pci 5000", "audio pci 5200")
+ (ct5800,ct5801,ct5803,ct5805,ct5806,ct5807,ct5808,ct5810)

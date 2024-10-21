@@ -7,8 +7,10 @@
 //
 
 import Foundation
+
+#if canImport(GameController)
 @_exported import GameController
-import simd
+//import simd
 
 private let thumbstickSensitivity: Float = 0.2
 
@@ -101,3 +103,4 @@ public final class PVGameControllerUtilities : NSObject {
         return .init(forThumbstick: thumbstick)
     }
 }
+#endif

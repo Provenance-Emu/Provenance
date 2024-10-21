@@ -6,13 +6,17 @@
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
 
-public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible {
+#if canImport(UIKit) && canImport(GameController)
+
+@MainActor
+public struct iCadeControllerState: OptionSet, Hashable, @preconcurrency CustomStringConvertible, Sendable {
     public let rawValue: Int
 
-    public init(rawValue: Int) {
+    nonisolated public init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
+    nonisolated
     public var hashValue: Int {
         return rawValue
     }
@@ -67,7 +71,7 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
         return "iCadeControllerState(rawValue: \(rawValue)) \(result)"
     }
 
-    static var debugDescriptions: [iCadeControllerState: String] = {
+    static let debugDescriptions: [iCadeControllerState: String] = {
         var descriptions = [iCadeControllerState: String]()
 
         descriptions[.joystickUp] = "JoyUp"
@@ -92,8 +96,11 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
     }()
 }
 
-public protocol iCadeEventDelegate: AnyObject {
+@preconcurrency
+public protocol iCadeEventDelegate: AnyObject, Sendable {
     func stateChanged(state: iCadeControllerState)
     func buttonDown(button: iCadeControllerState)
     func buttonUp(button: iCadeControllerState)
 }
+
+#endif

@@ -1,0 +1,1 @@
+Symbolic Link subdir/symlink -> /absolute/path

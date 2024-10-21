@@ -1,0 +1,1082 @@
+swagger: '2.0'
+info:
+  description: API Documentation
+  version: 2.0.0
+  title: TheGamesDB API
+  license:
+    name: GNU General Public License v3.0
+    url: https://github.com/TheGamesDB/TheGamesDBv2/blob/master/LICENSE
+
+# tags are used for organizing operations
+tags:
+- name: Games
+- name: Platforms
+- name: Genres
+- name: Developers
+- name: Publishers
+
+paths:
+  /v1/Games/ByGameID:
+    get:
+      tags:
+      - Games
+      operationId: GamesByGameID
+      summary: "Fetch game(s) by id"
+      description: "can request additional information can be requestes through `fields` and `include` params"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: id
+        description: "(Required) - supports `,` delimited list"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `players`, `publishers`, `genres`, `overview`, `last_updated`, `rating`, `platform`, `coop`, `youtube`, `os`, `processor`, `ram`, `hdd`, `video`, `sound`, `alternates`"
+        required: false
+        type: string
+      - in: query
+        name: include
+        description: "(Optional) - valid `,` delimited options: `boxart`, `platform`"
+        required: false
+        type: string
+      - in: query
+        name: page
+        description: "(Optional) - results page offset to return"
+        required: false
+        type: integer
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/GamesByGameID'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Games/ByGameName:
+    get:
+      tags:
+      - Games
+      operationId: GamesByGameName_v1
+      summary: "Fetch game(s) by name"
+      description: "can request additional information can be requestes through `fields` and `include` params"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: "(Required) - Search term"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `players`, `publishers`, `genres`, `overview`, `last_updated`, `rating`, `platform`, `coop`, `youtube`, `os`, `processor`, `ram`, `hdd`, `video`, `sound`, `alternates`"
+        required: false
+        type: string
+      - in: query
+        name: "filter[platform]"
+        description: "(Optional) - platform `id` can be obtain from the platforms api below, supports `,` delimited list"
+        required: false
+        type: string
+      - in: query
+        name: include
+        description: "(Optional) - valid `,` delimited options: `boxart`, `platform`"
+        required: false
+        type: string
+      - in: query
+        name: page
+        description: "(Optional) - results page offset to return"
+        required: false
+        type: integer
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/GamesByGameID_v1'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1.1/Games/ByGameName:
+    get:
+      tags:
+      - Games
+      operationId: GamesByGameName
+      summary: "Fetch game(s) by name"
+      description: "can request additional information can be requestes through `fields` and `include` params"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: "(Required) - Search term"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `players`, `publishers`, `genres`, `overview`, `last_updated`, `rating`, `platform`, `coop`, `youtube`, `os`, `processor`, `ram`, `hdd`, `video`, `sound`, `alternates`"
+        required: false
+        type: string
+      - in: query
+        name: "filter[platform]"
+        description: "(Optional) - platform `id` can be obtain from the platforms api below, supports `,` delimited list"
+        required: false
+        type: string
+      - in: query
+        name: include
+        description: "(Optional) - valid `,` delimited options: `boxart`, `platform`"
+        required: false
+        type: string
+      - in: query
+        name: page
+        description: "(Optional) - results page offset to return"
+        required: false
+        type: integer
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/GamesByGameID'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Games/ByPlatformID:
+    get:
+      tags:
+      - Games
+      operationId: GamesByPlatformID
+      summary: "Fetch game(s) by platform id"
+      description: "can request additional information can be requested through `fields` and `include` params"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: id
+        description: "(Required) - platform `id` can be obtain from the platforms api below, supports `,` delimited list"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `players`, `publishers`, `genres`, `overview`, `last_updated`, `rating`, `platform`, `coop`, `youtube`, `os`, `processor`, `ram`, `hdd`, `video`, `sound`, `alternates`"
+        required: false
+        type: string
+      - in: query
+        name: include
+        description: "(Optional) - valid `,` delimited options: `boxart`, `platform`"
+        required: false
+        type: string
+      - in: query
+        name: page
+        description: "(Optional) - results page offset to return"
+        required: false
+        type: integer
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/GamesByGameID'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Games/Images:
+    get:
+      tags:
+      - Games
+      operationId: GamesImages
+      summary: "Fetch game(s) images by game(s) id"
+      description: "results can be filtered with `filter[type]` param"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: games_id
+        description: "(Required) - game(s) `id` can be obtain from the above games api, supports `,` delimited list"
+        required: true
+        type: string
+      - in: query
+        name: filter[type]
+        description: "(Optional) - valid `,` delimited options: `fanart`, `banner`, `boxart`, `screenshot`, `clearlogo`, `titlescreen`"
+        required: false
+        type: string
+      - in: query
+        name: page
+        description: "(Optional) - results page offset to return"
+        required: false
+        type: integer
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/GamesImages'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Games/Updates:
+    get:
+      tags:
+      - Games
+      operationId: GamesUpdates
+      summary: "Fetch games update"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: last_edit_id
+        description: "(Required)"
+        required: true
+        type: integer
+      - in: query
+        name: time
+        description: "(Optional)"
+        required: false
+        type: integer
+      - in: query
+        name: page
+        description: "(Optional) - results page offset to return"
+        required: false
+        type: integer
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/GamesUpdates'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Platforms:
+    get:
+      tags:
+      - Platforms
+      operationId: Platforms
+      summary: "Fetch platforms list"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `icon`, `console`, `controller`, `developer`, `manufacturer`, `media`, `cpu`, `memory`, `graphics`, `sound`, `maxcontrollers`, `display`, `overview`, `youtube`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/Platforms'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Platforms/ByPlatformID:
+    get:
+      tags:
+      - Platforms
+      operationId: PlatformsByPlatformID
+      summary: "Fetch platforms list by id"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: id
+        description: "(Required) - supports `,` delimited list"
+        required: true
+        type: integer
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `icon`, `console`, `controller`, `developer`, `manufacturer`, `media`, `cpu`, `memory`, `graphics`, `sound`, `maxcontrollers`, `display`, `overview`, `youtube`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/PlatformsByPlatformID'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Platforms/ByPlatformName:
+    get:
+      tags:
+      - Platforms
+      operationId: PlatformsByPlatformName
+      summary: "Fetch platforms by name"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `icon`, `console`, `controller`, `developer`, `manufacturer`, `media`, `cpu`, `memory`, `graphics`, `sound`, `maxcontrollers`, `display`, `overview`, `youtube`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/PlatformsByPlatformName'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Platforms/Images:
+    get:
+      tags:
+      - Platforms
+      operationId: PlatformsImages
+      summary: "Fetch platform(s) images by platform(s) id"
+      description: "results can be filtered with `filter[type]` param"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: platforms_id
+        description: "(Required) - platform(s) `id` can be obtain from the above platforms api, supports `,` delimited list"
+        required: true
+        type: string
+      - in: query
+        name: filter[type]
+        description: "(Optional) - valid `,` delimited options: `fanart`, `banner`, `boxart`"
+        required: false
+        type: string
+      - in: query
+        name: page
+        description: "(Optional) - results page offset to return"
+        required: false
+        type: integer
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/PlatformsImages'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Genres:
+    get:
+      tags:
+      - Genres
+      operationId: Genres
+      summary: "Fetch Genres list"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/Genres'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Developers:
+    get:
+      tags:
+      - Developers
+      operationId: Developers
+      summary: "Fetch Developers list"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/Developers'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+  /v1/Publishers:
+    get:
+      tags:
+      - Publishers
+      operationId: Publishers
+      summary: "Fetch Publishers list"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            $ref: '#/definitions/Publishers'
+        400:
+          description: bad input parameter
+        403:
+          description: bad API key or hit rate-limit cap
+definitions:
+  BaseApiResponse:
+    type: object
+    required:
+    - code
+    - status
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+    example:
+      code: 200
+      status: 'Success'
+      remaining_monthly_allowance: 257
+      extra_allowance: 0
+  PaginatedApiResponse:
+    allOf: 
+    - $ref: '#/definitions/BaseApiResponse'
+    - type: object
+      required:
+      - pages
+      properties:
+        pages:
+          type: object
+          required:
+          - previous
+          - current
+          - next
+          properties:
+            previous:
+              type: string
+            current:
+              type: string
+            next:
+              type: string
+          example:
+            previous: ''
+            current: 'https://api.thegamesdb.net/Games/ByGameID?apikey=APIKEY&id=1%2C2%2C3%2C4&fields=players%2Cpublishers%2Cgenres%2Coverview%2Clast_updated%2Crating%2Cplatform%2Ccoop%2Cyoutube%2Cos%2Cprocessor%2Cram%2Chdd%2Cvideo%2Csound%2Calternates&include=boxart%2Cplatform&page=1'
+            next: ''
+  GamesByGameID:
+    allOf:
+    - $ref: '#/definitions/PaginatedApiResponse'
+    - type: object
+      required:
+      - data
+      - include
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - games
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            games:
+              type: array
+              items:
+                $ref: '#/definitions/Game'
+        include:
+          type: object
+          required:
+          - boxart
+          - platform
+          properties:
+            boxart:
+              type: object
+              required:
+              - base_url
+              - data
+              properties:
+                base_url:
+                  $ref: '#/definitions/ImageBaseUrlMeta'
+                data:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      $ref: '#/definitions/GameImage'
+            platform:
+              type: object
+              required:
+              - data
+              properties:
+                data:
+                  type: object
+                  additionalProperties:
+                    $ref: '#/definitions/PlatformSkinny'
+  GamesByGameID_v1:
+    allOf:
+    - $ref: '#/definitions/PaginatedApiResponse'
+    - type: object
+      required:
+      - data
+      - include
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - games
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            games:
+              type: array
+              items:
+                $ref: '#/definitions/Game'
+        include:
+          type: object
+          required:
+          - boxart
+          - platform
+          properties:
+            boxart:
+              type: object
+              required:
+              - base_url
+              - data
+              properties:
+                base_url:
+                  $ref: '#/definitions/ImageBaseUrlMeta'
+                data:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      $ref: '#/definitions/GameImage'
+            platform:
+              type: object
+              additionalProperties:
+                $ref: '#/definitions/PlatformSkinny'
+  GamesImages:
+    allOf:
+    - $ref: '#/definitions/PaginatedApiResponse'
+    - type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - base_url
+          - images
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            base_url:
+              $ref: '#/definitions/ImageBaseUrlMeta'
+            images:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: '#/definitions/GameImage'
+  GamesUpdates:
+    allOf:
+    - $ref: '#/definitions/PaginatedApiResponse'
+    - type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - updates
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            updates:
+              type: array
+              items:
+                $ref: '#/definitions/UpdateModel'
+  Platforms:
+    allOf:
+    - $ref: '#/definitions/BaseApiResponse'
+    - type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - platforms
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            platforms:
+              type: object
+              additionalProperties:
+                $ref: '#/definitions/Platform'
+  PlatformsByPlatformID:
+    allOf:
+    - $ref: '#/definitions/BaseApiResponse'
+    - type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - platforms
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            platforms:
+              type: object
+              additionalProperties:
+                $ref: '#/definitions/Platform'
+  PlatformsByPlatformName:
+    allOf:
+    - $ref: '#/definitions/BaseApiResponse'
+    - type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - platforms
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            platforms:
+              type: array
+              items:
+                $ref: '#/definitions/Platform'
+  PlatformsImages:
+    allOf:
+    - $ref: '#/definitions/PaginatedApiResponse'
+    - type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - base_url
+          - images
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            base_url:
+              $ref: '#/definitions/ImageBaseUrlMeta'
+            images:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: '#/definitions/PlatformImage'
+  Genres:
+    allOf:
+    - $ref: '#/definitions/BaseApiResponse'
+    - type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - genres
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            genres:
+              type: object
+              additionalProperties:
+                $ref: '#/definitions/Genre'
+  Developers:
+    allOf:
+    - $ref: '#/definitions/BaseApiResponse'
+    - type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - developers
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            developers:
+              type: object
+              additionalProperties:
+                $ref: '#/definitions/Developer'
+  Publishers:
+    allOf:
+    - $ref: '#/definitions/BaseApiResponse'
+    - type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - count
+          - publishers
+          properties:
+            count:
+              type: integer
+              minimum: 0
+            publishers:
+              type: object
+              additionalProperties:
+                $ref: '#/definitions/Publisher'
+  Publisher:
+    type: object
+    required:
+    - id
+    - name
+    properties:
+      id:
+        type: integer
+        minimum: 0
+      name:
+        type: string
+    example:
+      id: 2374
+      name: '.GEARS Studios'
+  Game:
+    type: object
+    properties:
+      id:
+        type: integer
+        minimum: 0
+      game_title:
+        type: string
+      release_date:
+        type: string
+      platform:
+        type: integer
+        minimum: 0
+      players:
+        type: integer
+        minimum: 0
+      overview:
+        type: string
+      last_updated:
+        type: string
+      rating:
+        type: string
+      coop:
+        type: string
+      youtube:
+        type: string
+      os:
+        type: string
+      processor:
+        type: string
+      ram:
+        type: string
+      hdd:
+        type: string
+      video:
+        type: string
+      sound:
+        type: string
+      developers:
+        type: array
+        items:
+          type: integer
+          minimum: 0
+      genres:
+        type: array
+        items:
+          type: integer
+          minimum: 0
+      publishers:
+        type: array
+        items:
+          type: integer
+          minimum: 0
+      alternates:
+        type: array
+        items:
+          type: string
+    example:
+      id: 4
+      game_title: 'Star Fox 64'
+      release_date: '1997-06-30'
+      platform: 3
+      players: 4
+      overview: 'The Lylat system has been invaded!  Join Fox McCloud and his Star Fox team as they fight to save the galaxy from the clutches of the...'
+      last_updated: '2018-08-11 15:01:11'
+      rating: 'E - Everyone'
+      coop: 'No'
+      youtube: 'jsEcmfPwnHo'
+      os: null
+      processor: null
+      ram: null
+      hdd: null
+      video: null
+      sound: null
+      developers: [6037]
+      genres: [1, 8]
+      publishers: [3]
+      alternates: [Lylat Wars (EU), Lylat Wars]
+  Platform:
+    type: object
+    required:
+    - id
+    - name
+    - alias
+    - icon
+    - console
+    - controller
+    - developer
+    properties:
+      id:
+        type: integer
+        minimum: 0
+      name:
+        type: string
+      alias:
+        type: string
+      icon:
+        type: string
+      console:
+        type: string
+      controller:
+        type: string
+      developer:
+        type: string
+      overview:
+        type: string
+    example:
+      id: 25
+      name: '3DO'
+      alias: '3do'
+      icon: '3do-1336524121.png'
+      console: '25.png'
+      controller: ''
+      developer: 'The 3DO Company'
+  PlatformSkinny:
+    type: object
+    required:
+    - id
+    - name
+    - alias
+    properties:
+      id:
+        type: integer
+        minimum: 0
+      name:
+        type: string
+      alias:
+        type: string
+    example:
+      id: 3
+      name: 'Nintendo 64'
+      alias: 'nintendo-64'
+  ImageBaseUrlMeta:
+    type: object
+    required:
+    - original
+    - small
+    - thumb
+    - cropped_center_thumb
+    - medium
+    - large
+    properties:
+      original:
+        type: string
+      small:
+        type: string
+      thumb:
+        type: string
+      cropped_center_thumb:
+        type: string
+      medium:
+        type: string
+      large:
+        type: string
+    example:
+      original: 'https://cdn.thegamsdb.net/images/original/'
+      small: 'https://cdn.thegamsdb.net/images/small/'
+      thumb: 'https://cdn.thegamsdb.net/images/thumb/'
+      cropped_center_thumb: 'https://cdn.thegamsdb.net/images/cropped_center_thumb/'
+      medium: 'https://cdn.thegamsdb.net/images/medium/'
+      large: 'https://cdn.thegamsdb.net/images/large/'
+  PlatformImage:
+    type: object
+    properties:
+      id:
+        type: integer
+        minimum: 0
+      type:
+        type: string
+      filename:
+        type: string
+    example:
+      id: 72
+      type: 'fanart'
+      filename: 'platform/fanart/12-1.jpg'
+  GameImage:
+    type: object
+    properties:
+      id:
+        type: integer
+        minimum: 0
+      type:
+        type: string
+      side:
+        type: string
+      filename:
+        type: string
+      resolution:
+        type: string
+    example:
+      id: 23413
+      type: 'boxart'
+      side: 'front'
+      filename: 'boxart/front/1-1.jpg'
+      resolution: '1529x2156'
+  UpdateModel:
+    type: object
+    properties:
+      edit_id:
+        type: integer
+        minimum: 0
+      game_id:
+        type: integer
+        minimum: 0
+      timestamp:
+        type: string
+      type:
+        type: string
+      value:
+        type: string
+    example:
+      edit_id: 23159
+      game_id: 60901
+      timestamp: '2018-09-05 21:21:27'
+      type: 'boxart'
+      value: 'boxart/front/60901-1.jpg'
+  Developer:
+    type: object
+    required:
+    - id
+    - name
+    properties:
+      id:
+        type: integer
+        minimum: 0
+      name:
+        type: string
+    example:
+      id: 202
+      name: 'Acclaim Studios Manchester'
+  Genre:
+    type: object
+    required:
+    - id
+    - name
+    properties:
+      id:
+        type: integer
+        minimum: 0
+      name:
+        type: string
+    example:
+      id: 1
+      name: 'Action'
+
+schemes: 
+- https
+
+host: api.thegamesdb.net
+basePath: /
+

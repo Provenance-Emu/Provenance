@@ -1,0 +1,2018 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/libxpad.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.rdata
+   5              	.align 3
+   6              	.type padStateString,@object
+   7              	.size padStateString,128
+   8              	padStateString:
+   9 0000 44495343 	.ascii "DISCONNECT\000"
+   9      4F4E4E45 
+   9      435400
+  10 000b 00000000 	.space 5
+  10      00
+  11 0010 46494E44 	.ascii "FINDPAD\000"
+  11      50414400 
+  12 0018 00000000 	.space 8
+  12      00000000 
+  13 0020 46494E44 	.ascii "FINDCTP1\000"
+  13      43545031 
+  13      00
+  14 0029 00000000 	.space 7
+  14      000000
+  15 0030 00       	.ascii "\000"
+  16 0031 00000000 	.space 15
+  16      00000000 
+  16      00000000 
+  16      000000
+  17 0040 00       	.ascii "\000"
+  18 0041 00000000 	.space 15
+  18      00000000 
+  18      00000000 
+  18      000000
+  19 0050 45584543 	.ascii "EXECCMD\000"
+  19      434D4400 
+  20 0058 00000000 	.space 8
+  20      00000000 
+  21 0060 53544142 	.ascii "STABLE\000"
+  21      4C4500
+  22 0067 00000000 	.space 9
+  22      00000000 
+  22      00
+  23 0070 4552524F 	.ascii "ERROR\000"
+  23      5200
+  24 0076 00000000 	.space 10
+  24      00000000 
+  24      0000
+  25              	.align 3
+  26              	.type padReqStateString,@object
+  27              	.size padReqStateString,48
+  28              	padReqStateString:
+  29 0080 434F4D50 	.ascii "COMPLETE\000"
+  29      4C455445 
+  29      00
+  30 0089 00000000 	.space 7
+  30      000000
+  31 0090 4641494C 	.ascii "FAILED\000"
+  31      454400
+GAS LISTING  			page 2
+
+
+  32 0097 00000000 	.space 9
+  32      00000000 
+  32      00
+  33 00a0 42555359 	.ascii "BUSY\000"
+  33      00
+  34 00a5 00000000 	.space 11
+  34      00000000 
+  34      000000
+  35              	.data
+  36              	.align 2
+  37              	.type padInitialised,@object
+  38              	.size padInitialised,4
+  39              	padInitialised:
+  40 0000 00000000 	.word 0
+  41              	.text
+  42              	.align 2
+  43              	.p2align 3,,7
+  44              	.ent xpadGetDmaStr
+  45              	xpadGetDmaStr:
+  46              	.frame $sp,32,$31
+  47              	.mask 0x80010000,-16
+  48              	.fmask 0x00000000,0
+  49 0000 28000324 	li $3,40
+  50 0004 14000224 	li $2,20
+  51 0008 1830A200 	mult $6,$5,$2
+  52 000c E0FFBD27 	subu $sp,$sp,32
+  53 0010 18108300 	mult $2,$4,$3
+  54 0014 1000BFFF 	sd $31,16($sp)
+  55 0018 0000B0FF 	sd $16,0($sp)
+  56 001c 00010524 	li $5,256
+  57 0020 21204600 	addu $4,$2,$6
+  58 0024 0000023C 	lui $2,%hi(PadState)
+  59 0028 D0004224 	addiu $2,$2,%lo(PadState)
+  60 002c 21208200 	addu $4,$4,$2
+  61 0030 0C00908C 	lw $16,12($4)
+  62              	.set noreorder
+  63              	.set nomacro
+  64 0034 0000000C 	jal SifWriteBackDCache
+  65 0038 2D200002 	move $4,$16
+  66              	.set macro
+  67              	.set reorder
+  68              	
+  69 003c 1000BFDF 	ld $31,16($sp)
+  70 0040 5800028E 	lw $2,88($16)
+  71 0044 80000426 	addu $4,$16,128
+  72 0048 D800038E 	lw $3,216($16)
+  73              	
+  74 004c 2B104300 	sltu $2,$2,$3
+  75 0050 0B808200 	movn $16,$4,$2
+  76 0054 2D100002 	move $2,$16
+  77 0058 0000B0DF 	ld $16,0($sp)
+  78              	
+  79              	.set noreorder
+  80              	.set nomacro
+  81 005c 0800E003 	j $31
+  82 0060 2000BD27 	addu $sp,$sp,32
+  83              	.set macro
+GAS LISTING  			page 3
+
+
+  84              	.set reorder
+  85              	
+  86              	.end xpadGetDmaStr
+  87              	$Lfe1:
+  88              	.size xpadGetDmaStr,$Lfe1-xpadGetDmaStr
+  89              	.align 2
+  90 0064 00000000 	.p2align 3,,7
+  91              	.globl xpadGetFrameCount
+  92              	.ent xpadGetFrameCount
+  93              	xpadGetFrameCount:
+  94              	.frame $sp,16,$31
+  95              	.mask 0x80000000,-16
+  96              	.fmask 0x00000000,0
+  97 0068 F0FFBD27 	subu $sp,$sp,16
+  98 006c 0000BFFF 	sd $31,0($sp)
+  99 0070 0000000C 	jal xpadGetDmaStr
+  99      00000000 
+ 100 0078 5800428C 	lw $2,88($2)
+ 101 007c 0000BFDF 	ld $31,0($sp)
+ 102              	
+ 103              	.set noreorder
+ 104              	.set nomacro
+ 105 0080 0800E003 	j $31
+ 106 0084 1000BD27 	addu $sp,$sp,16
+ 107              	.set macro
+ 108              	.set reorder
+ 109              	
+ 110              	.end xpadGetFrameCount
+ 111              	$Lfe2:
+ 112              	.size xpadGetFrameCount,$Lfe2-xpadGetFrameCount
+ 113              	.align 2
+ 114              	.p2align 3,,7
+ 115              	.globl xpadInit
+ 116              	.ent xpadInit
+ 117              	xpadInit:
+ 118              	.frame $sp,64,$31
+ 119              	.mask 0x80030000,-16
+ 120              	.fmask 0x00000000,0
+ 121 0088 C0FFBD27 	subu $sp,$sp,64
+ 122 008c 0000023C 	lui $2,%hi(padInitialised)
+ 123 0090 3000BFFF 	sd $31,48($sp)
+ 124 0094 2000B1FF 	sd $17,32($sp)
+ 125 0098 1000B0FF 	sd $16,16($sp)
+ 126 009c 0000438C 	lw $3,%lo(padInitialised)($2)
+ 127              	
+ 128              	.set noreorder
+ 129              	.set nomacro
+ 130 00a0 57006014 	bne $3,$0,$L5
+ 131 00a4 2D200000 	move $4,$0
+ 132              	.set macro
+ 133              	.set reorder
+ 134              	
+ 135 00a8 0000033C 	lui $3,%hi(padsif)
+ 136 00ac 00006224 	addiu $2,$3,%lo(padsif)
+ 137 00b0 2D806000 	move $16,$3
+ 138 00b4 240040AC 	sw $0,36($2)
+ 139 00b8 2D884000 	move $17,$2
+GAS LISTING  			page 4
+
+
+ 140 00bc 4C0040AC 	sw $0,76($2)
+ 141 00c0 0080053C 	li $5,-2147483648
+ 142              	$L37:
+ 143 00c4 00000426 	addiu $4,$16,%lo(padsif)
+ 144 00c8 0001A534 	ori $5,$5,0x100
+ 145              	.set noreorder
+ 146              	.set nomacro
+ 147 00cc 0000000C 	jal SifBindRpc
+ 148 00d0 2D300000 	move $6,$0
+ 149              	.set macro
+ 150              	.set reorder
+ 151              	
+ 152              	.set noreorder
+ 153              	.set nomacro
+ 154 00d4 52004004 	bltz $2,$L35
+ 155 00d8 0F00023C 	li $2,983040
+ 156              	.set macro
+ 157              	.set reorder
+ 158              	
+ 159 00dc FEFF0324 	li $3,-2
+ 160 00e0 FFFF4234 	ori $2,$2,0xffff
+ 161 00e4 00000000 	.p2align 3
+ 162              	$L11:
+ 163              	
+ 164 00e8 00000000 	nop
+ 165 00ec 00000000 	nop
+ 166 00f0 00000000 	nop
+ 167 00f4 00000000 	nop
+ 168 00f8 00000000 	nop
+ 169              	
+ 170              	
+ 171 00fc FFFF4224 	addu $2,$2,-1
+ 172              	.set noreorder
+ 173 0100 00000000 	nop
+ 174              	.set reorder
+ 175 0104 F8FF4314 	bne $2,$3,$L11
+ 175      00000000 
+ 176 010c 2400228E 	lw $2,36($17)
+ 177              	
+ 178              	.set noreorder
+ 179              	.set nomacro
+ 180 0110 ECFF4010 	beq $2,$0,$L37
+ 181 0114 0080053C 	li $5,-2147483648
+ 182              	.set macro
+ 183              	.set reorder
+ 184              	
+ 185 0118 0000023C 	lui $2,%hi(padsif)
+ 186 011c 0000103C 	lui $16,%hi(padsif+40)
+ 187 0120 00005124 	addiu $17,$2,%lo(padsif)
+ 188              	$L38:
+ 189 0124 28000426 	addiu $4,$16,%lo(padsif+40)
+ 190 0128 0101A534 	ori $5,$5,0x101
+ 191              	.set noreorder
+ 192              	.set nomacro
+ 193 012c 0000000C 	jal SifBindRpc
+ 194 0130 2D300000 	move $6,$0
+ 195              	.set macro
+GAS LISTING  			page 5
+
+
+ 196              	.set reorder
+ 197              	
+ 198              	.set noreorder
+ 199              	.set nomacro
+ 200 0134 38004004 	bltz $2,$L36
+ 201 0138 0F00023C 	li $2,983040
+ 202              	.set macro
+ 203              	.set reorder
+ 204              	
+ 205 013c FEFF0324 	li $3,-2
+ 206 0140 FFFF4234 	ori $2,$2,0xffff
+ 207              	$L21:
+ 208              	
+ 209 0144 00000000 	nop
+ 210 0148 00000000 	nop
+ 211 014c 00000000 	nop
+ 212 0150 00000000 	nop
+ 213 0154 00000000 	nop
+ 214              	
+ 215              	
+ 216 0158 FFFF4224 	addu $2,$2,-1
+ 217              	.set noreorder
+ 218 015c 00000000 	nop
+ 219              	.set reorder
+ 220 0160 F8FF4314 	bne $2,$3,$L21
+ 220      00000000 
+ 221 0168 4C00228E 	lw $2,76($17)
+ 222              	
+ 223              	.set noreorder
+ 224              	.set nomacro
+ 225 016c EDFF4010 	beq $2,$0,$L38
+ 226 0170 0080053C 	li $5,-2147483648
+ 227              	.set macro
+ 228              	.set reorder
+ 229              	
+ 230 0174 0000000C 	jal xpadGetModVersion
+ 230      00000000 
+ 231 017c 0000033C 	lui $3,%hi(PadState)
+ 232 0180 D0006324 	addiu $3,$3,%lo(PadState)
+ 233 0184 40016424 	addu $4,$3,320
+ 234 0188 000060AC 	sw $0,0($3)
+ 235              	$L39:
+ 236 018c 040060AC 	sw $0,4($3)
+ 237 0190 080060AC 	sw $0,8($3)
+ 238 0194 140060AC 	sw $0,20($3)
+ 239 0198 180060AC 	sw $0,24($3)
+ 240 019c 1C0060AC 	sw $0,28($3)
+ 241 01a0 28006324 	addu $3,$3,40
+ 242 01a4 2A106400 	slt $2,$3,$4
+ 243              	.set noreorder
+ 244              	.set nomacro
+ 245 01a8 F8FF4054 	bnel $2,$0,$L39
+ 246 01ac 000060AC 	sw $0,0($3)
+ 247              	.set macro
+ 248              	.set reorder
+ 249              	
+ 250 01b0 0000033C 	lui $3,%hi(buffer)
+GAS LISTING  			page 6
+
+
+ 251 01b4 0000043C 	lui $4,%hi(padsif)
+ 252 01b8 50006724 	addiu $7,$3,%lo(buffer)
+ 253 01bc 00008424 	addiu $4,$4,%lo(padsif)
+ 254 01c0 10000224 	li $2,16
+ 255 01c4 01000524 	li $5,1
+ 256 01c8 2D300000 	move $6,$0
+ 257 01cc 80000824 	li $8,128
+ 258 01d0 2D48E000 	move $9,$7
+ 259 01d4 80000A24 	li $10,128
+ 260 01d8 2D580000 	move $11,$0
+ 261 01dc 500062AC 	sw $2,%lo(buffer)($3)
+ 262              	.set noreorder
+ 263              	.set nomacro
+ 264 01e0 0000000C 	jal SifCallRpc
+ 265 01e4 0000A0AF 	sw $0,0($sp)
+ 266              	.set macro
+ 267              	.set reorder
+ 268              	
+ 269              	.set noreorder
+ 270              	.set nomacro
+ 271 01e8 05004004 	bltz $2,$L5
+ 272 01ec FFFF0424 	li $4,-1
+ 273              	.set macro
+ 274              	.set reorder
+ 275              	
+ 276 01f0 01000324 	li $3,1
+ 277 01f4 0000023C 	lui $2,%hi(padInitialised)
+ 278 01f8 000043AC 	sw $3,%lo(padInitialised)($2)
+ 279 01fc 2D200000 	move $4,$0
+ 280              	$L5:
+ 281 0200 3000BFDF 	ld $31,48($sp)
+ 282 0204 2D108000 	move $2,$4
+ 283 0208 2000B1DF 	ld $17,32($sp)
+ 284 020c 1000B0DF 	ld $16,16($sp)
+ 285              	
+ 286              	.set noreorder
+ 287              	.set nomacro
+ 288 0210 0800E003 	j $31
+ 289 0214 4000BD27 	addu $sp,$sp,64
+ 290              	.set macro
+ 291              	.set reorder
+ 292              	
+ 293              	$L36:
+ 294              	.set noreorder
+ 295              	.set nomacro
+ 296 0218 F9FF0010 	b $L5
+ 297 021c FDFF0424 	li $4,-3
+ 298              	.set macro
+ 299              	.set reorder
+ 300              	
+ 301              	$L35:
+ 302              	.set noreorder
+ 303              	.set nomacro
+ 304 0220 F7FF0010 	b $L5
+ 305 0224 FFFF0424 	li $4,-1
+ 306              	.set macro
+ 307              	.set reorder
+GAS LISTING  			page 7
+
+
+ 308              	
+ 309              	.end xpadInit
+ 310              	$Lfe3:
+ 311              	.size xpadInit,$Lfe3-xpadInit
+ 312              	.align 2
+ 313              	.p2align 3,,7
+ 314              	.globl xpadEnd
+ 315              	.ent xpadEnd
+ 316              	xpadEnd:
+ 317              	.frame $sp,48,$31
+ 318              	.mask 0x80010000,-16
+ 319              	.fmask 0x00000000,0
+ 320 0228 D0FFBD27 	subu $sp,$sp,48
+ 321 022c 0000033C 	lui $3,%hi(buffer)
+ 322 0230 1000B0FF 	sd $16,16($sp)
+ 323 0234 0000043C 	lui $4,%hi(padsif)
+ 324 0238 50007024 	addiu $16,$3,%lo(buffer)
+ 325 023c 0F000224 	li $2,15
+ 326 0240 00008424 	addiu $4,$4,%lo(padsif)
+ 327 0244 01000524 	li $5,1
+ 328 0248 2D300000 	move $6,$0
+ 329 024c 2D380002 	move $7,$16
+ 330 0250 80000824 	li $8,128
+ 331 0254 2D480002 	move $9,$16
+ 332 0258 80000A24 	li $10,128
+ 333 025c 2D580000 	move $11,$0
+ 334 0260 500062AC 	sw $2,%lo(buffer)($3)
+ 335 0264 2000BFFF 	sd $31,32($sp)
+ 336              	.set noreorder
+ 337              	.set nomacro
+ 338 0268 0000000C 	jal SifCallRpc
+ 339 026c 0000A0AF 	sw $0,0($sp)
+ 340              	.set macro
+ 341              	.set reorder
+ 342              	
+ 343              	.set noreorder
+ 344              	.set nomacro
+ 345 0270 05004004 	bltz $2,$L40
+ 346 0274 FFFF0324 	li $3,-1
+ 347              	.set macro
+ 348              	.set reorder
+ 349              	
+ 350 0278 0C00038E 	lw $3,12($16)
+ 351 027c 01000224 	li $2,1
+ 352              	.set noreorder
+ 353              	.set nomacro
+ 354 0280 07006210 	beq $3,$2,$L43
+ 355 0284 0000023C 	lui $2,%hi(padInitialised)
+ 356              	.set macro
+ 357              	.set reorder
+ 358              	
+ 359              	$L40:
+ 360 0288 2000BFDF 	ld $31,32($sp)
+ 361 028c 2D106000 	move $2,$3
+ 362 0290 1000B0DF 	ld $16,16($sp)
+ 363              	
+ 364              	.set noreorder
+GAS LISTING  			page 8
+
+
+ 365              	.set nomacro
+ 366 0294 0800E003 	j $31
+ 367 0298 3000BD27 	addu $sp,$sp,48
+ 368              	.set macro
+ 369              	.set reorder
+ 370              	
+ 371 029c 00000000 	.p2align 3
+ 372              	$L43:
+ 373              	.set noreorder
+ 374              	.set nomacro
+ 375 02a0 F9FF0010 	b $L40
+ 376 02a4 000040AC 	sw $0,%lo(padInitialised)($2)
+ 377              	.set macro
+ 378              	.set reorder
+ 379              	
+ 380              	.end xpadEnd
+ 381              	$Lfe4:
+ 382              	.size xpadEnd,$Lfe4-xpadEnd
+ 383              	.align 2
+ 384              	.p2align 3,,7
+ 385              	.globl xpadPortOpen
+ 386              	.ent xpadPortOpen
+ 387              	xpadPortOpen:
+ 388              	.frame $sp,144,$31
+ 389              	.mask 0x807f0000,-16
+ 390              	.fmask 0x00000000,0
+ 391 02a8 70FFBD27 	subu $sp,$sp,144
+ 392 02ac 3F00C230 	andi $2,$6,0x3f
+ 393 02b0 7000B6FF 	sd $22,112($sp)
+ 394 02b4 2DB08000 	move $22,$4
+ 395 02b8 6000B5FF 	sd $21,96($sp)
+ 396 02bc 2DA8A000 	move $21,$5
+ 397 02c0 3000B2FF 	sd $18,48($sp)
+ 398 02c4 2D90C000 	move $18,$6
+ 399 02c8 8000BFFF 	sd $31,128($sp)
+ 400 02cc 2D300000 	move $6,$0
+ 401 02d0 5000B4FF 	sd $20,80($sp)
+ 402 02d4 4000B3FF 	sd $19,64($sp)
+ 403 02d8 2000B1FF 	sd $17,32($sp)
+ 404              	.set noreorder
+ 405              	.set nomacro
+ 406 02dc 33004014 	bne $2,$0,$L44
+ 407 02e0 1000B0FF 	sd $16,16($sp)
+ 408              	.set macro
+ 409              	.set reorder
+ 410              	
+ 411 02e4 05001424 	li $20,5
+ 412 02e8 02001324 	li $19,2
+ 413 02ec 2D804002 	move $16,$18
+ 414 02f0 01001124 	li $17,1
+ 415              	$L50:
+ 416 02f4 2D200002 	move $4,$16
+ 417 02f8 FF000524 	li $5,255
+ 418 02fc 20000624 	dli $6,0x20
+ 419              	.set noreorder
+ 420              	.set nomacro
+ 421 0300 0000000C 	jal memset
+GAS LISTING  			page 9
+
+
+ 422 0304 FFFF3126 	addu $17,$17,-1
+ 423              	.set macro
+ 424              	.set reorder
+ 425              	
+ 426 0308 600000AE 	sw $0,96($16)
+ 427 030c 670000A2 	sb $0,103($16)
+ 428 0310 580000AE 	sw $0,88($16)
+ 429 0314 700014A2 	sb $20,112($16)
+ 430 0318 710013A2 	sb $19,113($16)
+ 431 031c 720000A2 	sb $0,114($16)
+ 432              	.set noreorder
+ 433              	.set nomacro
+ 434 0320 F4FF2106 	bgez $17,$L50
+ 435 0324 80001026 	addu $16,$16,128
+ 436              	.set macro
+ 437              	.set reorder
+ 438              	
+ 439 0328 0000023C 	lui $2,%hi(buffer)
+ 440 032c 01001124 	li $17,1
+ 441 0330 50005024 	addiu $16,$2,%lo(buffer)
+ 442 0334 500051AC 	sw $17,%lo(buffer)($2)
+ 443 0338 0000043C 	lui $4,%hi(padsif)
+ 444 033c 040016AE 	sw $22,4($16)
+ 445 0340 080015AE 	sw $21,8($16)
+ 446 0344 2D300000 	move $6,$0
+ 447 0348 100012AE 	sw $18,16($16)
+ 448 034c 00008424 	addiu $4,$4,%lo(padsif)
+ 449 0350 01000524 	li $5,1
+ 450 0354 2D380002 	move $7,$16
+ 451 0358 80000824 	li $8,128
+ 452 035c 2D480002 	move $9,$16
+ 453 0360 80000A24 	li $10,128
+ 454 0364 2D580000 	move $11,$0
+ 455              	.set noreorder
+ 456              	.set nomacro
+ 457 0368 0000000C 	jal SifCallRpc
+ 458 036c 0000A0AF 	sw $0,0($sp)
+ 459              	.set macro
+ 460              	.set reorder
+ 461              	
+ 462              	.set noreorder
+ 463              	.set nomacro
+ 464 0370 0E004004 	bltz $2,$L44
+ 465 0374 2D300000 	move $6,$0
+ 466              	.set macro
+ 467              	.set reorder
+ 468              	
+ 469 0378 28000324 	li $3,40
+ 470 037c 14000424 	li $4,20
+ 471 0380 1810C302 	mult $2,$22,$3
+ 472 0384 1820A402 	mult $4,$21,$4
+ 473 0388 1400058E 	lw $5,20($16)
+ 474 038c 0C00068E 	lw $6,12($16)
+ 475 0390 21184400 	addu $3,$2,$4
+ 476 0394 0000023C 	lui $2,%hi(PadState)
+ 477 0398 D0004224 	addiu $2,$2,%lo(PadState)
+ 478 039c 21186200 	addu $3,$3,$2
+GAS LISTING  			page 10
+
+
+ 479 03a0 100065AC 	sw $5,16($3)
+ 480 03a4 000071AC 	sw $17,0($3)
+ 481 03a8 0C0072AC 	sw $18,12($3)
+ 482              	$L44:
+ 483 03ac 8000BFDF 	ld $31,128($sp)
+ 484 03b0 2D10C000 	move $2,$6
+ 485 03b4 7000B6DF 	ld $22,112($sp)
+ 486 03b8 6000B5DF 	ld $21,96($sp)
+ 487 03bc 5000B4DF 	ld $20,80($sp)
+ 488 03c0 4000B3DF 	ld $19,64($sp)
+ 489 03c4 3000B2DF 	ld $18,48($sp)
+ 490 03c8 2000B1DF 	ld $17,32($sp)
+ 491 03cc 1000B0DF 	ld $16,16($sp)
+ 492              	
+ 493              	.set noreorder
+ 494              	.set nomacro
+ 495 03d0 0800E003 	j $31
+ 496 03d4 9000BD27 	addu $sp,$sp,144
+ 497              	.set macro
+ 498              	.set reorder
+ 499              	
+ 500              	.end xpadPortOpen
+ 501              	$Lfe5:
+ 502              	.size xpadPortOpen,$Lfe5-xpadPortOpen
+ 503              	.align 2
+ 504              	.p2align 3,,7
+ 505              	.globl xpadPortClose
+ 506              	.ent xpadPortClose
+ 507              	xpadPortClose:
+ 508              	.frame $sp,80,$31
+ 509              	.mask 0x80070000,-16
+ 510              	.fmask 0x00000000,0
+ 511 03d8 B0FFBD27 	subu $sp,$sp,80
+ 512 03dc 00000C3C 	lui $12,%hi(buffer)
+ 513 03e0 3000B2FF 	sd $18,48($sp)
+ 514 03e4 0E000224 	li $2,14
+ 515 03e8 1000B0FF 	sd $16,16($sp)
+ 516 03ec 2D908000 	move $18,$4
+ 517 03f0 50009025 	addiu $16,$12,%lo(buffer)
+ 518 03f4 0000043C 	lui $4,%hi(padsif)
+ 519 03f8 2000B1FF 	sd $17,32($sp)
+ 520 03fc 01000324 	li $3,1
+ 521 0400 2D88A000 	move $17,$5
+ 522 0404 00008424 	addiu $4,$4,%lo(padsif)
+ 523 0408 01000524 	li $5,1
+ 524 040c 2D300000 	move $6,$0
+ 525 0410 2D380002 	move $7,$16
+ 526 0414 80000824 	li $8,128
+ 527 0418 2D480002 	move $9,$16
+ 528 041c 80000A24 	li $10,128
+ 529 0420 2D580000 	move $11,$0
+ 530 0424 500082AD 	sw $2,%lo(buffer)($12)
+ 531 0428 4000BFFF 	sd $31,64($sp)
+ 532 042c 100003AE 	sw $3,16($16)
+ 533 0430 040012AE 	sw $18,4($16)
+ 534 0434 080011AE 	sw $17,8($16)
+ 535              	.set noreorder
+GAS LISTING  			page 11
+
+
+ 536              	.set nomacro
+ 537 0438 0000000C 	jal SifCallRpc
+ 538 043c 0000A0AF 	sw $0,0($sp)
+ 539              	.set macro
+ 540              	.set reorder
+ 541              	
+ 542              	.set noreorder
+ 543              	.set nomacro
+ 544 0440 0B004004 	bltz $2,$L54
+ 545 0444 2D284000 	move $5,$2
+ 546              	.set macro
+ 547              	.set reorder
+ 548              	
+ 549 0448 28000424 	li $4,40
+ 550 044c 14000324 	li $3,20
+ 551 0450 18104402 	mult $2,$18,$4
+ 552 0454 18182302 	mult $3,$17,$3
+ 553 0458 0C00058E 	lw $5,12($16)
+ 554 045c 21204300 	addu $4,$2,$3
+ 555 0460 0000023C 	lui $2,%hi(PadState)
+ 556 0464 D0004224 	addiu $2,$2,%lo(PadState)
+ 557 0468 21208200 	addu $4,$4,$2
+ 558 046c 000080AC 	sw $0,0($4)
+ 559              	$L54:
+ 560 0470 4000BFDF 	ld $31,64($sp)
+ 561 0474 2D10A000 	move $2,$5
+ 562 0478 3000B2DF 	ld $18,48($sp)
+ 563 047c 2000B1DF 	ld $17,32($sp)
+ 564 0480 1000B0DF 	ld $16,16($sp)
+ 565              	
+ 566              	.set noreorder
+ 567              	.set nomacro
+ 568 0484 0800E003 	j $31
+ 569 0488 5000BD27 	addu $sp,$sp,80
+ 570              	.set macro
+ 571              	.set reorder
+ 572              	
+ 573              	.end xpadPortClose
+ 574              	$Lfe6:
+ 575              	.size xpadPortClose,$Lfe6-xpadPortClose
+ 576              	.align 2
+ 577 048c 00000000 	.p2align 3,,7
+ 578              	.globl xpadRead
+ 579              	.ent xpadRead
+ 580              	xpadRead:
+ 581              	.frame $sp,48,$31
+ 582              	.mask 0x80030000,-16
+ 583              	.fmask 0x00000000,0
+ 584 0490 D0FFBD27 	subu $sp,$sp,48
+ 585 0494 2000BFFF 	sd $31,32($sp)
+ 586 0498 1000B1FF 	sd $17,16($sp)
+ 587 049c 2D88C000 	move $17,$6
+ 588              	.set noreorder
+ 589              	.set nomacro
+ 590 04a0 0000000C 	jal xpadGetDmaStr
+ 591 04a4 0000B0FF 	sd $16,0($sp)
+ 592              	.set macro
+GAS LISTING  			page 12
+
+
+ 593              	.set reorder
+ 594              	
+ 595 04a8 6000469C 	lwu $6,96($2)
+ 596 04ac 2D804000 	move $16,$2
+ 597 04b0 2D202002 	move $4,$17
+ 598              	.set noreorder
+ 599              	.set nomacro
+ 600 04b4 0000000C 	jal memcpy
+ 601 04b8 2D284000 	move $5,$2
+ 602              	.set macro
+ 603              	.set reorder
+ 604              	
+ 605 04bc 1000B1DF 	ld $17,16($sp)
+ 606 04c0 60000292 	lbu $2,96($16)
+ 607 04c4 2000BFDF 	ld $31,32($sp)
+ 608 04c8 0000B0DF 	ld $16,0($sp)
+ 609              	
+ 610              	.set noreorder
+ 611              	.set nomacro
+ 612 04cc 0800E003 	j $31
+ 613 04d0 3000BD27 	addu $sp,$sp,48
+ 614              	.set macro
+ 615              	.set reorder
+ 616              	
+ 617              	.end xpadRead
+ 618              	$Lfe7:
+ 619              	.size xpadRead,$Lfe7-xpadRead
+ 620              	.align 2
+ 621 04d4 00000000 	.p2align 3,,7
+ 622              	.globl xpadGetState
+ 623              	.ent xpadGetState
+ 624              	xpadGetState:
+ 625              	.frame $sp,64,$31
+ 626              	.mask 0x80070000,-16
+ 627              	.fmask 0x00000000,0
+ 628 04d8 C0FFBD27 	subu $sp,$sp,64
+ 629 04dc 2000B2FF 	sd $18,32($sp)
+ 630 04e0 1000B1FF 	sd $17,16($sp)
+ 631 04e4 2D88A000 	move $17,$5
+ 632 04e8 0000B0FF 	sd $16,0($sp)
+ 633 04ec 3000BFFF 	sd $31,48($sp)
+ 634              	.set noreorder
+ 635              	.set nomacro
+ 636 04f0 0000000C 	jal xpadGetDmaStr
+ 637 04f4 2D808000 	move $16,$4
+ 638              	.set macro
+ 639              	.set reorder
+ 640              	
+ 641 04f8 70005290 	lbu $18,112($2)
+ 642 04fc 2D200002 	move $4,$16
+ 643 0500 06000224 	li $2,6
+ 644              	.set noreorder
+ 645              	.set nomacro
+ 646 0504 0A004212 	beq $18,$2,$L61
+ 647 0508 2D282002 	move $5,$17
+ 648              	.set macro
+ 649              	.set reorder
+GAS LISTING  			page 13
+
+
+ 650              	
+ 651              	$L59:
+ 652 050c 2D204002 	move $4,$18
+ 653 0510 3000BFDF 	ld $31,48($sp)
+ 654              	$L62:
+ 655 0514 2D108000 	move $2,$4
+ 656 0518 2000B2DF 	ld $18,32($sp)
+ 657 051c 1000B1DF 	ld $17,16($sp)
+ 658 0520 0000B0DF 	ld $16,0($sp)
+ 659              	
+ 660              	.set noreorder
+ 661              	.set nomacro
+ 662 0524 0800E003 	j $31
+ 663 0528 4000BD27 	addu $sp,$sp,64
+ 664              	.set macro
+ 665              	.set reorder
+ 666              	
+ 667 052c 00000000 	.p2align 3
+ 668              	$L61:
+ 669 0530 0000000C 	jal xpadGetReqState
+ 669      00000000 
+ 670 0538 02000324 	li $3,2
+ 671              	.set noreorder
+ 672              	.set nomacro
+ 673 053c F3FF4314 	bne $2,$3,$L59
+ 674 0540 05000424 	li $4,5
+ 675              	.set macro
+ 676              	.set reorder
+ 677              	
+ 678              	.set noreorder
+ 679              	.set nomacro
+ 680 0544 F3FF0010 	b $L62
+ 681 0548 3000BFDF 	ld $31,48($sp)
+ 682              	.set macro
+ 683              	.set reorder
+ 684              	
+ 685              	.end xpadGetState
+ 686              	$Lfe8:
+ 687              	.size xpadGetState,$Lfe8-xpadGetState
+ 688              	.align 2
+ 689 054c 00000000 	.p2align 3,,7
+ 690              	.globl xpadGetReqState
+ 691              	.ent xpadGetReqState
+ 692              	xpadGetReqState:
+ 693              	.frame $sp,16,$31
+ 694              	.mask 0x80000000,-16
+ 695              	.fmask 0x00000000,0
+ 696 0550 F0FFBD27 	subu $sp,$sp,16
+ 697 0554 0000BFFF 	sd $31,0($sp)
+ 698 0558 0000000C 	jal xpadGetDmaStr
+ 698      00000000 
+ 699 0560 71004290 	lbu $2,113($2)
+ 700 0564 0000BFDF 	ld $31,0($sp)
+ 701              	
+ 702              	.set noreorder
+ 703              	.set nomacro
+ 704 0568 0800E003 	j $31
+GAS LISTING  			page 14
+
+
+ 705 056c 1000BD27 	addu $sp,$sp,16
+ 706              	.set macro
+ 707              	.set reorder
+ 708              	
+ 709              	.end xpadGetReqState
+ 710              	$Lfe9:
+ 711              	.size xpadGetReqState,$Lfe9-xpadGetReqState
+ 712              	.align 2
+ 713              	.p2align 3,,7
+ 714              	.globl xpadSetReqState
+ 715              	.ent xpadSetReqState
+ 716              	xpadSetReqState:
+ 717              	.frame $sp,32,$31
+ 718              	.mask 0x80010000,-16
+ 719              	.fmask 0x00000000,0
+ 720 0570 E0FFBD27 	subu $sp,$sp,32
+ 721 0574 1000BFFF 	sd $31,16($sp)
+ 722 0578 0000B0FF 	sd $16,0($sp)
+ 723              	.set noreorder
+ 724              	.set nomacro
+ 725 057c 0000000C 	jal xpadGetDmaStr
+ 726 0580 2D80C000 	move $16,$6
+ 727              	.set macro
+ 728              	.set reorder
+ 729              	
+ 730 0584 1000BFDF 	ld $31,16($sp)
+ 731 0588 710050A0 	sb $16,113($2)
+ 732 058c 01000224 	li $2,1
+ 733 0590 0000B0DF 	ld $16,0($sp)
+ 734              	
+ 735              	.set noreorder
+ 736              	.set nomacro
+ 737 0594 0800E003 	j $31
+ 738 0598 2000BD27 	addu $sp,$sp,32
+ 739              	.set macro
+ 740              	.set reorder
+ 741              	
+ 742              	.end xpadSetReqState
+ 743              	$Lfe10:
+ 744              	.size xpadSetReqState,$Lfe10-xpadSetReqState
+ 745              	.align 2
+ 746 059c 00000000 	.p2align 3,,7
+ 747              	.globl xpadStateInt2String
+ 748              	.ent xpadStateInt2String
+ 749              	xpadStateInt2String:
+ 750              	.frame $sp,16,$31
+ 751              	.mask 0x80000000,-16
+ 752              	.fmask 0x00000000,0
+ 753 05a0 0000023C 	lui $2,%hi(padStateString)
+ 754 05a4 00190400 	sll $3,$4,4
+ 755 05a8 F0FFBD27 	subu $sp,$sp,16
+ 756 05ac 00004224 	addiu $2,$2,%lo(padStateString)
+ 757 05b0 08008428 	slt $4,$4,8
+ 758 05b4 0000BFFF 	sd $31,0($sp)
+ 759              	.set noreorder
+ 760              	.set nomacro
+ 761 05b8 05008014 	bne $4,$0,$L67
+GAS LISTING  			page 15
+
+
+ 762 05bc 21186200 	addu $3,$3,$2
+ 763              	.set macro
+ 764              	.set reorder
+ 765              	
+ 766 05c0 0000BFDF 	ld $31,0($sp)
+ 767              	$L68:
+ 768              	.set noreorder
+ 769              	.set nomacro
+ 770 05c4 0800E003 	j $31
+ 771 05c8 1000BD27 	addu $sp,$sp,16
+ 772              	.set macro
+ 773              	.set reorder
+ 774              	
+ 775 05cc 00000000 	.p2align 3
+ 776              	$L67:
+ 777 05d0 2D20A000 	move $4,$5
+ 778              	.set noreorder
+ 779              	.set nomacro
+ 780 05d4 0000000C 	jal strcpy
+ 781 05d8 2D286000 	move $5,$3
+ 782              	.set macro
+ 783              	.set reorder
+ 784              	
+ 785              	.set noreorder
+ 786              	.set nomacro
+ 787 05dc F9FF0010 	b $L68
+ 788 05e0 0000BFDF 	ld $31,0($sp)
+ 789              	.set macro
+ 790              	.set reorder
+ 791              	
+ 792              	.end xpadStateInt2String
+ 793              	$Lfe11:
+ 794              	.size xpadStateInt2String,$Lfe11-xpadStateInt2String
+ 795              	.align 2
+ 796 05e4 00000000 	.p2align 3,,7
+ 797              	.globl xpadReqStateInt2String
+ 798              	.ent xpadReqStateInt2String
+ 799              	xpadReqStateInt2String:
+ 800              	.frame $sp,16,$31
+ 801              	.mask 0x80000000,-16
+ 802              	.fmask 0x00000000,0
+ 803 05e8 0000023C 	lui $2,%hi(padReqStateString)
+ 804 05ec 00190400 	sll $3,$4,4
+ 805 05f0 F0FFBD27 	subu $sp,$sp,16
+ 806 05f4 80004224 	addiu $2,$2,%lo(padReqStateString)
+ 807 05f8 04008428 	slt $4,$4,4
+ 808 05fc 0000BFFF 	sd $31,0($sp)
+ 809              	.set noreorder
+ 810              	.set nomacro
+ 811 0600 05008014 	bne $4,$0,$L71
+ 812 0604 21186200 	addu $3,$3,$2
+ 813              	.set macro
+ 814              	.set reorder
+ 815              	
+ 816 0608 0000BFDF 	ld $31,0($sp)
+ 817              	$L72:
+ 818              	.set noreorder
+GAS LISTING  			page 16
+
+
+ 819              	.set nomacro
+ 820 060c 0800E003 	j $31
+ 821 0610 1000BD27 	addu $sp,$sp,16
+ 822              	.set macro
+ 823              	.set reorder
+ 824              	
+ 825 0614 00000000 	.p2align 3
+ 826              	$L71:
+ 827 0618 2D20A000 	move $4,$5
+ 828              	.set noreorder
+ 829              	.set nomacro
+ 830 061c 0000000C 	jal strcpy
+ 831 0620 2D286000 	move $5,$3
+ 832              	.set macro
+ 833              	.set reorder
+ 834              	
+ 835              	.set noreorder
+ 836              	.set nomacro
+ 837 0624 F9FF0010 	b $L72
+ 838 0628 0000BFDF 	ld $31,0($sp)
+ 839              	.set macro
+ 840              	.set reorder
+ 841              	
+ 842              	.end xpadReqStateInt2String
+ 843              	$Lfe12:
+ 844              	.size xpadReqStateInt2String,$Lfe12-xpadReqStateInt2String
+ 845              	.align 2
+ 846 062c 00000000 	.p2align 3,,7
+ 847              	.globl xpadGetPortMax
+ 848              	.ent xpadGetPortMax
+ 849              	xpadGetPortMax:
+ 850              	.frame $sp,48,$31
+ 851              	.mask 0x80010000,-16
+ 852              	.fmask 0x00000000,0
+ 853 0630 D0FFBD27 	subu $sp,$sp,48
+ 854 0634 0000033C 	lui $3,%hi(buffer)
+ 855 0638 1000B0FF 	sd $16,16($sp)
+ 856 063c 0000043C 	lui $4,%hi(padsif)
+ 857 0640 50007024 	addiu $16,$3,%lo(buffer)
+ 858 0644 0C000224 	li $2,12
+ 859 0648 00008424 	addiu $4,$4,%lo(padsif)
+ 860 064c 01000524 	li $5,1
+ 861 0650 2D300000 	move $6,$0
+ 862 0654 2D380002 	move $7,$16
+ 863 0658 80000824 	li $8,128
+ 864 065c 2D480002 	move $9,$16
+ 865 0660 80000A24 	li $10,128
+ 866 0664 2D580000 	move $11,$0
+ 867 0668 500062AC 	sw $2,%lo(buffer)($3)
+ 868 066c 2000BFFF 	sd $31,32($sp)
+ 869              	.set noreorder
+ 870              	.set nomacro
+ 871 0670 0000000C 	jal SifCallRpc
+ 872 0674 0000A0AF 	sw $0,0($sp)
+ 873              	.set macro
+ 874              	.set reorder
+ 875              	
+GAS LISTING  			page 17
+
+
+ 876              	.set noreorder
+ 877              	.set nomacro
+ 878 0678 02004004 	bltz $2,$L73
+ 879 067c FFFF0324 	li $3,-1
+ 880              	.set macro
+ 881              	.set reorder
+ 882              	
+ 883 0680 0C00038E 	lw $3,12($16)
+ 884              	$L73:
+ 885 0684 2000BFDF 	ld $31,32($sp)
+ 886 0688 2D106000 	move $2,$3
+ 887 068c 1000B0DF 	ld $16,16($sp)
+ 888              	
+ 889              	.set noreorder
+ 890              	.set nomacro
+ 891 0690 0800E003 	j $31
+ 892 0694 3000BD27 	addu $sp,$sp,48
+ 893              	.set macro
+ 894              	.set reorder
+ 895              	
+ 896              	.end xpadGetPortMax
+ 897              	$Lfe13:
+ 898              	.size xpadGetPortMax,$Lfe13-xpadGetPortMax
+ 899              	.align 2
+ 900              	.p2align 3,,7
+ 901              	.globl xpadGetSlotMax
+ 902              	.ent xpadGetSlotMax
+ 903              	xpadGetSlotMax:
+ 904              	.frame $sp,48,$31
+ 905              	.mask 0x80010000,-16
+ 906              	.fmask 0x00000000,0
+ 907 0698 D0FFBD27 	subu $sp,$sp,48
+ 908 069c 0000033C 	lui $3,%hi(buffer)
+ 909 06a0 2D608000 	move $12,$4
+ 910 06a4 1000B0FF 	sd $16,16($sp)
+ 911 06a8 0000043C 	lui $4,%hi(padsif)
+ 912 06ac 50007024 	addiu $16,$3,%lo(buffer)
+ 913 06b0 0D000224 	li $2,13
+ 914 06b4 00008424 	addiu $4,$4,%lo(padsif)
+ 915 06b8 01000524 	li $5,1
+ 916 06bc 2D300000 	move $6,$0
+ 917 06c0 2D380002 	move $7,$16
+ 918 06c4 80000824 	li $8,128
+ 919 06c8 2D480002 	move $9,$16
+ 920 06cc 80000A24 	li $10,128
+ 921 06d0 2D580000 	move $11,$0
+ 922 06d4 500062AC 	sw $2,%lo(buffer)($3)
+ 923 06d8 2000BFFF 	sd $31,32($sp)
+ 924 06dc 04000CAE 	sw $12,4($16)
+ 925              	.set noreorder
+ 926              	.set nomacro
+ 927 06e0 0000000C 	jal SifCallRpc
+ 928 06e4 0000A0AF 	sw $0,0($sp)
+ 929              	.set macro
+ 930              	.set reorder
+ 931              	
+ 932              	.set noreorder
+GAS LISTING  			page 18
+
+
+ 933              	.set nomacro
+ 934 06e8 02004004 	bltz $2,$L75
+ 935 06ec FFFF0324 	li $3,-1
+ 936              	.set macro
+ 937              	.set reorder
+ 938              	
+ 939 06f0 0C00038E 	lw $3,12($16)
+ 940              	$L75:
+ 941 06f4 2000BFDF 	ld $31,32($sp)
+ 942 06f8 2D106000 	move $2,$3
+ 943 06fc 1000B0DF 	ld $16,16($sp)
+ 944              	
+ 945              	.set noreorder
+ 946              	.set nomacro
+ 947 0700 0800E003 	j $31
+ 948 0704 3000BD27 	addu $sp,$sp,48
+ 949              	.set macro
+ 950              	.set reorder
+ 951              	
+ 952              	.end xpadGetSlotMax
+ 953              	$Lfe14:
+ 954              	.size xpadGetSlotMax,$Lfe14-xpadGetSlotMax
+ 955              	.align 2
+ 956              	.p2align 3,,7
+ 957              	.globl xpadGetModVersion
+ 958              	.ent xpadGetModVersion
+ 959              	xpadGetModVersion:
+ 960              	.frame $sp,48,$31
+ 961              	.mask 0x80010000,-16
+ 962              	.fmask 0x00000000,0
+ 963 0708 D0FFBD27 	subu $sp,$sp,48
+ 964 070c 0000033C 	lui $3,%hi(buffer)
+ 965 0710 1000B0FF 	sd $16,16($sp)
+ 966 0714 0000043C 	lui $4,%hi(padsif)
+ 967 0718 50007024 	addiu $16,$3,%lo(buffer)
+ 968 071c 12000224 	li $2,18
+ 969 0720 00008424 	addiu $4,$4,%lo(padsif)
+ 970 0724 01000524 	li $5,1
+ 971 0728 2D300000 	move $6,$0
+ 972 072c 2D380002 	move $7,$16
+ 973 0730 80000824 	li $8,128
+ 974 0734 2D480002 	move $9,$16
+ 975 0738 80000A24 	li $10,128
+ 976 073c 2D580000 	move $11,$0
+ 977 0740 500062AC 	sw $2,%lo(buffer)($3)
+ 978 0744 2000BFFF 	sd $31,32($sp)
+ 979              	.set noreorder
+ 980              	.set nomacro
+ 981 0748 0000000C 	jal SifCallRpc
+ 982 074c 0000A0AF 	sw $0,0($sp)
+ 983              	.set macro
+ 984              	.set reorder
+ 985              	
+ 986              	.set noreorder
+ 987              	.set nomacro
+ 988 0750 02004004 	bltz $2,$L77
+ 989 0754 FFFF0324 	li $3,-1
+GAS LISTING  			page 19
+
+
+ 990              	.set macro
+ 991              	.set reorder
+ 992              	
+ 993 0758 0C00038E 	lw $3,12($16)
+ 994              	$L77:
+ 995 075c 2000BFDF 	ld $31,32($sp)
+ 996 0760 2D106000 	move $2,$3
+ 997 0764 1000B0DF 	ld $16,16($sp)
+ 998              	
+ 999              	.set noreorder
+ 1000              	.set nomacro
+ 1001 0768 0800E003 	j $31
+ 1002 076c 3000BD27 	addu $sp,$sp,48
+ 1003              	.set macro
+ 1004              	.set reorder
+ 1005              	
+ 1006              	.end xpadGetModVersion
+ 1007              	$Lfe15:
+ 1008              	.size xpadGetModVersion,$Lfe15-xpadGetModVersion
+ 1009              	.align 2
+ 1010              	.p2align 3,,7
+ 1011              	.globl xpadInfoMode
+ 1012              	.ent xpadInfoMode
+ 1013              	xpadInfoMode:
+ 1014              	.frame $sp,48,$31
+ 1015              	.mask 0x80030000,-16
+ 1016              	.fmask 0x00000000,0
+ 1017 0770 D0FFBD27 	subu $sp,$sp,48
+ 1018 0774 1000B1FF 	sd $17,16($sp)
+ 1019 0778 2D88E000 	move $17,$7
+ 1020 077c 0000B0FF 	sd $16,0($sp)
+ 1021 0780 2000BFFF 	sd $31,32($sp)
+ 1022              	.set noreorder
+ 1023              	.set nomacro
+ 1024 0784 0000000C 	jal xpadGetDmaStr
+ 1025 0788 2D80C000 	move $16,$6
+ 1026              	.set macro
+ 1027              	.set reorder
+ 1028              	
+ 1029 078c 72004390 	lbu $3,114($2)
+ 1030 0790 2D384000 	move $7,$2
+ 1031 0794 01000224 	li $2,1
+ 1032              	.set noreorder
+ 1033              	.set nomacro
+ 1034 0798 07006210 	beq $3,$2,$L102
+ 1035 079c 2D280000 	move $5,$0
+ 1036              	.set macro
+ 1037              	.set reorder
+ 1038              	
+ 1039              	$L79:
+ 1040 07a0 2000BFDF 	ld $31,32($sp)
+ 1041              	$L104:
+ 1042              	$L105:
+ 1043              	$L106:
+ 1044 07a4 2D10A000 	move $2,$5
+ 1045 07a8 1000B1DF 	ld $17,16($sp)
+ 1046 07ac 0000B0DF 	ld $16,0($sp)
+GAS LISTING  			page 20
+
+
+ 1047              	
+ 1048              	.set noreorder
+ 1049              	.set nomacro
+ 1050 07b0 0800E003 	j $31
+ 1051 07b4 3000BD27 	addu $sp,$sp,48
+ 1052              	.set macro
+ 1053              	.set reorder
+ 1054              	
+ 1055              	.p2align 3
+ 1056              	$L102:
+ 1057 07b8 7100E290 	lbu $2,113($7)
+ 1058 07bc 02000424 	li $4,2
+ 1059              	.set noreorder
+ 1060              	.set nomacro
+ 1061 07c0 F8FF4410 	beq $2,$4,$L104
+ 1062 07c4 2000BFDF 	ld $31,32($sp)
+ 1063              	.set macro
+ 1064              	.set reorder
+ 1065              	
+ 1066              	.set noreorder
+ 1067              	.set nomacro
+ 1068 07c8 22000412 	beq $16,$4,$L86
+ 1069 07cc 0300022A 	slt $2,$16,3
+ 1070              	.set macro
+ 1071              	.set reorder
+ 1072              	
+ 1073              	.set noreorder
+ 1074              	.set nomacro
+ 1075 07d0 0A004010 	beq $2,$0,$L100
+ 1076 07d4 03000224 	li $2,3
+ 1077              	.set macro
+ 1078              	.set reorder
+ 1079              	
+ 1080              	.set noreorder
+ 1081              	.set nomacro
+ 1082 07d8 03000352 	beql $16,$3,$L83
+ 1083 07dc 6500E290 	lbu $2,101($7)
+ 1084              	.set macro
+ 1085              	.set reorder
+ 1086              	
+ 1087              	.set noreorder
+ 1088              	.set nomacro
+ 1089 07e0 F0FF0010 	b $L104
+ 1090 07e4 2D280000 	move $5,$0
+ 1091              	.set macro
+ 1092              	.set reorder
+ 1093              	
+ 1094              	$L83:
+ 1095 07e8 2D280000 	move $5,$0
+ 1096 07ec F3004338 	xori $3,$2,0xf3
+ 1097 07f0 02110200 	srl $2,$2,4
+ 1098              	.set noreorder
+ 1099              	.set nomacro
+ 1100 07f4 EAFF0010 	b $L79
+ 1101 07f8 0B284300 	movn $5,$2,$3
+ 1102              	.set macro
+ 1103              	.set reorder
+GAS LISTING  			page 21
+
+
+ 1104              	
+ 1105              	$L100:
+ 1106              	.set noreorder
+ 1107              	.set nomacro
+ 1108 07fc 10000212 	beq $16,$2,$L88
+ 1109 0800 04000224 	li $2,4
+ 1110              	.set macro
+ 1111              	.set reorder
+ 1112              	
+ 1113              	.set noreorder
+ 1114              	.set nomacro
+ 1115 0804 E6FF0216 	bne $16,$2,$L79
+ 1116 0808 2D280000 	move $5,$0
+ 1117              	.set macro
+ 1118              	.set reorder
+ 1119              	
+ 1120 080c 6400E290 	lbu $2,100($7)
+ 1121              	
+ 1122              	.set noreorder
+ 1123              	.set nomacro
+ 1124 0810 E4FF4010 	beq $2,$0,$L104
+ 1125 0814 2000BFDF 	ld $31,32($sp)
+ 1126              	.set macro
+ 1127              	.set reorder
+ 1128              	
+ 1129 0818 FFFF0224 	li $2,-1
+ 1130              	.set noreorder
+ 1131              	.set nomacro
+ 1132 081c E1FF2252 	beql $17,$2,$L105
+ 1133 0820 6800E590 	lbu $5,104($7)
+ 1134              	.set macro
+ 1135              	.set reorder
+ 1136              	
+ 1137 0824 6800E290 	lbu $2,104($7)
+ 1138              	
+ 1139 0828 2A105100 	slt $2,$2,$17
+ 1140              	.set noreorder
+ 1141              	.set nomacro
+ 1142 082c DDFF4010 	beq $2,$0,$L106
+ 1143 0830 40101100 	sll $2,$17,1
+ 1144              	.set macro
+ 1145              	.set reorder
+ 1146              	
+ 1147              	$L101:
+ 1148 0834 21104700 	addu $2,$2,$7
+ 1149              	.set noreorder
+ 1150              	.set nomacro
+ 1151 0838 D9FF0010 	b $L79
+ 1152 083c 50004594 	lhu $5,80($2)
+ 1153              	.set macro
+ 1154              	.set reorder
+ 1155              	
+ 1156              	$L88:
+ 1157 0840 6400E290 	lbu $2,100($7)
+ 1158              	
+ 1159              	.set noreorder
+ 1160              	.set nomacro
+GAS LISTING  			page 22
+
+
+ 1161 0844 D6FF4010 	beq $2,$0,$L79
+ 1162 0848 2D280000 	move $5,$0
+ 1163              	.set macro
+ 1164              	.set reorder
+ 1165              	
+ 1166              	.set noreorder
+ 1167              	.set nomacro
+ 1168 084c D4FF0010 	b $L79
+ 1169 0850 6900E590 	lbu $5,105($7)
+ 1170              	.set macro
+ 1171              	.set reorder
+ 1172              	
+ 1173              	$L86:
+ 1174 0854 6400E290 	lbu $2,100($7)
+ 1175              	
+ 1176              	.set noreorder
+ 1177              	.set nomacro
+ 1178 0858 D1FF4310 	beq $2,$3,$L79
+ 1179 085c 2D280000 	move $5,$0
+ 1180              	.set macro
+ 1181              	.set reorder
+ 1182              	
+ 1183 0860 6900E290 	lbu $2,105($7)
+ 1184              	.set noreorder
+ 1185              	.set nomacro
+ 1186 0864 F3FF0010 	b $L101
+ 1187 0868 40100200 	sll $2,$2,1
+ 1188              	.set macro
+ 1189              	.set reorder
+ 1190              	
+ 1191              	.end xpadInfoMode
+ 1192              	$Lfe16:
+ 1193              	.size xpadInfoMode,$Lfe16-xpadInfoMode
+ 1194              	.align 2
+ 1195 086c 00000000 	.p2align 3,,7
+ 1196              	.globl xpadSetMainMode
+ 1197              	.ent xpadSetMainMode
+ 1198              	xpadSetMainMode:
+ 1199              	.frame $sp,80,$31
+ 1200              	.mask 0x80070000,-16
+ 1201              	.fmask 0x00000000,0
+ 1202 0870 B0FFBD27 	subu $sp,$sp,80
+ 1203 0874 0000033C 	lui $3,%hi(buffer)
+ 1204 0878 2000B1FF 	sd $17,32($sp)
+ 1205 087c 2D60C000 	move $12,$6
+ 1206 0880 1000B0FF 	sd $16,16($sp)
+ 1207 0884 2D888000 	move $17,$4
+ 1208 0888 50007024 	addiu $16,$3,%lo(buffer)
+ 1209 088c 0000043C 	lui $4,%hi(padsif)
+ 1210 0890 2D68E000 	move $13,$7
+ 1211 0894 3000B2FF 	sd $18,48($sp)
+ 1212 0898 06000224 	li $2,6
+ 1213 089c 00008424 	addiu $4,$4,%lo(padsif)
+ 1214 08a0 2D90A000 	move $18,$5
+ 1215 08a4 2D300000 	move $6,$0
+ 1216 08a8 01000524 	li $5,1
+ 1217 08ac 2D380002 	move $7,$16
+GAS LISTING  			page 23
+
+
+ 1218 08b0 80000824 	li $8,128
+ 1219 08b4 2D480002 	move $9,$16
+ 1220 08b8 80000A24 	li $10,128
+ 1221 08bc 2D580000 	move $11,$0
+ 1222 08c0 500062AC 	sw $2,%lo(buffer)($3)
+ 1223 08c4 4000BFFF 	sd $31,64($sp)
+ 1224 08c8 0C000CAE 	sw $12,12($16)
+ 1225 08cc 10000DAE 	sw $13,16($16)
+ 1226 08d0 040011AE 	sw $17,4($16)
+ 1227 08d4 080012AE 	sw $18,8($16)
+ 1228              	.set noreorder
+ 1229              	.set nomacro
+ 1230 08d8 0000000C 	jal SifCallRpc
+ 1231 08dc 0000A0AF 	sw $0,0($sp)
+ 1232              	.set macro
+ 1233              	.set reorder
+ 1234              	
+ 1235              	.set noreorder
+ 1236              	.set nomacro
+ 1237 08e0 07004004 	bltz $2,$L107
+ 1238 08e4 2D180000 	move $3,$0
+ 1239              	.set macro
+ 1240              	.set reorder
+ 1241              	
+ 1242 08e8 1400038E 	lw $3,20($16)
+ 1243 08ec 01000224 	li $2,1
+ 1244 08f0 2D202002 	move $4,$17
+ 1245 08f4 2D284002 	move $5,$18
+ 1246              	.set noreorder
+ 1247              	.set nomacro
+ 1248 08f8 09006210 	beq $3,$2,$L110
+ 1249 08fc 02000624 	li $6,2
+ 1250              	.set macro
+ 1251              	.set reorder
+ 1252              	
+ 1253              	$L107:
+ 1254 0900 4000BFDF 	ld $31,64($sp)
+ 1255 0904 2D106000 	move $2,$3
+ 1256 0908 3000B2DF 	ld $18,48($sp)
+ 1257 090c 2000B1DF 	ld $17,32($sp)
+ 1258 0910 1000B0DF 	ld $16,16($sp)
+ 1259              	
+ 1260              	.set noreorder
+ 1261              	.set nomacro
+ 1262 0914 0800E003 	j $31
+ 1263 0918 5000BD27 	addu $sp,$sp,80
+ 1264              	.set macro
+ 1265              	.set reorder
+ 1266              	
+ 1267 091c 00000000 	.p2align 3
+ 1268              	$L110:
+ 1269 0920 0000000C 	jal xpadSetReqState
+ 1269      00000000 
+ 1270              	.set noreorder
+ 1271              	.set nomacro
+ 1272 0928 F5FF0010 	b $L107
+ 1273 092c 1400038E 	lw $3,20($16)
+GAS LISTING  			page 24
+
+
+ 1274              	.set macro
+ 1275              	.set reorder
+ 1276              	
+ 1277              	.end xpadSetMainMode
+ 1278              	$Lfe17:
+ 1279              	.size xpadSetMainMode,$Lfe17-xpadSetMainMode
+ 1280              	.align 2
+ 1281              	.p2align 3,,7
+ 1282              	.globl xpadInfoPressMode
+ 1283              	.ent xpadInfoPressMode
+ 1284              	xpadInfoPressMode:
+ 1285              	.frame $sp,16,$31
+ 1286              	.mask 0x80000000,-16
+ 1287              	.fmask 0x00000000,0
+ 1288 0930 F0FFBD27 	subu $sp,$sp,16
+ 1289 0934 0000BFFF 	sd $31,0($sp)
+ 1290 0938 0000000C 	jal xpadGetButtonMask
+ 1290      00000000 
+ 1291 0940 0300033C 	li $3,196608
+ 1292 0944 0000BFDF 	ld $31,0($sp)
+ 1293 0948 FFFF6334 	ori $3,$3,0xffff
+ 1294 094c 26104300 	xor $2,$2,$3
+ 1295 0950 0100422C 	sltu $2,$2,1
+ 1296              	.set noreorder
+ 1297              	.set nomacro
+ 1298 0954 0800E003 	j $31
+ 1299 0958 1000BD27 	addu $sp,$sp,16
+ 1300              	.set macro
+ 1301              	.set reorder
+ 1302              	
+ 1303              	.end xpadInfoPressMode
+ 1304              	$Lfe18:
+ 1305              	.size xpadInfoPressMode,$Lfe18-xpadInfoPressMode
+ 1306              	.align 2
+ 1307 095c 00000000 	.p2align 3,,7
+ 1308              	.globl xpadEnterPressMode
+ 1309              	.ent xpadEnterPressMode
+ 1310              	xpadEnterPressMode:
+ 1311              	.frame $sp,16,$31
+ 1312              	.mask 0x80000000,-16
+ 1313              	.fmask 0x00000000,0
+ 1314 0960 F0FFBD27 	subu $sp,$sp,16
+ 1315 0964 0000BFFF 	sd $31,0($sp)
+ 1316              	.set noreorder
+ 1317              	.set nomacro
+ 1318 0968 0000000C 	jal xpadSetButtonInfo
+ 1319 096c FF0F0624 	li $6,4095
+ 1320              	.set macro
+ 1321              	.set reorder
+ 1322              	
+ 1323 0970 0000BFDF 	ld $31,0($sp)
+ 1324              	
+ 1325              	.set noreorder
+ 1326              	.set nomacro
+ 1327 0974 0800E003 	j $31
+ 1328 0978 1000BD27 	addu $sp,$sp,16
+ 1329              	.set macro
+GAS LISTING  			page 25
+
+
+ 1330              	.set reorder
+ 1331              	
+ 1332              	.end xpadEnterPressMode
+ 1333              	$Lfe19:
+ 1334              	.size xpadEnterPressMode,$Lfe19-xpadEnterPressMode
+ 1335              	.align 2
+ 1336 097c 00000000 	.p2align 3,,7
+ 1337              	.globl xpadExitPressMode
+ 1338              	.ent xpadExitPressMode
+ 1339              	xpadExitPressMode:
+ 1340              	.frame $sp,16,$31
+ 1341              	.mask 0x80000000,-16
+ 1342              	.fmask 0x00000000,0
+ 1343 0980 F0FFBD27 	subu $sp,$sp,16
+ 1344 0984 0000BFFF 	sd $31,0($sp)
+ 1345              	.set noreorder
+ 1346              	.set nomacro
+ 1347 0988 0000000C 	jal xpadSetButtonInfo
+ 1348 098c 2D300000 	move $6,$0
+ 1349              	.set macro
+ 1350              	.set reorder
+ 1351              	
+ 1352 0990 0000BFDF 	ld $31,0($sp)
+ 1353              	
+ 1354              	.set noreorder
+ 1355              	.set nomacro
+ 1356 0994 0800E003 	j $31
+ 1357 0998 1000BD27 	addu $sp,$sp,16
+ 1358              	.set macro
+ 1359              	.set reorder
+ 1360              	
+ 1361              	.end xpadExitPressMode
+ 1362              	$Lfe20:
+ 1363              	.size xpadExitPressMode,$Lfe20-xpadExitPressMode
+ 1364              	.align 2
+ 1365 099c 00000000 	.p2align 3,,7
+ 1366              	.globl xpadGetButtonMask
+ 1367              	.ent xpadGetButtonMask
+ 1368              	xpadGetButtonMask:
+ 1369              	.frame $sp,48,$31
+ 1370              	.mask 0x80010000,-16
+ 1371              	.fmask 0x00000000,0
+ 1372 09a0 D0FFBD27 	subu $sp,$sp,48
+ 1373 09a4 0000033C 	lui $3,%hi(buffer)
+ 1374 09a8 2D608000 	move $12,$4
+ 1375 09ac 1000B0FF 	sd $16,16($sp)
+ 1376 09b0 0000043C 	lui $4,%hi(padsif)
+ 1377 09b4 50007024 	addiu $16,$3,%lo(buffer)
+ 1378 09b8 2D68A000 	move $13,$5
+ 1379 09bc 09000224 	li $2,9
+ 1380 09c0 00008424 	addiu $4,$4,%lo(padsif)
+ 1381 09c4 01000524 	li $5,1
+ 1382 09c8 2D300000 	move $6,$0
+ 1383 09cc 2D380002 	move $7,$16
+ 1384 09d0 80000824 	li $8,128
+ 1385 09d4 2D480002 	move $9,$16
+ 1386 09d8 80000A24 	li $10,128
+GAS LISTING  			page 26
+
+
+ 1387 09dc 2D580000 	move $11,$0
+ 1388 09e0 500062AC 	sw $2,%lo(buffer)($3)
+ 1389 09e4 2000BFFF 	sd $31,32($sp)
+ 1390 09e8 04000CAE 	sw $12,4($16)
+ 1391 09ec 08000DAE 	sw $13,8($16)
+ 1392              	.set noreorder
+ 1393              	.set nomacro
+ 1394 09f0 0000000C 	jal SifCallRpc
+ 1395 09f4 0000A0AF 	sw $0,0($sp)
+ 1396              	.set macro
+ 1397              	.set reorder
+ 1398              	
+ 1399              	.set noreorder
+ 1400              	.set nomacro
+ 1401 09f8 02004004 	bltz $2,$L116
+ 1402 09fc 2D180000 	move $3,$0
+ 1403              	.set macro
+ 1404              	.set reorder
+ 1405              	
+ 1406 0a00 0C00038E 	lw $3,12($16)
+ 1407              	$L116:
+ 1408 0a04 2000BFDF 	ld $31,32($sp)
+ 1409 0a08 2D106000 	move $2,$3
+ 1410 0a0c 1000B0DF 	ld $16,16($sp)
+ 1411              	
+ 1412              	.set noreorder
+ 1413              	.set nomacro
+ 1414 0a10 0800E003 	j $31
+ 1415 0a14 3000BD27 	addu $sp,$sp,48
+ 1416              	.set macro
+ 1417              	.set reorder
+ 1418              	
+ 1419              	.end xpadGetButtonMask
+ 1420              	$Lfe21:
+ 1421              	.size xpadGetButtonMask,$Lfe21-xpadGetButtonMask
+ 1422              	.align 2
+ 1423              	.p2align 3,,7
+ 1424              	.globl xpadSetButtonInfo
+ 1425              	.ent xpadSetButtonInfo
+ 1426              	xpadSetButtonInfo:
+ 1427              	.frame $sp,80,$31
+ 1428              	.mask 0x80070000,-16
+ 1429              	.fmask 0x00000000,0
+ 1430 0a18 B0FFBD27 	subu $sp,$sp,80
+ 1431 0a1c 0000033C 	lui $3,%hi(buffer)
+ 1432 0a20 2000B1FF 	sd $17,32($sp)
+ 1433 0a24 2D60C000 	move $12,$6
+ 1434 0a28 1000B0FF 	sd $16,16($sp)
+ 1435 0a2c 2D888000 	move $17,$4
+ 1436 0a30 50007024 	addiu $16,$3,%lo(buffer)
+ 1437 0a34 0000043C 	lui $4,%hi(padsif)
+ 1438 0a38 3000B2FF 	sd $18,48($sp)
+ 1439 0a3c 0A000224 	li $2,10
+ 1440 0a40 2D90A000 	move $18,$5
+ 1441 0a44 00008424 	addiu $4,$4,%lo(padsif)
+ 1442 0a48 01000524 	li $5,1
+ 1443 0a4c 2D300000 	move $6,$0
+GAS LISTING  			page 27
+
+
+ 1444 0a50 2D380002 	move $7,$16
+ 1445 0a54 80000824 	li $8,128
+ 1446 0a58 2D480002 	move $9,$16
+ 1447 0a5c 80000A24 	li $10,128
+ 1448 0a60 2D580000 	move $11,$0
+ 1449 0a64 500062AC 	sw $2,%lo(buffer)($3)
+ 1450 0a68 4000BFFF 	sd $31,64($sp)
+ 1451 0a6c 0C000CAE 	sw $12,12($16)
+ 1452 0a70 040011AE 	sw $17,4($16)
+ 1453 0a74 080012AE 	sw $18,8($16)
+ 1454              	.set noreorder
+ 1455              	.set nomacro
+ 1456 0a78 0000000C 	jal SifCallRpc
+ 1457 0a7c 0000A0AF 	sw $0,0($sp)
+ 1458              	.set macro
+ 1459              	.set reorder
+ 1460              	
+ 1461              	.set noreorder
+ 1462              	.set nomacro
+ 1463 0a80 07004004 	bltz $2,$L118
+ 1464 0a84 2D180000 	move $3,$0
+ 1465              	.set macro
+ 1466              	.set reorder
+ 1467              	
+ 1468 0a88 1000038E 	lw $3,16($16)
+ 1469 0a8c 01000224 	li $2,1
+ 1470 0a90 2D202002 	move $4,$17
+ 1471 0a94 2D284002 	move $5,$18
+ 1472              	.set noreorder
+ 1473              	.set nomacro
+ 1474 0a98 09006210 	beq $3,$2,$L121
+ 1475 0a9c 02000624 	li $6,2
+ 1476              	.set macro
+ 1477              	.set reorder
+ 1478              	
+ 1479              	$L118:
+ 1480 0aa0 4000BFDF 	ld $31,64($sp)
+ 1481 0aa4 2D106000 	move $2,$3
+ 1482 0aa8 3000B2DF 	ld $18,48($sp)
+ 1483 0aac 2000B1DF 	ld $17,32($sp)
+ 1484 0ab0 1000B0DF 	ld $16,16($sp)
+ 1485              	
+ 1486              	.set noreorder
+ 1487              	.set nomacro
+ 1488 0ab4 0800E003 	j $31
+ 1489 0ab8 5000BD27 	addu $sp,$sp,80
+ 1490              	.set macro
+ 1491              	.set reorder
+ 1492              	
+ 1493 0abc 00000000 	.p2align 3
+ 1494              	$L121:
+ 1495 0ac0 0000000C 	jal xpadSetReqState
+ 1495      00000000 
+ 1496              	.set noreorder
+ 1497              	.set nomacro
+ 1498 0ac8 F5FF0010 	b $L118
+ 1499 0acc 1000038E 	lw $3,16($16)
+GAS LISTING  			page 28
+
+
+ 1500              	.set macro
+ 1501              	.set reorder
+ 1502              	
+ 1503              	.end xpadSetButtonInfo
+ 1504              	$Lfe22:
+ 1505              	.size xpadSetButtonInfo,$Lfe22-xpadSetButtonInfo
+ 1506              	.align 2
+ 1507              	.p2align 3,,7
+ 1508              	.globl xpadInfoAct
+ 1509              	.ent xpadInfoAct
+ 1510              	xpadInfoAct:
+ 1511              	.frame $sp,48,$31
+ 1512              	.mask 0x80030000,-16
+ 1513              	.fmask 0x00000000,0
+ 1514 0ad0 D0FFBD27 	subu $sp,$sp,48
+ 1515 0ad4 1000B1FF 	sd $17,16($sp)
+ 1516 0ad8 2D88E000 	move $17,$7
+ 1517 0adc 0000B0FF 	sd $16,0($sp)
+ 1518 0ae0 2000BFFF 	sd $31,32($sp)
+ 1519              	.set noreorder
+ 1520              	.set nomacro
+ 1521 0ae4 0000000C 	jal xpadGetDmaStr
+ 1522 0ae8 2D80C000 	move $16,$6
+ 1523              	.set macro
+ 1524              	.set reorder
+ 1525              	
+ 1526 0aec 72004390 	lbu $3,114($2)
+ 1527 0af0 2D304000 	move $6,$2
+ 1528 0af4 01000224 	li $2,1
+ 1529              	.set noreorder
+ 1530              	.set nomacro
+ 1531 0af8 07006210 	beq $3,$2,$L128
+ 1532 0afc 2D380000 	move $7,$0
+ 1533              	.set macro
+ 1534              	.set reorder
+ 1535              	
+ 1536 0b00 2000BFDF 	ld $31,32($sp)
+ 1537              	$L129:
+ 1538              	$L130:
+ 1539              	$L131:
+ 1540              	$L132:
+ 1541 0b04 2D10E000 	move $2,$7
+ 1542 0b08 1000B1DF 	ld $17,16($sp)
+ 1543 0b0c 0000B0DF 	ld $16,0($sp)
+ 1544              	
+ 1545              	.set noreorder
+ 1546              	.set nomacro
+ 1547 0b10 0800E003 	j $31
+ 1548 0b14 3000BD27 	addu $sp,$sp,48
+ 1549              	.set macro
+ 1550              	.set reorder
+ 1551              	
+ 1552              	.p2align 3
+ 1553              	$L128:
+ 1554 0b18 6400C290 	lbu $2,100($6)
+ 1555              	
+ 1556 0b1c 0200422C 	sltu $2,$2,2
+GAS LISTING  			page 29
+
+
+ 1557              	.set noreorder
+ 1558              	.set nomacro
+ 1559 0b20 F8FF4014 	bne $2,$0,$L129
+ 1560 0b24 2000BFDF 	ld $31,32($sp)
+ 1561              	.set macro
+ 1562              	.set reorder
+ 1563              	
+ 1564 0b28 6A00C390 	lbu $3,106($6)
+ 1565              	
+ 1566 0b2c 2A100302 	slt $2,$16,$3
+ 1567              	.set noreorder
+ 1568              	.set nomacro
+ 1569 0b30 F4FF4010 	beq $2,$0,$L129
+ 1570 0b34 2D380000 	move $7,$0
+ 1571              	.set macro
+ 1572              	.set reorder
+ 1573              	
+ 1574 0b38 FFFF0224 	li $2,-1
+ 1575              	.set noreorder
+ 1576              	.set nomacro
+ 1577 0b3c F1FF0212 	beq $16,$2,$L130
+ 1578 0b40 2D386000 	move $7,$3
+ 1579              	.set macro
+ 1580              	.set reorder
+ 1581              	
+ 1582 0b44 0400222A 	slt $2,$17,4
+ 1583              	.set noreorder
+ 1584              	.set nomacro
+ 1585 0b48 EEFF4010 	beq $2,$0,$L131
+ 1586 0b4c 2D380000 	move $7,$0
+ 1587              	.set macro
+ 1588              	.set reorder
+ 1589              	
+ 1590 0b50 80101000 	sll $2,$16,2
+ 1591 0b54 21104600 	addu $2,$2,$6
+ 1592 0b58 21105100 	addu $2,$2,$17
+ 1593              	.set noreorder
+ 1594              	.set nomacro
+ 1595 0b5c E9FF0010 	b $L132
+ 1596 0b60 30004790 	lbu $7,48($2)
+ 1597              	.set macro
+ 1598              	.set reorder
+ 1599              	
+ 1600              	.end xpadInfoAct
+ 1601              	$Lfe23:
+ 1602              	.size xpadInfoAct,$Lfe23-xpadInfoAct
+ 1603              	.align 2
+ 1604 0b64 00000000 	.p2align 3,,7
+ 1605              	.globl xpadSetActAlign
+ 1606              	.ent xpadSetActAlign
+ 1607              	xpadSetActAlign:
+ 1608              	.frame $sp,80,$31
+ 1609              	.mask 0x80070000,-16
+ 1610              	.fmask 0x00000000,0
+ 1611 0b68 B0FFBD27 	subu $sp,$sp,80
+ 1612 0b6c 0000073C 	lui $7,%hi(buffer)
+ 1613 0b70 5000E324 	addiu $3,$7,%lo(buffer)
+GAS LISTING  			page 30
+
+
+ 1614 0b74 08000224 	li $2,8
+ 1615 0b78 4000BFFF 	sd $31,64($sp)
+ 1616 0b7c 1000B0FF 	sd $16,16($sp)
+ 1617 0b80 3000B2FF 	sd $18,48($sp)
+ 1618 0b84 2D90A000 	move $18,$5
+ 1619 0b88 2000B1FF 	sd $17,32($sp)
+ 1620 0b8c 2D888000 	move $17,$4
+ 1621 0b90 040064AC 	sw $4,4($3)
+ 1622 0b94 5000E2AC 	sw $2,%lo(buffer)($7)
+ 1623 0b98 0C006724 	addu $7,$3,12
+ 1624 0b9c 080065AC 	sw $5,8($3)
+ 1625 0ba0 2D280000 	move $5,$0
+ 1626 0ba4 00000000 	.p2align 3
+ 1627              	$L138:
+ 1628 0ba8 2110C500 	addu $2,$6,$5
+ 1629 0bac 2120E500 	addu $4,$7,$5
+ 1630 0bb0 00004390 	lbu $3,0($2)
+ 1631 0bb4 0100A524 	addu $5,$5,1
+ 1632 0bb8 0600A228 	slt $2,$5,6
+ 1633              	.set noreorder
+ 1634 0bbc 00000000 	nop
+ 1635              	.set reorder
+ 1636              	.set noreorder
+ 1637              	.set nomacro
+ 1638 0bc0 F9FF4014 	bne $2,$0,$L138
+ 1639 0bc4 000083A0 	sb $3,0($4)
+ 1640              	.set macro
+ 1641              	.set reorder
+ 1642              	
+ 1643 0bc8 0000023C 	lui $2,%hi(buffer)
+ 1644 0bcc 0000043C 	lui $4,%hi(padsif)
+ 1645 0bd0 50005024 	addiu $16,$2,%lo(buffer)
+ 1646 0bd4 00008424 	addiu $4,$4,%lo(padsif)
+ 1647 0bd8 01000524 	li $5,1
+ 1648 0bdc 2D300000 	move $6,$0
+ 1649 0be0 2D380002 	move $7,$16
+ 1650 0be4 80000824 	li $8,128
+ 1651 0be8 2D480002 	move $9,$16
+ 1652 0bec 80000A24 	li $10,128
+ 1653 0bf0 2D580000 	move $11,$0
+ 1654              	.set noreorder
+ 1655              	.set nomacro
+ 1656 0bf4 0000000C 	jal SifCallRpc
+ 1657 0bf8 0000A0AF 	sw $0,0($sp)
+ 1658              	.set macro
+ 1659              	.set reorder
+ 1660              	
+ 1661              	.set noreorder
+ 1662              	.set nomacro
+ 1663 0bfc 05004004 	bltz $2,$L133
+ 1664 0c00 2D180000 	move $3,$0
+ 1665              	.set macro
+ 1666              	.set reorder
+ 1667              	
+ 1668 0c04 1400038E 	lw $3,20($16)
+ 1669 0c08 01000224 	li $2,1
+ 1670              	.set noreorder
+GAS LISTING  			page 31
+
+
+ 1671              	.set nomacro
+ 1672 0c0c 08006210 	beq $3,$2,$L143
+ 1673 0c10 2D202002 	move $4,$17
+ 1674              	.set macro
+ 1675              	.set reorder
+ 1676              	
+ 1677              	$L133:
+ 1678 0c14 4000BFDF 	ld $31,64($sp)
+ 1679 0c18 2D106000 	move $2,$3
+ 1680 0c1c 3000B2DF 	ld $18,48($sp)
+ 1681 0c20 2000B1DF 	ld $17,32($sp)
+ 1682 0c24 1000B0DF 	ld $16,16($sp)
+ 1683              	
+ 1684              	.set noreorder
+ 1685              	.set nomacro
+ 1686 0c28 0800E003 	j $31
+ 1687 0c2c 5000BD27 	addu $sp,$sp,80
+ 1688              	.set macro
+ 1689              	.set reorder
+ 1690              	
+ 1691              	$L143:
+ 1692 0c30 2D284002 	move $5,$18
+ 1693              	.set noreorder
+ 1694              	.set nomacro
+ 1695 0c34 0000000C 	jal xpadSetReqState
+ 1696 0c38 02000624 	li $6,2
+ 1697              	.set macro
+ 1698              	.set reorder
+ 1699              	
+ 1700              	.set noreorder
+ 1701              	.set nomacro
+ 1702 0c3c F5FF0010 	b $L133
+ 1703 0c40 1400038E 	lw $3,20($16)
+ 1704              	.set macro
+ 1705              	.set reorder
+ 1706              	
+ 1707              	.end xpadSetActAlign
+ 1708              	$Lfe24:
+ 1709              	.size xpadSetActAlign,$Lfe24-xpadSetActAlign
+ 1710              	.align 2
+ 1711 0c44 00000000 	.p2align 3,,7
+ 1712              	.globl xpadSetActDirect
+ 1713              	.ent xpadSetActDirect
+ 1714              	xpadSetActDirect:
+ 1715              	.frame $sp,48,$31
+ 1716              	.mask 0x80010000,-16
+ 1717              	.fmask 0x00000000,0
+ 1718 0c48 0000073C 	lui $7,%hi(buffer)
+ 1719 0c4c D0FFBD27 	subu $sp,$sp,48
+ 1720 0c50 5000E324 	addiu $3,$7,%lo(buffer)
+ 1721 0c54 07000224 	li $2,7
+ 1722 0c58 2000BFFF 	sd $31,32($sp)
+ 1723 0c5c 1000B0FF 	sd $16,16($sp)
+ 1724 0c60 040064AC 	sw $4,4($3)
+ 1725 0c64 5000E2AC 	sw $2,%lo(buffer)($7)
+ 1726 0c68 0C006724 	addu $7,$3,12
+ 1727 0c6c 080065AC 	sw $5,8($3)
+GAS LISTING  			page 32
+
+
+ 1728 0c70 2D280000 	move $5,$0
+ 1729 0c74 00000000 	.p2align 3
+ 1730              	$L149:
+ 1731 0c78 2110C500 	addu $2,$6,$5
+ 1732 0c7c 2120E500 	addu $4,$7,$5
+ 1733 0c80 00004390 	lbu $3,0($2)
+ 1734 0c84 0100A524 	addu $5,$5,1
+ 1735 0c88 0600A228 	slt $2,$5,6
+ 1736              	.set noreorder
+ 1737 0c8c 00000000 	nop
+ 1738              	.set reorder
+ 1739              	.set noreorder
+ 1740              	.set nomacro
+ 1741 0c90 F9FF4014 	bne $2,$0,$L149
+ 1742 0c94 000083A0 	sb $3,0($4)
+ 1743              	.set macro
+ 1744              	.set reorder
+ 1745              	
+ 1746 0c98 0000023C 	lui $2,%hi(buffer)
+ 1747 0c9c 0000043C 	lui $4,%hi(padsif)
+ 1748 0ca0 50005024 	addiu $16,$2,%lo(buffer)
+ 1749 0ca4 00008424 	addiu $4,$4,%lo(padsif)
+ 1750 0ca8 01000524 	li $5,1
+ 1751 0cac 2D300000 	move $6,$0
+ 1752 0cb0 2D380002 	move $7,$16
+ 1753 0cb4 80000824 	li $8,128
+ 1754 0cb8 2D480002 	move $9,$16
+ 1755 0cbc 80000A24 	li $10,128
+ 1756 0cc0 2D580000 	move $11,$0
+ 1757              	.set noreorder
+ 1758              	.set nomacro
+ 1759 0cc4 0000000C 	jal SifCallRpc
+ 1760 0cc8 0000A0AF 	sw $0,0($sp)
+ 1761              	.set macro
+ 1762              	.set reorder
+ 1763              	
+ 1764              	.set noreorder
+ 1765              	.set nomacro
+ 1766 0ccc 02004004 	bltz $2,$L144
+ 1767 0cd0 2D180000 	move $3,$0
+ 1768              	.set macro
+ 1769              	.set reorder
+ 1770              	
+ 1771 0cd4 1400038E 	lw $3,20($16)
+ 1772              	$L144:
+ 1773 0cd8 2000BFDF 	ld $31,32($sp)
+ 1774 0cdc 2D106000 	move $2,$3
+ 1775 0ce0 1000B0DF 	ld $16,16($sp)
+ 1776              	
+ 1777              	.set noreorder
+ 1778              	.set nomacro
+ 1779 0ce4 0800E003 	j $31
+ 1780 0ce8 3000BD27 	addu $sp,$sp,48
+ 1781              	.set macro
+ 1782              	.set reorder
+ 1783              	
+ 1784              	.end xpadSetActDirect
+GAS LISTING  			page 33
+
+
+ 1785              	$Lfe25:
+ 1786              	.size xpadSetActDirect,$Lfe25-xpadSetActDirect
+ 1787              	.align 2
+ 1788 0cec 00000000 	.p2align 3,,7
+ 1789              	.globl xpadGetConnection
+ 1790              	.ent xpadGetConnection
+ 1791              	xpadGetConnection:
+ 1792              	.frame $sp,48,$31
+ 1793              	.mask 0x80010000,-16
+ 1794              	.fmask 0x00000000,0
+ 1795 0cf0 D0FFBD27 	subu $sp,$sp,48
+ 1796 0cf4 0000033C 	lui $3,%hi(buffer)
+ 1797 0cf8 2D608000 	move $12,$4
+ 1798 0cfc 1000B0FF 	sd $16,16($sp)
+ 1799 0d00 0000043C 	lui $4,%hi(padsif)
+ 1800 0d04 50007024 	addiu $16,$3,%lo(buffer)
+ 1801 0d08 2D68A000 	move $13,$5
+ 1802 0d0c 11000224 	li $2,17
+ 1803 0d10 00008424 	addiu $4,$4,%lo(padsif)
+ 1804 0d14 01000524 	li $5,1
+ 1805 0d18 2D300000 	move $6,$0
+ 1806 0d1c 2D380002 	move $7,$16
+ 1807 0d20 80000824 	li $8,128
+ 1808 0d24 2D480002 	move $9,$16
+ 1809 0d28 80000A24 	li $10,128
+ 1810 0d2c 2D580000 	move $11,$0
+ 1811 0d30 500062AC 	sw $2,%lo(buffer)($3)
+ 1812 0d34 2000BFFF 	sd $31,32($sp)
+ 1813 0d38 04000CAE 	sw $12,4($16)
+ 1814 0d3c 08000DAE 	sw $13,8($16)
+ 1815              	.set noreorder
+ 1816              	.set nomacro
+ 1817 0d40 0000000C 	jal SifCallRpc
+ 1818 0d44 0000A0AF 	sw $0,0($sp)
+ 1819              	.set macro
+ 1820              	.set reorder
+ 1821              	
+ 1822              	.set noreorder
+ 1823              	.set nomacro
+ 1824 0d48 02004004 	bltz $2,$L153
+ 1825 0d4c FFFF0324 	li $3,-1
+ 1826              	.set macro
+ 1827              	.set reorder
+ 1828              	
+ 1829 0d50 0C00038E 	lw $3,12($16)
+ 1830              	$L153:
+ 1831 0d54 2000BFDF 	ld $31,32($sp)
+ 1832 0d58 2D106000 	move $2,$3
+ 1833 0d5c 1000B0DF 	ld $16,16($sp)
+ 1834              	
+ 1835              	.set noreorder
+ 1836              	.set nomacro
+ 1837 0d60 0800E003 	j $31
+ 1838 0d64 3000BD27 	addu $sp,$sp,48
+ 1839              	.set macro
+ 1840              	.set reorder
+ 1841              	
+GAS LISTING  			page 34
+
+
+ 1842              	.end xpadGetConnection
+ 1843              	$Lfe26:
+ 1844              	.size xpadGetConnection,$Lfe26-xpadGetConnection
+ 1845              	.section .bss
+ 1846              	padsif:
+ 1847              	.align 6
+ 1848 0000 00000000 	.space 80
+ 1848      00000000 
+ 1848      00000000 
+ 1848      00000000 
+ 1848      00000000 
+ 1849              	.previous
+ 1850              	.section .bss
+ 1851              	buffer:
+ 1852              	.align 4
+ 1853 0050 00000000 	.space 128
+ 1853      00000000 
+ 1853      00000000 
+ 1853      00000000 
+ 1853      00000000 
+ 1854              	.previous
+ 1855              	.section .bss
+ 1856              	PadState:
+ 1857              	.align 3
+ 1858 00d0 00000000 	.space 320
+ 1858      00000000 
+ 1858      00000000 
+ 1858      00000000 
+ 1858      00000000 
+ 1859 0210 00000000 	.previous
+ 1859      00000000 
+ 1859      00000000 
+ 1859      00000000 
+ 1859      00000000 
+ 1860              	.ident "GCC: (GNU) 3.2.2"

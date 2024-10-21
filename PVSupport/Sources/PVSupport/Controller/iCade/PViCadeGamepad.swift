@@ -6,9 +6,10 @@
 //  Created by Josejulio Martínez on 16/06/15.
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 import GameController
 
+//@MainActor
 internal final class PViCadeGamepad: GCExtendedGamepad {
     private let _dpad: PViCadeGamepadDirectionPad = PViCadeGamepadDirectionPad()
     private let _buttonA: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()

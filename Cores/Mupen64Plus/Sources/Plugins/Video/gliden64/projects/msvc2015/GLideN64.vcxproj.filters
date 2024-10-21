@@ -1,0 +1,728 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{315ddc50-16f7-4058-b6e4-05afaad9c0b3}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Source Files\uCodes">
+      <UniqueIdentifier>{23e5405e-5c26-4dcf-8c37-426901e33c55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{94476478-6142-414d-8301-45122ec74f2c}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+    </Filter>
+    <Filter Include="Header Files\uCodes">
+      <UniqueIdentifier>{80c1d464-fcae-461c-91c8-4c25b4f93055}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\windows">
+      <UniqueIdentifier>{384c65a8-5096-4ef9-bdec-3256fcd337f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{7c6de76c-0fca-47cf-99b1-0ee0fd845d7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\windows">
+      <UniqueIdentifier>{cad4dfbc-6dba-4d7c-805b-b2ba719da383}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mupenplus">
+      <UniqueIdentifier>{5481df48-dd50-42c8-89e5-670b337403e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mupenplus">
+      <UniqueIdentifier>{b10a85f0-0fbb-4f8e-b6d8-78ee2a6394bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BufferCopy">
+      <UniqueIdentifier>{e9bcfc4d-06e5-496a-a069-3d28e2fcd559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BufferCopy">
+      <UniqueIdentifier>{03c90b24-47cf-4a72-8652-837470d2a641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DepthBufferRender">
+      <UniqueIdentifier>{763fe27e-e0ab-4884-9794-727c47a9dd24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DepthBufferRender">
+      <UniqueIdentifier>{ac6b6e3c-c470-4a66-ad6c-d4ad388ec793}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{ed46d297-e09c-4187-870c-1f03bc54905f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{abdc978d-26cb-4c32-9b72-4c92b05f9e24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\OpenGL">
+      <UniqueIdentifier>{ac45d108-eb77-4831-b7aa-5efa9e48d4ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\OpenGL">
+      <UniqueIdentifier>{207de069-1088-4913-84f5-3cf0804928dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\OpenGL\GLSL">
+      <UniqueIdentifier>{f6f08b9a-17ba-4e14-a73b-bb0c3878811f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\OpenGL\GLSL">
+      <UniqueIdentifier>{e67eafa1-5cea-4267-bc12-715e06c744db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\OpenGL\windows">
+      <UniqueIdentifier>{dfff6885-c7e7-4b77-863e-7eeea6753d5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\OpenGL\windows">
+      <UniqueIdentifier>{e8b5c80f-51ec-45c2-bcdb-5e18868073df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\OpenGL\mupen64plus">
+      <UniqueIdentifier>{77259791-9942-4601-a63f-5a0468e69e49}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Combiner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DepthBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GBI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gDP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GLideN64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gSP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\N64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RDP.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RSP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Textures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\VI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\3DMath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\MupenPlusPluginAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CommonPluginAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ZilmarPluginAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\CommonAPIImpl_common.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mupenplus\CommonAPIImpl_mupenplus.cpp">
+      <Filter>Source Files\mupenplus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mupenplus\MupenPlusAPIImpl.cpp">
+      <Filter>Source Files\mupenplus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\windows\CommonAPIImpl_windows.cpp">
+      <Filter>Source Files\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\windows\GLideN64_windows.cpp">
+      <Filter>Source Files\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\windows\ZilmarAPIImpl_windows.cpp">
+      <Filter>Source Files\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\windows\Config_windows.cpp">
+      <Filter>Source Files\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mupenplus\Config_mupenplus.cpp">
+      <Filter>Source Files\mupenplus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\PostProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Keys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\FrameBufferInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\BufferCopy\ColorBufferToRDRAM.cpp">
+      <Filter>Source Files\BufferCopy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\BufferCopy\DepthBufferToRDRAM.cpp">
+      <Filter>Source Files\BufferCopy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\BufferCopy\RDRAMtoColorBuffer.cpp">
+      <Filter>Source Files\BufferCopy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\TextureFilterHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\SoftwareRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DepthBufferRender\ClipPolygon.cpp">
+      <Filter>Source Files\DepthBufferRender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DepthBufferRender\DepthBufferRender.cpp">
+      <Filter>Source Files\DepthBufferRender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\convert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Performance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\Context.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\GLFunctions.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_ContextImpl.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_Parameters.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_TextureManipulationObjectFactory.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_CachedFunctions.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_BufferManipulationObjectFactory.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CombinerKey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_CombinerProgramBuilder.cpp">
+      <Filter>Source Files\Graphics\OpenGL\GLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_CombinerProgramImpl.cpp">
+      <Filter>Source Files\Graphics\OpenGL\GLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_Utils.cpp">
+      <Filter>Source Files\Graphics\OpenGL\GLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_Attributes.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_GLInfo.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_CombinerProgramUniformFactory.cpp">
+      <Filter>Source Files\Graphics\OpenGL\GLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_CombinerInputs.cpp">
+      <Filter>Source Files\Graphics\OpenGL\GLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\NoiseTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ZlutTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_SpecialShadersFactory.cpp">
+      <Filter>Source Files\Graphics\OpenGL\GLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\PaletteTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_Utils.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\ColorBufferReader.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\CombinerProgram.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_ShaderStorage.cpp">
+      <Filter>Source Files\Graphics\OpenGL\GLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DisplayWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\windows\windows_DisplayWindow.cpp">
+      <Filter>Source Files\Graphics\OpenGL\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\mupen64plus\mupen64plus_DisplayWindow.cpp">
+      <Filter>Source Files\Graphics\OpenGL\mupen64plus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_UnbufferedDrawer.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GraphicsDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_ColorBufferReaderWithPixelBuffer.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_ColorBufferReaderWithBufferStorage.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_BufferedDrawer.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\TextDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\opengl_ColorBufferReaderWithReadPixels.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\TexrectDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\ObjectHandle.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RSP_LoadMatrixX86.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CRC_OPT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\xxHash\xxhash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DebugDump.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Debugger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3D.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DAM.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DBETA.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DDKR.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DEX.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DEX2.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DEX2ACCLAIM.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DEX2CBFD.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DFLX2.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DGOLDEN.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DPD.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DSETA.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DTEXA.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\L3D.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\L3DEX.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\L3DEX2.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\S2DEX.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\S2DEX2.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\T3DUX.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\Turbo3D.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\ZSort.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\ZSortBOSS.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F3DZEX2.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DisplayLoadProgress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RSP_LoadMatrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\iob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F5Indi_Naboo.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\uCodes\F5Rogue.cpp">
+      <Filter>Source Files\uCodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_FXAA.cpp">
+      <Filter>Source Files\Graphics\OpenGL\GLSL</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\3DMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Combiner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\convert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CRC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DepthBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\FrameBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GBI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gDP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GLideN64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gSP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\N64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RDP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RSP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Textures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\VI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ZilmarGFX_1_3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mupenplus\GLideN64_mupenplus.h">
+      <Filter>Header Files\mupenplus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\windows\GLideN64_windows.h">
+      <Filter>Header Files\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\PluginAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GLideNHQ\Ext_TxFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\PostProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Keys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\wst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\FrameBufferInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\FrameBufferInfoAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\BufferCopy\ColorBufferToRDRAM.h">
+      <Filter>Header Files\BufferCopy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\BufferCopy\DepthBufferToRDRAM.h">
+      <Filter>Header Files\BufferCopy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\BufferCopy\RDRAMtoColorBuffer.h">
+      <Filter>Header Files\BufferCopy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\BufferCopy\WriteToRDRAM.h">
+      <Filter>Header Files\BufferCopy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\TextureFilterHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\SoftwareRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DepthBufferRender\ClipPolygon.h">
+      <Filter>Header Files\DepthBufferRender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DepthBufferRender\DepthBufferRender.h">
+      <Filter>Header Files\DepthBufferRender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\inc\glext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Performance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CRC32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\ContextImpl.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\Context.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\Parameter.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\Parameters.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLFunctions.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_ContextImpl.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_TextureManipulationObjectFactory.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_CachedFunctions.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\ObjectHandle.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_BufferManipulationObjectFactory.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\CombinerProgram.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CombinerKey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_CombinerProgramBuilder.h">
+      <Filter>Header Files\Graphics\OpenGL\GLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_CombinerProgramImpl.h">
+      <Filter>Header Files\Graphics\OpenGL\GLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_Utils.h">
+      <Filter>Header Files\Graphics\OpenGL\GLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_Attributes.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_GLInfo.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_CombinerProgramUniformFactory.h">
+      <Filter>Header Files\Graphics\OpenGL\GLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_CombinerInputs.h">
+      <Filter>Header Files\Graphics\OpenGL\GLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\NoiseTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\ShaderProgram.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\PixelBuffer.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ZlutTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_SpecialShadersFactory.h">
+      <Filter>Header Files\Graphics\OpenGL\GLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\PaletteTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_ShaderPart.h">
+      <Filter>Header Files\Graphics\OpenGL\GLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_Utils.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_ShaderStorage.h">
+      <Filter>Header Files\Graphics\OpenGL\GLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DisplayWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_UnbufferedDrawer.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GraphicsDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_GraphicsDrawer.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\FramebufferTextureFormats.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\ColorBufferReader.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_ColorBufferReaderWithPixelBuffer.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_ColorBufferReaderWithBufferStorage.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_BufferedDrawer.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\TextDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\opengl_ColorBufferReaderWithReadPixels.h">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\TexrectDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\xxHash\xxhash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DebugDump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Debugger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3D.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DAM.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DBETA.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DDKR.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DEX.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DEX2.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DEX2ACCLAIM.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DEX2CBFD.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DFLX2.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DGOLDEN.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DPD.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DSETA.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DTEXA.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\L3D.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\L3DEX.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\L3DEX2.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\S2DEX.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\S2DEX2.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\T3DUX.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\Turbo3D.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\ZSort.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\ZSortBOSS.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F3DZEX2.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DisplayLoadProgress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F5Indi_Naboo.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uCodes\F5Rogue.h">
+      <Filter>Header Files\uCodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Graphics\OpenGLContext\GLSL\glsl_FXAA.h">
+      <Filter>Header Files\Graphics\OpenGL\GLSL</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

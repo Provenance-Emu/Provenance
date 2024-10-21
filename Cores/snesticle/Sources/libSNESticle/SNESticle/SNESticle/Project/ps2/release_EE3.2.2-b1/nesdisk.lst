@@ -1,0 +1,796 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../NESticle/Source/common/nesdisk.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN7NesDiskC2Ev
+   8              	.ent _ZN7NesDiskC2Ev
+   9              	_ZN7NesDiskC2Ev:
+  10              	.frame $sp,32,$31
+  11              	.mask 0x80010000,-16
+  12              	.fmask 0x00000000,0
+  13 0000 E0FFBD27 	subu $sp,$sp,32
+  14 0004 1000BFFF 	sd $31,16($sp)
+  15 0008 0000B0FF 	sd $16,0($sp)
+  16              	.set noreorder
+  17              	.set nomacro
+  18 000c 0000000C 	jal _ZN7CEmuRomC2Ev
+  19 0010 2D808000 	move $16,$4
+  20              	.set macro
+  21              	.set reorder
+  22              	
+  23 0014 10000624 	dli $6,0x10
+  24 0018 0000023C 	lui $2,%hi(_ZTV7NesDisk+8)
+  25 001c 080000AE 	sw $0,8($16)
+  26 0020 08004224 	addiu $2,$2,%lo(_ZTV7NesDisk+8)
+  27 0024 0C000426 	addu $4,$16,12
+  28 0028 000002AE 	sw $2,0($16)
+  29              	.set noreorder
+  30              	.set nomacro
+  31 002c 0000000C 	jal memset
+  32 0030 2D280000 	move $5,$0
+  33              	.set macro
+  34              	.set reorder
+  35              	
+  36 0034 0000B0DF 	ld $16,0($sp)
+  37 0038 1000BFDF 	ld $31,16($sp)
+  38              	
+  39              	.set noreorder
+  40              	.set nomacro
+  41 003c 0800E003 	j $31
+  42 0040 2000BD27 	addu $sp,$sp,32
+  43              	.set macro
+  44              	.set reorder
+  45              	
+  46              	.end _ZN7NesDiskC2Ev
+  47              	$Lfe1:
+  48              	.size _ZN7NesDiskC2Ev,$Lfe1-_ZN7NesDiskC2Ev
+  49              	.align 2
+  50 0044 00000000 	.p2align 3,,7
+  51              	.globl _ZN7NesDiskC1Ev
+  52              	.ent _ZN7NesDiskC1Ev
+  53              	_ZN7NesDiskC1Ev:
+  54              	.frame $sp,32,$31
+  55              	.mask 0x80010000,-16
+  56              	.fmask 0x00000000,0
+  57 0048 E0FFBD27 	subu $sp,$sp,32
+GAS LISTING  			page 2
+
+
+  58 004c 1000BFFF 	sd $31,16($sp)
+  59 0050 0000B0FF 	sd $16,0($sp)
+  60              	.set noreorder
+  61              	.set nomacro
+  62 0054 0000000C 	jal _ZN7CEmuRomC2Ev
+  63 0058 2D808000 	move $16,$4
+  64              	.set macro
+  65              	.set reorder
+  66              	
+  67 005c 10000624 	dli $6,0x10
+  68 0060 0000023C 	lui $2,%hi(_ZTV7NesDisk+8)
+  69 0064 080000AE 	sw $0,8($16)
+  70 0068 08004224 	addiu $2,$2,%lo(_ZTV7NesDisk+8)
+  71 006c 0C000426 	addu $4,$16,12
+  72 0070 000002AE 	sw $2,0($16)
+  73              	.set noreorder
+  74              	.set nomacro
+  75 0074 0000000C 	jal memset
+  76 0078 2D280000 	move $5,$0
+  77              	.set macro
+  78              	.set reorder
+  79              	
+  80 007c 0000B0DF 	ld $16,0($sp)
+  81 0080 1000BFDF 	ld $31,16($sp)
+  82              	
+  83              	.set noreorder
+  84              	.set nomacro
+  85 0084 0800E003 	j $31
+  86 0088 2000BD27 	addu $sp,$sp,32
+  87              	.set macro
+  88              	.set reorder
+  89              	
+  90              	.end _ZN7NesDiskC1Ev
+  91              	$Lfe2:
+  92              	.size _ZN7NesDiskC1Ev,$Lfe2-_ZN7NesDiskC1Ev
+  93              	.rdata
+  94              	.align 3
+  95              	$LC1:
+  96 0000 46445300 	.ascii "FDS\000"
+  97 0004 00000000 	.align 3
+  98              	$LC0:
+  99 0008 4552524F 	.ascii "ERROR: Invalid header\n\000"
+  99      523A2049 
+  99      6E76616C 
+  99      69642068 
+  99      65616465 
+ 100 001f 00       	.align 3
+ 101              	$LC2:
+ 102 0020 4552524F 	.ascii "ERROR: Loading disk %d\n\000"
+ 102      523A204C 
+ 102      6F616469 
+ 102      6E672064 
+ 102      69736B20 
+ 103              	.text
+ 104              	.align 2
+ 105 008c 00000000 	.p2align 3,,7
+ 106              	.globl _ZN7NesDisk7LoadRomEP7CDataIOPhj
+GAS LISTING  			page 3
+
+
+ 107              	.ent _ZN7NesDisk7LoadRomEP7CDataIOPhj
+ 108              	_ZN7NesDisk7LoadRomEP7CDataIOPhj:
+ 109              	.frame $sp,112,$31
+ 110              	.mask 0x801f0000,-16
+ 111              	.fmask 0x00000000,0
+ 112 0090 90FFBD27 	subu $sp,$sp,112
+ 113 0094 6000BFFF 	sd $31,96($sp)
+ 114 0098 3000B2FF 	sd $18,48($sp)
+ 115 009c 2D908000 	move $18,$4
+ 116 00a0 2000B1FF 	sd $17,32($sp)
+ 117 00a4 5000B4FF 	sd $20,80($sp)
+ 118 00a8 4000B3FF 	sd $19,64($sp)
+ 119 00ac 1000B0FF 	sd $16,16($sp)
+ 120 00b0 0000828C 	lw $2,0($4)
+ 121              	
+ 122 00b4 0C00438C 	lw $3,12($2)
+ 123              	
+ 124              	.set noreorder
+ 125              	.set nomacro
+ 126 00b8 09F86000 	jal $31,$3
+ 127 00bc 2D88A000 	move $17,$5
+ 128              	.set macro
+ 129              	.set reorder
+ 130              	
+ 131 00c0 2D28A003 	move $5,$sp
+ 132 00c4 0000238E 	lw $3,0($17)
+ 133 00c8 10000624 	li $6,16
+ 134 00cc 0800628C 	lw $2,8($3)
+ 135              	
+ 136              	.set noreorder
+ 137              	.set nomacro
+ 138 00d0 09F84000 	jal $31,$2
+ 139 00d4 2D202002 	move $4,$17
+ 140              	.set macro
+ 141              	.set reorder
+ 142              	
+ 143 00d8 10000324 	dli $3,0x10
+ 144              	.set noreorder
+ 145              	.set nomacro
+ 146 00dc 0E004310 	beq $2,$3,$L17
+ 147 00e0 0000053C 	lui $5,%hi($LC1)
+ 148              	.set macro
+ 149              	.set reorder
+ 150              	
+ 151              	$L16:
+ 152 00e4 0000043C 	lui $4,%hi($LC0)
+ 153              	.set noreorder
+ 154              	.set nomacro
+ 155 00e8 0000000C 	jal printf
+ 156 00ec 08008424 	addiu $4,$4,%lo($LC0)
+ 157              	.set macro
+ 158              	.set reorder
+ 159              	
+ 160 00f0 03000324 	li $3,3
+ 161              	$L3:
+ 162 00f4 6000BFDF 	ld $31,96($sp)
+ 163 00f8 2D106000 	move $2,$3
+GAS LISTING  			page 4
+
+
+ 164 00fc 5000B4DF 	ld $20,80($sp)
+ 165 0100 4000B3DF 	ld $19,64($sp)
+ 166 0104 3000B2DF 	ld $18,48($sp)
+ 167 0108 2000B1DF 	ld $17,32($sp)
+ 168 010c 1000B0DF 	ld $16,16($sp)
+ 169              	
+ 170              	.set noreorder
+ 171              	.set nomacro
+ 172 0110 0800E003 	j $31
+ 173 0114 7000BD27 	addu $sp,$sp,112
+ 174              	.set macro
+ 175              	.set reorder
+ 176              	
+ 177              	.p2align 3
+ 178              	$L17:
+ 179 0118 2D20A003 	move $4,$sp
+ 180 011c 03000624 	dli $6,0x3
+ 181              	.set noreorder
+ 182              	.set nomacro
+ 183 0120 0000000C 	jal memcmp
+ 184 0124 0000A524 	addiu $5,$5,%lo($LC1)
+ 185              	.set macro
+ 186              	.set reorder
+ 187              	
+ 188              	.set noreorder
+ 189              	.set nomacro
+ 190 0128 EEFF4014 	bne $2,$0,$L16
+ 191 012c 0400A293 	lbu $2,4($sp)
+ 192              	.set macro
+ 193              	.set reorder
+ 194              	
+ 195              	
+ 196 0130 05004328 	slt $3,$2,5
+ 197              	.set noreorder
+ 198              	.set nomacro
+ 199 0134 03006014 	bne $3,$0,$L6
+ 200 0138 080042AE 	sw $2,8($18)
+ 201              	.set macro
+ 202              	.set reorder
+ 203              	
+ 204 013c 04000224 	li $2,4
+ 205 0140 080042AE 	sw $2,8($18)
+ 206              	$L6:
+ 207 0144 0800428E 	lw $2,8($18)
+ 208              	
+ 209              	.set noreorder
+ 210              	.set nomacro
+ 211 0148 14004018 	blez $2,$L14
+ 212 014c 2D980000 	move $19,$0
+ 213              	.set macro
+ 214              	.set reorder
+ 215              	
+ 216 0150 DCFF1434 	dli $20,0xffdc
+ 217 0154 0C005026 	addu $16,$18,12
+ 218              	.p2align 3
+ 219              	$L12:
+ 220              	.set noreorder
+GAS LISTING  			page 5
+
+
+ 221              	.set nomacro
+ 222 0158 0000000C 	jal malloc
+ 223 015c DCFF0434 	dli $4,0xffdc
+ 224              	.set macro
+ 225              	.set reorder
+ 226              	
+ 227 0160 2D202002 	move $4,$17
+ 228 0164 000002AE 	sw $2,0($16)
+ 229 0168 2D284000 	move $5,$2
+ 230 016c DCFF0634 	li $6,65500
+ 231 0170 0000238E 	lw $3,0($17)
+ 232              	
+ 233 0174 0800628C 	lw $2,8($3)
+ 234              	
+ 235              	.set noreorder
+ 236              	.set nomacro
+ 237 0178 09F84000 	jal $31,$2
+ 238 017c 04001026 	addu $16,$16,4
+ 239              	.set macro
+ 240              	.set reorder
+ 241              	
+ 242              	.set noreorder
+ 243              	.set nomacro
+ 244 0180 0A005414 	bne $2,$20,$L15
+ 245 0184 0000043C 	lui $4,%hi($LC2)
+ 246              	.set macro
+ 247              	.set reorder
+ 248              	
+ 249 0188 0800428E 	lw $2,8($18)
+ 250 018c 01007326 	addu $19,$19,1
+ 251 0190 2A106202 	slt $2,$19,$2
+ 252 0194 F0FF4014 	bne $2,$0,$L12
+ 252      00000000 
+ 253              	$L14:
+ 254 019c 01000224 	li $2,1
+ 255 01a0 2D180000 	move $3,$0
+ 256              	.set noreorder
+ 257              	.set nomacro
+ 258 01a4 D3FF0010 	b $L3
+ 259 01a8 040042A2 	sb $2,4($18)
+ 260              	.set macro
+ 261              	.set reorder
+ 262              	
+ 263              	$L15:
+ 264 01ac 2D286002 	move $5,$19
+ 265              	.set noreorder
+ 266              	.set nomacro
+ 267 01b0 0000000C 	jal printf
+ 268 01b4 20008424 	addiu $4,$4,%lo($LC2)
+ 269              	.set macro
+ 270              	.set reorder
+ 271              	
+ 272 01b8 0000428E 	lw $2,0($18)
+ 273              	
+ 274 01bc 0C00438C 	lw $3,12($2)
+ 275              	
+ 276              	.set noreorder
+GAS LISTING  			page 6
+
+
+ 277              	.set nomacro
+ 278 01c0 09F86000 	jal $31,$3
+ 279 01c4 2D204002 	move $4,$18
+ 280              	.set macro
+ 281              	.set reorder
+ 282              	
+ 283              	.set noreorder
+ 284              	.set nomacro
+ 285 01c8 CAFF0010 	b $L3
+ 286 01cc 04000324 	li $3,4
+ 287              	.set macro
+ 288              	.set reorder
+ 289              	
+ 290              	.end _ZN7NesDisk7LoadRomEP7CDataIOPhj
+ 291              	$Lfe3:
+ 292              	.size _ZN7NesDisk7LoadRomEP7CDataIOPhj,$Lfe3-_ZN7NesDisk7LoadRomEP7CDataIOPhj
+ 293              	.align 2
+ 294              	.p2align 3,,7
+ 295              	.globl _ZN7NesDisk6UnloadEv
+ 296              	.ent _ZN7NesDisk6UnloadEv
+ 297              	_ZN7NesDisk6UnloadEv:
+ 298              	.frame $sp,64,$31
+ 299              	.mask 0x80070000,-16
+ 300              	.fmask 0x00000000,0
+ 301 01d0 C0FFBD27 	subu $sp,$sp,64
+ 302 01d4 3000BFFF 	sd $31,48($sp)
+ 303 01d8 2000B2FF 	sd $18,32($sp)
+ 304 01dc 2D908000 	move $18,$4
+ 305 01e0 1000B1FF 	sd $17,16($sp)
+ 306 01e4 03001124 	li $17,3
+ 307 01e8 0000B0FF 	sd $16,0($sp)
+ 308 01ec 2D808000 	move $16,$4
+ 309              	$L24:
+ 310 01f0 0C00028E 	lw $2,12($16)
+ 311 01f4 FFFF3126 	addu $17,$17,-1
+ 312              	.set noreorder
+ 313              	.set nomacro
+ 314 01f8 0B004014 	bne $2,$0,$L27
+ 315 01fc 2D204000 	move $4,$2
+ 316              	.set macro
+ 317              	.set reorder
+ 318              	
+ 319              	$L21:
+ 320              	.set noreorder
+ 321              	.set nomacro
+ 322 0200 FBFF2106 	bgez $17,$L24
+ 323 0204 04001026 	addu $16,$16,4
+ 324              	.set macro
+ 325              	.set reorder
+ 326              	
+ 327 0208 040040A2 	sb $0,4($18)
+ 328 020c 080040AE 	sw $0,8($18)
+ 329 0210 3000BFDF 	ld $31,48($sp)
+ 330 0214 2000B2DF 	ld $18,32($sp)
+ 331 0218 1000B1DF 	ld $17,16($sp)
+ 332 021c 0000B0DF 	ld $16,0($sp)
+ 333              	
+GAS LISTING  			page 7
+
+
+ 334              	.set noreorder
+ 335              	.set nomacro
+ 336 0220 0800E003 	j $31
+ 337 0224 4000BD27 	addu $sp,$sp,64
+ 338              	.set macro
+ 339              	.set reorder
+ 340              	
+ 341              	.p2align 3
+ 342              	$L27:
+ 343 0228 0000000C 	jal free
+ 343      00000000 
+ 344              	.set noreorder
+ 345              	.set nomacro
+ 346 0230 F3FF0010 	b $L21
+ 347 0234 0C0000AE 	sw $0,12($16)
+ 348              	.set macro
+ 349              	.set reorder
+ 350              	
+ 351              	.end _ZN7NesDisk6UnloadEv
+ 352              	$Lfe4:
+ 353              	.size _ZN7NesDisk6UnloadEv,$Lfe4-_ZN7NesDisk6UnloadEv
+ 354              	.align 2
+ 355              	.p2align 3,,7
+ 356              	.globl _ZN7NesDisk8ReadByteEij
+ 357              	.ent _ZN7NesDisk8ReadByteEij
+ 358              	_ZN7NesDisk8ReadByteEij:
+ 359              	.frame $sp,0,$31
+ 360              	.mask 0x00000000,0
+ 361              	.fmask 0x00000000,0
+ 362              	.set noreorder
+ 363              	.set nomacro
+ 364 0238 0D00A004 	bltz $5,$L28
+ 365 023c 2D380000 	move $7,$0
+ 366              	.set macro
+ 367              	.set reorder
+ 368              	
+ 369 0240 0800828C 	lw $2,8($4)
+ 370 0244 80180500 	sll $3,$5,2
+ 371 0248 2A10A200 	slt $2,$5,$2
+ 372              	.set noreorder
+ 373              	.set nomacro
+ 374 024c 08004010 	beq $2,$0,$L28
+ 375 0250 21186400 	addu $3,$3,$4
+ 376              	.set macro
+ 377              	.set reorder
+ 378              	
+ 379 0254 0C00638C 	lw $3,12($3)
+ 380 0258 DBFF0234 	li $2,65499
+ 381              	.set noreorder
+ 382              	.set nomacro
+ 383 025c 04006010 	beq $3,$0,$L28
+ 384 0260 2B104600 	sltu $2,$2,$6
+ 385              	.set macro
+ 386              	.set reorder
+ 387              	
+ 388              	.set noreorder
+ 389              	.set nomacro
+GAS LISTING  			page 8
+
+
+ 390 0264 02004014 	bne $2,$0,$L28
+ 391 0268 21186600 	addu $3,$3,$6
+ 392              	.set macro
+ 393              	.set reorder
+ 394              	
+ 395 026c 00006790 	lbu $7,0($3)
+ 396              	.p2align 3
+ 397              	$L28:
+ 398              	.set noreorder
+ 399              	.set nomacro
+ 400 0270 0800E003 	j $31
+ 401 0274 2D10E000 	move $2,$7
+ 402              	.set macro
+ 403              	.set reorder
+ 404              	
+ 405              	.end _ZN7NesDisk8ReadByteEij
+ 406              	$Lfe5:
+ 407              	.size _ZN7NesDisk8ReadByteEij,$Lfe5-_ZN7NesDisk8ReadByteEij
+ 408              	.align 2
+ 409              	.p2align 3,,7
+ 410              	.globl _ZN7NesDisk9WriteByteEijh
+ 411              	.ent _ZN7NesDisk9WriteByteEijh
+ 412              	_ZN7NesDisk9WriteByteEijh:
+ 413              	.frame $sp,0,$31
+ 414              	.mask 0x00000000,0
+ 415              	.fmask 0x00000000,0
+ 416              	.set noreorder
+ 417              	.set nomacro
+ 418 0278 0D00A004 	bltz $5,$L32
+ 419 027c FF00E730 	andi $7,$7,0x00ff
+ 420              	.set macro
+ 421              	.set reorder
+ 422              	
+ 423 0280 0800828C 	lw $2,8($4)
+ 424 0284 80180500 	sll $3,$5,2
+ 425 0288 2A10A200 	slt $2,$5,$2
+ 426              	.set noreorder
+ 427              	.set nomacro
+ 428 028c 08004010 	beq $2,$0,$L32
+ 429 0290 21186400 	addu $3,$3,$4
+ 430              	.set macro
+ 431              	.set reorder
+ 432              	
+ 433 0294 0C00638C 	lw $3,12($3)
+ 434 0298 DBFF0234 	li $2,65499
+ 435              	.set noreorder
+ 436              	.set nomacro
+ 437 029c 04006010 	beq $3,$0,$L32
+ 438 02a0 2B104600 	sltu $2,$2,$6
+ 439              	.set macro
+ 440              	.set reorder
+ 441              	
+ 442              	.set noreorder
+ 443              	.set nomacro
+ 444 02a4 02004014 	bne $2,$0,$L32
+ 445 02a8 21186600 	addu $3,$3,$6
+ 446              	.set macro
+GAS LISTING  			page 9
+
+
+ 447              	.set reorder
+ 448              	
+ 449 02ac 000067A0 	sb $7,0($3)
+ 450              	$L32:
+ 451 02b0 0800E003 	j $31
+ 451      00000000 
+ 452              	.end _ZN7NesDisk9WriteByteEijh
+ 453              	$Lfe6:
+ 454              	.size _ZN7NesDisk9WriteByteEijh,$Lfe6-_ZN7NesDisk9WriteByteEijh
+ 455              	.align 2
+ 456              	.p2align 3,,7
+ 457              	.globl _ZN7NesDisk16GetNumRomRegionsEv
+ 458              	.ent _ZN7NesDisk16GetNumRomRegionsEv
+ 459              	_ZN7NesDisk16GetNumRomRegionsEv:
+ 460              	.frame $sp,0,$31
+ 461              	.mask 0x00000000,0
+ 462              	.fmask 0x00000000,0
+ 463              	.set noreorder
+ 464              	.set nomacro
+ 465 02b8 0800E003 	j $31
+ 466 02bc 0800828C 	lw $2,8($4)
+ 467              	.set macro
+ 468              	.set reorder
+ 469              	
+ 470              	.end _ZN7NesDisk16GetNumRomRegionsEv
+ 471              	$Lfe7:
+ 472              	.size _ZN7NesDisk16GetNumRomRegionsEv,$Lfe7-_ZN7NesDisk16GetNumRomRegionsEv
+ 473              	.rdata
+ 474              	.align 3
+ 475              	$LC4:
+ 476 0038 46445331 	.ascii "FDS1\000"
+ 476      00
+ 477 003d 000000   	.align 3
+ 478              	$LC3:
+ 479 0040 46445330 	.ascii "FDS0\000"
+ 479      00
+ 480 0045 000000   	.align 3
+ 481              	$LC5:
+ 482 0048 46445332 	.ascii "FDS2\000"
+ 482      00
+ 483 004d 000000   	.align 3
+ 484              	$LC6:
+ 485 0050 46445333 	.ascii "FDS3\000"
+ 485      00
+ 486              	.text
+ 487              	.align 2
+ 488              	.p2align 3,,7
+ 489              	.globl _ZN7NesDisk16GetRomRegionNameEj
+ 490              	.ent _ZN7NesDisk16GetRomRegionNameEj
+ 491              	_ZN7NesDisk16GetRomRegionNameEj:
+ 492              	.frame $sp,0,$31
+ 493              	.mask 0x00000000,0
+ 494              	.fmask 0x00000000,0
+ 495 02c0 0000033C 	lui $3,%hi($LC4)
+ 496 02c4 01000224 	li $2,1
+ 497              	.set noreorder
+ 498              	.set nomacro
+GAS LISTING  			page 10
+
+
+ 499 02c8 0D00A210 	beq $5,$2,$L34
+ 500 02cc 38006324 	addiu $3,$3,%lo($LC4)
+ 501              	.set macro
+ 502              	.set reorder
+ 503              	
+ 504 02d0 0000023C 	lui $2,%hi($LC3)
+ 505              	.set noreorder
+ 506              	.set nomacro
+ 507 02d4 0A00A010 	beq $5,$0,$L34
+ 508 02d8 40004324 	addiu $3,$2,%lo($LC3)
+ 509              	.set macro
+ 510              	.set reorder
+ 511              	
+ 512 02dc 0000033C 	lui $3,%hi($LC5)
+ 513 02e0 02000224 	li $2,2
+ 514              	.set noreorder
+ 515              	.set nomacro
+ 516 02e4 0600A210 	beq $5,$2,$L34
+ 517 02e8 48006324 	addiu $3,$3,%lo($LC5)
+ 518              	.set macro
+ 519              	.set reorder
+ 520              	
+ 521 02ec 0000033C 	lui $3,%hi($LC6)
+ 522 02f0 03000224 	li $2,3
+ 523              	.set noreorder
+ 524              	.set nomacro
+ 525 02f4 0200A210 	beq $5,$2,$L34
+ 526 02f8 50006324 	addiu $3,$3,%lo($LC6)
+ 527              	.set macro
+ 528              	.set reorder
+ 529              	
+ 530 02fc 2D180000 	move $3,$0
+ 531              	$L34:
+ 532              	.set noreorder
+ 533              	.set nomacro
+ 534 0300 0800E003 	j $31
+ 535 0304 2D106000 	move $2,$3
+ 536              	.set macro
+ 537              	.set reorder
+ 538              	
+ 539              	.end _ZN7NesDisk16GetRomRegionNameEj
+ 540              	$Lfe8:
+ 541              	.size _ZN7NesDisk16GetRomRegionNameEj,$Lfe8-_ZN7NesDisk16GetRomRegionNameEj
+ 542              	.align 2
+ 543              	.p2align 3,,7
+ 544              	.globl _ZN7NesDisk16GetRomRegionSizeEj
+ 545              	.ent _ZN7NesDisk16GetRomRegionSizeEj
+ 546              	_ZN7NesDisk16GetRomRegionSizeEj:
+ 547              	.frame $sp,0,$31
+ 548              	.mask 0x00000000,0
+ 549              	.fmask 0x00000000,0
+ 550 0308 0400A52C 	sltu $5,$5,4
+ 551 030c DCFF0234 	li $2,65500
+ 552              	.set noreorder
+ 553              	.set nomacro
+ 554 0310 0800E003 	j $31
+ 555 0314 0A100500 	movz $2,$0,$5
+GAS LISTING  			page 11
+
+
+ 556              	.set macro
+ 557              	.set reorder
+ 558              	
+ 559              	.end _ZN7NesDisk16GetRomRegionSizeEj
+ 560              	$Lfe9:
+ 561              	.size _ZN7NesDisk16GetRomRegionSizeEj,$Lfe9-_ZN7NesDisk16GetRomRegionSizeEj
+ 562              	.align 2
+ 563              	.p2align 3,,7
+ 564              	.globl _ZN7NesDisk13GetMapperNameEv
+ 565              	.ent _ZN7NesDisk13GetMapperNameEv
+ 566              	_ZN7NesDisk13GetMapperNameEv:
+ 567              	.frame $sp,0,$31
+ 568              	.mask 0x00000000,0
+ 569              	.fmask 0x00000000,0
+ 570 0318 0000023C 	lui $2,%hi($LC1)
+ 571              	.set noreorder
+ 572              	.set nomacro
+ 573 031c 0800E003 	j $31
+ 574 0320 00004224 	addiu $2,$2,%lo($LC1)
+ 575              	.set macro
+ 576              	.set reorder
+ 577              	
+ 578              	.end _ZN7NesDisk13GetMapperNameEv
+ 579              	$Lfe10:
+ 580              	.size _ZN7NesDisk13GetMapperNameEv,$Lfe10-_ZN7NesDisk13GetMapperNameEv
+ 581              	.align 2
+ 582 0324 00000000 	.p2align 3,,7
+ 583              	.globl _ZN7NesDisk10GetNumExtsEv
+ 584              	.ent _ZN7NesDisk10GetNumExtsEv
+ 585              	_ZN7NesDisk10GetNumExtsEv:
+ 586              	.frame $sp,0,$31
+ 587              	.mask 0x00000000,0
+ 588              	.fmask 0x00000000,0
+ 589              	.set noreorder
+ 590              	.set nomacro
+ 591 0328 0800E003 	j $31
+ 592 032c 01000224 	li $2,1
+ 593              	.set macro
+ 594              	.set reorder
+ 595              	
+ 596              	.end _ZN7NesDisk10GetNumExtsEv
+ 597              	$Lfe11:
+ 598              	.size _ZN7NesDisk10GetNumExtsEv,$Lfe11-_ZN7NesDisk10GetNumExtsEv
+ 599              	.rdata
+ 600 0055 000000   	.align 3
+ 601              	$LC7:
+ 602 0058 66647300 	.ascii "fds\000"
+ 603 005c 00000000 	.text
+ 604              	.align 2
+ 605              	.p2align 3,,7
+ 606              	.globl _ZN7NesDisk10GetExtNameEj
+ 607              	.ent _ZN7NesDisk10GetExtNameEj
+ 608              	_ZN7NesDisk10GetExtNameEj:
+ 609              	.frame $sp,0,$31
+ 610              	.mask 0x00000000,0
+ 611              	.fmask 0x00000000,0
+ 612 0330 0000023C 	lui $2,%hi($LC7)
+GAS LISTING  			page 12
+
+
+ 613              	.set noreorder
+ 614              	.set nomacro
+ 615 0334 0200A010 	beq $5,$0,$L57
+ 616 0338 58004224 	addiu $2,$2,%lo($LC7)
+ 617              	.set macro
+ 618              	.set reorder
+ 619              	
+ 620 033c 2D100000 	move $2,$0
+ 621              	$L57:
+ 622 0340 0800E003 	j $31
+ 622      00000000 
+ 623              	.end _ZN7NesDisk10GetExtNameEj
+ 624              	$Lfe12:
+ 625              	.size _ZN7NesDisk10GetExtNameEj,$Lfe12-_ZN7NesDisk10GetExtNameEj
+ 626              	.weak _ZTV7NesDisk
+ 627              	.section .gnu.linkonce.d._ZTV7NesDisk,"aw",@progbits
+ 628              	.align 3
+ 629              	.type _ZTV7NesDisk,@object
+ 630              	.size _ZTV7NesDisk,52
+ 631              	_ZTV7NesDisk:
+ 632 0000 00000000 	.word 0
+ 633 0004 00000000 	.word 0
+ 634 0008 00000000 	.word _ZN7NesDiskD1Ev
+ 635 000c 00000000 	.word _ZN7NesDiskD0Ev
+ 636 0010 00000000 	.word _ZN7NesDisk7LoadRomEP7CDataIOPhj
+ 637 0014 00000000 	.word _ZN7NesDisk6UnloadEv
+ 638 0018 00000000 	.word _ZN7NesDisk10GetNumExtsEv
+ 639 001c 00000000 	.word _ZN7NesDisk10GetExtNameEj
+ 640 0020 00000000 	.word _ZN7NesDisk16GetNumRomRegionsEv
+ 641 0024 00000000 	.word _ZN7NesDisk16GetRomRegionNameEj
+ 642 0028 00000000 	.word _ZN7NesDisk16GetRomRegionSizeEj
+ 643 002c 00000000 	.word _ZN7CEmuRom11GetRomTitleEv
+ 644 0030 00000000 	.word _ZN7NesDisk13GetMapperNameEv
+ 645 0034 00000000 	.section .gnu.linkonce.t._ZN7NesDiskD1Ev,"ax",@progbits
+ 646              	.align 2
+ 647              	.p2align 3,,7
+ 648              	.weak _ZN7NesDiskD1Ev
+ 649              	.ent _ZN7NesDiskD1Ev
+ 650              	_ZN7NesDiskD1Ev:
+ 651              	.frame $sp,16,$31
+ 652              	.mask 0x80000000,-16
+ 653              	.fmask 0x00000000,0
+ 654 0000 0000023C 	lui $2,%hi(_ZTV7NesDisk+8)
+ 655 0004 F0FFBD27 	subu $sp,$sp,16
+ 656 0008 08004224 	addiu $2,$2,%lo(_ZTV7NesDisk+8)
+ 657 000c 0000BFFF 	sd $31,0($sp)
+ 658              	.set noreorder
+ 659              	.set nomacro
+ 660 0010 0000000C 	jal _ZN7CEmuRomD2Ev
+ 661 0014 000082AC 	sw $2,0($4)
+ 662              	.set macro
+ 663              	.set reorder
+ 664              	
+ 665 0018 0000BFDF 	ld $31,0($sp)
+ 666              	
+ 667              	.set noreorder
+ 668              	.set nomacro
+GAS LISTING  			page 13
+
+
+ 669 001c 0800E003 	j $31
+ 670 0020 1000BD27 	addu $sp,$sp,16
+ 671              	.set macro
+ 672              	.set reorder
+ 673              	
+ 674              	.end _ZN7NesDiskD1Ev
+ 675              	$Lfe13:
+ 676              	.size _ZN7NesDiskD1Ev,$Lfe13-_ZN7NesDiskD1Ev
+ 677 0024 00000000 	.section .gnu.linkonce.t._ZN7NesDiskD0Ev,"ax",@progbits
+ 678              	.align 2
+ 679              	.p2align 3,,7
+ 680              	.weak _ZN7NesDiskD0Ev
+ 681              	.ent _ZN7NesDiskD0Ev
+ 682              	_ZN7NesDiskD0Ev:
+ 683              	.frame $sp,32,$31
+ 684              	.mask 0x80010000,-16
+ 685              	.fmask 0x00000000,0
+ 686 0000 0000023C 	lui $2,%hi(_ZTV7NesDisk+8)
+ 687 0004 E0FFBD27 	subu $sp,$sp,32
+ 688 0008 08004224 	addiu $2,$2,%lo(_ZTV7NesDisk+8)
+ 689 000c 0000B0FF 	sd $16,0($sp)
+ 690 0010 000082AC 	sw $2,0($4)
+ 691 0014 1000BFFF 	sd $31,16($sp)
+ 692              	.set noreorder
+ 693              	.set nomacro
+ 694 0018 0000000C 	jal _ZN7CEmuRomD2Ev
+ 695 001c 2D808000 	move $16,$4
+ 696              	.set macro
+ 697              	.set reorder
+ 698              	
+ 699              	.set noreorder
+ 700              	.set nomacro
+ 701 0020 0000000C 	jal _ZdlPv
+ 702 0024 2D200002 	move $4,$16
+ 703              	.set macro
+ 704              	.set reorder
+ 705              	
+ 706 0028 0000B0DF 	ld $16,0($sp)
+ 707 002c 1000BFDF 	ld $31,16($sp)
+ 708              	
+ 709              	.set noreorder
+ 710              	.set nomacro
+ 711 0030 0800E003 	j $31
+ 712 0034 2000BD27 	addu $sp,$sp,32
+ 713              	.set macro
+ 714              	.set reorder
+ 715              	
+ 716              	.end _ZN7NesDiskD0Ev
+ 717              	$Lfe14:
+ 718              	.size _ZN7NesDiskD0Ev,$Lfe14-_ZN7NesDiskD0Ev
+ 719              	.section .gnu.linkonce.t._ZN7CEmuRom11GetRomTitleEv,"ax",@progbits
+ 720              	.align 2
+ 721              	.p2align 3,,7
+ 722              	.weak _ZN7CEmuRom11GetRomTitleEv
+ 723              	.ent _ZN7CEmuRom11GetRomTitleEv
+ 724              	_ZN7CEmuRom11GetRomTitleEv:
+ 725              	.frame $sp,0,$31
+GAS LISTING  			page 14
+
+
+ 726              	.mask 0x00000000,0
+ 727              	.fmask 0x00000000,0
+ 728              	.set noreorder
+ 729              	.set nomacro
+ 730 0000 0800E003 	j $31
+ 731 0004 2D100000 	move $2,$0
+ 732              	.set macro
+ 733              	.set reorder
+ 734              	
+ 735              	.end _ZN7CEmuRom11GetRomTitleEv
+ 736              	$Lfe15:
+ 737              	.size _ZN7CEmuRom11GetRomTitleEv,$Lfe15-_ZN7CEmuRom11GetRomTitleEv
+ 738              	.ident "GCC: (GNU) 3.2.2"

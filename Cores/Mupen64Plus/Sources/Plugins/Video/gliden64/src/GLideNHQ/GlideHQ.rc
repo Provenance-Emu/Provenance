@@ -1,0 +1,79 @@
+/*
+ * Texture Filtering
+ * Version:  1.0
+ *
+ * Copyright (C) 2007  Hiroshi Morii   All Rights Reserved.
+ * Email koolsmoky(at)users.sourceforge.net
+ * Web   http://www.3dfxzone.it/koolsmoky
+ *
+ * this is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * this is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GNU Make; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#include "bldno.h"
+
+#define ID(id)     id
+
+#define VS_FILE_INFO		ID(16)		/* Version stamp res type */
+#define VS_VERSION_INFO		ID(1)  		/* Version stamp res ID */
+#define VS_USER_DEFINED		ID(100)		/* User-defined res IDs */
+
+#define VOS_DOS_WINDOWS32       0x00010004L
+#define VFT_DLL                 0x00000002L
+#define VER_PRERELEASE              0
+#define VER_PRIVATEBUILD            0
+#define VER_DEBUG                   0
+
+#define VERSIONNAME             "GlideHQ.dll\0"
+#define PRODNAME                "GlideHQ\0"
+#define DESCRIPT                "Texture filtering DLL\0"
+#define COPYRIGHTSTR            "Copyright (C) 2007 Hiroshi Morii\0"
+#define CONTACTSTR              "Hiroshi Morii <koolsmoky@users.sourceforge.net> http://www.3dfxzone.it/koolsmoky\0"
+
+#define MANVERSION              1
+#define MANREVISION             02
+#define MINVERSION              00
+
+#define VERSIONSTR "1.02.00." BUILD_NUMBER_STR
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION MANVERSION, MANREVISION, 0, BUILD_NUMBER
+ PRODUCTVERSION MANVERSION, MANREVISION, 0, BUILD_NUMBER
+ FILEFLAGSMASK 0x0030003FL
+ FILEFLAGS (VER_PRIVATEBUILD|VER_PRERELEASE|VER_DEBUG)
+
+ FILEOS VOS_DOS_WINDOWS32
+ FILETYPE VFT_DLL
+ FILESUBTYPE 0
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "FileDescription", DESCRIPT
+            VALUE "FileVersion", VERSIONSTR
+            VALUE "InternalName", VERSIONNAME
+            VALUE "LegalCopyright", COPYRIGHTSTR
+            VALUE "OriginalFilename", VERSIONNAME
+            VALUE "ProductName", PRODNAME
+            VALUE "ProductVersion", VERSIONSTR
+            VALUE "Contact", CONTACTSTR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        /* the following line should be extended for localized versions */
+        VALUE "Translation", 0x409, 1252
+    END
+END

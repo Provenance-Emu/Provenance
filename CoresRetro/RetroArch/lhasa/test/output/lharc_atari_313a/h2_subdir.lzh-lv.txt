@@ -1,0 +1,6 @@
+ PERMSSN    UID  GID      SIZE  RATIO     STAMP     LV
+---------- ----------- ------- ------ ------------ ---
+subdir/subdir2/hello.txt
+[Atari]                     12 100.0% Jan 11 18:49 [2]
+---------- ----------- ------- ------ ------------ ---
+ Total         1 file       12 100.0% Jan  1  2000

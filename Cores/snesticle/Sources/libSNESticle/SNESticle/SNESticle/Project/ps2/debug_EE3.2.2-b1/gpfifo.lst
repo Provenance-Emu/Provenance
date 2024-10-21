@@ -1,0 +1,536 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/gpfifo.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.type _GPFifo_bDumpList,@object
+   6              	.size _GPFifo_bDumpList,1
+   7              	_GPFifo_bDumpList:
+   8 0000 00       	.byte 0
+   9              	.rdata
+  10              	.align 3
+  11              	$LC0:
+  12 0000 47504669 	.ascii "GPFifo: List %08X -> %08X\n\000"
+  12      666F3A20 
+  12      4C697374 
+  12      20253038 
+  12      58202D3E 
+  13 001b 00000000 	.align 3
+  13      00
+  14              	$LC1:
+  15 0020 25303858 	.ascii "%08X: %08X %08X %08X %08X\n\000"
+  15      3A202530 
+  15      38582025 
+  15      30385820 
+  15      25303858 
+  16              	.text
+  17              	.align 2
+  18              	.p2align 3,,7
+  19              	.ent _GPFifoDumpList
+  20              	_GPFifoDumpList:
+  21              	.frame $sp,64,$31
+  22              	.mask 0x80070000,-16
+  23              	.fmask 0x00000000,0
+  24 0000 C0FFBD27 	subu $sp,$sp,64
+  25 0004 3000BFFF 	sd $31,48($sp)
+  26 0008 1000B1FF 	sd $17,16($sp)
+  27 000c 0000B0FF 	sd $16,0($sp)
+  28              	.set noreorder
+  29              	.set nomacro
+  30 0010 0000000C 	jal GSListGetStart
+  31 0014 2000B2FF 	sd $18,32($sp)
+  32              	.set macro
+  33              	.set reorder
+  34              	
+  35              	.set noreorder
+  36              	.set nomacro
+  37 0018 0000000C 	jal GSListGetPtr
+  38 001c 2D804000 	move $16,$2
+  39              	.set macro
+  40              	.set reorder
+  41              	
+  42 0020 0000043C 	lui $4,%hi($LC0)
+  43 0024 2D884000 	move $17,$2
+  44 0028 2D304000 	move $6,$2
+  45 002c 2D280002 	move $5,$16
+  46              	.set noreorder
+  47              	.set nomacro
+  48 0030 0000000C 	jal printf
+GAS LISTING  			page 2
+
+
+  49 0034 00008424 	addiu $4,$4,%lo($LC0)
+  50              	.set macro
+  51              	.set reorder
+  52              	
+  53 0038 2B181102 	sltu $3,$16,$17
+  54              	.set noreorder
+  55              	.set nomacro
+  56 003c 0C006010 	beq $3,$0,$L7
+  57 0040 0000123C 	lui $18,%hi($LC1)
+  58              	.set macro
+  59              	.set reorder
+  60              	
+  61 0044 0000068E 	lw $6,0($16)
+  62              	$L8:
+  63 0048 2D280002 	move $5,$16
+  64 004c 0400078E 	lw $7,4($16)
+  65 0050 20004426 	addiu $4,$18,%lo($LC1)
+  66 0054 0800088E 	lw $8,8($16)
+  67 0058 0C00098E 	lw $9,12($16)
+  68              	.set noreorder
+  69              	.set nomacro
+  70 005c 0000000C 	jal printf
+  71 0060 10001026 	addu $16,$16,16
+  72              	.set macro
+  73              	.set reorder
+  74              	
+  75 0064 2B181102 	sltu $3,$16,$17
+  76              	.set noreorder
+  77              	.set nomacro
+  78 0068 F7FF6054 	bnel $3,$0,$L8
+  79 006c 0000068E 	lw $6,0($16)
+  80              	.set macro
+  81              	.set reorder
+  82              	
+  83              	$L7:
+  84 0070 3000BFDF 	ld $31,48($sp)
+  85 0074 2000B2DF 	ld $18,32($sp)
+  86 0078 1000B1DF 	ld $17,16($sp)
+  87 007c 0000B0DF 	ld $16,0($sp)
+  88              	
+  89              	.set noreorder
+  90              	.set nomacro
+  91 0080 0800E003 	j $31
+  92 0084 4000BD27 	addu $sp,$sp,64
+  93              	.set macro
+  94              	.set reorder
+  95              	
+  96              	.end _GPFifoDumpList
+  97              	$Lfe1:
+  98              	.size _GPFifoDumpList,$Lfe1-_GPFifoDumpList
+  99              	.align 2
+ 100              	.p2align 3,,7
+ 101              	.globl GPFifoFlush
+ 102              	.ent GPFifoFlush
+ 103              	GPFifoFlush:
+ 104              	.frame $sp,16,$31
+ 105              	.mask 0x80000000,-16
+GAS LISTING  			page 3
+
+
+ 106              	.fmask 0x00000000,0
+ 107 0088 F0FFBD27 	subu $sp,$sp,16
+ 108 008c 0000BFFF 	sd $31,0($sp)
+ 109 0090 0000000C 	jal GPFifoPause
+ 109      00000000 
+ 110 0098 0000000C 	jal GPFifoResume
+ 110      00000000 
+ 111 00a0 0000BFDF 	ld $31,0($sp)
+ 112              	
+ 113              	.set noreorder
+ 114              	.set nomacro
+ 115 00a4 0800E003 	j $31
+ 116 00a8 1000BD27 	addu $sp,$sp,16
+ 117              	.set macro
+ 118              	.set reorder
+ 119              	
+ 120              	.end GPFifoFlush
+ 121              	$Lfe2:
+ 122              	.size GPFifoFlush,$Lfe2-GPFifoFlush
+ 123              	.align 2
+ 124 00ac 00000000 	.p2align 3,,7
+ 125              	.globl GPFifoPause
+ 126              	.ent GPFifoPause
+ 127              	GPFifoPause:
+ 128              	.frame $sp,32,$31
+ 129              	.mask 0x80010000,-16
+ 130              	.fmask 0x00000000,0
+ 131 00b0 E0FFBD27 	subu $sp,$sp,32
+ 132 00b4 1000BFFF 	sd $31,16($sp)
+ 133              	.set noreorder
+ 134              	.set nomacro
+ 135 00b8 0000000C 	jal GSDmaCntClose
+ 136 00bc 0000B0FF 	sd $16,0($sp)
+ 137              	.set macro
+ 138              	.set reorder
+ 139              	
+ 140              	.set noreorder
+ 141              	.set nomacro
+ 142 00c0 0000000C 	jal GSDmaEnd
+ 143 00c4 0000103C 	lui $16,%hi(_GPFifo_iCurList)
+ 144              	.set macro
+ 145              	.set reorder
+ 146              	
+ 147 00c8 0000023C 	lui $2,%hi(_GPFifo_bDumpList)
+ 148 00cc 00004390 	lbu $3,%lo(_GPFifo_bDumpList)($2)
+ 149              	
+ 150 00d0 15006014 	bne $3,$0,$L12
+ 150      00000000 
+ 151              	$L11:
+ 152 00d8 0000000C 	jal GSListEnd
+ 152      00000000 
+ 153              	.set noreorder
+ 154              	.set nomacro
+ 155 00e0 0000000C 	jal FlushCache
+ 156 00e4 2D200000 	move $4,$0
+ 157              	.set macro
+ 158              	.set reorder
+GAS LISTING  			page 4
+
+
+ 159              	
+ 160 00e8 0000000C 	jal DmaSyncGIF
+ 160      00000000 
+ 161 00f0 0000033C 	lui $3,%hi(_GPFifo_pLists)
+ 162 00f4 0C00028E 	lw $2,%lo(_GPFifo_iCurList)($16)
+ 163 00f8 00006324 	addiu $3,$3,%lo(_GPFifo_pLists)
+ 164 00fc 80100200 	sll $2,$2,2
+ 165 0100 21104300 	addu $2,$2,$3
+ 166              	.set noreorder
+ 167              	.set nomacro
+ 168 0104 0000000C 	jal DmaExecGIFChain
+ 169 0108 0000448C 	lw $4,0($2)
+ 170              	.set macro
+ 171              	.set reorder
+ 172              	
+ 173 010c 1000BFDF 	ld $31,16($sp)
+ 174 0110 0C00028E 	lw $2,%lo(_GPFifo_iCurList)($16)
+ 175              	
+ 176 0114 01004238 	xori $2,$2,0x1
+ 177 0118 0C0002AE 	sw $2,%lo(_GPFifo_iCurList)($16)
+ 178 011c 0000B0DF 	ld $16,0($sp)
+ 179              	
+ 180              	.set noreorder
+ 181              	.set nomacro
+ 182 0120 0800E003 	j $31
+ 183 0124 2000BD27 	addu $sp,$sp,32
+ 184              	.set macro
+ 185              	.set reorder
+ 186              	
+ 187              	.p2align 3
+ 188              	$L12:
+ 189 0128 0000000C 	jal _GPFifoDumpList
+ 189      00000000 
+ 190 0130 E9FF0010 	b $L11
+ 190      00000000 
+ 191              	.end GPFifoPause
+ 192              	$Lfe3:
+ 193              	.size GPFifoPause,$Lfe3-GPFifoPause
+ 194              	.align 2
+ 195              	.p2align 3,,7
+ 196              	.globl GPFifoResume
+ 197              	.ent GPFifoResume
+ 198              	GPFifoResume:
+ 199              	.frame $sp,16,$31
+ 200              	.mask 0x80000000,-16
+ 201              	.fmask 0x00000000,0
+ 202 0138 F0FFBD27 	subu $sp,$sp,16
+ 203 013c 0000023C 	lui $2,%hi(_GPFifo_iCurList)
+ 204 0140 0000BFFF 	sd $31,0($sp)
+ 205 0144 0000033C 	lui $3,%hi(_GPFifo_nListQwords)
+ 206 0148 0800658C 	lw $5,%lo(_GPFifo_nListQwords)($3)
+ 207 014c 0C00468C 	lw $6,%lo(_GPFifo_iCurList)($2)
+ 208 0150 0000023C 	lui $2,%hi(_GPFifo_pLists)
+ 209 0154 00004224 	addiu $2,$2,%lo(_GPFifo_pLists)
+ 210 0158 80300600 	sll $6,$6,2
+ 211 015c 2130C200 	addu $6,$6,$2
+ 212 0160 0000C48C 	lw $4,0($6)
+GAS LISTING  			page 5
+
+
+ 213 0164 0000063C 	lui $6,%hi(GPFifoFlush)
+ 214              	.set noreorder
+ 215              	.set nomacro
+ 216 0168 0000000C 	jal GSListBegin
+ 217 016c 0000C624 	addiu $6,$6,%lo(GPFifoFlush)
+ 218              	.set macro
+ 219              	.set reorder
+ 220              	
+ 221 0170 0000000C 	jal GSDmaCntOpen
+ 221      00000000 
+ 222 0178 0000BFDF 	ld $31,0($sp)
+ 223              	
+ 224              	.set noreorder
+ 225              	.set nomacro
+ 226 017c 0800E003 	j $31
+ 227 0180 1000BD27 	addu $sp,$sp,16
+ 228              	.set macro
+ 229              	.set reorder
+ 230              	
+ 231              	.end GPFifoResume
+ 232              	$Lfe4:
+ 233              	.size GPFifoResume,$Lfe4-GPFifoResume
+ 234              	.align 2
+ 235 0184 00000000 	.p2align 3,,7
+ 236              	.globl GPFifoSync
+ 237              	.ent GPFifoSync
+ 238              	GPFifoSync:
+ 239              	.frame $sp,16,$31
+ 240              	.mask 0x80000000,-16
+ 241              	.fmask 0x00000000,0
+ 242 0188 F0FFBD27 	subu $sp,$sp,16
+ 243 018c 0000BFFF 	sd $31,0($sp)
+ 244 0190 0000000C 	jal DmaSyncGIF
+ 244      00000000 
+ 245 0198 0000BFDF 	ld $31,0($sp)
+ 246              	
+ 247              	.set noreorder
+ 248              	.set nomacro
+ 249 019c 0800E003 	j $31
+ 250 01a0 1000BD27 	addu $sp,$sp,16
+ 251              	.set macro
+ 252              	.set reorder
+ 253              	
+ 254              	.end GPFifoSync
+ 255              	$Lfe5:
+ 256              	.size GPFifoSync,$Lfe5-GPFifoSync
+ 257              	.align 2
+ 258 01a4 00000000 	.p2align 3,,7
+ 259              	.globl GPFifoOpen
+ 260              	.ent GPFifoOpen
+ 261              	GPFifoOpen:
+ 262              	.frame $sp,16,$31
+ 263              	.mask 0x80000000,-16
+ 264              	.fmask 0x00000000,0
+ 265 01a8 F0FFBD27 	subu $sp,$sp,16
+ 266 01ac 0000BFFF 	sd $31,0($sp)
+ 267 01b0 0000000C 	jal GSListSpace
+GAS LISTING  			page 6
+
+
+ 267      00000000 
+ 268              	.set noreorder
+ 269              	.set nomacro
+ 270 01b8 05004014 	bne $2,$0,$L18
+ 271 01bc 2D180000 	move $3,$0
+ 272              	.set macro
+ 273              	.set reorder
+ 274              	
+ 275              	$L15:
+ 276 01c0 0000BFDF 	ld $31,0($sp)
+ 277 01c4 2D106000 	move $2,$3
+ 278              	.set noreorder
+ 279              	.set nomacro
+ 280 01c8 0800E003 	j $31
+ 281 01cc 1000BD27 	addu $sp,$sp,16
+ 282              	.set macro
+ 283              	.set reorder
+ 284              	
+ 285              	.p2align 3
+ 286              	$L18:
+ 287 01d0 0000000C 	jal GSListGetPtr
+ 287      00000000 
+ 288              	.set noreorder
+ 289              	.set nomacro
+ 290 01d8 F9FF0010 	b $L15
+ 291 01dc 2D184000 	move $3,$2
+ 292              	.set macro
+ 293              	.set reorder
+ 294              	
+ 295              	.end GPFifoOpen
+ 296              	$Lfe6:
+ 297              	.size GPFifoOpen,$Lfe6-GPFifoOpen
+ 298              	.align 2
+ 299              	.p2align 3,,7
+ 300              	.globl GPFifoClose
+ 301              	.ent GPFifoClose
+ 302              	GPFifoClose:
+ 303              	.frame $sp,16,$31
+ 304              	.mask 0x80000000,-16
+ 305              	.fmask 0x00000000,0
+ 306 01e0 F0FFBD27 	subu $sp,$sp,16
+ 307 01e4 0000BFFF 	sd $31,0($sp)
+ 308 01e8 0000000C 	jal GSListSetPtr
+ 308      00000000 
+ 309 01f0 0000BFDF 	ld $31,0($sp)
+ 310              	
+ 311              	.set noreorder
+ 312              	.set nomacro
+ 313 01f4 0800E003 	j $31
+ 314 01f8 1000BD27 	addu $sp,$sp,16
+ 315              	.set macro
+ 316              	.set reorder
+ 317              	
+ 318              	.end GPFifoClose
+ 319              	$Lfe7:
+ 320              	.size GPFifoClose,$Lfe7-GPFifoClose
+ 321              	.rdata
+GAS LISTING  			page 7
+
+
+ 322 003b 00000000 	.align 3
+ 322      00
+ 323              	$LC3:
+ 324 0040 21282828 	.ascii "!(((Uint32)pMem)&0xF)\000"
+ 324      55696E74 
+ 324      33322970 
+ 324      4D656D29 
+ 324      26307846 
+ 325 0056 0000     	.align 3
+ 326              	$LC2:
+ 327 0058 2E2E2F2E 	.ascii "../../../Gep/Source/ps2/gpfifo.c\000"
+ 327      2E2F2E2E 
+ 327      2F476570 
+ 327      2F536F75 
+ 327      7263652F 
+ 328 0079 00000000 	.align 3
+ 328      000000
+ 329              	$LC4:
+ 330 0080 47504669 	.ascii "GPFifo: Init %08X %08X (%d qwords)\n\000"
+ 330      666F3A20 
+ 330      496E6974 
+ 330      20253038 
+ 330      58202530 
+ 331              	.text
+ 332              	.align 2
+ 333 01fc 00000000 	.p2align 3,,7
+ 334              	.globl GPFifoInit
+ 335              	.ent GPFifoInit
+ 336              	GPFifoInit:
+ 337              	.frame $sp,96,$31
+ 338              	.mask 0x801f0000,-16
+ 339              	.fmask 0x00000000,0
+ 340 0200 A0FFBD27 	subu $sp,$sp,96
+ 341 0204 0000063C 	lui $6,%hi($LC3)
+ 342 0208 0000B0FF 	sd $16,0($sp)
+ 343 020c 4000C624 	addiu $6,$6,%lo($LC3)
+ 344 0210 2D808000 	move $16,$4
+ 345 0214 2000B2FF 	sd $18,32($sp)
+ 346 0218 0000043C 	lui $4,%hi($LC2)
+ 347 021c 0F000232 	andi $2,$16,0xf
+ 348 0220 0000123C 	lui $18,%hi(_GPFifo_pLists)
+ 349 0224 4000B4FF 	sd $20,64($sp)
+ 350 0228 3000B3FF 	sd $19,48($sp)
+ 351 022c 58008424 	addiu $4,$4,%lo($LC2)
+ 352 0230 1000B1FF 	sd $17,16($sp)
+ 353 0234 0000143C 	lui $20,%hi(_GPFifo_nListQwords)
+ 354 0238 2D88A000 	move $17,$5
+ 355 023c 5000BFFF 	sd $31,80($sp)
+ 356 0240 00005326 	addiu $19,$18,%lo(_GPFifo_pLists)
+ 357              	.set noreorder
+ 358              	.set nomacro
+ 359 0244 18004014 	bne $2,$0,$L23
+ 360 0248 70000524 	li $5,112
+ 361              	.set macro
+ 362              	.set reorder
+ 363              	
+ 364 024c 42211100 	srl $4,$17,5
+GAS LISTING  			page 8
+
+
+ 365              	$L24:
+ 366 0250 0000033C 	lui $3,%hi(_GPFifo_iCurList)
+ 367 0254 00110400 	sll $2,$4,4
+ 368 0258 000050AE 	sw $16,%lo(_GPFifo_pLists)($18)
+ 369 025c 21100202 	addu $2,$16,$2
+ 370 0260 0C0060AC 	sw $0,%lo(_GPFifo_iCurList)($3)
+ 371 0264 040062AE 	sw $2,4($19)
+ 372              	.set noreorder
+ 373              	.set nomacro
+ 374 0268 0000000C 	jal GPFifoResume
+ 375 026c 080084AE 	sw $4,%lo(_GPFifo_nListQwords)($20)
+ 376              	.set macro
+ 377              	.set reorder
+ 378              	
+ 379 0270 0000458E 	lw $5,%lo(_GPFifo_pLists)($18)
+ 380 0274 0000043C 	lui $4,%hi($LC4)
+ 381 0278 0400668E 	lw $6,4($19)
+ 382 027c 80008424 	addiu $4,$4,%lo($LC4)
+ 383              	.set noreorder
+ 384              	.set nomacro
+ 385 0280 0000000C 	jal printf
+ 386 0284 0800878E 	lw $7,%lo(_GPFifo_nListQwords)($20)
+ 387              	.set macro
+ 388              	.set reorder
+ 389              	
+ 390 0288 0000B0DF 	ld $16,0($sp)
+ 391 028c 5000BFDF 	ld $31,80($sp)
+ 392 0290 4000B4DF 	ld $20,64($sp)
+ 393 0294 3000B3DF 	ld $19,48($sp)
+ 394 0298 2000B2DF 	ld $18,32($sp)
+ 395 029c 1000B1DF 	ld $17,16($sp)
+ 396              	
+ 397              	.set noreorder
+ 398              	.set nomacro
+ 399 02a0 0800E003 	j $31
+ 400 02a4 6000BD27 	addu $sp,$sp,96
+ 401              	.set macro
+ 402              	.set reorder
+ 403              	
+ 404              	.p2align 3
+ 405              	$L23:
+ 406 02a8 0000000C 	jal __assert
+ 406      00000000 
+ 407              	.set noreorder
+ 408              	.set nomacro
+ 409 02b0 E7FF0010 	b $L24
+ 410 02b4 42211100 	srl $4,$17,5
+ 411              	.set macro
+ 412              	.set reorder
+ 413              	
+ 414              	.end GPFifoInit
+ 415              	$Lfe8:
+ 416              	.size GPFifoInit,$Lfe8-GPFifoInit
+ 417              	.rdata
+ 418 00a4 00000000 	.align 3
+ 419              	$LC5:
+ 420 00a8 47504669 	.ascii "GPFifo: Shutdown\n\000"
+GAS LISTING  			page 9
+
+
+ 420      666F3A20 
+ 420      53687574 
+ 420      646F776E 
+ 420      0A00
+ 421 00ba 00000000 	.text
+ 421      0000
+ 422              	.align 2
+ 423              	.p2align 3,,7
+ 424              	.globl GPFifoShutdown
+ 425              	.ent GPFifoShutdown
+ 426              	GPFifoShutdown:
+ 427              	.frame $sp,16,$31
+ 428              	.mask 0x80000000,-16
+ 429              	.fmask 0x00000000,0
+ 430 02b8 0000043C 	lui $4,%hi($LC5)
+ 431 02bc F0FFBD27 	subu $sp,$sp,16
+ 432 02c0 0000BFFF 	sd $31,0($sp)
+ 433              	.set noreorder
+ 434              	.set nomacro
+ 435 02c4 0000000C 	jal printf
+ 436 02c8 A8008424 	addiu $4,$4,%lo($LC5)
+ 437              	.set macro
+ 438              	.set reorder
+ 439              	
+ 440 02cc 0000BFDF 	ld $31,0($sp)
+ 441              	
+ 442              	.set noreorder
+ 443              	.set nomacro
+ 444 02d0 0800E003 	j $31
+ 445 02d4 1000BD27 	addu $sp,$sp,16
+ 446              	.set macro
+ 447              	.set reorder
+ 448              	
+ 449              	.end GPFifoShutdown
+ 450              	$Lfe9:
+ 451              	.size GPFifoShutdown,$Lfe9-GPFifoShutdown
+ 452              	.section .bss
+ 453              	_GPFifo_pLists:
+ 454              	.align 3
+ 455 0000 00000000 	.space 8
+ 455      00000000 
+ 456              	.previous
+ 457              	.section .bss
+ 458              	_GPFifo_nListQwords:
+ 459              	.align 2
+ 460 0008 00000000 	.space 4
+ 461              	.previous
+ 462              	.section .bss
+ 463              	_GPFifo_iCurList:
+ 464              	.align 2
+ 465 000c 00000000 	.space 4
+ 466              	.previous
+ 467              	.ident "GCC: (GNU) 3.2.2"

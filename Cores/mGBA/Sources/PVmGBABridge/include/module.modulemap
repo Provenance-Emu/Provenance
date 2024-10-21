@@ -1,0 +1,4 @@
+module PVmGBABridge {
+    header "../mGBAGameCoreBridge.h"
+    export *
+}

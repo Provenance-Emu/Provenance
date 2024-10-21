@@ -1,0 +1,552 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Mednafen Apple II/II+/IIe/Enhanced IIe Documentation</title>
+  <link rel="stylesheet" type="text/css" media="screen, projection" href="mednafen.css">
+ </head>
+ <body>
+  <center><h1><img alt="Mednafen" src="mednafen.png" width="696" height="204"></h1></center>
+  <center><h1>Apple II/II+/IIe/Enhanced IIe Documentation</h1></center>
+  <center><i>Last updated March 19, 2024<br>Valid as of 1.32.1</i></center>
+ <p></p>
+ <b>Table of Contents:</b>
+ <ul><li><a href="#Section_intro">Introduction</a><ul></ul></li><li><a href="#Section_mai">MAI System and Disks Configuration File</a><ul></ul></li><li><a href="#Section_floppies">Floppy Disk Images</a><ul></ul></li><li><a href="#Section_firmware_bios">Firmware/BIOS</a><ul></ul></li><li><a href="#Section_input">Input</a><ul><li><a href="#Section_joystick_gamepad">Joystick/Gamepad</a><ul></ul></li><li><a href="#Section_atari_joystick">Atari Joystick</a><ul></ul></li><li><a href="#Section_keyboard">Apple II/II+ Keyboard</a><ul><li><a href="#Section_default_keys_keyboard">Default Mappings</a><ul></ul></li></ul></li><li><a href="#Section_keyboard_apple2e">Apple IIe Keyboard</a><ul><li><a href="#Section_default_keys_keyboard_apple2e">Default Mappings</a><ul></ul></li></ul></li></ul></li><li><a href="#Section_custom_palettes">Custom Palettes</a><ul></ul></li><li><a href="#Settings+Reference">Settings Reference</a><ul></ul></li></ul><hr width="100%">
+<h2><a name="Section_intro">Introduction</a></h2><p></p>Mednafen's "<b>apple2</b>" emulation module supports emulation of Apple II, II+, IIe, and Enhanced IIe.  It is geared more towards running individual software releases independently of other
+software releases; it can be used differently, but the abstractions chosen may make it rather awkward.
+<p>
+The model emulated by default is the Apple II/II+, but it can be changed by altering the <a href="#apple2.model">apple2.model</a> setting, or by using the "<b>model</b>" directive in a <a href="#Section_mai">MAI file</a>.
+Note that save states and modified disk image data are not shared between different emulated models(barring unlikely hash collisions),
+to avoid emulated software malfunctions that may, among other effects, corrupt emulated disk data.
+<hr width="100%">
+<h2><a name="Section_mai">MAI System and Disks Configuration File</a></h2><p></p><p>
+Single-disk single-side software can be loaded directly.  The recommended way to use multi-disk or multi-side software is to
+create a special configuration file, saved with the file extension "mai", to be loaded with Mednafen.  Alternatively, the
+<a href="#apple2.multiload">automatic multiload</a> feature can be used with ZIP archives.
+<p>
+Mednafen does not write to the floppy disk image files specified via the MAI configuration file.  Modified disk data is automatically saved into
+and loaded from files in Mednafen's nonvolatile memory/save game directory.  The ID/hash used in naming these files is calculated by hashing data generated based on the
+contents of the disk image files and any firmware files referenced in the MAI configuration file, along with the values of settings that control
+the hardware configuration.
+<p>
+In addition to loading a naked MAI file, Mednafen supports automatically loading a MAI file from within a ZIP archive.  Any referenced files(e.g. floppy disk images and override firmware) must also be in
+the same ZIP archive.  In regards to Mednafen selecting the correct file to open, the ordering of the MAI file in the ZIP archive in relation to other files doesn't matter.
+<p>
+Sample MAI configuration file:
+<blockquote>
+<pre>
+MEDNAFEN_SYSTEM_APPLE2
+# Above signature must be the first line.
+#
+# File paths specified in this file are relative to the directory containing
+# the MAI file.
+#
+
+#
+# Specify nominal model of Apple II to emulate.
+#
+#  Options: ii ii+ iie iie_enh
+#    ii:  Apple II with 48KiB RAM, Integer BASIC, AppleSoft BASIC ROM card, and Autostart.
+#    ii+: Apple II+ with 64KiB RAM, AppleSoft BASIC, and Autostart.
+#    iie: Apple IIe with 128KiB RAM and DHGR support.
+#    iie_enh: Enhanced Apple IIe with 128KiB RAM and DHGR support.
+#
+#  Default: ii+
+#
+model ii+
+
+#
+# Uncomment to specify available RAM, in KiB.
+#
+#  Options for Apple II/II+: 4 8 12 16 20 24 28 32 36 40 44 48 64
+#  Options for Apple IIe: 64 65 128 320 576 1088 3136
+#
+#  Specifying "64" enables emulation of a RAM-based 16K language card.
+#
+#  Specifying "65" enables emulation of a IIe 80-column text card.
+#
+#  Specifying "128" enables emulation of a IIe extended 80-column text card.
+#
+#  Specifying "320" or higher enables emulation of a IIe RamWorks III-type card,
+#    usable in some productivity software.
+#
+#  Defaults:
+#    ii:   48
+#    ii+:  64
+#    iie: 128
+#    iie_enh: 128
+#
+#ram 64
+
+#
+# Uncomment to select Apple II/II+ firmware.
+#
+#  Options for Apple II/II+: integer applesoft
+#  Options for Apple IIe: (setting ignored)
+#
+#  Ignored if "firmware.override" is specified.
+#
+#  Defaults:
+#    ii:  integer
+#    ii+: applesoft
+#
+#firmware applesoft
+
+# Uncomment to specify custom system firmware.
+#
+#  Apple II/II+: 12KiB, located at $D000-$FFFF
+#  Apple IIe: 16KB, located at $C000-$FFFF
+#
+#  Optional; specify to override the firmware loaded via Mednafen's firmware
+#  loading system.
+#
+#firmware.override "apple2.rom"
+
+#
+# Uncomment to select ROM card firmware for Apple II/II+.
+#
+#  Options for Apple II/II+: none integer applesoft
+#  Options for Apple IIe: (setting ignored)
+#
+#  ROM card emulation is disabled if "none" is selected(regardless of
+#  the "romcard.override" setting), or if 64K of RAM is selected
+#  by the "ram" setting.
+#
+#  Defaults:
+#    ii:  applesoft
+#    ii+: integer
+#
+#romcard integer
+
+# Uncomment to specify custom ROM card firmware for Apple II/II+.
+#
+#  Optional; specify to override the firmware loaded via Mednafen's firmware
+#  loading system.
+#
+#  Note: Ignored if "romcard" is set to "none", or if 64K of RAM is selected
+#  by the "ram" setting.
+#
+#romcard.override "applesoft.rom"
+
+#
+# Uncomment to specify custom Apple IIe Video (Character Generator) ROM, 4KiB.
+#
+#  Optional; specify to override the video ROM loaded via Mednafen's
+#  firmware loading system.
+#
+#video.override
+
+#
+# Uncomment to specify custom Apple IIe Keyboard ASCII Mapping ROM, 2KiB.
+#
+#  Optional; specify to override the keyboard ROM loaded via Mednafen's
+#  firmware loading system.
+#
+#kbmap.override
+
+
+#
+# Select game input device(s).
+#
+#      none: no game I/O devices
+#
+#   paddles: two rotary dial paddles
+#
+#  joystick: 2-axis, 2-button joystick, with selected default resistance
+#            setting(1 through 4).
+#
+#   gamepad: 2-axis(D-pad), 2-button gamepad, with selected default resistance
+#            setting(1 through 4).
+#
+#     atari: two Atari digital joyport joysticks
+#            Note: Incompatible with Apple IIe, due to conflicts with the
+#            Open Apple and Closed Apple keys.  As a partial workaround, hold
+#            the first emulated joystick's D-pad in the left position upon
+#            power-on/startup/reset.
+#
+# Examples:
+#  gameio none
+#  gameio paddles
+#  gameio joystick 2
+#  gameio gamepad 2
+#  gameio atari
+#
+# Default: joystick 2
+#
+gameio joystick 2
+
+#
+# Specify (maximum) resistance, in Ω, for each of the four selectable
+# resistance settings for the "joystick" and "gamepad" devices.
+#
+#  Default: 93551 125615 149425 164980
+#
+gameio.resistance 93551 125615 149425 164980
+
+#
+# Enable Disk II in Slot 6(with two 5.25" disk drives attached).
+#
+#   Default: 1
+#
+disk2.enable 1
+disk2.drive1.enable 1
+disk2.drive2.enable 1
+
+# Select 16-sector Disk II firmware.  Options are: 13sec 16sec
+#   Effectively ignored if "disk2.firmware.override" is set.
+#
+#   Default: 16sec
+#
+disk2.firmware 16sec
+
+# Uncomment to specify custom Disk II firmware.
+#
+#  Optional; specify to override the Disk II firmware loaded via Mednafen's
+#  firmware loading system.
+#
+#disk2.firmware.override "disk2_dos33_boot.rom" "disk2_dos33_seq.rom"
+
+
+#
+# Define available floppy disks (or sides).  Disk identifiers(the part
+# immediately after "disk2.disks." must only contain characters a-z, 0-9, and _)
+#
+# Fields: name filepath write_protect(optional)
+#  If the write_protect field is omitted, then the default write protect setting
+#  for the format is used.  For WOZ disk images, write protect is explicitly
+#  specified in the INFO header.  For other formats, write protect defaults
+#  to off(0).
+#
+disk2.disks.game1 "Disk 1 - Boot" "SomeGame - Disk 1.dsk" 1
+disk2.disks.game2 "Disk 2" "SomeGame - Disk 2.dsk" 1
+disk2.disks.game3 "Disk 3" "SomeGame - Disk 3.dsk" 1
+disk2.disks.save "Save Disk" "SomeGame - Save Disk.dsk" 0
+
+#
+# Specify which disks are allowed to go into which drive.
+#
+# Prefix the disk identifier with a * to start with that disk inserted.
+#
+# Don't insert the same disk (identifier) into different
+# drives at the same time unless you're some sort of spacetime wizard.
+#
+disk2.drive1.disks *game1 game2 game3
+disk2.drive2.disks *save
+
+#
+# Uncomment to enable ProDOS-compatible, high-level HDD emulation in specified
+# slot with specified hard disk drive image.
+#
+# The hard disk drive image must be a multiple of 512 bytes, and no larger
+# than 33,553,920 bytes(65535 * 512).
+#
+# Slot must be either 1 or 7.
+#
+# Fields: slot filepath write_protect
+#
+#   Default: (undefined/disabled)
+#
+#hdd 7 "ProDOS.hdv" 0
+
+</pre>
+</blockquote>
+<hr width="100%">
+<h2><a name="Section_floppies">Floppy Disk Images</a></h2><p></p><p>
+ If a virtual floppy disk image in memory has been modified(written to) during the course of emulation, the in-memory floppy disk image
+ will be saved into a separate file under Mednafen's nonvolatile memory directory upon exit.  On subsequent invocations with the same floppy disk
+ image(or MAI file and its associated floppy disk images), this separate floppy disk image will be transparently loaded at startup and its data used in lieu
+ of the source floppy disk image when creating the virtual floppy disk image in memory.
+</p>
+
+<p>
+The following 5.25" Apple II floppy disk image formats are supported:
+<table border>
+ <tr><th>Extension:</th><th>Size(Bytes):</th><th>Description:</th></tr>
+ <tr><td>d13</td><td>116480</td><td>Apple DOS 13 sectors/track</td></tr>
+ <tr><td>dsk<br>do</td><td>143360</td><td>Apple DOS-order 16 sectors/track</td></tr>
+ <tr><td>po</td><td>143360</td><td>Apple ProDOS-order 16 sectors/track</td></tr>
+ <tr><td>woz</td><td><i>(variable)</i></td><td><a href="https://applesaucefdc.com/woz/">https://applesaucefdc.com/woz/</a></td></tr>
+</table>
+</p>
+
+<hr width="100%">
+<h2><a name="Section_firmware_bios">Firmware/BIOS</a></h2><p></p><p>
+Place the correct firmware image files in the <a href="mednafen.html#Section_firmware_bios">correct location</a>.
+</p>
+
+<p>
+If you want to use custom or modified firmware, create and load a MAI configuration file.
+</p>
+
+<p>
+If you make a linear dump of your Disk II P6 sequencer ROM(s) through the P5 socket via a program running on an Apple II, remember to process the resulting data to
+swap: A7 and A5, D4 and D7, D5 and D6.
+</p>
+<p>
+In contrast, the required Disk II P5 boot ROM format has its data arranged how it appears to the 6502(i.e. as if it's just linearly dumped with
+a simple program running on an Apple II).
+</p>
+
+<table border>
+ <tr><th colspan="3">Apple II/II+:</th></tr>
+ <tr><th>Filename:</th><th>Purpose:</th><th>SHA-256 Hash:</tr>
+ <tr><td nowrap>apple2-int-auto.rom</td><td>Apple II Integer BASIC and Autostart System ROMs, concatenated(8KiB).
+<p>
+Consists of 2KiB ROMs(in order, with SHA-256 hashes):
+<br><i>(TODO: verify 341-0001, 341-0002, 341-0003 hashes)</i>
+<hr>
+<p>
+341-0001<br><i><font size="-1">(3a5137fa95b0a2e4a60a975a97d04abd89425295ee352aa17a3da348764d4f27)</i></font>
+<p>
+341-0002<br><i><font size="-1">(0ec63e5737b33f133166a3d55ed28a367a671f03960d9d57fb8598a9de6a437b)</i></font>
+<p>
+341-0003<br><i><font size="-1">(2ba5e31366045e5f03255f147550112a5974e3a36ed21ce585917f7c5be12869)</i></font>
+<p>
+341-0020<br><i><font size="-1">(29465303e7844fa56a8c846d0565e45f5ee082f98f2ccf1b261de4a7e902201b)</i></font>
+</td><td>cb52b212a62f808c2f59600b2823491ee12bd91cab8e0260fe34b5f14c47552f
+<br><i>(TODO: verify)</i></td></tr>
+ <tr><td nowrap>apple2-asoft-auto.rom</td><td>Apple II+ AppleSoft BASIC and Autostart System ROMs, concatenated(12KiB).
+<p>
+Consists of 2KiB ROMs(in order, with SHA-256 hashes):
+<hr>
+<p>
+341-0011<br><i><font size="-1">(b45168834f01e11ae2cc35fc6bef153e5a13c180503c6533dff111558099df4d)</i></font>
+<p>
+341-0012<br><i><font size="-1">(468d36201974ecbe22efd9164f0ead1abab00b33f1a480da525502964641f444)</i></font>
+<p>
+341-0013<br><i><font size="-1">(2814de134e79213eddb6d7d7a18cba105e120a08e77c9767c46d6fc3cfcc593d)</i></font>
+<p>
+341-0014<br><i><font size="-1">(6848707531d7a8934a58e743483e4ebc74bf2ded0229b42533fa20cb89ed1a23)</i></font>
+<p>
+341-0015<br><i><font size="-1">(220fb70bac6839c98901cd542c3c1fbd7145d0bb9423ea8fcc8af0f16ec47d75)</i></font>
+<p>
+341-0020<br><i><font size="-1">(29465303e7844fa56a8c846d0565e45f5ee082f98f2ccf1b261de4a7e902201b)</i></font>
+</td><td>fc3e9d41e9428534a883df5aa10eb55b73ea53d2fcbb3ee4f39bed1b07a82905</td></tr>
+
+
+ <tr><th colspan="3">Apple IIe:</th></tr>
+ <tr><td nowrap>apple2e.rom</td><td>Apple IIe BASIC and System ROMs, concatenated, 16KiB.</td><td>1fb812584c6633fa16b77b20915986ed1178d1e6fc07a647f7ee8d4e6ab9d40b</td></tr>
+ <tr><td nowrap>apple2e-video.rom</td><td>Apple IIe Video ROM, 4KiB, 342-0133-A</td><td>ed5bdd4afa509134e85f1d020685af7ff50e279226eb869a17825b471cc1634c</td></tr>
+ <tr><td nowrap>apple2e-kb.rom</td><td>Apple IIe Keyboard ROM, 2KiB, 342-0132-B</td><td>68198ae95923926b0307893d03ec286f00822c93a0b6dabfca565f6718dd5a56</td></tr>
+
+
+ <tr><th colspan="3">Enhanced Apple IIe:</th></tr>
+ <tr><td nowrap>apple2e-enh.rom</td><td>Enhanced Apple IIe BASIC and System ROMs, concatenated, 16KiB.</td><td>aab38a03ca8deabbb2f868733148c2efd6f655a59cd9c5d058ef3e0b7aa86a1a</td></tr>
+ <tr><td nowrap>apple2e-enh-video.rom</td><td>Enhanced Apple IIe Video ROM, 4KiB, 342-0265-A</td><td>52c3b87900ac939f6525402cab1ccfd8f8259290fc6df54da48fb4c98ae3ed0f</td></tr>
+ <tr><td nowrap>apple2e-enh-kb.rom</td><td>Enhanced Apple IIe Keyboard ROM, 2KiB, 341-0132-D</td><td>a1989da84ea4381d309e7e08783771f884e913236b9bcc71c3d649aacf76537a</td></tr>
+
+
+ <tr><th colspan="3">Disk II:</th></tr>
+ <tr><td nowrap>disk2-13boot.rom</td><td>Disk II Interface 13-Sector P5 Boot ROM, 341-0009</td><td>2d2599521fc5763d4e8c308c2ee7c5c4d5c93785b8fb9a4f7d0381dfd5eb60b6<br><i>(TODO: verify)</i></td></tr>
+ <tr><td nowrap>disk2-13seq.rom</td><td>Disk II Interface 13-Sector P6 Sequencer ROM, 341-0010</td><td>4234aed053c622b266014c4e06ab1ce9e0e085d94a28512aa4030462be0a3cb9</td></tr>
+
+ <tr><td nowrap>disk2-16boot.rom</td><td>Disk II Interface 16-Sector P5 Boot ROM, 341-0027</td><td>de1e3e035878bab43d0af8fe38f5839c527e9548647036598ee6fe7ec74d2a7d</td></tr>
+ <tr><td nowrap>disk2-16seq.rom</td><td>Disk II Interface 16-Sector P6 Sequencer ROM, 341-0028</td><td>e5e30615040567c1e7a2d21599681f8dac820edbdcda177b816a64d74b3a12f2</td></tr>
+</table>
+<hr width="100%">
+
+<h2><a name="Section_input">Input</a></h2><p></p>
+<h3><a name="Section_joystick_gamepad">Joystick/Gamepad</a></h3><p></p>
+<table border>
+ <tr><th>Game:</th><th>Preferred Resistance Setting(1, 2, 3, or 4):</th>
+ <tr><td>Boulder Dash</td><td>3</td></tr>
+ <tr><td>Bouncing Kamungas</td><td>2</td></tr>
+ <tr><td>Mario Bros</td><td>2</td></tr>
+ <tr><td>Ms. Pac-Man</td><td>2</td></tr>
+ <tr><td>Pac-Man</td><td>2</td></tr>
+ <tr><td>Stargate</td><td>1</td></tr>
+ <tr><td>Thexder</td><td>2</td></tr>
+ <tr><td>Wavy Navy</td><td>2</td></tr>
+ <tr><td>Xevious</td><td>2</td></tr>
+ <tr><td>Zaxxon</td><td>1</td></tr>
+</table>
+
+<hr width="75%">
+<h3><a name="Section_atari_joystick">Atari Joystick</a></h3><p></p>The following software is known to be compatible with one or more Atari joysticks(connected via an adapter to an Apple II):
+<ul>
+ <li>Ardy</li>
+ <li>Bandits <i>(press CTRL+SHIFT+P)</i></li>
+ <li>Beer Run <i>(press CTRL+SHIFT+P on control method screen)</i></li>
+ <li>Berzap</li>
+ <li>Borg</li>
+ <li>Borrowed Time</li>
+ <li>Boulder Dash</li>
+ <li>Boulder Dash II</li>
+ <li>Bouncing Kamungas</li>
+ <li>Bubble-Head</li>
+ <li>Buzzard Bait</li>
+ <!-- TODO, check: Computer Foosball -->
+ <li>Cyclod <i>(press CTRL+SHIFT+P)</i></li>
+ <li>Dino Eggs</li>
+ <li>Dogfight II <i>(virtual port 1 is player 3, virtual port 2 is player 1)</i> </li>
+ <li>Fly Wars</li>
+ <li>Free Fall</li>
+ <li>Gorgon <i>(later version?)</i></li>
+ <li>Hadron <i>(press CTRL+SHIFT+P)</i></li>
+ <li>Horizon V<i>(press CTRL+SHIFT+P; uses both controllers simultaneously to control different aspects)</i></li>
+ <li>Jawbreaker <i>(second release/title with the same name)</i></li>
+ <li>Jellyfish</li>
+ <li>Laf-Pak, Mine Sweep <i>(uses controller port typically used for player 2?)</i></li>
+ <li>Lemmings <i>(Sirius Software)</i></li>
+ <li>Lunar Leepers <i>(uses controller port typically used for player 2?)</i></li>
+ <li>Mating Zone <i>(press CTRL+I during game for config screen)</i></li>
+ <li>Miner 2049er</li>
+ <li>Miner 2049er II</li>
+ <li>Minotaur <i>(press CTRL+SHIFT+P)</i></li>
+ <li>Mouskattack</li>
+ <li>Outpost</li>
+ <li>Pest Patrol</li>
+ <li>Pie-Man</li>
+ <li>Plasmania</li>
+ <li>Roundabout</li>
+ <li>Seadragon</li>
+ <li>Snake Byte <i>(press CTRL+SHIFT+P)</i></li>
+ <li>Space Ark <i>(press CTRL+N during game for config screen)</i></li>
+ <li>Spy's Demise</li>
+ <li>Star Maze <i>(Sir-Tech)</i> <i>(press A on title/demo screen)</i></li>
+ <li>Stellar 7</li>
+ <li>Tass Times in Tonetown</li>
+ <li>Twerps <i>(press CTRL+SHIFT+P)</i></li>
+ <li>Vindicator <i>(Hal Labs)</i> <i>(press RETURN on level select screen one or more times; uses controller port typically used for player 2?)</i></li>
+ <li>Wavy Navy</li>
+ <li>Wayout</li>
+</ul>
+
+<hr width="75%">
+<h3><a name="Section_keyboard">Apple II/II+ Keyboard</a></h3><p></p> Mednafen emulates the later II/II+ two-piece keyboard that uses the AY-5-3600 encoder.
+ <p>
+ Note that emulated keyboard key state is not updated unless <a href="mednafen.html#Section_input_grabbing">input grabbing</a>(by default, mapped to CTRL+SHIFT+Menu) is toggled on.
+ <h4><a name="Section_default_keys_keyboard">Default Mappings</a></h4><p></p>  <p>
+  <table border>
+   <tr><th>Key(s):</th><th nowrap>Virtual Apple II/II+ Key:</th></tr>
+   <tr><td>A<br>↑<br>Keypad 8</td><td>A</td></tr>
+   <tr><td>Z<br>↓<br>Keypad 2</td><td>Z</td></tr>
+   <tr><td>B <i>through</i> Y</td><td>B <i>through</i> Y</td></tr>
+   <tr><td>0 <i>through</i> 9</td><td>0 <i>through</i> 9</td></tr>
+   <tr><td>-</td><td>:</td></tr>
+   <tr><td>=</td><td>-</td></tr>
+   <tr><td>Insert</td><td>RESET</td></tr>
+   <tr><td>Tab<br>ESC</td><td>ESC</td></tr>
+   <tr><td>[<br>ALT</td><td>REPT</td></tr>
+   <tr><td>\<br>Enter<br>Home</td><td>RETURN</td></tr>
+   <tr><td>Caps Lock<br>CTRL</td><td>CTRL</td></tr>
+   <tr><td>;<br>Keypad 4</td><td>;</td></tr>
+   <tr><td>Backspace<br>⭠<br>Keypad 5<br>Delete</td><td>⭠</td></tr>
+   <tr><td>⭢<br>Keypad 6<br>Page Down</td><td>⭢</td></tr>
+   <tr><td>SHIFT</td><td>SHIFT</td></tr>
+   <tr><td>,</td><td>,</td></tr>
+   <tr><td>.</td><td>.</td></tr>
+   <tr><td>/<br>End</td><td>/</td></tr>
+  </table>
+  </p>
+ <hr width="50%">
+<hr width="50%">
+<h3><a name="Section_keyboard_apple2e">Apple IIe Keyboard</a></h3><p></p> Note that emulated keyboard key state is not updated unless <a href="mednafen.html#Section_input_grabbing">input grabbing</a>(by default, mapped to CTRL+SHIFT+Menu) is toggled on.
+ <h4><a name="Section_default_keys_keyboard_apple2e">Default Mappings</a></h4><p></p>  <p>
+  <table border>
+   <tr><th>Key(s):</th><th nowrap>Virtual Apple IIe Key:</th></tr>
+   <tr><td>Insert</td><td>RESET</td></tr>
+   <tr><td>ESC</td><td>ESC</td></tr>
+   <tr><td>Tab</td><td>TAB</td></tr>
+   <tr><td>CTRL</td><td>CONTROL</td></tr>
+   <tr><td>SHIFT</td><td>SHIFT</td></tr>
+   <tr><td>Caps Lock</td><td>CAPS LOCK</td></tr>
+   <tr><td>Left ALT<br>Left Windows</td><td>Open Apple ○</td></tr>
+   <tr><td>Right ALT<br>Right Windows</td><td>Closed Apple ●</td></tr>
+   <tr><td>Space</td><td>Space</td></tr>
+   <tr><td>Enter</td><td>RETURN</td></tr>
+   <tr><td>Backspace</td><td>DELETE</td></tr>
+   <tr><td>⭠</td><td>⭠</td></tr>
+   <tr><td>⭢</td><td>⭢</td></tr>
+   <tr><td>⭣</td><td>⭣</td></tr>
+   <tr><td>⭡</td><td>⭡</td></tr>
+   <tr><td>A <i>through</i> Z</td><td>A <i>through</i> Z</td></tr>
+   <tr><td>0 <i>through</i> 9</td><td>0 <i>through</i> 9</td></tr>
+   <tr><td>`</td><td>`</td></tr>
+   <tr><td>-</td><td>-</td></tr>
+   <tr><td>=</td><td>=</td></tr>
+
+   <tr><td>[</td><td>[</td></tr>
+   <tr><td>]</td><td>]</td></tr>
+   <tr><td>\</td><td>\</td></tr>
+
+   <tr><td>;</td><td>;</td></tr>
+   <tr><td>'</td><td>'</td></tr>
+
+   <tr><td>,</td><td>,</td></tr>
+   <tr><td>.</td><td>.</td></tr>
+   <tr><td>/</td><td>/</td></tr>
+  </table>
+ <hr width="50%">
+<hr width="50%">
+<hr width="50%">
+<h2><a name="Section_custom_palettes">Custom Palettes</a></h2><p></p><p></p><table border><tr class="TableHeader"><th>Global Filename:</th><th>Description:</th></tr>
+<tr><td>apple2.pal</td><td>RGB mode 16-color(or 32-color for TFR) palette.  The presence of a custom palette will automatically enable RGB video mode if an RGB mode is not already selected via the "<a href="#apple2.video.mode">apple2.video.mode</a>" setting.  If the palette has 32 color entries, the text fringe reduction variant of an RGB mode is enabled.<br><br>16 <i>or</i> 32 RGB triplets</td></tr>
+</table><hr width="100%">
+<h2><a name="Settings+Reference">Settings Reference</a></h2><p></p><p>
+<b>Caution:</b> Any settings that change emulation behavior as seen from the emulated game are shown with the setting name bolded in the table. One should be conscious of these settings if one has changed them from the default values when using network play or movies, as they can cause desychronizations if not set the same among hosts(or between the recording emulator and the playing emulator). 
+</p>
+<p></p><table border><tr class="TableHeader"><th>Setting:</th><th>Value Type:</th><th>Possible Values:</th><th>Default Value:</th><th>Description:</th></tr><tr class="RowA"><td class="ColA">apple2.input.kb.auto_repeat</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="apple2.input.kb.auto_repeat">Enable Apple IIe's auto key repeat.</a><p>Only has an effect with Apple IIe/Enhanced IIe emulation.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.input.kb.ghosting</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="apple2.input.kb.ghosting">Enable key ghosting emulation.</a><p>When enabled, spurious emulated keypresses will be generated when certain combinations of keys are held down simultaneously.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.input.kb.iie.capslock.defpos</td><td class="ColB">enum</td><td class="ColC">off<br>on</td><td class="ColD">on</td><td class="ColE"><a name="apple2.input.kb.iie.capslock.defpos">Default position for switch "CAPS LOCK".</a><p>Sets the position for the switch to the value specified upon startup and virtual input device change.</p><ul><li><b>off</b> - Off<br>Lowercase</li><br><li><b>on</b> - On<br>Uppercase</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA"><b>apple2.input.port1</b></td><td class="ColB">enum</td><td class="ColC">none<br>paddle<br>joystick<br>gamepad<br>atari</td><td class="ColD">joystick</td><td class="ColE"><a name="apple2.input.port1">Input device for Virtual Gameport 1</a><ul><li><b>none</b> - None(all game I/O devices disabled)<br>Will disable all game I/O devices if selected.</li><br><li><b>paddle</b> - Paddle<br>1-axis, 1-button rotary dial paddle.  Only usable on virtual port 2 if it's also selected on virtual port 1.</li><br><li><b>joystick</b> - Joystick<br>2-axis, 2-button joystick, with 4-state resistance switch.</li><br><li><b>gamepad</b> - Gamepad<br>Gamepad with D-pad and 2 buttons.  Seen by emulated software as a 2-axis, 2-button analog joystick(albeit with only axis extremes), but provides more configuration options for the user.</li><br><li><b>atari</b> - Atari Joystick<br>Atari joyport digital joystick.  Only usable on virtual port 2 if it's also selected on virtual port 1.  Limited compatibility with software.<br>
+<br>
+Note: Incompatible with Apple IIe, due to conflicts with the Open Apple and Closed Apple keys.  As a partial workaround, hold the first emulated joystick's D-pad in the left position upon power-on.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.input.port1.joystick.axis_scale</td><td class="ColB">real</td><td class="ColC">1.00 <i>through</i> 1.50</td><td class="ColD">1.00</td><td class="ColE"><a name="apple2.input.port1.joystick.axis_scale">Analog axis scale coefficient for Joystick on Virtual Gameport 1.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA"><b>apple2.input.port2</b></td><td class="ColB">enum</td><td class="ColC">paddle<br>atari</td><td class="ColD">paddle</td><td class="ColE"><a name="apple2.input.port2">Input device for Virtual Gameport 2</a><ul><li><b>paddle</b> - Paddle<br>1-axis, 1-button rotary dial paddle.  Only usable on virtual port 2 if it's also selected on virtual port 1.</li><br><li><b>atari</b> - Atari Joystick<br>Atari joyport digital joystick.  Only usable on virtual port 2 if it's also selected on virtual port 1.  Limited compatibility with software.<br>
+<br>
+Note: Incompatible with Apple IIe, due to conflicts with the Open Apple and Closed Apple keys.  As a partial workaround, hold the first emulated joystick's D-pad in the left position upon power-on.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA"><b>apple2.model</b></td><td class="ColB">enum</td><td class="ColC">ii<br>ii+<br>ii_ii+<br>iie<br>iie_enh</td><td class="ColD">ii_ii+</td><td class="ColE"><a name="apple2.model">Nominal model of Apple II to emulate.</a><p>This setting is ignored when using a MAI file.</p><ul><li><b>ii</b> - Apple II<br>Apple II, with 48KiB RAM, Integer BASIC, AppleSoft BASIC ROM card, and Autostart.</li><br><li><b>ii+</b> - Apple II+<br>Apple II+, with 64KiB RAM, AppleSoft BASIC, and Autostart.</li><br><li><b>ii_ii+</b> - Apple II/II+<br>Apple II/II+, with 64KiB RAM, AppleSoft BASIC, and Autostart; however, when loading a 13-sector disk image, 48KiB of RAM and an Integer BASIC ROM card are automatically selected.</li><br><li><b>iie</b> - Apple IIe<br>Apple IIe with 128KiB RAM and DHGR support.</li><br><li><b>iie_enh</b> - Enhanced Apple IIe<br>Enhanced Apple IIe with 128KiB RAM and DHGR support.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.multiload</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="apple2.multiload">Enable automatic multiload from archives.</a><p>When loading a disk image from an archive(e.g. ZIP file) without a MAI file present, also automatically load all other files with the same extension in the same directory in that archive.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.brightness</td><td class="ColB">real</td><td class="ColC">-1.0 <i>through</i> 1.0</td><td class="ColD">0.0</td><td class="ColE"><a name="apple2.video.brightness">Video brightness.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.video.color_lumafilter</td><td class="ColB">integer</td><td class="ColC">-3 <i>through</i> 3</td><td class="ColD">-3</td><td class="ColE"><a name="apple2.video.color_lumafilter">Composite color video luma filter.</a><p>Filters numbered closer to 0 have a stronger lowpass effect.  Negative-numbered filters have ringing.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.color_smooth</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 2</td><td class="ColD">0</td><td class="ColE"><a name="apple2.video.color_smooth">Composite color video smoothing level.</a><p>When a non-zero value, reduces vertical stripes in composite video without increasing blurriness, at the cost of some pixel irregularities.  Larger values select more-aggressive smoothing.  May make small text illegible in graphics mode.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.video.contrast</td><td class="ColB">real</td><td class="ColC">-1.0 <i>through</i> 1.0</td><td class="ColD">0.0</td><td class="ColE"><a name="apple2.video.contrast">Video luma contrast.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.correct_aspect</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="apple2.video.correct_aspect">Correct aspect ratio.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.video.force_mono</td><td class="ColB">integer</td><td class="ColC">0x000000 <i>through</i> 0xFFFFFF</td><td class="ColD">0x000000</td><td class="ColE"><a name="apple2.video.force_mono">Force monochrome graphics color.</a><p>Force monochrome graphics if non-zero, with the specified color.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.hue</td><td class="ColB">real</td><td class="ColC">-1.0 <i>through</i> 1.0</td><td class="ColD">0.0</td><td class="ColE"><a name="apple2.video.hue">Color video hue/tint.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.video.matrix</td><td class="ColB">enum</td><td class="ColC">custom<br>mednafen<br>la7620<br>cxa2025as_usa<br>cxa2060bs_usa<br>cxa2095s_usa<br>cxa2025as_japan<br>cxa2060bs_japan<br>cxa2095s_japan</td><td class="ColD">mednafen</td><td class="ColE"><a name="apple2.video.matrix">Color decoder matrix.</a><p>The matrixes that correspond to the nominal demodulation angles and gains for various ICs are intended to get colors within the ballpark of what consumer-oriented NTSC TVs would display, and won't exactly replicate the colors these ICs would reproduce when fed an Apple II video signal.</p><ul><li><b>custom</b> - Custom<br></li><br><li><b>mednafen</b> - Mednafen<br></li><br><li><b>la7620</b> - Sanyo LA7620-like.<br></li><br><li><b>cxa2025as_usa</b> - Sony CXA2025AS-like, USA setting<br></li><br><li><b>cxa2060bs_usa</b> - Sony CXA2060BS-like, USA setting.<br></li><br><li><b>cxa2095s_usa</b> - Sony CXA2095S-like, USA setting.<br></li><br><li><b>cxa2025as_japan</b> - Sony CXA2025AS-like, Japan setting.<br></li><br><li><b>cxa2060bs_japan</b> - Sony CXA2060BS-like, Japan setting.<br></li><br><li><b>cxa2095s_japan</b> - Sony CXA2095S-like, Japan setting.<br></li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.matrix.blue.i</td><td class="ColB">real</td><td class="ColC">-4.00 <i>through</i> 4.00</td><td class="ColD">-1.11</td><td class="ColE"><a name="apple2.video.matrix.blue.i">Custom color decoder matrix; blue, I.</a><p>Only used if "<a href="#apple2.video.matrix">apple2.video.matrix</a>" is set to "custom".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.video.matrix.blue.q</td><td class="ColB">real</td><td class="ColC">-4.00 <i>through</i> 4.00</td><td class="ColD">1.70</td><td class="ColE"><a name="apple2.video.matrix.blue.q">Custom color decoder matrix; blue, Q.</a><p>Only used if "<a href="#apple2.video.matrix">apple2.video.matrix</a>" is set to "custom".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.matrix.green.i</td><td class="ColB">real</td><td class="ColC">-4.00 <i>through</i> 4.00</td><td class="ColD">-0.28</td><td class="ColE"><a name="apple2.video.matrix.green.i">Custom color decoder matrix; green, I.</a><p>Only used if "<a href="#apple2.video.matrix">apple2.video.matrix</a>" is set to "custom".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.video.matrix.green.q</td><td class="ColB">real</td><td class="ColC">-4.00 <i>through</i> 4.00</td><td class="ColD">-0.64</td><td class="ColE"><a name="apple2.video.matrix.green.q">Custom color decoder matrix; green, Q.</a><p>Only used if "<a href="#apple2.video.matrix">apple2.video.matrix</a>" is set to "custom".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.matrix.red.i</td><td class="ColB">real</td><td class="ColC">-4.00 <i>through</i> 4.00</td><td class="ColD">0.96</td><td class="ColE"><a name="apple2.video.matrix.red.i">Custom color decoder matrix; red, I.</a><p>Only used if "<a href="#apple2.video.matrix">apple2.video.matrix</a>" is set to "custom".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.video.matrix.red.q</td><td class="ColB">real</td><td class="ColC">-4.00 <i>through</i> 4.00</td><td class="ColD">0.62</td><td class="ColE"><a name="apple2.video.matrix.red.q">Custom color decoder matrix; red, Q.</a><p>Only used if "<a href="#apple2.video.matrix">apple2.video.matrix</a>" is set to "custom".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.mixed_text_mono</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="apple2.video.mixed_text_mono">Enable hack to treat mixed-mode text as monochrome.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.video.mode</td><td class="ColB">enum</td><td class="ColC">composite<br>rgb<br>rgb_tfr<br>rgb_alt<br>rgb_alt_tfr<br>rgb_qd<br>rgb_qd_tfr<br>rgb_video7</td><td class="ColD">composite</td><td class="ColE"><a name="apple2.video.mode">Video rendering mode.</a><p>When an RGB mode is enabled, settings "<a href="#apple2.video.postsharp">apple2.video.postsharp</a>", "<a href="#apple2.video.force_mono">apple2.video.force_mono</a>", "<a href="#apple2.video.mixed_text_mono">apple2.video.mixed_text_mono</a>", "<a href="#apple2.video.mono_lumafilter">apple2.video.mono_lumafilter</a>", "<a href="#apple2.video.color_lumafilter">apple2.video.color_lumafilter</a>", and "<a href="#apple2.video.color_smooth">apple2.video.color_smooth</a>" are effectively ignored.<br>
+<br>
+When selecting an RGB mode, setting "<a href="#apple2.shader">apple2.shader</a>" to "autoipsharper" is recommended.</p><ul><li><b>composite</b> - Composite<br>Internal video dimensions of 584x192.</li><br><li><b>rgb</b> - RGB<br>Internal video dimensions of 292x192 for single-resolution modes, and 584x192 for double-resolution; suitable for use with scalers like hq2x.</li><br><li><b>rgb_tfr</b> - RGB, with (D)HGR text fringe reduction.<br>Internal video dimensions of 292x192 for single-resolution modes, and 584x192 for double-resolution; suitable for use with scalers like hq2x.  Reduced brightness of colored pixels horizontally sandwiched between white pixels in (D)HGR mode.</li><br><li><b>rgb_alt</b> - RGB (alternate algorithm)<br>Internal video dimensions of 584x192.</li><br><li><b>rgb_alt_tfr</b> - RGB (alternate algorithm), with (D)HGR text fringe reduction.<br>Internal video dimensions of 584x192.  Reduced brightness of colored pixels horizontally sandwiched between white pixels in (D)HGR mode.</li><br><li><b>rgb_qd</b> - RGB, with 1/4 resolution DHGR.<br>Internal video dimensions of 292x192 for single-resolution modes, 584x192 for 80-column text, and 146x192 for DHGR; suitable for use with scalers like hq2x.  Enables palette generation tweak to provides two distinct grays.</li><br><li><b>rgb_qd_tfr</b> - RGB, with HGR text fringe reduction and 1/4 resolution DHGR.<br>Internal video dimensions of 292x192 for single-resolution modes, 584x192 for 80-column text, and 146x192 for DHGR; suitable for use with scalers like hq2x.  Reduced brightness of colored pixels horizontally sandwiched between white pixels in HGR mode.  Enables palette generation tweak to provides two distinct grays.</li><br><li><b>rgb_video7</b> - RGB, IIe Video 7-like algorithm.<br>Internal video dimensions of 584x192.  Enables palette generation tweak to provides two distinct grays.<br>
+<br>
+Useful with Sierra AGI games, like "King's Quest" and "Space Quest".</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.mono_lumafilter</td><td class="ColB">integer</td><td class="ColC">-3 <i>through</i> 7</td><td class="ColD">5</td><td class="ColE"><a name="apple2.video.mono_lumafilter">Composite monochrome video luma filter.</a><p>Filters numbered closer to 0 have a stronger lowpass effect.  Negative-numbered filters have ringing.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.video.postsharp</td><td class="ColB">real</td><td class="ColC">-1.0 <i>through</i> 2.0</td><td class="ColD">0.0</td><td class="ColE"><a name="apple2.video.postsharp">Composite color video sharpness.</a><p>Positive values will increase perceptual sharpness(and ringing), negative values will blur the image.  When a non-zero value is specified, CPU usage will increase due to the continuous extra calculations required.<br>
+<br>
+Note that this filter is applied after composite-&gt;RGB conversion(after the effects of the hue, saturation, brightness, contrast, color luma filter, and color smoothing settings), and in a roughly linear luminance space.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.video.saturation</td><td class="ColB">real</td><td class="ColC">-1.0 <i>through</i> 1.0</td><td class="ColD">0.0</td><td class="ColE"><a name="apple2.video.saturation">Color video saturation.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+</table><p></p><table border><tr class="TableHeader"><th>Setting:</th><th>Value Type:</th><th>Possible Values:</th><th>Default Value:</th><th>Description:</th></tr><tr class="RowA"><td class="ColA">apple2.enable</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="apple2.enable">Enable (automatic) usage of this module.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.scanlines</td><td class="ColB">integer</td><td class="ColC">-100 <i>through</i> 100</td><td class="ColD">0</td><td class="ColE"><a name="apple2.scanlines">Enable scanlines with specified opacity.</a><p>Opacity is specified in %; IE a value of "100" will give entirely black scanlines.<br>
+<br>
+Negative values are the same as positive values for non-interlaced video, but for interlaced video will cause the scanlines to be overlaid over the previous(if the "<a href="mednafen.html#video.deinterlacer">video.deinterlacer</a>" setting is set to "weave", the default) field's lines.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.shader</td><td class="ColB">enum</td><td class="ColC">none<br>autoip<br>autoipsharper<br>scale2x<br>sabr<br>ipsharper<br>ipxnoty<br>ipynotx<br>ipxnotysharper<br>ipynotxsharper<br>goat</td><td class="ColD">none</td><td class="ColE"><a name="apple2.shader">Enable specified OpenGL shader.</a><p>Obviously, this will only work with the OpenGL "<a href="mednafen.html#video.driver">video.driver</a>" setting, and only on cards and OpenGL implementations that support shaders, otherwise you will get a black screen, or Mednafen may display an error message when starting up. When a shader is enabled, the "<a href="#apple2.videoip">apple2.videoip</a>" setting is ignored.</p><ul><li><b>none</b> - None/Disabled<br></li><br><li><b>autoip</b> - Auto Interpolation<br>Will automatically interpolate on each axis if the corresponding effective scaling factor is not an integer.</li><br><li><b>autoipsharper</b> - Sharper Auto Interpolation<br>Same as "autoip", but when interpolation is done, it is done in a manner that will reduce blurriness if possible.</li><br><li><b>scale2x</b> - Scale2x<br></li><br><li><b>sabr</b> - SABR v3.0<br>GPU-intensive.</li><br><li><b>ipsharper</b> - Sharper bilinear interpolation.<br></li><br><li><b>ipxnoty</b> - Linear interpolation on X axis only.<br></li><br><li><b>ipynotx</b> - Linear interpolation on Y axis only.<br></li><br><li><b>ipxnotysharper</b> - Sharper version of "ipxnoty".<br></li><br><li><b>ipynotxsharper</b> - Sharper version of "ipynotx".<br></li><br><li><b>goat</b> - Simple approximation of a color TV CRT look.<br>Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 pixels.  Doesn't simulate halation and electron beam energy distribution nuances.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.shader.goat.fprog</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="apple2.shader.goat.fprog">Force interlaced video to be treated as progressive.</a><p>When disabled, the default, the "<a href="mednafen.html#video.deinterlacer">video.deinterlacer</a>" setting is effectively ignored with respect to what appears on the screen, unless it's set to "blend" or "blend_rg".  When enabled, it may be prudent to disable the scanlines effect controlled by the "<a href="#apple2.shader.goat.slen">apple2.shader.goat.slen</a>" setting, or else the scanline effect may look objectionable.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.shader.goat.hdiv</td><td class="ColB">real</td><td class="ColC">-2.00 <i>through</i> 2.00</td><td class="ColD">0.50</td><td class="ColE"><a name="apple2.shader.goat.hdiv">Constant RGB horizontal divergence.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.shader.goat.pat</td><td class="ColB">enum</td><td class="ColC">goatron<br>borg<br>slenderman</td><td class="ColD">goatron</td><td class="ColE"><a name="apple2.shader.goat.pat">Mask pattern.</a><ul><li><b>goatron</b> - Goatron<br>Brightest.</li><br><li><b>borg</b> - Borg<br>Darkest.</li><br><li><b>slenderman</b> - Slenderman<br>Spookiest?</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.shader.goat.slen</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="apple2.shader.goat.slen">Enable scanlines effect.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.shader.goat.tp</td><td class="ColB">real</td><td class="ColC">0.00 <i>through</i> 1.00</td><td class="ColD">0.50</td><td class="ColE"><a name="apple2.shader.goat.tp">Transparency of otherwise-opaque mask areas.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.shader.goat.vdiv</td><td class="ColB">real</td><td class="ColC">-2.00 <i>through</i> 2.00</td><td class="ColD">0.50</td><td class="ColE"><a name="apple2.shader.goat.vdiv">Constant RGB vertical divergence.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.special</td><td class="ColB">enum</td><td class="ColC">none<br>hq2x<br>hq3x<br>hq4x<br>scale2x<br>scale3x<br>scale4x<br>2xsai<br>super2xsai<br>supereagle<br>nn2x<br>nn3x<br>nn4x<br>nny2x<br>nny3x<br>nny4x</td><td class="ColD">none</td><td class="ColE"><a name="apple2.special">Enable specified special video scaler.</a><p>The destination rectangle is NOT altered by this setting, so if you have xscale and yscale set to "2", and try to use a 3x scaling filter like hq3x, the image is not going to look that great. The nearest-neighbor scalers are intended for use with bilinear interpolation enabled, for a sharper image, though the "autoipsharper" shader may provide better results.</p><ul><li><b>none</b> - None/Disabled<br></li><br><li><b>hq2x</b> - hq2x<br></li><br><li><b>hq3x</b> - hq3x<br></li><br><li><b>hq4x</b> - hq4x<br></li><br><li><b>scale2x</b> - scale2x<br></li><br><li><b>scale3x</b> - scale3x<br></li><br><li><b>scale4x</b> - scale4x<br></li><br><li><b>2xsai</b> - 2xSaI<br></li><br><li><b>super2xsai</b> - Super 2xSaI<br></li><br><li><b>supereagle</b> - Super Eagle<br></li><br><li><b>nn2x</b> - Nearest-neighbor 2x<br></li><br><li><b>nn3x</b> - Nearest-neighbor 3x<br></li><br><li><b>nn4x</b> - Nearest-neighbor 4x<br></li><br><li><b>nny2x</b> - Nearest-neighbor 2x, y axis only<br></li><br><li><b>nny3x</b> - Nearest-neighbor 3x, y axis only<br></li><br><li><b>nny4x</b> - Nearest-neighbor 4x, y axis only<br></li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.stretch</td><td class="ColB">enum</td><td class="ColC">0<br>full<br>aspect<br>aspect_int<br>aspect_mult2</td><td class="ColD">aspect_mult2</td><td class="ColE"><a name="apple2.stretch">Stretch to fill screen.</a><ul><li><b>0</b> - Disabled<br></li><br><li><b>full</b> - Full<br>Full-screen stretch, disregarding aspect ratio.</li><br><li><b>aspect</b> - Aspect Preserve<br>Full-screen stretch as far as the aspect ratio(in this sense, the equivalent xscalefs == yscalefs) can be maintained.</li><br><li><b>aspect_int</b> - Aspect Preserve + Integer Scale<br>Full-screen stretch, same as "aspect" except that the equivalent xscalefs and yscalefs are rounded down to the nearest integer.</li><br><li><b>aspect_mult2</b> - Aspect Preserve + Integer Multiple-of-2 Scale<br>Full-screen stretch, same as "aspect_int", but rounds down to the nearest multiple of 2.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.tblur</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="apple2.tblur">Enable video temporal blur(50/50 previous/current frame by default).</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.tblur.accum</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="apple2.tblur.accum">Accumulate color data rather than discarding it.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.tblur.accum.amount</td><td class="ColB">real</td><td class="ColC">0 <i>through</i> 100</td><td class="ColD">50</td><td class="ColE"><a name="apple2.tblur.accum.amount">Blur amount in accumulation mode, specified in percentage of accumulation buffer to mix with the current frame.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.videoip</td><td class="ColB">enum</td><td class="ColC">0<br>1<br>x<br>y</td><td class="ColD">x</td><td class="ColE"><a name="apple2.videoip">Enable (bi)linear interpolation.</a><ul><li><b>0</b> - Disabled<br></li><br><li><b>1</b> - Bilinear<br></li><br><li><b>x</b> - Linear (X)<br>Interpolation only on the X axis.</li><br><li><b>y</b> - Linear (Y)<br>Interpolation only on the Y axis.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.xres</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 65536</td><td class="ColD">0</td><td class="ColE"><a name="apple2.xres">Full-screen horizontal resolution.</a><p>A value of "0" will cause the current desktop horizontal resolution to be used.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.xscale</td><td class="ColB">real</td><td class="ColC">0.01 <i>through</i> 256</td><td class="ColD">4.000000</td><td class="ColE"><a name="apple2.xscale">Scaling factor for the X axis in windowed mode.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.xscalefs</td><td class="ColB">real</td><td class="ColC">0.01 <i>through</i> 256</td><td class="ColD">1.000000</td><td class="ColE"><a name="apple2.xscalefs">Scaling factor for the X axis in fullscreen mode.</a><p>For this setting to have any effect, the "<a href="#apple2.stretch">apple2.stretch</a>" setting must be set to "0".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.yres</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 65536</td><td class="ColD">0</td><td class="ColE"><a name="apple2.yres">Full-screen vertical resolution.</a><p>A value of "0" will cause the current desktop vertical resolution to be used.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">apple2.yscale</td><td class="ColB">real</td><td class="ColC">0.01 <i>through</i> 256</td><td class="ColD">4.000000</td><td class="ColE"><a name="apple2.yscale">Scaling factor for the Y axis in windowed mode.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">apple2.yscalefs</td><td class="ColB">real</td><td class="ColC">0.01 <i>through</i> 256</td><td class="ColD">1.000000</td><td class="ColE"><a name="apple2.yscalefs">Scaling factor for the Y axis in fullscreen mode.</a><p>For this setting to have any effect, the "<a href="#apple2.stretch">apple2.stretch</a>" setting must be set to "0".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+</table><hr width="100%">
+ </body>
+</html>

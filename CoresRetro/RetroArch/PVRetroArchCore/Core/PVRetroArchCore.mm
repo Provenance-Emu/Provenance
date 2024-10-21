@@ -13,7 +13,7 @@
 #import <PVRetroArch/RetroArch-Swift.h>
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 /* RetroArch Includes */
 #include <stdint.h>
@@ -83,6 +83,7 @@ extern int g_gs_preference;
 	return self;
 }
 - (void)initialize {
+    [super initialize];
     [self parseOptions];
     NSLog(@"RetroArch: Extract %d\n", self.extractArchive);
 }

@@ -1,0 +1,39 @@
+Source: stella
+Maintainer: Stephen Anthony <sa666666@gmail.com>
+Section: otherosfs
+Priority: optional
+Build-Depends: debhelper (>= 10~),
+               libpng-dev,
+               libsdl2-dev,
+               zlib1g-dev
+Standards-Version: 4.5.0
+Vcs-Browser: https://github.com/stella-emu/stella/
+Vcs-Git: https://github.com/stella-emu/stella.git
+Homepage: https://stella-emu.github.io
+Rules-Requires-Root: no
+
+Package: stella
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Recommends: joystick (>= 1:1.5.1)
+Pre-Depends: ${misc:Pre-Depends}
+Description: Atari 2600 Emulator for SDL2
+ Stella is a portable emulator of the old Atari 2600 video-game
+ console. You can play most Atari 2600 games with it.
+ .
+ Stella's features include:
+  * emulation of Atari 2600 joysticks, keyboards, paddles and driving
+    controllers using the host system's input peripherals;
+  * emulation of trackballs, joysticks, booster grips, driving
+    controllers and the Amiga Mouse using the host system's mouse;
+  * support for real Atari 2600 controllers using the Stelladaptor,
+    2600-daptor or 2600-daptor II;
+  * support for real Atari 7800 controllers using the 2600-daptor II;
+  * support for the speech portion of a real AtariVox device;
+  * support for Supercharger single-load and multi-load games;
+  * emulation of CRT TV features, including texturing, colour bleed,
+    RF noise and phosphor burn-off (requires OpenGL).
+ .
+ An extensive debugger is included, with the Distella disassembler.
+

@@ -6,8 +6,8 @@ import GLKit
 import os
 
 @objc public class EmuThreeOGLViewController: GLKViewController {
-	private var core: PVEmuThreeCore!
-	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVEmuThreeCore) {
+	private var core: PVEmuThreeCoreBridge!
+	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVEmuThreeCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
 		self.core = core;
 		self.view.isUserInteractionEnabled = false
@@ -24,6 +24,6 @@ import os
 	@objc public override func viewDidLoad() {
 		super.viewDidLoad()
 		NSLog("Starting VM\n");
-		core.startVM(self.view);
+        core.startVM(self.view);
 	}
 }

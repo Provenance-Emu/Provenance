@@ -1,0 +1,12 @@
+filename: long.txt
+compress_method: -lh6-
+compressed_length: 78932
+length: 1241658
+header_level: 1
+os_type: 85 ('U')
+crc: 6a7c
+timestamp: 1307647158
+unix_perms: 0100644
+unix_uid: 1000
+unix_gid: 1000
+--

@@ -15,7 +15,7 @@
 //#import "PVfMSXCore+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 #import <PVLogging/PVLogging.h>
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST

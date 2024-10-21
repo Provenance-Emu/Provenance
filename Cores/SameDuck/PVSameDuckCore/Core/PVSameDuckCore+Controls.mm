@@ -8,7 +8,7 @@
 
 #import <PVSameDuck/PVSameDuck.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)

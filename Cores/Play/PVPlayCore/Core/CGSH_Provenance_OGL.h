@@ -2,9 +2,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVCoreObjCBridge;
+
 #import "gs/GSH_OpenGL/GSH_OpenGL.h"
 
 class CGSH_Provenance_OGL : public CGSH_OpenGL

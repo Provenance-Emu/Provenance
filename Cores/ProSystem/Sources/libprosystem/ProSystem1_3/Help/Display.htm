@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Display</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1251">
+<META content="MSHTML 6.00.6000.20641" name=GENERATOR></HEAD>
+<BODY><BASEFONT face=verdana,arial size=2>
+<TABLE width="100%" bgColor=#7acafa>
+  <TBODY>
+  <TR>
+    <TD><FONT color=white size=2><B>ProSystem Emulator 
+    Documentation</B></FONT></TD></TR></TBODY></TABLE>
+<DIV><BR><FONT face=arial size=4><B>Display</B></FONT><BR>The Display menu 
+allows you to set the display properties of the emulator like the display mode, 
+zoom and stretch, and window mode. You can also set the custom palette or 
+default palette and take snapshots of the current display.<BR><BR><B>Setting 
+fullscreen mode</B><BR>You can set the emulator to display graphics in 
+fullscreen mode by going to the display sub-menu (in the <A 
+href="Options.htm">options</A> menu) and selecting the Fullscreen menu item or 
+use the shortcut <FONT color=green><B>Ctrl+F</B></FONT>. You can also choose 
+which display mode is used in the fullscreen window by going to the modes 
+sub-menu in the display menu and select one of the display modes (all fullscreen 
+display modes use 8 bpp). The display mode will change immediately after 
+selecting the menu-item if you are in the fullscreen mode, otherwise the display 
+mode will be displayed when you change to the fullscreen mode. The default 
+display mode is 640x480x8. You can also choose to stretch the display so that it 
+fills the entire screen by selecting the Stretched menu item from the display 
+sub-menu. A check mark will be next to the display mode, stretched and 
+fullscreen menu items indicating the current selection.<BR><BR><B>Setting window 
+mode</B><BR>The window mode is the default mode. You can switch to window mode 
+if you are in fullscreen mode by going to the display sub-menu and selecting the 
+fullscreen menu item or use the shortcut <FONT color=green><B>Ctrl+F</B></FONT>. 
+Display modes and the stretching option have no effect in window mode, but can 
+be selected so that the changes take effect when you choose to go to fullscreen 
+mode. You can also set the zoom level of the window by going to the display 
+sub-menu and choosing the x1, x2, x3, or x4 menu item. This will set how much 
+the window is resized in respect to the display dimensions. A check mark will be 
+next to the zoom menu item indicating the zoom level chosen.<BR><BR><B>Using 
+palettes</B><BR>You can choose to use a custom palette or default palette by 
+going to the display sub-menu and selecting the palette menu item. The Palette 
+dialog box will be displayed, which will allow you to select the target palette 
+file to be loaded. If a palette file has already been loaded, it will be 
+displayed in the Palette dialog box. Navigate to the palette file and select the 
+Open button. If you want to use the default palette instead of a custom palette, 
+you can select the default button in the dialog box.<BR><BR><IMG 
+src="./images/PaletteDialog.jpg"><BR><BR>Palette files have a size of 768 bytes. 
+Each collection of 3 bytes define the RGB color. The C++ code to create the 
+palette would look like the following:<BR><BR><FONT face=Courier size=2>struct 
+rgb {<BR>&nbsp;&nbsp;unsigned char r;<BR>&nbsp;&nbsp;unsigned char 
+g;<BR>&nbsp;&nbsp;unsigned char b;<BR>}<BR><BR>rgb palette[255] = 
+{...}<BR></FONT><BR><B>Taking screen snapshots</B><BR>You can take snapshots of 
+the screen by going to the display sub-menu and selecting the snapshot menu item 
+or use the shortcut <FONT color=green><B>F12</B></FONT>. The snapshots are saved 
+as bitmap files. Every file is stored in .BMP format with the same name as ROM + 
+unique number (as in MESS, MAME).</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>For&nbsp;better conveniences, after cartridge loading, it is possible to 
+adjust a format of screenshots. <STRONG><FONT color=#008000>Remove non-web 
+symbols</FONT></STRONG> - deletes from a name of a screenshot symbols which can 
+cause problems at the publication of pictures on the Internet. <FONT 
+color=#008000><STRONG>Replace spaces by "_"</STRONG></FONT> replaces all symbols 
+of&nbsp;space (" ")&nbsp;with an underlining sign "_" (it the problem of 
+compatibility with some web servers 
+dares).<BR><BR></DIV></BASEFONT></BODY></HTML>

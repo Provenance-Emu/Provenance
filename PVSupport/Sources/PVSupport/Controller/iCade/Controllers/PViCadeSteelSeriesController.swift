@@ -7,7 +7,8 @@
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
+
 public final class PViCadeSteelSeriesController: PViCadeController {
     override func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
         switch button {

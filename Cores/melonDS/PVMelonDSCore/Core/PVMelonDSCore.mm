@@ -14,8 +14,10 @@
 #import "PVMelonDS+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
 
+#import <PVLogging/PVLogging.h>
+
+@import PVCoreBridge;
 // MelonDS imports
 //#include "types.h"
 ////#include "profiler/profiler.h"
@@ -26,7 +28,7 @@
 //#include "hw/maple/maple_if.h"
 //#include "hw/maple/maple_cfg.h"
 
-//__weak PVMelonDSCore *_current = 0;
+//__weak PVMelonDSCoreBridge *_current = 0;
 //
 //@interface PVMelonDSCore() {
 //
@@ -68,7 +70,7 @@
 //    return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
 //}
 
-@implementation PVMelonDSCore {
+@implementation PVMelonDSCoreBridge {
 //	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
 //	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
 //    dispatch_semaphore_t coreWaitForExitSemaphore;

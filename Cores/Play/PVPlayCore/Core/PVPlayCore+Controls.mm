@@ -8,7 +8,7 @@
 
 #import <PVPlay/PVPlay.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 #import "PS2VM.h"
 
 #include "PH_Generic.h"
@@ -61,7 +61,7 @@ u8 lt[4];
 u32 vks[4];
 s8 joyx[4], joyy[4];
 
-@implementation PVPlayCore (Controls)
+@implementation PVPlayCoreBridge (Controls)
 
 - (void)initControllBuffers {
     memset(&kcode, 0xFFFF, sizeof(kcode));

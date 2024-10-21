@@ -1,0 +1,291 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/texture.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.ent _Z12_TextureLog2j
+   8              	_Z12_TextureLog2j:
+   9              	.frame $sp,0,$31
+  10              	.mask 0x00000000,0
+  11              	.fmask 0x00000000,0
+  12 0000 01000224 	li $2,1
+  13 0004 2B104400 	sltu $2,$2,$4
+  14              	.set noreorder
+  15              	.set nomacro
+  16 0008 0B004010 	beq $2,$0,$L7
+  17 000c 2D180000 	move $3,$0
+  18              	.set macro
+  19              	.set reorder
+  20              	
+  21 0010 01000524 	li $5,1
+  22 0014 01006324 	addu $3,$3,1
+  23              	$L8:
+  24 0018 04106500 	sll $2,$5,$3
+  25 001c 2B104400 	sltu $2,$2,$4
+  26              	.set noreorder
+  27 0020 00000000 	nop
+  28              	.set reorder
+  29              	.set noreorder
+  30 0024 00000000 	nop
+  31              	.set reorder
+  32              	.set noreorder
+  33 0028 00000000 	nop
+  34              	.set reorder
+  35              	.set noreorder
+  36 002c 00000000 	nop
+  37              	.set reorder
+  38              	.set noreorder
+  39              	.set nomacro
+  40 0030 F9FF4054 	bnel $2,$0,$L8
+  41 0034 01006324 	addu $3,$3,1
+  42              	.set macro
+  43              	.set reorder
+  44              	
+  45              	$L7:
+  46              	.set noreorder
+  47              	.set nomacro
+  48 0038 0800E003 	j $31
+  49 003c 2D106000 	move $2,$3
+  50              	.set macro
+  51              	.set reorder
+  52              	
+  53              	.end _Z12_TextureLog2j
+  54              	$Lfe1:
+  55              	.size _Z12_TextureLog2j,$Lfe1-_Z12_TextureLog2j
+  56              	.align 2
+  57              	.p2align 3,,7
+GAS LISTING  			page 2
+
+
+  58              	.globl _Z10TextureNewP8TextureTjjj
+  59              	.ent _Z10TextureNewP8TextureTjjj
+  60              	_Z10TextureNewP8TextureTjjj:
+  61              	.frame $sp,64,$31
+  62              	.mask 0x80070000,-16
+  63              	.fmask 0x00000000,0
+  64 0040 C0FFBD27 	subu $sp,$sp,64
+  65 0044 2000B2FF 	sd $18,32($sp)
+  66 0048 2D908000 	move $18,$4
+  67 004c 080045AE 	sw $5,8($18)
+  68 0050 2D20A000 	move $4,$5
+  69 0054 0C0046AE 	sw $6,12($18)
+  70 0058 3000BFFF 	sd $31,48($sp)
+  71 005c 1000B1FF 	sd $17,16($sp)
+  72 0060 2D88E000 	move $17,$7
+  73 0064 0000B0FF 	sd $16,0($sp)
+  74              	.set noreorder
+  75              	.set nomacro
+  76 0068 0000000C 	jal _Z12_TextureLog2j
+  77 006c 2D80C000 	move $16,$6
+  78              	.set macro
+  79              	.set reorder
+  80              	
+  81 0070 2D200002 	move $4,$16
+  82              	.set noreorder
+  83              	.set nomacro
+  84 0074 0000000C 	jal _Z12_TextureLog2j
+  85 0078 000042AE 	sw $2,0($18)
+  86              	.set macro
+  87              	.set reorder
+  88              	
+  89 007c 100051AE 	sw $17,16($18)
+  90 0080 0000448E 	lw $4,0($18)
+  91 0084 01000324 	li $3,1
+  92 0088 04284300 	sll $5,$3,$2
+  93 008c 040042AE 	sw $2,4($18)
+  94 0090 04188300 	sll $3,$3,$4
+  95 0094 42100300 	srl $2,$3,1
+  96 0098 01006430 	andi $4,$3,0x1
+  97              	.set noreorder
+  98              	.set nomacro
+  99 009c 24006004 	bltz $3,$L11
+ 100 00a0 25208200 	or $4,$4,$2
+ 101              	.set macro
+ 102              	.set reorder
+ 103              	
+ 104 00a4 00108344 	mtc1 $3,$f2
+ 104      00000000 
+ 105 00ac A0108046 	cvt.s.w $f2,$f2
+ 106              	$L10:
+ 107 00b0 803F013C 	li.s $f0,1.00000000000000000000e0
+ 107      00008144 
+ 108 00b8 42100500 	srl $2,$5,1
+ 109 00bc 0100A330 	andi $3,$5,0x1
+ 110 00c0 03000246 	div.s $f0,$f0,$f2
+ 111 00c4 25186200 	or $3,$3,$2
+ 112              	.set noreorder
+GAS LISTING  			page 3
+
+
+ 113              	.set nomacro
+ 114 00c8 1300A004 	bltz $5,$L13
+ 115 00cc 240040E6 	s.s $f0,36($18)
+ 116              	.set macro
+ 117              	.set reorder
+ 118              	
+ 119 00d0 00108544 	mtc1 $5,$f2
+ 119      00000000 
+ 120 00d8 A0108046 	cvt.s.w $f2,$f2
+ 121              	$L12:
+ 122 00dc 803F013C 	li.s $f0,1.00000000000000000000e0
+ 122      00008144 
+ 123 00e4 180040AE 	sw $0,24($18)
+ 124 00e8 03000246 	div.s $f0,$f0,$f2
+ 125 00ec 140040AE 	sw $0,20($18)
+ 126 00f0 1C0040AE 	sw $0,28($18)
+ 127 00f4 200040AE 	sw $0,32($18)
+ 128 00f8 3000BFDF 	ld $31,48($sp)
+ 129 00fc 1000B1DF 	ld $17,16($sp)
+ 130 0100 0000B0DF 	ld $16,0($sp)
+ 131 0104 280040E6 	s.s $f0,40($18)
+ 132 0108 2000B2DF 	ld $18,32($sp)
+ 133              	
+ 134              	.set noreorder
+ 135              	.set nomacro
+ 136 010c 0800E003 	j $31
+ 137 0110 4000BD27 	addu $sp,$sp,64
+ 138              	.set macro
+ 139              	.set reorder
+ 140              	
+ 141 0114 00000000 	.p2align 3
+ 142              	$L13:
+ 143 0118 00108344 	mtc1 $3,$f2
+ 143      00000000 
+ 144 0120 A0108046 	cvt.s.w $f2,$f2
+ 145              	.set noreorder
+ 146              	.set nomacro
+ 147 0124 EDFF0010 	b $L12
+ 148 0128 80100246 	add.s $f2,$f2,$f2
+ 149              	.set macro
+ 150              	.set reorder
+ 151              	
+ 152 012c 00000000 	.p2align 3
+ 153              	$L11:
+ 154 0130 00108444 	mtc1 $4,$f2
+ 154      00000000 
+ 155 0138 A0108046 	cvt.s.w $f2,$f2
+ 156              	.set noreorder
+ 157              	.set nomacro
+ 158 013c DCFF0010 	b $L10
+ 159 0140 80100246 	add.s $f2,$f2,$f2
+ 160              	.set macro
+ 161              	.set reorder
+ 162              	
+ 163              	.end _Z10TextureNewP8TextureTjjj
+ 164              	$Lfe2:
+ 165              	.size _Z10TextureNewP8TextureTjjj,$Lfe2-_Z10TextureNewP8TextureTjjj
+GAS LISTING  			page 4
+
+
+ 166              	.align 2
+ 167 0144 00000000 	.p2align 3,,7
+ 168              	.globl _Z14TextureSetAddrP8TextureTj
+ 169              	.ent _Z14TextureSetAddrP8TextureTj
+ 170              	_Z14TextureSetAddrP8TextureTj:
+ 171              	.frame $sp,0,$31
+ 172              	.mask 0x00000000,0
+ 173              	.fmask 0x00000000,0
+ 174              	.set noreorder
+ 175              	.set nomacro
+ 176 0148 0800E003 	j $31
+ 177 014c 180085AC 	sw $5,24($4)
+ 178              	.set macro
+ 179              	.set reorder
+ 180              	
+ 181              	.end _Z14TextureSetAddrP8TextureTj
+ 182              	$Lfe3:
+ 183              	.size _Z14TextureSetAddrP8TextureTj,$Lfe3-_Z14TextureSetAddrP8TextureTj
+ 184              	.align 2
+ 185              	.p2align 3,,7
+ 186              	.globl _Z13TextureUploadP8TextureTPh
+ 187              	.ent _Z13TextureUploadP8TextureTPh
+ 188              	_Z13TextureUploadP8TextureTPh:
+ 189              	.frame $sp,16,$31
+ 190              	.mask 0x80000000,-16
+ 191              	.fmask 0x00000000,0
+ 192 0150 F0FFBD27 	subu $sp,$sp,16
+ 193 0154 2D108000 	move $2,$4
+ 194 0158 0000BFFF 	sd $31,0($sp)
+ 195 015c 2D48A000 	move $9,$5
+ 196 0160 2D300000 	move $6,$0
+ 197 0164 2D380000 	move $7,$0
+ 198 0168 0800858C 	lw $5,8($4)
+ 199 016c 0C008B8C 	lw $11,12($4)
+ 200 0170 1000488C 	lw $8,16($2)
+ 201 0174 2D50A000 	move $10,$5
+ 202              	.set noreorder
+ 203              	.set nomacro
+ 204 0178 0000000C 	jal GPPrimUploadTexture
+ 205 017c 1800848C 	lw $4,24($4)
+ 206              	.set macro
+ 207              	.set reorder
+ 208              	
+ 209 0180 0000BFDF 	ld $31,0($sp)
+ 210              	
+ 211              	.set noreorder
+ 212              	.set nomacro
+ 213 0184 0800E003 	j $31
+ 214 0188 1000BD27 	addu $sp,$sp,16
+ 215              	.set macro
+ 216              	.set reorder
+ 217              	
+ 218              	.end _Z13TextureUploadP8TextureTPh
+ 219              	$Lfe4:
+ 220              	.size _Z13TextureUploadP8TextureTPh,$Lfe4-_Z13TextureUploadP8TextureTPh
+ 221              	.align 2
+ 222 018c 00000000 	.p2align 3,,7
+GAS LISTING  			page 5
+
+
+ 223              	.globl _Z13TextureDeleteP8TextureT
+ 224              	.ent _Z13TextureDeleteP8TextureT
+ 225              	_Z13TextureDeleteP8TextureT:
+ 226              	.frame $sp,0,$31
+ 227              	.mask 0x00000000,0
+ 228              	.fmask 0x00000000,0
+ 229 0190 0800E003 	j $31
+ 229      00000000 
+ 230              	.end _Z13TextureDeleteP8TextureT
+ 231              	$Lfe5:
+ 232              	.size _Z13TextureDeleteP8TextureT,$Lfe5-_Z13TextureDeleteP8TextureT
+ 233              	.align 2
+ 234              	.p2align 3,,7
+ 235              	.globl _Z14TextureGetAddrP8TextureT
+ 236              	.ent _Z14TextureGetAddrP8TextureT
+ 237              	_Z14TextureGetAddrP8TextureT:
+ 238              	.frame $sp,0,$31
+ 239              	.mask 0x00000000,0
+ 240              	.fmask 0x00000000,0
+ 241              	.set noreorder
+ 242              	.set nomacro
+ 243 0198 0800E003 	j $31
+ 244 019c 1800828C 	lw $2,24($4)
+ 245              	.set macro
+ 246              	.set reorder
+ 247              	
+ 248              	.end _Z14TextureGetAddrP8TextureT
+ 249              	$Lfe6:
+ 250              	.size _Z14TextureGetAddrP8TextureT,$Lfe6-_Z14TextureGetAddrP8TextureT
+ 251              	.align 2
+ 252              	.p2align 3,,7
+ 253              	.globl _Z16TextureSetFilterP8TextureTj
+ 254              	.ent _Z16TextureSetFilterP8TextureTj
+ 255              	_Z16TextureSetFilterP8TextureTj:
+ 256              	.frame $sp,0,$31
+ 257              	.mask 0x00000000,0
+ 258              	.fmask 0x00000000,0
+ 259              	.set noreorder
+ 260              	.set nomacro
+ 261 01a0 0800E003 	j $31
+ 262 01a4 140085AC 	sw $5,20($4)
+ 263              	.set macro
+ 264              	.set reorder
+ 265              	
+ 266              	.end _Z16TextureSetFilterP8TextureTj
+ 267              	$Lfe7:
+ 268              	.size _Z16TextureSetFilterP8TextureTj,$Lfe7-_Z16TextureSetFilterP8TextureTj
+ 269              	.ident "GCC: (GNU) 3.2.2"

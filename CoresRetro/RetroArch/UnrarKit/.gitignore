@@ -1,0 +1,8 @@
+build
+.DS_Store
+
+CarthageValidation
+analyzer-output
+
+**/*.xccheckout
+**/xcuserdata/*

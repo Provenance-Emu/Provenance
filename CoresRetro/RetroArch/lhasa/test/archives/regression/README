@@ -1,0 +1,44 @@
+
+Archives for regression testing.
+
+abspath.lzh         - Archive containing a file with an absolute path.  For
+                      security reasons, file extraction should always be done
+                      relative to the extraction path.  If extraction to
+                      absolute paths was permitted, it would potentially allow
+                      arbitrary files on the filesystem to be overwritten.
+
+badterm.lzh         - Archive containing a file that includes an unsafe
+                      terminal escape sequence (changes the title in the
+                      terminal window). This terminal escape sequence should
+                      not appear in list output.
+
+dir.lzh             - Archive that just contains a directory.
+
+multiple.lzh        - Archive containing multiple stored files with different
+                      names, for testing wildcard pattern matching.
+
+truncated.lzh       - Unexpectedly truncated -lh5- archive.
+
+unixsep.lzh         - Archive containing a level 0 header where the filename
+                      has a path separated with Unix-style path separators
+                      ('/') instead of DOS-style ('\'). This file is manually
+                      constructed, but archives like this do exist in the wild.
+
+symlink1.lzh        - Symbolic link test. The archive contains a file named
+                      foo.txt twice - firstly as a symbolic link to bar.txt,
+                      and then as an actual file. Extraction should not
+                      create bar.txt, or arbitrary files could be overwritten
+                      by a maliciously constructed archive file.
+
+symlink2.lzh        - This archive contains a symbolic link with '..' in the
+                      target, and a file that tries to use that symlink to
+                      overwrite files outside the extract directory.
+
+symlink3.lzh        - This archive contains a symbolic link with an absolute
+                      path, and a file that tries to use the symlink to
+                      overwrite files outside the extract directory.
+
+dotdot.lzh          - Archive containing paths with '..'. This could be used
+                      to break out of the extract directory and overwrite
+                      arbitrary files on the filesystem.
+

@@ -1,7 +1,7 @@
 /*
  * mvk_deprecated_api.h
  *
- * Copyright (c) 2015-2023 The Brenwill Workshop Ltd. (http://www.brenwill.com)
+ * Copyright (c) 2015-2024 The Brenwill Workshop Ltd. (http://www.brenwill.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 extern "C" {
 #endif	//  __cplusplus
 
-#include <MoltenVK/mvk_config.h>
+#include <MoltenVK/mvk_private_api.h>
 #include <IOSurface/IOSurfaceRef.h>
 
 
@@ -34,6 +34,7 @@ extern "C" {
 /**
  * This header contains obsolete and deprecated MoltenVK functions, that were originally
  * part of the obsolete and deprecated non-standard VK_MVK_moltenvk extension.
+ * This header is provided for legacy compatibility only.
  *
  * NOTE: USE OF THE FUNCTIONS BELOW IS NOT RECOMMENDED. THE VK_MVK_moltenvk EXTENSION,
  * AND THE FUNCTIONS BELOW ARE NOT SUPPORTED BY THE VULKAN LOADER AND LAYERS.
@@ -49,6 +50,7 @@ extern "C" {
 #pragma mark -
 #pragma mark Function types
 
+typedef VkResult (VKAPI_PTR *PFN_vkSetMoltenVKConfigurationMVK)(VkInstance ignored, const MVKConfiguration* pConfiguration, size_t* pConfigurationSize);
 typedef void (VKAPI_PTR *PFN_vkGetVersionStringsMVK)(char* pMoltenVersionStringBuffer, uint32_t moltenVersionStringBufferLength, char* pVulkanVersionStringBuffer, uint32_t vulkanVersionStringBufferLength);
 typedef void (VKAPI_PTR *PFN_vkSetWorkgroupSizeMVK)(VkShaderModule shaderModule, uint32_t x, uint32_t y, uint32_t z);
 typedef VkResult (VKAPI_PTR *PFN_vkUseIOSurfaceMVK)(VkImage image, IOSurfaceRef ioSurface);
@@ -71,6 +73,20 @@ typedef void (VKAPI_PTR *PFN_vkGetMTLCommandQueueMVK)(VkQueue queue, id<MTLComma
 #define MVK_DEPRECATED   VKAPI_ATTR [[deprecated]]
 #define MVK_DEPRECATED_USE_MTL_OBJS   VKAPI_ATTR [[deprecated("Use the VK_EXT_metal_objects extension instead.")]]
 
+
+/**
+ * DEPRECATED.
+ * To set configuration values, use one of the following mechansims:
+ *
+ *   - The standard Vulkan VK_EXT_layer_settings extension (layer name "MoltenVK").
+ *   - Application runtime environment variables.
+ *   - Build settings at MoltenVK build time.
+ */
+VKAPI_ATTR [[deprecated("Use the VK_EXT_layer_settings extension, or environment variables, instead.")]]
+VkResult VKAPI_CALL vkSetMoltenVKConfigurationMVK(
+    VkInstance                                  instance,
+    const MVKConfiguration*                     pConfiguration,
+    size_t*                                     pConfigurationSize);
 
 /**
  * DEPRECATED.

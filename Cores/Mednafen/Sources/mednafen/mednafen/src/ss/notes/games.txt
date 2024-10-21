@@ -1,0 +1,84 @@
+Independence Day
+
+Ultimate Mortal Kombat 3 - Major issues and no sound after defeating first opponent.
+
+All-Star Baseball 97 - VDP1 glitchy issues
+
+Space Jam
+
+Langrisser V - Really sensitive about SMPC timing during startup apparently...
+
+X-Men vs. Street Fighter - Sometimes locks up if skipping Capcom intro movie.
+
+Thunderhawk II - Hangs reading from 25D00010, waiting for bit1 to be 1
+Cyberbots - VDP1 timing issue. Hangs during startup.
+
+Lunar - FMV issues(timing-related; DMA is a bit too fast), @PC=0x60D7C24
+
+Nissan Presents Over Drivin' GT-R - SMPC problems
+
+Break Point - Fails to boot.
+
+Falcom Classics II - Ys 2 sometimes freezes during startup.
+
+Virtua Fighter Kids - Wonky FMV.
+	data @ 0x60435B8 0x60435C0	-- 0x6043318
+	0x060CAAA2
+	0x060CAAE4
+	code @ 0x60CA1C6
+	PC=0x60BA1D2
+
+	x inc 0x060FFD38
+	(312,gbr)
+
+	Writes to 0x25F80000:
+		PC=0x20000572 (clock change?)
+		PC=0x06030AB6
+
+
+Image Fight - uses RBG0 and RBG1 simultaneously during gameplay
+
+Shienryu - VDP1 output rotation probably.
+
+Zero Divide: Bad DMAs?
+
+Virtua Fighter spams SCU DMAs...
+
+TODO: check SCU write throughput for sparse writes.
+
+Resident Evil - Probably IM related.  Fighting Vipers too
+-----------------------
+Alone in the Dark
+
+Sega Saturn Choice Cuts - hangs on skipping video, hangs on playing video later.
+Marvel Super Heroes vs. Street Fighter - Goes back to CD screen after winning battle?
+-------------------
+
+-------------------------------------
+
+Probably vblank signal issue for a lot of these...
+
+Arcade's Greatest Hits - Locks up near Digital Eclipse video.
+
+Baku Baku - 600091A, Timer0 triggers an IRQ when the software isn't ready?
+
+Doom - Sound effect positioning seems off.
+
+NBA Jam Extreme - [M68K] Exception 3 @PC=0x0000088e SR=0x2700 ---> PC=0x0000029e, SR=0x2700
+
+Layer Section - Gets confused and misprograms the CDB?
+
+Tomb Raider:
+Pastel Muses - Tries illegal DMA transfer in indirect mode.
+Resident Evil - Almost same:
+[SCU] DMA level 1 reading indirect table entries @ 0x060c8000
+[SCU] Starting DMA level 1 transfer; ra=0x00000000 wa=0x05c00060 bc=0x0000001e - read_inc=1, write_inc=0x01 -- indirect=1 7
+[SCU] Attempted DMA from illegal address 0x00000000
+
+
+----------------------------------------------------------------------------------------------
+Funky Fantasy:
+[SCU] DMA level 1 reading indirect table entries @ 0x060c0000
+[SCU] Starting DMA level 1 transfer; ra=0x00000000 wa=0x05c00060 bc=0x0000001e - read_inc=1, write_inc=0x01 -- indirect=1 7
+[SCU] Attempted DMA from illegal address 0x00000000
+

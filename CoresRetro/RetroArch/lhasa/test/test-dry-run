@@ -1,0 +1,297 @@
+#!/usr/bin/env bash
+#
+# Copyright (c) 2011, 2012, Simon Howard
+#
+# Permission to use, copy, modify, and/or distribute this software
+# for any purpose with or without fee is hereby granted, provided
+# that the above copyright notice and this permission notice appear
+# in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+# WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+# AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+# LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+# NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+#
+# Check the "dry run" output is as expected.
+#
+
+. test_common.sh
+
+
+test_dry_run() {
+	local option=$1
+	local archive_file=$2
+	local expected=$3
+
+	if [ "$archive_file" != "-" ]; then
+		archive_file="archives/$archive_file"
+	fi
+
+	# Only check the last line of output:
+
+	echo "$expected" > "$wd/expected.txt"
+	test_lha $option "$archive_file" > "$wd/output.txt"
+
+	tail -n 1 < "$wd/output.txt" > "$wd/output2.txt"
+
+	if ! diff "$wd/expected.txt" "$wd/output2.txt"; then
+		fail "Output not as expected for $archive_file"
+	fi
+
+	rm -f "$wd/expected.txt" "$wd/output.txt" "$wd/output2.txt"
+}
+
+test_archive() {
+	local archive_file=$1
+	local filename=$2
+
+	test_dry_run en "$archive_file" "EXTRACT $filename"
+	test_dry_run tn "$archive_file" "VERIFY $filename"
+
+	# Test with an extract directory.
+
+	test_dry_run enw=/x/y/z "$archive_file" "EXTRACT /x/y/z/$filename"
+	test_dry_run tnw=/x/y/z "$archive_file" "VERIFY /x/y/z/$filename"
+
+	# Test the same, reading from stdin.
+
+	test_dry_run en - "EXTRACT $filename" < "archives/$archive_file"
+	test_dry_run tn - "VERIFY $filename" < "archives/$archive_file"
+}
+
+# Tests for archives in the test set:
+
+test_archive explzh_723/h0_lh0.lzh              "gpl-2.gz"
+test_archive explzh_723/h0_lh5.lzh              "gpl-2"
+test_archive explzh_723/h0_lh6.lzh              "gpl-2"
+test_archive explzh_723/h0_lh7.lzh              "gpl-2"
+test_archive explzh_723/h0_subdir.lzh           "subdir/subdir2/hello.txt"
+test_archive explzh_723/h1_lh0.lzh              "gpl-2.gz"
+test_archive explzh_723/h1_lh5.lzh              "gpl-2"
+test_archive explzh_723/h1_lh6.lzh              "gpl-2"
+test_archive explzh_723/h1_lh7.lzh              "gpl-2"
+test_archive explzh_723/h1_subdir.lzh           "subdir/subdir2/hello.txt"
+test_archive explzh_723/h2_lh0.lzh              "gpl-2.gz"
+test_archive explzh_723/h2_lh5.lzh              "gpl-2"
+test_archive explzh_723/h2_lh6.lzh              "gpl-2"
+test_archive explzh_723/h2_lh7.lzh              "gpl-2"
+test_archive explzh_723/h2_subdir.lzh           "subdir/subdir2/hello.txt"
+test_archive explzh_723/declha_sfx_ansi.exe     "gpl-2"
+test_archive explzh_723/declha_sfx_unicode.exe  "gpl-2"
+
+test_archive larc333/lz4.lzs                "gpl-2.gz"
+test_archive larc333/lz5.lzs                "gpl-2"
+test_archive larc333/sfx.com                "gpl-2.gz"
+test_archive larc333/subdir.lzs             "subdir/subdir2/hello.txt"
+test_archive larc333/long.lzs               "long.txt"
+
+test_archive lharc113/lh0.lzh               "gpl-2.gz"
+test_archive lharc113/lh1.lzh               "gpl-2"
+test_archive lharc113/sfx.com               "gpl-2"
+test_archive lharc113/subdir.lzh            "subdir/subdir2/hello.txt"
+test_archive lharc113/long.lzh              "long.txt"
+
+test_archive lha213/lh0.lzh                 "gpl-2.gz"
+test_archive lha213/lh5.lzh                 "gpl-2"
+test_archive lha213/lh5_long.lzh            "long.txt"
+test_archive lha213/sfx.exe                 "gpl-2"
+test_archive lha213/subdir.lzh              "subdir/subdir2/hello.txt"
+
+test_archive lha255e/lh0.lzh                "gpl-2.gz"
+test_archive lha255e/lh5.lzh                "gpl-2"
+test_archive lha255e/sfx.exe                "gpl-2"
+test_archive lha255e/subdir.lzh             "subdir/subdir2/hello.txt"
+
+test_archive lhark04d/lh0.lzh               "gpl-2.gz"
+test_archive lhark04d/lh5.lzh               "gpl-2"
+test_archive lhark04d/lh7.lzh               "gpl-2"
+
+test_archive lha_unix114i/h0_lh0.lzh        "gpl-2.gz"
+test_archive lha_unix114i/h0_lh5.lzh        "gpl-2"
+test_archive lha_unix114i/h0_lh6.lzh        "gpl-2"
+test_archive lha_unix114i/h0_lh7.lzh        "gpl-2"
+#test_archive lha_unix114i/h0_subdir.lzh     "subdir/subdir2/hello.txt"
+test_archive lha_unix114i/h1_lh0.lzh        "gpl-2.gz"
+test_archive lha_unix114i/h1_lh5.lzh        "gpl-2"
+test_archive lha_unix114i/h1_lh6.lzh        "gpl-2"
+test_archive lha_unix114i/h1_lh7.lzh        "gpl-2"
+test_archive lha_unix114i/h1_subdir.lzh     "subdir/subdir2/hello.txt"
+test_archive lha_unix114i/h2_lh0.lzh        "gpl-2.gz"
+test_archive lha_unix114i/h2_lh5.lzh        "gpl-2"
+test_archive lha_unix114i/h2_lh6.lzh        "gpl-2"
+test_archive lha_unix114i/h2_lh7.lzh        "gpl-2"
+test_archive lha_unix114i/h2_subdir.lzh     "subdir/subdir2/hello.txt"
+test_archive lha_unix114i/lh6_long.lzh      "long.txt"
+test_archive lha_unix114i/lh7_long.lzh      "long.txt"
+# ... tests for symlink archives are below.
+
+test_archive lha_os2_208/lh0.lzh            "GPL-2.gz"
+test_archive lha_os2_208/lh5.lzh            "gpl-2"
+test_archive lha_os2_208/lfn.lzh            "Long Filename.txt"
+test_archive lha_os2_208/subdir.lzh         "subdir/subdir2/HELLO.TXT"
+test_archive lha_os2_208/lh1.lzh            "gpl-2"
+test_archive lha_os2_208/h3_lfn.lzh         "Long Filename.txt"
+test_archive lha_os2_208/h3_lh0.lzh         "GPL-2.gz"
+test_archive lha_os2_208/h3_lh5.lzh         "gpl-2"
+test_archive lha_os2_208/h3_subdir.lzh      "subdir/subdir2/HELLO.TXT"
+
+test_archive pmarc2/pm0.pma                 "gpl-2.gz"
+test_archive pmarc2/pm2.pma                 "gpl-2."
+test_archive pmarc2/comment.pma             "hello.txt"
+test_archive pmarc2/sfx.com                 "gpl-2."
+test_archive pmarc2/long.pma                "long.txt"
+
+test_archive lha_amiga_122/level0.lzh       "subdir/subdir2/hello.txt"
+test_archive lha_amiga_122/level1.lzh       "subdir/subdir2/hello.txt"
+test_archive lha_amiga_122/level2.lzh       "subdir/subdir2/hello.txt"
+test_archive lha_amiga_122/lh0.lzh          "gpl-2.gz"
+test_archive lha_amiga_122/lh1.lzh          "gpl-2"
+test_archive lha_amiga_122/lh4_long.lzh     "long.txt"
+test_archive lha_amiga_122/lh4.lzh          "gpl-2"
+test_archive lha_amiga_122/lh5.lzh          "gpl-2"
+test_archive lha_amiga_122/subdir.lzh       "subdir/subdir2/hello.txt"
+test_archive lha_amiga_122/sfx.run          "gpl-2"
+
+test_archive lha_amiga_212/level0.lzh       "subdir/subdir2/hello.txt"
+test_archive lha_amiga_212/level1.lzh       "subdir/subdir2/hello.txt"
+test_archive lha_amiga_212/level2.lzh       "subdir/subdir2/hello.txt"
+test_archive lha_amiga_212/lh1.lzh          "gpl-2"
+test_archive lha_amiga_212/lh6.lzh          "gpl-2"
+
+test_archive lharc_atari_313a/lh0.lzh       "gpl2.gz"
+test_archive lharc_atari_313a/lh5.lzh       "gpl2"
+test_archive lharc_atari_313a/lz5.lzh       "gpl2"
+test_archive lharc_atari_313a/subdir.lzh    "subdir/subdir2/hello.txt"
+test_archive lharc_atari_313a/sfx.tos       "gpl2"
+test_archive lharc_atari_313a/shorter.lzh   "shorter.txt"
+test_archive lharc_atari_313a/h1_lh5.lzh    "gpl2"
+test_archive lharc_atari_313a/h1_lz5.lzh    "gpl2"
+test_archive lharc_atari_313a/h1_subdir.lzh "subdir/subdir2/hello.txt"
+test_archive lharc_atari_313a/h2_lh5.lzh    "gpl2"
+test_archive lharc_atari_313a/h2_lz5.lzh    "gpl2"
+test_archive lharc_atari_313a/h2_subdir.lzh "subdir/subdir2/hello.txt"
+
+test_archive lha_x68k_213/h0_lh0.lzh        "gpl-2.gz"
+test_archive lha_x68k_213/h0_lh5.lzh        "gpl-2"
+test_archive lha_x68k_213/h0_subdir.lzh     "subdir/subdir2/HELLO.TXT"
+test_archive lha_x68k_213/h1_lh0.lzh        "GPL-2.GZ"
+test_archive lha_x68k_213/h1_lh5.lzh        "GPL-2"
+test_archive lha_x68k_213/h1_subdir.lzh     "subdir/subdir2/HELLO.TXT"
+test_archive lha_x68k_213/h2_lh0.lzh        "GPL-2.GZ"
+test_archive lha_x68k_213/h2_lh5.lzh        "GPL-2"
+test_archive lha_x68k_213/h2_subdir.lzh     "subdir/subdir2/HELLO.TXT"
+test_archive lha_x68k_213/sfx.x             "gpl-2"
+
+test_archive maclha_224/l0_lh0.lzh          "gpl-2.gz"
+test_archive maclha_224/l0_lh1.lzh          "gpl-2"
+test_archive maclha_224/l0_lh5.lzh          "gpl-2"
+test_archive maclha_224/l0_nm_lh5.lzh       "gpl-2"
+
+test_archive maclha_224/l1_lh0.lzh          "gpl-2.gz"
+test_archive maclha_224/l1_lh1.lzh          "gpl-2"
+test_archive maclha_224/l1_lh5.lzh          "gpl-2"
+test_archive maclha_224/l1_nm_lh5.lzh       "gpl-2"
+test_archive maclha_224/l1_subdir.lzh       "subdir/subdir2/hello.txt"
+test_archive maclha_224/l1_full_subdir.lzh  "Untitled/subdir/subdir2/hello.txt"
+
+test_archive maclha_224/l2_lh0.lzh          "gpl-2.gz"
+test_archive maclha_224/l2_lh1.lzh          "gpl-2"
+test_archive maclha_224/l2_lh5.lzh          "gpl-2"
+test_archive maclha_224/l2_nm_lh5.lzh       "gpl-2"
+test_archive maclha_224/l2_subdir.lzh       "subdir/subdir2/hello.txt"
+test_archive maclha_224/l2_full_subdir.lzh  "Untitled/subdir/subdir2/hello.txt"
+
+# Unusual backwards directories in archives generated by LHmelt mean that
+# the subdir tests currently do not work:
+test_archive lhmelt_16536/h0_lh0.lzh        "gpl-2.gz"
+test_archive lhmelt_16536/h0_lh1.lzh        "gpl-2"
+test_archive lhmelt_16536/h0_lh5.lzh        "gpl-2"
+test_archive lhmelt_16536/h0_lh6.lzh        "gpl-2"
+test_archive lhmelt_16536/h0_lh7.lzh        "gpl-2"
+#test_archive lhmelt_16536/h0_subdir.lzh     "subdir/subdir2/hello.txt"
+test_archive lhmelt_16536/h1_lh0.lzh        "gpl-2.gz"
+test_archive lhmelt_16536/h1_lh1.lzh        "gpl-2"
+test_archive lhmelt_16536/h1_lh5.lzh        "gpl-2"
+#test_archive lhmelt_16536/h1_subdir.lzh     "subdir/subdir2/hello.txt"
+test_archive lhmelt_16536/h2_lh0.lzh        "gpl-2.gz"
+test_archive lhmelt_16536/h2_lh1.lzh        "gpl-2"
+test_archive lhmelt_16536/h2_lh5.lzh        "gpl-2"
+#test_archive lhmelt_16536/h2_subdir.lzh     "subdir/subdir2/hello.txt"
+test_archive lhmelt_16536/sfx_winsfx32_213.exe  "gpl-2"
+test_archive lhmelt_16536/sfx_winsfx32m_250.exe "gpl-2"
+test_archive lhmelt_16536/sfx_winsfx_213.exe    "gpl-2"
+test_archive lhmelt_16536/sfx_winsfxm_250.exe   "gpl-2"
+
+test_archive lha_osk_201/h0_lh0.lzh         "gpl-2.gz"
+test_archive lha_osk_201/h0_lh1.lzh         "gpl-2"
+test_archive lha_osk_201/h0_lh5.lzh         "gpl-2"
+#test_archive lha_osk_201/h0_subdir.lzh      "subdir/subdir2/hello.txt"
+test_archive lha_osk_201/h1_lh0.lzh         "gpl-2.gz"
+test_archive lha_osk_201/h1_lh1.lzh         "gpl-2"
+test_archive lha_osk_201/h1_lh5.lzh         "gpl-2"
+test_archive lha_osk_201/h1_subdir.lzh      "subdir/subdir2/hello.txt"
+test_archive lha_osk_201/h2_lh0.lzh         "gpl-2.gz"
+test_archive lha_osk_201/h2_lh1.lzh         "gpl-2"
+test_archive lha_osk_201/h2_lh5.lzh         "gpl-2"
+test_archive lha_osk_201/h2_subdir.lzh      "subdir/subdir2/hello.txt"
+
+test_archive lha_os9_211c/h0_lh0.lzh        "gpl2.gz"
+test_archive lha_os9_211c/h0_lh1.lzh        "gpl2"
+test_archive lha_os9_211c/h0_subdir.lzh     "SUBDIR/SUBDIR2/hello.txt"
+test_archive lha_os9_211c/h1_lh0.lzh        "gpl2.gz"
+test_archive lha_os9_211c/h1_lh1.lzh        "gpl2"
+test_archive lha_os9_211c/h1_subdir.lzh     "SUBDIR/SUBDIR2/hello.txt"
+test_archive lha_os9_211c/h2_lh0.lzh        "gpl2.gz"
+test_archive lha_os9_211c/h2_lh1.lzh        "gpl2"
+test_archive lha_os9_211c/h2_subdir.lzh     "SUBDIR/SUBDIR2/hello.txt"
+
+test_archive regression/abspath.lzh         "tmp/absolute_path.txt"
+test_archive regression/badterm.lzh         "tmp/?]2;malicious??"
+test_archive regression/truncated.lzh       "gpl-2"
+test_archive regression/unixsep.lzh         "subdir/subdir2/hello.txt"
+
+test_archive unlha32/h2_lhx.lzh             "gpl-2"
+test_archive unlha32/lhx_long.lzh           "long.txt"
+
+test_archive generated/lzs/lzs.lzs          "gpl-2"
+test_archive generated/lzs/long.lzs         "long.txt"
+
+test_archive generated/pm1/pm1.pma          "data_31.bin"
+
+# ======================================================================
+#
+# Special cases:
+#
+
+# Output for directories:
+
+test_dry_run en regression/dir.lzh "EXTRACT dir/ (directory)"
+
+# Output for overwriting an existing file:
+
+touch gpl-2
+test_dry_run en lharc113/lh1.lzh "EXTRACT gpl-2 but file is exist."
+rm -f gpl-2
+
+# Output for Unix LHA symlink archives:
+
+test_dry_run en lha_unix114i/h0_symlink.lzh \
+    "EXTRACT symlink|target (directory)"
+test_dry_run en lha_unix114i/h1_symlink.lzh \
+    "EXTRACT symlink|target (directory)"
+test_dry_run en lha_unix114i/h1_symlink2.lzh \
+    "EXTRACT symlink|path/to/target (directory)"
+test_dry_run en lha_unix114i/h1_symlink3.lzh \
+    "EXTRACT subdir/symlink|/absolute/path (directory)"
+test_dry_run en lha_unix114i/h2_symlink.lzh \
+    "EXTRACT symlink|target (directory)"
+test_dry_run en lha_unix114i/h2_symlink2.lzh \
+    "EXTRACT symlink|path/to/target (directory)"
+test_dry_run en lha_unix114i/h2_symlink3.lzh \
+    "EXTRACT subdir/symlink|/absolute/path (directory)"
+

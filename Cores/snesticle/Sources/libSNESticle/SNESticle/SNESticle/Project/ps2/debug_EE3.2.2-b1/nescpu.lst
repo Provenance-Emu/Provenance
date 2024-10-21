@@ -1,0 +1,288 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../NESticle/Source/common/nescpu.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN6NesCPUC2Ev
+   8              	.ent _ZN6NesCPUC2Ev
+   9              	_ZN6NesCPUC2Ev:
+  10              	.frame $sp,16,$31
+  11              	.mask 0x80000000,-16
+  12              	.fmask 0x00000000,0
+  13 0000 F0FFBD27 	subu $sp,$sp,16
+  14 0004 0000BFFF 	sd $31,0($sp)
+  15 0008 0000000C 	jal N6502New
+  15      00000000 
+  16 0010 0000BFDF 	ld $31,0($sp)
+  17              	
+  18              	.set noreorder
+  19              	.set nomacro
+  20 0014 0800E003 	j $31
+  21 0018 1000BD27 	addu $sp,$sp,16
+  22              	.set macro
+  23              	.set reorder
+  24              	
+  25              	.end _ZN6NesCPUC2Ev
+  26              	$Lfe1:
+  27              	.size _ZN6NesCPUC2Ev,$Lfe1-_ZN6NesCPUC2Ev
+  28              	.align 2
+  29 001c 00000000 	.p2align 3,,7
+  30              	.globl _ZN6NesCPUC1Ev
+  31              	.ent _ZN6NesCPUC1Ev
+  32              	_ZN6NesCPUC1Ev:
+  33              	.frame $sp,16,$31
+  34              	.mask 0x80000000,-16
+  35              	.fmask 0x00000000,0
+  36 0020 F0FFBD27 	subu $sp,$sp,16
+  37 0024 0000BFFF 	sd $31,0($sp)
+  38 0028 0000000C 	jal N6502New
+  38      00000000 
+  39 0030 0000BFDF 	ld $31,0($sp)
+  40              	
+  41              	.set noreorder
+  42              	.set nomacro
+  43 0034 0800E003 	j $31
+  44 0038 1000BD27 	addu $sp,$sp,16
+  45              	.set macro
+  46              	.set reorder
+  47              	
+  48              	.end _ZN6NesCPUC1Ev
+  49              	$Lfe2:
+  50              	.size _ZN6NesCPUC1Ev,$Lfe2-_ZN6NesCPUC1Ev
+  51              	.align 2
+  52 003c 00000000 	.p2align 3,,7
+  53              	.globl _ZN6NesCPUD2Ev
+  54              	.ent _ZN6NesCPUD2Ev
+  55              	_ZN6NesCPUD2Ev:
+GAS LISTING  			page 2
+
+
+  56              	.frame $sp,16,$31
+  57              	.mask 0x80000000,-16
+  58              	.fmask 0x00000000,0
+  59 0040 F0FFBD27 	subu $sp,$sp,16
+  60 0044 0000BFFF 	sd $31,0($sp)
+  61 0048 0000000C 	jal N6502Delete
+  61      00000000 
+  62 0050 0000BFDF 	ld $31,0($sp)
+  63              	
+  64              	.set noreorder
+  65              	.set nomacro
+  66 0054 0800E003 	j $31
+  67 0058 1000BD27 	addu $sp,$sp,16
+  68              	.set macro
+  69              	.set reorder
+  70              	
+  71              	.end _ZN6NesCPUD2Ev
+  72              	$Lfe3:
+  73              	.size _ZN6NesCPUD2Ev,$Lfe3-_ZN6NesCPUD2Ev
+  74              	.align 2
+  75 005c 00000000 	.p2align 3,,7
+  76              	.globl _ZN6NesCPUD1Ev
+  77              	.ent _ZN6NesCPUD1Ev
+  78              	_ZN6NesCPUD1Ev:
+  79              	.frame $sp,16,$31
+  80              	.mask 0x80000000,-16
+  81              	.fmask 0x00000000,0
+  82 0060 F0FFBD27 	subu $sp,$sp,16
+  83 0064 0000BFFF 	sd $31,0($sp)
+  84 0068 0000000C 	jal N6502Delete
+  84      00000000 
+  85 0070 0000BFDF 	ld $31,0($sp)
+  86              	
+  87              	.set noreorder
+  88              	.set nomacro
+  89 0074 0800E003 	j $31
+  90 0078 1000BD27 	addu $sp,$sp,16
+  91              	.set macro
+  92              	.set reorder
+  93              	
+  94              	.end _ZN6NesCPUD1Ev
+  95              	$Lfe4:
+  96              	.size _ZN6NesCPUD1Ev,$Lfe4-_ZN6NesCPUD1Ev
+  97              	.rdata
+  98              	.align 3
+  99              	$LC0:
+ 100 0000 5B253034 	.ascii "[%04X] %s\n\000"
+ 100      585D2025 
+ 100      730A00
+ 101              	.text
+ 102              	.align 2
+ 103 007c 00000000 	.p2align 3,,7
+ 104              	.globl _ZN6NesCPU10DumpDisasmEtj
+ 105              	.ent _ZN6NesCPU10DumpDisasmEtj
+ 106              	_ZN6NesCPU10DumpDisasmEtj:
+ 107              	.frame $sp,224,$31
+ 108              	.mask 0x801f0000,-16
+GAS LISTING  			page 3
+
+
+ 109              	.fmask 0x00000000,0
+ 110 0080 20FFBD27 	subu $sp,$sp,224
+ 111 0084 B000B3FF 	sd $19,176($sp)
+ 112 0088 2D988000 	move $19,$4
+ 113 008c A000B2FF 	sd $18,160($sp)
+ 114 0090 2D90C000 	move $18,$6
+ 115 0094 9000B1FF 	sd $17,144($sp)
+ 116 0098 FFFFB130 	andi $17,$5,0xffff
+ 117 009c D000BFFF 	sd $31,208($sp)
+ 118 00a0 C000B4FF 	sd $20,192($sp)
+ 119              	.set noreorder
+ 120              	.set nomacro
+ 121 00a4 0F00C010 	beq $6,$0,$L15
+ 122 00a8 8000B0FF 	sd $16,128($sp)
+ 123              	.set macro
+ 124              	.set reorder
+ 125              	
+ 126 00ac 0000143C 	lui $20,%hi($LC0)
+ 127              	.p2align 3
+ 128              	$L13:
+ 129 00b0 2D282002 	move $5,$17
+ 130 00b4 2D206002 	move $4,$19
+ 131 00b8 2D30A003 	move $6,$sp
+ 132              	.set noreorder
+ 133              	.set nomacro
+ 134 00bc 0000000C 	jal N6502Disassemble
+ 135 00c0 FFFF5226 	addu $18,$18,-1
+ 136              	.set macro
+ 137              	.set reorder
+ 138              	
+ 139 00c4 00008426 	addiu $4,$20,%lo($LC0)
+ 140 00c8 2D804000 	move $16,$2
+ 141 00cc 2D282002 	move $5,$17
+ 142 00d0 2D30A003 	move $6,$sp
+ 143              	.set noreorder
+ 144              	.set nomacro
+ 145 00d4 0000000C 	jal printf
+ 146 00d8 21803002 	addu $16,$17,$16
+ 147              	.set macro
+ 148              	.set reorder
+ 149              	
+ 150              	.set noreorder
+ 151              	.set nomacro
+ 152 00dc F4FF4016 	bne $18,$0,$L13
+ 153 00e0 FFFF1132 	andi $17,$16,0xffff
+ 154              	.set macro
+ 155              	.set reorder
+ 156              	
+ 157              	$L15:
+ 158 00e4 D000BFDF 	ld $31,208($sp)
+ 159 00e8 C000B4DF 	ld $20,192($sp)
+ 160 00ec B000B3DF 	ld $19,176($sp)
+ 161 00f0 A000B2DF 	ld $18,160($sp)
+ 162 00f4 9000B1DF 	ld $17,144($sp)
+ 163 00f8 8000B0DF 	ld $16,128($sp)
+ 164              	
+ 165              	.set noreorder
+GAS LISTING  			page 4
+
+
+ 166              	.set nomacro
+ 167 00fc 0800E003 	j $31
+ 168 0100 E000BD27 	addu $sp,$sp,224
+ 169              	.set macro
+ 170              	.set reorder
+ 171              	
+ 172              	.end _ZN6NesCPU10DumpDisasmEtj
+ 173              	$Lfe5:
+ 174              	.size _ZN6NesCPU10DumpDisasmEtj,$Lfe5-_ZN6NesCPU10DumpDisasmEtj
+ 175              	.rdata
+ 176 000b 00000000 	.align 3
+ 176      00
+ 177              	$LC1:
+ 178 0010 413A2530 	.ascii "A:%02X X:%02X Y:%02X S:%02X FLAG: %c%c%c%c%c%c%c%c\n\000"
+ 178      32582058 
+ 178      3A253032 
+ 178      5820593A 
+ 178      25303258 
+ 179 0044 00000000 	.text
+ 180              	.align 2
+ 181 0104 00000000 	.p2align 3,,7
+ 182              	.globl _ZN6NesCPU8DumpRegsEv
+ 183              	.ent _ZN6NesCPU8DumpRegsEv
+ 184              	_ZN6NesCPU8DumpRegsEv:
+ 185              	.frame $sp,144,$31
+ 186              	.mask 0x801f0000,-16
+ 187              	.fmask 0x00000000,0
+ 188 0108 70FFBD27 	subu $sp,$sp,144
+ 189 010c 73000224 	li $2,115
+ 190 0110 8000BFFF 	sd $31,128($sp)
+ 191 0114 53000924 	li $9,83
+ 192 0118 7000B4FF 	sd $20,112($sp)
+ 193 011c 52000B24 	li $11,82
+ 194 0120 6000B3FF 	sd $19,96($sp)
+ 195 0124 6F000324 	li $3,111
+ 196 0128 5000B2FF 	sd $18,80($sp)
+ 197 012c 4F000A24 	li $10,79
+ 198 0130 4000B1FF 	sd $17,64($sp)
+ 199 0134 49000F24 	li $15,73
+ 200 0138 3000B0FF 	sd $16,48($sp)
+ 201 013c 42001124 	li $17,66
+ 202 0140 44001024 	li $16,68
+ 203 0144 06008C90 	lbu $12,6($4)
+ 204 0148 01008890 	lbu $8,1($4)
+ 205 014c 80008D31 	andi $13,$12,0x80
+ 206 0150 00008590 	lbu $5,0($4)
+ 207 0154 02008690 	lbu $6,2($4)
+ 208 0158 0A484D00 	movz $9,$2,$13
+ 209 015c 03008790 	lbu $7,3($4)
+ 210 0160 72000224 	li $2,114
+ 211 0164 20008431 	andi $4,$12,0x20
+ 212 0168 40008E31 	andi $14,$12,0x40
+ 213 016c 0A584400 	movz $11,$2,$4
+ 214 0170 0A506E00 	movz $10,$3,$14
+ 215 0174 10008431 	andi $4,$12,0x10
+ 216 0178 62000224 	li $2,98
+ 217 017c 0A884400 	movz $17,$2,$4
+GAS LISTING  			page 5
+
+
+ 218 0180 08009231 	andi $18,$12,0x8
+ 219 0184 04009331 	andi $19,$12,0x4
+ 220 0188 64000324 	li $3,100
+ 221 018c 69000224 	li $2,105
+ 222 0190 0A807200 	movz $16,$3,$18
+ 223 0194 0A785300 	movz $15,$2,$19
+ 224 0198 01009431 	andi $20,$12,0x1
+ 225 019c 7A000324 	li $3,122
+ 226 01a0 63000224 	li $2,99
+ 227 01a4 02008C31 	andi $12,$12,0x2
+ 228 01a8 5A000D24 	li $13,90
+ 229 01ac 43000E24 	li $14,67
+ 230 01b0 0000043C 	lui $4,%hi($LC1)
+ 231 01b4 0A705400 	movz $14,$2,$20
+ 232 01b8 0A686C00 	movz $13,$3,$12
+ 233 01bc 10008424 	addiu $4,$4,%lo($LC1)
+ 234 01c0 0000B1AF 	sw $17,0($sp)
+ 235 01c4 0800B0AF 	sw $16,8($sp)
+ 236 01c8 1000AFAF 	sw $15,16($sp)
+ 237 01cc 1800ADAF 	sw $13,24($sp)
+ 238              	.set noreorder
+ 239              	.set nomacro
+ 240 01d0 0000000C 	jal printf
+ 241 01d4 2000AEAF 	sw $14,32($sp)
+ 242              	.set macro
+ 243              	.set reorder
+ 244              	
+ 245 01d8 8000BFDF 	ld $31,128($sp)
+ 246 01dc 7000B4DF 	ld $20,112($sp)
+ 247 01e0 6000B3DF 	ld $19,96($sp)
+ 248 01e4 5000B2DF 	ld $18,80($sp)
+ 249 01e8 4000B1DF 	ld $17,64($sp)
+ 250 01ec 3000B0DF 	ld $16,48($sp)
+ 251              	
+ 252              	.set noreorder
+ 253              	.set nomacro
+ 254 01f0 0800E003 	j $31
+ 255 01f4 9000BD27 	addu $sp,$sp,144
+ 256              	.set macro
+ 257              	.set reorder
+ 258              	
+ 259              	.end _ZN6NesCPU8DumpRegsEv
+ 260              	$Lfe6:
+ 261              	.size _ZN6NesCPU8DumpRegsEv,$Lfe6-_ZN6NesCPU8DumpRegsEv
+ 262              	.ident "GCC: (GNU) 3.2.2"

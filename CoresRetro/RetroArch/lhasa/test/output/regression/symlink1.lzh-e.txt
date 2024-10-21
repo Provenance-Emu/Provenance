@@ -1,0 +1,2 @@
+Symbolic Link foo.txt -> bar.txt
+foo.txt	- Melting  :  .foo.txt	- Melting  :  ofoo.txt	- Melted  

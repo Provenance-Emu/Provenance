@@ -1,0 +1,80 @@
+# TODO.MD
+_My personal TODO notes_
+
+## Show stoppers
+
+- [ ] Swift UI long press on roms menu missing actions {artwork, sharing...}
+- [X] Conflicts folder is weird
+- [X] SwiftUI not seeing conflicts
+- [X] Copy the framework loader from old branch, fix it too!
+- [X] emuThreeDS and other metal based cores have wrong layout contraints
+- [X] Possible race condition in importer
+- [X] Gambatte swift module not done
+- [X] PVmGBA swift module is not done
+- [X] Fix Repo submodules
+- [X] Audio broken
+- [X] Loading save states crashes realm
+- [X] Creating save states crashes realm
+- [X] SwiftUI not importing roms correctly
+- [X] compiling with Mupen+Rumble.swift breaks device release builds
+
+## Major bugs
+
+- [ ] Intellivision (PVBliss) audio crashes on button press
+- [ ] Intellivision video is glitched
+- [ ] SuperVision video dimensions wrong
+- [ ] Odyssey2 needs a way to enter game number 1,2 (3,4)?
+- [X] CrabEMU (Genesis) no buttons work
+- [X] Mednafen GB crashing
+- [X] Vectrex needs PVVecXCore:LibRetroCore (or rollback to older code?)
+- [X] ZX Spectrum needs PVLibRetroCore (or rollback to older code?)
+- [X] Zip files cause conflicts, not always handled correctly
+- [X] Jaguar not working in Metal mode (dimensions off slightly?)
+- [X] Stella Metal is right but GLES is blank
+- [X] Stella no buttons work
+- [X] Game gear dimensions wrong
+- [X] Colicovision roms are blank screen
+- [X] iPad swiftui opening web server doesn't have a cgrect
+- [X] Stella pixel types are wrong - video is distorted
+- [X] Loading the app is very slow now (release mode not that bad)
+- [X] Mednafen controller input broken
+- [X] Test intellivisoin and check proper bios
+- [X] Pokemini crashes on load
+- [X] PokeMini butons don't work
+- [X] Intellivision doesn't load
+
+## Minor bugs
+
+- [ ] Spotlignt/extensions can't build with spm modules
+- [ ] Add Show recent saves on console itself
+- [ ] See if psx mednafen has more options
+- [ ] Short names are abreviations not shortname
+- [ ] Sega Master System short name showing as SMS
+- [ ] Mupen CoreOptions code is trash 
+- [ ] Opening roms from md5/siri search doesn't work
+- [ ] Swift UI should open on home and be scrollable to systems
+- [ ] Swift UI sort consoles by bits/brand/name/year order ascend/descend
+- [ ] Dolphin won't build due to stdint.h in extern C
+- [X] Nes fix button layout
+- [X] Test/fix CrabEMU save states
+- [X] Legacy UI removed collapsing systems
+- [X] 3D0 crashes on load
+- [X] 7Zip support not working
+
+## Cores to translate
+
+- [ ] PVFreeIntV
+- [ ] PVfMSX
+
+## AppStore Review
+
+- [ ] Screenshots
+- [ ] Remove "beta" text
+
+## Provenance Plus
+
+- [ ] Add in-app purchase and screen
+- [ ] Add new logo
+- [ ] Add Shiragame
+- [ ] Finish themes
+- [ ] Add app rating with SiruisRating

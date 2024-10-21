@@ -40,18 +40,18 @@ ifeq ($(platform), unix)
 else ifeq ($(platform), android)
    CC = arm-linux-androideabi-gcc
    AR = @arm-linux-androideabi-ar
-   LD = @arm-linux-androideabi-g++ 
+   LD = @arm-linux-androideabi-g++
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
    SHARED :=  -Wl,--fix-cortex-a8 -llog -lz -shared -Wl,--version-script=$(LIBRETRO_DIR)/link.T -Wl,--no-undefined
    PLATFLAGS := -DAND -DLSB_FIRST -DALIGN_DWORD
-   
+
 # Classic Platforms ####################
 # Platform affix = classic_<ISA>_<µARCH>
 # Help at https://modmyclassic.com/comp
 
-# (armv7 a7, hard point, neon based) ### 
-# NESC, SNESC, C64 mini 
+# (armv7 a7, hard point, neon based) ###
+# NESC, SNESC, C64 mini
 else ifeq ($(platform), classic_armv7_a7)
 	TARGET := $(TARGET_NAME)_libretro.so
 	fpic := -fPIC
@@ -92,8 +92,8 @@ else ifneq (,$(findstring armv,$(platform)))
    PLATFLAGS := -DLSB_FIRST -DALIGN_DWORD
    CFLAGS += -marm
 ifneq (,$(findstring neon,$(platform)))
-   CFLAGS += -mfpu=neon
-   ASFLAGS += -mfpu=neon
+  #  CFLAGS += -mfpu=neon
+  #  ASFLAGS += -mfpu=neon
    HAVE_NEON = 1
 endif
 ifneq (,$(findstring softfloat,$(platform)))
@@ -116,7 +116,7 @@ else ifneq (,$(findstring ios,$(platform)))
 		IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 	endif
    ifeq ($(platform),ios-arm64)
-     CC = cc -arch arm64 -isysroot $(IOSSDK)      
+     CC = cc -arch arm64 -isysroot $(IOSSDK)
    else
 	  CC = cc -arch armv7 -isysroot $(IOSSDK)
    endif
@@ -144,7 +144,7 @@ else ifeq ($(platform), wii)
 	TARGET := $(TARGET_NAME)_libretro_wii.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
-   AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)   
+   AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    CFLAGS += -DSDL_BYTEORDER=SDL_BIG_ENDIAN -DMSB_FIRST -DBYTE_ORDER=BIG_ENDIAN  -DBYTE_ORDER=BIG_ENDIAN \
 	-DHAVE_MEMALIGN -DHAVE_ASPRINTF -I$(ZLIB_DIR) -I$(DEVKITPRO)/libogc/include \
 	-D__powerpc__ -D__POWERPC__ -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__
@@ -158,14 +158,14 @@ else ifeq ($(platform), wiiu)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
-   AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)  
-   PLATFORM_DEFINES += -DSDL_BYTEORDER=SDL_BIG_ENDIAN -DMSB_FIRST -DBYTE_ORDER=BIG_ENDIAN  -DBYTE_ORDER=BIG_ENDIAN 
+   AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
+   PLATFORM_DEFINES += -DSDL_BYTEORDER=SDL_BIG_ENDIAN -DMSB_FIRST -DBYTE_ORDER=BIG_ENDIAN  -DBYTE_ORDER=BIG_ENDIAN
    PLATFORM_DEFINES += -DGEKKO -mcpu=750 -meabi -mhard-float -DHAVE_STRTOF_L -DHAVE_LOCALE
    PLATFORM_DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int -D_GNU_SOURCE
-   PLATFORM_DEFINES += -DWIIU -DHW_RVL -mwup -DWORDS_BIGENDIAN=1 -Dpowerpc -D__POWERPC__ -D__ppc__ 
+   PLATFORM_DEFINES += -DWIIU -DHW_RVL -mwup -DWORDS_BIGENDIAN=1 -Dpowerpc -D__POWERPC__ -D__ppc__
    STATIC_LINKING=1
    STATIC_LINKING_LINK = 1
-   CFLAGS +=  -DALIGN_DWORD $(PLATFORM_DEFINES) -I$(ZLIB_DIR) 
+   CFLAGS +=  -DALIGN_DWORD $(PLATFORM_DEFINES) -I$(ZLIB_DIR)
 
 # Lightweight PS3 Homebrew SDK
 else ifneq (,$(filter $(platform), ps3 psl1ght))
@@ -175,8 +175,8 @@ else ifneq (,$(filter $(platform), ps3 psl1ght))
 	AR = $(PS3DEV)/ppu/bin/ppu-$(COMMONLV)ar$(EXE_EXT)
 	SHARED := -lm -lpthread -lc
 	CFLAGS += -DSDL_BYTEORDER=SDL_BIG_ENDIAN -DMSB_FIRST -DBYTE_ORDER=BIG_ENDIAN  -DBYTE_ORDER=BIG_ENDIAN \
-		-D__PS3__ -DHAVE_MEMALIGN -DHAVE_ASPRINTF -I$(ZLIB_DIR) 
-	PLATFLAGS := -DALIGN_DWORD 
+		-D__PS3__ -DHAVE_MEMALIGN -DHAVE_ASPRINTF -I$(ZLIB_DIR)
+	PLATFLAGS := -DALIGN_DWORD
 	EXTERNAL_ZLIB = 1
 	ifeq ($(platform), psl1ght)
 		CFLAGS += -D__PSL1GHT__
@@ -189,14 +189,14 @@ else ifeq ($(platform), vita)
    CC = arm-vita-eabi-gcc
    CXX = arm-vita-eabi-g++
    AR = arm-vita-eabi-ar
-	CFLAGS += -DLSB_FIRST -DSDL_BYTEORDER=SDL_LIL_ENDIAN 
+	CFLAGS += -DLSB_FIRST -DSDL_BYTEORDER=SDL_LIL_ENDIAN
    PLATFLAGS :=  -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int -DHAVE_STRTOUL -DVITA -I$(ZLIB_DIR) -DHAVE_ALPHASORT -DHAVE_SCANDIR
 	STATIC_LINKING=1
 	STATIC_LINKING_LINK=1
 else
    PLATFLAGS :=  -DLSB_FIRST -DALIGN_DWORD -DWIN32PORT -DWIN32
 	TARGET := $(TARGET_NAME)_libretro.dll
-   SHARED := -shared -static-libgcc -s -Wl,--version-script=$(LIBRETRO_DIR)/link.T -Wl,--no-undefined 
+   SHARED := -shared -static-libgcc -s -Wl,--version-script=$(LIBRETRO_DIR)/link.T -Wl,--no-undefined
 	EXTERNAL_ZLIB = 1
 endif
 
@@ -237,7 +237,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 ifeq ($(STATIC_LINKING_LINK),1)
-	$(AR) rcs $@ $(OBJECTS) 
+	$(AR) rcs $@ $(OBJECTS)
 else
 	$(CC) $(CFLAGS) $(INCFLAGS) $(LDFLAGS) $(OBJECTS) -o $@ -lm $(ZLIB) $(SHARED)
 endif
@@ -246,6 +246,6 @@ endif
 	$(CC) $(CFLAGS) $(INCFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(OBJECTS) $(TARGET) 
+	rm -f $(OBJECTS) $(TARGET)
 
 .PHONY: clean

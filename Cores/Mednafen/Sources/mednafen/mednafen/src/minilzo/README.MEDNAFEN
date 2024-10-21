@@ -1,0 +1,2 @@
+Renamed "minilzo.h" to "_minilzo.h", and changed the #include statement in minilzo.c to match(to discourage accidentally
+including the wrong header file in Mednafen code).

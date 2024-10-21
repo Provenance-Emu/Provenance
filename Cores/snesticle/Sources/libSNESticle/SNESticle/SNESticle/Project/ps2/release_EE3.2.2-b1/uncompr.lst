@@ -1,0 +1,139 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/zlib/uncompr.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.rdata
+   5              	.align 3
+   6              	$LC0:
+   7 0000 312E312E 	.ascii "1.1.3\000"
+   7      3300
+   8 0006 0000     	.text
+   9              	.align 2
+  10              	.p2align 3,,7
+  11              	.globl uncompress
+  12              	.ent uncompress
+  13              	uncompress:
+  14              	.frame $sp,128,$31
+  15              	.mask 0x80030000,-16
+  16              	.fmask 0x00000000,0
+  17 0000 3C180700 	dsll $3,$7,32
+  18 0004 3F180300 	dsra $3,$3,32
+  19 0008 80FFBD27 	subu $sp,$sp,128
+  20 000c 3C100300 	dsll $2,$3,32
+  21 0010 5000B0FF 	sd $16,80($sp)
+  22 0014 3E100200 	dsrl $2,$2,32
+  23 0018 0000A6AF 	sw $6,0($sp)
+  24 001c 2D80A000 	move $16,$5
+  25 0020 7000BFFF 	sd $31,112($sp)
+  26 0024 6000B1FF 	sd $17,96($sp)
+  27 0028 2D308000 	move $6,$4
+  28 002c 0400A3AF 	sw $3,4($sp)
+  29              	.set noreorder
+  30              	.set nomacro
+  31 0030 07004710 	beq $2,$7,$L7
+  32 0034 FBFF0524 	li $5,-5
+  33              	.set macro
+  34              	.set reorder
+  35              	
+  36              	$L1:
+  37 0038 7000BFDF 	ld $31,112($sp)
+  38 003c 2D10A000 	move $2,$5
+  39 0040 6000B1DF 	ld $17,96($sp)
+  40 0044 5000B0DF 	ld $16,80($sp)
+  41              	
+  42              	.set noreorder
+  43              	.set nomacro
+  44 0048 0800E003 	j $31
+  45 004c 8000BD27 	addu $sp,$sp,128
+  46              	.set macro
+  47              	.set reorder
+  48              	
+  49              	.p2align 3
+  50              	$L7:
+  51 0050 0000028E 	lw $2,0($16)
+  52 0054 000004DE 	ld $4,0($16)
+  53 0058 3C180200 	dsll $3,$2,32
+  54 005c 1000A6AF 	sw $6,16($sp)
+  55 0060 3E180300 	dsrl $3,$3,32
+  56              	.set noreorder
+GAS LISTING  			page 2
+
+
+  57              	.set nomacro
+  58 0064 F4FF6414 	bne $3,$4,$L1
+  59 0068 1400A2AF 	sw $2,20($sp)
+  60              	.set macro
+  61              	.set reorder
+  62              	
+  63 006c 0000053C 	lui $5,%hi($LC0)
+  64 0070 2D20A003 	move $4,$sp
+  65 0074 0000A524 	addiu $5,$5,%lo($LC0)
+  66 0078 48000624 	li $6,72
+  67 007c 2800A0AF 	sw $0,40($sp)
+  68              	.set noreorder
+  69              	.set nomacro
+  70 0080 0000000C 	jal inflateInit_
+  71 0084 2C00A0AF 	sw $0,44($sp)
+  72              	.set macro
+  73              	.set reorder
+  74              	
+  75              	.set noreorder
+  76              	.set nomacro
+  77 0088 EBFF4014 	bne $2,$0,$L1
+  78 008c 2D284000 	move $5,$2
+  79              	.set macro
+  80              	.set reorder
+  81              	
+  82 0090 2D20A003 	move $4,$sp
+  83              	.set noreorder
+  84              	.set nomacro
+  85 0094 0000000C 	jal inflate
+  86 0098 04000524 	li $5,4
+  87              	.set macro
+  88              	.set reorder
+  89              	
+  90 009c 2D884000 	move $17,$2
+  91 00a0 01000224 	li $2,1
+  92              	.set noreorder
+  93              	.set nomacro
+  94 00a4 06002212 	beq $17,$2,$L5
+  95 00a8 2D20A003 	move $4,$sp
+  96              	.set macro
+  97              	.set reorder
+  98              	
+  99 00ac 0000000C 	jal inflateEnd
+  99      00000000 
+ 100 00b4 FBFF0524 	li $5,-5
+ 101              	.set noreorder
+ 102              	.set nomacro
+ 103 00b8 DFFF0010 	b $L1
+ 104 00bc 0B283102 	movn $5,$17,$17
+ 105              	.set macro
+ 106              	.set reorder
+ 107              	
+ 108              	$L5:
+ 109 00c0 1800A2DF 	ld $2,24($sp)
+ 110              	
+ 111              	.set noreorder
+ 112              	.set nomacro
+GAS LISTING  			page 3
+
+
+ 113 00c4 0000000C 	jal inflateEnd
+ 114 00c8 000002FE 	sd $2,0($16)
+ 115              	.set macro
+ 116              	.set reorder
+ 117              	
+ 118              	.set noreorder
+ 119              	.set nomacro
+ 120 00cc DAFF0010 	b $L1
+ 121 00d0 2D284000 	move $5,$2
+ 122              	.set macro
+ 123              	.set reorder
+ 124              	
+ 125              	.end uncompress
+ 126              	$Lfe1:
+ 127              	.size uncompress,$Lfe1-uncompress
+ 128 00d4 00000000 	.ident "GCC: (GNU) 3.2.2"

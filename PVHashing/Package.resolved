@@ -1,0 +1,15 @@
+{
+  "originHash" : "e8a5becb36b471775f1971c2482a5bc8bb499ca781ea8f146c6c921102e1fbbd",
+  "pins" : [
+    {
+      "identity" : "checksum",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
+      "state" : {
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
+      }
+    }
+  ],
+  "version" : 3
+}

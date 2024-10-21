@@ -33,7 +33,7 @@ public extension DatabaseManager {
     func patreonAccount() -> PatreonAccount? {
         guard let patreonAccountID = Keychain.shared.patreonAccountID else { return nil }
         guard let patreonAccount: PatreonAccount = databaseDataManager.patreonAccounts?.first(where: {
-            $0.identifier == patreonAccountID
+            $0.id == patreonAccountID
         }) else {
             return nil
         }

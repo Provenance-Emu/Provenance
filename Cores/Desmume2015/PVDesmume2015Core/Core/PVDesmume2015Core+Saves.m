@@ -9,7 +9,7 @@
 #import "PVDesmume2015Core+Saves.h"
 #import "PVDesmume2015Core.h"
 
-@implementation PVDesmume2015Core (Saves)
+@implementation PVDesmume2015CoreBridge (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {

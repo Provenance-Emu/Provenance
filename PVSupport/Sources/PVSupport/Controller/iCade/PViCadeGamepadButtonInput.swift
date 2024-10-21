@@ -15,6 +15,7 @@
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
 
+#if canImport(UIKit) && canImport(GameController)
 import GameController
 
 public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
@@ -61,3 +62,4 @@ public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
         }
     }
 }
+#endif

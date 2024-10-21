@@ -1,0 +1,8 @@
+language: c
+
+compiler:
+ - clang
+ - gcc
+
+script: ./autogen.sh && make && make check
+
