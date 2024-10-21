@@ -45,7 +45,7 @@ extension PVAppDelegate {
     }
     
     func appRatingSignifigantEvent() {
-        SiriusRating.shared.userDidSignificantEvent()
+//        SiriusRating.shared.userDidSignificantEvent()
     }
     
     func testAppRatingPrompt() {

@@ -8,6 +8,8 @@
 
 import Foundation
 import SwiftMacros
+import Observation
+import Combine
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
@@ -15,13 +17,12 @@ import AppKit
 #endif
 
 //@Singleton
-@available(macOS 14.0, *)
-public final class ThemeManager {
+public final class ThemeManager: ObservableObject {
 
     nonisolated(unsafe) public static let shared: ThemeManager = .init()
     private init() { }
 
-    public let themes: Array<iOSTheme> = []
+    public var themes: Array<iOSTheme> = []
     public private(set) var currentTheme: iOSTheme = ProvenanceThemes.default.palette
 
     public func setCurrentTheme(_ theme: iOSTheme) {

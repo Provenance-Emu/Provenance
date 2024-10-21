@@ -12,7 +12,8 @@ import RealmSwift
 struct HomeContinueItemView: SwiftUI.View {
 
     @ObservedRealmObject var continueState: PVSaveState
-    let height: CGFloat // match image height to section height, else the fill content mode messes up the zstack
+    let height: CGFloat
+    let hideSystemLabel: Bool
     var action: () -> Void
 
     var body: some SwiftUI.View {
@@ -43,11 +44,13 @@ struct HomeContinueItemView: SwiftUI.View {
                                 .foregroundColor(Color.white)
                         }
                         Spacer()
-                        VStack(alignment: .trailing) {
-                            Text("...").font(.system(size: 15)).opacity(0)
-                            Text(continueState.game.system.name)
-                                .font(.system(size: 8))
-                                .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+                        if !hideSystemLabel {
+                            VStack(alignment: .trailing) {
+                                Text("...").font(.system(size: 15)).opacity(0)
+                                Text(continueState.game.system.name)
+                                    .font(.system(size: 8))
+                                    .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+                            }
                         }
                     }
                     .padding(.vertical, 10)

@@ -44,8 +44,12 @@ struct GameContextMenu: SwiftUI.View {
     weak var rootDelegate: PVRootDelegate?
     @State private var showingRenameAlert = false
     @State private var newGameTitle = ""
+    @FocusState private var renameTitleFieldIsFocused: Bool
+    #if !os(tvOS)
     @State private var showImagePicker = false
     @State private var selectedImage: UIImage?
+    @State private var didSetImage = false
+    #endif
 
     var body: some SwiftUI.View {
         Group {
@@ -73,9 +77,11 @@ struct GameContextMenu: SwiftUI.View {
             Button {
                 promptUserMD5CopiedToClipboard(forGame: game)
             } label: { Label("Copy MD5 URL", systemImage: "number.square") }
+            #if !os(tvOS)
             Button {
-                promptUserToSelectArtwork(forGame: game)
+                showImagePicker = true
             } label: { Label("Choose Cover", systemImage: "book.closed") }
+            #endif
             Button {
                 pasteArtwork(forGame: game)
             } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
@@ -95,31 +101,40 @@ struct GameContextMenu: SwiftUI.View {
         }
         .alert("Rename Game", isPresented: $showingRenameAlert) {
             TextField("New name", text: $newGameTitle)
-            Button("Cancel", role: .cancel) {}
-            Button("OK") {
-                if !newGameTitle.isEmpty {
-                    RomDatabase.sharedInstance.renameGame(game, toTitle: newGameTitle)
-                } else {
-                    rootDelegate?.showMessage("Cannot set a blank title.", title: "Error")
+                .onSubmit {
+                    submitRename()
                 }
+                .textInputAutocapitalization(.words)
+                .disableAutocorrection(true)
+
+            Button("Cancel", role: .cancel) {
+                showingRenameAlert = false
+            }
+            Button("OK") {
+                submitRename()
             }
         } message: {
             Text("Enter a new name for \(game.title)")
         }
+        #if !os(tvOS)
         .sheet(isPresented: $showImagePicker) {
-            ImagePicker(selectedImage: Binding(
-                get: { self.selectedImage ?? UIImage() },
-                set: { self.selectedImage = $0 }
-            ), didSet: Binding(
-                get: { self.selectedImage != nil },
-                set: { _ in }
-            ))
-            .onDisappear {
-                if let image = selectedImage {
-                    saveArtwork(image: image, forGame: game)
+            ImagePicker(selectedImage: $selectedImage, didSet: $didSetImage)
+                .onDisappear {
+                    if didSetImage, let image = selectedImage {
+                        saveArtwork(image: image, forGame: game)
+                    }
                 }
-            }
         }
+        #endif
+    }
+
+    private func submitRename() {
+        if !newGameTitle.isEmpty {
+            renameGame(game, toTitle: newGameTitle)
+        } else {
+            rootDelegate?.showMessage("Cannot set a blank title.", title: "Error")
+        }
+        showingRenameAlert = false
     }
 }
 
@@ -150,19 +165,23 @@ extension GameContextMenu {
     }
 
     func promptUserToSelectArtwork(forGame game: PVGame) {
+        #if !os(tvOS)
         showImagePicker = true
+        #endif
     }
 
     func pasteArtwork(forGame game: PVGame) {
         #if !os(tvOS)
-        guard let artwork = UIPasteboard.general.image else {
-            // Alert user Pasteboard did not contain image
+        guard let pastedImage = UIPasteboard.general.image else {
             artworkNotFoundAlert()
             return
         }
+
+        saveArtwork(image: pastedImage, forGame: game)
+        rootDelegate?.showMessage("Artwork has been pasted and saved for \(game.title).", title: "Artwork Saved")
+        #else
+        rootDelegate?.showMessage("Pasting artwork is not supported on this platform.", title: "Not Supported")
         #endif
-#warning("TODO: Paste artwork button action")
-        self.rootDelegate?.showUnderConstructionAlert()
     }
 
     func artworkNotFoundAlert() {
@@ -178,13 +197,30 @@ extension GameContextMenu {
         do {
             let uniqueFileName = UUID().uuidString + ".png"
             let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(uniqueFileName)
-            try image.pngData()?.write(to: fileURL)
+            if let pngData = image.pngData() {
+                try pngData.write(to: fileURL)
 
-            try RomDatabase.sharedInstance.writeTransaction {
-                game.customArtworkURL = fileURL.absoluteString
+                try RomDatabase.sharedInstance.writeTransaction {
+                    let thawedGame = game.thaw()
+                    thawedGame?.customArtworkURL = fileURL.absoluteString
+                }
+            } else {
+                throw NSError(domain: "GameContextMenu", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to PNG data"])
             }
         } catch {
             rootDelegate?.showMessage("Failed to save artwork: \(error.localizedDescription)", title: "Error")
+        }
+    }
+
+    private func renameGame(_ game: PVGame, toTitle newTitle: String) {
+        do {
+            try RomDatabase.sharedInstance.writeTransaction {
+                let thawedGame = game.thaw()
+                thawedGame?.title = newTitle
+            }
+            rootDelegate?.showMessage("Game successfully renamed to \(newTitle).", title: "Game Renamed")
+        } catch {
+            rootDelegate?.showMessage("Failed to rename game: \(error.localizedDescription)", title: "Error")
         }
     }
 }

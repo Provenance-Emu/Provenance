@@ -10,33 +10,33 @@ import SwiftUI
 #if !os(tvOS)
 struct ImagePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) private var presentationMode
-    @Binding var selectedImage: UIImage
+    @Binding var selectedImage: UIImage?
     @Binding var didSet: Bool
     var sourceType = UIImagePickerController.SourceType.photoLibrary
-     
+
     func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
         let imagePicker = UIImagePickerController()
-        imagePicker.navigationBar.tintColor = .clear
+        imagePicker.navigationBar.tintColor = .systemBlue
         imagePicker.allowsEditing = false
         imagePicker.sourceType = sourceType
         imagePicker.delegate = context.coordinator
         return imagePicker
     }
- 
+
     func updateUIViewController(_ uiViewController: UIImagePickerController,
                                 context: UIViewControllerRepresentableContext<ImagePicker>) { }
-    
+
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
+
     class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         let control: ImagePicker
-        
+
         init(_ control: ImagePicker) {
             self.control = control
         }
-     
+
         func imagePickerController(_ picker: UIImagePickerController,
                                    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
@@ -54,9 +54,9 @@ struct ImagePicker: UIViewControllerRepresentable {
 struct SignatureImageView: View {
     @Binding var isSet: Bool
     @Binding var selection: UIImage
-    
+
     @State private var showPopover = false
-    
+
     var body: some View {
         Button(action: {
             showPopover.toggle()

@@ -166,9 +166,6 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                     self.window?.makeKeyAndVisible()
                     self.window?.rootViewController?.present(alert, animated: true, completion: nil)
                     
-                    if self.isAppStore {
-                        self._initAppRating()
-                    }
                 }
             }
         }
@@ -183,6 +180,11 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
             self.startOptionalWebDavServer()
+            #if !os(tvOS)
+            if self.isAppStore {
+                self._initAppRating()
+            }
+            #endif
         })
 
         return true

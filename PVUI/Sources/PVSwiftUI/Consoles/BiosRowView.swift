@@ -34,9 +34,9 @@ struct BiosRowView: SwiftUI.View {
     @State
     var biosState: BIOSStatus.State? = nil
 
-    var body: some SwiftUI.View {
-        
+    @ObservedObject private var themeManager = ThemeManager.shared
 
+    var body: some SwiftUI.View {
         return HStack(alignment: .center, spacing: 0) {
             Image(biosState?.biosStatusImageName ?? BIOSStatus.State.missing.biosStatusImageName).resizable().scaledToFit()
                 .padding(.vertical, 4)
@@ -47,14 +47,14 @@ struct BiosRowView: SwiftUI.View {
                     .foregroundColor(Color.white)
                 Text("\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes")
                     .font(.caption2)
-                    .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
             }
             Spacer()
             HStack(alignment: .center, spacing: 4) {
                 switch biosState {
                 case .match:
                     Image(systemName: "checkmark")
-                        .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+                        .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
                         .font(.footnote.weight(.light))
                 case .missing:
                     Text("Missing")

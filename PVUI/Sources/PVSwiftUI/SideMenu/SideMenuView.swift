@@ -45,12 +45,14 @@ public struct SideMenuView: SwiftUI.View {
 
     @ObservedObject var searchBar: SearchBar
 
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.viewModel = viewModel
         self.delegate = delegate
         self.rootDelegate = rootDelegate
-        
+
         #if os(tvOS)
         searchBar = SearchBar(searchResultsController: rootDelegate as! UIViewController)
         #else
@@ -122,7 +124,7 @@ public struct SideMenuView: SwiftUI.View {
             vc.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "provnavicon"))
         })
 #endif
-        .background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
+        .background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
         .add(self.searchBar)
         // search results
         .if(!searchBar.text.isEmpty) { view in
@@ -144,7 +146,7 @@ public struct SideMenuView: SwiftUI.View {
                                 }
                                 .padding(.horizontal, 10)
                             }
-                            .background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
+                            .background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
                         }
                     }
                 }

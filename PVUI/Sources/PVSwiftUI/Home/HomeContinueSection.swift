@@ -15,18 +15,31 @@ import PVThemes
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueSection: SwiftUI.View {
 
-    var continueStates: Results<PVSaveState>
+    @ObservedResults(
+        PVSaveState.self,
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+    ) var allSaveStates
+
     weak var rootDelegate: PVRootDelegate?
     let height: CGFloat = 260
+    var consoleIdentifier: String?
+
+    var filteredSaveStates: [PVSaveState] {
+        if let consoleIdentifier = consoleIdentifier {
+            return allSaveStates.filter { $0.game?.systemIdentifier == consoleIdentifier }
+        } else {
+            return Array(allSaveStates)
+        }
+    }
 
     var body: some SwiftUI.View {
-
         TabView {
-            if continueStates.count > 0 {
-                ForEach(continueStates, id: \.self) { state in
-                    HomeContinueItemView(continueState: state, height: height) {
+            if filteredSaveStates.count > 0 {
+                ForEach(filteredSaveStates, id: \.self) { state in
+                    HomeContinueItemView(continueState: state, height: height, hideSystemLabel: consoleIdentifier != nil) {
                         Task.detached { @MainActor in
-                            await rootDelegate?.root_load(state.game, sender: self, core: state.core, saveState: state)}
+                            await rootDelegate?.root_load(state.game, sender: self, core: state.core, saveState: state)
+                        }
                     }
                 }
             } else {
@@ -36,7 +49,7 @@ struct HomeContinueSection: SwiftUI.View {
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
-        .id(continueStates.count)
+        .id(filteredSaveStates.count)
         .frame(height: height)
     }
 }

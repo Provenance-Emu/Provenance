@@ -22,56 +22,43 @@ enum PVHomeSection: Int, CaseIterable, Sendable {
 
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
-    
+
 //    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
-    
+
     weak var rootDelegate: PVRootDelegate?
-    
+
     @ObservedResults(
         PVSaveState.self,
         filter: NSPredicate(format: "game != nil && game.system != nil"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
     ) var recentSaveStates
-    
+
     @ObservedResults(
         PVRecentGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
     ) var recentlyPlayedGames
-    
+
     @ObservedResults(
         PVGame.self,
         filter: NSPredicate(format: "\(#keyPath(PVGame.isFavorite)) == %@", NSNumber(value: true)),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var favorites
-    
+
     @ObservedResults(
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
-    
+
     init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil) {
 //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
     }
-    
+
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
                 LazyVStack {
-                    if #available(iOS 15, tvOS 15, *) {
-                        HomeContinueSection(continueStates: recentSaveStates, rootDelegate: rootDelegate)
-                    } else {
-                        HomeSection(title: "Continue") {
-                            ForEach(recentSaveStates, id: \.self) { recentSaveState in
-                                GameItemView(game: recentSaveState.game, constrainHeight: true) {
-                                    Task.detached { @MainActor in
-                                        await rootDelegate?.root_load(recentSaveState.game, sender: self, core: recentSaveState.core, saveState: recentSaveState)
-                                    }
-                                }
-                            }
-                        }
-                        HomeDividerView()
-                    }
+                    HomeContinueSection(rootDelegate: rootDelegate)
                     HomeSection(title: "Recently Played") {
                         ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
                             GameItemView(game: game, constrainHeight: true) {
