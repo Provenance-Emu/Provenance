@@ -377,13 +377,13 @@ public enum iCloudSync {
                 await jsonFiles.concurrentForEach { @MainActor json in
                     let realm = try! await Realm()
                     do {
-                        guard json.startAccessingSecurityScopedResource() else {
-                            ELOG("startAccessingSecurityScopedResource failed")
-                            return
-                        }
+                        
+                        let secureDoc = json.startAccessingSecurityScopedResource()
 
                         defer {
-                            json.stopAccessingSecurityScopedResource()
+                            if secureDoc {
+                                json.stopAccessingSecurityScopedResource()
+                            }
                         }
                         
                         var dataMaybe = FileManager.default.contents(atPath: json.path)

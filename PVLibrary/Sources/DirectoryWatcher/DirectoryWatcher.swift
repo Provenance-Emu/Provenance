@@ -505,14 +505,13 @@ extension DirectoryWatcher {
     /// Handle an imported file
     public func handleImportedFile(at url: URL) {
         ILOG("Handling imported file: \(url.lastPathComponent)")
-        guard url.startAccessingSecurityScopedResource() else {
-            ELOG("Failed to access security scoped resource for file: \(url.lastPathComponent)")
-            return
-        }
+        let secureDoc = url.startAccessingSecurityScopedResource()
 
         defer {
-            url.stopAccessingSecurityScopedResource()
-            ILOG("Stopped accessing security scoped resource for file: \(url.lastPathComponent)")
+            if secureDoc {
+                url.stopAccessingSecurityScopedResource()
+                ILOG("Stopped accessing security scoped resource for file: \(url.lastPathComponent)")
+            }
         }
 
         let coordinator = NSFileCoordinator()
