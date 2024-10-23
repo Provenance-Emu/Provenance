@@ -89,9 +89,9 @@ struct GameContextMenu: SwiftUI.View {
             Button {
                 pasteArtwork(forGame: game)
             } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
-            Button {
-                share(game: game)
-            } label: { Label("Share", systemImage: "square.and.arrow.up") }
+//            Button {
+//                share(game: game)
+//            } label: { Label("Share", systemImage: "square.and.arrow.up") }
             Divider()
             if #available(iOS 15, tvOS 15, macOS 12, *) {
                 Button(role: .destructive) {
