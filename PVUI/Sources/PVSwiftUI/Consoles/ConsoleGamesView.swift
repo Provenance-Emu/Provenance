@@ -248,22 +248,41 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     }
 
     private func saveArtwork(image: UIImage, forGame game: PVGame) {
-        do {
-            let uniqueFileName = UUID().uuidString + ".png"
-            let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(uniqueFileName)
-            if let pngData = image.pngData() {
-                try pngData.write(to: fileURL)
+        DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
 
-                try RomDatabase.sharedInstance.writeTransaction {
-                    let thawedGame = game.thaw()
-                    thawedGame?.customArtworkURL = fileURL.absoluteString
+        let uniqueID = UUID().uuidString
+        let key = "artwork_\(game.md5)_\(uniqueID)"
+        DLOG("Generated key for image: \(key)")
+
+        do {
+            DLOG("Attempting to write image to disk")
+            try PVMediaCache.writeImage(toDisk: image, withKey: key)
+            DLOG("Image successfully written to disk")
+
+            DLOG("Attempting to update game's customArtworkURL")
+            try RomDatabase.sharedInstance.writeTransaction {
+                let thawedGame = game.thaw()
+                DLOG("Game thawed: \(thawedGame?.title ?? "Unknown")")
+                thawedGame?.customArtworkURL = key
+                DLOG("Game's customArtworkURL updated to: \(key)")
+            }
+            DLOG("Database transaction completed successfully")
+            rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
+
+            // Verify the image can be retrieved
+            DLOG("Attempting to verify image retrieval")
+            PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
+                if let retrievedImage = retrievedImage {
+                    DLOG("Successfully retrieved saved image for key: \(retrievedKey)")
+                    DLOG("Retrieved image size: \(retrievedImage.size)")
+                } else {
+                    DLOG("Failed to retrieve saved image for key: \(retrievedKey)")
                 }
-                rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
-            } else {
-                throw NSError(domain: "ConsoleGamesView", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to PNG data"])
             }
         } catch {
-            rootDelegate?.showMessage("Failed to save artwork: \(error.localizedDescription)", title: "Error")
+            DLOG("Failed to set custom artwork: \(error.localizedDescription)")
+            DLOG("Error details: \(error)")
+            rootDelegate?.showMessage("Failed to set custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
         }
     }
 }
