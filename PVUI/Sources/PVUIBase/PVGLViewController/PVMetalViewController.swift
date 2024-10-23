@@ -360,7 +360,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 
         let screenRect = emulatorCore.screenRect
-        let pixelFormat = getMTLPixelFormatNeo(from: emulatorCore.pixelFormat,
+        let pixelFormat = getMTLPixelFormat(from: emulatorCore.pixelFormat,
                                                type: emulatorCore.pixelType)
 
         ILOG("Updating input texture with screenRect: \(screenRect), pixelFormat: \(pixelFormat)")
@@ -520,9 +520,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         // Handle special cases first
         switch (pixelFormat, pixelType) {
-        case (GL_RGB565, GL_UNSIGNED_SHORT_5_6_5),
-             (GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4),
-             (GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1):
+        case (_, GL_UNSIGNED_SHORT_5_6_5),
+             (_, GL_UNSIGNED_SHORT_4_4_4_4),
+             (_, GL_UNSIGNED_SHORT_5_5_5_1):
             return 2
         case (GL_RGBA8, _), (GL_RGB8, _):
             return 4
