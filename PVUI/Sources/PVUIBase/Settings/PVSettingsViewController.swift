@@ -468,9 +468,9 @@ public final class PVSettingsViewController: QuickTableViewController {
 //                                detailText: .subtitle("Mix all audio in mono. The Legacy Audio Engine is not supported."),
 //                                key: .monoAudio, icon: .sfSymbol("ear.badge.waveform")),
 
-            PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
-                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
-                                key: .iCloudSync, icon: .sfSymbol("icloud")),
+//            PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
+//                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
+//                                key: .iCloudSync, icon: .sfSymbol("icloud")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
                                 detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 3-fingers 3 times to toggle."),
