@@ -101,9 +101,16 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @State private var lastScale: CGFloat = 1.0
     @State private var currentZoomIndex: Int = 2 // Start at middle zoom level
 
+    // Image Picker
     @State private var showImagePicker = false
     @State private var selectedImage: UIImage?
     @State private var gameToUpdateCover: PVGame?
+
+    // Rename Game
+    @State private var showingRenameAlert = false
+    @State private var gameToRename: PVGame?
+    @State private var newGameTitle = ""
+    @FocusState private var renameTitleFieldIsFocused: Bool
 
     var body: some SwiftUI.View {
         GeometryReader { geometry in
@@ -210,6 +217,23 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 showImagePicker = false
             }
         }
+        .alert("Rename Game", isPresented: $showingRenameAlert) {
+            TextField("New name", text: $newGameTitle)
+                .onSubmit {
+                    submitRename()
+                }
+                .textInputAutocapitalization(.words)
+                .disableAutocorrection(true)
+
+            Button("Cancel", role: .cancel) {
+                showingRenameAlert = false
+            }
+            Button("OK") {
+                submitRename()
+            }
+        } message: {
+            Text("Enter a new name for \(gameToRename?.title ?? "")")
+        }
     }
 
     // MARK: - Zoom Helpers
@@ -230,17 +254,34 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         Defaults[.gameLibraryScale] = Float(scale)
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame, to newTitle: String) {
-        do {
-            try RomDatabase.sharedInstance.writeTransaction {
-                let thawedGame = game.thaw()
-                thawedGame?.title = newTitle
-            }
-            rootDelegate?.showMessage("Game successfully renamed to \(newTitle).", title: "Game Renamed")
-        } catch {
-            rootDelegate?.showMessage("Failed to rename game: \(error.localizedDescription)", title: "Error")
-        }
+    /// MARK: Rename
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
+        gameToRename = game.freeze() // Freeze the game object
+        newGameTitle = game.title
+        showingRenameAlert = true
     }
+
+    private func submitRename() {
+        if !newGameTitle.isEmpty, let frozenGame = gameToRename, newGameTitle != frozenGame.title {
+            do {
+                guard let thawedGame = frozenGame.thaw() else {
+                    throw NSError(domain: "ConsoleGamesView", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to thaw game object"])
+                }
+                RomDatabase.sharedInstance.renameGame(thawedGame, toTitle: newGameTitle)
+                rootDelegate?.showMessage("Game renamed successfully.", title: "Success")
+            } catch {
+                DLOG("Failed to rename game: \(error.localizedDescription)")
+                rootDelegate?.showMessage("Failed to rename game: \(error.localizedDescription)", title: "Error")
+            }
+        } else if newGameTitle.isEmpty {
+            rootDelegate?.showMessage("Cannot set a blank title.", title: "Error")
+        }
+        showingRenameAlert = false
+        gameToRename = nil
+    }
+
+    /// MARK: Image Picker
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
         gameToUpdateCover = game

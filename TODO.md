@@ -3,8 +3,8 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] Swift UI long press on roms menu missing actions {artwork, sharing...}
-- [ ] iCloud sync isn't working, remove or fix
+- [X] iCloud sync isn't working, remove or fix
+- [X] Swift UI long press on roms menu missing actions {rename, ~~share~~}
 - [X] Progress hud on unzips isn't hiding
 - [X] Themes setting doesn't work
 - [X] Conflicts folder is weird
@@ -28,6 +28,7 @@ _My personal TODO notes_
 - [ ] Intellivision video is glitched
 - [ ] SuperVision video dimensions wrong
 - [ ] Odyssey2 needs a way to enter game number 1,2 (3,4)?
+- [ ] iCloud sync removed
 - [X] CrabEMU (Genesis) no buttons work
 - [X] Mednafen GB crashing
 - [X] Vectrex needs PVVecXCore:LibRetroCore (or rollback to older code?)
@@ -70,6 +71,7 @@ _My personal TODO notes_
     - [ ] Main background not themed
     - [ ] Game text not themed
     - [ ] New import indicator not themed
+- Swift UI doesn't have "Share" menu item
 - [X] Dolphin won't build due to stdint.h in extern C
 - [X] Nes fix button layout
 - [X] Test/fix CrabEMU save states

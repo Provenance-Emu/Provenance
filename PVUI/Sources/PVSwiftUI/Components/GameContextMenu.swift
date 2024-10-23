@@ -39,7 +39,7 @@ struct GameMoreInfoViewController: UIViewControllerRepresentable {
 }
 
 protocol GameContextMenuDelegate {
-    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame, to newTitle: String)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame)
 }
 
@@ -49,10 +49,6 @@ struct GameContextMenu: SwiftUI.View {
 
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
-    @State private var showingRenameAlert = false
-    @State private var newGameTitle = ""
-    @FocusState private var renameTitleFieldIsFocused: Bool
-    @State private var showImagePicker = false
 
     var body: some SwiftUI.View {
         Group {
@@ -74,24 +70,29 @@ struct GameContextMenu: SwiftUI.View {
                 }
             } label: { Label("Favorite", systemImage: "heart") }
             Button {
-                showingRenameAlert = true
-                newGameTitle = game.title
+                contextMenuDelegate?.gameContextMenu(self, didRequestRenameFor: game)
             } label: { Label("Rename", systemImage: "rectangle.and.pencil.and.ellipsis") }
             Button {
                 promptUserMD5CopiedToClipboard(forGame: game)
             } label: { Label("Copy MD5 URL", systemImage: "number.square") }
-            #if !os(tvOS)
+#if !os(tvOS)
             Button {
                 DLOG("GameContextMenu: Choose Cover button tapped")
                 contextMenuDelegate?.gameContextMenu(self, didRequestChooseCoverFor: game)
             } label: { Label("Choose Cover", systemImage: "book.closed") }
-            #endif
+#endif
             Button {
                 pasteArtwork(forGame: game)
             } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
-//            Button {
-//                share(game: game)
-//            } label: { Label("Share", systemImage: "square.and.arrow.up") }
+            //            Button {
+            //                share(game: game)
+            //            } label: { Label("Share", systemImage: "square.and.arrow.up") }
+            // New menu item to clear custom artwork
+            if game.customArtworkURL != "" {
+                Button {
+                    clearCustomArtwork(forGame: game)
+                } label: { Label("Clear Custom Artwork", systemImage: "xmark.circle") }
+            }
             Divider()
             if #available(iOS 15, tvOS 15, macOS 12, *) {
                 Button(role: .destructive) {
@@ -103,32 +104,6 @@ struct GameContextMenu: SwiftUI.View {
                 } label: { Label("Delete", systemImage: "trash") }
             }
         }
-        .alert("Rename Game", isPresented: $showingRenameAlert) {
-            TextField("New name", text: $newGameTitle)
-                .onSubmit {
-                    submitRename()
-                }
-                .textInputAutocapitalization(.words)
-                .disableAutocorrection(true)
-
-            Button("Cancel", role: .cancel) {
-                showingRenameAlert = false
-            }
-            Button("OK") {
-                submitRename()
-            }
-        } message: {
-            Text("Enter a new name for \(game.title)")
-        }
-    }
-
-    private func submitRename() {
-        if !newGameTitle.isEmpty {
-            renameGame(game, toTitle: newGameTitle)
-        } else {
-            rootDelegate?.showMessage("Cannot set a blank title.", title: "Error")
-        }
-        showingRenameAlert = false
     }
 }
 
@@ -156,12 +131,6 @@ extension GameContextMenu {
         #endif
 
         rootDelegate?.showMessage("The MD5 hash for \(game.title) has been copied to the clipboard.", title: "MD5 Copied")
-    }
-
-    func promptUserToSelectArtwork(forGame game: PVGame) {
-        #if !os(tvOS)
-        showImagePicker = true
-        #endif
     }
 
     func pasteArtwork(forGame game: PVGame) {
@@ -203,8 +172,8 @@ extension GameContextMenu {
     }
 
     func share(game: PVGame) {
-    #warning("TODO: Share button action")
-    self.rootDelegate?.showUnderConstructionAlert()
+        #warning("TODO: Share button action")
+        self.rootDelegate?.showUnderConstructionAlert()
     }
 
     private func saveArtwork(image: UIImage, forGame game: PVGame) {
@@ -246,15 +215,20 @@ extension GameContextMenu {
         }
     }
 
-    private func renameGame(_ game: PVGame, toTitle newTitle: String) {
+    private func clearCustomArtwork(forGame game: PVGame) {
+        DLOG("GameContextMenu: Attempting to clear custom artwork for game: \(game.title)")
         do {
             try RomDatabase.sharedInstance.writeTransaction {
                 let thawedGame = game.thaw()
-                thawedGame?.title = newTitle
+                thawedGame?.customArtworkURL = ""
             }
-            rootDelegate?.showMessage("Game successfully renamed to \(newTitle).", title: "Game Renamed")
+            DLOG("Successfully cleared custom artwork for game: \(game.title)")
+            rootDelegate?.showMessage("Custom artwork has been cleared for \(game.title).", title: "Artwork Cleared")
+            try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
+            DLOG("Successfully deleted custom artowrk form game: \(game.title)")
         } catch {
-            rootDelegate?.showMessage("Failed to rename game: \(error.localizedDescription)", title: "Error")
+            DLOG("Failed to clear custom artwork: \(error.localizedDescription)")
+            rootDelegate?.showMessage("Failed to clear custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
         }
     }
 }

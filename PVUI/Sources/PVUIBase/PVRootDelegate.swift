@@ -24,3 +24,17 @@ public protocol PVRootDelegate: AnyObject {
     func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
     func showMessage(_ message: String, title: String)
 }
+
+extension PVRootDelegate {
+    private func renameGame(_ game: PVGame, toTitle newTitle: String) {
+        do {
+            try RomDatabase.sharedInstance.writeTransaction {
+                let thawedGame = game.thaw()
+                thawedGame?.title = newTitle
+            }
+            showMessage("Game successfully renamed to \(newTitle).", title: "Game Renamed")
+        } catch {
+            showMessage("Failed to rename game: \(error.localizedDescription)", title: "Error")
+        }
+    }
+}
