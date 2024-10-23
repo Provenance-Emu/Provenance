@@ -10,84 +10,77 @@ import Foundation
 import PVLogging
 import Defaults
 
-public typealias ThemeOptions = CustomStringConvertible & CaseIterable & UserDefaultsRepresentable & Defaults.Serializable
+public protocol ThemeOptions: CustomStringConvertible, CaseIterable {}
+
+public struct ThemeOptionBridge: Defaults.Bridge, Sendable {
+    public typealias Value = ThemeOption
+    public typealias Serializable = [String: String]
+    
+    public func serialize(_ value: ThemeOption?) -> [String: String]? {
+        guard let value else { return nil }
+        switch value {
+        case .standard(let option):
+            return ["type": "standard", "value": option.rawValue]
+        case .cga(let option):
+            return ["type": "cga", "value": option.rawValue]
+        }
+    }
+    
+    public func deserialize(_ object: [String: String]?) -> ThemeOption? {
+        guard let object, let type = object["type"], let value = object["value"] else { return nil }
+        switch type {
+        case "standard":
+            return .standard(ThemeOptionsStandard(rawValue: value) ?? .dark)
+        case "cga":
+            return .cga(ThemeOptionsCGA(rawValue: value) ?? .blue)
+        default:
+            return nil
+        }
+    }
+}
+
+public enum ThemeOption: Defaults.Serializable {
+    case standard(ThemeOptionsStandard)
+    case cga(ThemeOptionsCGA)
+    
+    public static let bridge = ThemeOptionBridge()
+    
+    public var description: String {
+        switch self {
+        case .standard(let option): return "Standard " + option.description
+        case .cga(let option): return "CGA " + option.description
+        }
+    }
+    
+    public static var allCases: [ThemeOption] {
+        return ThemeOptionsStandard.allCases.map { ThemeOption.standard($0) } +
+               ThemeOptionsCGA.allCases.map { ThemeOption.cga($0) }
+    }
+}
 
 public enum ThemeOptionsStandard: String, ThemeOptions {
     case light
     case dark
     case auto
-
+    
     public var description: String {
-        switch self {
-        case .light: return "Light"
-        case .dark: return "Dark"
-        case .auto: return "Auto"
-        }
-    }
-
-    public static var themes: [ThemeOptionsStandard] {
-        return allCases
-    }
-
-    public static func optionForRow(_ row: UInt) -> ThemeOptionsStandard {
-        switch row {
-        case 0:
-            return .light
-        case 1:
-            return .dark
-        case 2:
-            return .auto
-        default:
-            ELOG("Bad row \(row)")
-            return .dark
-        }
+        rawValue.capitalized
     }
 }
 
-public enum ThemeOptionsCGA: UInt, ThemeOptions {
+public enum ThemeOptionsCGA: String, ThemeOptions {
     case blue
     case cyan
     case green
     case magenta
     case red
     case yellow
-
+    
     public var description: String {
-        switch self {
-        case .blue: return "Blue"
-        case .cyan: return "Cyan"
-        case .green: return "Green"
-        case .magenta: return "Magenta"
-        case .red: return "Red"
-        case .yellow: return "Yellow"
-        }
+        rawValue.capitalized
     }
+}
 
-    public var row: UInt {
-        return rawValue
-    }
-
-    public static var themes: [ThemeOptionsCGA] {
-        return allCases
-    }
-
-    public static func optionForRow(_ row: UInt) -> ThemeOptionsCGA {
-        switch row {
-        case 0:
-            return .blue
-        case 1:
-            return .cyan
-        case 2:
-            return .green
-        case 3:
-            return .magenta
-        case 4:
-            return .red
-        case 5:
-            return .yellow
-        default:
-            ELOG("Bad row \(row)")
-            return .blue
-        }
-    }
+public extension Defaults.Keys {
+    public static let theme = Key<ThemeOption>("theme", default: .standard(.dark))
 }

@@ -9,6 +9,7 @@
 #if canImport(UIKit)
 import UIKit
 #endif
+import PVThemes
 
 public extension SideNavigationController {
 
@@ -30,7 +31,7 @@ public extension SideNavigationController {
 
     struct Options {
 
-        public static var defaultTintColor = UIColor.white
+        public static var defaultTintColor = ThemeManager.shared.currentTheme.barButtonItemTint ?? UIColor.white
 
         public var widthPercent: CGFloat
         public var animationDuration: TimeInterval

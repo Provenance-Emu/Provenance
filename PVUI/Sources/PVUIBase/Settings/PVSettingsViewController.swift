@@ -36,9 +36,9 @@ fileprivate var IsAppStore: Bool {
 public final class PVSettingsViewController: QuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
     let reachability: Reachability = try! Reachability()
-    
+
     private var cancellables = Set<AnyCancellable>()
-    
+
     public var conflictsController: PVGameLibraryUpdatesController? {
         didSet {
             setupConflictsObserver()
@@ -57,13 +57,13 @@ public final class PVSettingsViewController: QuickTableViewController {
             .store(in: &cancellables)
     }
 
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         splitViewController?.title = "Settings"
         generateTableViewViewModels()
         tableView.reloadData()
-        
+
 #if os(tvOS)
         tableView.rowHeight = UITableView.automaticDimension
         splitViewController?.view.backgroundColor = .black
@@ -71,7 +71,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
 #endif
     }
-    
+
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         splitViewController?.title = "Settings"
@@ -81,25 +81,25 @@ public final class PVSettingsViewController: QuickTableViewController {
             print("Unable to start notifier")
         }
     }
-    
+
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         reachability.stopNotifier()
     }
-    
+
 #if os(tvOS)
     private var heightDictionary: [IndexPath: CGFloat] = [:]
-    
+
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         heightDictionary[indexPath] = cell.frame.size.height
     }
-    
+
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         let height = heightDictionary[indexPath]
         return height ?? UITableView.automaticDimension
     }
-    
+
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
@@ -108,26 +108,29 @@ public final class PVSettingsViewController: QuickTableViewController {
         return cell
     }
 #endif
-    
+
     @MainActor
     func generateTableViewViewModels() {
         typealias TableRow = Row & RowStyle
-        
+
         // MARK: -- Section : App
         let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), detailText: .subtitle("Information on cores, their bioses, links and stats."), icon: .sfSymbol("square.stack"), viewController: self, segue: "pushSystemSettings")
-        
         let systemMode = self.traitCollection.userInterfaceStyle == .dark ? "Dark" : "Light"
-        var theme = Defaults[.theme].description
-        if Defaults[.theme] == .auto {
-            theme += " (\(systemMode))"
+        let currentTheme = Defaults[.theme]
+        DLOG("Current theme from Defaults: \(currentTheme)")
+        var themeDescription = currentTheme.description
+        if case .standard(.auto) = currentTheme {
+            themeDescription += " (\(systemMode))"
         }
-        let themeRow = NavigationRow(text: NSLocalizedString("Theme", comment: "Theme"), detailText: .value1(Defaults[.theme].description), icon: .sfSymbol("paintbrush"), action: { row in
+
+        let themeRow = NavigationRow(text: NSLocalizedString("Theme", comment: "Theme"), detailText: .value1(themeDescription), icon: .sfSymbol("paintbrush"), action: { row in
             let alert = UIAlertController(title: "Theme", message: "", preferredStyle: .actionSheet)
             alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
             alert.popoverPresentationController?.sourceView = self.tableView
             alert.popoverPresentationController?.sourceRect = self.tableView.bounds
-            
-            ThemeOptionsStandard.themes.forEach { mode in
+
+            // Standard themes
+            ThemeOptionsStandard.allCases.forEach { mode in
                 let modeLabel = mode == .auto ? mode.description + " (\(systemMode))" : mode.description
                 let action = UIAlertAction(title: modeLabel, style: .default, handler: { _ in
                     Task { @MainActor in
@@ -135,30 +138,46 @@ public final class PVSettingsViewController: QuickTableViewController {
                         let newTheme = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
                         ThemeManager.shared.setCurrentTheme(newTheme)
                         UIApplication.shared.windows.first?.overrideUserInterfaceStyle = darkTheme ? .dark : .light
+
+                        Defaults[.theme] = .standard(mode)
+                        DLOG("Saving theme to Defaults: .standard(\(mode))")
                         
-                        Defaults[.theme] = mode
+                        
+                        // Apply the theme again, hacky
+                        ThemeManager.applySavedTheme()
+                        
                         self.generateTableViewViewModels()
                     }
                 })
                 alert.addAction(action)
             }
-            
-            CGAThemes.allCases.forEach { theme in
-                let palette = theme.palette
-                let nameLabel = palette.name
-                
-                let action = UIAlertAction(title: nameLabel, style: .default, handler: { _ in
-                    ThemeManager.shared.setCurrentTheme(palette)
-                    UIApplication.shared.windows.first!.overrideUserInterfaceStyle = palette.dark ? .dark : .light
-#warning("Need to set theme in settings model")
-                    //                    Defaults[.theme] = palette
-                    
-                    self.generateTableViewViewModels()
+
+            // CGA themes
+            CGAThemes.allCases.forEach { cgaTheme in
+                let action = UIAlertAction(title: cgaTheme.palette.name, style: .default, handler: { _ in
+                    Task { @MainActor in
+                        let palette = cgaTheme.palette
+                        ThemeManager.shared.setCurrentTheme(palette)
+                        UIApplication.shared.windows.first!.overrideUserInterfaceStyle = palette.dark ? .dark : .light
+
+                        // Convert CGAThemes to ThemeOptionsCGA
+                        let themeOptionCGA = ThemeOptionsCGA(rawValue: cgaTheme.rawValue) ?? .blue
+                        Defaults[.theme] = .cga(themeOptionCGA)
+                        DLOG("Saving theme to Defaults: .cga(\(themeOptionCGA))")
+
+                        // Add a verification step
+                        let savedTheme = Defaults[.theme]
+                        DLOG("Verified saved theme in Defaults: \(savedTheme)")
+
+                        // Apply the theme again, hacky
+                        ThemeManager.applySavedTheme()
+
+                        self.generateTableViewViewModels()
+                    }
                 })
-                
                 alert.addAction(action)
             }
-            
+
             alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { _ in
                 if let indexPathForSelectedRow = self.tableView.indexPathForSelectedRow {
                     self.tableView.deselectRow(at: indexPathForSelectedRow, animated: false)
@@ -166,16 +185,16 @@ public final class PVSettingsViewController: QuickTableViewController {
             }))
             self.present(alert, animated: true)
         })
-        
+
 #if os(tvOS)
         let appRows: [TableRow] = [systemsRow]
 #else
         let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), detailText: .subtitle("This also disables the screensaver."), key: .disableAutoLock, icon: .sfSymbol("powersleep"))
         let appRows: [TableRow] = [autolockRow, systemsRow, themeRow]
 #endif
-        
+
         let appSection = Section(title: NSLocalizedString("App", comment: "App"), rows: appRows)
-        
+
         // MARK: -- Core Options
         // Extra Info Section
         let coreOptionsRows: [TableRow] = [
@@ -186,9 +205,9 @@ public final class PVSettingsViewController: QuickTableViewController {
                                segue: "coreOptionsSegue",
                                customization: nil),
         ]
-        
+
         let coreOptionsSection = Section(title: nil, rows: coreOptionsRows)
-        
+
         // MARK: -- Section : Saves
         var saveRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), detailText: .subtitle("Auto-save game state on close. Must be playing for 30 seconds more."), key: .autoSave, icon: .sfSymbol("autostartstop")),
@@ -204,12 +223,12 @@ public final class PVSettingsViewController: QuickTableViewController {
                                                   key: .timedAutoSaveInterval)
         saveRows.append(autoSaveTimeRow)
 #endif
-        
+
         let savesSection = Section(title: NSLocalizedString("Saves", comment: "Saves"), rows: saveRows)
-        
+
         // MARK: -- Section : Audio/Video
         var avRows = [TableRow]()
-        
+
 #if os(iOS)
         let volumeHudRow: PVSettingsSwitchRow = PVSettingsSwitchRow(text: NSLocalizedString("Volume HUD", comment: "Volume HUD"),
                                                                     key: .volumeHUD,
@@ -253,9 +272,9 @@ public final class PVSettingsViewController: QuickTableViewController {
                                 icon: .sfSymbol("checkerboard.rectangle")),
             PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), detailText: .subtitle("Performance overlay with FPS, CPU and Memory stats. Note: FPS may not be accurate for threaded and/or GLES/Vulkan native cores."), key: .showFPSCount, icon: .sfSymbol("speedometer"))
         ])
-        
+
         let avSection = Section(title: NSLocalizedString("Video Options", comment: "Video Options"), rows: avRows)
-        
+
         // Metal Filters
         var shaders: [String] = MetalShaderManager.shared.filterShaders.map { $0.name }
         shaders.insert("Off", at: 0)
@@ -263,18 +282,18 @@ public final class PVSettingsViewController: QuickTableViewController {
                                                footer: "Post processing filter when using Metal",
                                                key: .metalFilter,
                                                options: shaders)
-        
+
         // MARK -- Section : Controller
-        
+
         var controllerRows = [TableRow]()
-        
+
 #if os(iOS)
         controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"),
                                                   detailText: .subtitle("Transparency amount of on-screen controls overlays."),
                                                   valueLimits: (min: 0.0, max: 1.0),
                                                   valueImages: (.sfSymbol("sun.min"), .sfSymbol("sun.max")),
                                                   key: .controllerOpacity))
-        
+
         controllerRows.append(contentsOf: [
             PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"),
                                 detailText: .subtitle("Color the on-screen controls to be similar to their original system controller colors where applicable."),
@@ -297,7 +316,7 @@ public final class PVSettingsViewController: QuickTableViewController {
                                 key: .missingButtonsAlwaysOn,
                                 icon: .sfSymbol("l.rectangle.roundedbottom"))
         ]
-                              
+
         )
 #endif
         controllerRows.append(contentsOf: [
@@ -313,11 +332,11 @@ public final class PVSettingsViewController: QuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the \nTG16/PC Engine, TG16/PC Engine CD and SuperGrafx systems."), key: .use8BitdoM30)
         ])
 #endif
-        
+
         let controllerSection = Section(title: NSLocalizedString("Controllers", comment: "Controllers"), rows: controllerRows, footer: "Check the wiki for controls per systems.")
-        
+
         // Game Library
-        
+
 #if canImport(PVWebServer)
         var libraryRows: [TableRow] = [
             NavigationRow(
@@ -333,7 +352,7 @@ public final class PVSettingsViewController: QuickTableViewController {
 #else
         var libraryRows: [TableRow] = [ ]
 #endif
-        
+
 #if os(tvOS)
         let webServerAlwaysOn = PVSettingsSwitchRow(
             text: "Web Server Always-On",
@@ -353,9 +372,9 @@ public final class PVSettingsViewController: QuickTableViewController {
         )
         libraryRows.append(webServerAlwaysOn)
 #endif
-        
+
         let librarySection = Section(title: NSLocalizedString("Game Library", comment: "Game Library"), rows: libraryRows, footer: "Check the wiki about importing ROMs.")
-        
+
         // Game Library 2
         let library2Rows: [TableRow] = [
             NavigationRow(
@@ -406,21 +425,21 @@ public final class PVSettingsViewController: QuickTableViewController {
                                viewController: self,
                                segue: "appearanceSegue")
         ]
-        
+
         let librarySection2 = Section(title: nil, rows: library2Rows)
-        
+
         // Beta options
 #if !os(tvOS)
-        
+
         let appStoreRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Advanced Impoter", comment: "Advanced Importer"),
                                 detailText: .subtitle("Use larger database for looking up games. Requires an additional 330MB of disk space."),
                                 key: .useMetal, icon: .sfSymbol("sparkle.magnifyingglass")),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
                                 detailText: .subtitle("Use newer Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
                                 key: .useMetal, icon: .sfSymbol("m.square.fill")),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy UIKit UI", comment: "Use UIKit UI"),
                                 detailText: .subtitle("Alternative legacy UI in UIKit  UI. Supports game controller navigation."),
                                 key: .useUIKit, icon: .sfSymbol("swift")) { cell, row in
@@ -440,42 +459,42 @@ public final class PVSettingsViewController: QuickTableViewController {
                                     //                                        swiftUI.switchValue = false
                                     //                                    }
                                 },
-            
+
 //            PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy Audio Engine", comment: "Use Legacy Audio Engine"),
 //                                detailText: .subtitle("Use the older CoreAudio audio engine instead of AVAudioEngine"),
 //                                key: .useLegacyAudioEngine, icon: .sfSymbol("waveform")),
-//            
+//
 //            PVSettingsSwitchRow(text: NSLocalizedString("Mono Audio", comment: "Mono Audio"),
 //                                detailText: .subtitle("Mix all audio in mono. The Legacy Audio Engine is not supported."),
 //                                key: .monoAudio, icon: .sfSymbol("ear.badge.waveform")),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: .iCloudSync, icon: .sfSymbol("icloud")),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
                                 detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 3-fingers 3 times to toggle."),
                                 key: .movableButtons, icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right")),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
-                                detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
+                                detailText: .subtitle("Show a touch Joystick pad on supported systems."),
                                 key: .onscreenJoypad, icon: .sfSymbol("l.joystick.tilt.left.fill")),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad with keyboard", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)"),
                                 key: .onscreenJoypadWithKeyboard, icon: .sfSymbol("keyboard.badge.eye"))
         ]
-        
+
         let nonAppStoreRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Auto JIT", comment: "Auto JIT"),
                                 detailText: .subtitle("Attempt to automatically enable Just In Time OS support. Requires ZeroConf VPN to be active. See JITStreamer.com for more info."),
                                 key: .autoJIT, icon: .sfSymbol("figure.run")),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
                                 detailText: .subtitle("Cores that are in development"),
                                 key: .unsupportedCores, icon: .sfSymbol("testtube.2"))
         ]
-        
+
         let betaRows: [TableRow] = IsAppStore ? appStoreRows : (appStoreRows + nonAppStoreRows)
 #else // tvOS
         let betaRows: [TableRow] = [
@@ -487,19 +506,19 @@ public final class PVSettingsViewController: QuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Use SwiftUI", comment: "Use SwiftUI"),
                                 detailText: .subtitle("Don't use unless you enjoy empty windows."),
                                 key: .multiSampling, icon: .sfSymbol("swift")),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Use Themes", comment: "Use Themes"),
                                 detailText: .subtitle("Use iOS themes on tvOS"),
                                 key: .tvOSThemes, icon: .sfSymbol("tshirt"))
         ]
 #endif
-        
+
         let betaSection = Section(
             title: NSLocalizedString("Advanced Features", comment: ""),
             rows: betaRows,
             footer: "Additional features for power users."
         )
-        
+
         // - Social links
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
@@ -546,7 +565,7 @@ public final class PVSettingsViewController: QuickTableViewController {
                 }
             }
         )
-        
+
 #if APP_STORE
         let patreonText = "Support us on Patreon."
 #else
@@ -639,32 +658,36 @@ public final class PVSettingsViewController: QuickTableViewController {
                 }
             }
         )
-        
+
         let socialLinksRows = [patreonRow, discordRow, xRow, youTubeRow, githubRow]
         let socialLinksSection = Section(title: NSLocalizedString("Socials", comment: ""), rows: socialLinksRows)
-        
+
         let documentationLinksRow = [blogRow, faqRow, wikiRow]
         let documentationSection = Section(title: NSLocalizedString("Documentation", comment: ""), rows: documentationLinksRow)
-        
+
         // - Build Information
-        
+
         let modeLabel = BuildEnvironment.config.uppercased()
-        
+
         // Note: If you get an error here, run the build again.
         // Blame Swift PM / XCode @JoeMatt
         let gitInfo: PackageBuild = PackageBuild.info
-        
+
         let branchName = gitInfo.branch?.lowercased() ?? "Unknown"
         let masterBranch: Bool = branchName == "master" || branchName.starts(with: "release")
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
-        
+
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !masterBranch {
-            versionText = "\(versionText ?? "") Beta"
+            if IsAppStore {
+                versionText = "\(versionText ?? "") TestFlight"
+            } else {
+                versionText = "\(versionText ?? "") Beta"
+            }
             //            versionLabel.textColor = UIColor.init(hex: "#F5F5A0")
         }
-        
+
         // Git Revision (branch/hash)
         var revisionString = NSLocalizedString("Unknown", comment: "")
         if var bundleRevision = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
@@ -673,19 +696,19 @@ public final class PVSettingsViewController: QuickTableViewController {
             }
             revisionString = bundleRevision
         }
-        
+
         // Build date string
         let incomingDateFormatter = DateFormatter()
         incomingDateFormatter.dateFormat = "E MMM d HH:mm:ss yyyy"
-        
+
         let outputDateFormatter = DateFormatter()
         outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
-        
+
         let buildDate = gitInfo.timeStamp
         let buildDateString: String = outputDateFormatter.string(from: buildDate)
-        
+
         let builtByUser = BuildEnvironment.userName
-        
+
         let buildInformationRows: [TableRow] = [
             NavigationRow(
                 text: NSLocalizedString("Version", comment: ""),
@@ -705,9 +728,9 @@ public final class PVSettingsViewController: QuickTableViewController {
             NavigationRow(text: NSLocalizedString("Builder", comment: "Builder"), detailText: .value2(builtByUser)),
             NavigationRow(text: NSLocalizedString("Bundle ID", comment: "Bundle ID"), detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown"))
         ]
-        
+
         let buildSection = Section(title: NSLocalizedString("Build Information", comment: ""), rows: buildInformationRows)
-        
+
         // Extra Info Section
         let extraInfoRows: [TableRow] = [
             SegueNavigationRow(text: NSLocalizedString("Cores", comment: "Cores"),
@@ -723,9 +746,9 @@ public final class PVSettingsViewController: QuickTableViewController {
                                segue: "licensesSegue",
                                customization: nil)
         ]
-        
+
         let extraInfoSection = Section(title: NSLocalizedString("3rd Party & Legal", comment: ""), rows: extraInfoRows)
-        
+
         // Debug section
         //        let debugRows: [TableRow] = [
         //            NavigationRow(text: NSLocalizedString("Logs", comment: "Logs"),
@@ -739,14 +762,14 @@ public final class PVSettingsViewController: QuickTableViewController {
         //
         //        let debugSection = Section(title: NSLocalizedString("Debug", comment: ""),
         //                                   rows: debugRows)
-        
+
         // Set table data
         tableContents = [appSection, coreOptionsSection, savesSection, avSection, metalSection, controllerSection, librarySection, librarySection2, betaSection, socialLinksSection, documentationSection, buildSection, extraInfoSection]
         //        #if os(iOS)
         //            tableContents.append(debugSection)
         //        #endif
     }
-    
+
 #if canImport(PVWebServer)
     func launchWebServerAction() {
         if reachability.connection == .wifi {
@@ -780,7 +803,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         }
     }
 #endif
-    
+
     func reimportROMsAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
         let alert = UIAlertController(title: "Re-Scan all ROM Directories?",
@@ -851,7 +874,7 @@ public final class PVSettingsViewController: QuickTableViewController {
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
-    
+
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
         let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""),
@@ -873,7 +896,7 @@ public final class PVSettingsViewController: QuickTableViewController {
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
-    
+
     func manageConflictsAction() {
         if let conflictsController = conflictsController {
             let conflictViewController = PVConflictViewController(conflictsController: conflictsController)
@@ -888,11 +911,11 @@ public final class PVSettingsViewController: QuickTableViewController {
         //        navigationController?.pushViewController(logViewController, animated: true)
         //        logViewController.hideDoneButton()
     }
-    
+
     @IBAction func done(_: Any) {
         presentingViewController?.dismiss(animated: true) { () -> Void in }
     }
-    
+
     @IBAction func help(_: Any) {
 #if canImport(SafariServices)
         let webVC = WebkitViewController(url: URL(string: "https://wiki.provenance-emu.com/")!)

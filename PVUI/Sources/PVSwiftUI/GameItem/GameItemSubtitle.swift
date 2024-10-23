@@ -15,6 +15,7 @@ struct GameItemSubtitle_Preview: PreviewProvider {
             GameItemSubtitle(text:  "Foo Bar", viewType: .cell)
             GameItemSubtitle(text:  "Bar Foo", viewType: .row)
         }
+        .environmentObject(ThemeManager.shared)
     }
 }
 
@@ -22,11 +23,12 @@ struct GameItemSubtitle_Preview: PreviewProvider {
 struct GameItemSubtitle: SwiftUI.View {
     var text: String?
     var viewType: GameItemViewType
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some SwiftUI.View {
         Text(text ?? "blank")
             .font(.system(size: viewType.subtitleFontSize))
-            .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+            .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
             .opacity(text != nil ? 1.0 : 0.0) // hide rather than not render so that cell keeps consistent height

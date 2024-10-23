@@ -12,6 +12,7 @@ import PVLibrary
 import RealmSwift
 import PVUIBase
 import PVRealm
+import PVLogging
 
 @_exported import PVUIBase
 
@@ -37,19 +38,21 @@ struct GameMoreInfoViewController: UIViewControllerRepresentable {
     }
 }
 
+protocol GameContextMenuDelegate {
+    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame, to newTitle: String)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame)
+}
+
 struct GameContextMenu: SwiftUI.View {
 
     var game: PVGame
 
     weak var rootDelegate: PVRootDelegate?
+    var contextMenuDelegate: GameContextMenuDelegate?
     @State private var showingRenameAlert = false
     @State private var newGameTitle = ""
     @FocusState private var renameTitleFieldIsFocused: Bool
-    #if !os(tvOS)
     @State private var showImagePicker = false
-    @State private var selectedImage: UIImage?
-    @State private var didSetImage = false
-    #endif
 
     var body: some SwiftUI.View {
         Group {
@@ -79,7 +82,8 @@ struct GameContextMenu: SwiftUI.View {
             } label: { Label("Copy MD5 URL", systemImage: "number.square") }
             #if !os(tvOS)
             Button {
-                showImagePicker = true
+                DLOG("GameContextMenu: Choose Cover button tapped")
+                contextMenuDelegate?.gameContextMenu(self, didRequestChooseCoverFor: game)
             } label: { Label("Choose Cover", systemImage: "book.closed") }
             #endif
             Button {
@@ -116,16 +120,6 @@ struct GameContextMenu: SwiftUI.View {
         } message: {
             Text("Enter a new name for \(game.title)")
         }
-        #if !os(tvOS)
-        .sheet(isPresented: $showImagePicker) {
-            ImagePicker(selectedImage: $selectedImage, didSet: $didSetImage)
-                .onDisappear {
-                    if didSetImage, let image = selectedImage {
-                        saveArtwork(image: image, forGame: game)
-                    }
-                }
-        }
-        #endif
     }
 
     private func submitRename() {
@@ -172,19 +166,39 @@ extension GameContextMenu {
 
     func pasteArtwork(forGame game: PVGame) {
         #if !os(tvOS)
-        guard let pastedImage = UIPasteboard.general.image else {
+        DLOG("Attempting to paste artwork for game: \(game.title)")
+        let pasteboard = UIPasteboard.general
+        if let pastedImage = pasteboard.image {
+            DLOG("Image found in pasteboard")
+            saveArtwork(image: pastedImage, forGame: game)
+        } else if let pastedURL = pasteboard.url {
+            DLOG("URL found in pasteboard: \(pastedURL)")
+            do {
+                let imageData = try Data(contentsOf: pastedURL)
+                DLOG("Successfully loaded data from URL")
+                if let image = UIImage(data: imageData) {
+                    DLOG("Successfully created UIImage from URL data")
+                    saveArtwork(image: image, forGame: game)
+                } else {
+                    DLOG("Failed to create UIImage from URL data")
+                    artworkNotFoundAlert()
+                }
+            } catch {
+                DLOG("Failed to load data from URL: \(error.localizedDescription)")
+                artworkNotFoundAlert()
+            }
+        } else {
+            DLOG("No image or URL found in pasteboard")
             artworkNotFoundAlert()
-            return
         }
-
-        saveArtwork(image: pastedImage, forGame: game)
-        rootDelegate?.showMessage("Artwork has been pasted and saved for \(game.title).", title: "Artwork Saved")
         #else
+        DLOG("Pasting artwork not supported on this platform")
         rootDelegate?.showMessage("Pasting artwork is not supported on this platform.", title: "Not Supported")
         #endif
     }
 
     func artworkNotFoundAlert() {
+        DLOG("Showing artwork not found alert")
         rootDelegate?.showMessage("Pasteboard did not contain an image.", title: "Artwork Not Found")
     }
 
@@ -194,21 +208,41 @@ extension GameContextMenu {
     }
 
     private func saveArtwork(image: UIImage, forGame game: PVGame) {
-        do {
-            let uniqueFileName = UUID().uuidString + ".png"
-            let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(uniqueFileName)
-            if let pngData = image.pngData() {
-                try pngData.write(to: fileURL)
+        DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
 
-                try RomDatabase.sharedInstance.writeTransaction {
-                    let thawedGame = game.thaw()
-                    thawedGame?.customArtworkURL = fileURL.absoluteString
+        let uniqueID = UUID().uuidString
+        let key = "artwork_\(game.md5)_\(uniqueID)"
+        DLOG("Generated key for image: \(key)")
+
+        do {
+            DLOG("Attempting to write image to disk")
+            try PVMediaCache.writeImage(toDisk: image, withKey: key)
+            DLOG("Image successfully written to disk")
+
+            DLOG("Attempting to update game's customArtworkURL")
+            try RomDatabase.sharedInstance.writeTransaction {
+                let thawedGame = game.thaw()
+                DLOG("Game thawed: \(thawedGame?.title ?? "Unknown")")
+                thawedGame?.customArtworkURL = key
+                DLOG("Game's customArtworkURL updated to: \(key)")
+            }
+            DLOG("Database transaction completed successfully")
+            rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
+
+            // Verify the image can be retrieved
+            DLOG("Attempting to verify image retrieval")
+            PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
+                if let retrievedImage = retrievedImage {
+                    DLOG("Successfully retrieved saved image for key: \(retrievedKey)")
+                    DLOG("Retrieved image size: \(retrievedImage.size)")
+                } else {
+                    DLOG("Failed to retrieve saved image for key: \(retrievedKey)")
                 }
-            } else {
-                throw NSError(domain: "GameContextMenu", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to PNG data"])
             }
         } catch {
-            rootDelegate?.showMessage("Failed to save artwork: \(error.localizedDescription)", title: "Error")
+            DLOG("Failed to set custom artwork: \(error.localizedDescription)")
+            DLOG("Error details: \(error)")
+            rootDelegate?.showMessage("Failed to set custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
         }
     }
 

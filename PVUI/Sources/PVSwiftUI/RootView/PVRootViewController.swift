@@ -21,6 +21,7 @@ import Combine
 import PVLibrary
 import PVRealm
 import PVLogging
+import PVThemes
 
 @_exported import PVUIBase
 
@@ -84,6 +85,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
         let hud = MBProgressHUD(view: view)
         hud.isUserInteractionEnabled = false
+        hud.contentColor = ThemeManager.shared.currentTheme.settingsCellText
         view.addSubview(hud)
 
         setupHUDObserver(hud: hud)

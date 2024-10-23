@@ -20,11 +20,13 @@ import Introspect
 @available(iOS 14, tvOS 14, *)
 struct ApplyBackgroundWrapper<Content: SwiftUI.View>: SwiftUI.View {
     @ViewBuilder var content: () -> Content
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some SwiftUI.View {
         if #available(iOS 15, tvOS 15, *) {
             content().background(Material.ultraThinMaterial)
         } else {
-            content().background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
+            content().background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
         }
     }
 }

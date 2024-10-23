@@ -44,7 +44,7 @@ struct BiosRowView: SwiftUI.View {
             VStack(alignment: .leading) {
                 Text("\(bios.descriptionText)")
                     .font(.footnote)
-                    .foregroundColor(Color.white)
+                    .foregroundColor(themeManager.currentTheme.settingsCellTextDetail?.swiftUIColor)
                 Text("\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes")
                     .font(.caption2)
                     .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)

@@ -10,6 +10,7 @@ import PVThemes
 
 @available(iOS 14, tvOS 14, *)
 struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     let title: String
 
@@ -18,7 +19,7 @@ struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title.uppercased())
-                .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+                .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
                 .font(.system(size: 11))
                 .padding(.horizontal, 10)
                 .padding(.top, 20)

@@ -465,7 +465,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
             })
             .mapMany({ system, isCollapsed -> Section? in
                 guard !system.sortedGames.isEmpty else { return nil }
-                let header = "\(system.manufacturer) : \(system.shortName)" + (system.isBeta ? " ⚠️ Beta" : "") + (system.unsupported ? " 🚫 Unsupported" : "")
+                let header = "\(system.manufacturer) : \(system.shortName)" + (system.isBeta ? " ⚠️ Experimental" : "") + (system.unsupported ? " 🚫 Unsupported" : "")
                 let items = isCollapsed ? [] : system.sortedGames.filter{ !$0.isInvalidated && $0.genres != "hidden" && hideBios[$0.romPath.lowercased()] != true }.map { Section.Item.game($0) }
                 
                 return Section(header: header, items: items,

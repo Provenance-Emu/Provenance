@@ -289,7 +289,7 @@ public final class CornerBadgeView: UIView {
             break
         }
 
-        let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: triangleBounds.height * 0.64), .foregroundColor: UIColor(white: 1.0, alpha: 0.6)]
+        let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: triangleBounds.height * 0.64), .foregroundColor: ThemeManager.shared.currentTheme.gameLibraryText ?? UIColor(white: 1.0, alpha: 0.6)]
         gString.draw(in: triangleBounds, withAttributes: attributes)
     }
 
@@ -508,7 +508,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         if favorite {
             topRightCornerBadgeView.fillColor = UIColor(rgb: 0xF71A32).withAlphaComponent(0.85)
         } else if !hasPlayed {
-            topRightCornerBadgeView.fillColor = UIColor(rgb: 0x17AAF7).withAlphaComponent(0.85)
+            topRightCornerBadgeView.fillColor = ThemeManager.shared.currentTheme.defaultTintColor ??  UIColor(rgb: 0x17AAF7).withAlphaComponent(0.85)
         }
 
         topRightCornerBadgeView.isHidden = hasPlayed && !favorite
@@ -526,7 +526,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
             discCountContainerView.isHidden = !multiDisc
             discCountLabel.text = "\(diskCount)"
-            discCountLabel.textColor = UIColor.white
+            discCountLabel.textColor = ThemeManager.shared.currentTheme.settingsCellText ?? UIColor.white
         }
     }
 
@@ -544,7 +544,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
         var bullet = NSAttributedString(string: "")
         let bulletFavoriteAttribute = [NSAttributedString.Key.foregroundColor: UIColor(rgb: 0xF71A32).withAlphaComponent(0.85)]
-        let bulletUnplayedAttribute = [NSAttributedString.Key.foregroundColor: UIColor(rgb: 0x17AAF7).withAlphaComponent(0.85)]
+        let bulletUnplayedAttribute = [NSAttributedString.Key.foregroundColor:ThemeManager.shared.currentTheme.defaultTintColor ??  UIColor(rgb: 0x17AAF7).withAlphaComponent(0.85)]
         let bulletFavorite = NSAttributedString(string: "♥︎ ", attributes: bulletFavoriteAttribute)
         let bulletUnplayed = NSAttributedString(string: "● ", attributes: bulletUnplayedAttribute)
         let attributedTitle = NSMutableAttributedString(string: game.title)
@@ -739,7 +739,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
-            let backgroundColor: UIColor = .systemGray5
+            let backgroundColor: UIColor = ThemeManager.shared.currentTheme.uiviewBackground ?? .systemGray5
         #else
             let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
         #endif

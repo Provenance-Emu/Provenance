@@ -10,10 +10,11 @@
 #if canImport(UIKit)
 import UIKit
 #endif
+import PVThemes
 
 final class PVUINavigationController: UINavigationController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+        return ThemeManager.shared.currentTheme.dark ? .lightContent : .darkContent
     }
 }
 #endif

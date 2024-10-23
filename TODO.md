@@ -4,6 +4,9 @@ _My personal TODO notes_
 ## Show stoppers
 
 - [ ] Swift UI long press on roms menu missing actions {artwork, sharing...}
+- [ ] iCloud sync isn't working, remove or fix
+- [X] Progress hud on unzips isn't hiding
+- [X] Themes setting doesn't work
 - [X] Conflicts folder is weird
 - [X] SwiftUI not seeing conflicts
 - [X] Copy the framework loader from old branch, fix it too!
@@ -20,6 +23,7 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [ ] Mupen video crashes with update metal code
 - [ ] Intellivision (PVBliss) audio crashes on button press
 - [ ] Intellivision video is glitched
 - [ ] SuperVision video dimensions wrong
@@ -45,6 +49,10 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] Swift UI console view, games could use some improvments
+    - [ ] side padding minimums
+    - [ ] even spacing
+    - [ ] game title text sometimes overflows the width
 - [ ] Spotlignt/extensions can't build with spm modules
 - [ ] Add Show recent saves on console itself
 - [ ] See if psx mednafen has more options
@@ -54,7 +62,15 @@ _My personal TODO notes_
 - [ ] Opening roms from md5/siri search doesn't work
 - [ ] Swift UI should open on home and be scrollable to systems
 - [ ] Swift UI sort consoles by bits/brand/name/year order ascend/descend
-- [ ] Dolphin won't build due to stdint.h in extern C
+- [ ] N64 onscreen controls are kind of high
+- [ ] Themes are ugly on old UI
+    - [ ] Fix default no-artwork background
+    - [ ] Fix section header colors
+    - [ ] Top bar not themed
+    - [ ] Main background not themed
+    - [ ] Game text not themed
+    - [ ] New import indicator not themed
+- [X] Dolphin won't build due to stdint.h in extern C
 - [X] Nes fix button layout
 - [X] Test/fix CrabEMU save states
 - [X] Legacy UI removed collapsing systems
@@ -78,3 +94,6 @@ _My personal TODO notes_
 - [ ] Add Shiragame
 - [ ] Finish themes
 - [ ] Add app rating with SiruisRating
+- [ ] Hide some features behind is plus in app store builds
+    - [ ] Advanced settings
+    - [ ] Extra themes

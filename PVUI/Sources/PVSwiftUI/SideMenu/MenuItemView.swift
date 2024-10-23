@@ -23,26 +23,31 @@ struct MenuItemView: SwiftUI.View {
     var rowTitle: String
     var action: () -> Void
 
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some SwiftUI.View {
         Button {
             action()
         } label: {
             HStack(spacing: 0) {
+                /// Icon
                 Image(imageName, bundle: PVUIBase.BundleLoader.myBundle)
                     .resizable().scaledToFit().cornerRadius(4).padding(8)
-                    .tint(ThemeManager.shared.currentTheme.barButtonItemTint?.swiftUIColor ?? Color.gray)
-                
+                    .tint(themeManager.currentTheme.menuIconTint.swiftUIColor)
+                /// Text
                 Text(rowTitle)
-                    .foregroundColor(ThemeManager.shared.currentTheme.settingsCellText?.swiftUIColor ?? Color.white)
-                    .background(Color.clear) // Clear background
-
+                    .foregroundColor(themeManager.currentTheme.menuText.swiftUIColor)
+                    .background(themeManager.currentTheme.menuBackground.swiftUIColor)
+                /// Space
                 Spacer()
             }
+            /// Height
             .frame(height: 40.0)
-            .background(ThemeManager.shared.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
+            /// Background
+            .background(themeManager.currentTheme.menuBackground.swiftUIColor.opacity(0.3))
         }
-        .buttonStyle(PlainButtonStyle()) // Use PlainButtonStyle to remove default button styling
-
+        /// Mac Catalyst fix
+        .buttonStyle(PlainButtonStyle())
     }
 }
 #endif

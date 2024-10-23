@@ -67,23 +67,60 @@ public final class PVGameLibraryUpdatesController {
                 Task { @MainActor in
                     await self?.updateConflicts()
                 }
-            } else {
-                self?.hudState = .hidden
             }
+            self?.hudState = .hidden
         }
 
         Task {
-            for await status in directoryWatcherStatusStream() {
-                await MainActor.run {
-                    self.hudState = Self.handleExtractionStatus(status)
-                }
-            }
-        }
+            var hideTask: Task<Void, Never>?
+            var isHidingHUD = false
 
-        Task {
             for await status in directoryWatcherStatusStream() {
                 await MainActor.run {
+                    DLOG("Received status: \(status)")
+
+                    if isHidingHUD {
+                        DLOG("Already hiding HUD, skipping this status update")
+                        return
+                    }
+
                     self.hudState = Self.handleExtractionStatus(status)
+                    DLOG("HUD State updated: \(self.hudState)")
+
+                    // Cancel the previous hide task if it exists
+                    if let existingTask = hideTask {
+                        existingTask.cancel()
+                        DLOG("Cancelled existing hide task")
+                    }
+
+                    switch status {
+                    case .completed:
+                        DLOG("Extraction completed, scheduling HUD hide task")
+                        isHidingHUD = true
+                        // Create a new task to hide the HUD after a 1-second delay
+                        hideTask = Task.detached { @MainActor in
+                            do {
+                                DLOG("Starting 1-second delay before hiding HUD")
+                                try await Task.sleep(for: .seconds(1))
+                                if !Task.isCancelled {
+                                    DLOG("Delay completed, hiding HUD")
+                                    self.hudState = .hidden
+                                    isHidingHUD = false
+                                } else {
+                                    DLOG("Task was cancelled during delay")
+                                    isHidingHUD = false
+                                }
+                            } catch {
+                                DLOG("Error during HUD hide delay: \(error)")
+                                isHidingHUD = false
+                            }
+                        }
+                    case .idle:
+                        DLOG("Received idle status, hiding HUD immediately")
+                        self.hudState = .hidden
+                    default:
+                        DLOG("Extraction status: \(status)")
+                    }
                 }
             }
         }
@@ -98,6 +135,7 @@ public final class PVGameLibraryUpdatesController {
     private func directoryWatcherStatusStream() -> AsyncStream<ExtractionStatus> {
         AsyncStream { continuation in
             let task = Task {
+                var lastStatus: ExtractionStatus?
                 while !Task.isCancelled {
                     let status = withObservationTracking {
                         directoryWatcher.extractionStatus
@@ -105,7 +143,11 @@ public final class PVGameLibraryUpdatesController {
                         continuation.yield(self.directoryWatcher.extractionStatus)
                     }
 
-                    continuation.yield(status)
+                    if status != lastStatus {
+                        DLOG("DirectoryWatcher status changed: \(status)")
+                        continuation.yield(status)
+                        lastStatus = status
+                    }
 
                     try? await Task.sleep(for: .seconds(0.1))
                 }
@@ -210,7 +252,7 @@ public final class PVGameLibraryUpdatesController {
                 DLOG("No game found for MD5: \(md5)")
                 return
             }
-            
+
             // Create a detached copy of the game object
             let detachedGame = game.detached()
 

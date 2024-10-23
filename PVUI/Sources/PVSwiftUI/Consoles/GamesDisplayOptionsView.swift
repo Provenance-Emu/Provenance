@@ -16,6 +16,7 @@ import PVThemes
 
 @available(iOS 14, tvOS 14, *)
 struct GamesDisplayOptionsView: SwiftUI.View {
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     var sortAscending = true
     var isGrid = true
@@ -27,19 +28,18 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     let font: Font = .system(.footnote, design: .default)
     let spacing: CGFloat = 12
     let padding: CGFloat = 10
-    
+
     var body: some SwiftUI.View {
         HStack(spacing: spacing) {
             Spacer()
-//            OptionsIndicator(pointDown: true, action: { toggleFilterAction() }) {
-//                Text("Filter").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(font)
-//            }
             OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
-                Text("Sort").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(font)
+                Text("Sort")
+                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                    .font(font)
             }
             OptionsIndicator(pointDown: true, action: { toggleViewTypeAction() }) {
                 Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
-                    .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
                     .font(font.weight(.light))
             }
             .padding(.trailing, padding)

@@ -34,10 +34,12 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>$(APP_GROUP_IDENTIFIER).provenance</string>
 		<string>$(APP_GROUP_IDENTIFIER)</string>
+		<string>group.org.provenance-emu</string>
 	</array>
 	<key>com.apple.security.assets.pictures.read-write</key>
+	<true/>
+	<key>com.apple.security.cs.allow-jit</key>
 	<true/>
 	<key>com.apple.security.device.audio-input</key>
 	<true/>

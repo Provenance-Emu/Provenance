@@ -10,10 +10,12 @@ import PVThemes
 
 @available(iOS 14, tvOS 14, *)
 struct HomeDividerView: SwiftUI.View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some SwiftUI.View {
         Divider()
             .frame(height: 1)
-            .background(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+            .background(themeManager.currentTheme.gameLibraryText.swiftUIColor)
             .opacity(0.1)
             .padding(.horizontal, 10)
     }

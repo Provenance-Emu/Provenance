@@ -54,6 +54,8 @@ struct HomeView: SwiftUI.View {
         self.rootDelegate = delegate
     }
 
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
@@ -90,8 +92,9 @@ struct HomeView: SwiftUI.View {
                     }
                 }
             }
+            .background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
         }
-        .background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
+        .background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
     }
 }
 

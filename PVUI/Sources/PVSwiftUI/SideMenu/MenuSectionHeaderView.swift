@@ -18,6 +18,7 @@ import Introspect
 #endif
 @available(iOS 14, tvOS 14, *)
 internal struct MenuSectionHeaderView: SwiftUI.View {
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     var sectionTitle: String
     var sortable: Bool
@@ -26,22 +27,31 @@ internal struct MenuSectionHeaderView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         VStack(spacing: 0) {
-            Divider().frame(height: 2).background(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+            /// Divider
+            Divider().frame(height: 2)
+                .background(themeManager.currentTheme.menuDivider.swiftUIColor)
+            /// Spacer
             Spacer()
+            
             HStack(alignment: .bottom) {
-                Text(sectionTitle).foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
+                Text(sectionTitle)
+                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                    .font(.system(size: 13))
                 Spacer()
                 if sortable {
                     OptionsIndicator(pointDown: sortAscending, action: action) {
-                        Text("Sort").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(.caption))
+                        Text("Sort")
+                            .foregroundColor(themeManager.currentTheme.menuIconTint.swiftUIColor)
+                            .font(.system(.caption))
                     }
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 4)
+            .background(themeManager.currentTheme.menuHeaderBackground.swiftUIColor)
         }
         .frame(height: 40.0)
-        .background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
+        .background(themeManager.currentTheme.menuHeaderBackground.swiftUIColor)
     }
 }
 #endif

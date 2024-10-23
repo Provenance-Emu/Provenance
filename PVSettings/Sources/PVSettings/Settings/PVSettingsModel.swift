@@ -86,9 +86,7 @@ extension Defaults.Keys {
     
 #if os(tvOS) || targetEnvironment(macCatalyst)
     static let largeGameArt = Key<Bool>("largeGameArt", default: true)
-#endif
-    
-    static let theme = Key<ThemeOptionsStandard>("theme", default: .dark)
+#endif    
 }
 
 // MARK: Beta Options

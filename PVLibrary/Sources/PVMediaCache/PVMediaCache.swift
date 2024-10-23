@@ -137,14 +137,18 @@ public final class PVMediaCache: NSObject, Sendable {
     @objc
     @discardableResult
     public class func writeImage(toDisk image: UIImage, withKey key: String) throws -> URL {
+        DLOG("Attempting to write image to disk with key: \(key)")
         if key.isEmpty {
+            DLOG("Error: Key was empty")
             throw MediaCacheError.keyWasEmpty
         }
 
         if let newImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)),
             let imageData = newImage.jpegData(compressionQuality: 0.85) {
+            DLOG("Image scaled and converted to JPEG data")
             return try writeData(toDisk: imageData, withKey: key)
         } else {
+            DLOG("Error: Failed to scale image or convert to JPEG data")
             throw MediaCacheError.failedToScaleImage
         }
     }
@@ -167,16 +171,20 @@ public final class PVMediaCache: NSObject, Sendable {
 
     @discardableResult
     public class func writeData(toDisk data: Data, withKey key: String) throws -> URL {
+        DLOG("Attempting to write data to disk with key: \(key)")
         if key.isEmpty {
+            DLOG("Error: Key was empty")
             throw MediaCacheError.keyWasEmpty
         }
 
         let keyHash: String = key.md5Hash
         let cachePath = self.cachePath.appendingPathComponent(keyHash, isDirectory: false)
+        DLOG("Cache path for key: \(cachePath.path)")
 
         do {
             try FileManager.default.createDirectory(at: self.cachePath, withIntermediateDirectories: true, attributes: nil)
             try data.write(to: cachePath, options: [.atomic])
+            DLOG("Data successfully written to cache path")
             return cachePath
         } catch {
             ELOG("Failed to write image to cache path \(cachePath.path) : \(error.localizedDescription)")
@@ -262,32 +270,43 @@ public final class PVMediaCache: NSObject, Sendable {
 
     @discardableResult
     public func image(forKey key: String, completion: ImageFetchCompletion? = nil) -> BlockOperation? {
-        if key.isEmpty {
-            completion?(key, nil)
+        DLOG("Attempting to fetch image for key: \(key)")
+        guard !key.isEmpty else {
+            DLOG("Error: Key was empty")
+            DispatchQueue.main.async {
+                completion?(key, nil)
+            }
             return nil
         }
 
-        let operation = BlockOperation(block: { () -> Void in
+        let operation = BlockOperation { [weak self] in
+            guard let self = self else { return }
             let cacheDir = PVMediaCache.cachePath
             let keyHash = key.md5Hash
-
             let cachePath = cacheDir.appendingPathComponent(keyHash, isDirectory: false).path
+            DLOG("Cache path for key: \(cachePath)")
 
             Task { @MainActor in
                 var image: UIImage?
                 image = PVMediaCache.memCache.object(forKey: keyHash as NSString)
+                DLOG("Image found in memory cache: \(image != nil)")
 
                 if image == nil, FileManager.default.fileExists(atPath: cachePath) {
+                    DLOG("Attempting to load image from disk")
                     image = UIImage(contentsOfFile: cachePath)
+                    DLOG("Image loaded from disk: \(image != nil)")
 
                     if let image = image {
                         PVMediaCache.memCache.setObject(image, forKey: keyHash as NSString)
+                        DLOG("Image added to memory cache")
                     }
                 }
 
-                completion?(key, image)
+                DispatchQueue.main.async {
+                    completion?(key, image)
+                }
             }
-        })
+        }
 
         operationQueue.addOperation(operation)
         return operation

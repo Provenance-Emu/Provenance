@@ -14,6 +14,7 @@ import RealmSwift
 import PVLibrary
 import PVUIBase
 import PVRealm
+import PVThemes
 
 @available(iOS 14, tvOS 14, *)
 class ConsolesWrapperViewDelegate: ObservableObject {
@@ -37,6 +38,8 @@ struct ConsolesWrapperView: SwiftUI.View {
         filter: NSPredicate(format: "games.@count > 0"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true)
     ) var consoles
+
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
@@ -67,6 +70,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(consoles.count)
+        .tint(themeManager.currentTheme.gameLibraryHeaderText.swiftUIColor)
     }
 }
 

@@ -6,78 +6,100 @@
 //
 
 import SwiftUI
+import PVThemes
+import PVLogging
 
 #if !os(tvOS)
 struct ImagePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) private var presentationMode
-    @Binding var selectedImage: UIImage?
-    @Binding var didSet: Bool
     var sourceType = UIImagePickerController.SourceType.photoLibrary
+    var onImageSelected: ((UIImage) -> Void)?
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
+        DLOG("ImagePicker: makeUIViewController called")
         let imagePicker = UIImagePickerController()
-        imagePicker.navigationBar.tintColor = .systemBlue
+        imagePicker.navigationBar.tintColor = ThemeManager.shared.currentTheme.barButtonItemTint
         imagePicker.allowsEditing = false
         imagePicker.sourceType = sourceType
         imagePicker.delegate = context.coordinator
+        DLOG("ImagePicker: UIImagePickerController created with sourceType: \(sourceType.rawValue)")
         return imagePicker
     }
 
     func updateUIViewController(_ uiViewController: UIImagePickerController,
-                                context: UIViewControllerRepresentableContext<ImagePicker>) { }
+                                context: UIViewControllerRepresentableContext<ImagePicker>) {
+        DLOG("ImagePicker: updateUIViewController called")
+    }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        DLOG("ImagePicker: makeCoordinator called")
+        return Coordinator(self)
     }
 
     class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-        let control: ImagePicker
+        let parent: ImagePicker
 
-        init(_ control: ImagePicker) {
-            self.control = control
+        init(_ parent: ImagePicker) {
+            self.parent = parent
+            super.init()
+            DLOG("ImagePicker: Coordinator initialized")
         }
 
         func imagePickerController(_ picker: UIImagePickerController,
                                    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            DLOG("ImagePicker: imagePickerController(_:didFinishPickingMediaWithInfo:) called")
             if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                control.selectedImage = image
-                control.didSet = true
+                DLOG("ImagePicker: Image selected: \(image.size.width)x\(image.size.height)")
+                parent.onImageSelected?(image)
+            } else {
+                DLOG("ImagePicker: Failed to get image from info dictionary")
             }
-            control.presentationMode.wrappedValue.dismiss()
+            parent.presentationMode.wrappedValue.dismiss()
+            DLOG("ImagePicker: ImagePicker dismissed")
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            DLOG("ImagePicker: imagePickerControllerDidCancel(_:) called")
+            parent.presentationMode.wrappedValue.dismiss()
+            DLOG("ImagePicker: ImagePicker cancelled and dismissed")
         }
     }
 }
 #endif
+
+#if DEBUG
+extension ImagePicker {
+    static func printDebugInfo() {
+        DLOG("ImagePicker Debug Information:")
+        DLOG("Available source types: \(UIImagePickerController.availableMediaTypes(for: .photoLibrary) ?? [])")
+        DLOG("Is camera available: \(UIImagePickerController.isSourceTypeAvailable(.camera))")
+        DLOG("Is photo library available: \(UIImagePickerController.isSourceTypeAvailable(.photoLibrary))")
+        DLOG("Is saved photos album available: \(UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum))")
+    }
+}
+#endif
+
 /*
 // Sample usage
 
-struct SignatureImageView: View {
-    @Binding var isSet: Bool
-    @Binding var selection: UIImage
-
-    @State private var showPopover = false
+struct GameContextMenu: View {
+    var game: PVGame
+    @State private var showImagePicker = false
 
     var body: some View {
-        Button(action: {
-            showPopover.toggle()
-        }) {
-            if isSet {
-                Image(uiImage: selection)
-                    .resizable()
-                    .frame(maxHeight: maxHeight)
-            } else {
-                ZStack {
-                    Color.white
-                    Text("Choose signature image")
-                        .font(.system(size: 18))
-                        .foregroundColor(.gray)
-                }.frame(height: maxHeight)
-                .overlay(RoundedRectangle(cornerRadius: 4)
-                            .stroke(Color.gray))
-            }
-        }.popover(isPresented: $showPopover) {
-            ImagePicker(selectedImage: $selection, didSet: $isSet)
+        Button("Choose Cover") {
+            DLOG("GameContextMenu: Choose Cover button tapped")
+            showImagePicker = true
+        }
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker(onImageSelected: { image in
+                DLOG("GameContextMenu: Image selected from ImagePicker. Size: \(image.size)")
+                saveArtwork(image: image, forGame: game)
+                showImagePicker = false
+            })
         }
     }
-}
+
+    private func saveArtwork(image: UIImage, forGame game: PVGame) {
+        DLOG("GameContextMenu: Attempting to save artwork for game
 */

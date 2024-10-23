@@ -12,8 +12,8 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVThemes
 
-@available(iOS 14, tvOS 14, *)
 struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
 
     var pointDown: Bool = true
@@ -23,6 +23,8 @@ struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
 
     @ViewBuilder var label: () -> Content
 
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some SwiftUI.View {
         Button {
             action()
@@ -30,7 +32,7 @@ struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
             HStack(spacing: 3) {
                 label()
                 Image(systemName: pointDown == true ? "chevron.down" : "chevron.up")
-                    .foregroundColor(.gray)
+                    .foregroundColor(themeManager.currentTheme.barButtonItemTint?.swiftUIColor)
                     .font(.system(size: chevronSize, weight: .ultraLight))
             }
         }

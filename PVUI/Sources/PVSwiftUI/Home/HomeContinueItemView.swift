@@ -12,6 +12,7 @@ import RealmSwift
 struct HomeContinueItemView: SwiftUI.View {
 
     @ObservedRealmObject var continueState: PVSaveState
+    @ObservedObject private var themeManager = ThemeManager.shared
     let height: CGFloat
     let hideSystemLabel: Bool
     var action: () -> Void
@@ -38,18 +39,17 @@ struct HomeContinueItemView: SwiftUI.View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Continue...")
                                 .font(.system(size: 10))
-                                .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+                                .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
                             Text(continueState.game.title)
                                 .font(.system(size: 13))
-                                .foregroundColor(Color.white)
+                                .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
                         }
                         Spacer()
                         if !hideSystemLabel {
                             VStack(alignment: .trailing) {
-                                Text("...").font(.system(size: 15)).opacity(0)
-                                Text(continueState.game.system.name)
+                                Text(continueState.game.system?.name ?? "")
                                     .font(.system(size: 8))
-                                    .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
+                                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
                             }
                         }
                     }

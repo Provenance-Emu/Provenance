@@ -73,7 +73,7 @@ public struct SideMenuView: SwiftUI.View {
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !masterBranch {
-            versionText = "\(versionText ?? "") Beta"
+            versionText = "\(versionText ?? "") Experimental"
         }
         return versionText ?? ""
     }
@@ -124,7 +124,7 @@ public struct SideMenuView: SwiftUI.View {
             vc.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "provnavicon"))
         })
 #endif
-        .background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
+        .background(themeManager.currentTheme.menuBackground.swiftUIColor)
         .add(self.searchBar)
         // search results
         .if(!searchBar.text.isEmpty) { view in
@@ -146,7 +146,7 @@ public struct SideMenuView: SwiftUI.View {
                                 }
                                 .padding(.horizontal, 10)
                             }
-                            .background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
+                            .background(themeManager.currentTheme.menuBackground.swiftUIColor)
                         }
                     }
                 }

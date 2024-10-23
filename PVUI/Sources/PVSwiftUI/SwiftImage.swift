@@ -39,3 +39,37 @@ extension SwiftImage {
         return missingArtworkImage ?? SwiftImage()
     }
 }
+
+// Add a new SwiftUI View for missing artwork
+struct MissingArtworkView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    let gameTitle: String
+    let ratio: CGFloat
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                #if os(tvOS)
+                Color(white: 0.18)
+                #else
+                themeManager.currentTheme.settingsCellBackground.map(Color.init) ?? Color(.systemBackground)
+                #endif
+
+                Text(gameTitle)
+                    .font(.system(size: UIDevice.current.userInterfaceIdiom == .tv ? 60 : 30))
+                    .foregroundColor(
+                        themeManager.currentTheme.settingsCellText.map(Color.init) ?? Color(.placeholderText)
+                    )
+            }
+            .frame(width: geometry.size.height * ratio, height: geometry.size.height)
+        }
+        .frame(height: CGFloat(PVThumbnailMaxResolution))
+    }
+}
+
+// Extension to SwiftUI Image to create a missing artwork image
+extension Image {
+    static func missingArtwork(gameTitle: String, ratio: CGFloat) -> some View {
+        MissingArtworkView(gameTitle: gameTitle, ratio: ratio)
+    }
+}

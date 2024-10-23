@@ -53,18 +53,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     weak var gameLibraryViewController: PVGameLibraryViewController?
 
     func _initUITheme() {
-        #if os(iOS)
-        let darkTheme = (Defaults[.theme] == .auto && self.window?.traitCollection.userInterfaceStyle == .dark) || Defaults[.theme] == .dark
-        let newTheme = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
-//        ThemeManager.shared.setCurrentTheme(newTheme)
-        self.window?.overrideUserInterfaceStyle = ThemeManager.shared.currentTheme.dark ? .dark : .light
-        #elseif os(tvOS)
-//        if Defaults[.tvOSThemes] {
-//            DispatchQueue.main.async {
-//                ThemeManager.shared.currentTheme = Theme.darkTheme
-//            }
-//        }
-        #endif
+        ThemeManager.applySavedTheme()
     }
 
     func _initUI(
@@ -81,9 +70,11 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         #if os(tvOS)
         window.tintColor = .provenanceBlue
         #endif
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+        let widthPercentage: CGFloat = isIpad ? 0.3 : 0.7
+        let overlayColor: UIColor = .Provenance.blue
 
-        if #available(iOS 14, tvOS 14, macCatalyst 15.0, visionOS 1.0, *),
-           !Defaults[.useUIKit] {
+        if !Defaults[.useUIKit] {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
@@ -94,7 +85,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             let sideNav = SideNavigationController(mainViewController: UINavigationController(rootViewController: rootViewController))
             sideNav.leftSide(
                 viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, viewModel: viewModel, delegate: rootViewController, rootDelegate: rootViewController),
-                options: .init(widthPercent: 0.7, animationDuration: 0.18, overlayColor: .clear, overlayOpacity: 1, shadowOpacity: 0.0)
+                options: .init(widthPercent: widthPercentage, animationDuration: 0.18, overlayColor: overlayColor, overlayOpacity: 0.1, shadowOpacity: 0.2)
             )
 
             window.rootViewController = sideNav

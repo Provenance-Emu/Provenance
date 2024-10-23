@@ -15,10 +15,13 @@ public typealias UIColor = NSColor
 #endif
 
 public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
+
     var name: String { get }
     var group: String? { get }
 
     var dark: Bool { get }
+    
+    var uiviewBackground: UIColor? { get }
 
 #if !os(tvOS)
     var statusBarColor: UIColor? { get }
@@ -48,6 +51,20 @@ public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
 
     var switchON: UIColor? { get }
     var switchThumb: UIColor? { get }
+    
+    // Tabs
+    var tabBarBackground: UIColor? { get }
+    
+    // Seperator color
+    var settingsSeperator: UIColor? { get }
+    
+    /// Side Menu
+    var menuBackground: UIColor { get }
+    var menuText: UIColor { get }
+    var menuDivider: UIColor { get }
+    var menuIconTint: UIColor { get }
+    var menuHeaderBackground: UIColor { get }
+    var menuHeaderIconTint: UIColor { get }
 }
 
 // MARK: - Default implimentnations
@@ -85,6 +102,7 @@ public extension UXThemePalette {
     var defaultTintColor: UIColor? { nil }
     var switchThumb: UIColor? { nil }
     var navigationBarBackgroundColor: UIColor? { nil }
+    var uiviewBackground: UIColor? { nil }
 }
 
 public extension UXThemePalette {
@@ -92,6 +110,27 @@ public extension UXThemePalette {
     var gameLibraryText: UIColor { .white }
     var gameLibraryHeaderBackground: UIColor { .black }
     var gameLibraryHeaderText: UIColor { .white }
+}
+
+/// Menu
+/// public extension UXThemePalette {
+public extension UXThemePalette {
+    var menuBackground: UIColor { .black }
+    var menuText: UIColor { .Provenance.blue }
+    var menuDivider: UIColor { .white }
+    var menuIconTint: UIColor { .Provenance.blue }
+    var menuHeaderBackground: UIColor { .systemBackground }
+    var menuHeaderIconTint: UIColor { .Provenance.blue }
+}
+
+// Tabs
+public extension UXThemePalette {
+    var tabBarBackground: UIColor? { self.uiviewBackground }
+}
+
+// Seperator color
+public extension UXThemePalette {
+    var settingsSeperator: UIColor? { self.settingsCellText }
 }
 
 public extension UXThemePalette {
@@ -102,6 +141,10 @@ public extension UXThemePalette {
 
     var settingsHeaderBackground: UIColor? { nil }
     var settingsHeaderText: UIColor? { nil }
+}
+
+public extension UXThemePalette {
+    var backgroundBritness: CGFloat { 0.07 }
 }
 
 public extension Hashable where Self: UXThemePalette {

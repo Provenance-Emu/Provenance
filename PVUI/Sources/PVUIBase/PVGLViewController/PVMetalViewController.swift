@@ -29,12 +29,27 @@ import OpenGLES.gltypes
 
 fileprivate let BUFFER_COUNT: UInt = 3
 
+extension GLenum {
+    var toString: String {
+        switch self {
+        case GLenum(GL_UNSIGNED_BYTE): return "GL_UNSIGNED_BYTE"
+        case GLenum(GL_BGRA): return "GL_BGRA"
+        case GLenum(GL_RGBA): return "GL_RGBA"
+        case GLenum(GL_RGB): return "GL_RGB"
+        case GLenum(GL_RGB8): return "GL_RGB8"
+        case GLenum(0x8367): return "GL_UNSIGNED_INT_8_8_8_8_REV"
+        // Add more cases as needed
+        default: return String(format: "0x%04X", self)
+        }
+    }
+}
+
 final
 class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDelegate {
     var presentationFramebuffer: AnyObject? = nil
 
     weak var emulatorCore: PVEmulatorCore? = nil
-    
+
     #if !os(visionOS)
     var mtlView: MTKView!
     #endif
@@ -118,7 +133,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         renderSettings.crtFilterEnabled = filterShaderEnabled()
         renderSettings.lcdFilterEnabled = Defaults[.lcdFilterEnabled]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-        
+
         Task {
             for await value in Defaults.updates([.crtFilterEnabled, .lcdFilterEnabled, .imageSmoothing]) {
                 renderSettings.crtFilterEnabled = Defaults[.crtFilterEnabled]
@@ -340,18 +355,20 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     func updateInputTexture() {
         guard let emulatorCore = emulatorCore else {
-            assertionFailure("emulatoreCore should not be nil")
+            ELOG("emulatorCore is nil in updateInputTexture()")
             return
         }
-        
+
         let screenRect = emulatorCore.screenRect
-        let pixelFormat = getMTLPixelFormat(from: emulatorCore.pixelFormat,
-                                            type: emulatorCore.pixelType)
+        let pixelFormat = getMTLPixelFormatNeo(from: emulatorCore.pixelFormat,
+                                               type: emulatorCore.pixelType)
+
+        ILOG("Updating input texture with screenRect: \(screenRect), pixelFormat: \(pixelFormat)")
 
         #if targetEnvironment(simulator)
-        var mtlPixelFormat:MTLPixelFormat = .astc_6x5_srgb
+        var mtlPixelFormat: MTLPixelFormat = .astc_6x5_srgb
         #else
-        var mtlPixelFormat:MTLPixelFormat = pixelFormat
+        var mtlPixelFormat: MTLPixelFormat = pixelFormat
         #endif
         if emulatorCore.rendersToOpenGL {
             mtlPixelFormat = .rgba8Unorm
@@ -371,6 +388,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             desc.usage = .shaderRead
 
             inputTexture = device?.makeTexture(descriptor: desc)
+
+            if let inputTexture = inputTexture {
+                ILOG("Created new input texture with size: \(inputTexture.width)x\(inputTexture.height), format: \(inputTexture.pixelFormat)")
+            } else {
+                ELOG("Failed to create input texture")
+            }
         }
     }
 
@@ -430,6 +453,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     func getByteWidth(for pixelFormat: Int32, type pixelType: Int32) -> UInt {
+        return getByteWidthNeo(for: pixelFormat, type: pixelType)
+    }
+    func getByteWidthLegacy(for pixelFormat: Int32, type pixelType: Int32) -> UInt {
         var typeWidth: UInt = 0
         switch pixelType {
         case GL_BYTE, GL_UNSIGNED_BYTE:
@@ -452,11 +478,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             default:
                 return 4 * typeWidth
             }
-            //    #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+        //    #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
         case GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, GL_RGB:
-            //    #else
-            //          case GL_UNSIGNED_SHORT_5_6_5, GL_RGB:
-            //    #endif
+        //    #else
+        //          case GL_UNSIGNED_SHORT_5_6_5, GL_RGB:
+        //    #endif
             switch pixelType {
             case GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT_4_4_4_4, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_SHORT_5_6_5:
                 return typeWidth
@@ -474,21 +500,39 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         assertionFailure("Unknown GL pixelFormat %x. Add me: \(pixelFormat)")
         return 1
     }
-    
-    func getByteWidth2(for pixelFormat: Int32, type pixelType: Int32) -> UInt {
+
+    func getByteWidthNeo(for pixelFormat: Int32, type pixelType: Int32) -> UInt {
+        // Determine component size
         let componentSize: Int
         switch pixelType {
         case GL_BYTE, GL_UNSIGNED_BYTE:
             componentSize = 1
         case GL_SHORT, GL_UNSIGNED_SHORT, GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4, GL_UNSIGNED_SHORT_5_5_5_1:
             componentSize = 2
-        case GL_INT, GL_UNSIGNED_INT, GL_FLOAT:
+        case GL_INT, GL_UNSIGNED_INT, GL_FLOAT, GL_FLOAT_32_UNSIGNED_INT_24_8_REV:
             componentSize = 4
+        case 0x8367: // GL_UNSIGNED_INT_8_8_8_8_REV
+            return 4 // This is always 4 bytes per pixel
         default:
-            assertionFailure("Unknown GL pixelType: \(pixelType)")
+            WLOG("Warning: Unknown GL pixelType: \(pixelType)")
             return 0
         }
 
+        // Handle special cases first
+        switch (pixelFormat, pixelType) {
+        case (GL_RGB565, GL_UNSIGNED_SHORT_5_6_5),
+             (GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4),
+             (GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1):
+            return 2
+        case (GL_RGBA8, _), (GL_RGB8, _):
+            return 4
+        case (GL_RGB5_A1, _):
+            return 2
+        default:
+            break
+        }
+
+        // Determine components per pixel
         let componentsPerPixel: Int
         switch pixelFormat {
         case GL_RGBA, GL_BGRA:
@@ -499,41 +543,27 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             componentsPerPixel = 2
         case GL_LUMINANCE, GL_ALPHA:
             componentsPerPixel = 1
-        case GL_RGBA8, GL_RGB8:
-            return 4  // These are always 4 bytes per pixel
-        case GL_RGB5_A1:
-            return 2  // This is always 2 bytes per pixel
         default:
-            assertionFailure("Unknown GL pixelFormat: \(pixelFormat)")
-            return 0
-        }
-
-        // Special cases for packed formats
-        if pixelFormat == GL_RGB565 && pixelType == GL_UNSIGNED_SHORT_5_6_5 {
-            return 2
-        }
-        if pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_4_4_4_4 {
-            return 2
-        }
-        if pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_5_5_5_1 {
-            return 2
+            WLOG("Warning: Unknown GL pixelFormat: \(pixelFormat)")
+            assertionFailure("Warning: Unknown GL pixelFormat: \(pixelFormat)")
+            return 1
         }
 
         return UInt(componentSize * componentsPerPixel)
     }
+
     func getMTLPixelFormat(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
         return getMTLPixelFormatNeo(from: pixelFormat, type: pixelType)
     }
-    
+
     func getMTLPixelFormatNeo(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
+        ILOG("Getting MTLPixelFormat for pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString)")
         switch (pixelFormat, pixelType) {
         case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_BYTE)),
              (GLenum(GL_BGRA), GLenum(0x8367)): // GL_UNSIGNED_INT_8_8_8_8_REV
             return .bgra8Unorm
         case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_INT)):
-            return .bgra8Unorm_srgb
-        case (GLenum(GL_BGRA), GLenum(GL_FLOAT_32_UNSIGNED_INT_24_8_REV)):
-            return .bgra8Unorm_srgb
+            return .bgra8Unorm
         case (GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE)):
             return .rgba8Unorm
         case (GLenum(GL_RGBA), GLenum(GL_BYTE)):
@@ -572,13 +602,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         #endif
         // Add more cases as needed for your specific use cases
         default:
-            print("Warning: Unknown GL pixelFormat. Add pixelFormat: \(pixelFormat) pixelType: \(pixelType)")
-            // Instead of assertionFailure, return a default format or handle the error as appropriate for your application
-            return .rgba8Unorm // Default to a common format, or return nil if you prefer
+            WLOG("Unknown GL pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString). Defaulting to .rgba8Unorm")
+            return .rgba8Unorm
         }
     }
-    
-    func getMTLPixelFormatOld(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
+
+    func getMTLPixelFormatLegacy(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
         if pixelFormat == GLenum(GL_BGRA),
            pixelType == GLenum(GL_UNSIGNED_BYTE) ||
             pixelType == GLenum(0x8367) {
@@ -647,7 +676,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return .rgba16Unorm
         }
 #endif
-
         print("Error: Unknown GL pixelFormat. Add pixelFormat: \(pixelFormat) pixelType: \(pixelType)")
         assertionFailure("Unknown GL pixelFormat. Add pixelFormat: \(pixelFormat) pixelType: \(pixelType)")
         return .invalid
@@ -656,12 +684,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     // TODO: Make this throw
     func setupBlitShader() {
         guard let emulatorCore = emulatorCore else {
-            ELOG("emulatorCore is nil")
+            ELOG("emulatorCore is nil in setupBlitShader()")
             return
         }
 
         guard let device = device else {
-            ELOG("device is nil")
+            ELOG("device is nil in setupBlitShader()")
             return
         }
 
@@ -694,11 +722,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         desc.fragmentFunction = lib.makeFunction(name: blitterShader.function)
 
         if let currentDrawable = mtlView.currentDrawable {
-            desc.colorAttachments[0].pixelFormat = currentDrawable.layer.pixelFormat
+            desc.colorAttachments[0].pixelFormat = currentDrawable.texture.pixelFormat
+        } else {
+            ELOG("No current drawable available")
         }
 
         do {
             blitPipeline = try device.makeRenderPipelineState(descriptor: desc)
+            ILOG("Successfully created blit pipeline state")
         } catch let error {
             ELOG("Error creating render pipeline state: \(error)")
         }
@@ -824,6 +855,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     func draw(in view: MTKView) {
         guard let emulatorCore = emulatorCore else {
+            ELOG("EmulatorCore is nil")
             return
         }
 
@@ -867,7 +899,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             }
         }
     }
-    
+
     @inlinable
     @inline (__always)
     func _render(_ emulatorCore: PVEmulatorCore, in view: MTKView) {
@@ -879,7 +911,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             emulatorCore.frontBufferLock.lock()
         }
 
+        ILOG("Drawing frame with pixelFormat: \(emulatorCore.pixelFormat.toString), pixelType: \(emulatorCore.pixelType.toString), internalPixelFormat: \(emulatorCore.internalPixelFormat.toString)")
+
         guard let commandBuffer = self.commandQueue?.makeCommandBuffer() else {
+            ELOG("Failed to create command buffer")
             return
         }
         self.previousCommandBuffer = commandBuffer
@@ -924,7 +959,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 ELOG("makeBlitCommandEncoder return nil")
                 return
             }
-            
+
             let sourceSize = MTLSize(width: Int(screenRect.width), height: Int(screenRect.height), depth: 1)
             encoder.copy(from: uploadBuffer,
                          sourceOffset: 0,
@@ -946,17 +981,17 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         desc.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
 
         guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: desc) else {
+            ELOG("Failed to create render command encoder")
             return
         }
 
-        if self.renderSettings.lcdFilterEnabled, emulatorCore.screenType.isLCD
-        {
-            #warning("LCD Filter incomplete")
-        }
-        else if self.renderSettings.crtFilterEnabled, emulatorCore.screenType.isCRT
-        {
-            if self.effectFilterShader?.name == "CRT"
-            {
+        var pipelineState: MTLRenderPipelineState?
+
+        if self.renderSettings.lcdFilterEnabled, emulatorCore.screenType.isLCD {
+            WLOG("LCD Filter not implemented yet")
+            pipelineState = self.blitPipeline
+        } else if self.renderSettings.crtFilterEnabled, emulatorCore.screenType.isCRT {
+            if self.effectFilterShader?.name == "CRT" {
                 let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
                                                Float(screenRect.width), Float(screenRect.height))
                 let emulatedImageSize = SIMD2<Float>(Float(self.inputTexture!.width),
@@ -964,21 +999,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 let finalRes = SIMD2<Float>(Float(view.drawableSize.width),
                                             Float(view.drawableSize.height))
                 var cbData = CRT_Data(DisplayRect: displayRect, EmulatedImageSize: emulatedImageSize, FinalRes: finalRes)
-                
+
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<CRT_Data>.stride, index: 0)
-                encoder.setRenderPipelineState(self.effectFilterPipeline!)
-            }
-            else if self.effectFilterShader?.name == "Simple CRT"
-            {
-                
+                pipelineState = self.effectFilterPipeline
+            } else if self.effectFilterShader?.name == "Simple CRT" {
                 let mameScreenSrcRect: SIMD4<Float> = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
                 let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture!.width), Float(inputTexture!.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
-                
+
                 var cbData = SimpleCrtUniforms(
                     mameScreenDstRect: mameScreenSrcRect,
                     mameScreenSrcRect: mameScreenDstRect
                 )
-                
+
                 cbData.curvVert = 5.0
                 cbData.curvHoriz = 4.0
                 cbData.curvStrength = 0.25
@@ -986,118 +1018,31 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 cbData.vignStrength = 0.05
                 cbData.zoomOut = 1.1
                 cbData.brightness = 1.0
-                
+
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<SimpleCrtUniforms>.stride, index: 0)
-                encoder.setRenderPipelineState(effectFilterPipeline!)
+                pipelineState = self.effectFilterPipeline
             }
-        }
-//        else if ((self.effectFilterShader?.name.contains(".fsh")) != nil)
-//        {
-//                #warning(".fsh Filter incomplete")
-//
-//                let vertexShader = """
-//                    #version 150
-//                    in vec4 aPosition;
-//                    void main(void) {
-//                        gl_Position = aPosition;
-//                    }
-//                """
-//
-//                let shaderSourceForName: (String, inout Error?) -> String? = { name, error in
-//                    guard let file = Bundle.main.path(forResource: name, ofType: "fsh", inDirectory: "Shaders") else {
-//                        return nil
-//                    }
-//                    return try? String(contentsOfFile: file, encoding: .utf8)
-//                }
-//
-//                guard let shaderName = (effectFilterShader?.name as NSString).deletingPathExtension() else {
-//                    ELOG("Invalid shader name")
-//                    return
-//                }
-//
-//                var err: Error?
-//
-//                // Program
-//                guard var fragmentShader = shaderSourceForName("MasterShader", &err) else {
-//                    ELOG("Error loading master shader: \(err?.localizedDescription ?? "unknown error")")
-//                    err = nil
-//                    return
-//                }
-//
-//                fragmentShader = fragmentShader.replacingOccurrences(of: "{filter}", with: shaderSourceForName(shaderName, &err) ?? "")
-//
-//                if let err = err {
-//                    ELOG("Error loading filter shader: \(err.localizedDescription)")
-//                    err = nil
-//                    return
-//                }
-//
-//                program = PVMetalViewController.program(vertexShader: vertexShader, fragmentShader: fragmentShader)
-//
-//                // Attributes
-//                self.positionAttribute = glGetAttribLocation(program, "aPosition")
-//
-//                // Uniforms
-//                self.resolutionUniform = glGetUniformLocation(program, "output_resolution")
-//
-//                glGenTextures(1, &texture)
-//                glBindTexture(GLenum(GL_TEXTURE_2D), texture)
-//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_NEAREST))
-//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_NEAREST))
-//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GLint(GL_CLAMP_TO_EDGE))
-//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GLint(GL_CLAMP_TO_EDGE))
-//                glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-//                self.textureUniform = glGetUniformLocation(program, "image")
-//
-//                glGenTextures(1, &self.previousTexture)
-//                glBindTexture(GLenum(GL_TEXTURE_2D), self.previousTexture)
-//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_NEAREST))
-//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_NEAREST))
-//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GLint(GL_CLAMP_TO_EDGE))
-//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GLint(GL_CLAMP_TO_EDGE))
-//                glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-//                self.previousTextureUniform = glGetUniformLocation(program, "previous_image")
-//
-//                self.frameBlendingModeUniform = glGetUniformLocation(program, "frame_blending_mode")
-//
-//                // Program
-//                glUseProgram(program)
-//
-//                var vao: GLuint = 0
-//                glGenVertexArrays(1, &vao)
-//                glBindVertexArray(vao)
-//
-//                var vbo: GLuint = 0
-//                glGenBuffers(1, &vbo)
-//
-//                // Attributes
-//                let quad: [GLfloat] = [
-//                    -1, -1, 0, 1,
-//                     -1, +1, 0, 1,
-//                     +1, -1, 0, 1,
-//                     +1, +1, 0, 1,
-//                ]
-//
-//                glBindBuffer(GLenum(GL_ARRAY_BUFFER), vbo)
-//                quad.withUnsafeBufferPointer { ptr in
-//                    glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<GLfloat>.stride * quad.count, ptr.baseAddress, GLenum(GL_STATIC_DRAW))
-//                }
-//                glEnableVertexAttribArray(GLuint(self.positionAttribute))
-//                glVertexAttribPointer(GLuint(self.positionAttribute), 4, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 0, nil)
-//        }
-        else
-        {
-            encoder.setRenderPipelineState(self.blitPipeline!)
+        } else {
+            pipelineState = self.blitPipeline
         }
 
-        encoder.setFragmentTexture(self.inputTexture, index: 0)
-        encoder.setFragmentSamplerState(self.renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler,
-                                        index: 0)
-        encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
-        encoder.endEncoding()
+        if let pipelineState = pipelineState {
+            encoder.setRenderPipelineState(pipelineState)
 
-        commandBuffer.present(view.currentDrawable!)
-        commandBuffer.commit()
+            encoder.setFragmentTexture(self.inputTexture, index: 0)
+            encoder.setFragmentSamplerState(self.renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler, index: 0)
+
+            ILOG("Drawing primitives with pipeline state: \(pipelineState)")
+            encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+            encoder.endEncoding()
+
+            commandBuffer.present(view.currentDrawable!)
+            commandBuffer.commit()
+        } else {
+            ELOG("No valid pipeline state selected. Skipping draw call.")
+            encoder.endEncoding()
+            commandBuffer.commit()
+        }
 
         if emulatorCore.rendersToOpenGL {
             emulatorCore.frontBufferLock.unlock()
