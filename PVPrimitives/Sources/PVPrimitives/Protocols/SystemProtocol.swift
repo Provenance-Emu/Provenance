@@ -29,8 +29,8 @@ public protocol SystemProtocol {
     var BIOSes: [BIOSInfoProviderType]? { get }
     var extensions: [String] { get }
 
-    var gameStructs: [Game] { get }
-    var coreStructs: [Core] { get }
+//    var gameStructs: @Sendable () -> [Game] { get }
+//    var coreStructs: @Sendable () -> [Core] { get }
     var userPreferredCore: Core? { get }
 
     var usesCDs: Bool { get }

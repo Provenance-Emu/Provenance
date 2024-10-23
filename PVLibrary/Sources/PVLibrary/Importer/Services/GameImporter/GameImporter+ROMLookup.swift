@@ -35,7 +35,7 @@ public extension GameImporter {
         }
         var resultsMaybe: [[String: Any]]?
         do {
-            if let result = RomDatabase.sharedInstance.getArtCache(game.md5Hash.uppercased(), systemIdentifier:game.systemIdentifier) {
+            if let result = RomDatabase.getArtCache(game.md5Hash.uppercased(), systemIdentifier:game.systemIdentifier) {
                 resultsMaybe=[result]
             } else {
                 resultsMaybe = try searchDatabase(usingKey: "romHashMD5", value: game.md5Hash.uppercased(), systemID: game.systemIdentifier)
@@ -55,7 +55,7 @@ public extension GameImporter {
             }
             let subfileName = String(fileName.prefix(gameTitleLen))
             do {
-                if let result = RomDatabase.sharedInstance.getArtCacheByFileName(subfileName, systemIdentifier:game.systemIdentifier) {
+                if let result = RomDatabase.getArtCacheByFileName(subfileName, systemIdentifier:game.systemIdentifier) {
                     resultsMaybe=[result]
                 } else {
                     resultsMaybe = try searchDatabase(usingKey: "romFileName", value: subfileName, systemID: game.systemIdentifier)

@@ -30,8 +30,8 @@ public struct System: Codable, SystemProtocol, Sendable {
 
     public let extensions: [String]
 
-    public let gameStructs: [Game]
-    public let coreStructs: [Core]
+//    public var gameStructs: @Sendable () -> [Game] { {[]} }
+//    public var coreStructs: @Sendable () -> [Core] { {[]} }
     public let userPreferredCore: Core?
 
     public let usesCDs: Bool
@@ -41,10 +41,26 @@ public struct System: Codable, SystemProtocol, Sendable {
     public let screenType: ScreenType
     public let supported: Bool
 
-    public init(name: String, identifier: String, shortName: String, shortNameAlt: String? = nil, manufacturer: String,
-                releaseYear: Int, bits: SystemBits, headerByteSize: Int, openvgDatabaseID: Int, requiresBIOS: Bool = false,
-                options: SystemOptions, bioses: [BIOS]? = nil, extensions: [String], games: [Game], cores: [Core], userPreferredCore: Core? = nil,
-                usesCDs: Bool = false, portableSystem: Bool = false, supportsRumble: Bool = false, screenType: ScreenType = .crt, supported: Bool = true) {
+    public init(
+        name: String,
+        identifier: String,
+        shortName: String,
+        shortNameAlt: String? = nil,
+        manufacturer: String,
+        releaseYear: Int,
+        bits: SystemBits,
+        headerByteSize: Int,
+        openvgDatabaseID: Int,
+        requiresBIOS: Bool = false,
+        options: SystemOptions,
+        bioses: [BIOS]? = nil,
+        extensions: [String],
+        userPreferredCore: Core? = nil,
+        usesCDs: Bool = false,
+        portableSystem: Bool = false,
+        supportsRumble: Bool = false,
+        screenType: ScreenType = .crt,
+        supported: Bool = true) {
         self.name = name
         self.identifier = identifier
         self.shortName = shortName
@@ -58,8 +74,6 @@ public struct System: Codable, SystemProtocol, Sendable {
         self.options = options
         self.BIOSes = bioses
         self.extensions = extensions
-        self.gameStructs = games
-        self.coreStructs = cores
         self.userPreferredCore = userPreferredCore
         self.usesCDs = usesCDs
         self.portableSystem = portableSystem
@@ -123,10 +137,8 @@ public extension System {
 
         let extensions = system.extensions
         let requiresBIOS = system.requiresBIOS
-        let games = system.gameStructs
         #warning("Fix this causing infinite loop")
         // TODO: fix this causing infinite loop
-//        let cores = system.coreStructs
         let userPreferredCore = system.userPreferredCore
 
         let usesCDs = system.usesCDs
@@ -135,9 +147,24 @@ public extension System {
         let supportsRumble = system.supportsRumble
         let screenType = system.screenType
         let supported = system.supported
-        self.init(name: name, identifier: identifier, shortName: shortName, shortNameAlt: shortNameAlt, manufacturer: manufacturer,
-                  releaseYear: releaseYear, bits: bits, headerByteSize: headerByteSize, openvgDatabaseID: openvgDatabaseID, requiresBIOS: requiresBIOS,
-                  options: options, bioses: bioses, extensions: extensions, games: games, cores: [], userPreferredCore: userPreferredCore,
-                  usesCDs: usesCDs, portableSystem: portableSystem, supportsRumble: supportsRumble, screenType: screenType, supported: supported)
+        self.init(name: name,
+                  identifier: identifier,
+                  shortName: shortName,
+                  shortNameAlt: shortNameAlt,
+                  manufacturer: manufacturer,
+                  releaseYear: releaseYear,
+                  bits: bits,
+                  headerByteSize: headerByteSize,
+                  openvgDatabaseID: openvgDatabaseID,
+                  requiresBIOS: requiresBIOS,
+                  options: options,
+                  bioses: bioses,
+                  extensions: extensions,
+                  userPreferredCore: userPreferredCore,
+                  usesCDs: usesCDs,
+                  portableSystem: portableSystem,
+                  supportsRumble: supportsRumble,
+                  screenType: screenType,
+                  supported: supported)
     }
 }

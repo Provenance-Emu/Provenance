@@ -493,8 +493,8 @@ extension GameImporter {
             importOperation.addExecutionBlock {
                 Task {
                     ILOG("Import Files at \(destinationPath)")
-                    if let system = await RomDatabase.sharedInstance.getSystemCache()[system.identifier] {
-                        RomDatabase.sharedInstance.addFileSystemROMCache(system)
+                    if let system = RomDatabase.systemCache[system.identifier] {
+                        RomDatabase.addFileSystemROMCache(system)
                     }
                     self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
                 }
@@ -978,7 +978,7 @@ extension GameImporter {
             ELOG("MD5 was blank")
             return nil
         }
-        if let result = RomDatabase.sharedInstance.getArtCache(md5) ?? RomDatabase.sharedInstance.getArtCacheByFileName(rom.filePath.lastPathComponent),
+        if let result = RomDatabase.artMD5DBCache[md5] ?? RomDatabase.getArtCacheByFileName(rom.filePath.lastPathComponent),
            let databaseID = result["systemID"] as? Int,
            let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
             return systemID
@@ -1061,8 +1061,10 @@ extension GameImporter {
 
     /// Saves the relative path for a given game
     func saveRelativePath(_ existingGame: PVGame, partialPath:String, file:URL) {
-        if RomDatabase.sharedInstance.getGamesCacheSync()[partialPath] == nil {
-            RomDatabase.sharedInstance.addRelativeFileCache(file, game:existingGame)
+        Task {
+            if await RomDatabase.gamesCache[partialPath] == nil {
+                await RomDatabase.addRelativeFileCache(file, game:existingGame)
+            }
         }
     }
 
@@ -1128,7 +1130,7 @@ extension GameImporter {
     /// Determines the systems for a given path
     private func determineSystems(for path: URL, chosenSystem: System?) throws -> [PVSystem] {
         if let chosenSystem = chosenSystem {
-            if let system = RomDatabase.sharedInstance.getSystemCacheSync()[chosenSystem.identifier] {
+            if let system = RomDatabase.systemCache[chosenSystem.identifier] {
                 return [system]
             }
         }
@@ -1140,7 +1142,7 @@ extension GameImporter {
     /// Handles a system conflict
     private func handleSystemConflict(path: URL, systems: [PVSystem]) throws {
         if let systemIDMatch = systemIdFromCache(forROMCandidate: ImportCandidateFile(filePath: path)),
-           let system = RomDatabase.sharedInstance.getSystemCacheSync()[systemIDMatch] {
+           let system = RomDatabase.systemCache[systemIDMatch] {
             try importGame(path: path, system: system)
         } else {
             try handleMultipleSystemMatch(path: path, systems: systems)
@@ -1170,9 +1172,9 @@ extension GameImporter {
     private func importGame(path: URL, system: PVSystem) throws {
         let filename = path.lastPathComponent
         let partialPath = (system.identifier as NSString).appendingPathComponent(filename)
-        let similarName = RomDatabase.sharedInstance.altName(path, systemIdentifier: system.identifier)
+        let similarName = RomDatabase.altName(path, systemIdentifier: system.identifier)
 
-        let gamesCache = RomDatabase.sharedInstance.getGamesCacheSync()
+        let gamesCache = RomDatabase.gamesCache
 
         if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
            system.identifier == existingGame.systemIdentifier {
@@ -1203,10 +1205,10 @@ extension GameImporter {
         game.title = title
         game.requiresSync = true
         var relatedPVFiles = [PVFile]()
-        let files = RomDatabase.sharedInstance.getFileSystemROMCache(for: system).keys
-        let name = RomDatabase.sharedInstance.altName(path, systemIdentifier: system.identifier)
+        let files = RomDatabase.getFileSystemROMCache(for: system).keys
+        let name = RomDatabase.altName(path, systemIdentifier: system.identifier)
         await files.asyncForEach { url in
-            let relativeName=RomDatabase.sharedInstance.altName(url, systemIdentifier: system.identifier)
+            let relativeName=RomDatabase.altName(url, systemIdentifier: system.identifier)
             if relativeName == name {
                 relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
             }
@@ -1229,7 +1231,7 @@ extension GameImporter {
     /// Finishes the update or import of a game
     private func finishUpdateOrImport(ofGame game: PVGame, path: URL) async throws {
         // Only process if rom doensn't exist in DB
-        if await RomDatabase.sharedInstance.getGamesCache()[game.romPath] != nil {
+        if await RomDatabase.gamesCache[game.romPath] != nil {
             throw GameImporterError.romAlreadyExistsInDatabase
         }
         var modified = false
@@ -1264,7 +1266,7 @@ extension GameImporter {
             try database.writeTransaction {
                 database.realm.create(PVGame.self, value:game, update:.modified)
             }
-            RomDatabase.sharedInstance.addGamesCache(game)
+            RomDatabase.addGamesCache(game)
         } catch {
             ELOG("Couldn't add new game \(error.localizedDescription)")
         }
@@ -1274,7 +1276,7 @@ extension GameImporter {
     fileprivate class func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem]?, romFilename: String) -> [PVGame]? {
         // Check if existing ROM
 
-        let allGames = RomDatabase.sharedInstance.getGamesCacheSync().values.filter ({
+        let allGames = RomDatabase.gamesCache.values.filter ({
             $0.romPath.lowercased() == romFilename.lowercased()
         })
         /*

@@ -207,15 +207,69 @@ public typealias RomDB = RomDatabase
 public final class RomDatabase {
 
     public private(set) static var databaseInitialized = false
-    
-    
-    static var gamesCache: [String: PVGame]?
-    static var systemCache: [String: PVSystem]?
-    static var coreCache: [String: PVCore]?
-    static var biosCache: [String: [String]]?
-    static var fileSystemROMCache:[URL:PVSystem]?
-    static var artMD5DBCache:[String:[String: AnyObject]]?
-    static var artFileNameToMD5Cache:[String:String]?
+
+    static var _gamesCache: [String: PVGame]?
+    public static var gamesCache: [String: PVGame] {
+        guard let _gamesCache = _gamesCache else {
+            reloadGamesCache(force: true)
+            return gamesCache
+        }
+        return _gamesCache
+    }
+
+    static var _systemCache: [String: PVSystem]?
+    public static var systemCache: [String: PVSystem] {
+        guard let _systemCache = _systemCache else {
+            reloadSystemsCache(force: true)
+            return systemCache
+        }
+        return _systemCache
+    }
+
+    static var _coreCache: [String: PVCore]?
+    public static var coreCache: [String: PVCore] {
+        guard let _coreCache = _coreCache else {
+            reloadCoresCache(force: true)
+            return coreCache
+        }
+        return _coreCache
+    }
+
+    static var _biosCache: [String: [String]]?
+    public static var biosCache: [String: [String]] {
+        guard let _biosCache = _biosCache else {
+            reloadBIOSCache()
+            return biosCache
+        }
+        return _biosCache
+    }
+
+    static var _fileSystemROMCache: [URL: PVSystem]?
+    public static var fileSystemROMCache: [URL: PVSystem] {
+        guard let _fileSystemROMCache = _fileSystemROMCache else {
+            reloadFileSystemROMCache()
+            return fileSystemROMCache
+        }
+        return _fileSystemROMCache
+    }
+
+    static var _artMD5DBCache: [String: [String: AnyObject]]?
+    public static var artMD5DBCache: [String: [String: AnyObject]] {
+        guard let _artMD5DBCache = _artMD5DBCache else {
+            reloadArtDBCache()
+            return artMD5DBCache
+        }
+        return _artMD5DBCache
+    }
+
+    static var _artFileNameToMD5Cache: [String: String]?
+    public static var artFileNameToMD5Cache: [String: String] {
+        guard let _artFileNameToMD5Cache = _artFileNameToMD5Cache else {
+            reloadArtDBCache()
+            return artFileNameToMD5Cache
+        }
+        return _artFileNameToMD5Cache
+    }
 
     public class func initDefaultDatabase() throws {
         if !databaseInitialized {
@@ -566,7 +620,7 @@ public extension RomDatabase {
 
 public extension RomDatabase {
     @objc
-    func refresh() {
+    static func refresh() {
         let realm = try! Realm()
         realm.refresh()
 

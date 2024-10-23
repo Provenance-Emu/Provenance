@@ -12,6 +12,7 @@ import PVLogging
 import PVPlists
 import PVRealm
 import PVFileSystem
+import PVPrimitives
 
 @objc
 public final class PVEmulatorConfiguration: NSObject {
@@ -99,11 +100,6 @@ public final class PVEmulatorConfiguration: NSObject {
 
 public extension PVEmulatorConfiguration {
     
-    /*
-     TODO: It really makes more sense for each core to have it's own plist file in it's framework
-     and iterate those and create SystemConfiguration structions based off of parsing them
-     instead of key / value matching a single plist
-     */
     static var systems: [PVSystem] {
         return Array(RomDatabase.sharedInstance.all(PVSystem.self))
     }
@@ -129,8 +125,40 @@ public extension PVEmulatorConfiguration {
         })
     }
     
+    class func core(forSystem system: PVSystem) -> [PVCore] {
+        system.cores.map { $0 }
+    }
+    
+    class func games(forSystem system: PVSystem) -> [PVGame] {
+        system.games.map { $0 }
+    }
+    
+    class func cores(forSystem system: any SystemProtocol) -> [PVCore] {
+        guard let system = RomDatabase.systemCache[system.identifier] else {
+            ELOG("No system cached for id \(system.identifier)")
+            return []
+        }
+        return system.cores.map{ $0 } ?? []
+    }
+    
+    class func games(forSystem system: any SystemProtocol) -> [PVGame] {
+        guard let system = RomDatabase.systemCache[system.identifier] else {
+            ELOG("No system cached for id \(system.identifier)")
+            return []
+        }
+        return system.games.map(\.self) ?? []
+    }
+    
+    class func gamesCount(forSystem system: any SystemProtocol) -> Int {
+        guard let system = RomDatabase.systemCache[system.identifier] else {
+            ELOG("No system cached for id \(system.identifier)")
+            return 0
+        }
+        return system.games.count ?? 0
+    }
+    
     class func systemsFromCache(forFileExtension fileExtension: String) -> [PVSystem]? {
-        let systems = RomDatabase.sharedInstance.getSystemCacheSync().values
+        let systems = RomDatabase.systemCache.values
         return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
                 var newSystems: [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist

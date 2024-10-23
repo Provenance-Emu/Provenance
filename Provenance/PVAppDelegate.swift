@@ -216,7 +216,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         Task.detached { @MainActor in
             let database = RomDatabase.sharedInstance
             await gameImporter.initSystems()
-            database.reloadCache()
+            RomDatabase.reloadCache()
             
             let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
 
@@ -252,8 +252,8 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                 print("changed: ", ThemeManager.shared.currentTheme)
                 Task.detached { @MainActor in
                     self._initUITheme()
-                    if isAppStore {
-                        appRatingSignifigantEvent()
+                    if self.isAppStore {
+                        self.appRatingSignifigantEvent()
                     }
                 }
             }
@@ -334,7 +334,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         NotificationCenter.default.rx.notification(.PVReimportLibrary)
             .flatMapLatest { _ in
                 return Completable.create { observer in
-                    RomDatabase.sharedInstance.refresh()
+                    RomDatabase.refresh()
                     self.gameLibraryViewController?.checkROMs(false)
 
                     observer(.completed)

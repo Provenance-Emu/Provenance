@@ -185,14 +185,14 @@ public final class PVGameLibraryUpdatesController {
 
     public func importROMDirectories() async {
         ILOG("PVGameLibrary: Starting Import")
-        RomDatabase.sharedInstance.reloadCache()
-        RomDatabase.sharedInstance.reloadFileSystemROMCache()
-        let dbGames: [AnyHashable: PVGame] = await RomDatabase.sharedInstance.getGamesCache()
-        let dbSystems: [AnyHashable: PVSystem] = await RomDatabase.sharedInstance.getSystemCache()
+        RomDatabase.reloadCache(force: true)
+        RomDatabase.reloadFileSystemROMCache()
+        let dbGames: [AnyHashable: PVGame] = await RomDatabase.gamesCache
+        let dbSystems: [AnyHashable: PVSystem] = RomDatabase.systemCache
 
         for system in dbSystems.values {
             ILOG("PVGameLibrary: Importing \(system.identifier)")
-            let files = await RomDatabase.sharedInstance.getFileSystemROMCache(for: system)
+            let files = await RomDatabase.getFileSystemROMCache(for: system)
             let newGames = files.keys.filter {
                 dbGames.index(forKey: (system.identifier as NSString).appendingPathComponent($0.lastPathComponent)) == nil
             }
@@ -338,7 +338,7 @@ extension PVGameLibraryUpdatesController: ConflictsController {
             let sortedFiles = PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
 
             self.conflicts = sortedFiles.compactMap { file -> (path: URL, candidates: [System])? in
-                let candidates = RomDatabase.sharedInstance.getSystemCacheSync().values
+                let candidates = RomDatabase.systemCache.values
                     .filter { $0.supportedExtensions.contains(file.pathExtension.lowercased()) }
                     .map { $0.asDomain() }
 

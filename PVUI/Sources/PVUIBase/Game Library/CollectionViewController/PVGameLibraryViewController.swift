@@ -447,7 +447,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                 return Section(header: "Search Results", items: games.map { .game($0) }, collapsible: nil)
             })
             .startWith(nil)
-        let hideBios:[String:Bool] = RomDatabase.sharedInstance.getBIOSCacheSync().values.joined()
+        let hideBios:[String:Bool] = RomDatabase.biosCache.values.joined()
             .reduce(into: [:]){
                 (hideBios, bios) in
                 let biosInfo=bios.components(separatedBy: "|")
@@ -1042,7 +1042,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     @objc func handleCacheEmptied(_: NotificationCenter) {
         DispatchQueue.global(qos: .userInitiated).async(execute: { () -> Void in
             let database = RomDatabase.sharedInstance
-            database.refresh()
+            RomDatabase.refresh()
             
             do {
                 try database.writeTransaction {
@@ -1059,7 +1059,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
             }
             
             DispatchQueue.main.async(execute: { () -> Void in
-                RomDatabase.sharedInstance.refresh()
+                RomDatabase.refresh()
             })
         })
     }

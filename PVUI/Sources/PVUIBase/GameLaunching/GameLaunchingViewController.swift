@@ -243,7 +243,7 @@ extension GameLaunchingViewController where Self: UIViewController {
     
     func updateRecentGames(_ game: PVGame) {
         let database = RomDatabase.sharedInstance
-        database.refresh()
+        RomDatabase.refresh()
 
         let recents: Results<PVRecentGame> = database.all(PVRecentGame.self)
 

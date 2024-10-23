@@ -262,7 +262,7 @@ extension RealmDatabaseDriver {
     /// - Returns: Completable for when finished
     public func refreshLibrary() -> Completable {
         Completable.create { observer in
-            self.database.refresh()
+            RomDatabase.refresh()
             observer(.completed)
             return Disposables.create()
         }

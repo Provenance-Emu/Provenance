@@ -74,7 +74,7 @@ public extension PVEmulatorConfiguration {
             }
         }
         //this calls refresh anyway
-        RomDatabase.sharedInstance.reloadCache()
+        RomDatabase.reloadCache(force: true)
     }
 
     class func updateSystems(fromPlists plists: [URL]) async {
@@ -91,7 +91,7 @@ public extension PVEmulatorConfiguration {
 
                     if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
                         do {
-                            database.refresh()
+                            RomDatabase.refresh()
                             try database.writeTransaction {
                                 setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
                                 VLOG("Updated system for id \(system.PVSystemIdentifier)")
@@ -104,7 +104,7 @@ public extension PVEmulatorConfiguration {
                         newSystem.identifier = system.PVSystemIdentifier
                         setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
                         do {
-                            database.refresh()
+                            RomDatabase.refresh()
                             try database.add(newSystem, update: true)
                             DLOG("Added new system for id \(system.PVSystemIdentifier)")
                         } catch {
@@ -171,7 +171,7 @@ public extension PVEmulatorConfiguration {
                 if database.realm.isInWriteTransaction {
                     database.realm.add(newBIOS)
                 } else {
-                    database.refresh()
+                    RomDatabase.refresh()
                     //avoids conflicts if two BIOS share the same name - looking at you jagboot.rom
                     try! database.add(newBIOS, update: true)
                 }

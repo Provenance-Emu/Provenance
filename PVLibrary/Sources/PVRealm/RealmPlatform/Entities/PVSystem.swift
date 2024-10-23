@@ -79,11 +79,11 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     public private(set) var games = LinkingObjects(fromType: PVGame.self, property: "system")
     public private(set) var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
 
-    public var gameStructs: [Game] { get {
+    public lazy var gameStructs: () -> [Game] = { [self] in
         games.map( { Game(withGame: $0) } )
-    }}
+    }
 
-    public var coreStructs: [Core] {
+    public lazy var coreStructs: () -> [Core] = { [self] in
         let _cores: [Core]  = cores.map { Core(with: $0) }
         return _cores
     }
@@ -139,7 +139,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     }
 
     public override static func ignoredProperties() -> [String] {
-        return ["controllerLayout"]
+        return ["controllerLayout", "gameStructs", "coreStructs"]
     }
 }
 
