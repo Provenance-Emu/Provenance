@@ -45,35 +45,24 @@ public extension ThemeManager {
     @MainActor
     class func applyTheme(_ theme: iOSTheme) {
         DLOG("Setting theme: \(theme)")
-        configureNavigationBar(withTheme: theme)
-
+//        configureNavigationBar(withTheme: theme)
+//        configureStatusBar(withTheme: theme)
+//
         // Apply theme to various UIKit components
-        configureBarButtonItems(theme)
-        configureSwitches(theme)
-        configureTableViews(theme)
-        configureCollectionViews(theme)
-        configureTextInputs(theme)
-        configureActionSheets(theme)
-        configureTabBar(theme)
-        configureSegmentedControl(theme)
-        configureSlider(theme)
-        configureActivityIndicator(theme)
-        configureInterfaceStyle(theme)
+//        configureUIView(theme)
+//        configureBarButtonItems(theme)
+//        configureSwitches(theme)
+//        configureTableViews(theme)
+//        configureCollectionViews(theme)
+//        configureTextInputs(theme)
+//        configureActionSheets(theme)
+//        configureTabBar(theme)
+//        configureSegmentedControl(theme)
+//        configureSlider(theme)
+//        configureActivityIndicator(theme)
+//        configureInterfaceStyle(theme)
 
-        // Apply general UIView appearance
-        UIView.appearance().tintColor = theme.defaultTintColor
-        UIView.appearance().backgroundColor = theme.uiviewBackground
-        DLOG("UIView appearance - tintColor: \(theme.defaultTintColor?.debugDescription ?? "nil"), backgroundColor: \(theme.uiviewBackground?.debugDescription ?? "nil")")
-
-        #if os(iOS)
-        // Configure status bar
-        if let statusBarColor = theme.statusBarColor {
-            styleStatusBar(withColor: statusBarColor)
-            DLOG("Status bar color: \(statusBarColor.debugDescription)")
-        }
-        #endif
-
-        DLOG("Theme application completed")
+        DLOG("Theme application completed.")
     }
 
     /// Status Bar
@@ -89,7 +78,20 @@ public extension ThemeManager {
         }
         #endif
     }
-
+    
+    /// Status Bar
+    /// - Parameter theme: current iOSTheme
+    @MainActor
+    private class func configureStatusBar(withTheme theme: iOSTheme) {
+        #if os(iOS)
+        // Configure status bar
+        if let statusBarColor = theme.statusBarColor {
+            styleStatusBar(withColor: statusBarColor)
+            DLOG("Status bar color: \(statusBarColor.debugDescription)")
+        }
+        #endif
+    }
+    
     /// UINavigation Bar
     /// - Parameter theme: current iOSTheme
     @MainActor
@@ -98,8 +100,10 @@ public extension ThemeManager {
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = theme.navigationBarBackgroundColor
         // TODO: Add `navigationBarTitleColor` to themes
-//        appearance.titleTextAttributes = [.foregroundColor: theme.navigationBarTitleColor ?? theme.gameLibraryText]
-//        appearance.largeTitleTextAttributes = [.foregroundColor: theme.navigationBarTitleColor ?? theme.gameLibraryText]
+        if let navigationBarTitleColor = theme.navigationBarTitleColor {
+            appearance.titleTextAttributes = [.foregroundColor: theme.navigationBarTitleColor]
+            appearance.largeTitleTextAttributes = [.foregroundColor: theme.navigationBarTitleColor]
+        }
 
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().compactAppearance = appearance
@@ -113,6 +117,14 @@ public extension ThemeManager {
     }
 
     // MARK: - UIKit Component Theming
+
+    @MainActor
+    private class func configureUIView(_ theme: iOSTheme) {
+        // Apply general UIView appearance
+        UIView.appearance().tintColor = theme.defaultTintColor
+        UIView.appearance().backgroundColor = theme.uiviewBackground
+        DLOG("UIView appearance - tintColor: \(theme.defaultTintColor?.debugDescription ?? "nil"), backgroundColor: \(theme.uiviewBackground?.debugDescription ?? "nil")")
+    }
 
     @MainActor
     private class func configureBarButtonItems(_ theme: iOSTheme) {

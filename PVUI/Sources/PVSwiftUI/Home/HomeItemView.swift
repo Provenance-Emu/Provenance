@@ -28,6 +28,6 @@ struct HomeItemView: SwiftUI.View {
             Spacer()
         }
         .frame(height: 40.0)
-        .background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
+        .background(themeManager.currentTheme.gameLibraryCellBackground?.swiftUIColor)
     }
 }

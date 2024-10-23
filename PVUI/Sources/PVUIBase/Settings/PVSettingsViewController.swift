@@ -432,9 +432,9 @@ public final class PVSettingsViewController: QuickTableViewController {
 #if !os(tvOS)
 
         let appStoreRows: [TableRow] = [
-            PVSettingsSwitchRow(text: NSLocalizedString("Advanced Impoter", comment: "Advanced Importer"),
-                                detailText: .subtitle("Use larger database for looking up games. Requires an additional 330MB of disk space."),
-                                key: .useMetal, icon: .sfSymbol("sparkle.magnifyingglass")),
+//            PVSettingsSwitchRow(text: NSLocalizedString("Advanced Importer", comment: "Advanced Importer"),
+//                                detailText: .subtitle("Use larger database for looking up games. Requires an additional 330MB of disk space."),
+//                                key: .useMetal, icon: .sfSymbol("sparkle.magnifyingglass")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
                                 detailText: .subtitle("Use newer Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),

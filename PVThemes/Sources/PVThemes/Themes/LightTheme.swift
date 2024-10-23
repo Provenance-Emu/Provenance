@@ -13,6 +13,7 @@ import UIKit.UIColor
 
 public
 struct LightThemePalette: UXThemePalette {
+    
     public var name: String = "Provenance Light"
     public var group: String { "Provenance" }
     public var dark: Bool { false }
@@ -24,6 +25,7 @@ struct LightThemePalette: UXThemePalette {
     public var defaultTintColor: UIColor? { .iOS.blue } // iOS Blue
 
     public var gameLibraryBackground: UIColor { .white }
+    public var gameLibraryCellBackground: UIColor? { .white }
     public var gameLibraryText: UIColor { .black }
 
     public var gameLibraryHeaderBackground: UIColor { Colors.white9alpha6 }

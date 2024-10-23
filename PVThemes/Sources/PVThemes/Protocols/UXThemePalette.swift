@@ -28,6 +28,7 @@ public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
 #endif
     // Mandatory
     var gameLibraryBackground: UIColor { get }
+    var gameLibraryCellBackground: UIColor? { get }
     var gameLibraryText: UIColor { get }
 
     var gameLibraryHeaderBackground: UIColor { get }
@@ -40,18 +41,25 @@ public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
 #if canImport(UIKit)
     var keyboardAppearance: UIKeyboardAppearance { get }
 #endif
-    var navigationBarBackgroundColor: UIColor? { get }
 
+    /// Settings
+    /// Settings > Header
     var settingsHeaderBackground: UIColor? { get }
     var settingsHeaderText: UIColor? { get }
 
+    /// Settings > Cells
     var settingsCellBackground: UIColor? { get }
     var settingsCellText: UIColor? { get }
     var settingsCellTextDetail: UIColor? { get }
 
+    /// UISwitch
     var switchON: UIColor? { get }
     var switchThumb: UIColor? { get }
     
+    // Navigation
+    var navigationBarTitleColor: UIColor? { get }
+    var navigationBarBackgroundColor: UIColor? { get }
+
     // Tabs
     var tabBarBackground: UIColor? { get }
     
@@ -101,38 +109,50 @@ public extension UXThemePalette {
     /// Defaults to NIL will use iOS defaults
     var defaultTintColor: UIColor? { nil }
     var switchThumb: UIColor? { nil }
-    var navigationBarBackgroundColor: UIColor? { nil }
     var uiviewBackground: UIColor? { nil }
 }
 
+
+/// Navigation
 public extension UXThemePalette {
+    /// Navbar Title Text
+    var navigationBarTitleColor: UIColor? { nil }
+    /// Navbar Background
+    var navigationBarBackgroundColor: UIColor? { nil }
+}
+
+/// Game Library
+public extension UXThemePalette {
+    /// Library Header Background
+    var gameLibraryHeaderBackground: UIColor { UIColor.secondarySystemBackground }
+    var gameLibraryHeaderText: UIColor { .label }
+
+    var gameLibraryCellBackground: UIColor? { nil }
     var gameLibraryBackground: UIColor { .black }
     var gameLibraryText: UIColor { .white }
-    var gameLibraryHeaderBackground: UIColor { .black }
-    var gameLibraryHeaderText: UIColor { .white }
 }
 
 /// Menu
-/// public extension UXThemePalette {
 public extension UXThemePalette {
-    var menuBackground: UIColor { .black }
+    var menuBackground: UIColor { .systemBackground }
     var menuText: UIColor { .Provenance.blue }
-    var menuDivider: UIColor { .white }
+    var menuDivider: UIColor { .Provenance.blue }
     var menuIconTint: UIColor { .Provenance.blue }
-    var menuHeaderBackground: UIColor { .systemBackground }
+    var menuHeaderBackground: UIColor { .secondarySystemBackground }
     var menuHeaderIconTint: UIColor { .Provenance.blue }
 }
 
-// Tabs
+/// Tabs
 public extension UXThemePalette {
     var tabBarBackground: UIColor? { self.uiviewBackground }
 }
 
-// Seperator color
+/// Seperator color
 public extension UXThemePalette {
     var settingsSeperator: UIColor? { self.settingsCellText }
 }
 
+/// Settings
 public extension UXThemePalette {
     /// Defaults to NIL will use iOS defaults
     var settingsCellBackground: UIColor? { nil }
@@ -144,7 +164,7 @@ public extension UXThemePalette {
 }
 
 public extension UXThemePalette {
-    var backgroundBritness: CGFloat { 0.07 }
+    var backgroundBrightness: CGFloat { 0.07 }
 }
 
 public extension Hashable where Self: UXThemePalette {
