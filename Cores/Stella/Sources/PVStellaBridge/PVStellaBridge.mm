@@ -262,7 +262,7 @@ static void writeSaveFile(const char* path, int type) {
 #pragma mark - Exectuion
 
 - (void)resetEmulation {
-    [super resetEmulation];
+//    [super resetEmulation];
     retro_reset();
 }
 

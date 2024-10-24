@@ -46,15 +46,10 @@ typedef                         uint32_t     stellabuffer_t;
 // OpenGL for some reason is blank
 // TODO: See what the metal format is calculated as
 #define STELLA_PITCH_SHIFT      2
-#define STELLA_PIXEL_TYPE       GL_UNSIGNED_BYTE
 
-#if TARGET_OS_MACCATALYST
-#define STELLA_PIXEL_FORMAT     GL_UNSIGNED_SHORT_5_6_5
-#define STELLA_INTERNAL_FORMAT  GL_UNSIGNED_SHORT_5_6_5
-#else
+#define STELLA_PIXEL_TYPE       GL_UNSIGNED_BYTE
 #define STELLA_PIXEL_FORMAT     GL_BGRA
 #define STELLA_INTERNAL_FORMAT  GL_BGRA
-#endif
 
 #define STELLA_WIDTH 160
 #define STELLA_HEIGHT 256
