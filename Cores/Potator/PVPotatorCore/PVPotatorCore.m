@@ -100,7 +100,7 @@
 //}
 
 - (GLenum)pixelFormat {
-    return GL_RGB;
+    return GL_RGB565;
 }
 
 - (GLenum)pixelType {
@@ -118,7 +118,7 @@
 # pragma mark - Audio
 
 - (double)audioSampleRate {
-    return 44100;
+    return 44100; // SV_SAMPLE_RATE
 }
 
 - (NSUInteger)channelCount {
@@ -134,8 +134,36 @@
     
 #define V(x) strcmp(variable, x) == 0
     if (V("potator_palette")) {
-            // none,simple,detailed
-            char *value = strdup("potator_green");
+//        { "default",                "Greyscale" },
+//        { "potator_amber",          "Potator Amber" },
+//        { "potator_green",          "Potator Green" },
+//        { "potator_blue",           "Potator Blue" },
+//        { "potator_bgb",            "Potator BGB" },
+//        { "potator_wataroo",        "Potator Wataroo" },
+//        { "gb_dmg",                 "Game Boy DMG" },
+//        { "gb_pocket",              "Game Boy Pocket" },
+//        { "gb_light",               "Game Boy Light" },
+//        { "blossom_pink",           "Blossom Pink" },
+//        { "bubbles_blue",           "Bubbles Blue" },
+//        { "buttercup_green",        "Buttercup Green" },
+//        { "digivice",               "Digivice" },
+//        { "game_com",               "Game.com" },
+//        { "gameking",               "GameKing" },
+//        { "game_master",            "Game Master" },
+//        { "golden_wild",            "Golden Wild" },
+//        { "greenscale",             "Greenscale" },
+//        { "hokage_orange",          "Hokage Orange" },
+//        { "labo_fawn",              "Labo Fawn" },
+//        { "legendary_super_saiyan", "Legendary Super Saiyan" },
+//        { "microvision",            "Microvision" },
+//        { "million_live_gold",      "Million Live Gold" },
+//        { "odyssey_gold",           "Odyssey Gold" },
+//        { "shiny_sky_blue",         "Shiny Sky Blue" },
+//        { "slime_blue",             "Slime Blue" },
+//        { "ti_83",                  "TI-83" },
+//        { "travel_wood",            "Travel Wood" },
+//        { "virtual_boy",            "Virtual Boy" },
+        char *value = strdup("potator_green");
             return value;
     } else if (V("potator_lcd_ghosting")) {
             // Off|Interlaced|Progressive
