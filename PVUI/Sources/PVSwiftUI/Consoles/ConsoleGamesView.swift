@@ -175,10 +175,59 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                             // Games section
                             if games.isEmpty && isSimulator {
                                 // Show mock games in simulator
-                                showMockGames()
+                                let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
+                                if viewModel.viewGamesAsGrid {
+                                    let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 2)]
+                                    LazyVGrid(columns: columns, spacing: 2) {
+                                        ForEach(fakeGames, id: \.self) { game in
+                                            GameItemView(game: game, constrainHeight: false) {
+                                                // No action needed for fake games
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    LazyVStack(spacing: 8) {
+                                        ForEach(fakeGames, id: \.self) { game in
+                                            GameItemView(game: game, constrainHeight: false) {
+                                                // No action needed for fake games
+                                            }
+                                        }
+                                    }
+                                }
                             } else {
                                 // Show real games
-                                showRealGames()
+                                if viewModel.viewGamesAsGrid {
+                                    let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 2)]
+                                    LazyVGrid(columns: columns, spacing: 2) {
+                                        ForEach(filteredAndSortedGames(), id: \.self) { game in
+                                            GameItemView(game: game, constrainHeight: false) {
+                                                loadGame(game)
+                                            }
+                                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                                        }
+                                    }
+                                    .gesture(
+                                        MagnificationGesture()
+                                            .onChanged { value in
+                                                let delta = value / lastScale
+                                                lastScale = value
+                                                adjustZoom(delta: delta)
+                                            }
+                                            .onEnded { _ in
+                                                lastScale = 1.0
+                                                saveScale()
+                                            }
+                                    )
+                                } else {
+                                    LazyVStack(spacing: 8) {
+                                        ForEach(filteredAndSortedGames(), id: \.self) { game in
+                                            GameItemView(game: game, constrainHeight: false) {
+                                                loadGame(game)
+                                            }
+                                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                                        }
+                                    }
+                                }
                             }
 
                             BiosesView(console: console)
@@ -236,52 +285,6 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     private func loadGame(_ game: PVGame) {
         Task.detached { @MainActor in
             await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
-        }
-    }
-
-    private func showMockGames() -> some View {
-        let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
-        return HomeSection(title: "Games") {
-            ForEach(fakeGames, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false) {
-                    // No action needed for fake games
-                }
-            }
-        }
-    }
-
-    private func showRealGames() -> some View {
-        if viewModel.viewGamesAsGrid {
-            let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 2)]
-            return LazyVGrid(columns: columns, spacing: 2) {
-                ForEach(filteredAndSortedGames(), id: \.self) { game in
-                    GameItemView(game: game, constrainHeight: false) {
-                        loadGame(game)
-                    }
-                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
-                }
-            }
-            .gesture(
-                MagnificationGesture()
-                    .onChanged { value in
-                        let delta = value / lastScale
-                        lastScale = value
-                        adjustZoom(delta: delta)
-                    }
-                    .onEnded { _ in
-                        lastScale = 1.0
-                        saveScale()
-                    }
-            )
-        } else {
-            return LazyVStack(spacing: 8) {
-                ForEach(filteredAndSortedGames(), id: \.self) { game in
-                    GameItemView(game: game, constrainHeight: false) {
-                        loadGame(game)
-                    }
-                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
-                }
-            }
         }
     }
 
