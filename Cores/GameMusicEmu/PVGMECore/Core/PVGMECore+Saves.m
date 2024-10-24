@@ -9,7 +9,7 @@
 #import "PVGMECore+Saves.h"
 #import "PVGMECore.h"
 
-@implementation PVGMECore (Saves)
+@implementation PVGMECoreBridge (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {

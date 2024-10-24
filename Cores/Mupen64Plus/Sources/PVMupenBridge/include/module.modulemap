@@ -1,0 +1,10 @@
+module PVMupenBridge {
+    header "../PVMupenBridge.h"
+    header "../PVMupenBridge+Cheats.h"
+    header "../PVMupenBridge+Controls.h"
+    header "../PVMupenBridge+Mupen.h"
+    header "../PVMupenBridge+Resources.h"
+    header "../PVMupenBridge+Saves.h"
+    
+    export *
+}

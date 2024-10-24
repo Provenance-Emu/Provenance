@@ -1,0 +1,507 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/ps2dma.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl DmaExecSprToRam
+   8              	.ent DmaExecSprToRam
+   9              	DmaExecSprToRam:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 0010023C 	li $2,268435456
+  14 0004 0010033C 	li $3,268435456
+  15 0008 20D04234 	ori $2,$2,0xd020
+  16 000c 0010073C 	li $7,268435456
+  17 0010 0010083C 	li $8,268435456
+  18              	
+  19 0014 000046AC 	sw $6,0($2)
+  20              	
+  21 0018 10D06334 	ori $3,$3,0xd010
+  22 001c 80D0E734 	ori $7,$7,0xd080
+  23 0020 00D00835 	ori $8,$8,0xd000
+  24 0024 00010224 	li $2,256
+  25              	
+  26 0028 000064AC 	sw $4,0($3)
+  27              	
+  28              	
+  29 002c 0000E5AC 	sw $5,0($7)
+  30              	
+  31              	
+  32 0030 000002AD 	sw $2,0($8)
+  33              	
+  34              	
+  35 0034 0F000000 	sync.l
+  36              	
+  37 0038 0800E003 	j $31
+  37      00000000 
+  38              	.end DmaExecSprToRam
+  39              	$Lfe1:
+  40              	.size DmaExecSprToRam,$Lfe1-DmaExecSprToRam
+  41              	.align 2
+  42              	.p2align 3,,7
+  43              	.globl DmaSyncSprToRam
+  44              	.ent DmaSyncSprToRam
+  45              	DmaSyncSprToRam:
+  46              	.frame $sp,0,$31
+  47              	.mask 0x00000000,0
+  48              	.fmask 0x00000000,0
+  49 0040 0010033C 	li $3,268435456
+  50 0044 00D06334 	ori $3,$3,0xd000
+  51              	.p2align 3
+  52              	$L3:
+  53              	
+  54 0048 0000628C 	lw $2,0($3)
+  55              	
+  56              	
+GAS LISTING  			page 2
+
+
+  57 004c 00014230 	andi $2,$2,0x100
+  58              	.set noreorder
+  59 0050 00000000 	nop
+  60              	.set reorder
+  61 0054 FCFF4014 	bne $2,$0,$L3
+  61      00000000 
+  62 005c 0800E003 	j $31
+  62      00000000 
+  63              	.end DmaSyncSprToRam
+  64              	$Lfe2:
+  65              	.size DmaSyncSprToRam,$Lfe2-DmaSyncSprToRam
+  66              	.align 2
+  67 0064 00000000 	.p2align 3,,7
+  68              	.globl DmaExecRamToSpr
+  69              	.ent DmaExecRamToSpr
+  70              	DmaExecRamToSpr:
+  71              	.frame $sp,0,$31
+  72              	.mask 0x00000000,0
+  73              	.fmask 0x00000000,0
+  74 0068 0010023C 	li $2,268435456
+  75 006c 0010033C 	li $3,268435456
+  76 0070 20D44234 	ori $2,$2,0xd420
+  77 0074 0010073C 	li $7,268435456
+  78 0078 0010083C 	li $8,268435456
+  79              	
+  80 007c 000046AC 	sw $6,0($2)
+  81              	
+  82 0080 10D46334 	ori $3,$3,0xd410
+  83 0084 80D4E734 	ori $7,$7,0xd480
+  84 0088 00D40835 	ori $8,$8,0xd400
+  85 008c 00010224 	li $2,256
+  86              	
+  87 0090 000064AC 	sw $4,0($3)
+  88              	
+  89              	
+  90 0094 0000E5AC 	sw $5,0($7)
+  91              	
+  92              	
+  93 0098 000002AD 	sw $2,0($8)
+  94              	
+  95              	
+  96 009c 0F000000 	sync.l
+  97              	
+  98 00a0 0800E003 	j $31
+  98      00000000 
+  99              	.end DmaExecRamToSpr
+ 100              	$Lfe3:
+ 101              	.size DmaExecRamToSpr,$Lfe3-DmaExecRamToSpr
+ 102              	.align 2
+ 103              	.p2align 3,,7
+ 104              	.globl DmaSyncRamToSpr
+ 105              	.ent DmaSyncRamToSpr
+ 106              	DmaSyncRamToSpr:
+ 107              	.frame $sp,0,$31
+ 108              	.mask 0x00000000,0
+ 109              	.fmask 0x00000000,0
+ 110 00a8 0010033C 	li $3,268435456
+GAS LISTING  			page 3
+
+
+ 111 00ac 00D46334 	ori $3,$3,0xd400
+ 112              	.p2align 3
+ 113              	$L8:
+ 114              	
+ 115 00b0 0000628C 	lw $2,0($3)
+ 116              	
+ 117              	
+ 118 00b4 00014230 	andi $2,$2,0x100
+ 119              	.set noreorder
+ 120 00b8 00000000 	nop
+ 121              	.set reorder
+ 122 00bc FCFF4014 	bne $2,$0,$L8
+ 122      00000000 
+ 123 00c4 0800E003 	j $31
+ 123      00000000 
+ 124              	.end DmaSyncRamToSpr
+ 125              	$Lfe4:
+ 126              	.size DmaSyncRamToSpr,$Lfe4-DmaSyncRamToSpr
+ 127              	.align 2
+ 128 00cc 00000000 	.p2align 3,,7
+ 129              	.globl DmaExecVIF0
+ 130              	.ent DmaExecVIF0
+ 131              	DmaExecVIF0:
+ 132              	.frame $sp,0,$31
+ 133              	.mask 0x00000000,0
+ 134              	.fmask 0x00000000,0
+ 135 00d0 0010023C 	li $2,268435456
+ 136 00d4 0010033C 	li $3,268435456
+ 137 00d8 20804234 	ori $2,$2,0x8020
+ 138 00dc 0010063C 	li $6,268435456
+ 139              	
+ 140 00e0 000045AC 	sw $5,0($2)
+ 141              	
+ 142 00e4 10806334 	ori $3,$3,0x8010
+ 143 00e8 0080C634 	ori $6,$6,0x8000
+ 144 00ec 01010224 	li $2,257
+ 145              	
+ 146 00f0 000064AC 	sw $4,0($3)
+ 147              	
+ 148              	
+ 149 00f4 0000C2AC 	sw $2,0($6)
+ 150              	
+ 151              	
+ 152 00f8 0F000000 	sync.l
+ 153              	
+ 154 00fc 0800E003 	j $31
+ 154      00000000 
+ 155              	.end DmaExecVIF0
+ 156              	$Lfe5:
+ 157              	.size DmaExecVIF0,$Lfe5-DmaExecVIF0
+ 158              	.align 2
+ 159 0104 00000000 	.p2align 3,,7
+ 160              	.globl DmaExecVIF0Chain
+ 161              	.ent DmaExecVIF0Chain
+ 162              	DmaExecVIF0Chain:
+ 163              	.frame $sp,0,$31
+ 164              	.mask 0x00000000,0
+GAS LISTING  			page 4
+
+
+ 165              	.fmask 0x00000000,0
+ 166 0108 0010023C 	li $2,268435456
+ 167 010c 0010033C 	li $3,268435456
+ 168 0110 20804234 	ori $2,$2,0x8020
+ 169 0114 0010053C 	li $5,268435456
+ 170 0118 0010063C 	li $6,268435456
+ 171              	
+ 172 011c 000040AC 	sw $0,0($2)
+ 173              	
+ 174 0120 10806334 	ori $3,$3,0x8010
+ 175 0124 3080A534 	ori $5,$5,0x8030
+ 176 0128 0080C634 	ori $6,$6,0x8000
+ 177 012c 45010224 	li $2,325
+ 178              	
+ 179 0130 000060AC 	sw $0,0($3)
+ 180              	
+ 181              	
+ 182 0134 0000A4AC 	sw $4,0($5)
+ 183              	
+ 184              	
+ 185 0138 0000C2AC 	sw $2,0($6)
+ 186              	
+ 187              	
+ 188 013c 0F000000 	sync.l
+ 189              	
+ 190 0140 0800E003 	j $31
+ 190      00000000 
+ 191              	.end DmaExecVIF0Chain
+ 192              	$Lfe6:
+ 193              	.size DmaExecVIF0Chain,$Lfe6-DmaExecVIF0Chain
+ 194              	.align 2
+ 195              	.p2align 3,,7
+ 196              	.globl DmaSyncVIF0
+ 197              	.ent DmaSyncVIF0
+ 198              	DmaSyncVIF0:
+ 199              	.frame $sp,0,$31
+ 200              	.mask 0x00000000,0
+ 201              	.fmask 0x00000000,0
+ 202 0148 0010033C 	li $3,268435456
+ 203 014c 00806334 	ori $3,$3,0x8000
+ 204              	.p2align 3
+ 205              	$L14:
+ 206              	
+ 207 0150 0000628C 	lw $2,0($3)
+ 208              	
+ 209              	
+ 210 0154 00014230 	andi $2,$2,0x100
+ 211              	.set noreorder
+ 212 0158 00000000 	nop
+ 213              	.set reorder
+ 214 015c FCFF4014 	bne $2,$0,$L14
+ 214      00000000 
+ 215 0164 0010033C 	li $3,268435456
+ 216 0168 00386334 	ori $3,$3,0x3800
+ 217 016c 00000000 	.p2align 3
+ 218              	$L17:
+ 219              	
+GAS LISTING  			page 5
+
+
+ 220 0170 0000628C 	lw $2,0($3)
+ 221              	
+ 222              	
+ 223 0174 03004230 	andi $2,$2,0x3
+ 224              	.set noreorder
+ 225 0178 00000000 	nop
+ 226              	.set reorder
+ 227 017c FCFF4014 	bne $2,$0,$L17
+ 227      00000000 
+ 228 0184 0800E003 	j $31
+ 228      00000000 
+ 229              	.end DmaSyncVIF0
+ 230              	$Lfe7:
+ 231              	.size DmaSyncVIF0,$Lfe7-DmaSyncVIF0
+ 232              	.align 2
+ 233 018c 00000000 	.p2align 3,,7
+ 234              	.globl DmaExecVIF1
+ 235              	.ent DmaExecVIF1
+ 236              	DmaExecVIF1:
+ 237              	.frame $sp,0,$31
+ 238              	.mask 0x00000000,0
+ 239              	.fmask 0x00000000,0
+ 240 0190 0010023C 	li $2,268435456
+ 241 0194 0010033C 	li $3,268435456
+ 242 0198 20904234 	ori $2,$2,0x9020
+ 243 019c 0010063C 	li $6,268435456
+ 244              	
+ 245 01a0 000045AC 	sw $5,0($2)
+ 246              	
+ 247 01a4 10906334 	ori $3,$3,0x9010
+ 248 01a8 0090C634 	ori $6,$6,0x9000
+ 249 01ac 01010224 	li $2,257
+ 250              	
+ 251 01b0 000064AC 	sw $4,0($3)
+ 252              	
+ 253              	
+ 254 01b4 0000C2AC 	sw $2,0($6)
+ 255              	
+ 256              	
+ 257 01b8 0F000000 	sync.l
+ 258              	
+ 259 01bc 0800E003 	j $31
+ 259      00000000 
+ 260              	.end DmaExecVIF1
+ 261              	$Lfe8:
+ 262              	.size DmaExecVIF1,$Lfe8-DmaExecVIF1
+ 263              	.align 2
+ 264 01c4 00000000 	.p2align 3,,7
+ 265              	.globl DmaExecVIF1Chain
+ 266              	.ent DmaExecVIF1Chain
+ 267              	DmaExecVIF1Chain:
+ 268              	.frame $sp,0,$31
+ 269              	.mask 0x00000000,0
+ 270              	.fmask 0x00000000,0
+ 271 01c8 0010023C 	li $2,268435456
+ 272 01cc 0010033C 	li $3,268435456
+ 273 01d0 20904234 	ori $2,$2,0x9020
+GAS LISTING  			page 6
+
+
+ 274 01d4 0010053C 	li $5,268435456
+ 275 01d8 0010063C 	li $6,268435456
+ 276              	
+ 277 01dc 000040AC 	sw $0,0($2)
+ 278              	
+ 279 01e0 10906334 	ori $3,$3,0x9010
+ 280 01e4 3090A534 	ori $5,$5,0x9030
+ 281 01e8 0090C634 	ori $6,$6,0x9000
+ 282 01ec 45010224 	li $2,325
+ 283              	
+ 284 01f0 000060AC 	sw $0,0($3)
+ 285              	
+ 286              	
+ 287 01f4 0000A4AC 	sw $4,0($5)
+ 288              	
+ 289              	
+ 290 01f8 0000C2AC 	sw $2,0($6)
+ 291              	
+ 292              	
+ 293 01fc 0F000000 	sync.l
+ 294              	
+ 295 0200 0800E003 	j $31
+ 295      00000000 
+ 296              	.end DmaExecVIF1Chain
+ 297              	$Lfe9:
+ 298              	.size DmaExecVIF1Chain,$Lfe9-DmaExecVIF1Chain
+ 299              	.align 2
+ 300              	.p2align 3,,7
+ 301              	.globl DmaSyncVIF1
+ 302              	.ent DmaSyncVIF1
+ 303              	DmaSyncVIF1:
+ 304              	.frame $sp,0,$31
+ 305              	.mask 0x00000000,0
+ 306              	.fmask 0x00000000,0
+ 307 0208 0010033C 	li $3,268435456
+ 308 020c 00906334 	ori $3,$3,0x9000
+ 309              	.p2align 3
+ 310              	$L23:
+ 311              	
+ 312 0210 0000628C 	lw $2,0($3)
+ 313              	
+ 314              	
+ 315 0214 00014230 	andi $2,$2,0x100
+ 316              	.set noreorder
+ 317 0218 00000000 	nop
+ 318              	.set reorder
+ 319 021c FCFF4014 	bne $2,$0,$L23
+ 319      00000000 
+ 320 0224 0010033C 	li $3,268435456
+ 321 0228 003C6334 	ori $3,$3,0x3c00
+ 322 022c 00000000 	.p2align 3
+ 323              	$L26:
+ 324              	
+ 325 0230 0000628C 	lw $2,0($3)
+ 326              	
+ 327              	
+ 328 0234 03004230 	andi $2,$2,0x3
+GAS LISTING  			page 7
+
+
+ 329              	.set noreorder
+ 330 0238 00000000 	nop
+ 331              	.set reorder
+ 332 023c FCFF4014 	bne $2,$0,$L26
+ 332      00000000 
+ 333 0244 0800E003 	j $31
+ 333      00000000 
+ 334              	.end DmaSyncVIF1
+ 335              	$Lfe10:
+ 336              	.size DmaSyncVIF1,$Lfe10-DmaSyncVIF1
+ 337              	.align 2
+ 338 024c 00000000 	.p2align 3,,7
+ 339              	.globl DmaExecGIF
+ 340              	.ent DmaExecGIF
+ 341              	DmaExecGIF:
+ 342              	.frame $sp,0,$31
+ 343              	.mask 0x00000000,0
+ 344              	.fmask 0x00000000,0
+ 345 0250 0010023C 	li $2,268435456
+ 346 0254 0010033C 	li $3,268435456
+ 347 0258 20A04234 	ori $2,$2,0xa020
+ 348 025c 0010063C 	li $6,268435456
+ 349              	
+ 350 0260 000045AC 	sw $5,0($2)
+ 351              	
+ 352 0264 10A06334 	ori $3,$3,0xa010
+ 353 0268 00A0C634 	ori $6,$6,0xa000
+ 354 026c 01010224 	li $2,257
+ 355              	
+ 356 0270 000064AC 	sw $4,0($3)
+ 357              	
+ 358              	
+ 359 0274 0000C2AC 	sw $2,0($6)
+ 360              	
+ 361              	
+ 362 0278 0F000000 	sync.l
+ 363              	
+ 364 027c 0800E003 	j $31
+ 364      00000000 
+ 365              	.end DmaExecGIF
+ 366              	$Lfe11:
+ 367              	.size DmaExecGIF,$Lfe11-DmaExecGIF
+ 368              	.align 2
+ 369 0284 00000000 	.p2align 3,,7
+ 370              	.globl DmaExecGIFChain
+ 371              	.ent DmaExecGIFChain
+ 372              	DmaExecGIFChain:
+ 373              	.frame $sp,0,$31
+ 374              	.mask 0x00000000,0
+ 375              	.fmask 0x00000000,0
+ 376 0288 0010023C 	li $2,268435456
+ 377 028c 0010033C 	li $3,268435456
+ 378 0290 20A04234 	ori $2,$2,0xa020
+ 379 0294 0010053C 	li $5,268435456
+ 380 0298 0010063C 	li $6,268435456
+ 381              	
+ 382 029c 000040AC 	sw $0,0($2)
+GAS LISTING  			page 8
+
+
+ 383              	
+ 384 02a0 10A06334 	ori $3,$3,0xa010
+ 385 02a4 30A0A534 	ori $5,$5,0xa030
+ 386 02a8 00A0C634 	ori $6,$6,0xa000
+ 387 02ac 05010224 	li $2,261
+ 388              	
+ 389 02b0 000060AC 	sw $0,0($3)
+ 390              	
+ 391              	
+ 392 02b4 0000A4AC 	sw $4,0($5)
+ 393              	
+ 394              	
+ 395 02b8 0000C2AC 	sw $2,0($6)
+ 396              	
+ 397              	
+ 398 02bc 0F000000 	sync.l
+ 399              	
+ 400 02c0 0800E003 	j $31
+ 400      00000000 
+ 401              	.end DmaExecGIFChain
+ 402              	$Lfe12:
+ 403              	.size DmaExecGIFChain,$Lfe12-DmaExecGIFChain
+ 404              	.align 2
+ 405              	.p2align 3,,7
+ 406              	.globl DmaSyncGIF
+ 407              	.ent DmaSyncGIF
+ 408              	DmaSyncGIF:
+ 409              	.frame $sp,0,$31
+ 410              	.mask 0x00000000,0
+ 411              	.fmask 0x00000000,0
+ 412 02c8 0010033C 	li $3,268435456
+ 413 02cc 9800043C 	li $4,9961472
+ 414 02d0 00A06334 	ori $3,$3,0xa000
+ 415 02d4 80968434 	ori $4,$4,0x9680
+ 416              	
+ 417 02d8 0000628C 	lw $2,0($3)
+ 418              	
+ 419              	
+ 420 02dc 00014230 	andi $2,$2,0x100
+ 421 02e0 09004010 	beq $2,$0,$L33
+ 421      00000000 
+ 422 02e8 0010033C 	li $3,268435456
+ 423 02ec 00A06334 	ori $3,$3,0xa000
+ 424              	.p2align 3
+ 425              	$L36:
+ 426              	
+ 427 02f0 0000628C 	lw $2,0($3)
+ 428              	
+ 429              	
+ 430 02f4 00014230 	andi $2,$2,0x100
+ 431              	.set noreorder
+ 432              	.set nomacro
+ 433 02f8 03004010 	beq $2,$0,$L33
+ 434 02fc FFFF8424 	addu $4,$4,-1
+ 435              	.set macro
+ 436              	.set reorder
+ 437              	
+GAS LISTING  			page 9
+
+
+ 438 0300 FBFF801C 	bgtz $4,$L36
+ 438      00000000 
+ 439              	$L33:
+ 440              	.set noreorder
+ 441              	.set nomacro
+ 442 0308 03008004 	bltz $4,$L39
+ 443 030c 0012023C 	li $2,301989888
+ 444              	.set macro
+ 445              	.set reorder
+ 446              	
+ 447              	$L40:
+ 448 0310 0800E003 	j $31
+ 448      00000000 
+ 449              	$L39:
+ 450 0318 FF000324 	dli $3,0xff
+ 451 031c E0004234 	ori $2,$2,0xe0
+ 452              	
+ 453 0320 FBFF0010 	sd $3,0($2)
+ 454              	
+ 455 0324 000043FC 	b $L40
+ 456              	.end DmaSyncGIF
+ 457              	$Lfe13:
+ 458              	.size DmaSyncGIF,$Lfe13-DmaSyncGIF
+ 459              	.ident "GCC: (GNU) 3.2.2"

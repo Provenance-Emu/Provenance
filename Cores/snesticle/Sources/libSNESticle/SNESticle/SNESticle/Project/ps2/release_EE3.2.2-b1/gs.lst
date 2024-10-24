@@ -1,0 +1,544 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/gs.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl GS_SetDispMode
+   8              	.ent GS_SetDispMode
+   9              	GS_SetDispMode:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13              	
+  14 0000 39000042 	di 
+  15              	
+  16 0004 00120B3C 	li $11,301989888
+  17 0008 FF09C824 	addu $8,$6,2559
+  18 000c 000A0A24 	li $10,2560
+  19 0010 1A000601 	div $0,$8,$6
+  20 0014 1A004671 	div1 $0,$10,$6
+  21 0018 0000C328 	slt $3,$6,0
+  22 001c 3F00C224 	addu $2,$6,63
+  23 0020 0A10C300 	movz $2,$6,$3
+  24 0024 FFFFE724 	subu $7,$7,1
+  25 0028 3C3B0700 	dsll $7,$7,44
+  26 002c 83110200 	sra $2,$2,6
+  27 0030 002B0500 	sll $5,$5,12
+  28 0034 0012093C 	li $9,301989888
+  29 0038 78120200 	dsll $2,$2,9
+  30 003c 70002935 	ori $9,$9,0x70
+  31 0040 61FF0334 	dli $3,0xff61
+  32              	
+  33 0044 0012013C 	sd $3,301989888
+  33      000023FC 
+  34              	
+  35 004c 00120C3C 	li $12,301989888
+  36              	
+  37 0050 000022FD 	sd $2,0($9)
+  38              	
+  39 0054 80006B35 	ori $11,$11,0x80
+  40 0058 F09F0234 	dli $2,0x9ff00000000
+  40      38170200 
+  41 0060 E0008C35 	ori $12,$12,0xe0
+  42              	.set noreorder
+  43 0064 0100C050 	beql $6,$0,1f
+  44 0068 CD010000 	break 7
+  45              	1:
+  46              	.set reorder
+  47 006c 12400000 	mflo $8
+  48              	
+  49 0070 12500070 	mflo1 $10
+  50              	
+  51 0074 FFFF0825 	addu $8,$8,-1
+  52 0078 C0450800 	sll $8,$8,23
+  53 007c 18208A00 	mult $4,$4,$10
+  54 0080 25380701 	or $7,$8,$7
+  55 0084 2538A700 	or $7,$5,$7
+GAS LISTING  			page 2
+
+
+  56 0088 25388700 	or $7,$4,$7
+  57 008c 2538E200 	or $7,$7,$2
+  58              	
+  59 0090 000067FD 	sd $7,0($11)
+  60              	
+  61              	
+  62 0094 000080FD 	sd $0,0($12)
+  63              	
+  64              	
+  65 0098 0800E003 	ei 
+  66              	
+  67 009c 38000042 	j $31
+  68              	.end GS_SetDispMode
+  69              	$Lfe1:
+  70              	.size GS_SetDispMode,$Lfe1-GS_SetDispMode
+  71              	.align 2
+  72              	.p2align 3,,7
+  73              	.globl GS_SetCrtFB
+  74              	.ent GS_SetCrtFB
+  75              	GS_SetCrtFB:
+  76              	.frame $sp,0,$31
+  77              	.mask 0x00000000,0
+  78              	.fmask 0x00000000,0
+  79 00a0 0000023C 	lui $2,%hi(disp_env)
+  80 00a4 C0200400 	sll $4,$4,3
+  81 00a8 00004224 	addiu $2,$2,%lo(disp_env)
+  82 00ac 0012033C 	li $3,301989888
+  83 00b0 21208200 	addu $4,$4,$2
+  84 00b4 70006334 	ori $3,$3,0x70
+  85 00b8 000082DC 	ld $2,0($4)
+  86              	
+  87              	
+  88 00bc 0800E003 	sd $2,0($3)
+  89              	
+  90 00c0 000062FC 	j $31
+  91              	.end GS_SetCrtFB
+  92              	$Lfe2:
+  93              	.size GS_SetCrtFB,$Lfe2-GS_SetCrtFB
+  94              	.align 2
+  95 00c4 00000000 	.p2align 3,,7
+  96              	.globl GS_SetDrawFB
+  97              	.ent GS_SetDrawFB
+  98              	GS_SetDrawFB:
+  99              	.frame $sp,32,$31
+ 100              	.mask 0x80010000,-16
+ 101              	.fmask 0x00000000,0
+ 102 00c8 E0FFBD27 	subu $sp,$sp,32
+ 103 00cc 0000B0FF 	sd $16,0($sp)
+ 104 00d0 1000BFFF 	sd $31,16($sp)
+ 105              	.set noreorder
+ 106              	.set nomacro
+ 107 00d4 0000000C 	jal DmaSyncGIF
+ 108 00d8 2D808000 	move $16,$4
+ 109              	.set macro
+ 110              	.set reorder
+ 111              	
+ 112 00dc 0000043C 	lui $4,%hi(draw_env0)
+GAS LISTING  			page 3
+
+
+ 113              	.set noreorder
+ 114              	.set nomacro
+ 115 00e0 03000012 	beq $16,$0,$L7
+ 116 00e4 00008424 	addiu $4,$4,%lo(draw_env0)
+ 117              	.set macro
+ 118              	.set reorder
+ 119              	
+ 120 00e8 0000043C 	lui $4,%hi(draw_env1)
+ 121 00ec 00008424 	addiu $4,$4,%lo(draw_env1)
+ 122              	$L7:
+ 123 00f0 0000000C 	jal DmaExecGIFChain
+ 123      00000000 
+ 124 00f8 1000BFDF 	ld $31,16($sp)
+ 125 00fc 0000023C 	lui $2,%hi(_curdrawbuffer)
+ 126 0100 000050AC 	sw $16,%lo(_curdrawbuffer)($2)
+ 127 0104 0000B0DF 	ld $16,0($sp)
+ 128              	
+ 129              	.set noreorder
+ 130              	.set nomacro
+ 131 0108 0800E003 	j $31
+ 132 010c 2000BD27 	addu $sp,$sp,32
+ 133              	.set macro
+ 134              	.set reorder
+ 135              	
+ 136              	.end GS_SetDrawFB
+ 137              	$Lfe3:
+ 138              	.size GS_SetDrawFB,$Lfe3-GS_SetDrawFB
+ 139              	.align 2
+ 140              	.p2align 3,,7
+ 141              	.globl GS_GetFrameReg
+ 142              	.ent GS_GetFrameReg
+ 143              	GS_GetFrameReg:
+ 144              	.frame $sp,0,$31
+ 145              	.mask 0x00000000,0
+ 146              	.fmask 0x00000000,0
+ 147 0110 0000023C 	lui $2,%hi(_curdrawbuffer)
+ 148 0114 0000438C 	lw $3,%lo(_curdrawbuffer)($2)
+ 149              	
+ 150              	.set noreorder
+ 151              	.set nomacro
+ 152 0118 05006054 	bnel $3,$0,$L9
+ 153 011c 0000023C 	lui $2,%hi(draw_env1+32)
+ 154              	.set macro
+ 155              	.set reorder
+ 156              	
+ 157 0120 0000023C 	lui $2,%hi(draw_env0+32)
+ 158              	.set noreorder
+ 159              	.set nomacro
+ 160 0124 0800E003 	j $31
+ 161 0128 200042DC 	ld $2,%lo(draw_env0+32)($2)
+ 162              	.set macro
+ 163              	.set reorder
+ 164              	
+ 165 012c 00000000 	.p2align 3
+ 166              	$L9:
+ 167              	.set noreorder
+ 168              	.set nomacro
+GAS LISTING  			page 4
+
+
+ 169 0130 0800E003 	j $31
+ 170 0134 200042DC 	ld $2,%lo(draw_env1+32)($2)
+ 171              	.set macro
+ 172              	.set reorder
+ 173              	
+ 174              	.end GS_GetFrameReg
+ 175              	$Lfe4:
+ 176              	.size GS_GetFrameReg,$Lfe4-GS_GetFrameReg
+ 177              	.align 2
+ 178              	.p2align 3,,7
+ 179              	.globl GS_GetOffsetReg
+ 180              	.ent GS_GetOffsetReg
+ 181              	GS_GetOffsetReg:
+ 182              	.frame $sp,0,$31
+ 183              	.mask 0x00000000,0
+ 184              	.fmask 0x00000000,0
+ 185 0138 0000023C 	lui $2,%hi(_curdrawbuffer)
+ 186 013c 0000438C 	lw $3,%lo(_curdrawbuffer)($2)
+ 187              	
+ 188              	.set noreorder
+ 189              	.set nomacro
+ 190 0140 05006054 	bnel $3,$0,$L12
+ 191 0144 0000023C 	lui $2,%hi(draw_env1+48)
+ 192              	.set macro
+ 193              	.set reorder
+ 194              	
+ 195 0148 0000023C 	lui $2,%hi(draw_env0+48)
+ 196              	.set noreorder
+ 197              	.set nomacro
+ 198 014c 0800E003 	j $31
+ 199 0150 300042DC 	ld $2,%lo(draw_env0+48)($2)
+ 200              	.set macro
+ 201              	.set reorder
+ 202              	
+ 203 0154 00000000 	.p2align 3
+ 204              	$L12:
+ 205              	.set noreorder
+ 206              	.set nomacro
+ 207 0158 0800E003 	j $31
+ 208 015c 300042DC 	ld $2,%lo(draw_env1+48)($2)
+ 209              	.set macro
+ 210              	.set reorder
+ 211              	
+ 212              	.end GS_GetOffsetReg
+ 213              	$Lfe5:
+ 214              	.size GS_GetOffsetReg,$Lfe5-GS_GetOffsetReg
+ 215              	.align 2
+ 216              	.p2align 3,,7
+ 217              	.globl GS_SetEnv
+ 218              	.ent GS_SetEnv
+ 219              	GS_SetEnv:
+ 220              	.frame $sp,176,$31
+ 221              	.mask 0xc0ff0000,-16
+ 222              	.fmask 0x00000000,0
+ 223 0160 50FFBD27 	subu $sp,$sp,176
+ 224 0164 0000023C 	lui $2,%hi(draw_env0)
+ 225 0168 1000B0FF 	sd $16,16($sp)
+GAS LISTING  			page 5
+
+
+ 226 016c 00005024 	addiu $16,$2,%lo(draw_env0)
+ 227 0170 8000B7FF 	sd $23,128($sp)
+ 228 0174 2DB8A000 	move $23,$5
+ 229 0178 7000B6FF 	sd $22,112($sp)
+ 230 017c 2D280000 	move $5,$0
+ 231 0180 2DB0C000 	move $22,$6
+ 232 0184 4000B3FF 	sd $19,64($sp)
+ 233 0188 2000B1FF 	sd $17,32($sp)
+ 234 018c 10010624 	dli $6,0x110
+ 235 0190 2D988000 	move $19,$4
+ 236 0194 2D880001 	move $17,$8
+ 237 0198 2D200002 	move $4,$16
+ 238 019c A000BFFF 	sd $31,160($sp)
+ 239 01a0 9000BEFF 	sd $fp,144($sp)
+ 240 01a4 6000B5FF 	sd $21,96($sp)
+ 241 01a8 00801E34 	li $fp,32768
+ 242 01ac 2DA8E000 	move $21,$7
+ 243 01b0 5000B4FF 	sd $20,80($sp)
+ 244 01b4 3000B2FF 	sd $18,48($sp)
+ 245 01b8 2DA04001 	move $20,$10
+ 246 01bc 2D902001 	move $18,$9
+ 247              	.set noreorder
+ 248              	.set nomacro
+ 249 01c0 0000000C 	jal memset
+ 250 01c4 2DA08002 	move $20,$20
+ 251              	.set macro
+ 252              	.set reorder
+ 253              	
+ 254 01c8 38A61400 	dsll $20,$20,24
+ 255 01cc 2D280000 	move $5,$0
+ 256 01d0 10010624 	dli $6,0x110
+ 257 01d4 0000043C 	la $4,draw_env1
+ 257      00008424 
+ 258              	.set noreorder
+ 259              	.set nomacro
+ 260 01dc 0000000C 	jal memset
+ 261 01e0 0000B1FF 	sd $17,0($sp)
+ 262              	.set macro
+ 263              	.set reorder
+ 264              	
+ 265 01e4 600000FE 	sd $0,96($16)
+ 266 01e8 0000B1DF 	ld $17,0($sp)
+ 267 01ec 0000622A 	slt $2,$19,0
+ 268 01f0 00391700 	sll $7,$23,4
+ 269 01f4 00411300 	sll $8,$19,4
+ 270 01f8 381E1100 	dsll $3,$17,24
+ 271 01fc 2138FE00 	addu $7,$7,$fp
+ 272 0200 3F007126 	addu $17,$19,63
+ 273 0204 0800A3FF 	sd $3,8($sp)
+ 274 0208 0A886202 	movz $17,$19,$2
+ 275 020c 1F00C326 	addu $3,$22,31
+ 276 0210 0000C22A 	slt $2,$22,0
+ 277 0214 21401E01 	addu $8,$8,$fp
+ 278 0218 0BB06200 	movn $22,$3,$2
+ 279 021c F0FFE730 	andi $7,$7,0xfff0
+ 280 0220 1F004326 	addu $3,$18,31
+ 281 0224 0000422A 	slt $2,$18,0
+GAS LISTING  			page 6
+
+
+ 282 0228 0B906200 	movn $18,$3,$2
+ 283 022c F0FF0831 	andi $8,$8,0xfff0
+ 284 0230 383C0700 	dsll $7,$7,16
+ 285 0234 00800234 	dli $2,0x80000000
+ 285      38140200 
+ 286 023c 00800334 	dli $3,0x8000
+ 287 0240 25700701 	or $14,$8,$7
+ 288 0244 25400201 	or $8,$8,$2
+ 289 0248 2538E300 	or $7,$7,$3
+ 290 024c 0070023C 	dli $2,0x70000010
+ 290      10004234 
+ 291 0254 0000033C 	lui $3,%hi(draw_env0)
+ 292 0258 000062FC 	sd $2,%lo(draw_env0)($3)
+ 293 025c 83891100 	sra $17,$17,6
+ 294 0260 0E000224 	dli $2,0xe
+ 295 0264 0010033C 	dli $3,0x100000000000800f
+ 295      3C180300 
+ 295      0F806334 
+ 296 0270 180002FE 	sd $2,24($16)
+ 297 0274 00800234 	dli $2,0x800000008000
+ 297      3C100200 
+ 297      00804234 
+ 298 0280 100003FE 	sd $3,16($16)
+ 299 0284 300002FE 	sd $2,48($16)
+ 300 0288 43B11600 	sra $22,$22,5
+ 301 028c 4E000224 	dli $2,0x4e
+ 302 0290 18000324 	dli $3,0x18
+ 303 0294 480002FE 	sd $2,72($16)
+ 304 0298 38F41100 	dsll $fp,$17,16
+ 305 029c 45000224 	dli $2,0x45
+ 306 02a0 0800A4DF 	ld $4,8($sp)
+ 307 02a4 680002FE 	sd $2,104($16)
+ 308 02a8 0300023C 	dli $2,0x30000
+ 309 02ac 380003FE 	sd $3,56($16)
+ 310 02b0 800002FE 	sd $2,128($16)
+ 311 02b4 FFFF7326 	subu $19,$19,1
+ 312 02b8 40000224 	dli $2,0x40
+ 313 02bc 1A000324 	dli $3,0x1a
+ 314 02c0 980002FE 	sd $2,152($16)
+ 315 02c4 FFFFF726 	subu $23,$23,1
+ 316 02c8 00FE0234 	dli $2,0x3f80000000000000
+ 316      BC130200 
+ 317 02d0 2548DE02 	or $9,$22,$fp
+ 318 02d4 580003FE 	sd $3,88($16)
+ 319 02d8 3CBC1700 	dsll $23,$23,48
+ 320 02dc B00002FE 	sd $2,176($16)
+ 321 02e0 43911200 	sra $18,$18,5
+ 322 02e4 46000324 	dli $3,0x46
+ 323 02e8 00800234 	dli $2,0x80008000
+ 323      38140200 
+ 323      00804234 
+ 324 02f4 389C1300 	dsll $19,$19,16
+ 325 02f8 01000A24 	dli $10,0x1
+ 326 02fc 25482401 	or $9,$9,$4
+ 327 0300 47000B24 	dli $11,0x47
+ 328 0304 0D000C24 	dli $12,0xd
+ 329 0308 05000D24 	dli $13,0x5
+GAS LISTING  			page 7
+
+
+ 330 030c 25A05402 	or $20,$18,$20
+ 331 0310 25987702 	or $19,$19,$23
+ 332 0314 2D280002 	move $5,$16
+ 333 0318 4C001224 	dli $18,0x4c
+ 334 031c 780003FE 	sd $3,120($16)
+ 335 0320 0000043C 	la $4,draw_env1
+ 335      00008424 
+ 336 0328 04000324 	dli $3,0x4
+ 337 032c C00002FE 	sd $2,192($16)
+ 338 0330 10010624 	dli $6,0x110
+ 339 0334 0700023C 	dli $2,0x70000
+ 340 0338 200009FE 	sd $9,32($16)
+ 341 033c 788A1100 	dsll $17,$17,9
+ 342 0340 A00003FE 	sd $3,160($16)
+ 343 0344 25B0D102 	or $22,$22,$17
+ 344 0348 B8000AFE 	sd $10,184($16)
+ 345 034c D00008FE 	sd $8,208($16)
+ 346 0350 D8000CFE 	sd $12,216($16)
+ 347 0354 E00007FE 	sd $7,224($16)
+ 348 0358 F0000EFE 	sd $14,240($16)
+ 349 035c F8000DFE 	sd $13,248($16)
+ 350 0360 08010BFE 	sd $11,264($16)
+ 351 0364 50000AFE 	sd $10,80($16)
+ 352 0368 70000AFE 	sd $10,112($16)
+ 353 036c 88000BFE 	sd $11,136($16)
+ 354 0370 400014FE 	sd $20,64($16)
+ 355 0374 900013FE 	sd $19,144($16)
+ 356 0378 000102FE 	sd $2,256($16)
+ 357 037c 280012FE 	sd $18,40($16)
+ 358 0380 A80000FE 	sd $0,168($16)
+ 359 0384 C8000CFE 	sd $12,200($16)
+ 360              	.set noreorder
+ 361              	.set nomacro
+ 362 0388 0000000C 	jal memcpy
+ 363 038c E8000DFE 	sd $13,232($16)
+ 364              	.set macro
+ 365              	.set reorder
+ 366              	
+ 367 0390 1F00A326 	addu $3,$21,31
+ 368 0394 0000A22A 	slt $2,$21,0
+ 369 0398 0BA86200 	movn $21,$3,$2
+ 370 039c 0000A4DF 	ld $4,0($sp)
+ 371 03a0 43A91500 	sra $21,$21,5
+ 372 03a4 0800A2DF 	ld $2,8($sp)
+ 373 03a8 F8430400 	dsll $8,$4,15
+ 374 03ac 0000033C 	lui $3,%hi(disp_env)
+ 375 03b0 2588B102 	or $17,$21,$17
+ 376 03b4 0000043C 	lui $4,%hi(draw_env1)
+ 377 03b8 25A8BE02 	or $21,$21,$fp
+ 378 03bc 25A8A202 	or $21,$21,$2
+ 379 03c0 25882802 	or $17,$17,$8
+ 380 03c4 25B0C802 	or $22,$22,$8
+ 381 03c8 00008424 	addiu $4,$4,%lo(draw_env1)
+ 382 03cc 00006224 	addiu $2,$3,%lo(disp_env)
+ 383 03d0 280092FC 	sd $18,40($4)
+ 384 03d4 000076FC 	sd $22,%lo(disp_env)($3)
+ 385 03d8 080051FC 	sd $17,8($2)
+GAS LISTING  			page 8
+
+
+ 386 03dc 200095FC 	sd $21,32($4)
+ 387 03e0 A000BFDF 	ld $31,160($sp)
+ 388 03e4 9000BEDF 	ld $fp,144($sp)
+ 389 03e8 8000B7DF 	ld $23,128($sp)
+ 390 03ec 7000B6DF 	ld $22,112($sp)
+ 391 03f0 6000B5DF 	ld $21,96($sp)
+ 392 03f4 5000B4DF 	ld $20,80($sp)
+ 393 03f8 4000B3DF 	ld $19,64($sp)
+ 394 03fc 3000B2DF 	ld $18,48($sp)
+ 395 0400 2000B1DF 	ld $17,32($sp)
+ 396 0404 1000B0DF 	ld $16,16($sp)
+ 397              	
+ 398              	.set noreorder
+ 399              	.set nomacro
+ 400 0408 0800E003 	j $31
+ 401 040c B000BD27 	addu $sp,$sp,176
+ 402              	.set macro
+ 403              	.set reorder
+ 404              	
+ 405              	.end GS_SetEnv
+ 406              	$Lfe6:
+ 407              	.size GS_SetEnv,$Lfe6-GS_SetEnv
+ 408              	.align 2
+ 409              	.p2align 3,,7
+ 410              	.globl GS_InitGraph
+ 411              	.ent GS_InitGraph
+ 412              	GS_InitGraph:
+ 413              	.frame $sp,0,$31
+ 414              	.mask 0x00000000,0
+ 415              	.fmask 0x00000000,0
+ 416              	
+ 417 0410 F8FFBD27 	addiu $29,-8
+ 418 0414 0000A4FF 	sd $4,0($29)
+ 419 0418 F8FFBD27 	addiu $29,-8
+ 420 041c 0000A5FF 	sd $5,0($29)
+ 421              	
+ 422 0420 0012033C 	lui $3,0x1200
+ 423 0424 00020264 	daddiu $2,$0,0x0200
+ 424 0428 001062FC 	sd $2,0x1000($3)
+ 425 042c 0F040000 	sync.p 
+ 426 0430 001060FC 	sd $0,0x1000($3)
+ 427              	
+ 428              	
+ 429 0434 00FF0434 	ori $4,$0,0xff00
+ 430 0438 71000324 	addiu $3,$0,0x0071
+ 431 043c 0C000000 	syscall 
+ 432 0440 00000000 	nop 
+ 433              	
+ 434              	
+ 435 0444 0000A4DF 	ld $4,0($29)
+ 436 0448 0800A5DF 	ld $5,8($29)
+ 437 044c 00000634 	ori $6,$0,0
+ 438 0450 02000324 	addiu $3,$0,2
+ 439 0454 0C000000 	syscall 
+ 440 0458 00000000 	nop 
+ 441              	
+ 442 045c 0800E003 	addiu $29,16
+GAS LISTING  			page 9
+
+
+ 443              	
+ 444 0460 1000BD27 	jr $31
+ 445 0464 0800E003 	nop 
+ 446              	
+ 447              	
+ 448 0468 00000000 	j $31
+ 449              	.end GS_InitGraph
+ 450              	$Lfe7:
+ 451              	.size GS_InitGraph,$Lfe7-GS_InitGraph
+ 452              	.align 2
+ 453 046c 00000000 	.p2align 3,,7
+ 454              	.globl GS_VSync
+ 455              	.ent GS_VSync
+ 456              	GS_VSync:
+ 457              	.frame $sp,0,$31
+ 458              	.mask 0x00000000,0
+ 459              	.fmask 0x00000000,0
+ 460 0470 0800E003 	j $31
+ 460      00000000 
+ 461              	.end GS_VSync
+ 462              	$Lfe8:
+ 463              	.size GS_VSync,$Lfe8-GS_VSync
+ 464              	.globl draw_env0
+ 465              	.data
+ 466              	.align 4
+ 467              	.type draw_env0,@object
+ 468              	.size draw_env0,272
+ 469              	draw_env0:
+ 470 0000 00000000 	.space 272
+ 470      00000000 
+ 470      00000000 
+ 470      00000000 
+ 470      00000000 
+ 471              	.globl draw_env1
+ 472              	.align 4
+ 473              	.type draw_env1,@object
+ 474              	.size draw_env1,272
+ 475              	draw_env1:
+ 476 0110 00000000 	.space 272
+ 476      00000000 
+ 476      00000000 
+ 476      00000000 
+ 476      00000000 
+ 477              	.section .bss
+ 478              	_curdrawbuffer:
+ 479              	.align 2
+ 480 0000 00000000 	.space 4
+ 481              	.previous
+ 482              	.globl disp_env
+ 483              	.align 3
+ 484              	.type disp_env,@object
+ 485              	.size disp_env,16
+ 486              	disp_env:
+ 487 0220 00000000 	.space 16
+ 487      00000000 
+ 487      00000000 
+ 487      00000000 
+GAS LISTING  			page 10
+
+
+ 488              	.ident "GCC: (GNU) 3.2.2"

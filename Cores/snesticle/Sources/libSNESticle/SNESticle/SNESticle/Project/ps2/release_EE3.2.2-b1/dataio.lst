@@ -1,0 +1,1174 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/dataio.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN7CDataIOC2Ev
+   8              	.ent _ZN7CDataIOC2Ev
+   9              	_ZN7CDataIOC2Ev:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 0000023C 	lui $2,%hi(_ZTV7CDataIO+8)
+  14 0004 08004224 	addiu $2,$2,%lo(_ZTV7CDataIO+8)
+  15              	.set noreorder
+  16              	.set nomacro
+  17 0008 0800E003 	j $31
+  18 000c 000082AC 	sw $2,0($4)
+  19              	.set macro
+  20              	.set reorder
+  21              	
+  22              	.end _ZN7CDataIOC2Ev
+  23              	$Lfe1:
+  24              	.size _ZN7CDataIOC2Ev,$Lfe1-_ZN7CDataIOC2Ev
+  25              	.align 2
+  26              	.p2align 3,,7
+  27              	.globl _ZN7CDataIOC1Ev
+  28              	.ent _ZN7CDataIOC1Ev
+  29              	_ZN7CDataIOC1Ev:
+  30              	.frame $sp,0,$31
+  31              	.mask 0x00000000,0
+  32              	.fmask 0x00000000,0
+  33 0010 0000023C 	lui $2,%hi(_ZTV7CDataIO+8)
+  34 0014 08004224 	addiu $2,$2,%lo(_ZTV7CDataIO+8)
+  35              	.set noreorder
+  36              	.set nomacro
+  37 0018 0800E003 	j $31
+  38 001c 000082AC 	sw $2,0($4)
+  39              	.set macro
+  40              	.set reorder
+  41              	
+  42              	.end _ZN7CDataIOC1Ev
+  43              	$Lfe2:
+  44              	.size _ZN7CDataIOC1Ev,$Lfe2-_ZN7CDataIOC1Ev
+  45              	.align 2
+  46              	.p2align 3,,7
+  47              	.globl _ZN7CDataIOD2Ev
+  48              	.ent _ZN7CDataIOD2Ev
+  49              	_ZN7CDataIOD2Ev:
+  50              	.frame $sp,0,$31
+  51              	.mask 0x00000000,0
+  52              	.fmask 0x00000000,0
+  53 0020 0000023C 	lui $2,%hi(_ZTV7CDataIO+8)
+  54 0024 08004224 	addiu $2,$2,%lo(_ZTV7CDataIO+8)
+  55              	.set noreorder
+  56              	.set nomacro
+  57 0028 0800E003 	j $31
+GAS LISTING  			page 2
+
+
+  58 002c 000082AC 	sw $2,0($4)
+  59              	.set macro
+  60              	.set reorder
+  61              	
+  62              	.end _ZN7CDataIOD2Ev
+  63              	$Lfe3:
+  64              	.size _ZN7CDataIOD2Ev,$Lfe3-_ZN7CDataIOD2Ev
+  65              	.align 2
+  66              	.p2align 3,,7
+  67              	.globl _ZN7CDataIOD1Ev
+  68              	.ent _ZN7CDataIOD1Ev
+  69              	_ZN7CDataIOD1Ev:
+  70              	.frame $sp,0,$31
+  71              	.mask 0x00000000,0
+  72              	.fmask 0x00000000,0
+  73 0030 0000023C 	lui $2,%hi(_ZTV7CDataIO+8)
+  74 0034 08004224 	addiu $2,$2,%lo(_ZTV7CDataIO+8)
+  75              	.set noreorder
+  76              	.set nomacro
+  77 0038 0800E003 	j $31
+  78 003c 000082AC 	sw $2,0($4)
+  79              	.set macro
+  80              	.set reorder
+  81              	
+  82              	.end _ZN7CDataIOD1Ev
+  83              	$Lfe4:
+  84              	.size _ZN7CDataIOD1Ev,$Lfe4-_ZN7CDataIOD1Ev
+  85              	.align 2
+  86              	.p2align 3,,7
+  87              	.globl _ZN7CDataIOD0Ev
+  88              	.ent _ZN7CDataIOD0Ev
+  89              	_ZN7CDataIOD0Ev:
+  90              	.frame $sp,16,$31
+  91              	.mask 0x80000000,-16
+  92              	.fmask 0x00000000,0
+  93 0040 0000023C 	lui $2,%hi(_ZTV7CDataIO+8)
+  94 0044 F0FFBD27 	subu $sp,$sp,16
+  95 0048 08004224 	addiu $2,$2,%lo(_ZTV7CDataIO+8)
+  96 004c 0000BFFF 	sd $31,0($sp)
+  97              	.set noreorder
+  98              	.set nomacro
+  99 0050 0000000C 	jal _ZdlPv
+ 100 0054 000082AC 	sw $2,0($4)
+ 101              	.set macro
+ 102              	.set reorder
+ 103              	
+ 104 0058 0000BFDF 	ld $31,0($sp)
+ 105              	
+ 106              	.set noreorder
+ 107              	.set nomacro
+ 108 005c 0800E003 	j $31
+ 109 0060 1000BD27 	addu $sp,$sp,16
+ 110              	.set macro
+ 111              	.set reorder
+ 112              	
+ 113              	.end _ZN7CDataIOD0Ev
+ 114              	$Lfe5:
+GAS LISTING  			page 3
+
+
+ 115              	.size _ZN7CDataIOD0Ev,$Lfe5-_ZN7CDataIOD0Ev
+ 116              	.align 2
+ 117 0064 00000000 	.p2align 3,,7
+ 118              	.globl _ZN7CFileIOC2Ev
+ 119              	.ent _ZN7CFileIOC2Ev
+ 120              	_ZN7CFileIOC2Ev:
+ 121              	.frame $sp,32,$31
+ 122              	.mask 0x80010000,-16
+ 123              	.fmask 0x00000000,0
+ 124 0068 E0FFBD27 	subu $sp,$sp,32
+ 125 006c 1000BFFF 	sd $31,16($sp)
+ 126 0070 0000B0FF 	sd $16,0($sp)
+ 127              	.set noreorder
+ 128              	.set nomacro
+ 129 0074 0000000C 	jal _ZN7CDataIOC2Ev
+ 130 0078 2D808000 	move $16,$4
+ 131              	.set macro
+ 132              	.set reorder
+ 133              	
+ 134 007c 1000BFDF 	ld $31,16($sp)
+ 135 0080 0000023C 	lui $2,%hi(_ZTV7CFileIO+8)
+ 136 0084 040000AE 	sw $0,4($16)
+ 137 0088 08004224 	addiu $2,$2,%lo(_ZTV7CFileIO+8)
+ 138 008c 000002AE 	sw $2,0($16)
+ 139 0090 0000B0DF 	ld $16,0($sp)
+ 140              	
+ 141              	.set noreorder
+ 142              	.set nomacro
+ 143 0094 0800E003 	j $31
+ 144 0098 2000BD27 	addu $sp,$sp,32
+ 145              	.set macro
+ 146              	.set reorder
+ 147              	
+ 148              	.end _ZN7CFileIOC2Ev
+ 149              	$Lfe6:
+ 150              	.size _ZN7CFileIOC2Ev,$Lfe6-_ZN7CFileIOC2Ev
+ 151              	.align 2
+ 152 009c 00000000 	.p2align 3,,7
+ 153              	.globl _ZN7CFileIOC1Ev
+ 154              	.ent _ZN7CFileIOC1Ev
+ 155              	_ZN7CFileIOC1Ev:
+ 156              	.frame $sp,32,$31
+ 157              	.mask 0x80010000,-16
+ 158              	.fmask 0x00000000,0
+ 159 00a0 E0FFBD27 	subu $sp,$sp,32
+ 160 00a4 1000BFFF 	sd $31,16($sp)
+ 161 00a8 0000B0FF 	sd $16,0($sp)
+ 162              	.set noreorder
+ 163              	.set nomacro
+ 164 00ac 0000000C 	jal _ZN7CDataIOC2Ev
+ 165 00b0 2D808000 	move $16,$4
+ 166              	.set macro
+ 167              	.set reorder
+ 168              	
+ 169 00b4 1000BFDF 	ld $31,16($sp)
+ 170 00b8 0000023C 	lui $2,%hi(_ZTV7CFileIO+8)
+ 171 00bc 040000AE 	sw $0,4($16)
+GAS LISTING  			page 4
+
+
+ 172 00c0 08004224 	addiu $2,$2,%lo(_ZTV7CFileIO+8)
+ 173 00c4 000002AE 	sw $2,0($16)
+ 174 00c8 0000B0DF 	ld $16,0($sp)
+ 175              	
+ 176              	.set noreorder
+ 177              	.set nomacro
+ 178 00cc 0800E003 	j $31
+ 179 00d0 2000BD27 	addu $sp,$sp,32
+ 180              	.set macro
+ 181              	.set reorder
+ 182              	
+ 183              	.end _ZN7CFileIOC1Ev
+ 184              	$Lfe7:
+ 185              	.size _ZN7CFileIOC1Ev,$Lfe7-_ZN7CFileIOC1Ev
+ 186              	.align 2
+ 187 00d4 00000000 	.p2align 3,,7
+ 188              	.globl _ZN7CFileIO4OpenEPKcS1_
+ 189              	.ent _ZN7CFileIO4OpenEPKcS1_
+ 190              	_ZN7CFileIO4OpenEPKcS1_:
+ 191              	.frame $sp,64,$31
+ 192              	.mask 0x80070000,-16
+ 193              	.fmask 0x00000000,0
+ 194 00d8 C0FFBD27 	subu $sp,$sp,64
+ 195 00dc 3000BFFF 	sd $31,48($sp)
+ 196 00e0 2000B2FF 	sd $18,32($sp)
+ 197 00e4 2D908000 	move $18,$4
+ 198 00e8 1000B1FF 	sd $17,16($sp)
+ 199 00ec 2D88C000 	move $17,$6
+ 200 00f0 0000B0FF 	sd $16,0($sp)
+ 201 00f4 0000838C 	lw $3,0($4)
+ 202              	
+ 203 00f8 1C00628C 	lw $2,28($3)
+ 204              	
+ 205              	.set noreorder
+ 206              	.set nomacro
+ 207 00fc 09F84000 	jal $31,$2
+ 208 0100 2D80A000 	move $16,$5
+ 209              	.set macro
+ 210              	.set reorder
+ 211              	
+ 212 0104 2D282002 	move $5,$17
+ 213              	.set noreorder
+ 214              	.set nomacro
+ 215 0108 0000000C 	jal fopen
+ 216 010c 2D200002 	move $4,$16
+ 217              	.set macro
+ 218              	.set reorder
+ 219              	
+ 220 0110 0000B0DF 	ld $16,0($sp)
+ 221 0114 040042AE 	sw $2,4($18)
+ 222 0118 2B180200 	sltu $3,$0,$2
+ 223 011c 3000BFDF 	ld $31,48($sp)
+ 224 0120 2D106000 	move $2,$3
+ 225 0124 2000B2DF 	ld $18,32($sp)
+ 226 0128 1000B1DF 	ld $17,16($sp)
+ 227              	
+ 228              	.set noreorder
+GAS LISTING  			page 5
+
+
+ 229              	.set nomacro
+ 230 012c 0800E003 	j $31
+ 231 0130 4000BD27 	addu $sp,$sp,64
+ 232              	.set macro
+ 233              	.set reorder
+ 234              	
+ 235              	.end _ZN7CFileIO4OpenEPKcS1_
+ 236              	$Lfe8:
+ 237              	.size _ZN7CFileIO4OpenEPKcS1_,$Lfe8-_ZN7CFileIO4OpenEPKcS1_
+ 238              	.align 2
+ 239 0134 00000000 	.p2align 3,,7
+ 240              	.globl _ZN7CFileIO4ReadEPvi
+ 241              	.ent _ZN7CFileIO4ReadEPvi
+ 242              	_ZN7CFileIO4ReadEPvi:
+ 243              	.frame $sp,16,$31
+ 244              	.mask 0x80000000,-16
+ 245              	.fmask 0x00000000,0
+ 246 0138 F0FFBD27 	subu $sp,$sp,16
+ 247 013c 0000BFFF 	sd $31,0($sp)
+ 248 0140 0400828C 	lw $2,4($4)
+ 249 0144 2D20A000 	move $4,$5
+ 250 0148 01000524 	dli $5,0x1
+ 251              	.set noreorder
+ 252              	.set nomacro
+ 253 014c 06004014 	bne $2,$0,$L23
+ 254 0150 2D384000 	move $7,$2
+ 255              	.set macro
+ 256              	.set reorder
+ 257              	
+ 258 0154 2D100000 	move $2,$0
+ 259 0158 0000BFDF 	ld $31,0($sp)
+ 260              	$L24:
+ 261              	
+ 262              	.set noreorder
+ 263              	.set nomacro
+ 264 015c 0800E003 	j $31
+ 265 0160 1000BD27 	addu $sp,$sp,16
+ 266              	.set macro
+ 267              	.set reorder
+ 268              	
+ 269 0164 00000000 	.p2align 3
+ 270              	$L23:
+ 271 0168 0000000C 	jal fread
+ 271      00000000 
+ 272              	.set noreorder
+ 273              	.set nomacro
+ 274 0170 FAFF0010 	b $L24
+ 275 0174 0000BFDF 	ld $31,0($sp)
+ 276              	.set macro
+ 277              	.set reorder
+ 278              	
+ 279              	.end _ZN7CFileIO4ReadEPvi
+ 280              	$Lfe9:
+ 281              	.size _ZN7CFileIO4ReadEPvi,$Lfe9-_ZN7CFileIO4ReadEPvi
+ 282              	.align 2
+ 283              	.p2align 3,,7
+ 284              	.globl _ZN7CFileIO5WriteEPKvi
+GAS LISTING  			page 6
+
+
+ 285              	.ent _ZN7CFileIO5WriteEPKvi
+ 286              	_ZN7CFileIO5WriteEPKvi:
+ 287              	.frame $sp,16,$31
+ 288              	.mask 0x80000000,-16
+ 289              	.fmask 0x00000000,0
+ 290 0178 F0FFBD27 	subu $sp,$sp,16
+ 291 017c 0000BFFF 	sd $31,0($sp)
+ 292 0180 0400828C 	lw $2,4($4)
+ 293 0184 2D20A000 	move $4,$5
+ 294 0188 01000524 	dli $5,0x1
+ 295              	.set noreorder
+ 296              	.set nomacro
+ 297 018c 06004014 	bne $2,$0,$L27
+ 298 0190 2D384000 	move $7,$2
+ 299              	.set macro
+ 300              	.set reorder
+ 301              	
+ 302 0194 2D100000 	move $2,$0
+ 303 0198 0000BFDF 	ld $31,0($sp)
+ 304              	$L28:
+ 305              	
+ 306              	.set noreorder
+ 307              	.set nomacro
+ 308 019c 0800E003 	j $31
+ 309 01a0 1000BD27 	addu $sp,$sp,16
+ 310              	.set macro
+ 311              	.set reorder
+ 312              	
+ 313 01a4 00000000 	.p2align 3
+ 314              	$L27:
+ 315 01a8 0000000C 	jal fwrite
+ 315      00000000 
+ 316              	.set noreorder
+ 317              	.set nomacro
+ 318 01b0 FAFF0010 	b $L28
+ 319 01b4 0000BFDF 	ld $31,0($sp)
+ 320              	.set macro
+ 321              	.set reorder
+ 322              	
+ 323              	.end _ZN7CFileIO5WriteEPKvi
+ 324              	$Lfe10:
+ 325              	.size _ZN7CFileIO5WriteEPKvi,$Lfe10-_ZN7CFileIO5WriteEPKvi
+ 326              	.align 2
+ 327              	.p2align 3,,7
+ 328              	.globl _ZN7CFileIO4SeekEii
+ 329              	.ent _ZN7CFileIO4SeekEii
+ 330              	_ZN7CFileIO4SeekEii:
+ 331              	.frame $sp,16,$31
+ 332              	.mask 0x80000000,-16
+ 333              	.fmask 0x00000000,0
+ 334 01b8 F0FFBD27 	subu $sp,$sp,16
+ 335 01bc 0000BFFF 	sd $31,0($sp)
+ 336 01c0 FFFF0324 	li $3,-1
+ 337 01c4 0400828C 	lw $2,4($4)
+ 338              	
+ 339              	.set noreorder
+ 340              	.set nomacro
+GAS LISTING  			page 7
+
+
+ 341 01c8 05004014 	bne $2,$0,$L31
+ 342 01cc 2D204000 	move $4,$2
+ 343              	.set macro
+ 344              	.set reorder
+ 345              	
+ 346              	$L29:
+ 347 01d0 0000BFDF 	ld $31,0($sp)
+ 348 01d4 2D106000 	move $2,$3
+ 349              	.set noreorder
+ 350              	.set nomacro
+ 351 01d8 0800E003 	j $31
+ 352 01dc 1000BD27 	addu $sp,$sp,16
+ 353              	.set macro
+ 354              	.set reorder
+ 355              	
+ 356              	.p2align 3
+ 357              	$L31:
+ 358 01e0 0000000C 	jal fseek
+ 358      00000000 
+ 359              	.set noreorder
+ 360              	.set nomacro
+ 361 01e8 F9FF0010 	b $L29
+ 362 01ec 2D184000 	move $3,$2
+ 363              	.set macro
+ 364              	.set reorder
+ 365              	
+ 366              	.end _ZN7CFileIO4SeekEii
+ 367              	$Lfe11:
+ 368              	.size _ZN7CFileIO4SeekEii,$Lfe11-_ZN7CFileIO4SeekEii
+ 369              	.align 2
+ 370              	.p2align 3,,7
+ 371              	.globl _ZN7CFileIO6GetPosEv
+ 372              	.ent _ZN7CFileIO6GetPosEv
+ 373              	_ZN7CFileIO6GetPosEv:
+ 374              	.frame $sp,16,$31
+ 375              	.mask 0x80000000,-16
+ 376              	.fmask 0x00000000,0
+ 377 01f0 F0FFBD27 	subu $sp,$sp,16
+ 378 01f4 2D180000 	move $3,$0
+ 379 01f8 0000BFFF 	sd $31,0($sp)
+ 380 01fc 0400828C 	lw $2,4($4)
+ 381              	
+ 382              	.set noreorder
+ 383              	.set nomacro
+ 384 0200 05004014 	bne $2,$0,$L35
+ 385 0204 2D204000 	move $4,$2
+ 386              	.set macro
+ 387              	.set reorder
+ 388              	
+ 389              	$L34:
+ 390 0208 0000BFDF 	ld $31,0($sp)
+ 391 020c 2D106000 	move $2,$3
+ 392              	.set noreorder
+ 393              	.set nomacro
+ 394 0210 0800E003 	j $31
+ 395 0214 1000BD27 	addu $sp,$sp,16
+ 396              	.set macro
+GAS LISTING  			page 8
+
+
+ 397              	.set reorder
+ 398              	
+ 399              	.p2align 3
+ 400              	$L35:
+ 401 0218 0000000C 	jal ftell
+ 401      00000000 
+ 402              	.set noreorder
+ 403              	.set nomacro
+ 404 0220 F9FF0010 	b $L34
+ 405 0224 2D184000 	move $3,$2
+ 406              	.set macro
+ 407              	.set reorder
+ 408              	
+ 409              	.end _ZN7CFileIO6GetPosEv
+ 410              	$Lfe12:
+ 411              	.size _ZN7CFileIO6GetPosEv,$Lfe12-_ZN7CFileIO6GetPosEv
+ 412              	.align 2
+ 413              	.p2align 3,,7
+ 414              	.globl _ZN7CFileIO5CloseEv
+ 415              	.ent _ZN7CFileIO5CloseEv
+ 416              	_ZN7CFileIO5CloseEv:
+ 417              	.frame $sp,32,$31
+ 418              	.mask 0x80010000,-16
+ 419              	.fmask 0x00000000,0
+ 420 0228 E0FFBD27 	subu $sp,$sp,32
+ 421 022c 0000B0FF 	sd $16,0($sp)
+ 422 0230 2D808000 	move $16,$4
+ 423 0234 1000BFFF 	sd $31,16($sp)
+ 424 0238 0400828C 	lw $2,4($4)
+ 425              	
+ 426              	.set noreorder
+ 427              	.set nomacro
+ 428 023c 06004014 	bne $2,$0,$L38
+ 429 0240 2D204000 	move $4,$2
+ 430              	.set macro
+ 431              	.set reorder
+ 432              	
+ 433              	$L36:
+ 434 0244 1000BFDF 	ld $31,16($sp)
+ 435 0248 0000B0DF 	ld $16,0($sp)
+ 436              	
+ 437              	.set noreorder
+ 438              	.set nomacro
+ 439 024c 0800E003 	j $31
+ 440 0250 2000BD27 	addu $sp,$sp,32
+ 441              	.set macro
+ 442              	.set reorder
+ 443              	
+ 444 0254 00000000 	.p2align 3
+ 445              	$L38:
+ 446 0258 0000000C 	jal fclose
+ 446      00000000 
+ 447              	.set noreorder
+ 448              	.set nomacro
+ 449 0260 F8FF0010 	b $L36
+ 450 0264 040000AE 	sw $0,4($16)
+ 451              	.set macro
+GAS LISTING  			page 9
+
+
+ 452              	.set reorder
+ 453              	
+ 454              	.end _ZN7CFileIO5CloseEv
+ 455              	$Lfe13:
+ 456              	.size _ZN7CFileIO5CloseEv,$Lfe13-_ZN7CFileIO5CloseEv
+ 457              	.align 2
+ 458              	.p2align 3,,7
+ 459              	.globl _ZN10CMemFileIOC2Ev
+ 460              	.ent _ZN10CMemFileIOC2Ev
+ 461              	_ZN10CMemFileIOC2Ev:
+ 462              	.frame $sp,32,$31
+ 463              	.mask 0x80010000,-16
+ 464              	.fmask 0x00000000,0
+ 465 0268 E0FFBD27 	subu $sp,$sp,32
+ 466 026c 1000BFFF 	sd $31,16($sp)
+ 467 0270 0000B0FF 	sd $16,0($sp)
+ 468              	.set noreorder
+ 469              	.set nomacro
+ 470 0274 0000000C 	jal _ZN7CDataIOC2Ev
+ 471 0278 2D808000 	move $16,$4
+ 472              	.set macro
+ 473              	.set reorder
+ 474              	
+ 475 027c 1000BFDF 	ld $31,16($sp)
+ 476 0280 0000023C 	lui $2,%hi(_ZTV10CMemFileIO+8)
+ 477 0284 0C0000AE 	sw $0,12($16)
+ 478 0288 08004224 	addiu $2,$2,%lo(_ZTV10CMemFileIO+8)
+ 479 028c 040000AE 	sw $0,4($16)
+ 480 0290 000002AE 	sw $2,0($16)
+ 481 0294 080000AE 	sw $0,8($16)
+ 482 0298 0000B0DF 	ld $16,0($sp)
+ 483              	
+ 484              	.set noreorder
+ 485              	.set nomacro
+ 486 029c 0800E003 	j $31
+ 487 02a0 2000BD27 	addu $sp,$sp,32
+ 488              	.set macro
+ 489              	.set reorder
+ 490              	
+ 491              	.end _ZN10CMemFileIOC2Ev
+ 492              	$Lfe14:
+ 493              	.size _ZN10CMemFileIOC2Ev,$Lfe14-_ZN10CMemFileIOC2Ev
+ 494              	.align 2
+ 495 02a4 00000000 	.p2align 3,,7
+ 496              	.globl _ZN10CMemFileIOC1Ev
+ 497              	.ent _ZN10CMemFileIOC1Ev
+ 498              	_ZN10CMemFileIOC1Ev:
+ 499              	.frame $sp,32,$31
+ 500              	.mask 0x80010000,-16
+ 501              	.fmask 0x00000000,0
+ 502 02a8 E0FFBD27 	subu $sp,$sp,32
+ 503 02ac 1000BFFF 	sd $31,16($sp)
+ 504 02b0 0000B0FF 	sd $16,0($sp)
+ 505              	.set noreorder
+ 506              	.set nomacro
+ 507 02b4 0000000C 	jal _ZN7CDataIOC2Ev
+ 508 02b8 2D808000 	move $16,$4
+GAS LISTING  			page 10
+
+
+ 509              	.set macro
+ 510              	.set reorder
+ 511              	
+ 512 02bc 1000BFDF 	ld $31,16($sp)
+ 513 02c0 0000023C 	lui $2,%hi(_ZTV10CMemFileIO+8)
+ 514 02c4 0C0000AE 	sw $0,12($16)
+ 515 02c8 08004224 	addiu $2,$2,%lo(_ZTV10CMemFileIO+8)
+ 516 02cc 040000AE 	sw $0,4($16)
+ 517 02d0 000002AE 	sw $2,0($16)
+ 518 02d4 080000AE 	sw $0,8($16)
+ 519 02d8 0000B0DF 	ld $16,0($sp)
+ 520              	
+ 521              	.set noreorder
+ 522              	.set nomacro
+ 523 02dc 0800E003 	j $31
+ 524 02e0 2000BD27 	addu $sp,$sp,32
+ 525              	.set macro
+ 526              	.set reorder
+ 527              	
+ 528              	.end _ZN10CMemFileIOC1Ev
+ 529              	$Lfe15:
+ 530              	.size _ZN10CMemFileIOC1Ev,$Lfe15-_ZN10CMemFileIOC1Ev
+ 531              	.align 2
+ 532 02e4 00000000 	.p2align 3,,7
+ 533              	.globl _ZN10CMemFileIO4OpenEPhj
+ 534              	.ent _ZN10CMemFileIO4OpenEPhj
+ 535              	_ZN10CMemFileIO4OpenEPhj:
+ 536              	.frame $sp,64,$31
+ 537              	.mask 0x80070000,-16
+ 538              	.fmask 0x00000000,0
+ 539 02e8 C0FFBD27 	subu $sp,$sp,64
+ 540 02ec 0000838C 	lw $3,0($4)
+ 541 02f0 3000BFFF 	sd $31,48($sp)
+ 542 02f4 2000B2FF 	sd $18,32($sp)
+ 543 02f8 2D90A000 	move $18,$5
+ 544 02fc 1000B1FF 	sd $17,16($sp)
+ 545 0300 2D88C000 	move $17,$6
+ 546 0304 0000B0FF 	sd $16,0($sp)
+ 547 0308 1C00628C 	lw $2,28($3)
+ 548              	
+ 549              	.set noreorder
+ 550              	.set nomacro
+ 551 030c 09F84000 	jal $31,$2
+ 552 0310 2D808000 	move $16,$4
+ 553              	.set macro
+ 554              	.set reorder
+ 555              	
+ 556 0314 3000BFDF 	ld $31,48($sp)
+ 557 0318 0C0011AE 	sw $17,12($16)
+ 558 031c 01000224 	li $2,1
+ 559 0320 040012AE 	sw $18,4($16)
+ 560 0324 080000AE 	sw $0,8($16)
+ 561 0328 2000B2DF 	ld $18,32($sp)
+ 562 032c 1000B1DF 	ld $17,16($sp)
+ 563 0330 0000B0DF 	ld $16,0($sp)
+ 564              	
+ 565              	.set noreorder
+GAS LISTING  			page 11
+
+
+ 566              	.set nomacro
+ 567 0334 0800E003 	j $31
+ 568 0338 4000BD27 	addu $sp,$sp,64
+ 569              	.set macro
+ 570              	.set reorder
+ 571              	
+ 572              	.end _ZN10CMemFileIO4OpenEPhj
+ 573              	$Lfe16:
+ 574              	.size _ZN10CMemFileIO4OpenEPhj,$Lfe16-_ZN10CMemFileIO4OpenEPhj
+ 575              	.align 2
+ 576 033c 00000000 	.p2align 3,,7
+ 577              	.globl _ZN10CMemFileIO4ReadEPvi
+ 578              	.ent _ZN10CMemFileIO4ReadEPvi
+ 579              	_ZN10CMemFileIO4ReadEPvi:
+ 580              	.frame $sp,64,$31
+ 581              	.mask 0x80070000,-16
+ 582              	.fmask 0x00000000,0
+ 583 0340 C0FFBD27 	subu $sp,$sp,64
+ 584 0344 2000B2FF 	sd $18,32($sp)
+ 585 0348 2D90C000 	move $18,$6
+ 586 034c 1000B1FF 	sd $17,16($sp)
+ 587 0350 2D888000 	move $17,$4
+ 588 0354 0000B0FF 	sd $16,0($sp)
+ 589 0358 2D20A000 	move $4,$5
+ 590 035c 3000BFFF 	sd $31,48($sp)
+ 591 0360 0400258E 	lw $5,4($17)
+ 592              	
+ 593              	.set noreorder
+ 594              	.set nomacro
+ 595 0364 0800A014 	bne $5,$0,$L45
+ 596 0368 2D800000 	move $16,$0
+ 597              	.set macro
+ 598              	.set reorder
+ 599              	
+ 600              	$L42:
+ 601 036c 2D100002 	move $2,$16
+ 602 0370 3000BFDF 	ld $31,48($sp)
+ 603 0374 2000B2DF 	ld $18,32($sp)
+ 604 0378 1000B1DF 	ld $17,16($sp)
+ 605 037c 0000B0DF 	ld $16,0($sp)
+ 606              	
+ 607              	.set noreorder
+ 608              	.set nomacro
+ 609 0380 0800E003 	j $31
+ 610 0384 4000BD27 	addu $sp,$sp,64
+ 611              	.set macro
+ 612              	.set reorder
+ 613              	
+ 614              	.p2align 3
+ 615              	$L45:
+ 616 0388 0800238E 	lw $3,8($17)
+ 617 038c 0C00228E 	lw $2,12($17)
+ 618 0390 2128A300 	addu $5,$5,$3
+ 619 0394 23104300 	subu $2,$2,$3
+ 620 0398 2A184600 	slt $3,$2,$6
+ 621 039c 0B904300 	movn $18,$2,$3
+ 622 03a0 2D804002 	move $16,$18
+GAS LISTING  			page 12
+
+
+ 623              	.set noreorder
+ 624              	.set nomacro
+ 625 03a4 0000000C 	jal memcpy
+ 626 03a8 2D300002 	move $6,$16
+ 627              	.set macro
+ 628              	.set reorder
+ 629              	
+ 630 03ac 0800228E 	lw $2,8($17)
+ 631              	
+ 632 03b0 21105200 	addu $2,$2,$18
+ 633              	.set noreorder
+ 634              	.set nomacro
+ 635 03b4 EDFF0010 	b $L42
+ 636 03b8 080022AE 	sw $2,8($17)
+ 637              	.set macro
+ 638              	.set reorder
+ 639              	
+ 640              	.end _ZN10CMemFileIO4ReadEPvi
+ 641              	$Lfe17:
+ 642              	.size _ZN10CMemFileIO4ReadEPvi,$Lfe17-_ZN10CMemFileIO4ReadEPvi
+ 643              	.align 2
+ 644 03bc 00000000 	.p2align 3,,7
+ 645              	.globl _ZN10CMemFileIO5WriteEPKvi
+ 646              	.ent _ZN10CMemFileIO5WriteEPKvi
+ 647              	_ZN10CMemFileIO5WriteEPKvi:
+ 648              	.frame $sp,64,$31
+ 649              	.mask 0x80070000,-16
+ 650              	.fmask 0x00000000,0
+ 651 03c0 C0FFBD27 	subu $sp,$sp,64
+ 652 03c4 2000B2FF 	sd $18,32($sp)
+ 653 03c8 2D90C000 	move $18,$6
+ 654 03cc 1000B1FF 	sd $17,16($sp)
+ 655 03d0 2D888000 	move $17,$4
+ 656 03d4 0000B0FF 	sd $16,0($sp)
+ 657 03d8 3000BFFF 	sd $31,48($sp)
+ 658 03dc 0400848C 	lw $4,4($4)
+ 659              	
+ 660              	.set noreorder
+ 661              	.set nomacro
+ 662 03e0 09008014 	bne $4,$0,$L49
+ 663 03e4 2D800000 	move $16,$0
+ 664              	.set macro
+ 665              	.set reorder
+ 666              	
+ 667              	$L46:
+ 668 03e8 2D100002 	move $2,$16
+ 669 03ec 3000BFDF 	ld $31,48($sp)
+ 670 03f0 2000B2DF 	ld $18,32($sp)
+ 671 03f4 1000B1DF 	ld $17,16($sp)
+ 672 03f8 0000B0DF 	ld $16,0($sp)
+ 673              	
+ 674              	.set noreorder
+ 675              	.set nomacro
+ 676 03fc 0800E003 	j $31
+ 677 0400 4000BD27 	addu $sp,$sp,64
+ 678              	.set macro
+ 679              	.set reorder
+GAS LISTING  			page 13
+
+
+ 680              	
+ 681 0404 00000000 	.p2align 3
+ 682              	$L49:
+ 683 0408 0800238E 	lw $3,8($17)
+ 684 040c 0C00228E 	lw $2,12($17)
+ 685 0410 21208300 	addu $4,$4,$3
+ 686 0414 23104300 	subu $2,$2,$3
+ 687 0418 2A184600 	slt $3,$2,$6
+ 688 041c 0B904300 	movn $18,$2,$3
+ 689 0420 2D804002 	move $16,$18
+ 690              	.set noreorder
+ 691              	.set nomacro
+ 692 0424 0000000C 	jal memcpy
+ 693 0428 2D300002 	move $6,$16
+ 694              	.set macro
+ 695              	.set reorder
+ 696              	
+ 697 042c 0800228E 	lw $2,8($17)
+ 698              	
+ 699 0430 21105200 	addu $2,$2,$18
+ 700              	.set noreorder
+ 701              	.set nomacro
+ 702 0434 ECFF0010 	b $L46
+ 703 0438 080022AE 	sw $2,8($17)
+ 704              	.set macro
+ 705              	.set reorder
+ 706              	
+ 707              	.end _ZN10CMemFileIO5WriteEPKvi
+ 708              	$Lfe18:
+ 709              	.size _ZN10CMemFileIO5WriteEPKvi,$Lfe18-_ZN10CMemFileIO5WriteEPKvi
+ 710              	.align 2
+ 711 043c 00000000 	.p2align 3,,7
+ 712              	.globl _ZN10CMemFileIO4SeekEii
+ 713              	.ent _ZN10CMemFileIO4SeekEii
+ 714              	_ZN10CMemFileIO4SeekEii:
+ 715              	.frame $sp,0,$31
+ 716              	.mask 0x00000000,0
+ 717              	.fmask 0x00000000,0
+ 718 0440 01000224 	li $2,1
+ 719              	.set noreorder
+ 720              	.set nomacro
+ 721 0444 1400C250 	beql $6,$2,$L52
+ 722 0448 0800828C 	lw $2,8($4)
+ 723              	.set macro
+ 724              	.set reorder
+ 725              	
+ 726              	
+ 727 044c 0200C228 	slt $2,$6,2
+ 728              	.set noreorder
+ 729              	.set nomacro
+ 730 0450 0D004014 	bne $2,$0,$L61
+ 731 0454 02000224 	li $2,2
+ 732              	.set macro
+ 733              	.set reorder
+ 734              	
+ 735              	.set noreorder
+ 736              	.set nomacro
+GAS LISTING  			page 14
+
+
+ 737 0458 0700C210 	beq $6,$2,$L54
+ 738 045c 0C00838C 	lw $3,12($4)
+ 739              	.set macro
+ 740              	.set reorder
+ 741              	
+ 742              	$L51:
+ 743 0460 0800828C 	lw $2,8($4)
+ 744              	
+ 745 0464 2B106200 	sltu $2,$3,$2
+ 746              	.set noreorder
+ 747              	.set nomacro
+ 748 0468 01004054 	bnel $2,$0,$L58
+ 749 046c 080083AC 	sw $3,8($4)
+ 750              	.set macro
+ 751              	.set reorder
+ 752              	
+ 753              	$L58:
+ 754              	.set noreorder
+ 755              	.set nomacro
+ 756 0470 0800E003 	j $31
+ 757 0474 2D100000 	move $2,$0
+ 758              	.set macro
+ 759              	.set reorder
+ 760              	
+ 761              	.p2align 3
+ 762              	$L54:
+ 763 0478 23106500 	subu $2,$3,$5
+ 764              	$L59:
+ 765              	.set noreorder
+ 766              	.set nomacro
+ 767 047c F8FF0010 	b $L51
+ 768 0480 080082AC 	sw $2,8($4)
+ 769              	.set macro
+ 770              	.set reorder
+ 771              	
+ 772 0484 00000000 	.p2align 3
+ 773              	$L61:
+ 774              	.set noreorder
+ 775              	.set nomacro
+ 776 0488 F5FFC014 	bne $6,$0,$L51
+ 777 048c 0C00838C 	lw $3,12($4)
+ 778              	.set macro
+ 779              	.set reorder
+ 780              	
+ 781              	.set noreorder
+ 782              	.set nomacro
+ 783 0490 F3FF0010 	b $L51
+ 784 0494 080085AC 	sw $5,8($4)
+ 785              	.set macro
+ 786              	.set reorder
+ 787              	
+ 788              	.p2align 3
+ 789              	$L52:
+ 790 0498 0C00838C 	lw $3,12($4)
+ 791              	.set noreorder
+ 792              	.set nomacro
+ 793 049c F7FF0010 	b $L59
+GAS LISTING  			page 15
+
+
+ 794 04a0 21104500 	addu $2,$2,$5
+ 795              	.set macro
+ 796              	.set reorder
+ 797              	
+ 798              	.end _ZN10CMemFileIO4SeekEii
+ 799              	$Lfe19:
+ 800              	.size _ZN10CMemFileIO4SeekEii,$Lfe19-_ZN10CMemFileIO4SeekEii
+ 801              	.align 2
+ 802 04a4 00000000 	.p2align 3,,7
+ 803              	.globl _ZN10CMemFileIO5CloseEv
+ 804              	.ent _ZN10CMemFileIO5CloseEv
+ 805              	_ZN10CMemFileIO5CloseEv:
+ 806              	.frame $sp,0,$31
+ 807              	.mask 0x00000000,0
+ 808              	.fmask 0x00000000,0
+ 809 04a8 0C0080AC 	sw $0,12($4)
+ 810 04ac 040080AC 	sw $0,4($4)
+ 811              	.set noreorder
+ 812              	.set nomacro
+ 813 04b0 0800E003 	j $31
+ 814 04b4 080080AC 	sw $0,8($4)
+ 815              	.set macro
+ 816              	.set reorder
+ 817              	
+ 818              	.end _ZN10CMemFileIO5CloseEv
+ 819              	$Lfe20:
+ 820              	.size _ZN10CMemFileIO5CloseEv,$Lfe20-_ZN10CMemFileIO5CloseEv
+ 821              	.align 2
+ 822              	.p2align 3,,7
+ 823              	.globl _ZN10CMemFileIO7ReadPtrEi
+ 824              	.ent _ZN10CMemFileIO7ReadPtrEi
+ 825              	_ZN10CMemFileIO7ReadPtrEi:
+ 826              	.frame $sp,0,$31
+ 827              	.mask 0x00000000,0
+ 828              	.fmask 0x00000000,0
+ 829 04b8 0400868C 	lw $6,4($4)
+ 830              	
+ 831              	.set noreorder
+ 832              	.set nomacro
+ 833 04bc 0A00C010 	beq $6,$0,$L63
+ 834 04c0 2D380000 	move $7,$0
+ 835              	.set macro
+ 836              	.set reorder
+ 837              	
+ 838 04c4 0C00828C 	lw $2,12($4)
+ 839 04c8 0800838C 	lw $3,8($4)
+ 840              	
+ 841 04cc 23104300 	subu $2,$2,$3
+ 842 04d0 2A104500 	slt $2,$2,$5
+ 843 04d4 04004014 	bne $2,$0,$L63
+ 843      00000000 
+ 844 04dc 21106500 	addu $2,$3,$5
+ 845 04e0 2138C300 	addu $7,$6,$3
+ 846 04e4 080082AC 	sw $2,8($4)
+ 847              	$L63:
+ 848              	.set noreorder
+ 849              	.set nomacro
+GAS LISTING  			page 16
+
+
+ 850 04e8 0800E003 	j $31
+ 851 04ec 2D10E000 	move $2,$7
+ 852              	.set macro
+ 853              	.set reorder
+ 854              	
+ 855              	.end _ZN10CMemFileIO7ReadPtrEi
+ 856              	$Lfe21:
+ 857              	.size _ZN10CMemFileIO7ReadPtrEi,$Lfe21-_ZN10CMemFileIO7ReadPtrEi
+ 858              	.weak _ZTV10CMemFileIO
+ 859              	.section .gnu.linkonce.d._ZTV10CMemFileIO,"aw",@progbits
+ 860              	.align 3
+ 861              	.type _ZTV10CMemFileIO,@object
+ 862              	.size _ZTV10CMemFileIO,44
+ 863              	_ZTV10CMemFileIO:
+ 864 0000 00000000 	.word 0
+ 865 0004 00000000 	.word 0
+ 866 0008 00000000 	.word _ZN10CMemFileIOD1Ev
+ 867 000c 00000000 	.word _ZN10CMemFileIOD0Ev
+ 868 0010 00000000 	.word _ZN10CMemFileIO4ReadEPvi
+ 869 0014 00000000 	.word _ZN10CMemFileIO7ReadPtrEi
+ 870 0018 00000000 	.word _ZN10CMemFileIO5WriteEPKvi
+ 871 001c 00000000 	.word _ZN10CMemFileIO4SeekEii
+ 872 0020 00000000 	.word _ZN10CMemFileIO6GetPosEv
+ 873 0024 00000000 	.word _ZN10CMemFileIO5CloseEv
+ 874 0028 00000000 	.word _ZN10CMemFileIO4OpenEPhj
+ 875              	.weak _ZTV7CFileIO
+ 876 002c 00000000 	.section .gnu.linkonce.d._ZTV7CFileIO,"aw",@progbits
+ 877              	.align 3
+ 878              	.type _ZTV7CFileIO,@object
+ 879              	.size _ZTV7CFileIO,44
+ 880              	_ZTV7CFileIO:
+ 881 0000 00000000 	.word 0
+ 882 0004 00000000 	.word 0
+ 883 0008 00000000 	.word _ZN7CFileIOD1Ev
+ 884 000c 00000000 	.word _ZN7CFileIOD0Ev
+ 885 0010 00000000 	.word _ZN7CFileIO4ReadEPvi
+ 886 0014 00000000 	.word _ZN7CDataIO7ReadPtrEi
+ 887 0018 00000000 	.word _ZN7CFileIO5WriteEPKvi
+ 888 001c 00000000 	.word _ZN7CFileIO4SeekEii
+ 889 0020 00000000 	.word _ZN7CFileIO6GetPosEv
+ 890 0024 00000000 	.word _ZN7CFileIO5CloseEv
+ 891 0028 00000000 	.word _ZN7CFileIO4OpenEPKcS1_
+ 892              	.weak _ZTV7CDataIO
+ 893 002c 00000000 	.section .gnu.linkonce.d._ZTV7CDataIO,"aw",@progbits
+ 894              	.align 3
+ 895              	.type _ZTV7CDataIO,@object
+ 896              	.size _ZTV7CDataIO,40
+ 897              	_ZTV7CDataIO:
+ 898 0000 00000000 	.word 0
+ 899 0004 00000000 	.word 0
+ 900 0008 00000000 	.word _ZN7CDataIOD1Ev
+ 901 000c 00000000 	.word _ZN7CDataIOD0Ev
+ 902 0010 00000000 	.word __cxa_pure_virtual
+ 903 0014 00000000 	.word _ZN7CDataIO7ReadPtrEi
+ 904 0018 00000000 	.word __cxa_pure_virtual
+ 905 001c 00000000 	.word __cxa_pure_virtual
+ 906 0020 00000000 	.word __cxa_pure_virtual
+GAS LISTING  			page 17
+
+
+ 907 0024 00000000 	.word _ZN7CDataIO5CloseEv
+ 908              	.section .gnu.linkonce.t._ZN7CFileIOD1Ev,"ax",@progbits
+ 909              	.align 2
+ 910              	.p2align 3,,7
+ 911              	.weak _ZN7CFileIOD1Ev
+ 912              	.ent _ZN7CFileIOD1Ev
+ 913              	_ZN7CFileIOD1Ev:
+ 914              	.frame $sp,16,$31
+ 915              	.mask 0x80000000,-16
+ 916              	.fmask 0x00000000,0
+ 917 0000 0000023C 	lui $2,%hi(_ZTV7CFileIO+8)
+ 918 0004 F0FFBD27 	subu $sp,$sp,16
+ 919 0008 08004224 	addiu $2,$2,%lo(_ZTV7CFileIO+8)
+ 920 000c 0000BFFF 	sd $31,0($sp)
+ 921              	.set noreorder
+ 922              	.set nomacro
+ 923 0010 0000000C 	jal _ZN7CDataIOD2Ev
+ 924 0014 000082AC 	sw $2,0($4)
+ 925              	.set macro
+ 926              	.set reorder
+ 927              	
+ 928 0018 0000BFDF 	ld $31,0($sp)
+ 929              	
+ 930              	.set noreorder
+ 931              	.set nomacro
+ 932 001c 0800E003 	j $31
+ 933 0020 1000BD27 	addu $sp,$sp,16
+ 934              	.set macro
+ 935              	.set reorder
+ 936              	
+ 937              	.end _ZN7CFileIOD1Ev
+ 938              	$Lfe22:
+ 939              	.size _ZN7CFileIOD1Ev,$Lfe22-_ZN7CFileIOD1Ev
+ 940 0024 00000000 	.section .gnu.linkonce.t._ZN7CFileIOD0Ev,"ax",@progbits
+ 941              	.align 2
+ 942              	.p2align 3,,7
+ 943              	.weak _ZN7CFileIOD0Ev
+ 944              	.ent _ZN7CFileIOD0Ev
+ 945              	_ZN7CFileIOD0Ev:
+ 946              	.frame $sp,32,$31
+ 947              	.mask 0x80010000,-16
+ 948              	.fmask 0x00000000,0
+ 949 0000 0000023C 	lui $2,%hi(_ZTV7CFileIO+8)
+ 950 0004 E0FFBD27 	subu $sp,$sp,32
+ 951 0008 08004224 	addiu $2,$2,%lo(_ZTV7CFileIO+8)
+ 952 000c 0000B0FF 	sd $16,0($sp)
+ 953 0010 000082AC 	sw $2,0($4)
+ 954 0014 1000BFFF 	sd $31,16($sp)
+ 955              	.set noreorder
+ 956              	.set nomacro
+ 957 0018 0000000C 	jal _ZN7CDataIOD2Ev
+ 958 001c 2D808000 	move $16,$4
+ 959              	.set macro
+ 960              	.set reorder
+ 961              	
+ 962              	.set noreorder
+ 963              	.set nomacro
+GAS LISTING  			page 18
+
+
+ 964 0020 0000000C 	jal _ZdlPv
+ 965 0024 2D200002 	move $4,$16
+ 966              	.set macro
+ 967              	.set reorder
+ 968              	
+ 969 0028 0000B0DF 	ld $16,0($sp)
+ 970 002c 1000BFDF 	ld $31,16($sp)
+ 971              	
+ 972              	.set noreorder
+ 973              	.set nomacro
+ 974 0030 0800E003 	j $31
+ 975 0034 2000BD27 	addu $sp,$sp,32
+ 976              	.set macro
+ 977              	.set reorder
+ 978              	
+ 979              	.end _ZN7CFileIOD0Ev
+ 980              	$Lfe23:
+ 981              	.size _ZN7CFileIOD0Ev,$Lfe23-_ZN7CFileIOD0Ev
+ 982              	.section .gnu.linkonce.t._ZN10CMemFileIOD1Ev,"ax",@progbits
+ 983              	.align 2
+ 984              	.p2align 3,,7
+ 985              	.weak _ZN10CMemFileIOD1Ev
+ 986              	.ent _ZN10CMemFileIOD1Ev
+ 987              	_ZN10CMemFileIOD1Ev:
+ 988              	.frame $sp,16,$31
+ 989              	.mask 0x80000000,-16
+ 990              	.fmask 0x00000000,0
+ 991 0000 0000023C 	lui $2,%hi(_ZTV10CMemFileIO+8)
+ 992 0004 F0FFBD27 	subu $sp,$sp,16
+ 993 0008 08004224 	addiu $2,$2,%lo(_ZTV10CMemFileIO+8)
+ 994 000c 0000BFFF 	sd $31,0($sp)
+ 995              	.set noreorder
+ 996              	.set nomacro
+ 997 0010 0000000C 	jal _ZN7CDataIOD2Ev
+ 998 0014 000082AC 	sw $2,0($4)
+ 999              	.set macro
+ 1000              	.set reorder
+ 1001              	
+ 1002 0018 0000BFDF 	ld $31,0($sp)
+ 1003              	
+ 1004              	.set noreorder
+ 1005              	.set nomacro
+ 1006 001c 0800E003 	j $31
+ 1007 0020 1000BD27 	addu $sp,$sp,16
+ 1008              	.set macro
+ 1009              	.set reorder
+ 1010              	
+ 1011              	.end _ZN10CMemFileIOD1Ev
+ 1012              	$Lfe24:
+ 1013              	.size _ZN10CMemFileIOD1Ev,$Lfe24-_ZN10CMemFileIOD1Ev
+ 1014 0024 00000000 	.section .gnu.linkonce.t._ZN10CMemFileIOD0Ev,"ax",@progbits
+ 1015              	.align 2
+ 1016              	.p2align 3,,7
+ 1017              	.weak _ZN10CMemFileIOD0Ev
+ 1018              	.ent _ZN10CMemFileIOD0Ev
+ 1019              	_ZN10CMemFileIOD0Ev:
+ 1020              	.frame $sp,32,$31
+GAS LISTING  			page 19
+
+
+ 1021              	.mask 0x80010000,-16
+ 1022              	.fmask 0x00000000,0
+ 1023 0000 0000023C 	lui $2,%hi(_ZTV10CMemFileIO+8)
+ 1024 0004 E0FFBD27 	subu $sp,$sp,32
+ 1025 0008 08004224 	addiu $2,$2,%lo(_ZTV10CMemFileIO+8)
+ 1026 000c 0000B0FF 	sd $16,0($sp)
+ 1027 0010 000082AC 	sw $2,0($4)
+ 1028 0014 1000BFFF 	sd $31,16($sp)
+ 1029              	.set noreorder
+ 1030              	.set nomacro
+ 1031 0018 0000000C 	jal _ZN7CDataIOD2Ev
+ 1032 001c 2D808000 	move $16,$4
+ 1033              	.set macro
+ 1034              	.set reorder
+ 1035              	
+ 1036              	.set noreorder
+ 1037              	.set nomacro
+ 1038 0020 0000000C 	jal _ZdlPv
+ 1039 0024 2D200002 	move $4,$16
+ 1040              	.set macro
+ 1041              	.set reorder
+ 1042              	
+ 1043 0028 0000B0DF 	ld $16,0($sp)
+ 1044 002c 1000BFDF 	ld $31,16($sp)
+ 1045              	
+ 1046              	.set noreorder
+ 1047              	.set nomacro
+ 1048 0030 0800E003 	j $31
+ 1049 0034 2000BD27 	addu $sp,$sp,32
+ 1050              	.set macro
+ 1051              	.set reorder
+ 1052              	
+ 1053              	.end _ZN10CMemFileIOD0Ev
+ 1054              	$Lfe25:
+ 1055              	.size _ZN10CMemFileIOD0Ev,$Lfe25-_ZN10CMemFileIOD0Ev
+ 1056              	.section .gnu.linkonce.t._ZN7CDataIO7ReadPtrEi,"ax",@progbits
+ 1057              	.align 2
+ 1058              	.p2align 3,,7
+ 1059              	.weak _ZN7CDataIO7ReadPtrEi
+ 1060              	.ent _ZN7CDataIO7ReadPtrEi
+ 1061              	_ZN7CDataIO7ReadPtrEi:
+ 1062              	.frame $sp,0,$31
+ 1063              	.mask 0x00000000,0
+ 1064              	.fmask 0x00000000,0
+ 1065              	.set noreorder
+ 1066              	.set nomacro
+ 1067 0000 0800E003 	j $31
+ 1068 0004 2D100000 	move $2,$0
+ 1069              	.set macro
+ 1070              	.set reorder
+ 1071              	
+ 1072              	.end _ZN7CDataIO7ReadPtrEi
+ 1073              	$Lfe26:
+ 1074              	.size _ZN7CDataIO7ReadPtrEi,$Lfe26-_ZN7CDataIO7ReadPtrEi
+ 1075              	.section .gnu.linkonce.t._ZN7CDataIO5CloseEv,"ax",@progbits
+ 1076              	.align 2
+ 1077              	.p2align 3,,7
+GAS LISTING  			page 20
+
+
+ 1078              	.weak _ZN7CDataIO5CloseEv
+ 1079              	.ent _ZN7CDataIO5CloseEv
+ 1080              	_ZN7CDataIO5CloseEv:
+ 1081              	.frame $sp,0,$31
+ 1082              	.mask 0x00000000,0
+ 1083              	.fmask 0x00000000,0
+ 1084 0000 0800E003 	j $31
+ 1084      00000000 
+ 1085              	.end _ZN7CDataIO5CloseEv
+ 1086              	$Lfe27:
+ 1087              	.size _ZN7CDataIO5CloseEv,$Lfe27-_ZN7CDataIO5CloseEv
+ 1088              	.section .gnu.linkonce.t._ZN10CMemFileIO6GetPosEv,"ax",@progbits
+ 1089              	.align 2
+ 1090              	.p2align 3,,7
+ 1091              	.weak _ZN10CMemFileIO6GetPosEv
+ 1092              	.ent _ZN10CMemFileIO6GetPosEv
+ 1093              	_ZN10CMemFileIO6GetPosEv:
+ 1094              	.frame $sp,0,$31
+ 1095              	.mask 0x00000000,0
+ 1096              	.fmask 0x00000000,0
+ 1097              	.set noreorder
+ 1098              	.set nomacro
+ 1099 0000 0800E003 	j $31
+ 1100 0004 0800829C 	lwu $2,8($4)
+ 1101              	.set macro
+ 1102              	.set reorder
+ 1103              	
+ 1104              	.end _ZN10CMemFileIO6GetPosEv
+ 1105              	$Lfe28:
+ 1106              	.size _ZN10CMemFileIO6GetPosEv,$Lfe28-_ZN10CMemFileIO6GetPosEv
+ 1107              	.ident "GCC: (GNU) 3.2.2"

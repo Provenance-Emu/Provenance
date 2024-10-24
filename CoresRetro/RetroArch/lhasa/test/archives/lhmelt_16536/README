@@ -1,0 +1,26 @@
+
+These archives are generated using LHMelt v1.65.3.6 (lmlzh32.dll v2.67.1.2).
+It is also possible to use it with unlha32.dll instead, but the generated
+archives appear to be identical. The following files have level 0 headers:
+
+  h0_lh0.lzh        - Stored (-lh0-) file.
+  h0_lh1.lzh        - Compressed (-lh1-) file.
+  h0_lh5.lzh        - Compressed (-lh5-) file.
+  h0_lh6.lzh        - Compressed (-lh6-) file.
+  h0_lh7.lzh        - Compressed (-lh7-) file.
+  h0_subdir.lzh     - Archive containing a file with a path. This was
+                      generated with the "use root dir" option turned on
+                      and the recursive button pressed, so that an entry
+                      was stored for the parent directory.
+
+Equivalent archives with level 1 and 2 headers have h1_ and h2_ prefixes.
+
+The following are self-extracting archives. Technically, these don't seem
+to specifically be associated with LHmelt (unlha32.dll?) but this seems
+like an appropriate place to put them.
+
+  sfx_winsfx_213.exe     - 16-bit Windows WinSFX v2.13
+  sfx_winsfxm_250.exe    - 16-bit Windows WinSFXM v2.50
+  sfx_winsfx32_213.exe   - 32-bit Windows WinSFX v2.13
+  sfx_winsfx32m_250.exe  - 32-bit Windows WinSFXM v2.50
+

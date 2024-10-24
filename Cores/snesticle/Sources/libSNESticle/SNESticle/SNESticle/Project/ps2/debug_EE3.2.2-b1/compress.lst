@@ -1,0 +1,161 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/zlib/compress.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.rdata
+   5              	.align 3
+   6              	$LC0:
+   7 0000 312E312E 	.ascii "1.1.3\000"
+   7      3300
+   8 0006 0000     	.text
+   9              	.align 2
+  10              	.p2align 3,,7
+  11              	.globl compress2
+  12              	.ent compress2
+  13              	compress2:
+  14              	.frame $sp,128,$31
+  15              	.mask 0x80030000,-16
+  16              	.fmask 0x00000000,0
+  17 0000 80FFBD27 	subu $sp,$sp,128
+  18 0004 3C380700 	dsll $7,$7,32
+  19 0008 3F380700 	dsra $7,$7,32
+  20 000c 5000B0FF 	sd $16,80($sp)
+  21 0010 2D80A000 	move $16,$5
+  22 0014 7000BFFF 	sd $31,112($sp)
+  23 0018 6000B1FF 	sd $17,96($sp)
+  24 001c 1000A4AF 	sw $4,16($sp)
+  25 0020 FBFF0424 	li $4,-5
+  26 0024 0000A38C 	lw $3,0($5)
+  27 0028 0000A5DC 	ld $5,0($5)
+  28 002c 3C100300 	dsll $2,$3,32
+  29 0030 0000A6AF 	sw $6,0($sp)
+  30 0034 3E100200 	dsrl $2,$2,32
+  31 0038 0400A7AF 	sw $7,4($sp)
+  32              	.set noreorder
+  33              	.set nomacro
+  34 003c 08004510 	beq $2,$5,$L6
+  35 0040 1400A3AF 	sw $3,20($sp)
+  36              	.set macro
+  37              	.set reorder
+  38              	
+  39              	$L1:
+  40 0044 7000BFDF 	ld $31,112($sp)
+  41 0048 2D108000 	move $2,$4
+  42 004c 6000B1DF 	ld $17,96($sp)
+  43 0050 5000B0DF 	ld $16,80($sp)
+  44              	
+  45              	.set noreorder
+  46              	.set nomacro
+  47 0054 0800E003 	j $31
+  48 0058 8000BD27 	addu $sp,$sp,128
+  49              	.set macro
+  50              	.set reorder
+  51              	
+  52 005c 00000000 	.p2align 3
+  53              	$L6:
+  54 0060 0000063C 	lui $6,%hi($LC0)
+  55 0064 2D20A003 	move $4,$sp
+  56 0068 2D280001 	move $5,$8
+GAS LISTING  			page 2
+
+
+  57 006c 0000C624 	addiu $6,$6,%lo($LC0)
+  58 0070 48000724 	li $7,72
+  59 0074 2800A0AF 	sw $0,40($sp)
+  60 0078 2C00A0AF 	sw $0,44($sp)
+  61              	.set noreorder
+  62              	.set nomacro
+  63 007c 0000000C 	jal deflateInit_
+  64 0080 3000A0AF 	sw $0,48($sp)
+  65              	.set macro
+  66              	.set reorder
+  67              	
+  68              	.set noreorder
+  69              	.set nomacro
+  70 0084 EFFF4014 	bne $2,$0,$L1
+  71 0088 2D204000 	move $4,$2
+  72              	.set macro
+  73              	.set reorder
+  74              	
+  75 008c 2D20A003 	move $4,$sp
+  76              	.set noreorder
+  77              	.set nomacro
+  78 0090 0000000C 	jal deflate
+  79 0094 04000524 	li $5,4
+  80              	.set macro
+  81              	.set reorder
+  82              	
+  83 0098 2D884000 	move $17,$2
+  84 009c 01000224 	li $2,1
+  85              	.set noreorder
+  86              	.set nomacro
+  87 00a0 06002212 	beq $17,$2,$L4
+  88 00a4 2D20A003 	move $4,$sp
+  89              	.set macro
+  90              	.set reorder
+  91              	
+  92 00a8 0000000C 	jal deflateEnd
+  92      00000000 
+  93 00b0 FBFF0424 	li $4,-5
+  94              	.set noreorder
+  95              	.set nomacro
+  96 00b4 E3FF0010 	b $L1
+  97 00b8 0B203102 	movn $4,$17,$17
+  98              	.set macro
+  99              	.set reorder
+ 100              	
+ 101              	$L4:
+ 102 00bc 1800A2DF 	ld $2,24($sp)
+ 103              	
+ 104              	.set noreorder
+ 105              	.set nomacro
+ 106 00c0 0000000C 	jal deflateEnd
+ 107 00c4 000002FE 	sd $2,0($16)
+ 108              	.set macro
+ 109              	.set reorder
+ 110              	
+ 111              	.set noreorder
+ 112              	.set nomacro
+GAS LISTING  			page 3
+
+
+ 113 00c8 DEFF0010 	b $L1
+ 114 00cc 2D204000 	move $4,$2
+ 115              	.set macro
+ 116              	.set reorder
+ 117              	
+ 118              	.end compress2
+ 119              	$Lfe1:
+ 120              	.size compress2,$Lfe1-compress2
+ 121              	.align 2
+ 122              	.p2align 3,,7
+ 123              	.globl compress
+ 124              	.ent compress
+ 125              	compress:
+ 126              	.frame $sp,16,$31
+ 127              	.mask 0x80000000,-16
+ 128              	.fmask 0x00000000,0
+ 129 00d0 F0FFBD27 	subu $sp,$sp,16
+ 130 00d4 0000BFFF 	sd $31,0($sp)
+ 131              	.set noreorder
+ 132              	.set nomacro
+ 133 00d8 0000000C 	jal compress2
+ 134 00dc FFFF0824 	li $8,-1
+ 135              	.set macro
+ 136              	.set reorder
+ 137              	
+ 138 00e0 0000BFDF 	ld $31,0($sp)
+ 139              	
+ 140              	.set noreorder
+ 141              	.set nomacro
+ 142 00e4 0800E003 	j $31
+ 143 00e8 1000BD27 	addu $sp,$sp,16
+ 144              	.set macro
+ 145              	.set reorder
+ 146              	
+ 147              	.end compress
+ 148              	$Lfe2:
+ 149              	.size compress,$Lfe2-compress
+ 150 00ec 00000000 	.ident "GCC: (GNU) 3.2.2"

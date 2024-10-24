@@ -1,0 +1,6 @@
+ PERMSSN    UID  GID    PACKED    SIZE  RATIO METHOD CRC     STAMP          NAME
+---------- ----------- ------- ------- ------ ---------- ------------ -------------
+[MS-DOS]                    12      12 100.0% -lh0- 9778 Jan  1  2010 /subdir/subdir2/hello.txt
+[MS-DOS]                     0       0 ****** -lhd- 0000 Jan  1  2000 /subdir/subdir2/
+---------- ----------- ------- ------- ------ ---------- ------------ -------------
+ Total         2 files      12      12 100.0%            Jan  1  2000

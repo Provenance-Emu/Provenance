@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVDolphinCore (Saves)
+@interface PVDolphinCoreBridge (Saves)
 
 @end
 

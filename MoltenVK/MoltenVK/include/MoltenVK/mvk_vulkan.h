@@ -1,7 +1,7 @@
 /*
  * mvk_vulkan.h
  *
- * Copyright (c) 2015-2023 The Brenwill Workshop Ltd. (http://www.brenwill.com)
+ * Copyright (c) 2015-2024 The Brenwill Workshop Ltd. (http://www.brenwill.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  *
  * When building for iOS, this header also automatically enables the obsolete VK_MVK_ios_surface Vulkan extension.
  * When building for macOS, this header also automatically enables the obsolete VK_MVK_macos_surface Vulkan extension.
- * Both of these extensions are obsolete. Consider using the portable VK_EXT_metal_surface extension instead.
+ * Both of these extensions are deprecated. Use the portable VK_EXT_metal_surface extension instead.
  */
 
 #ifndef __mvk_vulkan_h_
@@ -46,5 +46,8 @@
 #endif
 
 #include <vulkan/vulkan.h>
+
+/** The name of the MoltenVK driver layer. */
+static const char* kMVKMoltenVKDriverLayerName = "MoltenVK";
 
 #endif

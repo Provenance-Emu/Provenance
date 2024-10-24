@@ -1,6 +1,9 @@
 #import <PVPPSSPP/PVPPSSPP.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVSupport;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
 
 /* PSP Includes */
 #include "Common/MemoryUtil.h"
@@ -44,7 +47,7 @@
 #include "Core/ELF/ParamSFO.h"
 #include "Core/SaveState.h"
 
-@implementation PVPPSSPPCore (Cheats)
+@implementation PVPPSSPPCoreBridge (Cheats)
 #pragma mark - Cheats
 - (void)resetCheatCodes {
     NSLog(@"Reset Cheat Codes\n");

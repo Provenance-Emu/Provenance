@@ -1,0 +1,99 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Source/common/snspcrom.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 3
+   6              	.type _SNSPCRom_RomData,@object
+   7              	.size _SNSPCRom_RomData,64
+   8              	_SNSPCRom_RomData:
+   9 0000 CD       	.byte -51
+  10 0001 EF       	.byte -17
+  11 0002 BD       	.byte -67
+  12 0003 E8       	.byte -24
+  13 0004 00       	.byte 0
+  14 0005 C6       	.byte -58
+  15 0006 1D       	.byte 29
+  16 0007 D0       	.byte -48
+  17 0008 FC       	.byte -4
+  18 0009 8F       	.byte -113
+  19 000a AA       	.byte -86
+  20 000b F4       	.byte -12
+  21 000c 8F       	.byte -113
+  22 000d BB       	.byte -69
+  23 000e F5       	.byte -11
+  24 000f 78       	.byte 120
+  25 0010 CC       	.byte -52
+  26 0011 F4       	.byte -12
+  27 0012 D0       	.byte -48
+  28 0013 FB       	.byte -5
+  29 0014 2F       	.byte 47
+  30 0015 19       	.byte 25
+  31 0016 EB       	.byte -21
+  32 0017 F4       	.byte -12
+  33 0018 D0       	.byte -48
+  34 0019 FC       	.byte -4
+  35 001a 7E       	.byte 126
+  36 001b F4       	.byte -12
+  37 001c D0       	.byte -48
+  38 001d 0B       	.byte 11
+  39 001e E4       	.byte -28
+  40 001f F5       	.byte -11
+  41 0020 CB       	.byte -53
+  42 0021 F4       	.byte -12
+  43 0022 D7       	.byte -41
+  44 0023 00       	.byte 0
+  45 0024 FC       	.byte -4
+  46 0025 D0       	.byte -48
+  47 0026 F3       	.byte -13
+  48 0027 AB       	.byte -85
+  49 0028 01       	.byte 1
+  50 0029 10       	.byte 16
+  51 002a EF       	.byte -17
+  52 002b 7E       	.byte 126
+  53 002c F4       	.byte -12
+  54 002d 10       	.byte 16
+  55 002e EB       	.byte -21
+  56 002f BA       	.byte -70
+  57 0030 F6       	.byte -10
+GAS LISTING  			page 2
+
+
+  58 0031 DA       	.byte -38
+  59 0032 00       	.byte 0
+  60 0033 BA       	.byte -70
+  61 0034 F4       	.byte -12
+  62 0035 C4       	.byte -60
+  63 0036 F4       	.byte -12
+  64 0037 DD       	.byte -35
+  65 0038 5D       	.byte 93
+  66 0039 D0       	.byte -48
+  67 003a DB       	.byte -37
+  68 003b 1F       	.byte 31
+  69 003c 00       	.byte 0
+  70 003d 00       	.byte 0
+  71 003e C0       	.byte -64
+  72 003f FF       	.byte -1
+  73              	.text
+  74              	.align 2
+  75              	.p2align 3,,7
+  76              	.globl SNSpcRomGetRomData
+  77              	.ent SNSpcRomGetRomData
+  78              	SNSpcRomGetRomData:
+  79              	.frame $sp,0,$31
+  80              	.mask 0x00000000,0
+  81              	.fmask 0x00000000,0
+  82 0000 0000023C 	lui $2,%hi(_SNSPCRom_RomData)
+  83              	.set noreorder
+  84              	.set nomacro
+  85 0004 0800E003 	j $31
+  86 0008 00004224 	addiu $2,$2,%lo(_SNSPCRom_RomData)
+  87              	.set macro
+  88              	.set reorder
+  89              	
+  90              	.end SNSpcRomGetRomData
+  91              	$Lfe1:
+  92              	.size SNSpcRomGetRomData,$Lfe1-SNSpcRomGetRomData
+  93 000c 00000000 	.ident "GCC: (GNU) 3.2.2"

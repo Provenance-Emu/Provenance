@@ -1,0 +1,42 @@
+diff -rupN gcc-4.9.4.orig/libgcc/config/i386/gthr-win32.c gcc-4.9.4/libgcc/config/i386/gthr-win32.c
+--- gcc-4.9.4.orig/libgcc/config/i386/gthr-win32.c	2014-01-02 14:25:22.000000000 -0800
++++ gcc-4.9.4/libgcc/config/i386/gthr-win32.c	2020-11-25 17:57:38.683423842 -0800
+@@ -147,7 +147,7 @@ void
+ __gthr_win32_mutex_init_function (__gthread_mutex_t *mutex)
+ {
+   mutex->counter = -1;
+-  mutex->sema = CreateSemaphoreW (NULL, 0, 65535, NULL);
++  mutex->sema = CreateSemaphoreA (NULL, 0, 65535, NULL);
+ }
+ 
+ void
+@@ -195,7 +195,7 @@ __gthr_win32_recursive_mutex_init_functi
+   mutex->counter = -1;
+   mutex->depth = 0;
+   mutex->owner = 0;
+-  mutex->sema = CreateSemaphoreW (NULL, 0, 65535, NULL);
++  mutex->sema = CreateSemaphoreA (NULL, 0, 65535, NULL);
+ }
+ 
+ int
+diff -rupN gcc-4.9.4.orig/libgcc/config/i386/gthr-win32.h gcc-4.9.4/libgcc/config/i386/gthr-win32.h
+--- gcc-4.9.4.orig/libgcc/config/i386/gthr-win32.h	2014-01-02 14:25:22.000000000 -0800
++++ gcc-4.9.4/libgcc/config/i386/gthr-win32.h	2020-11-25 17:57:59.595423797 -0800
+@@ -635,7 +635,7 @@ static inline void
+ __gthread_mutex_init_function (__gthread_mutex_t *__mutex)
+ {
+   __mutex->counter = -1;
+-  __mutex->sema = CreateSemaphoreW (NULL, 0, 65535, NULL);
++  __mutex->sema = CreateSemaphoreA (NULL, 0, 65535, NULL);
+ }
+ 
+ static inline void
+@@ -697,7 +697,7 @@ __gthread_recursive_mutex_init_function
+   __mutex->counter = -1;
+   __mutex->depth = 0;
+   __mutex->owner = 0;
+-  __mutex->sema = CreateSemaphoreW (NULL, 0, 65535, NULL);
++  __mutex->sema = CreateSemaphoreA (NULL, 0, 65535, NULL);
+ }
+ 
+ static inline int

@@ -1,0 +1,108 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Source/common/snesreg.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN11SnesReg16FT6Write8Eh
+   8              	.ent _ZN11SnesReg16FT6Write8Eh
+   9              	_ZN11SnesReg16FT6Write8Eh:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 02008290 	lbu $2,2($4)
+  14              	
+  15              	.set noreorder
+  16              	.set nomacro
+  17 0004 06004014 	bne $2,$0,$L2
+  18 0008 FF00A530 	andi $5,$5,0x00ff
+  19              	.set macro
+  20              	.set reorder
+  21              	
+  22 000c 01000224 	li $2,1
+  23 0010 000085A0 	sb $5,0($4)
+  24              	.set noreorder
+  25              	.set nomacro
+  26 0014 0800E003 	j $31
+  27 0018 020082A0 	sb $2,2($4)
+  28              	.set macro
+  29              	.set reorder
+  30              	
+  31 001c 00000000 	.p2align 3
+  32              	$L2:
+  33 0020 010085A0 	sb $5,1($4)
+  34              	.set noreorder
+  35              	.set nomacro
+  36 0024 0800E003 	j $31
+  37 0028 020080A0 	sb $0,2($4)
+  38              	.set macro
+  39              	.set reorder
+  40              	
+  41              	.end _ZN11SnesReg16FT6Write8Eh
+  42              	$Lfe1:
+  43              	.size _ZN11SnesReg16FT6Write8Eh,$Lfe1-_ZN11SnesReg16FT6Write8Eh
+  44              	.align 2
+  45 002c 00000000 	.p2align 3,,7
+  46              	.globl _ZN11SnesReg16FT5Read8Ev
+  47              	.ent _ZN11SnesReg16FT5Read8Ev
+  48              	_ZN11SnesReg16FT5Read8Ev:
+  49              	.frame $sp,0,$31
+  50              	.mask 0x00000000,0
+  51              	.fmask 0x00000000,0
+  52 0030 02008290 	lbu $2,2($4)
+  53              	
+  54              	.set noreorder
+  55              	.set nomacro
+  56 0034 06004054 	bnel $2,$0,$L5
+  57 0038 020080A0 	sb $0,2($4)
+GAS LISTING  			page 2
+
+
+  58              	.set macro
+  59              	.set reorder
+  60              	
+  61 003c 00008390 	lbu $3,0($4)
+  62 0040 01000224 	li $2,1
+  63 0044 020082A0 	sb $2,2($4)
+  64              	$L4:
+  65              	.set noreorder
+  66              	.set nomacro
+  67 0048 0800E003 	j $31
+  68 004c 2D106000 	move $2,$3
+  69              	.set macro
+  70              	.set reorder
+  71              	
+  72              	.p2align 3
+  73              	$L5:
+  74              	.set noreorder
+  75              	.set nomacro
+  76 0050 FDFF0010 	b $L4
+  77 0054 01008390 	lbu $3,1($4)
+  78              	.set macro
+  79              	.set reorder
+  80              	
+  81              	.end _ZN11SnesReg16FT5Read8Ev
+  82              	$Lfe2:
+  83              	.size _ZN11SnesReg16FT5Read8Ev,$Lfe2-_ZN11SnesReg16FT5Read8Ev
+  84              	.align 2
+  85              	.p2align 3,,7
+  86              	.globl _ZN11SnesReg16FT5ResetEv
+  87              	.ent _ZN11SnesReg16FT5ResetEv
+  88              	_ZN11SnesReg16FT5ResetEv:
+  89              	.frame $sp,0,$31
+  90              	.mask 0x00000000,0
+  91              	.fmask 0x00000000,0
+  92              	.set noreorder
+  93              	.set nomacro
+  94 0058 0800E003 	j $31
+  95 005c 020080A0 	sb $0,2($4)
+  96              	.set macro
+  97              	.set reorder
+  98              	
+  99              	.end _ZN11SnesReg16FT5ResetEv
+ 100              	$Lfe3:
+ 101              	.size _ZN11SnesReg16FT5ResetEv,$Lfe3-_ZN11SnesReg16FT5ResetEv
+ 102              	.ident "GCC: (GNU) 3.2.2"

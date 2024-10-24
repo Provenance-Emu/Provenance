@@ -1,0 +1,1 @@
+/tmp/extract2/dir/hello.txt	- Melting  :  ./tmp/extract2/dir/hello.txt	- Melting  :  o/tmp/extract2/dir/hello.txt	- Melted  

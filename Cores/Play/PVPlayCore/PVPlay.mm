@@ -29,7 +29,7 @@ fs::path PathUtils::GetRoamingDataPath()
 
 fs::path PathUtils::GetAppResourcesPath()
 {
-	NSBundle* bundle = [NSBundle bundleForClass:[PVPlayCore class]];
+	NSBundle* bundle = [NSBundle bundleForClass:[PVPlayCoreBridge class]];
 	NSURL* bundleURL = [bundle resourceURL];
 	return fs::path([bundleURL fileSystemRepresentation]);
 }

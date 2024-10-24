@@ -1,0 +1,8 @@
+filename: long.txt
+compress_method: -pm2-
+compressed_length: 85397
+length: 1241659
+header_level: 0
+os_type: 0
+crc: 2aea
+--

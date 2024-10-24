@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: liblhasa
+Description: LHA (de)compression library
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -llhasa
+Cflags: -I${includedir}/liblhasa-1.0

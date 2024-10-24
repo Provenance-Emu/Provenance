@@ -15,14 +15,15 @@
 //#import "PVOperaCore+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVOperaCore() {
+@interface PVOperaCoreBridge() {
 
 }
 
@@ -30,7 +31,7 @@
 
 #pragma mark - PVOperaCore Begin
 
-@implementation PVOperaCore
+@implementation PVOperaCoreBridge
 {
 }
 

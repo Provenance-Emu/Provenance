@@ -1,0 +1,1 @@
+/tmp/extract2/dir/tmp/absolute_path.txt	- Melting  :  ./tmp/extract2/dir/tmp/absolute_path.txt	- Melting  :  o/tmp/extract2/dir/tmp/absolute_path.txt	- Melted  

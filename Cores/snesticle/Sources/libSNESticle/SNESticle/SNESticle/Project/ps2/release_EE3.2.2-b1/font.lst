@@ -1,0 +1,1482 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/font.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.section .bss
+   5              	_Font_State:
+   6              	.align 3
+   7 0000 00000000 	.space 12
+   7      00000000 
+   7      00000000 
+   8              	.previous
+   9              	.section .bss
+  10              	_Font_Default:
+  11 000c 00000000 	.align 3
+  12 0010 00000000 	.space 1108
+  12      00000000 
+  12      00000000 
+  12      00000000 
+  12      00000000 
+  13              	.previous
+  14              	.section .bss
+  15              	_Font_Fixed:
+  16 0464 00000000 	.align 3
+  17 0468 00000000 	.space 1108
+  17      00000000 
+  17      00000000 
+  17      00000000 
+  17      00000000 
+  18              	.previous
+  19              	.section .bss
+  20              	_Font_pFonts:
+  21 08bc 00000000 	.align 3
+  22 08c0 00000000 	.space 16
+  22      00000000 
+  22      00000000 
+  22      00000000 
+  23              	.previous
+  24              	.text
+  25              	.align 2
+  26              	.p2align 3,,7
+  27              	.ent _Z13_FontDrawCharP9FontCharTfffji
+  28              	_Z13_FontDrawCharP9FontCharTfffji:
+  29              	.frame $sp,64,$31
+  30              	.mask 0x80010000,-16
+  31              	.fmask 0x00000000,0
+  32 0000 C0FFBD27 	subu $sp,$sp,64
+  33 0004 8041013C 	li.s $f2,1.60000000000000000000e1
+  33      00108144 
+  34 000c 3000BFFF 	sd $31,48($sp)
+  35 0010 2000B0FF 	sd $16,32($sp)
+  36 0014 02620246 	mul.s $f8,$f12,$f2
+  37 0018 826A0246 	mul.s $f10,$f13,$f2
+  38 001c 03008B90 	lbu $11,3($4)
+  39 0020 02008A90 	lbu $10,2($4)
+  40 0024 00008690 	lbu $6,0($4)
+  41 0028 01008790 	lbu $7,1($4)
+  42 002c 23804601 	subu $16,$10,$6
+  43 0030 00510A00 	sll $10,$10,4
+GAS LISTING  			page 2
+
+
+  44 0034 23106701 	subu $2,$11,$7
+  45 0038 00209044 	mtc1 $16,$f4
+  45      00000000 
+  46 0040 20218046 	cvt.s.w $f4,$f4
+  47 0044 00308244 	mtc1 $2,$f6
+  47      00000000 
+  48 004c A0318046 	cvt.s.w $f6,$f6
+  49 0050 00310600 	sll $6,$6,4
+  50 0054 A4430046 	cvt.w.s $f14,$f8
+  51 0058 00700444 	mfc1 $4,$f14
+  52 005c 00390700 	sll $7,$7,4
+  53 0060 00630446 	add.s $f12,$f12,$f4
+  54 0064 00590B00 	sll $11,$11,4
+  55 0068 00680646 	add.s $f0,$f13,$f6
+  56 006c 0800C624 	addu $6,$6,8
+  57 0070 24510046 	cvt.w.s $f4,$f10
+  58 0074 00200244 	mfc1 $2,$f4
+  59 0078 0800E724 	addu $7,$7,8
+  60 007c 02630246 	mul.s $f12,$f12,$f2
+  61 0080 08004A25 	addu $10,$10,8
+  62 0084 02000246 	mul.s $f0,$f0,$f2
+  63 0088 08006B25 	addu $11,$11,8
+  64 008c FFFF4230 	andi $2,$2,0xffff
+  65 0090 FFFF8430 	andi $4,$4,0xffff
+  66 0094 A4600046 	cvt.w.s $f2,$f12
+  67 0098 00100844 	mfc1 $8,$f2
+  68 009c 2D18A000 	move $3,$5
+  69 00a0 A4000046 	cvt.w.s $f2,$f0
+  70 00a4 00100944 	mfc1 $9,$f2
+  71 00a8 0800A3AF 	sw $3,8($sp)
+  72 00ac 2D284000 	move $5,$2
+  73 00b0 0A000224 	li $2,10
+  74 00b4 0000A2AF 	sw $2,0($sp)
+  75 00b8 FFFF0831 	andi $8,$8,0xffff
+  76 00bc 01000224 	li $2,1
+  77 00c0 FFFF2931 	andi $9,$9,0xffff
+  78              	.set noreorder
+  79              	.set nomacro
+  80 00c4 0000000C 	jal GPPrimTexRect
+  81 00c8 1000A2AF 	sw $2,16($sp)
+  82              	.set macro
+  83              	.set reorder
+  84              	
+  85 00cc 2D100002 	move $2,$16
+  86 00d0 3000BFDF 	ld $31,48($sp)
+  87 00d4 2000B0DF 	ld $16,32($sp)
+  88              	
+  89              	.set noreorder
+  90              	.set nomacro
+  91 00d8 0800E003 	j $31
+  92 00dc 4000BD27 	addu $sp,$sp,64
+  93              	.set macro
+  94              	.set reorder
+  95              	
+  96              	.end _Z13_FontDrawCharP9FontCharTfffji
+  97              	$Lfe1:
+  98              	.size _Z13_FontDrawCharP9FontCharTfffji,$Lfe1-_Z13_FontDrawCharP9FontCharTfffji
+GAS LISTING  			page 3
+
+
+  99              	.align 2
+ 100              	.p2align 3,,7
+ 101              	.globl _Z15FontGetStrWidthPc
+ 102              	.ent _Z15FontGetStrWidthPc
+ 103              	_Z15FontGetStrWidthPc:
+ 104              	.frame $sp,0,$31
+ 105              	.mask 0x00000000,0
+ 106              	.fmask 0x00000000,0
+ 107 00e0 0000023C 	lui $2,%hi(_Font_State+8)
+ 108 00e4 2D288000 	move $5,$4
+ 109 00e8 0800468C 	lw $6,%lo(_Font_State+8)($2)
+ 110 00ec 2D380000 	move $7,$0
+ 111              	.set noreorder
+ 112              	.set nomacro
+ 113 00f0 1500C010 	beq $6,$0,$L12
+ 114 00f4 2D100000 	move $2,$0
+ 115              	.set macro
+ 116              	.set reorder
+ 117              	
+ 118 00f8 00008290 	lbu $2,0($4)
+ 119              	
+ 120 00fc 00160200 	sll $2,$2,24
+ 121              	.set noreorder
+ 122              	.set nomacro
+ 123 0100 11004050 	beql $2,$0,$L12
+ 124 0104 2D10E000 	move $2,$7
+ 125              	.set macro
+ 126              	.set reorder
+ 127              	
+ 128 0108 20000824 	li $8,32
+ 129 010c 03160200 	sra $2,$2,24
+ 130              	$L13:
+ 131              	.set noreorder
+ 132              	.set nomacro
+ 133 0110 0F004810 	beq $2,$8,$L7
+ 134 0114 80180200 	sll $3,$2,2
+ 135              	.set macro
+ 136              	.set reorder
+ 137              	
+ 138 0118 2110C300 	addu $2,$6,$3
+ 139 011c 48004490 	lbu $4,72($2)
+ 140 0120 4A004390 	lbu $3,74($2)
+ 141              	
+ 142 0124 23186400 	subu $3,$3,$4
+ 143 0128 2118E300 	addu $3,$7,$3
+ 144 012c 01006724 	addu $7,$3,1
+ 145              	$L8:
+ 146 0130 0100A524 	addu $5,$5,1
+ 147 0134 0000A290 	lbu $2,0($5)
+ 148              	
+ 149 0138 00160200 	sll $2,$2,24
+ 150              	.set noreorder
+ 151              	.set nomacro
+ 152 013c F4FF4054 	bnel $2,$0,$L13
+ 153 0140 03160200 	sra $2,$2,24
+ 154              	.set macro
+ 155              	.set reorder
+GAS LISTING  			page 4
+
+
+ 156              	
+ 157 0144 2D10E000 	move $2,$7
+ 158              	$L12:
+ 159 0148 0800E003 	j $31
+ 159      00000000 
+ 160              	.p2align 3
+ 161              	$L7:
+ 162 0150 4804C28C 	lw $2,1096($6)
+ 163              	.set noreorder
+ 164              	.set nomacro
+ 165 0154 F6FF0010 	b $L8
+ 166 0158 2138E200 	addu $7,$7,$2
+ 167              	.set macro
+ 168              	.set reorder
+ 169              	
+ 170              	.end _Z15FontGetStrWidthPc
+ 171              	$Lfe2:
+ 172              	.size _Z15FontGetStrWidthPc,$Lfe2-_Z15FontGetStrWidthPc
+ 173              	.align 2
+ 174 015c 00000000 	.p2align 3,,7
+ 175              	.ent _Z12_FontDrawStrP5FontTfffPcj
+ 176              	_Z12_FontDrawStrP5FontTfffPcj:
+ 177              	.frame $sp,112,$31
+ 178              	.mask 0x800f0000,-32
+ 179              	.fmask 0x01500000,-8
+ 180 0160 90FFBD27 	subu $sp,$sp,112
+ 181 0164 3000B2FF 	sd $18,48($sp)
+ 182 0168 2D90C000 	move $18,$6
+ 183 016c 2000B1FF 	sd $17,32($sp)
+ 184 0170 2D88A000 	move $17,$5
+ 185 0174 1000B0FF 	sd $16,16($sp)
+ 186 0178 2D808000 	move $16,$4
+ 187 017c 6800B8E7 	s.s $f24,104($sp)
+ 188 0180 066E0046 	mov.s $f24,$f13
+ 189 0184 6400B6E7 	s.s $f22,100($sp)
+ 190 0188 86750046 	mov.s $f22,$f14
+ 191 018c 6000B4E7 	s.s $f20,96($sp)
+ 192 0190 06650046 	mov.s $f20,$f12
+ 193 0194 5000BFFF 	sd $31,80($sp)
+ 194              	.set noreorder
+ 195              	.set nomacro
+ 196 0198 25008010 	beq $4,$0,$L14
+ 197 019c 4000B3FF 	sd $19,64($sp)
+ 198              	.set macro
+ 199              	.set reorder
+ 200              	
+ 201 01a0 1800848C 	lw $4,24($4)
+ 202 01a4 2D480000 	move $9,$0
+ 203 01a8 0800058E 	lw $5,8($16)
+ 204 01ac 2D500000 	move $10,$0
+ 205 01b0 0000068E 	lw $6,0($16)
+ 206 01b4 2D580000 	move $11,$0
+ 207 01b8 0400078E 	lw $7,4($16)
+ 208 01bc 1000088E 	lw $8,16($16)
+ 209              	.set noreorder
+ 210              	.set nomacro
+ 211 01c0 0000000C 	jal GPPrimSetTex
+GAS LISTING  			page 5
+
+
+ 212 01c4 0000A0AF 	sw $0,0($sp)
+ 213              	.set macro
+ 214              	.set reorder
+ 215              	
+ 216 01c8 00002292 	lbu $2,0($17)
+ 217              	
+ 218 01cc 00160200 	sll $2,$2,24
+ 219              	.set noreorder
+ 220              	.set nomacro
+ 221 01d0 17004010 	beq $2,$0,$L14
+ 222 01d4 20001324 	li $19,32
+ 223              	.set macro
+ 224              	.set reorder
+ 225              	
+ 226              	.p2align 3
+ 227              	$L22:
+ 228 01d8 03160200 	sra $2,$2,24
+ 229 01dc 06A30046 	mov.s $f12,$f20
+ 230 01e0 80180200 	sll $3,$2,2
+ 231 01e4 46C30046 	mov.s $f13,$f24
+ 232 01e8 86B30046 	mov.s $f14,$f22
+ 233 01ec 2D284002 	move $5,$18
+ 234 01f0 2D304000 	move $6,$2
+ 235              	.set noreorder
+ 236              	.set nomacro
+ 237 01f4 18005310 	beq $2,$19,$L19
+ 238 01f8 21200302 	addu $4,$16,$3
+ 239              	.set macro
+ 240              	.set reorder
+ 241              	
+ 242              	.set noreorder
+ 243              	.set nomacro
+ 244 01fc 0000000C 	jal _Z13_FontDrawCharP9FontCharTfffji
+ 245 0200 48008424 	addu $4,$4,72
+ 246              	.set macro
+ 247              	.set reorder
+ 248              	
+ 249 0204 5004038E 	lw $3,1104($16)
+ 250 0208 01004224 	addu $2,$2,1
+ 251 020c 0B106300 	movn $2,$3,$3
+ 252 0210 00008244 	mtc1 $2,$f0
+ 252      00000000 
+ 253 0218 20008046 	cvt.s.w $f0,$f0
+ 254 021c 01003126 	addu $17,$17,1
+ 255              	$L25:
+ 256 0220 00002292 	lbu $2,0($17)
+ 257              	
+ 258 0224 00160200 	sll $2,$2,24
+ 259              	.set noreorder
+ 260              	.set nomacro
+ 261 0228 EBFF4014 	bne $2,$0,$L22
+ 262 022c 00A50046 	add.s $f20,$f20,$f0
+ 263              	.set macro
+ 264              	.set reorder
+ 265              	
+ 266              	$L14:
+ 267 0230 5000BFDF 	ld $31,80($sp)
+GAS LISTING  			page 6
+
+
+ 268 0234 4000B3DF 	ld $19,64($sp)
+ 269 0238 3000B2DF 	ld $18,48($sp)
+ 270 023c 2000B1DF 	ld $17,32($sp)
+ 271 0240 1000B0DF 	ld $16,16($sp)
+ 272 0244 6800B8C7 	l.s $f24,104($sp)
+ 273 0248 6400B6C7 	l.s $f22,100($sp)
+ 274 024c 6000B4C7 	l.s $f20,96($sp)
+ 275              	
+ 276              	.set noreorder
+ 277              	.set nomacro
+ 278 0250 0800E003 	j $31
+ 279 0254 7000BD27 	addu $sp,$sp,112
+ 280              	.set macro
+ 281              	.set reorder
+ 282              	
+ 283              	.p2align 3
+ 284              	$L19:
+ 285 0258 480400C6 	l.s $f0,1096($16)
+ 286 025c 20008046 	cvt.s.w $f0,$f0
+ 287              	.set noreorder
+ 288              	.set nomacro
+ 289 0260 EFFF0010 	b $L25
+ 290 0264 01003126 	addu $17,$17,1
+ 291              	.set macro
+ 292              	.set reorder
+ 293              	
+ 294              	.end _Z12_FontDrawStrP5FontTfffPcj
+ 295              	$Lfe3:
+ 296              	.size _Z12_FontDrawStrP5FontTfffPcj,$Lfe3-_Z12_FontDrawStrP5FontTfffPcj
+ 297              	.align 2
+ 298              	.p2align 3,,7
+ 299              	.ent _Z15_FontSetCharMapP5FontThjjjj
+ 300              	_Z15_FontSetCharMapP5FontThjjjj:
+ 301              	.frame $sp,0,$31
+ 302              	.mask 0x00000000,0
+ 303              	.fmask 0x00000000,0
+ 304 0268 FF00A530 	andi $5,$5,0x00ff
+ 305 026c 2140C800 	addu $8,$6,$8
+ 306 0270 80280500 	sll $5,$5,2
+ 307 0274 2148E900 	addu $9,$7,$9
+ 308 0278 2128A400 	addu $5,$5,$4
+ 309 027c 4000A524 	addu $5,$5,64
+ 310 0280 0B00A9A0 	sb $9,11($5)
+ 311 0284 0A00A8A0 	sb $8,10($5)
+ 312 0288 0800A6A0 	sb $6,8($5)
+ 313              	.set noreorder
+ 314              	.set nomacro
+ 315 028c 0800E003 	j $31
+ 316 0290 0900A7A0 	sb $7,9($5)
+ 317              	.set macro
+ 318              	.set reorder
+ 319              	
+ 320              	.end _Z15_FontSetCharMapP5FontThjjjj
+ 321              	$Lfe4:
+ 322              	.size _Z15_FontSetCharMapP5FontThjjjj,$Lfe4-_Z15_FontSetCharMapP5FontThjjjj
+ 323              	.align 2
+ 324 0294 00000000 	.p2align 3,,7
+GAS LISTING  			page 7
+
+
+ 325              	.ent _Z16_FontSetCharSizeP5FontTjj
+ 326              	_Z16_FontSetCharSizeP5FontTjj:
+ 327              	.frame $sp,0,$31
+ 328              	.mask 0x00000000,0
+ 329              	.fmask 0x00000000,0
+ 330 0298 480485AC 	sw $5,1096($4)
+ 331              	.set noreorder
+ 332              	.set nomacro
+ 333 029c 0800E003 	j $31
+ 334 02a0 4C0486AC 	sw $6,1100($4)
+ 335              	.set macro
+ 336              	.set reorder
+ 337              	
+ 338              	.end _Z16_FontSetCharSizeP5FontTjj
+ 339              	$Lfe5:
+ 340              	.size _Z16_FontSetCharSizeP5FontTjj,$Lfe5-_Z16_FontSetCharSizeP5FontTjj
+ 341              	.align 2
+ 342 02a4 00000000 	.p2align 3,,7
+ 343              	.globl _Z8FontMakeP5FontTP8CSurfacejPc
+ 344              	.ent _Z8FontMakeP5FontTP8CSurfacejPc
+ 345              	_Z8FontMakeP5FontTP8CSurfacejPc:
+ 346              	.frame $sp,80,$31
+ 347              	.mask 0x800f0000,-16
+ 348              	.fmask 0x00000000,0
+ 349 02a8 B0FFBD27 	subu $sp,$sp,80
+ 350 02ac 2000B2FF 	sd $18,32($sp)
+ 351 02b0 2D90E000 	move $18,$7
+ 352 02b4 1000B1FF 	sd $17,16($sp)
+ 353 02b8 2D888000 	move $17,$4
+ 354 02bc 0000B0FF 	sd $16,0($sp)
+ 355 02c0 2D80A000 	move $16,$5
+ 356 02c4 4000BFFF 	sd $31,64($sp)
+ 357 02c8 3000B3FF 	sd $19,48($sp)
+ 358              	.set noreorder
+ 359              	.set nomacro
+ 360 02cc 0000000C 	jal _Z7FontNewP5FontT
+ 361 02d0 2D98C000 	move $19,$6
+ 362              	.set macro
+ 363              	.set reorder
+ 364              	
+ 365 02d4 2D304002 	move $6,$18
+ 366 02d8 2D202002 	move $4,$17
+ 367              	.set noreorder
+ 368              	.set nomacro
+ 369 02dc 0000000C 	jal _Z14FontParseCharsP5FontTP8CSurfacePc
+ 370 02e0 2D280002 	move $5,$16
+ 371              	.set macro
+ 372              	.set reorder
+ 373              	
+ 374 02e4 1000068E 	lw $6,16($16)
+ 375 02e8 0C00058E 	lw $5,12($16)
+ 376 02ec 2D380000 	move $7,$0
+ 377              	.set noreorder
+ 378              	.set nomacro
+ 379 02f0 0000000C 	jal _Z10TextureNewP8TextureTjjj
+ 380 02f4 2D202002 	move $4,$17
+ 381              	.set macro
+GAS LISTING  			page 8
+
+
+ 382              	.set reorder
+ 383              	
+ 384 02f8 2D286002 	move $5,$19
+ 385              	.set noreorder
+ 386              	.set nomacro
+ 387 02fc 0000000C 	jal _Z14TextureSetAddrP8TextureTj
+ 388 0300 2D202002 	move $4,$17
+ 389              	.set macro
+ 390              	.set reorder
+ 391              	
+ 392 0304 2D280000 	move $5,$0
+ 393              	.set noreorder
+ 394              	.set nomacro
+ 395 0308 0000000C 	jal _ZN8CSurface10GetLinePtrEi
+ 396 030c 2D200002 	move $4,$16
+ 397              	.set macro
+ 398              	.set reorder
+ 399              	
+ 400 0310 2D202002 	move $4,$17
+ 401              	.set noreorder
+ 402              	.set nomacro
+ 403 0314 0000000C 	jal _Z13TextureUploadP8TextureTPh
+ 404 0318 2D284000 	move $5,$2
+ 405              	.set macro
+ 406              	.set reorder
+ 407              	
+ 408 031c 0000000C 	jal GPFifoFlush
+ 408      00000000 
+ 409 0324 0000B0DF 	ld $16,0($sp)
+ 410 0328 4000BFDF 	ld $31,64($sp)
+ 411 032c 3000B3DF 	ld $19,48($sp)
+ 412 0330 2000B2DF 	ld $18,32($sp)
+ 413 0334 1000B1DF 	ld $17,16($sp)
+ 414              	
+ 415              	.set noreorder
+ 416              	.set nomacro
+ 417 0338 0800E003 	j $31
+ 418 033c 5000BD27 	addu $sp,$sp,80
+ 419              	.set macro
+ 420              	.set reorder
+ 421              	
+ 422              	.end _Z8FontMakeP5FontTP8CSurfacejPc
+ 423              	$Lfe6:
+ 424              	.size _Z8FontMakeP5FontTP8CSurfacejPc,$Lfe6-_Z8FontMakeP5FontTP8CSurfacejPc
+ 425              	.align 2
+ 426              	.p2align 3,,7
+ 427              	.globl _Z11FontColor4fffff
+ 428              	.ent _Z11FontColor4fffff
+ 429              	_Z11FontColor4fffff:
+ 430              	.frame $sp,0,$31
+ 431              	.mask 0x00000000,0
+ 432              	.fmask 0x00000000,0
+ 433 0340 0043013C 	li.s $f0,1.28000000000000000000e2
+ 433      00008144 
+ 434 0348 00000000 	
+ 435 034c 02630046 	mul.s $f12,$f12,$f0
+ 436 0350 02690046 	mul.s $f4,$f13,$f0
+GAS LISTING  			page 9
+
+
+ 437 0354 82730046 	mul.s $f14,$f14,$f0
+ 438 0358 82780046 	mul.s $f2,$f15,$f0
+ 439 035c 24600046 	cvt.w.s $f0,$f12
+ 440 0360 00000244 	mfc1 $2,$f0
+ 441 0364 24200046 	cvt.w.s $f0,$f4
+ 442 0368 00000344 	mfc1 $3,$f0
+ 443 036c 24700046 	cvt.w.s $f0,$f14
+ 444 0370 00000444 	mfc1 $4,$f0
+ 445 0374 24100046 	cvt.w.s $f0,$f2
+ 446 0378 00000544 	mfc1 $5,$f0
+ 447 037c 3C100200 	dsll $2,$2,32
+ 448 0380 3C180300 	dsll $3,$3,32
+ 449 0384 3E100200 	dsrl $2,$2,32
+ 450 0388 3A1E0300 	dsrl $3,$3,24
+ 451 038c 3C200400 	dsll $4,$4,32
+ 452 0390 25104300 	or $2,$2,$3
+ 453 0394 3A240400 	dsrl $4,$4,16
+ 454 0398 3C280500 	dsll $5,$5,32
+ 455 039c 25104400 	or $2,$2,$4
+ 456 03a0 3A2A0500 	dsrl $5,$5,8
+ 457 03a4 0000033C 	lui $3,%hi(_Font_State)
+ 458 03a8 25104500 	or $2,$2,$5
+ 459 03ac 3C100200 	dsll $2,$2,32
+ 460 03b0 3F100200 	dsra $2,$2,32
+ 461              	.set noreorder
+ 462              	.set nomacro
+ 463 03b4 0800E003 	j $31
+ 464 03b8 000062AC 	sw $2,%lo(_Font_State)($3)
+ 465              	.set macro
+ 466              	.set reorder
+ 467              	
+ 468              	.end _Z11FontColor4fffff
+ 469              	$Lfe7:
+ 470              	.size _Z11FontColor4fffff,$Lfe7-_Z11FontColor4fffff
+ 471              	.align 2
+ 472 03bc 00000000 	.p2align 3,,7
+ 473              	.globl _Z8FontPutsffPc
+ 474              	.ent _Z8FontPutsffPc
+ 475              	_Z8FontPutsffPc:
+ 476              	.frame $sp,16,$31
+ 477              	.mask 0x80000000,-16
+ 478              	.fmask 0x00000000,0
+ 479 03c0 0000063C 	lui $6,%hi(_Font_State)
+ 480 03c4 F0FFBD27 	subu $sp,$sp,16
+ 481 03c8 0000C224 	addiu $2,$6,%lo(_Font_State)
+ 482 03cc 2D288000 	move $5,$4
+ 483 03d0 0800438C 	lw $3,8($2)
+ 484 03d4 0000BFFF 	sd $31,0($sp)
+ 485 03d8 7041013C 	li.s $f14,1.50000000000000000000e1
+ 485      00708144 
+ 486              	.set noreorder
+ 487              	.set nomacro
+ 488 03e0 03006010 	beq $3,$0,$L32
+ 489 03e4 2D206000 	move $4,$3
+ 490              	.set macro
+ 491              	.set reorder
+ 492              	
+GAS LISTING  			page 10
+
+
+ 493              	.set noreorder
+ 494              	.set nomacro
+ 495 03e8 5800000C 	jal _Z12_FontDrawStrP5FontTfffPcj
+ 496 03ec 0000C68C 	lw $6,%lo(_Font_State)($6)
+ 497              	.set macro
+ 498              	.set reorder
+ 499              	
+ 500              	$L32:
+ 501 03f0 0000BFDF 	ld $31,0($sp)
+ 502              	
+ 503              	.set noreorder
+ 504              	.set nomacro
+ 505 03f4 0800E003 	j $31
+ 506 03f8 1000BD27 	addu $sp,$sp,16
+ 507              	.set macro
+ 508              	.set reorder
+ 509              	
+ 510              	.end _Z8FontPutsffPc
+ 511              	$Lfe8:
+ 512              	.size _Z8FontPutsffPc,$Lfe8-_Z8FontPutsffPc
+ 513              	.section .bss
+ 514              	_ZZ10FontPrintfffPczE6strbuf:
+ 515              	.align 3
+ 516 08d0 00000000 	.space 1024
+ 516      00000000 
+ 516      00000000 
+ 516      00000000 
+ 516      00000000 
+ 517              	.previous
+ 518              	.align 2
+ 519 03fc 00000000 	.p2align 3,,7
+ 520              	.globl _Z10FontPrintfffPcz
+ 521              	.ent _Z10FontPrintfffPcz
+ 522              	_Z10FontPrintfffPcz:
+ 523              	.frame $sp,128,$31
+ 524              	.mask 0x80010000,-112
+ 525              	.fmask 0x00500000,-92
+ 526 0400 80FFBD27 	subu $sp,$sp,128
+ 527 0404 0000B0FF 	sd $16,0($sp)
+ 528 0408 0000103C 	lui $16,%hi(_ZZ10FontPrintfffPczE6strbuf)
+ 529 040c D0081026 	addiu $16,$16,%lo(_ZZ10FontPrintfffPczE6strbuf)
+ 530 0410 2400B6E7 	s.s $f22,36($sp)
+ 531 0414 2000B4E7 	s.s $f20,32($sp)
+ 532 0418 86650046 	mov.s $f22,$f12
+ 533 041c 4800A5FF 	sd $5,72($sp)
+ 534 0420 066D0046 	mov.s $f20,$f13
+ 535 0424 2D288000 	move $5,$4
+ 536 0428 5000A6FF 	sd $6,80($sp)
+ 537 042c 2D200002 	move $4,$16
+ 538 0430 4800A627 	addu $6,$sp,72
+ 539 0434 1000BFFF 	sd $31,16($sp)
+ 540 0438 5800A7FF 	sd $7,88($sp)
+ 541 043c 6000A8FF 	sd $8,96($sp)
+ 542 0440 6800A9FF 	sd $9,104($sp)
+ 543 0444 7000AAFF 	sd $10,112($sp)
+ 544 0448 7800ABFF 	sd $11,120($sp)
+ 545 044c 3C00AEE7 	s.s $f14,60($sp)
+GAS LISTING  			page 11
+
+
+ 546 0450 4000B0E7 	s.s $f16,64($sp)
+ 547              	.set noreorder
+ 548              	.set nomacro
+ 549 0454 0000000C 	jal vsprintf
+ 550 0458 4400B2E7 	s.s $f18,68($sp)
+ 551              	.set macro
+ 552              	.set reorder
+ 553              	
+ 554 045c 06B30046 	mov.s $f12,$f22
+ 555 0460 46A30046 	mov.s $f13,$f20
+ 556              	.set noreorder
+ 557              	.set nomacro
+ 558 0464 0000000C 	jal _Z8FontPutsffPc
+ 559 0468 2D200002 	move $4,$16
+ 560              	.set macro
+ 561              	.set reorder
+ 562              	
+ 563 046c 2000B4C7 	l.s $f20,32($sp)
+ 564 0470 1000BFDF 	ld $31,16($sp)
+ 565 0474 0000B0DF 	ld $16,0($sp)
+ 566 0478 2400B6C7 	l.s $f22,36($sp)
+ 567              	
+ 568              	.set noreorder
+ 569              	.set nomacro
+ 570 047c 0800E003 	j $31
+ 571 0480 8000BD27 	addu $sp,$sp,128
+ 572              	.set macro
+ 573              	.set reorder
+ 574              	
+ 575              	.end _Z10FontPrintfffPcz
+ 576              	$Lfe9:
+ 577              	.size _Z10FontPrintfffPcz,$Lfe9-_Z10FontPrintfffPcz
+ 578              	.align 2
+ 579 0484 00000000 	.p2align 3,,7
+ 580              	.globl _Z10FontSelecti
+ 581              	.ent _Z10FontSelecti
+ 582              	_Z10FontSelecti:
+ 583              	.frame $sp,0,$31
+ 584              	.mask 0x00000000,0
+ 585              	.fmask 0x00000000,0
+ 586 0488 0000023C 	lui $2,%hi(_Font_pFonts)
+ 587 048c 80200400 	sll $4,$4,2
+ 588 0490 C0084224 	addiu $2,$2,%lo(_Font_pFonts)
+ 589 0494 21208200 	addu $4,$4,$2
+ 590 0498 0000023C 	lui $2,%hi(_Font_State+8)
+ 591 049c 0000838C 	lw $3,0($4)
+ 592              	.set noreorder
+ 593              	.set nomacro
+ 594 04a0 0800E003 	j $31
+ 595 04a4 080043AC 	sw $3,%lo(_Font_State+8)($2)
+ 596              	.set macro
+ 597              	.set reorder
+ 598              	
+ 599              	.end _Z10FontSelecti
+ 600              	$Lfe10:
+ 601              	.size _Z10FontSelecti,$Lfe10-_Z10FontSelecti
+ 602              	.align 2
+GAS LISTING  			page 12
+
+
+ 603              	.p2align 3,,7
+ 604              	.globl _Z11FontSetFontiP5FontT
+ 605              	.ent _Z11FontSetFontiP5FontT
+ 606              	_Z11FontSetFontiP5FontT:
+ 607              	.frame $sp,0,$31
+ 608              	.mask 0x00000000,0
+ 609              	.fmask 0x00000000,0
+ 610 04a8 0000023C 	lui $2,%hi(_Font_pFonts)
+ 611 04ac 80200400 	sll $4,$4,2
+ 612 04b0 C0084224 	addiu $2,$2,%lo(_Font_pFonts)
+ 613 04b4 21208200 	addu $4,$4,$2
+ 614              	.set noreorder
+ 615              	.set nomacro
+ 616 04b8 0800E003 	j $31
+ 617 04bc 000085AC 	sw $5,0($4)
+ 618              	.set macro
+ 619              	.set reorder
+ 620              	
+ 621              	.end _Z11FontSetFontiP5FontT
+ 622              	$Lfe11:
+ 623              	.size _Z11FontSetFontiP5FontT,$Lfe11-_Z11FontSetFontiP5FontT
+ 624              	.align 2
+ 625              	.p2align 3,,7
+ 626              	.globl _Z12FontGetWidthv
+ 627              	.ent _Z12FontGetWidthv
+ 628              	_Z12FontGetWidthv:
+ 629              	.frame $sp,0,$31
+ 630              	.mask 0x00000000,0
+ 631              	.fmask 0x00000000,0
+ 632 04c0 0000023C 	lui $2,%hi(_Font_State+8)
+ 633 04c4 0800428C 	lw $2,%lo(_Font_State+8)($2)
+ 634              	
+ 635              	.set noreorder
+ 636              	.set nomacro
+ 637 04c8 02004010 	beq $2,$0,$L39
+ 638 04cc 2D180000 	move $3,$0
+ 639              	.set macro
+ 640              	.set reorder
+ 641              	
+ 642 04d0 4804438C 	lw $3,1096($2)
+ 643              	$L39:
+ 644              	.set noreorder
+ 645              	.set nomacro
+ 646 04d4 0800E003 	j $31
+ 647 04d8 2D106000 	move $2,$3
+ 648              	.set macro
+ 649              	.set reorder
+ 650              	
+ 651              	.end _Z12FontGetWidthv
+ 652              	$Lfe12:
+ 653              	.size _Z12FontGetWidthv,$Lfe12-_Z12FontGetWidthv
+ 654              	.align 2
+ 655 04dc 00000000 	.p2align 3,,7
+ 656              	.globl _Z13FontGetHeightv
+ 657              	.ent _Z13FontGetHeightv
+ 658              	_Z13FontGetHeightv:
+ 659              	.frame $sp,0,$31
+GAS LISTING  			page 13
+
+
+ 660              	.mask 0x00000000,0
+ 661              	.fmask 0x00000000,0
+ 662 04e0 0000023C 	lui $2,%hi(_Font_State+8)
+ 663 04e4 0800428C 	lw $2,%lo(_Font_State+8)($2)
+ 664              	
+ 665              	.set noreorder
+ 666              	.set nomacro
+ 667 04e8 02004010 	beq $2,$0,$L42
+ 668 04ec 2D180000 	move $3,$0
+ 669              	.set macro
+ 670              	.set reorder
+ 671              	
+ 672 04f0 4C04438C 	lw $3,1100($2)
+ 673              	$L42:
+ 674              	.set noreorder
+ 675              	.set nomacro
+ 676 04f4 0800E003 	j $31
+ 677 04f8 2D106000 	move $2,$3
+ 678              	.set macro
+ 679              	.set reorder
+ 680              	
+ 681              	.end _Z13FontGetHeightv
+ 682              	$Lfe13:
+ 683              	.size _Z13FontGetHeightv,$Lfe13-_Z13FontGetHeightv
+ 684              	.rdata
+ 685              	.align 3
+ 686              	$LC0:
+ 687 0000 41424344 	.ascii "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123"
+ 687      45464748 
+ 687      494A4B4C 
+ 687      4D4E4F50 
+ 687      51525354 
+ 688 0038 34353637 	.ascii "456789({[<!@#$%^&*?_+-=;,\"/~>]}).:'\\|\000"
+ 688      3839287B 
+ 688      5B3C2140 
+ 688      2324255E 
+ 688      262A3F5F 
+ 689 005e 0000     	.text
+ 690              	.align 2
+ 691 04fc 00000000 	.p2align 3,,7
+ 692              	.globl _Z8FontInitj
+ 693              	.ent _Z8FontInitj
+ 694              	_Z8FontInitj:
+ 695              	.frame $sp,112,$31
+ 696              	.mask 0x80070000,-16
+ 697              	.fmask 0x00000000,0
+ 698 0500 90FFBD27 	subu $sp,$sp,112
+ 699 0504 5000B2FF 	sd $18,80($sp)
+ 700 0508 2D908000 	move $18,$4
+ 701 050c 2D20A003 	move $4,$sp
+ 702 0510 6000BFFF 	sd $31,96($sp)
+ 703 0514 4000B1FF 	sd $17,64($sp)
+ 704 0518 0000113C 	lui $17,%hi(_Font_Default)
+ 705 051c 3000B0FF 	sd $16,48($sp)
+ 706              	.set noreorder
+ 707              	.set nomacro
+ 708 0520 0000000C 	jal _ZN8CSurfaceC1Ev
+GAS LISTING  			page 14
+
+
+ 709 0524 10003126 	addiu $17,$17,%lo(_Font_Default)
+ 710              	.set macro
+ 711              	.set reorder
+ 712              	
+ 713 0528 0000103C 	lui $16,%hi($LC0)
+ 714 052c 0A000424 	li $4,10
+ 715              	.set noreorder
+ 716              	.set nomacro
+ 717 0530 0000000C 	jal _Z20PixelFormatGetByEnum12PixelFormatE
+ 718 0534 00001026 	addiu $16,$16,%lo($LC0)
+ 719              	.set macro
+ 720              	.set reorder
+ 721              	
+ 722 0538 20000724 	li $7,32
+ 723 053c 0000053C 	lui $5,%hi(_FontData_04b16b)
+ 724 0540 2D484000 	move $9,$2
+ 725 0544 00040824 	li $8,1024
+ 726 0548 2D20A003 	move $4,$sp
+ 727 054c 0000A524 	addiu $5,$5,%lo(_FontData_04b16b)
+ 728              	.set noreorder
+ 729              	.set nomacro
+ 730 0550 0000000C 	jal _ZN8CSurface3SetEPhjjjP12PixelFormatT
+ 731 0554 00010624 	li $6,256
+ 732              	.set macro
+ 733              	.set reorder
+ 734              	
+ 735 0558 2D380002 	move $7,$16
+ 736 055c 2D304002 	move $6,$18
+ 737 0560 2D202002 	move $4,$17
+ 738              	.set noreorder
+ 739              	.set nomacro
+ 740 0564 0000000C 	jal _Z8FontMakeP5FontTP8CSurfacejPc
+ 741 0568 2D28A003 	move $5,$sp
+ 742              	.set macro
+ 743              	.set reorder
+ 744              	
+ 745 056c 2D28A003 	move $5,$sp
+ 746 0570 2D380002 	move $7,$16
+ 747 0574 2D304002 	move $6,$18
+ 748 0578 0000103C 	lui $16,%hi(_Font_Fixed)
+ 749 057c 68041026 	addiu $16,$16,%lo(_Font_Fixed)
+ 750              	.set noreorder
+ 751              	.set nomacro
+ 752 0580 0000000C 	jal _Z8FontMakeP5FontTP8CSurfacejPc
+ 753 0584 2D200002 	move $4,$16
+ 754              	.set macro
+ 755              	.set reorder
+ 756              	
+ 757 0588 2D200000 	move $4,$0
+ 758 058c 4804028E 	lw $2,1096($16)
+ 759 0590 2D282002 	move $5,$17
+ 760              	.set noreorder
+ 761              	.set nomacro
+ 762 0594 0000000C 	jal _Z11FontSetFontiP5FontT
+ 763 0598 500402AE 	sw $2,1104($16)
+ 764              	.set macro
+ 765              	.set reorder
+GAS LISTING  			page 15
+
+
+ 766              	
+ 767 059c 01000424 	li $4,1
+ 768              	.set noreorder
+ 769              	.set nomacro
+ 770 05a0 0000000C 	jal _Z11FontSetFontiP5FontT
+ 771 05a4 2D280002 	move $5,$16
+ 772              	.set macro
+ 773              	.set reorder
+ 774              	
+ 775 05a8 02000424 	li $4,2
+ 776              	.set noreorder
+ 777              	.set nomacro
+ 778 05ac 0000000C 	jal _Z11FontSetFontiP5FontT
+ 779 05b0 2D282002 	move $5,$17
+ 780              	.set macro
+ 781              	.set reorder
+ 782              	
+ 783 05b4 03000424 	li $4,3
+ 784              	.set noreorder
+ 785              	.set nomacro
+ 786 05b8 0000000C 	jal _Z11FontSetFontiP5FontT
+ 787 05bc 2D282002 	move $5,$17
+ 788              	.set macro
+ 789              	.set reorder
+ 790              	
+ 791              	.set noreorder
+ 792              	.set nomacro
+ 793 05c0 0000000C 	jal _Z10FontSelecti
+ 794 05c4 2D200000 	move $4,$0
+ 795              	.set macro
+ 796              	.set reorder
+ 797              	
+ 798 05c8 803F013C 	li.s $f12,1.00000000000000000000e0
+ 798      00608144 
+ 799 05d0 00000000 	
+ 800 05d4 46630046 	mov.s $f13,$f12
+ 801 05d8 86630046 	mov.s $f14,$f12
+ 802              	.set noreorder
+ 803              	.set nomacro
+ 804 05dc 0000000C 	jal _Z11FontColor4fffff
+ 805 05e0 C6630046 	mov.s $f15,$f12
+ 806              	.set macro
+ 807              	.set reorder
+ 808              	
+ 809              	.set noreorder
+ 810              	.set nomacro
+ 811 05e4 0000000C 	jal _ZN8CSurfaceD1Ev
+ 812 05e8 2D20A003 	move $4,$sp
+ 813              	.set macro
+ 814              	.set reorder
+ 815              	
+ 816 05ec 3000B0DF 	ld $16,48($sp)
+ 817 05f0 6000BFDF 	ld $31,96($sp)
+ 818 05f4 5000B2DF 	ld $18,80($sp)
+ 819 05f8 4000B1DF 	ld $17,64($sp)
+ 820              	
+ 821              	.set noreorder
+GAS LISTING  			page 16
+
+
+ 822              	.set nomacro
+ 823 05fc 0800E003 	j $31
+ 824 0600 7000BD27 	addu $sp,$sp,112
+ 825              	.set macro
+ 826              	.set reorder
+ 827              	
+ 828              	.end _Z8FontInitj
+ 829              	$Lfe14:
+ 830              	.size _Z8FontInitj,$Lfe14-_Z8FontInitj
+ 831              	.align 2
+ 832 0604 00000000 	.p2align 3,,7
+ 833              	.globl _Z12FontShutdownv
+ 834              	.ent _Z12FontShutdownv
+ 835              	_Z12FontShutdownv:
+ 836              	.frame $sp,16,$31
+ 837              	.mask 0x80000000,-16
+ 838              	.fmask 0x00000000,0
+ 839 0608 0000043C 	lui $4,%hi(_Font_Default)
+ 840 060c F0FFBD27 	subu $sp,$sp,16
+ 841 0610 0000BFFF 	sd $31,0($sp)
+ 842              	.set noreorder
+ 843              	.set nomacro
+ 844 0614 0000000C 	jal _Z10FontDeleteP5FontT
+ 845 0618 10008424 	addiu $4,$4,%lo(_Font_Default)
+ 846              	.set macro
+ 847              	.set reorder
+ 848              	
+ 849 061c 0000043C 	lui $4,%hi(_Font_Fixed)
+ 850              	.set noreorder
+ 851              	.set nomacro
+ 852 0620 0000000C 	jal _Z10FontDeleteP5FontT
+ 853 0624 68048424 	addiu $4,$4,%lo(_Font_Fixed)
+ 854              	.set macro
+ 855              	.set reorder
+ 856              	
+ 857 0628 0000BFDF 	ld $31,0($sp)
+ 858              	
+ 859              	.set noreorder
+ 860              	.set nomacro
+ 861 062c 0800E003 	j $31
+ 862 0630 1000BD27 	addu $sp,$sp,16
+ 863              	.set macro
+ 864              	.set reorder
+ 865              	
+ 866              	.end _Z12FontShutdownv
+ 867              	$Lfe15:
+ 868              	.size _Z12FontShutdownv,$Lfe15-_Z12FontShutdownv
+ 869              	.align 2
+ 870 0634 00000000 	.p2align 3,,7
+ 871              	.globl _Z7FontNewP5FontT
+ 872              	.ent _Z7FontNewP5FontT
+ 873              	_Z7FontNewP5FontT:
+ 874              	.frame $sp,16,$31
+ 875              	.mask 0x80000000,-16
+ 876              	.fmask 0x00000000,0
+ 877 0638 48008224 	addu $2,$4,72
+ 878 063c 440080AC 	sw $0,68($4)
+GAS LISTING  			page 17
+
+
+ 879 0640 500480AC 	sw $0,1104($4)
+ 880 0644 F0FFBD27 	subu $sp,$sp,16
+ 881 0648 2D280000 	move $5,$0
+ 882 064c 2D204000 	move $4,$2
+ 883 0650 0000BFFF 	sd $31,0($sp)
+ 884              	.set noreorder
+ 885              	.set nomacro
+ 886 0654 0000000C 	jal memset
+ 887 0658 00040624 	dli $6,0x400
+ 888              	.set macro
+ 889              	.set reorder
+ 890              	
+ 891 065c 0000BFDF 	ld $31,0($sp)
+ 892              	
+ 893              	.set noreorder
+ 894              	.set nomacro
+ 895 0660 0800E003 	j $31
+ 896 0664 1000BD27 	addu $sp,$sp,16
+ 897              	.set macro
+ 898              	.set reorder
+ 899              	
+ 900              	.end _Z7FontNewP5FontT
+ 901              	$Lfe16:
+ 902              	.size _Z7FontNewP5FontT,$Lfe16-_Z7FontNewP5FontT
+ 903              	.align 2
+ 904              	.p2align 3,,7
+ 905              	.globl _Z10FontDeleteP5FontT
+ 906              	.ent _Z10FontDeleteP5FontT
+ 907              	_Z10FontDeleteP5FontT:
+ 908              	.frame $sp,0,$31
+ 909              	.mask 0x00000000,0
+ 910              	.fmask 0x00000000,0
+ 911 0668 0800E003 	j $31
+ 911      00000000 
+ 912              	.end _Z10FontDeleteP5FontT
+ 913              	$Lfe17:
+ 914              	.size _Z10FontDeleteP5FontT,$Lfe17-_Z10FontDeleteP5FontT
+ 915              	.align 2
+ 916              	.p2align 3,,7
+ 917              	.ent _Z19_FontScanHorizWhiteP8CSurfacejjj
+ 918              	_Z19_FontScanHorizWhiteP8CSurfacejjj:
+ 919              	.frame $sp,48,$31
+ 920              	.mask 0x80030000,-16
+ 921              	.fmask 0x00000000,0
+ 922 0670 D0FFBD27 	subu $sp,$sp,48
+ 923 0674 1000B1FF 	sd $17,16($sp)
+ 924 0678 2D88A000 	move $17,$5
+ 925 067c 2D28E000 	move $5,$7
+ 926 0680 0000B0FF 	sd $16,0($sp)
+ 927 0684 2000BFFF 	sd $31,32($sp)
+ 928              	.set noreorder
+ 929              	.set nomacro
+ 930 0688 0000000C 	jal _ZN8CSurface10GetLinePtrEi
+ 931 068c 2D80C000 	move $16,$6
+ 932              	.set macro
+ 933              	.set reorder
+ 934              	
+GAS LISTING  			page 18
+
+
+ 935 0690 2D184000 	move $3,$2
+ 936              	.set noreorder
+ 937              	.set nomacro
+ 938 0694 10006010 	beq $3,$0,$L47
+ 939 0698 01000224 	li $2,1
+ 940              	.set macro
+ 941              	.set reorder
+ 942              	
+ 943 069c 2B103002 	sltu $2,$17,$16
+ 944              	.set noreorder
+ 945              	.set nomacro
+ 946 06a0 0C004010 	beq $2,$0,$L56
+ 947 06a4 2D282002 	move $5,$17
+ 948              	.set macro
+ 949              	.set reorder
+ 950              	
+ 951 06a8 80101100 	sll $2,$17,2
+ 952 06ac 00FF063C 	li $6,-16777216
+ 953 06b0 21184300 	addu $3,$2,$3
+ 954 06b4 0000628C 	lw $2,0($3)
+ 955              	$L58:
+ 956 06b8 0100A524 	addu $5,$5,1
+ 957 06bc 2B20B000 	sltu $4,$5,$16
+ 958 06c0 24104600 	and $2,$2,$6
+ 959              	.set noreorder
+ 960              	.set nomacro
+ 961 06c4 09004014 	bne $2,$0,$L57
+ 962 06c8 04006324 	addu $3,$3,4
+ 963              	.set macro
+ 964              	.set reorder
+ 965              	
+ 966              	.set noreorder
+ 967              	.set nomacro
+ 968 06cc FAFF8054 	bnel $4,$0,$L58
+ 969 06d0 0000628C 	lw $2,0($3)
+ 970              	.set macro
+ 971              	.set reorder
+ 972              	
+ 973              	$L56:
+ 974 06d4 01000224 	li $2,1
+ 975              	$L47:
+ 976 06d8 2000BFDF 	ld $31,32($sp)
+ 977 06dc 1000B1DF 	ld $17,16($sp)
+ 978 06e0 0000B0DF 	ld $16,0($sp)
+ 979              	
+ 980              	.set noreorder
+ 981              	.set nomacro
+ 982 06e4 0800E003 	j $31
+ 983 06e8 3000BD27 	addu $sp,$sp,48
+ 984              	.set macro
+ 985              	.set reorder
+ 986              	
+ 987              	$L57:
+ 988              	.set noreorder
+ 989              	.set nomacro
+ 990 06ec FAFF0010 	b $L47
+ 991 06f0 2D100000 	move $2,$0
+GAS LISTING  			page 19
+
+
+ 992              	.set macro
+ 993              	.set reorder
+ 994              	
+ 995              	.end _Z19_FontScanHorizWhiteP8CSurfacejjj
+ 996              	$Lfe18:
+ 997              	.size _Z19_FontScanHorizWhiteP8CSurfacejjj,$Lfe18-_Z19_FontScanHorizWhiteP8CSurfacejjj
+ 998              	.align 2
+ 999 06f4 00000000 	.p2align 3,,7
+ 1000              	.ent _Z18_FontScanVertWhiteP8CSurfacejjj
+ 1001              	_Z18_FontScanVertWhiteP8CSurfacejjj:
+ 1002              	.frame $sp,96,$31
+ 1003              	.mask 0x801f0000,-16
+ 1004              	.fmask 0x00000000,0
+ 1005 06f8 A0FFBD27 	subu $sp,$sp,96
+ 1006 06fc 2B10A600 	sltu $2,$5,$6
+ 1007 0700 3000B3FF 	sd $19,48($sp)
+ 1008 0704 2D988000 	move $19,$4
+ 1009 0708 2000B2FF 	sd $18,32($sp)
+ 1010 070c 2D90C000 	move $18,$6
+ 1011 0710 0000B0FF 	sd $16,0($sp)
+ 1012 0714 2D80A000 	move $16,$5
+ 1013 0718 5000BFFF 	sd $31,80($sp)
+ 1014 071c 4000B4FF 	sd $20,64($sp)
+ 1015              	.set noreorder
+ 1016              	.set nomacro
+ 1017 0720 11004010 	beq $2,$0,$L68
+ 1018 0724 1000B1FF 	sd $17,16($sp)
+ 1019              	.set macro
+ 1020              	.set reorder
+ 1021              	
+ 1022 0728 80880700 	sll $17,$7,2
+ 1023 072c 00FF143C 	li $20,-16777216
+ 1024 0730 2D206002 	move $4,$19
+ 1025              	$L69:
+ 1026              	.set noreorder
+ 1027              	.set nomacro
+ 1028 0734 0000000C 	jal _ZN8CSurface10GetLinePtrEi
+ 1029 0738 2D280002 	move $5,$16
+ 1030              	.set macro
+ 1031              	.set reorder
+ 1032              	
+ 1033              	.set noreorder
+ 1034              	.set nomacro
+ 1035 073c 0B004010 	beq $2,$0,$L59
+ 1036 0740 01000424 	li $4,1
+ 1037              	.set macro
+ 1038              	.set reorder
+ 1039              	
+ 1040 0744 21182202 	addu $3,$17,$2
+ 1041 0748 0000628C 	lw $2,0($3)
+ 1042              	
+ 1043 074c 24105400 	and $2,$2,$20
+ 1044              	.set noreorder
+ 1045              	.set nomacro
+ 1046 0750 06004014 	bne $2,$0,$L59
+ 1047 0754 2D200000 	move $4,$0
+ 1048              	.set macro
+GAS LISTING  			page 20
+
+
+ 1049              	.set reorder
+ 1050              	
+ 1051 0758 01001026 	addu $16,$16,1
+ 1052 075c 2B101202 	sltu $2,$16,$18
+ 1053              	.set noreorder
+ 1054              	.set nomacro
+ 1055 0760 F4FF4014 	bne $2,$0,$L69
+ 1056 0764 2D206002 	move $4,$19
+ 1057              	.set macro
+ 1058              	.set reorder
+ 1059              	
+ 1060              	$L68:
+ 1061 0768 01000424 	li $4,1
+ 1062              	$L59:
+ 1063 076c 5000BFDF 	ld $31,80($sp)
+ 1064 0770 2D108000 	move $2,$4
+ 1065 0774 4000B4DF 	ld $20,64($sp)
+ 1066 0778 3000B3DF 	ld $19,48($sp)
+ 1067 077c 2000B2DF 	ld $18,32($sp)
+ 1068 0780 1000B1DF 	ld $17,16($sp)
+ 1069 0784 0000B0DF 	ld $16,0($sp)
+ 1070              	
+ 1071              	.set noreorder
+ 1072              	.set nomacro
+ 1073 0788 0800E003 	j $31
+ 1074 078c 6000BD27 	addu $sp,$sp,96
+ 1075              	.set macro
+ 1076              	.set reorder
+ 1077              	
+ 1078              	.end _Z18_FontScanVertWhiteP8CSurfacejjj
+ 1079              	$Lfe19:
+ 1080              	.size _Z18_FontScanVertWhiteP8CSurfacejjj,$Lfe19-_Z18_FontScanVertWhiteP8CSurfacejjj
+ 1081              	.align 2
+ 1082              	.p2align 3,,7
+ 1083              	.globl _Z14_FontParseLineP5FontTP8CSurfacePcjj
+ 1084              	.ent _Z14_FontParseLineP5FontTP8CSurfacePcjj
+ 1085              	_Z14_FontParseLineP5FontTP8CSurfacePcjj:
+ 1086              	.frame $sp,160,$31
+ 1087              	.mask 0xc0ff0000,-16
+ 1088              	.fmask 0x00000000,0
+ 1089 0790 60FFBD27 	subu $sp,$sp,160
+ 1090 0794 8000BEFF 	sd $fp,128($sp)
+ 1091 0798 2DF08000 	move $fp,$4
+ 1092 079c 7000B7FF 	sd $23,112($sp)
+ 1093 07a0 2DB8C000 	move $23,$6
+ 1094 07a4 5000B5FF 	sd $21,80($sp)
+ 1095 07a8 2DA8A000 	move $21,$5
+ 1096 07ac 3000B3FF 	sd $19,48($sp)
+ 1097 07b0 2D98E000 	move $19,$7
+ 1098 07b4 2000B2FF 	sd $18,32($sp)
+ 1099 07b8 1000B1FF 	sd $17,16($sp)
+ 1100 07bc 2D880000 	move $17,$0
+ 1101 07c0 0000B0FF 	sd $16,0($sp)
+ 1102 07c4 9000BFFF 	sd $31,144($sp)
+ 1103 07c8 6000B6FF 	sd $22,96($sp)
+ 1104 07cc 4000B4FF 	sd $20,64($sp)
+ 1105 07d0 0C00B48C 	lw $20,12($5)
+GAS LISTING  			page 21
+
+
+ 1106              	
+ 1107 07d4 2B803402 	sltu $16,$17,$20
+ 1108              	.set noreorder
+ 1109              	.set nomacro
+ 1110 07d8 0C000012 	beq $16,$0,$L89
+ 1111 07dc 2D900001 	move $18,$8
+ 1112              	.set macro
+ 1113              	.set reorder
+ 1114              	
+ 1115 07e0 2D20A002 	move $4,$21
+ 1116              	$L92:
+ 1117 07e4 2D286002 	move $5,$19
+ 1118 07e8 2D304002 	move $6,$18
+ 1119              	.set noreorder
+ 1120              	.set nomacro
+ 1121 07ec BE01000C 	jal _Z18_FontScanVertWhiteP8CSurfacejjj
+ 1122 07f0 2D382002 	move $7,$17
+ 1123              	.set macro
+ 1124              	.set reorder
+ 1125              	
+ 1126              	.set noreorder
+ 1127              	.set nomacro
+ 1128 07f4 12004010 	beq $2,$0,$L82
+ 1129 07f8 2DB02002 	move $22,$17
+ 1130              	.set macro
+ 1131              	.set reorder
+ 1132              	
+ 1133 07fc 01003126 	addu $17,$17,1
+ 1134 0800 2B803402 	sltu $16,$17,$20
+ 1135              	$L91:
+ 1136              	.set noreorder
+ 1137              	.set nomacro
+ 1138 0804 F7FF0016 	bne $16,$0,$L92
+ 1139 0808 2D20A002 	move $4,$21
+ 1140              	.set macro
+ 1141              	.set reorder
+ 1142              	
+ 1143              	$L89:
+ 1144 080c 2D10E002 	move $2,$23
+ 1145 0810 9000BFDF 	ld $31,144($sp)
+ 1146 0814 8000BEDF 	ld $fp,128($sp)
+ 1147 0818 7000B7DF 	ld $23,112($sp)
+ 1148 081c 6000B6DF 	ld $22,96($sp)
+ 1149 0820 5000B5DF 	ld $21,80($sp)
+ 1150 0824 4000B4DF 	ld $20,64($sp)
+ 1151 0828 3000B3DF 	ld $19,48($sp)
+ 1152 082c 2000B2DF 	ld $18,32($sp)
+ 1153 0830 1000B1DF 	ld $17,16($sp)
+ 1154 0834 0000B0DF 	ld $16,0($sp)
+ 1155              	
+ 1156              	.set noreorder
+ 1157              	.set nomacro
+ 1158 0838 0800E003 	j $31
+ 1159 083c A000BD27 	addu $sp,$sp,160
+ 1160              	.set macro
+ 1161              	.set reorder
+ 1162              	
+GAS LISTING  			page 22
+
+
+ 1163              	.p2align 3
+ 1164              	$L82:
+ 1165 0840 2D382002 	move $7,$17
+ 1166 0844 2D20A002 	move $4,$21
+ 1167 0848 2D286002 	move $5,$19
+ 1168              	.set noreorder
+ 1169              	.set nomacro
+ 1170 084c 08000012 	beq $16,$0,$L83
+ 1171 0850 2D304002 	move $6,$18
+ 1172              	.set macro
+ 1173              	.set reorder
+ 1174              	
+ 1175 0854 BE01000C 	jal _Z18_FontScanVertWhiteP8CSurfacejjj
+ 1175      00000000 
+ 1176              	.set noreorder
+ 1177              	.set nomacro
+ 1178 085c 05004054 	bnel $2,$0,$L93
+ 1179 0860 0000E592 	lbu $5,0($23)
+ 1180              	.set macro
+ 1181              	.set reorder
+ 1182              	
+ 1183 0864 01003126 	addu $17,$17,1
+ 1184              	.set noreorder
+ 1185              	.set nomacro
+ 1186 0868 F5FF0010 	b $L82
+ 1187 086c 2B803402 	sltu $16,$17,$20
+ 1188              	.set macro
+ 1189              	.set reorder
+ 1190              	
+ 1191              	$L83:
+ 1192 0870 0000E592 	lbu $5,0($23)
+ 1193              	$L93:
+ 1194 0874 23403602 	subu $8,$17,$22
+ 1195 0878 2D30C002 	move $6,$22
+ 1196 087c 2D20C003 	move $4,$fp
+ 1197 0880 01003126 	addu $17,$17,1
+ 1198 0884 2D386002 	move $7,$19
+ 1199 0888 23485302 	subu $9,$18,$19
+ 1200              	.set noreorder
+ 1201              	.set nomacro
+ 1202 088c 9A00000C 	jal _Z15_FontSetCharMapP5FontThjjjj
+ 1203 0890 2B803402 	sltu $16,$17,$20
+ 1204              	.set macro
+ 1205              	.set reorder
+ 1206              	
+ 1207              	.set noreorder
+ 1208              	.set nomacro
+ 1209 0894 DBFF0010 	b $L91
+ 1210 0898 0100F726 	addu $23,$23,1
+ 1211              	.set macro
+ 1212              	.set reorder
+ 1213              	
+ 1214              	.end _Z14_FontParseLineP5FontTP8CSurfacePcjj
+ 1215              	$Lfe20:
+ 1216              	.size _Z14_FontParseLineP5FontTP8CSurfacePcjj,$Lfe20-_Z14_FontParseLineP5FontTP8CSurfacePcjj
+ 1217              	.align 2
+ 1218 089c 00000000 	.p2align 3,,7
+GAS LISTING  			page 23
+
+
+ 1219              	.globl _Z14FontParseCharsP5FontTP8CSurfacePc
+ 1220              	.ent _Z14FontParseCharsP5FontTP8CSurfacePc
+ 1221              	_Z14FontParseCharsP5FontTP8CSurfacePc:
+ 1222              	.frame $sp,160,$31
+ 1223              	.mask 0xc0ff0000,-16
+ 1224              	.fmask 0x00000000,0
+ 1225 08a0 60FFBD27 	subu $sp,$sp,160
+ 1226 08a4 8000BEFF 	sd $fp,128($sp)
+ 1227 08a8 2DF08000 	move $fp,$4
+ 1228 08ac 7000B7FF 	sd $23,112($sp)
+ 1229 08b0 2DB8C000 	move $23,$6
+ 1230 08b4 6000B6FF 	sd $22,96($sp)
+ 1231 08b8 2DB00000 	move $22,$0
+ 1232 08bc 2000B2FF 	sd $18,32($sp)
+ 1233 08c0 2D90A000 	move $18,$5
+ 1234 08c4 1000B1FF 	sd $17,16($sp)
+ 1235 08c8 2D880000 	move $17,$0
+ 1236 08cc 0000B0FF 	sd $16,0($sp)
+ 1237 08d0 9000BFFF 	sd $31,144($sp)
+ 1238 08d4 5000B5FF 	sd $21,80($sp)
+ 1239 08d8 4000B4FF 	sd $20,64($sp)
+ 1240 08dc 3000B3FF 	sd $19,48($sp)
+ 1241 08e0 1000B38C 	lw $19,16($5)
+ 1242 08e4 0C00B48C 	lw $20,12($5)
+ 1243              	.set noreorder
+ 1244              	.set nomacro
+ 1245 08e8 23006012 	beq $19,$0,$L114
+ 1246 08ec 2B801300 	sltu $16,$0,$19
+ 1247              	.set macro
+ 1248              	.set reorder
+ 1249              	
+ 1250              	$L100:
+ 1251              	.set noreorder
+ 1252              	.set nomacro
+ 1253 08f0 22000012 	beq $16,$0,$L118
+ 1254 08f4 2D20C003 	move $4,$fp
+ 1255              	.set macro
+ 1256              	.set reorder
+ 1257              	
+ 1258              	.p2align 3
+ 1259              	$L115:
+ 1260 08f8 2D204002 	move $4,$18
+ 1261 08fc 2D280000 	move $5,$0
+ 1262 0900 2D308002 	move $6,$20
+ 1263              	.set noreorder
+ 1264              	.set nomacro
+ 1265 0904 9C01000C 	jal _Z19_FontScanHorizWhiteP8CSurfacejjj
+ 1266 0908 2D382002 	move $7,$17
+ 1267              	.set macro
+ 1268              	.set reorder
+ 1269              	
+ 1270              	.set noreorder
+ 1271              	.set nomacro
+ 1272 090c 2A004014 	bne $2,$0,$L104
+ 1273 0910 2DA82002 	move $21,$17
+ 1274              	.set macro
+ 1275              	.set reorder
+GAS LISTING  			page 24
+
+
+ 1276              	
+ 1277 0914 00000000 	.p2align 3
+ 1278              	$L106:
+ 1279 0918 2D382002 	move $7,$17
+ 1280 091c 2D204002 	move $4,$18
+ 1281 0920 2D280000 	move $5,$0
+ 1282              	.set noreorder
+ 1283              	.set nomacro
+ 1284 0924 08000012 	beq $16,$0,$L107
+ 1285 0928 2D308002 	move $6,$20
+ 1286              	.set macro
+ 1287              	.set reorder
+ 1288              	
+ 1289 092c 9C01000C 	jal _Z19_FontScanHorizWhiteP8CSurfacejjj
+ 1289      00000000 
+ 1290              	.set noreorder
+ 1291              	.set nomacro
+ 1292 0934 05004014 	bne $2,$0,$L119
+ 1293 0938 23103502 	subu $2,$17,$21
+ 1294              	.set macro
+ 1295              	.set reorder
+ 1296              	
+ 1297 093c 01003126 	addu $17,$17,1
+ 1298              	.set noreorder
+ 1299              	.set nomacro
+ 1300 0940 F5FF0010 	b $L106
+ 1301 0944 2B803302 	sltu $16,$17,$19
+ 1302              	.set macro
+ 1303              	.set reorder
+ 1304              	
+ 1305              	$L107:
+ 1306 0948 23103502 	subu $2,$17,$21
+ 1307              	$L119:
+ 1308 094c 2D402002 	move $8,$17
+ 1309 0950 2D30E002 	move $6,$23
+ 1310 0954 2D38A002 	move $7,$21
+ 1311 0958 01003126 	addu $17,$17,1
+ 1312 095c 2D20C003 	move $4,$fp
+ 1313 0960 2D284002 	move $5,$18
+ 1314 0964 0AB05600 	movz $22,$2,$22
+ 1315              	.set noreorder
+ 1316              	.set nomacro
+ 1317 0968 0000000C 	jal _Z14_FontParseLineP5FontTP8CSurfacePcjj
+ 1318 096c 2B803302 	sltu $16,$17,$19
+ 1319              	.set macro
+ 1320              	.set reorder
+ 1321              	
+ 1322              	.set noreorder
+ 1323              	.set nomacro
+ 1324 0970 E1FF0016 	bne $16,$0,$L115
+ 1325 0974 2DB84000 	move $23,$2
+ 1326              	.set macro
+ 1327              	.set reorder
+ 1328              	
+ 1329              	$L114:
+ 1330 0978 2D20C003 	move $4,$fp
+ 1331              	$L118:
+GAS LISTING  			page 25
+
+
+ 1332 097c 2D30C002 	move $6,$22
+ 1333              	.set noreorder
+ 1334              	.set nomacro
+ 1335 0980 A600000C 	jal _Z16_FontSetCharSizeP5FontTjj
+ 1336 0984 05000524 	li $5,5
+ 1337              	.set macro
+ 1338              	.set reorder
+ 1339              	
+ 1340 0988 0000B0DF 	ld $16,0($sp)
+ 1341 098c 9000BFDF 	ld $31,144($sp)
+ 1342 0990 8000BEDF 	ld $fp,128($sp)
+ 1343 0994 7000B7DF 	ld $23,112($sp)
+ 1344 0998 6000B6DF 	ld $22,96($sp)
+ 1345 099c 5000B5DF 	ld $21,80($sp)
+ 1346 09a0 4000B4DF 	ld $20,64($sp)
+ 1347 09a4 3000B3DF 	ld $19,48($sp)
+ 1348 09a8 2000B2DF 	ld $18,32($sp)
+ 1349 09ac 1000B1DF 	ld $17,16($sp)
+ 1350              	
+ 1351              	.set noreorder
+ 1352              	.set nomacro
+ 1353 09b0 0800E003 	j $31
+ 1354 09b4 A000BD27 	addu $sp,$sp,160
+ 1355              	.set macro
+ 1356              	.set reorder
+ 1357              	
+ 1358              	$L104:
+ 1359 09b8 01003126 	addu $17,$17,1
+ 1360              	.set noreorder
+ 1361              	.set nomacro
+ 1362 09bc CCFF0010 	b $L100
+ 1363 09c0 2B803302 	sltu $16,$17,$19
+ 1364              	.set macro
+ 1365              	.set reorder
+ 1366              	
+ 1367              	.end _Z14FontParseCharsP5FontTP8CSurfacePc
+ 1368              	$Lfe21:
+ 1369              	.size _Z14FontParseCharsP5FontTP8CSurfacePc,$Lfe21-_Z14FontParseCharsP5FontTP8CSurfacePc
+ 1370 09c4 00000000 	.ident "GCC: (GNU) 3.2.2"

@@ -1,0 +1,288 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/libxmtap.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 2
+   6              	.type mtapInitialised,@object
+   7              	.size mtapInitialised,4
+   8              	mtapInitialised:
+   9 0000 00000000 	.word 0
+  10              	.text
+  11              	.align 2
+  12              	.p2align 3,,7
+  13              	.globl xmtapInit
+  14              	.ent xmtapInit
+  15              	xmtapInit:
+  16              	.frame $sp,64,$31
+  17              	.mask 0x80030000,-16
+  18              	.fmask 0x00000000,0
+  19 0000 C0FFBD27 	subu $sp,$sp,64
+  20 0004 0000023C 	lui $2,%hi(mtapInitialised)
+  21 0008 3000BFFF 	sd $31,48($sp)
+  22 000c 2000B1FF 	sd $17,32($sp)
+  23 0010 1000B0FF 	sd $16,16($sp)
+  24 0014 0000438C 	lw $3,%lo(mtapInitialised)($2)
+  25              	
+  26              	.set noreorder
+  27              	.set nomacro
+  28 0018 48006014 	bne $3,$0,$L1
+  29 001c 2D200000 	move $4,$0
+  30              	.set macro
+  31              	.set reorder
+  32              	
+  33 0020 0000033C 	lui $3,%hi(mtapsif)
+  34 0024 00006224 	addiu $2,$3,%lo(mtapsif)
+  35 0028 2D806000 	move $16,$3
+  36 002c 240040AC 	sw $0,36($2)
+  37 0030 2D884000 	move $17,$2
+  38 0034 4C0040AC 	sw $0,76($2)
+  39 0038 0080053C 	li $5,-2147483648
+  40              	$L26:
+  41 003c 00000426 	addiu $4,$16,%lo(mtapsif)
+  42 0040 0109A534 	ori $5,$5,0x901
+  43              	.set noreorder
+  44              	.set nomacro
+  45 0044 0000000C 	jal SifBindRpc
+  46 0048 2D300000 	move $6,$0
+  47              	.set macro
+  48              	.set reorder
+  49              	
+  50              	.set noreorder
+  51              	.set nomacro
+  52 004c 43004004 	bltz $2,$L24
+  53 0050 0F00023C 	li $2,983040
+  54              	.set macro
+  55              	.set reorder
+  56              	
+  57 0054 FEFF0324 	li $3,-2
+GAS LISTING  			page 2
+
+
+  58 0058 FFFF4234 	ori $2,$2,0xffff
+  59 005c 00000000 	.p2align 3
+  60              	$L7:
+  61              	
+  62 0060 00000000 	nop
+  63 0064 00000000 	nop
+  64 0068 00000000 	nop
+  65 006c 00000000 	nop
+  66 0070 00000000 	nop
+  67              	
+  68              	
+  69 0074 FFFF4224 	addu $2,$2,-1
+  70              	.set noreorder
+  71 0078 00000000 	nop
+  72              	.set reorder
+  73 007c F8FF4314 	bne $2,$3,$L7
+  73      00000000 
+  74 0084 2400228E 	lw $2,36($17)
+  75              	
+  76              	.set noreorder
+  77              	.set nomacro
+  78 0088 ECFF4010 	beq $2,$0,$L26
+  79 008c 0080053C 	li $5,-2147483648
+  80              	.set macro
+  81              	.set reorder
+  82              	
+  83 0090 0000023C 	lui $2,%hi(mtapsif)
+  84 0094 0000103C 	lui $16,%hi(mtapsif+40)
+  85 0098 00005124 	addiu $17,$2,%lo(mtapsif)
+  86              	$L27:
+  87 009c 28000426 	addiu $4,$16,%lo(mtapsif+40)
+  88 00a0 0209A534 	ori $5,$5,0x902
+  89              	.set noreorder
+  90              	.set nomacro
+  91 00a4 0000000C 	jal SifBindRpc
+  92 00a8 2D300000 	move $6,$0
+  93              	.set macro
+  94              	.set reorder
+  95              	
+  96              	.set noreorder
+  97              	.set nomacro
+  98 00ac 29004004 	bltz $2,$L25
+  99 00b0 0F00023C 	li $2,983040
+ 100              	.set macro
+ 101              	.set reorder
+ 102              	
+ 103 00b4 FEFF0324 	li $3,-2
+ 104 00b8 FFFF4234 	ori $2,$2,0xffff
+ 105              	$L17:
+ 106              	
+ 107 00bc 00000000 	nop
+ 108 00c0 00000000 	nop
+ 109 00c4 00000000 	nop
+ 110 00c8 00000000 	nop
+ 111 00cc 00000000 	nop
+ 112              	
+ 113              	
+GAS LISTING  			page 3
+
+
+ 114 00d0 FFFF4224 	addu $2,$2,-1
+ 115              	.set noreorder
+ 116 00d4 00000000 	nop
+ 117              	.set reorder
+ 118 00d8 F8FF4314 	bne $2,$3,$L17
+ 118      00000000 
+ 119 00e0 4C00228E 	lw $2,76($17)
+ 120              	
+ 121              	.set noreorder
+ 122              	.set nomacro
+ 123 00e4 EDFF4010 	beq $2,$0,$L27
+ 124 00e8 0080053C 	li $5,-2147483648
+ 125              	.set macro
+ 126              	.set reorder
+ 127              	
+ 128 00ec 0000023C 	lui $2,%hi(buffer)
+ 129 00f0 0000043C 	lui $4,%hi(mtapsif)
+ 130 00f4 50005024 	addiu $16,$2,%lo(buffer)
+ 131 00f8 00008424 	addiu $4,$4,%lo(mtapsif)
+ 132 00fc 01000524 	li $5,1
+ 133 0100 2D300000 	move $6,$0
+ 134 0104 2D380002 	move $7,$16
+ 135 0108 80000824 	li $8,128
+ 136 010c 2D480002 	move $9,$16
+ 137 0110 80000A24 	li $10,128
+ 138 0114 2D580000 	move $11,$0
+ 139 0118 500040AC 	sw $0,%lo(buffer)($2)
+ 140              	.set noreorder
+ 141              	.set nomacro
+ 142 011c 0000000C 	jal SifCallRpc
+ 143 0120 0000A0AF 	sw $0,0($sp)
+ 144              	.set macro
+ 145              	.set reorder
+ 146              	
+ 147              	.set noreorder
+ 148              	.set nomacro
+ 149 0124 05004004 	bltz $2,$L1
+ 150 0128 FFFF0424 	li $4,-1
+ 151              	.set macro
+ 152              	.set reorder
+ 153              	
+ 154 012c 01000324 	li $3,1
+ 155 0130 0000023C 	lui $2,%hi(mtapInitialised)
+ 156 0134 000043AC 	sw $3,%lo(mtapInitialised)($2)
+ 157 0138 0400048E 	lw $4,4($16)
+ 158              	$L1:
+ 159 013c 3000BFDF 	ld $31,48($sp)
+ 160 0140 2D108000 	move $2,$4
+ 161 0144 2000B1DF 	ld $17,32($sp)
+ 162 0148 1000B0DF 	ld $16,16($sp)
+ 163              	
+ 164              	.set noreorder
+ 165              	.set nomacro
+ 166 014c 0800E003 	j $31
+ 167 0150 4000BD27 	addu $sp,$sp,64
+ 168              	.set macro
+ 169              	.set reorder
+GAS LISTING  			page 4
+
+
+ 170              	
+ 171              	$L25:
+ 172              	.set noreorder
+ 173              	.set nomacro
+ 174 0154 F9FF0010 	b $L1
+ 175 0158 FDFF0424 	li $4,-3
+ 176              	.set macro
+ 177              	.set reorder
+ 178              	
+ 179              	$L24:
+ 180              	.set noreorder
+ 181              	.set nomacro
+ 182 015c F7FF0010 	b $L1
+ 183 0160 FFFF0424 	li $4,-1
+ 184              	.set macro
+ 185              	.set reorder
+ 186              	
+ 187              	.end xmtapInit
+ 188              	$Lfe1:
+ 189              	.size xmtapInit,$Lfe1-xmtapInit
+ 190              	.align 2
+ 191 0164 00000000 	.p2align 3,,7
+ 192              	.globl xmtapPortOpen
+ 193              	.ent xmtapPortOpen
+ 194              	xmtapPortOpen:
+ 195              	.frame $sp,48,$31
+ 196              	.mask 0x80010000,-16
+ 197              	.fmask 0x00000000,0
+ 198 0168 D0FFBD27 	subu $sp,$sp,48
+ 199 016c 0000033C 	lui $3,%hi(buffer)
+ 200 0170 2D608000 	move $12,$4
+ 201 0174 1000B0FF 	sd $16,16($sp)
+ 202 0178 0000043C 	lui $4,%hi(mtapsif)
+ 203 017c 50007024 	addiu $16,$3,%lo(buffer)
+ 204 0180 2D68A000 	move $13,$5
+ 205 0184 01000224 	li $2,1
+ 206 0188 00008424 	addiu $4,$4,%lo(mtapsif)
+ 207 018c 01000524 	li $5,1
+ 208 0190 2D300000 	move $6,$0
+ 209 0194 2D380002 	move $7,$16
+ 210 0198 80000824 	li $8,128
+ 211 019c 2D480002 	move $9,$16
+ 212 01a0 80000A24 	li $10,128
+ 213 01a4 2D580000 	move $11,$0
+ 214 01a8 500062AC 	sw $2,%lo(buffer)($3)
+ 215 01ac 2000BFFF 	sd $31,32($sp)
+ 216 01b0 04000CAE 	sw $12,4($16)
+ 217 01b4 08000DAE 	sw $13,8($16)
+ 218 01b8 0C0000AE 	sw $0,12($16)
+ 219              	.set noreorder
+ 220              	.set nomacro
+ 221 01bc 0000000C 	jal SifCallRpc
+ 222 01c0 0000A0AF 	sw $0,0($sp)
+ 223              	.set macro
+ 224              	.set reorder
+ 225              	
+ 226              	.set noreorder
+GAS LISTING  			page 5
+
+
+ 227              	.set nomacro
+ 228 01c4 02004004 	bltz $2,$L28
+ 229 01c8 2D180000 	move $3,$0
+ 230              	.set macro
+ 231              	.set reorder
+ 232              	
+ 233 01cc 0400038E 	lw $3,4($16)
+ 234              	$L28:
+ 235 01d0 2000BFDF 	ld $31,32($sp)
+ 236 01d4 2D106000 	move $2,$3
+ 237 01d8 1000B0DF 	ld $16,16($sp)
+ 238              	
+ 239              	.set noreorder
+ 240              	.set nomacro
+ 241 01dc 0800E003 	j $31
+ 242 01e0 3000BD27 	addu $sp,$sp,48
+ 243              	.set macro
+ 244              	.set reorder
+ 245              	
+ 246              	.end xmtapPortOpen
+ 247              	$Lfe2:
+ 248              	.size xmtapPortOpen,$Lfe2-xmtapPortOpen
+ 249              	.section .bss
+ 250              	mtapsif:
+ 251              	.align 6
+ 252 0000 00000000 	.space 80
+ 252      00000000 
+ 252      00000000 
+ 252      00000000 
+ 252      00000000 
+ 253              	.previous
+ 254              	.section .bss
+ 255              	buffer:
+ 256              	.align 4
+ 257 0050 00000000 	.space 128
+ 257      00000000 
+ 257      00000000 
+ 257      00000000 
+ 257      00000000 
+ 258 00d0 00000000 	.previous
+ 258      00000000 
+ 258      00000000 
+ 258      00000000 
+ 258      00000000 
+ 259 01e4 00000000 	.ident "GCC: (GNU) 3.2.2"

@@ -1,0 +1,9 @@
+filename: GPL-2.GZ
+compress_method: -lh0-
+compressed_length: 6829
+length: 6829
+header_level: 1
+os_type: 72 ('H')
+crc: b6d5
+timestamp: 1333572266
+--

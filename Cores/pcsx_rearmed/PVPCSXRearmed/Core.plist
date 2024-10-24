@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.PCSXRearmed</string>
+	<string>com.provenance.core.PCSXRearmed</string>
 	<key>PVPrincipleClass</key>
-	<string>PVPCSXRearmedCore</string>
+	<string>PVPCSXRearmed.PVPCSXRearmedCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.psx</string>

@@ -9,31 +9,24 @@
 		<string>applinks:provenance-emu.com</string>
 		<string>applinks:provenance.app</string>
 	</array>
-	<key>com.apple.developer.group-session</key>
-	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
-		<string>iCloud.org.provenance-emu.provenance</string>
+		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>
 		<string>CloudDocuments</string>
+		<string>CloudKit</string>
 	</array>
-	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
-	<true/>
-	<key>com.apple.developer.kernel.increased-memory-limit</key>
-	<true/>
 	<key>com.apple.developer.nfc.readersession.formats</key>
 	<array>
 		<string>TAG</string>
 	</array>
-	<key>com.apple.developer.siri</key>
-	<true/>
 	<key>com.apple.developer.sustained-execution</key>
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
 	<array>
-		<string>iCloud.org.provenance-emu.provenance</string>
+		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
 	</array>
 	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
@@ -41,26 +34,24 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.org.provenance-emu.provenance</string>
+		<string>$(APP_GROUP_IDENTIFIER)</string>
 		<string>group.org.provenance-emu</string>
 	</array>
 	<key>com.apple.security.assets.pictures.read-write</key>
 	<true/>
-	<key>com.apple.security.cs.allow-dyld-environment-variables</key>
-	<true/>
 	<key>com.apple.security.cs.allow-jit</key>
-	<true/>
-	<key>com.apple.security.cs.allow-unsigned-executable-memory</key>
 	<true/>
 	<key>com.apple.security.device.audio-input</key>
 	<true/>
 	<key>com.apple.security.device.bluetooth</key>
 	<true/>
+	<key>com.apple.security.device.camera</key>
+	<true/>
 	<key>com.apple.security.device.usb</key>
 	<true/>
-	<key>com.apple.security.files.downloads.read-only</key>
+	<key>com.apple.security.files.downloads.read-write</key>
 	<true/>
-	<key>com.apple.security.files.user-selected.read-only</key>
+	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 	<key>com.apple.security.network.client</key>
 	<true/>

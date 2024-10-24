@@ -1,0 +1,9 @@
+Document: stella
+Title: Stella Manual
+Author: The Stella Team
+Abstract: Documentation for the Stella Atari 2600 VCS emulator.
+Section: Emulators
+
+Format: HTML
+Index: /usr/share/doc/stella/index.html
+Files: /usr/share/doc/stella/*.html

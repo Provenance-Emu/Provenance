@@ -8,7 +8,7 @@
 
 #import "PVPlayCore+Audio.h"
 
-@implementation PVPlayCore (Audio)
+@implementation PVPlayCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
     return 30.0;

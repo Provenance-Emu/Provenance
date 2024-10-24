@@ -1,0 +1,6 @@
+ PERMSSN    UID  GID      SIZE  RATIO     STAMP     LV
+---------- ----------- ------- ------ ------------ ---
+subdir/subdir2/hello.txt
+[generic]                   12 100.0% Dec 11 18:49 [0]
+---------- ----------- ------- ------ ------------ ---
+ Total         1 file       12 100.0% Jan  1  2000

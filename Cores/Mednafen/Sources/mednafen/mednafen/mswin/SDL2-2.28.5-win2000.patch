@@ -1,0 +1,226 @@
+diff -rupN SDL2-2.28.5.orig/configure SDL2-2.28.5/configure
+--- SDL2-2.28.5.orig/configure	2023-11-02 10:03:38.000000000 -0700
++++ SDL2-2.28.5/configure	2023-11-25 11:38:32.151174923 -0800
+@@ -29081,7 +29081,7 @@ printf "%s\n" "#define SDL_LOADSO_WINDOW
+         else
+             LIBUUID=-luuid
+         fi
+-        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lsetupapi -lversion $LIBUUID"
++        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lpsapi -lsetupapi -lversion $LIBUUID"
+         BUILD_LDFLAGS="$BUILD_LDFLAGS -Wc,-static-libgcc"
+         # The Windows platform requires special setup
+         VERSION_SOURCES="$srcdir/src/main/windows/*.rc"
+diff -rupN SDL2-2.28.5.orig/configure.ac SDL2-2.28.5/configure.ac
+--- SDL2-2.28.5.orig/configure.ac	2023-11-02 10:03:38.000000000 -0700
++++ SDL2-2.28.5/configure.ac	2023-11-25 11:38:32.152174923 -0800
+@@ -4169,7 +4169,7 @@ case "$host" in
+         else
+             LIBUUID=-luuid
+         fi
+-        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lsetupapi -lversion $LIBUUID"
++        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lpsapi -lsetupapi -lversion $LIBUUID"
+         BUILD_LDFLAGS="$BUILD_LDFLAGS -Wc,-static-libgcc"
+         # The Windows platform requires special setup
+         VERSION_SOURCES="$srcdir/src/main/windows/*.rc"
+diff -rupN SDL2-2.28.5.orig/src/core/windows/SDL_windows.h SDL2-2.28.5/src/core/windows/SDL_windows.h
+--- SDL2-2.28.5.orig/src/core/windows/SDL_windows.h	2023-11-02 10:03:38.000000000 -0700
++++ SDL2-2.28.5/src/core/windows/SDL_windows.h	2023-11-25 11:38:32.152174923 -0800
+@@ -89,6 +89,8 @@
+ #define MINGW32_FORCEALIGN
+ #endif
+ 
++#define PSAPI_VERSION 1
++
+ #include <windows.h>
+ #include <basetyps.h> /* for REFIID with broken mingw.org headers */
+ 
+diff -rupN SDL2-2.28.5.orig/src/video/windows/SDL_windowsevents.c SDL2-2.28.5/src/video/windows/SDL_windowsevents.c
+--- SDL2-2.28.5.orig/src/video/windows/SDL_windowsevents.c	2023-11-02 10:03:38.000000000 -0700
++++ SDL2-2.28.5/src/video/windows/SDL_windowsevents.c	2023-11-25 11:38:32.152174923 -0800
+@@ -822,7 +822,7 @@ WIN_WindowProc(HWND hwnd, UINT msg, WPAR
+     } break;
+ 
+     case WM_INPUT:
+-    {
++    if (pGetRawInputData) {
+         SDL_Mouse *mouse = SDL_GetMouse();
+         HRAWINPUT hRawInput = (HRAWINPUT)lParam;
+         RAWINPUT inp;
+@@ -838,7 +838,7 @@ WIN_WindowProc(HWND hwnd, UINT msg, WPAR
+             break;
+         }
+ 
+-        GetRawInputData(hRawInput, RID_INPUT, &inp, &size, sizeof(RAWINPUTHEADER));
++        pGetRawInputData(hRawInput, RID_INPUT, &inp, &size, sizeof(RAWINPUTHEADER));
+ 
+         /* Mouse data (ignoring synthetic mouse events generated for touchscreens) */
+         if (inp.header.dwType == RIM_TYPEMOUSE) {
+diff -rupN SDL2-2.28.5.orig/src/video/windows/SDL_windowsmouse.c SDL2-2.28.5/src/video/windows/SDL_windowsmouse.c
+--- SDL2-2.28.5.orig/src/video/windows/SDL_windowsmouse.c	2023-11-02 10:03:38.000000000 -0700
++++ SDL2-2.28.5/src/video/windows/SDL_windowsmouse.c	2023-11-25 11:38:32.152174923 -0800
+@@ -30,6 +30,9 @@ DWORD SDL_last_warp_time = 0;
+ HCURSOR SDL_cursor = NULL;
+ static SDL_Cursor *SDL_blank_cursor = NULL;
+ 
++pfnGetRawInputData pGetRawInputData = NULL;
++pfnRegisterRawInputDevices pRegisterRawInputDevices = NULL;
++
+ static int rawInputEnableCount = 0;
+ 
+ static int ToggleRawInput(SDL_bool enabled)
+@@ -56,7 +59,7 @@ static int ToggleRawInput(SDL_bool enabl
+     }
+ 
+     /* (Un)register raw input for mice */
+-    if (RegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE)) == FALSE) {
++    if (!pRegisterRawInputDevices || pRegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE)) == FALSE) {
+         /* Reset the enable count, otherwise subsequent enable calls will
+            believe raw input is enabled */
+         rawInputEnableCount = 0;
+@@ -368,6 +371,14 @@ void WIN_InitMouse(_THIS)
+     mouse->CaptureMouse = WIN_CaptureMouse;
+     mouse->GetGlobalMouseState = WIN_GetGlobalMouseState;
+ 
++    pRegisterRawInputDevices = (pfnRegisterRawInputDevices)GetProcAddress(GetModuleHandle(TEXT("user32.dll")), "RegisterRawInputDevices");
++    pGetRawInputData = (pfnGetRawInputData)GetProcAddress(GetModuleHandle(TEXT("user32.dll")), "GetRawInputData");
++
++    if(!pRegisterRawInputDevices || !pGetRawInputData) {
++        pRegisterRawInputDevices = NULL;
++        pGetRawInputData = NULL;
++    }
++
+     SDL_SetDefaultCursor(WIN_CreateDefaultCursor());
+ 
+     SDL_blank_cursor = WIN_CreateBlankCursor();
+diff -rupN SDL2-2.28.5.orig/src/video/windows/SDL_windowsmouse.h SDL2-2.28.5/src/video/windows/SDL_windowsmouse.h
+--- SDL2-2.28.5.orig/src/video/windows/SDL_windowsmouse.h	2023-11-02 10:03:38.000000000 -0700
++++ SDL2-2.28.5/src/video/windows/SDL_windowsmouse.h	2023-11-25 11:38:32.152174923 -0800
+@@ -25,6 +25,10 @@
+ 
+ extern DWORD SDL_last_warp_time;
+ extern HCURSOR SDL_cursor;
++typedef UINT WINAPI (*pfnGetRawInputData)(HRAWINPUT,UINT,LPVOID,PUINT,UINT);
++typedef WINBOOL WINAPI (*pfnRegisterRawInputDevices)(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize);
++extern pfnGetRawInputData pGetRawInputData;
++extern pfnRegisterRawInputDevices pRegisterRawInputDevices;
+ 
+ extern void WIN_InitMouse(_THIS);
+ extern void WIN_QuitMouse(_THIS);
+diff -rupN SDL2-2.28.5.orig/src/video/windows/SDL_windowswindow.c SDL2-2.28.5/src/video/windows/SDL_windowswindow.c
+--- SDL2-2.28.5.orig/src/video/windows/SDL_windowswindow.c	2023-11-02 10:03:38.000000000 -0700
++++ SDL2-2.28.5/src/video/windows/SDL_windowswindow.c	2023-11-25 11:38:32.153174923 -0800
+@@ -41,6 +41,8 @@
+ /* Dropfile support */
+ #include <shellapi.h>
+ 
++#include <psapi.h>
++
+ /* This is included after SDL_windowsvideo.h, which includes windows.h */
+ #include "SDL_syswm.h"
+ 
+@@ -1086,10 +1088,84 @@ int WIN_GetWindowGammaRamp(_THIS, SDL_Wi
+     return succeeded ? 0 : -1;
+ }
+ 
++typedef WINBOOL WINAPI (*pfnGetModuleHandleExW)(DWORD, LPCWSTR, HMODULE*);
++
++static int IsAddressInModule(HMODULE module, void* addr)
++{
++    MODULEINFO modinfo;
++
++    SDL_memset(&modinfo, 0, sizeof(modinfo));
++
++    if (!GetModuleInformation(GetCurrentProcess(), module, &modinfo, sizeof(modinfo))) {
++        return 0;
++    }
++
++    //printf("%08x %08x %08x\n", (unsigned)addr, (unsigned)modinfo.lpBaseOfDll, (unsigned)modinfo.lpBaseOfDll + (unsigned)modinfo.SizeOfImage);
++
++    if ((uintptr_t)addr < (uintptr_t)modinfo.lpBaseOfDll ||
++       (uintptr_t)addr >= ((uintptr_t)modinfo.lpBaseOfDll + modinfo.SizeOfImage)) {
++        return 0;
++    }
++
++    return 1;
++}
++
++static HMODULE FindModuleByAddr(void* addr)
++{
++    HMODULE* modules = NULL;
++    DWORD alloc_size = 0;
++    DWORD got_size = 0;
++    HANDLE prh = GetCurrentProcess();
++    DWORD i;
++    HMODULE ret = NULL;
++
++    do {
++        if(modules) {
++            SDL_free(modules);
++            modules = NULL;
++        }
++
++        alloc_size = got_size;
++        if (alloc_size) {
++            modules = (HMODULE*)SDL_malloc(alloc_size);
++            if (modules == NULL) {
++                return NULL; //return SDL_OutOfMemory();
++            }
++        }
++
++        if (!EnumProcessModules(prh, modules, alloc_size, &got_size)) {
++            if(modules) {
++                SDL_free(modules);
++                modules = NULL;
++            }
++
++            return NULL;
++        }
++    } while (got_size > alloc_size);
++
++    got_size /= sizeof(HMODULE);
++
++    for (i = 0; i < got_size; i++) {
++        if (IsAddressInModule(modules[i], addr)) {
++            ret = modules[i];
++            break;
++        }
++    }
++
++    if(modules) {
++        SDL_free(modules);
++        modules = NULL;
++    }
++
++    return ret;
++}
++
+ static void WIN_GrabKeyboard(SDL_Window *window)
+ {
+     SDL_WindowData *data = (SDL_WindowData *)window->driverdata;
+-    HMODULE module;
++    HANDLE kernel32;
++    pfnGetModuleHandleExW pGetModuleHandleExW;
++    HMODULE module = NULL;
+ 
+     if (data->keyboard_hook) {
+         return;
+@@ -1101,8 +1177,17 @@ static void WIN_GrabKeyboard(SDL_Window
+        this nice API that will go through the loaded modules and find the
+        one containing our code.
+     */
+-    if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+-                           (LPTSTR)WIN_KeyboardHookProc,
++    kernel32 = GetModuleHandle(TEXT("kernel32.dll"));
++    pGetModuleHandleExW = (pfnGetModuleHandleExW)GetProcAddress(kernel32, "GetModuleHandleExW");
++
++    if (!pGetModuleHandleExW) {
++        module = FindModuleByAddr(WIN_KeyboardHookProc);
++
++        if (!module) {
++            return;
++        }
++    } else if (!pGetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
++                           (LPCWSTR)WIN_KeyboardHookProc,
+                            &module)) {
+         return;
+     }

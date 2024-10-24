@@ -1,0 +1,27 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=ProSystem.chm
+Contents file=ProSystem.hhc
+Default topic=Introduction.htm
+Display compile progress=Yes
+Full-text search=Yes
+Index file=ProSystem.hhk
+Language=0x409 English (United States)
+Title=ProSystem Documentation
+
+
+[FILES]
+Introduction.htm
+Input.htm
+Display.htm
+Sound.htm
+Emulation.htm
+Options.htm
+File.htm
+Help.htm
+History.htm
+Requirements.htm
+Overview.htm
+
+[INFOTYPES]
+

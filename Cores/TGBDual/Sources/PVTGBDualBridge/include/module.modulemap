@@ -1,0 +1,8 @@
+module PVTGBDualBridge {
+    header "../PVTGBDualBridge.h"
+    header "../PVTGBDualBridge+Audio.h"
+    header "../PVTGBDualBridge+Controls.h"
+    header "../PVTGBDualBridge+Saves.h"
+    header "../PVTGBDualBridge+Video.h"
+    export *
+}

@@ -1,0 +1,9 @@
+filename: shorter.txt
+compress_method: -lh5-
+compressed_length: 83043
+length: 286015
+header_level: 0
+os_type: 0
+crc: ea66
+timestamp: 1323628292
+--

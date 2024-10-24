@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.ppsspp</string>
 	<key>PVPrincipleClass</key>
-	<string>PVPPSSPPCore</string>
+	<string>PVPPSSPP.PVPPSSPPCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.psp</string>

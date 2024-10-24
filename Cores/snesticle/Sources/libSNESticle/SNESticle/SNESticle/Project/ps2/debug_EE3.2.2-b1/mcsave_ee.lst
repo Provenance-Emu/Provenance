@@ -1,0 +1,578 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Modules/mcsave/ee/mcsave_ee.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 2
+   6              	.type _MCSave_bInitialized,@object
+   7              	.size _MCSave_bInitialized,4
+   8              	_MCSave_bInitialized:
+   9 0000 00000000 	.word 0
+  10              	.align 2
+  11              	.type _MCSave_bAsync,@object
+  12              	.size _MCSave_bAsync,4
+  13              	_MCSave_bAsync:
+  14 0004 00000000 	.word 0
+  15              	.text
+  16              	.align 2
+  17              	.p2align 3,,7
+  18              	.ent _MCSave_StoreIntr
+  19              	_MCSave_StoreIntr:
+  20              	.frame $sp,0,$31
+  21              	.mask 0x00000000,0
+  22              	.fmask 0x00000000,0
+  23 0000 0000023C 	lui $2,%hi(_MCSave_bAsync)
+  24              	
+  25 0004 040040AC 	sw $0,%lo(_MCSave_bAsync)($2)
+  26              	
+  27 0008 0000023C 	lui $2,%hi(_MCSave_Result)
+  28 000c 0000838C 	lw $3,0($4)
+  29              	.set noreorder
+  30              	.set nomacro
+  31 0010 0800E003 	j $31
+  32 0014 300243AC 	sw $3,%lo(_MCSave_Result)($2)
+  33              	.set macro
+  34              	.set reorder
+  35              	
+  36              	.end _MCSave_StoreIntr
+  37              	$Lfe1:
+  38              	.size _MCSave_StoreIntr,$Lfe1-_MCSave_StoreIntr
+  39              	.align 2
+  40              	.p2align 3,,7
+  41              	.globl MCSave_IsInitialized
+  42              	.ent MCSave_IsInitialized
+  43              	MCSave_IsInitialized:
+  44              	.frame $sp,0,$31
+  45              	.mask 0x00000000,0
+  46              	.fmask 0x00000000,0
+  47 0018 0000033C 	lui $3,%hi(_MCSave_bInitialized)
+  48              	.set noreorder
+  49              	.set nomacro
+  50 001c 0800E003 	j $31
+  51 0020 0000628C 	lw $2,%lo(_MCSave_bInitialized)($3)
+  52              	.set macro
+  53              	.set reorder
+  54              	
+  55              	.end MCSave_IsInitialized
+  56              	$Lfe2:
+  57              	.size MCSave_IsInitialized,$Lfe2-MCSave_IsInitialized
+GAS LISTING  			page 2
+
+
+  58              	.align 2
+  59 0024 00000000 	.p2align 3,,7
+  60              	.globl MCSave_Init
+  61              	.ent MCSave_Init
+  62              	MCSave_Init:
+  63              	.frame $sp,64,$31
+  64              	.mask 0x80030000,-16
+  65              	.fmask 0x00000000,0
+  66 0028 C0FFBD27 	subu $sp,$sp,64
+  67 002c 0000023C 	lui $2,%hi(cd0)
+  68 0030 3000BFFF 	sd $31,48($sp)
+  69 0034 2000B1FF 	sd $17,32($sp)
+  70 0038 2D888000 	move $17,$4
+  71 003c 1000B0FF 	sd $16,16($sp)
+  72 0040 00025024 	addiu $16,$2,%lo(cd0)
+  73 0044 0D0B053C 	li $5,185401344
+  74              	$L13:
+  75 0048 2D300000 	move $6,$0
+  76 004c 2D200002 	move $4,$16
+  77              	.set noreorder
+  78              	.set nomacro
+  79 0050 0000000C 	jal SifBindRpc
+  80 0054 CD1DA534 	ori $5,$5,0x1dcd
+  81              	.set macro
+  82              	.set reorder
+  83              	
+  84              	.set noreorder
+  85              	.set nomacro
+  86 0058 29004004 	bltz $2,$L3
+  87 005c FFFF0624 	li $6,-1
+  88              	.set macro
+  89              	.set reorder
+  90              	
+  91 0060 2400028E 	lw $2,36($16)
+  92              	
+  93              	.set noreorder
+  94              	.set nomacro
+  95 0064 0D004014 	bne $2,$0,$L5
+  96 0068 0100023C 	li $2,65536
+  97              	.set macro
+  98              	.set reorder
+  99              	
+ 100 006c FFFF0324 	li $3,-1
+ 101 0070 FFFF4224 	addu $2,$2,-1
+ 102              	$L14:
+ 103              	.set noreorder
+ 104 0074 00000000 	nop
+ 105              	.set reorder
+ 106              	.set noreorder
+ 107 0078 00000000 	nop
+ 108              	.set reorder
+ 109              	.set noreorder
+ 110 007c 00000000 	nop
+ 111              	.set reorder
+ 112              	.set noreorder
+ 113 0080 00000000 	nop
+ 114              	.set reorder
+GAS LISTING  			page 3
+
+
+ 115              	.set noreorder
+ 116 0084 00000000 	nop
+ 117              	.set reorder
+ 118              	.set noreorder
+ 119 0088 00000000 	nop
+ 120              	.set reorder
+ 121              	.set noreorder
+ 122              	.set nomacro
+ 123 008c F9FF4314 	bne $2,$3,$L14
+ 124 0090 FFFF4224 	addu $2,$2,-1
+ 125              	.set macro
+ 126              	.set reorder
+ 127              	
+ 128              	.set noreorder
+ 129              	.set nomacro
+ 130 0094 ECFF0010 	b $L13
+ 131 0098 0D0B053C 	li $5,185401344
+ 132              	.set macro
+ 133              	.set reorder
+ 134              	
+ 135              	$L5:
+ 136 009c 0000023C 	lui $2,%hi(sbuff)
+ 137 00a0 0000043C 	lui $4,%hi(cd0)
+ 138 00a4 00005024 	addiu $16,$2,%lo(sbuff)
+ 139 00a8 02000524 	li $5,2
+ 140 00ac 2D300000 	move $6,$0
+ 141 00b0 00028424 	addiu $4,$4,%lo(cd0)
+ 142 00b4 2D380002 	move $7,$16
+ 143 00b8 40000824 	li $8,64
+ 144 00bc 2D480002 	move $9,$16
+ 145 00c0 40000A24 	li $10,64
+ 146 00c4 2D580000 	move $11,$0
+ 147 00c8 000051AC 	sw $17,%lo(sbuff)($2)
+ 148              	.set noreorder
+ 149              	.set nomacro
+ 150 00cc 0000000C 	jal SifCallRpc
+ 151 00d0 0000A0AF 	sw $0,0($sp)
+ 152              	.set macro
+ 153              	.set reorder
+ 154              	
+ 155              	.set noreorder
+ 156              	.set nomacro
+ 157 00d4 0000000C 	jal FlushCache
+ 158 00d8 2D200000 	move $4,$0
+ 159              	.set macro
+ 160              	.set reorder
+ 161              	
+ 162 00dc 01000424 	li $4,1
+ 163 00e0 0000023C 	lui $2,%hi(_MCSave_nBufferBytes)
+ 164 00e4 0400058E 	lw $5,4($16)
+ 165 00e8 2C0251AC 	sw $17,%lo(_MCSave_nBufferBytes)($2)
+ 166 00ec 0000033C 	lui $3,%hi(_MCSave_uBufferAddr)
+ 167 00f0 0000023C 	lui $2,%hi(_MCSave_bInitialized)
+ 168 00f4 280265AC 	sw $5,%lo(_MCSave_uBufferAddr)($3)
+ 169 00f8 000044AC 	sw $4,%lo(_MCSave_bInitialized)($2)
+ 170 00fc 2D300000 	move $6,$0
+ 171              	$L3:
+GAS LISTING  			page 4
+
+
+ 172 0100 3000BFDF 	ld $31,48($sp)
+ 173 0104 2D10C000 	move $2,$6
+ 174 0108 2000B1DF 	ld $17,32($sp)
+ 175 010c 1000B0DF 	ld $16,16($sp)
+ 176              	
+ 177              	.set noreorder
+ 178              	.set nomacro
+ 179 0110 0800E003 	j $31
+ 180 0114 4000BD27 	addu $sp,$sp,64
+ 181              	.set macro
+ 182              	.set reorder
+ 183              	
+ 184              	.end MCSave_Init
+ 185              	$Lfe3:
+ 186              	.size MCSave_Init,$Lfe3-MCSave_Init
+ 187              	.align 2
+ 188              	.p2align 3,,7
+ 189              	.globl MCSave_WriteSync
+ 190              	.ent MCSave_WriteSync
+ 191              	MCSave_WriteSync:
+ 192              	.frame $sp,0,$31
+ 193              	.mask 0x00000000,0
+ 194              	.fmask 0x00000000,0
+ 195              	.set noreorder
+ 196              	.set nomacro
+ 197 0118 05008010 	beq $4,$0,$L16
+ 198 011c 0000033C 	lui $3,%hi(_MCSave_bAsync)
+ 199              	.set macro
+ 200              	.set reorder
+ 201              	
+ 202              	.p2align 3
+ 203              	$L17:
+ 204              	
+ 205 0120 0400628C 	lw $2,%lo(_MCSave_bAsync)($3)
+ 206              	
+ 207              	.set noreorder
+ 208 0124 00000000 	nop
+ 209              	.set reorder
+ 210 0128 FDFF4014 	bne $2,$0,$L17
+ 210      00000000 
+ 211              	$L16:
+ 212              	.set noreorder
+ 213              	.set nomacro
+ 214 0130 0500A050 	beql $5,$0,$L22
+ 215 0134 0000033C 	lui $3,%hi(_MCSave_bAsync)
+ 216              	.set macro
+ 217              	.set reorder
+ 218              	
+ 219 0138 0000023C 	lui $2,%hi(_MCSave_Result)
+ 220 013c 3002438C 	lw $3,%lo(_MCSave_Result)($2)
+ 221              	
+ 222 0140 0000A3AC 	sw $3,0($5)
+ 223 0144 0000033C 	lui $3,%hi(_MCSave_bAsync)
+ 224              	$L22:
+ 225              	
+ 226 0148 0800E003 	lw $2,%lo(_MCSave_bAsync)($3)
+ 227              	
+GAS LISTING  			page 5
+
+
+ 228 014c 0400628C 	j $31
+ 229              	.end MCSave_WriteSync
+ 230              	$Lfe4:
+ 231              	.size MCSave_WriteSync,$Lfe4-MCSave_WriteSync
+ 232              	.align 2
+ 233              	.p2align 3,,7
+ 234              	.globl MCSave_Write
+ 235              	.ent MCSave_Write
+ 236              	MCSave_Write:
+ 237              	.frame $sp,96,$31
+ 238              	.mask 0x80070000,-16
+ 239              	.fmask 0x00000000,0
+ 240 0150 A0FFBD27 	subu $sp,$sp,96
+ 241 0154 3000B1FF 	sd $17,48($sp)
+ 242 0158 2D888000 	move $17,$4
+ 243 015c 2000B0FF 	sd $16,32($sp)
+ 244 0160 01000424 	li $4,1
+ 245 0164 2D80A000 	move $16,$5
+ 246 0168 4000B2FF 	sd $18,64($sp)
+ 247 016c 2D280000 	move $5,$0
+ 248 0170 5000BFFF 	sd $31,80($sp)
+ 249              	.set noreorder
+ 250              	.set nomacro
+ 251 0174 0000000C 	jal MCSave_WriteSync
+ 252 0178 2D90C000 	move $18,$6
+ 253              	.set macro
+ 254              	.set reorder
+ 255              	
+ 256 017c 0000033C 	lui $3,%hi(_MCSave_nBufferBytes)
+ 257 0180 0000023C 	lui $2,%hi(_MCSave_Result)
+ 258 0184 2C02648C 	lw $4,%lo(_MCSave_nBufferBytes)($3)
+ 259 0188 2D280000 	move $5,$0
+ 260 018c 2A209200 	slt $4,$4,$18
+ 261              	.set noreorder
+ 262              	.set nomacro
+ 263 0190 05008014 	bne $4,$0,$L23
+ 264 0194 300240AC 	sw $0,%lo(_MCSave_Result)($2)
+ 265              	.set macro
+ 266              	.set reorder
+ 267              	
+ 268 0198 0000023C 	lui $2,%hi(_MCSave_bInitialized)
+ 269 019c 0000438C 	lw $3,%lo(_MCSave_bInitialized)($2)
+ 270              	
+ 271              	.set noreorder
+ 272              	.set nomacro
+ 273 01a0 09006014 	bne $3,$0,$L26
+ 274 01a4 0000023C 	lui $2,%hi(_MCSave_uBufferAddr)
+ 275              	.set macro
+ 276              	.set reorder
+ 277              	
+ 278              	$L23:
+ 279 01a8 5000BFDF 	ld $31,80($sp)
+ 280 01ac 2D10A000 	move $2,$5
+ 281 01b0 4000B2DF 	ld $18,64($sp)
+ 282 01b4 3000B1DF 	ld $17,48($sp)
+ 283 01b8 2000B0DF 	ld $16,32($sp)
+ 284              	
+GAS LISTING  			page 6
+
+
+ 285              	.set noreorder
+ 286              	.set nomacro
+ 287 01bc 0800E003 	j $31
+ 288 01c0 6000BD27 	addu $sp,$sp,96
+ 289              	.set macro
+ 290              	.set reorder
+ 291              	
+ 292 01c4 00000000 	.p2align 3
+ 293              	$L26:
+ 294 01c8 2D200000 	move $4,$0
+ 295 01cc 2802438C 	lw $3,%lo(_MCSave_uBufferAddr)($2)
+ 296 01d0 1000B0AF 	sw $16,16($sp)
+ 297 01d4 0000103C 	lui $16,%hi(rbuff)
+ 298 01d8 1400A3AF 	sw $3,20($sp)
+ 299 01dc 00011026 	addiu $16,$16,%lo(rbuff)
+ 300 01e0 1800B2AF 	sw $18,24($sp)
+ 301              	.set noreorder
+ 302              	.set nomacro
+ 303 01e4 0000000C 	jal FlushCache
+ 304 01e8 1C00A0AF 	sw $0,28($sp)
+ 305              	.set macro
+ 306              	.set reorder
+ 307              	
+ 308 01ec 01000524 	li $5,1
+ 309              	.set noreorder
+ 310              	.set nomacro
+ 311 01f0 0000000C 	jal SifSetDma
+ 312 01f4 1000A427 	addu $4,$sp,16
+ 313              	.set macro
+ 314              	.set reorder
+ 315              	
+ 316 01f8 0000023C 	lui $2,%hi(_MCSave_bAsync)
+ 317 01fc 01000324 	li $3,1
+ 318 0200 40000524 	li $5,64
+ 319 0204 2D200002 	move $4,$16
+ 320              	
+ 321 0208 0000000C 	sw $3,%lo(_MCSave_bAsync)($2)
+ 322              	
+ 323 020c 040043AC 	jal SifWriteBackDCache
+ 324 0210 0000023C 	lui $2,%hi(sbuff)
+ 325 0214 2D282002 	move $5,$17
+ 326 0218 000052AC 	sw $18,%lo(sbuff)($2)
+ 327 021c 00005124 	addiu $17,$2,%lo(sbuff)
+ 328              	.set noreorder
+ 329              	.set nomacro
+ 330 0220 0000000C 	jal strcpy
+ 331 0224 04002426 	addu $4,$17,4
+ 332              	.set macro
+ 333              	.set reorder
+ 334              	
+ 335 0228 0000B0AF 	sw $16,0($sp)
+ 336 022c 0000043C 	lui $4,%hi(cd0)
+ 337 0230 00000B3C 	lui $11,%hi(_MCSave_StoreIntr)
+ 338 0234 03000524 	li $5,3
+ 339 0238 40000A24 	li $10,64
+ 340 023c 00028424 	addiu $4,$4,%lo(cd0)
+ 341 0240 2D382002 	move $7,$17
+GAS LISTING  			page 7
+
+
+ 342 0244 2D480002 	move $9,$16
+ 343 0248 00006B25 	addiu $11,$11,%lo(_MCSave_StoreIntr)
+ 344 024c 01000624 	li $6,1
+ 345              	.set noreorder
+ 346              	.set nomacro
+ 347 0250 0000000C 	jal SifCallRpc
+ 348 0254 40000824 	li $8,64
+ 349              	.set macro
+ 350              	.set reorder
+ 351              	
+ 352              	.set noreorder
+ 353              	.set nomacro
+ 354 0258 D3FF0010 	b $L23
+ 355 025c 01000524 	li $5,1
+ 356              	.set macro
+ 357              	.set reorder
+ 358              	
+ 359              	.end MCSave_Write
+ 360              	$Lfe5:
+ 361              	.size MCSave_Write,$Lfe5-MCSave_Write
+ 362              	.align 2
+ 363              	.p2align 3,,7
+ 364              	.globl MCSave_Shutdown
+ 365              	.ent MCSave_Shutdown
+ 366              	MCSave_Shutdown:
+ 367              	.frame $sp,48,$31
+ 368              	.mask 0x80010000,-16
+ 369              	.fmask 0x00000000,0
+ 370 0260 D0FFBD27 	subu $sp,$sp,48
+ 371 0264 01000424 	li $4,1
+ 372 0268 1000B0FF 	sd $16,16($sp)
+ 373 026c 0000103C 	lui $16,%hi(_MCSave_bInitialized)
+ 374 0270 2000BFFF 	sd $31,32($sp)
+ 375 0274 0000028E 	lw $2,%lo(_MCSave_bInitialized)($16)
+ 376              	
+ 377              	.set noreorder
+ 378              	.set nomacro
+ 379 0278 05004014 	bne $2,$0,$L29
+ 380 027c 2D280000 	move $5,$0
+ 381              	.set macro
+ 382              	.set reorder
+ 383              	
+ 384              	$L27:
+ 385 0280 2000BFDF 	ld $31,32($sp)
+ 386 0284 1000B0DF 	ld $16,16($sp)
+ 387              	
+ 388              	.set noreorder
+ 389              	.set nomacro
+ 390 0288 0800E003 	j $31
+ 391 028c 3000BD27 	addu $sp,$sp,48
+ 392              	.set macro
+ 393              	.set reorder
+ 394              	
+ 395              	.p2align 3
+ 396              	$L29:
+ 397 0290 0000000C 	jal MCSave_WriteSync
+ 397      00000000 
+GAS LISTING  			page 8
+
+
+ 398 0298 0000A0AF 	sw $0,0($sp)
+ 399 029c 0000073C 	lui $7,%hi(sbuff)
+ 400 02a0 0000043C 	lui $4,%hi(cd0)
+ 401 02a4 0000E724 	addiu $7,$7,%lo(sbuff)
+ 402 02a8 2D580000 	move $11,$0
+ 403 02ac 00028424 	addiu $4,$4,%lo(cd0)
+ 404 02b0 04000524 	li $5,4
+ 405 02b4 2D300000 	move $6,$0
+ 406 02b8 2D400000 	move $8,$0
+ 407 02bc 2D48E000 	move $9,$7
+ 408              	.set noreorder
+ 409              	.set nomacro
+ 410 02c0 0000000C 	jal SifCallRpc
+ 411 02c4 2D500000 	move $10,$0
+ 412              	.set macro
+ 413              	.set reorder
+ 414              	
+ 415              	.set noreorder
+ 416              	.set nomacro
+ 417 02c8 EDFF0010 	b $L27
+ 418 02cc 000000AE 	sw $0,%lo(_MCSave_bInitialized)($16)
+ 419              	.set macro
+ 420              	.set reorder
+ 421              	
+ 422              	.end MCSave_Shutdown
+ 423              	$Lfe6:
+ 424              	.size MCSave_Shutdown,$Lfe6-MCSave_Shutdown
+ 425              	.align 2
+ 426              	.p2align 3,,7
+ 427              	.globl MCSave_Dread
+ 428              	.ent MCSave_Dread
+ 429              	MCSave_Dread:
+ 430              	.frame $sp,80,$31
+ 431              	.mask 0x80030000,-16
+ 432              	.fmask 0x00000000,0
+ 433 02d0 B0FFBD27 	subu $sp,$sp,80
+ 434 02d4 3000B1FF 	sd $17,48($sp)
+ 435 02d8 2D888000 	move $17,$4
+ 436 02dc 2000B0FF 	sd $16,32($sp)
+ 437 02e0 01000424 	li $4,1
+ 438 02e4 2D80A000 	move $16,$5
+ 439 02e8 4000BFFF 	sd $31,64($sp)
+ 440              	.set noreorder
+ 441              	.set nomacro
+ 442 02ec 0000000C 	jal MCSave_WriteSync
+ 443 02f0 2D280000 	move $5,$0
+ 444              	.set macro
+ 445              	.set reorder
+ 446              	
+ 447 02f4 1400B0AF 	sw $16,20($sp)
+ 448 02f8 0020033C 	li $3,536870912
+ 449 02fc 2D200002 	move $4,$16
+ 450 0300 24180302 	and $3,$16,$3
+ 451 0304 2C010524 	li $5,300
+ 452              	.set noreorder
+ 453              	.set nomacro
+ 454 0308 13006010 	beq $3,$0,$L32
+GAS LISTING  			page 9
+
+
+ 455 030c 1000B1AF 	sw $17,16($sp)
+ 456              	.set macro
+ 457              	.set reorder
+ 458              	
+ 459 0310 1000A727 	addu $7,$sp,16
+ 460              	$L33:
+ 461 0314 0000043C 	lui $4,%hi(cd0)
+ 462 0318 05000524 	li $5,5
+ 463 031c 2D300000 	move $6,$0
+ 464 0320 08000824 	li $8,8
+ 465 0324 00028424 	addiu $4,$4,%lo(cd0)
+ 466 0328 2D48E000 	move $9,$7
+ 467 032c 08000A24 	li $10,8
+ 468 0330 2D580000 	move $11,$0
+ 469              	.set noreorder
+ 470              	.set nomacro
+ 471 0334 0000000C 	jal SifCallRpc
+ 472 0338 0000A0AF 	sw $0,0($sp)
+ 473              	.set macro
+ 474              	.set reorder
+ 475              	
+ 476 033c 2000B0DF 	ld $16,32($sp)
+ 477 0340 1000A28F 	lw $2,16($sp)
+ 478 0344 4000BFDF 	ld $31,64($sp)
+ 479 0348 3000B1DF 	ld $17,48($sp)
+ 480              	
+ 481              	.set noreorder
+ 482              	.set nomacro
+ 483 034c 0800E003 	j $31
+ 484 0350 5000BD27 	addu $sp,$sp,80
+ 485              	.set macro
+ 486              	.set reorder
+ 487              	
+ 488 0354 00000000 	.p2align 3
+ 489              	$L32:
+ 490 0358 0000000C 	jal SifWriteBackDCache
+ 490      00000000 
+ 491              	.set noreorder
+ 492              	.set nomacro
+ 493 0360 ECFF0010 	b $L33
+ 494 0364 1000A727 	addu $7,$sp,16
+ 495              	.set macro
+ 496              	.set reorder
+ 497              	
+ 498              	.end MCSave_Dread
+ 499              	$Lfe7:
+ 500              	.size MCSave_Dread,$Lfe7-MCSave_Dread
+ 501              	.section .bss
+ 502              	sbuff:
+ 503              	.align 6
+ 504 0000 00000000 	.space 256
+ 504      00000000 
+ 504      00000000 
+ 504      00000000 
+ 504      00000000 
+ 505              	.previous
+ 506              	.section .bss
+GAS LISTING  			page 10
+
+
+ 507              	rbuff:
+ 508              	.align 6
+ 509 0100 00000000 	.space 256
+ 509      00000000 
+ 509      00000000 
+ 509      00000000 
+ 509      00000000 
+ 510              	.previous
+ 511              	.section .bss
+ 512              	cd0:
+ 513              	.align 3
+ 514 0200 00000000 	.space 40
+ 514      00000000 
+ 514      00000000 
+ 514      00000000 
+ 514      00000000 
+ 515              	.previous
+ 516              	.section .bss
+ 517              	_MCSave_uBufferAddr:
+ 518              	.align 2
+ 519 0228 00000000 	.space 4
+ 520              	.previous
+ 521              	.section .bss
+ 522              	_MCSave_nBufferBytes:
+ 523              	.align 2
+ 524 022c 00000000 	.space 4
+ 525              	.previous
+ 526              	.section .bss
+ 527              	_MCSave_Result:
+ 528              	.align 2
+ 529 0230 00000000 	.space 4
+ 530 0234 00000000 	.previous
+ 530      00000000 
+ 530      00000000 
+ 531              	.ident "GCC: (GNU) 3.2.2"

@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
-@interface PVPPSSPPCore (Controls) <PVGameCubeSystemResponderClient>
+@interface PVPPSSPPCoreBridge (Controls) <PVPSPSystemResponderClient>
 #pragma mark - Control
 - (void)initControllBuffers;
 - (void)pollControllers;

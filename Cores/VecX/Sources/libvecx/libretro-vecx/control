@@ -1,0 +1,10 @@
+Package: com.libretro.vecx
+Name: vecx
+Depends: 
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: Libretro iOS core of vecX
+Maintainer: libretro
+Author: libretro
+Section: System
+Tag: role::developer

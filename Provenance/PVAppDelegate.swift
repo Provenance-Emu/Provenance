@@ -10,37 +10,39 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
-#if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
+import PVEmulatorCore
+import PVCoreBridge
+import PVThemes
+import PVSettings
+import PVUIBase
+import PVUIKit
+import PVSwiftUI
+import PVLogging
+
+#if canImport(PVJIT)
+import PVJIT
+import JITManager
+#endif
+
+#if !targetEnvironment(macCatalyst) && !os(macOS)
+#if canImport(SteamController)
 import SteamController
+#endif
 import UIKit
 #endif
 
-final class PVApplication: UIApplication {
-    var core: PVEmulatorCore?
-    var emulator: PVEmulatorViewController?
-    var isInBackground: Bool = false
-    override func sendEvent(_ event: UIEvent) {
-        if let core=self.core {
-            core.send(event)
-        }
-        super.sendEvent(event)
-    }
-}
-
-#if !os(tvOS)
-final class PVUINavigationController: UINavigationController {
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-}
-#endif
-
-final class PVAppDelegate: UIResponder, UIApplicationDelegate {
+final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     internal var window: UIWindow?
     var shortcutItemGame: PVGame?
     let disposeBag = DisposeBag()
+    
+    var isAppStore: Bool {
+        // Test if Info.plist has PVAppType containing appstore
+        guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
+        return appType.lowercased().contains("appstore")
+    }
 
-    #if os(iOS) && !APP_STORE
+    #if os(iOS) && !APP_STORE && canImport(PVJIT)
     weak var jitScreenDelegate: JitScreenDelegate?
     weak var jitWaitScreenVC: JitWaitScreenViewController?
     var cancellation_token = DOLCancellationToken()
@@ -51,23 +53,14 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     weak var gameLibraryViewController: PVGameLibraryViewController?
 
     func _initUITheme() {
-        #if os(iOS)
-        let darkTheme = (PVSettingsModel.shared.theme == .auto && self.window?.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
-        Theme.currentTheme = darkTheme ? Theme.darkTheme : Theme.lightTheme
-        self.window?.overrideUserInterfaceStyle = darkTheme ? .dark : .light
-        #elseif os(tvOS)
-        if PVSettingsModel.shared.debugOptions.tvOSThemes {
-            DispatchQueue.main.async {
-                Theme.currentTheme = Theme.darkTheme
-            }
-        }
-        #endif
+        ThemeManager.applySavedTheme()
+//        themeAppUI(withPalette: ThemeManager.shared.currentPalette)
     }
 
     func _initUI(
         libraryUpdatesController: PVGameLibraryUpdatesController,
         gameImporter: GameImporter,
-        gameLibrary: PVGameLibrary
+        gameLibrary: PVGameLibrary<RealmDatabaseDriver>
     ) {
         // Set root view controller and make windows visible
         let window = UIWindow.init(frame: UIScreen.main.bounds)
@@ -78,9 +71,11 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #if os(tvOS)
         window.tintColor = .provenanceBlue
         #endif
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+        let widthPercentage: CGFloat = isIpad ? 0.3 : 0.7
+        let overlayColor: UIColor = ThemeManager.shared.currentPalette.menuHeaderBackground
 
-        if #available(iOS 14, tvOS 14, macCatalyst 15.0, visionOS 1.0, *),
-           PVSettingsModel.shared.debugOptions.useSwiftUI {
+        if !Defaults[.useUIKit] {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
@@ -90,36 +85,45 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             self.rootNavigationVC = rootViewController
             let sideNav = SideNavigationController(mainViewController: UINavigationController(rootViewController: rootViewController))
             sideNav.leftSide(
-                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, viewModel: viewModel, delegate: rootViewController, rootDelegate: rootViewController),
-                options: .init(widthPercent: 0.7, animationDuration: 0.18, overlayColor: .clear, overlayOpacity: 1, shadowOpacity: 0.0)
+                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary,
+                                                         viewModel: viewModel,
+                                                         delegate: rootViewController,
+                                                         rootDelegate: rootViewController),
+                options: .init(widthPercent: widthPercentage,
+                               animationDuration: 0.18,
+                               overlayColor: overlayColor,
+                               overlayOpacity: 0.1,
+                               shadowOpacity: 0.2)
             )
 
             window.rootViewController = sideNav
         } else {
-            let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
-            let vc = storyboard.instantiateInitialViewController()
+            Task.detached { @MainActor in
+                let storyboard = UIStoryboard.init(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
+                let vc = storyboard.instantiateInitialViewController()
 
-            window.rootViewController = vc
+                window.rootViewController = vc
 
-            guard let rootNavigation = window.rootViewController as? UINavigationController else {
-                fatalError("No root nav controller")
+                guard let rootNavigation = window.rootViewController as? UINavigationController else {
+                    fatalError("No root nav controller")
+                }
+                self.rootNavigationVC = rootNavigation
+                guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
+                    fatalError("No gameLibraryViewController")
+                }
+
+                // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
+                gameLibraryViewController.updatesController = libraryUpdatesController
+                gameLibraryViewController.gameImporter = gameImporter
+                gameLibraryViewController.gameLibrary = gameLibrary
+                
+                self.gameLibraryViewController = gameLibraryViewController
             }
-            self.rootNavigationVC = rootNavigation
-            guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
-                fatalError("No gameLibraryViewController")
-            }
-
-            // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
-            gameLibraryViewController.updatesController = libraryUpdatesController
-            gameLibraryViewController.gameImporter = gameImporter
-            gameLibraryViewController.gameLibrary = gameLibrary
-            
-            self.gameLibraryViewController = gameLibraryViewController
         }
 
         #if os(iOS) && !APP_STORE
-        if PVSettingsModel.shared.debugOptions.autoJIT {
-            DOLJitManager.shared().attemptToAcquireJitOnStartup()
+        if Defaults[.autoJIT] {
+            DOLJitManager.shared.attemptToAcquireJitOnStartup()
         }
         DispatchQueue.main.async { [unowned self] in
             self.showJITWaitScreen()
@@ -128,49 +132,77 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
-
+        application.isIdleTimerDisabled = Defaults[.disableAutoLock]
+        loadRocketSimConnect()
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
 
-//		#if !(targetEnvironment(macCatalyst) || os(macOS))
-        PVEmulatorConfiguration.initICloud()
-        DispatchQueue.global(qos: .background).async {
-            let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
-            if useiCloud {
-                DispatchQueue.main.async {
-                    iCloudSync.initICloudDocuments()
-                    iCloudSync.importNewSaves()
+        _initICloud()
+        
+        _initThemeListener()
+
+        runDetachedTaskWithCompletion {
+            try RomDatabase.initDefaultDatabase()
+        } completion: { result in
+            switch result {
+            case .success(let value):
+                Task.detached { @MainActor in
+                    self._initLibraryNotificationHandlers()
+                    self._initGameImporter(application, launchOptions: launchOptions)
+                }
+            case .failure(let error):
+                Task { @MainActor in
+                    let appName: String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
+                    ELOG("Error: Database Error\n")
+                    let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""), message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
+                    ELOG(error.localizedDescription)
+                    alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
+                        fatalError(error.localizedDescription)
+                    }))
+                    
+                    self.window?.rootViewController = UIViewController()
+                    self.window?.makeKeyAndVisible()
+                    self.window?.rootViewController?.present(alert, animated: true, completion: nil)
+                    
                 }
             }
         }
-//		#endif
 
-        do {
-            try RomDatabase.initDefaultDatabase()
-        } catch {
-            let appName: String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
-            print("Error: Database Error\n")
-            let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""), message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
-            ELOG(error.localizedDescription)
-            alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
-                fatalError(error.localizedDescription)
-            }))
+        _initSteamControllers()
 
-            self.window?.rootViewController = UIViewController()
-            self.window?.makeKeyAndVisible()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.window?.rootViewController?.present(alert, animated: true, completion: nil)
+        #if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
+//            PVAltKitService.shared.start()
+            ApplicationMonitor.shared.start()
+        #endif
+
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
+            self.startOptionalWebDavServer()
+            #if !os(tvOS)
+            if self.isAppStore {
+                self._initAppRating()
             }
+            #endif
+        })
 
-            return true
-        }
-
-        let gameLibrary = PVGameLibrary(database: RomDatabase.sharedInstance)
+        return true
+    }
+    
+    func _initSteamControllers() {
+        #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
+        // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
+        // SteamControllerManager.listenForConnections()
+        #endif
+    }
+    
+    func _initGameImporter(_ application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
+        // Setup importing/updating library
+        let gameImporter = GameImporter.shared
+        let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
 
         #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-            // Setup shortcuts
+            /// Setup shortcuts
             Observable.combineLatest(
                 gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
                 gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }
@@ -180,77 +212,94 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 })
                 .disposed(by: disposeBag)
 
-            // Handle if started from shortcut
-            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut", let md5Value = shortcut.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
+            /// Handle if started from shortcut
+            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
+                shortcut.type == "kRecentGameShortcut",
+                let md5Value = shortcut.userInfo?["PVGameHash"] as? String,
+                let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                 shortcutItemGame = matchedGame
             }
         #endif
+        
+        Task.detached { @MainActor in
+            let database = RomDatabase.sharedInstance
+            await gameImporter.initSystems()
+            RomDatabase.reloadCache()
+            
+            let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
 
-        // Setup importing/updating library
-        let gameImporter = GameImporter.shared
-        let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
-        #if os(iOS) || os(macOS)
-            libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
-        #endif
-
-        // Handle refreshing library
-        self.handleNotifications()
-        _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
-
-        let database = RomDatabase.sharedInstance
-        database.refresh()
-        database.reloadCache()
-
-        #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
-        // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
-        // SteamControllerManager.listenForConnections()
-        #endif
-
-        #if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
-//            PVAltKitService.shared.start()
-            ApplicationMonitor.shared.start()
-        #endif
-
-		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
-			self.startOptionalWebDavServer()
-		})
-
-        self.window!.makeKeyAndVisible()
-
-        return true
+            // Handle refreshing library
+            self._initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
+            self.window!.makeKeyAndVisible()
+#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+            Task.detached {
+                await libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
+            }
+#endif
+        }
     }
-
-    func saveCoreState(_ application: PVApplication) {
-        if let core = application.core {
-            if core.isOn, let emulator = application.emulator {
-                if PVSettingsModel.shared.autoSave, core.supportsSaveStates {
-                    NSLog("PVAppDelegate: Saving Core State\n")
-                    emulator.autoSaveState { result in
-                        switch result {
-                            case .success:
-                                NSLog("PVAppDelegate: Save Successful")
-                                break
-                            case let .error(error):
-                                NSLog("PVAppDelegate: \(error.localizedDescription)")
-                        }
-                    }
+    
+    func _initICloud() {
+        PVEmulatorConfiguration.initICloud()
+        DispatchQueue.global(qos: .background).async {
+            let useiCloud = Defaults[.iCloudSync] && URL.supportsICloud
+            if useiCloud {
+                DispatchQueue.main.async {
+                    iCloudSync.initICloudDocuments()
+                    iCloudSync.importNewSaves()
                 }
             }
         }
     }
+    
+    func _initThemeListener() {
+        if #available(iOS 17.0, *) {
+            withObservationTracking {
+                _ = ThemeManager.shared.currentPalette
+            } onChange: { [unowned self] in
+                print("changed: ", ThemeManager.shared.currentPalette)
+                Task.detached { @MainActor in
+                    self._initUITheme()
+                    if self.isAppStore {
+                        self.appRatingSignifigantEvent()
+                    }
+                }
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+
+    func saveCoreState(_ application: PVApplication) async throws {
+        if let core = application.core {
+            if core.isOn, let emulator = application.emulator {
+                if Defaults[.autoSave], core.supportsSaveStates {
+                    ILOG("PVAppDelegate: Saving Core State\n")
+                    try await emulator.autoSaveState()
+                }
+            }
+        }
+        if isAppStore {
+            appRatingSignifigantEvent()
+        }
+    }
+
     func pauseCore(_ application: PVApplication) {
         if let core = application.core {
             if core.isOn && core.isRunning {
-                NSLog("PVAppDelegate: Pausing Core\n")
+                ILOG("PVAppDelegate: Pausing Core\n")
                 core.setPauseEmulation(true)
             }
+        }
+        if isAppStore {
+            appRatingSignifigantEvent()
         }
     }
 
     func stopCore(_ application: PVApplication) {
         if let core = application.core {
             if core.isOn {
-                NSLog("PVAppDelegate: Stopping Core\n")
+                ILOG("PVAppDelegate: Stopping Core\n")
                 core.stopEmulation()
             }
         }
@@ -262,7 +311,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
             pauseCore(app)
             sleep(1)
-            saveCoreState(app)
+
+            Task {
+                try await self.saveCoreState(app)
+            }
         }
     }
 
@@ -286,11 +338,11 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             stopCore(app)
         }
     }
-    func handleNotifications() {
+    func _initLibraryNotificationHandlers() {
         NotificationCenter.default.rx.notification(.PVReimportLibrary)
             .flatMapLatest { _ in
                 return Completable.create { observer in
-                    RomDatabase.sharedInstance.refresh()
+                    RomDatabase.refresh()
                     self.gameLibraryViewController?.checkROMs(false)
 
                     observer(.completed)
@@ -319,9 +371,11 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                     do {
                         NSLog("PVAppDelegate: Completed ResetLibrary, Re-Importing")
                         try RomDatabase.sharedInstance.deleteAllData()
-                        GameImporter.shared.initSystems()
-                        self.gameLibraryViewController?.checkROMs(false)
-                        observer(.completed)
+                        Task {
+                            await GameImporter.shared.initSystems()
+                            self.gameLibraryViewController?.checkROMs(false)
+                            observer(.completed)
+                        }
                     } catch {
                         NSLog("Failed to delete all objects. \(error.localizedDescription)")
                         observer(.error(error))
@@ -330,5 +384,30 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
             .subscribe(onCompleted: {}).disposed(by: disposeBag)
+    }
+}
+
+private func loadRocketSimConnect() {
+    #if DEBUG
+    guard (Bundle(path: "/Applications/RocketSim.app/Contents/Frameworks/RocketSimConnectLinker.nocache.framework")?.load() == true) else {
+        print("Failed to load linker framework")
+        return
+    }
+    print("RocketSim Connect successfully linked")
+    #endif
+}
+
+func runDetachedTaskWithCompletion<T>(
+    priority: TaskPriority? = nil,
+    operation: @escaping () async throws -> T,
+    completion: @escaping (Result<T, Error>) -> Void
+) {
+    Task.detached(priority: priority) {
+        do {
+            let result = try await operation()
+            completion(.success(result))
+        } catch {
+            completion(.failure(error))
+        }
     }
 }

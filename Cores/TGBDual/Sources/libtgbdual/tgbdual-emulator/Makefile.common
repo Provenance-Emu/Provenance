@@ -1,0 +1,18 @@
+LIBRETRO_COMM_DIR := $(CORE_DIR)/libretro-common
+INCFLAGS := -I$(CORE_DIR) \
+				-I$(CORE_DIR)/gb_core \
+				-I$(CORE_DIR)/libretro
+
+ifneq (,$(findstring msvc200,$(platform)))
+INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
+endif
+
+SOURCES_CXX := $(CORE_DIR)/gb_core/apu.cpp \
+	$(CORE_DIR)/gb_core/cheat.cpp \
+	$(CORE_DIR)/gb_core/cpu.cpp \
+	$(CORE_DIR)/gb_core/gb.cpp \
+	$(CORE_DIR)/gb_core/lcd.cpp \
+	$(CORE_DIR)/gb_core/mbc.cpp \
+	$(CORE_DIR)/gb_core/rom.cpp \
+	$(CORE_DIR)/libretro/dmy_renderer.cpp \
+	$(CORE_DIR)/libretro/libretro.cpp

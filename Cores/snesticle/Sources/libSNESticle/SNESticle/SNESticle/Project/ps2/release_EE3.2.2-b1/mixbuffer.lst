@@ -1,0 +1,101 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/mixbuffer.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN10CMixBuffer9GetFormatEPjS0_S0_
+   8              	.ent _ZN10CMixBuffer9GetFormatEPjS0_S0_
+   9              	_ZN10CMixBuffer9GetFormatEPjS0_S0_:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 0000A0AC 	sw $0,0($5)
+  14 0004 0000C0AC 	sw $0,0($6)
+  15              	.set noreorder
+  16              	.set nomacro
+  17 0008 0800E003 	j $31
+  18 000c 0000E0AC 	sw $0,0($7)
+  19              	.set macro
+  20              	.set reorder
+  21              	
+  22              	.end _ZN10CMixBuffer9GetFormatEPjS0_S0_
+  23              	$Lfe1:
+  24              	.size _ZN10CMixBuffer9GetFormatEPjS0_S0_,$Lfe1-_ZN10CMixBuffer9GetFormatEPjS0_S0_
+  25              	.align 2
+  26              	.p2align 3,,7
+  27              	.globl _ZN10CMixBuffer16GetOutputSamplesEv
+  28              	.ent _ZN10CMixBuffer16GetOutputSamplesEv
+  29              	_ZN10CMixBuffer16GetOutputSamplesEv:
+  30              	.frame $sp,0,$31
+  31              	.mask 0x00000000,0
+  32              	.fmask 0x00000000,0
+  33              	.set noreorder
+  34              	.set nomacro
+  35 0010 0800E003 	j $31
+  36 0014 2D100000 	move $2,$0
+  37              	.set macro
+  38              	.set reorder
+  39              	
+  40              	.end _ZN10CMixBuffer16GetOutputSamplesEv
+  41              	$Lfe2:
+  42              	.size _ZN10CMixBuffer16GetOutputSamplesEv,$Lfe2-_ZN10CMixBuffer16GetOutputSamplesEv
+  43              	.align 2
+  44              	.p2align 3,,7
+  45              	.globl _ZN10CMixBuffer17OutputSamplesMonoEPsi
+  46              	.ent _ZN10CMixBuffer17OutputSamplesMonoEPsi
+  47              	_ZN10CMixBuffer17OutputSamplesMonoEPsi:
+  48              	.frame $sp,0,$31
+  49              	.mask 0x00000000,0
+  50              	.fmask 0x00000000,0
+  51 0018 0800E003 	j $31
+  51      00000000 
+  52              	.end _ZN10CMixBuffer17OutputSamplesMonoEPsi
+  53              	$Lfe3:
+  54              	.size _ZN10CMixBuffer17OutputSamplesMonoEPsi,$Lfe3-_ZN10CMixBuffer17OutputSamplesMonoEPsi
+  55              	.align 2
+  56              	.p2align 3,,7
+GAS LISTING  			page 2
+
+
+  57              	.globl _ZN10CMixBuffer19OutputSamplesStereoEPsS0_i
+  58              	.ent _ZN10CMixBuffer19OutputSamplesStereoEPsS0_i
+  59              	_ZN10CMixBuffer19OutputSamplesStereoEPsS0_i:
+  60              	.frame $sp,0,$31
+  61              	.mask 0x00000000,0
+  62              	.fmask 0x00000000,0
+  63 0020 0800E003 	j $31
+  63      00000000 
+  64              	.end _ZN10CMixBuffer19OutputSamplesStereoEPsS0_i
+  65              	$Lfe4:
+  66              	.size _ZN10CMixBuffer19OutputSamplesStereoEPsS0_i,$Lfe4-_ZN10CMixBuffer19OutputSamplesStereoEPsS0_i
+  67              	.align 2
+  68              	.p2align 3,,7
+  69              	.globl _ZN10CMixBuffer5FlushEv
+  70              	.ent _ZN10CMixBuffer5FlushEv
+  71              	_ZN10CMixBuffer5FlushEv:
+  72              	.frame $sp,0,$31
+  73              	.mask 0x00000000,0
+  74              	.fmask 0x00000000,0
+  75 0028 0800E003 	j $31
+  75      00000000 
+  76              	.end _ZN10CMixBuffer5FlushEv
+  77              	$Lfe5:
+  78              	.size _ZN10CMixBuffer5FlushEv,$Lfe5-_ZN10CMixBuffer5FlushEv
+  79              	.weak _ZTV10CMixBuffer
+  80              	.section .gnu.linkonce.d._ZTV10CMixBuffer,"aw",@progbits
+  81              	.align 3
+  82              	.type _ZTV10CMixBuffer,@object
+  83              	.size _ZTV10CMixBuffer,28
+  84              	_ZTV10CMixBuffer:
+  85 0000 00000000 	.word 0
+  86 0004 00000000 	.word 0
+  87 0008 00000000 	.word _ZN10CMixBuffer9GetFormatEPjS0_S0_
+  88 000c 00000000 	.word _ZN10CMixBuffer16GetOutputSamplesEv
+  89 0010 00000000 	.word _ZN10CMixBuffer17OutputSamplesMonoEPsi
+  90 0014 00000000 	.word _ZN10CMixBuffer19OutputSamplesStereoEPsS0_i
+  91 0018 00000000 	.word _ZN10CMixBuffer5FlushEv
+  92 001c 00000000 	.ident "GCC: (GNU) 3.2.2"

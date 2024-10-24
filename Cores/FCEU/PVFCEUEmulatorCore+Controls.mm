@@ -8,20 +8,22 @@
 
 #import "PVFCEUEmulatorCore+Controls.h"
 #import "PVFCEUEmulatorCore.h"
+@import PVCoreBridge;
+
 
 #include "fceux/src/fceu.h"
-#include "fceux/src/driver.h"
-#include "fceux/src/input.h"
-#include "fceux/src/sound.h"
-#include "fceux/src/movie.h"
-#include "fceux/src/palette.h"
-#include "fceux/src/state.h"
-#include "fceux/src/emufile.h"
+//#include "fceux/src/driver.h"
+//#include "fceux/src/input.h"
+//#include "fceux/src/sound.h"
+//#include "fceux/src/movie.h"
+//#include "fceux/src/palette.h"
+//#include "fceux/src/state.h"
+//#include "fceux/src/emufile.h"
 
 #define DEADZONE 0.1f
 static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
 
-@implementation PVFCEUEmulatorCore (Controls)
+@implementation PVFCEUEmulatorCoreBridge (Controls)
 
 # pragma mark - Input
 

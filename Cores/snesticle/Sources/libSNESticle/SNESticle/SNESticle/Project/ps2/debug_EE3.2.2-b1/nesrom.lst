@@ -1,0 +1,1311 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../NESticle/Source/common/nesrom.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN6NesRomC2Ev
+   8              	.ent _ZN6NesRomC2Ev
+   9              	_ZN6NesRomC2Ev:
+  10              	.frame $sp,32,$31
+  11              	.mask 0x80010000,-16
+  12              	.fmask 0x00000000,0
+  13 0000 E0FFBD27 	subu $sp,$sp,32
+  14 0004 1000BFFF 	sd $31,16($sp)
+  15 0008 0000B0FF 	sd $16,0($sp)
+  16              	.set noreorder
+  17              	.set nomacro
+  18 000c 0000000C 	jal _ZN7CEmuRomC2Ev
+  19 0010 2D808000 	move $16,$4
+  20              	.set macro
+  21              	.set reorder
+  22              	
+  23 0014 0000023C 	lui $2,%hi(_ZTV6NesRom+8)
+  24 0018 08004224 	addiu $2,$2,%lo(_ZTV6NesRom+8)
+  25 001c 10000426 	addu $4,$16,16
+  26              	.set noreorder
+  27              	.set nomacro
+  28 0020 0000000C 	jal _ZN9CMemSpaceC1Ev
+  29 0024 000002AE 	sw $2,0($16)
+  30              	.set macro
+  31              	.set reorder
+  32              	
+  33              	.set noreorder
+  34              	.set nomacro
+  35 0028 0000000C 	jal _ZN9CMemSpaceC1Ev
+  36 002c 20000426 	addu $4,$16,32
+  37              	.set macro
+  38              	.set reorder
+  39              	
+  40              	.set noreorder
+  41              	.set nomacro
+  42 0030 0000000C 	jal _ZN9CMemSpaceC1Ev
+  43 0034 30000426 	addu $4,$16,48
+  44              	.set macro
+  45              	.set reorder
+  46              	
+  47 0038 1000BFDF 	ld $31,16($sp)
+  48 003c 040000A2 	sb $0,4($16)
+  49 0040 0000B0DF 	ld $16,0($sp)
+  50              	
+  51              	.set noreorder
+  52              	.set nomacro
+  53 0044 0800E003 	j $31
+  54 0048 2000BD27 	addu $sp,$sp,32
+  55              	.set macro
+  56              	.set reorder
+  57              	
+GAS LISTING  			page 2
+
+
+  58              	.end _ZN6NesRomC2Ev
+  59              	$Lfe1:
+  60              	.size _ZN6NesRomC2Ev,$Lfe1-_ZN6NesRomC2Ev
+  61              	.align 2
+  62 004c 00000000 	.p2align 3,,7
+  63              	.globl _ZN6NesRomC1Ev
+  64              	.ent _ZN6NesRomC1Ev
+  65              	_ZN6NesRomC1Ev:
+  66              	.frame $sp,32,$31
+  67              	.mask 0x80010000,-16
+  68              	.fmask 0x00000000,0
+  69 0050 E0FFBD27 	subu $sp,$sp,32
+  70 0054 1000BFFF 	sd $31,16($sp)
+  71 0058 0000B0FF 	sd $16,0($sp)
+  72              	.set noreorder
+  73              	.set nomacro
+  74 005c 0000000C 	jal _ZN7CEmuRomC2Ev
+  75 0060 2D808000 	move $16,$4
+  76              	.set macro
+  77              	.set reorder
+  78              	
+  79 0064 0000023C 	lui $2,%hi(_ZTV6NesRom+8)
+  80 0068 08004224 	addiu $2,$2,%lo(_ZTV6NesRom+8)
+  81 006c 10000426 	addu $4,$16,16
+  82              	.set noreorder
+  83              	.set nomacro
+  84 0070 0000000C 	jal _ZN9CMemSpaceC1Ev
+  85 0074 000002AE 	sw $2,0($16)
+  86              	.set macro
+  87              	.set reorder
+  88              	
+  89              	.set noreorder
+  90              	.set nomacro
+  91 0078 0000000C 	jal _ZN9CMemSpaceC1Ev
+  92 007c 20000426 	addu $4,$16,32
+  93              	.set macro
+  94              	.set reorder
+  95              	
+  96              	.set noreorder
+  97              	.set nomacro
+  98 0080 0000000C 	jal _ZN9CMemSpaceC1Ev
+  99 0084 30000426 	addu $4,$16,48
+ 100              	.set macro
+ 101              	.set reorder
+ 102              	
+ 103 0088 1000BFDF 	ld $31,16($sp)
+ 104 008c 040000A2 	sb $0,4($16)
+ 105 0090 0000B0DF 	ld $16,0($sp)
+ 106              	
+ 107              	.set noreorder
+ 108              	.set nomacro
+ 109 0094 0800E003 	j $31
+ 110 0098 2000BD27 	addu $sp,$sp,32
+ 111              	.set macro
+ 112              	.set reorder
+ 113              	
+ 114              	.end _ZN6NesRomC1Ev
+GAS LISTING  			page 3
+
+
+ 115              	$Lfe2:
+ 116              	.size _ZN6NesRomC1Ev,$Lfe2-_ZN6NesRomC1Ev
+ 117              	.align 2
+ 118 009c 00000000 	.p2align 3,,7
+ 119              	.globl _ZN6NesRomD2Ev
+ 120              	.ent _ZN6NesRomD2Ev
+ 121              	_ZN6NesRomD2Ev:
+ 122              	.frame $sp,32,$31
+ 123              	.mask 0x80010000,-16
+ 124              	.fmask 0x00000000,0
+ 125 00a0 0000023C 	lui $2,%hi(_ZTV6NesRom+8)
+ 126 00a4 E0FFBD27 	subu $sp,$sp,32
+ 127 00a8 08004224 	addiu $2,$2,%lo(_ZTV6NesRom+8)
+ 128 00ac 0000B0FF 	sd $16,0($sp)
+ 129 00b0 000082AC 	sw $2,0($4)
+ 130 00b4 1000BFFF 	sd $31,16($sp)
+ 131              	.set noreorder
+ 132              	.set nomacro
+ 133 00b8 0000000C 	jal _ZN6NesRom6UnloadEv
+ 134 00bc 2D808000 	move $16,$4
+ 135              	.set macro
+ 136              	.set reorder
+ 137              	
+ 138              	.set noreorder
+ 139              	.set nomacro
+ 140 00c0 0000000C 	jal _ZN9CMemSpaceD1Ev
+ 141 00c4 30000426 	addu $4,$16,48
+ 142              	.set macro
+ 143              	.set reorder
+ 144              	
+ 145              	.set noreorder
+ 146              	.set nomacro
+ 147 00c8 0000000C 	jal _ZN9CMemSpaceD1Ev
+ 148 00cc 20000426 	addu $4,$16,32
+ 149              	.set macro
+ 150              	.set reorder
+ 151              	
+ 152              	.set noreorder
+ 153              	.set nomacro
+ 154 00d0 0000000C 	jal _ZN9CMemSpaceD1Ev
+ 155 00d4 10000426 	addu $4,$16,16
+ 156              	.set macro
+ 157              	.set reorder
+ 158              	
+ 159              	.set noreorder
+ 160              	.set nomacro
+ 161 00d8 0000000C 	jal _ZN7CEmuRomD2Ev
+ 162 00dc 2D200002 	move $4,$16
+ 163              	.set macro
+ 164              	.set reorder
+ 165              	
+ 166 00e0 0000B0DF 	ld $16,0($sp)
+ 167 00e4 1000BFDF 	ld $31,16($sp)
+ 168              	
+ 169              	.set noreorder
+ 170              	.set nomacro
+ 171 00e8 0800E003 	j $31
+GAS LISTING  			page 4
+
+
+ 172 00ec 2000BD27 	addu $sp,$sp,32
+ 173              	.set macro
+ 174              	.set reorder
+ 175              	
+ 176              	.end _ZN6NesRomD2Ev
+ 177              	$Lfe3:
+ 178              	.size _ZN6NesRomD2Ev,$Lfe3-_ZN6NesRomD2Ev
+ 179              	.align 2
+ 180              	.p2align 3,,7
+ 181              	.globl _ZN6NesRomD1Ev
+ 182              	.ent _ZN6NesRomD1Ev
+ 183              	_ZN6NesRomD1Ev:
+ 184              	.frame $sp,32,$31
+ 185              	.mask 0x80010000,-16
+ 186              	.fmask 0x00000000,0
+ 187 00f0 0000023C 	lui $2,%hi(_ZTV6NesRom+8)
+ 188 00f4 E0FFBD27 	subu $sp,$sp,32
+ 189 00f8 08004224 	addiu $2,$2,%lo(_ZTV6NesRom+8)
+ 190 00fc 0000B0FF 	sd $16,0($sp)
+ 191 0100 000082AC 	sw $2,0($4)
+ 192 0104 1000BFFF 	sd $31,16($sp)
+ 193              	.set noreorder
+ 194              	.set nomacro
+ 195 0108 0000000C 	jal _ZN6NesRom6UnloadEv
+ 196 010c 2D808000 	move $16,$4
+ 197              	.set macro
+ 198              	.set reorder
+ 199              	
+ 200              	.set noreorder
+ 201              	.set nomacro
+ 202 0110 0000000C 	jal _ZN9CMemSpaceD1Ev
+ 203 0114 30000426 	addu $4,$16,48
+ 204              	.set macro
+ 205              	.set reorder
+ 206              	
+ 207              	.set noreorder
+ 208              	.set nomacro
+ 209 0118 0000000C 	jal _ZN9CMemSpaceD1Ev
+ 210 011c 20000426 	addu $4,$16,32
+ 211              	.set macro
+ 212              	.set reorder
+ 213              	
+ 214              	.set noreorder
+ 215              	.set nomacro
+ 216 0120 0000000C 	jal _ZN9CMemSpaceD1Ev
+ 217 0124 10000426 	addu $4,$16,16
+ 218              	.set macro
+ 219              	.set reorder
+ 220              	
+ 221              	.set noreorder
+ 222              	.set nomacro
+ 223 0128 0000000C 	jal _ZN7CEmuRomD2Ev
+ 224 012c 2D200002 	move $4,$16
+ 225              	.set macro
+ 226              	.set reorder
+ 227              	
+ 228 0130 0000B0DF 	ld $16,0($sp)
+GAS LISTING  			page 5
+
+
+ 229 0134 1000BFDF 	ld $31,16($sp)
+ 230              	
+ 231              	.set noreorder
+ 232              	.set nomacro
+ 233 0138 0800E003 	j $31
+ 234 013c 2000BD27 	addu $sp,$sp,32
+ 235              	.set macro
+ 236              	.set reorder
+ 237              	
+ 238              	.end _ZN6NesRomD1Ev
+ 239              	$Lfe4:
+ 240              	.size _ZN6NesRomD1Ev,$Lfe4-_ZN6NesRomD1Ev
+ 241              	.align 2
+ 242              	.p2align 3,,7
+ 243              	.globl _ZN6NesRomD0Ev
+ 244              	.ent _ZN6NesRomD0Ev
+ 245              	_ZN6NesRomD0Ev:
+ 246              	.frame $sp,32,$31
+ 247              	.mask 0x80010000,-16
+ 248              	.fmask 0x00000000,0
+ 249 0140 0000023C 	lui $2,%hi(_ZTV6NesRom+8)
+ 250 0144 E0FFBD27 	subu $sp,$sp,32
+ 251 0148 08004224 	addiu $2,$2,%lo(_ZTV6NesRom+8)
+ 252 014c 0000B0FF 	sd $16,0($sp)
+ 253 0150 000082AC 	sw $2,0($4)
+ 254 0154 1000BFFF 	sd $31,16($sp)
+ 255              	.set noreorder
+ 256              	.set nomacro
+ 257 0158 0000000C 	jal _ZN6NesRom6UnloadEv
+ 258 015c 2D808000 	move $16,$4
+ 259              	.set macro
+ 260              	.set reorder
+ 261              	
+ 262              	.set noreorder
+ 263              	.set nomacro
+ 264 0160 0000000C 	jal _ZN9CMemSpaceD1Ev
+ 265 0164 30000426 	addu $4,$16,48
+ 266              	.set macro
+ 267              	.set reorder
+ 268              	
+ 269              	.set noreorder
+ 270              	.set nomacro
+ 271 0168 0000000C 	jal _ZN9CMemSpaceD1Ev
+ 272 016c 20000426 	addu $4,$16,32
+ 273              	.set macro
+ 274              	.set reorder
+ 275              	
+ 276              	.set noreorder
+ 277              	.set nomacro
+ 278 0170 0000000C 	jal _ZN9CMemSpaceD1Ev
+ 279 0174 10000426 	addu $4,$16,16
+ 280              	.set macro
+ 281              	.set reorder
+ 282              	
+ 283              	.set noreorder
+ 284              	.set nomacro
+ 285 0178 0000000C 	jal _ZN7CEmuRomD2Ev
+GAS LISTING  			page 6
+
+
+ 286 017c 2D200002 	move $4,$16
+ 287              	.set macro
+ 288              	.set reorder
+ 289              	
+ 290              	.set noreorder
+ 291              	.set nomacro
+ 292 0180 0000000C 	jal _ZdlPv
+ 293 0184 2D200002 	move $4,$16
+ 294              	.set macro
+ 295              	.set reorder
+ 296              	
+ 297 0188 0000B0DF 	ld $16,0($sp)
+ 298 018c 1000BFDF 	ld $31,16($sp)
+ 299              	
+ 300              	.set noreorder
+ 301              	.set nomacro
+ 302 0190 0800E003 	j $31
+ 303 0194 2000BD27 	addu $sp,$sp,32
+ 304              	.set macro
+ 305              	.set reorder
+ 306              	
+ 307              	.end _ZN6NesRomD0Ev
+ 308              	$Lfe5:
+ 309              	.size _ZN6NesRomD0Ev,$Lfe5-_ZN6NesRomD0Ev
+ 310              	.rdata
+ 311              	.align 3
+ 312              	$LC1:
+ 313 0000 4E455300 	.ascii "NES\000"
+ 314 0004 00000000 	.align 3
+ 315              	$LC0:
+ 316 0008 4552524F 	.ascii "ERROR: Invalid header\n\000"
+ 316      523A2049 
+ 316      6E76616C 
+ 316      69642068 
+ 316      65616465 
+ 317 001f 00       	.align 3
+ 318              	$LC3:
+ 319 0020 4552524F 	.ascii "ERROR loading CHR data\n\000"
+ 319      52206C6F 
+ 319      6164696E 
+ 319      67204348 
+ 319      52206461 
+ 320              	.align 3
+ 321              	$LC2:
+ 322 0038 4552524F 	.ascii "ERROR loading PRG data\n\000"
+ 322      52206C6F 
+ 322      6164696E 
+ 322      67205052 
+ 322      47206461 
+ 323              	.text
+ 324              	.align 2
+ 325              	.p2align 3,,7
+ 326              	.globl _ZN6NesRom7LoadRomEP7CDataIOPhj
+ 327              	.ent _ZN6NesRom7LoadRomEP7CDataIOPhj
+ 328              	_ZN6NesRom7LoadRomEP7CDataIOPhj:
+ 329              	.frame $sp,96,$31
+ 330              	.mask 0x800f0000,-16
+GAS LISTING  			page 7
+
+
+ 331              	.fmask 0x00000000,0
+ 332 0198 A0FFBD27 	subu $sp,$sp,96
+ 333 019c 5000BFFF 	sd $31,80($sp)
+ 334 01a0 3000B2FF 	sd $18,48($sp)
+ 335 01a4 2D908000 	move $18,$4
+ 336 01a8 2000B1FF 	sd $17,32($sp)
+ 337 01ac 4000B3FF 	sd $19,64($sp)
+ 338 01b0 1000B0FF 	sd $16,16($sp)
+ 339 01b4 0000828C 	lw $2,0($4)
+ 340              	
+ 341 01b8 0C00438C 	lw $3,12($2)
+ 342              	
+ 343              	.set noreorder
+ 344              	.set nomacro
+ 345 01bc 09F86000 	jal $31,$3
+ 346 01c0 2D88A000 	move $17,$5
+ 347              	.set macro
+ 348              	.set reorder
+ 349              	
+ 350 01c4 2D28A003 	move $5,$sp
+ 351 01c8 0000238E 	lw $3,0($17)
+ 352 01cc 10000624 	li $6,16
+ 353 01d0 0800628C 	lw $2,8($3)
+ 354              	
+ 355              	.set noreorder
+ 356              	.set nomacro
+ 357 01d4 09F84000 	jal $31,$2
+ 358 01d8 2D202002 	move $4,$17
+ 359              	.set macro
+ 360              	.set reorder
+ 361              	
+ 362 01dc 10000324 	dli $3,0x10
+ 363              	.set noreorder
+ 364              	.set nomacro
+ 365 01e0 0D004310 	beq $2,$3,$L30
+ 366 01e4 0000053C 	lui $5,%hi($LC1)
+ 367              	.set macro
+ 368              	.set reorder
+ 369              	
+ 370              	$L29:
+ 371 01e8 0000043C 	lui $4,%hi($LC0)
+ 372              	.set noreorder
+ 373              	.set nomacro
+ 374 01ec 0000000C 	jal printf
+ 375 01f0 08008424 	addiu $4,$4,%lo($LC0)
+ 376              	.set macro
+ 377              	.set reorder
+ 378              	
+ 379 01f4 03000324 	li $3,3
+ 380              	$L15:
+ 381 01f8 5000BFDF 	ld $31,80($sp)
+ 382 01fc 2D106000 	move $2,$3
+ 383 0200 4000B3DF 	ld $19,64($sp)
+ 384 0204 3000B2DF 	ld $18,48($sp)
+ 385 0208 2000B1DF 	ld $17,32($sp)
+ 386 020c 1000B0DF 	ld $16,16($sp)
+ 387              	
+GAS LISTING  			page 8
+
+
+ 388              	.set noreorder
+ 389              	.set nomacro
+ 390 0210 0800E003 	j $31
+ 391 0214 6000BD27 	addu $sp,$sp,96
+ 392              	.set macro
+ 393              	.set reorder
+ 394              	
+ 395              	.p2align 3
+ 396              	$L30:
+ 397 0218 2D20A003 	move $4,$sp
+ 398 021c 03000624 	dli $6,0x3
+ 399              	.set noreorder
+ 400              	.set nomacro
+ 401 0220 0000000C 	jal memcmp
+ 402 0224 0000A524 	addiu $5,$5,%lo($LC1)
+ 403              	.set macro
+ 404              	.set reorder
+ 405              	
+ 406              	.set noreorder
+ 407              	.set nomacro
+ 408 0228 EFFF4014 	bne $2,$0,$L29
+ 409 022c 0C00A393 	lbu $3,12($sp)
+ 410              	.set macro
+ 411              	.set reorder
+ 412              	
+ 413 0230 0000A4DF 	ld $4,0($sp)
+ 414              	
+ 415 0234 3E150400 	dsrl $2,$4,52
+ 416 0238 FF004230 	andi $2,$2,0x00ff
+ 417              	.set noreorder
+ 418              	.set nomacro
+ 419 023c 0E006014 	bne $3,$0,$L18
+ 420 0240 0F004630 	andi $6,$2,0xf
+ 421              	.set macro
+ 422              	.set reorder
+ 423              	
+ 424 0244 0D00A293 	lbu $2,13($sp)
+ 425              	
+ 426              	.set noreorder
+ 427              	.set nomacro
+ 428 0248 0C004014 	bne $2,$0,$L35
+ 429 024c 0600A293 	lbu $2,6($sp)
+ 430              	.set macro
+ 431              	.set reorder
+ 432              	
+ 433              	
+ 434 0250 0E00A293 	lbu $2,14($sp)
+ 435              	
+ 436              	.set noreorder
+ 437              	.set nomacro
+ 438 0254 09004014 	bne $2,$0,$L35
+ 439 0258 0600A293 	lbu $2,6($sp)
+ 440              	.set macro
+ 441              	.set reorder
+ 442              	
+ 443              	
+ 444 025c 0F00A293 	lbu $2,15($sp)
+GAS LISTING  			page 9
+
+
+ 445              	
+ 446              	.set noreorder
+ 447              	.set nomacro
+ 448 0260 06004014 	bne $2,$0,$L35
+ 449 0264 0600A293 	lbu $2,6($sp)
+ 450              	.set macro
+ 451              	.set reorder
+ 452              	
+ 453              	
+ 454 0268 3E170400 	dsrl $2,$4,60
+ 455 026c FF004230 	andi $2,$2,0x00ff
+ 456 0270 00110200 	sll $2,$2,4
+ 457 0274 2530C200 	or $6,$6,$2
+ 458              	.p2align 3
+ 459              	$L18:
+ 460 0278 0600A293 	lbu $2,6($sp)
+ 461              	$L35:
+ 462 027c FE2C0400 	dsrl $5,$4,51
+ 463 0280 3E1C0400 	dsrl $3,$4,48
+ 464 0284 FF00A530 	andi $5,$5,0x00ff
+ 465 0288 7E240400 	dsrl $4,$4,49
+ 466 028c FF006330 	andi $3,$3,0x00ff
+ 467 0290 FF008430 	andi $4,$4,0x00ff
+ 468 0294 01006330 	andi $3,$3,0x1
+ 469 0298 01008430 	andi $4,$4,0x1
+ 470 029c 0100A530 	andi $5,$5,0x1
+ 471 02a0 04004230 	andi $2,$2,0x4
+ 472 02a4 080046AE 	sw $6,8($18)
+ 473 02a8 0C0043A2 	sb $3,12($18)
+ 474 02ac 0E0044A2 	sb $4,14($18)
+ 475              	.set noreorder
+ 476              	.set nomacro
+ 477 02b0 3A004014 	bne $2,$0,$L31
+ 478 02b4 0D0045A2 	sb $5,13($18)
+ 479              	.set macro
+ 480              	.set reorder
+ 481              	
+ 482 02b8 0D000224 	li $2,13
+ 483              	$L34:
+ 484 02bc 10005326 	addu $19,$18,16
+ 485 02c0 0C0062AE 	sw $2,12($19)
+ 486 02c4 2D202002 	move $4,$17
+ 487 02c8 0400A293 	lbu $2,4($sp)
+ 488 02cc 0000238E 	lw $3,0($17)
+ 489 02d0 80830200 	sll $16,$2,14
+ 490 02d4 0C00628C 	lw $2,12($3)
+ 491              	
+ 492              	.set noreorder
+ 493              	.set nomacro
+ 494 02d8 09F84000 	jal $31,$2
+ 495 02dc 2D280002 	move $5,$16
+ 496              	.set macro
+ 497              	.set reorder
+ 498              	
+ 499              	.set noreorder
+ 500              	.set nomacro
+ 501 02e0 26004010 	beq $2,$0,$L32
+GAS LISTING  			page 10
+
+
+ 502 02e4 2D206002 	move $4,$19
+ 503              	.set macro
+ 504              	.set reorder
+ 505              	
+ 506 02e8 2D284000 	move $5,$2
+ 507              	.set noreorder
+ 508              	.set nomacro
+ 509 02ec 0000000C 	jal _ZN9CMemSpace6SetMemEPhj
+ 510 02f0 2D300002 	move $6,$16
+ 511              	.set macro
+ 512              	.set reorder
+ 513              	
+ 514 02f4 0A000224 	li $2,10
+ 515              	$L37:
+ 516 02f8 20005326 	addu $19,$18,32
+ 517 02fc 0C0062AE 	sw $2,12($19)
+ 518 0300 2D202002 	move $4,$17
+ 519 0304 0500A293 	lbu $2,5($sp)
+ 520 0308 0000238E 	lw $3,0($17)
+ 521 030c 40830200 	sll $16,$2,13
+ 522 0310 0C00628C 	lw $2,12($3)
+ 523              	
+ 524              	.set noreorder
+ 525              	.set nomacro
+ 526 0314 09F84000 	jal $31,$2
+ 527 0318 2D280002 	move $5,$16
+ 528              	.set macro
+ 529              	.set reorder
+ 530              	
+ 531              	.set noreorder
+ 532              	.set nomacro
+ 533 031c 08004010 	beq $2,$0,$L33
+ 534 0320 2D206002 	move $4,$19
+ 535              	.set macro
+ 536              	.set reorder
+ 537              	
+ 538 0324 2D284000 	move $5,$2
+ 539              	.set noreorder
+ 540              	.set nomacro
+ 541 0328 0000000C 	jal _ZN9CMemSpace6SetMemEPhj
+ 542 032c 2D300002 	move $6,$16
+ 543              	.set macro
+ 544              	.set reorder
+ 545              	
+ 546 0330 01000224 	li $2,1
+ 547              	$L36:
+ 548 0334 2D180000 	move $3,$0
+ 549              	.set noreorder
+ 550              	.set nomacro
+ 551 0338 AFFF0010 	b $L15
+ 552 033c 040042A2 	sb $2,4($18)
+ 553              	.set macro
+ 554              	.set reorder
+ 555              	
+ 556              	$L33:
+ 557 0340 2D282002 	move $5,$17
+ 558              	.set noreorder
+GAS LISTING  			page 11
+
+
+ 559              	.set nomacro
+ 560 0344 0000000C 	jal _ZN9CMemSpace13ReadAllocFileEP7CDataIOj
+ 561 0348 2D300002 	move $6,$16
+ 562              	.set macro
+ 563              	.set reorder
+ 564              	
+ 565              	.set noreorder
+ 566              	.set nomacro
+ 567 034c F9FF4014 	bne $2,$0,$L36
+ 568 0350 01000224 	li $2,1
+ 569              	.set macro
+ 570              	.set reorder
+ 571              	
+ 572 0354 0000043C 	lui $4,%hi($LC3)
+ 573 0358 20008424 	addiu $4,$4,%lo($LC3)
+ 574              	$L28:
+ 575 035c 0000000C 	jal printf
+ 575      00000000 
+ 576 0364 0000428E 	lw $2,0($18)
+ 577              	
+ 578 0368 0C00438C 	lw $3,12($2)
+ 579              	
+ 580              	.set noreorder
+ 581              	.set nomacro
+ 582 036c 09F86000 	jal $31,$3
+ 583 0370 2D204002 	move $4,$18
+ 584              	.set macro
+ 585              	.set reorder
+ 586              	
+ 587              	.set noreorder
+ 588              	.set nomacro
+ 589 0374 A0FF0010 	b $L15
+ 590 0378 07000324 	li $3,7
+ 591              	.set macro
+ 592              	.set reorder
+ 593              	
+ 594              	$L32:
+ 595 037c 2D300002 	move $6,$16
+ 596              	.set noreorder
+ 597              	.set nomacro
+ 598 0380 0000000C 	jal _ZN9CMemSpace13ReadAllocFileEP7CDataIOj
+ 599 0384 2D282002 	move $5,$17
+ 600              	.set macro
+ 601              	.set reorder
+ 602              	
+ 603              	.set noreorder
+ 604              	.set nomacro
+ 605 0388 DBFF4014 	bne $2,$0,$L37
+ 606 038c 0A000224 	li $2,10
+ 607              	.set macro
+ 608              	.set reorder
+ 609              	
+ 610 0390 0000043C 	lui $4,%hi($LC2)
+ 611              	.set noreorder
+ 612              	.set nomacro
+ 613 0394 F1FF0010 	b $L28
+ 614 0398 38008424 	addiu $4,$4,%lo($LC2)
+GAS LISTING  			page 12
+
+
+ 615              	.set macro
+ 616              	.set reorder
+ 617              	
+ 618              	$L31:
+ 619 039c 30004426 	addu $4,$18,48
+ 620 03a0 2D282002 	move $5,$17
+ 621              	.set noreorder
+ 622              	.set nomacro
+ 623 03a4 0000000C 	jal _ZN9CMemSpace13ReadAllocFileEP7CDataIOj
+ 624 03a8 00020624 	li $6,512
+ 625              	.set macro
+ 626              	.set reorder
+ 627              	
+ 628              	.set noreorder
+ 629              	.set nomacro
+ 630 03ac C3FF0010 	b $L34
+ 631 03b0 0D000224 	li $2,13
+ 632              	.set macro
+ 633              	.set reorder
+ 634              	
+ 635              	.end _ZN6NesRom7LoadRomEP7CDataIOPhj
+ 636              	$Lfe6:
+ 637              	.size _ZN6NesRom7LoadRomEP7CDataIOPhj,$Lfe6-_ZN6NesRom7LoadRomEP7CDataIOPhj
+ 638              	.align 2
+ 639 03b4 00000000 	.p2align 3,,7
+ 640              	.globl _ZN6NesRom6UnloadEv
+ 641              	.ent _ZN6NesRom6UnloadEv
+ 642              	_ZN6NesRom6UnloadEv:
+ 643              	.frame $sp,32,$31
+ 644              	.mask 0x80010000,-16
+ 645              	.fmask 0x00000000,0
+ 646 03b8 E0FFBD27 	subu $sp,$sp,32
+ 647 03bc 0000B0FF 	sd $16,0($sp)
+ 648 03c0 2D808000 	move $16,$4
+ 649 03c4 1000BFFF 	sd $31,16($sp)
+ 650              	.set noreorder
+ 651              	.set nomacro
+ 652 03c8 0000000C 	jal _ZN9CMemSpace4FreeEv
+ 653 03cc 10008424 	addu $4,$4,16
+ 654              	.set macro
+ 655              	.set reorder
+ 656              	
+ 657              	.set noreorder
+ 658              	.set nomacro
+ 659 03d0 0000000C 	jal _ZN9CMemSpace4FreeEv
+ 660 03d4 20000426 	addu $4,$16,32
+ 661              	.set macro
+ 662              	.set reorder
+ 663              	
+ 664              	.set noreorder
+ 665              	.set nomacro
+ 666 03d8 0000000C 	jal _ZN9CMemSpace4FreeEv
+ 667 03dc 30000426 	addu $4,$16,48
+ 668              	.set macro
+ 669              	.set reorder
+ 670              	
+ 671 03e0 1000BFDF 	ld $31,16($sp)
+GAS LISTING  			page 13
+
+
+ 672 03e4 040000A2 	sb $0,4($16)
+ 673 03e8 0000B0DF 	ld $16,0($sp)
+ 674              	
+ 675              	.set noreorder
+ 676              	.set nomacro
+ 677 03ec 0800E003 	j $31
+ 678 03f0 2000BD27 	addu $sp,$sp,32
+ 679              	.set macro
+ 680              	.set reorder
+ 681              	
+ 682              	.end _ZN6NesRom6UnloadEv
+ 683              	$Lfe7:
+ 684              	.size _ZN6NesRom6UnloadEv,$Lfe7-_ZN6NesRom6UnloadEv
+ 685              	.align 2
+ 686 03f4 00000000 	.p2align 3,,7
+ 687              	.globl _ZN6NesRom16GetNumRomRegionsEv
+ 688              	.ent _ZN6NesRom16GetNumRomRegionsEv
+ 689              	_ZN6NesRom16GetNumRomRegionsEv:
+ 690              	.frame $sp,0,$31
+ 691              	.mask 0x00000000,0
+ 692              	.fmask 0x00000000,0
+ 693              	.set noreorder
+ 694              	.set nomacro
+ 695 03f8 0800E003 	j $31
+ 696 03fc 02000224 	li $2,2
+ 697              	.set macro
+ 698              	.set reorder
+ 699              	
+ 700              	.end _ZN6NesRom16GetNumRomRegionsEv
+ 701              	$Lfe8:
+ 702              	.size _ZN6NesRom16GetNumRomRegionsEv,$Lfe8-_ZN6NesRom16GetNumRomRegionsEv
+ 703              	.rdata
+ 704              	.align 3
+ 705              	$LC4:
+ 706 0050 50524700 	.ascii "PRG\000"
+ 707 0054 00000000 	.align 3
+ 708              	$LC5:
+ 709 0058 43485200 	.ascii "CHR\000"
+ 710              	.text
+ 711              	.align 2
+ 712              	.p2align 3,,7
+ 713              	.globl _ZN6NesRom16GetRomRegionNameEj
+ 714              	.ent _ZN6NesRom16GetRomRegionNameEj
+ 715              	_ZN6NesRom16GetRomRegionNameEj:
+ 716              	.frame $sp,0,$31
+ 717              	.mask 0x00000000,0
+ 718              	.fmask 0x00000000,0
+ 719 0400 0000023C 	lui $2,%hi($LC4)
+ 720              	.set noreorder
+ 721              	.set nomacro
+ 722 0404 0600A010 	beq $5,$0,$L40
+ 723 0408 50004324 	addiu $3,$2,%lo($LC4)
+ 724              	.set macro
+ 725              	.set reorder
+ 726              	
+ 727 040c 0000033C 	lui $3,%hi($LC5)
+ 728 0410 01000224 	li $2,1
+GAS LISTING  			page 14
+
+
+ 729              	.set noreorder
+ 730              	.set nomacro
+ 731 0414 0200A210 	beq $5,$2,$L40
+ 732 0418 58006324 	addiu $3,$3,%lo($LC5)
+ 733              	.set macro
+ 734              	.set reorder
+ 735              	
+ 736 041c 2D180000 	move $3,$0
+ 737              	$L40:
+ 738              	.set noreorder
+ 739              	.set nomacro
+ 740 0420 0800E003 	j $31
+ 741 0424 2D106000 	move $2,$3
+ 742              	.set macro
+ 743              	.set reorder
+ 744              	
+ 745              	.end _ZN6NesRom16GetRomRegionNameEj
+ 746              	$Lfe9:
+ 747              	.size _ZN6NesRom16GetRomRegionNameEj,$Lfe9-_ZN6NesRom16GetRomRegionNameEj
+ 748              	.align 2
+ 749              	.p2align 3,,7
+ 750              	.globl _ZN6NesRom16GetRomRegionSizeEj
+ 751              	.ent _ZN6NesRom16GetRomRegionSizeEj
+ 752              	_ZN6NesRom16GetRomRegionSizeEj:
+ 753              	.frame $sp,0,$31
+ 754              	.mask 0x00000000,0
+ 755              	.fmask 0x00000000,0
+ 756 0428 0900A010 	beq $5,$0,$L48
+ 756      00000000 
+ 757 0430 01000224 	li $2,1
+ 758 0434 0400A210 	beq $5,$2,$L50
+ 758      00000000 
+ 759              	.set noreorder
+ 760              	.set nomacro
+ 761 043c 0800E003 	j $31
+ 762 0440 2D100000 	move $2,$0
+ 763              	.set macro
+ 764              	.set reorder
+ 765              	
+ 766 0444 00000000 	.p2align 3
+ 767              	$L50:
+ 768              	.set noreorder
+ 769              	.set nomacro
+ 770 0448 0800E003 	j $31
+ 771 044c 2000828C 	lw $2,32($4)
+ 772              	.set macro
+ 773              	.set reorder
+ 774              	
+ 775              	.p2align 3
+ 776              	$L48:
+ 777              	.set noreorder
+ 778              	.set nomacro
+ 779 0450 0800E003 	j $31
+ 780 0454 1000828C 	lw $2,16($4)
+ 781              	.set macro
+ 782              	.set reorder
+ 783              	
+GAS LISTING  			page 15
+
+
+ 784              	.end _ZN6NesRom16GetRomRegionSizeEj
+ 785              	$Lfe10:
+ 786              	.size _ZN6NesRom16GetRomRegionSizeEj,$Lfe10-_ZN6NesRom16GetRomRegionSizeEj
+ 787              	.align 2
+ 788              	.p2align 3,,7
+ 789              	.globl _ZN6NesRom13GetMapperNameEv
+ 790              	.ent _ZN6NesRom13GetMapperNameEv
+ 791              	_ZN6NesRom13GetMapperNameEv:
+ 792              	.frame $sp,16,$31
+ 793              	.mask 0x80000000,-16
+ 794              	.fmask 0x00000000,0
+ 795 0458 F0FFBD27 	subu $sp,$sp,16
+ 796 045c 0000BFFF 	sd $31,0($sp)
+ 797              	.set noreorder
+ 798              	.set nomacro
+ 799 0460 0000000C 	jal _Z13NesMMUGetName7NesMMUE
+ 800 0464 0800848C 	lw $4,8($4)
+ 801              	.set macro
+ 802              	.set reorder
+ 803              	
+ 804 0468 0000BFDF 	ld $31,0($sp)
+ 805              	
+ 806              	.set noreorder
+ 807              	.set nomacro
+ 808 046c 0800E003 	j $31
+ 809 0470 1000BD27 	addu $sp,$sp,16
+ 810              	.set macro
+ 811              	.set reorder
+ 812              	
+ 813              	.end _ZN6NesRom13GetMapperNameEv
+ 814              	$Lfe11:
+ 815              	.size _ZN6NesRom13GetMapperNameEv,$Lfe11-_ZN6NesRom13GetMapperNameEv
+ 816              	.align 2
+ 817 0474 00000000 	.p2align 3,,7
+ 818              	.globl _ZN6NesRom10GetNumExtsEv
+ 819              	.ent _ZN6NesRom10GetNumExtsEv
+ 820              	_ZN6NesRom10GetNumExtsEv:
+ 821              	.frame $sp,0,$31
+ 822              	.mask 0x00000000,0
+ 823              	.fmask 0x00000000,0
+ 824              	.set noreorder
+ 825              	.set nomacro
+ 826 0478 0800E003 	j $31
+ 827 047c 01000224 	li $2,1
+ 828              	.set macro
+ 829              	.set reorder
+ 830              	
+ 831              	.end _ZN6NesRom10GetNumExtsEv
+ 832              	$Lfe12:
+ 833              	.size _ZN6NesRom10GetNumExtsEv,$Lfe12-_ZN6NesRom10GetNumExtsEv
+ 834              	.rdata
+ 835 005c 00000000 	.align 3
+ 836              	$LC6:
+ 837 0060 6E657300 	.ascii "nes\000"
+ 838              	.text
+ 839              	.align 2
+ 840              	.p2align 3,,7
+GAS LISTING  			page 16
+
+
+ 841              	.globl _ZN6NesRom10GetExtNameEj
+ 842              	.ent _ZN6NesRom10GetExtNameEj
+ 843              	_ZN6NesRom10GetExtNameEj:
+ 844              	.frame $sp,0,$31
+ 845              	.mask 0x00000000,0
+ 846              	.fmask 0x00000000,0
+ 847 0480 0000023C 	lui $2,%hi($LC6)
+ 848              	.set noreorder
+ 849              	.set nomacro
+ 850 0484 0200A010 	beq $5,$0,$L61
+ 851 0488 60004224 	addiu $2,$2,%lo($LC6)
+ 852              	.set macro
+ 853              	.set reorder
+ 854              	
+ 855 048c 2D100000 	move $2,$0
+ 856              	$L61:
+ 857 0490 0800E003 	j $31
+ 857      00000000 
+ 858              	.end _ZN6NesRom10GetExtNameEj
+ 859              	$Lfe13:
+ 860              	.size _ZN6NesRom10GetExtNameEj,$Lfe13-_ZN6NesRom10GetExtNameEj
+ 861              	.align 2
+ 862              	.p2align 3,,7
+ 863              	.globl _ZN10NesFDSBios7LoadRomEP7CDataIOPhj
+ 864              	.ent _ZN10NesFDSBios7LoadRomEP7CDataIOPhj
+ 865              	_ZN10NesFDSBios7LoadRomEP7CDataIOPhj:
+ 866              	.frame $sp,64,$31
+ 867              	.mask 0x80070000,-16
+ 868              	.fmask 0x00000000,0
+ 869 0498 C0FFBD27 	subu $sp,$sp,64
+ 870 049c 3000BFFF 	sd $31,48($sp)
+ 871 04a0 2000B2FF 	sd $18,32($sp)
+ 872 04a4 2D908000 	move $18,$4
+ 873 04a8 1000B1FF 	sd $17,16($sp)
+ 874 04ac 2D88A000 	move $17,$5
+ 875 04b0 0000B0FF 	sd $16,0($sp)
+ 876 04b4 0000838C 	lw $3,0($4)
+ 877              	
+ 878 04b8 0C00628C 	lw $2,12($3)
+ 879              	
+ 880              	.set noreorder
+ 881              	.set nomacro
+ 882 04bc 09F84000 	jal $31,$2
+ 883 04c0 10009024 	addu $16,$4,16
+ 884              	.set macro
+ 885              	.set reorder
+ 886              	
+ 887 04c4 0D0040A2 	sb $0,13($18)
+ 888 04c8 FF000224 	li $2,255
+ 889 04cc 0C0040A2 	sb $0,12($18)
+ 890 04d0 080042AE 	sw $2,8($18)
+ 891 04d4 00200524 	li $5,8192
+ 892 04d8 0D000224 	li $2,13
+ 893 04dc 0E0040A2 	sb $0,14($18)
+ 894 04e0 0C0002AE 	sw $2,12($16)
+ 895              	.set noreorder
+ 896              	.set nomacro
+GAS LISTING  			page 17
+
+
+ 897 04e4 0000000C 	jal _ZN9CMemSpace5AllocEj
+ 898 04e8 2D200002 	move $4,$16
+ 899              	.set macro
+ 900              	.set reorder
+ 901              	
+ 902 04ec 2D282002 	move $5,$17
+ 903              	.set noreorder
+ 904              	.set nomacro
+ 905 04f0 0000000C 	jal _ZN9CMemSpace8ReadFileEP7CDataIO
+ 906 04f4 2D200002 	move $4,$16
+ 907              	.set macro
+ 908              	.set reorder
+ 909              	
+ 910 04f8 2D280000 	move $5,$0
+ 911 04fc 0000043C 	lui $4,%hi($LC2)
+ 912 0500 20004326 	addu $3,$18,32
+ 913              	.set noreorder
+ 914              	.set nomacro
+ 915 0504 10004014 	bne $2,$0,$L64
+ 916 0508 38008424 	addiu $4,$4,%lo($LC2)
+ 917              	.set macro
+ 918              	.set reorder
+ 919              	
+ 920 050c 0000000C 	jal printf
+ 920      00000000 
+ 921 0514 0000438E 	lw $3,0($18)
+ 922              	
+ 923 0518 0C00628C 	lw $2,12($3)
+ 924              	
+ 925              	.set noreorder
+ 926              	.set nomacro
+ 927 051c 09F84000 	jal $31,$2
+ 928 0520 2D204002 	move $4,$18
+ 929              	.set macro
+ 930              	.set reorder
+ 931              	
+ 932 0524 04000324 	li $3,4
+ 933              	$L62:
+ 934 0528 3000BFDF 	ld $31,48($sp)
+ 935 052c 2D106000 	move $2,$3
+ 936 0530 2000B2DF 	ld $18,32($sp)
+ 937 0534 1000B1DF 	ld $17,16($sp)
+ 938 0538 0000B0DF 	ld $16,0($sp)
+ 939              	
+ 940              	.set noreorder
+ 941              	.set nomacro
+ 942 053c 0800E003 	j $31
+ 943 0540 4000BD27 	addu $sp,$sp,64
+ 944              	.set macro
+ 945              	.set reorder
+ 946              	
+ 947 0544 00000000 	.p2align 3
+ 948              	$L64:
+ 949 0548 0A000224 	li $2,10
+ 950 054c 2D206000 	move $4,$3
+ 951              	.set noreorder
+ 952              	.set nomacro
+GAS LISTING  			page 18
+
+
+ 953 0550 0000000C 	jal _ZN9CMemSpace5AllocEj
+ 954 0554 0C0062AC 	sw $2,12($3)
+ 955              	.set macro
+ 956              	.set reorder
+ 957              	
+ 958 0558 01000224 	li $2,1
+ 959 055c 040042A2 	sb $2,4($18)
+ 960              	.set noreorder
+ 961              	.set nomacro
+ 962 0560 F1FF0010 	b $L62
+ 963 0564 2D180000 	move $3,$0
+ 964              	.set macro
+ 965              	.set reorder
+ 966              	
+ 967              	.end _ZN10NesFDSBios7LoadRomEP7CDataIOPhj
+ 968              	$Lfe14:
+ 969              	.size _ZN10NesFDSBios7LoadRomEP7CDataIOPhj,$Lfe14-_ZN10NesFDSBios7LoadRomEP7CDataIOPhj
+ 970              	.align 2
+ 971              	.p2align 3,,7
+ 972              	.globl _ZN10NesFDSBios16GetNumRomRegionsEv
+ 973              	.ent _ZN10NesFDSBios16GetNumRomRegionsEv
+ 974              	_ZN10NesFDSBios16GetNumRomRegionsEv:
+ 975              	.frame $sp,0,$31
+ 976              	.mask 0x00000000,0
+ 977              	.fmask 0x00000000,0
+ 978              	.set noreorder
+ 979              	.set nomacro
+ 980 0568 0800E003 	j $31
+ 981 056c 01000224 	li $2,1
+ 982              	.set macro
+ 983              	.set reorder
+ 984              	
+ 985              	.end _ZN10NesFDSBios16GetNumRomRegionsEv
+ 986              	$Lfe15:
+ 987              	.size _ZN10NesFDSBios16GetNumRomRegionsEv,$Lfe15-_ZN10NesFDSBios16GetNumRomRegionsEv
+ 988              	.align 2
+ 989              	.p2align 3,,7
+ 990              	.globl _ZN10NesFDSBios16GetRomRegionNameEj
+ 991              	.ent _ZN10NesFDSBios16GetRomRegionNameEj
+ 992              	_ZN10NesFDSBios16GetRomRegionNameEj:
+ 993              	.frame $sp,0,$31
+ 994              	.mask 0x00000000,0
+ 995              	.fmask 0x00000000,0
+ 996 0570 0000023C 	lui $2,%hi($LC4)
+ 997              	.set noreorder
+ 998              	.set nomacro
+ 999 0574 0200A010 	beq $5,$0,$L72
+ 1000 0578 50004224 	addiu $2,$2,%lo($LC4)
+ 1001              	.set macro
+ 1002              	.set reorder
+ 1003              	
+ 1004 057c 2D100000 	move $2,$0
+ 1005              	$L72:
+ 1006 0580 0800E003 	j $31
+ 1006      00000000 
+ 1007              	.end _ZN10NesFDSBios16GetRomRegionNameEj
+ 1008              	$Lfe16:
+GAS LISTING  			page 19
+
+
+ 1009              	.size _ZN10NesFDSBios16GetRomRegionNameEj,$Lfe16-_ZN10NesFDSBios16GetRomRegionNameEj
+ 1010              	.align 2
+ 1011              	.p2align 3,,7
+ 1012              	.globl _ZN10NesFDSBios16GetRomRegionSizeEj
+ 1013              	.ent _ZN10NesFDSBios16GetRomRegionSizeEj
+ 1014              	_ZN10NesFDSBios16GetRomRegionSizeEj:
+ 1015              	.frame $sp,0,$31
+ 1016              	.mask 0x00000000,0
+ 1017              	.fmask 0x00000000,0
+ 1018              	.set noreorder
+ 1019              	.set nomacro
+ 1020 0588 0200A014 	bne $5,$0,$L79
+ 1021 058c 2D100000 	move $2,$0
+ 1022              	.set macro
+ 1023              	.set reorder
+ 1024              	
+ 1025 0590 1000828C 	lw $2,16($4)
+ 1026              	$L79:
+ 1027 0594 0800E003 	j $31
+ 1027      00000000 
+ 1028              	.end _ZN10NesFDSBios16GetRomRegionSizeEj
+ 1029              	$Lfe17:
+ 1030              	.size _ZN10NesFDSBios16GetRomRegionSizeEj,$Lfe17-_ZN10NesFDSBios16GetRomRegionSizeEj
+ 1031              	.align 2
+ 1032 059c 00000000 	.p2align 3,,7
+ 1033              	.globl _ZN10NesFDSBios13GetMapperNameEv
+ 1034              	.ent _ZN10NesFDSBios13GetMapperNameEv
+ 1035              	_ZN10NesFDSBios13GetMapperNameEv:
+ 1036              	.frame $sp,0,$31
+ 1037              	.mask 0x00000000,0
+ 1038              	.fmask 0x00000000,0
+ 1039              	.set noreorder
+ 1040              	.set nomacro
+ 1041 05a0 0800E003 	j $31
+ 1042 05a4 2D100000 	move $2,$0
+ 1043              	.set macro
+ 1044              	.set reorder
+ 1045              	
+ 1046              	.end _ZN10NesFDSBios13GetMapperNameEv
+ 1047              	$Lfe18:
+ 1048              	.size _ZN10NesFDSBios13GetMapperNameEv,$Lfe18-_ZN10NesFDSBios13GetMapperNameEv
+ 1049              	.align 2
+ 1050              	.p2align 3,,7
+ 1051              	.globl _ZN10NesFDSBios10GetNumExtsEv
+ 1052              	.ent _ZN10NesFDSBios10GetNumExtsEv
+ 1053              	_ZN10NesFDSBios10GetNumExtsEv:
+ 1054              	.frame $sp,0,$31
+ 1055              	.mask 0x00000000,0
+ 1056              	.fmask 0x00000000,0
+ 1057              	.set noreorder
+ 1058              	.set nomacro
+ 1059 05a8 0800E003 	j $31
+ 1060 05ac 01000224 	li $2,1
+ 1061              	.set macro
+ 1062              	.set reorder
+ 1063              	
+ 1064              	.end _ZN10NesFDSBios10GetNumExtsEv
+GAS LISTING  			page 20
+
+
+ 1065              	$Lfe19:
+ 1066              	.size _ZN10NesFDSBios10GetNumExtsEv,$Lfe19-_ZN10NesFDSBios10GetNumExtsEv
+ 1067              	.rdata
+ 1068 0064 00000000 	.align 3
+ 1069              	$LC7:
+ 1070 0068 726F6D00 	.ascii "rom\000"
+ 1071 006c 00000000 	.text
+ 1072              	.align 2
+ 1073              	.p2align 3,,7
+ 1074              	.globl _ZN10NesFDSBios10GetExtNameEj
+ 1075              	.ent _ZN10NesFDSBios10GetExtNameEj
+ 1076              	_ZN10NesFDSBios10GetExtNameEj:
+ 1077              	.frame $sp,0,$31
+ 1078              	.mask 0x00000000,0
+ 1079              	.fmask 0x00000000,0
+ 1080 05b0 0000023C 	lui $2,%hi($LC7)
+ 1081              	.set noreorder
+ 1082              	.set nomacro
+ 1083 05b4 0200A010 	beq $5,$0,$L87
+ 1084 05b8 68004224 	addiu $2,$2,%lo($LC7)
+ 1085              	.set macro
+ 1086              	.set reorder
+ 1087              	
+ 1088 05bc 2D100000 	move $2,$0
+ 1089              	$L87:
+ 1090 05c0 0800E003 	j $31
+ 1090      00000000 
+ 1091              	.end _ZN10NesFDSBios10GetExtNameEj
+ 1092              	$Lfe20:
+ 1093              	.size _ZN10NesFDSBios10GetExtNameEj,$Lfe20-_ZN10NesFDSBios10GetExtNameEj
+ 1094              	.weak _ZTV10NesFDSBios
+ 1095              	.section .gnu.linkonce.d._ZTV10NesFDSBios,"aw",@progbits
+ 1096              	.align 3
+ 1097              	.type _ZTV10NesFDSBios,@object
+ 1098              	.size _ZTV10NesFDSBios,52
+ 1099              	_ZTV10NesFDSBios:
+ 1100 0000 00000000 	.word 0
+ 1101 0004 00000000 	.word 0
+ 1102 0008 00000000 	.word _ZN10NesFDSBiosD1Ev
+ 1103 000c 00000000 	.word _ZN10NesFDSBiosD0Ev
+ 1104 0010 00000000 	.word _ZN10NesFDSBios7LoadRomEP7CDataIOPhj
+ 1105 0014 00000000 	.word _ZN6NesRom6UnloadEv
+ 1106 0018 00000000 	.word _ZN10NesFDSBios10GetNumExtsEv
+ 1107 001c 00000000 	.word _ZN10NesFDSBios10GetExtNameEj
+ 1108 0020 00000000 	.word _ZN10NesFDSBios16GetNumRomRegionsEv
+ 1109 0024 00000000 	.word _ZN10NesFDSBios16GetRomRegionNameEj
+ 1110 0028 00000000 	.word _ZN10NesFDSBios16GetRomRegionSizeEj
+ 1111 002c 00000000 	.word _ZN7CEmuRom11GetRomTitleEv
+ 1112 0030 00000000 	.word _ZN10NesFDSBios13GetMapperNameEv
+ 1113              	.weak _ZTV6NesRom
+ 1114 0034 00000000 	.section .gnu.linkonce.d._ZTV6NesRom,"aw",@progbits
+ 1115              	.align 3
+ 1116              	.type _ZTV6NesRom,@object
+ 1117              	.size _ZTV6NesRom,52
+ 1118              	_ZTV6NesRom:
+ 1119 0000 00000000 	.word 0
+ 1120 0004 00000000 	.word 0
+GAS LISTING  			page 21
+
+
+ 1121 0008 00000000 	.word _ZN6NesRomD1Ev
+ 1122 000c 00000000 	.word _ZN6NesRomD0Ev
+ 1123 0010 00000000 	.word _ZN6NesRom7LoadRomEP7CDataIOPhj
+ 1124 0014 00000000 	.word _ZN6NesRom6UnloadEv
+ 1125 0018 00000000 	.word _ZN6NesRom10GetNumExtsEv
+ 1126 001c 00000000 	.word _ZN6NesRom10GetExtNameEj
+ 1127 0020 00000000 	.word _ZN6NesRom16GetNumRomRegionsEv
+ 1128 0024 00000000 	.word _ZN6NesRom16GetRomRegionNameEj
+ 1129 0028 00000000 	.word _ZN6NesRom16GetRomRegionSizeEj
+ 1130 002c 00000000 	.word _ZN7CEmuRom11GetRomTitleEv
+ 1131 0030 00000000 	.word _ZN6NesRom13GetMapperNameEv
+ 1132 0034 00000000 	.section .gnu.linkonce.t._ZN10NesFDSBiosD1Ev,"ax",@progbits
+ 1133              	.align 2
+ 1134              	.p2align 3,,7
+ 1135              	.weak _ZN10NesFDSBiosD1Ev
+ 1136              	.ent _ZN10NesFDSBiosD1Ev
+ 1137              	_ZN10NesFDSBiosD1Ev:
+ 1138              	.frame $sp,16,$31
+ 1139              	.mask 0x80000000,-16
+ 1140              	.fmask 0x00000000,0
+ 1141 0000 0000023C 	lui $2,%hi(_ZTV10NesFDSBios+8)
+ 1142 0004 F0FFBD27 	subu $sp,$sp,16
+ 1143 0008 08004224 	addiu $2,$2,%lo(_ZTV10NesFDSBios+8)
+ 1144 000c 0000BFFF 	sd $31,0($sp)
+ 1145              	.set noreorder
+ 1146              	.set nomacro
+ 1147 0010 0000000C 	jal _ZN6NesRomD2Ev
+ 1148 0014 000082AC 	sw $2,0($4)
+ 1149              	.set macro
+ 1150              	.set reorder
+ 1151              	
+ 1152 0018 0000BFDF 	ld $31,0($sp)
+ 1153              	
+ 1154              	.set noreorder
+ 1155              	.set nomacro
+ 1156 001c 0800E003 	j $31
+ 1157 0020 1000BD27 	addu $sp,$sp,16
+ 1158              	.set macro
+ 1159              	.set reorder
+ 1160              	
+ 1161              	.end _ZN10NesFDSBiosD1Ev
+ 1162              	$Lfe21:
+ 1163              	.size _ZN10NesFDSBiosD1Ev,$Lfe21-_ZN10NesFDSBiosD1Ev
+ 1164 0024 00000000 	.section .gnu.linkonce.t._ZN10NesFDSBiosD0Ev,"ax",@progbits
+ 1165              	.align 2
+ 1166              	.p2align 3,,7
+ 1167              	.weak _ZN10NesFDSBiosD0Ev
+ 1168              	.ent _ZN10NesFDSBiosD0Ev
+ 1169              	_ZN10NesFDSBiosD0Ev:
+ 1170              	.frame $sp,32,$31
+ 1171              	.mask 0x80010000,-16
+ 1172              	.fmask 0x00000000,0
+ 1173 0000 0000023C 	lui $2,%hi(_ZTV10NesFDSBios+8)
+ 1174 0004 E0FFBD27 	subu $sp,$sp,32
+ 1175 0008 08004224 	addiu $2,$2,%lo(_ZTV10NesFDSBios+8)
+ 1176 000c 0000B0FF 	sd $16,0($sp)
+ 1177 0010 000082AC 	sw $2,0($4)
+GAS LISTING  			page 22
+
+
+ 1178 0014 1000BFFF 	sd $31,16($sp)
+ 1179              	.set noreorder
+ 1180              	.set nomacro
+ 1181 0018 0000000C 	jal _ZN6NesRomD2Ev
+ 1182 001c 2D808000 	move $16,$4
+ 1183              	.set macro
+ 1184              	.set reorder
+ 1185              	
+ 1186              	.set noreorder
+ 1187              	.set nomacro
+ 1188 0020 0000000C 	jal _ZdlPv
+ 1189 0024 2D200002 	move $4,$16
+ 1190              	.set macro
+ 1191              	.set reorder
+ 1192              	
+ 1193 0028 0000B0DF 	ld $16,0($sp)
+ 1194 002c 1000BFDF 	ld $31,16($sp)
+ 1195              	
+ 1196              	.set noreorder
+ 1197              	.set nomacro
+ 1198 0030 0800E003 	j $31
+ 1199 0034 2000BD27 	addu $sp,$sp,32
+ 1200              	.set macro
+ 1201              	.set reorder
+ 1202              	
+ 1203              	.end _ZN10NesFDSBiosD0Ev
+ 1204              	$Lfe22:
+ 1205              	.size _ZN10NesFDSBiosD0Ev,$Lfe22-_ZN10NesFDSBiosD0Ev
+ 1206              	.section .gnu.linkonce.t._ZN7CEmuRom11GetRomTitleEv,"ax",@progbits
+ 1207              	.align 2
+ 1208              	.p2align 3,,7
+ 1209              	.weak _ZN7CEmuRom11GetRomTitleEv
+ 1210              	.ent _ZN7CEmuRom11GetRomTitleEv
+ 1211              	_ZN7CEmuRom11GetRomTitleEv:
+ 1212              	.frame $sp,0,$31
+ 1213              	.mask 0x00000000,0
+ 1214              	.fmask 0x00000000,0
+ 1215              	.set noreorder
+ 1216              	.set nomacro
+ 1217 0000 0800E003 	j $31
+ 1218 0004 2D100000 	move $2,$0
+ 1219              	.set macro
+ 1220              	.set reorder
+ 1221              	
+ 1222              	.end _ZN7CEmuRom11GetRomTitleEv
+ 1223              	$Lfe23:
+ 1224              	.size _ZN7CEmuRom11GetRomTitleEv,$Lfe23-_ZN7CEmuRom11GetRomTitleEv
+ 1225              	.ident "GCC: (GNU) 3.2.2"

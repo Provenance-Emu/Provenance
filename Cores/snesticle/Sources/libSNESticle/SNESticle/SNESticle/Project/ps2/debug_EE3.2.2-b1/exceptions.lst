@@ -1,0 +1,278 @@
+GAS LISTING debug_EE3.2.2-b1/exceptions.sp 			page 1
+
+
+   1              	# 1 "../../../Gep/Source/ps2/exceptions.S"
+   2              	# 1 "<built-in>"
+   1              	/*********************************************************************
+   0              	
+   0              	
+   2              	 * Copyright (C) 2003 Tord Lindstrom (pukko@home.se)
+   3              	 * This file is subject to the terms and conditions of the PS2Link License.
+   4              	 * See the file LICENSE in the main directory of this distribution for more
+   5              	 * details.
+   6              	 */
+   7              	
+   8              	# ASM exception handlers
+   9              	
+  10              	#include "r5900_regs.h"
+   1              	//------------------------------------------------------------------------
+   2              	// File:	regs.h
+   3              	// Author:	Tony Saveski, t_saveski@yahoo.com
+   4              	// Notes:	Playstation 2 Register Definitions
+   5              	//------------------------------------------------------------------------
+   6              	#ifndef R5900_REGS_H
+   7              	#define R5900_REGS_H
+   8              	
+   9              	// MIPS CPU Registsers
+  10              	#define zero	$0		// Always 0
+  11              	#define at		$1		// Assembler temporary
+  11              	        
+  12              	.set noat
+  13              	.set noreorder
+  14              	
+  15              	
+  16              	.text
+  17              	.p2align 4
+  18              	
+  19              	        .global _savedRegs
+  20              	        
+  21              	        .global pkoStepBP
+  22              	        .ent    pkoStepBP
+  23              	pkoStepBP:
+  24              	        # Should check for cause in cop0 Cause reg
+  25              	        # If Bp, increase EPC (DO NOT PUT 'break' in a branch delay slot!!!)
+  26 0000 00701A40 	        mfc0    k0, EPC         # cop0 EPC
+  27 0004 04005A27 	        addiu   k0, k0, 4     # Step over breakpoint
+  28 0008 00709A40 	        mtc0    k0, EPC
+  29 000c 0F040000 	        sync.p
+  30 0010 18000042 	        eret
+  31              	        .end pkoStepBP
+  32              	
+  33              	     
+  34              	        # Save all user regs
+  35              	        # Save HI/LO, SR, BadVAddr, Cause, EPC, ErrorEPC, 
+  36              	        # ShiftAmount, cop0: $24, $25
+  37              	        # Save float regs??
+  38              	        # Set EPC to debugger
+  39              	        # Set stack to 'exception stack'
+  40              	        # eret
+  41              	        .global pkoExceptionHandler
+  42              	        .ent	pkoExceptionHandler
+GAS LISTING debug_EE3.2.2-b1/exceptions.sp 			page 2
+
+
+  43              	pkoExceptionHandler:
+  44 0014 00001A3C 	        la      k0, _savedRegs
+  44      00005A27 
+  45 001c 0000407F 	        sq      $0,  0x00(k0)
+  46 0020 1000417F 	        sq      at,  0x10(k0)
+  47 0024 2000427F 	        sq      v0,  0x20(k0)
+  48 0028 3000437F 	        sq      v1,  0x30(k0)
+  49 002c 4000447F 	        sq      a0,  0x40(k0)
+  50 0030 5000457F 	        sq      a1,  0x50(k0)
+  51 0034 6000467F 	        sq      a2,  0x60(k0)
+  52 0038 7000477F 	        sq      a3,  0x70(k0)
+  53 003c 8000487F 	        sq      t0,  0x80(k0)
+  54 0040 9000497F 	        sq      t1,  0x90(k0)
+  55 0044 A0004A7F 	        sq      t2,  0xa0(k0)
+  56 0048 B0004B7F 	        sq      t3,  0xb0(k0)
+  57 004c C0004C7F 	        sq      t4,  0xc0(k0)
+  58 0050 D0004D7F 	        sq      t5,  0xd0(k0)
+  59 0054 E0004E7F 	        sq      t6,  0xe0(k0)
+  60 0058 F0004F7F 	        sq      t7,  0xf0(k0)
+  61 005c 0001587F 	        sq      t8,  0x100(k0)
+  62 0060 1001597F 	        sq      t9,  0x110(k0)
+  63 0064 2001507F 	        sq      s0,  0x120(k0)
+  64 0068 3001517F 	        sq      s1,  0x130(k0)
+  65 006c 4001527F 	        sq      s2,  0x140(k0)
+  66 0070 5001537F 	        sq      s3,  0x150(k0)
+  67 0074 6001547F 	        sq      s4,  0x160(k0)
+  68 0078 7001557F 	        sq      s5,  0x170(k0)
+  69 007c 8001567F 	        sq      s6,  0x180(k0)
+  70 0080 9001577F 	        sq      s7,  0x190(k0)
+  71              	#        sq      k0,  0x1a0(k0)          # $k0
+  72 0084 A001407F 	        sq      zero, 0x1a0(k0)         # zero instead
+  73 0088 B0015B7F 	        sq      k1,  0x1b0(k0)          # $k1
+  74 008c C0015C7F 	        sq      gp,  0x1c0(k0)
+  75 0090 D0015D7F 	        sq      sp,  0x1d0(k0)          # sp
+  76 0094 E0015E7F 	        sq      fp,  0x1e0(k0)
+  77 0098 F0015F7F 	        sq      ra,  0x1f0(k0)          # $ra
+  78              	
+  79 009c 09420070 	        pmfhi   t0                      # HI
+  80 00a0 494A0070 	        pmflo   t1                      # LO
+  81 00a4 0002487F 	        sq      t0, 0x200(k0)
+  82 00a8 1002497F 	        sq      t1, 0x210(k0)
+  83              	       
+  84 00ac 00400840 	        mfc0    t0, BadVAddr            # Cop0 state regs
+  85 00b0 00600940 	        mfc0    t1, Status
+  86 00b4 200248AF 	        sw      t0, 0x220(k0)
+  87 00b8 240249AF 	        sw      t1, 0x224(k0)
+  88              	
+  89 00bc 00680840 	        mfc0    t0, Cause
+  90 00c0 00700940 	        mfc0    t1, EPC
+  91 00c4 280248AF 	        sw      t0, 0x228(k0)
+  92 00c8 2C0249AF 	        sw      t1, 0x22c(k0)
+  93              	
+  94              	        # Kernel saves these two also..
+  95 00cc 00C00840 	        mfc0    t0, DEPC
+  96 00d0 00C80940 	        mfc0    t1, PerfCnt
+  97 00d4 300248AF 	        sw      t0, 0x230(k0)
+  98 00d8 340249AF 	        sw      t1, 0x234(k0)
+GAS LISTING debug_EE3.2.2-b1/exceptions.sp 			page 3
+
+
+  99              	
+ 100 00dc 28400000 	        mfsa    t0
+ 101 00e0 380248AF 	        sw      t0, 0x238(k0)
+ 102              	
+ 103              	        # Use our own stack..
+ 104 00e4 00001D3C 	        la      sp, _exceptionStack+0x2000-16
+ 104      F01FBD27 
+ 105 00ec 00001C3C 	        la       gp, _gp                 # Use exception handlers _gp
+ 105      00009C27 
+ 106              	        
+ 107              	        # Return from exception and start 'debugger'
+ 108 00f4 00680440 	        mfc0    a0, Cause               # arg0
+ 109 00f8 00400540 	        mfc0    a1, BadVAddr
+ 110 00fc 00600640 	        mfc0    a2, Status
+ 111 0100 00700740 	        mfc0    a3, EPC
+ 112 0104 21401A00 	        addu    t0, zero, k0            # arg4 = registers
+ 113 0108 2D48A003 	        move    t1, sp
+ 114 010c 00001A3C 	        la      k0, pkoDebug
+ 114      00005A27 
+ 115 0114 00709A40 	        mtc0    k0, EPC                 # eret return address
+ 116 0118 0F040000 	        sync.p
+ 117 011c 00601A40 	        mfc0    k0, Status                  # check this out..
+ 118 0120 FFFF023C 	        li      v0, 0xfffffffe
+ 118      FEFF4234 
+ 119 0128 24D04203 	        and     k0, v0
+ 120 012c 00609A40 	        mtc0    k0, Status
+ 121 0130 0F040000 	        sync.p
+ 122 0134 00000000 	        nop
+ 123 0138 00000000 	        nop
+ 124 013c 00000000 	        nop
+ 125 0140 00000000 	        nop
+ 126 0144 18000042 	        eret
+ 127 0148 00000000 	        nop
+ 128              	        .end	pkoExceptionHandler
+ 129              	
+ 130              	
+ 131              	        
+ 132              	        # Put EE in kernel mode
+ 133              	        # Restore all user regs etc
+ 134              	        # Restore PC? & Stack ptr
+ 135              	        # Restore interrupt sources
+ 136              	        # Jump to EPC
+ 137              	        .ent pkoReturnFromDebug
+ 138              	        .global pkoReturnFromDebug
+ 139              	pkoReturnFromDebug:
+ 140              	
+ 141 014c 0100093C 	        lui     t1, 0x1
+ 142              	_disable:
+ 143 0150 39000042 	        di
+ 144 0154 0F000000 	        sync
+ 145 0158 00600840 	        mfc0    t0, Status
+ 146 015c 24400901 	        and     t0, t1
+ 147 0160 FBFF0011 	        beqz    t0, _disable
+ 148 0164 00000000 	        nop
+ 149              	        
+ 150 0168 00001A3C 	        la      k0, _savedRegs
+ 150      00005A27 
+GAS LISTING debug_EE3.2.2-b1/exceptions.sp 			page 4
+
+
+ 151              	                
+ 152 0170 0002487B 	        lq      t0, 0x200(k0)
+ 153 0174 1002497B 	        lq      t1, 0x210(k0)
+ 154 0178 29020071 	        pmthi   t0                      # HI
+ 155 017c 69022071 	        pmtlo   t1                      # LO
+ 156              	       
+ 157 0180 2002488F 	        lw      t0, 0x220(k0)
+ 158 0184 2402498F 	        lw      t1, 0x224(k0)
+ 159 0188 00408840 	        mtc0    t0, BadVAddr
+ 160 018c 00608940 	        mtc0    t1, Status
+ 161              	
+ 162 0190 2802488F 	        lw      t0, 0x228(k0)
+ 163 0194 2C02498F 	        lw      t1, 0x22c(k0)
+ 164 0198 00688840 	        mtc0    t0, Cause
+ 165 019c 00708940 	        mtc0    t1, EPC
+ 166              	
+ 167              	        # Kernel saves these two also..
+ 168 01a0 3002488F 	        lw      t0, 0x230(k0)
+ 169 01a4 3402498F 	        lw      t1, 0x234(k0)
+ 170 01a8 00C08840 	        mtc0    t0, DEPC
+ 171 01ac 00C88940 	        mtc0    t1, PerfCnt
+ 172              	
+ 173              	        # Shift Amount reg
+ 174 01b0 3802488F 	        lw      t0, 0x238(k0)
+ 175 01b4 29000001 	        mtsa    t0
+ 176              	
+ 177              	
+ 178              	#        ori     t2, 0xff
+ 179              	#        sw      t2, 0(k1)
+ 180              	        
+ 181              	        #        lq      $0,  0x00(k0)
+ 182 01b8 1000417B 	        lq      $1,  0x10(k0)
+ 183 01bc 2000427B 	        lq      $2,  0x20(k0)
+ 184 01c0 3000437B 	        lq      $3,  0x30(k0)
+ 185 01c4 4000447B 	        lq      $4,  0x40(k0)
+ 186 01c8 5000457B 	        lq      $5,  0x50(k0)
+ 187 01cc 6000467B 	        lq      $6,  0x60(k0)
+ 188 01d0 7000477B 	        lq      $7,  0x70(k0)
+ 189 01d4 8000487B 	        lq      $8,  0x80(k0)
+ 190 01d8 9000497B 	        lq      $9,  0x90(k0)
+ 191 01dc A0004A7B 	        lq      $10, 0xa0(k0)
+ 192 01e0 B0004B7B 	        lq      $11, 0xb0(k0)
+ 193 01e4 C0004C7B 	        lq      $12, 0xc0(k0)
+ 194 01e8 D0004D7B 	        lq      $13, 0xd0(k0)
+ 195 01ec E0004E7B 	        lq      $14, 0xe0(k0)
+ 196 01f0 F0004F7B 	        lq      $15, 0xf0(k0)
+ 197 01f4 0001507B 	        lq      $16, 0x100(k0)
+ 198 01f8 1001517B 	        lq      $17, 0x110(k0)
+ 199 01fc 2001527B 	        lq      $18, 0x120(k0)
+ 200 0200 3001537B 	        lq      $19, 0x130(k0)
+ 201 0204 40014A7B 	        lq      $10, 0x140(k0)
+ 202 0208 5001557B 	        lq      $21, 0x150(k0)
+ 203 020c 6001567B 	        lq      $22, 0x160(k0)
+ 204 0210 7001577B 	        lq      $23, 0x170(k0)
+ 205 0214 8001587B 	        lq      $24, 0x180(k0)
+ 206 0218 9001597B 	        lq      $25, 0x190(k0)
+ 207              	#        lq      $26, 0x1a0(k0)          # $k0
+GAS LISTING debug_EE3.2.2-b1/exceptions.sp 			page 5
+
+
+ 208 021c B0015B7B 	        lq      $27, 0x1b0(k0)          # $k1
+ 209 0220 C0015C7B 	        lq      $28, 0x1c0(k0)
+ 210 0224 D0015D7B 	        lq      $29, 0x1d0(k0)          # $sp
+ 211 0228 E0015E7B 	        lq      $30, 0x1e0(k0)
+ 212              	#        lq      $31, 0x1f0(k0)          # $ra
+ 213              	
+ 214 022c 2C025F8F 	        lw      ra, 0x22c(k0)
+ 215              	        # Guess one should have some check here, and only advance PC if 
+ 216              	        # we are going to step over a Breakpoint or something
+ 217              	        # (i.e. do stuff depending on Cause)
+ 218 0230 0400FF27 	        addiu   ra, 4
+ 219 0234 0F040000 	        sync.p
+ 220 0238 38000042 	        ei
+ 221 023c 0F040000 	        sync.p
+ 222              	
+ 223 0240 0800E003 	        jr      ra
+ 224 0244 00000000 	        nop        
+ 225 0248 00000000 	        .end pkoReturnFromDebug
+ 225      00000000 
+GAS LISTING debug_EE3.2.2-b1/exceptions.sp 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 <command line>
+                            *ABS*:0000000000000000 <built-in>
+../../../Gep/Source/ps2/exceptions.S:23     .text:0000000000000000 pkoStepBP
+../../../Gep/Source/ps2/exceptions.S:43     .text:0000000000000014 pkoExceptionHandler
+../../../Gep/Source/ps2/exceptions.S:139    .text:000000000000014c pkoReturnFromDebug
+../../../Gep/Source/ps2/exceptions.S:142    .text:0000000000000150 _disable
+
+UNDEFINED SYMBOLS
+_savedRegs
+_exceptionStack
+_gp
+pkoDebug

@@ -1,0 +1,13 @@
+framework module PVEmulatorCore {
+    umbrella header "PVEmulatorCore.h"
+
+    header "EmulatorCore.h"
+    header "OEGeometry.h"
+    export *
+    module * { export * }
+}
+
+module PVEmulatorCore.Swift {
+    header "PVEmulatorCore-Swift.h"
+    requires objc
+}

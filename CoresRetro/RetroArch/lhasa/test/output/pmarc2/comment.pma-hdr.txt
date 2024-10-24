@@ -1,0 +1,8 @@
+filename: hello.txt
+compress_method: -pm2-
+compressed_length: 22
+length: 128
+header_level: 0
+os_type: 0
+crc: 9784
+--

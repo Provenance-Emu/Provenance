@@ -1,0 +1,176 @@
+GAS LISTING crt0.s 			page 1
+
+
+   1              	#
+   2              	#  _____     ___ ____
+   3              	#   ____|   |    ____|      PS2 OpenSource Project
+   4              	#  |     ___|   |____
+   5              	#  ------------------------------------------------------------------------
+   6              	#  crt0.s                   Standard startup file.
+   7              	#
+   8              	
+   9              	.set noat
+  10              	.set noreorder
+  11              	
+  12              	.global _start
+  13              	.global	_exit
+  14              	
+  15              		.extern	_heap_size
+  16              		.extern	_stack
+  17              		.extern _stack_size
+  18              	
+  19              		.text
+  20              	
+  21 0000 00000000 		nop
+  22 0004 00000000 		nop
+  23              	
+  24              		.ent _start
+  25              	_start:
+  26              	
+  27              	# Clear bss elf segment (static uninitalised data)
+  28              	zerobss:
+  29 0008 0000023C 		la	$2, _fbss
+  29      00004224 
+  30 0010 0000033C 		la	$3, _end
+  30      00006324 
+  31              	loop:
+  32 0018 00000000 		nop
+  33 001c 00000000 		nop
+  34 0020 00000000 		nop
+  35 0024 0000407C 		sq	$0,($2)
+  36 0028 2B084300 		sltu	$1,$2,$3
+  37 002c FAFF2014 		bne	$1,$0,loop
+  38 0030 10004224 		addiu	$2,$2,16
+  39              	
+  40              	# Some program loaders (such as Pukklink) execute programs as a thread, but
+  41              	# support passing argc and argv values via a0.  This also indicates that when
+  42              	# the program terminates, control should be returned to the program loader
+  43              	# instead of the PS2 browser.
+  44 0034 0000023C 		la	$2, _args_ptr
+  44      44014224 
+  45 003c 000044AC 	    	sw	$4,($2)
+  46              	
+  47              	# Setup a thread to use
+  48 0040 0000043C 		la	$4, _gp
+  48      00008424 
+  49 0048 0000053C 		la	$5, _stack
+  49      0000A524 
+  50 0050 0000063C 		la	$6, _stack_size
+  50      0000C624 
+  51 0058 0000073C 		la	$7, _args
+GAS LISTING crt0.s 			page 2
+
+
+  51      0000E724 
+  52 0060 0000083C 		la	$8, _root
+  52      0C010825 
+  53 0068 2DE08000 		move	$28,$4
+  54 006c 3C000324 		addiu	$3,$0,60
+  55 0070 0C000000 		syscall			# RFU060(gp, stack, stack_size, args, root_func)
+  56 0074 2DE84000 		move	$29, $2
+  57              	
+  58              	# Heap
+  59 0078 3D000324 		addiu	$3,$0,61
+  60 007c 0000043C 		la	$4, _end
+  60      00008424 
+  61 0084 0000053C 		la	$5, _heap_size
+  61      0000A524 
+  62 008c 0C000000 		syscall			# RFU061(heap_start, heap_size)
+  63 0090 00000000 		nop
+  64              	
+  65              	# Flush the data cache (no need to preserve regs for this call)
+  66 0094 64000324 		li	$3, 0x64
+  67 0098 2D200000 		move	$4,$0
+  68 009c 0C000000 		syscall			# FlushCache(0) - Writeback data cache
+  69              	
+  70              	# Jump main, now that environment and args are setup
+  71 00a0 38000042 		ei
+  72              	
+  73              	# Check for arguments pased via ExecPS2 or LoadExecPS2
+  74 00a4 0000023C 		la	$2, _args
+  74      00004224 
+  75 00ac 0000438C 		lw	$3, ($2)
+  76 00b0 07006014 		bnez	$3, 1f
+  77 00b4 00000000 		nop
+  78              	
+  79              	# Otherwise check for arguments passed by a loader via a0 (_arg_ptr)
+  80 00b8 0000023C 		la	$2, _args_ptr
+  80      44014224 
+  81 00c0 0000438C 		lw	$3, ($2)
+  82 00c4 04006050 		beqzl	$3, 2f
+  83 00c8 00000424 		addu	$4, $0, 0
+  84              	
+  85 00cc 04006224 		addiu	$2, $3, 4
+  86              	1:
+  87 00d0 0000448C 		lw	$4, ($2)
+  88 00d4 04004524 		addiu	$5, $2, 4
+  89              	2:
+  90 00d8 0000000C 		jal	main
+  91 00dc 00000000 		nop
+  92              		.end	_start
+  93              	
+  94              		.ent	_exit
+  95              	_exit:
+  96              	# If we received our program arguments in a0, then we were executed by a
+  97              	# loader, and we don't want to return to the browser.
+  98 00e0 0000043C 		la	$4, _args_ptr
+  98      44018424 
+  99 00e8 0000858C 		lw	$5, ($4)
+ 100 00ec 0500A010 		beqz	$5, 1f
+ 101 00f0 2D204000 		move	$4, $2		# main()'s return code
+GAS LISTING crt0.s 			page 3
+
+
+ 102              	
+ 103 00f4 0000A68C 		lw	$6, ($5)
+ 104 00f8 0000C0AC 		sw	$0, ($6)
+ 105 00fc 24000324 		addiu	$3, $0, 36
+ 106 0100 0C000000 		syscall			# ExitDeleteThread(void)
+ 107              	
+ 108              	# Return to the browser via Exit()
+ 109              	1:
+ 110 0104 04000324 		addiu	$3, $0, 4
+ 111 0108 0C000000 		syscall			# Exit(void)
+ 112              		.end	_exit
+ 113              	
+ 114              	# Call ExitThread()
+ 115              		.ent	_root
+ 116              	_root:
+ 117 010c 23000324 		addiu	$3, $0, 35
+ 118 0110 0C000000 		syscall
+ 119              		.end	_root
+ 120              	
+ 121              		.bss
+ 122              		.align	6
+ 123              	_args:
+ 124 0000 00000000 		.space	256+16*4+4
+ 124      00000000 
+ 124      00000000 
+ 124      00000000 
+ 124      00000000 
+ 125              	_args_ptr:
+ 126 0144 00000000 		.space	4
+ 126      00000000 
+ 126      00000000 
+ 126      00000000 
+ 126      00000000 
+GAS LISTING crt0.s 			page 4
+
+
+DEFINED SYMBOLS
+              crt0.s:25     .text:0000000000000008 _start
+              crt0.s:95     .text:00000000000000e0 _exit
+              crt0.s:28     .text:0000000000000008 zerobss
+              crt0.s:31     .text:0000000000000018 loop
+              crt0.s:125    .bss:0000000000000144 _args_ptr
+              crt0.s:123    .bss:0000000000000000 _args
+              crt0.s:116    .text:000000000000010c _root
+
+UNDEFINED SYMBOLS
+_heap_size
+_stack
+_stack_size
+_fbss
+_end
+_gp
+main

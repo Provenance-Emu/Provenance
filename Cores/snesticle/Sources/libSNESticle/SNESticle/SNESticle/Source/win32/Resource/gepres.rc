@@ -1,0 +1,161 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Load Rom...\tCtrl+L",        ID_FILE_OPENROM
+        MENUITEM "&Close Rom",                  ID_FILE_CLOSEROM
+        MENUITEM SEPARATOR
+        MENUITEM "&Screenshot\tF9",             ID_FILE_SCREENSHOT
+        MENUITEM "E&xit",                       ID_FILE_EXIT
+    END
+    POPUP "&Emu"
+    BEGIN
+        MENUITEM "&Pause",                      ID_EMU_PAUSE
+        MENUITEM "&Frame Step\tF11",            ID_EMU_STEPFRAME
+        MENUITEM "&Reset\tF10",                 ID_EMU_RESET
+        MENUITEM "Soft Reset",                  ID_EMU_SOFTRESET
+        MENUITEM SEPARATOR
+        MENUITEM "&Save State\tF5",             ID_EMU_SAVESTATE
+        MENUITEM "&Load State\tF7",             ID_EMU_RESTORESTATE
+        MENUITEM SEPARATOR
+        POPUP "Dump"
+        BEGIN
+            MENUITEM "CPU Mem",                     ID_EMU_DUMPCPUMEM
+            MENUITEM "PPU Mem",                     ID_EMU_DUMPPPUMEM
+            MENUITEM "SPC Mem",                     ID_DUMP_SPCMEM
+        END
+        POPUP "Disasm"
+        BEGIN
+            MENUITEM "CPU Mem",                     ID_DISASM_CPUMEMORY
+            MENUITEM "SPC Mem",                     ID_DISASM_SPCMEMORY
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Record Movie",                ID_EMU_RECORDMOVIE
+        MENUITEM "Play Movie",                  ID_EMU_PLAYMOVIE
+        MENUITEM "Stop Movie",                  ID_EMU_STOPMOVIE
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Memory",                     ID_VIEW_MEMORY
+        MENUITEM "&Disasm",                     ID_VIEW_DISASM
+        MENUITEM "&Console",                    ID_VIEW_CONSOLE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About",                      ID_HELP_ABOUT
+    END
+END
+
+IDR_MEMMENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Write",                      IDM_FILE_WRITE
+        MENUITEM "&Close",                      IDM_FILE_CLOSE
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "CPU Memory",                  IDM_VIEW_CPUMEMORY
+        MENUITEM "PPU Memory",                  IDM_VIEW_PPUMEMORY
+        MENUITEM "PRG ROM",                     IDM_VIEW_PRGROM
+        MENUITEM "CHR ROM",                     IDM_VIEW_CHRROM
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "icon1.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS 
+BEGIN
+    "E",            ID_DISK_EJECT,          VIRTKEY, CONTROL, NOINVERT
+    "I",            ID_DISK_INSERT,         VIRTKEY, CONTROL, NOINVERT
+    "L",            ID_FILE_OPENROM,        VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_DISK_SWITCH,         VIRTKEY, CONTROL, NOINVERT
+    VK_F10,         ID_EMU_RESET,           VIRTKEY, NOINVERT
+    VK_F11,         ID_EMU_STEPFRAME,       VIRTKEY, NOINVERT
+    VK_F5,          ID_EMU_SAVESTATE,       VIRTKEY, NOINVERT
+    VK_F7,          ID_EMU_RESTORESTATE,    VIRTKEY, NOINVERT
+    VK_F9,          ID_FILE_SCREENSHOT,     VIRTKEY, NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

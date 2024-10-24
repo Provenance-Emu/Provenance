@@ -1,0 +1,3408 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/zlib/gzio.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 3
+   6              	.type gz_magic,@object
+   7              	.size gz_magic,8
+   8              	gz_magic:
+   9 0000 1F000000 	.word 31
+  10 0004 8B000000 	.word 139
+  11              	.rdata
+  12              	.align 3
+  13              	$LC0:
+  14 0000 312E312E 	.ascii "1.1.3\000"
+  14      3300
+  15 0006 0000     	.align 3
+  16              	$LC1:
+  17 0008 25632563 	.ascii "%c%c%c%c%c%c%c%c%c%c\000"
+  17      25632563 
+  17      25632563 
+  17      25632563 
+  17      25632563 
+  18              	.text
+  19              	.align 2
+  20              	.p2align 3,,7
+  21              	.ent gz_open
+  22              	gz_open:
+  23              	.frame $sp,240,$31
+  24              	.mask 0x807f0000,-16
+  25              	.fmask 0x00000000,0
+  26 0000 10FFBD27 	subu $sp,$sp,240
+  27 0004 D000B6FF 	sd $22,208($sp)
+  28 0008 2DB0C000 	move $22,$6
+  29 000c C000B5FF 	sd $21,192($sp)
+  30 0010 FFFF1524 	li $21,-1
+  31 0014 B000B4FF 	sd $20,176($sp)
+  32 0018 2DA00000 	move $20,$0
+  33 001c A000B3FF 	sd $19,160($sp)
+  34 0020 2D988000 	move $19,$4
+  35 0024 9000B2FF 	sd $18,144($sp)
+  36 0028 2000B227 	addu $18,$sp,32
+  37 002c 8000B1FF 	sd $17,128($sp)
+  38 0030 2D88A000 	move $17,$5
+  39 0034 E000BFFF 	sd $31,224($sp)
+  40              	.set noreorder
+  41              	.set nomacro
+  42 0038 5F008010 	beq $4,$0,$L33
+  43 003c 7000B0FF 	sd $16,112($sp)
+  44              	.set macro
+  45              	.set reorder
+  46              	
+  47              	.set noreorder
+  48              	.set nomacro
+  49 0040 5E00A050 	beql $5,$0,$L1
+  50 0044 2D100000 	move $2,$0
+  51              	.set macro
+  52              	.set reorder
+GAS LISTING  			page 2
+
+
+  53              	
+  54              	.set noreorder
+  55              	.set nomacro
+  56 0048 0000000C 	jal malloc
+  57 004c 80000424 	dli $4,0x80
+  58              	.set macro
+  59              	.set reorder
+  60              	
+  61 0050 2D804000 	move $16,$2
+  62              	.set noreorder
+  63              	.set nomacro
+  64 0054 59000012 	beq $16,$0,$L1
+  65 0058 2D100000 	move $2,$0
+  66              	.set macro
+  67              	.set reorder
+  68              	
+  69 005c 2D280000 	move $5,$0
+  70 0060 2D300000 	move $6,$0
+  71 0064 2D200000 	move $4,$0
+  72 0068 280000AE 	sw $0,40($16)
+  73 006c 2C0000AE 	sw $0,44($16)
+  74 0070 300000AE 	sw $0,48($16)
+  75 0074 540000AE 	sw $0,84($16)
+  76 0078 000000AE 	sw $0,0($16)
+  77 007c 580000AE 	sw $0,88($16)
+  78 0080 100000AE 	sw $0,16($16)
+  79 0084 140000AE 	sw $0,20($16)
+  80 0088 040000AE 	sw $0,4($16)
+  81 008c 500000AE 	sw $0,80($16)
+  82 0090 480000AE 	sw $0,72($16)
+  83              	.set noreorder
+  84              	.set nomacro
+  85 0094 0000000C 	jal crc32
+  86 0098 4C0000AE 	sw $0,76($16)
+  87              	.set macro
+  88              	.set reorder
+  89              	
+  90 009c 2D206002 	move $4,$19
+  91 00a0 600002FE 	sd $2,96($16)
+  92 00a4 680000AE 	sw $0,104($16)
+  93              	.set noreorder
+  94              	.set nomacro
+  95 00a8 0000000C 	jal strlen
+  96 00ac 700000AE 	sw $0,112($16)
+  97              	.set macro
+  98              	.set reorder
+  99              	
+ 100 00b0 01004224 	addu $2,$2,1
+ 101 00b4 3C100200 	dsll $2,$2,32
+ 102 00b8 3E100200 	dsrl $2,$2,32
+ 103              	.set noreorder
+ 104              	.set nomacro
+ 105 00bc 0000000C 	jal malloc
+ 106 00c0 2D204000 	move $4,$2
+ 107              	.set macro
+ 108              	.set reorder
+ 109              	
+GAS LISTING  			page 3
+
+
+ 110              	.set noreorder
+ 111              	.set nomacro
+ 112 00c4 3A004010 	beq $2,$0,$L32
+ 113 00c8 6C0002AE 	sw $2,108($16)
+ 114              	.set macro
+ 115              	.set reorder
+ 116              	
+ 117 00cc 2D286002 	move $5,$19
+ 118              	.set noreorder
+ 119              	.set nomacro
+ 120 00d0 0000000C 	jal strcpy
+ 121 00d4 2D204000 	move $4,$2
+ 122              	.set macro
+ 123              	.set reorder
+ 124              	
+ 125 00d8 68000924 	li $9,104
+ 126 00dc 740000A2 	sb $0,116($16)
+ 127 00e0 7000A627 	addu $6,$sp,112
+ 128 00e4 72000524 	li $5,114
+ 129 00e8 61000724 	li $7,97
+ 130 00ec 66000824 	li $8,102
+ 131 00f0 00002282 	lb $2,0($17)
+ 132              	$L41:
+ 133              	.set noreorder
+ 134              	.set nomacro
+ 135 00f4 7E004510 	beq $2,$5,$L35
+ 136 00f8 00002392 	lbu $3,0($17)
+ 137              	.set macro
+ 138              	.set reorder
+ 139              	
+ 140              	$L9:
+ 141 00fc 77000424 	li $4,119
+ 142              	.set noreorder
+ 143              	.set nomacro
+ 144 0100 03004450 	beql $2,$4,$L10
+ 145 0104 740004A2 	sb $4,116($16)
+ 146              	.set macro
+ 147              	.set reorder
+ 148              	
+ 149              	.set noreorder
+ 150              	.set nomacro
+ 151 0108 01004750 	beql $2,$7,$L10
+ 152 010c 740004A2 	sb $4,116($16)
+ 153              	.set macro
+ 154              	.set reorder
+ 155              	
+ 156              	$L10:
+ 157 0110 D0FF6224 	addu $2,$3,-48
+ 158 0114 0A00422C 	sltu $2,$2,10
+ 159              	.set noreorder
+ 160              	.set nomacro
+ 161 0118 6D004010 	beq $2,$0,$L12
+ 162 011c 00160300 	sll $2,$3,24
+ 163              	.set macro
+ 164              	.set reorder
+ 165              	
+ 166 0120 03160200 	sra $2,$2,24
+GAS LISTING  			page 4
+
+
+ 167 0124 D0FF5524 	addu $21,$2,-48
+ 168              	$L8:
+ 169              	$L42:
+ 170              	.set noreorder
+ 171              	.set nomacro
+ 172 0128 03006010 	beq $3,$0,$L7
+ 173 012c 01003126 	addu $17,$17,1
+ 174              	.set macro
+ 175              	.set reorder
+ 176              	
+ 177              	.set noreorder
+ 178              	.set nomacro
+ 179 0130 F0FF4656 	bnel $18,$6,$L41
+ 180 0134 00002282 	lb $2,0($17)
+ 181              	.set macro
+ 182              	.set reorder
+ 183              	
+ 184              	$L7:
+ 185 0138 74000382 	lb $3,116($16)
+ 186              	
+ 187              	.set noreorder
+ 188              	.set nomacro
+ 189 013c 1C006010 	beq $3,$0,$L32
+ 190 0140 77000224 	li $2,119
+ 191              	.set macro
+ 192              	.set reorder
+ 193              	
+ 194              	.set noreorder
+ 195              	.set nomacro
+ 196 0144 51006210 	beq $3,$2,$L36
+ 197 0148 00000A3C 	lui $10,%hi($LC0)
+ 198              	.set macro
+ 199              	.set reorder
+ 200              	
+ 201              	.set noreorder
+ 202              	.set nomacro
+ 203 014c 0000000C 	jal malloc
+ 204 0150 00400424 	dli $4,0x4000
+ 205              	.set macro
+ 206              	.set reorder
+ 207              	
+ 208 0154 0000063C 	lui $6,%hi($LC0)
+ 209 0158 48000724 	li $7,72
+ 210 015c 2D200002 	move $4,$16
+ 211 0160 F1FF0524 	li $5,-15
+ 212 0164 0000C624 	addiu $6,$6,%lo($LC0)
+ 213 0168 000002AE 	sw $2,0($16)
+ 214              	.set noreorder
+ 215              	.set nomacro
+ 216 016c 0000000C 	jal inflateInit2_
+ 217 0170 540002AE 	sw $2,84($16)
+ 218              	.set macro
+ 219              	.set reorder
+ 220              	
+ 221 0174 0E004014 	bne $2,$0,$L32
+ 221      00000000 
+ 222 017c 5400028E 	lw $2,84($16)
+GAS LISTING  			page 5
+
+
+ 223              	$L34:
+ 224              	.set noreorder
+ 225              	.set nomacro
+ 226 0180 0B004010 	beq $2,$0,$L32
+ 227 0184 00400224 	li $2,16384
+ 228              	.set macro
+ 229              	.set reorder
+ 230              	
+ 231              	.set noreorder
+ 232              	.set nomacro
+ 233 0188 0000000C 	jal __errno
+ 234 018c 140002AE 	sw $2,20($16)
+ 235              	.set macro
+ 236              	.set reorder
+ 237              	
+ 238              	.set noreorder
+ 239              	.set nomacro
+ 240 0190 3900C006 	bltz $22,$L37
+ 241 0194 000040AC 	sw $0,0($2)
+ 242              	.set macro
+ 243              	.set reorder
+ 244              	
+ 245 0198 2D20C002 	move $4,$22
+ 246              	.set noreorder
+ 247              	.set nomacro
+ 248 019c 0000000C 	jal fdopen
+ 249 01a0 2000A527 	addu $5,$sp,32
+ 250              	.set macro
+ 251              	.set reorder
+ 252              	
+ 253              	$L28:
+ 254              	.set noreorder
+ 255              	.set nomacro
+ 256 01a4 0F004014 	bne $2,$0,$L29
+ 257 01a8 500002AE 	sw $2,80($16)
+ 258              	.set macro
+ 259              	.set reorder
+ 260              	
+ 261 01ac 00000000 	.p2align 3
+ 262              	$L32:
+ 263              	.set noreorder
+ 264              	.set nomacro
+ 265 01b0 B001000C 	jal destroy
+ 266 01b4 2D200002 	move $4,$16
+ 267              	.set macro
+ 268              	.set reorder
+ 269              	
+ 270              	$L33:
+ 271 01b8 2D100000 	move $2,$0
+ 272              	$L1:
+ 273 01bc E000BFDF 	ld $31,224($sp)
+ 274 01c0 D000B6DF 	ld $22,208($sp)
+ 275 01c4 C000B5DF 	ld $21,192($sp)
+ 276 01c8 B000B4DF 	ld $20,176($sp)
+ 277 01cc A000B3DF 	ld $19,160($sp)
+ 278 01d0 9000B2DF 	ld $18,144($sp)
+ 279 01d4 8000B1DF 	ld $17,128($sp)
+GAS LISTING  			page 6
+
+
+ 280 01d8 7000B0DF 	ld $16,112($sp)
+ 281              	
+ 282              	.set noreorder
+ 283              	.set nomacro
+ 284 01dc 0800E003 	j $31
+ 285 01e0 F000BD27 	addu $sp,$sp,240
+ 286              	.set macro
+ 287              	.set reorder
+ 288              	
+ 289              	$L29:
+ 290 01e4 2D204000 	move $4,$2
+ 291 01e8 2D280000 	move $5,$0
+ 292 01ec 2D300000 	move $6,$0
+ 293              	.set noreorder
+ 294              	.set nomacro
+ 295 01f0 0000000C 	jal setvbuf
+ 296 01f4 00400724 	dli $7,0x4000
+ 297              	.set macro
+ 298              	.set reorder
+ 299              	
+ 300 01f8 77000224 	li $2,119
+ 301 01fc 74000382 	lb $3,116($16)
+ 302              	
+ 303              	.set noreorder
+ 304              	.set nomacro
+ 305 0200 0A006250 	beql $3,$2,$L38
+ 306 0204 0000023C 	lui $2,%hi(gz_magic)
+ 307              	.set macro
+ 308              	.set reorder
+ 309              	
+ 310              	.set noreorder
+ 311              	.set nomacro
+ 312 0208 3801000C 	jal check_header
+ 313 020c 2D200002 	move $4,$16
+ 314              	.set macro
+ 315              	.set reorder
+ 316              	
+ 317              	.set noreorder
+ 318              	.set nomacro
+ 319 0210 0000000C 	jal ftell
+ 320 0214 5000048E 	lw $4,80($16)
+ 321              	.set macro
+ 322              	.set reorder
+ 323              	
+ 324 0218 0400039E 	lwu $3,4($16)
+ 325              	
+ 326 021c 2F104300 	dsubu $2,$2,$3
+ 327 0220 780002FE 	sd $2,120($16)
+ 328              	$L31:
+ 329              	.set noreorder
+ 330              	.set nomacro
+ 331 0224 E5FF0010 	b $L1
+ 332 0228 2D100002 	move $2,$16
+ 333              	.set macro
+ 334              	.set reorder
+ 335              	
+ 336              	$L38:
+GAS LISTING  			page 7
+
+
+ 337 022c 0000053C 	lui $5,%hi($LC1)
+ 338 0230 00004324 	addiu $3,$2,%lo(gz_magic)
+ 339 0234 0000468C 	lw $6,%lo(gz_magic)($2)
+ 340 0238 0400678C 	lw $7,4($3)
+ 341 023c 0800A524 	addiu $5,$5,%lo($LC1)
+ 342 0240 5000048E 	lw $4,80($16)
+ 343 0244 03000224 	li $2,3
+ 344 0248 08000824 	li $8,8
+ 345 024c 2D480000 	move $9,$0
+ 346 0250 2D500000 	move $10,$0
+ 347 0254 2D580000 	move $11,$0
+ 348 0258 1800A2AF 	sw $2,24($sp)
+ 349 025c 0000A0AF 	sw $0,0($sp)
+ 350 0260 0800A0AF 	sw $0,8($sp)
+ 351              	.set noreorder
+ 352              	.set nomacro
+ 353 0264 0000000C 	jal fprintf
+ 354 0268 1000A0AF 	sw $0,16($sp)
+ 355              	.set macro
+ 356              	.set reorder
+ 357              	
+ 358 026c 0A000324 	dli $3,0xa
+ 359              	.set noreorder
+ 360              	.set nomacro
+ 361 0270 ECFF0010 	b $L31
+ 362 0274 780003FE 	sd $3,120($16)
+ 363              	.set macro
+ 364              	.set reorder
+ 365              	
+ 366              	$L37:
+ 367 0278 2D206002 	move $4,$19
+ 368              	.set noreorder
+ 369              	.set nomacro
+ 370 027c 0000000C 	jal fopen
+ 371 0280 2000A527 	addu $5,$sp,32
+ 372              	.set macro
+ 373              	.set reorder
+ 374              	
+ 375 0284 C7FF0010 	b $L28
+ 375      00000000 
+ 376              	$L36:
+ 377 028c 2D28A002 	move $5,$21
+ 378 0290 2D488002 	move $9,$20
+ 379 0294 00004A25 	addiu $10,$10,%lo($LC0)
+ 380 0298 2D200002 	move $4,$16
+ 381 029c 08000624 	li $6,8
+ 382 02a0 F1FF0724 	li $7,-15
+ 383 02a4 08000824 	li $8,8
+ 384              	.set noreorder
+ 385              	.set nomacro
+ 386 02a8 0000000C 	jal deflateInit2_
+ 387 02ac 48000B24 	li $11,72
+ 388              	.set macro
+ 389              	.set reorder
+ 390              	
+ 391 02b0 00400424 	dli $4,0x4000
+ 392              	.set noreorder
+GAS LISTING  			page 8
+
+
+ 393              	.set nomacro
+ 394 02b4 0000000C 	jal malloc
+ 395 02b8 2D884000 	move $17,$2
+ 396              	.set macro
+ 397              	.set reorder
+ 398              	
+ 399 02bc 580002AE 	sw $2,88($16)
+ 400              	.set noreorder
+ 401              	.set nomacro
+ 402 02c0 BBFF2016 	bne $17,$0,$L32
+ 403 02c4 100002AE 	sw $2,16($16)
+ 404              	.set macro
+ 405              	.set reorder
+ 406              	
+ 407 02c8 ADFF0010 	b $L34
+ 407      00000000 
+ 408              	.p2align 3
+ 409              	$L12:
+ 410 02d0 03160200 	sra $2,$2,24
+ 411              	.set noreorder
+ 412              	.set nomacro
+ 413 02d4 94FF4850 	beql $2,$8,$L42
+ 414 02d8 01001424 	li $20,1
+ 415              	.set macro
+ 416              	.set reorder
+ 417              	
+ 418              	.set noreorder
+ 419              	.set nomacro
+ 420 02dc 92FF4950 	beql $2,$9,$L42
+ 421 02e0 02001424 	li $20,2
+ 422              	.set macro
+ 423              	.set reorder
+ 424              	
+ 425 02e4 000043A2 	sb $3,0($18)
+ 426              	.set noreorder
+ 427              	.set nomacro
+ 428 02e8 8FFF0010 	b $L8
+ 429 02ec 01005226 	addu $18,$18,1
+ 430              	.set macro
+ 431              	.set reorder
+ 432              	
+ 433              	.p2align 3
+ 434              	$L35:
+ 435              	.set noreorder
+ 436              	.set nomacro
+ 437 02f0 82FF0010 	b $L9
+ 438 02f4 740002A2 	sb $2,116($16)
+ 439              	.set macro
+ 440              	.set reorder
+ 441              	
+ 442              	.end gz_open
+ 443              	$Lfe1:
+ 444              	.size gz_open,$Lfe1-gz_open
+ 445              	.align 2
+ 446              	.p2align 3,,7
+ 447              	.globl gzopen
+ 448              	.ent gzopen
+GAS LISTING  			page 9
+
+
+ 449              	gzopen:
+ 450              	.frame $sp,16,$31
+ 451              	.mask 0x80000000,-16
+ 452              	.fmask 0x00000000,0
+ 453 02f8 F0FFBD27 	subu $sp,$sp,16
+ 454 02fc 0000BFFF 	sd $31,0($sp)
+ 455              	.set noreorder
+ 456              	.set nomacro
+ 457 0300 0000000C 	jal gz_open
+ 458 0304 FFFF0624 	li $6,-1
+ 459              	.set macro
+ 460              	.set reorder
+ 461              	
+ 462 0308 0000BFDF 	ld $31,0($sp)
+ 463              	
+ 464              	.set noreorder
+ 465              	.set nomacro
+ 466 030c 0800E003 	j $31
+ 467 0310 1000BD27 	addu $sp,$sp,16
+ 468              	.set macro
+ 469              	.set reorder
+ 470              	
+ 471              	.end gzopen
+ 472              	$Lfe2:
+ 473              	.size gzopen,$Lfe2-gzopen
+ 474              	.rdata
+ 475 001d 000000   	.align 3
+ 476              	$LC2:
+ 477 0020 3C66643A 	.ascii "<fd:%d>\000"
+ 477      25643E00 
+ 478              	.text
+ 479              	.align 2
+ 480 0314 00000000 	.p2align 3,,7
+ 481              	.globl gzdopen
+ 482              	.ent gzdopen
+ 483              	gzdopen:
+ 484              	.frame $sp,80,$31
+ 485              	.mask 0x80030000,-16
+ 486              	.fmask 0x00000000,0
+ 487 0318 B0FFBD27 	subu $sp,$sp,80
+ 488 031c 2D100000 	move $2,$0
+ 489 0320 3000B1FF 	sd $17,48($sp)
+ 490 0324 2D88A000 	move $17,$5
+ 491 0328 2000B0FF 	sd $16,32($sp)
+ 492 032c 2D808000 	move $16,$4
+ 493              	.set noreorder
+ 494              	.set nomacro
+ 495 0330 0A008004 	bltz $4,$L44
+ 496 0334 4000BFFF 	sd $31,64($sp)
+ 497              	.set macro
+ 498              	.set reorder
+ 499              	
+ 500 0338 0000053C 	lui $5,%hi($LC2)
+ 501 033c 2D20A003 	move $4,$sp
+ 502 0340 2D300002 	move $6,$16
+ 503              	.set noreorder
+ 504              	.set nomacro
+GAS LISTING  			page 10
+
+
+ 505 0344 0000000C 	jal sprintf
+ 506 0348 2000A524 	addiu $5,$5,%lo($LC2)
+ 507              	.set macro
+ 508              	.set reorder
+ 509              	
+ 510 034c 2D300002 	move $6,$16
+ 511 0350 2D20A003 	move $4,$sp
+ 512              	.set noreorder
+ 513              	.set nomacro
+ 514 0354 0000000C 	jal gz_open
+ 515 0358 2D282002 	move $5,$17
+ 516              	.set macro
+ 517              	.set reorder
+ 518              	
+ 519              	$L44:
+ 520 035c 4000BFDF 	ld $31,64($sp)
+ 521 0360 3000B1DF 	ld $17,48($sp)
+ 522 0364 2000B0DF 	ld $16,32($sp)
+ 523              	
+ 524              	.set noreorder
+ 525              	.set nomacro
+ 526 0368 0800E003 	j $31
+ 527 036c 5000BD27 	addu $sp,$sp,80
+ 528              	.set macro
+ 529              	.set reorder
+ 530              	
+ 531              	.end gzdopen
+ 532              	$Lfe3:
+ 533              	.size gzdopen,$Lfe3-gzdopen
+ 534              	.align 2
+ 535              	.p2align 3,,7
+ 536              	.globl gzsetparams
+ 537              	.ent gzsetparams
+ 538              	gzsetparams:
+ 539              	.frame $sp,64,$31
+ 540              	.mask 0x80070000,-16
+ 541              	.fmask 0x00000000,0
+ 542 0370 C0FFBD27 	subu $sp,$sp,64
+ 543 0374 0000B0FF 	sd $16,0($sp)
+ 544 0378 2D808000 	move $16,$4
+ 545 037c 2000B2FF 	sd $18,32($sp)
+ 546 0380 FEFF0424 	li $4,-2
+ 547 0384 1000B1FF 	sd $17,16($sp)
+ 548 0388 2D90C000 	move $18,$6
+ 549 038c 3000BFFF 	sd $31,48($sp)
+ 550              	.set noreorder
+ 551              	.set nomacro
+ 552 0390 05000012 	beq $16,$0,$L46
+ 553 0394 2D88A000 	move $17,$5
+ 554              	.set macro
+ 555              	.set reorder
+ 556              	
+ 557 0398 74000382 	lb $3,116($16)
+ 558 039c 77000224 	li $2,119
+ 559              	.set noreorder
+ 560              	.set nomacro
+ 561 03a0 09006250 	beql $3,$2,$L51
+GAS LISTING  			page 11
+
+
+ 562 03a4 1400028E 	lw $2,20($16)
+ 563              	.set macro
+ 564              	.set reorder
+ 565              	
+ 566              	$L46:
+ 567 03a8 3000BFDF 	ld $31,48($sp)
+ 568 03ac 2D108000 	move $2,$4
+ 569 03b0 2000B2DF 	ld $18,32($sp)
+ 570 03b4 1000B1DF 	ld $17,16($sp)
+ 571 03b8 0000B0DF 	ld $16,0($sp)
+ 572              	
+ 573              	.set noreorder
+ 574              	.set nomacro
+ 575 03bc 0800E003 	j $31
+ 576 03c0 4000BD27 	addu $sp,$sp,64
+ 577              	.set macro
+ 578              	.set reorder
+ 579              	
+ 580 03c4 00000000 	.p2align 3
+ 581              	$L51:
+ 582 03c8 01000524 	dli $5,0x1
+ 583              	.set noreorder
+ 584              	.set nomacro
+ 585 03cc 07004010 	beq $2,$0,$L52
+ 586 03d0 00400624 	dli $6,0x4000
+ 587              	.set macro
+ 588              	.set reorder
+ 589              	
+ 590              	$L49:
+ 591 03d4 2D200002 	move $4,$16
+ 592 03d8 2D282002 	move $5,$17
+ 593              	.set noreorder
+ 594              	.set nomacro
+ 595 03dc 0000000C 	jal deflateParams
+ 596 03e0 2D304002 	move $6,$18
+ 597              	.set macro
+ 598              	.set reorder
+ 599              	
+ 600              	.set noreorder
+ 601              	.set nomacro
+ 602 03e4 F0FF0010 	b $L46
+ 603 03e8 2D204000 	move $4,$2
+ 604              	.set macro
+ 605              	.set reorder
+ 606              	
+ 607              	$L52:
+ 608 03ec 5800048E 	lw $4,88($16)
+ 609 03f0 5000078E 	lw $7,80($16)
+ 610              	.set noreorder
+ 611              	.set nomacro
+ 612 03f4 0000000C 	jal fwrite
+ 613 03f8 100004AE 	sw $4,16($16)
+ 614              	.set macro
+ 615              	.set reorder
+ 616              	
+ 617 03fc 00400324 	dli $3,0x4000
+ 618              	.set noreorder
+GAS LISTING  			page 12
+
+
+ 619              	.set nomacro
+ 620 0400 02004310 	beq $2,$3,$L50
+ 621 0404 FFFF0224 	li $2,-1
+ 622              	.set macro
+ 623              	.set reorder
+ 624              	
+ 625 0408 480002AE 	sw $2,72($16)
+ 626              	$L50:
+ 627 040c 00400224 	li $2,16384
+ 628              	.set noreorder
+ 629              	.set nomacro
+ 630 0410 F0FF0010 	b $L49
+ 631 0414 140002AE 	sw $2,20($16)
+ 632              	.set macro
+ 633              	.set reorder
+ 634              	
+ 635              	.end gzsetparams
+ 636              	$Lfe4:
+ 637              	.size gzsetparams,$Lfe4-gzsetparams
+ 638              	.align 2
+ 639              	.p2align 3,,7
+ 640              	.ent get_byte
+ 641              	get_byte:
+ 642              	.frame $sp,32,$31
+ 643              	.mask 0x80010000,-16
+ 644              	.fmask 0x00000000,0
+ 645 0418 E0FFBD27 	subu $sp,$sp,32
+ 646 041c FFFF0524 	li $5,-1
+ 647 0420 0000B0FF 	sd $16,0($sp)
+ 648 0424 1000BFFF 	sd $31,16($sp)
+ 649 0428 4C00828C 	lw $2,76($4)
+ 650              	
+ 651              	.set noreorder
+ 652              	.set nomacro
+ 653 042c 0B004014 	bne $2,$0,$L53
+ 654 0430 2D808000 	move $16,$4
+ 655              	.set macro
+ 656              	.set reorder
+ 657              	
+ 658 0434 0400838C 	lw $3,4($4)
+ 659              	
+ 660 0438 0D006010 	beq $3,$0,$L58
+ 660      00000000 
+ 661              	$L55:
+ 662 0440 FFFF6224 	addu $2,$3,-1
+ 663 0444 0000038E 	lw $3,0($16)
+ 664 0448 040002AE 	sw $2,4($16)
+ 665 044c 00006490 	lbu $4,0($3)
+ 666 0450 01006324 	addu $3,$3,1
+ 667 0454 000003AE 	sw $3,0($16)
+ 668 0458 2D288000 	move $5,$4
+ 669              	$L53:
+ 670 045c 1000BFDF 	ld $31,16($sp)
+ 671              	$L59:
+ 672 0460 2D10A000 	move $2,$5
+ 673 0464 0000B0DF 	ld $16,0($sp)
+ 674              	
+GAS LISTING  			page 13
+
+
+ 675              	.set noreorder
+ 676              	.set nomacro
+ 677 0468 0800E003 	j $31
+ 678 046c 2000BD27 	addu $sp,$sp,32
+ 679              	.set macro
+ 680              	.set reorder
+ 681              	
+ 682              	.p2align 3
+ 683              	$L58:
+ 684 0470 0000000C 	jal __errno
+ 684      00000000 
+ 685 0478 5000078E 	lw $7,80($16)
+ 686 047c 000040AC 	sw $0,0($2)
+ 687 0480 01000524 	dli $5,0x1
+ 688 0484 5400048E 	lw $4,84($16)
+ 689              	.set noreorder
+ 690              	.set nomacro
+ 691 0488 0000000C 	jal fread
+ 692 048c 00400624 	dli $6,0x4000
+ 693              	.set macro
+ 694              	.set reorder
+ 695              	
+ 696 0490 FFFF0524 	li $5,-1
+ 697 0494 3C100200 	dsll $2,$2,32
+ 698 0498 3F100200 	dsra $2,$2,32
+ 699 049c 040002AE 	sw $2,4($16)
+ 700              	.set noreorder
+ 701              	.set nomacro
+ 702 04a0 0B004014 	bne $2,$0,$L56
+ 703 04a4 2D184000 	move $3,$2
+ 704              	.set macro
+ 705              	.set reorder
+ 706              	
+ 707 04a8 5000048E 	lw $4,80($16)
+ 708 04ac 01000324 	li $3,1
+ 709 04b0 4C0003AE 	sw $3,76($16)
+ 710 04b4 0C008294 	lhu $2,12($4)
+ 711              	
+ 712 04b8 40004230 	andi $2,$2,0x40
+ 713              	.set noreorder
+ 714              	.set nomacro
+ 715 04bc E8FF4010 	beq $2,$0,$L59
+ 716 04c0 1000BFDF 	ld $31,16($sp)
+ 717              	.set macro
+ 718              	.set reorder
+ 719              	
+ 720 04c4 FFFF0224 	li $2,-1
+ 721              	.set noreorder
+ 722              	.set nomacro
+ 723 04c8 E5FF0010 	b $L59
+ 724 04cc 480002AE 	sw $2,72($16)
+ 725              	.set macro
+ 726              	.set reorder
+ 727              	
+ 728              	$L56:
+ 729 04d0 5400028E 	lw $2,84($16)
+ 730              	.set noreorder
+GAS LISTING  			page 14
+
+
+ 731              	.set nomacro
+ 732 04d4 DAFF0010 	b $L55
+ 733 04d8 000002AE 	sw $2,0($16)
+ 734              	.set macro
+ 735              	.set reorder
+ 736              	
+ 737              	.end get_byte
+ 738              	$Lfe5:
+ 739              	.size get_byte,$Lfe5-get_byte
+ 740              	.align 2
+ 741 04dc 00000000 	.p2align 3,,7
+ 742              	.ent check_header
+ 743              	check_header:
+ 744              	.frame $sp,80,$31
+ 745              	.mask 0x800f0000,-16
+ 746              	.fmask 0x00000000,0
+ 747 04e0 B0FFBD27 	subu $sp,$sp,80
+ 748 04e4 0000023C 	lui $2,%hi(gz_magic)
+ 749 04e8 4000BFFF 	sd $31,64($sp)
+ 750 04ec 3000B3FF 	sd $19,48($sp)
+ 751 04f0 2000B2FF 	sd $18,32($sp)
+ 752 04f4 2D908000 	move $18,$4
+ 753 04f8 1000B1FF 	sd $17,16($sp)
+ 754 04fc 2D880000 	move $17,$0
+ 755 0500 0000B0FF 	sd $16,0($sp)
+ 756 0504 00005024 	addiu $16,$2,%lo(gz_magic)
+ 757              	$L68:
+ 758              	.set noreorder
+ 759              	.set nomacro
+ 760 0508 0601000C 	jal get_byte
+ 761 050c 2D204002 	move $4,$18
+ 762              	.set macro
+ 763              	.set reorder
+ 764              	
+ 765 0510 2D204000 	move $4,$2
+ 766 0514 0000028E 	lw $2,0($16)
+ 767              	
+ 768              	.set noreorder
+ 769              	.set nomacro
+ 770 0518 53008214 	bne $4,$2,$L109
+ 771 051c 04001026 	addu $16,$16,4
+ 772              	.set macro
+ 773              	.set reorder
+ 774              	
+ 775 0520 01003126 	addu $17,$17,1
+ 776 0524 0200222E 	sltu $2,$17,2
+ 777 0528 F7FF4014 	bne $2,$0,$L68
+ 777      00000000 
+ 778              	.set noreorder
+ 779              	.set nomacro
+ 780 0530 0601000C 	jal get_byte
+ 781 0534 2D204002 	move $4,$18
+ 782              	.set macro
+ 783              	.set reorder
+ 784              	
+ 785 0538 2D204002 	move $4,$18
+ 786              	.set noreorder
+GAS LISTING  			page 15
+
+
+ 787              	.set nomacro
+ 788 053c 0601000C 	jal get_byte
+ 789 0540 2D804000 	move $16,$2
+ 790              	.set macro
+ 791              	.set reorder
+ 792              	
+ 793 0544 2D984000 	move $19,$2
+ 794 0548 08000224 	li $2,8
+ 795              	.set noreorder
+ 796              	.set nomacro
+ 797 054c 0A000212 	beq $16,$2,$L110
+ 798 0550 E0006232 	andi $2,$19,0xe0
+ 799              	.set macro
+ 800              	.set reorder
+ 801              	
+ 802              	$L70:
+ 803 0554 FDFF0224 	li $2,-3
+ 804              	$L108:
+ 805 0558 480042AE 	sw $2,72($18)
+ 806 055c 4000BFDF 	ld $31,64($sp)
+ 807 0560 3000B3DF 	ld $19,48($sp)
+ 808 0564 2000B2DF 	ld $18,32($sp)
+ 809 0568 1000B1DF 	ld $17,16($sp)
+ 810 056c 0000B0DF 	ld $16,0($sp)
+ 811              	
+ 812              	.set noreorder
+ 813              	.set nomacro
+ 814 0570 0800E003 	j $31
+ 815 0574 5000BD27 	addu $sp,$sp,80
+ 816              	.set macro
+ 817              	.set reorder
+ 818              	
+ 819              	.p2align 3
+ 820              	$L110:
+ 821              	.set noreorder
+ 822              	.set nomacro
+ 823 0578 F6FF4014 	bne $2,$0,$L70
+ 824 057c 2D880000 	move $17,$0
+ 825              	.set macro
+ 826              	.set reorder
+ 827              	
+ 828 0580 2D204002 	move $4,$18
+ 829              	$L115:
+ 830              	.set noreorder
+ 831              	.set nomacro
+ 832 0584 0601000C 	jal get_byte
+ 833 0588 01003126 	addu $17,$17,1
+ 834              	.set macro
+ 835              	.set reorder
+ 836              	
+ 837 058c 0600232E 	sltu $3,$17,6
+ 838              	.set noreorder
+ 839              	.set nomacro
+ 840 0590 FCFF6014 	bne $3,$0,$L115
+ 841 0594 2D204002 	move $4,$18
+ 842              	.set macro
+ 843              	.set reorder
+GAS LISTING  			page 16
+
+
+ 844              	
+ 845 0598 04006232 	andi $2,$19,0x4
+ 846 059c 22004014 	bne $2,$0,$L111
+ 846      00000000 
+ 847              	$L76:
+ 848 05a4 08006232 	andi $2,$19,0x8
+ 849              	$L114:
+ 850              	.set noreorder
+ 851              	.set nomacro
+ 852 05a8 09004010 	beq $2,$0,$L116
+ 853 05ac 10006232 	andi $2,$19,0x10
+ 854              	.set macro
+ 855              	.set reorder
+ 856              	
+ 857 05b0 FFFF1024 	li $16,-1
+ 858 05b4 00000000 	.p2align 3
+ 859              	$L82:
+ 860              	.set noreorder
+ 861              	.set nomacro
+ 862 05b8 0601000C 	jal get_byte
+ 863 05bc 2D204002 	move $4,$18
+ 864              	.set macro
+ 865              	.set reorder
+ 866              	
+ 867              	.set noreorder
+ 868              	.set nomacro
+ 869 05c0 03004050 	beql $2,$0,$L116
+ 870 05c4 10006232 	andi $2,$19,0x10
+ 871              	.set macro
+ 872              	.set reorder
+ 873              	
+ 874              	.set noreorder
+ 875              	.set nomacro
+ 876 05c8 FBFF5014 	bne $2,$16,$L82
+ 877 05cc 10006232 	andi $2,$19,0x10
+ 878              	.set macro
+ 879              	.set reorder
+ 880              	
+ 881              	$L116:
+ 882              	.set noreorder
+ 883              	.set nomacro
+ 884 05d0 09004010 	beq $2,$0,$L117
+ 885 05d4 02006232 	andi $2,$19,0x2
+ 886              	.set macro
+ 887              	.set reorder
+ 888              	
+ 889 05d8 FFFF1024 	li $16,-1
+ 890 05dc 00000000 	.p2align 3
+ 891              	$L87:
+ 892              	.set noreorder
+ 893              	.set nomacro
+ 894 05e0 0601000C 	jal get_byte
+ 895 05e4 2D204002 	move $4,$18
+ 896              	.set macro
+ 897              	.set reorder
+ 898              	
+ 899              	.set noreorder
+GAS LISTING  			page 17
+
+
+ 900              	.set nomacro
+ 901 05e8 03004050 	beql $2,$0,$L117
+ 902 05ec 02006232 	andi $2,$19,0x2
+ 903              	.set macro
+ 904              	.set reorder
+ 905              	
+ 906              	.set noreorder
+ 907              	.set nomacro
+ 908 05f0 FBFF5014 	bne $2,$16,$L87
+ 909 05f4 02006232 	andi $2,$19,0x2
+ 910              	.set macro
+ 911              	.set reorder
+ 912              	
+ 913              	$L117:
+ 914 05f8 05004014 	bne $2,$0,$L112
+ 914      00000000 
+ 915 0600 4C00438E 	lw $3,76($18)
+ 916              	$L113:
+ 917 0604 FDFF0224 	li $2,-3
+ 918              	.set noreorder
+ 919              	.set nomacro
+ 920 0608 D3FF0010 	b $L108
+ 921 060c 0A100300 	movz $2,$0,$3
+ 922              	.set macro
+ 923              	.set reorder
+ 924              	
+ 925              	$L112:
+ 926              	.set noreorder
+ 927              	.set nomacro
+ 928 0610 0601000C 	jal get_byte
+ 929 0614 2D204002 	move $4,$18
+ 930              	.set macro
+ 931              	.set reorder
+ 932              	
+ 933              	.set noreorder
+ 934              	.set nomacro
+ 935 0618 0601000C 	jal get_byte
+ 936 061c 2D204002 	move $4,$18
+ 937              	.set macro
+ 938              	.set reorder
+ 939              	
+ 940              	.set noreorder
+ 941              	.set nomacro
+ 942 0620 F8FF0010 	b $L113
+ 943 0624 4C00438E 	lw $3,76($18)
+ 944              	.set macro
+ 945              	.set reorder
+ 946              	
+ 947              	$L111:
+ 948              	.set noreorder
+ 949              	.set nomacro
+ 950 0628 0601000C 	jal get_byte
+ 951 062c FFFF1024 	li $16,-1
+ 952              	.set macro
+ 953              	.set reorder
+ 954              	
+ 955 0630 2D204002 	move $4,$18
+GAS LISTING  			page 18
+
+
+ 956              	.set noreorder
+ 957              	.set nomacro
+ 958 0634 0601000C 	jal get_byte
+ 959 0638 2D884000 	move $17,$2
+ 960              	.set macro
+ 961              	.set reorder
+ 962              	
+ 963 063c 00120200 	sll $2,$2,8
+ 964 0640 21882202 	addu $17,$17,$2
+ 965 0644 FFFF3126 	addu $17,$17,-1
+ 966              	$L118:
+ 967              	.set noreorder
+ 968              	.set nomacro
+ 969 0648 D6FF3012 	beq $17,$16,$L76
+ 970 064c 2D204002 	move $4,$18
+ 971              	.set macro
+ 972              	.set reorder
+ 973              	
+ 974 0650 0601000C 	jal get_byte
+ 974      00000000 
+ 975              	.set noreorder
+ 976              	.set nomacro
+ 977 0658 FBFF5054 	bnel $2,$16,$L118
+ 978 065c FFFF3126 	addu $17,$17,-1
+ 979              	.set macro
+ 980              	.set reorder
+ 981              	
+ 982              	.set noreorder
+ 983              	.set nomacro
+ 984 0660 D1FF0010 	b $L114
+ 985 0664 08006232 	andi $2,$19,0x8
+ 986              	.set macro
+ 987              	.set reorder
+ 988              	
+ 989              	$L109:
+ 990              	.set noreorder
+ 991              	.set nomacro
+ 992 0668 08002012 	beq $17,$0,$L119
+ 993 066c FFFF0224 	li $2,-1
+ 994              	.set macro
+ 995              	.set reorder
+ 996              	
+ 997 0670 0400428E 	lw $2,4($18)
+ 998 0674 0000438E 	lw $3,0($18)
+ 999 0678 01004224 	addu $2,$2,1
+ 1000 067c FFFF6324 	addu $3,$3,-1
+ 1001 0680 040042AE 	sw $2,4($18)
+ 1002 0684 000043AE 	sw $3,0($18)
+ 1003 0688 FFFF0224 	li $2,-1
+ 1004              	$L119:
+ 1005              	.set noreorder
+ 1006              	.set nomacro
+ 1007 068c 08008210 	beq $4,$2,$L67
+ 1008 0690 01000324 	li $3,1
+ 1009              	.set macro
+ 1010              	.set reorder
+ 1011              	
+GAS LISTING  			page 19
+
+
+ 1012 0694 0400428E 	lw $2,4($18)
+ 1013 0698 0000448E 	lw $4,0($18)
+ 1014 069c 01004224 	addu $2,$2,1
+ 1015 06a0 700043AE 	sw $3,112($18)
+ 1016 06a4 FFFF8424 	addu $4,$4,-1
+ 1017 06a8 040042AE 	sw $2,4($18)
+ 1018 06ac 000044AE 	sw $4,0($18)
+ 1019              	$L67:
+ 1020 06b0 0400428E 	lw $2,4($18)
+ 1021              	.set noreorder
+ 1022              	.set nomacro
+ 1023 06b4 A8FF0010 	b $L108
+ 1024 06b8 0100422C 	sltu $2,$2,1
+ 1025              	.set macro
+ 1026              	.set reorder
+ 1027              	
+ 1028              	.end check_header
+ 1029              	$Lfe6:
+ 1030              	.size check_header,$Lfe6-check_header
+ 1031              	.align 2
+ 1032 06bc 00000000 	.p2align 3,,7
+ 1033              	.ent destroy
+ 1034              	destroy:
+ 1035              	.frame $sp,48,$31
+ 1036              	.mask 0x80030000,-16
+ 1037              	.fmask 0x00000000,0
+ 1038 06c0 D0FFBD27 	subu $sp,$sp,48
+ 1039 06c4 FEFF0224 	li $2,-2
+ 1040 06c8 1000B1FF 	sd $17,16($sp)
+ 1041 06cc 2D880000 	move $17,$0
+ 1042 06d0 0000B0FF 	sd $16,0($sp)
+ 1043 06d4 2D808000 	move $16,$4
+ 1044              	.set noreorder
+ 1045              	.set nomacro
+ 1046 06d8 20008010 	beq $4,$0,$L120
+ 1047 06dc 2000BFFF 	sd $31,32($sp)
+ 1048              	.set macro
+ 1049              	.set reorder
+ 1050              	
+ 1051 06e0 6800848C 	lw $4,104($4)
+ 1052              	
+ 1053 06e4 42008014 	bne $4,$0,$L135
+ 1053      00000000 
+ 1054 06ec 2400028E 	lw $2,36($16)
+ 1055              	$L144:
+ 1056              	.set noreorder
+ 1057              	.set nomacro
+ 1058 06f0 08004050 	beql $2,$0,$L145
+ 1059 06f4 5000048E 	lw $4,80($16)
+ 1060              	.set macro
+ 1061              	.set reorder
+ 1062              	
+ 1063 06f8 74000382 	lb $3,116($16)
+ 1064 06fc 77000224 	li $2,119
+ 1065              	.set noreorder
+ 1066              	.set nomacro
+ 1067 0700 36006210 	beq $3,$2,$L136
+GAS LISTING  			page 20
+
+
+ 1068 0704 72000224 	li $2,114
+ 1069              	.set macro
+ 1070              	.set reorder
+ 1071              	
+ 1072 0708 30006210 	beq $3,$2,$L137
+ 1072      00000000 
+ 1073              	$L123:
+ 1074 0710 5000048E 	lw $4,80($16)
+ 1075              	$L145:
+ 1076 0714 22008014 	bne $4,$0,$L138
+ 1076      00000000 
+ 1077              	$L127:
+ 1078 071c 4800038E 	lw $3,72($16)
+ 1079              	$L146:
+ 1080 0720 5400048E 	lw $4,84($16)
+ 1081 0724 00006228 	slt $2,$3,0
+ 1082              	.set noreorder
+ 1083              	.set nomacro
+ 1084 0728 19008014 	bne $4,$0,$L139
+ 1085 072c 0B886200 	movn $17,$3,$2
+ 1086              	.set macro
+ 1087              	.set reorder
+ 1088              	
+ 1089 0730 5800048E 	lw $4,88($16)
+ 1090              	$L143:
+ 1091 0734 12008014 	bne $4,$0,$L140
+ 1091      00000000 
+ 1092 073c 6C00048E 	lw $4,108($16)
+ 1093              	$L142:
+ 1094 0740 0B008014 	bne $4,$0,$L141
+ 1094      00000000 
+ 1095              	$L132:
+ 1096              	.set noreorder
+ 1097              	.set nomacro
+ 1098 0748 04000012 	beq $16,$0,$L120
+ 1099 074c 2D102002 	move $2,$17
+ 1100              	.set macro
+ 1101              	.set reorder
+ 1102              	
+ 1103              	.set noreorder
+ 1104              	.set nomacro
+ 1105 0750 0000000C 	jal free
+ 1106 0754 2D200002 	move $4,$16
+ 1107              	.set macro
+ 1108              	.set reorder
+ 1109              	
+ 1110 0758 2D102002 	move $2,$17
+ 1111              	$L120:
+ 1112 075c 2000BFDF 	ld $31,32($sp)
+ 1113 0760 1000B1DF 	ld $17,16($sp)
+ 1114 0764 0000B0DF 	ld $16,0($sp)
+ 1115              	
+ 1116              	.set noreorder
+ 1117              	.set nomacro
+ 1118 0768 0800E003 	j $31
+ 1119 076c 3000BD27 	addu $sp,$sp,48
+ 1120              	.set macro
+GAS LISTING  			page 21
+
+
+ 1121              	.set reorder
+ 1122              	
+ 1123              	.p2align 3
+ 1124              	$L141:
+ 1125 0770 0000000C 	jal free
+ 1125      00000000 
+ 1126 0778 F3FF0010 	b $L132
+ 1126      00000000 
+ 1127              	.p2align 3
+ 1128              	$L140:
+ 1129 0780 0000000C 	jal free
+ 1129      00000000 
+ 1130              	.set noreorder
+ 1131              	.set nomacro
+ 1132 0788 EDFF0010 	b $L142
+ 1133 078c 6C00048E 	lw $4,108($16)
+ 1134              	.set macro
+ 1135              	.set reorder
+ 1136              	
+ 1137              	.p2align 3
+ 1138              	$L139:
+ 1139 0790 0000000C 	jal free
+ 1139      00000000 
+ 1140              	.set noreorder
+ 1141              	.set nomacro
+ 1142 0798 E6FF0010 	b $L143
+ 1143 079c 5800048E 	lw $4,88($16)
+ 1144              	.set macro
+ 1145              	.set reorder
+ 1146              	
+ 1147              	.p2align 3
+ 1148              	$L138:
+ 1149 07a0 0000000C 	jal fclose
+ 1149      00000000 
+ 1150              	.set noreorder
+ 1151              	.set nomacro
+ 1152 07a8 DDFF4050 	beql $2,$0,$L146
+ 1153 07ac 4800038E 	lw $3,72($16)
+ 1154              	.set macro
+ 1155              	.set reorder
+ 1156              	
+ 1157 07b0 0000000C 	jal __errno
+ 1157      00000000 
+ 1158 07b8 0000438C 	lw $3,0($2)
+ 1159 07bc FFFF0224 	li $2,-1
+ 1160 07c0 1D006338 	xori $3,$3,0x1d
+ 1161              	.set noreorder
+ 1162              	.set nomacro
+ 1163 07c4 D5FF0010 	b $L127
+ 1164 07c8 0B884300 	movn $17,$2,$3
+ 1165              	.set macro
+ 1166              	.set reorder
+ 1167              	
+ 1168              	$L137:
+ 1169              	.set noreorder
+ 1170              	.set nomacro
+ 1171 07cc 0000000C 	jal inflateEnd
+GAS LISTING  			page 22
+
+
+ 1172 07d0 2D200002 	move $4,$16
+ 1173              	.set macro
+ 1174              	.set reorder
+ 1175              	
+ 1176              	.set noreorder
+ 1177              	.set nomacro
+ 1178 07d4 CEFF0010 	b $L123
+ 1179 07d8 2D884000 	move $17,$2
+ 1180              	.set macro
+ 1181              	.set reorder
+ 1182              	
+ 1183              	$L136:
+ 1184              	.set noreorder
+ 1185              	.set nomacro
+ 1186 07dc 0000000C 	jal deflateEnd
+ 1187 07e0 2D200002 	move $4,$16
+ 1188              	.set macro
+ 1189              	.set reorder
+ 1190              	
+ 1191              	.set noreorder
+ 1192              	.set nomacro
+ 1193 07e4 CAFF0010 	b $L123
+ 1194 07e8 2D884000 	move $17,$2
+ 1195              	.set macro
+ 1196              	.set reorder
+ 1197              	
+ 1198 07ec 00000000 	.p2align 3
+ 1199              	$L135:
+ 1200 07f0 0000000C 	jal free
+ 1200      00000000 
+ 1201              	.set noreorder
+ 1202              	.set nomacro
+ 1203 07f8 BDFF0010 	b $L144
+ 1204 07fc 2400028E 	lw $2,36($16)
+ 1205              	.set macro
+ 1206              	.set reorder
+ 1207              	
+ 1208              	.end destroy
+ 1209              	$Lfe7:
+ 1210              	.size destroy,$Lfe7-destroy
+ 1211              	.align 2
+ 1212              	.p2align 3,,7
+ 1213              	.globl gzread
+ 1214              	.ent gzread
+ 1215              	gzread:
+ 1216              	.frame $sp,128,$31
+ 1217              	.mask 0x807f0000,-16
+ 1218              	.fmask 0x00000000,0
+ 1219 0800 80FFBD27 	subu $sp,$sp,128
+ 1220 0804 5000B5FF 	sd $21,80($sp)
+ 1221 0808 2DA8A000 	move $21,$5
+ 1222 080c 4000B4FF 	sd $20,64($sp)
+ 1223 0810 2DA0C000 	move $20,$6
+ 1224 0814 3000B3FF 	sd $19,48($sp)
+ 1225 0818 2D98A000 	move $19,$5
+ 1226 081c 2000B2FF 	sd $18,32($sp)
+ 1227 0820 2D908000 	move $18,$4
+GAS LISTING  			page 23
+
+
+ 1228 0824 7000BFFF 	sd $31,112($sp)
+ 1229 0828 6000B6FF 	sd $22,96($sp)
+ 1230 082c 1000B1FF 	sd $17,16($sp)
+ 1231              	.set noreorder
+ 1232              	.set nomacro
+ 1233 0830 05008010 	beq $4,$0,$L149
+ 1234 0834 0000B0FF 	sd $16,0($sp)
+ 1235              	.set macro
+ 1236              	.set reorder
+ 1237              	
+ 1238 0838 74008380 	lb $3,116($4)
+ 1239 083c 72000224 	li $2,114
+ 1240              	.set noreorder
+ 1241              	.set nomacro
+ 1242 0840 0D006250 	beql $3,$2,$L148
+ 1243 0844 4800848C 	lw $4,72($4)
+ 1244              	.set macro
+ 1245              	.set reorder
+ 1246              	
+ 1247              	$L149:
+ 1248 0848 FEFF0324 	li $3,-2
+ 1249              	$L147:
+ 1250 084c 7000BFDF 	ld $31,112($sp)
+ 1251 0850 2D106000 	move $2,$3
+ 1252 0854 6000B6DF 	ld $22,96($sp)
+ 1253 0858 5000B5DF 	ld $21,80($sp)
+ 1254 085c 4000B4DF 	ld $20,64($sp)
+ 1255 0860 3000B3DF 	ld $19,48($sp)
+ 1256 0864 2000B2DF 	ld $18,32($sp)
+ 1257 0868 1000B1DF 	ld $17,16($sp)
+ 1258 086c 0000B0DF 	ld $16,0($sp)
+ 1259              	
+ 1260              	.set noreorder
+ 1261              	.set nomacro
+ 1262 0870 0800E003 	j $31
+ 1263 0874 8000BD27 	addu $sp,$sp,128
+ 1264              	.set macro
+ 1265              	.set reorder
+ 1266              	
+ 1267              	.p2align 3
+ 1268              	$L148:
+ 1269 0878 FDFF0224 	li $2,-3
+ 1270              	.set noreorder
+ 1271              	.set nomacro
+ 1272 087c 92008210 	beq $4,$2,$L151
+ 1273 0880 FFFF0224 	li $2,-1
+ 1274              	.set macro
+ 1275              	.set reorder
+ 1276              	
+ 1277              	.set noreorder
+ 1278              	.set nomacro
+ 1279 0884 90008210 	beq $4,$2,$L151
+ 1280 0888 01000224 	li $2,1
+ 1281              	.set macro
+ 1282              	.set reorder
+ 1283              	
+ 1284              	.set noreorder
+GAS LISTING  			page 24
+
+
+ 1285              	.set nomacro
+ 1286 088c EFFF8210 	beq $4,$2,$L147
+ 1287 0890 2D180000 	move $3,$0
+ 1288              	.set macro
+ 1289              	.set reorder
+ 1290              	
+ 1291 0894 100045AE 	sw $5,16($18)
+ 1292 0898 2DB0A000 	move $22,$5
+ 1293              	.set noreorder
+ 1294              	.set nomacro
+ 1295 089c 1600C010 	beq $6,$0,$L154
+ 1296 08a0 140046AE 	sw $6,20($18)
+ 1297              	.set macro
+ 1298              	.set reorder
+ 1299              	
+ 1300 08a4 7000428E 	lw $2,112($18)
+ 1301              	$L179:
+ 1302              	.set noreorder
+ 1303              	.set nomacro
+ 1304 08a8 55004054 	bnel $2,$0,$L172
+ 1305 08ac 0400508E 	lw $16,4($18)
+ 1306              	.set macro
+ 1307              	.set reorder
+ 1308              	
+ 1309 08b0 0400428E 	lw $2,4($18)
+ 1310              	
+ 1311              	.set noreorder
+ 1312              	.set nomacro
+ 1313 08b4 05004014 	bne $2,$0,$L177
+ 1314 08b8 2D204002 	move $4,$18
+ 1315              	.set macro
+ 1316              	.set reorder
+ 1317              	
+ 1318 08bc 4C00428E 	lw $2,76($18)
+ 1319              	
+ 1320 08c0 37004010 	beq $2,$0,$L173
+ 1320      00000000 
+ 1321              	$L161:
+ 1322 08c8 2D204002 	move $4,$18
+ 1323              	$L177:
+ 1324              	.set noreorder
+ 1325              	.set nomacro
+ 1326 08cc 0000000C 	jal inflate
+ 1327 08d0 2D280000 	move $5,$0
+ 1328              	.set macro
+ 1329              	.set reorder
+ 1330              	
+ 1331 08d4 01000324 	li $3,1
+ 1332              	.set noreorder
+ 1333              	.set nomacro
+ 1334 08d8 10004310 	beq $2,$3,$L174
+ 1335 08dc 480042AE 	sw $2,72($18)
+ 1336              	.set macro
+ 1337              	.set reorder
+ 1338              	
+ 1339              	$L164:
+ 1340 08e0 480042DE 	ld $2,72($18)
+GAS LISTING  			page 25
+
+
+ 1341              	$L180:
+ 1342              	.set noreorder
+ 1343              	.set nomacro
+ 1344 08e4 05004054 	bnel $2,$0,$L178
+ 1345 08e8 1000468E 	lw $6,16($18)
+ 1346              	.set macro
+ 1347              	.set reorder
+ 1348              	
+ 1349 08ec 1400428E 	lw $2,20($18)
+ 1350              	
+ 1351              	.set noreorder
+ 1352              	.set nomacro
+ 1353 08f0 EDFF4054 	bnel $2,$0,$L179
+ 1354 08f4 7000428E 	lw $2,112($18)
+ 1355              	.set macro
+ 1356              	.set reorder
+ 1357              	
+ 1358              	$L154:
+ 1359 08f8 1000468E 	lw $6,16($18)
+ 1360              	$L178:
+ 1361 08fc 2D286002 	move $5,$19
+ 1362 0900 600044DE 	ld $4,96($18)
+ 1363              	.set noreorder
+ 1364              	.set nomacro
+ 1365 0904 0000000C 	jal crc32
+ 1366 0908 2330D300 	subu $6,$6,$19
+ 1367              	.set macro
+ 1368              	.set reorder
+ 1369              	
+ 1370 090c 1400438E 	lw $3,20($18)
+ 1371 0910 600042FE 	sd $2,96($18)
+ 1372              	.set noreorder
+ 1373              	.set nomacro
+ 1374 0914 CDFF0010 	b $L147
+ 1375 0918 23188302 	subu $3,$20,$3
+ 1376              	.set macro
+ 1377              	.set reorder
+ 1378              	
+ 1379              	$L174:
+ 1380 091c 1000468E 	lw $6,16($18)
+ 1381 0920 2D286002 	move $5,$19
+ 1382 0924 600044DE 	ld $4,96($18)
+ 1383              	.set noreorder
+ 1384              	.set nomacro
+ 1385 0928 0000000C 	jal crc32
+ 1386 092c 2330D300 	subu $6,$6,$19
+ 1387              	.set macro
+ 1388              	.set reorder
+ 1389              	
+ 1390 0930 1000538E 	lw $19,16($18)
+ 1391 0934 600042FE 	sd $2,96($18)
+ 1392              	.set noreorder
+ 1393              	.set nomacro
+ 1394 0938 A204000C 	jal getLong
+ 1395 093c 2D204002 	move $4,$18
+ 1396              	.set macro
+ 1397              	.set reorder
+GAS LISTING  			page 26
+
+
+ 1398              	
+ 1399 0940 600043DE 	ld $3,96($18)
+ 1400              	
+ 1401              	.set noreorder
+ 1402              	.set nomacro
+ 1403 0944 03004310 	beq $2,$3,$L165
+ 1404 0948 FDFF0224 	li $2,-3
+ 1405              	.set macro
+ 1406              	.set reorder
+ 1407              	
+ 1408              	.set noreorder
+ 1409              	.set nomacro
+ 1410 094c E4FF0010 	b $L164
+ 1411 0950 480042AE 	sw $2,72($18)
+ 1412              	.set macro
+ 1413              	.set reorder
+ 1414              	
+ 1415              	$L165:
+ 1416              	.set noreorder
+ 1417              	.set nomacro
+ 1418 0954 A204000C 	jal getLong
+ 1419 0958 2D204002 	move $4,$18
+ 1420              	.set macro
+ 1421              	.set reorder
+ 1422              	
+ 1423              	.set noreorder
+ 1424              	.set nomacro
+ 1425 095c 3801000C 	jal check_header
+ 1426 0960 2D204002 	move $4,$18
+ 1427              	.set macro
+ 1428              	.set reorder
+ 1429              	
+ 1430 0964 4800428E 	lw $2,72($18)
+ 1431              	
+ 1432              	.set noreorder
+ 1433              	.set nomacro
+ 1434 0968 DEFF4054 	bnel $2,$0,$L180
+ 1435 096c 480042DE 	ld $2,72($18)
+ 1436              	.set macro
+ 1437              	.set reorder
+ 1438              	
+ 1439 0970 080050DE 	ld $16,8($18)
+ 1440 0974 2D204002 	move $4,$18
+ 1441              	.set noreorder
+ 1442              	.set nomacro
+ 1443 0978 0000000C 	jal inflateReset
+ 1444 097c 180051DE 	ld $17,24($18)
+ 1445              	.set macro
+ 1446              	.set reorder
+ 1447              	
+ 1448 0980 080050FE 	sd $16,8($18)
+ 1449 0984 2D200000 	move $4,$0
+ 1450 0988 180051FE 	sd $17,24($18)
+ 1451 098c 2D280000 	move $5,$0
+ 1452              	.set noreorder
+ 1453              	.set nomacro
+ 1454 0990 0000000C 	jal crc32
+GAS LISTING  			page 27
+
+
+ 1455 0994 2D300000 	move $6,$0
+ 1456              	.set macro
+ 1457              	.set reorder
+ 1458              	
+ 1459              	.set noreorder
+ 1460              	.set nomacro
+ 1461 0998 D1FF0010 	b $L164
+ 1462 099c 600042FE 	sd $2,96($18)
+ 1463              	.set macro
+ 1464              	.set reorder
+ 1465              	
+ 1466              	.p2align 3
+ 1467              	$L173:
+ 1468 09a0 0000000C 	jal __errno
+ 1468      00000000 
+ 1469 09a8 00400624 	dli $6,0x4000
+ 1470 09ac 5000478E 	lw $7,80($18)
+ 1471 09b0 01000524 	dli $5,0x1
+ 1472 09b4 000040AC 	sw $0,0($2)
+ 1473              	.set noreorder
+ 1474              	.set nomacro
+ 1475 09b8 0000000C 	jal fread
+ 1476 09bc 5400448E 	lw $4,84($18)
+ 1477              	.set macro
+ 1478              	.set reorder
+ 1479              	
+ 1480 09c0 3C100200 	dsll $2,$2,32
+ 1481 09c4 3F100200 	dsra $2,$2,32
+ 1482              	.set noreorder
+ 1483              	.set nomacro
+ 1484 09c8 08004014 	bne $2,$0,$L162
+ 1485 09cc 040042AE 	sw $2,4($18)
+ 1486              	.set macro
+ 1487              	.set reorder
+ 1488              	
+ 1489 09d0 5000448E 	lw $4,80($18)
+ 1490 09d4 01000324 	li $3,1
+ 1491 09d8 4C0043AE 	sw $3,76($18)
+ 1492 09dc 0C008294 	lhu $2,12($4)
+ 1493              	
+ 1494 09e0 40004230 	andi $2,$2,0x40
+ 1495              	.set noreorder
+ 1496              	.set nomacro
+ 1497 09e4 04004014 	bne $2,$0,$L171
+ 1498 09e8 FFFF0224 	li $2,-1
+ 1499              	.set macro
+ 1500              	.set reorder
+ 1501              	
+ 1502              	$L162:
+ 1503 09ec 5400428E 	lw $2,84($18)
+ 1504              	.set noreorder
+ 1505              	.set nomacro
+ 1506 09f0 B5FF0010 	b $L161
+ 1507 09f4 000042AE 	sw $2,0($18)
+ 1508              	.set macro
+ 1509              	.set reorder
+ 1510              	
+GAS LISTING  			page 28
+
+
+ 1511              	$L171:
+ 1512              	.set noreorder
+ 1513              	.set nomacro
+ 1514 09f8 BFFF0010 	b $L154
+ 1515 09fc 480042AE 	sw $2,72($18)
+ 1516              	.set macro
+ 1517              	.set reorder
+ 1518              	
+ 1519              	$L172:
+ 1520 0a00 1400438E 	lw $3,20($18)
+ 1521              	
+ 1522 0a04 2B107000 	sltu $2,$3,$16
+ 1523 0a08 0B806200 	movn $16,$3,$2
+ 1524              	.set noreorder
+ 1525              	.set nomacro
+ 1526 0a0c 1C000056 	bnel $16,$0,$L175
+ 1527 0a10 1000448E 	lw $4,16($18)
+ 1528              	.set macro
+ 1529              	.set reorder
+ 1530              	
+ 1531              	$L158:
+ 1532              	.set noreorder
+ 1533              	.set nomacro
+ 1534 0a14 0F006014 	bne $3,$0,$L176
+ 1535 0a18 3C300300 	dsll $6,$3,32
+ 1536              	.set macro
+ 1537              	.set reorder
+ 1538              	
+ 1539              	$L159:
+ 1540 0a1c 23A08302 	subu $20,$20,$3
+ 1541 0a20 080042DE 	ld $2,8($18)
+ 1542 0a24 180044DE 	ld $4,24($18)
+ 1543 0a28 3C181400 	dsll $3,$20,32
+ 1544 0a2c 3E180300 	dsrl $3,$3,32
+ 1545 0a30 2D208300 	daddu $4,$4,$3
+ 1546 0a34 2D104300 	daddu $2,$2,$3
+ 1547 0a38 080042FE 	sd $2,8($18)
+ 1548              	.set noreorder
+ 1549              	.set nomacro
+ 1550 0a3c 03008016 	bne $20,$0,$L160
+ 1551 0a40 180044FE 	sd $4,24($18)
+ 1552              	.set macro
+ 1553              	.set reorder
+ 1554              	
+ 1555 0a44 01000224 	li $2,1
+ 1556 0a48 4C0042AE 	sw $2,76($18)
+ 1557              	$L160:
+ 1558              	.set noreorder
+ 1559              	.set nomacro
+ 1560 0a4c 7FFF0010 	b $L147
+ 1561 0a50 2D188002 	move $3,$20
+ 1562              	.set macro
+ 1563              	.set reorder
+ 1564              	
+ 1565              	$L176:
+ 1566 0a54 5000478E 	lw $7,80($18)
+ 1567 0a58 3E300600 	dsrl $6,$6,32
+GAS LISTING  			page 29
+
+
+ 1568 0a5c 2D20C002 	move $4,$22
+ 1569              	.set noreorder
+ 1570              	.set nomacro
+ 1571 0a60 0000000C 	jal fread
+ 1572 0a64 01000524 	dli $5,0x1
+ 1573              	.set macro
+ 1574              	.set reorder
+ 1575              	
+ 1576 0a68 1400438E 	lw $3,20($18)
+ 1577 0a6c 3C100200 	dsll $2,$2,32
+ 1578 0a70 3F100200 	dsra $2,$2,32
+ 1579 0a74 23186200 	subu $3,$3,$2
+ 1580              	.set noreorder
+ 1581              	.set nomacro
+ 1582 0a78 E8FF0010 	b $L159
+ 1583 0a7c 140043AE 	sw $3,20($18)
+ 1584              	.set macro
+ 1585              	.set reorder
+ 1586              	
+ 1587              	$L175:
+ 1588 0a80 3C301000 	dsll $6,$16,32
+ 1589 0a84 0000458E 	lw $5,0($18)
+ 1590 0a88 3E300600 	dsrl $6,$6,32
+ 1591              	.set noreorder
+ 1592              	.set nomacro
+ 1593 0a8c 0000000C 	jal memcpy
+ 1594 0a90 21B0B002 	addu $22,$21,$16
+ 1595              	.set macro
+ 1596              	.set reorder
+ 1597              	
+ 1598 0a94 100056AE 	sw $22,16($18)
+ 1599 0a98 0000428E 	lw $2,0($18)
+ 1600 0a9c 1400448E 	lw $4,20($18)
+ 1601 0aa0 0400438E 	lw $3,4($18)
+ 1602 0aa4 21105000 	addu $2,$2,$16
+ 1603 0aa8 23209000 	subu $4,$4,$16
+ 1604 0aac 000042AE 	sw $2,0($18)
+ 1605 0ab0 23187000 	subu $3,$3,$16
+ 1606 0ab4 140044AE 	sw $4,20($18)
+ 1607 0ab8 040043AE 	sw $3,4($18)
+ 1608              	.set noreorder
+ 1609              	.set nomacro
+ 1610 0abc D5FF0010 	b $L158
+ 1611 0ac0 2D188000 	move $3,$4
+ 1612              	.set macro
+ 1613              	.set reorder
+ 1614              	
+ 1615 0ac4 00000000 	.p2align 3
+ 1616              	$L151:
+ 1617              	.set noreorder
+ 1618              	.set nomacro
+ 1619 0ac8 60FF0010 	b $L147
+ 1620 0acc FFFF0324 	li $3,-1
+ 1621              	.set macro
+ 1622              	.set reorder
+ 1623              	
+ 1624              	.end gzread
+GAS LISTING  			page 30
+
+
+ 1625              	$Lfe8:
+ 1626              	.size gzread,$Lfe8-gzread
+ 1627              	.align 2
+ 1628              	.p2align 3,,7
+ 1629              	.globl gzgetc
+ 1630              	.ent gzgetc
+ 1631              	gzgetc:
+ 1632              	.frame $sp,32,$31
+ 1633              	.mask 0x80000000,-16
+ 1634              	.fmask 0x00000000,0
+ 1635 0ad0 E0FFBD27 	subu $sp,$sp,32
+ 1636 0ad4 01000624 	li $6,1
+ 1637 0ad8 1000BFFF 	sd $31,16($sp)
+ 1638              	.set noreorder
+ 1639              	.set nomacro
+ 1640 0adc 0000000C 	jal gzread
+ 1641 0ae0 2D28A003 	move $5,$sp
+ 1642              	.set macro
+ 1643              	.set reorder
+ 1644              	
+ 1645 0ae4 1000BFDF 	ld $31,16($sp)
+ 1646 0ae8 0000A493 	lbu $4,0($sp)
+ 1647 0aec 01004238 	xori $2,$2,0x1
+ 1648 0af0 FFFF0324 	li $3,-1
+ 1649 0af4 0A188200 	movz $3,$4,$2
+ 1650 0af8 2D106000 	move $2,$3
+ 1651              	.set noreorder
+ 1652              	.set nomacro
+ 1653 0afc 0800E003 	j $31
+ 1654 0b00 2000BD27 	addu $sp,$sp,32
+ 1655              	.set macro
+ 1656              	.set reorder
+ 1657              	
+ 1658              	.end gzgetc
+ 1659              	$Lfe9:
+ 1660              	.size gzgetc,$Lfe9-gzgetc
+ 1661              	.align 2
+ 1662 0b04 00000000 	.p2align 3,,7
+ 1663              	.globl gzgets
+ 1664              	.ent gzgets
+ 1665              	gzgets:
+ 1666              	.frame $sp,112,$31
+ 1667              	.mask 0x803f0000,-16
+ 1668              	.fmask 0x00000000,0
+ 1669 0b08 90FFBD27 	subu $sp,$sp,112
+ 1670 0b0c 3000B3FF 	sd $19,48($sp)
+ 1671 0b10 2D988000 	move $19,$4
+ 1672 0b14 2000B2FF 	sd $18,32($sp)
+ 1673 0b18 2D90A000 	move $18,$5
+ 1674 0b1c 1000B1FF 	sd $17,16($sp)
+ 1675 0b20 2D88C000 	move $17,$6
+ 1676 0b24 0000B0FF 	sd $16,0($sp)
+ 1677 0b28 2D80A000 	move $16,$5
+ 1678 0b2c 6000BFFF 	sd $31,96($sp)
+ 1679 0b30 5000B5FF 	sd $21,80($sp)
+ 1680              	.set noreorder
+ 1681              	.set nomacro
+GAS LISTING  			page 31
+
+
+ 1682 0b34 2200A010 	beq $5,$0,$L186
+ 1683 0b38 4000B4FF 	sd $20,64($sp)
+ 1684              	.set macro
+ 1685              	.set reorder
+ 1686              	
+ 1687 0b3c 01001524 	li $21,1
+ 1688              	.set noreorder
+ 1689              	.set nomacro
+ 1690 0b40 1F00C018 	blez $6,$L186
+ 1691 0b44 0A001424 	li $20,10
+ 1692              	.set macro
+ 1693              	.set reorder
+ 1694              	
+ 1695              	$L187:
+ 1696 0b48 FFFF3126 	addu $17,$17,-1
+ 1697 0b4c 2D280002 	move $5,$16
+ 1698 0b50 2D206002 	move $4,$19
+ 1699              	.set noreorder
+ 1700              	.set nomacro
+ 1701 0b54 0A00201A 	blez $17,$L188
+ 1702 0b58 01000624 	li $6,1
+ 1703              	.set macro
+ 1704              	.set reorder
+ 1705              	
+ 1706 0b5c 0000000C 	jal gzread
+ 1706      00000000 
+ 1707 0b64 06005514 	bne $2,$21,$L188
+ 1707      00000000 
+ 1708 0b6c 00000292 	lbu $2,0($16)
+ 1709              	
+ 1710 0b70 00160200 	sll $2,$2,24
+ 1711 0b74 03160200 	sra $2,$2,24
+ 1712              	.set noreorder
+ 1713              	.set nomacro
+ 1714 0b78 F3FF5414 	bne $2,$20,$L187
+ 1715 0b7c 01001026 	addu $16,$16,1
+ 1716              	.set macro
+ 1717              	.set reorder
+ 1718              	
+ 1719              	$L188:
+ 1720              	.set noreorder
+ 1721              	.set nomacro
+ 1722 0b80 0B005012 	beq $18,$16,$L194
+ 1723 0b84 000000A2 	sb $0,0($16)
+ 1724              	.set macro
+ 1725              	.set reorder
+ 1726              	
+ 1727 0b88 2D104002 	move $2,$18
+ 1728              	$L184:
+ 1729 0b8c 6000BFDF 	ld $31,96($sp)
+ 1730 0b90 5000B5DF 	ld $21,80($sp)
+ 1731 0b94 4000B4DF 	ld $20,64($sp)
+ 1732 0b98 3000B3DF 	ld $19,48($sp)
+ 1733 0b9c 2000B2DF 	ld $18,32($sp)
+ 1734 0ba0 1000B1DF 	ld $17,16($sp)
+ 1735 0ba4 0000B0DF 	ld $16,0($sp)
+ 1736              	
+GAS LISTING  			page 32
+
+
+ 1737              	.set noreorder
+ 1738              	.set nomacro
+ 1739 0ba8 0800E003 	j $31
+ 1740 0bac 7000BD27 	addu $sp,$sp,112
+ 1741              	.set macro
+ 1742              	.set reorder
+ 1743              	
+ 1744              	$L194:
+ 1745              	.set noreorder
+ 1746              	.set nomacro
+ 1747 0bb0 F6FF201E 	bgtz $17,$L184
+ 1748 0bb4 2D100000 	move $2,$0
+ 1749              	.set macro
+ 1750              	.set reorder
+ 1751              	
+ 1752              	.set noreorder
+ 1753              	.set nomacro
+ 1754 0bb8 F4FF0010 	b $L184
+ 1755 0bbc 2D104002 	move $2,$18
+ 1756              	.set macro
+ 1757              	.set reorder
+ 1758              	
+ 1759              	.p2align 3
+ 1760              	$L186:
+ 1761              	.set noreorder
+ 1762              	.set nomacro
+ 1763 0bc0 F2FF0010 	b $L184
+ 1764 0bc4 2D100000 	move $2,$0
+ 1765              	.set macro
+ 1766              	.set reorder
+ 1767              	
+ 1768              	.end gzgets
+ 1769              	$Lfe10:
+ 1770              	.size gzgets,$Lfe10-gzgets
+ 1771              	.align 2
+ 1772              	.p2align 3,,7
+ 1773              	.globl gzwrite
+ 1774              	.ent gzwrite
+ 1775              	gzwrite:
+ 1776              	.frame $sp,96,$31
+ 1777              	.mask 0x801f0000,-16
+ 1778              	.fmask 0x00000000,0
+ 1779 0bc8 A0FFBD27 	subu $sp,$sp,96
+ 1780 0bcc 2000B2FF 	sd $18,32($sp)
+ 1781 0bd0 2D90A000 	move $18,$5
+ 1782 0bd4 1000B1FF 	sd $17,16($sp)
+ 1783 0bd8 2D88C000 	move $17,$6
+ 1784 0bdc 0000B0FF 	sd $16,0($sp)
+ 1785 0be0 2D808000 	move $16,$4
+ 1786 0be4 5000BFFF 	sd $31,80($sp)
+ 1787 0be8 4000B4FF 	sd $20,64($sp)
+ 1788              	.set noreorder
+ 1789              	.set nomacro
+ 1790 0bec 05008010 	beq $4,$0,$L197
+ 1791 0bf0 3000B3FF 	sd $19,48($sp)
+ 1792              	.set macro
+ 1793              	.set reorder
+GAS LISTING  			page 33
+
+
+ 1794              	
+ 1795 0bf4 74008380 	lb $3,116($4)
+ 1796 0bf8 77000224 	li $2,119
+ 1797              	.set noreorder
+ 1798              	.set nomacro
+ 1799 0bfc 0A006250 	beql $3,$2,$L196
+ 1800 0c00 000005AE 	sw $5,0($16)
+ 1801              	.set macro
+ 1802              	.set reorder
+ 1803              	
+ 1804              	$L197:
+ 1805 0c04 FEFF0224 	li $2,-2
+ 1806              	$L195:
+ 1807 0c08 5000BFDF 	ld $31,80($sp)
+ 1808 0c0c 4000B4DF 	ld $20,64($sp)
+ 1809 0c10 3000B3DF 	ld $19,48($sp)
+ 1810 0c14 2000B2DF 	ld $18,32($sp)
+ 1811 0c18 1000B1DF 	ld $17,16($sp)
+ 1812 0c1c 0000B0DF 	ld $16,0($sp)
+ 1813              	
+ 1814              	.set noreorder
+ 1815              	.set nomacro
+ 1816 0c20 0800E003 	j $31
+ 1817 0c24 6000BD27 	addu $sp,$sp,96
+ 1818              	.set macro
+ 1819              	.set reorder
+ 1820              	
+ 1821              	.p2align 3
+ 1822              	$L196:
+ 1823              	.set noreorder
+ 1824              	.set nomacro
+ 1825 0c28 1600C010 	beq $6,$0,$L199
+ 1826 0c2c 040006AE 	sw $6,4($16)
+ 1827              	.set macro
+ 1828              	.set reorder
+ 1829              	
+ 1830 0c30 00401424 	dli $20,0x4000
+ 1831 0c34 00401324 	li $19,16384
+ 1832 0c38 1400028E 	lw $2,20($16)
+ 1833              	$L207:
+ 1834 0c3c 01000524 	dli $5,0x1
+ 1835              	.set noreorder
+ 1836              	.set nomacro
+ 1837 0c40 08004014 	bne $2,$0,$L201
+ 1838 0c44 00400624 	dli $6,0x4000
+ 1839              	.set macro
+ 1840              	.set reorder
+ 1841              	
+ 1842 0c48 5800048E 	lw $4,88($16)
+ 1843 0c4c 5000078E 	lw $7,80($16)
+ 1844              	.set noreorder
+ 1845              	.set nomacro
+ 1846 0c50 0000000C 	jal fwrite
+ 1847 0c54 100004AE 	sw $4,16($16)
+ 1848              	.set macro
+ 1849              	.set reorder
+ 1850              	
+GAS LISTING  			page 34
+
+
+ 1851              	.set noreorder
+ 1852              	.set nomacro
+ 1853 0c58 12005414 	bne $2,$20,$L206
+ 1854 0c5c FFFF0224 	li $2,-1
+ 1855              	.set macro
+ 1856              	.set reorder
+ 1857              	
+ 1858 0c60 140013AE 	sw $19,20($16)
+ 1859              	$L201:
+ 1860 0c64 2D200002 	move $4,$16
+ 1861              	.set noreorder
+ 1862              	.set nomacro
+ 1863 0c68 0000000C 	jal deflate
+ 1864 0c6c 2D280000 	move $5,$0
+ 1865              	.set macro
+ 1866              	.set reorder
+ 1867              	
+ 1868              	.set noreorder
+ 1869              	.set nomacro
+ 1870 0c70 04004014 	bne $2,$0,$L199
+ 1871 0c74 480002AE 	sw $2,72($16)
+ 1872              	.set macro
+ 1873              	.set reorder
+ 1874              	
+ 1875 0c78 0400028E 	lw $2,4($16)
+ 1876              	
+ 1877              	.set noreorder
+ 1878              	.set nomacro
+ 1879 0c7c EFFF4054 	bnel $2,$0,$L207
+ 1880 0c80 1400028E 	lw $2,20($16)
+ 1881              	.set macro
+ 1882              	.set reorder
+ 1883              	
+ 1884              	$L199:
+ 1885 0c84 600004DE 	ld $4,96($16)
+ 1886 0c88 2D284002 	move $5,$18
+ 1887              	.set noreorder
+ 1888              	.set nomacro
+ 1889 0c8c 0000000C 	jal crc32
+ 1890 0c90 2D302002 	move $6,$17
+ 1891              	.set macro
+ 1892              	.set reorder
+ 1893              	
+ 1894 0c94 0400038E 	lw $3,4($16)
+ 1895 0c98 600002FE 	sd $2,96($16)
+ 1896              	.set noreorder
+ 1897              	.set nomacro
+ 1898 0c9c DAFF0010 	b $L195
+ 1899 0ca0 23102302 	subu $2,$17,$3
+ 1900              	.set macro
+ 1901              	.set reorder
+ 1902              	
+ 1903              	$L206:
+ 1904              	.set noreorder
+ 1905              	.set nomacro
+ 1906 0ca4 F7FF0010 	b $L199
+ 1907 0ca8 480002AE 	sw $2,72($16)
+GAS LISTING  			page 35
+
+
+ 1908              	.set macro
+ 1909              	.set reorder
+ 1910              	
+ 1911              	.end gzwrite
+ 1912              	$Lfe11:
+ 1913              	.size gzwrite,$Lfe11-gzwrite
+ 1914              	.align 2
+ 1915 0cac 00000000 	.p2align 3,,7
+ 1916              	.globl gzprintf
+ 1917              	.ent gzprintf
+ 1918              	gzprintf:
+ 1919              	.frame $sp,4208,$31
+ 1920              	.mask 0x80010000,-96
+ 1921              	.fmask 0x00000000,0
+ 1922 0cb0 90EFBD27 	subu $sp,$sp,4208
+ 1923 0cb4 0010B0FF 	sd $16,4096($sp)
+ 1924 0cb8 2D808000 	move $16,$4
+ 1925 0cbc 4010A6FF 	sd $6,4160($sp)
+ 1926 0cc0 2D20A003 	move $4,$sp
+ 1927 0cc4 4010A627 	addu $6,$sp,4160
+ 1928 0cc8 1010BFFF 	sd $31,4112($sp)
+ 1929 0ccc 4810A7FF 	sd $7,4168($sp)
+ 1930 0cd0 5010A8FF 	sd $8,4176($sp)
+ 1931 0cd4 5810A9FF 	sd $9,4184($sp)
+ 1932 0cd8 6010AAFF 	sd $10,4192($sp)
+ 1933 0cdc 6810ABFF 	sd $11,4200($sp)
+ 1934 0ce0 3010ACE7 	s.s $f12,4144($sp)
+ 1935 0ce4 3410AEE7 	s.s $f14,4148($sp)
+ 1936 0ce8 3810B0E7 	s.s $f16,4152($sp)
+ 1937              	.set noreorder
+ 1938              	.set nomacro
+ 1939 0cec 0000000C 	jal vsprintf
+ 1940 0cf0 3C10B2E7 	s.s $f18,4156($sp)
+ 1941              	.set macro
+ 1942              	.set reorder
+ 1943              	
+ 1944              	.set noreorder
+ 1945              	.set nomacro
+ 1946 0cf4 0000000C 	jal strlen
+ 1947 0cf8 2D20A003 	move $4,$sp
+ 1948              	.set macro
+ 1949              	.set reorder
+ 1950              	
+ 1951              	.set noreorder
+ 1952              	.set nomacro
+ 1953 0cfc 06004018 	blez $2,$L208
+ 1954 0d00 2D180000 	move $3,$0
+ 1955              	.set macro
+ 1956              	.set reorder
+ 1957              	
+ 1958 0d04 2D200002 	move $4,$16
+ 1959 0d08 2D304000 	move $6,$2
+ 1960              	.set noreorder
+ 1961              	.set nomacro
+ 1962 0d0c 0000000C 	jal gzwrite
+ 1963 0d10 2D28A003 	move $5,$sp
+ 1964              	.set macro
+GAS LISTING  			page 36
+
+
+ 1965              	.set reorder
+ 1966              	
+ 1967 0d14 2D184000 	move $3,$2
+ 1968              	$L208:
+ 1969 0d18 1010BFDF 	ld $31,4112($sp)
+ 1970 0d1c 2D106000 	move $2,$3
+ 1971 0d20 0010B0DF 	ld $16,4096($sp)
+ 1972              	
+ 1973              	.set noreorder
+ 1974              	.set nomacro
+ 1975 0d24 0800E003 	j $31
+ 1976 0d28 7010BD27 	addu $sp,$sp,4208
+ 1977              	.set macro
+ 1978              	.set reorder
+ 1979              	
+ 1980              	.end gzprintf
+ 1981              	$Lfe12:
+ 1982              	.size gzprintf,$Lfe12-gzprintf
+ 1983              	.align 2
+ 1984 0d2c 00000000 	.p2align 3,,7
+ 1985              	.globl gzputc
+ 1986              	.ent gzputc
+ 1987              	gzputc:
+ 1988              	.frame $sp,32,$31
+ 1989              	.mask 0x80000000,-16
+ 1990              	.fmask 0x00000000,0
+ 1991 0d30 E0FFBD27 	subu $sp,$sp,32
+ 1992 0d34 2D10A000 	move $2,$5
+ 1993 0d38 01000624 	li $6,1
+ 1994 0d3c 2D28A003 	move $5,$sp
+ 1995 0d40 1000BFFF 	sd $31,16($sp)
+ 1996              	.set noreorder
+ 1997              	.set nomacro
+ 1998 0d44 0000000C 	jal gzwrite
+ 1999 0d48 0000A2A3 	sb $2,0($sp)
+ 2000              	.set macro
+ 2001              	.set reorder
+ 2002              	
+ 2003 0d4c 0000A493 	lbu $4,0($sp)
+ 2004 0d50 01004238 	xori $2,$2,0x1
+ 2005 0d54 FFFF0324 	li $3,-1
+ 2006 0d58 1000BFDF 	ld $31,16($sp)
+ 2007 0d5c 0A188200 	movz $3,$4,$2
+ 2008 0d60 2D106000 	move $2,$3
+ 2009              	.set noreorder
+ 2010              	.set nomacro
+ 2011 0d64 0800E003 	j $31
+ 2012 0d68 2000BD27 	addu $sp,$sp,32
+ 2013              	.set macro
+ 2014              	.set reorder
+ 2015              	
+ 2016              	.end gzputc
+ 2017              	$Lfe13:
+ 2018              	.size gzputc,$Lfe13-gzputc
+ 2019              	.align 2
+ 2020 0d6c 00000000 	.p2align 3,,7
+ 2021              	.globl gzputs
+GAS LISTING  			page 37
+
+
+ 2022              	.ent gzputs
+ 2023              	gzputs:
+ 2024              	.frame $sp,48,$31
+ 2025              	.mask 0x80030000,-16
+ 2026              	.fmask 0x00000000,0
+ 2027 0d70 D0FFBD27 	subu $sp,$sp,48
+ 2028 0d74 1000B1FF 	sd $17,16($sp)
+ 2029 0d78 2D888000 	move $17,$4
+ 2030 0d7c 2D20A000 	move $4,$5
+ 2031 0d80 2000BFFF 	sd $31,32($sp)
+ 2032 0d84 0000B0FF 	sd $16,0($sp)
+ 2033              	.set noreorder
+ 2034              	.set nomacro
+ 2035 0d88 0000000C 	jal strlen
+ 2036 0d8c 2D80A000 	move $16,$5
+ 2037              	.set macro
+ 2038              	.set reorder
+ 2039              	
+ 2040 0d90 2D280002 	move $5,$16
+ 2041 0d94 2D202002 	move $4,$17
+ 2042              	.set noreorder
+ 2043              	.set nomacro
+ 2044 0d98 0000000C 	jal gzwrite
+ 2045 0d9c 2D304000 	move $6,$2
+ 2046              	.set macro
+ 2047              	.set reorder
+ 2048              	
+ 2049 0da0 0000B0DF 	ld $16,0($sp)
+ 2050 0da4 2000BFDF 	ld $31,32($sp)
+ 2051 0da8 1000B1DF 	ld $17,16($sp)
+ 2052              	
+ 2053              	.set noreorder
+ 2054              	.set nomacro
+ 2055 0dac 0800E003 	j $31
+ 2056 0db0 3000BD27 	addu $sp,$sp,48
+ 2057              	.set macro
+ 2058              	.set reorder
+ 2059              	
+ 2060              	.end gzputs
+ 2061              	$Lfe14:
+ 2062              	.size gzputs,$Lfe14-gzputs
+ 2063              	.align 2
+ 2064 0db4 00000000 	.p2align 3,,7
+ 2065              	.ent do_flush
+ 2066              	do_flush:
+ 2067              	.frame $sp,128,$31
+ 2068              	.mask 0x807f0000,-16
+ 2069              	.fmask 0x00000000,0
+ 2070 0db8 80FFBD27 	subu $sp,$sp,128
+ 2071 0dbc 3000B3FF 	sd $19,48($sp)
+ 2072 0dc0 2D98A000 	move $19,$5
+ 2073 0dc4 2000B2FF 	sd $18,32($sp)
+ 2074 0dc8 2D900000 	move $18,$0
+ 2075 0dcc 0000B0FF 	sd $16,0($sp)
+ 2076 0dd0 2D808000 	move $16,$4
+ 2077 0dd4 7000BFFF 	sd $31,112($sp)
+ 2078 0dd8 6000B6FF 	sd $22,96($sp)
+GAS LISTING  			page 38
+
+
+ 2079 0ddc 5000B5FF 	sd $21,80($sp)
+ 2080 0de0 4000B4FF 	sd $20,64($sp)
+ 2081              	.set noreorder
+ 2082              	.set nomacro
+ 2083 0de4 05008010 	beq $4,$0,$L216
+ 2084 0de8 1000B1FF 	sd $17,16($sp)
+ 2085              	.set macro
+ 2086              	.set reorder
+ 2087              	
+ 2088 0dec 74008380 	lb $3,116($4)
+ 2089 0df0 77000224 	li $2,119
+ 2090              	.set noreorder
+ 2091              	.set nomacro
+ 2092 0df4 0E006250 	beql $3,$2,$L215
+ 2093 0df8 040080AC 	sw $0,4($4)
+ 2094              	.set macro
+ 2095              	.set reorder
+ 2096              	
+ 2097              	$L216:
+ 2098 0dfc FEFF0324 	li $3,-2
+ 2099              	$L214:
+ 2100 0e00 7000BFDF 	ld $31,112($sp)
+ 2101 0e04 2D106000 	move $2,$3
+ 2102 0e08 6000B6DF 	ld $22,96($sp)
+ 2103 0e0c 5000B5DF 	ld $21,80($sp)
+ 2104 0e10 4000B4DF 	ld $20,64($sp)
+ 2105 0e14 3000B3DF 	ld $19,48($sp)
+ 2106 0e18 2000B2DF 	ld $18,32($sp)
+ 2107 0e1c 1000B1DF 	ld $17,16($sp)
+ 2108 0e20 0000B0DF 	ld $16,0($sp)
+ 2109              	
+ 2110              	.set noreorder
+ 2111              	.set nomacro
+ 2112 0e24 0800E003 	j $31
+ 2113 0e28 8000BD27 	addu $sp,$sp,128
+ 2114              	.set macro
+ 2115              	.set reorder
+ 2116              	
+ 2117 0e2c 00000000 	.p2align 3
+ 2118              	$L215:
+ 2119 0e30 00401424 	li $20,16384
+ 2120 0e34 1400868C 	lw $6,20($4)
+ 2121 0e38 FBFF1624 	li $22,-5
+ 2122 0e3c 01001524 	li $21,1
+ 2123 0e40 23888602 	subu $17,$20,$6
+ 2124              	$L236:
+ 2125              	.set noreorder
+ 2126              	.set nomacro
+ 2127 0e44 20002016 	bne $17,$0,$L232
+ 2128 0e48 3C301100 	dsll $6,$17,32
+ 2129              	.set macro
+ 2130              	.set reorder
+ 2131              	
+ 2132              	$L220:
+ 2133              	.set noreorder
+ 2134              	.set nomacro
+ 2135 0e4c 1C004016 	bne $18,$0,$L229
+GAS LISTING  			page 39
+
+
+ 2136 0e50 2D200002 	move $4,$16
+ 2137              	.set macro
+ 2138              	.set reorder
+ 2139              	
+ 2140              	.set noreorder
+ 2141              	.set nomacro
+ 2142 0e54 0000000C 	jal deflate
+ 2143 0e58 2D286002 	move $5,$19
+ 2144              	.set macro
+ 2145              	.set reorder
+ 2146              	
+ 2147              	.set noreorder
+ 2148              	.set nomacro
+ 2149 0e5c 03002016 	bne $17,$0,$L223
+ 2150 0e60 480002AE 	sw $2,72($16)
+ 2151              	.set macro
+ 2152              	.set reorder
+ 2153              	
+ 2154              	.set noreorder
+ 2155              	.set nomacro
+ 2156 0e64 01005650 	beql $2,$22,$L223
+ 2157 0e68 480000AE 	sw $0,72($16)
+ 2158              	.set macro
+ 2159              	.set reorder
+ 2160              	
+ 2161              	$L223:
+ 2162 0e6c 1400028E 	lw $2,20($16)
+ 2163 0e70 2D900000 	move $18,$0
+ 2164              	.set noreorder
+ 2165              	.set nomacro
+ 2166 0e74 10004014 	bne $2,$0,$L230
+ 2167 0e78 2D304000 	move $6,$2
+ 2168              	.set macro
+ 2169              	.set reorder
+ 2170              	
+ 2171 0e7c 4800038E 	lw $3,72($16)
+ 2172              	
+ 2173              	.set noreorder
+ 2174              	.set nomacro
+ 2175 0e80 01007550 	beql $3,$21,$L224
+ 2176 0e84 01001224 	li $18,1
+ 2177              	.set macro
+ 2178              	.set reorder
+ 2179              	
+ 2180              	$L224:
+ 2181 0e88 0200622C 	sltu $2,$3,2
+ 2182              	.set noreorder
+ 2183              	.set nomacro
+ 2184 0e8c EDFF4014 	bne $2,$0,$L236
+ 2185 0e90 23888602 	subu $17,$20,$6
+ 2186              	.set macro
+ 2187              	.set reorder
+ 2188              	
+ 2189              	$L218:
+ 2190 0e94 01000224 	li $2,1
+ 2191              	.set noreorder
+ 2192              	.set nomacro
+GAS LISTING  			page 40
+
+
+ 2193 0e98 03006210 	beq $3,$2,$L227
+ 2194 0e9c 2D206000 	move $4,$3
+ 2195              	.set macro
+ 2196              	.set reorder
+ 2197              	
+ 2198              	$L228:
+ 2199              	.set noreorder
+ 2200              	.set nomacro
+ 2201 0ea0 D7FF0010 	b $L214
+ 2202 0ea4 2D188000 	move $3,$4
+ 2203              	.set macro
+ 2204              	.set reorder
+ 2205              	
+ 2206              	$L227:
+ 2207              	.set noreorder
+ 2208              	.set nomacro
+ 2209 0ea8 FDFF0010 	b $L228
+ 2210 0eac 2D200000 	move $4,$0
+ 2211              	.set macro
+ 2212              	.set reorder
+ 2213              	
+ 2214              	.p2align 3
+ 2215              	$L225:
+ 2216              	.set noreorder
+ 2217              	.set nomacro
+ 2218 0eb0 F5FF0010 	b $L224
+ 2219 0eb4 01001224 	li $18,1
+ 2220              	.set macro
+ 2221              	.set reorder
+ 2222              	
+ 2223              	.p2align 3
+ 2224              	$L230:
+ 2225              	.set noreorder
+ 2226              	.set nomacro
+ 2227 0eb8 FDFF0010 	b $L225
+ 2228 0ebc 4800038E 	lw $3,72($16)
+ 2229              	.set macro
+ 2230              	.set reorder
+ 2231              	
+ 2232              	$L229:
+ 2233              	.set noreorder
+ 2234              	.set nomacro
+ 2235 0ec0 F4FF0010 	b $L218
+ 2236 0ec4 4800038E 	lw $3,72($16)
+ 2237              	.set macro
+ 2238              	.set reorder
+ 2239              	
+ 2240              	.p2align 3
+ 2241              	$L232:
+ 2242 0ec8 5800048E 	lw $4,88($16)
+ 2243 0ecc 5000078E 	lw $7,80($16)
+ 2244 0ed0 3E300600 	dsrl $6,$6,32
+ 2245              	.set noreorder
+ 2246              	.set nomacro
+ 2247 0ed4 0000000C 	jal fwrite
+ 2248 0ed8 01000524 	dli $5,0x1
+ 2249              	.set macro
+GAS LISTING  			page 41
+
+
+ 2250              	.set reorder
+ 2251              	
+ 2252 0edc 3C100200 	dsll $2,$2,32
+ 2253 0ee0 3F100200 	dsra $2,$2,32
+ 2254              	.set noreorder
+ 2255              	.set nomacro
+ 2256 0ee4 05005114 	bne $2,$17,$L231
+ 2257 0ee8 FFFF0224 	li $2,-1
+ 2258              	.set macro
+ 2259              	.set reorder
+ 2260              	
+ 2261 0eec 5800028E 	lw $2,88($16)
+ 2262 0ef0 140014AE 	sw $20,20($16)
+ 2263              	.set noreorder
+ 2264              	.set nomacro
+ 2265 0ef4 D5FF0010 	b $L220
+ 2266 0ef8 100002AE 	sw $2,16($16)
+ 2267              	.set macro
+ 2268              	.set reorder
+ 2269              	
+ 2270              	$L231:
+ 2271 0efc FFFF0324 	li $3,-1
+ 2272              	.set noreorder
+ 2273              	.set nomacro
+ 2274 0f00 BFFF0010 	b $L214
+ 2275 0f04 480002AE 	sw $2,72($16)
+ 2276              	.set macro
+ 2277              	.set reorder
+ 2278              	
+ 2279              	.end do_flush
+ 2280              	$Lfe15:
+ 2281              	.size do_flush,$Lfe15-do_flush
+ 2282              	.align 2
+ 2283              	.p2align 3,,7
+ 2284              	.globl gzflush
+ 2285              	.ent gzflush
+ 2286              	gzflush:
+ 2287              	.frame $sp,32,$31
+ 2288              	.mask 0x80010000,-16
+ 2289              	.fmask 0x00000000,0
+ 2290 0f08 E0FFBD27 	subu $sp,$sp,32
+ 2291 0f0c 0000B0FF 	sd $16,0($sp)
+ 2292 0f10 1000BFFF 	sd $31,16($sp)
+ 2293              	.set noreorder
+ 2294              	.set nomacro
+ 2295 0f14 6E03000C 	jal do_flush
+ 2296 0f18 2D808000 	move $16,$4
+ 2297              	.set macro
+ 2298              	.set reorder
+ 2299              	
+ 2300              	.set noreorder
+ 2301              	.set nomacro
+ 2302 0f1c 06004010 	beq $2,$0,$L241
+ 2303 0f20 2D204000 	move $4,$2
+ 2304              	.set macro
+ 2305              	.set reorder
+ 2306              	
+GAS LISTING  			page 42
+
+
+ 2307              	$L237:
+ 2308 0f24 1000BFDF 	ld $31,16($sp)
+ 2309 0f28 2D108000 	move $2,$4
+ 2310 0f2c 0000B0DF 	ld $16,0($sp)
+ 2311              	
+ 2312              	.set noreorder
+ 2313              	.set nomacro
+ 2314 0f30 0800E003 	j $31
+ 2315 0f34 2000BD27 	addu $sp,$sp,32
+ 2316              	.set macro
+ 2317              	.set reorder
+ 2318              	
+ 2319              	.p2align 3
+ 2320              	$L241:
+ 2321              	.set noreorder
+ 2322              	.set nomacro
+ 2323 0f38 0000000C 	jal fflush
+ 2324 0f3c 5000048E 	lw $4,80($16)
+ 2325              	.set macro
+ 2326              	.set reorder
+ 2327              	
+ 2328              	
+ 2329 0f40 2D200000 	move $4,$0
+ 2330 0f44 4800038E 	lw $3,72($16)
+ 2331              	
+ 2332 0f48 01006238 	xori $2,$3,0x1
+ 2333              	.set noreorder
+ 2334              	.set nomacro
+ 2335 0f4c F5FF0010 	b $L237
+ 2336 0f50 0B206200 	movn $4,$3,$2
+ 2337              	.set macro
+ 2338              	.set reorder
+ 2339              	
+ 2340              	.end gzflush
+ 2341              	$Lfe16:
+ 2342              	.size gzflush,$Lfe16-gzflush
+ 2343              	.align 2
+ 2344 0f54 00000000 	.p2align 3,,7
+ 2345              	.globl gzseek
+ 2346              	.ent gzseek
+ 2347              	gzseek:
+ 2348              	.frame $sp,48,$31
+ 2349              	.mask 0x80030000,-16
+ 2350              	.fmask 0x00000000,0
+ 2351 0f58 D0FFBD27 	subu $sp,$sp,48
+ 2352 0f5c 1000B1FF 	sd $17,16($sp)
+ 2353 0f60 2D88A000 	move $17,$5
+ 2354 0f64 0000B0FF 	sd $16,0($sp)
+ 2355 0f68 2D808000 	move $16,$4
+ 2356              	.set noreorder
+ 2357              	.set nomacro
+ 2358 0f6c 68008010 	beq $4,$0,$L273
+ 2359 0f70 2000BFFF 	sd $31,32($sp)
+ 2360              	.set macro
+ 2361              	.set reorder
+ 2362              	
+ 2363 0f74 02000224 	li $2,2
+GAS LISTING  			page 43
+
+
+ 2364              	.set noreorder
+ 2365              	.set nomacro
+ 2366 0f78 6500C210 	beq $6,$2,$L273
+ 2367 0f7c FFFF0224 	li $2,-1
+ 2368              	.set macro
+ 2369              	.set reorder
+ 2370              	
+ 2371 0f80 4800838C 	lw $3,72($4)
+ 2372              	
+ 2373              	.set noreorder
+ 2374              	.set nomacro
+ 2375 0f84 62006210 	beq $3,$2,$L273
+ 2376 0f88 FDFF0224 	li $2,-3
+ 2377              	.set macro
+ 2378              	.set reorder
+ 2379              	
+ 2380              	.set noreorder
+ 2381              	.set nomacro
+ 2382 0f8c 60006210 	beq $3,$2,$L273
+ 2383 0f90 77000224 	li $2,119
+ 2384              	.set macro
+ 2385              	.set reorder
+ 2386              	
+ 2387 0f94 74008380 	lb $3,116($4)
+ 2388              	
+ 2389              	.set noreorder
+ 2390              	.set nomacro
+ 2391 0f98 41006210 	beq $3,$2,$L275
+ 2392 0f9c 01000224 	li $2,1
+ 2393              	.set macro
+ 2394              	.set reorder
+ 2395              	
+ 2396              	.set noreorder
+ 2397              	.set nomacro
+ 2398 0fa0 3D00C250 	beql $6,$2,$L276
+ 2399 0fa4 180082DC 	ld $2,24($4)
+ 2400              	.set macro
+ 2401              	.set reorder
+ 2402              	
+ 2403              	$L255:
+ 2404              	.set noreorder
+ 2405              	.set nomacro
+ 2406 0fa8 1F002006 	bltz $17,$L242
+ 2407 0fac FFFF0324 	dli $3,0xffffffffffffffff
+ 2408              	.set macro
+ 2409              	.set reorder
+ 2410              	
+ 2411 0fb0 7000028E 	lw $2,112($16)
+ 2412              	
+ 2413              	.set noreorder
+ 2414              	.set nomacro
+ 2415 0fb4 2C004054 	bnel $2,$0,$L277
+ 2416 0fb8 5400028E 	lw $2,84($16)
+ 2417              	.set macro
+ 2418              	.set reorder
+ 2419              	
+ 2420 0fbc 180003DE 	ld $3,24($16)
+GAS LISTING  			page 44
+
+
+ 2421              	
+ 2422 0fc0 2B102302 	sltu $2,$17,$3
+ 2423 0fc4 22004014 	bne $2,$0,$L259
+ 2423      00000000 
+ 2424 0fcc 2F882302 	dsubu $17,$17,$3
+ 2425              	$L260:
+ 2426              	.set noreorder
+ 2427              	.set nomacro
+ 2428 0fd0 15002052 	beql $17,$0,$L242
+ 2429 0fd4 180003DE 	ld $3,24($16)
+ 2430              	.set macro
+ 2431              	.set reorder
+ 2432              	
+ 2433 0fd8 5800028E 	lw $2,88($16)
+ 2434              	
+ 2435 0fdc 18004010 	beq $2,$0,$L278
+ 2435      00000000 
+ 2436              	$L262:
+ 2437              	.set noreorder
+ 2438              	.set nomacro
+ 2439 0fe4 1000205A 	blezl $17,$L242
+ 2440 0fe8 180003DE 	ld $3,24($16)
+ 2441              	.set macro
+ 2442              	.set reorder
+ 2443              	
+ 2444              	
+ 2445 0fec 0040232A 	slt $3,$17,16384
+ 2446              	$L280:
+ 2447 0ff0 3C101100 	dsll $2,$17,32
+ 2448 0ff4 3F100200 	dsra $2,$2,32
+ 2449 0ff8 00400624 	li $6,16384
+ 2450 0ffc 5800058E 	lw $5,88($16)
+ 2451 1000 0B304300 	movn $6,$2,$3
+ 2452              	.set noreorder
+ 2453              	.set nomacro
+ 2454 1004 0000000C 	jal gzread
+ 2455 1008 2D200002 	move $4,$16
+ 2456              	.set macro
+ 2457              	.set reorder
+ 2458              	
+ 2459 100c FFFF0324 	dli $3,0xffffffffffffffff
+ 2460 1010 2D304000 	move $6,$2
+ 2461              	.set noreorder
+ 2462              	.set nomacro
+ 2463 1014 04004018 	blez $2,$L242
+ 2464 1018 2F882602 	dsubu $17,$17,$6
+ 2465              	.set macro
+ 2466              	.set reorder
+ 2467              	
+ 2468              	.set noreorder
+ 2469              	.set nomacro
+ 2470 101c F4FF201E 	bgtz $17,$L280
+ 2471 1020 0040232A 	slt $3,$17,16384
+ 2472              	.set macro
+ 2473              	.set reorder
+ 2474              	
+ 2475 1024 180003DE 	ld $3,24($16)
+GAS LISTING  			page 45
+
+
+ 2476              	.p2align 3
+ 2477              	$L242:
+ 2478 1028 2000BFDF 	ld $31,32($sp)
+ 2479 102c 2D106000 	move $2,$3
+ 2480 1030 1000B1DF 	ld $17,16($sp)
+ 2481 1034 0000B0DF 	ld $16,0($sp)
+ 2482              	
+ 2483              	.set noreorder
+ 2484              	.set nomacro
+ 2485 1038 0800E003 	j $31
+ 2486 103c 3000BD27 	addu $sp,$sp,48
+ 2487              	.set macro
+ 2488              	.set reorder
+ 2489              	
+ 2490              	$L278:
+ 2491              	.set noreorder
+ 2492              	.set nomacro
+ 2493 1040 0000000C 	jal malloc
+ 2494 1044 00400424 	dli $4,0x4000
+ 2495              	.set macro
+ 2496              	.set reorder
+ 2497              	
+ 2498              	.set noreorder
+ 2499              	.set nomacro
+ 2500 1048 E6FF0010 	b $L262
+ 2501 104c 580002AE 	sw $2,88($16)
+ 2502              	.set macro
+ 2503              	.set reorder
+ 2504              	
+ 2505              	$L259:
+ 2506 1050 0000000C 	jal gzrewind
+ 2506      00000000 
+ 2507              	.set noreorder
+ 2508              	.set nomacro
+ 2509 1058 F3FF4004 	bltz $2,$L242
+ 2510 105c FFFF0324 	dli $3,0xffffffffffffffff
+ 2511              	.set macro
+ 2512              	.set reorder
+ 2513              	
+ 2514 1060 DBFF0010 	b $L260
+ 2514      00000000 
+ 2515              	$L277:
+ 2516 1068 2D282002 	move $5,$17
+ 2517 106c 040000AE 	sw $0,4($16)
+ 2518 1070 2D300000 	move $6,$0
+ 2519 1074 000002AE 	sw $2,0($16)
+ 2520              	.set noreorder
+ 2521              	.set nomacro
+ 2522 1078 0000000C 	jal fseek
+ 2523 107c 5000048E 	lw $4,80($16)
+ 2524              	.set macro
+ 2525              	.set reorder
+ 2526              	
+ 2527              	.set noreorder
+ 2528              	.set nomacro
+ 2529 1080 E9FF4004 	bltz $2,$L242
+ 2530 1084 FFFF0324 	dli $3,0xffffffffffffffff
+GAS LISTING  			page 46
+
+
+ 2531              	.set macro
+ 2532              	.set reorder
+ 2533              	
+ 2534 1088 2D182002 	move $3,$17
+ 2535 108c 080011FE 	sd $17,8($16)
+ 2536              	.set noreorder
+ 2537              	.set nomacro
+ 2538 1090 E5FF0010 	b $L242
+ 2539 1094 180011FE 	sd $17,24($16)
+ 2540              	.set macro
+ 2541              	.set reorder
+ 2542              	
+ 2543              	$L276:
+ 2544              	.set noreorder
+ 2545              	.set nomacro
+ 2546 1098 C3FF0010 	b $L255
+ 2547 109c 2D88A200 	daddu $17,$5,$2
+ 2548              	.set macro
+ 2549              	.set reorder
+ 2550              	
+ 2551              	$L275:
+ 2552 10a0 0300C014 	bne $6,$0,$L246
+ 2552      00000000 
+ 2553 10a8 080082DC 	ld $2,8($4)
+ 2554              	
+ 2555 10ac 2F88A200 	dsubu $17,$5,$2
+ 2556              	$L246:
+ 2557              	.set noreorder
+ 2558              	.set nomacro
+ 2559 10b0 DDFF2006 	bltz $17,$L242
+ 2560 10b4 FFFF0324 	dli $3,0xffffffffffffffff
+ 2561              	.set macro
+ 2562              	.set reorder
+ 2563              	
+ 2564 10b8 5400028E 	lw $2,84($16)
+ 2565              	
+ 2566 10bc 16004010 	beq $2,$0,$L279
+ 2566      00000000 
+ 2567              	$L248:
+ 2568              	.set noreorder
+ 2569              	.set nomacro
+ 2570 10c4 D8FF205A 	blezl $17,$L242
+ 2571 10c8 080003DE 	ld $3,8($16)
+ 2572              	.set macro
+ 2573              	.set reorder
+ 2574              	
+ 2575              	
+ 2576 10cc 0040232A 	slt $3,$17,16384
+ 2577              	$L281:
+ 2578 10d0 3C101100 	dsll $2,$17,32
+ 2579 10d4 3F100200 	dsra $2,$2,32
+ 2580 10d8 00400624 	li $6,16384
+ 2581 10dc 5400058E 	lw $5,84($16)
+ 2582 10e0 0B304300 	movn $6,$2,$3
+ 2583              	.set noreorder
+ 2584              	.set nomacro
+ 2585 10e4 0000000C 	jal gzwrite
+GAS LISTING  			page 47
+
+
+ 2586 10e8 2D200002 	move $4,$16
+ 2587              	.set macro
+ 2588              	.set reorder
+ 2589              	
+ 2590 10ec 2D304000 	move $6,$2
+ 2591              	.set noreorder
+ 2592              	.set nomacro
+ 2593 10f0 0700C010 	beq $6,$0,$L273
+ 2594 10f4 3C100600 	dsll $2,$6,32
+ 2595              	.set macro
+ 2596              	.set reorder
+ 2597              	
+ 2598 10f8 3E100200 	dsrl $2,$2,32
+ 2599 10fc 2F882202 	dsubu $17,$17,$2
+ 2600              	.set noreorder
+ 2601              	.set nomacro
+ 2602 1100 F3FF205E 	bgtzl $17,$L281
+ 2603 1104 0040232A 	slt $3,$17,16384
+ 2604              	.set macro
+ 2605              	.set reorder
+ 2606              	
+ 2607              	.set noreorder
+ 2608              	.set nomacro
+ 2609 1108 C7FF0010 	b $L242
+ 2610 110c 080003DE 	ld $3,8($16)
+ 2611              	.set macro
+ 2612              	.set reorder
+ 2613              	
+ 2614              	.p2align 3
+ 2615              	$L273:
+ 2616              	.set noreorder
+ 2617              	.set nomacro
+ 2618 1110 C5FF0010 	b $L242
+ 2619 1114 FFFF0324 	dli $3,0xffffffffffffffff
+ 2620              	.set macro
+ 2621              	.set reorder
+ 2622              	
+ 2623              	$L279:
+ 2624              	.set noreorder
+ 2625              	.set nomacro
+ 2626 1118 0000000C 	jal malloc
+ 2627 111c 00400424 	dli $4,0x4000
+ 2628              	.set macro
+ 2629              	.set reorder
+ 2630              	
+ 2631 1120 2D280000 	move $5,$0
+ 2632 1124 540002AE 	sw $2,84($16)
+ 2633 1128 00400624 	dli $6,0x4000
+ 2634              	.set noreorder
+ 2635              	.set nomacro
+ 2636 112c 0000000C 	jal memset
+ 2637 1130 2D204000 	move $4,$2
+ 2638              	.set macro
+ 2639              	.set reorder
+ 2640              	
+ 2641 1134 E3FF0010 	b $L248
+ 2641      00000000 
+GAS LISTING  			page 48
+
+
+ 2642              	.end gzseek
+ 2643              	$Lfe17:
+ 2644              	.size gzseek,$Lfe17-gzseek
+ 2645              	.align 2
+ 2646 113c 00000000 	.p2align 3,,7
+ 2647              	.globl gzrewind
+ 2648              	.ent gzrewind
+ 2649              	gzrewind:
+ 2650              	.frame $sp,32,$31
+ 2651              	.mask 0x80010000,-16
+ 2652              	.fmask 0x00000000,0
+ 2653 1140 E0FFBD27 	subu $sp,$sp,32
+ 2654 1144 FFFF0724 	li $7,-1
+ 2655 1148 0000B0FF 	sd $16,0($sp)
+ 2656 114c 2D808000 	move $16,$4
+ 2657              	.set noreorder
+ 2658              	.set nomacro
+ 2659 1150 07008010 	beq $4,$0,$L282
+ 2660 1154 1000BFFF 	sd $31,16($sp)
+ 2661              	.set macro
+ 2662              	.set reorder
+ 2663              	
+ 2664 1158 74000382 	lb $3,116($16)
+ 2665 115c 72000224 	li $2,114
+ 2666 1160 2D280000 	move $5,$0
+ 2667 1164 2D300000 	move $6,$0
+ 2668              	.set noreorder
+ 2669              	.set nomacro
+ 2670 1168 07006210 	beq $3,$2,$L286
+ 2671 116c 2D200000 	move $4,$0
+ 2672              	.set macro
+ 2673              	.set reorder
+ 2674              	
+ 2675              	$L282:
+ 2676 1170 1000BFDF 	ld $31,16($sp)
+ 2677 1174 2D10E000 	move $2,$7
+ 2678 1178 0000B0DF 	ld $16,0($sp)
+ 2679              	
+ 2680              	.set noreorder
+ 2681              	.set nomacro
+ 2682 117c 0800E003 	j $31
+ 2683 1180 2000BD27 	addu $sp,$sp,32
+ 2684              	.set macro
+ 2685              	.set reorder
+ 2686              	
+ 2687 1184 00000000 	.p2align 3
+ 2688              	$L286:
+ 2689 1188 5400028E 	lw $2,84($16)
+ 2690 118c 480000AE 	sw $0,72($16)
+ 2691 1190 4C0000AE 	sw $0,76($16)
+ 2692 1194 000002AE 	sw $2,0($16)
+ 2693              	.set noreorder
+ 2694              	.set nomacro
+ 2695 1198 0000000C 	jal crc32
+ 2696 119c 040000AE 	sw $0,4($16)
+ 2697              	.set macro
+ 2698              	.set reorder
+GAS LISTING  			page 49
+
+
+ 2699              	
+ 2700 11a0 2D200002 	move $4,$16
+ 2701 11a4 780003DE 	ld $3,120($16)
+ 2702              	
+ 2703              	.set noreorder
+ 2704              	.set nomacro
+ 2705 11a8 05006014 	bne $3,$0,$L285
+ 2706 11ac 600002FE 	sd $2,96($16)
+ 2707              	.set macro
+ 2708              	.set reorder
+ 2709              	
+ 2710              	.set noreorder
+ 2711              	.set nomacro
+ 2712 11b0 0000000C 	jal rewind
+ 2713 11b4 5000048E 	lw $4,80($16)
+ 2714              	.set macro
+ 2715              	.set reorder
+ 2716              	
+ 2717              	.set noreorder
+ 2718              	.set nomacro
+ 2719 11b8 EDFF0010 	b $L282
+ 2720 11bc 2D380000 	move $7,$0
+ 2721              	.set macro
+ 2722              	.set reorder
+ 2723              	
+ 2724              	$L285:
+ 2725 11c0 0000000C 	jal inflateReset
+ 2725      00000000 
+ 2726 11c8 5000048E 	lw $4,80($16)
+ 2727 11cc 780005DE 	ld $5,120($16)
+ 2728              	.set noreorder
+ 2729              	.set nomacro
+ 2730 11d0 0000000C 	jal fseek
+ 2731 11d4 2D300000 	move $6,$0
+ 2732              	.set macro
+ 2733              	.set reorder
+ 2734              	
+ 2735              	.set noreorder
+ 2736              	.set nomacro
+ 2737 11d8 E5FF0010 	b $L282
+ 2738 11dc 2D384000 	move $7,$2
+ 2739              	.set macro
+ 2740              	.set reorder
+ 2741              	
+ 2742              	.end gzrewind
+ 2743              	$Lfe18:
+ 2744              	.size gzrewind,$Lfe18-gzrewind
+ 2745              	.align 2
+ 2746              	.p2align 3,,7
+ 2747              	.globl gztell
+ 2748              	.ent gztell
+ 2749              	gztell:
+ 2750              	.frame $sp,16,$31
+ 2751              	.mask 0x80000000,-16
+ 2752              	.fmask 0x00000000,0
+ 2753 11e0 F0FFBD27 	subu $sp,$sp,16
+ 2754 11e4 2D280000 	move $5,$0
+GAS LISTING  			page 50
+
+
+ 2755 11e8 0000BFFF 	sd $31,0($sp)
+ 2756              	.set noreorder
+ 2757              	.set nomacro
+ 2758 11ec 0000000C 	jal gzseek
+ 2759 11f0 01000624 	li $6,1
+ 2760              	.set macro
+ 2761              	.set reorder
+ 2762              	
+ 2763 11f4 0000BFDF 	ld $31,0($sp)
+ 2764              	
+ 2765              	.set noreorder
+ 2766              	.set nomacro
+ 2767 11f8 0800E003 	j $31
+ 2768 11fc 1000BD27 	addu $sp,$sp,16
+ 2769              	.set macro
+ 2770              	.set reorder
+ 2771              	
+ 2772              	.end gztell
+ 2773              	$Lfe19:
+ 2774              	.size gztell,$Lfe19-gztell
+ 2775              	.align 2
+ 2776              	.p2align 3,,7
+ 2777              	.globl gzeof
+ 2778              	.ent gzeof
+ 2779              	gzeof:
+ 2780              	.frame $sp,0,$31
+ 2781              	.mask 0x00000000,0
+ 2782              	.fmask 0x00000000,0
+ 2783 1200 05008010 	beq $4,$0,$L289
+ 2783      00000000 
+ 2784 1208 74008380 	lb $3,116($4)
+ 2785 120c 72000224 	li $2,114
+ 2786 1210 03006210 	beq $3,$2,$L291
+ 2786      00000000 
+ 2787              	$L289:
+ 2788              	.set noreorder
+ 2789              	.set nomacro
+ 2790 1218 0800E003 	j $31
+ 2791 121c 2D100000 	move $2,$0
+ 2792              	.set macro
+ 2793              	.set reorder
+ 2794              	
+ 2795              	.p2align 3
+ 2796              	$L291:
+ 2797              	.set noreorder
+ 2798              	.set nomacro
+ 2799 1220 0800E003 	j $31
+ 2800 1224 4C00828C 	lw $2,76($4)
+ 2801              	.set macro
+ 2802              	.set reorder
+ 2803              	
+ 2804              	.end gzeof
+ 2805              	$Lfe20:
+ 2806              	.size gzeof,$Lfe20-gzeof
+ 2807              	.align 2
+ 2808              	.p2align 3,,7
+ 2809              	.ent putLong
+GAS LISTING  			page 51
+
+
+ 2810              	putLong:
+ 2811              	.frame $sp,64,$31
+ 2812              	.mask 0x80070000,-16
+ 2813              	.fmask 0x00000000,0
+ 2814 1228 C0FFBD27 	subu $sp,$sp,64
+ 2815 122c 3000BFFF 	sd $31,48($sp)
+ 2816 1230 2000B2FF 	sd $18,32($sp)
+ 2817 1234 2D908000 	move $18,$4
+ 2818 1238 1000B1FF 	sd $17,16($sp)
+ 2819 123c 03001124 	li $17,3
+ 2820 1240 0000B0FF 	sd $16,0($sp)
+ 2821 1244 2D80A000 	move $16,$5
+ 2822 1248 FF000432 	andi $4,$16,0xff
+ 2823              	$L300:
+ 2824 124c FFFF3126 	addu $17,$17,-1
+ 2825 1250 2D284002 	move $5,$18
+ 2826 1254 3C200400 	dsll $4,$4,32
+ 2827 1258 3F200400 	dsra $4,$4,32
+ 2828              	.set noreorder
+ 2829              	.set nomacro
+ 2830 125c 0000000C 	jal fputc
+ 2831 1260 3A821000 	dsrl $16,$16,8
+ 2832              	.set macro
+ 2833              	.set reorder
+ 2834              	
+ 2835              	.set noreorder
+ 2836              	.set nomacro
+ 2837 1264 F9FF2106 	bgez $17,$L300
+ 2838 1268 FF000432 	andi $4,$16,0xff
+ 2839              	.set macro
+ 2840              	.set reorder
+ 2841              	
+ 2842 126c 3000BFDF 	ld $31,48($sp)
+ 2843 1270 2000B2DF 	ld $18,32($sp)
+ 2844 1274 1000B1DF 	ld $17,16($sp)
+ 2845 1278 0000B0DF 	ld $16,0($sp)
+ 2846              	
+ 2847              	.set noreorder
+ 2848              	.set nomacro
+ 2849 127c 0800E003 	j $31
+ 2850 1280 4000BD27 	addu $sp,$sp,64
+ 2851              	.set macro
+ 2852              	.set reorder
+ 2853              	
+ 2854              	.end putLong
+ 2855              	$Lfe21:
+ 2856              	.size putLong,$Lfe21-putLong
+ 2857              	.align 2
+ 2858 1284 00000000 	.p2align 3,,7
+ 2859              	.ent getLong
+ 2860              	getLong:
+ 2861              	.frame $sp,48,$31
+ 2862              	.mask 0x80030000,-16
+ 2863              	.fmask 0x00000000,0
+ 2864 1288 D0FFBD27 	subu $sp,$sp,48
+ 2865 128c 1000B1FF 	sd $17,16($sp)
+ 2866 1290 2D888000 	move $17,$4
+GAS LISTING  			page 52
+
+
+ 2867 1294 2000BFFF 	sd $31,32($sp)
+ 2868              	.set noreorder
+ 2869              	.set nomacro
+ 2870 1298 0601000C 	jal get_byte
+ 2871 129c 0000B0FF 	sd $16,0($sp)
+ 2872              	.set macro
+ 2873              	.set reorder
+ 2874              	
+ 2875 12a0 2D202002 	move $4,$17
+ 2876              	.set noreorder
+ 2877              	.set nomacro
+ 2878 12a4 0601000C 	jal get_byte
+ 2879 12a8 2D804000 	move $16,$2
+ 2880              	.set macro
+ 2881              	.set reorder
+ 2882              	
+ 2883 12ac 2D202002 	move $4,$17
+ 2884 12b0 38120200 	dsll $2,$2,8
+ 2885              	.set noreorder
+ 2886              	.set nomacro
+ 2887 12b4 0601000C 	jal get_byte
+ 2888 12b8 2D800202 	daddu $16,$16,$2
+ 2889              	.set macro
+ 2890              	.set reorder
+ 2891              	
+ 2892 12bc 2D202002 	move $4,$17
+ 2893 12c0 38140200 	dsll $2,$2,16
+ 2894              	.set noreorder
+ 2895              	.set nomacro
+ 2896 12c4 0601000C 	jal get_byte
+ 2897 12c8 2D800202 	daddu $16,$16,$2
+ 2898              	.set macro
+ 2899              	.set reorder
+ 2900              	
+ 2901 12cc 2D184000 	move $3,$2
+ 2902 12d0 FFFF0424 	li $4,-1
+ 2903 12d4 381E0300 	dsll $3,$3,24
+ 2904              	.set noreorder
+ 2905              	.set nomacro
+ 2906 12d8 07004410 	beq $2,$4,$L303
+ 2907 12dc 2D800302 	daddu $16,$16,$3
+ 2908              	.set macro
+ 2909              	.set reorder
+ 2910              	
+ 2911              	$L302:
+ 2912 12e0 2D100002 	move $2,$16
+ 2913 12e4 2000BFDF 	ld $31,32($sp)
+ 2914 12e8 1000B1DF 	ld $17,16($sp)
+ 2915 12ec 0000B0DF 	ld $16,0($sp)
+ 2916              	
+ 2917              	.set noreorder
+ 2918              	.set nomacro
+ 2919 12f0 0800E003 	j $31
+ 2920 12f4 3000BD27 	addu $sp,$sp,48
+ 2921              	.set macro
+ 2922              	.set reorder
+ 2923              	
+GAS LISTING  			page 53
+
+
+ 2924              	.p2align 3
+ 2925              	$L303:
+ 2926 12f8 FDFF0224 	li $2,-3
+ 2927              	.set noreorder
+ 2928              	.set nomacro
+ 2929 12fc F8FF0010 	b $L302
+ 2930 1300 480022AE 	sw $2,72($17)
+ 2931              	.set macro
+ 2932              	.set reorder
+ 2933              	
+ 2934              	.end getLong
+ 2935              	$Lfe22:
+ 2936              	.size getLong,$Lfe22-getLong
+ 2937              	.align 2
+ 2938 1304 00000000 	.p2align 3,,7
+ 2939              	.globl gzclose
+ 2940              	.ent gzclose
+ 2941              	gzclose:
+ 2942              	.frame $sp,32,$31
+ 2943              	.mask 0x80010000,-16
+ 2944              	.fmask 0x00000000,0
+ 2945 1308 E0FFBD27 	subu $sp,$sp,32
+ 2946 130c FEFF0224 	li $2,-2
+ 2947 1310 0000B0FF 	sd $16,0($sp)
+ 2948 1314 2D808000 	move $16,$4
+ 2949              	.set noreorder
+ 2950              	.set nomacro
+ 2951 1318 08008010 	beq $4,$0,$L304
+ 2952 131c 1000BFFF 	sd $31,16($sp)
+ 2953              	.set macro
+ 2954              	.set reorder
+ 2955              	
+ 2956 1320 74008380 	lb $3,116($4)
+ 2957 1324 77000224 	li $2,119
+ 2958              	.set noreorder
+ 2959              	.set nomacro
+ 2960 1328 09006210 	beq $3,$2,$L309
+ 2961 132c 04000524 	li $5,4
+ 2962              	.set macro
+ 2963              	.set reorder
+ 2964              	
+ 2965 1330 2D200002 	move $4,$16
+ 2966              	$L308:
+ 2967 1334 B001000C 	jal destroy
+ 2967      00000000 
+ 2968              	$L304:
+ 2969 133c 1000BFDF 	ld $31,16($sp)
+ 2970 1340 0000B0DF 	ld $16,0($sp)
+ 2971              	
+ 2972              	.set noreorder
+ 2973              	.set nomacro
+ 2974 1344 0800E003 	j $31
+ 2975 1348 2000BD27 	addu $sp,$sp,32
+ 2976              	.set macro
+ 2977              	.set reorder
+ 2978              	
+ 2979 134c 00000000 	.p2align 3
+GAS LISTING  			page 54
+
+
+ 2980              	$L309:
+ 2981 1350 6E03000C 	jal do_flush
+ 2981      00000000 
+ 2982              	.set noreorder
+ 2983              	.set nomacro
+ 2984 1358 F6FF4014 	bne $2,$0,$L308
+ 2985 135c 2D200002 	move $4,$16
+ 2986              	.set macro
+ 2987              	.set reorder
+ 2988              	
+ 2989 1360 5000048E 	lw $4,80($16)
+ 2990              	.set noreorder
+ 2991              	.set nomacro
+ 2992 1364 8A04000C 	jal putLong
+ 2993 1368 600005DE 	ld $5,96($16)
+ 2994              	.set macro
+ 2995              	.set reorder
+ 2996              	
+ 2997 136c 5000048E 	lw $4,80($16)
+ 2998              	.set noreorder
+ 2999              	.set nomacro
+ 3000 1370 8A04000C 	jal putLong
+ 3001 1374 080005DE 	ld $5,8($16)
+ 3002              	.set macro
+ 3003              	.set reorder
+ 3004              	
+ 3005              	.set noreorder
+ 3006              	.set nomacro
+ 3007 1378 EEFF0010 	b $L308
+ 3008 137c 2D200002 	move $4,$16
+ 3009              	.set macro
+ 3010              	.set reorder
+ 3011              	
+ 3012              	.end gzclose
+ 3013              	$Lfe23:
+ 3014              	.size gzclose,$Lfe23-gzclose
+ 3015              	.rdata
+ 3016              	.align 3
+ 3017              	$LC3:
+ 3018 0028 00       	.ascii "\000"
+ 3019 0029 00000000 	.align 3
+ 3019      000000
+ 3020              	$LC4:
+ 3021 0030 3A2000   	.ascii ": \000"
+ 3022 0033 00000000 	.text
+ 3022      00
+ 3023              	.align 2
+ 3024              	.p2align 3,,7
+ 3025              	.globl gzerror
+ 3026              	.ent gzerror
+ 3027              	gzerror:
+ 3028              	.frame $sp,64,$31
+ 3029              	.mask 0x80070000,-16
+ 3030              	.fmask 0x00000000,0
+ 3031 1380 C0FFBD27 	subu $sp,$sp,64
+ 3032 1384 1000B1FF 	sd $17,16($sp)
+ 3033 1388 2D888000 	move $17,$4
+GAS LISTING  			page 55
+
+
+ 3034 138c 3000BFFF 	sd $31,48($sp)
+ 3035 1390 2000B2FF 	sd $18,32($sp)
+ 3036              	.set noreorder
+ 3037              	.set nomacro
+ 3038 1394 3E008010 	beq $4,$0,$L318
+ 3039 1398 0000B0FF 	sd $16,0($sp)
+ 3040              	.set macro
+ 3041              	.set reorder
+ 3042              	
+ 3043 139c 4800868C 	lw $6,72($4)
+ 3044              	
+ 3045              	.set noreorder
+ 3046              	.set nomacro
+ 3047 13a0 0900C014 	bne $6,$0,$L312
+ 3048 13a4 0000A6AC 	sw $6,0($5)
+ 3049              	.set macro
+ 3050              	.set reorder
+ 3051              	
+ 3052 13a8 0000023C 	lui $2,%hi($LC3)
+ 3053 13ac 28004224 	addiu $2,$2,%lo($LC3)
+ 3054              	$L310:
+ 3055 13b0 3000BFDF 	ld $31,48($sp)
+ 3056 13b4 2000B2DF 	ld $18,32($sp)
+ 3057 13b8 1000B1DF 	ld $17,16($sp)
+ 3058 13bc 0000B0DF 	ld $16,0($sp)
+ 3059              	
+ 3060              	.set noreorder
+ 3061              	.set nomacro
+ 3062 13c0 0800E003 	j $31
+ 3063 13c4 4000BD27 	addu $sp,$sp,64
+ 3064              	.set macro
+ 3065              	.set reorder
+ 3066              	
+ 3067              	.p2align 3
+ 3068              	$L312:
+ 3069 13c8 0000033C 	lui $3,%hi($LC3)
+ 3070 13cc FFFF0224 	li $2,-1
+ 3071              	.set noreorder
+ 3072              	.set nomacro
+ 3073 13d0 0200C210 	beq $6,$2,$L314
+ 3074 13d4 28007224 	addiu $18,$3,%lo($LC3)
+ 3075              	.set macro
+ 3076              	.set reorder
+ 3077              	
+ 3078 13d8 2000928C 	lw $18,32($4)
+ 3079              	$L314:
+ 3080              	.set noreorder
+ 3081              	.set nomacro
+ 3082 13dc 05004052 	beql $18,$0,$L320
+ 3083 13e0 4800228E 	lw $2,72($17)
+ 3084              	.set macro
+ 3085              	.set reorder
+ 3086              	
+ 3087              	
+ 3088 13e4 00004282 	lb $2,0($18)
+ 3089              	
+ 3090              	.set noreorder
+GAS LISTING  			page 56
+
+
+ 3091              	.set nomacro
+ 3092 13e8 0A004054 	bnel $2,$0,$L321
+ 3093 13ec 6800248E 	lw $4,104($17)
+ 3094              	.set macro
+ 3095              	.set reorder
+ 3096              	
+ 3097 13f0 4800228E 	lw $2,72($17)
+ 3098              	$L320:
+ 3099 13f4 02000324 	li $3,2
+ 3100 13f8 23186200 	subu $3,$3,$2
+ 3101 13fc 0000023C 	lui $2,%hi(z_errmsg)
+ 3102 1400 80180300 	sll $3,$3,2
+ 3103 1404 00004224 	addiu $2,$2,%lo(z_errmsg)
+ 3104 1408 21186200 	addu $3,$3,$2
+ 3105 140c 0000728C 	lw $18,0($3)
+ 3106 1410 6800248E 	lw $4,104($17)
+ 3107              	$L321:
+ 3108 1414 1A008014 	bne $4,$0,$L319
+ 3108      00000000 
+ 3109              	$L317:
+ 3110              	.set noreorder
+ 3111              	.set nomacro
+ 3112 141c 0000000C 	jal strlen
+ 3113 1420 6C00248E 	lw $4,108($17)
+ 3114              	.set macro
+ 3115              	.set reorder
+ 3116              	
+ 3117              	
+ 3118 1424 2D204002 	move $4,$18
+ 3119              	.set noreorder
+ 3120              	.set nomacro
+ 3121 1428 0000000C 	jal strlen
+ 3122 142c 2D804000 	move $16,$2
+ 3123              	.set macro
+ 3124              	.set reorder
+ 3125              	
+ 3126 1430 21800202 	addu $16,$16,$2
+ 3127 1434 03001026 	addu $16,$16,3
+ 3128 1438 3C801000 	dsll $16,$16,32
+ 3129 143c 3E801000 	dsrl $16,$16,32
+ 3130              	.set noreorder
+ 3131              	.set nomacro
+ 3132 1440 0000000C 	jal malloc
+ 3133 1444 2D200002 	move $4,$16
+ 3134              	.set macro
+ 3135              	.set reorder
+ 3136              	
+ 3137 1448 6C00258E 	lw $5,108($17)
+ 3138 144c 680022AE 	sw $2,104($17)
+ 3139              	.set noreorder
+ 3140              	.set nomacro
+ 3141 1450 0000000C 	jal strcpy
+ 3142 1454 2D204000 	move $4,$2
+ 3143              	.set macro
+ 3144              	.set reorder
+ 3145              	
+ 3146 1458 0000053C 	lui $5,%hi($LC4)
+GAS LISTING  			page 57
+
+
+ 3147 145c 6800248E 	lw $4,104($17)
+ 3148              	.set noreorder
+ 3149              	.set nomacro
+ 3150 1460 0000000C 	jal strcat
+ 3151 1464 3000A524 	addiu $5,$5,%lo($LC4)
+ 3152              	.set macro
+ 3153              	.set reorder
+ 3154              	
+ 3155 1468 6800248E 	lw $4,104($17)
+ 3156              	.set noreorder
+ 3157              	.set nomacro
+ 3158 146c 0000000C 	jal strcat
+ 3159 1470 2D284002 	move $5,$18
+ 3160              	.set macro
+ 3161              	.set reorder
+ 3162              	
+ 3163              	.set noreorder
+ 3164              	.set nomacro
+ 3165 1474 CEFF0010 	b $L310
+ 3166 1478 6800228E 	lw $2,104($17)
+ 3167              	.set macro
+ 3168              	.set reorder
+ 3169              	
+ 3170 147c 00000000 	.p2align 3
+ 3171              	$L319:
+ 3172 1480 0000000C 	jal free
+ 3172      00000000 
+ 3173 1488 E4FF0010 	b $L317
+ 3173      00000000 
+ 3174              	.p2align 3
+ 3175              	$L318:
+ 3176 1490 0000023C 	lui $2,%hi(z_errmsg+16)
+ 3177 1494 FEFF0324 	li $3,-2
+ 3178 1498 1000428C 	lw $2,%lo(z_errmsg+16)($2)
+ 3179              	.set noreorder
+ 3180              	.set nomacro
+ 3181 149c C4FF0010 	b $L310
+ 3182 14a0 0000A3AC 	sw $3,0($5)
+ 3183              	.set macro
+ 3184              	.set reorder
+ 3185              	
+ 3186              	.end gzerror
+ 3187              	$Lfe24:
+ 3188              	.size gzerror,$Lfe24-gzerror
+ 3189 14a4 00000000 	.ident "GCC: (GNU) 3.2.2"

@@ -1,0 +1,33 @@
+{
+  "originHash" : "73bc9aee447bc8b1e86af38387b01e3caaef488d4ef24dac6375d42a86fa6f37",
+  "pins" : [
+    {
+      "identity" : "lighter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Lighter.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "b1c78989db429349427cd90b9b99925ff3253853"
+      }
+    },
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift.git",
+      "state" : {
+        "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
+        "version" : "0.15.3"
+      }
+    },
+    {
+      "identity" : "swiftgenplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
+      }
+    }
+  ],
+  "version" : 3
+}

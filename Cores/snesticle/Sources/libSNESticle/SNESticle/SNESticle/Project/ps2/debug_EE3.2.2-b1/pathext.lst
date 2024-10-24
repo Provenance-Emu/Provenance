@@ -1,0 +1,394 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/pathext.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 2
+   6              	.type _Path_nExtList,@object
+   7              	.size _Path_nExtList,4
+   8              	_Path_nExtList:
+   9 0000 00000000 	.word 0
+  10              	.section .bss
+  11              	_Path_ExtList:
+  12              	.align 3
+  13 0000 00000000 	.space 192
+  13      00000000 
+  13      00000000 
+  13      00000000 
+  13      00000000 
+  14              	.previous
+  15              	.text
+  16              	.align 2
+  17              	.p2align 3,,7
+  18              	.ent _Z11_PathNewExtv
+  19              	_Z11_PathNewExtv:
+  20              	.frame $sp,0,$31
+  21              	.mask 0x00000000,0
+  22              	.fmask 0x00000000,0
+  23 0000 0000063C 	lui $6,%hi(_Path_nExtList)
+  24 0004 2D180000 	move $3,$0
+  25 0008 0000C48C 	lw $4,%lo(_Path_nExtList)($6)
+  26              	
+  27 000c 1000822C 	sltu $2,$4,16
+  28              	.set noreorder
+  29              	.set nomacro
+  30 0010 07004010 	beq $2,$0,$L1
+  31 0014 01008524 	addu $5,$4,1
+  32              	.set macro
+  33              	.set reorder
+  34              	
+  35 0018 0C000324 	li $3,12
+  36 001c 0000023C 	lui $2,%hi(_Path_ExtList)
+  37 0020 18388300 	mult $7,$4,$3
+  38 0024 00004224 	addiu $2,$2,%lo(_Path_ExtList)
+  39 0028 0000C5AC 	sw $5,%lo(_Path_nExtList)($6)
+  40 002c 2118E200 	addu $3,$7,$2
+  41              	$L1:
+  42              	.set noreorder
+  43              	.set nomacro
+  44 0030 0800E003 	j $31
+  45 0034 2D106000 	move $2,$3
+  46              	.set macro
+  47              	.set reorder
+  48              	
+  49              	.end _Z11_PathNewExtv
+  50              	$Lfe1:
+  51              	.size _Z11_PathNewExtv,$Lfe1-_Z11_PathNewExtv
+  52              	.align 2
+  53              	.p2align 3,,7
+GAS LISTING  			page 2
+
+
+  54              	.ent _Z12_PathFindExtPc
+  55              	_Z12_PathFindExtPc:
+  56              	.frame $sp,80,$31
+  57              	.mask 0x800f0000,-16
+  58              	.fmask 0x00000000,0
+  59 0038 B0FFBD27 	subu $sp,$sp,80
+  60 003c 0000033C 	lui $3,%hi(_Path_nExtList)
+  61 0040 2000B2FF 	sd $18,32($sp)
+  62 0044 2D908000 	move $18,$4
+  63 0048 1000B1FF 	sd $17,16($sp)
+  64 004c 4000BFFF 	sd $31,64($sp)
+  65 0050 3000B3FF 	sd $19,48($sp)
+  66 0054 0000B0FF 	sd $16,0($sp)
+  67 0058 0000628C 	lw $2,%lo(_Path_nExtList)($3)
+  68              	
+  69              	.set noreorder
+  70              	.set nomacro
+  71 005c 0E004010 	beq $2,$0,$L11
+  72 0060 2D880000 	move $17,$0
+  73              	.set macro
+  74              	.set reorder
+  75              	
+  76 0064 0000023C 	lui $2,%hi(_Path_ExtList)
+  77 0068 2D986000 	move $19,$3
+  78 006c 00005024 	addiu $16,$2,%lo(_Path_ExtList)
+  79              	.p2align 3
+  80              	$L9:
+  81 0070 2D200002 	move $4,$16
+  82              	.set noreorder
+  83              	.set nomacro
+  84 0074 0000000C 	jal strcasecmp
+  85 0078 2D284002 	move $5,$18
+  86              	.set macro
+  87              	.set reorder
+  88              	
+  89              	.set noreorder
+  90              	.set nomacro
+  91 007c 07004010 	beq $2,$0,$L3
+  92 0080 2D180002 	move $3,$16
+  93              	.set macro
+  94              	.set reorder
+  95              	
+  96 0084 0000628E 	lw $2,%lo(_Path_nExtList)($19)
+  97 0088 01003126 	addu $17,$17,1
+  98 008c 2B102202 	sltu $2,$17,$2
+  99              	.set noreorder
+ 100              	.set nomacro
+ 101 0090 F7FF4014 	bne $2,$0,$L9
+ 102 0094 0C001026 	addu $16,$16,12
+ 103              	.set macro
+ 104              	.set reorder
+ 105              	
+ 106              	$L11:
+ 107 0098 2D180000 	move $3,$0
+ 108              	$L3:
+ 109 009c 4000BFDF 	ld $31,64($sp)
+ 110 00a0 2D106000 	move $2,$3
+GAS LISTING  			page 3
+
+
+ 111 00a4 3000B3DF 	ld $19,48($sp)
+ 112 00a8 2000B2DF 	ld $18,32($sp)
+ 113 00ac 1000B1DF 	ld $17,16($sp)
+ 114 00b0 0000B0DF 	ld $16,0($sp)
+ 115              	
+ 116              	.set noreorder
+ 117              	.set nomacro
+ 118 00b4 0800E003 	j $31
+ 119 00b8 5000BD27 	addu $sp,$sp,80
+ 120              	.set macro
+ 121              	.set reorder
+ 122              	
+ 123              	.end _Z12_PathFindExtPc
+ 124              	$Lfe2:
+ 125              	.size _Z12_PathFindExtPc,$Lfe2-_Z12_PathFindExtPc
+ 126              	.align 2
+ 127 00bc 00000000 	.p2align 3,,7
+ 128              	.globl _Z10PathExtAddjPc
+ 129              	.ent _Z10PathExtAddjPc
+ 130              	_Z10PathExtAddjPc:
+ 131              	.frame $sp,48,$31
+ 132              	.mask 0x80030000,-16
+ 133              	.fmask 0x00000000,0
+ 134 00c0 D0FFBD27 	subu $sp,$sp,48
+ 135 00c4 FFFF0324 	li $3,-1
+ 136 00c8 1000B1FF 	sd $17,16($sp)
+ 137 00cc 2D888000 	move $17,$4
+ 138 00d0 0000B0FF 	sd $16,0($sp)
+ 139 00d4 2D80A000 	move $16,$5
+ 140              	.set noreorder
+ 141              	.set nomacro
+ 142 00d8 0A00A010 	beq $5,$0,$L12
+ 143 00dc 2000BFFF 	sd $31,32($sp)
+ 144              	.set macro
+ 145              	.set reorder
+ 146              	
+ 147 00e0 0000000C 	jal _Z11_PathNewExtv
+ 147      00000000 
+ 148 00e8 2D280002 	move $5,$16
+ 149 00ec FFFF0324 	li $3,-1
+ 150              	.set noreorder
+ 151              	.set nomacro
+ 152 00f0 04004010 	beq $2,$0,$L12
+ 153 00f4 2D204000 	move $4,$2
+ 154              	.set macro
+ 155              	.set reorder
+ 156              	
+ 157              	.set noreorder
+ 158              	.set nomacro
+ 159 00f8 0000000C 	jal strcpy
+ 160 00fc 080051AC 	sw $17,8($2)
+ 161              	.set macro
+ 162              	.set reorder
+ 163              	
+ 164 0100 2D180000 	move $3,$0
+ 165              	$L12:
+ 166 0104 2000BFDF 	ld $31,32($sp)
+GAS LISTING  			page 4
+
+
+ 167 0108 2D106000 	move $2,$3
+ 168 010c 1000B1DF 	ld $17,16($sp)
+ 169 0110 0000B0DF 	ld $16,0($sp)
+ 170              	
+ 171              	.set noreorder
+ 172              	.set nomacro
+ 173 0114 0800E003 	j $31
+ 174 0118 3000BD27 	addu $sp,$sp,48
+ 175              	.set macro
+ 176              	.set reorder
+ 177              	
+ 178              	.end _Z10PathExtAddjPc
+ 179              	$Lfe3:
+ 180              	.size _Z10PathExtAddjPc,$Lfe3-_Z10PathExtAddjPc
+ 181              	.align 2
+ 182 011c 00000000 	.p2align 3,,7
+ 183              	.globl _Z10PathExtGetPc
+ 184              	.ent _Z10PathExtGetPc
+ 185              	_Z10PathExtGetPc:
+ 186              	.frame $sp,32,$31
+ 187              	.mask 0x80010000,-16
+ 188              	.fmask 0x00000000,0
+ 189 0120 E0FFBD27 	subu $sp,$sp,32
+ 190 0124 0000B0FF 	sd $16,0($sp)
+ 191 0128 1000BFFF 	sd $31,16($sp)
+ 192              	.set noreorder
+ 193              	.set nomacro
+ 194 012c 0000000C 	jal strlen
+ 195 0130 2D808000 	move $16,$4
+ 196              	.set macro
+ 197              	.set reorder
+ 198              	
+ 199              	.set noreorder
+ 200              	.set nomacro
+ 201 0134 1C004004 	bltz $2,$L21
+ 202 0138 2D184000 	move $3,$2
+ 203              	.set macro
+ 204              	.set reorder
+ 205              	
+ 206 013c 21280202 	addu $5,$16,$2
+ 207 0140 2E000224 	li $2,46
+ 208 0144 0000A480 	lb $4,0($5)
+ 209              	
+ 210              	.set noreorder
+ 211              	.set nomacro
+ 212 0148 12008210 	beq $4,$2,$L17
+ 213 014c 2F000224 	li $2,47
+ 214              	.set macro
+ 215              	.set reorder
+ 216              	
+ 217              	.set noreorder
+ 218              	.set nomacro
+ 219 0150 10008210 	beq $4,$2,$L17
+ 220 0154 5C000224 	li $2,92
+ 221              	.set macro
+ 222              	.set reorder
+ 223              	
+GAS LISTING  			page 5
+
+
+ 224 0158 0E008210 	beq $4,$2,$L17
+ 224      00000000 
+ 225 0160 2E000724 	li $7,46
+ 226 0164 2F000624 	li $6,47
+ 227 0168 5C000424 	li $4,92
+ 228 016c FFFF6324 	addu $3,$3,-1
+ 229              	$L23:
+ 230              	.set noreorder
+ 231              	.set nomacro
+ 232 0170 0D006004 	bltz $3,$L21
+ 233 0174 21280302 	addu $5,$16,$3
+ 234              	.set macro
+ 235              	.set reorder
+ 236              	
+ 237 0178 0000A280 	lb $2,0($5)
+ 238              	
+ 239 017c 05004710 	beq $2,$7,$L17
+ 239      00000000 
+ 240 0184 03004610 	beq $2,$6,$L17
+ 240      00000000 
+ 241              	.set noreorder
+ 242              	.set nomacro
+ 243 018c F8FF4454 	bnel $2,$4,$L23
+ 244 0190 FFFF6324 	addu $3,$3,-1
+ 245              	.set macro
+ 246              	.set reorder
+ 247              	
+ 248              	$L17:
+ 249              	.set noreorder
+ 250              	.set nomacro
+ 251 0194 04006018 	blez $3,$L21
+ 252 0198 2E000224 	li $2,46
+ 253              	.set macro
+ 254              	.set reorder
+ 255              	
+ 256 019c 0000A380 	lb $3,0($5)
+ 257              	
+ 258              	.set noreorder
+ 259              	.set nomacro
+ 260 01a0 02006210 	beq $3,$2,$L15
+ 261 01a4 2D20A000 	move $4,$5
+ 262              	.set macro
+ 263              	.set reorder
+ 264              	
+ 265              	$L21:
+ 266 01a8 2D200000 	move $4,$0
+ 267              	$L15:
+ 268 01ac 1000BFDF 	ld $31,16($sp)
+ 269 01b0 2D108000 	move $2,$4
+ 270 01b4 0000B0DF 	ld $16,0($sp)
+ 271              	
+ 272              	.set noreorder
+ 273              	.set nomacro
+ 274 01b8 0800E003 	j $31
+ 275 01bc 2000BD27 	addu $sp,$sp,32
+ 276              	.set macro
+ 277              	.set reorder
+GAS LISTING  			page 6
+
+
+ 278              	
+ 279              	.end _Z10PathExtGetPc
+ 280              	$Lfe4:
+ 281              	.size _Z10PathExtGetPc,$Lfe4-_Z10PathExtGetPc
+ 282              	.align 2
+ 283              	.p2align 3,,7
+ 284              	.globl _Z14PathExtResolvePcPjh
+ 285              	.ent _Z14PathExtResolvePcPjh
+ 286              	_Z14PathExtResolvePcPjh:
+ 287              	.frame $sp,64,$31
+ 288              	.mask 0x80070000,-16
+ 289              	.fmask 0x00000000,0
+ 290 01c0 C0FFBD27 	subu $sp,$sp,64
+ 291 01c4 2000B2FF 	sd $18,32($sp)
+ 292 01c8 2D90A000 	move $18,$5
+ 293 01cc 1000B1FF 	sd $17,16($sp)
+ 294 01d0 0000B0FF 	sd $16,0($sp)
+ 295 01d4 3000BFFF 	sd $31,48($sp)
+ 296              	.set noreorder
+ 297              	.set nomacro
+ 298 01d8 0000000C 	jal _Z10PathExtGetPc
+ 299 01dc FF00D130 	andi $17,$6,0x00ff
+ 300              	.set macro
+ 301              	.set reorder
+ 302              	
+ 303 01e0 2D804000 	move $16,$2
+ 304              	.set noreorder
+ 305              	.set nomacro
+ 306 01e4 12004010 	beq $2,$0,$L25
+ 307 01e8 01004424 	addu $4,$2,1
+ 308              	.set macro
+ 309              	.set reorder
+ 310              	
+ 311 01ec 0E00000C 	jal _Z12_PathFindExtPc
+ 311      00000000 
+ 312              	.set noreorder
+ 313              	.set nomacro
+ 314 01f4 0E004010 	beq $2,$0,$L25
+ 315 01f8 01000324 	li $3,1
+ 316              	.set macro
+ 317              	.set reorder
+ 318              	
+ 319              	.set noreorder
+ 320              	.set nomacro
+ 321 01fc 01002056 	bnel $17,$0,$L27
+ 322 0200 000000A2 	sb $0,0($16)
+ 323              	.set macro
+ 324              	.set reorder
+ 325              	
+ 326              	$L27:
+ 327              	.set noreorder
+ 328              	.set nomacro
+ 329 0204 04004012 	beq $18,$0,$L29
+ 330 0208 3000BFDF 	ld $31,48($sp)
+ 331              	.set macro
+ 332              	.set reorder
+ 333              	
+GAS LISTING  			page 7
+
+
+ 334 020c 0800428C 	lw $2,8($2)
+ 335              	
+ 336 0210 000042AE 	sw $2,0($18)
+ 337              	$L24:
+ 338 0214 3000BFDF 	ld $31,48($sp)
+ 339              	$L29:
+ 340 0218 2D106000 	move $2,$3
+ 341 021c 2000B2DF 	ld $18,32($sp)
+ 342 0220 1000B1DF 	ld $17,16($sp)
+ 343 0224 0000B0DF 	ld $16,0($sp)
+ 344              	
+ 345              	.set noreorder
+ 346              	.set nomacro
+ 347 0228 0800E003 	j $31
+ 348 022c 4000BD27 	addu $sp,$sp,64
+ 349              	.set macro
+ 350              	.set reorder
+ 351              	
+ 352              	.p2align 3
+ 353              	$L25:
+ 354              	.set noreorder
+ 355              	.set nomacro
+ 356 0230 F8FF0010 	b $L24
+ 357 0234 2D180000 	move $3,$0
+ 358              	.set macro
+ 359              	.set reorder
+ 360              	
+ 361              	.end _Z14PathExtResolvePcPjh
+ 362              	$Lfe5:
+ 363              	.size _Z14PathExtResolvePcPjh,$Lfe5-_Z14PathExtResolvePcPjh
+ 364              	.ident "GCC: (GNU) 3.2.2"

@@ -26,9 +26,12 @@
  */
 
 #import "PVSNESEmulatorCore.h"
-#import <PVSupport/OERingBuffer.h>
-#import <PVLogging/PVLogging.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVAudio;
+@import PVSupport;
+@import PVLoggingObjC;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
 
 //#import <PVSupport/PVGameControllerUtilities.h>
 
@@ -61,9 +64,9 @@
 #define SAMPLERATE      48000
 #define SIZESOUNDBUFFER SAMPLERATE / 50 * 4
 
-static __weak PVSNESEmulatorCore *_current;
+static __weak PVSNESEmulatorCoreBridge *_current;
 
-@interface PVSNESEmulatorCore () {
+@interface PVSNESEmulatorCoreBridge () {
 
 @public
     UInt16        *soundBuffer;
@@ -78,9 +81,9 @@ static __weak PVSNESEmulatorCore *_current;
 
 NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", @"X", @"Y", @"L", @"R", @"Start", @"Select", nil };
 
-@implementation PVSNESEmulatorCore
+@implementation PVSNESEmulatorCoreBridge
 
-- (id)init
+- (instancetype)init
 {
 	if ((self = [super init]))
 	{
@@ -819,16 +822,12 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 #pragma mark Audio
 
-bool8 S9xOpenSoundDevice(void) {
-	return true;
-}
-
 static void FinalizeSamplesAudioCallback(void *) {
-    __strong PVSNESEmulatorCore *strongCurrent = _current;
+    __strong PVSNESEmulatorCoreBridge *strongCurrent = _current;
     
     int samples = S9xGetSampleCount();
     S9xMixSamples((uint8_t*)strongCurrent->soundBuffer, samples);
-    [[strongCurrent ringBufferAtIndex:0] write:strongCurrent->soundBuffer maxLength:samples * 2];
+    [[strongCurrent ringBufferAtIndex:0] write:strongCurrent->soundBuffer size:samples * 2];
 }
 
 - (double)audioSampleRate {

@@ -15,14 +15,14 @@
 //#import "PVYabauseCore+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVYabauseCore() {
+@interface PVYabauseCoreBridge() {
 
 }
 
@@ -30,7 +30,7 @@
 
 #pragma mark - PVYabauseCore Begin
 
-@implementation PVYabauseCore
+@implementation PVYabauseCoreBridge
 {
 }
 

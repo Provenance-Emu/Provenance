@@ -1,0 +1,32 @@
+Archives generated using the Unix LHA tool, from the Debian package
+(version 1.14i-10.3).
+
+The following are files with level 1 header (with the -1 command
+line option). Equivalent files also exist for level 0 and 2 headers.
+
+  h1_lh0.lzh      - Archive containing uncompressed (stored) file.
+  h1_lh5.lzh      - Archive containing compressed file (-lh5-: -o5 option)
+  h1_lh6.lzh      - Archive containing compressed file (-lh6-: -o6 option)
+  h1_lh7.lzh      - Archive containing compressed file (-lh7-: -o7 option)
+  h1_subdir.lzh   - Archive containing subdirectories.
+                    This archive has specially chosen permissions - the file
+                    is contained in a directory without write permissions.
+                    The archive therefore has to be extracted carefully,
+                    with the directory's contents extracted before the
+                    permissions on it are set.  The Unix LHA tool, although
+                    it was used to create this archive, fails to extract it.
+  h1_symlink.lzh  - Archive containing a Unix symbolic link.
+  h1_symlink2.lzh - Archive containing a symbolic link that contains a path
+                    separator. Relevant because the symbolic link is split
+                    across the filename and path headers.
+  h1_symlink3.lzh - Archive containing a symbolic link located inside a
+                    subdirectory.
+
+h0_subdir.lzh is broken - because of the header level, the filenames are
+empty.
+
+In addition, there are also these:
+
+  lh6_long.lzh - Large -lh6- compressed file.
+  lh7_long.lzh - Large -lh7- compressed file.
+

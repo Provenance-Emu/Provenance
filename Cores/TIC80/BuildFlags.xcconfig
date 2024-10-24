@@ -13,7 +13,7 @@ OTHER_LDFLAGS = $(inherited) -ObjC -Wl,-all_load -all_load
 
     // Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
-OTHER_CFLAGS[sdk=iphoneos*] = $(inherited)
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -fmodules -fcxx-modules
 
 // Simulator
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1

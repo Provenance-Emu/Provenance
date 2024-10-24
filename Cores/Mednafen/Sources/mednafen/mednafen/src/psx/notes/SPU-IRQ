@@ -1,0 +1,16 @@
+Castlevania Chronicles - Music.
+Chrono Cross - FMV.
+Dance Dance Revolution - Gameplay music.
+Dance Dance Revolution: Disney Mix - Gameplay music.
+Eithea - Sneaky evil usage, along with manual loop address override abuse.
+Final Fantasy 8 - Some FMV
+Koudelka
+Legend of Mana - FMV(really finicky about DMA timing).
+Medal of Honor
+Misadventures of Tron Bonne - Dialogue.
+Nicktoons Racing - FMV, gameplay music.
+Tales of Destiny - Battle voices.  Japanese version 1.0 is particularly sensitive to how SPU IRQs are emulated, and tends to lock up after Mary's "Moushuuken" is used if emulated improperly.
+Thousand Arms - Dialogue.
+Um Jammer Lammy
+Valkyrie Profile - Used extensively for dialogue, in-battle and out.
+Wing Commander 4 - FMV.

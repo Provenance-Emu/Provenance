@@ -7,11 +7,11 @@ import MetalKit
 import os
 
 @objc public class EmuThreeVulkanViewController: UIViewController {
-	private var core: PVEmuThreeCore!
+	private var core: PVEmuThreeCoreBridge!
 	private var metalView: MTKView!
 	private var dev: MTLDevice!
 
-	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVEmuThreeCore) {
+    @objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVEmuThreeCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
 		self.core = core;
 		self.dev = MTLCreateSystemDefaultDevice()!
@@ -33,7 +33,7 @@ import os
 		NSLog("VulkanViewController: View Did Load\n")
 		self.view=metalView;
         NSLog("VulkanViewController: Starting VM\n")
-		core.startVM(self.view)
+        core.startVM(self.view)
 	}
 	@objc public override func viewDidLayoutSubviews() {
         NSLog("View Size Changed\n")

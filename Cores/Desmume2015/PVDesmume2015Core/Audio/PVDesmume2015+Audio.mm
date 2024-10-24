@@ -10,7 +10,7 @@
 #import "PVDesmume2015+CoreAudio.h"
 #import "PVDesmume2015+AudioTypes.h"
 
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 #include "oslib/audiobackend_coreaudio.h"
 

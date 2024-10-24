@@ -71,92 +71,92 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0051D559A536430E9DE13D1D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */ = {isa = PBXBuildFile; fileRef = 73EC201A9E8940D187993699 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */; };
-		01FE3A81AFCD4A599F698FC1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanContext.h */ = {isa = PBXBuildFile; fileRef = 7D5BF4D58C1F4510AD3B1E1C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanContext.h */; };
-		03F71D27559F463985D4CE07 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */ = {isa = PBXBuildFile; fileRef = DAE3D6DCCD8E451C99399431 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */; };
-		064ED01B4B794472A099350F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Image.cpp */ = {isa = PBXBuildFile; fileRef = D2AE6440F48142E2B0F1E628 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Image.cpp */; };
-		06AE964B41DA4692A7FEAFD0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */ = {isa = PBXBuildFile; fileRef = DB538A4C91E3423FAAC68144 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */; };
-		0904D4945CDB4857946A268D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPipelineCache.h */ = {isa = PBXBuildFile; fileRef = 19196AC2C71E4872920E4FB8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPipelineCache.h */; };
-		119D62E190FF450AAB8185CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Loader.h */ = {isa = PBXBuildFile; fileRef = 26D3B7BAEA314E70BC871791 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Loader.h */; };
-		144D26AC278F47408DD67064 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = D1AFF7774D0A443CA95ADC37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */; };
-		1830CF95974544989515E0D4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = 05856A7F898343D0AD8C644B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */; };
-		1C73213B33984DD295402669 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */ = {isa = PBXBuildFile; fileRef = D388488FFC014A8890CA05F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */; };
-		1E2176244B914C449747EB63 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.h */ = {isa = PBXBuildFile; fileRef = D13FFD4727984548800D2742 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.h */; };
-		206524FA2F5D4D728B9DA625 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.h */ = {isa = PBXBuildFile; fileRef = 02E0C7AB45C44F30AEA9883E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.h */; };
-		21832AA46F25486CA3116D9D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Utils.h */ = {isa = PBXBuildFile; fileRef = 8F0C41AA4C3A41E39D119D80 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Utils.h */; };
-		21B2EA4400CB4A9A8C0BC08B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */ = {isa = PBXBuildFile; fileRef = 2C3063D76EB948F6B2175FFA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */; };
-		24B31CAF18C3493489859F2B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */ = {isa = PBXBuildFile; fileRef = 42658EB5D28B46ED91ADB222 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */; };
-		31C0C1F465EC44199CD07FA9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructDefs.h */ = {isa = PBXBuildFile; fileRef = 29396D418E8E4D8B8D39D2F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructDefs.h */; };
-		31D028AF94C8416DABAD2D50 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.h */ = {isa = PBXBuildFile; fileRef = 313FA1685526403BBCC6D1FF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.h */; };
-		368BA9A847D941F2AFFCEF5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */ = {isa = PBXBuildFile; fileRef = 4DDA0BAF007F43F79F233D6A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */; };
-		399CA445E135485CAECA5A1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */ = {isa = PBXBuildFile; fileRef = 89C77F78CD1C493D83ED7215 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */; };
-		3FEBDED6E8564CBFB5836D58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h */ = {isa = PBXBuildFile; fileRef = 5745B382E3A2440AA39FDB86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h */; };
-		40C3EF3DBD674D6AA32940BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 213F281DAE4A4C8ABECEC7B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */; };
-		438A3232CA854EA0ADA42445 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */ = {isa = PBXBuildFile; fileRef = D337BB4311F44841AED8C578 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */; };
-		4445E1E375684450BA699B31 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.h */ = {isa = PBXBuildFile; fileRef = 82C4BC2E28E544F3B5C01F84 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.h */; };
-		4C838B6FCDC347D19BE6AAF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Utils.cpp */ = {isa = PBXBuildFile; fileRef = E483B33AFE29411ABD95CA21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Utils.cpp */; };
-		4D4A144E827E453A951D46D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.h */ = {isa = PBXBuildFile; fileRef = 9DB123EA8CD2481BBBA28AC4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.h */; };
-		54FDE051C08441C192107531 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.h */ = {isa = PBXBuildFile; fileRef = 1E44C5B100B24B5D81087240 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.h */; };
-		5A906B2F1E4C4FD8A4C303EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = 66C6969C03614AF2A75451F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */; };
-		5C942FA117F948F88B1FADF1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */ = {isa = PBXBuildFile; fileRef = 774107A3B5CA4A0F87C1D421 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */; };
-		5EED413CF1434E59A0777B2C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.h */ = {isa = PBXBuildFile; fileRef = AB9E68DE065346CE9343AB3E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.h */; };
-		5F2F449856EC4CE39592E615 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */ = {isa = PBXBuildFile; fileRef = 891C5A3B8BE3486CA157931A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */; };
-		62E7BE7443934F408738AC58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */ = {isa = PBXBuildFile; fileRef = 2B70AB541383412C8D6B8CA3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */; };
-		646012C0372D47BA964AC55A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/CommandBufferPool.h */ = {isa = PBXBuildFile; fileRef = 574A483D623D45CC9B5197D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/CommandBufferPool.h */; };
-		65AF4320CDED41309D4DA1ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 121BCFA0567045FCA5E3D7DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */; };
-		663EF4B1DE4444C8AC7A337E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Buffer.cpp */ = {isa = PBXBuildFile; fileRef = FE6874AF83074F1385182BFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Buffer.cpp */; };
-		6663362851964A7E95BBD188 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 06D051C8EF2D47EBAE9286A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */; };
-		6D0EB4D86E1542D09089B2C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */ = {isa = PBXBuildFile; fileRef = 2C9768CB2D034D988ACA01D8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */; };
-		6FCB1249E8384EEC8B364D70 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructChain.h */ = {isa = PBXBuildFile; fileRef = 9470736BEFA74D1FA59CE03D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructChain.h */; };
-		70ABB10F19C641748603704B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */ = {isa = PBXBuildFile; fileRef = 9F0017E8156744A69121F397 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */; };
-		71D51EFCCB154581A3EA9EB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */ = {isa = PBXBuildFile; fileRef = AD5701FB80BF47C49224ACB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */; };
-		75F63D43479C45E6BF952DC9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.h */ = {isa = PBXBuildFile; fileRef = 4CAD61B45C5B49D487631E22 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.h */; };
-		7667C145A6624E3A9058FE1C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */ = {isa = PBXBuildFile; fileRef = CDF32A8CEC124C6583E6418F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */; };
-		7795BF2B39484D94AC08B3CE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */ = {isa = PBXBuildFile; fileRef = B7408018EDA24244B1989A97 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */; };
-		781B34B34E2F4A798C98B91B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Device.cpp */ = {isa = PBXBuildFile; fileRef = 990466D27F744D2EA6384B46 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Device.cpp */; };
-		78316DF2189645A89D0659A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */ = {isa = PBXBuildFile; fileRef = EE18FFB552D345B2B8694FB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */; };
-		7E760E5125214FB3BC224A6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Buffer.h */ = {isa = PBXBuildFile; fileRef = CE9E5CF236A1430C85ED6283 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Buffer.h */; };
-		80489E8724B74E42BCD0C39E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.h */ = {isa = PBXBuildFile; fileRef = 9045AFD88AFA4EFB869F34DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.h */; };
-		813C870483E547D4A90ADECC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/VulkanDef.h */ = {isa = PBXBuildFile; fileRef = 390AA67C08E247AE87A2DFD2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/VulkanDef.h */; };
-		84BBC8BB014846439D3E4A5B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Device.h */ = {isa = PBXBuildFile; fileRef = 855B2F9BE7E94D1986D1A0A1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Device.h */; };
-		889FBB624A874DCCBF9C3CAD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 28FB1FA1D60048E888ACAA9C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */; };
-		8A07B8CCB53B4DC2BBBD911D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */ = {isa = PBXBuildFile; fileRef = AAE3DE2A537F4799BACCC89F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */; };
-		8D69C093762D4D6480EC4076 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/ShaderModule.cpp */ = {isa = PBXBuildFile; fileRef = 43C3A09E713D4A9280C1272A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/ShaderModule.cpp */; };
-		8DBB68BB71344AD1A5685767 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */ = {isa = PBXBuildFile; fileRef = E8A500D598B14BBBAD4F2DF9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */; };
-		8FB558E8AFD44E369641860C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.h */ = {isa = PBXBuildFile; fileRef = 93A2151B69D749D4A002A2BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.h */; };
-		927FC48E9C654E9CBC8E8D7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Loader.cpp */ = {isa = PBXBuildFile; fileRef = 66983C5F9AF24264BF3859EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Loader.cpp */; };
-		9B65E3D8390047849EF026C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = 480EEA39B87D4706A4EAD56B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */; };
-		9C50D861B1AF4BA79F626E7A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.h */ = {isa = PBXBuildFile; fileRef = 21B2414C482745E68940157B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.h */; };
-		A5A1EAD249C344FC816387C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */ = {isa = PBXBuildFile; fileRef = 54E7569C2D004787996115B8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */; };
-		B70A366435A1459BAD9FBA82 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */ = {isa = PBXBuildFile; fileRef = AB8C33A4C1684CFA9AA94E89 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */; };
-		BF3B3709FDD04A498447DD4E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/Builder.h */ = {isa = PBXBuildFile; fileRef = 40833A25328E411AA3CC501D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/Builder.h */; };
-		C9BFE30378E543BAA4686733 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */ = {isa = PBXBuildFile; fileRef = A69EF226683F4E558E1A6794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */; };
-		CB2E12E7E1C74BE185859B7F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Image.h */ = {isa = PBXBuildFile; fileRef = 6F19CEBAA9C64493B6D81CFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Image.h */; };
-		CCF72BE14785442D9B90CA8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/Operations.cpp */ = {isa = PBXBuildFile; fileRef = E39E8AD7270645FEA71CA405 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/Operations.cpp */; };
-		CD8A188420FA4B238100B322 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = C4BA99CBC3B0406B8D677E82 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */; };
-		CE3C17DDCEAF46C2A61DB5F2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Instance.cpp */ = {isa = PBXBuildFile; fileRef = A740E8120B8743A7850BADF2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Instance.cpp */; };
-		CF6943E58FFB4640BAD39D1E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = 2BAF857AFD3E476AADEB73D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */; };
-		D176E860E5C2481A8AA5FE3F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Instance.h */ = {isa = PBXBuildFile; fileRef = B0752FB021FC4AE0AB003722 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Instance.h */; };
-		D22794136E9A4D36AC1919F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */ = {isa = PBXBuildFile; fileRef = CBB735B15C4644F38360D0AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */; };
-		D6B7399B07CA4DD1B421A086 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 4EEA4258B353428CBFFDE172 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */; };
-		D983CA5599DF423FB97B90FC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = B77053E775D54182A2B8AC59 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist */; };
-		DC867EB4F6F346B7B3D6B1EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */ = {isa = PBXBuildFile; fileRef = 6C169D65B8FE451FB8208BDA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */; };
-		DFD9857D50D1403C8518AA35 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.h */ = {isa = PBXBuildFile; fileRef = FDEE8EAC7ABE4B17A745EB37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.h */; };
-		E328DC61E6844C3285CEC6EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */ = {isa = PBXBuildFile; fileRef = 4363DB7E504B4F3898F0EA6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */; };
-		E43C8B67E2DD4760B64C814E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.h */ = {isa = PBXBuildFile; fileRef = 670A8C91DD1245E996F6BCDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.h */; };
-		E8210CAA8EDA4418879BCE2C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */ = {isa = PBXBuildFile; fileRef = 9E15C86F5F2B4040989FCF9E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */; };
-		EA4B5B4600FF4FC79C266E61 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */ = {isa = PBXBuildFile; fileRef = 886C0873CAA84784859C5172 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */; };
-		EB731B029FD84F799857A3B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */ = {isa = PBXBuildFile; fileRef = 84A3A890B511462E82D898E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */; };
-		EDD35C34FC9F43378869BEE0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/ShaderModule.h */ = {isa = PBXBuildFile; fileRef = E707C718FBF142C0977D8CEC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/ShaderModule.h */; };
-		EECC798DCC8447E1B0886AC4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */ = {isa = PBXBuildFile; fileRef = E7AF2C0A43684BE8B4A8AE95 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */; };
-		EF62E67A3A364E47BBDB11FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */ = {isa = PBXBuildFile; fileRef = 10F61F1C891442CBB4EA57E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */; };
-		EF6986411BEC48D4AB3263B2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */ = {isa = PBXBuildFile; fileRef = 98FE68CE6B4E4CC2B9FDE462 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */; };
-		F0176DA6D5814EC2B8056A72 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */ = {isa = PBXBuildFile; fileRef = 117863AE35AB4ED6ADDDB8E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */; };
-		F0B2D279D8FD401B9F548D3B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 9CBB28F57A7249A38721F366 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */; };
-		F0CFFED716164E90B82463EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 18D37F51BD994F7AB96D990D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */; };
-		F2675FDDB45440EC8749993B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = C11CC651AA3C4BD3887C1A28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */; };
-		F93B9CBA3F6F455C9A4F428E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */ = {isa = PBXBuildFile; fileRef = 1C9FDF6931BB4C5CA2E676EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */; };
-		FD7502CC7D3C41FB86CD50FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */ = {isa = PBXBuildFile; fileRef = 9072AD99295242A5950E4942 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */; };
+		0051D559A536430E9DE13D1D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */ = {isa = PBXBuildFile; fileRef = 73EC201A9E8940D187993699 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */; };
+		01FE3A81AFCD4A599F698FC1 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanContext.h */ = {isa = PBXBuildFile; fileRef = 7D5BF4D58C1F4510AD3B1E1C /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanContext.h */; };
+		03F71D27559F463985D4CE07 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */ = {isa = PBXBuildFile; fileRef = DAE3D6DCCD8E451C99399431 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */; };
+		064ED01B4B794472A099350F /* ../Play-/deps/Framework/src/vulkan/Image.cpp */ = {isa = PBXBuildFile; fileRef = D2AE6440F48142E2B0F1E628 /* ../Play-/deps/Framework/src/vulkan/Image.cpp */; };
+		06AE964B41DA4692A7FEAFD0 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */ = {isa = PBXBuildFile; fileRef = DB538A4C91E3423FAAC68144 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */; };
+		0904D4945CDB4857946A268D /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPipelineCache.h */ = {isa = PBXBuildFile; fileRef = 19196AC2C71E4872920E4FB8 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPipelineCache.h */; };
+		119D62E190FF450AAB8185CD /* ../Play-/deps/Framework/include/vulkan/Loader.h */ = {isa = PBXBuildFile; fileRef = 26D3B7BAEA314E70BC871791 /* ../Play-/deps/Framework/include/vulkan/Loader.h */; };
+		144D26AC278F47408DD67064 /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = D1AFF7774D0A443CA95ADC37 /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */; };
+		1830CF95974544989515E0D4 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = 05856A7F898343D0AD8C644B /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */; };
+		1C73213B33984DD295402669 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */ = {isa = PBXBuildFile; fileRef = D388488FFC014A8890CA05F7 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */; };
+		1E2176244B914C449747EB63 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.h */ = {isa = PBXBuildFile; fileRef = D13FFD4727984548800D2742 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.h */; };
+		206524FA2F5D4D728B9DA625 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.h */ = {isa = PBXBuildFile; fileRef = 02E0C7AB45C44F30AEA9883E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.h */; };
+		21832AA46F25486CA3116D9D /* ../Play-/deps/Framework/include/vulkan/Utils.h */ = {isa = PBXBuildFile; fileRef = 8F0C41AA4C3A41E39D119D80 /* ../Play-/deps/Framework/include/vulkan/Utils.h */; };
+		21B2EA4400CB4A9A8C0BC08B /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */ = {isa = PBXBuildFile; fileRef = 2C3063D76EB948F6B2175FFA /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */; };
+		24B31CAF18C3493489859F2B /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */ = {isa = PBXBuildFile; fileRef = 42658EB5D28B46ED91ADB222 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */; };
+		31C0C1F465EC44199CD07FA9 /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */ = {isa = PBXBuildFile; fileRef = 29396D418E8E4D8B8D39D2F7 /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */; };
+		31D028AF94C8416DABAD2D50 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.h */ = {isa = PBXBuildFile; fileRef = 313FA1685526403BBCC6D1FF /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.h */; };
+		368BA9A847D941F2AFFCEF5E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */ = {isa = PBXBuildFile; fileRef = 4DDA0BAF007F43F79F233D6A /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */; };
+		399CA445E135485CAECA5A1A /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */ = {isa = PBXBuildFile; fileRef = 89C77F78CD1C493D83ED7215 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */; };
+		3FEBDED6E8564CBFB5836D58 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h */ = {isa = PBXBuildFile; fileRef = 5745B382E3A2440AA39FDB86 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h */; };
+		40C3EF3DBD674D6AA32940BF /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 213F281DAE4A4C8ABECEC7B0 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */; };
+		438A3232CA854EA0ADA42445 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */ = {isa = PBXBuildFile; fileRef = D337BB4311F44841AED8C578 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */; };
+		4445E1E375684450BA699B31 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.h */ = {isa = PBXBuildFile; fileRef = 82C4BC2E28E544F3B5C01F84 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.h */; };
+		4C838B6FCDC347D19BE6AAF7 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */ = {isa = PBXBuildFile; fileRef = E483B33AFE29411ABD95CA21 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */; };
+		4D4A144E827E453A951D46D3 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.h */ = {isa = PBXBuildFile; fileRef = 9DB123EA8CD2481BBBA28AC4 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.h */; };
+		54FDE051C08441C192107531 /* ../Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.h */ = {isa = PBXBuildFile; fileRef = 1E44C5B100B24B5D81087240 /* ../Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.h */; };
+		5A906B2F1E4C4FD8A4C303EA /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = 66C6969C03614AF2A75451F3 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */; };
+		5C942FA117F948F88B1FADF1 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */ = {isa = PBXBuildFile; fileRef = 774107A3B5CA4A0F87C1D421 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */; };
+		5EED413CF1434E59A0777B2C /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.h */ = {isa = PBXBuildFile; fileRef = AB9E68DE065346CE9343AB3E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.h */; };
+		5F2F449856EC4CE39592E615 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */ = {isa = PBXBuildFile; fileRef = 891C5A3B8BE3486CA157931A /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */; };
+		62E7BE7443934F408738AC58 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */ = {isa = PBXBuildFile; fileRef = 2B70AB541383412C8D6B8CA3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */; };
+		646012C0372D47BA964AC55A /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */ = {isa = PBXBuildFile; fileRef = 574A483D623D45CC9B5197D9 /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */; };
+		65AF4320CDED41309D4DA1ED /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 121BCFA0567045FCA5E3D7DF /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */; };
+		663EF4B1DE4444C8AC7A337E /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */ = {isa = PBXBuildFile; fileRef = FE6874AF83074F1385182BFB /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */; };
+		6663362851964A7E95BBD188 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 06D051C8EF2D47EBAE9286A2 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */; };
+		6D0EB4D86E1542D09089B2C9 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */ = {isa = PBXBuildFile; fileRef = 2C9768CB2D034D988ACA01D8 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */; };
+		6FCB1249E8384EEC8B364D70 /* ../Play-/deps/Framework/include/vulkan/StructChain.h */ = {isa = PBXBuildFile; fileRef = 9470736BEFA74D1FA59CE03D /* ../Play-/deps/Framework/include/vulkan/StructChain.h */; };
+		70ABB10F19C641748603704B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */ = {isa = PBXBuildFile; fileRef = 9F0017E8156744A69121F397 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */; };
+		71D51EFCCB154581A3EA9EB1 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */ = {isa = PBXBuildFile; fileRef = AD5701FB80BF47C49224ACB9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */; };
+		75F63D43479C45E6BF952DC9 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.h */ = {isa = PBXBuildFile; fileRef = 4CAD61B45C5B49D487631E22 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.h */; };
+		7667C145A6624E3A9058FE1C /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */ = {isa = PBXBuildFile; fileRef = CDF32A8CEC124C6583E6418F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */; };
+		7795BF2B39484D94AC08B3CE /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */ = {isa = PBXBuildFile; fileRef = B7408018EDA24244B1989A97 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */; };
+		781B34B34E2F4A798C98B91B /* ../Play-/deps/Framework/src/vulkan/Device.cpp */ = {isa = PBXBuildFile; fileRef = 990466D27F744D2EA6384B46 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */; };
+		78316DF2189645A89D0659A0 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */ = {isa = PBXBuildFile; fileRef = EE18FFB552D345B2B8694FB1 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */; };
+		7E760E5125214FB3BC224A6F /* ../Play-/deps/Framework/include/vulkan/Buffer.h */ = {isa = PBXBuildFile; fileRef = CE9E5CF236A1430C85ED6283 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */; };
+		80489E8724B74E42BCD0C39E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.h */ = {isa = PBXBuildFile; fileRef = 9045AFD88AFA4EFB869F34DA /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.h */; };
+		813C870483E547D4A90ADECC /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */ = {isa = PBXBuildFile; fileRef = 390AA67C08E247AE87A2DFD2 /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */; };
+		84BBC8BB014846439D3E4A5B /* ../Play-/deps/Framework/include/vulkan/Device.h */ = {isa = PBXBuildFile; fileRef = 855B2F9BE7E94D1986D1A0A1 /* ../Play-/deps/Framework/include/vulkan/Device.h */; };
+		889FBB624A874DCCBF9C3CAD /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 28FB1FA1D60048E888ACAA9C /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */; };
+		8A07B8CCB53B4DC2BBBD911D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */ = {isa = PBXBuildFile; fileRef = AAE3DE2A537F4799BACCC89F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */; };
+		8D69C093762D4D6480EC4076 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */ = {isa = PBXBuildFile; fileRef = 43C3A09E713D4A9280C1272A /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */; };
+		8DBB68BB71344AD1A5685767 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */ = {isa = PBXBuildFile; fileRef = E8A500D598B14BBBAD4F2DF9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */; };
+		8FB558E8AFD44E369641860C /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.h */ = {isa = PBXBuildFile; fileRef = 93A2151B69D749D4A002A2BB /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.h */; };
+		927FC48E9C654E9CBC8E8D7D /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */ = {isa = PBXBuildFile; fileRef = 66983C5F9AF24264BF3859EC /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */; };
+		9B65E3D8390047849EF026C1 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = 480EEA39B87D4706A4EAD56B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */; };
+		9C50D861B1AF4BA79F626E7A /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.h */ = {isa = PBXBuildFile; fileRef = 21B2414C482745E68940157B /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.h */; };
+		A5A1EAD249C344FC816387C1 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */ = {isa = PBXBuildFile; fileRef = 54E7569C2D004787996115B8 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */; };
+		B70A366435A1459BAD9FBA82 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */ = {isa = PBXBuildFile; fileRef = AB8C33A4C1684CFA9AA94E89 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */; };
+		BF3B3709FDD04A498447DD4E /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */ = {isa = PBXBuildFile; fileRef = 40833A25328E411AA3CC501D /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */; };
+		C9BFE30378E543BAA4686733 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */ = {isa = PBXBuildFile; fileRef = A69EF226683F4E558E1A6794 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */; };
+		CB2E12E7E1C74BE185859B7F /* ../Play-/deps/Framework/include/vulkan/Image.h */ = {isa = PBXBuildFile; fileRef = 6F19CEBAA9C64493B6D81CFB /* ../Play-/deps/Framework/include/vulkan/Image.h */; };
+		CCF72BE14785442D9B90CA8C /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */ = {isa = PBXBuildFile; fileRef = E39E8AD7270645FEA71CA405 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */; };
+		CD8A188420FA4B238100B322 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = C4BA99CBC3B0406B8D677E82 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */; };
+		CE3C17DDCEAF46C2A61DB5F2 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */ = {isa = PBXBuildFile; fileRef = A740E8120B8743A7850BADF2 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */; };
+		CF6943E58FFB4640BAD39D1E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = 2BAF857AFD3E476AADEB73D9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */; };
+		D176E860E5C2481A8AA5FE3F /* ../Play-/deps/Framework/include/vulkan/Instance.h */ = {isa = PBXBuildFile; fileRef = B0752FB021FC4AE0AB003722 /* ../Play-/deps/Framework/include/vulkan/Instance.h */; };
+		D22794136E9A4D36AC1919F3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */ = {isa = PBXBuildFile; fileRef = CBB735B15C4644F38360D0AB /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */; };
+		D6B7399B07CA4DD1B421A086 /* ../Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 4EEA4258B353428CBFFDE172 /* ../Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */; };
+		D983CA5599DF423FB97B90FC /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = B77053E775D54182A2B8AC59 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist */; };
+		DC867EB4F6F346B7B3D6B1EA /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */ = {isa = PBXBuildFile; fileRef = 6C169D65B8FE451FB8208BDA /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */; };
+		DFD9857D50D1403C8518AA35 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.h */ = {isa = PBXBuildFile; fileRef = FDEE8EAC7ABE4B17A745EB37 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.h */; };
+		E328DC61E6844C3285CEC6EC /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */ = {isa = PBXBuildFile; fileRef = 4363DB7E504B4F3898F0EA6B /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */; };
+		E43C8B67E2DD4760B64C814E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.h */ = {isa = PBXBuildFile; fileRef = 670A8C91DD1245E996F6BCDC /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.h */; };
+		E8210CAA8EDA4418879BCE2C /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */ = {isa = PBXBuildFile; fileRef = 9E15C86F5F2B4040989FCF9E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */; };
+		EA4B5B4600FF4FC79C266E61 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */ = {isa = PBXBuildFile; fileRef = 886C0873CAA84784859C5172 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */; };
+		EB731B029FD84F799857A3B0 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */ = {isa = PBXBuildFile; fileRef = 84A3A890B511462E82D898E0 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */; };
+		EDD35C34FC9F43378869BEE0 /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */ = {isa = PBXBuildFile; fileRef = E707C718FBF142C0977D8CEC /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */; };
+		EECC798DCC8447E1B0886AC4 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */ = {isa = PBXBuildFile; fileRef = E7AF2C0A43684BE8B4A8AE95 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */; };
+		EF62E67A3A364E47BBDB11FB /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */ = {isa = PBXBuildFile; fileRef = 10F61F1C891442CBB4EA57E0 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */; };
+		EF6986411BEC48D4AB3263B2 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */ = {isa = PBXBuildFile; fileRef = 98FE68CE6B4E4CC2B9FDE462 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */; };
+		F0176DA6D5814EC2B8056A72 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */ = {isa = PBXBuildFile; fileRef = 117863AE35AB4ED6ADDDB8E3 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */; };
+		F0B2D279D8FD401B9F548D3B /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 9CBB28F57A7249A38721F366 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */; };
+		F0CFFED716164E90B82463EE /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 18D37F51BD994F7AB96D990D /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */; };
+		F2675FDDB45440EC8749993B /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = C11CC651AA3C4BD3887C1A28 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */; };
+		F93B9CBA3F6F455C9A4F428E /* ../Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */ = {isa = PBXBuildFile; fileRef = 1C9FDF6931BB4C5CA2E676EA /* ../Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */; };
+		FD7502CC7D3C41FB86CD50FB /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */ = {isa = PBXBuildFile; fileRef = 9072AD99295242A5950E4942 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -257,96 +257,96 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		02E0C7AB45C44F30AEA9883E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanMemoryUtils.h; path = GSH_VulkanMemoryUtils.h; sourceTree = SOURCE_ROOT; };
-		05856A7F898343D0AD8C644B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SpirvShaderGenerator.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h"; sourceTree = "<absolute>"; };
-		06D051C8EF2D47EBAE9286A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist; sourceTree = "<absolute>"; };
-		10F61F1C891442CBB4EA57E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatValue.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h"; sourceTree = "<absolute>"; };
-		117863AE35AB4ED6ADDDB8E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CommandBufferPool.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp"; sourceTree = "<absolute>"; };
-		121BCFA0567045FCA5E3D7DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SpirvShaderGenerator.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp"; sourceTree = "<absolute>"; };
-		18D37F51BD994F7AB96D990D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = HlslShaderGenerator.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp"; sourceTree = "<absolute>"; };
-		19196AC2C71E4872920E4FB8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPipelineCache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanPipelineCache.h; path = GSH_VulkanPipelineCache.h; sourceTree = SOURCE_ROOT; };
-		1C9FDF6931BB4C5CA2E676EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_Vulkan.cpp; path = GSH_Vulkan.cpp; sourceTree = SOURCE_ROOT; };
-		1E44C5B100B24B5D81087240 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_Vulkan.h; path = GSH_Vulkan.h; sourceTree = SOURCE_ROOT; };
-		213F281DAE4A4C8ABECEC7B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GlslShaderGenerator.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp"; sourceTree = "<absolute>"; };
-		21B2414C482745E68940157B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanTransferHost.h; path = GSH_VulkanTransferHost.h; sourceTree = SOURCE_ROOT; };
-		26D3B7BAEA314E70BC871791 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Loader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Loader.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Loader.h"; sourceTree = "<absolute>"; };
-		28FB1FA1D60048E888ACAA9C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist; sourceTree = "<absolute>"; };
-		29396D418E8E4D8B8D39D2F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructDefs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StructDefs.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructDefs.h"; sourceTree = "<absolute>"; };
-		2B70AB541383412C8D6B8CA3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float3Value.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h"; sourceTree = "<absolute>"; };
-		2BAF857AFD3E476AADEB73D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = UintSwizzleSelector4.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h"; sourceTree = "<absolute>"; };
-		2C3063D76EB948F6B2175FFA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderBuilder.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp"; sourceTree = "<absolute>"; };
-		2C9768CB2D034D988ACA01D8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanFrameCommandBuffer.cpp; path = GSH_VulkanFrameCommandBuffer.cpp; sourceTree = SOURCE_ROOT; };
-		313FA1685526403BBCC6D1FF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanTransferLocal.h; path = GSH_VulkanTransferLocal.h; sourceTree = SOURCE_ROOT; };
-		390AA67C08E247AE87A2DFD2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/VulkanDef.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VulkanDef.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/VulkanDef.h"; sourceTree = "<absolute>"; };
-		40833A25328E411AA3CC501D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/Builder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Builder.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/Builder.h"; sourceTree = "<absolute>"; };
-		42658EB5D28B46ED91ADB222 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanClutLoad.cpp; path = GSH_VulkanClutLoad.cpp; sourceTree = SOURCE_ROOT; };
-		4363DB7E504B4F3898F0EA6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDrawMobile.cpp; path = GSH_VulkanDrawMobile.cpp; sourceTree = SOURCE_ROOT; };
-		43C3A09E713D4A9280C1272A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/ShaderModule.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderModule.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/ShaderModule.cpp"; sourceTree = "<absolute>"; };
-		480EEA39B87D4706A4EAD56B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntSwizzleSelector4.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h"; sourceTree = "<absolute>"; };
-		4CAD61B45C5B49D487631E22 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDeviceInfo.h; path = GSH_VulkanDeviceInfo.h; sourceTree = SOURCE_ROOT; };
-		4DDA0BAF007F43F79F233D6A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanMemoryUtils.cpp; path = GSH_VulkanMemoryUtils.cpp; sourceTree = SOURCE_ROOT; };
-		4EEA4258B353428CBFFDE172 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		54E7569C2D004787996115B8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int4Value.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h"; sourceTree = "<absolute>"; };
-		5745B382E3A2440AA39FDB86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanPlatformDefs.h; path = GSH_VulkanPlatformDefs.h; sourceTree = SOURCE_ROOT; };
-		574A483D623D45CC9B5197D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/CommandBufferPool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CommandBufferPool.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/CommandBufferPool.h"; sourceTree = "<absolute>"; };
+		02E0C7AB45C44F30AEA9883E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanMemoryUtils.h; path = GSH_VulkanMemoryUtils.h; sourceTree = SOURCE_ROOT; };
+		05856A7F898343D0AD8C644B /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SpirvShaderGenerator.h; path = "../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h"; sourceTree = "<absolute>"; };
+		06D051C8EF2D47EBAE9286A2 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist; sourceTree = "<absolute>"; };
+		10F61F1C891442CBB4EA57E0 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h"; sourceTree = "<absolute>"; };
+		117863AE35AB4ED6ADDDB8E3 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CommandBufferPool.cpp; path = "../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp"; sourceTree = "<absolute>"; };
+		121BCFA0567045FCA5E3D7DF /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SpirvShaderGenerator.cpp; path = "../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp"; sourceTree = "<absolute>"; };
+		18D37F51BD994F7AB96D990D /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = HlslShaderGenerator.cpp; path = "../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp"; sourceTree = "<absolute>"; };
+		19196AC2C71E4872920E4FB8 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPipelineCache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanPipelineCache.h; path = GSH_VulkanPipelineCache.h; sourceTree = SOURCE_ROOT; };
+		1C9FDF6931BB4C5CA2E676EA /* ../Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_Vulkan.cpp; path = GSH_Vulkan.cpp; sourceTree = SOURCE_ROOT; };
+		1E44C5B100B24B5D81087240 /* ../Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_Vulkan.h; path = GSH_Vulkan.h; sourceTree = SOURCE_ROOT; };
+		213F281DAE4A4C8ABECEC7B0 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GlslShaderGenerator.cpp; path = "../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp"; sourceTree = "<absolute>"; };
+		21B2414C482745E68940157B /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanTransferHost.h; path = GSH_VulkanTransferHost.h; sourceTree = SOURCE_ROOT; };
+		26D3B7BAEA314E70BC871791 /* ../Play-/deps/Framework/include/vulkan/Loader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Loader.h; path = "../Play-/deps/Framework/include/vulkan/Loader.h"; sourceTree = "<absolute>"; };
+		28FB1FA1D60048E888ACAA9C /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist; sourceTree = "<absolute>"; };
+		29396D418E8E4D8B8D39D2F7 /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StructDefs.h; path = "../Play-/deps/Framework/include/vulkan/StructDefs.h"; sourceTree = "<absolute>"; };
+		2B70AB541383412C8D6B8CA3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float3Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h"; sourceTree = "<absolute>"; };
+		2BAF857AFD3E476AADEB73D9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = UintSwizzleSelector4.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h"; sourceTree = "<absolute>"; };
+		2C3063D76EB948F6B2175FFA /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderBuilder.cpp; path = "../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp"; sourceTree = "<absolute>"; };
+		2C9768CB2D034D988ACA01D8 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanFrameCommandBuffer.cpp; path = GSH_VulkanFrameCommandBuffer.cpp; sourceTree = SOURCE_ROOT; };
+		313FA1685526403BBCC6D1FF /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanTransferLocal.h; path = GSH_VulkanTransferLocal.h; sourceTree = SOURCE_ROOT; };
+		390AA67C08E247AE87A2DFD2 /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VulkanDef.h; path = "../Play-/deps/Framework/include/vulkan/VulkanDef.h"; sourceTree = "<absolute>"; };
+		40833A25328E411AA3CC501D /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Builder.h; path = "../Play-/deps/Nuanceur/include/nuanceur/Builder.h"; sourceTree = "<absolute>"; };
+		42658EB5D28B46ED91ADB222 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanClutLoad.cpp; path = GSH_VulkanClutLoad.cpp; sourceTree = SOURCE_ROOT; };
+		4363DB7E504B4F3898F0EA6B /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDrawMobile.cpp; path = GSH_VulkanDrawMobile.cpp; sourceTree = SOURCE_ROOT; };
+		43C3A09E713D4A9280C1272A /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderModule.cpp; path = "../Play-/deps/Framework/src/vulkan/ShaderModule.cpp"; sourceTree = "<absolute>"; };
+		480EEA39B87D4706A4EAD56B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntSwizzleSelector4.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h"; sourceTree = "<absolute>"; };
+		4CAD61B45C5B49D487631E22 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDeviceInfo.h; path = GSH_VulkanDeviceInfo.h; sourceTree = SOURCE_ROOT; };
+		4DDA0BAF007F43F79F233D6A /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanMemoryUtils.cpp; path = GSH_VulkanMemoryUtils.cpp; sourceTree = SOURCE_ROOT; };
+		4EEA4258B353428CBFFDE172 /* ../Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		54E7569C2D004787996115B8 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int4Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h"; sourceTree = "<absolute>"; };
+		5745B382E3A2440AA39FDB86 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanPlatformDefs.h; path = GSH_VulkanPlatformDefs.h; sourceTree = SOURCE_ROOT; };
+		574A483D623D45CC9B5197D9 /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CommandBufferPool.h; path = "../Play-/deps/Framework/include/vulkan/CommandBufferPool.h"; sourceTree = "<absolute>"; };
 		62490B075B5747D2BE54A856 /* Nuanceur */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libNuanceur.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		66983C5F9AF24264BF3859EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Loader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Loader.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Loader.cpp"; sourceTree = "<absolute>"; };
-		66C6969C03614AF2A75451F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = HlslShaderGenerator.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h"; sourceTree = "<absolute>"; };
-		670A8C91DD1245E996F6BCDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDrawMobile.h; path = GSH_VulkanDrawMobile.h; sourceTree = SOURCE_ROOT; };
-		6C169D65B8FE451FB8208BDA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int2Value.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h"; sourceTree = "<absolute>"; };
-		6F19CEBAA9C64493B6D81CFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Image.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Image.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Image.h"; sourceTree = "<absolute>"; };
-		73EC201A9E8940D187993699 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Operations.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h"; sourceTree = "<absolute>"; };
-		774107A3B5CA4A0F87C1D421 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShaderBuilder.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h"; sourceTree = "<absolute>"; };
-		7D5BF4D58C1F4510AD3B1E1C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanContext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanContext.h; path = GSH_VulkanContext.h; sourceTree = SOURCE_ROOT; };
-		82C4BC2E28E544F3B5C01F84 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanClutLoad.h; path = GSH_VulkanClutLoad.h; sourceTree = SOURCE_ROOT; };
-		84A3A890B511462E82D898E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDrawUtils.cpp; path = GSH_VulkanDrawUtils.cpp; sourceTree = SOURCE_ROOT; };
-		855B2F9BE7E94D1986D1A0A1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Device.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Device.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Device.h"; sourceTree = "<absolute>"; };
-		886C0873CAA84784859C5172 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanOffscreen.cpp; path = GSH_VulkanOffscreen.cpp; sourceTree = SOURCE_ROOT; };
-		891C5A3B8BE3486CA157931A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDeviceInfo.cpp; path = GSH_VulkanDeviceInfo.cpp; sourceTree = SOURCE_ROOT; };
-		89C77F78CD1C493D83ED7215 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanTransferLocal.cpp; path = GSH_VulkanTransferLocal.cpp; sourceTree = SOURCE_ROOT; };
-		8F0C41AA4C3A41E39D119D80 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Utils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Utils.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Utils.h"; sourceTree = "<absolute>"; };
-		9045AFD88AFA4EFB869F34DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanOffscreen.h; path = GSH_VulkanOffscreen.h; sourceTree = SOURCE_ROOT; };
-		9072AD99295242A5950E4942 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Uint3Value.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h"; sourceTree = "<absolute>"; };
-		93A2151B69D749D4A002A2BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDrawUtils.h; path = GSH_VulkanDrawUtils.h; sourceTree = SOURCE_ROOT; };
-		9470736BEFA74D1FA59CE03D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructChain.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StructChain.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructChain.h"; sourceTree = "<absolute>"; };
-		98FE68CE6B4E4CC2B9FDE462 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntValue.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h"; sourceTree = "<absolute>"; };
-		990466D27F744D2EA6384B46 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Device.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Device.cpp"; sourceTree = "<absolute>"; };
-		9CBB28F57A7249A38721F366 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt"; sourceTree = "<absolute>"; };
-		9DB123EA8CD2481BBBA28AC4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDraw.h; path = GSH_VulkanDraw.h; sourceTree = SOURCE_ROOT; };
-		9E15C86F5F2B4040989FCF9E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanPresent.cpp; path = GSH_VulkanPresent.cpp; sourceTree = SOURCE_ROOT; };
-		9F0017E8156744A69121F397 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Texture2DValue.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h"; sourceTree = "<absolute>"; };
+		66983C5F9AF24264BF3859EC /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Loader.cpp; path = "../Play-/deps/Framework/src/vulkan/Loader.cpp"; sourceTree = "<absolute>"; };
+		66C6969C03614AF2A75451F3 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = HlslShaderGenerator.h; path = "../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h"; sourceTree = "<absolute>"; };
+		670A8C91DD1245E996F6BCDC /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDrawMobile.h; path = GSH_VulkanDrawMobile.h; sourceTree = SOURCE_ROOT; };
+		6C169D65B8FE451FB8208BDA /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int2Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h"; sourceTree = "<absolute>"; };
+		6F19CEBAA9C64493B6D81CFB /* ../Play-/deps/Framework/include/vulkan/Image.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Image.h; path = "../Play-/deps/Framework/include/vulkan/Image.h"; sourceTree = "<absolute>"; };
+		73EC201A9E8940D187993699 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Operations.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h"; sourceTree = "<absolute>"; };
+		774107A3B5CA4A0F87C1D421 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShaderBuilder.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h"; sourceTree = "<absolute>"; };
+		7D5BF4D58C1F4510AD3B1E1C /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanContext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanContext.h; path = GSH_VulkanContext.h; sourceTree = SOURCE_ROOT; };
+		82C4BC2E28E544F3B5C01F84 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanClutLoad.h; path = GSH_VulkanClutLoad.h; sourceTree = SOURCE_ROOT; };
+		84A3A890B511462E82D898E0 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDrawUtils.cpp; path = GSH_VulkanDrawUtils.cpp; sourceTree = SOURCE_ROOT; };
+		855B2F9BE7E94D1986D1A0A1 /* ../Play-/deps/Framework/include/vulkan/Device.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Device.h; path = "../Play-/deps/Framework/include/vulkan/Device.h"; sourceTree = "<absolute>"; };
+		886C0873CAA84784859C5172 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanOffscreen.cpp; path = GSH_VulkanOffscreen.cpp; sourceTree = SOURCE_ROOT; };
+		891C5A3B8BE3486CA157931A /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDeviceInfo.cpp; path = GSH_VulkanDeviceInfo.cpp; sourceTree = SOURCE_ROOT; };
+		89C77F78CD1C493D83ED7215 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanTransferLocal.cpp; path = GSH_VulkanTransferLocal.cpp; sourceTree = SOURCE_ROOT; };
+		8F0C41AA4C3A41E39D119D80 /* ../Play-/deps/Framework/include/vulkan/Utils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Utils.h; path = "../Play-/deps/Framework/include/vulkan/Utils.h"; sourceTree = "<absolute>"; };
+		9045AFD88AFA4EFB869F34DA /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanOffscreen.h; path = GSH_VulkanOffscreen.h; sourceTree = SOURCE_ROOT; };
+		9072AD99295242A5950E4942 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Uint3Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h"; sourceTree = "<absolute>"; };
+		93A2151B69D749D4A002A2BB /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDrawUtils.h; path = GSH_VulkanDrawUtils.h; sourceTree = SOURCE_ROOT; };
+		9470736BEFA74D1FA59CE03D /* ../Play-/deps/Framework/include/vulkan/StructChain.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StructChain.h; path = "../Play-/deps/Framework/include/vulkan/StructChain.h"; sourceTree = "<absolute>"; };
+		98FE68CE6B4E4CC2B9FDE462 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h"; sourceTree = "<absolute>"; };
+		990466D27F744D2EA6384B46 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Device.cpp; path = "../Play-/deps/Framework/src/vulkan/Device.cpp"; sourceTree = "<absolute>"; };
+		9CBB28F57A7249A38721F366 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt"; sourceTree = "<absolute>"; };
+		9DB123EA8CD2481BBBA28AC4 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDraw.h; path = GSH_VulkanDraw.h; sourceTree = SOURCE_ROOT; };
+		9E15C86F5F2B4040989FCF9E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanPresent.cpp; path = GSH_VulkanPresent.cpp; sourceTree = SOURCE_ROOT; };
+		9F0017E8156744A69121F397 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Texture2DValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h"; sourceTree = "<absolute>"; };
 		9FC512E9F5A84D8E916A1F9C /* Framework_Vulkan */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFramework_Vulkan.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		A69EF226683F4E558E1A6794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanTransferHost.cpp; path = GSH_VulkanTransferHost.cpp; sourceTree = SOURCE_ROOT; };
-		A740E8120B8743A7850BADF2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Instance.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Instance.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Instance.cpp"; sourceTree = "<absolute>"; };
-		AAE3DE2A537F4799BACCC89F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ImageUint2DValue.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h"; sourceTree = "<absolute>"; };
-		AB8C33A4C1684CFA9AA94E89 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDrawDesktop.cpp; path = GSH_VulkanDrawDesktop.cpp; sourceTree = SOURCE_ROOT; };
-		AB9E68DE065346CE9343AB3E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanFrameCommandBuffer.h; path = GSH_VulkanFrameCommandBuffer.h; sourceTree = SOURCE_ROOT; };
-		AD5701FB80BF47C49224ACB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatSwizzleSelector.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h"; sourceTree = "<absolute>"; };
-		B0752FB021FC4AE0AB003722 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Instance.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Instance.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Instance.h"; sourceTree = "<absolute>"; };
-		B7408018EDA24244B1989A97 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDraw.cpp; path = GSH_VulkanDraw.cpp; sourceTree = SOURCE_ROOT; };
-		B77053E775D54182A2B8AC59 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist; sourceTree = "<absolute>"; };
-		C11CC651AA3C4BD3887C1A28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GlslShaderGenerator.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h"; sourceTree = "<absolute>"; };
-		C4BA99CBC3B0406B8D677E82 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatSwizzleSelector4.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h"; sourceTree = "<absolute>"; };
-		CBB735B15C4644F38360D0AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArrayUintValue.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h"; sourceTree = "<absolute>"; };
-		CBDB97B85A51458DAD42B7EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		CDF32A8CEC124C6583E6418F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Uint4Value.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h"; sourceTree = "<absolute>"; };
-		CE9E5CF236A1430C85ED6283 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Buffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Buffer.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Buffer.h"; sourceTree = "<absolute>"; };
-		D13FFD4727984548800D2742 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDrawDesktop.h; path = GSH_VulkanDrawDesktop.h; sourceTree = SOURCE_ROOT; };
-		D1AFF7774D0A443CA95ADC37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/CMakeLists.txt"; sourceTree = "<absolute>"; };
-		D2AE6440F48142E2B0F1E628 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Image.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Image.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Image.cpp"; sourceTree = "<absolute>"; };
-		D337BB4311F44841AED8C578 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float4Value.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h"; sourceTree = "<absolute>"; };
-		D388488FFC014A8890CA05F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int3Value.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h"; sourceTree = "<absolute>"; };
-		DAE3D6DCCD8E451C99399431 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float2Value.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h"; sourceTree = "<absolute>"; };
-		DB538A4C91E3423FAAC68144 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = UintValue.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h"; sourceTree = "<absolute>"; };
+		A69EF226683F4E558E1A6794 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanTransferHost.cpp; path = GSH_VulkanTransferHost.cpp; sourceTree = SOURCE_ROOT; };
+		A740E8120B8743A7850BADF2 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Instance.cpp; path = "../Play-/deps/Framework/src/vulkan/Instance.cpp"; sourceTree = "<absolute>"; };
+		AAE3DE2A537F4799BACCC89F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ImageUint2DValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h"; sourceTree = "<absolute>"; };
+		AB8C33A4C1684CFA9AA94E89 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDrawDesktop.cpp; path = GSH_VulkanDrawDesktop.cpp; sourceTree = SOURCE_ROOT; };
+		AB9E68DE065346CE9343AB3E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanFrameCommandBuffer.h; path = GSH_VulkanFrameCommandBuffer.h; sourceTree = SOURCE_ROOT; };
+		AD5701FB80BF47C49224ACB9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatSwizzleSelector.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h"; sourceTree = "<absolute>"; };
+		B0752FB021FC4AE0AB003722 /* ../Play-/deps/Framework/include/vulkan/Instance.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Instance.h; path = "../Play-/deps/Framework/include/vulkan/Instance.h"; sourceTree = "<absolute>"; };
+		B7408018EDA24244B1989A97 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_VulkanDraw.cpp; path = GSH_VulkanDraw.cpp; sourceTree = SOURCE_ROOT; };
+		B77053E775D54182A2B8AC59 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist; sourceTree = "<absolute>"; };
+		C11CC651AA3C4BD3887C1A28 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GlslShaderGenerator.h; path = "../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h"; sourceTree = "<absolute>"; };
+		C4BA99CBC3B0406B8D677E82 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatSwizzleSelector4.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h"; sourceTree = "<absolute>"; };
+		CBB735B15C4644F38360D0AB /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArrayUintValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h"; sourceTree = "<absolute>"; };
+		CBDB97B85A51458DAD42B7EE /* ../Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		CDF32A8CEC124C6583E6418F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Uint4Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h"; sourceTree = "<absolute>"; };
+		CE9E5CF236A1430C85ED6283 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Buffer.h; path = "../Play-/deps/Framework/include/vulkan/Buffer.h"; sourceTree = "<absolute>"; };
+		D13FFD4727984548800D2742 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanDrawDesktop.h; path = GSH_VulkanDrawDesktop.h; sourceTree = SOURCE_ROOT; };
+		D1AFF7774D0A443CA95ADC37 /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt"; sourceTree = "<absolute>"; };
+		D2AE6440F48142E2B0F1E628 /* ../Play-/deps/Framework/src/vulkan/Image.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Image.cpp; path = "../Play-/deps/Framework/src/vulkan/Image.cpp"; sourceTree = "<absolute>"; };
+		D337BB4311F44841AED8C578 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float4Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h"; sourceTree = "<absolute>"; };
+		D388488FFC014A8890CA05F7 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int3Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h"; sourceTree = "<absolute>"; };
+		DAE3D6DCCD8E451C99399431 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float2Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h"; sourceTree = "<absolute>"; };
+		DB538A4C91E3423FAAC68144 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = UintValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h"; sourceTree = "<absolute>"; };
 		DF57B9F82C5E4AC484B15BF7 /* gsh_vulkan */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgsh_vulkan.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		E39E8AD7270645FEA71CA405 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/Operations.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Operations.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/Operations.cpp"; sourceTree = "<absolute>"; };
-		E483B33AFE29411ABD95CA21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Utils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Utils.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Utils.cpp"; sourceTree = "<absolute>"; };
-		E707C718FBF142C0977D8CEC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/ShaderModule.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShaderModule.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/ShaderModule.h"; sourceTree = "<absolute>"; };
-		E7AF2C0A43684BE8B4A8AE95 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SubpassInputValue.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h"; sourceTree = "<absolute>"; };
-		E8A500D598B14BBBAD4F2DF9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BoolValue.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h"; sourceTree = "<absolute>"; };
-		EE18FFB552D345B2B8694FB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Matrix44Value.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h"; sourceTree = "<absolute>"; };
-		FDEE8EAC7ABE4B17A745EB37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanPresent.h; path = GSH_VulkanPresent.h; sourceTree = SOURCE_ROOT; };
-		FE6874AF83074F1385182BFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Buffer.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Buffer.cpp"; sourceTree = "<absolute>"; };
+		E39E8AD7270645FEA71CA405 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Operations.cpp; path = "../Play-/deps/Nuanceur/src/builder/Operations.cpp"; sourceTree = "<absolute>"; };
+		E483B33AFE29411ABD95CA21 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Utils.cpp; path = "../Play-/deps/Framework/src/vulkan/Utils.cpp"; sourceTree = "<absolute>"; };
+		E707C718FBF142C0977D8CEC /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShaderModule.h; path = "../Play-/deps/Framework/include/vulkan/ShaderModule.h"; sourceTree = "<absolute>"; };
+		E7AF2C0A43684BE8B4A8AE95 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SubpassInputValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h"; sourceTree = "<absolute>"; };
+		E8A500D598B14BBBAD4F2DF9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BoolValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h"; sourceTree = "<absolute>"; };
+		EE18FFB552D345B2B8694FB1 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Matrix44Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h"; sourceTree = "<absolute>"; };
+		FDEE8EAC7ABE4B17A745EB37 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_VulkanPresent.h; path = GSH_VulkanPresent.h; sourceTree = SOURCE_ROOT; };
+		FE6874AF83074F1385182BFB /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Buffer.cpp; path = "../Play-/deps/Framework/src/vulkan/Buffer.cpp"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -377,7 +377,7 @@
 		06AF07140FBF4065B9349206 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				28FB1FA1D60048E888ACAA9C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */,
+				28FB1FA1D60048E888ACAA9C /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -385,17 +385,17 @@
 		07DCB3C2CC854C1F8C77B098 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				CE9E5CF236A1430C85ED6283 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Buffer.h */,
-				574A483D623D45CC9B5197D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/CommandBufferPool.h */,
-				855B2F9BE7E94D1986D1A0A1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Device.h */,
-				6F19CEBAA9C64493B6D81CFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Image.h */,
-				B0752FB021FC4AE0AB003722 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Instance.h */,
-				26D3B7BAEA314E70BC871791 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Loader.h */,
-				E707C718FBF142C0977D8CEC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/ShaderModule.h */,
-				9470736BEFA74D1FA59CE03D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructChain.h */,
-				29396D418E8E4D8B8D39D2F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/StructDefs.h */,
-				8F0C41AA4C3A41E39D119D80 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/Utils.h */,
-				390AA67C08E247AE87A2DFD2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/vulkan/VulkanDef.h */,
+				CE9E5CF236A1430C85ED6283 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */,
+				574A483D623D45CC9B5197D9 /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */,
+				855B2F9BE7E94D1986D1A0A1 /* ../Play-/deps/Framework/include/vulkan/Device.h */,
+				6F19CEBAA9C64493B6D81CFB /* ../Play-/deps/Framework/include/vulkan/Image.h */,
+				B0752FB021FC4AE0AB003722 /* ../Play-/deps/Framework/include/vulkan/Instance.h */,
+				26D3B7BAEA314E70BC871791 /* ../Play-/deps/Framework/include/vulkan/Loader.h */,
+				E707C718FBF142C0977D8CEC /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */,
+				9470736BEFA74D1FA59CE03D /* ../Play-/deps/Framework/include/vulkan/StructChain.h */,
+				29396D418E8E4D8B8D39D2F7 /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */,
+				8F0C41AA4C3A41E39D119D80 /* ../Play-/deps/Framework/include/vulkan/Utils.h */,
+				390AA67C08E247AE87A2DFD2 /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -403,19 +403,19 @@
 		10A263E35C8E47268C841D30 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				1C9FDF6931BB4C5CA2E676EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */,
-				42658EB5D28B46ED91ADB222 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */,
-				891C5A3B8BE3486CA157931A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */,
-				B7408018EDA24244B1989A97 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */,
-				AB8C33A4C1684CFA9AA94E89 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */,
-				4363DB7E504B4F3898F0EA6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */,
-				84A3A890B511462E82D898E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */,
-				2C9768CB2D034D988ACA01D8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */,
-				4DDA0BAF007F43F79F233D6A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */,
-				886C0873CAA84784859C5172 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */,
-				9E15C86F5F2B4040989FCF9E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */,
-				A69EF226683F4E558E1A6794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */,
-				89C77F78CD1C493D83ED7215 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */,
+				1C9FDF6931BB4C5CA2E676EA /* ../Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */,
+				42658EB5D28B46ED91ADB222 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */,
+				891C5A3B8BE3486CA157931A /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */,
+				B7408018EDA24244B1989A97 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */,
+				AB8C33A4C1684CFA9AA94E89 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */,
+				4363DB7E504B4F3898F0EA6B /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */,
+				84A3A890B511462E82D898E0 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */,
+				2C9768CB2D034D988ACA01D8 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */,
+				4DDA0BAF007F43F79F233D6A /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */,
+				886C0873CAA84784859C5172 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */,
+				9E15C86F5F2B4040989FCF9E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */,
+				A69EF226683F4E558E1A6794 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */,
+				89C77F78CD1C493D83ED7215 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -423,33 +423,33 @@
 		133668BCEF9F4C38B8E3C9F1 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				40833A25328E411AA3CC501D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/Builder.h */,
-				CBB735B15C4644F38360D0AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */,
-				E8A500D598B14BBBAD4F2DF9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */,
-				DAE3D6DCCD8E451C99399431 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */,
-				2B70AB541383412C8D6B8CA3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */,
-				D337BB4311F44841AED8C578 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */,
-				AD5701FB80BF47C49224ACB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */,
-				C4BA99CBC3B0406B8D677E82 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */,
-				10F61F1C891442CBB4EA57E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */,
-				AAE3DE2A537F4799BACCC89F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */,
-				6C169D65B8FE451FB8208BDA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */,
-				D388488FFC014A8890CA05F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */,
-				54E7569C2D004787996115B8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */,
-				480EEA39B87D4706A4EAD56B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */,
-				98FE68CE6B4E4CC2B9FDE462 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */,
-				EE18FFB552D345B2B8694FB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */,
-				73EC201A9E8940D187993699 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */,
-				774107A3B5CA4A0F87C1D421 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */,
-				E7AF2C0A43684BE8B4A8AE95 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */,
-				9F0017E8156744A69121F397 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */,
-				9072AD99295242A5950E4942 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */,
-				CDF32A8CEC124C6583E6418F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */,
-				2BAF857AFD3E476AADEB73D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */,
-				DB538A4C91E3423FAAC68144 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */,
-				C11CC651AA3C4BD3887C1A28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */,
-				66C6969C03614AF2A75451F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */,
-				05856A7F898343D0AD8C644B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */,
+				40833A25328E411AA3CC501D /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */,
+				CBB735B15C4644F38360D0AB /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */,
+				E8A500D598B14BBBAD4F2DF9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */,
+				DAE3D6DCCD8E451C99399431 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */,
+				2B70AB541383412C8D6B8CA3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */,
+				D337BB4311F44841AED8C578 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */,
+				AD5701FB80BF47C49224ACB9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */,
+				C4BA99CBC3B0406B8D677E82 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */,
+				10F61F1C891442CBB4EA57E0 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */,
+				AAE3DE2A537F4799BACCC89F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */,
+				6C169D65B8FE451FB8208BDA /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */,
+				D388488FFC014A8890CA05F7 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */,
+				54E7569C2D004787996115B8 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */,
+				480EEA39B87D4706A4EAD56B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */,
+				98FE68CE6B4E4CC2B9FDE462 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */,
+				EE18FFB552D345B2B8694FB1 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */,
+				73EC201A9E8940D187993699 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */,
+				774107A3B5CA4A0F87C1D421 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */,
+				E7AF2C0A43684BE8B4A8AE95 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */,
+				9F0017E8156744A69121F397 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */,
+				9072AD99295242A5950E4942 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */,
+				CDF32A8CEC124C6583E6418F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */,
+				2BAF857AFD3E476AADEB73D9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */,
+				DB538A4C91E3423FAAC68144 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */,
+				C11CC651AA3C4BD3887C1A28 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */,
+				66C6969C03614AF2A75451F3 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */,
+				05856A7F898343D0AD8C644B /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -480,7 +480,7 @@
 				10A263E35C8E47268C841D30 /* Source Files */,
 				C4067A01ABAB481593B61A5C /* Header Files */,
 				BC7EA203C4DB41BF9748B464 /* Resources */,
-				4EEA4258B353428CBFFDE172 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */,
+				4EEA4258B353428CBFFDE172 /* ../Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */,
 			);
 			name = gsh_vulkan;
 			sourceTree = "<group>";
@@ -505,11 +505,11 @@
 		B74BA04F76CE4363AC207478 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				E39E8AD7270645FEA71CA405 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/Operations.cpp */,
-				2C3063D76EB948F6B2175FFA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */,
-				213F281DAE4A4C8ABECEC7B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */,
-				18D37F51BD994F7AB96D990D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */,
-				121BCFA0567045FCA5E3D7DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */,
+				E39E8AD7270645FEA71CA405 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */,
+				2C3063D76EB948F6B2175FFA /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */,
+				213F281DAE4A4C8ABECEC7B0 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */,
+				18D37F51BD994F7AB96D990D /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */,
+				121BCFA0567045FCA5E3D7DF /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -517,7 +517,7 @@
 		BC7EA203C4DB41BF9748B464 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B77053E775D54182A2B8AC59 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist */,
+				B77053E775D54182A2B8AC59 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/gsh_vulkan.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -525,22 +525,22 @@
 		C4067A01ABAB481593B61A5C /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				1E44C5B100B24B5D81087240 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.h */,
-				82C4BC2E28E544F3B5C01F84 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.h */,
-				7D5BF4D58C1F4510AD3B1E1C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanContext.h */,
-				4CAD61B45C5B49D487631E22 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.h */,
-				9DB123EA8CD2481BBBA28AC4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.h */,
-				D13FFD4727984548800D2742 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.h */,
-				670A8C91DD1245E996F6BCDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.h */,
-				93A2151B69D749D4A002A2BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.h */,
-				AB9E68DE065346CE9343AB3E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.h */,
-				02E0C7AB45C44F30AEA9883E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.h */,
-				9045AFD88AFA4EFB869F34DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.h */,
-				19196AC2C71E4872920E4FB8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPipelineCache.h */,
-				5745B382E3A2440AA39FDB86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h */,
-				FDEE8EAC7ABE4B17A745EB37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.h */,
-				21B2414C482745E68940157B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.h */,
-				313FA1685526403BBCC6D1FF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.h */,
+				1E44C5B100B24B5D81087240 /* ../Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.h */,
+				82C4BC2E28E544F3B5C01F84 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.h */,
+				7D5BF4D58C1F4510AD3B1E1C /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanContext.h */,
+				4CAD61B45C5B49D487631E22 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.h */,
+				9DB123EA8CD2481BBBA28AC4 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.h */,
+				D13FFD4727984548800D2742 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.h */,
+				670A8C91DD1245E996F6BCDC /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.h */,
+				93A2151B69D749D4A002A2BB /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.h */,
+				AB9E68DE065346CE9343AB3E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.h */,
+				02E0C7AB45C44F30AEA9883E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.h */,
+				9045AFD88AFA4EFB869F34DA /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.h */,
+				19196AC2C71E4872920E4FB8 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPipelineCache.h */,
+				5745B382E3A2440AA39FDB86 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h */,
+				FDEE8EAC7ABE4B17A745EB37 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.h */,
+				21B2414C482745E68940157B /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.h */,
+				313FA1685526403BBCC6D1FF /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -551,7 +551,7 @@
 				E30127FA297340A7975DA61B /* Source Files */,
 				07DCB3C2CC854C1F8C77B098 /* Header Files */,
 				F1DB65D5DFC54B4198BDADCB /* Resources */,
-				9CBB28F57A7249A38721F366 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */,
+				9CBB28F57A7249A38721F366 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */,
 			);
 			name = Framework_Vulkan;
 			sourceTree = "<group>";
@@ -560,7 +560,7 @@
 			isa = PBXGroup;
 			children = (
 				558F392CF5344F7287C7BD6C /* CMake Rules */,
-				CBDB97B85A51458DAD42B7EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */,
+				CBDB97B85A51458DAD42B7EE /* ../Play-/Source/gs/GSH_Vulkan/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -571,7 +571,7 @@
 				B74BA04F76CE4363AC207478 /* Source Files */,
 				133668BCEF9F4C38B8E3C9F1 /* Header Files */,
 				06AF07140FBF4065B9349206 /* Resources */,
-				D1AFF7774D0A443CA95ADC37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */,
+				D1AFF7774D0A443CA95ADC37 /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */,
 			);
 			name = Nuanceur;
 			sourceTree = "<group>";
@@ -586,14 +586,14 @@
 		E30127FA297340A7975DA61B /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				FE6874AF83074F1385182BFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Buffer.cpp */,
-				117863AE35AB4ED6ADDDB8E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */,
-				990466D27F744D2EA6384B46 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Device.cpp */,
-				D2AE6440F48142E2B0F1E628 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Image.cpp */,
-				A740E8120B8743A7850BADF2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Instance.cpp */,
-				66983C5F9AF24264BF3859EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Loader.cpp */,
-				43C3A09E713D4A9280C1272A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/ShaderModule.cpp */,
-				E483B33AFE29411ABD95CA21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Utils.cpp */,
+				FE6874AF83074F1385182BFB /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */,
+				117863AE35AB4ED6ADDDB8E3 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */,
+				990466D27F744D2EA6384B46 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */,
+				D2AE6440F48142E2B0F1E628 /* ../Play-/deps/Framework/src/vulkan/Image.cpp */,
+				A740E8120B8743A7850BADF2 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */,
+				66983C5F9AF24264BF3859EC /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */,
+				43C3A09E713D4A9280C1272A /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */,
+				E483B33AFE29411ABD95CA21 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -601,7 +601,7 @@
 		F1DB65D5DFC54B4198BDADCB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				06D051C8EF2D47EBAE9286A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */,
+				06D051C8EF2D47EBAE9286A2 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -710,19 +710,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -738,24 +738,24 @@ fi
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/ALL_BUILD			);
+../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   echo Build\\ all\\ projects
 fi
 ";
@@ -786,25 +786,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/ZERO_CHECK			);
+../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
+  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
+  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
+  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
+  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -822,19 +822,19 @@ fi
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -898,19 +898,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_Vulkan
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -938,19 +938,19 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F93B9CBA3F6F455C9A4F428E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */,
-				24B31CAF18C3493489859F2B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */,
-				5F2F449856EC4CE39592E615 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */,
-				7795BF2B39484D94AC08B3CE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */,
-				B70A366435A1459BAD9FBA82 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */,
-				E328DC61E6844C3285CEC6EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */,
-				EB731B029FD84F799857A3B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */,
-				6D0EB4D86E1542D09089B2C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */,
-				368BA9A847D941F2AFFCEF5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */,
-				EA4B5B4600FF4FC79C266E61 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */,
-				E8210CAA8EDA4418879BCE2C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */,
-				C9BFE30378E543BAA4686733 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */,
-				399CA445E135485CAECA5A1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */,
+				F93B9CBA3F6F455C9A4F428E /* ../Play-/Source/gs/GSH_Vulkan/GSH_Vulkan.cpp */,
+				24B31CAF18C3493489859F2B /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanClutLoad.cpp */,
+				5F2F449856EC4CE39592E615 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDeviceInfo.cpp */,
+				7795BF2B39484D94AC08B3CE /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDraw.cpp */,
+				B70A366435A1459BAD9FBA82 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawDesktop.cpp */,
+				E328DC61E6844C3285CEC6EC /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawMobile.cpp */,
+				EB731B029FD84F799857A3B0 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanDrawUtils.cpp */,
+				6D0EB4D86E1542D09089B2C9 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanFrameCommandBuffer.cpp */,
+				368BA9A847D941F2AFFCEF5E /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanMemoryUtils.cpp */,
+				EA4B5B4600FF4FC79C266E61 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanOffscreen.cpp */,
+				E8210CAA8EDA4418879BCE2C /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanPresent.cpp */,
+				C9BFE30378E543BAA4686733 /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferHost.cpp */,
+				399CA445E135485CAECA5A1A /* ../Play-/Source/gs/GSH_Vulkan/GSH_VulkanTransferLocal.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -958,14 +958,14 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				663EF4B1DE4444C8AC7A337E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Buffer.cpp */,
-				F0176DA6D5814EC2B8056A72 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */,
-				781B34B34E2F4A798C98B91B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Device.cpp */,
-				064ED01B4B794472A099350F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Image.cpp */,
-				CE3C17DDCEAF46C2A61DB5F2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Instance.cpp */,
-				927FC48E9C654E9CBC8E8D7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Loader.cpp */,
-				8D69C093762D4D6480EC4076 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/ShaderModule.cpp */,
-				4C838B6FCDC347D19BE6AAF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/vulkan/Utils.cpp */,
+				663EF4B1DE4444C8AC7A337E /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */,
+				F0176DA6D5814EC2B8056A72 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */,
+				781B34B34E2F4A798C98B91B /* ../Play-/deps/Framework/src/vulkan/Device.cpp */,
+				064ED01B4B794472A099350F /* ../Play-/deps/Framework/src/vulkan/Image.cpp */,
+				CE3C17DDCEAF46C2A61DB5F2 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */,
+				927FC48E9C654E9CBC8E8D7D /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */,
+				8D69C093762D4D6480EC4076 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */,
+				4C838B6FCDC347D19BE6AAF7 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -973,11 +973,11 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCF72BE14785442D9B90CA8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/Operations.cpp */,
-				21B2EA4400CB4A9A8C0BC08B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */,
-				40C3EF3DBD674D6AA32940BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */,
-				F0CFFED716164E90B82463EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */,
-				65AF4320CDED41309D4DA1ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */,
+				CCF72BE14785442D9B90CA8C /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */,
+				21B2EA4400CB4A9A8C0BC08B /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */,
+				40C3EF3DBD674D6AA32940BF /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */,
+				F0CFFED716164E90B82463EE /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */,
+				65AF4320CDED41309D4DA1ED /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1105,7 +1105,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1135,7 +1135,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1165,7 +1165,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1215,7 +1215,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1325,7 +1325,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1395,7 +1395,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1445,7 +1445,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1475,7 +1475,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1545,7 +1545,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1748,7 +1748,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1778,7 +1778,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1828,7 +1828,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;

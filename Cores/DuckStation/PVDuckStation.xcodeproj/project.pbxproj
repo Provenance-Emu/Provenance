@@ -3,49 +3,54 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		934D873C2A777AB300C3107A /* libclogDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C22A777A3700C3107A /* libclogDuckstation.a */; };
-		934D873D2A777AB300C3107A /* libcommonDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C42A777A3700C3107A /* libcommonDuckstation.a */; };
-		934D873E2A777AB300C3107A /* libcoreDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C62A777A3700C3107A /* libcoreDuckstation.a */; };
-		934D873F2A777AB300C3107A /* libcpuinfo_internalsDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86CA2A777A3700C3107A /* libcpuinfo_internalsDuckstation.a */; };
-		934D87402A777AB300C3107A /* libcpuinfoDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C82A777A3700C3107A /* libcpuinfoDuckstation.a */; };
-		934D87412A777AB300C3107A /* libfmtDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86CC2A777A3700C3107A /* libfmtDuckstation.a */; };
-		934D87422A777AB300C3107A /* libfrontend-commonDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86CE2A777A3700C3107A /* libfrontend-commonDuckstation.a */; };
-		934D87432A777AB300C3107A /* libgladDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D02A777A3700C3107A /* libgladDuckstation.a */; };
-		934D87442A777AB300C3107A /* libglslangDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D22A777A3700C3107A /* libglslangDuckstation.a */; };
-		934D87452A777AB300C3107A /* libgtest_mainDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D62A777A3700C3107A /* libgtest_mainDuckstation.a */; };
-		934D87462A777AB300C3107A /* libgtestDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D42A777A3700C3107A /* libgtestDuckstation.a */; };
-		934D87472A777AB300C3107A /* libimguiDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D82A777A3700C3107A /* libimguiDuckstation.a */; };
-		934D87482A777AB300C3107A /* liblibchdrDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86DA2A777A3700C3107A /* liblibchdrDuckstation.a */; };
-		934D87492A777AB300C3107A /* liblzmaDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86DC2A777A3700C3107A /* liblzmaDuckstation.a */; };
-		934D874A2A777AB300C3107A /* libminizipDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86DE2A777A3700C3107A /* libminizipDuckstation.a */; };
-		934D874B2A777AB300C3107A /* librcheevosDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E02A777A3700C3107A /* librcheevosDuckstation.a */; };
-		934D874C2A777AB300C3107A /* libscmversionDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E22A777A3700C3107A /* libscmversionDuckstation.a */; };
-		934D874D2A777AB300C3107A /* libsimpleiniDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E42A777A3700C3107A /* libsimpleiniDuckstation.a */; };
-		934D874E2A777AB300C3107A /* libsoundtouchDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E62A777A3700C3107A /* libsoundtouchDuckstation.a */; };
-		934D874F2A777AB300C3107A /* libstbDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E82A777A3700C3107A /* libstbDuckstation.a */; };
-		934D87502A777AB300C3107A /* libtinyxml2Duckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86EA2A777A3700C3107A /* libtinyxml2Duckstation.a */; };
-		934D87512A777AB300C3107A /* libutilDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86EC2A777A3700C3107A /* libutilDuckstation.a */; };
-		934D87522A777AB300C3107A /* libvixlDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86EE2A777A3700C3107A /* libvixlDuckstation.a */; };
-		934D87532A777AB300C3107A /* libxxhashDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F02A777A3700C3107A /* libxxhashDuckstation.a */; };
-		934D87542A777AB300C3107A /* libzlibDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F22A777A3700C3107A /* libzlibDuckstation.a */; };
-		934D87552A777AB300C3107A /* libzstdDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F42A777A3700C3107A /* libzstdDuckstation.a */; };
-		939AAF6D2A791EC7007709E5 /* libduckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8A54026BE55780096A354 /* libduckstation.a */; };
-		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (Weak, ); }; };
-		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
+		934D873C2A777AB300C3107A /* libclogDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C22A777A3700C3107A /* libclogDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D873D2A777AB300C3107A /* libcommonDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C42A777A3700C3107A /* libcommonDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D873E2A777AB300C3107A /* libcoreDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C62A777A3700C3107A /* libcoreDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D873F2A777AB300C3107A /* libcpuinfo_internalsDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86CA2A777A3700C3107A /* libcpuinfo_internalsDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87402A777AB300C3107A /* libcpuinfoDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C82A777A3700C3107A /* libcpuinfoDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87412A777AB300C3107A /* libfmtDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86CC2A777A3700C3107A /* libfmtDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87422A777AB300C3107A /* libfrontend-commonDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86CE2A777A3700C3107A /* libfrontend-commonDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87432A777AB300C3107A /* libgladDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D02A777A3700C3107A /* libgladDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87442A777AB300C3107A /* libglslangDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D22A777A3700C3107A /* libglslangDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87452A777AB300C3107A /* libgtest_mainDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D62A777A3700C3107A /* libgtest_mainDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87462A777AB300C3107A /* libgtestDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D42A777A3700C3107A /* libgtestDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87472A777AB300C3107A /* libimguiDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D82A777A3700C3107A /* libimguiDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87482A777AB300C3107A /* liblibchdrDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86DA2A777A3700C3107A /* liblibchdrDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87492A777AB300C3107A /* liblzmaDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86DC2A777A3700C3107A /* liblzmaDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D874A2A777AB300C3107A /* libminizipDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86DE2A777A3700C3107A /* libminizipDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D874B2A777AB300C3107A /* librcheevosDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E02A777A3700C3107A /* librcheevosDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D874C2A777AB300C3107A /* libscmversionDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E22A777A3700C3107A /* libscmversionDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D874D2A777AB300C3107A /* libsimpleiniDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E42A777A3700C3107A /* libsimpleiniDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D874E2A777AB300C3107A /* libsoundtouchDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E62A777A3700C3107A /* libsoundtouchDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D874F2A777AB300C3107A /* libstbDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E82A777A3700C3107A /* libstbDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87502A777AB300C3107A /* libtinyxml2Duckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86EA2A777A3700C3107A /* libtinyxml2Duckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87512A777AB300C3107A /* libutilDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86EC2A777A3700C3107A /* libutilDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87522A777AB300C3107A /* libvixlDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86EE2A777A3700C3107A /* libvixlDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87532A777AB300C3107A /* libxxhashDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F02A777A3700C3107A /* libxxhashDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87542A777AB300C3107A /* libzlibDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F22A777A3700C3107A /* libzlibDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		934D87552A777AB300C3107A /* libzstdDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F42A777A3700C3107A /* libzstdDuckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		939AAF6D2A791EC7007709E5 /* libduckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8A54026BE55780096A354 /* libduckstation.a */; platformFilters = (ios, maccatalyst, tvos, ); };
+		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		B30E99052C6EF1A900C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99042C6EF1A900C1431E /* PVSupport */; };
+		B30E9B162C6FD0F200C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B152C6FD0F200C1431E /* PVEmulatorCore */; };
+		B30E9B192C6FD0FE00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B182C6FD0FE00C1431E /* PVCoreBridge */; };
 		B34C2BF4296F9B24002146BB /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
 		B34C2C13296FBEDA002146BB /* duckstation_null.c in Sources */ = {isa = PBXBuildFile; fileRef = B34C2C12296FBEDA002146BB /* duckstation_null.c */; };
 		B34C2C14296FBFBD002146BB /* PlayStationGameHacks.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */; };
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
-		B373CD98296F99B6005D110B /* PVDuckStation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */; };
-		B373CD99296F99B6005D110B /* PVDuckStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */; };
+		B373CD98296F99B6005D110B /* PVDuckStationCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A52926BE48CA0096A354 /* PVDuckStationCoreBridge.mm */; };
+		B373CD99296F99B6005D110B /* PVDuckStationCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A53926BE4A6D0096A354 /* PVDuckStationCore.swift */; };
+		B37CDB1F2CAA1EB40026E901 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDB1E2CAA1EB40026E901 /* PVPlists */; };
+		B37CDB222CAA1EEF0026E901 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDB212CAA1EEF0026E901 /* PVCoreObjCBridge */; };
+		B37CDB252CAA1F2A0026E901 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDB242CAA1F2A0026E901 /* PVSettings */; };
 		B392F761296F6B2B008BAEF1 /* EAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = B392F75F296F6B2B008BAEF1 /* EAGL.h */; };
-		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilter = ios; settings = {ATTRIBUTES = (Weak, ); }; };
+		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilters = (ios, tvos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924526DEFFD8003CB9D4 /* GLKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924C26DEFFE8003CB9D4 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924826DEFFE7003CB9D4 /* MetalKit.framework */; };
 		B3C2924E26DEFFE8003CB9D4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924A26DEFFE8003CB9D4 /* Metal.framework */; };
@@ -54,7 +59,10 @@
 		B3D8A52D26BE48CA0096A354 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52426BE48C90096A354 /* Core.plist */; };
 		B3D8A52F26BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52526BE48C90096A354 /* PVDuckStation.h */; };
 		B3D8A53126BE48CA0096A354 /* DuckStation-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */; };
-		B3D8A53326BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52826BE48C90096A354 /* PVDuckStation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3D8A53326BE48CA0096A354 /* PVDuckStationCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52826BE48C90096A354 /* PVDuckStationCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3E2A9FD2CB619B100E2636D /* PVDuckStationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2A9FC2CB619B100E2636D /* PVDuckStationOptions.swift */; };
+		B3E2AA002CB61A5900E2636D /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2A9FE2CB61A5900E2636D /* CorePlist.swift */; };
+		B3E2AA012CB61A5900E2636D /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2A9FF2CB61A5900E2636D /* CorePlist-Generated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -526,11 +534,14 @@
 		B3D8A52426BE48C90096A354 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3D8A52526BE48C90096A354 /* PVDuckStation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVDuckStation.h; sourceTree = "<group>"; };
 		B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DuckStation-Info.plist"; sourceTree = "<group>"; };
-		B3D8A52826BE48C90096A354 /* PVDuckStation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVDuckStation.h; sourceTree = "<group>"; };
-		B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDuckStation.mm; sourceTree = "<group>"; };
+		B3D8A52826BE48C90096A354 /* PVDuckStationCoreBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVDuckStationCoreBridge.h; sourceTree = "<group>"; };
+		B3D8A52926BE48CA0096A354 /* PVDuckStationCoreBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDuckStationCoreBridge.mm; sourceTree = "<group>"; };
 		B3D8A52A26BE48CA0096A354 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDuckStation.swift; sourceTree = "<group>"; };
+		B3D8A53926BE4A6D0096A354 /* PVDuckStationCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDuckStationCore.swift; sourceTree = "<group>"; };
 		B3D8A54026BE55780096A354 /* libduckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libduckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E2A9FC2CB619B100E2636D /* PVDuckStationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDuckStationOptions.swift; sourceTree = "<group>"; };
+		B3E2A9FE2CB61A5900E2636D /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3E2A9FF2CB61A5900E2636D /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -539,14 +550,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				939AAF6D2A791EC7007709E5 /* libduckstation.a in Frameworks */,
-				B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */,
 				B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */,
+				B30E99052C6EF1A900C1431E /* PVSupport in Frameworks */,
 				B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */,
+				B30E9B192C6FD0FE00C1431E /* PVCoreBridge in Frameworks */,
+				B30E9B162C6FD0F200C1431E /* PVEmulatorCore in Frameworks */,
 				B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */,
 				B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */,
+				B37CDB1F2CAA1EB40026E901 /* PVPlists in Frameworks */,
 				B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */,
+				B37CDB252CAA1F2A0026E901 /* PVSettings in Frameworks */,
 				B3C2924E26DEFFE8003CB9D4 /* Metal.framework in Frameworks */,
 				B3C2924C26DEFFE8003CB9D4 /* MetalKit.framework in Frameworks */,
+				B37CDB222CAA1EEF0026E901 /* PVCoreObjCBridge in Frameworks */,
 				B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -802,13 +818,16 @@
 			isa = PBXGroup;
 			children = (
 				B392F75F296F6B2B008BAEF1 /* EAGL.h */,
-				B3D8A52826BE48C90096A354 /* PVDuckStation.h */,
-				B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */,
-				B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */,
 				B392F760296F6B2B008BAEF1 /* EAGL.mm */,
+				B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */,
 				B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */,
-				B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */,
-				B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */,
+				B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */,
+				B3D8A52826BE48C90096A354 /* PVDuckStationCoreBridge.h */,
+				B3D8A52926BE48CA0096A354 /* PVDuckStationCoreBridge.mm */,
+				B3D8A53926BE4A6D0096A354 /* PVDuckStationCore.swift */,
+				B3E2A9FC2CB619B100E2636D /* PVDuckStationOptions.swift */,
+				B3E2A9FE2CB61A5900E2636D /* CorePlist.swift */,
+				B3E2A9FF2CB61A5900E2636D /* CorePlist-Generated.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -820,7 +839,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3D8A53326BE48CA0096A354 /* PVDuckStation.h in Headers */,
+				B3D8A53326BE48CA0096A354 /* PVDuckStationCoreBridge.h in Headers */,
 				B392F761296F6B2B008BAEF1 /* EAGL.h in Headers */,
 				B3D8A52F26BE48CA0096A354 /* PVDuckStation.h in Headers */,
 			);
@@ -895,8 +914,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1250;
-				ORGANIZATIONNAME = "Provenance Emu";
+				LastUpgradeCheck = 1600;
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B36DE7471D6AB19C002EE3ED = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -907,7 +926,7 @@
 				};
 			};
 			buildConfigurationList = 0269535B143169EA003A07D4 /* Build configuration list for PBXProject "PVDuckStation" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -915,6 +934,15 @@
 				Base,
 			);
 			mainGroup = 02695356143169EA003A07D4;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E99032C6EF1A900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E9B142C6FD0F200C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B30E9B172C6FD0FE00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B37CDB1D2CAA1EB40026E901 /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B37CDB202CAA1EEF0026E901 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B37CDB232CAA1F2A0026E901 /* XCLocalSwiftPackageReference "../../PVSettings" */,
+			);
 			productRefGroup = 02695362143169EB003A07D4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -1135,10 +1163,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3E2A9FD2CB619B100E2636D /* PVDuckStationOptions.swift in Sources */,
 				B34C2BF4296F9B24002146BB /* OpenGLHostDisplay.mm in Sources */,
 				B34C2C14296FBFBD002146BB /* PlayStationGameHacks.m in Sources */,
-				B373CD98296F99B6005D110B /* PVDuckStation.mm in Sources */,
-				B373CD99296F99B6005D110B /* PVDuckStation.swift in Sources */,
+				B373CD98296F99B6005D110B /* PVDuckStationCoreBridge.mm in Sources */,
+				B3E2AA002CB61A5900E2636D /* CorePlist.swift in Sources */,
+				B3E2AA012CB61A5900E2636D /* CorePlist-Generated.swift in Sources */,
+				B373CD99296F99B6005D110B /* PVDuckStationCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1155,117 +1186,232 @@
 /* Begin PBXTargetDependency section */
 		B3D8AD4F26BE55E20096A354 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			target = B3D8A53F26BE55780096A354 /* duckstation */;
 			targetProxy = B3D8AD4E26BE55E20096A354 /* PBXContainerItemProxy */;
 		};
 		B3F8DF982975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = clog;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DF972975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DF9A2975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = common;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DF992975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DF9C2975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = core;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DF9B2975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DF9E2975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = cpuinfo;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DF9D2975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFA02975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = cpuinfo_internals;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DF9F2975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFA42975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "frontend-common";
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFA32975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFA62975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = glad;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFA52975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFA82975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = glslang;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFA72975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFAE2975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = imgui;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFAD2975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFB02975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = libchdr;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFAF2975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFB22975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = lzma;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFB12975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFB42975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = minizip;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFB32975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFB62975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = rcheevos;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFB52975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFBA2975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = simpleini;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFB92975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFBC2975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = soundtouch;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFBB2975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFBE2975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = stb;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFBD2975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFC02975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = tinyxml2;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFBF2975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFC22975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = util;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFC12975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFC42975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = vixl;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFC32975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFC62975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = xxhash;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFC52975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFC82975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = zlib;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFC72975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 		B3F8DFCA2975EFEB00C24FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = zstd;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+			);
 			targetProxy = B3F8DFC92975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1311,10 +1457,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1337,7 +1484,7 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = auto;
@@ -1345,7 +1492,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -1377,10 +1524,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1402,15 +1550,16 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -1442,10 +1591,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1467,14 +1617,14 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Archive;
 		};
@@ -1487,11 +1637,14 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				"DEVELOPMENT_TEAM[sdk=appletvos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1541,8 +1694,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1554,12 +1706,21 @@
 					"$(PROJECT_DIR)/lib",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fcxx-modules",
+					"-fmodules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1575,11 +1736,14 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				"DEVELOPMENT_TEAM[sdk=appletvos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1630,8 +1794,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1643,12 +1806,21 @@
 					"$(PROJECT_DIR)/lib",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fcxx-modules",
+					"-fmodules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1663,11 +1835,14 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				"DEVELOPMENT_TEAM[sdk=appletvos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1717,8 +1892,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1730,12 +1904,21 @@
 					"$(PROJECT_DIR)/lib",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fcxx-modules",
+					"-fmodules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1781,7 +1964,7 @@
 					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
 					"\"$(SRCROOT)/duckstation/dep/xbyak\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/lib",
 					"$(inherited)",
@@ -1795,9 +1978,13 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Debug;
 		};
@@ -1840,7 +2027,7 @@
 					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
 					"\"$(SRCROOT)/duckstation/dep/xbyak\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/lib",
 					"$(inherited)",
@@ -1854,9 +2041,13 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1900,7 +2091,7 @@
 					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
 					"\"$(SRCROOT)/duckstation/dep/xbyak\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/lib",
 					"$(inherited)",
@@ -1914,9 +2105,13 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Archive;
@@ -1955,6 +2150,60 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E99032C6EF1A900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E9B142C6FD0F200C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B30E9B172C6FD0FE00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B37CDB1D2CAA1EB40026E901 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B37CDB202CAA1EEF0026E901 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B37CDB232CAA1F2A0026E901 /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E99042C6EF1A900C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9B152C6FD0F200C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B30E9B182C6FD0FE00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B37CDB1E2CAA1EB40026E901 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B37CDB212CAA1EEF0026E901 /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B37CDB242CAA1F2A0026E901 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 02695358143169EA003A07D4 /* Project object */;
 }
