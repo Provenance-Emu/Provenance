@@ -982,8 +982,6 @@
 		B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF70652191733D000FA7F9 /* GameController.framework */; };
 		B3AFCF962977A80700A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF952977A80700A01010 /* PVLogging */; };
 		B3AFCF982977A80C00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF972977A80C00A01010 /* PVLogging */; };
-		B3B0C01B2CBE37E100E72CAF /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B0C01A2CBE37E100E72CAF /* PVEmuThree.framework */; };
-		B3B0C01C2CBE37E100E72CAF /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B0C01A2CBE37E100E72CAF /* PVEmuThree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B6E7482CA4CF4500002BFD /* PVCoreMednafen in Frameworks */ = {isa = PBXBuildFile; productRef = B3B6E7472CA4CF4500002BFD /* PVCoreMednafen */; };
 		B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; };
 		B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1848,7 +1846,6 @@
 				B351E7D72CBE072E0000E087 /* libswscale.xcframework in Embed Frameworks */,
 				B35EEFA52C6C6D1A00EBD1A8 /* RealmSwift in Embed Frameworks */,
 				B37321A22C900A6400CF59EF /* PVAtari800-Dynamic in Embed Frameworks */,
-				B3B0C01C2CBE37E100E72CAF /* PVEmuThree.framework in Embed Frameworks */,
 				B3F8E0F72CB3BA8500017D1B /* PVPCSXRearmed.framework in Embed Frameworks */,
 				B3F8E11B2CB3CE4600017D1B /* PVMelonDS.framework in Embed Frameworks */,
 				B351E7D32CBE072D0000E087 /* libavcodec.xcframework in Embed Frameworks */,
@@ -3167,7 +3164,6 @@
 				B36C8E7B2C7ECE6100BD4377 /* PVStella-Dynamic in Frameworks */,
 				B35EEFD22C6C6D1A00EBD1A8 /* MBProgressHUD in Frameworks */,
 				B351E7D22CBE072D0000E087 /* libavcodec.xcframework in Frameworks */,
-				B3B0C01B2CBE37E100E72CAF /* PVEmuThree.framework in Frameworks */,
 				B3E2AA542CB63A7B00E2636D /* PVBeetlePSX.framework in Frameworks */,
 				B35EEFD32C6C6D1A00EBD1A8 /* UIKit.framework in Frameworks */,
 				B35EEFD42C6C6D1A00EBD1A8 /* PVThemes in Frameworks */,

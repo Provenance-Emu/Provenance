@@ -108,6 +108,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
             game.title = "Mock Game \(index)"
             game.systemIdentifier = systemIdentifier
             game.md5Hash = UUID().uuidString // Mock MD5 hash
+            game.publishDate = String("\(1980 + count)")
             return game
         }
     }
