@@ -24,14 +24,14 @@ public final class ThemeManager: ObservableObject {
     nonisolated(unsafe) public static let shared: ThemeManager = .init()
     private init() { }
 
-    public var themes: Array<iOSTheme> = []
-    public private(set) var currentTheme: iOSTheme = ProvenanceThemes.default.palette
+    public var palettes: Array<any UXThemePalette> = []
+    public private(set) var currentPalette: any UXThemePalette = ProvenanceThemes.default.palette
 
     @MainActor
-    public func setCurrentTheme(_ theme: iOSTheme) {
+    public func setCurrentPalette(_ palatte: any UXThemePalette) {
         // Set new value to obserable variable
-        currentTheme = theme
-        ThemeManager.applyTheme(self.currentTheme)
+        currentPalette = palatte
+        ThemeManager.applyPalette(palatte)
         Task { @MainActor in
             await UIApplication.shared.refreshAppearance(animated: true)
         }

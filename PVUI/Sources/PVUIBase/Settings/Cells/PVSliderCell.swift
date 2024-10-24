@@ -31,9 +31,9 @@ final class PVSliderCell: SliderCell {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         #if os(iOS)
-            slider.tintColor = ThemeManager.shared.currentTheme.defaultTintColor
+            slider.tintColor = ThemeManager.shared.currentPalette.defaultTintColor
 		#if !targetEnvironment(macCatalyst)
-            slider.thumbTintColor = ThemeManager.shared.currentTheme.switchThumb
+            slider.thumbTintColor = ThemeManager.shared.currentPalette.switchThumb
 		#endif
             slider.isContinuous = false
         #endif

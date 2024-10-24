@@ -34,12 +34,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             Spacer()
             OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
                 Text("Sort")
-                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(font)
             }
             OptionsIndicator(pointDown: true, action: { toggleViewTypeAction() }) {
                 Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
-                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(font.weight(.light))
             }
             .padding(.trailing, padding)

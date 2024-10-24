@@ -30,9 +30,9 @@ final class PVSwitchCell: SwitchCell {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         #if os(iOS)
-            switchControl.onTintColor = ThemeManager.shared.currentTheme.switchON
+            switchControl.onTintColor = ThemeManager.shared.currentPalette.switchON
 		#if !targetEnvironment(macCatalyst)
-            switchControl.thumbTintColor = ThemeManager.shared.currentTheme.switchThumb
+            switchControl.thumbTintColor = ThemeManager.shared.currentPalette.switchThumb
 		#endif
         #endif
         backgroundView = bg

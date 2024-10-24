@@ -32,7 +32,7 @@ struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
             HStack(spacing: 3) {
                 label()
                 Image(systemName: pointDown == true ? "chevron.down" : "chevron.up")
-                    .foregroundColor(themeManager.currentTheme.barButtonItemTint?.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.barButtonItemTint?.swiftUIColor)
                     .font(.system(size: chevronSize, weight: .ultraLight))
             }
         }

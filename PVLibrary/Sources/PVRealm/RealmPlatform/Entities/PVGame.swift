@@ -100,6 +100,17 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     public override static func indexedProperties() -> [String] {
         return ["systemIdentifier"]
     }
+
+    public static func mockGenerate(systemID: String? = nil, count: Int = 10) -> [PVGame] {
+        let systemIdentifier = systemID ?? "mock.system"
+        return (1...count).map { index in
+            let game = PVGame()
+            game.title = "Mock Game \(index)"
+            game.systemIdentifier = systemIdentifier
+            game.md5Hash = UUID().uuidString // Mock MD5 hash
+            return game
+        }
+    }
 }
 
 public extension PVGame {
@@ -184,7 +195,7 @@ public extension Game {
         // TODO: Screenshots
         self.init(id: id, title: title, file: file, systemIdentifier: systemIdentifier, md5: md5, crc: crc, isFavorite: isFavorite, playCount: playCount, lastPlayed: lastPlayed, gameDescription: gameDescription, boxBackArtworkURL: boxBackArtworkURL, developer: developer, publisher: publisher, publishDate: publishDate, genres: genres, referenceURL: referenceURL, releaseID: releaseID, regionName: regionName, regionID: regionID, systemShortName: systemShortName, language: language)
     }
-    
+
 //    init(withGame game: Game_Data) {
 //        let id = game.id
 //        let title = game.title

@@ -15,7 +15,7 @@ struct HomeDividerView: SwiftUI.View {
     var body: some SwiftUI.View {
         Divider()
             .frame(height: 1)
-            .background(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+            .background(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             .opacity(0.1)
             .padding(.horizontal, 10)
     }

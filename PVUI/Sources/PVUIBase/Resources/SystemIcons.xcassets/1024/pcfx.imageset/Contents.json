@@ -1,12 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "prov_add_games_icon.pdf",
-      "idiom" : "universal"
+      "filename" : "NEC - PC-FX.png",
+      "idiom" : "universal",
+      "scale" : "1x"
     },
     {
-      "filename" : "prov_add_games_icon-1.pdf",
-      "idiom" : "iphone"
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {

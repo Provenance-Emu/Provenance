@@ -280,7 +280,8 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         DLOG("Entering connectNodes")
         guard let src else {
             ELOG("Source node is nil")
-            fatalError("Expected src node")
+            assertionFailure("Expected src node")
+            return
         }
         if isMonoOutput {
             updateMonoSetting()

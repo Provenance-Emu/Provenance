@@ -16,7 +16,7 @@ import AppKit
 #endif
 import HexColors
 
-public enum CGAThemes: String, CaseIterable {
+public enum CGAThemes: String, CaseIterable, PaletteProvider {
     case blue
     case cyan
     case green
@@ -26,7 +26,7 @@ public enum CGAThemes: String, CaseIterable {
     case purple
     case rainbow
     
-    public var palette: iOSTheme {
+    public var palette: any UXThemePalette {
         let palette: any UXThemePalette
         switch self {
         case .blue:
@@ -46,7 +46,7 @@ public enum CGAThemes: String, CaseIterable {
         case .rainbow:
             palette = CGARainbowThemePalette()
         }
-        return iOSTheme(name: palette.name, palette: palette)
+        return palette
     }
 }
 
@@ -154,8 +154,9 @@ public struct CGACyanThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var switchThumb: UIColor? { .CGA.cyanShadow }
     public var switchON: UIColor? { .CGA.cyan }
     
-    public var gameLibraryBackground: UIColor { .CGA.cyanShadow }
+    public var gameLibraryBackground: UIColor { .white }
     public var gameLibraryCellBackground: UIColor? { .CGA.cyanShadow.brightness(0.10) }
+    public var gameLibraryCellText: UIColor? { .CGA.cyan }
     public var gameLibraryText: UIColor { .CGA.cyan }
     
     public var gameLibraryHeaderBackground: UIColor { .CGA.cyanShadow }
@@ -171,11 +172,12 @@ public struct CGACyanThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var settingsCellText: UIColor? { .CGA.cyan }
     
     public var menuBackground: UIColor { .CGA.cyan.brightness(0.8) }
-    public var menuText: UIColor { .CGA.cyan.brightness(0.2) }
+    public var menuText: UIColor { .CGA.cyan.brightness(1.0) }
     public var menuDivider: UIColor { .CGA.cyan.brightness(0.6) }
-    public var menuIconTint: UIColor { .CGA.cyan.brightness(0.2) }
-    public var menuHeaderBackground: UIColor { .CGA.cyan.brightness(0.7) }
-    public var menuHeaderIconTint: UIColor { .CGA.cyan.brightness(0.1) }
+    public var menuIconTint: UIColor { .CGA.cyan.brightness(1.0) }
+    
+    public var menuHeaderBackground: UIColor { .CGA.cyanShadow.brightness(0.7) }
+    public var menuHeaderIconTint: UIColor { .CGA.cyan.brightness(0.8) }
 }
 
 public struct CGAGreenThemePalette: UXThemePalette, Codable, Sendable, Hashable {
@@ -328,6 +330,7 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     
     public var gameLibraryHeaderBackground: UIColor { .CGA.redShadow.brightness(backgroundBrightness).withAlphaComponent(backgroundAlpha) }
     public var gameLibraryCellBackground: UIColor? { .CGA.redShadow.brightness(0.10) }
+    public var gameLibraryCellText: UIColor? { .CGA.red }
     public var gameLibraryHeaderText: UIColor { .CGA.red }
     
     public var navigationBarBackgroundColor: UIColor? { .CGA.redShadow }
@@ -339,8 +342,8 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var settingsCellBackground: UIColor? { .CGA.redShadow }
     public var settingsCellText: UIColor? { .CGA.red }
     
-    public var menuBackground: UIColor { .CGA.red.brightness(0.8) }
-    public var menuText: UIColor { .CGA.red.brightness(0.2) }
+    public var menuBackground: UIColor { .CGA.redShadow.brightness(0.10) }
+    public var menuText: UIColor { .CGA.red.brightness(1.0) }
     public var menuDivider: UIColor { .CGA.red.brightness(0.6) }
     public var menuIconTint: UIColor { .CGA.red.brightness(0.2) }
     public var menuHeaderBackground: UIColor { .CGA.red.brightness(0.7) }

@@ -19,7 +19,7 @@ struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title.uppercased())
-                .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 .font(.system(size: 11))
                 .padding(.horizontal, 10)
                 .padding(.top, 20)

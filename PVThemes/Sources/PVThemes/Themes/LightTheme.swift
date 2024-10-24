@@ -22,7 +22,7 @@ struct LightThemePalette: UXThemePalette {
         static let white9alpha6 = UIColor(white: 0.9, alpha: 0.6)
     }
 
-    public var defaultTintColor: UIColor? { .iOS.blue } // iOS Blue
+    public var defaultTintColor: UIColor? { .Provenance.blue } // iOS Blue
 
     public var gameLibraryBackground: UIColor { .white }
     public var gameLibraryCellBackground: UIColor? { .white }
@@ -37,7 +37,18 @@ struct LightThemePalette: UXThemePalette {
     public var settingsCellBackground: UIColor? { .white }
     public var settingsCellText: UIColor? { .black }
     public var settingsCellTextDetail: UIColor? { .gray }
+    
+    public var barButtonItemTint: UIColor? { .Provenance.blue }
+    
+    // Switch
+    public var switchON: UIColor { .Provenance.blue }
+    public var switchThumb: UIColor { .Provenance.blue.brightness(0.95) }
+    
+    /// Side Menu
+    public var menuBackground: UIColor { .white }
+    public var menuText: UIColor { .tintColor }
+    public var menuDivider: UIColor { .lightGray }
+    public var menuIconTint: UIColor { .tintColor }
+    public var menuHeaderBackground: UIColor { .white }
+    public var menuHeaderIconTint: UIColor { .Provenance.blue }
 }
-
-public
-let ProvenanceLightTheme: iOSTheme = .init(name: "Provenance Light", palette: LightThemePalette())

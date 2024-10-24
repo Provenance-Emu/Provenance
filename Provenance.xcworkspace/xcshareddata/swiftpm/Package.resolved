@@ -51,7 +51,7 @@
         "repositoryURL": "https://github.com/JoeMatt/HexColors.git",
         "state": {
           "branch": "main",
-          "revision": "6aec172f32dab98d66458d1d58e98790f173c9ea",
+          "revision": "96bcc8d806e58cf31ee32d419cabccd827ce6550",
           "version": null
         }
       },
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "e474a8d2270a8b12ac63ac9504e4757e39814b99",
-          "version": "14.13.0"
+          "revision": "85eeca41654cc9070ad81a21a4b1d153ad467c33",
+          "version": "14.13.1"
         }
       },
       {
@@ -123,8 +123,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "863498d37a9f0e72caa65963da9641d8cdfc8228",
-          "version": "10.54.0"
+          "revision": "5553cfd1c789efdb3d6daf7f0cc0733cfe601846",
+          "version": "10.54.1"
         }
       },
       {
@@ -222,8 +222,8 @@
         "repositoryURL": "https://github.com/swiftlang/swift-syntax.git",
         "state": {
           "branch": null,
-          "revision": "64889f0c732f210a935a0ad7cda38f77f876262d",
-          "version": "509.1.1"
+          "revision": "0687f71944021d616d34d922343dcef086855920",
+          "version": "600.0.1"
         }
       },
       {
@@ -240,7 +240,7 @@
         "repositoryURL": "https://github.com/JoeMatt/SwiftMacros.git",
         "state": {
           "branch": "main",
-          "revision": "c7430902f056432a07803f8580263b4acd7753f1",
+          "revision": "cb30be65a3f121d756c98d442194c41eb24e9f09",
           "version": null
         }
       },
@@ -276,7 +276,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "da23998e9afc8aabf0ecb91033ccedad90eb6916",
+          "revision": "dfaf5fafb94ade85290604525ad9ee6e3a4cdd31",
           "version": null
         }
       }

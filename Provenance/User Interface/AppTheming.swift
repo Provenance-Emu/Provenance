@@ -12,7 +12,7 @@ import PVThemes
 import PVUIBase
 import PVUIKit
 
-func themeAppUI(withTheme theme: iOSTheme) {
+func themeAppUI(withPalette palette: any UXThemePalette) {
     // Settings
     Task { @MainActor in
         appearance(inAny:[
@@ -23,26 +23,26 @@ func themeAppUI(withTheme theme: iOSTheme) {
             PVCoresTableViewController.self]
         ) {
             UITableViewCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
+                $0.backgroundColor = palette.settingsCellBackground
+                $0.textLabel?.backgroundColor = palette.settingsCellBackground
+                $0.textLabel?.textColor = palette.settingsCellText
+                $0.detailTextLabel?.textColor = palette.settingsCellText
             }
             
             SwitchCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
+                $0.backgroundColor = palette.settingsCellBackground
+                $0.textLabel?.backgroundColor = palette.settingsCellBackground
+                $0.textLabel?.textColor = palette.settingsCellText
+                $0.detailTextLabel?.textColor = palette.settingsCellText
                 //                $0.switchControl.onTintColor = theme.switchON
                 //                $0.switchControl.thumbTintColor = theme.switchThumb
             }
             
             TapActionCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
+                $0.backgroundColor = palette.settingsCellBackground
+                $0.textLabel?.backgroundColor = palette.settingsCellBackground
+                $0.textLabel?.textColor = palette.settingsCellText
+                $0.detailTextLabel?.textColor = palette.settingsCellText
             }
         }
     }
@@ -50,13 +50,13 @@ func themeAppUI(withTheme theme: iOSTheme) {
     Task { @MainActor in
         appearance(in: [UITableViewCell.self, SwitchCell.self]) {
             UILabel.appearance {
-                $0.textColor = theme.settingsCellText
+                $0.textColor = palette.settingsCellText
             }
         }
     }
     
     let selectedView = UIView()
-    selectedView.backgroundColor = theme.defaultTintColor
+    selectedView.backgroundColor = palette.defaultTintColor
     
     SwitchCell.appearance().selectedBackgroundView = selectedView
     UITableViewCell.appearance().selectedBackgroundView = selectedView
@@ -65,19 +65,19 @@ func themeAppUI(withTheme theme: iOSTheme) {
     // Search bar
     appearance(in: UISearchBar.self) {
         UITextView.appearance {
-            $0.textColor = theme.searchTextColor
+            $0.textColor = palette.searchTextColor
         }
     }
     
     // Game Library Headers
     PVGameLibrarySectionHeaderView.appearance {
-        $0.backgroundColor = theme.gameLibraryHeaderBackground
+        $0.backgroundColor = palette.gameLibraryHeaderBackground
     }
     
     appearance(in: [PVGameLibrarySectionHeaderView.self]) {
         UILabel.appearance {
-            $0.backgroundColor = theme.gameLibraryHeaderBackground
-            $0.textColor = theme.gameLibraryHeaderText
+            $0.backgroundColor = palette.gameLibraryHeaderBackground
+            $0.textColor = palette.gameLibraryHeaderText
         }
     }
 #endif
@@ -86,7 +86,7 @@ func themeAppUI(withTheme theme: iOSTheme) {
     Task { @MainActor in
         appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
             UILabel.appearance {
-                $0.textColor = theme.gameLibraryText
+                $0.textColor = palette.gameLibraryText
             }
         }
     }

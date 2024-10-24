@@ -116,10 +116,10 @@ public final class PVSettingsViewController: QuickTableViewController {
         // MARK: -- Section : App
         let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), detailText: .subtitle("Information on cores, their bioses, links and stats."), icon: .sfSymbol("square.stack"), viewController: self, segue: "pushSystemSettings")
         let systemMode = self.traitCollection.userInterfaceStyle == .dark ? "Dark" : "Light"
-        let currentTheme = Defaults[.theme]
-        DLOG("Current theme from Defaults: \(currentTheme)")
-        var themeDescription = currentTheme.description
-        if case .standard(.auto) = currentTheme {
+        let currentPalette = Defaults[.theme]
+        DLOG("Current theme from Defaults: \(currentPalette)")
+        var themeDescription = currentPalette.description
+        if case .standard(.auto) = currentPalette {
             themeDescription += " (\(systemMode))"
         }
 
@@ -136,7 +136,7 @@ public final class PVSettingsViewController: QuickTableViewController {
                     Task { @MainActor in
                         let darkTheme = (mode == .auto && self.traitCollection.userInterfaceStyle == .dark) || mode == .dark
                         let newTheme = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
-                        ThemeManager.shared.setCurrentTheme(newTheme)
+                        ThemeManager.shared.setCurrentPalette(newTheme)
                         UIApplication.shared.windows.first?.overrideUserInterfaceStyle = darkTheme ? .dark : .light
 
                         Defaults[.theme] = .standard(mode)
@@ -157,7 +157,7 @@ public final class PVSettingsViewController: QuickTableViewController {
                 let action = UIAlertAction(title: cgaTheme.palette.name, style: .default, handler: { _ in
                     Task { @MainActor in
                         let palette = cgaTheme.palette
-                        ThemeManager.shared.setCurrentTheme(palette)
+                        ThemeManager.shared.setCurrentPalette(palette)
                         UIApplication.shared.windows.first!.overrideUserInterfaceStyle = palette.dark ? .dark : .light
 
                         // Convert CGAThemes to ThemeOptionsCGA

@@ -23,12 +23,13 @@ _My personal TODO notes_
 
 ## Major bugs
 
-- [ ] Mupen video crashes with update metal code
+- [ ] Turbo GFX 16 no video
 - [ ] Intellivision (PVBliss) audio crashes on button press
 - [ ] Intellivision video is glitched
 - [ ] SuperVision video dimensions wrong
 - [ ] Odyssey2 needs a way to enter game number 1,2 (3,4)?
 - [ ] iCloud sync removed
+- [X] Mupen video crashes with update metal code
 - [X] CrabEMU (Genesis) no buttons work
 - [X] Mednafen GB crashing
 - [X] Vectrex needs PVVecXCore:LibRetroCore (or rollback to older code?)
@@ -50,6 +51,7 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] Importer should overwrite or delete on duplicate imports
 - [ ] Swift UI console view, games could use some improvments
     - [ ] side padding minimums
     - [ ] even spacing

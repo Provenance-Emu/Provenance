@@ -14,23 +14,6 @@ import AppKit
 #endif
 import HexColors
 
-public enum ProvenanceThemes: CaseIterable {
-    case `default`
-    case dark
-    case light
-
-    public var palette: iOSTheme {
-        let palette: any UXThemePalette
-        switch self {
-        case .dark, .default:
-            palette = DarkThemePalette()
-        case .light:
-            palette = LightThemePalette()
-        }
-        return iOSTheme(name: palette.name, palette: palette)
-    }
-}
-
 public
 struct DarkThemePalette: UXThemePalette {
 
@@ -74,5 +57,3 @@ struct DarkThemePalette: UXThemePalette {
     public var settingsCellBackground: UIColor? { .grey.g29 }
     public var settingsCellText: UIColor? { .grey.middleGrey  }
 }
-
-public let ProvenanceDarkTheme: iOSTheme = .init(name: "Provenance Dark", palette: DarkThemePalette())

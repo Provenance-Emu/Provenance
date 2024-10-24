@@ -29,29 +29,30 @@ internal struct MenuSectionHeaderView: SwiftUI.View {
         VStack(spacing: 0) {
             /// Divider
             Divider().frame(height: 2)
-                .background(themeManager.currentTheme.menuDivider.swiftUIColor)
+                .background(themeManager.currentPalette.menuDivider.swiftUIColor)
             /// Spacer
             Spacer()
             
             HStack(alignment: .bottom) {
                 Text(sectionTitle)
-                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor)
                     .font(.system(size: 13))
                 Spacer()
                 if sortable {
                     OptionsIndicator(pointDown: sortAscending, action: action) {
                         Text("Sort")
-                            .foregroundColor(themeManager.currentTheme.menuIconTint.swiftUIColor)
+                            .foregroundColor(themeManager.currentPalette.menuIconTint.swiftUIColor)
                             .font(.system(.caption))
                     }
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 4)
-            .background(themeManager.currentTheme.menuHeaderBackground.swiftUIColor)
+            .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
         }
         .frame(height: 40.0)
-        .background(themeManager.currentTheme.menuHeaderBackground.swiftUIColor)
+        .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
+        .tint(themeManager.currentPalette.menuIconTint.swiftUIColor)
     }
 }
 #endif

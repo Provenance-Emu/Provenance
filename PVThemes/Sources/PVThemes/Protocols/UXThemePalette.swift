@@ -14,6 +14,10 @@ import AppKit
 public typealias UIColor = NSColor
 #endif
 
+public protocol PaletteProvider {
+    var palette: any UXThemePalette { get }
+}
+
 public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
 
     var name: String { get }
@@ -29,6 +33,7 @@ public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
     // Mandatory
     var gameLibraryBackground: UIColor { get }
     var gameLibraryCellBackground: UIColor? { get }
+    var gameLibraryCellText: UIColor { get }
     var gameLibraryText: UIColor { get }
 
     var gameLibraryHeaderBackground: UIColor { get }
@@ -51,10 +56,17 @@ public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
     var settingsCellBackground: UIColor? { get }
     var settingsCellText: UIColor? { get }
     var settingsCellTextDetail: UIColor? { get }
+    
+    /// TableView
+    var tableViewBackgroundColor: UIColor? { get }
 
     /// UISwitch
     var switchON: UIColor? { get }
     var switchThumb: UIColor? { get }
+    
+    /// Segmented Control
+    var segmentedControlTint: UIColor? { get }
+    var segmentedControlSelectedTint: UIColor? { get }
     
     // Navigation
     var navigationBarTitleColor: UIColor? { get }
@@ -72,6 +84,7 @@ public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
     var menuDivider: UIColor { get }
     var menuIconTint: UIColor { get }
     var menuHeaderBackground: UIColor { get }
+    var menuHeaderText: UIColor { get }
     var menuHeaderIconTint: UIColor { get }
 }
 
@@ -118,7 +131,13 @@ public extension UXThemePalette {
     /// Navbar Title Text
     var navigationBarTitleColor: UIColor? { nil }
     /// Navbar Background
-    var navigationBarBackgroundColor: UIColor? { nil }
+    var navigationBarBackgroundColor: UIColor? { UIColor.systemBackground }
+}
+
+/// TableView
+public extension UXThemePalette {
+    /// TableView TableView
+    var tableViewBackgroundColor: UIColor? { nil }
 }
 
 /// Game Library
@@ -128,6 +147,8 @@ public extension UXThemePalette {
     var gameLibraryHeaderText: UIColor { .label }
 
     var gameLibraryCellBackground: UIColor? { nil }
+    var gameLibraryCellText: UIColor { gameLibraryText }
+
     var gameLibraryBackground: UIColor { .black }
     var gameLibraryText: UIColor { .white }
 }
@@ -139,12 +160,19 @@ public extension UXThemePalette {
     var menuDivider: UIColor { .Provenance.blue }
     var menuIconTint: UIColor { .Provenance.blue }
     var menuHeaderBackground: UIColor { .secondarySystemBackground }
+    var menuHeaderText: UIColor { settingsCellText ?? .Provenance.blue }
     var menuHeaderIconTint: UIColor { .Provenance.blue }
 }
 
 /// Tabs
 public extension UXThemePalette {
     var tabBarBackground: UIColor? { self.uiviewBackground }
+}
+
+/// Segmented Control
+public extension UXThemePalette {
+    var segmentedControlTint: UIColor? { .Provenance.blue  }
+    var segmentedControlSelectedTint: UIColor? {.Provenance.blue.saturation(0.2) }
 }
 
 /// Seperator color

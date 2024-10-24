@@ -22,12 +22,12 @@ struct HomeItemView: SwiftUI.View {
                 .scaledToFit()
                 .cornerRadius(4)
                 .padding(8)
-                .tint(themeManager.currentTheme.barButtonItemTint?.swiftUIColor)
+                .tint(themeManager.currentPalette.barButtonItemTint?.swiftUIColor)
             Text(rowTitle)
-                .foregroundColor(themeManager.currentTheme.barButtonItemTint?.swiftUIColor)
+                .foregroundColor(themeManager.currentPalette.barButtonItemTint?.swiftUIColor)
             Spacer()
         }
         .frame(height: 40.0)
-        .background(themeManager.currentTheme.gameLibraryCellBackground?.swiftUIColor)
+        .background(themeManager.currentPalette.gameLibraryCellBackground?.swiftUIColor)
     }
 }

@@ -201,8 +201,8 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
         
 #if os(iOS)
-        navigationController?.navigationBar.backgroundColor = ThemeManager.shared.currentTheme.navigationBarBackgroundColor
-        navigationController?.navigationBar.tintColor = ThemeManager.shared.currentTheme.barButtonItemTint
+        navigationController?.navigationBar.backgroundColor = ThemeManager.shared.currentPalette.navigationBarBackgroundColor
+        navigationController?.navigationBar.tintColor = ThemeManager.shared.currentPalette.barButtonItemTint
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: { (_: Notification) -> Void in
             DispatchQueue.main.async {
@@ -750,9 +750,6 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     var transitioningToSize: CGSize?
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        
-        // TODO: wtf? @JoeMatt
-        ThemeManager.shared.setCurrentTheme(ThemeManager.shared.currentTheme)
         
         transitioningToSize = size
         collectionView?.collectionViewLayout.invalidateLayout()

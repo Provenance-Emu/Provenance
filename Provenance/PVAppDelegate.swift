@@ -54,6 +54,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 
     func _initUITheme() {
         ThemeManager.applySavedTheme()
+//        themeAppUI(withPalette: ThemeManager.shared.currentPalette)
     }
 
     func _initUI(
@@ -72,7 +73,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         #endif
         let isIpad = UIDevice.current.userInterfaceIdiom == .pad
         let widthPercentage: CGFloat = isIpad ? 0.3 : 0.7
-        let overlayColor: UIColor = .Provenance.blue
+        let overlayColor: UIColor = ThemeManager.shared.currentPalette.menuHeaderBackground
 
         if !Defaults[.useUIKit] {
             let viewModel = PVRootViewModel()
@@ -84,8 +85,15 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             self.rootNavigationVC = rootViewController
             let sideNav = SideNavigationController(mainViewController: UINavigationController(rootViewController: rootViewController))
             sideNav.leftSide(
-                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, viewModel: viewModel, delegate: rootViewController, rootDelegate: rootViewController),
-                options: .init(widthPercent: widthPercentage, animationDuration: 0.18, overlayColor: overlayColor, overlayOpacity: 0.1, shadowOpacity: 0.2)
+                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary,
+                                                         viewModel: viewModel,
+                                                         delegate: rootViewController,
+                                                         rootDelegate: rootViewController),
+                options: .init(widthPercent: widthPercentage,
+                               animationDuration: 0.18,
+                               overlayColor: overlayColor,
+                               overlayOpacity: 0.1,
+                               shadowOpacity: 0.2)
             )
 
             window.rootViewController = sideNav
@@ -247,9 +255,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     func _initThemeListener() {
         if #available(iOS 17.0, *) {
             withObservationTracking {
-                _ = ThemeManager.shared.currentTheme
+                _ = ThemeManager.shared.currentPalette
             } onChange: { [unowned self] in
-                print("changed: ", ThemeManager.shared.currentTheme)
+                print("changed: ", ThemeManager.shared.currentPalette)
                 Task.detached { @MainActor in
                     self._initUITheme()
                     if self.isAppStore {

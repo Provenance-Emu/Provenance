@@ -14,7 +14,7 @@ import PVThemes
 
 final class PVUINavigationController: UINavigationController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return ThemeManager.shared.currentTheme.dark ? .lightContent : .darkContent
+        return ThemeManager.shared.currentPalette.dark ? .lightContent : .darkContent
     }
 }
 #endif

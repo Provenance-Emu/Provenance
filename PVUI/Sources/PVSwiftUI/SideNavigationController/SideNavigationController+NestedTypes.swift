@@ -31,7 +31,7 @@ public extension SideNavigationController {
 
     struct Options {
 
-        public static var defaultTintColor = ThemeManager.shared.currentTheme.barButtonItemTint ?? UIColor.white
+        public static var defaultTintColor = ThemeManager.shared.currentPalette.barButtonItemTint ?? UIColor.white
 
         public var widthPercent: CGFloat
         public var animationDuration: TimeInterval

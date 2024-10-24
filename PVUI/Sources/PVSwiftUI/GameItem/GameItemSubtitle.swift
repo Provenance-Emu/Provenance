@@ -28,7 +28,7 @@ struct GameItemSubtitle: SwiftUI.View {
     var body: some SwiftUI.View {
         Text(text ?? "blank")
             .font(.system(size: viewType.subtitleFontSize))
-            .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
             .opacity(text != nil ? 1.0 : 0.0) // hide rather than not render so that cell keeps consistent height

@@ -18,14 +18,14 @@ import PVThemes
 struct GamesDividerView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    var currentTheme: Color {
-        themeManager.currentTheme.gameLibraryText.swiftUIColor
+    var currentPalette: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
     }
 
     var body: some SwiftUI.View {
         Divider()
             .frame(height: 1)
-            .background(currentTheme)
+            .background(currentPalette)
             .opacity(0.1)
     }
 }

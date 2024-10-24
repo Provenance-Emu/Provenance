@@ -24,22 +24,17 @@ class ConsolesWrapperViewDelegate: ObservableObject {
 @available(iOS 14, tvOS 14, *)
 struct ConsolesWrapperView: SwiftUI.View {
 
-	// TODO: This was weak before but can't be cause property wrapper - @JoeMatt
-    @ObservedObject
-	var delegate: ConsolesWrapperViewDelegate
+    // MARK: - Properties
 
-	@ObservedObject
-	var viewModel: PVRootViewModel
+    @ObservedObject var delegate: ConsolesWrapperViewDelegate
+    @ObservedObject var viewModel: PVRootViewModel
+    weak var rootDelegate: PVRootDelegate!
 
-	weak var rootDelegate: PVRootDelegate!
-
-    @ObservedResults(
-        PVSystem.self,
-        filter: NSPredicate(format: "games.@count > 0"),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true)
-    ) var consoles
-
+    @State private var showEmptySystems: Bool
+    @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
     @ObservedObject private var themeManager = ThemeManager.shared
+
+    // MARK: - Initializer
 
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
@@ -49,28 +44,57 @@ struct ConsolesWrapperView: SwiftUI.View {
         self.delegate = consolesWrapperViewDelegate
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
+
+        #if targetEnvironment(simulator)
+        _showEmptySystems = State(initialValue: true)
+        #else
+        _showEmptySystems = State(initialValue: false)
+        #endif
+
+        // Set the filter for consoles based on showEmptySystems
+        let filter = showEmptySystems ? nil : NSPredicate(format: "games.@count > 0")
+        _consoles = ObservedResults(PVSystem.self, filter: filter, sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true))
     }
+
+    // MARK: - Body
 
     var body: some SwiftUI.View {
         TabView(selection: $delegate.selectedTab) {
-            if consoles.count > 0 {
-                ForEach(
-                    viewModel.sortConsolesAscending == false
-                        ? consoles.reversed()
-                        : consoles.map { $0 },
-                    id: \.self
-                ) { console in
-                    ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
-                        .tag(console.identifier)
-                }
+            if consoles.isEmpty {
+                showNoConsolesView()
             } else {
-                NoConsolesView()
+                showConsoles()
             }
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(consoles.count)
-        .tint(themeManager.currentTheme.gameLibraryHeaderText.swiftUIColor)
+        .tint(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+        .background(themeManager.currentPalette.gameLibraryHeaderBackground.swiftUIColor)
+    }
+
+    // MARK: - Helper Methods
+
+    private func sortedConsoles() -> [PVSystem] {
+        viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
+    }
+
+    private func showNoConsolesView() -> some View {
+        NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
+            .tabItem {
+                Label("No Consoles", systemImage: "xmark.circle")
+            }
+            .tag("noConsoles")
+    }
+
+    private func showConsoles() -> some View {
+        ForEach(sortedConsoles(), id: \.self) { console in
+            ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
+                .tabItem {
+                    Label(console.name, systemImage: console.iconName)
+                }
+                .tag(console.identifier)
+        }
     }
 }
 

@@ -39,17 +39,17 @@ struct HomeContinueItemView: SwiftUI.View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Continue...")
                                 .font(.system(size: 10))
-                                .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                             Text(continueState.game.title)
                                 .font(.system(size: 13))
-                                .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         }
                         Spacer()
                         if !hideSystemLabel {
                             VStack(alignment: .trailing) {
                                 Text(continueState.game.system?.name ?? "")
                                     .font(.system(size: 8))
-                                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                             }
                         }
                     }

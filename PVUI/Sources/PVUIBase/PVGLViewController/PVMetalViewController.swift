@@ -524,8 +524,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
              (_, GL_UNSIGNED_SHORT_4_4_4_4),
              (_, GL_UNSIGNED_SHORT_5_5_5_1):
             return 2
-        case (GL_RGBA8, _), (GL_RGB8, _):
+        case (GL_RGBA8, _):
             return 4
+        case (GL_RGB8, _):
+            return 3 // Note: This might be 4 in practice due to alignment, but technically it's 3 bytes
         case (GL_RGB5_A1, _):
             return 2
         default:
@@ -535,14 +537,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Determine components per pixel
         let componentsPerPixel: Int
         switch pixelFormat {
-        case GL_RGBA, GL_BGRA:
+        case GL_RGBA, GL_BGRA, GL_RGBA8:
             componentsPerPixel = 4
-        case GL_RGB, GL_RGB565:
+        case GL_RGB, GL_RGB565, GL_RGB8:
             componentsPerPixel = 3
         case GL_LUMINANCE_ALPHA:
             componentsPerPixel = 2
         case GL_LUMINANCE, GL_ALPHA:
             componentsPerPixel = 1
+        case GL_R8:
+            componentsPerPixel = 1
+        case GL_RG8:
+            componentsPerPixel = 2
         default:
             WLOG("Warning: Unknown GL pixelFormat: \(pixelFormat)")
             assertionFailure("Warning: Unknown GL pixelFormat: \(pixelFormat)")
@@ -552,28 +558,32 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         return UInt(componentSize * componentsPerPixel)
     }
 
+
     func getMTLPixelFormat(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
         return getMTLPixelFormatNeo(from: pixelFormat, type: pixelType)
     }
 
     func getMTLPixelFormatNeo(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
-        ILOG("Getting MTLPixelFormat for pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString)")
+        VLOG("Getting MTLPixelFormat for pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString)")
         switch (pixelFormat, pixelType) {
         case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_BYTE)),
              (GLenum(GL_BGRA), GLenum(0x8367)): // GL_UNSIGNED_INT_8_8_8_8_REV
             return .bgra8Unorm
         case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_INT)):
             return .bgra8Unorm
-        case (GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE)):
+        case (GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE)),
+             (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_BYTE)):
             return .rgba8Unorm
         case (GLenum(GL_RGBA), GLenum(GL_BYTE)):
             return .rgba8Snorm
-        case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_BYTE)):
+        case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_BYTE)),
+             (GLenum(GL_RGB8), GLenum(GL_UNSIGNED_BYTE)):
             // Note: Metal doesn't have a direct RGB8 format, using RGBA8 and ignoring alpha
             return .rgba8Unorm
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT)):
             return .rgb10a2Unorm // Better match for RGB unsigned short
-        case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT_5_6_5)):
+        case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT_5_6_5)),
+            (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_SHORT_5_6_5)):
             return .b5g6r5Unorm
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_INT)):
             return .rgba32Uint // Approximation, might lose precision
@@ -583,8 +593,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return .a1bgr5Unorm
         case (_, GLenum(GL_UNSIGNED_SHORT_4_4_4_4)):
             return .abgr4Unorm
-        case (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_BYTE)):
-            return .rgba8Unorm
         case (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_SHORT)):
             return .rgba16Uint
         case (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_INT)):
@@ -911,7 +919,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             emulatorCore.frontBufferLock.lock()
         }
 
-        ILOG("Drawing frame with pixelFormat: \(emulatorCore.pixelFormat.toString), pixelType: \(emulatorCore.pixelType.toString), internalPixelFormat: \(emulatorCore.internalPixelFormat.toString)")
+//        VLOG("Drawing frame with pixelFormat: \(emulatorCore.pixelFormat.toString), pixelType: \(emulatorCore.pixelType.toString), internalPixelFormat: \(emulatorCore.internalPixelFormat.toString)")
 
         guard let commandBuffer = self.commandQueue?.makeCommandBuffer() else {
             ELOG("Failed to create command buffer")
@@ -1032,7 +1040,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             encoder.setFragmentTexture(self.inputTexture, index: 0)
             encoder.setFragmentSamplerState(self.renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler, index: 0)
 
-            ILOG("Drawing primitives with pipeline state: \(pipelineState)")
+            VLOG("Drawing primitives with pipeline state: \(pipelineState)")
             encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
             encoder.endEncoding()
 

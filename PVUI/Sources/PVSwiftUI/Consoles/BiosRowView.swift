@@ -44,17 +44,17 @@ struct BiosRowView: SwiftUI.View {
             VStack(alignment: .leading) {
                 Text("\(bios.descriptionText)")
                     .font(.footnote)
-                    .foregroundColor(themeManager.currentTheme.settingsCellTextDetail?.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor)
                 Text("\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes")
                     .font(.caption2)
-                    .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
             Spacer()
             HStack(alignment: .center, spacing: 4) {
                 switch biosState {
                 case .match:
                     Image(systemName: "checkmark")
-                        .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         .font(.footnote.weight(.light))
                 case .missing:
                     Text("Missing")

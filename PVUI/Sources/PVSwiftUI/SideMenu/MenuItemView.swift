@@ -32,19 +32,21 @@ struct MenuItemView: SwiftUI.View {
             HStack(spacing: 0) {
                 /// Icon
                 Image(imageName, bundle: PVUIBase.BundleLoader.myBundle)
+                    .renderingMode(.template)
                     .resizable().scaledToFit().cornerRadius(4).padding(8)
-                    .tint(themeManager.currentTheme.menuIconTint.swiftUIColor)
+                    .tint(themeManager.currentPalette.menuIconTint.swiftUIColor)
+                    .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
                 /// Text
                 Text(rowTitle)
-                    .foregroundColor(themeManager.currentTheme.menuText.swiftUIColor)
-                    .background(themeManager.currentTheme.menuBackground.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.menuText.swiftUIColor)
+                    .background(themeManager.currentPalette.menuBackground.swiftUIColor)
                 /// Space
                 Spacer()
             }
             /// Height
             .frame(height: 40.0)
             /// Background
-            .background(themeManager.currentTheme.menuBackground.swiftUIColor.opacity(0.3))
+            .background(themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.3))
         }
         /// Mac Catalyst fix
         .buttonStyle(PlainButtonStyle())

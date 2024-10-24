@@ -31,7 +31,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         button.setImage(UIImage(named: "chevron_down"), for: .normal)
         button.clipsToBounds = true
         #if os(iOS)
-            button.tintColor = ThemeManager.shared.currentTheme.gameLibraryHeaderText
+            button.tintColor = ThemeManager.shared.currentPalette.gameLibraryHeaderText
         #else
             button.tintColor = .darkGray
         #endif
@@ -91,14 +91,14 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 //        addSubview(topSeparator)
 
             bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height - 1, width: bounds.size.width, height: 1.0))
-            bottomSeparator.backgroundColor = ThemeManager.shared.currentTheme.settingsSeperator
+            bottomSeparator.backgroundColor = ThemeManager.shared.currentPalette.settingsSeperator
             bottomSeparator.autoresizingMask = .flexibleWidth
             addSubview(bottomSeparator)
 
             // Style
-            backgroundColor = ThemeManager.shared.currentTheme.gameLibraryHeaderBackground
+            backgroundColor = ThemeManager.shared.currentPalette.gameLibraryHeaderBackground
             titleLabel.textAlignment = .left
-            titleLabel.textColor = ThemeManager.shared.currentTheme.gameLibraryHeaderText
+            titleLabel.textColor = ThemeManager.shared.currentPalette.gameLibraryHeaderText
 //        topSeparator.backgroundColor = UIColor(hex: "#262626")
 //        bottomSeparator.backgroundColor = UIColor(hex: "#262626")
             clipsToBounds = false
@@ -125,10 +125,10 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         #if os(tvOS)
         titleLabel.textColor = colorForText
         #else
-        backgroundColor = ThemeManager.shared.currentTheme.gameLibraryHeaderBackground
-        titleLabel.textColor = ThemeManager.shared.currentTheme.gameLibraryHeaderText
-        collapseButton.tintColor = ThemeManager.shared.currentTheme.gameLibraryHeaderText
-        bottomSeparator.backgroundColor = ThemeManager.shared.currentTheme.gameLibraryHeaderText
+        backgroundColor = ThemeManager.shared.currentPalette.gameLibraryHeaderBackground
+        titleLabel.textColor = ThemeManager.shared.currentPalette.gameLibraryHeaderText
+        collapseButton.tintColor = ThemeManager.shared.currentPalette.gameLibraryHeaderText
+        bottomSeparator.backgroundColor = ThemeManager.shared.currentPalette.gameLibraryHeaderText
         #endif
     }
     

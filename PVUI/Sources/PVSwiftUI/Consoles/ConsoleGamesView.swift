@@ -59,6 +59,15 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     @ObservedObject private var themeManager = ThemeManager.shared
 
+    // Properties
+    private var isSimulator: Bool {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return false
+        #endif
+    }
+
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
         self.console = console
         self.viewModel = viewModel
@@ -92,7 +101,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         return games
             .filter(gamesForSystemPredicate)
             .sorted(by: [
-                SortDescriptor(keyPath: #keyPath(PVGame.isFavorite), ascending: false),
+//                SortDescriptor(keyPath: #keyPath(PVGame.isFavorite), ascending: false),
                 SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)
             ])
     }
@@ -112,33 +121,35 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @State private var newGameTitle = ""
     @FocusState private var renameTitleFieldIsFocused: Bool
 
+    // Body
     var body: some SwiftUI.View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
+                // Display options for sorting and view type
                 GamesDisplayOptionsView(
                     sortAscending: viewModel.sortGamesAscending,
                     isGrid: viewModel.viewGamesAsGrid,
                     toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
                     toggleSortAction: { viewModel.sortGamesAscending.toggle() },
-                    toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() })
+                    toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
+                )
                 .padding(.top, 16)
 
                 ZStack(alignment: .bottom) {
                     ScrollView {
                         LazyVStack(spacing: 20) {
-                            if !recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty {
+                            // Continue section for recent save states
+                            if hasRecentSaveStates {
                                 HomeContinueSection(rootDelegate: rootDelegate, consoleIdentifier: console.identifier)
                                 HomeDividerView()
                             }
 
-                            let filteredFavorites = favorites.filter("systemIdentifier == %@", console.identifier)
-                            if !filteredFavorites.isEmpty {
+                            // Favorites section
+                            if hasFavorites {
                                 HomeSection(title: "Favorites") {
-                                    ForEach(Array(filteredFavorites), id: \.self) { favorite in
+                                    ForEach(favoritesArray, id: \.self) { favorite in
                                         GameItemView(game: favorite, constrainHeight: true) {
-                                            Task.detached { @MainActor in
-                                                await rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
-                                            }
+                                            loadGame(favorite)
                                         }
                                         .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate, contextMenuDelegate: self) }
                                     }
@@ -147,58 +158,29 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                                 HomeDividerView()
                             }
 
-                            if !recentlyPlayedGames.isEmpty {
+                            // Recently played games section
+                            if hasRecentlyPlayedGames {
                                 HomeSection(title: "Recently Played") {
-                                    ForEach(recentlyPlayedGames.compactMap{$0.game}, id:\.self) { game in
+                                    ForEach(recentlyPlayedGamesArray, id: \.self) { game in
                                         GameItemView(game: game, constrainHeight: true) {
-                                            Task.detached { @MainActor in
-                                                await rootDelegate?.root_load(game, sender:self, core: nil, saveState: nil)
-                                            }
+                                            loadGame(game)
                                         }
-                                        .contextMenu { GameContextMenu(game: game,rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
                                     }
                                 }
                                 .frame(height: 150)
                                 HomeDividerView()
                             }
 
-                            // Existing grid or list view for all games
-                            if viewModel.viewGamesAsGrid {
-                                let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 2)]
-                                LazyVGrid(columns: columns, spacing: 2) {
-                                    ForEach(filteredAndSortedGames(), id: \.self) { game in
-                                        GameItemView(game: game, constrainHeight: false) {
-                                            Task { @MainActor in
-                                                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
-                                            }
-                                        }
-                                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
-                                    }
-                                }
-                                .gesture(
-                                    MagnificationGesture()
-                                        .onChanged { value in
-                                            let delta = value / lastScale
-                                            lastScale = value
-                                            adjustZoom(delta: delta)
-                                        }
-                                        .onEnded { _ in
-                                            lastScale = 1.0
-                                            saveScale()
-                                        }
-                                )
+                            // Games section
+                            if games.isEmpty && isSimulator {
+                                // Show mock games in simulator
+                                showMockGames()
                             } else {
-                                LazyVStack(spacing: 8) {
-                                    ForEach(filteredAndSortedGames(), id: \.self) { game in
-                                        GameItemView(game: game, constrainHeight: false) {
-                                            Task { @MainActor in
-                                                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
-                                            }
-                                        }
-                                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
-                                    }
-                                }
+                                // Show real games
+                                showRealGames()
                             }
+
                             BiosesView(console: console)
                         }
                         .padding(.horizontal, 10)
@@ -219,20 +201,87 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         }
         .alert("Rename Game", isPresented: $showingRenameAlert) {
             TextField("New name", text: $newGameTitle)
-                .onSubmit {
-                    submitRename()
-                }
+                .onSubmit { submitRename() }
                 .textInputAutocapitalization(.words)
                 .disableAutocorrection(true)
 
-            Button("Cancel", role: .cancel) {
-                showingRenameAlert = false
-            }
-            Button("OK") {
-                submitRename()
-            }
+            Button("Cancel", role: .cancel) { showingRenameAlert = false }
+            Button("OK") { submitRename() }
         } message: {
             Text("Enter a new name for \(gameToRename?.title ?? "")")
+        }
+    }
+
+    // Helper Methods
+    private var hasRecentSaveStates: Bool {
+        !recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
+    }
+
+    private var hasFavorites: Bool {
+        !favorites.filter("systemIdentifier == %@", console.identifier).isEmpty
+    }
+
+    private var favoritesArray: [PVGame] {
+        Array(favorites.filter("systemIdentifier == %@", console.identifier))
+    }
+
+    private var hasRecentlyPlayedGames: Bool {
+        !recentlyPlayedGames.isEmpty
+    }
+
+    private var recentlyPlayedGamesArray: [PVGame] {
+        recentlyPlayedGames.compactMap { $0.game }
+    }
+
+    private func loadGame(_ game: PVGame) {
+        Task.detached { @MainActor in
+            await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+        }
+    }
+
+    private func showMockGames() -> some View {
+        let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
+        return HomeSection(title: "Games") {
+            ForEach(fakeGames, id: \.self) { game in
+                GameItemView(game: game, constrainHeight: false) {
+                    // No action needed for fake games
+                }
+            }
+        }
+    }
+
+    private func showRealGames() -> some View {
+        if viewModel.viewGamesAsGrid {
+            let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 2)]
+            return LazyVGrid(columns: columns, spacing: 2) {
+                ForEach(filteredAndSortedGames(), id: \.self) { game in
+                    GameItemView(game: game, constrainHeight: false) {
+                        loadGame(game)
+                    }
+                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                }
+            }
+            .gesture(
+                MagnificationGesture()
+                    .onChanged { value in
+                        let delta = value / lastScale
+                        lastScale = value
+                        adjustZoom(delta: delta)
+                    }
+                    .onEnded { _ in
+                        lastScale = 1.0
+                        saveScale()
+                    }
+            )
+        } else {
+            return LazyVStack(spacing: 8) {
+                ForEach(filteredAndSortedGames(), id: \.self) { game in
+                    GameItemView(game: game, constrainHeight: false) {
+                        loadGame(game)
+                    }
+                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                }
+            }
         }
     }
 

@@ -18,7 +18,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
         DLOG("ImagePicker: makeUIViewController called")
         let imagePicker = UIImagePickerController()
-        imagePicker.navigationBar.tintColor = ThemeManager.shared.currentTheme.barButtonItemTint
+        imagePicker.navigationBar.tintColor = ThemeManager.shared.currentPalette.barButtonItemTint
         imagePicker.allowsEditing = false
         imagePicker.sourceType = sourceType
         imagePicker.delegate = context.coordinator

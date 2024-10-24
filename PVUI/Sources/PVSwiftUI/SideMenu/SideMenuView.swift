@@ -28,7 +28,8 @@ extension PVSystem {
 }
 
 @available(iOS 14, tvOS 14, *)
-public struct SideMenuView: SwiftUI.View {
+public struct
+SideMenuView: SwiftUI.View {
 
     weak var delegate: PVMenuDelegate!
 
@@ -38,10 +39,8 @@ public struct SideMenuView: SwiftUI.View {
 	weak var rootDelegate: PVRootDelegate!
     var gameLibrary: PVGameLibrary<RealmDatabaseDriver>
 
-    @ObservedResults(
-        PVSystem.self,
-        filter: NSPredicate(format: "games.@count > 0")
-    ) var consoles
+    @State private var showEmptySystems: Bool
+    @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
 
     @ObservedObject var searchBar: SearchBar
 
@@ -58,6 +57,16 @@ public struct SideMenuView: SwiftUI.View {
         #else
         searchBar = SearchBar(searchResultsController: nil)
         #endif
+
+        #if targetEnvironment(simulator)
+        _showEmptySystems = State(initialValue: true)
+        #else
+        _showEmptySystems = State(initialValue: false)
+        #endif
+
+        // Set the filter for consoles based on showEmptySystems
+        let filter = showEmptySystems ? nil : NSPredicate(format: "games.@count > 0")
+        _consoles = ObservedResults(PVSystem.self, filter: filter)
     }
 
     public static func instantiate(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
@@ -124,7 +133,7 @@ public struct SideMenuView: SwiftUI.View {
             vc.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "provnavicon"))
         })
 #endif
-        .background(themeManager.currentTheme.menuBackground.swiftUIColor)
+        .background(themeManager.currentPalette.menuBackground.swiftUIColor)
         .add(self.searchBar)
         // search results
         .if(!searchBar.text.isEmpty) { view in
@@ -146,7 +155,7 @@ public struct SideMenuView: SwiftUI.View {
                                 }
                                 .padding(.horizontal, 10)
                             }
-                            .background(themeManager.currentTheme.menuBackground.swiftUIColor)
+                            .background(themeManager.currentPalette.menuBackground.swiftUIColor)
                         }
                     }
                 }

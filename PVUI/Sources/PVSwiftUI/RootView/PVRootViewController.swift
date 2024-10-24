@@ -85,7 +85,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
         let hud = MBProgressHUD(view: view)
         hud.isUserInteractionEnabled = false
-        hud.contentColor = ThemeManager.shared.currentTheme.settingsCellText
+        hud.contentColor = ThemeManager.shared.currentPalette.settingsCellText
         view.addSubview(hud)
 
         setupHUDObserver(hud: hud)

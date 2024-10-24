@@ -17,7 +17,7 @@ struct GameItemTitle: SwiftUI.View {
     var body: some SwiftUI.View {
         Text(text)
             .font(.system(size: viewType.titleFontSize))
-            .foregroundColor(themeManager.currentTheme.gameLibraryText.swiftUIColor)
+            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
     }

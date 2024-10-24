@@ -92,9 +92,9 @@ struct HomeView: SwiftUI.View {
                     }
                 }
             }
-            .background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
+            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
         }
-        .background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
+        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
 }
 

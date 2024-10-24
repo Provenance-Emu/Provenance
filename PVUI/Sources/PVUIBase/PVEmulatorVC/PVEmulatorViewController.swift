@@ -550,10 +550,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             $0.clearPauseHandler()
         }
         
-        // EEEEEWWWW WTF X - X?
-        // TODO: You that lazy or retarded bro? @JoeMatt 7/25/24
-        ThemeManager.shared.setCurrentTheme(ThemeManager.shared.currentTheme)
-        
 #endif
         updatePlayedDuration()
         destroyAutosaveTimer()

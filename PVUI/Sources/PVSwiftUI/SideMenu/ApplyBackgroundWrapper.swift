@@ -16,18 +16,18 @@ import PVThemes
 import Introspect
 #endif
 
-
-@available(iOS 14, tvOS 14, *)
+/// Wraps a view and applies a background color based on the current theme.
 struct ApplyBackgroundWrapper<Content: SwiftUI.View>: SwiftUI.View {
+    /// The content view to wrap.
     @ViewBuilder var content: () -> Content
+    /// The theme manager to use.
     @ObservedObject private var themeManager = ThemeManager.shared
 
+    /// The body of the view.
     var body: some SwiftUI.View {
-        if #available(iOS 15, tvOS 15, *) {
-            content().background(Material.ultraThinMaterial)
-        } else {
-            content().background(themeManager.currentTheme.gameLibraryBackground.swiftUIColor)
-        }
+        content()
+            .background(Material.ultraThinMaterial)
+            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
 }
 #endif

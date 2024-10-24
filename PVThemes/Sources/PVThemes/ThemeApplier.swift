@@ -19,50 +19,52 @@ public extension ThemeManager {
         DLOG("Theme option read from Defaults: \(savedThemeOption)")
 
         // Convert the saved theme option to iOSTheme
-        let themeToApply: iOSTheme
+        let paletteToApply: any UXThemePalette
         switch savedThemeOption {
         case .standard(let option):
             switch option {
             case .light:
-                themeToApply = ProvenanceThemes.light.palette
+                paletteToApply = ProvenanceThemes.light.palette
             case .dark:
-                themeToApply = ProvenanceThemes.dark.palette
+                paletteToApply = ProvenanceThemes.dark.palette
             case .auto:
                 // Determine based on system setting
                 let isDarkMode = UITraitCollection.current.userInterfaceStyle == .dark
-                themeToApply = isDarkMode ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
+                paletteToApply = isDarkMode ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
             }
         case .cga(let option):
-            themeToApply = CGAThemes(rawValue: option.rawValue)?.palette ?? ProvenanceThemes.dark.palette
+            paletteToApply = CGAThemes(rawValue: option.rawValue)?.palette ?? ProvenanceThemes.dark.palette
         }
 
-        DLOG("Applying theme: \(themeToApply)")
-        applyTheme(themeToApply)
+        DLOG("Applying palette: \(paletteToApply)")
+        applyPalette(paletteToApply)
     }
 }
 
 public extension ThemeManager {
     @MainActor
-    class func applyTheme(_ theme: iOSTheme) {
-        DLOG("Setting theme: \(theme)")
-//        configureNavigationBar(withTheme: theme)
-//        configureStatusBar(withTheme: theme)
-//
-        // Apply theme to various UIKit components
-//        configureUIView(theme)
-//        configureBarButtonItems(theme)
-//        configureSwitches(theme)
-//        configureTableViews(theme)
-//        configureCollectionViews(theme)
-//        configureTextInputs(theme)
-//        configureActionSheets(theme)
-//        configureTabBar(theme)
-//        configureSegmentedControl(theme)
-//        configureSlider(theme)
-//        configureActivityIndicator(theme)
-//        configureInterfaceStyle(theme)
+    class func applyPalette(_ palette: any UXThemePalette) {
+        DLOG("Setting palette: \(palette)")
 
-        DLOG("Theme application completed.")
+        // Apply theme to various UIKit components
+   
+        configureActionSheets(palette)
+        configureActivityIndicator(palette)
+        configureBarButtonItems(palette)
+//        configureCollectionViews(palette)
+//        configureInterfaceStyle(palette)
+        configureNavigationBar(palette)
+        configureSegmentedControl(palette)
+        configurePageControl(palette)
+        configureSlider(palette)
+//        configureStatusBar(palette)
+        configureSwitches(palette)
+//        configureTabBar(palette)
+//        configureTableViews(palette)
+//        configureTextInputs(palette)
+//        configureUIView(palette)
+
+        DLOG("Palette \(palette.name) application completed.")
     }
 
     /// Status Bar
@@ -82,10 +84,10 @@ public extension ThemeManager {
     /// Status Bar
     /// - Parameter theme: current iOSTheme
     @MainActor
-    private class func configureStatusBar(withTheme theme: iOSTheme) {
+    private class func configureStatusBar(_ palette: any UXThemePalette) {
         #if os(iOS)
         // Configure status bar
-        if let statusBarColor = theme.statusBarColor {
+        if let statusBarColor = palette.statusBarColor {
             styleStatusBar(withColor: statusBarColor)
             DLOG("Status bar color: \(statusBarColor.debugDescription)")
         }
@@ -95,14 +97,14 @@ public extension ThemeManager {
     /// UINavigation Bar
     /// - Parameter theme: current iOSTheme
     @MainActor
-    private class func configureNavigationBar(withTheme theme: iOSTheme) {
+    private class func configureNavigationBar(_ palette: any UXThemePalette) {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = theme.navigationBarBackgroundColor
-        // TODO: Add `navigationBarTitleColor` to themes
-        if let navigationBarTitleColor = theme.navigationBarTitleColor {
-            appearance.titleTextAttributes = [.foregroundColor: theme.navigationBarTitleColor]
-            appearance.largeTitleTextAttributes = [.foregroundColor: theme.navigationBarTitleColor]
+        appearance.backgroundColor = palette.navigationBarBackgroundColor
+
+        if let navigationBarTitleColor = palette.navigationBarTitleColor {
+            appearance.titleTextAttributes = [.foregroundColor: palette.navigationBarTitleColor]
+            appearance.largeTitleTextAttributes = [.foregroundColor: palette.navigationBarTitleColor]
         }
 
         UINavigationBar.appearance().standardAppearance = appearance
@@ -112,102 +114,113 @@ public extension ThemeManager {
             UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
         }
 
-        UINavigationBar.appearance().tintColor = theme.barButtonItemTint
-        DLOG("Navigation bar - tintColor: \(theme.barButtonItemTint?.debugDescription ?? "nil"), backgroundColor: \(theme.navigationBarBackgroundColor?.debugDescription ?? "nil")")
+        UINavigationBar.appearance().tintColor = palette.barButtonItemTint
+        DLOG("Navigation bar - tintColor: \(palette.barButtonItemTint?.debugDescription ?? "nil"), backgroundColor: \(palette.navigationBarBackgroundColor?.debugDescription ?? "nil")")
     }
 
     // MARK: - UIKit Component Theming
 
     @MainActor
-    private class func configureUIView(_ theme: iOSTheme) {
+    private class func configureUIView(_ palette: any UXThemePalette) {
         // Apply general UIView appearance
-        UIView.appearance().tintColor = theme.defaultTintColor
-        UIView.appearance().backgroundColor = theme.uiviewBackground
-        DLOG("UIView appearance - tintColor: \(theme.defaultTintColor?.debugDescription ?? "nil"), backgroundColor: \(theme.uiviewBackground?.debugDescription ?? "nil")")
+        UIView.appearance().tintColor = palette.defaultTintColor
+//        UIView.appearance().backgroundColor = palette.uiviewBackground
+        DLOG("UIView appearance - tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), backgroundColor: \(palette.uiviewBackground?.debugDescription ?? "nil")")
     }
 
     @MainActor
-    private class func configureBarButtonItems(_ theme: iOSTheme) {
-        UIBarButtonItem.appearance().tintColor = theme.barButtonItemTint
-        DLOG("Bar button items - tintColor: \(theme.barButtonItemTint?.debugDescription ?? "nil")")
+    private class func configureBarButtonItems(_ palette: any UXThemePalette) {
+        UIBarButtonItem.appearance().tintColor = palette.barButtonItemTint
+        DLOG("Bar button items - tintColor: \(palette.barButtonItemTint?.debugDescription ?? "nil")")
     }
 
     @MainActor
-    private class func configureSwitches(_ theme: iOSTheme) {
+    private class func configureSwitches(_ palette: any UXThemePalette) {
         #if !os(tvOS)
-        UISwitch.appearance().onTintColor = theme.switchON
+        UISwitch.appearance().onTintColor = palette.switchON
         #if !targetEnvironment(macCatalyst)
-        UISwitch.appearance().thumbTintColor = theme.switchThumb
+        UISwitch.appearance().thumbTintColor = palette.switchThumb
         #endif
-        DLOG("Switches - onTintColor: \(theme.switchON?.debugDescription ?? "nil"), thumbTintColor: \(theme.switchThumb?.debugDescription ?? "nil")")
+        DLOG("Switches - onTintColor: \(palette.switchON?.debugDescription ?? "nil"), thumbTintColor: \(palette.switchThumb?.debugDescription ?? "nil")")
         #endif
     }
 
     @MainActor
-    private class func configureTableViews(_ theme: iOSTheme) {
-        UITableView.appearance().backgroundColor = theme.navigationBarBackgroundColor
-        UITableView.appearance().separatorColor = theme.settingsSeperator
-        DLOG("Table views - backgroundColor: \(theme.navigationBarBackgroundColor?.debugDescription ?? "nil"), separatorColor: \(theme.settingsSeperator?.debugDescription ?? "nil")")
+    private class func configureTableViews(_ palette: any UXThemePalette) {
+        UITableView.appearance().backgroundColor = palette.tableViewBackgroundColor
+        UITableView.appearance().separatorColor = palette.settingsSeperator
+        DLOG("Table views - backgroundColor: \(palette.tableViewBackgroundColor?.debugDescription ?? "nil"), separatorColor: \(palette.settingsSeperator?.debugDescription ?? "nil")")
     }
 
     @MainActor
-    private class func configureCollectionViews(_ theme: iOSTheme) {
-        UICollectionView.appearance().backgroundColor = theme.gameLibraryBackground
-        DLOG("Collection views - backgroundColor: \(theme.gameLibraryBackground.debugDescription)")
+    private class func configureCollectionViews(_ palette: any UXThemePalette) {
+        UICollectionViewCell.appearance {
+            $0.backgroundColor = palette.gameLibraryCellBackground
+            $0.tintColor = palette.gameLibraryCellText
+        }
+        UICollectionView.appearance().backgroundColor = palette.gameLibraryBackground
+        DLOG("Collection views - backgroundColor: \(palette.gameLibraryBackground.debugDescription)")
     }
 
     @MainActor
-    private class func configureTextInputs(_ theme: iOSTheme) {
-        UITextField.appearance().keyboardAppearance = theme.keyboardAppearance
-        UISearchBar.appearance().keyboardAppearance = theme.keyboardAppearance
-        DLOG("Text inputs - keyboardAppearance: \(theme.keyboardAppearance)")
+    private class func configureTextInputs(_ palette: any UXThemePalette) {
+        UITextField.appearance().keyboardAppearance = palette.keyboardAppearance
+        UISearchBar.appearance().keyboardAppearance = palette.keyboardAppearance
+        DLOG("Text inputs - keyboardAppearance: \(palette.keyboardAppearance)")
     }
 
     @MainActor
-    private class func configureActionSheets(_ theme: iOSTheme) {
+    private class func configureActionSheets(_ palette: any UXThemePalette) {
         if let actionSystemView = NSClassFromString("_UIInterfaceActionRepresentationsSequenceView") as? UIView.Type {
-            actionSystemView.appearance().backgroundColor = theme.settingsCellBackground
-            actionSystemView.appearance().tintColor = theme.gameLibraryText
-            DLOG("Action sheets - backgroundColor: \(theme.settingsCellBackground?.debugDescription ?? "nil"), tintColor: \(theme.gameLibraryText.debugDescription)")
+            actionSystemView.appearance().backgroundColor = palette.settingsCellBackground
+            actionSystemView.appearance().tintColor = palette.gameLibraryText
+            DLOG("Action sheets - backgroundColor: \(palette.settingsCellBackground?.debugDescription ?? "nil"), tintColor: \(palette.gameLibraryText.debugDescription)")
 
-            UILabel.appearance(whenContainedInInstancesOf: [actionSystemView]).textColor = theme.gameLibraryText
-            UILabel.appearance(whenContainedInInstancesOf: [actionSystemView]).tintColor = theme.defaultTintColor
-            DLOG("Action sheet labels - textColor: \(theme.gameLibraryText.debugDescription), tintColor: \(theme.defaultTintColor?.debugDescription ?? "nil")")
+            UILabel.appearance(whenContainedInInstancesOf: [actionSystemView]).textColor = palette.gameLibraryText
+            UILabel.appearance(whenContainedInInstancesOf: [actionSystemView]).tintColor = palette.defaultTintColor
+            DLOG("Action sheet labels - textColor: \(palette.gameLibraryText.debugDescription), tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil")")
         }
     }
 
     @MainActor
-    private class func configureTabBar(_ theme: iOSTheme) {
-        UITabBar.appearance().tintColor = theme.defaultTintColor
-        UITabBar.appearance().barTintColor = theme.tabBarBackground
-        DLOG("Tab bar - tintColor: \(theme.defaultTintColor?.debugDescription ?? "nil"), barTintColor: \(theme.tabBarBackground?.debugDescription ?? "nil")")
+    private class func configureTabBar(_ palette: any UXThemePalette) {
+        UITabBar.appearance().tintColor = palette.defaultTintColor
+        UITabBar.appearance().barTintColor = palette.tabBarBackground
+        DLOG("Tab bar - tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), barTintColor: \(palette.tabBarBackground?.debugDescription ?? "nil")")
     }
 
     @MainActor
-    private class func configureSegmentedControl(_ theme: iOSTheme) {
-        UISegmentedControl.appearance().selectedSegmentTintColor = theme.defaultTintColor
-        UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: theme.gameLibraryText], for: .normal)
-        UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: theme.settingsCellBackground ?? .white], for: .selected)
-        DLOG("Segmented control - selectedSegmentTintColor: \(theme.defaultTintColor?.debugDescription ?? "nil"), normalTextColor: \(theme.gameLibraryText.debugDescription), selectedTextColor: \(theme.settingsCellBackground?.debugDescription ?? "nil")")
+    private class func configureSegmentedControl(_ palette: any UXThemePalette) {
+        UISegmentedControl.appearance().selectedSegmentTintColor = palette.defaultTintColor
+        UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: palette.gameLibraryText], for: .normal)
+        UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: palette.settingsCellBackground ?? .white], for: .selected)
+        DLOG("Segmented control - selectedSegmentTintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), normalTextColor: \(palette.gameLibraryText.debugDescription), selectedTextColor: \(palette.settingsCellBackground?.debugDescription ?? "nil")")
+    }
+    
+    @MainActor
+    private class func configurePageControl(_ palette: any UXThemePalette) {
+        UIPageControl.appearance().currentPageIndicatorTintColor = palette.switchON?.saturation(0.3)
+        UIPageControl.appearance().pageIndicatorTintColor = palette.switchON?.saturation(0.3) ?? palette.switchThumb
+        DLOG("Page control - configurePageControl - currentPageIndicatorTintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), pageIndicatorTintColor: \(palette.gameLibraryText.debugDescription ?? "") ")
     }
 
     @MainActor
-    private class func configureSlider(_ theme: iOSTheme) {
-        UISlider.appearance().thumbTintColor = theme.defaultTintColor
-        UISlider.appearance().minimumTrackTintColor = theme.defaultTintColor?.withAlphaComponent(0.5)
-        UISlider.appearance().maximumTrackTintColor = theme.settingsSeperator
-        DLOG("Slider - thumbTintColor: \(theme.defaultTintColor?.debugDescription ?? "nil"), minimumTrackTintColor: \(theme.defaultTintColor?.withAlphaComponent(0.5).debugDescription ?? "nil"), maximumTrackTintColor: \(theme.settingsSeperator?.debugDescription ?? "nil")")
+    private class func configureSlider(_ palette: any UXThemePalette) {
+        UISlider.appearance().thumbTintColor = palette.defaultTintColor
+        UISlider.appearance().minimumTrackTintColor = palette.defaultTintColor?.withAlphaComponent(0.5)
+        UISlider.appearance().maximumTrackTintColor = palette.settingsSeperator
+        DLOG("Slider - thumbTintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), minimumTrackTintColor: \(palette.defaultTintColor?.withAlphaComponent(0.5).debugDescription ?? "nil"), maximumTrackTintColor: \(palette.settingsSeperator?.debugDescription ?? "nil")")
     }
 
     @MainActor
-    private class func configureActivityIndicator(_ theme: iOSTheme) {
-        UIActivityIndicatorView.appearance().color = theme.defaultTintColor
-        DLOG("Activity indicator - color: \(theme.defaultTintColor?.debugDescription ?? "nil")")
+    private class func configureActivityIndicator(_ palette: any UXThemePalette) {
+        UIActivityIndicatorView.appearance().color = palette.defaultTintColor
+        DLOG("Activity indicator - color: \(palette.defaultTintColor?.debugDescription ?? "nil")")
     }
 
     @MainActor
-    private class func configureInterfaceStyle(_ theme: iOSTheme) {
-        let interfaceStyle: UIUserInterfaceStyle = theme.dark ? .dark : .light
+    private class func configureInterfaceStyle(_ palette: any UXThemePalette) {
+        let interfaceStyle: UIUserInterfaceStyle = palette.dark ? .dark : .light
         UIApplication.shared.windows.forEach { $0.overrideUserInterfaceStyle = interfaceStyle }
         DLOG("Interface style: \(interfaceStyle == .dark ? "Dark" : "Light")")
     }
