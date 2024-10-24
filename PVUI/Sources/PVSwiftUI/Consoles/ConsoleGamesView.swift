@@ -177,56 +177,16 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                                 // Show mock games in simulator
                                 let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
                                 if viewModel.viewGamesAsGrid {
-                                    let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 2)]
-                                    LazyVGrid(columns: columns, spacing: 2) {
-                                        ForEach(fakeGames, id: \.self) { game in
-                                            GameItemView(game: game, constrainHeight: false) {
-                                                // No action needed for fake games
-                                            }
-                                        }
-                                    }
+                                    showGamesGrid(fakeGames)
                                 } else {
-                                    LazyVStack(spacing: 8) {
-                                        ForEach(fakeGames, id: \.self) { game in
-                                            GameItemView(game: game, constrainHeight: false) {
-                                                // No action needed for fake games
-                                            }
-                                        }
-                                    }
+                                    showGamesList(fakeGames)
                                 }
                             } else {
                                 // Show real games
                                 if viewModel.viewGamesAsGrid {
-                                    let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 2)]
-                                    LazyVGrid(columns: columns, spacing: 2) {
-                                        ForEach(filteredAndSortedGames(), id: \.self) { game in
-                                            GameItemView(game: game, constrainHeight: false) {
-                                                loadGame(game)
-                                            }
-                                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
-                                        }
-                                    }
-                                    .gesture(
-                                        MagnificationGesture()
-                                            .onChanged { value in
-                                                let delta = value / lastScale
-                                                lastScale = value
-                                                adjustZoom(delta: delta)
-                                            }
-                                            .onEnded { _ in
-                                                lastScale = 1.0
-                                                saveScale()
-                                            }
-                                    )
+                                    showGamesGrid(filteredAndSortedGames())
                                 } else {
-                                    LazyVStack(spacing: 8) {
-                                        ForEach(filteredAndSortedGames(), id: \.self) { game in
-                                            GameItemView(game: game, constrainHeight: false) {
-                                                loadGame(game)
-                                            }
-                                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
-                                        }
-                                    }
+                                    showGamesList(filteredAndSortedGames())
                                 }
                             }
 
@@ -288,22 +248,60 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         }
     }
 
-    // MARK: - Zoom Helpers
+    private func showGamesGrid(_ games: [PVGame]) -> some View {
+        let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 10)]
+        return LazyVGrid(columns: columns, spacing: 10) {
+            ForEach(games, id: \.self) { game in
+                GameItemView(game: game, constrainHeight: false) {
+                    loadGame(game)
+                }
+                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+            }
+        }
+        .padding(.horizontal, 10) // Add horizontal padding to prevent overflow
+    }
+
+    private func showGamesGrid(_ games: Results<PVGame>) -> some View {
+        let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 10)]
+        return LazyVGrid(columns: columns, spacing: 10) {
+            ForEach(games, id: \.self) { game in
+                GameItemView(game: game, constrainHeight: false) {
+                    loadGame(game)
+                }
+                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+            }
+        }
+        .padding(.horizontal, 10) // Add horizontal padding to prevent overflow
+    }
+
+    private func showGamesList(_ games: [PVGame]) -> some View {
+        LazyVStack(spacing: 8) {
+            ForEach(games, id: \.self) { game in
+                GameItemView(game: game, constrainHeight: false) {
+                    loadGame(game)
+                }
+                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+            }
+        }
+    }
+
+    private func showGamesList(_ games: Results<PVGame>) -> some View {
+        LazyVStack(spacing: 8) {
+            ForEach(games, id: \.self) { game in
+                GameItemView(game: game, constrainHeight: false) {
+                    loadGame(game)
+                }
+                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+            }
+        }
+    }
 
     private func calculateGridItemSize() -> CGFloat {
-        let baseSize: CGFloat = 100 // Adjust this base size as needed
-        return baseSize * scale
-    }
-
-    private func adjustZoom(delta: CGFloat) {
-        let minScale: CGFloat = 0.5
-        let maxScale: CGFloat = 1.5
-        let newScale = scale * delta
-        scale = min(max(newScale, minScale), maxScale)
-    }
-
-    private func saveScale() {
-        Defaults[.gameLibraryScale] = Float(scale)
+        // Calculate grid item size based on the number of items per row
+        let numberOfItemsPerRow: CGFloat = 3 // Adjust this number as needed
+        let totalSpacing: CGFloat = 10 * (numberOfItemsPerRow - 1)
+        let availableWidth = UIScreen.main.bounds.width - totalSpacing - 20 // Account for padding
+        return availableWidth / numberOfItemsPerRow
     }
 
     /// MARK: Rename
@@ -389,55 +387,6 @@ struct ConsoleGamesView_Previews: PreviewProvider {
         ConsoleGamesView(console: console,
                          viewModel: viewModel,
                          rootDelegate: nil)
-    }
-}
-
-struct GridZoomStages
-{
-    static var zoomStages: [Int]
-    {
-#if os(tvOS)
-        return [1, 2, 4, 8, 16]
-#else
-        if UIDevice.current.userInterfaceIdiom == .pad
-        {
-            if UIDevice.current.orientation.isLandscape
-            {
-                return [4, 6, 10, 14, 18]
-            }
-            else
-            {
-                return [4, 6, 8, 10, 12]
-            }
-        }
-        else
-        {
-            if UIDevice.current.orientation.isLandscape
-            {
-                return [4, 6, 8, 9]
-            }
-            else
-            {
-                return [1, 2, 4, 6, 8]
-            }
-        }
-#endif
-    }
-
-    static func getZoomStage(at index: Int) -> Int
-    {
-        if index >= zoomStages.count
-        {
-            return zoomStages.last!
-        }
-        else if index < 0
-        {
-            return zoomStages.first!
-        }
-        else
-        {
-            return zoomStages[index]
-        }
     }
 }
 
