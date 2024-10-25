@@ -19,22 +19,15 @@ import PVSettings
 
 // TODO: might be able to reuse this view for collections
 
-
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
 
-    // Played
     static let played = ConsoleGamesFilterModeFlags(rawValue: 1 << 0)
-
-    // Never played
     static let neverPlayed = ConsoleGamesFilterModeFlags(rawValue: 1 << 1)
-
-    // Recently Imported
     static let recentlyImported = ConsoleGamesFilterModeFlags(rawValue: 1 << 2)
-
-    // Recently played
     static let recentlyPlayed = ConsoleGamesFilterModeFlags(rawValue: 1 << 3)
 }
+
 struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     @ObservedObject var viewModel: PVRootViewModel
@@ -59,7 +52,6 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    // Properties
     private var isSimulator: Bool {
         #if targetEnvironment(simulator)
         return true
@@ -67,6 +59,17 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         return false
         #endif
     }
+
+    @State private var gameLibraryItemsPerRow: Int = 4
+    @Default(.gameLibraryScale) private var gameLibraryScale
+    
+    @State private var showImagePicker = false
+    @State private var selectedImage: UIImage?
+    @State private var gameToUpdateCover: PVGame?
+    @State private var showingRenameAlert = false
+    @State private var gameToRename: PVGame?
+    @State private var newGameTitle = ""
+    @FocusState private var renameTitleFieldIsFocused: Bool
 
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
         self.console = console
@@ -91,105 +94,19 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         _recentSaveStates = ObservedResults(PVSaveState.self,
                                             filter: saveStatesPredicate,
                                             sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false))
-
-        // Initialize scale with the saved value
-        let savedScale = CGFloat(Defaults[.gameLibraryScale])
-        _scale = State(initialValue: savedScale)
     }
 
-    func filteredAndSortedGames() -> Results<PVGame> {
-        return games
-            .filter(gamesForSystemPredicate)
-            .sorted(by: [
-//                SortDescriptor(keyPath: #keyPath(PVGame.isFavorite), ascending: false),
-                SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)
-            ])
-    }
-
-    @State private var scale: CGFloat
-    @State private var lastScale: CGFloat = 1.0
-    @State private var currentZoomIndex: Int = 2 // Start at middle zoom level
-
-    // Image Picker
-    @State private var showImagePicker = false
-    @State private var selectedImage: UIImage?
-    @State private var gameToUpdateCover: PVGame?
-
-    // Rename Game
-    @State private var showingRenameAlert = false
-    @State private var gameToRename: PVGame?
-    @State private var newGameTitle = ""
-    @FocusState private var renameTitleFieldIsFocused: Bool
-
-    // Body
     var body: some SwiftUI.View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                // Display options for sorting and view type
-                GamesDisplayOptionsView(
-                    sortAscending: viewModel.sortGamesAscending,
-                    isGrid: viewModel.viewGamesAsGrid,
-                    toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
-                    toggleSortAction: { viewModel.sortGamesAscending.toggle() },
-                    toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
-                )
-                .padding(.top, 16)
-
+                displayOptionsView()
                 ZStack(alignment: .bottom) {
                     ScrollView {
                         LazyVStack(spacing: 20) {
-                            // Continue section for recent save states
-                            if hasRecentSaveStates {
-                                HomeContinueSection(rootDelegate: rootDelegate, consoleIdentifier: console.identifier)
-                                HomeDividerView()
-                            }
-
-                            // Favorites section
-                            if hasFavorites {
-                                HomeSection(title: "Favorites") {
-                                    ForEach(favoritesArray, id: \.self) { favorite in
-                                        GameItemView(game: favorite, constrainHeight: true) {
-                                            loadGame(favorite)
-                                        }
-                                        .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate, contextMenuDelegate: self) }
-                                    }
-                                }
-                                .frame(height: 150)
-                                HomeDividerView()
-                            }
-
-                            // Recently played games section
-                            if hasRecentlyPlayedGames {
-                                HomeSection(title: "Recently Played") {
-                                    ForEach(recentlyPlayedGamesArray, id: \.self) { game in
-                                        GameItemView(game: game, constrainHeight: true) {
-                                            loadGame(game)
-                                        }
-                                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
-                                    }
-                                }
-                                .frame(height: 150)
-                                HomeDividerView()
-                            }
-
-                            // Games section
-                            if games.isEmpty && isSimulator {
-                                // Show mock games in simulator
-                                let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
-                                if viewModel.viewGamesAsGrid {
-                                    showGamesGrid(fakeGames)
-                                } else {
-                                    showGamesList(fakeGames)
-                                }
-                            } else {
-                                // Show real games
-                                if viewModel.viewGamesAsGrid {
-                                    showGamesGrid(filteredAndSortedGames())
-                                } else {
-                                    showGamesList(filteredAndSortedGames())
-                                }
-                            }
-
+                            continueSection()
+                            favoritesSection()
+                            recentlyPlayedSection()
+                            gamesSection()
                             BiosesView(console: console)
                         }
                         .padding(.horizontal, 10)
@@ -198,17 +115,109 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 }
             }
             .edgesIgnoringSafeArea(.bottom)
-        }
-        .sheet(isPresented: $showImagePicker) {
-            ImagePicker(sourceType: .photoLibrary) { image in
-                if let game = gameToUpdateCover {
-                    saveArtwork(image: image, forGame: game)
-                }
-                gameToUpdateCover = nil
-                showImagePicker = false
+            .gesture(magnificationGesture())
+            .onAppear {
+                adjustZoomLevel(for: gameLibraryScale)
             }
         }
+        .sheet(isPresented: $showImagePicker) {
+            imagePickerView()
+        }
         .alert("Rename Game", isPresented: $showingRenameAlert) {
+            renameAlertView()
+        } message: {
+            Text("Enter a new name for \(gameToRename?.title ?? "")")
+        }
+    }
+
+    // MARK: - View Components
+
+    private func displayOptionsView() -> some View {
+        GamesDisplayOptionsView(
+            sortAscending: viewModel.sortGamesAscending,
+            isGrid: viewModel.viewGamesAsGrid,
+            toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
+            toggleSortAction: { viewModel.sortGamesAscending.toggle() },
+            toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
+        )
+        .padding(.top, 16)
+        .padding(.bottom, 16)
+    }
+
+    private func continueSection() -> some View {
+        Group {
+            if hasRecentSaveStates {
+                HomeContinueSection(rootDelegate: rootDelegate, consoleIdentifier: console.identifier)
+                HomeDividerView()
+            }
+        }
+    }
+
+    private func favoritesSection() -> some View {
+        Group {
+            if hasFavorites {
+                HomeSection(title: "Favorites") {
+                    ForEach(favoritesArray, id: \.self) { favorite in
+                        GameItemView(game: favorite, constrainHeight: true) {
+                            loadGame(favorite)
+                        }
+                        .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                    }
+                }
+                .frame(height: 150)
+                HomeDividerView()
+            }
+        }
+    }
+
+    private func recentlyPlayedSection() -> some View {
+        Group {
+            if hasRecentlyPlayedGames {
+                HomeSection(title: "Recently Played") {
+                    ForEach(recentlyPlayedGamesArray, id: \.self) { game in
+                        GameItemView(game: game, constrainHeight: true) {
+                            loadGame(game)
+                        }
+                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                    }
+                }
+                .frame(height: 150)
+                HomeDividerView()
+            }
+        }
+    }
+
+    private func gamesSection() -> some View {
+        Group {
+            if games.isEmpty && isSimulator {
+                let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
+                if viewModel.viewGamesAsGrid {
+                    showGamesGrid(fakeGames)
+                } else {
+                    showGamesList(fakeGames)
+                }
+            } else {
+                if viewModel.viewGamesAsGrid {
+                    showGamesGrid(filteredAndSortedGames())
+                } else {
+                    showGamesList(filteredAndSortedGames())
+                }
+            }
+        }
+    }
+
+    private func imagePickerView() -> some View {
+        ImagePicker(sourceType: .photoLibrary) { image in
+            if let game = gameToUpdateCover {
+                saveArtwork(image: image, forGame: game)
+            }
+            gameToUpdateCover = nil
+            showImagePicker = false
+        }
+    }
+
+    private func renameAlertView() -> some View {
+        Group {
             TextField("New name", text: $newGameTitle)
                 .onSubmit { submitRename() }
                 .textInputAutocapitalization(.words)
@@ -216,12 +225,19 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
             Button("Cancel", role: .cancel) { showingRenameAlert = false }
             Button("OK") { submitRename() }
-        } message: {
-            Text("Enter a new name for \(gameToRename?.title ?? "")")
         }
     }
 
-    // Helper Methods
+    // MARK: - Helper Methods
+
+    func filteredAndSortedGames() -> Results<PVGame> {
+        return games
+            .filter(gamesForSystemPredicate)
+            .sorted(by: [
+                SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)
+            ])
+    }
+
     private var hasRecentSaveStates: Bool {
         !recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
     }
@@ -247,9 +263,22 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
         }
     }
+    
+    var itemsPerRow: Int {
+        let roundedScale = Int(gameLibraryScale.rounded())
+        // If games is less than count, just use the games to fill the row.
+        // also don't go below 0
+        let count: Int
+        if isSimulator {
+            count = max(0,roundedScale )
+        } else {
+            count = min(max(0, roundedScale), games.count)
+        }
+        return count
+    }
 
     private func showGamesGrid(_ games: [PVGame]) -> some View {
-        let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 10)]
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return LazyVGrid(columns: columns, spacing: 10) {
             ForEach(games, id: \.self) { game in
                 GameItemView(game: game, constrainHeight: false) {
@@ -258,11 +287,11 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
             }
         }
-        .padding(.horizontal, 10) // Add horizontal padding to prevent overflow
+        .padding(.horizontal, 10)
     }
 
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
-        let columns = [GridItem(.adaptive(minimum: calculateGridItemSize()), spacing: 10)]
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return LazyVGrid(columns: columns, spacing: 10) {
             ForEach(games, id: \.self) { game in
                 GameItemView(game: game, constrainHeight: false) {
@@ -271,13 +300,13 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
             }
         }
-        .padding(.horizontal, 10) // Add horizontal padding to prevent overflow
+        .padding(.horizontal, 10)
     }
 
     private func showGamesList(_ games: [PVGame]) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false) {
+                GameItemView(game: game, constrainHeight: false, viewType: .row) {
                     loadGame(game)
                 }
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
@@ -288,7 +317,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false) {
+                GameItemView(game: game, constrainHeight: false, viewType: .row) {
                     loadGame(game)
                 }
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
@@ -297,17 +326,51 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     }
 
     private func calculateGridItemSize() -> CGFloat {
-        // Calculate grid item size based on the number of items per row
-        let numberOfItemsPerRow: CGFloat = 3 // Adjust this number as needed
+        let numberOfItemsPerRow: CGFloat = CGFloat(gameLibraryScale)
         let totalSpacing: CGFloat = 10 * (numberOfItemsPerRow - 1)
-        let availableWidth = UIScreen.main.bounds.width - totalSpacing - 20 // Account for padding
+        let availableWidth = UIScreen.main.bounds.width - totalSpacing - 20
         return availableWidth / numberOfItemsPerRow
     }
+    
+    private func adjustZoomLevel(for magnification: Float) {
+        gameLibraryItemsPerRow = calculatedZoomLevel(for: magnification)
+    }
 
-    /// MARK: Rename
+    private func calculatedZoomLevel(for magnification: Float) -> Int {
+        let isIPad = UIDevice.current.userInterfaceIdiom == .pad
+        let defaultZoomLevel = isIPad ? 8 : 4
+        
+        // Handle invalid magnification values
+        guard !magnification.isNaN && !magnification.isInfinite else {
+            return defaultZoomLevel
+        }
+        
+        // Calculate the target zoom level based on magnification
+        let targetZoomLevel = Float(defaultZoomLevel) / magnification
+        
+        // Round to the nearest even number
+        let roundedZoomLevel = round(targetZoomLevel / 2) * 2
+        
+        // Clamp the value between 2 and 16
+        let clampedZoomLevel = max(2, min(16, roundedZoomLevel))
+        
+        return Int(clampedZoomLevel)
+    }
+
+    private func magnificationGesture() -> some Gesture {
+        MagnificationGesture()
+            .onChanged { value in
+                adjustZoomLevel(for: Float(value))
+            }
+            .onEnded { _ in
+                // TODO: What to do here?
+            }
+    }
+
+    // MARK: - Rename Methods
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
-        gameToRename = game.freeze() // Freeze the game object
+        gameToRename = game.freeze()
         newGameTitle = game.title
         showingRenameAlert = true
     }
@@ -331,7 +394,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         gameToRename = nil
     }
 
-    /// MARK: Image Picker
+    // MARK: - Image Picker Methods
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
         gameToUpdateCover = game
@@ -360,7 +423,6 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             DLOG("Database transaction completed successfully")
             rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
 
-            // Verify the image can be retrieved
             DLOG("Attempting to verify image retrieval")
             PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
                 if let retrievedImage = retrievedImage {
@@ -390,7 +452,6 @@ struct ConsoleGamesView_Previews: PreviewProvider {
     }
 }
 
-// New BiosesView
 struct BiosesView: View {
     let console: PVSystem
 

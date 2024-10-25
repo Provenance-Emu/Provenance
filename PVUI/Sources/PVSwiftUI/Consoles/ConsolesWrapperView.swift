@@ -69,8 +69,9 @@ struct ConsolesWrapperView: SwiftUI.View {
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(consoles.count)
-        .tint(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
-        .background(themeManager.currentPalette.gameLibraryHeaderBackground.swiftUIColor)
+        .tint(themeManager.currentPalette.defaultTintColor?.swiftUIColor)
+        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
 
     // MARK: - Helper Methods

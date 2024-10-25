@@ -30,62 +30,101 @@ public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
 #if !os(tvOS)
     var statusBarColor: UIColor? { get }
 #endif
-    // Mandatory
+    /// Game Library
+    ///     Background
     var gameLibraryBackground: UIColor { get }
-    var gameLibraryCellBackground: UIColor? { get }
-    var gameLibraryCellText: UIColor { get }
+    ///     Text
     var gameLibraryText: UIColor { get }
-
+    ///     Cell
+    ///         Background
+    var gameLibraryCellBackground: UIColor? { get }
+    ///         Text
+    var gameLibraryCellText: UIColor { get }
+    ///     Header
+    ///         Background
     var gameLibraryHeaderBackground: UIColor { get }
+    ///         Text
     var gameLibraryHeaderText: UIColor { get }
 
-    // Optional - Defaults to nil (OS chooses)
+
+    /// General
+    ///     Bar Buttom Item Tint
+    var barButtonItemTint: UIColor? { get }
+    ///     Tint
+    ///         Optional - Defaults to nil (OS chooses)
     var defaultTintColor: UIColor? { get }
 
-    var barButtonItemTint: UIColor? { get }
 #if canImport(UIKit)
     var keyboardAppearance: UIKeyboardAppearance { get }
 #endif
 
     /// Settings
-    /// Settings > Header
+    ///     Header
+    ///         Background
     var settingsHeaderBackground: UIColor? { get }
+    ///         Text
     var settingsHeaderText: UIColor? { get }
-
-    /// Settings > Cells
+    ///     Cells
+    ///         Background
     var settingsCellBackground: UIColor? { get }
+    ///         Text
     var settingsCellText: UIColor? { get }
+    ///         Detail Text
     var settingsCellTextDetail: UIColor? { get }
     
     /// TableView
+    ///     Background
     var tableViewBackgroundColor: UIColor? { get }
 
     /// UISwitch
+    ///     On
     var switchON: UIColor? { get }
+    ///     Thumb
     var switchThumb: UIColor? { get }
     
     /// Segmented Control
+    ///     Tint
     var segmentedControlTint: UIColor? { get }
+    ///     Selected Tint
     var segmentedControlSelectedTint: UIColor? { get }
     
-    // Navigation
-    var navigationBarTitleColor: UIColor? { get }
+    /// Navigation Bar
+    ///     Background
     var navigationBarBackgroundColor: UIColor? { get }
-
-    // Tabs
+    ///     Title
+    var navigationBarTitleColor: UIColor? { get }
+   
+    /// Tab bar
+    ///     Background
     var tabBarBackground: UIColor? { get }
     
-    // Seperator color
+    /// Settings
+    ///     Seperator color
     var settingsSeperator: UIColor? { get }
     
     /// Side Menu
+    ///     Background
     var menuBackground: UIColor { get }
+    ///     Text
     var menuText: UIColor { get }
+    ///     Divider
     var menuDivider: UIColor { get }
+    ///     Icon Tint
     var menuIconTint: UIColor { get }
+    ///     Header
+    ///         Background
     var menuHeaderBackground: UIColor { get }
+    ///         Text
     var menuHeaderText: UIColor { get }
+    ///         Icon Tint
     var menuHeaderIconTint: UIColor { get }
+    ///     Section Header
+    ///         Background
+    var menuSectionHeaderBackground: UIColor { get }
+    ///         Text
+    var menuSectionHeaderText: UIColor { get }
+    ///         Icon
+    var menuSectionHeaderIconTint: UIColor { get }
 }
 
 // MARK: - Default implimentnations
@@ -162,6 +201,9 @@ public extension UXThemePalette {
     var menuHeaderBackground: UIColor { .secondarySystemBackground }
     var menuHeaderText: UIColor { settingsCellText ?? .Provenance.blue }
     var menuHeaderIconTint: UIColor { .Provenance.blue }
+    var menuSectionHeaderBackground: UIColor { menuHeaderBackground }
+    var menuSectionHeaderText: UIColor { menuHeaderText }
+    var menuSectionHeaderIconTint: UIColor { menuHeaderIconTint }
 }
 
 /// Tabs

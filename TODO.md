@@ -51,6 +51,8 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] Fix button 9 repeat on Intellivision controls
+- [ ] Dark mode toggle doens't refresh all views if theme set to auto
 - [ ] Importer should overwrite or delete on duplicate imports
 - [ ] Swift UI console view, games could use some improvments
     - [ ] side padding minimums

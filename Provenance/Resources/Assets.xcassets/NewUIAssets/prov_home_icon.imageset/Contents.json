@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "prov_home_icon-1.pdf",
+      "filename" : "prov_home_icon.png",
       "idiom" : "universal"
     },
     {
-      "filename" : "prov_home_icon.pdf",
+      "filename" : "prov_home_icon~iphone.png",
       "idiom" : "iphone"
     }
   ],

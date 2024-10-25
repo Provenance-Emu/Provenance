@@ -126,14 +126,12 @@ public extension RomDatabase {
     }
 
     static func reloadFileSystemROMCache() {
-        Task {
-            ILOG("RomDatabase: reloadFileSystemROMCache")
-            var files:[URL:PVSystem]=[:]
-            systemCache.values.forEach { system in
-                files = addFileSystemROMCache(system, files:files)
-            }
-            _fileSystemROMCache = files
+        ILOG("RomDatabase: reloadFileSystemROMCache")
+        var files:[URL:PVSystem]=[:]
+        systemCache.values.forEach { system in
+            files = addFileSystemROMCache(system, files:files)
         }
+        _fileSystemROMCache = files
     }
     
     static func addFileSystemROMCache(_ system:PVSystem, files:[URL:PVSystem]) -> [URL:PVSystem] {
@@ -182,16 +180,17 @@ public extension RomDatabase {
     
     static func reloadArtDBCache() {
         VLOG("RomDatabase:reloadArtDBCache")
-        if RomDatabase.artMD5DBCache != nil && RomDatabase.artFileNameToMD5Cache != nil {
+        if RomDatabase._artMD5DBCache != nil && RomDatabase._artFileNameToMD5Cache != nil {
             ILOG("RomDatabase:reloadArtDBCache:Cache Found, Skipping Data Reload")
         }
         do {
-
             let openVGDB = OpenVGDB.init()
             let mappings = try openVGDB.getArtworkMappings()
             _artMD5DBCache = mappings.romMD5
             _artFileNameToMD5Cache = mappings.romFileNameToMD5
         } catch {
+            _artMD5DBCache = [:]
+            _artFileNameToMD5Cache = [:]
             ELOG("Failed to execute query: \(error.localizedDescription)")
         }
     }

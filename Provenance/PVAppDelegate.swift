@@ -54,7 +54,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 
     func _initUITheme() {
         ThemeManager.applySavedTheme()
-//        themeAppUI(withPalette: ThemeManager.shared.currentPalette)
+        themeAppUI(withPalette: ThemeManager.shared.currentPalette)
     }
 
     func _initUI(
@@ -65,8 +65,6 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         // Set root view controller and make windows visible
         let window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window = window
-
-        _initUITheme()
         
         #if os(tvOS)
         window.tintColor = .provenanceBlue
@@ -83,7 +81,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                 gameImporter: gameImporter,
                 viewModel: viewModel)
             self.rootNavigationVC = rootViewController
-            let sideNav = SideNavigationController(mainViewController: UINavigationController(rootViewController: rootViewController))
+            let sideNavHostedNavigationController = PVRootViewNavigationController(rootViewController: rootViewController)
+            
+            let sideNav = SideNavigationController(mainViewController:sideNavHostedNavigationController)
             sideNav.leftSide(
                 viewController: SideMenuView.instantiate(gameLibrary: gameLibrary,
                                                          viewModel: viewModel,
@@ -132,15 +132,15 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        application.isIdleTimerDisabled = Defaults[.disableAutoLock]
         loadRocketSimConnect()
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
-
         _initICloud()
-        
+        _initUITheme()
         _initThemeListener()
+
+        application.isIdleTimerDisabled = Defaults[.disableAutoLock]
 
         runDetachedTaskWithCompletion {
             try RomDatabase.initDefaultDatabase()
@@ -255,9 +255,21 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     func _initThemeListener() {
         if #available(iOS 17.0, *) {
             withObservationTracking {
+                _ = UITraitCollection.current.userInterfaceStyle
+            } onChange: { [unowned self] in
+                ILOG("changed: \(UITraitCollection.current.userInterfaceStyle)")
+                Task.detached { @MainActor in
+                    self._initUITheme()
+                    if self.isAppStore {
+                        self.appRatingSignifigantEvent()
+                    }
+                }
+            }
+
+            withObservationTracking {
                 _ = ThemeManager.shared.currentPalette
             } onChange: { [unowned self] in
-                print("changed: ", ThemeManager.shared.currentPalette)
+                ILOG("changed: \(ThemeManager.shared.currentPalette.name)")
                 Task.detached { @MainActor in
                     self._initUITheme()
                     if self.isAppStore {

@@ -45,10 +45,22 @@ struct LightThemePalette: UXThemePalette {
     public var switchThumb: UIColor { .Provenance.blue.brightness(0.95) }
     
     /// Side Menu
+    ///     Background
     public var menuBackground: UIColor { .white }
+    ///     Text
     public var menuText: UIColor { .tintColor }
+    ///     Divider
     public var menuDivider: UIColor { .lightGray }
+    ///     Icon Tint
     public var menuIconTint: UIColor { .tintColor }
+    ///     Header
+    ///         Background
     public var menuHeaderBackground: UIColor { .white }
+    ///         Icon Tint
     public var menuHeaderIconTint: UIColor { .Provenance.blue }
+    ///     Section Header
+    ///         Background
+    public var menuSectionHeaderBackground: UIColor { .lightGray }
+    ///         Tint
+    public var menuSectionHeaderIconTint: UIColor { .Provenance.blue }
 }

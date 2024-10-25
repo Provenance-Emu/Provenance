@@ -19,7 +19,7 @@ extension SwiftImage {
         #if os(tvOS)
         let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
         #else
-        let backgroundColor: UIColor = ThemeManager.shared.currentPalette.settingsCellBackground ?? .systemBackground
+        let backgroundColor: UIColor = ThemeManager.shared.currentPalette.gameLibraryCellBackground ?? .systemBackground
         #endif
 
         #if os(tvOS)
@@ -52,13 +52,13 @@ struct MissingArtworkView: View {
                 #if os(tvOS)
                 Color(white: 0.18)
                 #else
-                themeManager.currentPalette.settingsCellBackground.map(Color.init) ?? Color(.systemBackground)
+                themeManager.currentPalette.gameLibraryCellBackground?.swiftUIColor ?? Color(.systemBackground)
                 #endif
 
                 Text(gameTitle)
                     .font(.system(size: UIDevice.current.userInterfaceIdiom == .tv ? 60 : 30))
                     .foregroundColor(
-                        themeManager.currentPalette.settingsCellText.map(Color.init) ?? Color(.placeholderText)
+                        themeManager.currentPalette.gameLibraryCellText.swiftUIColor ?? Color(.placeholderText)
                     )
             }
             .frame(width: geometry.size.height * ratio, height: geometry.size.height)

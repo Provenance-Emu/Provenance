@@ -8,7 +8,7 @@
 
 import Foundation
 #if canImport(GameController)
-@_exported import GameController
+import GameController
 #endif
 import PVCoreBridge
 import PVLogging

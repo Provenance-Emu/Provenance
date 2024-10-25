@@ -33,11 +33,14 @@ public extension ThemeManager {
                 paletteToApply = isDarkMode ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
             }
         case .cga(let option):
-            paletteToApply = CGAThemes(rawValue: option.rawValue)?.palette ?? ProvenanceThemes.dark.palette
+            let isDarkMode = UITraitCollection.current.userInterfaceStyle == .dark
+            let autoPalette = isDarkMode ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
+
+            paletteToApply = CGAThemes(rawValue: option.rawValue)?.palette ?? autoPalette
         }
 
         DLOG("Applying palette: \(paletteToApply)")
-        applyPalette(paletteToApply)
+        ThemeManager.shared.setCurrentPalette(paletteToApply)
     }
 }
 
@@ -53,16 +56,16 @@ public extension ThemeManager {
         configureBarButtonItems(palette)
 //        configureCollectionViews(palette)
 //        configureInterfaceStyle(palette)
-        configureNavigationBar(palette)
+//        configureNavigationBar(palette)
         configureSegmentedControl(palette)
         configurePageControl(palette)
         configureSlider(palette)
-//        configureStatusBar(palette)
+        configureStatusBar(palette)
         configureSwitches(palette)
 //        configureTabBar(palette)
 //        configureTableViews(palette)
-//        configureTextInputs(palette)
-//        configureUIView(palette)
+        configureTextInputs(palette)
+        configureUIView(palette)
 
         DLOG("Palette \(palette.name) application completed.")
     }
@@ -184,8 +187,11 @@ public extension ThemeManager {
 
     @MainActor
     private class func configureTabBar(_ palette: any UXThemePalette) {
-        UITabBar.appearance().tintColor = palette.defaultTintColor
-        UITabBar.appearance().barTintColor = palette.tabBarBackground
+        UITabBar.appearance {
+            $0.tintColor = palette.defaultTintColor
+            $0.unselectedItemTintColor = palette.segmentedControlTint
+            $0.barTintColor = palette.segmentedControlSelectedTint
+        }
         DLOG("Tab bar - tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), barTintColor: \(palette.tabBarBackground?.debugDescription ?? "nil")")
     }
 

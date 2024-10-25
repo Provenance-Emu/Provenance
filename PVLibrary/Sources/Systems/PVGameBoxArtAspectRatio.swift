@@ -26,4 +26,6 @@ public enum PVGameBoxArtAspectRatio: CGFloat {
     case ggUSA = 0.7201
     case ggJAPAN = 0.86
     case Sega32XUSA = 0.7194636596
+    
+    public static let jaguar: PVGameBoxArtAspectRatio = .tall
 }

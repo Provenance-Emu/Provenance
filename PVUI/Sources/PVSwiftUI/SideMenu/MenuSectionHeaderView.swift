@@ -35,24 +35,25 @@ internal struct MenuSectionHeaderView: SwiftUI.View {
             
             HStack(alignment: .bottom) {
                 Text(sectionTitle)
-                    .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.menuSectionHeaderText.swiftUIColor)
                     .font(.system(size: 13))
                 Spacer()
                 if sortable {
                     OptionsIndicator(pointDown: sortAscending, action: action) {
                         Text("Sort")
-                            .foregroundColor(themeManager.currentPalette.menuIconTint.swiftUIColor)
+                            .foregroundColor(themeManager.currentPalette.menuHeaderIconTint.swiftUIColor)
                             .font(.system(.caption))
                     }
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 4)
-            .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
+            .background(themeManager.currentPalette.menuSectionHeaderBackground.swiftUIColor)
         }
         .frame(height: 40.0)
-        .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
-        .tint(themeManager.currentPalette.menuIconTint.swiftUIColor)
+        .background(themeManager.currentPalette.menuSectionHeaderBackground.swiftUIColor)
+        .foregroundStyle(themeManager.currentPalette.menuSectionHeaderText.swiftUIColor)
+        .tint(themeManager.currentPalette.menuSectionHeaderIconTint.swiftUIColor)
     }
 }
 #endif

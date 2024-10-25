@@ -22,7 +22,7 @@ internal struct GameLibrarySectionViewModel {
 //    }
 }
 
-final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
+public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
     private(set) var bottomSeparator: UIView = UIView()
     private(set) var collapseButton: UIButton = {
@@ -121,7 +121,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         isOpaque = true
     }
 
-    override func traitCollectionDidChange(_: UITraitCollection?) {
+    public override func traitCollectionDidChange(_: UITraitCollection?) {
         #if os(tvOS)
         titleLabel.textColor = colorForText
         #else
@@ -179,7 +179,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             }
         }
     #endif
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         disposeBag = DisposeBag()
     }

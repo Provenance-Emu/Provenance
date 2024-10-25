@@ -122,15 +122,36 @@ SideMenuView: SwiftUI.View {
                             }
                         }
                     }
-                // TODO: flesh out collections later
                     MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
                     Spacer()
                 }
             }
         }
 #if canImport(Introspect)
+        .introspectNavigationController(customize: { navController in
+           let appearance = UINavigationBarAppearance()
+           appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = themeManager.currentPalette.menuHeaderBackground
+            appearance.titleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText]
+           appearance.largeTitleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText ]
+   
+            navController.navigationBar.standardAppearance = appearance
+            navController.navigationBar.scrollEdgeAppearance = appearance
+            navController.navigationBar.compactAppearance = appearance
+
+            navController.navigationBar.tintColor = themeManager.currentPalette.menuHeaderIconTint
+        })
         .introspectViewController(customize: { vc in
-            vc.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "provnavicon"))
+            let image = UIImage(named: "provnavicon")
+            let menuHeaderIconTint = themeManager.currentPalette.menuHeaderIconTint
+            
+            if menuHeaderIconTint != .clear {
+                    image?.applyTintEffectWithColor(menuHeaderIconTint)
+            }
+            let provenanceLogo = UIBarButtonItem(image: image)
+            provenanceLogo.tintColor = themeManager.currentPalette.menuHeaderIconTint
+            vc.navigationItem.leftBarButtonItem = provenanceLogo
+            vc.navigationItem.leftBarButtonItem?.tintColor = menuHeaderIconTint
         })
 #endif
         .background(themeManager.currentPalette.menuBackground.swiftUIColor)
