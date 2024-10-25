@@ -817,6 +817,8 @@
 		B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38FB4B22CBEF961006786C6 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B392B3DE2CCC592600B1C760 /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B392B3DD2CCC592600B1C760 /* PVFlycast.framework */; };
+		B392B3DF2CCC592600B1C760 /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B392B3DD2CCC592600B1C760 /* PVFlycast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B39342142CC57837008AA673 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B39342132CC57837008AA673 /* MoltenVK */; };
 		B39342162CC5784D008AA673 /* MoltenVK-Catalyst in Frameworks */ = {isa = PBXBuildFile; platformFilter = maccatalyst; productRef = B39342152CC5784D008AA673 /* MoltenVK-Catalyst */; };
 		B39343962CC5B202008AA673 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39343952CC5B202008AA673 /* PVDolphin.framework */; };
@@ -1821,6 +1823,7 @@
 				B3FC97312CB8B6BA00C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
 				B35D52832C96C83E006BE5BF /* PVFreeDO-Dynamic in Embed Frameworks */,
 				B3E2AA552CB63A7B00E2636D /* PVBeetlePSX.framework in Embed Frameworks */,
+				B392B3DF2CCC592600B1C760 /* PVFlycast.framework in Embed Frameworks */,
 				B3F8E0C92CB3996200017D1B /* PVPotator.framework in Embed Frameworks */,
 				B3816E162CA92AC700DBA1A0 /* PVGenesis.framework in Embed Frameworks */,
 				B351E7D52CBE072D0000E087 /* libavutil.xcframework in Embed Frameworks */,
@@ -2490,6 +2493,7 @@
 		B3918FD82873EDC3000838F6 /* PVEP128Emu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEP128Emu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3918FDB2873EE5F000838F6 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3918FDE2873EEA8000838F6 /* PVMiniVMac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMiniVMac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B392B3DD2CCC592600B1C760 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39313832870FCFC00372EBB /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B393420D2CC5760C008AA673 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = Cores/emuThree/lib/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B39342102CC5771B008AA673 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = Cores/emuThree/cmake/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
@@ -3167,6 +3171,7 @@
 				B3E2AA542CB63A7B00E2636D /* PVBeetlePSX.framework in Frameworks */,
 				B35EEFD32C6C6D1A00EBD1A8 /* UIKit.framework in Frameworks */,
 				B35EEFD42C6C6D1A00EBD1A8 /* PVThemes in Frameworks */,
+				B392B3DE2CCC592600B1C760 /* PVFlycast.framework in Frameworks */,
 				B35EEFD52C6C6D1A00EBD1A8 /* Reachability in Frameworks */,
 				B35EEFD62C6C6D1A00EBD1A8 /* SteamController in Frameworks */,
 				B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */,
@@ -3540,6 +3545,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B392B3DD2CCC592600B1C760 /* PVFlycast.framework */,
 				B39343952CC5B202008AA673 /* PVDolphin.framework */,
 				B39342102CC5771B008AA673 /* MoltenVK.xcframework */,
 				B31553612CC2FD5500C472CA /* PVPPSSPP.framework */,
