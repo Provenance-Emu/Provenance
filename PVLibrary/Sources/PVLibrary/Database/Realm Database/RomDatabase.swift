@@ -271,38 +271,55 @@ public final class RomDatabase {
         return _artFileNameToMD5Cache
     }
 
-    public class func initDefaultDatabase() throws {
+    @MainActor
+    public class func initDefaultDatabase() async throws {
         if !databaseInitialized {
+            ILOG("Setting default Realm configuration")
             RealmConfiguration.setDefaultRealmConfig()
-            try _sharedInstance = RomDatabase()
 
+            ILOG("Creating RomDatabase instance")
+            _sharedInstance = try RomDatabase()
+
+            ILOG("Checking for existing local libraries")
             let existingLocalLibraries = _sharedInstance.realm.objects(PVLibrary.self).filter("isLocal == YES")
 
             if !existingLocalLibraries.isEmpty, let first = existingLocalLibraries.first {
-                VLOG("Existing PVLibrary(s) found.")
+                ILOG("Existing PVLibrary found")
                 _sharedInstance.libraryRef = ThreadSafeReference(to: first)
             } else {
-                VLOG("No local library, need to create")
-                createInitialLocalLibrary()
+                ILOG("No local library found, creating initial local library")
+                try await createInitialLocalLibrary()
             }
 
+            ILOG("Database initialization completed")
             databaseInitialized = true
+        } else {
+            ILOG("Database already initialized")
         }
     }
 
-    private static func createInitialLocalLibrary() {
-        // This is all pretty much place holder as I scope out the idea of
-        // local and remote libraries
+    private static func createInitialLocalLibrary() async throws {
+        ILOG("Creating initial local library")
         let newLibrary = PVLibrary()
         newLibrary.bonjourName = ""
         newLibrary.domainname = "localhost"
         newLibrary.name = "Default Library"
         newLibrary.ipaddress = "127.0.0.1"
+
+        ILOG("Checking for existing games")
         if let existingGames = _sharedInstance?.realm.objects(PVGame.self).filter("libraries.@count == 0") {
             newLibrary.games.append(objectsIn: existingGames)
         }
-        try! _sharedInstance?.add(newLibrary)
-        _sharedInstance.libraryRef = ThreadSafeReference(to: newLibrary)
+
+        ILOG("Adding new library to database")
+        do {
+            try await _sharedInstance?.addAsync(newLibrary)
+            _sharedInstance.libraryRef = ThreadSafeReference(to: newLibrary)
+            ILOG("Initial local library created successfully")
+        } catch {
+            ELOG("Error creating initial local library: \(error.localizedDescription)")
+            throw error
+        }
     }
 
     // Primary local library
@@ -462,11 +479,28 @@ public extension RomDatabase {
             realm.writeAsync(block)
         }
     }
-
+    
     @objc
     func add(_ object: Object, update: Bool = false) throws {
         try writeTransaction {
             realm.add(object, update: update ? .all : .error)
+        }
+    }
+
+    @objc
+    func addAsync(_ object: Object, update: Bool = false) async throws {
+        ILOG("Adding object to database")
+        try await withCheckedThrowingContinuation { continuation in
+            do {
+                try writeTransaction {
+                    realm.add(object, update: update ? .all : .error)
+                }
+                ILOG("Object added successfully")
+                continuation.resume()
+            } catch {
+                ELOG("Error adding object to database: \(error.localizedDescription)")
+                continuation.resume(throwing: error)
+            }
         }
     }
 

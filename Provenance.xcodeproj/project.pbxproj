@@ -187,8 +187,6 @@
 		939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93A728632AAF073B0052B279 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93A728622AAF073B0052B279 /* PVLogging */; };
 		93A728642AAF073B0052B279 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 93A728622AAF073B0052B279 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		93AC9F562A7F757C00484B9E /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */; };
-		93AC9F572A7F75E300484B9E /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93CB27D2297CE664006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; };
 		93CB27D3297CE666006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93DB7D312A750967005F8B26 /* libswscale.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93DB7D2C2A750966005F8B26 /* libswscale.framework */; platformFilter = ios; };
@@ -274,7 +272,6 @@
 		B318E2A12CAB5A2600D0E599 /* PVProSystem-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B318E29F2CAB5A2600D0E599 /* PVProSystem-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B318E2A32CAB5A4B00D0E599 /* PVCoreMednafen in Frameworks */ = {isa = PBXBuildFile; productRef = B318E2A22CAB5A4B00D0E599 /* PVCoreMednafen */; };
 		B32111A52CBC428700BE8D6C /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B32111AB2CBC42A200BE8D6C /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, macos, xros, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B32111B12CBC42B500BE8D6C /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B323B0092BF46D2800CEA3CF /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B323B0082BF46D2800CEA3CF /* PVLibrary */; };
 		B323B00E2BF46DB900CEA3CF /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B323B00D2BF46DB900CEA3CF /* PVSupport */; };
@@ -314,7 +311,6 @@
 		B32987D52B661A7C00728996 /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; };
 		B32987D72B661C7A00728996 /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32987D62B661C7A00728996 /* TVUIKit.framework */; platformFilters = (tvos, ); };
 		B32D45BD2CB730AE006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45BC2CB730AE006B76C2 /* PVGambatte */; };
-		B32D45BF2CB730EC006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45BE2CB730EC006B76C2 /* PVGambatte */; };
 		B32D45C12CB730FB006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45C02CB730FB006B76C2 /* PVGambatte */; };
 		B32D45C32CB73101006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45C22CB73101006B76C2 /* PVGambatte */; };
 		B32D45C52CB73106006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45C42CB73106006B76C2 /* PVGambatte */; };
@@ -772,15 +768,28 @@
 		B36A8B1A2CCD10C0002357DD /* AppBootupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8B132CCD10C0002357DD /* AppBootupState.swift */; };
 		B36A8B1B2CCD10C0002357DD /* AppBootupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8B132CCD10C0002357DD /* AppBootupState.swift */; };
 		B36A8B1C2CCD10C0002357DD /* AppBootupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8B132CCD10C0002357DD /* AppBootupState.swift */; };
-		B36A8C4B2CCD168D002357DD /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */; };
-		B36A8C4C2CCD168D002357DD /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */; };
-		B36A8C4D2CCD168D002357DD /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */; };
-		B36A8C4E2CCD168D002357DD /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */; };
-		B36A8C4F2CCD168D002357DD /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */; };
-		B36A8C502CCD168D002357DD /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */; };
-		B36A8C512CCD168D002357DD /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */; };
-		B36A8C522CCD168D002357DD /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */; };
-		B36A8C532CCD168D002357DD /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */; };
+		B36A8C4B2CCD168D002357DD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* AppState.swift */; };
+		B36A8C4C2CCD168D002357DD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* AppState.swift */; };
+		B36A8C4D2CCD168D002357DD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* AppState.swift */; };
+		B36A8C4E2CCD168D002357DD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* AppState.swift */; };
+		B36A8C4F2CCD168D002357DD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* AppState.swift */; };
+		B36A8C502CCD168D002357DD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* AppState.swift */; };
+		B36A8C512CCD168D002357DD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* AppState.swift */; };
+		B36A8C522CCD168D002357DD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* AppState.swift */; };
+		B36A8C532CCD168D002357DD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8C4A2CCD168D002357DD /* AppState.swift */; };
+		B36A8D442CCD5480002357DD /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D432CCD5480002357DD /* Defaults */; };
+		B36A8D462CCD548E002357DD /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D452CCD548E002357DD /* MBProgressHUD */; };
+		B36A8D4A2CCD54C7002357DD /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D492CCD54C7002357DD /* PVUI */; };
+		B36A8D4C2CCD54CE002357DD /* PVThemes in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D4B2CCD54CE002357DD /* PVThemes */; };
+		B36A8D4E2CCD54E0002357DD /* PVWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D4D2CCD54E0002357DD /* PVWebServer */; };
+		B36A8D502CCD5518002357DD /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D4F2CCD5518002357DD /* PVJIT */; };
+		B36A8D572CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8D552CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift */; };
+		B36A8D582CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8D552CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift */; };
+		B36A8D592CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8D552CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift */; };
+		B36A8D5A2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8D552CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift */; };
+		B36A8D5B2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8D552CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift */; };
+		B36A8D5D2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8D552CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift */; };
+		B36A8D5E2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A8D552CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift */; };
 		B36B852F29599A6000FDEA29 /* PVGearcoleco.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; };
 		B36B853029599A6000FDEA29 /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36B853529599A9600FDEA29 /* PVOpera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3231BEE28966661003CC116 /* PVOpera.framework */; };
@@ -929,7 +938,6 @@
 		B39CE2882C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B39CE2872C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic */; };
 		B39CE2892C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B39CE2872C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B3A186662CBCA49100BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186672CBCA4C000BB1FFE /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186682CBCA4C500BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186712CBCA50B00BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -939,8 +947,6 @@
 		B3A186822CBCBA8100BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A186802CBCBA8100BB1FFE /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A186852CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A186842CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework */; };
 		B3A186862CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A186842CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3A186882CBCBAE200BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A186872CBCBAE200BB1FFE /* PVMupen64PlusBridge.framework */; };
-		B3A186892CBCBAE200BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A186872CBCBAE200BB1FFE /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A1868B2CBCBAF900BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A1868A2CBCBAF900BB1FFE /* PVMupen64PlusBridge.framework */; };
 		B3A1868C2CBCBAF900BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A1868A2CBCBAF900BB1FFE /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A1868E2CBCBB1B00BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A1868D2CBCBB1B00BB1FFE /* PVMupen64PlusBridge.framework */; };
@@ -1035,8 +1041,6 @@
 		B3D1C1322CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3D1C1342CB70D6000F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1332CB70D6000F1F46B /* PVCoremGBA-Dynamic */; };
 		B3D1C1352CB70D6000F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1332CB70D6000F1F46B /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B3D1C1372CB70D6900F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1362CB70D6900F1F46B /* PVCoremGBA-Dynamic */; };
-		B3D1C1382CB70D6900F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1362CB70D6900F1F46B /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3D1C13A2CB70D7000F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1392CB70D7000F1F46B /* PVCoremGBA-Dynamic */; };
 		B3D1C13B2CB70D7000F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1392CB70D7000F1F46B /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3D5E2AE218EC1AE0015C690 /* RealmBindObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AA218EC1AB0015C690 /* RealmBindObserver.swift */; };
@@ -1155,7 +1159,6 @@
 		B3F7E3B7297736BE00362B92 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		B3F7E3B8297736BE00362B92 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDA276B8B2E0031AECC /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3F7E3BB297736BE00362B92 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
-		B3F7E3BC297736BE00362B92 /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B3F7E29F297736BE00362B92 /* AltKit */; };
 		B3F7E3BE297736BE00362B92 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B3F7E2A3297736BE00362B92 /* Introspect */; };
 		B3F7E3C5297736BE00362B92 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		B3F7E3C6297736BE00362B92 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
@@ -1178,7 +1181,6 @@
 		B3F7E3E2297736BE00362B92 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
 		B3F7E3E3297736BE00362B92 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
 		B3F7E3E5297736BE00362B92 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
-		B3F7E41C297736BE00362B92 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3F7E43C297736C200362B92 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
 		B3F7E43E297736C200362B92 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
 		B3F7E440297736C200362B92 /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
@@ -1386,8 +1388,6 @@
 		B3FC97282CB8B69200C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3FC97262CB8B69100C6DB31 /* PVVisualBoyAdvance-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3FC972A2CB8B6AD00C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC97292CB8B6AD00C6DB31 /* PVVisualBoyAdvance-Dynamic */; };
 		B3FC972B2CB8B6AE00C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3FC97292CB8B6AD00C6DB31 /* PVVisualBoyAdvance-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B3FC972D2CB8B6B300C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC972C2CB8B6B300C6DB31 /* PVVisualBoyAdvance-Dynamic */; };
-		B3FC972E2CB8B6B300C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3FC972C2CB8B6B300C6DB31 /* PVVisualBoyAdvance-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3FC97302CB8B6BA00C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC972F2CB8B6BA00C6DB31 /* PVVisualBoyAdvance-Dynamic */; };
 		B3FC97312CB8B6BA00C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3FC972F2CB8B6BA00C6DB31 /* PVVisualBoyAdvance-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3FC97332CB8B6BF00C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC97322CB8B6BF00C6DB31 /* PVVisualBoyAdvance-Dynamic */; };
@@ -1470,13 +1470,6 @@
 			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
 			remoteInfo = TopShelf;
 		};
-		B32111AC2CBC42A200BE8D6C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B355E0102920AA9700E4C858;
-			remoteInfo = SpotlightImportExtension;
-		};
 		B32111B22CBC42B500BE8D6C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1547,13 +1540,6 @@
 			remoteGlobalIDString = B355E0102920AA9700E4C858;
 			remoteInfo = SpotlightImportExtension;
 		};
-		B3A186642CBCA48200BB1FFE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
-			remoteInfo = TopShelf;
-		};
 		B3A186692CBCA4DE00BB1FFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1595,13 +1581,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
-		};
-		B3F7E29B297736BE00362B92 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E21D6A203211BE009939D3;
-			remoteInfo = Spotlight;
 		};
 		B3F7E424297736C200362B92 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1999,33 +1978,6 @@
 			files = (
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3F7E3E7297736BE00362B92 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				93AC9F572A7F75E300484B9E /* libMoltenVK.dylib in Embed Frameworks */,
-				B3FC972E2CB8B6B300C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
-				B3D1C1382CB70D6900F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */,
-				B3A186892CBCBAE200BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3F7E41B297736BE00362B92 /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				B3A186662CBCA49100BB1FFE /* TopShelf.appex in Embed Foundation Extensions */,
-				B32111AB2CBC42A200BE8D6C /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
-				B3F7E41C297736BE00362B92 /* Spotlight.appex in Embed Foundation Extensions */,
-			);
-			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3F7E574297736C200362B92 /* Embed Frameworks */ = {
@@ -2481,7 +2433,9 @@
 		B36703582896314200F75595 /* Scale4x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Scale4x.fsh; sourceTree = "<group>"; };
 		B36703592896314200F75595 /* OmniScaleLegacy.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = OmniScaleLegacy.fsh; sourceTree = "<group>"; };
 		B36A8B132CCD10C0002357DD /* AppBootupState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBootupState.swift; sourceTree = "<group>"; };
-		B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvenanceApp.swift; sourceTree = "<group>"; };
+		B36A8C4A2CCD168D002357DD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		B36A8D422CCD53DB002357DD /* Provenance-Lite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-Lite-Info.plist"; sourceTree = "<group>"; };
+		B36A8D552CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+AppRating+NOOP.swift"; sourceTree = "<group>"; };
 		B36B84D429598F6600FDEA29 /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36B84D529598F6600FDEA29 /* PVSnesticle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSnesticle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3374,28 +3328,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93AC9F562A7F757C00484B9E /* libMoltenVK.dylib in Frameworks */,
 				B3F7E378297736BE00362B92 /* CoreTelephony.framework in Frameworks */,
 				B3F7E37A297736BE00362B92 /* Photos.framework in Frameworks */,
 				B3F7E37D297736BE00362B92 /* GameController.framework in Frameworks */,
 				B3F7E37E297736BE00362B92 /* libxml2.dylib in Frameworks */,
 				B3F7E37F297736BE00362B92 /* MetalKit.framework in Frameworks */,
+				B36A8D502CCD5518002357DD /* PVJIT in Frameworks */,
 				B3F7E381297736BE00362B92 /* CoreServices.framework in Frameworks */,
 				B3F7E383297736BE00362B92 /* libz.dylib in Frameworks */,
 				B3F7E384297736BE00362B92 /* libstdc++.dylib in Frameworks */,
-				B3A186882CBCBAE200BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */,
 				B3F7E388297736BE00362B92 /* libc++.dylib in Frameworks */,
-				B3D1C1372CB70D6900F1F46B /* PVCoremGBA-Dynamic in Frameworks */,
 				B3F7E38B297736BE00362B92 /* libsqlite3.dylib in Frameworks */,
 				B3F7E38E297736BE00362B92 /* AVFoundation.framework in Frameworks */,
 				B323B00E2BF46DB900CEA3CF /* PVSupport in Frameworks */,
+				B36A8D4C2CCD54CE002357DD /* PVThemes in Frameworks */,
 				B3F7E393297736BE00362B92 /* CFNetwork.framework in Frameworks */,
+				B36A8D4A2CCD54C7002357DD /* PVUI in Frameworks */,
 				B3F7E399297736BE00362B92 /* Security.framework in Frameworks */,
 				B3F7E39F297736BE00362B92 /* SystemConfiguration.framework in Frameworks */,
 				B3F7E3A3297736BE00362B92 /* CoreData.framework in Frameworks */,
+				B36A8D462CCD548E002357DD /* MBProgressHUD in Frameworks */,
+				B36A8D4E2CCD54E0002357DD /* PVWebServer in Frameworks */,
 				B3F7E3A8297736BE00362B92 /* AudioToolbox.framework in Frameworks */,
+				B36A8D442CCD5480002357DD /* Defaults in Frameworks */,
 				B3F7E3AD297736BE00362B92 /* UIKit.framework in Frameworks */,
-				B3FC972D2CB8B6B300C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
 				B3F7E3B3297736BE00362B92 /* SteamController in Frameworks */,
 				B3F7E3B4297736BE00362B92 /* Metal.framework in Frameworks */,
 				B3F7E3B5297736BE00362B92 /* OpenGLES.framework in Frameworks */,
@@ -3404,10 +3360,8 @@
 				B3F7E3BB297736BE00362B92 /* CoreGraphics.framework in Frameworks */,
 				B323B0092BF46D2800CEA3CF /* PVLibrary in Frameworks */,
 				B3E88CBA2977AB5900C90E86 /* Reachability in Frameworks */,
-				B3F7E3BC297736BE00362B92 /* AltKit in Frameworks */,
 				B3F7E3BE297736BE00362B92 /* Introspect in Frameworks */,
 				B395958F2BF47033004C5AA9 /* RxDataSources in Frameworks */,
-				B32D45BF2CB730EC006B76C2 /* PVGambatte in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3958,22 +3912,23 @@
 				551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */,
 				551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */,
 				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
-				B36A8C4A2CCD168D002357DD /* ProvenanceApp.swift */,
+				B36A8C4A2CCD168D002357DD /* AppState.swift */,
 				B36A8B132CCD10C0002357DD /* AppBootupState.swift */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
-				B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */,
-				B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */,
-				B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */,
-				B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */,
 				B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */,
+				B38236202CC45FA700DCE080 /* PVAppDelegate+AppRating.swift */,
+				B36A8D552CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift */,
+				B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */,
+				B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */,
+				B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */,
+				B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */,
+				B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */,
 				934855C829708D5A00A5BBC6 /* main.swift */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
 				B3532C3A21A9AC71006CDA0F /* Services */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
 				1A1237F217CA279900CEC788 /* User Interface */,
 				B3DBF13A2094669A005935A8 /* Utilities */,
-				B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */,
-				B38236202CC45FA700DCE080 /* PVAppDelegate+AppRating.swift */,
 			);
 			path = Provenance;
 			sourceTree = "<group>";
@@ -3981,13 +3936,14 @@
 		1A3D409E17B2DCE4004DFFFC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				B35EF0062C6C6DBF00EBD1A8 /* Provenance-Lite (AppStore)-Info.plist */,
-				B394CDE22BDF0BCE006B63E8 /* Provenance-AppStore-Info.plist */,
-				B30623162CC81A1000B4F954 /* Provenance-UnderDevelopment-Info.plist */,
-				1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */,
-				1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */,
-				1A3D40A517B2DCE4004DFFFC /* Provenance-Prefix.pch */,
 				1F8D52471D91993000C29F90 /* licenses.html */,
+				1A3D40A517B2DCE4004DFFFC /* Provenance-Prefix.pch */,
+				B394CDE22BDF0BCE006B63E8 /* Provenance-AppStore-Info.plist */,
+				1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */,
+				B35EF0062C6C6DBF00EBD1A8 /* Provenance-Lite (AppStore)-Info.plist */,
+				B36A8D422CCD53DB002357DD /* Provenance-Lite-Info.plist */,
+				B30623162CC81A1000B4F954 /* Provenance-UnderDevelopment-Info.plist */,
+				1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -5031,8 +4987,6 @@
 			buildConfigurationList = B3F7E41D297736BE00362B92 /* Build configuration list for PBXNativeTarget "Provenance-Lite" */;
 			buildPhases = (
 				B3F7E2A5297736BE00362B92 /* Sources */,
-				B3F7E3E7297736BE00362B92 /* Embed Frameworks */,
-				B3F7E41B297736BE00362B92 /* Embed Foundation Extensions */,
 				B3F7E373297736BE00362B92 /* Frameworks */,
 				B3F7E3C3297736BE00362B92 /* Resources */,
 				B3F7E3E6297736BE00362B92 /* Script: Set Build Number */,
@@ -5040,23 +4994,22 @@
 			buildRules = (
 			);
 			dependencies = (
-				B3A186652CBCA48200BB1FFE /* PBXTargetDependency */,
 				B3F7E296297736BE00362B92 /* PBXTargetDependency */,
-				B3F7E29A297736BE00362B92 /* PBXTargetDependency */,
-				B32111AD2CBC42A200BE8D6C /* PBXTargetDependency */,
 			);
 			name = "Provenance-Lite";
 			packageProductDependencies = (
-				B3F7E29F297736BE00362B92 /* AltKit */,
 				B3F7E2A1297736BE00362B92 /* SteamController */,
 				B3F7E2A3297736BE00362B92 /* Introspect */,
 				B3E88CB92977AB5900C90E86 /* Reachability */,
 				B323B0082BF46D2800CEA3CF /* PVLibrary */,
 				B323B00D2BF46DB900CEA3CF /* PVSupport */,
 				B395958E2BF47033004C5AA9 /* RxDataSources */,
-				B3D1C1362CB70D6900F1F46B /* PVCoremGBA-Dynamic */,
-				B32D45BE2CB730EC006B76C2 /* PVGambatte */,
-				B3FC972C2CB8B6B300C6DB31 /* PVVisualBoyAdvance-Dynamic */,
+				B36A8D432CCD5480002357DD /* Defaults */,
+				B36A8D452CCD548E002357DD /* MBProgressHUD */,
+				B36A8D492CCD54C7002357DD /* PVUI */,
+				B36A8D4B2CCD54CE002357DD /* PVThemes */,
+				B36A8D4D2CCD54E0002357DD /* PVWebServer */,
+				B36A8D4F2CCD5518002357DD /* PVJIT */,
 			);
 			productName = Provenance;
 			productReference = B3F7E421297736BE00362B92 /* Provenance-Lite.app */;
@@ -6292,10 +6245,11 @@
 				B300DED5295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */,
 				B3427BF4287EA0CF0054C1B5 /* crt_filter_ps.metal in Sources */,
 				B3D5E2B0218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
-				B36A8C4B2CCD168D002357DD /* ProvenanceApp.swift in Sources */,
+				B36A8C4B2CCD168D002357DD /* AppState.swift in Sources */,
 				B3A4FB64278FFA5100A65248 /* PublishedPipeline.swift in Sources */,
 				B3D5E2AE218EC1AE0015C690 /* RealmBindObserver.swift in Sources */,
 				B3427C04287EA0CF0054C1B5 /* fullscreen_vs.metal in Sources */,
+				B36A8D572CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B32987D52B661A7C00728996 /* PVAppDelegate+NitoTV.swift in Sources */,
 				B3427BFA287EA0CF0054C1B5 /* simpleCRT.metal in Sources */,
 				B355DF8B292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */,
@@ -6311,7 +6265,7 @@
 				B300DED6295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */,
 				B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */,
 				B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */,
-				B36A8C532CCD168D002357DD /* ProvenanceApp.swift in Sources */,
+				B36A8C532CCD168D002357DD /* AppState.swift in Sources */,
 				B3427C01287EA0CF0054C1B5 /* blit_ps.metal in Sources */,
 				B3290499270D1F95002707AC /* PVAppDelegate+NitoTV.swift in Sources */,
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */,
@@ -6320,6 +6274,7 @@
 				B3D5E2AF218EC1AE0015C690 /* RealmBindObserver.swift in Sources */,
 				B3427BFF287EA0CF0054C1B5 /* MameShaders.metal in Sources */,
 				B355DF8F29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */,
+				B36A8D592CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B313CEB42C4E876E001D9E4D /* AppTheming.swift in Sources */,
 				B3427BFD287EA0CF0054C1B5 /* lineTron.metal in Sources */,
 				B36A8B1C2CCD10C0002357DD /* AppBootupState.swift in Sources */,
@@ -6349,6 +6304,7 @@
 				930498DD2A93073800BF257F /* PVAppDelegate+AppCenter.swift in Sources */,
 				930498E02A93073800BF257F /* RxTableViewRealmDataSource.swift in Sources */,
 				930498E42A93073800BF257F /* PVAppDelegate.swift in Sources */,
+				B36A8D582CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B313CEAF2C4E876E001D9E4D /* AppTheming.swift in Sources */,
 				930498E92A93073800BF257F /* PVAppDelegate+Helpers.swift in Sources */,
 				930498FA2A93073800BF257F /* PVAppDelegate+VolumeButton.swift in Sources */,
@@ -6366,7 +6322,7 @@
 				930499542A93073800BF257F /* Reactive+RxRealmDataSources.swift in Sources */,
 				930499582A93073800BF257F /* PublishedPipeline.swift in Sources */,
 				B33B4F532C1A5D31007371C5 /* PVAltKitService.swift in Sources */,
-				B36A8C4C2CCD168D002357DD /* ProvenanceApp.swift in Sources */,
+				B36A8C4C2CCD168D002357DD /* AppState.swift in Sources */,
 				9304996B2A93073800BF257F /* RealmBindObserver.swift in Sources */,
 				930499832A93073800BF257F /* fullscreen_vs.metal in Sources */,
 				9304998B2A93073800BF257F /* simpleCRT.metal in Sources */,
@@ -6418,10 +6374,11 @@
 				B341FD3E2BE61EC100718929 /* crt_filter_ps.metal in Sources */,
 				B341FD4A2BE61EC100718929 /* Reactive+RxRealmDataSources.swift in Sources */,
 				B36A8B162CCD10C0002357DD /* AppBootupState.swift in Sources */,
-				B36A8C522CCD168D002357DD /* ProvenanceApp.swift in Sources */,
+				B36A8C522CCD168D002357DD /* AppState.swift in Sources */,
 				B341FD4F2BE61EC100718929 /* PublishedPipeline.swift in Sources */,
 				B341FD622BE61EC100718929 /* RealmBindObserver.swift in Sources */,
 				B341FD7A2BE61EC100718929 /* fullscreen_vs.metal in Sources */,
+				B36A8D5A2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B341FD822BE61EC100718929 /* simpleCRT.metal in Sources */,
 				B341FD832BE61EC100718929 /* PVAppDelegate+Open.swift in Sources */,
 			);
@@ -6435,7 +6392,7 @@
 				B347B2552BC4CA98006A3B2D /* PVAppDelegate+JIT.swift in Sources */,
 				B347B2652BC4CA98006A3B2D /* Services.swift in Sources */,
 				B347B26B2BC4CA98006A3B2D /* PVAppDelegate+AppCenter.swift in Sources */,
-				B36A8C502CCD168D002357DD /* ProvenanceApp.swift in Sources */,
+				B36A8C502CCD168D002357DD /* AppState.swift in Sources */,
 				B347B2732BC4CA98006A3B2D /* blit_ps.metal in Sources */,
 				B347B27E2BC4CA98006A3B2D /* PVAppDelegate+NitoTV.swift in Sources */,
 				B347B2932BC4CA98006A3B2D /* PVAppDelegate.swift in Sources */,
@@ -6444,6 +6401,7 @@
 				B347B2BD2BC4CA98006A3B2D /* RealmBindObserver.swift in Sources */,
 				B347B2C12BC4CA98006A3B2D /* MameShaders.metal in Sources */,
 				B347B2CA2BC4CA98006A3B2D /* PVAppDelegate+Helpers.swift in Sources */,
+				B36A8D5B2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B313CEB52C4E876E001D9E4D /* AppTheming.swift in Sources */,
 				B347B2CF2BC4CA98006A3B2D /* lineTron.metal in Sources */,
 				B36A8B1A2CCD10C0002357DD /* AppBootupState.swift in Sources */,
@@ -6486,7 +6444,7 @@
 			files = (
 				B35EEF882C6C6D1A00EBD1A8 /* blit_ps.metal in Sources */,
 				B35EEF892C6C6D1A00EBD1A8 /* ulTron.metal in Sources */,
-				B36A8C4F2CCD168D002357DD /* ProvenanceApp.swift in Sources */,
+				B36A8C4F2CCD168D002357DD /* AppState.swift in Sources */,
 				B36A8B0D2CCCFC01002357DD /* main.swift in Sources */,
 				B35EEF8A2C6C6D1A00EBD1A8 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B38236272CC45FA700DCE080 /* PVAppDelegate+AppRating.swift in Sources */,
@@ -6519,7 +6477,7 @@
 			files = (
 				B394CC722BDEE53A006B63E8 /* blit_ps.metal in Sources */,
 				B394CC742BDEE53A006B63E8 /* ulTron.metal in Sources */,
-				B36A8C4D2CCD168D002357DD /* ProvenanceApp.swift in Sources */,
+				B36A8C4D2CCD168D002357DD /* AppState.swift in Sources */,
 				B36A8B0B2CCCFC01002357DD /* main.swift in Sources */,
 				B394CC762BDEE53A006B63E8 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B38236252CC45FA700DCE080 /* PVAppDelegate+AppRating.swift in Sources */,
@@ -6585,6 +6543,7 @@
 				B3F7E2B3297736BE00362B92 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3F7E2B6297736BE00362B92 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3F7E2BA297736BE00362B92 /* PVAppDelegate.swift in Sources */,
+				B36A8D5E2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B313CEB32C4E876E001D9E4D /* AppTheming.swift in Sources */,
 				B3F7E2BF297736BE00362B92 /* PVAppDelegate+Helpers.swift in Sources */,
 				B3F7E2D0297736BE00362B92 /* PVAppDelegate+VolumeButton.swift in Sources */,
@@ -6602,7 +6561,7 @@
 				B3F7E32B297736BE00362B92 /* Reactive+RxRealmDataSources.swift in Sources */,
 				B3F7E32F297736BE00362B92 /* PublishedPipeline.swift in Sources */,
 				B33B4F522C1A5D31007371C5 /* PVAltKitService.swift in Sources */,
-				B36A8C4E2CCD168D002357DD /* ProvenanceApp.swift in Sources */,
+				B36A8C4E2CCD168D002357DD /* AppState.swift in Sources */,
 				B3F7E343297736BE00362B92 /* RealmBindObserver.swift in Sources */,
 				B3F7E35B297736BE00362B92 /* fullscreen_vs.metal in Sources */,
 				B3F7E363297736BE00362B92 /* simpleCRT.metal in Sources */,
@@ -6619,6 +6578,7 @@
 				B3F7E440297736C200362B92 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3F7E443297736C200362B92 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3F7E447297736C200362B92 /* PVAppDelegate.swift in Sources */,
+				B36A8D5D2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B313CEAE2C4E876E001D9E4D /* AppTheming.swift in Sources */,
 				B3F7E44C297736C200362B92 /* PVAppDelegate+Helpers.swift in Sources */,
 				B3F7E45D297736C200362B92 /* PVAppDelegate+VolumeButton.swift in Sources */,
@@ -6636,7 +6596,7 @@
 				B3F7E4B8297736C200362B92 /* Reactive+RxRealmDataSources.swift in Sources */,
 				B3F7E4BC297736C200362B92 /* PublishedPipeline.swift in Sources */,
 				B33B4F4E2C1A5D31007371C5 /* PVAltKitService.swift in Sources */,
-				B36A8C512CCD168D002357DD /* ProvenanceApp.swift in Sources */,
+				B36A8C512CCD168D002357DD /* AppState.swift in Sources */,
 				B3F7E4D0297736C200362B92 /* RealmBindObserver.swift in Sources */,
 				B3F7E4E8297736C200362B92 /* fullscreen_vs.metal in Sources */,
 				B3F7E4F0297736C200362B92 /* simpleCRT.metal in Sources */,
@@ -6698,17 +6658,6 @@
 			);
 			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
 			targetProxy = B32111A62CBC428700BE8D6C /* PBXContainerItemProxy */;
-		};
-		B32111AD2CBC42A200BE8D6C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-				macos,
-				xros,
-			);
-			target = B355E0102920AA9700E4C858 /* SpotlightImportExtension */;
-			targetProxy = B32111AC2CBC42A200BE8D6C /* PBXContainerItemProxy */;
 		};
 		B32111B32CBC42B500BE8D6C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6788,14 +6737,6 @@
 			target = B355E0102920AA9700E4C858 /* SpotlightImportExtension */;
 			targetProxy = B396208F2C66E14C0094F6F0 /* PBXContainerItemProxy */;
 		};
-		B3A186652CBCA48200BB1FFE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				tvos,
-			);
-			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
-			targetProxy = B3A186642CBCA48200BB1FFE /* PBXContainerItemProxy */;
-		};
 		B3A1866A2CBCA4DE00BB1FFE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilters = (
@@ -6832,15 +6773,6 @@
 			isa = PBXTargetDependency;
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B3F7E297297736BE00362B92 /* PBXContainerItemProxy */;
-		};
-		B3F7E29A297736BE00362B92 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-			);
-			target = B3E21D6A203211BE009939D3 /* Spotlight */;
-			targetProxy = B3F7E29B297736BE00362B92 /* PBXContainerItemProxy */;
 		};
 		B3F7E423297736C200362B92 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -10737,7 +10669,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
+				INFOPLIST_FILE = "Provenance/Provenance-Lite-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -10808,7 +10740,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
+				INFOPLIST_FILE = "Provenance/Provenance-Lite-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -10880,7 +10812,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
+				INFOPLIST_FILE = "Provenance/Provenance-Lite-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -11878,14 +11810,6 @@
 				kind = branch;
 			};
 		};
-		B3F7E2A0297736BE00362B92 /* XCRemoteSwiftPackageReference "AltKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/rileytestut/AltKit";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.0.2;
-			};
-		};
 		B3F7E2A2297736BE00362B92 /* XCRemoteSwiftPackageReference "SteamController" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
@@ -12024,11 +11948,6 @@
 		};
 		B32D45BC2CB730AE006B76C2 /* PVGambatte */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = PVGambatte;
-		};
-		B32D45BE2CB730EC006B76C2 /* PVGambatte */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
 			productName = PVGambatte;
 		};
 		B32D45C02CB730FB006B76C2 /* PVGambatte */ = {
@@ -12362,6 +12281,36 @@
 			package = B35EEF792C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
+		B36A8D432CCD5480002357DD /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+		B36A8D452CCD548E002357DD /* MBProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */;
+			productName = MBProgressHUD;
+		};
+		B36A8D492CCD54C7002357DD /* PVUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */;
+			productName = PVUI;
+		};
+		B36A8D4B2CCD54CE002357DD /* PVThemes */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */;
+			productName = PVThemes;
+		};
+		B36A8D4D2CCD54E0002357DD /* PVWebServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B30585672C0C14ED00B91D7A /* XCLocalSwiftPackageReference "PVWebServer" */;
+			productName = PVWebServer;
+		};
+		B36A8D4F2CCD5518002357DD /* PVJIT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B305856A2C0C150100B91D7A /* XCLocalSwiftPackageReference "PVJIT" */;
+			productName = PVJIT;
+		};
 		B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
@@ -12630,11 +12579,6 @@
 			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
 			productName = "PVCoremGBA-Dynamic";
 		};
-		B3D1C1362CB70D6900F1F46B /* PVCoremGBA-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
-			productName = "PVCoremGBA-Dynamic";
-		};
 		B3D1C1392CB70D7000F1F46B /* PVCoremGBA-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
@@ -12716,11 +12660,6 @@
 			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
 			productName = PVLibrary;
 		};
-		B3F7E29F297736BE00362B92 /* AltKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F7E2A0297736BE00362B92 /* XCRemoteSwiftPackageReference "AltKit" */;
-			productName = AltKit;
-		};
 		B3F7E2A1297736BE00362B92 /* SteamController */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3F7E2A2297736BE00362B92 /* XCRemoteSwiftPackageReference "SteamController" */;
@@ -12764,10 +12703,6 @@
 			productName = "PVVisualBoyAdvance-Dynamic";
 		};
 		B3FC97292CB8B6AD00C6DB31 /* PVVisualBoyAdvance-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = "PVVisualBoyAdvance-Dynamic";
-		};
-		B3FC972C2CB8B6B300C6DB31 /* PVVisualBoyAdvance-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = "PVVisualBoyAdvance-Dynamic";
 		};

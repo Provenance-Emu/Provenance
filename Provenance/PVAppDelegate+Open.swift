@@ -56,7 +56,7 @@ extension Array<URLQueryItem> {
 
 extension PVAppDelegate {
     func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        #if !os(tvOS)
+        #if !os(tvOS) && canImport(SiriusRating)
         if isAppStore {
             appRatingSignifigantEvent()
         }

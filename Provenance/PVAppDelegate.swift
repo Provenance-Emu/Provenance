@@ -40,7 +40,10 @@ import SteamController
 final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     internal var window: UIWindow?
     var shortcutItemGame: PVGame?
-    let bootupState = AppBootupState()
+    var bootupState: AppBootupState {
+        appState.bootupStateManager
+    }
+    let appState = AppState()
     let disposeBag = DisposeBag()
 
     // Check if the app is running in App Store mode
@@ -60,6 +63,10 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     weak var rootNavigationVC: UIViewController?
     weak var gameLibraryViewController: PVGameLibraryViewController?
 
+    private var libraryUpdatesController: PVGameLibraryUpdatesController?
+    private var gameImporter: GameImporter?
+    private var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
+
     // Initialize the UI theme
     func _initUITheme() {
         ThemeManager.applySavedTheme()
@@ -75,7 +82,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         let window = setupWindow()
         self.window = window
 
-        if !Defaults[.useUIKit] {
+        if !appState.useUIKit{
             setupSwiftUIInterface(window: window,
                                   libraryUpdatesController: libraryUpdatesController,
                                   gameImporter: gameImporter,
@@ -182,11 +189,12 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         initializeAppComponents()
         configureApplication(application)
-        initializeDatabase(application: application, launchOptions: launchOptions)
         observeBootupState()
+        appState.startBootupSequence()
         return true
     }
 
+    @MainActor
     private func initializeAppComponents() {
         loadRocketSimConnect()
         _initLogging()
@@ -201,66 +209,77 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         application.isIdleTimerDisabled = Defaults[.disableAutoLock]
     }
 
-    private func initializeDatabase(application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        bootupState.transition(to: .initializingDatabase)
-        Task {
-            do {
-                try await RomDatabase.initDefaultDatabase()
-                bootupState.transition(to: .databaseInitialized)
-            } catch {
-                bootupState.transition(to: .error(error))
+    private var bootupObservationTask: Task<Void, any Error>?
+
+    @MainActor
+    private func observeBootupState() {
+        ILOG("Starting to observe bootup state")
+        Task { @MainActor in
+            for await _ in appState.$isInitialized.values where appState.isInitialized {
+                handleBootupStateChange(appState.bootupState)
+                break
             }
         }
     }
 
-    private func observeBootupState() {
-        bootupState.currentState
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] state in
-                switch state {
-                case .databaseInitialized:
-                    self?.initializeLibrary()
-                case .completed:
-                    self?.finalizeBootup()
-                case .error(let error):
-                    self?.handleBootupError(error)
-                default:
-                    break
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-
-    private func initializeLibrary() {
-        bootupState.transition(to: .initializingLibrary)
-        Task {
-            await GameImporter.shared.initSystems()
-            RomDatabase.reloadCache()
-            bootupState.transition(to: .completed)
+    @MainActor
+    private func handleBootupStateChange(_ state: AppBootupState.State) {
+        ILOG("Bootup state changed to: \(state.localizedDescription)")
+        switch state {
+        case .completed:
+            ILOG("Bootup completed, finalizing")
+            finalizeBootup()
+        case .error(let error):
+            ELOG("Bootup error occurred: \(error.localizedDescription)")
+            handleBootupError(error)
+        default:
+            break
         }
     }
 
+    @MainActor
     private func finalizeBootup() {
-        let gameImporter = GameImporter.shared
-        let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
-        let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
+        // Initialize UI and perform any final setup only if not already done
+        if gameLibraryViewController == nil {
+            let gameImporter = GameImporter.shared
+            let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
+            let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
 
-        _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
-        window!.makeKeyAndVisible()
+            appState.gameImporter = gameImporter
+            appState.gameLibrary = gameLibrary
+            appState.libraryUpdatesController = libraryUpdatesController
 
-        #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-        Task.detached {
-            await libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
+            _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
+            window?.makeKeyAndVisible()
         }
-        #endif
-
-        initializeAdditionalComponents()
-        scheduleDelayedTasks()
     }
 
+    @MainActor
     private func handleBootupError(_ error: Error) {
-        DispatchQueue.main.async { [weak self] in
-            self?.showDatabaseErrorAlert(error: error)
+        // Handle bootup errors, possibly show an alert to the user
+
+        showDatabaseErrorAlert(error: error)
+    }
+
+    private func updateUIBasedOnPreference(useUIKit: Bool) {
+        guard let window = self.window,
+              let libraryUpdatesController = self.libraryUpdatesController,
+              let gameImporter = self.gameImporter,
+              let gameLibrary = self.gameLibrary else {
+            ELOG("Unable to update UI: missing required components")
+            return
+        }
+
+        if useUIKit {
+            setupUIKitInterface(window: window,
+                                libraryUpdatesController: libraryUpdatesController,
+                                gameImporter: gameImporter,
+                                gameLibrary: gameLibrary)
+        } else {
+            setupSwiftUIInterface(window: window,
+                                  libraryUpdatesController: libraryUpdatesController,
+                                  gameImporter: gameImporter,
+                                  gameLibrary: gameLibrary)
         }
     }
 
@@ -452,6 +471,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
+        bootupObservationTask?.cancel()
         if let app = application as? PVApplication {
             stopCore(app)
         }

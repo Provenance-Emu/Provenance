@@ -7,6 +7,7 @@
 //
 
 import Foundation
+#if canImport(SiriusRating)
 import SiriusRating
 
 extension PVAppDelegate {
@@ -53,3 +54,15 @@ extension PVAppDelegate {
         SiriusRating.shared.showRequestPrompt()
     }
 }
+#else
+extension PVAppDelegate {
+    func _initAppRating() {
+    }
+    
+    func appRatingSignifigantEvent() {
+    }
+    
+    func testAppRatingPrompt() {
+    }
+}
+#endif
