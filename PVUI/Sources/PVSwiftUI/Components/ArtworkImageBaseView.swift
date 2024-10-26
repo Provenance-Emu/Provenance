@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-@available(iOS 14, tvOS 14, *)
 struct ArtworkImageBaseView: SwiftUI.View {
 
     var artwork: SwiftImage?
@@ -24,11 +23,11 @@ struct ArtworkImageBaseView: SwiftUI.View {
         if let artwork = artwork {
             SwiftUI.Image(uiImage: artwork)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .aspectRatio(boxartAspectRatio.rawValue, contentMode: .fit)
         } else {
             SwiftUI.Image(uiImage: UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: boxartAspectRatio.rawValue))
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .aspectRatio(boxartAspectRatio.rawValue, contentMode: .fit)
         }
     }
 }

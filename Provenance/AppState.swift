@@ -37,16 +37,22 @@ class AppState: ObservableObject {
 
     /// Optional properties for game-related functionalities
     var gameImporter: GameImporter?
+    /// Optional property for the game library
     var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
+    /// Optional property for the library updates controller
     var libraryUpdatesController: PVGameLibraryUpdatesController?
 
+    /// Whether the app has been initialized
     @Published var isInitialized = false
+
+
+    /// Task for observing changes to useUIKit
+    private var useUIKitObservationTask: Task<Void, Never>?
 
     /// Initializer
     init() {
         ILOG("AppState initialized")
-        
-        Task {
+        useUIKitObservationTask = Task { @MainActor in
             for await value in Defaults.updates(.useUIKit) {
                 useUIKit = value
             }

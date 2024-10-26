@@ -270,6 +270,7 @@ public final class PVGameLibraryUpdatesController {
 
     #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
     /// Spotlight indexing support
+    @MainActor
     public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async {
         enum ImportEvent {
             case finished(md5: String, modified: Bool)

@@ -957,8 +957,6 @@
 		B3A186952CBCBB3F00BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A186932CBCBB3F00BB1FFE /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A3CDAE2CCC873B00589F82 /* PVDuckStation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CDAD2CCC873B00589F82 /* PVDuckStation.framework */; platformFilter = maccatalyst; };
 		B3A3CDAF2CCC873B00589F82 /* PVDuckStation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CDAD2CCC873B00589F82 /* PVDuckStation.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3A3CDB12CCC875F00589F82 /* PVDuckStation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */; platformFilters = (ios, maccatalyst, ); };
-		B3A3CDB22CCC875F00589F82 /* PVDuckStation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A3D02F2CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		B3A3D0302CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		B3A3D0312CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
@@ -1918,7 +1916,6 @@
 				B33BD1BD2C6A6204001E933A /* PVCrabEmu-Dynamic in Embed Frameworks */,
 				B3E2A9FB2CB60F1200E2636D /* PVPPSSPP.framework in Embed Frameworks */,
 				B318E2A12CAB5A2600D0E599 /* PVProSystem-Dynamic in Embed Frameworks */,
-				B3A3CDB22CCC875F00589F82 /* PVDuckStation.framework in Embed Frameworks */,
 				B38FB4AD2CBEF6B0006786C6 /* libavutil.xcframework in Embed Frameworks */,
 				B33BD1C32C6A621A001E933A /* PVPokeMini-Dynamic in Embed Frameworks */,
 			);
@@ -3253,7 +3250,6 @@
 				B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */,
 				B394CD9A2BDEE53A006B63E8 /* AudioToolbox.framework in Frameworks */,
 				B3FC972A2CB8B6AD00C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
-				B3A3CDB12CCC875F00589F82 /* PVDuckStation.framework in Frameworks */,
 				B318E29D2CAB58A300D0E599 /* PVRSPCXD4.framework in Frameworks */,
 				B3E2AA482CB6381400E2636D /* PVEP128Emu.framework in Frameworks */,
 				B318E2772CAB4B3F00D0E599 /* PVGenesis.framework in Frameworks */,

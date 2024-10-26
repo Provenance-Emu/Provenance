@@ -9,7 +9,6 @@ import SwiftUI
 import PVRealm
 import RealmSwift
 
-@available(iOS 14, tvOS 14, *)
 struct GameItemViewCell: SwiftUI.View {
     
     @ObservedRealmObject var game: PVGame

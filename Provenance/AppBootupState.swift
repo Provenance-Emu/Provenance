@@ -64,6 +64,7 @@ class AppBootupState {
         }
     }
 
+    /// Whether the bootup process has completed
     var isBootupCompleted = false
 
     /// Function to transition to a new state
