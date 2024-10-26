@@ -51,6 +51,12 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] theme switching doesn't update everything
+- [ ] purple and rainbow themes not selectable
+- [ ] Themes page indicator not right
+- [ ] Box art is clipped in swift ui
+- [ ] add tap for bios to clipboard in swiftui on missing
+- [ ] Game Info in swift ui crashes on next game scroll
 - [ ] Fix button 9 repeat on Intellivision controls
 - [ ] Dark mode toggle doens't refresh all views if theme set to auto
 - [ ] Importer should overwrite or delete on duplicate imports
