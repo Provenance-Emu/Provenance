@@ -11,6 +11,7 @@ public enum PVGameBoxArtAspectRatio: CGFloat {
     case square = 1.0
     case wide = 1.45
     case tall = 0.72
+    case fiveBySix = 0.8333333333
     case tg16 = 0.8497494768
     case pce = 1.00176208
     case sgx = 1.12

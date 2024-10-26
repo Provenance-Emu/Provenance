@@ -77,12 +77,13 @@ public extension PVGame {
                 .WonderSwan,
                 .WonderSwanColor:
             return .tall
+        case .Lynx:
+            return .fiveBySix
         case
                 ._3DS,
                 .DS,
                 .GBA,
                 .GBC,
-                .Lynx,
                 .MegaDuck,
                 .Music,
                 .NGP,

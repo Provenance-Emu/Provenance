@@ -17,6 +17,66 @@ extension FloatingPoint {
 
 public extension UIColor {
     
+    /// Subtracts from the alphe of the current UIColor
+    /// Also takes a negative value or you can use `addSaturation()`
+    /// - Parameter newBrighness: From 0...1
+    /// - Returns: Color with adusted saturation
+    func subtractAlpha(_ adjustment: CGFloat) -> UIColor {
+        addAlpha(adjustment * -1)
+    }
+    
+    /// Adds to the alphe of the current UIColor
+    /// Also takes a negative value or you can use `subtractSaturation()`
+    /// - Parameter newBrighness: From 0...1
+    /// - Returns: Color with adusted saturation
+    func addAlpha(_ adjustment: CGFloat) -> UIColor {
+        var hue: CGFloat = 0
+        var saturation: CGFloat = 0
+        var brightness: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        // Get the current color components
+        if self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
+            // Create a new color with the adjusted saturation
+            // It is also range bound from 0 to 1
+            let newAlpha = (alpha + adjustment).clamped(to: 0...1)
+            return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: newAlpha)
+        }
+        
+        // If we couldn't get the color components, return the original color
+        return self
+    }
+    
+    /// Subtracts from the brightness of the current UIColor
+    /// Also takes a negative value or you can use `addSaturation()`
+    /// - Parameter newBrighness: From 0...1
+    /// - Returns: Color with adusted saturation
+    func subtractBrightness(_ adjustment: CGFloat) -> UIColor {
+        addBrightness(adjustment * -1)
+    }
+    
+    /// Adds to the alpha of the current UIColor
+    /// Also takes a negative value or you can use `subtractSaturation()`
+    /// - Parameter newBrighness: From 0...1
+    /// - Returns: Color with adusted saturation
+    func addBrightness(_ adjustment: CGFloat) -> UIColor {
+        var hue: CGFloat = 0
+        var saturation: CGFloat = 0
+        var brightness: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        // Get the current color components
+        if self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
+            // Create a new color with the adjusted saturation
+            // It is also range bound from 0 to 1
+            let newBrightness = (brightness + adjustment).clamped(to: 0...1)
+            return UIColor(hue: hue, saturation: saturation, brightness: newBrightness, alpha: alpha)
+        }
+        
+        // If we couldn't get the color components, return the original color
+        return self
+    }
+    
     /// Subtracts from the saturation of the current UIColor
     /// Also takes a negative value or you can use `addSaturation()`
     /// - Parameter newBrighness: From 0...1

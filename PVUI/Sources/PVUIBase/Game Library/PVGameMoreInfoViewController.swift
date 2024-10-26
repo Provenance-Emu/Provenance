@@ -223,6 +223,15 @@ public typealias PVGameMoreInfoViewControllerBase = NSViewController
 
 public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, GameLaunchingViewController, GameSharingViewController {
     @objc public var game: PVGame! {
+        willSet {
+            if newValue == game {
+                return
+            }
+            if let game = newValue {
+                let thawedGame = game.isFrozen ? game.thaw() : game
+                self.game = thawedGame
+            }
+        }
         didSet {
             assert(game != nil, "Set a nil game")
 

@@ -63,13 +63,6 @@ public final class PVSettingsViewController: QuickTableViewController {
         splitViewController?.title = "Settings"
         generateTableViewViewModels()
         tableView.reloadData()
-
-#if os(tvOS)
-        tableView.rowHeight = UITableView.automaticDimension
-        splitViewController?.view.backgroundColor = .black
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
-#endif
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -80,6 +73,20 @@ public final class PVSettingsViewController: QuickTableViewController {
         } catch {
             print("Unable to start notifier")
         }
+        
+#if os(tvOS)
+        tableView.rowHeight = UITableView.automaticDimension
+        splitViewController?.view.backgroundColor = .black
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
+#else
+        let palette = ThemeManager.shared.currentPalette
+        if palette.dark {
+            tableView.backgroundColor = palette.settingsCellBackground?.subtractBrightness(0.1)
+        } else {
+            tableView.backgroundColor = palette.settingsCellBackground?.addBrightness(0.1)
+        }
+#endif
     }
 
     public override func viewWillDisappear(_ animated: Bool) {

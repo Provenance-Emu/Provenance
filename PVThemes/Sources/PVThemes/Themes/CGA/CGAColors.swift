@@ -431,7 +431,7 @@ public struct CGAMagentaThemePalette: UXThemePalette, Codable, Sendable, Hashabl
     public var settingsHeaderText: UIColor? { .CGA.magenta }
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.magentaShadow }
+    public var settingsCellBackground: UIColor? { .CGA.magentaShadow.brightness(0.2) }
     ///         Text
     public var settingsCellText: UIColor? { .CGA.magenta }
 
@@ -492,7 +492,7 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     /// Settings
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.redShadow }
+    public var settingsCellBackground: UIColor? { .CGA.redShadow.brightness(0.2) }
     ///         Text
     public var settingsCellText: UIColor? { .CGA.red }
     ///     Header
@@ -572,7 +572,7 @@ public struct CGAYellowThemePalette: UXThemePalette, Codable, Sendable, Hashable
     public var settingsHeaderText: UIColor? { .CGA.yellow }
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.yellowShadow }
+    public var settingsCellBackground: UIColor? { .CGA.yellowShadow.brightness(0.2) }
     ///         Text
     public var settingsCellText: UIColor? { .CGA.yellow }
 

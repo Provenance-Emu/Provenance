@@ -118,7 +118,8 @@ extension GameContextMenu {
 
             let moreInfoCollectionVC = GameMoreInfoPageViewController()
             moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
-            rootDelegate.present(moreInfoCollectionVC, animated: true)
+            rootDelegate.show(moreInfoCollectionVC, sender: self)
+//            rootDelegate.present(moreInfoCollectionVC, animated: true)
         }
     }
 
