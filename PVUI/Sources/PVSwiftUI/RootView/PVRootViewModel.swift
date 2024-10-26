@@ -12,7 +12,6 @@ import SwiftUI
 #endif
 
 /// ViewModel for the Root view
-@available(iOS 14, tvOS 14, *)
 public class PVRootViewModel: ObservableObject {
 
     /// Whether to sort consoles in ascending order
