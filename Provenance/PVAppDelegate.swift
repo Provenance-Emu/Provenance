@@ -21,6 +21,7 @@ import PVUIBase
 import PVUIKit
 import PVSwiftUI
 import PVLogging
+import Combine
 
 // Conditionally import PVJIT and JITManager if available
 #if canImport(PVJIT)
@@ -405,53 +406,54 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         }
     }
 
+    private var cancellables = Set<AnyCancellable>()
     func _initLibraryNotificationHandlers() {
-        NotificationCenter.default.rx.notification(.PVReimportLibrary)
-            .flatMapLatest { _ in
-                Completable.create { observer in
+        NotificationCenter.default.publisher(for: .PVReimportLibrary)
+            .flatMap { _ in
+                Future<Void, Never> { promise in
                     RomDatabase.refresh()
                     self.gameLibraryViewController?.checkROMs(false)
-                    observer(.completed)
-                    return Disposables.create()
+                    promise(.success(()))
                 }
             }
-            .subscribe(onCompleted: {}).disposed(by: disposeBag)
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+            .store(in: &cancellables)
 
-        NotificationCenter.default.rx.notification(.PVRefreshLibrary)
-            .flatMapLatest { _ in
-                Completable.create { observer in
+        NotificationCenter.default.publisher(for: .PVRefreshLibrary)
+            .flatMap { _ in
+                Future<Void, Error> { promise in
                     do {
                         try RomDatabase.sharedInstance.deleteAllGames()
                         self.gameLibraryViewController?.checkROMs(false)
-                        observer(.completed)
+                        promise(.success(()))
                     } catch {
                         NSLog("Failed to refresh all objects. \(error.localizedDescription)")
-                        observer(.error(error))
+                        promise(.failure(error))
                     }
-                    return Disposables.create()
                 }
             }
-            .subscribe(onCompleted: {}).disposed(by: disposeBag)
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+            .store(in: &cancellables)
 
-        NotificationCenter.default.rx.notification(.PVResetLibrary)
-            .flatMapLatest { _ in
-                Completable.create { observer in
+        NotificationCenter.default.publisher(for: .PVResetLibrary)
+            .flatMap { _ in
+                Future<Void, Error> { promise in
                     do {
                         NSLog("PVAppDelegate: Completed ResetLibrary, Re-Importing")
                         try RomDatabase.sharedInstance.deleteAllData()
                         Task {
                             await GameImporter.shared.initSystems()
                             self.gameLibraryViewController?.checkROMs(false)
-                            observer(.completed)
+                            promise(.success(()))
                         }
                     } catch {
                         NSLog("Failed to delete all objects. \(error.localizedDescription)")
-                        observer(.error(error))
+                        promise(.failure(error))
                     }
-                    return Disposables.create()
                 }
             }
-            .subscribe(onCompleted: {}).disposed(by: disposeBag)
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+            .store(in: &cancellables)
     }
 }
 
