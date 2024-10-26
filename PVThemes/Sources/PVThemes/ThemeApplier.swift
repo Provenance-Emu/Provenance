@@ -54,7 +54,7 @@ public extension ThemeManager {
         configureActionSheets(palette)
         configureActivityIndicator(palette)
         configureBarButtonItems(palette)
-        configureCollectionViews(palette)
+//        configureCollectionViews(palette)
         configureInterfaceStyle(palette)
 //        configureNavigationBar(palette)
         configureSegmentedControl(palette)
@@ -63,7 +63,7 @@ public extension ThemeManager {
         configureStatusBar(palette)
         configureSwitches(palette)
         configureTabBar(palette)
-//        configureTableViews(palette)
+        configureTableViews(palette)
         configureTextInputs(palette)
         configureUIView(palette)
 

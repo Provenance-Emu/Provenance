@@ -374,6 +374,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     var currentThemeObservation: Any?
     var userInterfaceStyleObservation: Any?
     
+    @MainActor
     func _initThemeListener() {
         if #available(iOS 17.0, tvOS 17.0, *) {
             userInterfaceStyleObservation = withObservationTracking {

@@ -587,9 +587,9 @@ public struct CGAYellowThemePalette: UXThemePalette, Codable, Sendable, Hashable
     public var menuIconTint: UIColor { .CGA.yellow.brightness(1.0) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor { .CGA.yellow.brightness(0.7) }
+    public var menuHeaderBackground: UIColor { .CGA.yellow.brightness(0.5) }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .CGA.yellow.brightness(2.0) }
+    public var menuHeaderIconTint: UIColor { .CGA.yellowShadow.brightness(2.0) }
     ///     Section Header
     ///         Background
     public var menuSectionHeaderBackground: UIColor {  .CGA.yellowShadow.brightness(0.1) }
