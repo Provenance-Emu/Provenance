@@ -177,6 +177,15 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        initializeAppComponents()
+        configureApplication(application)
+        initializeDatabase(application: application, launchOptions: launchOptions)
+        initializeAdditionalComponents()
+        scheduleDelayedTasks()
+        return true
+    }
+
+    private func initializeAppComponents() {
         loadRocketSimConnect()
         _initLogging()
         _initAppCenter()
@@ -184,51 +193,67 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         _initICloud()
         _initUITheme()
         _initThemeListener()
+    }
 
+    private func configureApplication(_ application: UIApplication) {
         application.isIdleTimerDisabled = Defaults[.disableAutoLock]
+    }
 
+    private func initializeDatabase(application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         runDetachedTaskWithCompletion {
             try RomDatabase.initDefaultDatabase()
-        } completion: { result in
-            switch result {
-            case .success:
-                Task.detached { @MainActor in
-                    self._initLibraryNotificationHandlers()
-                    self._initGameImporter(application, launchOptions: launchOptions)
-                }
-            case .failure(let error):
-                Task { @MainActor in
-                    let appName: String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
-                    ELOG("Error: Database Error\n")
-                    let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""), message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
-                    ELOG(error.localizedDescription)
-                    alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
-                        fatalError(error.localizedDescription)
-                    }))
+        } completion: { [weak self] result in
+            self?.handleDatabaseInitializationResult(result, application: application, launchOptions: launchOptions)
+        }
+    }
 
-                    self.window?.rootViewController = UIViewController()
-                    self.window?.makeKeyAndVisible()
-                    self.window?.rootViewController?.present(alert, animated: true, completion: nil)
-                }
+    private func handleDatabaseInitializationResult(_ result: Result<Void, Error>, application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+        switch result {
+        case .success:
+            Task.detached { @MainActor [weak self] in
+                self?._initLibraryNotificationHandlers()
+                self?._initGameImporter(application, launchOptions: launchOptions)
+            }
+        case .failure(let error):
+            Task { @MainActor [weak self] in
+                self?.showDatabaseErrorAlert(error: error)
             }
         }
+    }
 
+    private func showDatabaseErrorAlert(error: Error) {
+        let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
+        ELOG("Error: Database Error\n")
+        let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""),
+                                      message: error.localizedDescription + "\nDelete and reinstall " + appName + ".",
+                                      preferredStyle: .alert)
+        ELOG(error.localizedDescription)
+        alert.addAction(UIAlertAction(title: "Exit", style: .destructive) { _ in
+            fatalError(error.localizedDescription)
+        })
+
+        window?.rootViewController = UIViewController()
+        window?.makeKeyAndVisible()
+        window?.rootViewController?.present(alert, animated: true, completion: nil)
+    }
+
+    private func initializeAdditionalComponents() {
         _initSteamControllers()
 
         #if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
         ApplicationMonitor.shared.start()
         #endif
+    }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
-            self.startOptionalWebDavServer()
+    private func scheduleDelayedTasks() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+            self?.startOptionalWebDavServer()
             #if !os(tvOS)
-            if self.isAppStore {
-                self._initAppRating()
+            if self?.isAppStore == true {
+                self?._initAppRating()
             }
             #endif
-        })
-
-        return true
+        }
     }
 
     func _initSteamControllers() {
