@@ -11,7 +11,7 @@ let __GCCUNIX__ = "1"
 let __LIBRETRO__ = "0"
 
 let package = Package(
-    name: "PVVisualBoyAdvance",
+    name: "PVCoreVisualBoyAdvance",
     platforms: [
         .iOS(.v17),
         .tvOS(.v17),
