@@ -43,12 +43,12 @@
 #import "core/host_display.h"
 #include <memory>
 
-@class PVDuckStationCore;
+@class PVDuckStationCoreBridge;
 
 namespace OpenEmu {
     class PVOpenGLHostDisplay final: public HostDisplay {
     public:
-        PVOpenGLHostDisplay(PVDuckStationCore *core);
+        PVOpenGLHostDisplay(PVDuckStationCoreBridge *core);
         virtual ~PVOpenGLHostDisplay();
         RenderAPI GetRenderAPI() const override;
         void* GetDevice() const override;
@@ -137,7 +137,7 @@ namespace OpenEmu {
         u32 m_display_pixels_texture_pbo_map_size = 0;
 
     private:
-        PVDuckStationCore *_current;
+        PVDuckStationCoreBridge *_current;
     };
 };
 

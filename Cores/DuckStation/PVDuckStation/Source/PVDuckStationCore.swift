@@ -52,7 +52,7 @@ extension PVDuckStationCore: CoreOptional {
 
 extension PVDuckStationCore: DiscSwappable {
     public var numberOfDiscs: UInt {
-        return maxDiscs
+        return _bridge.maxDiscs
     }
 
     public var currentGameSupportsMultipleDiscs: Bool {
@@ -63,9 +63,9 @@ extension PVDuckStationCore: DiscSwappable {
         setPauseEmulation(false)
 
         let index = number - 1
-        setMedia(true, forDisc: 0)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.setMedia(false, forDisc: index)
+        _bridge.setMedia(true, forDisc: 0)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
+            _bridge.setMedia(false, forDisc: index)
         }
     }
 }
@@ -73,7 +73,7 @@ extension PVDuckStationCore: DiscSwappable {
 extension PVDuckStationCore: GameWithCheat {
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
         do {
-            try self.setCheat(code, setType: type, setEnabled: enabled)
+            try self._bridge.setCheat(code, setType: type, setEnabled: enabled)
             return true
         } catch let error {
             ELOG("Error setCheat \(error)")

@@ -27,6 +27,9 @@
 #import "PVDuckStationCoreBridge.h"
 #import <PVDuckStation/PVDuckStation-Swift.h>
 @import PVCoreBridge;
+@import PVCoreAudio;
+@import PVAudio;
+#import <PVLogging/PVLoggingObjC.h>
 //#import <PVLibrary/PVLibrary.h>
 
 //#import <PVSupport/OERingBuffer.h>
@@ -86,7 +89,7 @@ static void updateAnalogControllerButton(PVPSXButton button, int player, bool do
 static void updateDigitalControllerButton(PVPSXButton button, int player, bool down);
 static bool LoadCompatibilitySettings(NSURL* path);
 // We're keeping this: I think it'll be useful when OpenEmu supports Metal.
-static WindowInfo WindowInfoFromGameCore(PVDuckStationCore *core);
+static WindowInfo WindowInfoFromGameCore(PVDuckStationCoreBridge *core);
 
 os_log_t OE_CORE_LOG;
 
@@ -1787,8 +1790,8 @@ void OpenEmuAudioStream::FramesAvailable()
     const u32 num_frames = GetBufferedFramesRelaxed();
     ReadFrames(m_output_buffer.data(), num_frames);
     GET_CURRENT_OR_RETURN();
-    OERingBuffer* rb = [current ringBufferAtIndex:0];
-    [rb write:m_output_buffer.data() maxLength:num_frames * m_channels * sizeof(SampleType)];
+    id<RingBufferProtocol> rb = [current ringBufferAtIndex:0];
+    [rb write:m_output_buffer.data() size:num_frames * m_channels * sizeof(SampleType)];
 }
 
 std::unique_ptr<OpenEmuAudioStream> OpenEmuAudioStream::CreateOpenEmuStream(u32 sample_rate, u32 channels, u32 buffer_ms)
@@ -1873,7 +1876,7 @@ static void updateAnalogAxis(PVPSXButton button, int player, CGFloat amount) {
     }
 }
 
-static WindowInfo WindowInfoFromGameCore(PVDuckStationCore *core)
+static WindowInfo WindowInfoFromGameCore(PVDuckStationCoreBridge *core)
 {
     WindowInfo wi = WindowInfo();
 //    wi.type = WindowInfo::Type::Android;

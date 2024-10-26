@@ -31,9 +31,9 @@
     }
 }
 
-@objc public extension PVDuckStationCore {
+@objc public extension PVDuckStationCoreBridge {
     @objc var gs: Int {
-        PVDuckStationCore.valueForOption(PVDuckStationCore.gsOption).asInt ?? 0
+        PVDuckStationCore.valueForOption(PVDuckStationOptions.gsOption).asInt ?? 0
     }
 
 //    func parseOptions() {

@@ -4,12 +4,12 @@
 @import PVCoreObjCBridge;
 
 @protocol ObjCBridgedCoreBridge;
-@protocol PVJaguarSystemResponderClient;
+@protocol PVPSXSystemResponderClient;
 typedef enum PVPSXButton: NSInteger PVPSXButton;
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern os_log_t OE_CORE_LOG;
+//extern os_log_t OE_CORE_LOG;
 
 //PVCORE_DIRECT_MEMBERS
 @interface PVDuckStationCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVPSXSystemResponderClient> {

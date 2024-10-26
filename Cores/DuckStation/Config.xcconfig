@@ -12,6 +12,8 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GL_SILENCE_DEPRECATION=1 SI_CONVERT_
 // WITH_CUBEB
 // WITH_RECOMPILER=1  IPHONEOS=1
 
+OTHER_CFLAGS = $(inherited) -Wno-module-import-in-extern-c
+
 // Arm 32bit
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=armv7] = $(inherited) cpu_recompiler_code_generator_x64.cpp cpu_recompiler_code_generator_aarch64.cpp *arch64.cpp *arch64.cc xxh_x86dispatch.c
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=armv7s] = $(inherited) cpu_recompiler_code_generator_x64.cpp cpu_recompiler_code_generator_aarch64.cpp  *arch64.cpp *arch64.cc*arch64.cpp *arch64.cc xxh_x86dispatch.c
