@@ -22,6 +22,7 @@ import PVUIKit
 import PVSwiftUI
 import PVLogging
 import Combine
+import Perception
 
 // Conditionally import PVJIT and JITManager if available
 #if canImport(PVJIT)
@@ -39,6 +40,7 @@ import SteamController
 final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     internal var window: UIWindow?
     var shortcutItemGame: PVGame?
+    let bootupState = AppBootupState()
     let disposeBag = DisposeBag()
 
     // Check if the app is running in App Store mode
@@ -181,8 +183,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         initializeAppComponents()
         configureApplication(application)
         initializeDatabase(application: application, launchOptions: launchOptions)
-        initializeAdditionalComponents()
-        scheduleDelayedTasks()
+        observeBootupState()
         return true
     }
 
@@ -201,41 +202,66 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     }
 
     private func initializeDatabase(application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        runDetachedTaskWithCompletion {
-            try RomDatabase.initDefaultDatabase()
-        } completion: { [weak self] result in
-            self?.handleDatabaseInitializationResult(result, application: application, launchOptions: launchOptions)
-        }
-    }
-
-    private func handleDatabaseInitializationResult(_ result: Result<Void, Error>, application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        switch result {
-        case .success:
-            Task.detached { @MainActor [weak self] in
-                self?._initLibraryNotificationHandlers()
-                self?._initGameImporter(application, launchOptions: launchOptions)
-            }
-        case .failure(let error):
-            Task { @MainActor [weak self] in
-                self?.showDatabaseErrorAlert(error: error)
+        bootupState.transition(to: .initializingDatabase)
+        Task {
+            do {
+                try await RomDatabase.initDefaultDatabase()
+                bootupState.transition(to: .databaseInitialized)
+            } catch {
+                bootupState.transition(to: .error(error))
             }
         }
     }
 
-    private func showDatabaseErrorAlert(error: Error) {
-        let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
-        ELOG("Error: Database Error\n")
-        let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""),
-                                      message: error.localizedDescription + "\nDelete and reinstall " + appName + ".",
-                                      preferredStyle: .alert)
-        ELOG(error.localizedDescription)
-        alert.addAction(UIAlertAction(title: "Exit", style: .destructive) { _ in
-            fatalError(error.localizedDescription)
-        })
+    private func observeBootupState() {
+        bootupState.currentState
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] state in
+                switch state {
+                case .databaseInitialized:
+                    self?.initializeLibrary()
+                case .completed:
+                    self?.finalizeBootup()
+                case .error(let error):
+                    self?.handleBootupError(error)
+                default:
+                    break
+                }
+            })
+            .disposed(by: disposeBag)
+    }
 
-        window?.rootViewController = UIViewController()
-        window?.makeKeyAndVisible()
-        window?.rootViewController?.present(alert, animated: true, completion: nil)
+    private func initializeLibrary() {
+        bootupState.transition(to: .initializingLibrary)
+        Task {
+            await GameImporter.shared.initSystems()
+            RomDatabase.reloadCache()
+            bootupState.transition(to: .completed)
+        }
+    }
+
+    private func finalizeBootup() {
+        let gameImporter = GameImporter.shared
+        let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
+        let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
+
+        _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
+        window!.makeKeyAndVisible()
+
+        #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+        Task.detached {
+            await libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
+        }
+        #endif
+
+        initializeAdditionalComponents()
+        scheduleDelayedTasks()
+    }
+
+    private func handleBootupError(_ error: Error) {
+        DispatchQueue.main.async { [weak self] in
+            self?.showDatabaseErrorAlert(error: error)
+        }
     }
 
     private func initializeAdditionalComponents() {
@@ -318,7 +344,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     }
 
     func _initThemeListener() {
-        if #available(iOS 17.0, *) {
+        if #available(iOS 17.0, tvOS 17.0, *) {
             withObservationTracking {
                 _ = UITraitCollection.current.userInterfaceStyle
             } onChange: { [unowned self] in
@@ -332,6 +358,31 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             }
 
             withObservationTracking {
+                _ = ThemeManager.shared.currentPalette
+            } onChange: { [unowned self] in
+                ILOG("changed: \(ThemeManager.shared.currentPalette.name)")
+                Task.detached { @MainActor in
+                    self._initUITheme()
+                    if self.isAppStore {
+                        self.appRatingSignifigantEvent()
+                    }
+                }
+            }
+        }
+        else {
+            withPerceptionTracking {
+                _ = UITraitCollection.current.userInterfaceStyle
+            } onChange: { [unowned self] in
+                ILOG("changed: \(UITraitCollection.current.userInterfaceStyle)")
+                Task.detached { @MainActor in
+                    self._initUITheme()
+                    if self.isAppStore {
+                        self.appRatingSignifigantEvent()
+                    }
+                }
+            }
+
+            withPerceptionTracking {
                 _ = ThemeManager.shared.currentPalette
             } onChange: { [unowned self] in
                 ILOG("changed: \(ThemeManager.shared.currentPalette.name)")
@@ -427,7 +478,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                         self.gameLibraryViewController?.checkROMs(false)
                         promise(.success(()))
                     } catch {
-                        NSLog("Failed to refresh all objects. \(error.localizedDescription)")
+                        ELOG("Failed to refresh all objects. \(error.localizedDescription)")
                         promise(.failure(error))
                     }
                 }
@@ -439,7 +490,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             .flatMap { _ in
                 Future<Void, Error> { promise in
                     do {
-                        NSLog("PVAppDelegate: Completed ResetLibrary, Re-Importing")
+                        ILOG("PVAppDelegate: Completed ResetLibrary, Re-Importing")
                         try RomDatabase.sharedInstance.deleteAllData()
                         Task {
                             await GameImporter.shared.initSystems()
@@ -447,13 +498,50 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                             promise(.success(()))
                         }
                     } catch {
-                        NSLog("Failed to delete all objects. \(error.localizedDescription)")
+                        ELOG("Failed to delete all objects. \(error.localizedDescription)")
                         promise(.failure(error))
                     }
                 }
             }
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
             .store(in: &cancellables)
+    }
+
+    func showDatabaseErrorAlert(error: Error) {
+        let alertController = UIAlertController(
+            title: "Database Error",
+            message: "An error occurred while initializing the database: \(error.localizedDescription)",
+            preferredStyle: .alert
+        )
+
+        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+            // You might want to add some recovery action here,
+            // such as attempting to reinitialize the database or exiting the app
+        }
+
+        alertController.addAction(okAction)
+
+        // If you have a more detailed error description or recovery steps, you can add them here
+        if let detailedError = error as? DetailedError {
+            alertController.message?.append("\n\nDetails: \(detailedError.detailedDescription)")
+
+            let showDetailsAction = UIAlertAction(title: "Show Details", style: .default) { _ in
+                // Present a new view controller with more detailed error information
+                self.presentDetailedErrorViewController(error: detailedError)
+            }
+
+            alertController.addAction(showDetailsAction)
+        }
+
+        // Present the alert controller
+        DispatchQueue.main.async {
+            self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    private func presentDetailedErrorViewController(error: DetailedError) {
+        // Implement this method to show a more detailed error view
+        // This could include stack traces, error codes, or recovery steps
     }
 }
 
@@ -480,4 +568,9 @@ func runDetachedTaskWithCompletion<T>(
             completion(.failure(error))
         }
     }
+}
+
+// You might want to define a protocol for errors that can provide more detailed information
+protocol DetailedError: Error {
+    var detailedDescription: String { get }
 }
