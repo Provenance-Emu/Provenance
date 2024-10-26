@@ -14,6 +14,7 @@ import PVThemes
 
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueSection: SwiftUI.View {
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     @ObservedResults(
         PVSaveState.self,
@@ -45,6 +46,7 @@ struct HomeContinueSection: SwiftUI.View {
             } else {
                 Text("No Continues")
                     .tag("no continues")
+                    .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
         }
         .tabViewStyle(.page)
