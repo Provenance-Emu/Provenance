@@ -5,11 +5,14 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+// Import necessary modules for core functionality
 import CoreSpotlight
-import PVLibrary
-import PVSupport
 import RealmSwift
 import RxSwift
+import UIKit
+
+// Import custom modules for Provenance-specific functionality
+import PVSupport
 import PVEmulatorCore
 import PVCoreBridge
 import PVThemes
@@ -19,108 +22,150 @@ import PVUIKit
 import PVSwiftUI
 import PVLogging
 
+// Conditionally import PVJIT and JITManager if available
 #if canImport(PVJIT)
 import PVJIT
 import JITManager
 #endif
 
+// Conditionally import SteamController for non-macCatalyst and non-macOS targets
 #if !targetEnvironment(macCatalyst) && !os(macOS)
 #if canImport(SteamController)
 import SteamController
 #endif
-import UIKit
 #endif
 
 final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     internal var window: UIWindow?
     var shortcutItemGame: PVGame?
     let disposeBag = DisposeBag()
-    
+
+    // Check if the app is running in App Store mode
     var isAppStore: Bool {
-        // Test if Info.plist has PVAppType containing appstore
         guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
         return appType.lowercased().contains("appstore")
     }
 
+    // JIT-related properties for iOS, non-App Store builds with PVJIT support
     #if os(iOS) && !APP_STORE && canImport(PVJIT)
     weak var jitScreenDelegate: JitScreenDelegate?
     weak var jitWaitScreenVC: JitWaitScreenViewController?
     var cancellation_token = DOLCancellationToken()
     var is_presenting_alert = false
     #endif
-    
+
     weak var rootNavigationVC: UIViewController?
     weak var gameLibraryViewController: PVGameLibraryViewController?
 
+    // Initialize the UI theme
     func _initUITheme() {
         ThemeManager.applySavedTheme()
         themeAppUI(withPalette: ThemeManager.shared.currentPalette)
     }
 
+    // Initialize the UI
     func _initUI(
         libraryUpdatesController: PVGameLibraryUpdatesController,
         gameImporter: GameImporter,
         gameLibrary: PVGameLibrary<RealmDatabaseDriver>
     ) {
-        // Set root view controller and make windows visible
-        let window = UIWindow.init(frame: UIScreen.main.bounds)
+        let window = setupWindow()
         self.window = window
-        
+
+        if !Defaults[.useUIKit] {
+            setupSwiftUIInterface(window: window,
+                                  libraryUpdatesController: libraryUpdatesController,
+                                  gameImporter: gameImporter,
+                                  gameLibrary: gameLibrary)
+        } else {
+            setupUIKitInterface(window: window,
+                                libraryUpdatesController: libraryUpdatesController,
+                                gameImporter: gameImporter,
+                                gameLibrary: gameLibrary)
+        }
+
+        setupJITIfNeeded()
+    }
+
+    private func setupWindow() -> UIWindow {
+        let window = UIWindow(frame: UIScreen.main.bounds)
         #if os(tvOS)
         window.tintColor = .provenanceBlue
         #endif
+        return window
+    }
+
+    private func setupSwiftUIInterface(window: UIWindow,
+                                       libraryUpdatesController: PVGameLibraryUpdatesController,
+                                       gameImporter: GameImporter,
+                                       gameLibrary: PVGameLibrary<RealmDatabaseDriver>) {
+        let viewModel = PVRootViewModel()
+        let rootViewController = PVRootViewController.instantiate(
+            updatesController: libraryUpdatesController,
+            gameLibrary: gameLibrary,
+            gameImporter: gameImporter,
+            viewModel: viewModel)
+        self.rootNavigationVC = rootViewController
+        let sideNavHostedNavigationController = PVRootViewNavigationController(rootViewController: rootViewController)
+
+        let sideNav = setupSideNavigation(mainViewController: sideNavHostedNavigationController,
+                                          gameLibrary: gameLibrary,
+                                          viewModel: viewModel,
+                                          rootViewController: rootViewController)
+
+        window.rootViewController = sideNav
+    }
+
+    private func setupSideNavigation(mainViewController: UIViewController,
+                                     gameLibrary: PVGameLibrary<RealmDatabaseDriver>,
+                                     viewModel: PVRootViewModel,
+                                     rootViewController: PVRootViewController) -> SideNavigationController {
+        let sideNav = SideNavigationController(mainViewController: mainViewController)
         let isIpad = UIDevice.current.userInterfaceIdiom == .pad
         let widthPercentage: CGFloat = isIpad ? 0.3 : 0.7
         let overlayColor: UIColor = ThemeManager.shared.currentPalette.menuHeaderBackground
 
-        if !Defaults[.useUIKit] {
-            let viewModel = PVRootViewModel()
-            let rootViewController = PVRootViewController.instantiate(
-                updatesController: libraryUpdatesController,
-                gameLibrary: gameLibrary,
-                gameImporter: gameImporter,
-                viewModel: viewModel)
-            self.rootNavigationVC = rootViewController
-            let sideNavHostedNavigationController = PVRootViewNavigationController(rootViewController: rootViewController)
-            
-            let sideNav = SideNavigationController(mainViewController:sideNavHostedNavigationController)
-            sideNav.leftSide(
-                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary,
-                                                         viewModel: viewModel,
-                                                         delegate: rootViewController,
-                                                         rootDelegate: rootViewController),
-                options: .init(widthPercent: widthPercentage,
-                               animationDuration: 0.18,
-                               overlayColor: overlayColor,
-                               overlayOpacity: 0.1,
-                               shadowOpacity: 0.2)
-            )
+        sideNav.leftSide(
+            viewController: SideMenuView.instantiate(gameLibrary: gameLibrary,
+                                                     viewModel: viewModel,
+                                                     delegate: rootViewController,
+                                                     rootDelegate: rootViewController),
+            options: .init(widthPercent: widthPercentage,
+                           animationDuration: 0.18,
+                           overlayColor: overlayColor,
+                           overlayOpacity: 0.1,
+                           shadowOpacity: 0.2)
+        )
+        return sideNav
+    }
 
-            window.rootViewController = sideNav
-        } else {
-            Task.detached { @MainActor in
-                let storyboard = UIStoryboard.init(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
-                let vc = storyboard.instantiateInitialViewController()
+    private func setupUIKitInterface(window: UIWindow,
+                                     libraryUpdatesController: PVGameLibraryUpdatesController,
+                                     gameImporter: GameImporter,
+                                     gameLibrary: PVGameLibrary<RealmDatabaseDriver>) {
+        Task.detached { @MainActor in
+            let storyboard = UIStoryboard(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
+            let vc = storyboard.instantiateInitialViewController()
 
-                window.rootViewController = vc
+            window.rootViewController = vc
 
-                guard let rootNavigation = window.rootViewController as? UINavigationController else {
-                    fatalError("No root nav controller")
-                }
-                self.rootNavigationVC = rootNavigation
-                guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
-                    fatalError("No gameLibraryViewController")
-                }
-
-                // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
-                gameLibraryViewController.updatesController = libraryUpdatesController
-                gameLibraryViewController.gameImporter = gameImporter
-                gameLibraryViewController.gameLibrary = gameLibrary
-                
-                self.gameLibraryViewController = gameLibraryViewController
+            guard let rootNavigation = window.rootViewController as? UINavigationController else {
+                fatalError("No root nav controller")
             }
-        }
+            self.rootNavigationVC = rootNavigation
+            guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
+                fatalError("No gameLibraryViewController")
+            }
 
+            gameLibraryViewController.updatesController = libraryUpdatesController
+            gameLibraryViewController.gameImporter = gameImporter
+            gameLibraryViewController.gameLibrary = gameLibrary
+
+            self.gameLibraryViewController = gameLibraryViewController
+        }
+    }
+
+    private func setupJITIfNeeded() {
         #if os(iOS) && !APP_STORE
         if Defaults[.autoJIT] {
             DOLJitManager.shared.attemptToAcquireJitOnStartup()
@@ -146,7 +191,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             try RomDatabase.initDefaultDatabase()
         } completion: { result in
             switch result {
-            case .success(let value):
+            case .success:
                 Task.detached { @MainActor in
                     self._initLibraryNotificationHandlers()
                     self._initGameImporter(application, launchOptions: launchOptions)
@@ -160,11 +205,10 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                     alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
                         fatalError(error.localizedDescription)
                     }))
-                    
+
                     self.window?.rootViewController = UIViewController()
                     self.window?.makeKeyAndVisible()
                     self.window?.rootViewController?.present(alert, animated: true, completion: nil)
-                    
                 }
             }
         }
@@ -172,11 +216,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         _initSteamControllers()
 
         #if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
-//            PVAltKitService.shared.start()
-            ApplicationMonitor.shared.start()
+        ApplicationMonitor.shared.start()
         #endif
 
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
             self.startOptionalWebDavServer()
             #if !os(tvOS)
@@ -188,57 +230,54 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 
         return true
     }
-    
+
     func _initSteamControllers() {
         #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
-        // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
+        // SteamController is built with STEAMCONTROLLER_NO_PRIVATE_API, so we don't call this
         // SteamControllerManager.listenForConnections()
         #endif
     }
-    
+
     func _initGameImporter(_ application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
-        // Setup importing/updating library
         let gameImporter = GameImporter.shared
         let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
 
         #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-            /// Setup shortcuts
-            Observable.combineLatest(
-                gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
-                gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }
-            ) { $0 + $1 }
-                .bind(onNext: { shortcuts in
-                    application.shortcutItems = shortcuts
-                })
-                .disposed(by: disposeBag)
+        // Setup shortcuts for favorites and recent games
+        Observable.combineLatest(
+            gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
+            gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }
+        ) { $0 + $1 }
+        .bind(onNext: { shortcuts in
+            application.shortcutItems = shortcuts
+        })
+        .disposed(by: disposeBag)
 
-            /// Handle if started from shortcut
-            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
-                shortcut.type == "kRecentGameShortcut",
-                let md5Value = shortcut.userInfo?["PVGameHash"] as? String,
-                let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-                shortcutItemGame = matchedGame
-            }
+        // Handle if started from shortcut
+        if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
+           shortcut.type == "kRecentGameShortcut",
+           let md5Value = shortcut.userInfo?["PVGameHash"] as? String,
+           let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
+            shortcutItemGame = matchedGame
+        }
         #endif
-        
+
         Task.detached { @MainActor in
-            let database = RomDatabase.sharedInstance
             await gameImporter.initSystems()
             RomDatabase.reloadCache()
-            
+
             let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
 
-            // Handle refreshing library
             self._initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
             self.window!.makeKeyAndVisible()
-#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+            #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
             Task.detached {
                 await libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
             }
-#endif
+            #endif
         }
     }
-    
+
     func _initICloud() {
         PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
@@ -251,7 +290,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             }
         }
     }
-    
+
     func _initThemeListener() {
         if #available(iOS 17.0, *) {
             withObservationTracking {
@@ -277,18 +316,14 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                     }
                 }
             }
-        } else {
-            // Fallback on earlier versions
         }
     }
 
     func saveCoreState(_ application: PVApplication) async throws {
-        if let core = application.core {
-            if core.isOn, let emulator = application.emulator {
-                if Defaults[.autoSave], core.supportsSaveStates {
-                    ILOG("PVAppDelegate: Saving Core State\n")
-                    try await emulator.autoSaveState()
-                }
+        if let core = application.core, core.isOn, let emulator = application.emulator {
+            if Defaults[.autoSave], core.supportsSaveStates {
+                ILOG("PVAppDelegate: Saving Core State\n")
+                try await emulator.autoSaveState()
             }
         }
         if isAppStore {
@@ -297,11 +332,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     }
 
     func pauseCore(_ application: PVApplication) {
-        if let core = application.core {
-            if core.isOn && core.isRunning {
-                ILOG("PVAppDelegate: Pausing Core\n")
-                core.setPauseEmulation(true)
-            }
+        if let core = application.core, core.isOn && core.isRunning {
+            ILOG("PVAppDelegate: Pausing Core\n")
+            core.setPauseEmulation(true)
         }
         if isAppStore {
             appRatingSignifigantEvent()
@@ -309,21 +342,17 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     }
 
     func stopCore(_ application: PVApplication) {
-        if let core = application.core {
-            if core.isOn {
-                ILOG("PVAppDelegate: Stopping Core\n")
-                core.stopEmulation()
-            }
+        if let core = application.core, core.isOn {
+            ILOG("PVAppDelegate: Stopping Core\n")
+            core.stopEmulation()
         }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        if let app=application as? PVApplication {
-            app.isInBackground = true;
-
+        if let app = application as? PVApplication {
+            app.isInBackground = true
             pauseCore(app)
             sleep(1)
-
             Task {
                 try await self.saveCoreState(app)
             }
@@ -331,8 +360,8 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        if let app=application as? PVApplication {
-            app.isInBackground = true;
+        if let app = application as? PVApplication {
+            app.isInBackground = true
             pauseCore(app)
         }
     }
@@ -340,31 +369,32 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     func applicationWillEnterForeground(_: UIApplication) {}
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        if let app=application as? PVApplication {
-            app.isInBackground = false;
+        if let app = application as? PVApplication {
+            app.isInBackground = false
         }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        if let app=application as? PVApplication {
+        if let app = application as? PVApplication {
             stopCore(app)
         }
     }
+
     func _initLibraryNotificationHandlers() {
         NotificationCenter.default.rx.notification(.PVReimportLibrary)
             .flatMapLatest { _ in
-                return Completable.create { observer in
+                Completable.create { observer in
                     RomDatabase.refresh()
                     self.gameLibraryViewController?.checkROMs(false)
-
                     observer(.completed)
                     return Disposables.create()
                 }
             }
             .subscribe(onCompleted: {}).disposed(by: disposeBag)
+
         NotificationCenter.default.rx.notification(.PVRefreshLibrary)
             .flatMapLatest { _ in
-                return Completable.create { observer in
+                Completable.create { observer in
                     do {
                         try RomDatabase.sharedInstance.deleteAllGames()
                         self.gameLibraryViewController?.checkROMs(false)
@@ -377,9 +407,10 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                 }
             }
             .subscribe(onCompleted: {}).disposed(by: disposeBag)
+
         NotificationCenter.default.rx.notification(.PVResetLibrary)
             .flatMapLatest { _ in
-                return Completable.create { observer in
+                Completable.create { observer in
                     do {
                         NSLog("PVAppDelegate: Completed ResetLibrary, Re-Importing")
                         try RomDatabase.sharedInstance.deleteAllData()

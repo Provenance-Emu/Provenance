@@ -6,7 +6,7 @@ let package = Package(
     name: "PVThemes",
     platforms: [
         .iOS(.v17),
-        .tvOS(.v17),
+        .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),
@@ -32,6 +32,8 @@ let package = Package(
         /// https://github.com/alvmo/HexColors
         .package(url: "https://github.com/JoeMatt/HexColors.git", branch: "main"),
         .package(url: "https://github.com/JoeMatt/SwiftMacros.git", branch: "main"),
+        .package(url: "https://github.com/pointfreeco/swift-perception.git",
+                 branch:("main"))
     ],
 
     // MARK: - Targets
@@ -41,7 +43,8 @@ let package = Package(
             name: "PVThemes",
             dependencies: [
                 .product(name: "HexColors", package: "HexColors"),
-                .product(name: "SwiftMacros", package: "SwiftMacros")
+                .product(name: "SwiftMacros", package: "SwiftMacros"),
+                .product(name: "Perception", package: "swift-perception"),
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")],
             linkerSettings: [

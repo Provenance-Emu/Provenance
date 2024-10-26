@@ -406,6 +406,7 @@
                                 </connections>
                             </barButtonItem>
                             <barButtonItem image="sort" id="d9C-DJ-Fuv" userLabel="Sort">
+                                <imageReference key="image" image="sort" symbolScale="large" renderingMode="template"/>
                                 <color key="tintColor" red="0.10000000000000001" green="0.5" blue="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="sortButtonTapped:" destination="In9-6L-5FX" id="Ncy-G2-J4k"/>

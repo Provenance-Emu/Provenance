@@ -945,7 +945,7 @@
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Archive;
 		};
@@ -1199,7 +1199,7 @@
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -1230,7 +1230,7 @@
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};

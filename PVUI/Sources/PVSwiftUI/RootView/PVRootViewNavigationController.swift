@@ -8,6 +8,7 @@
 
 import UIKit
 import PVThemes
+import Perception
 
 /// Custom themed `UINavigationController` for the main center view
 /// that's embedded in the SideNavigationController
@@ -70,7 +71,7 @@ public final class PVRootViewNavigationController: UINavigationController {
     }
     
     func _initThemeListener() {
-        if #available(iOS 17.0, *) {
+        if #available(iOS 17.0, tvOS 17.0, *) {
             withObservationTracking {
                 _ = ThemeManager.shared.currentPalette
             } onChange: { [unowned self] in
@@ -80,7 +81,37 @@ public final class PVRootViewNavigationController: UINavigationController {
                 }
             }
         } else {
-            // Fallback on earlier versions
+            withPerceptionTracking {
+                _ = ThemeManager.shared.currentPalette
+            } onChange: {
+                print("changed: ", ThemeManager.shared.currentPalette)
+                Task.detached { @MainActor in
+                    self.applyCustomTheme()
+                }
+            }
+
+            // Fallback for earlier versions
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleThemeChange),
+                name: .themeDidChange, // You need to define this notification name in ThemeManager
+                object: nil
+            )
+        }
+    }
+    
+    // Add this method to handle theme changes for earlier versions
+    @objc private func handleThemeChange() {
+        print("changed: ", ThemeManager.shared.currentPalette)
+        DispatchQueue.main.async { [weak self] in
+            self?.applyCustomTheme()
+        }
+    }
+
+    // Don't forget to remove the observer when it's no longer needed
+    deinit {
+        if #unavailable(iOS 17.0, tvOS 17.0) {
+            NotificationCenter.default.removeObserver(self)
         }
     }
 }

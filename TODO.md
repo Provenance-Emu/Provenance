@@ -3,6 +3,7 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [ ] Sega CD is borked
 - [X] iCloud sync isn't working, remove or fix
 - [X] Swift UI long press on roms menu missing actions {rename, ~~share~~}
 - [X] Progress hud on unzips isn't hiding

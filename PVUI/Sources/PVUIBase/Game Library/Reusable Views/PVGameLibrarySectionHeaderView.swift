@@ -145,14 +145,14 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             return UIColor.darkGray
         }
 
-        override var canBecomeFocused: Bool {
+        public override var canBecomeFocused: Bool {
             if !collapseButton.isHidden {
                 return true
             }
             return false
         }
 
-        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        public override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
             if isFocused {
                 UIView.transition(with: titleLabel, duration: 0.1, options: .transitionCrossDissolve, animations: {
                   self.titleLabel.textColor = .white
@@ -170,7 +170,7 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             }
         }
 
-        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        public override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
             super.pressesBegan(presses, with: event)
             if presses.contains(where: { (press) -> Bool in
                 press.type == .select

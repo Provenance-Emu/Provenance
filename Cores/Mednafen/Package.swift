@@ -117,7 +117,7 @@ let package = Package(
     name: "PVCoreMednafen",
     platforms: [
         .iOS(.v17),
-        .tvOS(.v17),
+        .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),

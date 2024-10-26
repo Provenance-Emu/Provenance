@@ -115,13 +115,17 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 }
             }
             .edgesIgnoringSafeArea(.bottom)
+            #if !os(tvOS)
             .gesture(magnificationGesture())
+            #endif
             .onAppear {
                 adjustZoomLevel(for: gameLibraryScale)
             }
         }
         .sheet(isPresented: $showImagePicker) {
+            #if !os(tvOS)
             imagePickerView()
+            #endif
         }
         .alert("Rename Game", isPresented: $showingRenameAlert) {
             renameAlertView()
@@ -206,6 +210,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         }
     }
 
+#if !os(tvOS)
     private func imagePickerView() -> some View {
         ImagePicker(sourceType: .photoLibrary) { image in
             if let game = gameToUpdateCover {
@@ -215,6 +220,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             showImagePicker = false
         }
     }
+#endif
 
     private func renameAlertView() -> some View {
         Group {
@@ -357,6 +363,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         return Int(clampedZoomLevel)
     }
 
+#if !os(tvOS)
     private func magnificationGesture() -> some Gesture {
         MagnificationGesture()
             .onChanged { value in
@@ -366,6 +373,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 // TODO: What to do here?
             }
     }
+    #endif
 
     // MARK: - Rename Methods
 

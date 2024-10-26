@@ -2,9 +2,14 @@ import Foundation
 import PVSupport
 import Combine
 import PVLogging
+import Perception
 
+#if !os(tvOS)
 @Observable
-public final class ConflictsWatcher {
+#else
+@Perceptible
+#endif
+public final class ConflictsWatcher: ObservableObject {
     public static let shared = ConflictsWatcher()
 
     private let conflictsPath: URL

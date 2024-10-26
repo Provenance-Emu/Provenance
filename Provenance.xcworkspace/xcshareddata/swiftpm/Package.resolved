@@ -218,6 +218,15 @@
         }
       },
       {
+        "package": "swift-perception",
+        "repositoryURL": "https://github.com/pointfreeco/swift-perception.git",
+        "state": {
+          "branch": "main",
+          "revision": "7335e4aab6136e42adeb7545a10570e543336d11",
+          "version": null
+        }
+      },
+      {
         "package": "swift-syntax",
         "repositoryURL": "https://github.com/swiftlang/swift-syntax.git",
         "state": {
@@ -263,6 +272,15 @@
         }
       },
       {
+        "package": "xctest-dynamic-overlay",
+        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
+        "state": {
+          "branch": null,
+          "revision": "770f990d3e4eececb57ac04a6076e22f8c97daeb",
+          "version": "1.4.2"
+        }
+      },
+      {
         "package": "ZipArchive",
         "repositoryURL": "https://github.com/ZipArchive/ZipArchive.git",
         "state": {
@@ -276,7 +294,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "dfaf5fafb94ade85290604525ad9ee6e3a4cdd31",
+          "revision": "7fb5347e88f10472226c9aa1962a148e55d8c480",
           "version": null
         }
       }

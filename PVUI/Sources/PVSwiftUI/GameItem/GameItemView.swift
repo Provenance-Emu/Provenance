@@ -10,7 +10,7 @@ import PVRealm
 import PVMediaCache
 import RealmSwift
 
-@available(iOS 17, tvOS 17, *)
+@available(iOS 17, tvOS 16, *)
 struct GameItemView: SwiftUI.View {
 
     @ObservedRealmObject var game: PVGame
@@ -34,9 +34,15 @@ struct GameItemView: SwiftUI.View {
         .onAppear {
             updateArtwork()
         }
+        #if os(tvOS)
+        .onChange(of: game.trueArtworkURL) { newValue in
+            updateArtwork()
+        }
+        #else
         .onChange(of: game.trueArtworkURL) { _, newValue in
             updateArtwork()
         }
+        #endif
     }
 
     private func updateArtwork() {

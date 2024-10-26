@@ -20,6 +20,7 @@ import PVFileSystem
 import DirectoryWatcher
 import Combine
 import Observation
+import Perception
 
 //@Observable
 public final class PVGameLibraryUpdatesController {
@@ -131,23 +132,69 @@ public final class PVGameLibraryUpdatesController {
             }
         }
     }
-
+    var statusCheckTimer: Timer?
     private func directoryWatcherStatusStream() -> AsyncStream<ExtractionStatus> {
         AsyncStream { continuation in
             let task = Task {
                 var lastStatus: ExtractionStatus?
                 while !Task.isCancelled {
-                    let status = withObservationTracking {
-                        directoryWatcher.extractionStatus
-                    } onChange: {
-                        continuation.yield(self.directoryWatcher.extractionStatus)
+                    if #available(iOS 17.0, tvOS 17.0, *) {
+                        let status = withObservationTracking {
+                            directoryWatcher.extractionStatus
+                        } onChange: {
+                            let newStatus = self.directoryWatcher.extractionStatus
+                            if newStatus != lastStatus {
+                                DLOG("DirectoryWatcher status changed: \(newStatus)")
+                                continuation.yield(newStatus)
+                                lastStatus = newStatus
+                            }
+                        }
+                        
+                        // Initial yield if the status is different
+                        if status != lastStatus {
+                            DLOG("DirectoryWatcher initial status: \(status)")
+                            continuation.yield(status)
+                            lastStatus = status
+                        }
+                    } else {
+                        withPerceptionTracking {
+                            directoryWatcher.extractionStatus
+                        } onChange: {
+                            let newStatus = self.directoryWatcher.extractionStatus
+                            if newStatus != lastStatus {
+                                DLOG("DirectoryWatcher status changed: \(newStatus)")
+                                continuation.yield(newStatus)
+                                lastStatus = newStatus
+                            }
+                        }
+
+                        // Fallback for tvOS versions earlier than 17.0
+                        let initialStatus = directoryWatcher.extractionStatus
+                        
+                        // Set up a timer to periodically check for status changes
+                        let timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+                            guard let self = self else { return }
+                            let newStatus = self.directoryWatcher.extractionStatus
+                            if newStatus != lastStatus {
+                                DLOG("DirectoryWatcher status changed: \(newStatus)")
+                                continuation.yield(newStatus)
+                                lastStatus = newStatus
+                            }
+                        }
+                        
+                        // Store the timer somewhere to keep it alive
+                        // For example, you might have a property like this:
+                        // var statusCheckTimer: Timer?
+                        statusCheckTimer = timer
+                        
+                        // Initial yield if the status is different
+                        if initialStatus != lastStatus {
+                            DLOG("DirectoryWatcher initial status: \(initialStatus)")
+                            continuation.yield(initialStatus)
+                            lastStatus = initialStatus
+                        }
                     }
 
-                    if status != lastStatus {
-                        DLOG("DirectoryWatcher status changed: \(status)")
-                        continuation.yield(status)
-                        lastStatus = status
-                    }
 
                     try? await Task.sleep(for: .seconds(0.1))
                 }
@@ -157,6 +204,15 @@ public final class PVGameLibraryUpdatesController {
                 task.cancel()
             }
         }
+    }
+    
+    deinit {
+        stopObserving()
+    }
+    
+    func stopObserving() {
+        statusCheckTimer?.invalidate()
+        statusCheckTimer = nil
     }
 
     private func handleFileImports(importPath: URL) {

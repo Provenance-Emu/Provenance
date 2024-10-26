@@ -14,6 +14,19 @@ import AppKit
 public typealias UIColor = NSColor
 #endif
 
+#if os(tvOS)
+fileprivate extension UIColor {
+    static var systemBackground: UIColor {
+        UIColor(white: 0.18, alpha: 1.0)
+    }
+    static var secondarySystemBackground: UIColor {
+        UITraitCollection.current.userInterfaceStyle == .dark ?
+        UIColor(red: 0.110, green: 0.110, blue: 0.118, alpha: 1.0) :
+        UIColor(red: 0.949, green: 0.949, blue: 0.969, alpha: 1.0)
+    }
+}
+#endif
+
 public protocol PaletteProvider {
     var palette: any UXThemePalette { get }
 }

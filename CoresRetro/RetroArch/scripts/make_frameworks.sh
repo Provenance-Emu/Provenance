@@ -21,10 +21,17 @@ OUTPUT_FOLDER="${3:-.}"
 # Ensure output folder exists
 mkdir -p "$OUTPUT_FOLDER"
 
+# Determine the platform based on Xcode environment variables
+if [ "${PLATFORM_NAME}" = "appletvos" ]; then
+    PLATFORM="tvos"
+else
+    PLATFORM="ios"
+fi
+
 # Function to create a dynamic framework from a dylib
 create_framework() {
     local dylib_path="$1"
-    local framework_name=$(basename "${dylib_path%.*}" | tr '_' '.' | sed -E 's/(ios|tvos)$//g' | sed 's/\.$//')
+    local framework_name=$(basename "${dylib_path%.*}" | tr '_' '.' | sed -E "s/${PLATFORM}$//g" | sed 's/\.$//')
     local framework_path="$OUTPUT_FOLDER/${framework_name}.framework"
 
     echo "Creating framework for $framework_name..."
@@ -64,20 +71,20 @@ EOF
     # Set correct install name
     install_name_tool -id "@rpath/${framework_name}.framework/${framework_name}" "$framework_path/${framework_name}"
 
-    # Make sure the framework is for iOS
+    # Make sure the framework is for the correct platform
     if ! lipo -info "$framework_path/${framework_name}" | grep -q "arm64"; then
-        echo "Warning: ${framework_name} is not built for arm64 (iOS). It may not be compatible with the App Store."
+        echo "Warning: ${framework_name} is not built for arm64 (${PLATFORM}). It may not be compatible with the App Store."
     fi
 
     echo "Framework $framework_name created successfully."
 }
 
-# Find all dylib files in the source folder
-dylibs=$(find "$SOURCE_FOLDER" -name "*.dylib")
+# Find all dylib files in the source folder for the specific platform
+dylibs=$(find "$SOURCE_FOLDER" -name "*${PLATFORM}.dylib")
 
 # Loop through each dylib and create a framework
 for dylib in $dylibs; do
     create_framework "$dylib"
 done
 
-echo "All frameworks have been created in $OUTPUT_FOLDER"
+echo "All frameworks for ${PLATFORM} have been created in $OUTPUT_FOLDER"

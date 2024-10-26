@@ -325,7 +325,7 @@
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
-		B33A763B2CC5168C00FC746F /* SiriusRating in Frameworks */ = {isa = PBXBuildFile; productRef = B33A763A2CC5168C00FC746F /* SiriusRating */; };
+		B33A763B2CC5168C00FC746F /* SiriusRating in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B33A763A2CC5168C00FC746F /* SiriusRating */; };
 		B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, tvos, ); productRef = B33B4F3F2C198F32007371C5 /* MBProgressHUD */; };
 		B33B4F4B2C1A5B4B007371C5 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F4A2C1A5B4B007371C5 /* RealmSwift */; };
 		B33B4F4C2C1A5B4B007371C5 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F4A2C1A5B4B007371C5 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -480,14 +480,6 @@
 		B3427C03287EA0CF0054C1B5 /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEA287EA0CE0054C1B5 /* MetalViewShaders.metal */; };
 		B3427C04287EA0CF0054C1B5 /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEC287EA0CE0054C1B5 /* fullscreen_vs.metal */; };
 		B3427C05287EA0CF0054C1B5 /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEC287EA0CE0054C1B5 /* fullscreen_vs.metal */; };
-		B34699922C1A8B430075CE90 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
-		B34699932C1A8B440075CE90 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
-		B34699942C1A8B440075CE90 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
-		B34699952C1A8B450075CE90 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
-		B34699962C1A8B450075CE90 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
-		B34699972C1A8B450075CE90 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
-		B34699982C1A8B460075CE90 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
-		B34699992C1A8B460075CE90 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
 		B346AED2297602210090E014 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; };
 		B346AED3297602210090E014 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B347B2512BC4CA98006A3B2D /* crt_filter_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE1287EA0CE0054C1B5 /* crt_filter_ps.metal */; };
@@ -636,6 +628,10 @@
 		B35AB4492CB6F7DA003273D4 /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B35AB4472CB6F7DA003273D4 /* PVEmuThree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B35AB44B2CB6F815003273D4 /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35AB44A2CB6F815003273D4 /* PVMelonDS.framework */; };
 		B35AB44C2CB6F815003273D4 /* PVMelonDS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B35AB44A2CB6F815003273D4 /* PVMelonDS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B35B177F2CCCDFC7007059CA /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B35B177E2CCCDFC7007059CA /* PVAudio */; };
+		B35B17812CCCDFD1007059CA /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B35B17802CCCDFD1007059CA /* PVAudio */; };
+		B35B17832CCCE035007059CA /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B35B17822CCCE035007059CA /* PVLibrary */; };
+		B35B17852CCCE0BB007059CA /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B35B17842CCCE0BB007059CA /* Defaults */; };
 		B35D52822C96C83E006BE5BF /* PVFreeDO-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35D52812C96C83E006BE5BF /* PVFreeDO-Dynamic */; };
 		B35D52832C96C83E006BE5BF /* PVFreeDO-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35D52812C96C83E006BE5BF /* PVFreeDO-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B35EEF882C6C6D1A00EBD1A8 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
@@ -652,7 +648,6 @@
 		B35EEF932C6C6D1A00EBD1A8 /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; platformFilters = (tvos, ); };
 		B35EEF942C6C6D1A00EBD1A8 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE7287EA0CE0054C1B5 /* MameShaders.metal */; };
 		B35EEF952C6C6D1A00EBD1A8 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */; };
-		B35EEF962C6C6D1A00EBD1A8 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
 		B35EEF972C6C6D1A00EBD1A8 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B35EEF992C6C6D1A00EBD1A8 /* crt_filter_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE1287EA0CE0054C1B5 /* crt_filter_ps.metal */; };
 		B35EEF9A2C6C6D1A00EBD1A8 /* Reactive+RxRealmDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AB218EC1AC0015C690 /* Reactive+RxRealmDataSources.swift */; };
@@ -759,6 +754,15 @@
 		B36703752896314300F75595 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
 		B36703762896314300F75595 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
 		B36703772896314300F75595 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
+		B36A8B092CCCFC01002357DD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
+		B36A8B0A2CCCFC01002357DD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
+		B36A8B0B2CCCFC01002357DD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
+		B36A8B0C2CCCFC01002357DD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
+		B36A8B0D2CCCFC01002357DD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
+		B36A8B0E2CCCFC01002357DD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
+		B36A8B0F2CCCFC01002357DD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
+		B36A8B102CCCFC01002357DD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
+		B36A8B112CCCFC01002357DD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.swift */; };
 		B36B852F29599A6000FDEA29 /* PVGearcoleco.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; };
 		B36B853029599A6000FDEA29 /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36B853529599A9600FDEA29 /* PVOpera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3231BEE28966661003CC116 /* PVOpera.framework */; };
@@ -817,8 +821,9 @@
 		B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38FB4B22CBEF961006786C6 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B392B3DE2CCC592600B1C760 /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B392B3DD2CCC592600B1C760 /* PVFlycast.framework */; };
-		B392B3DF2CCC592600B1C760 /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B392B3DD2CCC592600B1C760 /* PVFlycast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B392B3DE2CCC592600B1C760 /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B392B3DD2CCC592600B1C760 /* PVFlycast.framework */; platformFilter = maccatalyst; };
+		B392B3DF2CCC592600B1C760 /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B392B3DD2CCC592600B1C760 /* PVFlycast.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B392B3E22CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B392B3E12CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic */; };
 		B39342142CC57837008AA673 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B39342132CC57837008AA673 /* MoltenVK */; };
 		B39342162CC5784D008AA673 /* MoltenVK-Catalyst in Frameworks */ = {isa = PBXBuildFile; platformFilter = maccatalyst; productRef = B39342152CC5784D008AA673 /* MoltenVK-Catalyst */; };
 		B39343962CC5B202008AA673 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39343952CC5B202008AA673 /* PVDolphin.framework */; };
@@ -926,6 +931,13 @@
 		B3A186922CBCBB2C00BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A186902CBCBB2C00BB1FFE /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A186942CBCBB3F00BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A186932CBCBB3F00BB1FFE /* PVMupen64PlusBridge.framework */; };
 		B3A186952CBCBB3F00BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A186932CBCBB3F00BB1FFE /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A3CDAE2CCC873B00589F82 /* PVDuckStation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CDAD2CCC873B00589F82 /* PVDuckStation.framework */; platformFilter = maccatalyst; };
+		B3A3CDAF2CCC873B00589F82 /* PVDuckStation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CDAD2CCC873B00589F82 /* PVDuckStation.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A3CDB12CCC875F00589F82 /* PVDuckStation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */; platformFilters = (ios, maccatalyst, ); };
+		B3A3CDB22CCC875F00589F82 /* PVDuckStation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A3D02F2CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
+		B3A3D0302CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
+		B3A3D0312CCCC62B00589F82 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; };
 		B3A477C62C941F120052500A /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A479CE2C96507A0052500A /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A479CD2C96507A0052500A /* PVSNES.framework */; };
@@ -1856,6 +1868,7 @@
 				B3FE6DB32C93E60900792419 /* PVO2EM.framework in Embed Frameworks */,
 				B3E1C0482C96F86000EB4238 /* PVProSystem-Dynamic in Embed Frameworks */,
 				B37321A52C900A9F00CF59EF /* PVCrabEmu-Dynamic in Embed Frameworks */,
+				B3A3CDAF2CCC873B00589F82 /* PVDuckStation.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1908,6 +1921,7 @@
 				B33BD1BD2C6A6204001E933A /* PVCrabEmu-Dynamic in Embed Frameworks */,
 				B3E2A9FB2CB60F1200E2636D /* PVPPSSPP.framework in Embed Frameworks */,
 				B318E2A12CAB5A2600D0E599 /* PVProSystem-Dynamic in Embed Frameworks */,
+				B3A3CDB22CCC875F00589F82 /* PVDuckStation.framework in Embed Frameworks */,
 				B38FB4AD2CBEF6B0006786C6 /* libavutil.xcframework in Embed Frameworks */,
 				B33BD1C32C6A621A001E933A /* PVPokeMini-Dynamic in Embed Frameworks */,
 			);
@@ -2523,6 +2537,9 @@
 		B3A186932CBCBB3F00BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A320392720991B00F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3203C2720992500F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A3CC142CCC6BC000589F82 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A3CDAD2CCC873B00589F82 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A477C42C941F120052500A /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A479CD2C96507A0052500A /* PVSNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationMonitor.swift; sourceTree = "<group>"; };
@@ -3133,6 +3150,7 @@
 				B3C65E5A2CA53666000E37B0 /* PVMupen64Plus.framework in Frameworks */,
 				B35EEFBA2C6C6D1A00EBD1A8 /* libz.tbd in Frameworks */,
 				B35EEFBB2C6C6D1A00EBD1A8 /* CoreTelephony.framework in Frameworks */,
+				B392B3E22CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
 				B37321A72C900B1E00CF59EF /* PVTGBDual-Dynamic in Frameworks */,
 				B3B6E7482CA4CF4500002BFD /* PVCoreMednafen in Frameworks */,
 				B35EEFBD2C6C6D1A00EBD1A8 /* PVPlists in Frameworks */,
@@ -3171,6 +3189,7 @@
 				B3E2AA542CB63A7B00E2636D /* PVBeetlePSX.framework in Frameworks */,
 				B35EEFD32C6C6D1A00EBD1A8 /* UIKit.framework in Frameworks */,
 				B35EEFD42C6C6D1A00EBD1A8 /* PVThemes in Frameworks */,
+				B3A3CDAE2CCC873B00589F82 /* PVDuckStation.framework in Frameworks */,
 				B392B3DE2CCC592600B1C760 /* PVFlycast.framework in Frameworks */,
 				B35EEFD52C6C6D1A00EBD1A8 /* Reachability in Frameworks */,
 				B35EEFD62C6C6D1A00EBD1A8 /* SteamController in Frameworks */,
@@ -3240,6 +3259,7 @@
 				B38FB4AE2CBEF6B1006786C6 /* libswresample.xcframework in Frameworks */,
 				B318E2A32CAB5A4B00D0E599 /* PVCoreMednafen in Frameworks */,
 				B394CD7A2BDEE53A006B63E8 /* MetalKit.framework in Frameworks */,
+				B35B17812CCCDFD1007059CA /* PVAudio in Frameworks */,
 				B35573742CC4843600A4BA16 /* MoltenVK in Frameworks */,
 				B3E2A9FA2CB60F1200E2636D /* PVPPSSPP.framework in Frameworks */,
 				B32D45C72CB7310C006B76C2 /* PVGambatte in Frameworks */,
@@ -3259,6 +3279,7 @@
 				B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */,
 				B394CD9A2BDEE53A006B63E8 /* AudioToolbox.framework in Frameworks */,
 				B3FC972A2CB8B6AD00C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
+				B3A3CDB12CCC875F00589F82 /* PVDuckStation.framework in Frameworks */,
 				B318E29D2CAB58A300D0E599 /* PVRSPCXD4.framework in Frameworks */,
 				B3E2AA482CB6381400E2636D /* PVEP128Emu.framework in Frameworks */,
 				B318E2772CAB4B3F00D0E599 /* PVGenesis.framework in Frameworks */,
@@ -3468,10 +3489,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B35B17832CCCE035007059CA /* PVLibrary in Frameworks */,
 				B324C314219195E0009F4EDC /* TVServices.framework in Frameworks */,
+				B35B177F2CCCDFC7007059CA /* PVAudio in Frameworks */,
 				B3F8214E2C05429400232722 /* PVSupport in Frameworks */,
 				B3AF705A21916F30000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AFCF982977A80C00A01010 /* PVLogging in Frameworks */,
+				B35B17852CCCE0BB007059CA /* Defaults in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3545,6 +3569,9 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */,
+				B3A3CDAD2CCC873B00589F82 /* PVDuckStation.framework */,
+				B3A3CC142CCC6BC000589F82 /* PVDuckStation.framework */,
 				B392B3DD2CCC592600B1C760 /* PVFlycast.framework */,
 				B39343952CC5B202008AA673 /* PVDolphin.framework */,
 				B39342102CC5771B008AA673 /* MoltenVK.xcframework */,
@@ -4644,11 +4671,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B341FE042BE61EC100718929 /* Build configuration list for PBXNativeTarget "ProvenanceTV (AppStore)" */;
 			buildPhases = (
+				B35B17922CCCE410007059CA /* Script: Get retroarch modules */,
 				B341FCC72BE61EC100718929 /* Sources */,
 				B341FD922BE61EC100718929 /* Embed Frameworks */,
 				B341FDAD2BE61EC100718929 /* Frameworks */,
+				B35B17932CCCE42A007059CA /* Script: Generate Frameworks */,
 				B341FDDD2BE61EC100718929 /* Resources */,
-				B341FE032BE61EC100718929 /* Script: Set Build Number */,
 				B3A186742CBCA50B00BB1FFE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -4803,6 +4831,7 @@
 				B33A763A2CC5168C00FC746F /* SiriusRating */,
 				B39342132CC57837008AA673 /* MoltenVK */,
 				B39342152CC5784D008AA673 /* MoltenVK-Catalyst */,
+				B392B3E12CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic */,
 			);
 			productName = Provenance;
 			productReference = B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */;
@@ -4865,6 +4894,7 @@
 				B382362B2CC4623100DCE080 /* SiriusRating */,
 				B35573732CC4843600A4BA16 /* MoltenVK */,
 				B39343982CC5C432008AA673 /* MoltenVK-Catalyst */,
+				B35B17802CCCDFD1007059CA /* PVAudio */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -5074,6 +5104,9 @@
 			packageProductDependencies = (
 				B3AFCF972977A80C00A01010 /* PVLogging */,
 				B3F8214D2C05429400232722 /* PVSupport */,
+				B35B177E2CCCDFC7007059CA /* PVAudio */,
+				B35B17822CCCE035007059CA /* PVLibrary */,
+				B35B17842CCCE0BB007059CA /* Defaults */,
 			);
 			productName = TopShelf;
 			productReference = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */;
@@ -5252,9 +5285,10 @@
 				B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Cores/Bliss" */,
 				B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */,
 				B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */,
-				B3CF55292CB8ACF20023C620 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */,
 				B382362A2CC4623100DCE080 /* XCRemoteSwiftPackageReference "SiriusRating-iOS" */,
 				B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */,
+				B392B3E02CCC5BB700B1C760 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */,
+				B35B177D2CCCDFC7007059CA /* XCLocalSwiftPackageReference "PVAudio" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -5405,6 +5439,7 @@
 				930499D52A93073800BF257F /* OmniScale.fsh in Resources */,
 				930499D62A93073800BF257F /* MasterShader.fsh in Resources */,
 				930499D72A93073800BF257F /* AAScale4x.fsh in Resources */,
+				B3A3D0312CCCC62B00589F82 /* TVAssets.xcassets in Resources */,
 				930499DB2A93073800BF257F /* SmoothBilinear.fsh in Resources */,
 				930499DD2A93073800BF257F /* licenses.html in Resources */,
 				930499DE2A93073800BF257F /* NearestNeighbor.fsh in Resources */,
@@ -5656,6 +5691,7 @@
 				B3F7E3D1297736BE00362B92 /* OmniScale.fsh in Resources */,
 				B3F7E3D2297736BE00362B92 /* MasterShader.fsh in Resources */,
 				B3F7E3D3297736BE00362B92 /* AAScale4x.fsh in Resources */,
+				B3A3D0302CCCC62B00589F82 /* TVAssets.xcassets in Resources */,
 				B3F7E3D7297736BE00362B92 /* SmoothBilinear.fsh in Resources */,
 				B3F7E3D9297736BE00362B92 /* licenses.html in Resources */,
 				B3F7E3DA297736BE00362B92 /* NearestNeighbor.fsh in Resources */,
@@ -5675,6 +5711,7 @@
 			files = (
 				B3F7E552297736C200362B92 /* InfoPlist.strings in Resources */,
 				B394CDEA2BDF7018006B63E8 /* LaunchScreen.storyboard in Resources */,
+				B3A3D02F2CCCC62B00589F82 /* TVAssets.xcassets in Resources */,
 				B3F7E553297736C200362B92 /* Strings.strings in Resources */,
 				B3F7E554297736C200362B92 /* HQ2x.fsh in Resources */,
 				B3F7E555297736C200362B92 /* AAScale2x.fsh in Resources */,
@@ -5902,29 +5939,6 @@
 			shellPath = /bin/bash;
 			shellScript = "FILE=\"${SRCROOT}/CodeSigning.xcconfig\"\nif [ -e \"${FILE}\" ]\nthen\n\techo \"CodeSigning OK!\"\nelse\n    osascript -e 'display notification \"Copy CodeSigning.xcconfig.sample to CodeSigning.xcconfig and edit with your Apple Developer Account info for proper signing.\" with title \"Code Signing not Configured!\"'\n    echo \"warning: Missing CodeSigning.xcconfig\"\nfi\n";
 		};
-		B341FE032BE61EC100718929 /* Script: Set Build Number */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
-				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-			);
-			name = "Script: Set Build Number";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
-				"$(SRCROOT)/ProvenanceTV/.version",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "#. Scripts/set_bundle_build_number.sh ProvenanceTV\n";
-		};
 		B347B3842BC4CA98006A3B2D /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -5946,6 +5960,42 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = ". \"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh\" ProvenanceTV\n";
+		};
+		B35B17922CCCE410007059CA /* Script: Get retroarch modules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Script: Get retroarch modules";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\"\n";
+		};
+		B35B17932CCCE42A007059CA /* Script: Generate Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Script: Generate Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch\necho \"End: Generate Frameworks\"\n";
 		};
 		B35EEFFF2C6C6D1A00EBD1A8 /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6214,8 +6264,8 @@
 				B33B4F4F2C1A5D31007371C5 /* PVAltKitService.swift in Sources */,
 				B3A4FB66278FFB6600A65248 /* Result+Conveniences.swift in Sources */,
 				B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */,
+				B36A8B0A2CCCFC01002357DD /* main.swift in Sources */,
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
-				B34699982C1A8B460075CE90 /* main.swift in Sources */,
 				B300DED5295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */,
 				B3427BF4287EA0CF0054C1B5 /* crt_filter_ps.metal in Sources */,
 				B3D5E2B0218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
@@ -6241,6 +6291,7 @@
 				B3290499270D1F95002707AC /* PVAppDelegate+NitoTV.swift in Sources */,
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */,
 				B3427C03287EA0CF0054C1B5 /* MetalViewShaders.metal in Sources */,
+				B36A8B0F2CCCFC01002357DD /* main.swift in Sources */,
 				B3D5E2AF218EC1AE0015C690 /* RealmBindObserver.swift in Sources */,
 				B3427BFF287EA0CF0054C1B5 /* MameShaders.metal in Sources */,
 				B355DF8F29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */,
@@ -6248,7 +6299,6 @@
 				B3427BFD287EA0CF0054C1B5 /* lineTron.metal in Sources */,
 				B3427BFB287EA0CF0054C1B5 /* simpleCRT.metal in Sources */,
 				B3D5E2B1218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
-				B34699962C1A8B450075CE90 /* main.swift in Sources */,
 				B3D5E2B3218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3427BF9287EA0CF0054C1B5 /* megaTron.metal in Sources */,
 				B3427C05287EA0CF0054C1B5 /* fullscreen_vs.metal in Sources */,
@@ -6281,10 +6331,10 @@
 				930499092A93073800BF257F /* megaTron.metal in Sources */,
 				9304991A2A93073800BF257F /* MameShaders.metal in Sources */,
 				930499202A93073800BF257F /* Result+Conveniences.swift in Sources */,
-				B34699922C1A8B430075CE90 /* main.swift in Sources */,
 				930499352A93073800BF257F /* ApplicationMonitor.swift in Sources */,
 				9304993A2A93073800BF257F /* Services.swift in Sources */,
 				930499412A93073800BF257F /* PVAppDelegate+JIT.swift in Sources */,
+				B36A8B0E2CCCFC01002357DD /* main.swift in Sources */,
 				930499482A93073800BF257F /* crt_filter_ps.metal in Sources */,
 				930499542A93073800BF257F /* Reactive+RxRealmDataSources.swift in Sources */,
 				930499582A93073800BF257F /* PublishedPipeline.swift in Sources */,
@@ -6323,6 +6373,7 @@
 			files = (
 				B341FCD12BE61EC100718929 /* blit_ps.metal in Sources */,
 				B341FCD32BE61EC100718929 /* ulTron.metal in Sources */,
+				B36A8B102CCCFC01002357DD /* main.swift in Sources */,
 				B341FCD42BE61EC100718929 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B341FCD72BE61EC100718929 /* RxTableViewRealmDataSource.swift in Sources */,
 				B341FCDA2BE61EC100718929 /* PVAppDelegate.swift in Sources */,
@@ -6335,7 +6386,6 @@
 				B341FD002BE61EC100718929 /* PVAppDelegate+NitoTV.swift in Sources */,
 				B341FD0F2BE61EC100718929 /* MameShaders.metal in Sources */,
 				B341FD152BE61EC100718929 /* Result+Conveniences.swift in Sources */,
-				B34699952C1A8B450075CE90 /* main.swift in Sources */,
 				B341FD2D2BE61EC100718929 /* Services.swift in Sources */,
 				B341FD3E2BE61EC100718929 /* crt_filter_ps.metal in Sources */,
 				B341FD4A2BE61EC100718929 /* Reactive+RxRealmDataSources.swift in Sources */,
@@ -6359,6 +6409,7 @@
 				B347B27E2BC4CA98006A3B2D /* PVAppDelegate+NitoTV.swift in Sources */,
 				B347B2932BC4CA98006A3B2D /* PVAppDelegate.swift in Sources */,
 				B347B29C2BC4CA98006A3B2D /* MetalViewShaders.metal in Sources */,
+				B36A8B112CCCFC01002357DD /* main.swift in Sources */,
 				B347B2BD2BC4CA98006A3B2D /* RealmBindObserver.swift in Sources */,
 				B347B2C12BC4CA98006A3B2D /* MameShaders.metal in Sources */,
 				B347B2CA2BC4CA98006A3B2D /* PVAppDelegate+Helpers.swift in Sources */,
@@ -6366,7 +6417,6 @@
 				B347B2CF2BC4CA98006A3B2D /* lineTron.metal in Sources */,
 				B347B2D02BC4CA98006A3B2D /* simpleCRT.metal in Sources */,
 				B347B2D12BC4CA98006A3B2D /* Reactive+RxRealmDataSources.swift in Sources */,
-				B34699942C1A8B440075CE90 /* main.swift in Sources */,
 				B347B2DA2BC4CA98006A3B2D /* RxTableViewRealmDataSource.swift in Sources */,
 				B347B2DB2BC4CA98006A3B2D /* megaTron.metal in Sources */,
 				B347B2FD2BC4CA98006A3B2D /* fullscreen_vs.metal in Sources */,
@@ -6404,6 +6454,7 @@
 			files = (
 				B35EEF882C6C6D1A00EBD1A8 /* blit_ps.metal in Sources */,
 				B35EEF892C6C6D1A00EBD1A8 /* ulTron.metal in Sources */,
+				B36A8B0D2CCCFC01002357DD /* main.swift in Sources */,
 				B35EEF8A2C6C6D1A00EBD1A8 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B38236272CC45FA700DCE080 /* PVAppDelegate+AppRating.swift in Sources */,
 				B35EEF8B2C6C6D1A00EBD1A8 /* RxTableViewRealmDataSource.swift in Sources */,
@@ -6417,7 +6468,6 @@
 				B35EEF932C6C6D1A00EBD1A8 /* PVAppDelegate+NitoTV.swift in Sources */,
 				B35EEF942C6C6D1A00EBD1A8 /* MameShaders.metal in Sources */,
 				B35EEF952C6C6D1A00EBD1A8 /* Result+Conveniences.swift in Sources */,
-				B35EEF962C6C6D1A00EBD1A8 /* main.swift in Sources */,
 				B35EEF972C6C6D1A00EBD1A8 /* Services.swift in Sources */,
 				B35EEF992C6C6D1A00EBD1A8 /* crt_filter_ps.metal in Sources */,
 				B35EEF9A2C6C6D1A00EBD1A8 /* Reactive+RxRealmDataSources.swift in Sources */,
@@ -6435,6 +6485,7 @@
 			files = (
 				B394CC722BDEE53A006B63E8 /* blit_ps.metal in Sources */,
 				B394CC742BDEE53A006B63E8 /* ulTron.metal in Sources */,
+				B36A8B0B2CCCFC01002357DD /* main.swift in Sources */,
 				B394CC762BDEE53A006B63E8 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B38236252CC45FA700DCE080 /* PVAppDelegate+AppRating.swift in Sources */,
 				B394CC792BDEE53A006B63E8 /* RxTableViewRealmDataSource.swift in Sources */,
@@ -6448,7 +6499,6 @@
 				B3AED3042BE35C52003A9290 /* PVAppDelegate+NitoTV.swift in Sources */,
 				B394CCB52BDEE53A006B63E8 /* MameShaders.metal in Sources */,
 				B394CCBB2BDEE53A006B63E8 /* Result+Conveniences.swift in Sources */,
-				B34699972C1A8B450075CE90 /* main.swift in Sources */,
 				B394CCD52BDEE53A006B63E8 /* Services.swift in Sources */,
 				B394CCE62BDEE53A006B63E8 /* crt_filter_ps.metal in Sources */,
 				B394CCF22BDEE53A006B63E8 /* Reactive+RxRealmDataSources.swift in Sources */,
@@ -6507,10 +6557,10 @@
 				B3F7E2DF297736BE00362B92 /* megaTron.metal in Sources */,
 				B3F7E2F1297736BE00362B92 /* MameShaders.metal in Sources */,
 				B3F7E2F7297736BE00362B92 /* Result+Conveniences.swift in Sources */,
-				B34699932C1A8B440075CE90 /* main.swift in Sources */,
 				B3F7E30C297736BE00362B92 /* ApplicationMonitor.swift in Sources */,
 				B3F7E311297736BE00362B92 /* Services.swift in Sources */,
 				B3F7E318297736BE00362B92 /* PVAppDelegate+JIT.swift in Sources */,
+				B36A8B0C2CCCFC01002357DD /* main.swift in Sources */,
 				B3F7E31F297736BE00362B92 /* crt_filter_ps.metal in Sources */,
 				B3F7E32B297736BE00362B92 /* Reactive+RxRealmDataSources.swift in Sources */,
 				B3F7E32F297736BE00362B92 /* PublishedPipeline.swift in Sources */,
@@ -6539,10 +6589,10 @@
 				B3F7E46C297736C200362B92 /* megaTron.metal in Sources */,
 				B3F7E47E297736C200362B92 /* MameShaders.metal in Sources */,
 				B3F7E484297736C200362B92 /* Result+Conveniences.swift in Sources */,
-				B34699992C1A8B460075CE90 /* main.swift in Sources */,
 				B3F7E499297736C200362B92 /* ApplicationMonitor.swift in Sources */,
 				B3F7E49E297736C200362B92 /* Services.swift in Sources */,
 				B3F7E4A5297736C200362B92 /* PVAppDelegate+JIT.swift in Sources */,
+				B36A8B092CCCFC01002357DD /* main.swift in Sources */,
 				B3F7E4AC297736C200362B92 /* crt_filter_ps.metal in Sources */,
 				B3F7E4B8297736C200362B92 /* Reactive+RxRealmDataSources.swift in Sources */,
 				B3F7E4BC297736C200362B92 /* PublishedPipeline.swift in Sources */,
@@ -9057,7 +9107,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -9155,7 +9205,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -9253,7 +9303,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -9535,7 +9585,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Extensions/TopShelf/TopShelf-Bridging-Header.h";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Archive;
 		};
@@ -9731,7 +9781,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -9829,7 +9879,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -9926,7 +9976,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -11093,7 +11143,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Extensions/TopShelf/TopShelf-Bridging-Header.h";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -11133,7 +11183,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Extensions/TopShelf/TopShelf-Bridging-Header.h";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -11453,6 +11503,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVLogging;
 		};
+		B35B177D2CCCDFC7007059CA /* XCLocalSwiftPackageReference "PVAudio" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVAudio;
+		};
 		B35EEF6D2C6C6D1A00EBD1A8 /* XCLocalSwiftPackageReference "PVLibrary" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVLibrary;
@@ -11464,6 +11518,10 @@
 		B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "Cores/4DO" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/4DO;
+		};
+		B392B3E02CCC5BB700B1C760 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "Cores/VisualBoyAdvance-M";
 		};
 		B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -11488,10 +11546,6 @@
 		B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Mednafen;
-		};
-		B3CF55292CB8ACF20023C620 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "Cores/VisualBoyAdvance-M";
 		};
 		B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -12167,6 +12221,25 @@
 			package = B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */;
 			productName = PVSupport;
 		};
+		B35B177E2CCCDFC7007059CA /* PVAudio */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVAudio;
+		};
+		B35B17802CCCDFD1007059CA /* PVAudio */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35B177D2CCCDFC7007059CA /* XCLocalSwiftPackageReference "PVAudio" */;
+			productName = PVAudio;
+		};
+		B35B17822CCCE035007059CA /* PVLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
+			productName = PVLibrary;
+		};
+		B35B17842CCCE0BB007059CA /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
 		B35D52812C96C83E006BE5BF /* PVFreeDO-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "Cores/4DO" */;
@@ -12287,6 +12360,10 @@
 		B386DD672C8939C60021A7BA /* PVFreeDO-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = "PVFreeDO-Dynamic";
+		};
+		B392B3E12CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "PVVisualBoyAdvance-Dynamic";
 		};
 		B39342132CC57837008AA673 /* MoltenVK */ = {
 			isa = XCSwiftPackageProductDependency;

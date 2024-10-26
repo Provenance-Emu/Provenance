@@ -190,6 +190,7 @@ extension PVRootViewController: PVMenuDelegate {
 #endif
 }
 
+#if !os(tvOS)
 extension PVRootViewController: UIDocumentPickerDelegate {
     public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         updatesController.handlePickedDocuments(urls)
@@ -199,3 +200,4 @@ extension PVRootViewController: UIDocumentPickerDelegate {
         ILOG("Document picker was cancelled")
     }
 }
+#endif

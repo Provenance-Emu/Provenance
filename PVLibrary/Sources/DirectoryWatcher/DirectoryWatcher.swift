@@ -58,8 +58,14 @@ public extension NSNotification.Name {
 let TIMER_DELAY_IN_SECONDS = 2.0
 
 /// The directory watcher class
+import Perception
+
+//#if !os(tvOS)
 @Observable
-public final class DirectoryWatcher {
+//#else
+//@Perceptible
+//#endif
+public final class DirectoryWatcher: ObservableObject {
     
     private let watchedDirectory: URL
 
@@ -87,7 +93,10 @@ public final class DirectoryWatcher {
 
     /// The current extraction status
     public var extractionStatus: ExtractionStatus = .idle
-    @ObservationIgnored private var statusContinuation: AsyncStream<ExtractionStatus>.Continuation?
+//    #if !os(tvOS)
+    @ObservationIgnored
+//    #endif
+    private var statusContinuation: AsyncStream<ExtractionStatus>.Continuation?
 
     /// A sequence of extraction statuses
     public var extractionStatusSequence: AsyncStream<ExtractionStatus> {
@@ -99,7 +108,10 @@ public final class DirectoryWatcher {
         }
     }
 
-    @ObservationIgnored private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
+//    #if !os(tvOS)
+    @ObservationIgnored
+//    #endif
+    private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
 
     /// A sequence of completed files
     public var completedFilesSequence: AsyncStream<[URL]> {
@@ -432,7 +444,7 @@ fileprivate extension DirectoryWatcher {
     }
 
     private func checkFileStatus(at path: URL) {
-        ILOG("Checking file status for: \(path.lastPathComponent)")
+        ILOG("Checking file status for: \(path)")
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
             let currentSize = attributes[.size] as? Int64 ?? 0

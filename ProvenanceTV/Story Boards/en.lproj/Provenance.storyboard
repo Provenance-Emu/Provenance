@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="23094" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7Iz-AI-QKl">
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="23504" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7Iz-AI-QKl">
     <device id="appleTV" appearance="dark"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>

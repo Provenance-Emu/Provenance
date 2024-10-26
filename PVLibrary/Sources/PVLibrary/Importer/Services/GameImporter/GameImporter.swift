@@ -22,6 +22,7 @@ import PVFileSystem
 import PVLogging
 import PVPrimitives
 import PVRealm
+import Perception
 
 #if canImport(UIKit)
 import UIKit
@@ -49,8 +50,12 @@ public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, 
 /// Type alias for a closure that handles the finish of getting artwork
 public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
+#if !os(tvOS)
 @Observable
-public final class GameImporter {
+#else
+@Perceptible
+#endif
+public final class GameImporter: ObservableObject {
     /// Closure called when import starts
     public var importStartedHandler: GameImporterImportStartedHandler?
     /// Closure called when import completes

@@ -151,7 +151,9 @@ public extension ThemeManager {
     @MainActor
     private class func configureTableViews(_ palette: any UXThemePalette) {
         UITableView.appearance().backgroundColor = palette.tableViewBackgroundColor
+        #if !os(tvOS)
         UITableView.appearance().separatorColor = palette.settingsSeperator
+        #endif
         DLOG("Table views - backgroundColor: \(palette.tableViewBackgroundColor?.debugDescription ?? "nil"), separatorColor: \(palette.settingsSeperator?.debugDescription ?? "nil")")
     }
 
@@ -212,10 +214,12 @@ public extension ThemeManager {
 
     @MainActor
     private class func configureSlider(_ palette: any UXThemePalette) {
+        #if !os(tvOS)
         UISlider.appearance().thumbTintColor = palette.defaultTintColor
         UISlider.appearance().minimumTrackTintColor = palette.defaultTintColor?.withAlphaComponent(0.5)
         UISlider.appearance().maximumTrackTintColor = palette.settingsSeperator
         DLOG("Slider - thumbTintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), minimumTrackTintColor: \(palette.defaultTintColor?.withAlphaComponent(0.5).debugDescription ?? "nil"), maximumTrackTintColor: \(palette.settingsSeperator?.debugDescription ?? "nil")")
+        #endif
     }
 
     @MainActor

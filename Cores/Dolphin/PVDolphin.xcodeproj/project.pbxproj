@@ -49,7 +49,7 @@
 		B34A8EF6295848010000D110 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB452949F41D00CC8234 /* libbz2.tbd */; };
 		B34A8EF7295848360000D110 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
+		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B39F67CC295D8B1F0048CEAD /* libfmtdDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD72949E94400CC8234 /* libfmtdDolphin.a */; };
@@ -40636,7 +40636,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -40820,7 +40820,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Release;
@@ -41004,7 +41004,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
@@ -41046,7 +41046,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};

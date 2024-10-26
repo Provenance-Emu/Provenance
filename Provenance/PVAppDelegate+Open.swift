@@ -56,9 +56,11 @@ extension Array<URLQueryItem> {
 
 extension PVAppDelegate {
     func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        #if !os(tvOS)
         if isAppStore {
             appRatingSignifigantEvent()
         }
+        #endif
 #if os(tvOS)
         importFile(atURL: url)
         return true
@@ -105,9 +107,11 @@ extension PVAppDelegate {
 
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         defer {
+            #if !os(tvOS)
             if isAppStore {
                 appRatingSignifigantEvent()
             }
+            #endif
         }
         // Spotlight search click-through
 #if os(iOS) || os(macOS)

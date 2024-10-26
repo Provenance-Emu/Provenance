@@ -34,7 +34,7 @@ let package = Package(
     name: "PVCoremGBA",
     platforms: [
         .iOS(.v17),
-        .tvOS(.v17),
+        .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v10_13),
         .macCatalyst(.v17),

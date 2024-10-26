@@ -24,7 +24,7 @@ let package = Package(
     name: "PVLibrary",
     platforms: [
         .iOS(.v17),
-        .tvOS(.v17),
+        .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v14),
         .macCatalyst(.v17),
@@ -70,7 +70,9 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
                  branch: "develop"),
         .package(url: "https://github.com/stephencelis/SQLite.swift.git",
-                 .upToNextMajor(from: "0.15.3"))
+                 .upToNextMajor(from: "0.15.3")),
+        .package(url: "https://github.com/pointfreeco/swift-perception.git",
+                 branch:("main"))
     ],
     
     targets: [
@@ -104,6 +106,7 @@ let package = Package(
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+                .product(name: "Perception", package: "swift-perception"),
             ],
             resources: [
                 // TODO: Move Cheats to PVLookup
@@ -191,6 +194,7 @@ let package = Package(
                 "PVPrimitives",
                 "Extractor",
                 "PVFileSystem",
+                .product(name: "Perception", package: "swift-perception"),
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),

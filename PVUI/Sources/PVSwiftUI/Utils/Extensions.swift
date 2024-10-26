@@ -21,8 +21,8 @@ extension SwiftUI.View {
    }
 }
 
-extension UIColor {
-    var swiftUIColor: Color {
+public extension UIColor {
+    public var swiftUIColor: Color {
         return Color(self)
     }
 }
