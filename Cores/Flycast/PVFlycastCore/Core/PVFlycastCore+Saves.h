@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVFlycastCore (Saves)
+@interface PVFlycastCoreBridge (Saves)
 
 @end
 

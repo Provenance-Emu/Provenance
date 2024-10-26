@@ -8,7 +8,7 @@
 
 #import "PVFlycastCore+Audio.h"
 #ifndef LIBRETRO
-@implementation PVFlycastCore (Audio)
+@implementation PVFlycastCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
     return isNTSC ? 60 : 50;

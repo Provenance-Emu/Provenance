@@ -1,6 +1,6 @@
 import Foundation
 
-extension PVFlycastCore: CoreOptional {
+extension PVFlycastEmuCore: CoreOptional {
      static var resolutionOption: CoreOption = {
          /*
           Internal resolution (restart) [flycast_internal_resolution] (640x480|1280x960|1920x1440|2560x1920|3200x2400|3840x2880|
