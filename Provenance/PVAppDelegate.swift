@@ -371,9 +371,12 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         }
     }
     
+    var currentThemeObservation: Any?
+    var userInterfaceStyleObservation: Any?
+    
     func _initThemeListener() {
         if #available(iOS 17.0, tvOS 17.0, *) {
-            withObservationTracking {
+            userInterfaceStyleObservation = withObservationTracking {
                 _ = UITraitCollection.current.userInterfaceStyle
             } onChange: { [unowned self] in
                 ILOG("changed: \(UITraitCollection.current.userInterfaceStyle)")
@@ -385,11 +388,12 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                 }
             }
             
-            withObservationTracking {
+            currentThemeObservation = withObservationTracking {
                 _ = ThemeManager.shared.currentPalette
-            } onChange: { [unowned self] in
-                ILOG("changed: \(ThemeManager.shared.currentPalette.name)")
-                Task.detached { @MainActor in
+            } onChange: { [weak self] in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    ILOG("changed: \(ThemeManager.shared.currentPalette.name)")
                     self._initUITheme()
                     if self.isAppStore {
                         self.appRatingSignifigantEvent()
@@ -398,7 +402,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             }
         }
         else {
-            withPerceptionTracking {
+            userInterfaceStyleObservation = withPerceptionTracking {
                 _ = UITraitCollection.current.userInterfaceStyle
             } onChange: { [unowned self] in
                 ILOG("changed: \(UITraitCollection.current.userInterfaceStyle)")
@@ -410,7 +414,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                 }
             }
             
-            withPerceptionTracking {
+            currentThemeObservation =   withPerceptionTracking {
                 _ = ThemeManager.shared.currentPalette
             } onChange: { [unowned self] in
                 ILOG("changed: \(ThemeManager.shared.currentPalette.name)")

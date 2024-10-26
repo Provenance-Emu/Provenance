@@ -54,15 +54,15 @@ public extension ThemeManager {
         configureActionSheets(palette)
         configureActivityIndicator(palette)
         configureBarButtonItems(palette)
-//        configureCollectionViews(palette)
-//        configureInterfaceStyle(palette)
+        configureCollectionViews(palette)
+        configureInterfaceStyle(palette)
 //        configureNavigationBar(palette)
         configureSegmentedControl(palette)
         configurePageControl(palette)
         configureSlider(palette)
         configureStatusBar(palette)
         configureSwitches(palette)
-//        configureTabBar(palette)
+        configureTabBar(palette)
 //        configureTableViews(palette)
         configureTextInputs(palette)
         configureUIView(palette)
@@ -207,7 +207,7 @@ public extension ThemeManager {
     
     @MainActor
     private class func configurePageControl(_ palette: any UXThemePalette) {
-        UIPageControl.appearance().currentPageIndicatorTintColor = palette.switchON?.saturation(0.3)
+        UIPageControl.appearance().currentPageIndicatorTintColor = palette.switchON?.saturation(0.8)
         UIPageControl.appearance().pageIndicatorTintColor = palette.switchON?.saturation(0.3) ?? palette.switchThumb
         DLOG("Page control - configurePageControl - currentPageIndicatorTintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), pageIndicatorTintColor: \(palette.gameLibraryText.debugDescription ?? "") ")
     }

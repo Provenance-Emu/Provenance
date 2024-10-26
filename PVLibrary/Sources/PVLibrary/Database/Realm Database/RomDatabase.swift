@@ -298,6 +298,7 @@ public final class RomDatabase {
         }
     }
 
+    @MainActor
     private static func createInitialLocalLibrary() async throws {
         ILOG("Creating initial local library")
         let newLibrary = PVLibrary()
@@ -313,7 +314,7 @@ public final class RomDatabase {
 
         ILOG("Adding new library to database")
         do {
-            try await _sharedInstance?.addAsync(newLibrary)
+            try _sharedInstance?.add(newLibrary)
             _sharedInstance.libraryRef = ThreadSafeReference(to: newLibrary)
             ILOG("Initial local library created successfully")
         } catch {
@@ -472,14 +473,20 @@ public extension RomDatabase {
 
     @objc
     func asyncWriteTransaction(_ block: @escaping () -> Void) {
-        let realm = Thread.isMainThread ? self.realm : try! Realm()
-        if realm.isPerformingAsynchronousWriteOperations {
-            block()
-        } else {
-            realm.writeAsync(block)
+        DispatchQueue.main.async {
+            let realm = self.realm
+            if realm.isInWriteTransaction {
+                block()
+            } else {
+                realm.writeAsync {
+                    autoreleasepool {
+                        block()
+                    }
+                }
+            }
         }
     }
-    
+
     @objc
     func add(_ object: Object, update: Bool = false) throws {
         try writeTransaction {
@@ -490,16 +497,19 @@ public extension RomDatabase {
     @objc
     func addAsync(_ object: Object, update: Bool = false) async throws {
         ILOG("Adding object to database")
-        try await withCheckedThrowingContinuation { continuation in
-            do {
-                try writeTransaction {
-                    realm.add(object, update: update ? .all : .error)
+        return try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.main.async {
+                do {
+                    let realm = self.realm
+                    try realm.write {
+                        realm.add(object, update: update ? .all : .error)
+                    }
+                    ILOG("Object added successfully")
+                    continuation.resume()
+                } catch {
+                    ELOG("Error adding object to database: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
                 }
-                ILOG("Object added successfully")
-                continuation.resume()
-            } catch {
-                ELOG("Error adding object to database: \(error.localizedDescription)")
-                continuation.resume(throwing: error)
             }
         }
     }
