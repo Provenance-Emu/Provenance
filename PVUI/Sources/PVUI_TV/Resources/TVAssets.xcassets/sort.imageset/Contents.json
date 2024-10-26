@@ -1,8 +1,16 @@
 {
   "images" : [
     {
-      "filename" : "gear.pdf",
-      "idiom" : "universal"
+      "filename" : "sort.pdf",
+      "idiom" : "iphone"
+    },
+    {
+      "filename" : "sort-1.pdf",
+      "idiom" : "ipad"
+    },
+    {
+      "filename" : "sort-tv.pdf",
+      "idiom" : "tv"
     }
   ],
   "info" : {
