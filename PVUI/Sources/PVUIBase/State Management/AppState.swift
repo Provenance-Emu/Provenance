@@ -15,8 +15,6 @@ import PVCoreBridge
 import PVThemes
 import PVSettings
 import PVUIBase
-import PVUIKit
-import PVSwiftUI
 import PVLogging
 import Combine
 import Observation
@@ -28,28 +26,36 @@ import Defaults
 
 // Main AppState class
 @MainActor
-class AppState: ObservableObject {
+public class AppState: ObservableObject {
+    
+    @ObservedObject
+    public static private(set) var shared: AppState = .init()
+    
     /// Computed property to access current bootup state
-    var bootupState: AppBootupState.State {
+    public var bootupState: AppBootupState.State {
         bootupStateManager.currentState
     }
+    
+    /// Hold the emulation core and other info
+    @Published
+    public var emulationState :EmulationState = .init()
 
     /// User default for UI preference
     @Published
-    var useUIKit: Bool = Defaults[.useUIKit]
+    public var useUIKit: Bool = Defaults[.useUIKit]
 
     /// Instance of AppBootupState to manage bootup process
-    let bootupStateManager = AppBootupState()
+    public let bootupStateManager = AppBootupState()
 
     /// Optional properties for game-related functionalities
-    @Published var gameImporter: GameImporter?
+    @Published public var gameImporter: GameImporter?
     /// Optional property for the game library
-    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
+    public var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
     /// Optional property for the library updates controller
-    @Published var libraryUpdatesController: PVGameLibraryUpdatesController?
+    @Published public var libraryUpdatesController: PVGameLibraryUpdatesController?
 
     /// Whether the app has been initialized
-    @Published var isInitialized = false {
+    @Published public var isInitialized = false {
         didSet {
             ILOG("AppState: isInitialized changed to \(isInitialized)")
             if isInitialized {
@@ -65,7 +71,7 @@ class AppState: ObservableObject {
     private var useUIKitObservationTask: Task<Void, Never>?
 
     /// Initializer
-    init() {
+    private init() {
         ILOG("AppState: Initializing")
         useUIKitObservationTask = Task { @MainActor in
             for await value in Defaults.updates(.useUIKit) {
@@ -77,7 +83,7 @@ class AppState: ObservableObject {
     }
 
     /// Method to start the bootup sequence
-    func startBootupSequence() {
+    public func startBootupSequence() {
         ILOG("AppState: Starting bootup sequence")
         if isInitialized {
             ILOG("AppState: Already initialized, skipping bootup sequence")
@@ -191,7 +197,7 @@ class AppState: ObservableObject {
 
 
     @MainActor
-    func setupShortcutsListener() {
+    private func setupShortcutsListener() {
         guard let gameLibrary = gameLibrary else {
             ELOG("gameLibrary not yet initialized")
             return
@@ -208,16 +214,18 @@ class AppState: ObservableObject {
             .disposed(by: disposeBag)
 #endif
     }
-
-    @MainActor
-    func initializeComponents() async {
-        ILOG("AppState: Starting component initialization")
-        // Initialize gameLibrary, gameImporter, libraryUpdatesController here
-        // Add logging after each initialization
-        ILOG("AppState: Component initialization completed")
-    }
 }
 
 struct TimeoutError: Error {
     let seconds: TimeInterval
 }
+
+#if os(iOS) || os(macOS)
+@available(iOS 9.0, macOS 11.0, macCatalyst 11.0, *)
+extension PVGame {
+    func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
+        let icon: UIApplicationShortcutIcon = isFavorite ? .init(type: .favorite) : .init(type: .play)
+        return UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: systemIdentifier), icon: icon, userInfo: ["PVGameHash": md5Hash as NSSecureCoding])
+    }
+}
+#endif

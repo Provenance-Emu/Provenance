@@ -1,5 +1,7 @@
 import SwiftUI
 import PVLogging
+import PVSwiftUI
+import PVUIBase
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
@@ -18,6 +20,7 @@ struct ContentView: View {
                 BootupView()
             }
         }
+        .edgesIgnoringSafeArea(.all)
         .onAppear {
             ILOG("ContentView: Appeared")
         }

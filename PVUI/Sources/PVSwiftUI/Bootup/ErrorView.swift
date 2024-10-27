@@ -10,11 +10,16 @@
 import SwiftUI
 import PVLogging
 
-struct ErrorView: View {
-    let error: Error
-    let retryAction: () -> Void
+public struct ErrorView: View {
+    public let error: Error
+    public let retryAction: () -> Void
 
-    var body: some View {
+    public init(error: Error, retryAction: @escaping () -> Void) {
+        self.error = error
+        self.retryAction = retryAction
+    }
+    
+    public var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 50))

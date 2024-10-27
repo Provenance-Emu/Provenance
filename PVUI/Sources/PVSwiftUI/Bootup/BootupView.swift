@@ -9,15 +9,16 @@
 import SwiftUI
 import Foundation
 import PVLogging
+import PVUIBase
 
-struct BootupView: View {
+public struct BootupView: View {
     @EnvironmentObject private var appState: AppState
 
-    init() {
+    public init() {
         ILOG("ContentView: App is not initialized, showing BootupView")
     }
 
-    var body: some View {
+    public var body: some View {
         VStack {
             Text("Initializing...")
             Text(appState.bootupState.localizedDescription)

@@ -810,7 +810,8 @@ public extension GCKeyboard {
 
         let controller = GCController.withExtendedGamepad()
         let gamepad = controller.extendedGamepad!
-        let app = UIApplication.shared as! PVApplication
+
+        let emulationState = AppState.shared.emulationState
 
         controller.setValue(self.vendorName ?? "Keyboard", forKey: "vendorName")
 
@@ -862,7 +863,7 @@ public extension GCKeyboard {
             gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
             
             // Bind / to select, rightShift to start
-            if let emulator = app.emulator, let core = app.core, core.isOn, core.isRunning {
+            if let emulator = emulationState.emulator, let core = emulationState.core, core.isOn, core.isRunning {
                 if (isPressed(.slash)) {
                     print("Select Pressed\n")
                     emulator.controllerViewController?.pressSelect(forPlayer: 0)

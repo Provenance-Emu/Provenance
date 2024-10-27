@@ -48,6 +48,10 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
     /// This is set by the UIApplicationDelegateAdaptor
     internal var window: UIWindow? = nil
 
+    static func main() {
+        UIApplicationMain(CommandLine.argc, CommandLine.unsafeArgv, NSStringFromClass(PVApplication.self), NSStringFromClass(PVAppDelegate.self))
+    }
+    
     var shortcutItemGame: PVGame?
     var bootupState: AppBootupState? {
         appState?.bootupStateManager
@@ -199,6 +203,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
         return true
     }
 
+    // TODO: Move to ProvenanceApp
     @MainActor
     private func initializeAppComponents() {
         loadRocketSimConnect()
@@ -330,8 +335,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
         }
     }
 
-    func saveCoreState(_ application: PVApplication) async throws {
-        if let core = application.core, core.isOn, let emulator = application.emulator {
+    // TODO: Move to ProvenanceApp
+    func saveCoreState() async throws {
+        if let core = appState?.emulationState.core, core.isOn, let emulator = appState?.emulationState.emulator {
             if Defaults[.autoSave], core.supportsSaveStates {
                 ILOG("PVAppDelegate: Saving Core State\n")
                 try await emulator.autoSaveState()
@@ -342,8 +348,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
         }
     }
 
-    func pauseCore(_ application: PVApplication) {
-        if let core = application.core, core.isOn && core.isRunning {
+    // TODO: Move to ProvenanceApp
+    func pauseCore() {
+        if let core = appState?.emulationState.core, core.isOn && core.isRunning {
             ILOG("PVAppDelegate: Pausing Core\n")
             core.setPauseEmulation(true)
         }
@@ -352,43 +359,41 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
         }
     }
 
-    func stopCore(_ application: PVApplication) {
-        if let core = application.core, core.isOn {
+    // TODO: Move to ProvenanceApp
+    func stopCore() {
+        if let core = appState?.emulationState.core, core.isOn {
             ILOG("PVAppDelegate: Stopping Core\n")
             core.stopEmulation()
         }
     }
 
+    
     func applicationWillResignActive(_ application: UIApplication) {
-        if let app = application as? PVApplication {
-            app.isInBackground = true
-            pauseCore(app)
-            sleep(1)
-            Task {
-                try await self.saveCoreState(app)
-            }
+        let emulationState = appState?.emulationState
+        emulationState?.isInBackground = true
+        pauseCore()
+        sleep(1)
+        Task {
+            try await self.saveCoreState()
         }
     }
 
+    // TODO: Move to ProvenanceApp
     func applicationDidEnterBackground(_ application: UIApplication) {
-        if let app = application as? PVApplication {
-            app.isInBackground = true
-            pauseCore(app)
-        }
+        appState?.emulationState.isInBackground = true
+        pauseCore()
     }
 
     func applicationWillEnterForeground(_: UIApplication) {}
 
+    // TODO: Move to ProvenanceApp
     func applicationDidBecomeActive(_ application: UIApplication) {
-        if let app = application as? PVApplication {
-            app.isInBackground = false
-        }
+        appState?.emulationState.isInBackground = false
     }
 
+    // TODO: Move to ProvenanceApp
     func applicationWillTerminate(_ application: UIApplication) {
-        if let app = application as? PVApplication {
-            stopCore(app)
-        }
+        stopCore()
     }
 
     @MainActor

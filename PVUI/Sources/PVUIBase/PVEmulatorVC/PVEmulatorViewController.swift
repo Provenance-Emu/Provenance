@@ -131,10 +131,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         self.game = game
         
         super.init(nibName: nil, bundle: nil)
-        let app = UIApplication.shared as! PVApplication
-        app.core = core
-        if (app.emulator == nil) {
-            app.emulator = self
+        
+        
+        let emulationState = AppState.shared.emulationState
+        emulationState.core = core
+        if (emulationState.emulator == nil) {
+            emulationState.emulator = self
         }
         if let coreClass = type(of: core) as? OptionalCore.Type {
             coreClass.coreClassName = core.coreIdentifier ?? ""
@@ -206,10 +208,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             view.removeGestureRecognizer(menuGestureRecognizer)
         }
         
-        // This has a race condition
-//        let appDelegate = UIApplication.shared as! PVApplication
-//        appDelegate.core = nil
-//        appDelegate.emulator = nil
+        Task { @MainActor in
+            let emulationState = AppState.shared.emulationState
+
+            emulationState.core = nil
+            emulationState.emulator = nil
+        }
         core.removeObserver(self, forKeyPath: "isRunning")
     }
     
@@ -285,10 +289,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         title = game.title
         view.backgroundColor = UIColor.black
         
-        let app = UIApplication.shared as! PVApplication
-        app.core = core
-        if (app.emulator == nil) {
-            app.emulator = self
+        let emulationState = AppState.shared.emulationState
+
+        emulationState.core = core
+        if (emulationState.emulator == nil) {
+            emulationState.emulator = self
         }
         
         initNotificationObservers()
@@ -556,9 +561,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         if let menuGestureRecognizer = menuGestureRecognizer {
             view.removeGestureRecognizer(menuGestureRecognizer)
         }
-        let appDelegate = UIApplication.shared as! PVApplication
-        appDelegate.core = nil
-        appDelegate.emulator = nil
+        
+        let emulationState = AppState.shared.emulationState
+
+        emulationState.core = nil
+        emulationState.emulator = nil
         PVEmulatorCore.status = [:]
         fpsTimer?.invalidate()
         fpsTimer = nil

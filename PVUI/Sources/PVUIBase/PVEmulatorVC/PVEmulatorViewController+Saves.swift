@@ -52,8 +52,7 @@ public extension PVEmulatorViewController {
         autosaveTimer?.invalidate()
         let interval = Defaults[.timedAutoSaveInterval]
         autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
-            if let app=UIApplication.shared as? PVApplication,
-               app.isInBackground {
+            if AppState.shared.emulationState.isInBackground {
                 return
             }
             Task { @MainActor in

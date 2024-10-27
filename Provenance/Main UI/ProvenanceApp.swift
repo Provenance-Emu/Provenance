@@ -1,10 +1,11 @@
 import SwiftUI
 import Foundation
 import PVLogging
+import PVSwiftUI
 
 @main
 struct ProvenanceApp: App {
-    @StateObject private var appState = AppState()
+    @StateObject private var appState = AppState.shared
     @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
     @Environment(\.scenePhase) private var scenePhase
 
@@ -15,7 +16,6 @@ struct ProvenanceApp: App {
                 .onAppear {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
-//                    appState.startBootupSequence()
                 }
         }
         .onChange(of: scenePhase) { newPhase in

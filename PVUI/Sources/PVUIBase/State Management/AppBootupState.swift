@@ -13,9 +13,9 @@ import PVLogging
 /// A class to manage the bootup state of the application
 @MainActor
 //@Observable
-class AppBootupState: ObservableObject {
+public class AppBootupState: ObservableObject {
     /// Enum representing different states during the bootup process
-    enum State: Equatable {
+    public enum State: Equatable {
         case notStarted
         case initializingDatabase
         case databaseInitialized
@@ -24,7 +24,7 @@ class AppBootupState: ObservableObject {
         case error(Error)
 
         /// Custom equality check for State enum
-        static func == (lhs: AppBootupState.State, rhs: AppBootupState.State) -> Bool {
+        public static func == (lhs: AppBootupState.State, rhs: AppBootupState.State) -> Bool {
             switch (lhs, rhs) {
             case (.notStarted, .notStarted),
                  (.initializingDatabase, .initializingDatabase),
@@ -40,7 +40,7 @@ class AppBootupState: ObservableObject {
         }
 
         /// Computed property to get a human-readable description of the state
-        var localizedDescription: String {
+        public var localizedDescription: String {
             switch self {
             case .notStarted:
                 return "Not Started"
@@ -57,7 +57,7 @@ class AppBootupState: ObservableObject {
     }
 
     /// The current state of the bootup process
-    @Published private(set) var currentState: State = .notStarted {
+    @Published public  private(set) var currentState: State = .notStarted {
         didSet {
             if currentState == .completed {
                 isBootupCompleted = true
@@ -66,10 +66,10 @@ class AppBootupState: ObservableObject {
     }
 
     /// Whether the bootup process has completed
-    @Published var isBootupCompleted = false
+    @Published public private(set) var isBootupCompleted = false
 
     /// Function to transition to a new state
-    func transition(to state: State) {
+    public func transition(to state: State) {
         guard !isBootupCompleted else { return }
         currentState = state
     }

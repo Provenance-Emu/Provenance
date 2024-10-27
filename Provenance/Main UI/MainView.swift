@@ -8,6 +8,7 @@
 
 import SwiftUI
 import PVLogging
+import PVUIBase
 
 struct MainView: View {
     @EnvironmentObject private var appState: AppState
@@ -22,12 +23,15 @@ struct MainView: View {
         Group {
             if appState.useUIKit {
                 UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+                .edgesIgnoringSafeArea(.all)
             } else {
                 SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+                .edgesIgnoringSafeArea(.all)
             }
         }
         .onAppear {
             ILOG("MainView: Appeared")
         }
+        .edgesIgnoringSafeArea(.all)
     }
 }

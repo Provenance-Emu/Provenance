@@ -235,8 +235,7 @@ extension PVEmulatorViewController {
 
         // make sure this item is marked .cancel so it will be called even if user dismises popup
         let resumeAction = UIAlertAction(title: "Resume", style: .cancel, handler: { action in
-            if let appDelegate = UIApplication.shared as? PVApplication,
-               appDelegate.isInBackground {
+            if AppState.shared.emulationState.isInBackground {
                 return // don't resume if in background
             }
 
