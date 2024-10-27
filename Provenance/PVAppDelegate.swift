@@ -22,7 +22,10 @@ import PVUIKit
 import PVSwiftUI
 import PVLogging
 import Combine
+import Observation
 import Perception
+import SwiftUI
+import Defaults
 
 // Conditionally import PVJIT and JITManager if available
 #if canImport(PVJIT)
@@ -36,9 +39,65 @@ import JITManager
 import SteamController
 #endif
 #endif
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
+@main
+struct ProvenceApplication: SwiftUI.App {
+    init() {
+        
+    }
+    
+    @UIApplicationDelegateAdaptor(PVAppDelegate.self) private var appDelegate
+    @Environment(\.scenePhase) private var scenePhase
+    @Default(.useUIKit) var useUIKit: Bool
 
-final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
-    internal var window: UIWindow?
+    var body: some Scene {
+        WindowGroup {
+            MainView(appDelegate: appDelegate)
+                #if canImport(FreemiumKit)
+                .environmentObject(FreemiumKit.shared)
+                #endif
+        }
+    }
+}
+
+struct MainView: View {
+    let appDelegate: PVAppDelegate
+    @Default(.useUIKit) var useUIKit: Bool
+
+    var body: some View {
+        if useUIKit {
+            UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+        } else {
+            SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+        }
+    }
+}
+
+struct UIKitHostedProvenanceMainView: UIViewControllerRepresentable {
+    let appDelegate: PVAppDelegate
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        appDelegate.setupUIKitInterface()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+struct SwiftUIHostedProvenanceMainView: UIViewControllerRepresentable {
+    let appDelegate: PVAppDelegate
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        appDelegate.setupSwiftUIInterface()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+@Observable
+final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDelegate {
+    internal var window: UIWindow? = nil
     var shortcutItemGame: PVGame?
     var bootupState: AppBootupState {
         appState.bootupStateManager
@@ -60,12 +119,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     var is_presenting_alert = false
 #endif
 
-    @MainActor weak var rootNavigationVC: UIViewController?
-    @MainActor weak var gameLibraryViewController: PVGameLibraryViewController?
+    @MainActor weak var rootNavigationVC: UIViewController? = nil
+    @MainActor weak var gameLibraryViewController: PVGameLibraryViewController? = nil
 
-    private var libraryUpdatesController: PVGameLibraryUpdatesController?
-    private var gameImporter: GameImporter?
-    private var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
 
     // Initialize the UI theme
     @MainActor
@@ -73,41 +129,41 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         ThemeManager.applySavedTheme()
         themeAppUI(withPalette: ThemeManager.shared.currentPalette)
     }
-
-    // Initialize the UI
-    @MainActor
-    func _initUI(
-        libraryUpdatesController: PVGameLibraryUpdatesController,
-        gameImporter: GameImporter,
-        gameLibrary: PVGameLibrary<RealmDatabaseDriver>
-    ) {
-        let window = setupWindow()
-        self.window = window
-
-        if !appState.useUIKit{
-            setupSwiftUIInterface(window: window,
-                                  libraryUpdatesController: libraryUpdatesController,
-                                  gameImporter: gameImporter,
-                                  gameLibrary: gameLibrary)
-        } else {
-            setupUIKitInterface(window: window,
-                                libraryUpdatesController: libraryUpdatesController,
-                                gameImporter: gameImporter,
-                                gameLibrary: gameLibrary)
-        }
-
-        _initUITheme()
-        setupJITIfNeeded()
-    }
-
-    private func setupWindow() -> UIWindow {
-        let window = UIWindow(frame: UIScreen.main.bounds)
-#if os(tvOS)
-        window.tintColor = .provenanceBlue
-#endif
-        return window
-    }
-
+//
+//    // Initialize the UI
+//    @MainActor
+//    func _initUI(
+//        libraryUpdatesController: PVGameLibraryUpdatesController,
+//        gameImporter: GameImporter,
+//        gameLibrary: PVGameLibrary<RealmDatabaseDriver>
+//    ) {
+//        let window = setupWindow()
+//        self.window = window
+//
+//        if !appState.useUIKit{
+//            setupSwiftUIInterface(window: window,
+//                                  libraryUpdatesController: libraryUpdatesController,
+//                                  gameImporter: gameImporter,
+//                                  gameLibrary: gameLibrary)
+//        } else {
+//            setupUIKitInterface(window: window,
+//                                libraryUpdatesController: libraryUpdatesController,
+//                                gameImporter: gameImporter,
+//                                gameLibrary: gameLibrary)
+//        }
+//
+//        _initUITheme()
+//        setupJITIfNeeded()
+//    }
+//
+//    private func setupWindow() -> UIWindow {
+//        let window = UIWindow(frame: UIScreen.main.bounds)
+//#if os(tvOS)
+//        window.tintColor = .provenanceBlue
+//#endif
+//        return window
+//    }
+//
     private func setupSwiftUIInterface(window: UIWindow,
                                        libraryUpdatesController: PVGameLibraryUpdatesController,
                                        gameImporter: GameImporter,
@@ -129,7 +185,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         window.rootViewController = sideNav
     }
 
-    private func setupSideNavigation(mainViewController: UIViewController,
+    fileprivate func setupSideNavigation(mainViewController: UIViewController,
                                      gameLibrary: PVGameLibrary<RealmDatabaseDriver>,
                                      viewModel: PVRootViewModel,
                                      rootViewController: PVRootViewController) -> SideNavigationController {
@@ -152,7 +208,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         return sideNav
     }
 
-    private func setupUIKitInterface(window: UIWindow,
+    fileprivate func setupUIKitInterface(window: UIWindow,
                                      libraryUpdatesController: PVGameLibraryUpdatesController,
                                      gameImporter: GameImporter,
                                      gameLibrary: PVGameLibrary<RealmDatabaseDriver>) {
@@ -177,18 +233,18 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             self.gameLibraryViewController = gameLibraryViewController
         }
     }
-
-    private func setupJITIfNeeded() {
-#if os(iOS) && !APP_STORE
-        if Defaults[.autoJIT] {
-            DOLJitManager.shared.attemptToAcquireJitOnStartup()
-        }
-        DispatchQueue.main.async { [unowned self] in
-            self.showJITWaitScreen()
-        }
-#endif
-    }
-
+//
+//    private func setupJITIfNeeded() {
+//#if os(iOS) && !APP_STORE
+//        if Defaults[.autoJIT] {
+//            DOLJitManager.shared.attemptToAcquireJitOnStartup()
+//        }
+//        DispatchQueue.main.async { [unowned self] in
+//            self.showJITWaitScreen()
+//        }
+//#endif
+//    }
+//
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         initializeAppComponents()
         configureApplication(application)
@@ -258,29 +314,21 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 
     @MainActor
     private func finalizeBootup() {
-        // Initialize UI and perform any final setup only if not already done
         if gameLibraryViewController == nil {
-            let gameImporter = GameImporter.shared
-            let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
-            let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
-
-            appState.gameImporter = gameImporter
-            appState.gameLibrary = gameLibrary
-            appState.libraryUpdatesController = libraryUpdatesController
+            appState.gameImporter = GameImporter.shared
+            appState.gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
+            appState.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: appState.gameImporter!)
 
             setupShortcutsListener()
 
+            // The UI setup is now handled by SwiftUI, so we don't need to call _initUI here
 
-            _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
-
-#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+            #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
             Task.detached { @MainActor in
-                await libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
+                await self.appState.libraryUpdatesController?.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
             }
-#endif
-            window?.makeKeyAndVisible()
+            #endif
         }
-
     }
 
     @MainActor
@@ -308,30 +356,30 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 
         showDatabaseErrorAlert(error: error)
     }
-
-    @MainActor
-    private func updateUIBasedOnPreference(useUIKit: Bool) {
-        guard let window = self.window,
-              let libraryUpdatesController = self.libraryUpdatesController,
-              let gameImporter = self.gameImporter,
-              let gameLibrary = self.gameLibrary else {
-            ELOG("Unable to update UI: missing required components")
-            return
-        }
-
-        if useUIKit {
-            setupUIKitInterface(window: window,
-                                libraryUpdatesController: libraryUpdatesController,
-                                gameImporter: gameImporter,
-                                gameLibrary: gameLibrary)
-        } else {
-            setupSwiftUIInterface(window: window,
-                                  libraryUpdatesController: libraryUpdatesController,
-                                  gameImporter: gameImporter,
-                                  gameLibrary: gameLibrary)
-        }
-    }
-
+//
+//    @MainActor
+//    private func updateUIBasedOnPreference(useUIKit: Bool) {
+//        guard let window = self.window,
+//              let libraryUpdatesController = self.libraryUpdatesController,
+//              let gameImporter = self.gameImporter,
+//              let gameLibrary = self.gameLibrary else {
+//            ELOG("Unable to update UI: missing required components")
+//            return
+//        }
+//
+//        if useUIKit {
+//            setupUIKitInterface(window: window,
+//                                libraryUpdatesController: libraryUpdatesController,
+//                                gameImporter: gameImporter,
+//                                gameLibrary: gameLibrary)
+//        } else {
+//            setupSwiftUIInterface(window: window,
+//                                  libraryUpdatesController: libraryUpdatesController,
+//                                  gameImporter: gameImporter,
+//                                  gameLibrary: gameLibrary)
+//        }
+//    }
+//
     private func initializeAdditionalComponents() {
         _initSteamControllers()
 
@@ -498,56 +546,56 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         }
     }
 
-    private var cancellables = Set<AnyCancellable>()
-    func _initLibraryNotificationHandlers() {
-        NotificationCenter.default.publisher(for: .PVReimportLibrary)
-            .flatMap { _ in
-                Future<Void, Never> { promise in
-                    RomDatabase.refresh()
-                    self.gameLibraryViewController?.checkROMs(false)
-                    promise(.success(()))
-                }
-            }
-            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-            .store(in: &cancellables)
-
-        NotificationCenter.default.publisher(for: .PVRefreshLibrary)
-            .flatMap { _ in
-                Future<Void, Error> { promise in
-                    do {
-                        try RomDatabase.sharedInstance.deleteAllGames()
-                        self.gameLibraryViewController?.checkROMs(false)
-                        promise(.success(()))
-                    } catch {
-                        ELOG("Failed to refresh all objects. \(error.localizedDescription)")
-                        promise(.failure(error))
-                    }
-                }
-            }
-            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-            .store(in: &cancellables)
-
-        NotificationCenter.default.publisher(for: .PVResetLibrary)
-            .flatMap { _ in
-                Future<Void, Error> { promise in
-                    do {
-                        ILOG("PVAppDelegate: Completed ResetLibrary, Re-Importing")
-                        try RomDatabase.sharedInstance.deleteAllData()
-                        Task {
-                            await GameImporter.shared.initSystems()
-                            self.gameLibraryViewController?.checkROMs(false)
-                            promise(.success(()))
-                        }
-                    } catch {
-                        ELOG("Failed to delete all objects. \(error.localizedDescription)")
-                        promise(.failure(error))
-                    }
-                }
-            }
-            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-            .store(in: &cancellables)
-    }
-
+//    private var cancellables = Set<AnyCancellable>()
+//    func _initLibraryNotificationHandlers() {
+//        NotificationCenter.default.publisher(for: .PVReimportLibrary)
+//            .flatMap { _ in
+//                Future<Void, Never> { promise in
+//                    RomDatabase.refresh()
+//                    self.gameLibraryViewController?.checkROMs(false)
+//                    promise(.success(()))
+//                }
+//            }
+//            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+//            .store(in: &cancellables)
+//
+//        NotificationCenter.default.publisher(for: .PVRefreshLibrary)
+//            .flatMap { _ in
+//                Future<Void, Error> { promise in
+//                    do {
+//                        try RomDatabase.sharedInstance.deleteAllGames()
+//                        self.gameLibraryViewController?.checkROMs(false)
+//                        promise(.success(()))
+//                    } catch {
+//                        ELOG("Failed to refresh all objects. \(error.localizedDescription)")
+//                        promise(.failure(error))
+//                    }
+//                }
+//            }
+//            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+//            .store(in: &cancellables)
+//
+//        NotificationCenter.default.publisher(for: .PVResetLibrary)
+//            .flatMap { _ in
+//                Future<Void, Error> { promise in
+//                    do {
+//                        ILOG("PVAppDelegate: Completed ResetLibrary, Re-Importing")
+//                        try RomDatabase.sharedInstance.deleteAllData()
+//                        Task {
+//                            await GameImporter.shared.initSystems()
+//                            self.gameLibraryViewController?.checkROMs(false)
+//                            promise(.success(()))
+//                        }
+//                    } catch {
+//                        ELOG("Failed to delete all objects. \(error.localizedDescription)")
+//                        promise(.failure(error))
+//                    }
+//                }
+//            }
+//            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+//            .store(in: &cancellables)
+//    }
+//
     func showDatabaseErrorAlert(error: Error) {
         let alertController = UIAlertController(
             title: "Database Error",
@@ -584,31 +632,72 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         // Implement this method to show a more detailed error view
         // This could include stack traces, error codes, or recovery steps
     }
-}
 
-private func loadRocketSimConnect() {
-#if DEBUG
-    guard (Bundle(path: "/Applications/RocketSim.app/Contents/Frameworks/RocketSimConnectLinker.nocache.framework")?.load() == true) else {
-        print("Failed to load linker framework")
-        return
+    @MainActor
+    func setupUIKitInterface() -> UIViewController {
+        let storyboard = UIStoryboard(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
+        guard let rootNavigation = storyboard.instantiateInitialViewController() as? UINavigationController else {
+            fatalError("No root nav controller")
+        }
+
+        self.rootNavigationVC = rootNavigation
+        guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
+            fatalError("No gameLibraryViewController")
+        }
+
+        gameLibraryViewController.updatesController = appState.libraryUpdatesController
+        gameLibraryViewController.gameImporter = appState.gameImporter
+        gameLibraryViewController.gameLibrary = appState.gameLibrary
+
+        self.gameLibraryViewController = gameLibraryViewController
+
+        return rootNavigation
     }
-    print("RocketSim Connect successfully linked")
-#endif
-}
 
-func runDetachedTaskWithCompletion<T>(
-    priority: TaskPriority? = nil,
-    operation: @escaping () async throws -> T,
-    completion: @escaping (Result<T, Error>) -> Void
-) {
-    Task.detached(priority: priority) {
-        do {
-            let result = try await operation()
-            completion(.success(result))
-        } catch {
-            completion(.failure(error))
+    @MainActor
+    func setupSwiftUIInterface() -> UIViewController {
+        let viewModel = PVRootViewModel()
+        let rootViewController = PVRootViewController.instantiate(
+            updatesController: appState.libraryUpdatesController!,
+            gameLibrary: appState.gameLibrary!,
+            gameImporter: appState.gameImporter!,
+            viewModel: viewModel)
+        self.rootNavigationVC = rootViewController
+        let sideNavHostedNavigationController = PVRootViewNavigationController(rootViewController: rootViewController)
+
+        let sideNav = setupSideNavigation(mainViewController: sideNavHostedNavigationController,
+                                          gameLibrary: appState.gameLibrary!,
+                                          viewModel: viewModel,
+                                          rootViewController: rootViewController)
+
+        return sideNav
+    }
+
+    private func loadRocketSimConnect() {
+    #if DEBUG
+        guard (Bundle(path: "/Applications/RocketSim.app/Contents/Frameworks/RocketSimConnectLinker.nocache.framework")?.load() == true) else {
+            print("Failed to load linker framework")
+            return
+        }
+        print("RocketSim Connect successfully linked")
+    #endif
+    }
+
+    func runDetachedTaskWithCompletion<T>(
+        priority: TaskPriority? = nil,
+        operation: @escaping () async throws -> T,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) {
+        Task.detached(priority: priority) {
+            do {
+                let result = try await operation()
+                completion(.success(result))
+            } catch {
+                completion(.failure(error))
+            }
         }
     }
+
 }
 
 // You might want to define a protocol for errors that can provide more detailed information

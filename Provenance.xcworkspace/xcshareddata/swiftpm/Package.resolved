@@ -47,6 +47,15 @@
         }
       },
       {
+        "package": "FreemiumKit",
+        "repositoryURL": "https://github.com/FlineDev/FreemiumKit.git",
+        "state": {
+          "branch": null,
+          "revision": "034f0a9c67eb24be90ec4334369dc23d44245f35",
+          "version": "1.11.0"
+        }
+      },
+      {
         "package": "HexColors",
         "repositoryURL": "https://github.com/JoeMatt/HexColors.git",
         "state": {

@@ -40,8 +40,10 @@ let package = Package(
         .package(url: "https://github.com/DimaRU/BuildEnvironment.git", from: "1.0.0"),
 //        .package(path: "../PackageBuildInfo")
         /// https://github.com/DimaRU/PackageBuildInfo
-        .package(url: "https://github.com/JoeMatt/PackageBuildInfo", branch: "master")
-        
+        .package(url: "https://github.com/JoeMatt/PackageBuildInfo", branch: "master"),
+        /// FreemiumKit
+        .package(url: "https://github.com/FlineDev/FreemiumKit.git", from: "1.11.0"),
+    
     ],
     targets: [
         

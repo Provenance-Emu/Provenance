@@ -1,5 +1,5 @@
 {
-  "originHash" : "5308b19baab55251d27039a296fb31c262bdd68d5849bde13e2c1d38d0855c90",
+  "originHash" : "13285f1a5da75945096ed0899dd8080470118b8bd5d3ada8f6eeabc6b2f36fb9",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -35,6 +35,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
+      }
+    },
+    {
+      "identity" : "freemiumkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/FlineDev/FreemiumKit.git",
+      "state" : {
+        "revision" : "034f0a9c67eb24be90ec4334369dc23d44245f35",
+        "version" : "1.11.0"
       }
     },
     {
@@ -173,6 +182,15 @@
       }
     },
     {
+      "identity" : "swift-perception",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-perception.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7335e4aab6136e42adeb7545a10570e543336d11"
+      }
+    },
+    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
@@ -197,6 +215,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "cb30be65a3f121d756c98d442194c41eb24e9f09"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "770f990d3e4eececb57ac04a6076e22f8c97daeb",
+        "version" : "1.4.2"
       }
     },
     {
