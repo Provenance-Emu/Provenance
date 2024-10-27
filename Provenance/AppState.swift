@@ -20,6 +20,9 @@ import PVSwiftUI
 import PVLogging
 import Combine
 import Observation
+#if canImport(CoreSpotlight)
+import CoreSpotlight
+#endif
 import Defaults
 
 // Main AppState class
@@ -96,10 +99,24 @@ class AppState: ObservableObject {
                 RomDatabase.reloadCache()
             }
             ILOG("AppState: RomDatabase cache reloaded")
-            bootupStateManager.transition(to: .completed)
-            ILOG("AppState: Library initialization completed")
-            isInitialized = true
+            await finalizeBootup()
         }
+    }
+
+    @MainActor
+    private func finalizeBootup() async {
+        ILOG("AppState: Finalizing bootup")
+        gameImporter = GameImporter.shared
+        gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
+        libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter!)
+
+        #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+        await libraryUpdatesController?.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
+        #endif
+
+        bootupStateManager.transition(to: .completed)
+        ILOG("AppState: Bootup finalized")
+        isInitialized = true
     }
 
     func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
