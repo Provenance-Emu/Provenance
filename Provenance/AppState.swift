@@ -46,8 +46,11 @@ class AppState: ObservableObject {
     var libraryUpdatesController: PVGameLibraryUpdatesController?
 
     /// Whether the app has been initialized
-    @Published var isInitialized = false
-
+    @Published var isInitialized = false {
+        didSet {
+            ILOG("AppState: isInitialized changed to \(isInitialized)")
+        }
+    }
 
     /// Task for observing changes to useUIKit
     private var useUIKitObservationTask: Task<Void, Never>?
@@ -65,6 +68,10 @@ class AppState: ObservableObject {
     /// Method to start the bootup sequence
     func startBootupSequence() {
         ILOG("AppState: Starting bootup sequence")
+        if isInitialized {
+            ILOG("AppState: Already initialized, skipping bootup sequence")
+            return
+        }
         initializeDatabase()
     }
 
@@ -78,7 +85,7 @@ class AppState: ObservableObject {
                 try await RomDatabase.initDefaultDatabase()
                 ILOG("AppState: Database initialization completed successfully")
                 bootupStateManager.transition(to: .databaseInitialized)
-                initializeLibrary()
+                await initializeLibrary()
             } catch {
                 ELOG("AppState: Error initializing database: \(error.localizedDescription)")
                 bootupStateManager.transition(to: .error(error))
@@ -87,20 +94,16 @@ class AppState: ObservableObject {
     }
 
     @MainActor
-    private func initializeLibrary() {
+    private func initializeLibrary() async {
         ILOG("AppState: Initializing library")
         bootupStateManager.transition(to: .initializingLibrary)
-        Task { @MainActor in
-            ILOG("AppState: Starting GameImporter.shared.initSystems()")
-            await GameImporter.shared.initSystems()
-            ILOG("AppState: GameImporter.shared.initSystems() completed")
-            ILOG("AppState: Reloading RomDatabase cache")
-            await MainActor.run {
-                RomDatabase.reloadCache()
-            }
-            ILOG("AppState: RomDatabase cache reloaded")
-            await finalizeBootup()
-        }
+        ILOG("AppState: Starting GameImporter.shared.initSystems()")
+        await GameImporter.shared.initSystems()
+        ILOG("AppState: GameImporter.shared.initSystems() completed")
+        ILOG("AppState: Reloading RomDatabase cache")
+        RomDatabase.reloadCache()
+        ILOG("AppState: RomDatabase cache reloaded")
+        await finalizeBootup()
     }
 
     @MainActor

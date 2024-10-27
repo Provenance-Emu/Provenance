@@ -42,6 +42,7 @@ import SteamController
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
+
 @main
 struct ProvenceApplication: SwiftUI.App {
     @StateObject private var appState = AppState()
@@ -49,6 +50,7 @@ struct ProvenceApplication: SwiftUI.App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        ILOG("ProvenceApplication: Initializing")
         appDelegate.appState = appState
     }
 
@@ -59,6 +61,13 @@ struct ProvenceApplication: SwiftUI.App {
                 #if canImport(FreemiumKit)
                 .environmentObject(FreemiumKit.shared)
                 #endif
+        }
+        .onChange(of: scenePhase) { newPhase in
+            ILOG("ProvenceApplication: Scene phase changed to \(newPhase)")
+            if newPhase == .active {
+                ILOG("ProvenceApplication: App became active, starting bootup sequence")
+                appState.startBootupSequence()
+            }
         }
     }
 }
@@ -76,7 +85,7 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            appState.startBootupSequence()
+            ILOG("ContentView: Appeared")
         }
     }
 }
@@ -84,12 +93,22 @@ struct ContentView: View {
 struct MainView: View {
     @EnvironmentObject private var appState: AppState
     let appDelegate: PVAppDelegate
+    
+    init(appDelegate: PVAppDelegate) {
+        ILOG("ContentView: App is initialized, showing MainView")
+        self.appDelegate = appDelegate
+    }
 
     var body: some View {
-        if appState.useUIKit {
-            UIKitHostedProvenanceMainView(appDelegate: appDelegate)
-        } else {
-            SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+        Group {
+            if appState.useUIKit {
+                UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+            } else {
+                SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+            }
+        }
+        .onAppear {
+            ILOG("MainView: Appeared")
         }
     }
 }
@@ -97,32 +116,55 @@ struct MainView: View {
 struct BootupView: View {
     @EnvironmentObject private var appState: AppState
 
+    init() {
+        ILOG("ContentView: App is not initialized, showing BootupView")
+    }
+    
     var body: some View {
         VStack {
             Text("Initializing...")
             Text(appState.bootupState.localizedDescription)
+        }
+        .onAppear {
+            ILOG("BootupView: Appeared, current state: \(appState.bootupState.localizedDescription)")
         }
     }
 }
 
 struct UIKitHostedProvenanceMainView: UIViewControllerRepresentable {
     let appDelegate: PVAppDelegate
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        appDelegate.setupUIKitInterface()
+    
+    init(appDelegate: PVAppDelegate) {
+        ILOG("MainView: Using UIKit interface")
+        self.appDelegate = appDelegate
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    func makeUIViewController(context: Context) -> UIViewController {
+        ILOG("UIKitHostedProvenanceMainView: Making UIViewController")
+        return appDelegate.setupUIKitInterface()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        ILOG("UIKitHostedProvenanceMainView: Updating UIViewController")
+    }
 }
 
 struct SwiftUIHostedProvenanceMainView: UIViewControllerRepresentable {
     let appDelegate: PVAppDelegate
 
+    init(appDelegate: PVAppDelegate) {
+        ILOG("MainView: Using SwiftUI interface")
+        self.appDelegate = appDelegate
+    }
+    
     func makeUIViewController(context: Context) -> UIViewController {
-        appDelegate.setupSwiftUIInterface()
+        ILOG("SwiftUIHostedProvenanceMainView: Making UIViewController")
+        return appDelegate.setupSwiftUIInterface()
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        ILOG("SwiftUIHostedProvenanceMainView: Updating UIViewController")
+    }
 }
 
 @Observable
@@ -276,6 +318,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 //    }
 //
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        ILOG("PVAppDelegate: Application did finish launching")
         initializeAppComponents()
         configureApplication(application)
 
@@ -641,6 +684,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 
     @MainActor
     func setupUIKitInterface() -> UIViewController {
+        ILOG("PVAppDelegate: Setting up UIKit interface")
         let storyboard = UIStoryboard(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
         guard let rootNavigation = storyboard.instantiateInitialViewController() as? UINavigationController else {
             fatalError("No root nav controller")
@@ -662,6 +706,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 
     @MainActor
     func setupSwiftUIInterface() -> UIViewController {
+        ILOG("PVAppDelegate: Setting up SwiftUI interface")
         let viewModel = PVRootViewModel()
         let rootViewController = PVRootViewController.instantiate(
             updatesController: appState.libraryUpdatesController!,
