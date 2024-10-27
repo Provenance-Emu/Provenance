@@ -48,14 +48,17 @@ public class AppState: ObservableObject {
     public let bootupStateManager = AppBootupState()
 
     /// Optional properties for game-related functionalities
-    @Published public var gameImporter: GameImporter?
+    @Published
+    public var gameImporter: GameImporter?
     /// Optional property for the game library
     public var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
     /// Optional property for the library updates controller
-    @Published public var libraryUpdatesController: PVGameLibraryUpdatesController?
+    @Published
+    public var libraryUpdatesController: PVGameLibraryUpdatesController?
 
     /// Whether the app has been initialized
-    @Published public var isInitialized = false {
+    @Published
+    public var isInitialized = false {
         didSet {
             ILOG("AppState: isInitialized changed to \(isInitialized)")
             if isInitialized {
@@ -65,7 +68,6 @@ public class AppState: ObservableObject {
     }
 
     private let disposeBag = DisposeBag()
-
 
     /// Task for observing changes to useUIKit
     private var useUIKitObservationTask: Task<Void, Never>?
@@ -78,7 +80,6 @@ public class AppState: ObservableObject {
                 useUIKit = value
             }
         }
-        self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: GameImporter.shared)
         ILOG("AppState: Initialization completed")
     }
 
