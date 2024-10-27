@@ -44,17 +44,18 @@ import FreemiumKit
 #endif
 @main
 struct ProvenceApplication: SwiftUI.App {
-    init() {
-        
-    }
-    
-    @UIApplicationDelegateAdaptor(PVAppDelegate.self) private var appDelegate
+    @StateObject private var appState = AppState()
+    @UIApplicationDelegateAdaptor(PVAppDelegate.self) private var appDelegate: PVAppDelegate
     @Environment(\.scenePhase) private var scenePhase
-    @Default(.useUIKit) var useUIKit: Bool
+
+    init() {
+        appDelegate.appState = appState
+    }
 
     var body: some Scene {
         WindowGroup {
-            MainView(appDelegate: appDelegate)
+            ContentView(appDelegate: appDelegate)
+                .environmentObject(appState)
                 #if canImport(FreemiumKit)
                 .environmentObject(FreemiumKit.shared)
                 #endif
@@ -62,15 +63,44 @@ struct ProvenceApplication: SwiftUI.App {
     }
 }
 
-struct MainView: View {
+struct ContentView: View {
+    @EnvironmentObject private var appState: AppState
     let appDelegate: PVAppDelegate
-    @Default(.useUIKit) var useUIKit: Bool
 
     var body: some View {
-        if useUIKit {
+        Group {
+            if appState.isInitialized {
+                MainView(appDelegate: appDelegate)
+            } else {
+                BootupView()
+            }
+        }
+        .onAppear {
+            appState.startBootupSequence()
+        }
+    }
+}
+
+struct MainView: View {
+    @EnvironmentObject private var appState: AppState
+    let appDelegate: PVAppDelegate
+
+    var body: some View {
+        if appState.useUIKit {
             UIKitHostedProvenanceMainView(appDelegate: appDelegate)
         } else {
             SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+        }
+    }
+}
+
+struct BootupView: View {
+    @EnvironmentObject private var appState: AppState
+
+    var body: some View {
+        VStack {
+            Text("Initializing...")
+            Text(appState.bootupState.localizedDescription)
         }
     }
 }
@@ -102,7 +132,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
     var bootupState: AppBootupState {
         appState.bootupStateManager
     }
-    let appState = AppState()
+    var appState: AppState!
     let disposeBag = DisposeBag()
 
     // Check if the app is running in App Store mode
@@ -248,11 +278,10 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         initializeAppComponents()
         configureApplication(application)
-        observeBootupState()
 
-        Task.detached { @MainActor in
-            self.appState.startBootupSequence()
-        }
+        // The bootup sequence is now started by the ContentView
+//        observeBootupState()
+//
 
         return true
     }
@@ -356,30 +385,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 
         showDatabaseErrorAlert(error: error)
     }
-//
-//    @MainActor
-//    private func updateUIBasedOnPreference(useUIKit: Bool) {
-//        guard let window = self.window,
-//              let libraryUpdatesController = self.libraryUpdatesController,
-//              let gameImporter = self.gameImporter,
-//              let gameLibrary = self.gameLibrary else {
-//            ELOG("Unable to update UI: missing required components")
-//            return
-//        }
-//
-//        if useUIKit {
-//            setupUIKitInterface(window: window,
-//                                libraryUpdatesController: libraryUpdatesController,
-//                                gameImporter: gameImporter,
-//                                gameLibrary: gameLibrary)
-//        } else {
-//            setupSwiftUIInterface(window: window,
-//                                  libraryUpdatesController: libraryUpdatesController,
-//                                  gameImporter: gameImporter,
-//                                  gameLibrary: gameLibrary)
-//        }
-//    }
-//
+
     private func initializeAdditionalComponents() {
         _initSteamControllers()
 
