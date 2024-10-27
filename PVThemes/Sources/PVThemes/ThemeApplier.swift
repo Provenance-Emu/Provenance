@@ -66,6 +66,7 @@ public extension ThemeManager {
         configureTableViews(palette)
         configureTextInputs(palette)
         configureUIView(palette)
+        configureUIWindow(palette)
 
         DLOG("Palette \(palette.name) application completed.")
     }
@@ -130,6 +131,15 @@ public extension ThemeManager {
 //        UIView.appearance().backgroundColor = palette.uiviewBackground
         DLOG("UIView appearance - tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), backgroundColor: \(palette.uiviewBackground?.debugDescription ?? "nil")")
     }
+    
+    @MainActor
+    private class func configureUIWindow(_ palette: any UXThemePalette) {
+        // Apply general UIWindow appearance
+        UIView.appearance().tintColor = palette.defaultTintColor
+//        UIView.appearance().backgroundColor = palette.uiviewBackground
+        DLOG("UIWindow appearance - tintColor: \(palette.defaultTintColor?.debugDescription ?? "nil"), backgroundColor: \(palette.uiviewBackground?.debugDescription ?? "nil")")
+    }
+
 
     @MainActor
     private class func configureBarButtonItems(_ palette: any UXThemePalette) {
