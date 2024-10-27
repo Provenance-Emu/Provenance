@@ -3,7 +3,7 @@ import PVLogging
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
-    @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
+    let appDelegate: PVAppDelegate
 
     var body: some View {
         Group {

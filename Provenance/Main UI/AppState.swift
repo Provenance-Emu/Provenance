@@ -162,7 +162,9 @@ class AppState: ObservableObject {
         ILOG("AppState: Bootup state transitioned to completed")
         ILOG("AppState: Bootup finalized")
         
-        setupShortcutsListener()
+        try? await withTimeout(seconds: 5) {
+            self.setupShortcutsListener()
+        }
     }
 
     func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {

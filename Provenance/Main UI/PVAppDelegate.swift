@@ -56,7 +56,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
     /// This is set by the ContentView
     var appState: AppState? {
         didSet {
-            ILOG("Did set appstate")
+            ILOG("Did set appstate: currently is: \(appState?.bootupStateManager.currentState)")
         }
     }
 

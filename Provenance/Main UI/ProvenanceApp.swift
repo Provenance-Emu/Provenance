@@ -1,5 +1,6 @@
 import SwiftUI
 import Foundation
+import PVLogging
 
 @main
 struct ProvenanceApp: App {
@@ -9,9 +10,10 @@ struct ProvenanceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(appDelegate: appDelegate)
                 .environmentObject(appState)
                 .onAppear {
+                    ILOG("onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
                 }
         }
