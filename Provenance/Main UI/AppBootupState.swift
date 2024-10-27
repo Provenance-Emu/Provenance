@@ -8,6 +8,7 @@
 
 import Foundation
 import Observation
+import PVLogging
 
 /// A class to manage the bootup state of the application
 @MainActor

@@ -20,6 +20,7 @@ import PVSwiftUI
 import PVLogging
 import Combine
 import Observation
+import RxSwift
 #if canImport(CoreSpotlight)
 import CoreSpotlight
 #endif
@@ -56,6 +57,9 @@ class AppState: ObservableObject {
             }
         }
     }
+    
+    private let disposeBag = DisposeBag()
+
 
     /// Task for observing changes to useUIKit
     private var useUIKitObservationTask: Task<Void, Never>?
@@ -157,6 +161,8 @@ class AppState: ObservableObject {
         bootupStateManager.transition(to: .completed)
         ILOG("AppState: Bootup state transitioned to completed")
         ILOG("AppState: Bootup finalized")
+        
+        setupShortcutsListener()
     }
 
     func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
@@ -172,6 +178,26 @@ class AppState: ObservableObject {
             group.cancelAll()
             return result
         }
+    }
+    
+    
+    @MainActor
+    func setupShortcutsListener() {
+        guard let gameLibrary = gameLibrary else {
+            ELOG("gameLibrary not yet initialized")
+            return
+        }
+#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+        // Setup shortcuts for favorites and recent games
+        Observable.combineLatest(
+            gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
+            gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }
+        ) { $0 + $1 }
+            .bind(onNext: { shortcuts in
+                UIApplication.shared.shortcutItems = shortcuts
+            })
+            .disposed(by: disposeBag)
+#endif
     }
 }
 

@@ -43,130 +43,6 @@ import SteamController
 import FreemiumKit
 #endif
 
-@main
-struct ProvenceApplication: SwiftUI.App {
-    @StateObject private var appState = AppState()
-    @UIApplicationDelegateAdaptor(PVAppDelegate.self) private var appDelegate: PVAppDelegate
-    @Environment(\.scenePhase) private var scenePhase
-
-    init() {
-        ILOG("ProvenceApplication: Initializing")
-        appDelegate.appState = appState
-    }
-
-    var body: some Scene {
-        WindowGroup {
-            ContentView(appDelegate: appDelegate)
-                .environmentObject(appState)
-                #if canImport(FreemiumKit)
-                .environmentObject(FreemiumKit.shared)
-                #endif
-        }
-        .onChange(of: scenePhase) { newPhase in
-            ILOG("ProvenceApplication: Scene phase changed to \(newPhase)")
-            if newPhase == .active {
-                ILOG("ProvenceApplication: App became active, starting bootup sequence")
-                appState.startBootupSequence()
-            }
-        }
-    }
-}
-
-struct ContentView: View {
-    @EnvironmentObject private var appState: AppState
-    let appDelegate: PVAppDelegate
-
-    var body: some View {
-        Group {
-            if appState.isInitialized {
-                MainView(appDelegate: appDelegate)
-            } else {
-                BootupView()
-            }
-        }
-        .onAppear {
-            ILOG("ContentView: Appeared")
-        }
-    }
-}
-
-struct MainView: View {
-    @EnvironmentObject private var appState: AppState
-    let appDelegate: PVAppDelegate
-    
-    init(appDelegate: PVAppDelegate) {
-        ILOG("ContentView: App is initialized, showing MainView")
-        self.appDelegate = appDelegate
-    }
-
-    var body: some View {
-        Group {
-            if appState.useUIKit {
-                UIKitHostedProvenanceMainView(appDelegate: appDelegate)
-            } else {
-                SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
-            }
-        }
-        .onAppear {
-            ILOG("MainView: Appeared")
-        }
-    }
-}
-
-struct BootupView: View {
-    @EnvironmentObject private var appState: AppState
-
-    init() {
-        ILOG("ContentView: App is not initialized, showing BootupView")
-    }
-    
-    var body: some View {
-        VStack {
-            Text("Initializing...")
-            Text(appState.bootupState.localizedDescription)
-        }
-        .onAppear {
-            ILOG("BootupView: Appeared, current state: \(appState.bootupState.localizedDescription)")
-        }
-    }
-}
-
-struct UIKitHostedProvenanceMainView: UIViewControllerRepresentable {
-    let appDelegate: PVAppDelegate
-    
-    init(appDelegate: PVAppDelegate) {
-        ILOG("MainView: Using UIKit interface")
-        self.appDelegate = appDelegate
-    }
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        ILOG("UIKitHostedProvenanceMainView: Making UIViewController")
-        return appDelegate.setupUIKitInterface()
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        ILOG("UIKitHostedProvenanceMainView: Updating UIViewController")
-    }
-}
-
-struct SwiftUIHostedProvenanceMainView: UIViewControllerRepresentable {
-    let appDelegate: PVAppDelegate
-
-    init(appDelegate: PVAppDelegate) {
-        ILOG("MainView: Using SwiftUI interface")
-        self.appDelegate = appDelegate
-    }
-    
-    func makeUIViewController(context: Context) -> UIViewController {
-        ILOG("SwiftUIHostedProvenanceMainView: Making UIViewController")
-        return appDelegate.setupSwiftUIInterface()
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        ILOG("SwiftUIHostedProvenanceMainView: Updating UIViewController")
-    }
-}
-
 @Observable
 final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDelegate {
     internal var window: UIWindow? = nil
@@ -175,7 +51,6 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
         appState.bootupStateManager
     }
     var appState: AppState!
-    let disposeBag = DisposeBag()
 
     // Check if the app is running in App Store mode
     var isAppStore: Bool {
@@ -322,10 +197,6 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
         initializeAppComponents()
         configureApplication(application)
 
-        // The bootup sequence is now started by the ContentView
-//        observeBootupState()
-//
-
         return true
     }
 
@@ -354,79 +225,6 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
                 application.isIdleTimerDisabled =  value
             }
         }
-    }
-
-    private var bootupObservationTask: Task<Void, any Error>?
-
-    @MainActor
-    private func observeBootupState() {
-        ILOG("Starting to observe bootup state")
-        Task { @MainActor in
-            for await _ in appState.$isInitialized.values where appState.isInitialized {
-                handleBootupStateChange(appState.bootupState)
-                break
-            }
-        }
-    }
-
-    @MainActor
-    private func handleBootupStateChange(_ state: AppBootupState.State) {
-        ILOG("Bootup state changed to: \(state.localizedDescription)")
-        switch state {
-        case .completed:
-            ILOG("Bootup completed, finalizing")
-            finalizeBootup()
-        case .error(let error):
-            ELOG("Bootup error occurred: \(error.localizedDescription)")
-            handleBootupError(error)
-        default:
-            break
-        }
-    }
-
-    @MainActor
-    private func finalizeBootup() {
-        if gameLibraryViewController == nil {
-            appState.gameImporter = GameImporter.shared
-            appState.gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
-            appState.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: appState.gameImporter!)
-
-            setupShortcutsListener()
-
-            // The UI setup is now handled by SwiftUI, so we don't need to call _initUI here
-
-            #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-            Task.detached { @MainActor in
-                await self.appState.libraryUpdatesController?.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
-            }
-            #endif
-        }
-    }
-
-    @MainActor
-    func setupShortcutsListener() {
-        guard let gameLibrary = appState.gameLibrary else {
-            ELOG("gameLibrary not yet initialized")
-            return
-        }
-#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-        // Setup shortcuts for favorites and recent games
-        Observable.combineLatest(
-            gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
-            gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }
-        ) { $0 + $1 }
-            .bind(onNext: { shortcuts in
-                UIApplication.shared.shortcutItems = shortcuts
-            })
-            .disposed(by: disposeBag)
-#endif
-    }
-
-    @MainActor
-    private func handleBootupError(_ error: Error) {
-        // Handle bootup errors, possibly show an alert to the user
-
-        showDatabaseErrorAlert(error: error)
     }
 
     private func initializeAdditionalComponents() {
@@ -589,7 +387,6 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        bootupObservationTask?.cancel()
         if let app = application as? PVApplication {
             stopCore(app)
         }
@@ -645,43 +442,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 //            .store(in: &cancellables)
 //    }
 //
-    func showDatabaseErrorAlert(error: Error) {
-        let alertController = UIAlertController(
-            title: "Database Error",
-            message: "An error occurred while initializing the database: \(error.localizedDescription)",
-            preferredStyle: .alert
-        )
-
-        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-            // You might want to add some recovery action here,
-            // such as attempting to reinitialize the database or exiting the app
-        }
-
-        alertController.addAction(okAction)
-
-        // If you have a more detailed error description or recovery steps, you can add them here
-        if let detailedError = error as? DetailedError {
-            alertController.message?.append("\n\nDetails: \(detailedError.detailedDescription)")
-
-            let showDetailsAction = UIAlertAction(title: "Show Details", style: .default) { _ in
-                // Present a new view controller with more detailed error information
-                self.presentDetailedErrorViewController(error: detailedError)
-            }
-
-            alertController.addAction(showDetailsAction)
-        }
-
-        // Present the alert controller
-        DispatchQueue.main.async {
-            self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
-        }
-    }
-
-    private func presentDetailedErrorViewController(error: DetailedError) {
-        // Implement this method to show a more detailed error view
-        // This could include stack traces, error codes, or recovery steps
-    }
-
+  
     @MainActor
     func setupUIKitInterface() -> UIViewController {
         ILOG("PVAppDelegate: Setting up UIKit interface")
