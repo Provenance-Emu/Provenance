@@ -41,14 +41,14 @@ public enum SaveStateError: Error {
 }
 
 public extension PVEmulatorViewController {
-    public var saveStatePath: URL { get { PVEmulatorConfiguration.saveStatePath(forGame: game) } }
+    var saveStatePath: URL { get { PVEmulatorConfiguration.saveStatePath(forGame: game) } }
 
-    public func destroyAutosaveTimer() {
+    func destroyAutosaveTimer() {
         autosaveTimer?.invalidate()
         autosaveTimer = nil
     }
 
-    public func createAutosaveTimer() {
+    func createAutosaveTimer() {
         autosaveTimer?.invalidate()
         let interval = Defaults[.timedAutoSaveInterval]
         autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
@@ -70,7 +70,7 @@ public extension PVEmulatorViewController {
     }
 
     @discardableResult
-    public func autoSaveState() async throws(SaveStateError) -> Bool {
+    func autoSaveState() async throws(SaveStateError) -> Bool {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
             throw .saveStatesUnsupportedByCore
@@ -99,7 +99,7 @@ public extension PVEmulatorViewController {
 
     //    #error ("Use to https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/iCloud/iCloud.html to save files to iCloud from local url, and setup packages for bundles")
     @discardableResult
-    public func createNewSaveState(auto: Bool, screenshot: UIImage?) async throws(SaveStateError) -> Bool {
+    func createNewSaveState(auto: Bool, screenshot: UIImage?) async throws(SaveStateError) -> Bool {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
             throw .saveStatesUnsupportedByCore
@@ -184,7 +184,7 @@ public extension PVEmulatorViewController {
         return true
     }
 
-    public func loadSaveState(_ state: PVSaveState) async -> Bool {
+    func loadSaveState(_ state: PVSaveState) async -> Bool {
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
             return false
@@ -204,7 +204,7 @@ public extension PVEmulatorViewController {
             try! realm.write {
                 state.lastOpened = Date()
             }
-            if await !FileManager.default.fileExists(atPath: state.file.url.path) {
+            if !FileManager.default.fileExists(atPath: state.file.url.path) {
                 return false
             }
 
@@ -256,26 +256,26 @@ public extension PVEmulatorViewController {
 // MARK: - Save states UI
 
 public extension PVEmulatorViewController {
-    public func saveStatesViewControllerDone(_: PVSaveStatesViewController) {
+    func saveStatesViewControllerDone(_: PVSaveStatesViewController) {
         dismiss(animated: true, completion: nil)
         core.setPauseEmulation(false)
         isShowingMenu = false
         enableControllerInput(false)
     }
-    public func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) async throws -> Bool {
+    func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) async throws -> Bool {
         try await createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
     }
-    public func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) async throws(SaveStateError) -> Bool {
+    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) async throws(SaveStateError) -> Bool {
         try await createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
     }
-    public func saveStatesViewController(_: PVSaveStatesViewController, load state: PVSaveState) {
+    func saveStatesViewController(_: PVSaveStatesViewController, load state: PVSaveState) {
         dismiss(animated: true, completion: nil)
         Task.detached { [weak self] in
             await self?.loadSaveState(state)
         }
     }
 
-    @objc public func showSaveStateMenu() {
+    @objc func showSaveStateMenu() {
         Task.detached { [weak self] in
             guard let self = self else { return }
             await updateSaveStates()
@@ -306,7 +306,7 @@ public extension PVEmulatorViewController {
 #endif
         present(saveStatesNavController, animated: true)
     }
-    public func convertOldSaveStatesToNewIfNeeded() {
+    func convertOldSaveStatesToNewIfNeeded() {
         let fileManager = FileManager.default
         let saveStatePath = self.saveStatePath
         let infoURL = saveStatePath.appendingPathComponent("Info.plist", isDirectory: false)
@@ -364,7 +364,7 @@ public extension PVEmulatorViewController {
         }
     }
     
-    public func recoverSaveStates() {
+    func recoverSaveStates() {
         do {
             let fileManager = FileManager.default
             let directoryContents = try fileManager.contentsOfDirectory(
@@ -409,16 +409,16 @@ public extension PVEmulatorViewController {
         }
     }
     
-    public func updateSaveStates() async {
+    func updateSaveStates() {
         do {
             for save in game.saveStates {
-                if await !FileManager.default.fileExists(atPath: save.file.url.path) {
-                    try await PVSaveState.delete(save)
+                if !FileManager.default.fileExists(atPath: save.file.url.path) {
+                    try PVSaveState.delete(save)
                 }
             }
             for save in game.autoSaves {
-                if await !FileManager.default.fileExists(atPath: save.file.url.path) {
-                    try await PVSaveState.delete(save)
+                if !FileManager.default.fileExists(atPath: save.file.url.path) {
+                    try PVSaveState.delete(save)
                 }
             }
         } catch {

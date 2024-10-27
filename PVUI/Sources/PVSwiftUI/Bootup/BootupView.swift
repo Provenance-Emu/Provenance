@@ -32,7 +32,9 @@ public struct BootupView: View {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
                     .padding()
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? themeManager.currentPalette.gameLibraryCellText.swiftUIColor)
+                    .colorScheme(.light)
+                    .tint(themeManager.currentPalette.gameLibraryCellText.swiftUIColor)
+                    .foregroundColor(.white)
 
                 Text(appState.bootupState.localizedDescription)
                     .foregroundColor(themeManager.currentPalette.gameLibraryCellText.swiftUIColor)

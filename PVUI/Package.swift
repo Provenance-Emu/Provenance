@@ -62,6 +62,7 @@ let package = Package(
                 "PVThemes",
                 "PVWebServer",
                 "PVUIObjC",
+                "FreemiumKit",
                 .byNameItem(name: "MBProgressHUD", condition: .when(platforms: [.iOS, .macCatalyst, .tvOS, .watchOS])),
                 .byNameItem(name: "PVUI_AppKit", condition: .when(platforms: [.macOS])),
                 .byNameItem(name: "PVUI_TV", condition: .when(platforms: [.tvOS])),
@@ -120,6 +121,7 @@ let package = Package(
                 "PVThemes",
                 "PVWebServer",
                 "MBProgressHUD",
+                "FreemiumKit",
                 .product(name: "Reachability", package: "reachability.swift"),
                 "RxDataSources",
 //                .product(name: "Dependencies", package: "swift-dependencies")

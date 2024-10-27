@@ -17,6 +17,11 @@ import Defaults
 struct GamesDisplayOptionsView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @Default(.gameLibraryScale) private var gameLibraryScale
+    @Default(.showGameTitles) private var showGameTitles
+    @Default(.showRecentGames) private var showRecentGames
+    @Default(.showRecentSaveStates) private var showRecentSaveStates
+    @Default(.showFavorites) private var showFavorites
+    @Default(.showGameBadges) private var showGameBadges
 
     var sortAscending = true
     var isGrid = true
@@ -32,13 +37,35 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     var canZoomIn: Bool {
         gameLibraryScale > 1
     }
-    
+
     var canZoomOut: Bool {
         gameLibraryScale < 8
     }
 
     var body: some SwiftUI.View {
         HStack(spacing: spacing) {
+            Menu {
+                Toggle(isOn: $showGameTitles) {
+                    Label("Show Game Titles", systemImage: "textformat")
+                }
+                Toggle(isOn: $showRecentGames) {
+                    Label("Show Recent Games", systemImage: "clock")
+                }
+                Toggle(isOn: $showRecentSaveStates) {
+                    Label("Show Save States", systemImage: "bookmark")
+                }
+                Toggle(isOn: $showFavorites) {
+                    Label("Show Favorites", systemImage: "star")
+                }
+                Toggle(isOn: $showGameBadges) {
+                    Label("Show Badges", systemImage: "rosette")
+                }
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .font(font)
+            }
+
             Spacer()
             OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
                 Text("Sort")

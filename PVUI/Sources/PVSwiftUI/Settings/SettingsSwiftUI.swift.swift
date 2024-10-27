@@ -10,9 +10,13 @@ import PVSettings
 import Combine
 import PVUIBase
 import PVUIKit
-#if canImport(FreemiumKit)
+import RxRealm
+import RxSwift
+import RealmSwift
+
+//#if canImport(FreemiumKit)
 import FreemiumKit
-#endif
+//#endif
 #if canImport(SafariServices)
 import SafariServices
 #endif
@@ -74,7 +78,7 @@ public struct PVSettingsView: View {
                            subtitle: "Information on cores, their bioses, links and stats.",
                            icon: .sfSymbol("square.stack.3d.down.forward"))
             }
-            Button(action: viewModel.showThemeOptions) {
+            PaidFeatureButton("Themes", action: viewModel.showThemeOptions) {
                 SettingsRow(title: "Theme",
                            value: viewModel.currentTheme.description,
                            icon: .sfSymbol("paintpalette"))
@@ -681,8 +685,8 @@ class PVSettingsViewModel: ObservableObject {
 
     // Function to show help
     func showHelp() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootViewController = windowScene.windows.first?.rootViewController {
+        if let window = UIApplication.shared.windows.first,
+           let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
             let webVC = SFSafariViewController(url: URL(string: "https://wiki.provenance-emu.com/")!)
             rootViewController.present(webVC, animated: true)
         }
@@ -705,8 +709,8 @@ class PVSettingsViewModel: ObservableObject {
 
         alert.addAction(UIAlertAction(title: "No", style: .cancel))
 
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootViewController = windowScene.windows.first?.rootViewController {
+        if let window = UIApplication.shared.windows.first,
+           let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
             rootViewController.present(alert, animated: true)
         }
     }
@@ -728,8 +732,8 @@ class PVSettingsViewModel: ObservableObject {
 
         alert.addAction(UIAlertAction(title: "No", style: .cancel))
 
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootViewController = windowScene.windows.first?.rootViewController {
+        if let window = UIApplication.shared.windows.first,
+           let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
             rootViewController.present(alert, animated: true)
         }
     }
@@ -755,8 +759,8 @@ class PVSettingsViewModel: ObservableObject {
 
         alert.addAction(UIAlertAction(title: "No", style: .cancel))
 
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootViewController = windowScene.windows.first?.rootViewController {
+        if let window = UIApplication.shared.windows.first,
+           let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
             rootViewController.present(alert, animated: true)
         }
     }
@@ -779,8 +783,8 @@ class PVSettingsViewModel: ObservableObject {
 
         alert.addAction(UIAlertAction(title: "No", style: .cancel))
 
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootViewController = windowScene.windows.first?.rootViewController {
+        if let window = UIApplication.shared.windows.first,
+           let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
             rootViewController.present(alert, animated: true)
         }
     }
@@ -808,8 +812,8 @@ class PVSettingsViewModel: ObservableObject {
 
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
 
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let rootViewController = windowScene.windows.first?.rootViewController {
+                if let window = UIApplication.shared.windows.first,
+                   let rootViewController = window.rootViewController {
                     rootViewController.present(alert, animated: true)
                 }
             } else {
@@ -822,8 +826,8 @@ class PVSettingsViewModel: ObservableObject {
 
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
 
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let rootViewController = windowScene.windows.first?.rootViewController {
+                if let window = UIApplication.shared.windows.first,
+                   let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
                     rootViewController.present(alert, animated: true)
                 }
             }
@@ -836,8 +840,8 @@ class PVSettingsViewModel: ObservableObject {
 
             alert.addAction(UIAlertAction(title: "OK", style: .default))
 
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let rootViewController = windowScene.windows.first?.rootViewController {
+            if let window = UIApplication.shared.windows.first,
+               let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
                 rootViewController.present(alert, animated: true)
             }
         }
@@ -886,17 +890,6 @@ struct CoreOptionsView: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: CoreOptionsTableViewController, context: Context) {
-        // Update the view controller if needed
-    }
-}
-
-struct CoreProjectsView: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> PVCoresTableViewController {
-        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
-        return storyboard.instantiateViewController(withIdentifier: "coresTablewView") as! PVCoresTableViewController
-    }
-
-    func updateUIViewController(_ uiViewController: PVCoresTableViewController, context: Context) {
         // Update the view controller if needed
     }
 }
@@ -1111,5 +1104,93 @@ private struct SwitchRepresentable: UIViewRepresentable {
         @objc func switchChanged(_ sender: UISwitch) {
             isOn.wrappedValue = sender.isOn
         }
+    }
+}
+
+struct CoreProjectsView: View {
+    let cores: [PVCore]
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @State private var searchText = ""
+
+    init() {
+        cores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName)).toArray()
+    }
+
+    var filteredCores: [PVCore] {
+        if searchText.isEmpty {
+            return cores
+        }
+        return cores.filter { core in
+            core.projectName.localizedCaseInsensitiveContains(searchText) ||
+            core.supportedSystems.contains {
+                $0.name.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+    }
+
+    var body: some View {
+        List {
+            ForEach(filteredCores, id: \.self) { core in
+                CoreSection(core: core, systems: Array(core.supportedSystems))
+            }
+        }
+        .searchable(text: $searchText, prompt: "Search cores or systems")
+        .navigationTitle("Emulator Cores")
+    }
+}
+
+struct CoreSection: View {
+    let core: PVCore
+    let systems: [PVSystem]
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @State private var isExpanded = false
+
+    var body: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 12) {
+                // Header
+                HStack {
+                    Text(core.projectName)
+                        .font(.headline)
+                    if !core.projectVersion.isEmpty {
+                        Text("v\(core.projectVersion)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    if core.disabled {
+                        Text("Disabled")
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                }
+
+                // Project URL
+                if !core.projectURL.isEmpty {
+                    Link(destination: URL(string: core.projectURL)!) {
+                        HStack {
+                            Image(systemName: "link")
+                            Text("Project Website")
+                        }
+                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? .secondary)
+                    }
+                }
+
+                // Systems
+                if !systems.isEmpty {
+                    DisclosureGroup(isExpanded: $isExpanded) {
+                        ForEach(systems.sorted(by: { $0.name < $1.name }), id: \.self) { system in
+                            Text("• \(system.name)")
+                                .padding(.leading, 4)
+                                .padding(.vertical, 2)
+                        }
+                    } label: {
+                        Text("Supported Systems (\(systems.count))")
+                    }
+                }
+            }
+            .padding(.vertical, 8)
+        }
+        .listRowBackground(core.disabled ? Color.gray.opacity(0.1) : Color.clear)
     }
 }
