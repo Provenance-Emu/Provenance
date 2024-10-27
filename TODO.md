@@ -53,9 +53,9 @@ _My personal TODO notes_
 ## Minor bugs
 
 - [ ] theme switching doesn't update everything
-- [ ] purple and rainbow themes not selectable
-- [ ] Themes page indicator not right
-- [ ] Box art is clipped in swift ui
+- [X] purple and rainbow themes not selectable
+- [X] Themes page indicator not right
+- [ ] Box art is clipped in swift ui -- need better aspect ratios
 - [ ] add tap for bios to clipboard in swiftui on missing
 - [ ] Game Info in swift ui crashes on next game scroll
 - [ ] Fix button 9 repeat on Intellivision controls
