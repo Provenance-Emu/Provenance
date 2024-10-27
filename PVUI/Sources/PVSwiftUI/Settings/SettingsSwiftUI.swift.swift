@@ -194,15 +194,15 @@ public struct PVSettingsView: View {
     /// Filters sub-section
     var filtersSection: some View {
         Section(header: Text("Filters")) {
-            ThemedToggle(isOn: $viewModel.crtFilter) {
+            ThemedToggle(isOn: $viewModel.crtFilterEnabled) {
                 SettingsRow(title: "CRT Filter",
-                           subtitle: "Emulate a CRT TV gridding and bloom filter.",
-                            icon: .sfSymbol("inset.filled.tv"))
+                           subtitle: "Apply CRT screen effect to games.",
+                           icon: .sfSymbol("tv"))
             }
-            ThemedToggle(isOn: $viewModel.lcdFilter) {
+            ThemedToggle(isOn: $viewModel.lcdFilterEnabled) {
                 SettingsRow(title: "LCD Filter",
-                           subtitle: "Emulate a CRT TV gridding and bloom filter.",
-                            icon: .sfSymbol("tv"))
+                           subtitle: "Apply LCD screen effect to games.",
+                           icon: .sfSymbol("rectangle.on.rectangle"))
             }
         }
     }
@@ -268,11 +268,14 @@ public struct PVSettingsView: View {
     // Section for library settings
     var librarySection: some View {
         Section(header: Text("Library")) {
+            #if canImport(PVWebServer)
             Button(action: viewModel.launchWebServer) {
                 SettingsRow(title: "Launch Web Server",
                            subtitle: "Transfer ROMs and saves over WiFi.",
                            icon: .sfSymbol("xserve"))
             }
+            #endif
+
             NavigationLink(destination: ConflictsView().environmentObject(viewModel)) {
                 SettingsRow(title: "Manage Conflicts",
                            subtitle: "Resolve conflicting save states and files.",
@@ -505,6 +508,11 @@ class PVSettingsViewModel: ObservableObject {
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
     @Default(.webDavAlwaysOn) var webDavAlwaysOn
+    @Default(.showGameTitles) var showGameTitles
+    @Default(.showRecentGames) var showRecentGames
+    @Default(.showRecentSaveStates) var showRecentSaveStates
+    @Default(.showGameBadges) var showGameBadges
+    @Default(.showFavorites) var showFavorites
 
     var conflictsController: PVGameLibraryUpdatesController! {
         didSet {
@@ -835,11 +843,35 @@ class PVSettingsViewModel: ObservableObject {
         }
 #endif
     }
+
+    // Add these computed properties
+    var crtFilterEnabled: Bool {
+        get { Defaults[.crtFilterEnabled] }
+        set {
+            Defaults[.crtFilterEnabled] = newValue
+            if newValue {
+                // Turn off LCD filter if CRT is enabled
+                Defaults[.lcdFilterEnabled] = false
+            }
+        }
+    }
+
+    var lcdFilterEnabled: Bool {
+        get { Defaults[.lcdFilterEnabled] }
+        set {
+            Defaults[.lcdFilterEnabled] = newValue
+            if newValue {
+                // Turn off CRT filter if LCD is enabled
+                Defaults[.crtFilterEnabled] = false
+            }
+        }
+    }
 }
 
 struct SystemSettingsView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> SystemsSettingsTableViewController {
-        return SystemsSettingsTableViewController()
+        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
+        return storyboard.instantiateViewController(withIdentifier: "systemSettingsTableViewController") as! SystemsSettingsTableViewController
     }
 
     func updateUIViewController(_ uiViewController: SystemsSettingsTableViewController, context: Context) {
@@ -849,7 +881,8 @@ struct SystemSettingsView: UIViewControllerRepresentable {
 
 struct CoreOptionsView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> CoreOptionsTableViewController {
-        return CoreOptionsTableViewController()
+        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
+        return storyboard.instantiateViewController(withIdentifier: "coreOptionsTablewView") as! CoreOptionsTableViewController
     }
 
     func updateUIViewController(_ uiViewController: CoreOptionsTableViewController, context: Context) {
@@ -859,7 +892,8 @@ struct CoreOptionsView: UIViewControllerRepresentable {
 
 struct CoreProjectsView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> PVCoresTableViewController {
-        return PVCoresTableViewController()
+        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
+        return storyboard.instantiateViewController(withIdentifier: "coresTablewView") as! PVCoresTableViewController
     }
 
     func updateUIViewController(_ uiViewController: PVCoresTableViewController, context: Context) {
@@ -869,7 +903,10 @@ struct CoreProjectsView: UIViewControllerRepresentable {
 
 struct LicensesView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> PVLicensesViewController {
-        return PVLicensesViewController()
+        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
+        let licensesViewController = storyboard.instantiateViewController(withIdentifier: "licensesViewController") as! PVLicensesViewController
+        licensesViewController.title = "Licenses"
+        return licensesViewController
     }
 
     func updateUIViewController(_ uiViewController: PVLicensesViewController, context: Context) {
@@ -911,14 +948,52 @@ struct ConflictsView: UIViewControllerRepresentable {
     }
 }
 
-struct AppearanceView: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> PVAppearanceViewController {
-        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
-        return storyboard.instantiateViewController(withIdentifier: "PVAppearanceViewController") as! PVAppearanceViewController
-    }
+struct AppearanceView: View {
+    @ObservedObject private var viewModel = PVSettingsViewModel()
 
-    func updateUIViewController(_ uiViewController: PVAppearanceViewController, context: Context) {
-        // Update the view controller if needed
+    var body: some View {
+        Form {
+            Section(header: Text("Display Options")) {
+                ThemedToggle(isOn: $viewModel.showGameTitles) {
+                    SettingsRow(title: "Show Game Titles",
+                              subtitle: "Display game titles under artwork.",
+                              icon: .sfSymbol("textformat"))
+                }
+
+                ThemedToggle(isOn: $viewModel.showRecentGames) {
+                    SettingsRow(title: "Show Recently Played Games",
+                              subtitle: "Display recently played games section.",
+                              icon: .sfSymbol("clock"))
+                }
+
+                ThemedToggle(isOn: $viewModel.showRecentSaveStates) {
+                    SettingsRow(title: "Show Recent Save States",
+                              subtitle: "Display recent save states section.",
+                              icon: .sfSymbol("bookmark"))
+                }
+
+                ThemedToggle(isOn: $viewModel.showFavorites) {
+                    SettingsRow(title: "Show Favorites",
+                              subtitle: "Display favorites section.",
+                              icon: .sfSymbol("star"))
+                }
+
+                ThemedToggle(isOn: $viewModel.showGameBadges) {
+                    SettingsRow(title: "Show Game Badges",
+                              subtitle: "Display badges on game artwork.",
+                              icon: .sfSymbol("rosette"))
+                }
+
+                #if os(tvOS) || targetEnvironment(macCatalyst)
+                ThemedToggle(isOn: $viewModel.largeGameArt) {
+                    SettingsRow(title: "Show Large Game Artwork",
+                              subtitle: "Use larger artwork in game grid.",
+                              icon: .sfSymbol("rectangle.expand.vertical"))
+                }
+                #endif
+            }
+        }
+        .navigationTitle("Appearance")
     }
 }
 

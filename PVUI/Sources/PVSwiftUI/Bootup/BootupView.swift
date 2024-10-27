@@ -29,6 +29,11 @@ public struct BootupView: View {
                 Text("Initializing...")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .padding()
+                    .foregroundColor(themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? themeManager.currentPalette.gameLibraryCellText.swiftUIColor)
+
                 Text(appState.bootupState.localizedDescription)
                     .foregroundColor(themeManager.currentPalette.gameLibraryCellText.swiftUIColor)
             }

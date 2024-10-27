@@ -62,7 +62,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     @State private var gameLibraryItemsPerRow: Int = 4
     @Default(.gameLibraryScale) private var gameLibraryScale
-    
+
     @State private var showImagePicker = false
     @State private var selectedImage: UIImage?
     @State private var gameToUpdateCover: PVGame?
@@ -70,6 +70,10 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @State private var gameToRename: PVGame?
     @State private var newGameTitle = ""
     @FocusState private var renameTitleFieldIsFocused: Bool
+
+    @Default(.showRecentSaveStates) private var showRecentSaveStates
+    @Default(.showFavorites) private var showFavorites
+    @Default(.showRecentGames) private var showRecentGames
 
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
         self.console = console
@@ -150,7 +154,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func continueSection() -> some View {
         Group {
-            if hasRecentSaveStates {
+            if showRecentSaveStates && hasRecentSaveStates {
                 HomeContinueSection(rootDelegate: rootDelegate, consoleIdentifier: console.identifier)
                 HomeDividerView()
             }
@@ -159,7 +163,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func favoritesSection() -> some View {
         Group {
-            if hasFavorites {
+            if showFavorites && hasFavorites {
                 HomeSection(title: "Favorites") {
                     ForEach(favoritesArray, id: \.self) { favorite in
                         GameItemView(game: favorite, constrainHeight: true) {
@@ -176,7 +180,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func recentlyPlayedSection() -> some View {
         Group {
-            if hasRecentlyPlayedGames {
+            if showRecentGames && hasRecentlyPlayedGames {
                 HomeSection(title: "Recently Played") {
                     ForEach(recentlyPlayedGamesArray, id: \.self) { game in
                         GameItemView(game: game, constrainHeight: true) {
@@ -269,7 +273,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
         }
     }
-    
+
     var itemsPerRow: Int {
         let roundedScale = Int(gameLibraryScale.rounded())
         // If games is less than count, just use the games to fill the row.
@@ -337,7 +341,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         let availableWidth = UIScreen.main.bounds.width - totalSpacing - 20
         return availableWidth / numberOfItemsPerRow
     }
-    
+
     private func adjustZoomLevel(for magnification: Float) {
         gameLibraryItemsPerRow = calculatedZoomLevel(for: magnification)
     }
@@ -345,21 +349,21 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     private func calculatedZoomLevel(for magnification: Float) -> Int {
         let isIPad = UIDevice.current.userInterfaceIdiom == .pad
         let defaultZoomLevel = isIPad ? 8 : 4
-        
+
         // Handle invalid magnification values
         guard !magnification.isNaN && !magnification.isInfinite else {
             return defaultZoomLevel
         }
-        
+
         // Calculate the target zoom level based on magnification
         let targetZoomLevel = Float(defaultZoomLevel) / magnification
-        
+
         // Round to the nearest even number
         let roundedZoomLevel = round(targetZoomLevel / 2) * 2
-        
+
         // Clamp the value between 2 and 16
         let clampedZoomLevel = max(2, min(16, roundedZoomLevel))
-        
+
         return Int(clampedZoomLevel)
     }
 

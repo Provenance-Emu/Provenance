@@ -22,16 +22,16 @@ extension Defaults.Keys {
     static let autoSave = Key<Bool>("autoSave", default: true)
     static let timedAutoSaves = Key<Bool>("timedAutoSaves", default: true)
     static let timedAutoSaveInterval = Key<TimeInterval>("timedAutoSaveInterval", default: minutes(10))
-    
+
     static let askToAutoLoad = Key<Bool>("askToAutoLoad", default: true)
     static let autoLoadSaves = Key<Bool>("autoLoadSaves", default: false)
-    
+
 #if os(tvOS)
     static let disableAutoLock = Key<Bool>("disableAutoLock", default: true)
 #else
     static let disableAutoLock = Key<Bool>("disableAutoLock", default: false)
 #endif
-    
+
     static let buttonVibration = Key<Bool>("buttonVibration", default: true)
 #if os(iOS) || os(wathcOS) || targetEnvironment(macCatalyst)
     static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
@@ -42,19 +42,19 @@ extension Defaults.Keys {
     static let crtFilterEnabled = Key<Bool>("crtFilterEnabled", default: false)
     static let lcdFilterEnabled = Key<Bool>("lcdFilterEnabled", default: false)
     static let metalFilter = Key<String>("metalFilter", default: "")
-    
+
     static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
-    
+
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
     static let showGameBadges = Key<Bool>("showGameBadges", default: true)
     static let showRecentGames = Key<Bool>("showRecentGames", default: true)
-    
+
     static let showFPSCount = Key<Bool>("showFPSCount", default: false)
-    
+
     static let showGameTitles = Key<Bool>("showGameTitles", default: true)
-    
+
     static let gameLibraryScale = Key<Float>("gameLibraryScale", default: 1.0)
-    
+
 #if os(tvOS)
     static let webDavAlwaysOn = Key<Bool>("webDavAlwaysOn", default: true)
 #else
@@ -65,28 +65,28 @@ extension Defaults.Keys {
     static let allRightShoulders = Key<Bool>("allRightShoulders", default: false)
 #endif
     static let controllerOpacity = Key<Double>("controllerOpacity", default: 0.8)
-    
+
     static let buttonTints = Key<Bool>("buttonTints", default: true)
     static let use8BitdoM30 = Key<Bool>("use8BitdoM30", default: false)
-    
+
 #if os(tvOS)
     static let missingButtonsAlwaysOn = Key<Bool>("missingButtonsAlwaysOn", default: true)
 #else
     static let missingButtonsAlwaysOn = Key<Bool>("missingButtonsAlwaysOn", default: false)
 #endif
-    
+
     static let volume = Key<Float>("volume", default: 1.0)
     static let volumeHUD = Key<Bool>("volumeHUD", default: true)
-    
+
     static let sort = Key<SortOptions>("sort", default: SortOptions.title)
-    
+
     static let haveWarnedAboutDebug = Key<Bool>("haveWarnedAboutDebug", default: false)
     static let collapsedSystems = Key<Set<String>>("collapsedSystems", default: [])
-    
-    
+
+
 #if os(tvOS) || targetEnvironment(macCatalyst)
     static let largeGameArt = Key<Bool>("largeGameArt", default: true)
-#endif    
+#endif
 }
 
 // MARK: Beta Options
@@ -120,7 +120,7 @@ public extension Defaults.Keys {
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif
-    
+
     static let useLegacyAudioEngine = Key<Bool>("useLegacyAudioEngine", default: false)
     static let monoAudio = Key<Bool>("monoAudio", default: false)
 
@@ -137,44 +137,48 @@ public extension Defaults.Keys {
 @objc
 @objcMembers
 public final class PVSettingsWrapper: NSObject {
-    
+
     @objc
     public static var useLegacyAudioEngine: Bool {
         get { Defaults[.useLegacyAudioEngine] }
         set { Defaults[.useLegacyAudioEngine] = newValue }}
-    
+
     @objc
     public static var use8BitdoM30: Bool {
         get { Defaults[.use8BitdoM30] }
         set { Defaults[.use8BitdoM30] = newValue }}
-    
+
     @objc
     public static var nativeScaleEnabled: Bool {
         get { Defaults[.nativeScaleEnabled] }
         set { Defaults[.nativeScaleEnabled] = newValue }}
-    
+
     @objc
     public static var integerScaleEnabled: Bool {
         get { Defaults[.integerScaleEnabled] }
         set { Defaults[.integerScaleEnabled] = newValue }}
-    
+
     @objc
     public static var imageSmoothing: Bool {
         get { Defaults[.imageSmoothing] }
         set { Defaults[.imageSmoothing] = newValue }}
-    
+
     @objc
     public static var crtFilterEnabled: Bool {
         get { Defaults[.crtFilterEnabled] }
         set { Defaults[.crtFilterEnabled] = newValue }}
-    
+
     @objc
     public static var lcdFilterEnabled: Bool {
         get { Defaults[.lcdFilterEnabled] }
         set { Defaults[.lcdFilterEnabled] = newValue }}
-    
+
     @objc
     public static var volume: Float {
         get { Defaults[.volume] }
         set { Defaults[.volume] = newValue }}
+}
+
+public extension Defaults.Keys {
+    static let showFavorites = Key<Bool>("showFavorites", default: true)
 }
