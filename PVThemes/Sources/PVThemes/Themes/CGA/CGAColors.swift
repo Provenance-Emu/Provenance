@@ -25,6 +25,7 @@ public enum CGAThemes: String, CaseIterable, PaletteProvider {
     case yellow
     case purple
     case rainbow
+    case random
 
     public var palette: any UXThemePalette {
         let palette: any UXThemePalette
@@ -45,13 +46,15 @@ public enum CGAThemes: String, CaseIterable, PaletteProvider {
             palette = CGAPurpleThemePalette()
         case .rainbow:
             palette = CGARainbowThemePalette()
+        case .random:
+            palette = CGARandomThemePalette()
         }
         return palette
     }
 }
 
 public extension UIColor {
-    enum CGA {
+    enum CGA: CaseIterable {
 #if canImport(UIKit)
         public static let blue: UIColor         = #uiColor(0x0000AA)
         public static let blueShadow: UIColor   = #uiColor(0x0000FF)
@@ -73,6 +76,14 @@ public extension UIColor {
 
         public static let purple: UIColor       = #uiColor(0xDD33FF)
         public static let purpleShadow: UIColor = #uiColor(0x6B1383)
+
+        static public var allCases: [UIColor] {
+            [.CGA.blue, .CGA.blueShadow, .CGA.cyan, .CGA.cyanShadow, .CGA.green, .CGA.greenShadow, .CGA.magenta, .CGA.magentaShadow, .CGA.red, .CGA.redShadow, .CGA.yellow, .CGA.yellowShadow, .CGA.purple, .CGA.purpleShadow]
+        }
+
+        static public func random() -> UIColor {
+            allCases.randomElement()!
+        }
 #else
         public static let blue: UIColor         = #nsColor(0x0000AA)
         public static let blueShadow: UIColor   = #nsColor(0x0000FF)
@@ -656,9 +667,9 @@ public struct CGARainbowThemePalette: UXThemePalette, Codable, Sendable, Hashabl
 
     /// Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.purple.brightness(0.2) }
+    public var menuBackground: UIColor { .CGA.yellow.brightness(0.2) }
     ///     Text
-    public var menuText: UIColor { .CGA.yellowShadow }
+    public var menuText: UIColor { .CGA.redShadow }
     ///     Divider
     public var menuDivider: UIColor { .CGA.red.brightness(0.4) }
     ///     Icon Tint
@@ -673,4 +684,191 @@ public struct CGARainbowThemePalette: UXThemePalette, Codable, Sendable, Hashabl
     public var menuSectionHeaderBackground: UIColor  { .CGA.green.brightness(0.3) }
     ///         Tint
     public var menuSectionHeaderIconTint: UIColor { .CGA.purple }
+}
+
+
+public struct CGARandomThemePalette: UXThemePalette, Codable, Sendable, Hashable {
+
+    public var name: String { "CGA Random" }
+    public var group: String { "CGA" }
+    public var dark: Bool { _dark }
+
+    private let _dark: Bool
+    private let _statusBarColor: Int
+    private let _defaultTintColor: Int?
+    private let _switchThumb: Int?
+    private let _switchON: Int?
+    private let _gameLibraryBackground: Int
+    private let _gameLibraryText: Int
+    private let _gameLibraryHeaderBackground: Int
+    private let _gameLibraryHeaderText: Int
+    private let _gameLibraryCellBackground: Int?
+    private let _gameLibraryCellText: Int?
+    private let _navigationBarBackgroundColor: Int?
+    private let _barButtonItemTint: Int?
+    private let _settingsHeaderBackground: Int?
+    private let _settingsHeaderText: Int?
+    private let _settingsCellBackground: Int?
+    private let _settingsCellText: Int?
+    private let _menuBackground: Int
+    private let _menuText: Int
+    private let _menuDivider: Int
+    private let _menuIconTint: Int
+    private let _menuHeaderBackground: Int
+    private let _menuHeaderIconTint: Int
+    private let _menuSectionHeaderBackground: Int
+    private let _menuSectionHeaderText: Int
+    private let _menuSectionHeaderIconTint: Int
+
+#if !os(tvOS)
+    public var statusBarColor: UIColor { UIColor(rgb: _statusBarColor) }
+#endif
+    public var defaultTintColor: UIColor? { _defaultTintColor.map { UIColor(rgb: $0) } }
+
+#if canImport(UIKit)
+    public var keyboardAppearance: UIKeyboardAppearance { dark ? .dark : .light }
+#endif
+
+    public var switchThumb: UIColor? { _switchThumb.map { UIColor(rgb: $0) } }
+    public var switchON: UIColor? { _switchON.map { UIColor(rgb: $0) } }
+
+    // Game Library
+    public var gameLibraryBackground: UIColor { UIColor(rgb: _gameLibraryBackground) }
+    public var gameLibraryText: UIColor {
+        let background = UIColor(rgb: _gameLibraryBackground)
+        let text = UIColor(rgb: _gameLibraryText)
+        return adjustBrightness(text: text, background: background)
+    }
+    public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: _gameLibraryHeaderBackground) }
+    public var gameLibraryHeaderText: UIColor {
+        let background = UIColor(rgb: _gameLibraryHeaderBackground)
+        let text = UIColor(rgb: _gameLibraryHeaderText)
+        return adjustBrightness(text: text, background: background)
+    }
+    public var gameLibraryCellBackground: UIColor? { _gameLibraryCellBackground.map { UIColor(rgb: $0) } }
+    public var gameLibraryCellText: UIColor? {
+        guard let cellBackground = _gameLibraryCellBackground.map({ UIColor(rgb: $0) }),
+              let cellText = _gameLibraryCellText.map({ UIColor(rgb: $0) }) else { return nil }
+        return adjustBrightness(text: cellText, background: cellBackground)
+    }
+
+    // Navigation Bar
+    public var navigationBarBackgroundColor: UIColor? { _navigationBarBackgroundColor.map { UIColor(rgb: $0) } }
+    public var barButtonItemTint: UIColor? {
+        guard let background = _navigationBarBackgroundColor.map({ UIColor(rgb: $0) }),
+              let tint = _barButtonItemTint.map({ UIColor(rgb: $0) }) else { return nil }
+        return adjustBrightness(text: tint, background: background)
+    }
+
+    // Settings
+    public var settingsHeaderBackground: UIColor? { _settingsHeaderBackground.map { UIColor(rgb: $0) } }
+    public var settingsHeaderText: UIColor? {
+        guard let background = _settingsHeaderBackground.map({ UIColor(rgb: $0) }),
+              let text = _settingsHeaderText.map({ UIColor(rgb: $0) }) else { return nil }
+        return adjustBrightness(text: text, background: background)
+    }
+    public var settingsCellBackground: UIColor? { _settingsCellBackground.map { UIColor(rgb: $0) } }
+    public var settingsCellText: UIColor? {
+        guard let background = _settingsCellBackground.map({ UIColor(rgb: $0) }),
+              let text = _settingsCellText.map({ UIColor(rgb: $0) }) else { return nil }
+        return adjustBrightness(text: text, background: background)
+    }
+
+    // Menu
+    public var menuBackground: UIColor { UIColor(rgb: _menuBackground) }
+    public var menuText: UIColor {
+        let background = UIColor(rgb: _menuBackground)
+        let text = UIColor(rgb: _menuText)
+        return adjustBrightness(text: text, background: background)
+    }
+    public var menuDivider: UIColor { UIColor(rgb: _menuDivider) }
+    public var menuIconTint: UIColor {
+        let background = UIColor(rgb: _menuBackground)
+        let tint = UIColor(rgb: _menuIconTint)
+        return adjustBrightness(text: tint, background: background)
+    }
+    public var menuHeaderBackground: UIColor { UIColor(rgb: _menuHeaderBackground) }
+    public var menuHeaderIconTint: UIColor {
+        let background = UIColor(rgb: _menuHeaderBackground)
+        let tint = UIColor(rgb: _menuHeaderIconTint)
+        return adjustBrightness(text: tint, background: background)
+    }
+    public var menuSectionHeaderBackground: UIColor { UIColor(rgb: _menuSectionHeaderBackground) }
+    public var menuSectionHeaderText: UIColor {
+        let background = UIColor(rgb: _menuSectionHeaderBackground)
+        let text = UIColor(rgb: _menuSectionHeaderText)
+        return adjustBrightness(text: text, background: background)
+    }
+    public var menuSectionHeaderIconTint: UIColor {
+        let background = UIColor(rgb: _menuSectionHeaderBackground)
+        let tint = UIColor(rgb: _menuSectionHeaderIconTint)
+        return adjustBrightness(text: tint, background: background)
+    }
+
+    public init() {
+        self._dark = Bool.random()
+        self._statusBarColor = UIColor.CGA.allCases.randomElement()!.rgb
+        self._defaultTintColor = UIColor.CGA.allCases.randomElement()!.rgb
+        self._switchThumb = UIColor.CGA.allCases.randomElement()!.rgb
+        self._switchON = UIColor.CGA.allCases.randomElement()!.rgb
+        self._gameLibraryBackground = UIColor.CGA.allCases.randomElement()!.rgb
+        self._gameLibraryText = UIColor.CGA.allCases.randomElement()!.rgb
+        self._gameLibraryHeaderBackground = UIColor.CGA.allCases.randomElement()!.rgb
+        self._gameLibraryHeaderText = UIColor.CGA.allCases.randomElement()!.rgb
+        self._gameLibraryCellBackground = UIColor.CGA.allCases.randomElement()!.rgb
+        self._gameLibraryCellText = UIColor.CGA.allCases.randomElement()!.rgb
+        self._navigationBarBackgroundColor = UIColor.CGA.allCases.randomElement()!.rgb
+        self._barButtonItemTint = UIColor.CGA.allCases.randomElement()!.rgb
+        self._settingsHeaderBackground = UIColor.CGA.allCases.randomElement()!.rgb
+        self._settingsHeaderText = UIColor.CGA.allCases.randomElement()!.rgb
+        self._settingsCellBackground = UIColor.CGA.allCases.randomElement()!.rgb
+        self._settingsCellText = UIColor.CGA.allCases.randomElement()!.rgb
+        self._menuBackground = UIColor.CGA.allCases.randomElement()!.rgb
+        self._menuText = UIColor.CGA.allCases.randomElement()!.rgb
+        self._menuDivider = UIColor.CGA.allCases.randomElement()!.rgb
+        self._menuIconTint = UIColor.CGA.allCases.randomElement()!.rgb
+        self._menuHeaderBackground = UIColor.CGA.allCases.randomElement()!.rgb
+        self._menuHeaderIconTint = UIColor.CGA.allCases.randomElement()!.rgb
+        self._menuSectionHeaderBackground = UIColor.CGA.allCases.randomElement()!.rgb
+        self._menuSectionHeaderText = UIColor.CGA.allCases.randomElement()!.rgb
+        self._menuSectionHeaderIconTint = UIColor.CGA.allCases.randomElement()!.rgb
+    }
+
+    private func adjustBrightness(text: UIColor, background: UIColor) -> UIColor {
+        var textBrightness: CGFloat = 0
+        var backgroundBrightness: CGFloat = 0
+        text.getHue(nil, saturation: nil, brightness: &textBrightness, alpha: nil)
+        background.getHue(nil, saturation: nil, brightness: &backgroundBrightness, alpha: nil)
+
+        if abs(textBrightness - backgroundBrightness) < 0.5 {
+            return textBrightness > backgroundBrightness ? text.brightness(1.0) : text.brightness(0.0)
+        }
+        return text
+    }
+}
+
+private extension UIColor {
+    var rgb: Int {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+        let r = Int(red * 255) << 16
+        let g = Int(green * 255) << 8
+        let b = Int(blue * 255)
+
+        return r | g | b
+    }
+
+    convenience init(rgb: Int) {
+        self.init(
+            red: CGFloat((rgb >> 16) & 0xFF) / 255.0,
+            green: CGFloat((rgb >> 8) & 0xFF) / 255.0,
+            blue: CGFloat(rgb & 0xFF) / 255.0,
+            alpha: 1.0
+        )
+    }
 }

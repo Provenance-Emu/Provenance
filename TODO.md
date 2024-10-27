@@ -3,7 +3,7 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] Sega CD is borked
+- [ ] (Lite) Sega CD is borked
 - [X] iCloud sync isn't working, remove or fix
 - [X] Swift UI long press on roms menu missing actions {rename, ~~share~~}
 - [X] Progress hud on unzips isn't hiding
@@ -24,12 +24,12 @@ _My personal TODO notes_
 
 ## Major bugs
 
-- [ ] Turbo GFX 16 no video
-- [ ] Intellivision (PVBliss) audio crashes on button press
-- [ ] Intellivision video is glitched
-- [ ] SuperVision video dimensions wrong
-- [ ] Odyssey2 needs a way to enter game number 1,2 (3,4)?
 - [ ] iCloud sync removed
+- [ ] (Lite) Turbo GFX 16 no video for some roms
+- [ ] (Lite) Intellivision (PVBliss) audio crashes on button press
+- [ ] (Lite) Intellivision video is glitched
+- [ ] (Lite) SuperVision video dimensions wrong
+- [ ] (Lite) Odyssey2 needs a way to enter game number 1,2 (3,4)?
 - [X] Mupen video crashes with update metal code
 - [X] CrabEMU (Genesis) no buttons work
 - [X] Mednafen GB crashing
