@@ -27,6 +27,9 @@ public struct PVSettingsView: View {
     /// Environment variable for dismissing the view
     @Environment(\.presentationMode) var presentationMode
 
+    /// Theme manager
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     /// State manager observable conflicts controller
     let conflictsController: PVGameLibraryUpdatesController
 
@@ -98,16 +101,16 @@ public struct PVSettingsView: View {
     /// Section for saves settings
     var savesSection: some View {
         Section(header: Text("Saves")) {
-            Toggle(isOn: $viewModel.autoSave) {
+            ThemedToggle(isOn: $viewModel.autoSave) {
                 SettingsRow(title: "Auto Save", subtitle: "Auto-save game state on close. Must be playing for 30 seconds more.", icon: .sfSymbol("autostartstop"))
             }
-            Toggle(isOn: $viewModel.timedAutoSaves) {
+            ThemedToggle(isOn: $viewModel.timedAutoSaves) {
                 SettingsRow(title: "Timed Auto Saves", subtitle: "Periodically create save states while you play.", icon: .sfSymbol("clock.badge"))
             }
-            Toggle(isOn: $viewModel.autoLoadSaves) {
+            ThemedToggle(isOn: $viewModel.autoLoadSaves) {
                 SettingsRow(title: "Auto Load Saves", subtitle: "Automatically load the last save of a game if one exists. Disables the load prompt.", icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
             }
-            Toggle(isOn: $viewModel.askToAutoLoad) {
+            ThemedToggle(isOn: $viewModel.askToAutoLoad) {
                 SettingsRow(title: "Ask to Load Saves", subtitle: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active.", icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
             }
 
@@ -130,7 +133,7 @@ public struct PVSettingsView: View {
     /// Section for audio settings
     var audioSection: some View {
         Section(header: Text("Audio / Video")) {
-            Toggle(isOn: $viewModel.volumeHUD) {
+            ThemedToggle(isOn: $viewModel.volumeHUD) {
                 SettingsRow(title: "Volume HUD",
                            subtitle: "Show volume indicator when changing volume.",
                             icon: .sfSymbol("speaker.wave.2"))
@@ -154,32 +157,32 @@ public struct PVSettingsView: View {
     /// Section for video settings
     var videoSection: some View {
         Section(header: Text("Audio / Video")) {
-            Toggle(isOn: $viewModel.multiThreadedGL) {
+            ThemedToggle(isOn: $viewModel.multiThreadedGL) {
                 SettingsRow(title: "Multi-threaded Rendering",
                            subtitle: "Improves performance but may cause graphical glitches.",
                             icon: .sfSymbol("cpu"))
             }
-            Toggle(isOn: $viewModel.multiSampling) {
+            ThemedToggle(isOn: $viewModel.multiSampling) {
                 SettingsRow(title: "4X Multisampling GL",
                            subtitle: "Smoother graphics at the cost of performance.",
                            icon: .sfSymbol("square.stack.3d.up"))
             }
-            Toggle(isOn: $viewModel.nativeScaleEnabled) {
+            ThemedToggle(isOn: $viewModel.nativeScaleEnabled) {
                 SettingsRow(title: "Native Scaling",
                            subtitle: "Use the original console's resolution.",
                            icon: .sfSymbol("arrow.up.left.and.arrow.down.right"))
             }
-            Toggle(isOn: $viewModel.integerScaleEnabled) {
+            ThemedToggle(isOn: $viewModel.integerScaleEnabled) {
                 SettingsRow(title: "Integer Scaling",
                            subtitle: "Scale by whole numbers only for pixel-perfect display.",
                            icon: .sfSymbol("square.grid.4x3.fill"))
             }
-            Toggle(isOn: $viewModel.imageSmoothing) {
+            ThemedToggle(isOn: $viewModel.imageSmoothing) {
                 SettingsRow(title: "Image Smoothing",
                            subtitle: "Smooth scaled graphics. Off for sharp pixels.",
                            icon: .sfSymbol("paintbrush.pointed"))
             }
-            Toggle(isOn: $viewModel.showFPSCount) {
+            ThemedToggle(isOn: $viewModel.showFPSCount) {
                 SettingsRow(title: "FPS Counter",
                            subtitle: "Show frames per second counter.",
                            icon: .sfSymbol("speedometer"))
@@ -191,14 +194,14 @@ public struct PVSettingsView: View {
     /// Filters sub-section
     var filtersSection: some View {
         Section(header: Text("Filters")) {
-            Toggle(isOn: $viewModel.crtFilter) {
+            ThemedToggle(isOn: $viewModel.crtFilter) {
                 SettingsRow(title: "CRT Filter",
                            subtitle: "Emulate a CRT TV gridding and bloom filter.",
                             icon: .sfSymbol("inset.filled.tv"))
             }
-            Toggle(isOn: $viewModel.lcdFilter) {
+            ThemedToggle(isOn: $viewModel.lcdFilter) {
                 SettingsRow(title: "LCD Filter",
-                           subtitle: "Emulate a LCD screen gridding and blur filter.",
+                           subtitle: "Emulate a CRT TV gridding and bloom filter.",
                             icon: .sfSymbol("tv"))
             }
         }
@@ -207,7 +210,7 @@ public struct PVSettingsView: View {
     /// Section for metal settings
     var metalSection: some View {
         Section(header: Text("Metal")) {
-            Toggle(isOn: $viewModel.useMetalRenderer) {
+            ThemedToggle(isOn: $viewModel.useMetalRenderer) {
                 SettingsRow(title: "Use Metal Renderer",
                            subtitle: "Modern graphics API. Disable to use OpenGL.",
                            icon: .sfSymbol("cpu"))
@@ -239,22 +242,22 @@ public struct PVSettingsView: View {
     /// On-Screen Controller settings sub-section
     var onScreenControllerSection: some View {
         Section(header: Text("On-Screen Controller")) {
-            Toggle(isOn: $viewModel.buttonTints) {
+            ThemedToggle(isOn: $viewModel.buttonTints) {
                 SettingsRow(title: "Button Colors",
                            subtitle: "Show colored buttons matching original hardware.",
                            icon: .sfSymbol("paintpalette"))
             }
-            Toggle(isOn: $viewModel.allRightShoulders) {
+            ThemedToggle(isOn: $viewModel.allRightShoulders) {
                 SettingsRow(title: "All Right Shoulder Buttons",
                            subtitle: "Show all shoulder buttons on the right side.",
                            icon: .sfSymbol("l.joystick.tilt.right"))
             }
-            Toggle(isOn: $viewModel.buttonVibration) {
+            ThemedToggle(isOn: $viewModel.buttonVibration) {
                 SettingsRow(title: "Haptic Feedback",
                            subtitle: "Vibrate when pressing on-screen buttons.",
                            icon: .sfSymbol("hand.point.up.braille"))
             }
-            Toggle(isOn: $viewModel.missingButtonsAlwaysOn) {
+            ThemedToggle(isOn: $viewModel.missingButtonsAlwaysOn) {
                 SettingsRow(title: "Missing Buttons Always On",
                            subtitle: "Always show buttons not present on original hardware.",
                            icon: .sfSymbol("l.rectangle.roundedbottom"))
@@ -276,6 +279,7 @@ public struct PVSettingsView: View {
                            value: "\(viewModel.numberOfConflicts)",
                            icon: .sfSymbol("bandage"))
             }
+            .disabled(viewModel.numberOfConflicts == 0)
         }
     }
 
@@ -308,22 +312,22 @@ public struct PVSettingsView: View {
     // Section for advanced settings
     var advancedSection: some View {
         Section(header: Text("Advanced")) {
-            Toggle(isOn: $viewModel.useMetalRenderer) {
+            ThemedToggle(isOn: $viewModel.useMetalRenderer) {
                 SettingsRow(title: "Use Metal Renderer",
                            subtitle: "Modern graphics API for better performance.",
                            icon: .sfSymbol("m.square.fill"))
             }
-            Toggle(isOn: $viewModel.useUIKit) {
+            ThemedToggle(isOn: $viewModel.useUIKit) {
                 SettingsRow(title: "Use Legacy UIKit UI",
                            subtitle: "Switch to classic interface. Requires app restart.",
                            icon: .sfSymbol("swift"))
             }
-            Toggle(isOn: $viewModel.movableButtons) {
+            ThemedToggle(isOn: $viewModel.movableButtons) {
                 SettingsRow(title: "Movable Buttons",
-                           subtitle: "Allow moving on-screen buttons. Triple-tap with three fingers to toggle.",
+                           subtitle: "Allow moving on-screen buttons. Triple-tap with three fingers to ThemedToggle.",
                            icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
-            Toggle(isOn: $viewModel.onscreenJoypad) {
+            ThemedToggle(isOn: $viewModel.onscreenJoypad) {
                 SettingsRow(title: "On-screen Joypad",
                            subtitle: "Show touch joystick on supported systems.",
                            icon: .sfSymbol("l.joystick.tilt.left.fill"))
@@ -949,6 +953,88 @@ public enum SettingsIcon: Equatable {
             return nil
         case .sfSymbol:
             return nil
+        }
+    }
+}
+
+struct ThemedToggle<Label: View>: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @Binding var isOn: Bool
+    let label: Label
+
+    init(isOn: Binding<Bool>, @ViewBuilder label: () -> Label) {
+        self._isOn = isOn
+        self.label = label()
+    }
+
+    var body: some View {
+        Toggle(isOn: $isOn) {
+            label
+        }
+        .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
+        .onAppear {
+            UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
+        }
+    }
+}
+
+struct SwitchThemedToggleStyle: ToggleStyle {
+    let tint: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+            Spacer()
+            Switch(isOn: configuration.$isOn, tint: tint)
+        }
+    }
+}
+
+private struct Switch: View {
+    @Binding var isOn: Bool
+    let tint: Color
+
+    var body: some View {
+        // Use UIKit switch for custom styling
+        SwitchRepresentable(isOn: $isOn, tint: tint)
+            .frame(width: 51, height: 31) // Standard UISwitch dimensions
+    }
+}
+
+// UIViewRepresentable wrapper for UISwitch
+private struct SwitchRepresentable: UIViewRepresentable {
+    @Binding var isOn: Bool
+    let tint: Color
+
+    func makeUIView(context: Context) -> UISwitch {
+        let uiSwitch = UISwitch()
+        uiSwitch.onTintColor = UIColor(tint)
+        uiSwitch.thumbTintColor = ThemeManager.shared.currentPalette.switchThumb
+        uiSwitch.addTarget(context.coordinator,
+                          action: #selector(Coordinator.switchChanged(_:)),
+                          for: .valueChanged)
+        return uiSwitch
+    }
+
+    func updateUIView(_ uiView: UISwitch, context: Context) {
+        uiView.isOn = isOn
+        uiView.onTintColor = UIColor(tint)
+        uiView.thumbTintColor = ThemeManager.shared.currentPalette.switchThumb
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(isOn: $isOn)
+    }
+
+    class Coordinator: NSObject {
+        private var isOn: Binding<Bool>
+
+        init(isOn: Binding<Bool>) {
+            self.isOn = isOn
+        }
+
+        @objc func switchChanged(_ sender: UISwitch) {
+            isOn.wrappedValue = sender.isOn
         }
     }
 }
