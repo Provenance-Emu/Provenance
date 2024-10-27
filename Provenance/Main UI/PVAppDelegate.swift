@@ -51,7 +51,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
     static func main() {
         UIApplicationMain(CommandLine.argc, CommandLine.unsafeArgv, NSStringFromClass(PVApplication.self), NSStringFromClass(PVAppDelegate.self))
     }
-    
+
     var shortcutItemGame: PVGame?
     var bootupState: AppBootupState? {
         appState?.bootupStateManager
@@ -367,7 +367,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
         }
     }
 
-    
+
     func applicationWillResignActive(_ application: UIApplication) {
         let emulationState = appState?.emulationState
         emulationState?.isInBackground = true
@@ -494,9 +494,11 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
         }
     }
 
+//    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+//        let sceneConfig = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+//        sceneConfig.delegateClass = PVSceneDelegate.self
+//        return sceneConfig
+//    }
+
 }
 
-// You might want to define a protocol for errors that can provide more detailed information
-protocol DetailedError: Error {
-    var detailedDescription: String { get }
-}

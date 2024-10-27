@@ -14,8 +14,8 @@ struct ContentView: View {
                 ZStack {
                     MainView(appDelegate: appDelegate)
                     
-                    FirstResponderViewControllerWrapper()
-                        .edgesIgnoringSafeArea(.all)
+//                    FirstResponderViewControllerWrapper()
+//                        .edgesIgnoringSafeArea(.all)
                 }
             case .error(let error):
                 ErrorView(error: error) {

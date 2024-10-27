@@ -1040,7 +1040,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             encoder.setFragmentTexture(self.inputTexture, index: 0)
             encoder.setFragmentSamplerState(self.renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler, index: 0)
 
-            VLOG("Drawing primitives with pipeline state: \(pipelineState)")
+//            VLOG("Drawing primitives with pipeline state: \(pipelineState)")
             encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
             encoder.endEncoding()
 

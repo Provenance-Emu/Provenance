@@ -10,54 +10,57 @@ import SwiftUI
 import Foundation
 import PVUIBase
 
-struct FirstResponderViewControllerWrapper: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> FirstResponderViewController {
+public struct FirstResponderViewControllerWrapper: UIViewControllerRepresentable {
+    public init() {
+        
+    }
+    public func makeUIViewController(context: Context) -> FirstResponderViewController {
         let vc = FirstResponderViewController()
         vc.view.backgroundColor = .clear
         return vc
     }
 
-    func updateUIViewController(_ uiViewController: FirstResponderViewController, context: Context) {
+    public func updateUIViewController(_ uiViewController: FirstResponderViewController, context: Context) {
         // Update the view controller if needed
     }
 }
 
-class FirstResponderViewController: UIViewController {
-    override func viewDidLoad() {
+public class FirstResponderViewController: UIViewController {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
         view.isUserInteractionEnabled = true
     }
 
-    override var canBecomeFirstResponder: Bool {
+    public override var canBecomeFirstResponder: Bool {
         return true
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         becomeFirstResponder()
     }
 
     // Handle and forward touch events
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         handleAndForwardTouches(touches, with: event)
         super.touchesBegan(touches, with: event)
         next?.touchesBegan(touches, with: event)
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         handleAndForwardTouches(touches, with: event)
         super.touchesMoved(touches, with: event)
         next?.touchesMoved(touches, with: event)
     }
 
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         handleAndForwardTouches(touches, with: event)
         super.touchesEnded(touches, with: event)
         next?.touchesEnded(touches, with: event)
     }
 
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         handleAndForwardTouches(touches, with: event)
         super.touchesCancelled(touches, with: event)
         next?.touchesCancelled(touches, with: event)
@@ -72,19 +75,19 @@ class FirstResponderViewController: UIViewController {
     }
 
     // Handle and forward motion events
-    override func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+    public override func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         handleAndForwardMotion(motion, with: event)
         super.motionBegan(motion, with: event)
         next?.motionBegan(motion, with: event)
     }
 
-    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+    public override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         handleAndForwardMotion(motion, with: event)
         super.motionEnded(motion, with: event)
         next?.motionEnded(motion, with: event)
     }
 
-    override func motionCancelled(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+    public override func motionCancelled(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         handleAndForwardMotion(motion, with: event)
         super.motionCancelled(motion, with: event)
         next?.motionCancelled(motion, with: event)
@@ -99,7 +102,7 @@ class FirstResponderViewController: UIViewController {
     }
 
     // Optionally, handle remote control events
-    override func remoteControlReceived(with event: UIEvent?) {
+    public override func remoteControlReceived(with event: UIEvent?) {
         // Handle remote control event (e.g., send to emulator core)
         print("Handling remote control event: \(event?.subtype.rawValue ?? -1)")
 
