@@ -22,19 +22,20 @@ public extension Notification.Name {
     static let themeDidChange = Notification.Name("com.yourapp.themeDidChange")
 }
 
-import Perception
-
-#if !os(tvOS)
-@Observable
-#else
-@Perceptible
-#endif
+//import Perception
+//
+//#if !os(tvOS)
+//@Observable
+//#else
+//@Perceptible
+//#endif
 public final class ThemeManager: ObservableObject {
 
     nonisolated(unsafe) public static let shared: ThemeManager = .init()
     private init() { }
 
     public var palettes: Array<any UXThemePalette> = []
+    @Published
     public private(set) var currentPalette: any UXThemePalette = ProvenanceThemes.default.palette {
          didSet {
              if #unavailable(iOS 17.0, tvOS 17.0), currentPalette.name != oldValue.name {

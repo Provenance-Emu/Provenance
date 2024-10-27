@@ -70,18 +70,19 @@ public final class PVRootViewNavigationController: UINavigationController {
         navigationBar.tintColor = nil // Reset to default tint color
     }
     
+    var paletteListener: Any?
     func _initThemeListener() {
         if #available(iOS 17.0, tvOS 17.0, *) {
-            withObservationTracking {
+            paletteListener = withObservationTracking {
                 _ = ThemeManager.shared.currentPalette
             } onChange: { [unowned self] in
-                print("changed: ", ThemeManager.shared.currentPalette)
+                DLOG("changed: \(ThemeManager.shared.currentPalette.name)")
                 Task.detached { @MainActor in
                     self.applyCustomTheme()
                 }
             }
         } else {
-            withPerceptionTracking {
+            paletteListener = withPerceptionTracking {
                 _ = ThemeManager.shared.currentPalette
             } onChange: {
                 print("changed: ", ThemeManager.shared.currentPalette)

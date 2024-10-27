@@ -45,13 +45,13 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     }
     let appState = AppState()
     let disposeBag = DisposeBag()
-    
+
     // Check if the app is running in App Store mode
     var isAppStore: Bool {
         guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
         return appType.lowercased().contains("appstore")
     }
-    
+
     // JIT-related properties for iOS, non-App Store builds with PVJIT support
 #if os(iOS) && !APP_STORE && canImport(PVJIT)
     weak var jitScreenDelegate: JitScreenDelegate?
@@ -59,21 +59,21 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     var cancellation_token = DOLCancellationToken()
     var is_presenting_alert = false
 #endif
-    
+
     @MainActor weak var rootNavigationVC: UIViewController?
     @MainActor weak var gameLibraryViewController: PVGameLibraryViewController?
-    
+
     private var libraryUpdatesController: PVGameLibraryUpdatesController?
     private var gameImporter: GameImporter?
     private var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
-    
+
     // Initialize the UI theme
     @MainActor
     func _initUITheme() {
         ThemeManager.applySavedTheme()
         themeAppUI(withPalette: ThemeManager.shared.currentPalette)
     }
-    
+
     // Initialize the UI
     @MainActor
     func _initUI(
@@ -83,7 +83,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     ) {
         let window = setupWindow()
         self.window = window
-        
+
         if !appState.useUIKit{
             setupSwiftUIInterface(window: window,
                                   libraryUpdatesController: libraryUpdatesController,
@@ -95,11 +95,11 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                                 gameImporter: gameImporter,
                                 gameLibrary: gameLibrary)
         }
-        
+
         _initUITheme()
         setupJITIfNeeded()
     }
-    
+
     private func setupWindow() -> UIWindow {
         let window = UIWindow(frame: UIScreen.main.bounds)
 #if os(tvOS)
@@ -107,7 +107,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 #endif
         return window
     }
-    
+
     private func setupSwiftUIInterface(window: UIWindow,
                                        libraryUpdatesController: PVGameLibraryUpdatesController,
                                        gameImporter: GameImporter,
@@ -120,15 +120,15 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             viewModel: viewModel)
         self.rootNavigationVC = rootViewController
         let sideNavHostedNavigationController = PVRootViewNavigationController(rootViewController: rootViewController)
-        
+
         let sideNav = setupSideNavigation(mainViewController: sideNavHostedNavigationController,
                                           gameLibrary: gameLibrary,
                                           viewModel: viewModel,
                                           rootViewController: rootViewController)
-        
+
         window.rootViewController = sideNav
     }
-    
+
     private func setupSideNavigation(mainViewController: UIViewController,
                                      gameLibrary: PVGameLibrary<RealmDatabaseDriver>,
                                      viewModel: PVRootViewModel,
@@ -137,7 +137,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         let isIpad = UIDevice.current.userInterfaceIdiom == .pad
         let widthPercentage: CGFloat = isIpad ? 0.3 : 0.7
         let overlayColor: UIColor = ThemeManager.shared.currentPalette.menuHeaderBackground
-        
+
         sideNav.leftSide(
             viewController: SideMenuView.instantiate(gameLibrary: gameLibrary,
                                                      viewModel: viewModel,
@@ -151,7 +151,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         )
         return sideNav
     }
-    
+
     private func setupUIKitInterface(window: UIWindow,
                                      libraryUpdatesController: PVGameLibraryUpdatesController,
                                      gameImporter: GameImporter,
@@ -159,9 +159,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         Task.detached { @MainActor in
             let storyboard = UIStoryboard(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
             let vc = storyboard.instantiateInitialViewController()
-            
+
             window.rootViewController = vc
-            
+
             guard let rootNavigation = window.rootViewController as? UINavigationController else {
                 fatalError("No root nav controller")
             }
@@ -169,15 +169,15 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
                 fatalError("No gameLibraryViewController")
             }
-            
+
             gameLibraryViewController.updatesController = libraryUpdatesController
             gameLibraryViewController.gameImporter = gameImporter
             gameLibraryViewController.gameLibrary = gameLibrary
-            
+
             self.gameLibraryViewController = gameLibraryViewController
         }
     }
-    
+
     private func setupJITIfNeeded() {
 #if os(iOS) && !APP_STORE
         if Defaults[.autoJIT] {
@@ -188,19 +188,19 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         }
 #endif
     }
-    
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         initializeAppComponents()
         configureApplication(application)
         observeBootupState()
-        
+
         Task.detached { @MainActor in
             self.appState.startBootupSequence()
         }
-        
+
         return true
     }
-    
+
     @MainActor
     private func initializeAppComponents() {
         loadRocketSimConnect()
@@ -211,7 +211,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         _initUITheme()
         _initThemeListener()
     }
-    
+
     private func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
         // Handle if started from shortcut
         if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
@@ -220,16 +220,16 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
            let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
             shortcutItemGame = matchedGame
         }
-        
+
         Task {
             for await value in Defaults.updates(.disableAutoLock) {
                 application.isIdleTimerDisabled =  value
             }
         }
     }
-    
+
     private var bootupObservationTask: Task<Void, any Error>?
-    
+
     @MainActor
     private func observeBootupState() {
         ILOG("Starting to observe bootup state")
@@ -240,7 +240,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             }
         }
     }
-    
+
     @MainActor
     private func handleBootupStateChange(_ state: AppBootupState.State) {
         ILOG("Bootup state changed to: \(state.localizedDescription)")
@@ -255,7 +255,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             break
         }
     }
-    
+
     @MainActor
     private func finalizeBootup() {
         // Initialize UI and perform any final setup only if not already done
@@ -263,16 +263,16 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             let gameImporter = GameImporter.shared
             let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
             let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
-            
+
             appState.gameImporter = gameImporter
             appState.gameLibrary = gameLibrary
             appState.libraryUpdatesController = libraryUpdatesController
-            
+
             setupShortcutsListener()
 
-            
+
             _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
-            
+
 #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
             Task.detached { @MainActor in
                 await libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
@@ -280,9 +280,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 #endif
             window?.makeKeyAndVisible()
         }
-                
+
     }
-    
+
     @MainActor
     func setupShortcutsListener() {
         guard let gameLibrary = appState.gameLibrary else {
@@ -301,14 +301,14 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             .disposed(by: disposeBag)
 #endif
     }
-    
+
     @MainActor
     private func handleBootupError(_ error: Error) {
         // Handle bootup errors, possibly show an alert to the user
-        
+
         showDatabaseErrorAlert(error: error)
     }
-    
+
     @MainActor
     private func updateUIBasedOnPreference(useUIKit: Bool) {
         guard let window = self.window,
@@ -318,7 +318,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             ELOG("Unable to update UI: missing required components")
             return
         }
-        
+
         if useUIKit {
             setupUIKitInterface(window: window,
                                 libraryUpdatesController: libraryUpdatesController,
@@ -331,15 +331,15 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                                   gameLibrary: gameLibrary)
         }
     }
-    
+
     private func initializeAdditionalComponents() {
         _initSteamControllers()
-        
+
 #if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
         ApplicationMonitor.shared.start()
 #endif
     }
-    
+
     private func scheduleDelayedTasks() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
             self?.startOptionalWebDavServer()
@@ -350,14 +350,14 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 #endif
         }
     }
-    
+
     func _initSteamControllers() {
 #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
         // SteamController is built with STEAMCONTROLLER_NO_PRIVATE_API, so we don't call this
         // SteamControllerManager.listenForConnections()
 #endif
     }
-    
+
     func _initICloud() {
         PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
@@ -370,10 +370,11 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             }
         }
     }
-    
-    var currentThemeObservation: Any?
+
+    var currentThemeObservation: Any? // AnyCancellable?
     var userInterfaceStyleObservation: Any?
-    
+    var oldPalette: (any UXThemePalette)?
+
     @MainActor
     func _initThemeListener() {
         if #available(iOS 17.0, tvOS 17.0, *) {
@@ -388,19 +389,21 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                     }
                 }
             }
-            
-            currentThemeObservation = withObservationTracking {
-                _ = ThemeManager.shared.currentPalette
-            } onChange: { [weak self] in
-                guard let self = self else { return }
-                Task { @MainActor in
-                    ILOG("changed: \(ThemeManager.shared.currentPalette.name)")
-                    self._initUITheme()
-                    if self.isAppStore {
-                        self.appRatingSignifigantEvent()
+
+            currentThemeObservation = ThemeManager.shared.$currentPalette
+                .dropFirst() // Skip the initial value
+                .sink { [weak self] newPalette in
+                    ILOG("Theme changed to: \(newPalette.name)")
+                    if newPalette.name != self?.oldPalette?.name {
+                        self?.oldPalette = newPalette
+                        Task { @MainActor in
+                            self?._initUITheme()
+                            if self?.isAppStore == true {
+                                self?.appRatingSignifigantEvent()
+                            }
+                        }
                     }
                 }
-            }
         }
         else {
             userInterfaceStyleObservation = withPerceptionTracking {
@@ -414,21 +417,25 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                     }
                 }
             }
-            
+
             currentThemeObservation =   withPerceptionTracking {
                 _ = ThemeManager.shared.currentPalette
             } onChange: { [unowned self] in
-                ILOG("changed: \(ThemeManager.shared.currentPalette.name)")
-                Task.detached { @MainActor in
-                    self._initUITheme()
-                    if self.isAppStore {
-                        self.appRatingSignifigantEvent()
+                let newPaletteName = ThemeManager.shared.currentPalette.name
+                ILOG("Theme changed to: \(newPaletteName)")
+                if newPaletteName != oldPalette?.name {
+                    oldPalette = ThemeManager.shared.currentPalette
+                    Task { @MainActor in
+                        self._initUITheme()
+                        if self.isAppStore == true {
+                            self.appRatingSignifigantEvent()
+                        }
                     }
                 }
             }
         }
     }
-    
+
     func saveCoreState(_ application: PVApplication) async throws {
         if let core = application.core, core.isOn, let emulator = application.emulator {
             if Defaults[.autoSave], core.supportsSaveStates {
@@ -440,7 +447,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             appRatingSignifigantEvent()
         }
     }
-    
+
     func pauseCore(_ application: PVApplication) {
         if let core = application.core, core.isOn && core.isRunning {
             ILOG("PVAppDelegate: Pausing Core\n")
@@ -450,14 +457,14 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             appRatingSignifigantEvent()
         }
     }
-    
+
     func stopCore(_ application: PVApplication) {
         if let core = application.core, core.isOn {
             ILOG("PVAppDelegate: Stopping Core\n")
             core.stopEmulation()
         }
     }
-    
+
     func applicationWillResignActive(_ application: UIApplication) {
         if let app = application as? PVApplication {
             app.isInBackground = true
@@ -468,29 +475,29 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             }
         }
     }
-    
+
     func applicationDidEnterBackground(_ application: UIApplication) {
         if let app = application as? PVApplication {
             app.isInBackground = true
             pauseCore(app)
         }
     }
-    
+
     func applicationWillEnterForeground(_: UIApplication) {}
-    
+
     func applicationDidBecomeActive(_ application: UIApplication) {
         if let app = application as? PVApplication {
             app.isInBackground = false
         }
     }
-    
+
     func applicationWillTerminate(_ application: UIApplication) {
         bootupObservationTask?.cancel()
         if let app = application as? PVApplication {
             stopCore(app)
         }
     }
-    
+
     private var cancellables = Set<AnyCancellable>()
     func _initLibraryNotificationHandlers() {
         NotificationCenter.default.publisher(for: .PVReimportLibrary)
@@ -503,7 +510,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             }
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
             .store(in: &cancellables)
-        
+
         NotificationCenter.default.publisher(for: .PVRefreshLibrary)
             .flatMap { _ in
                 Future<Void, Error> { promise in
@@ -519,7 +526,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             }
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
             .store(in: &cancellables)
-        
+
         NotificationCenter.default.publisher(for: .PVResetLibrary)
             .flatMap { _ in
                 Future<Void, Error> { promise in
@@ -540,39 +547,39 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
             .store(in: &cancellables)
     }
-    
+
     func showDatabaseErrorAlert(error: Error) {
         let alertController = UIAlertController(
             title: "Database Error",
             message: "An error occurred while initializing the database: \(error.localizedDescription)",
             preferredStyle: .alert
         )
-        
+
         let okAction = UIAlertAction(title: "OK", style: .default) { _ in
             // You might want to add some recovery action here,
             // such as attempting to reinitialize the database or exiting the app
         }
-        
+
         alertController.addAction(okAction)
-        
+
         // If you have a more detailed error description or recovery steps, you can add them here
         if let detailedError = error as? DetailedError {
             alertController.message?.append("\n\nDetails: \(detailedError.detailedDescription)")
-            
+
             let showDetailsAction = UIAlertAction(title: "Show Details", style: .default) { _ in
                 // Present a new view controller with more detailed error information
                 self.presentDetailedErrorViewController(error: detailedError)
             }
-            
+
             alertController.addAction(showDetailsAction)
         }
-        
+
         // Present the alert controller
         DispatchQueue.main.async {
             self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
         }
     }
-    
+
     private func presentDetailedErrorViewController(error: DetailedError) {
         // Implement this method to show a more detailed error view
         // This could include stack traces, error codes, or recovery steps
