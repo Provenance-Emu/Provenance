@@ -11,18 +11,18 @@ import PVSupport
 import Observation
 #if canImport(UIKit)
 import UIKit
-typealias BaseContoller = UITableViewController
+public typealias PVConflictBaseContoller = UITableViewController
 #elseif canImport(AppKit)
 import AppKit
-typealias BaseContoller = NSTableViewController
+public typealias PVConflictBaseContoller = NSTableViewController
 #endif
 import PVSettings
 
-final class PVConflictViewController: BaseContoller {
+public final class PVConflictViewController: PVConflictBaseContoller {
     let conflictsController: PVGameLibraryUpdatesController
     @Published private var rows: [Row] = []
 
-    init(conflictsController: PVGameLibraryUpdatesController) {
+    public init(conflictsController: PVGameLibraryUpdatesController) {
         self.conflictsController = conflictsController
         super.init(style: .plain)
     }
@@ -36,7 +36,7 @@ final class PVConflictViewController: BaseContoller {
         case empty(title: String)
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         title = "Solve Conflicts"
         #if !os(tvOS)
@@ -67,7 +67,7 @@ final class PVConflictViewController: BaseContoller {
         }
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         #if !os(tvOS)
         if navigationController == nil || navigationController!.viewControllers.count <= 1 {
@@ -83,11 +83,11 @@ final class PVConflictViewController: BaseContoller {
 }
 
 extension PVConflictViewController { // : UITableViewDataSource, UITableViewDelegate {
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return rows.count
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let row = rows[indexPath.row]
         switch row {
@@ -105,11 +105,11 @@ extension PVConflictViewController { // : UITableViewDataSource, UITableViewDele
         return cell
     }
 
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    public override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    public override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             if case .conflict(let conflict) = rows[indexPath.row] {
                 Task {
@@ -119,7 +119,7 @@ extension PVConflictViewController { // : UITableViewDataSource, UITableViewDele
         }
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if case .conflict(let conflict) = rows[indexPath.row] {
             showSystemSelectionAlert(for: conflict, at: indexPath)
@@ -152,11 +152,11 @@ extension PVConflictViewController { // : UITableViewDataSource, UITableViewDele
         }
     }
 
-    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+    public override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         return true
     }
 
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+    public override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
 
@@ -175,7 +175,7 @@ extension PVConflictViewController { // : UITableViewDataSource, UITableViewDele
         }
     }
 
-    override func setEditing(_ editing: Bool, animated: Bool) {
+    public override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         tableView.setEditing(editing, animated: true)
     }

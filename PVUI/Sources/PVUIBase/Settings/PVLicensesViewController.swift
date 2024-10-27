@@ -16,12 +16,12 @@ import Darwin
 import WebKit
 #endif
 
-final class PVLicensesViewController: UIViewController {
+public final class PVLicensesViewController: UIViewController {
     #if os(tvOS) || targetEnvironment(macCatalyst)
         @IBOutlet var textView: UITextView!
     #endif
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         title = NSLocalizedString("Acknowledgements", comment: "")
@@ -64,7 +64,7 @@ final class PVLicensesViewController: UIViewController {
         #endif
     }
 
-    override func didReceiveMemoryWarning() {
+    public override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }

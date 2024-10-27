@@ -14,8 +14,8 @@ import UIKit
 import PVSettings
 import PVUIBase
 
-final class PViCadeControllerViewController: UITableViewController {
-    override func viewDidLoad() {
+public final class PViCadeControllerViewController: UITableViewController {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         #if os(tvOS)
             tableView.backgroundColor = UIColor.black
@@ -23,15 +23,15 @@ final class PViCadeControllerViewController: UITableViewController {
         #endif
     }
 
-    override func numberOfSections(in _: UITableView) -> Int {
+    public override func numberOfSections(in _: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+    public override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return iCadeControllerSetting.allCases.count
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "iCadeCell") ?? UITableViewCell(style: .default, reuseIdentifier: "iCadeCell")
 
         if indexPath.row == Defaults[.myiCadeControllerSetting].rawValue {
@@ -48,15 +48,15 @@ final class PViCadeControllerViewController: UITableViewController {
         return cell
     }
 
-    override func tableView(_: UITableView, titleForHeaderInSection _: Int) -> String? {
+    public override func tableView(_: UITableView, titleForHeaderInSection _: Int) -> String? {
         return "Supported iCade Controllers"
     }
 
-    override func tableView(_: UITableView, titleForFooterInSection _: Int) -> String? {
+    public override func tableView(_: UITableView, titleForFooterInSection _: Int) -> String? {
         return "Controllers must be paired with device."
     }
 
-    override func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public override func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         if let aRow = self.tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: aRow, animated: true)

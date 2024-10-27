@@ -8,12 +8,17 @@ import PVCoreBridge
 import PVThemes
 import PVSettings
 import Combine
+import PVUIBase
+import PVUIKit
 
+// MARK: - PVSettingsView
 public struct PVSettingsView: View {
     // View model for managing settings state and logic
     @StateObject private var viewModel = PVSettingsViewModel()
     // Environment variable for dismissing the view
     @Environment(\.presentationMode) var presentationMode
+
+    let conflictsController: PVGameLibraryUpdatesController
 
     public var body: some View {
         NavigationView {
@@ -41,7 +46,7 @@ public struct PVSettingsView: View {
             })
         }
         .onAppear {
-            viewModel.setupConflictsObserver()
+            viewModel.conflictsController = conflictsController
         }
     }
 
@@ -52,13 +57,13 @@ public struct PVSettingsView: View {
                 SettingsRow(title: "Systems", subtitle: "Information on cores, their bioses, links and stats.", icon: "square.stack")
             }
             Button(action: viewModel.showThemeOptions) {
-                SettingsRow(title: "Theme", value: viewModel.currentTheme, icon: "paintbrush")
+                SettingsRow(title: "Theme", value: viewModel.currentTheme.description, icon: "paintbrush")
+            }
+            NavigationLink(destination: AppearanceView()) {
+                SettingsRow(title: "Appearance", icon: "paintpalette")
             }
             Toggle("Auto Load Saves", isOn: $viewModel.autoLoadSaves)
             Toggle("Auto Save", isOn: $viewModel.autoSave)
-            NavigationLink(destination: GameLibraryView()) {
-                SettingsRow(title: "Game Library", icon: "books.vertical")
-            }
         }
     }
 
@@ -74,17 +79,43 @@ public struct PVSettingsView: View {
     // Section for saves settings
     var savesSection: some View {
         Section(header: Text("Saves")) {
-            Toggle("iCloud Sync", isOn: $viewModel.iCloudSync)
-            Toggle("Ask to Sync", isOn: $viewModel.askToSync)
+            Toggle(isOn: $viewModel.autoSave) {
+                SettingsRow(title: "Auto Save", subtitle: "Auto-save game state on close. Must be playing for 30 seconds more.", icon: "autostartstop")
+            }
+            Toggle(isOn: $viewModel.timedAutoSaves) {
+                SettingsRow(title: "Timed Auto Saves", subtitle: "Periodically create save states while you play.", icon: "clock.badge")
+            }
+            Toggle(isOn: $viewModel.autoLoadSaves) {
+                SettingsRow(title: "Auto Load Saves", subtitle: "Automatically load the last save of a game if one exists. Disables the load prompt.", icon: "autostartstop.trianglebadge.exclamationmark")
+            }
+            Toggle(isOn: $viewModel.askToAutoLoad) {
+                SettingsRow(title: "Ask to Load Saves", subtitle: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active.", icon: "autostartstop.trianglebadge.exclamationmark")
+            }
+
+            #if os(iOS)
+            HStack {
+                Text("Auto-save Time")
+                Slider(value: $viewModel.timedAutoSaveInterval, in: 1...30, step: 1) {
+                    Text("Auto-save Time")
+                } minimumValueLabel: {
+                    Image(systemName: "hare")
+                } maximumValueLabel: {
+                    Image(systemName: "tortoise")
+                }
+            }
+            Text("Number of minutes between timed auto saves.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            #endif
         }
     }
 
     // Section for audio/video settings
     var avSection: some View {
         Section(header: Text("Audio / Video")) {
-            Toggle("Smooth Scaling", isOn: $viewModel.smoothScaling)
+            Toggle("4x Multi Scaling", isOn: $viewModel.multiSampling)
             Toggle("CRT Filter", isOn: $viewModel.crtFilter)
-            Toggle("Sound", isOn: $viewModel.sound)
+            Toggle("Volume HUD", isOn: $viewModel.volumeHUD)
         }
     }
 
@@ -100,6 +131,9 @@ public struct PVSettingsView: View {
         Section(header: Text("Controller")) {
             NavigationLink(destination: ControllerSettingsView()) {
                 SettingsRow(title: "Controller Settings", icon: "gamecontroller")
+            }
+            NavigationLink(destination: ICadeControllerView()) {
+                SettingsRow(title: "iCade / 8Bitdo", icon: "gamecontroller.fill")
             }
         }
     }
@@ -125,7 +159,7 @@ public struct PVSettingsView: View {
             Button(action: viewModel.emptyImageCache) {
                 SettingsRow(title: "Empty Image Cache", icon: "photo.on.rectangle.angled")
             }
-            NavigationLink(destination: ConflictsView()) {
+            NavigationLink(destination: ConflictsView().environmentObject(viewModel)) {
                 SettingsRow(title: "Manage Conflicts", value: "\(viewModel.numberOfConflicts)", icon: "exclamationmark.triangle")
             }
         }
@@ -134,7 +168,7 @@ public struct PVSettingsView: View {
     // Section for beta settings
     var betaSection: some View {
         Section(header: Text("Beta")) {
-            Toggle("Beta Features", isOn: $viewModel.betaFeatures)
+//            Toggle("Beta Features", isOn: $viewModel.betaFeatures)
         }
     }
 
@@ -212,32 +246,31 @@ struct SettingsRow: View {
 }
 
 class PVSettingsViewModel: ObservableObject {
-    // Published property for auto load saves setting
     @Default(.autoLoadSaves) var autoLoadSaves
-    // Published property for auto save setting
-    @Published var autoSave: Bool = Defaults[.autoSave]
-    // Published property for current theme
-    @Published var currentTheme: String = Defaults[.theme].description
-    // Published property for number of conflicts
+    @Default(.autoSave) var autoSave
+    @Default(.theme) var currentTheme
     @Published var numberOfConflicts: Int = 0
-    // Published property for iCloud sync
-    @Published var iCloudSync: Bool = Defaults[.iCloudSync]
-    // Published property for ask to sync
-    @Published var askToSync: Bool = Defaults[.askToSync]
-    // Published property for smooth scaling
-    @Published var smoothScaling: Bool = Defaults[.smoothScaling]
-    // Published property for CRT filter
-    @Published var crtFilter: Bool = Defaults[.crtFilter]
-    // Published property for sound
-    @Published var sound: Bool = Defaults[.sound]
-    // Published property for use metal renderer
-    @Published var useMetalRenderer: Bool = Defaults[.useMetalRenderer]
-    // Published property for beta features
-    @Published var betaFeatures: Bool = Defaults[.betaFeatures]
+    @Default(.iCloudSync) var iCloudSync
+    @Default(.integerScaleEnabled) var integerScaleEnabled
+    @Default(.crtFilterEnabled) var crtFilter
+    @Default(.lcdFilterEnabled) var lcdFilter
+    @Default(.metalFilter) var metalFilter
+    @Default(.useMetal) var useMetalRenderer
+    @Default(.disableAutoLock) var disableAutoLock
+    @Default(.multiSampling) var multiSampling
+    @Default(.volumeHUD) var volumeHUD
+    @Default(.timedAutoSaves) var timedAutoSaves
+    @Default(.askToAutoLoad) var askToAutoLoad
+    @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
 
-    // Set to store cancellable objects
+//    @ObservedObject
+    var conflictsController: PVGameLibraryUpdatesController! {
+        didSet {
+            setupConflictsObserver()
+        }
+    }
+
     private var cancellables = Set<AnyCancellable>()
-    // Reachability instance for network connectivity
     private let reachability: Reachability = try! Reachability()
 
     // Computed property to get app version
@@ -263,8 +296,13 @@ class PVSettingsViewModel: ObservableObject {
     }
 
     // Function to setup conflicts observer
-    func setupConflictsObserver() {
-        // Implement conflicts observer
+    public func setupConflictsObserver() {
+//        conflictsController?.$conflicts
+//            .receive(on: DispatchQueue.main)
+//            .sink { [weak self] conflicts in
+//                self?.numberOfConflicts = conflicts.count
+//            }
+//            .store(in: &cancellables)
     }
 
     // Function to show theme options
@@ -298,9 +336,87 @@ class PVSettingsViewModel: ObservableObject {
     }
 }
 
-struct SystemSettingsView: View {
-    // Body of the SystemSettingsView
-    var body: some View {
-        Text("System Settings")
+struct SystemSettingsView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> SystemsSettingsTableViewController {
+        return SystemsSettingsTableViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: SystemsSettingsTableViewController, context: Context) {
+        // Update the view controller if needed
+    }
+}
+
+struct CoreOptionsView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> CoreOptionsTableViewController {
+        return CoreOptionsTableViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: CoreOptionsTableViewController, context: Context) {
+        // Update the view controller if needed
+    }
+}
+
+struct CoreProjectsView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> PVCoresTableViewController {
+        return PVCoresTableViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: PVCoresTableViewController, context: Context) {
+        // Update the view controller if needed
+    }
+}
+
+struct LicensesView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> PVLicensesViewController {
+        return PVLicensesViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: PVLicensesViewController, context: Context) {
+        // Update the view controller if needed
+    }
+}
+
+struct ICadeControllerView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> PViCadeControllerViewController {
+        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
+        return storyboard.instantiateViewController(withIdentifier: "PViCadeControllerViewController") as! PViCadeControllerViewController
+    }
+
+    func updateUIViewController(_ uiViewController: PViCadeControllerViewController, context: Context) {
+        // Update the view controller if needed
+    }
+}
+
+struct ControllerSettingsView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> PVControllerSelectionViewController {
+        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
+        return storyboard.instantiateViewController(withIdentifier: "PVControllerSelectionViewController") as! PVControllerSelectionViewController
+    }
+
+    func updateUIViewController(_ uiViewController: PVControllerSelectionViewController, context: Context) {
+        // Update the view controller if needed
+    }
+}
+
+struct ConflictsView: UIViewControllerRepresentable {
+    @EnvironmentObject var viewModel: PVSettingsViewModel
+
+    func makeUIViewController(context: Context) -> PVConflictViewController {
+        return PVConflictViewController(conflictsController: viewModel.conflictsController)
+    }
+
+    func updateUIViewController(_ uiViewController: PVConflictViewController, context: Context) {
+        // Update the view controller if needed
+    }
+}
+
+struct AppearanceView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> PVAppearanceViewController {
+        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
+        return storyboard.instantiateViewController(withIdentifier: "PVAppearanceViewController") as! PVAppearanceViewController
+    }
+
+    func updateUIViewController(_ uiViewController: PVAppearanceViewController, context: Context) {
+        // Update the view controller if needed
     }
 }

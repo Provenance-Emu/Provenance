@@ -42,14 +42,11 @@ public protocol PVMenuDelegate: AnyObject {
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate {
     public func didTapSettings() {
-        let settingsView = PVSettingsView()
+        let settingsView = PVSettingsView(conflictsController: updatesController)
             .environmentObject(updatesController) // Assuming updatesController conforms to ObservableObject
         
         let hostingController = UIHostingController(rootView: settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
-        
-        // Optional: Set navigation bar appearance if needed
-        navigationController.navigationBar.prefersLargeTitles = true
         
         self.closeMenu()
         self.present(navigationController, animated: true)

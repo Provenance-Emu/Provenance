@@ -23,7 +23,7 @@ import Observation
 import Perception
 
 //@Observable
-public final class PVGameLibraryUpdatesController {
+public final class PVGameLibraryUpdatesController: ObservableObject {
 
     @Published
     public var hudState: HudState = .hidden

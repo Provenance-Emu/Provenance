@@ -13,8 +13,8 @@ import PVUIBase
 import UIKit
 #endif
 
-final class PVControllerSelectionViewController: UITableViewController {
-    override func viewDidLoad() {
+public final class PVControllerSelectionViewController: UITableViewController {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         #if TARGET_OS_TV
             tableView.backgroundColor = UIColor.clear
@@ -24,15 +24,15 @@ final class PVControllerSelectionViewController: UITableViewController {
 
     // MARK: - UITableViewDataSource
 
-    override func numberOfSections(in _: UITableView) -> Int {
+    public override func numberOfSections(in _: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+    public override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return 8
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "controllerCell")!
 
         let labelText = "Player \(indexPath.row + 1)"
@@ -72,15 +72,15 @@ final class PVControllerSelectionViewController: UITableViewController {
 
     // MARK: - UITableViewDelegate
 
-    override func tableView(_: UITableView, titleForHeaderInSection _: Int) -> String? {
+    public override func tableView(_: UITableView, titleForHeaderInSection _: Int) -> String? {
         return "Controller Assignments"
     }
 
-    override func tableView(_: UITableView, titleForFooterInSection _: Int) -> String? {
+    public override func tableView(_: UITableView, titleForFooterInSection _: Int) -> String? {
         return "Controllers must be paired with device."
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let player: Int = indexPath.row + 1
         let actionSheet = UIAlertController(title: "Select a controller for Player \(player)", message: "or press a button on your iCade controller.", preferredStyle: .actionSheet)

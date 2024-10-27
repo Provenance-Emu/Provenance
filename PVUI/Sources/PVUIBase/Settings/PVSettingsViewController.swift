@@ -73,7 +73,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         } catch {
             print("Unable to start notifier")
         }
-        
+
 #if os(tvOS)
         tableView.rowHeight = UITableView.automaticDimension
         splitViewController?.view.backgroundColor = .black
@@ -148,11 +148,11 @@ public final class PVSettingsViewController: QuickTableViewController {
 
                         Defaults[.theme] = .standard(mode)
                         DLOG("Saving theme to Defaults: .standard(\(mode))")
-                        
-                        
+
+
                         // Apply the theme again, hacky
                         ThemeManager.applySavedTheme()
-                        
+
                         self.generateTableViewViewModels()
                     }
                 })
