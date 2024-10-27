@@ -45,11 +45,15 @@ import FreemiumKit
 
 @Observable
 final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDelegate {
+    /// This is set by the UIApplicationDelegateAdaptor
     internal var window: UIWindow? = nil
+
     var shortcutItemGame: PVGame?
     var bootupState: AppBootupState? {
         appState?.bootupStateManager
     }
+
+    /// This is set by the ContentView
     var appState: AppState? {
         didSet {
             ILOG("Did set appstate")
@@ -73,7 +77,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
     @MainActor weak var rootNavigationVC: UIViewController? = nil
     @MainActor weak var gameLibraryViewController: PVGameLibraryViewController? = nil {
         didSet {
+            ILOG("Did set gameLibraryViewController")
             if gameLibraryViewController != nil {
+                ILOG("Initializing library notification handlers")
                 _initLibraryNotificationHandlers()
             }
         }
@@ -82,7 +88,10 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
     private var cancellables = Set<AnyCancellable>()
     @MainActor
     func _initLibraryNotificationHandlers() {
+        ILOG("Initializing library notification handlers")
         cancellables.forEach { $0.cancel() }
+
+        /// Reimport the library
         NotificationCenter.default.publisher(for: .PVReimportLibrary)
             .flatMap { _ in
                 Future<Void, Never> { promise in
@@ -94,6 +103,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
             .store(in: &cancellables)
 
+        /// Refresh the library
         NotificationCenter.default.publisher(for: .PVRefreshLibrary)
             .flatMap { _ in
                 Future<Void, Error> { promise in
@@ -110,6 +120,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
             .store(in: &cancellables)
 
+        /// Reset the library
         NotificationCenter.default.publisher(for: .PVResetLibrary)
             .flatMap { _ in
                 Future<Void, Error> { promise in
@@ -135,63 +146,12 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
     func _initUITheme() {
         ThemeManager.applySavedTheme()
         themeAppUI(withPalette: ThemeManager.shared.currentPalette)
-    }
-//
-//    // Initialize the UI
-//    @MainActor
-//    func _initUI(
-//        libraryUpdatesController: PVGameLibraryUpdatesController,
-//        gameImporter: GameImporter,
-//        gameLibrary: PVGameLibrary<RealmDatabaseDriver>
-//    ) {
-//        let window = setupWindow()
-//        self.window = window
-//
-//        if !appState.useUIKit{
-//            setupSwiftUIInterface(window: window,
-//                                  libraryUpdatesController: libraryUpdatesController,
-//                                  gameImporter: gameImporter,
-//                                  gameLibrary: gameLibrary)
-//        } else {
-//            setupUIKitInterface(window: window,
-//                                libraryUpdatesController: libraryUpdatesController,
-//                                gameImporter: gameImporter,
-//                                gameLibrary: gameLibrary)
-//        }
-//
-//        _initUITheme()
-//        setupJITIfNeeded()
-//    }
-//
-//    private func setupWindow() -> UIWindow {
-//        let window = UIWindow(frame: UIScreen.main.bounds)
-//#if os(tvOS)
-//        window.tintColor = .provenanceBlue
-//#endif
-//        return window
-//    }
-//
-    private func setupSwiftUIInterface(window: UIWindow,
-                                       libraryUpdatesController: PVGameLibraryUpdatesController,
-                                       gameImporter: GameImporter,
-                                       gameLibrary: PVGameLibrary<RealmDatabaseDriver>) {
-        let viewModel = PVRootViewModel()
-        let rootViewController = PVRootViewController.instantiate(
-            updatesController: libraryUpdatesController,
-            gameLibrary: gameLibrary,
-            gameImporter: gameImporter,
-            viewModel: viewModel)
-        self.rootNavigationVC = rootViewController
-        let sideNavHostedNavigationController = PVRootViewNavigationController(rootViewController: rootViewController)
-
-        let sideNav = setupSideNavigation(mainViewController: sideNavHostedNavigationController,
-                                          gameLibrary: gameLibrary,
-                                          viewModel: viewModel,
-                                          rootViewController: rootViewController)
-
-        window.rootViewController = sideNav
+        #if os(tvOS)
+            UIWindow.appearance().tintColor = .provenanceBlue
+        #endif
     }
 
+    /// Setup the side navigation
     fileprivate func setupSideNavigation(mainViewController: UIViewController,
                                      gameLibrary: PVGameLibrary<RealmDatabaseDriver>,
                                      viewModel: PVRootViewModel,
@@ -215,45 +175,25 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
         return sideNav
     }
 
-    fileprivate func setupUIKitInterface(window: UIWindow,
-                                     libraryUpdatesController: PVGameLibraryUpdatesController,
-                                     gameImporter: GameImporter,
-                                     gameLibrary: PVGameLibrary<RealmDatabaseDriver>) {
-        Task.detached { @MainActor in
-            let storyboard = UIStoryboard(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
-            let vc = storyboard.instantiateInitialViewController()
+    /// Setup JIT if needed
+    ///
+    /// This is called from the ContentView
+    // TODO: This is not called from the ContentView
+    @MainActor
+    private func setupJITIfNeeded() {
+#if os(iOS) && !APP_STORE
+        if Defaults[.autoJIT] {
+           DOLJitManager.shared.attemptToAcquireJitOnStartup()
+       }
+       DispatchQueue.main.async { [unowned self] in
+           self.showJITWaitScreen()
+       }
+#endif
+   }
 
-            window.rootViewController = vc
-
-            guard let rootNavigation = window.rootViewController as? UINavigationController else {
-                fatalError("No root nav controller")
-            }
-            self.rootNavigationVC = rootNavigation
-            guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
-                fatalError("No gameLibraryViewController")
-            }
-
-            gameLibraryViewController.updatesController = libraryUpdatesController
-            gameLibraryViewController.gameImporter = gameImporter
-            gameLibraryViewController.gameLibrary = gameLibrary
-
-            self.gameLibraryViewController = gameLibraryViewController
-        }
-    }
-//
-//    private func setupJITIfNeeded() {
-//#if os(iOS) && !APP_STORE
-//        if Defaults[.autoJIT] {
-//            DOLJitManager.shared.attemptToAcquireJitOnStartup()
-//        }
-//        DispatchQueue.main.async { [unowned self] in
-//            self.showJITWaitScreen()
-//        }
-//#endif
-//    }
-//
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         ILOG("PVAppDelegate: Application did finish launching")
+        appState = AppState()
         initializeAppComponents()
         configureApplication(application)
 
@@ -451,14 +391,14 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
             stopCore(app)
         }
     }
-  
+
     @MainActor
     func setupUIKitInterface() -> UIViewController {
         guard let appState = appState else {
             ELOG("`appState` was nil. Never set?")
             return .init()
         }
-        
+
         ILOG("PVAppDelegate: Setting up UIKit interface")
         let storyboard = UIStoryboard(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
         guard let rootNavigation = storyboard.instantiateInitialViewController() as? UINavigationController else {
@@ -485,7 +425,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
             ELOG("`appState` was nil. Never set?")
             return .init()
         }
-        
+
         ILOG("PVAppDelegate: Setting up SwiftUI interface")
         let viewModel = PVRootViewModel()
         let rootViewController = PVRootViewController.instantiate(
