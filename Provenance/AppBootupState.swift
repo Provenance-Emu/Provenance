@@ -11,8 +11,8 @@ import Observation
 
 /// A class to manage the bootup state of the application
 @MainActor
-@Observable
-class AppBootupState {
+//@Observable
+class AppBootupState: ObservableObject {
     /// Enum representing different states during the bootup process
     enum State: Equatable {
         case notStarted
@@ -56,7 +56,7 @@ class AppBootupState {
     }
 
     /// The current state of the bootup process
-    var currentState: State = .notStarted {
+    @Published private(set) var currentState: State = .notStarted {
         didSet {
             if currentState == .completed {
                 isBootupCompleted = true
@@ -65,7 +65,7 @@ class AppBootupState {
     }
 
     /// Whether the bootup process has completed
-    var isBootupCompleted = false
+    @Published var isBootupCompleted = false
 
     /// Function to transition to a new state
     func transition(to state: State) {

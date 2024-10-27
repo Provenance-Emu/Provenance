@@ -814,6 +814,15 @@
 		B37321A52C900A9F00CF59EF /* PVCrabEmu-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A32C900A9F00CF59EF /* PVCrabEmu-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B37321A72C900B1E00CF59EF /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; };
 		B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B3766CE92CCDE70400A35521 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3766CE82CCDE70400A35521 /* ErrorView.swift */; };
+		B3766CEA2CCDE70400A35521 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3766CE82CCDE70400A35521 /* ErrorView.swift */; };
+		B3766CEB2CCDE70400A35521 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3766CE82CCDE70400A35521 /* ErrorView.swift */; };
+		B3766CEC2CCDE70400A35521 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3766CE82CCDE70400A35521 /* ErrorView.swift */; };
+		B3766CED2CCDE70400A35521 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3766CE82CCDE70400A35521 /* ErrorView.swift */; };
+		B3766CEE2CCDE70400A35521 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3766CE82CCDE70400A35521 /* ErrorView.swift */; };
+		B3766CEF2CCDE70400A35521 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3766CE82CCDE70400A35521 /* ErrorView.swift */; };
+		B3766CF02CCDE70400A35521 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3766CE82CCDE70400A35521 /* ErrorView.swift */; };
+		B3766CF12CCDE70400A35521 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3766CE82CCDE70400A35521 /* ErrorView.swift */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B377EBE52CB2B34C00E9B750 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; };
 		B377EBE62CB2B34C00E9B750 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2451,6 +2460,7 @@
 		B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37263A826EA159400E95488 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3766CE82CCDE70400A35521 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B377ECAA2CB33EC700E9B750 /* PVEP128Emu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEP128Emu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3918,6 +3928,7 @@
 				551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */,
 				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
 				B36A8C4A2CCD168D002357DD /* AppState.swift */,
+				B3766CE82CCDE70400A35521 /* ErrorView.swift */,
 				B36A8B132CCD10C0002357DD /* AppBootupState.swift */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
 				B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */,
@@ -6263,6 +6274,7 @@
 				B3D5E2AE218EC1AE0015C690 /* RealmBindObserver.swift in Sources */,
 				B3427C04287EA0CF0054C1B5 /* fullscreen_vs.metal in Sources */,
 				B36A8D572CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
+				B3766CE92CCDE70400A35521 /* ErrorView.swift in Sources */,
 				B32987D52B661A7C00728996 /* PVAppDelegate+NitoTV.swift in Sources */,
 				B3427BFA287EA0CF0054C1B5 /* simpleCRT.metal in Sources */,
 				B355DF8B292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */,
@@ -6274,6 +6286,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3766CEA2CCDE70400A35521 /* ErrorView.swift in Sources */,
 				B3427BF5287EA0CF0054C1B5 /* crt_filter_ps.metal in Sources */,
 				B300DED6295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */,
 				B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */,
@@ -6317,6 +6330,7 @@
 				930498DD2A93073800BF257F /* PVAppDelegate+AppCenter.swift in Sources */,
 				930498E02A93073800BF257F /* RxTableViewRealmDataSource.swift in Sources */,
 				930498E42A93073800BF257F /* PVAppDelegate.swift in Sources */,
+				B3766CF02CCDE70400A35521 /* ErrorView.swift in Sources */,
 				B36A8D582CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B313CEAF2C4E876E001D9E4D /* AppTheming.swift in Sources */,
 				930498E92A93073800BF257F /* PVAppDelegate+Helpers.swift in Sources */,
@@ -6375,6 +6389,7 @@
 				B341FCD72BE61EC100718929 /* RxTableViewRealmDataSource.swift in Sources */,
 				B341FCDA2BE61EC100718929 /* PVAppDelegate.swift in Sources */,
 				B313CEB22C4E876E001D9E4D /* AppTheming.swift in Sources */,
+				B3766CEC2CCDE70400A35521 /* ErrorView.swift in Sources */,
 				B341FCDE2BE61EC100718929 /* PVAppDelegate+Helpers.swift in Sources */,
 				B341FCEE2BE61EC100718929 /* PVAppDelegate+VolumeButton.swift in Sources */,
 				B341FCF92BE61EC100718929 /* lineTron.metal in Sources */,
@@ -6401,6 +6416,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3766CEB2CCDE70400A35521 /* ErrorView.swift in Sources */,
 				B347B2512BC4CA98006A3B2D /* crt_filter_ps.metal in Sources */,
 				B347B2552BC4CA98006A3B2D /* PVAppDelegate+JIT.swift in Sources */,
 				B347B2652BC4CA98006A3B2D /* Services.swift in Sources */,
@@ -6462,6 +6478,7 @@
 				B35EEF8A2C6C6D1A00EBD1A8 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B38236272CC45FA700DCE080 /* PVAppDelegate+AppRating.swift in Sources */,
 				B35EEF8B2C6C6D1A00EBD1A8 /* RxTableViewRealmDataSource.swift in Sources */,
+				B3766CEE2CCDE70400A35521 /* ErrorView.swift in Sources */,
 				B35EEF8C2C6C6D1A00EBD1A8 /* PVAppDelegate.swift in Sources */,
 				B35EEF8D2C6C6D1A00EBD1A8 /* AppTheming.swift in Sources */,
 				B35EEF8E2C6C6D1A00EBD1A8 /* PVAppDelegate+Helpers.swift in Sources */,
@@ -6495,6 +6512,7 @@
 				B394CC762BDEE53A006B63E8 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B38236252CC45FA700DCE080 /* PVAppDelegate+AppRating.swift in Sources */,
 				B394CC792BDEE53A006B63E8 /* RxTableViewRealmDataSource.swift in Sources */,
+				B3766CEF2CCDE70400A35521 /* ErrorView.swift in Sources */,
 				B394CC7D2BDEE53A006B63E8 /* PVAppDelegate.swift in Sources */,
 				B313CEB02C4E876E001D9E4D /* AppTheming.swift in Sources */,
 				B394CC822BDEE53A006B63E8 /* PVAppDelegate+Helpers.swift in Sources */,
@@ -6556,6 +6574,7 @@
 				B3F7E2B3297736BE00362B92 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3F7E2B6297736BE00362B92 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3F7E2BA297736BE00362B92 /* PVAppDelegate.swift in Sources */,
+				B3766CF12CCDE70400A35521 /* ErrorView.swift in Sources */,
 				B36A8D5E2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B313CEB32C4E876E001D9E4D /* AppTheming.swift in Sources */,
 				B3F7E2BF297736BE00362B92 /* PVAppDelegate+Helpers.swift in Sources */,
@@ -6591,6 +6610,7 @@
 				B3F7E440297736C200362B92 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3F7E443297736C200362B92 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3F7E447297736C200362B92 /* PVAppDelegate.swift in Sources */,
+				B3766CED2CCDE70400A35521 /* ErrorView.swift in Sources */,
 				B36A8D5D2CCD57E3002357DD /* PVAppDelegate+AppRating+NOOP.swift in Sources */,
 				B313CEAE2C4E876E001D9E4D /* AppTheming.swift in Sources */,
 				B3F7E44C297736C200362B92 /* PVAppDelegate+Helpers.swift in Sources */,

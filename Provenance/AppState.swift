@@ -29,7 +29,9 @@ import Defaults
 @MainActor
 class AppState: ObservableObject {
     /// Computed property to access current bootup state
-    var bootupState: AppBootupState.State { bootupStateManager.currentState }
+    var bootupState: AppBootupState.State {
+        bootupStateManager.currentState
+    }
 
     /// User default for UI preference
     @Published
@@ -39,16 +41,19 @@ class AppState: ObservableObject {
     let bootupStateManager = AppBootupState()
 
     /// Optional properties for game-related functionalities
-    var gameImporter: GameImporter?
+    @Published var gameImporter: GameImporter?
     /// Optional property for the game library
     var gameLibrary: PVGameLibrary<RealmDatabaseDriver>?
     /// Optional property for the library updates controller
-    var libraryUpdatesController: PVGameLibraryUpdatesController?
+    @Published var libraryUpdatesController: PVGameLibraryUpdatesController?
 
     /// Whether the app has been initialized
     @Published var isInitialized = false {
         didSet {
             ILOG("AppState: isInitialized changed to \(isInitialized)")
+            if isInitialized {
+                ILOG("AppState: Bootup sequence completed, UI should update now")
+            }
         }
     }
 
@@ -63,6 +68,7 @@ class AppState: ObservableObject {
                 useUIKit = value
             }
         }
+        self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: GameImporter.shared)
     }
 
     /// Method to start the bootup sequence
@@ -72,7 +78,16 @@ class AppState: ObservableObject {
             ILOG("AppState: Already initialized, skipping bootup sequence")
             return
         }
-        initializeDatabase()
+        Task {
+            do {
+                try await withTimeout(seconds: 30) {
+                    await self.initializeDatabase()
+                }
+            } catch {
+                ELOG("AppState: Bootup sequence timed out or failed: \(error)")
+                bootupStateManager.transition(to: .error(error))
+            }
+        }
     }
 
     /// Method to initialize the database
@@ -96,30 +111,52 @@ class AppState: ObservableObject {
     @MainActor
     private func initializeLibrary() async {
         ILOG("AppState: Initializing library")
-        bootupStateManager.transition(to: .initializingLibrary)
         ILOG("AppState: Starting GameImporter.shared.initSystems()")
         await GameImporter.shared.initSystems()
         ILOG("AppState: GameImporter.shared.initSystems() completed")
         ILOG("AppState: Reloading RomDatabase cache")
         RomDatabase.reloadCache()
         ILOG("AppState: RomDatabase cache reloaded")
+
+        // Initialize gameImporter
+        self.gameImporter = GameImporter.shared
+        ILOG("AppState: GameImporter set")
+
+        // Initialize libraryUpdatesController with the gameImporter
+        self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: self.gameImporter!)
+        ILOG("AppState: LibraryUpdatesController initialized")
+
         await finalizeBootup()
     }
 
     @MainActor
     private func finalizeBootup() async {
         ILOG("AppState: Finalizing bootup")
-        gameImporter = GameImporter.shared
-        gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
-        libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter!)
+
+        if libraryUpdatesController == nil {
+            ELOG("AppState: LibraryUpdatesController is nil in finalizeBootup")
+        }
 
         #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-        await libraryUpdatesController?.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
+        ILOG("AppState: Starting detached task to add imported games to CSSearchableIndex")
+        Task.detached { [weak self] in
+            guard let self = self else { return }
+            do {
+                try await withTimeout(seconds: 30) {
+                    await self.libraryUpdatesController?.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
+                }
+                ILOG("AppState: Finished adding imported games to CSSearchableIndex")
+            } catch let error as TimeoutError {
+                ELOG("AppState: Timeout while adding imported games to CSSearchableIndex: \(error)")
+            } catch {
+                ELOG("AppState: Error adding imported games to CSSearchableIndex: \(error)")
+            }
+        }
         #endif
 
         bootupStateManager.transition(to: .completed)
+        ILOG("AppState: Bootup state transitioned to completed")
         ILOG("AppState: Bootup finalized")
-        isInitialized = true
     }
 
     func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
