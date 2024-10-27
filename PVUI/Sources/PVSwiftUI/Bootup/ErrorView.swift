@@ -9,8 +9,11 @@
 
 import SwiftUI
 import PVLogging
+import PVThemes
 
 public struct ErrorView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     public let error: Error
     public let retryAction: () -> Void
 
@@ -39,8 +42,8 @@ public struct ErrorView: View {
                 retryAction()
             }
             .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
+            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             .cornerRadius(10)
         }
         .padding()

@@ -31,13 +31,13 @@ import PVWebServer
 public
 final class CoreOptionsTableViewController: QuickTableViewController {
     private let disposeBag = DisposeBag()
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         splitViewController?.title = "Settings"
         generateTableViewViewModels()
         tableView.reloadData()
-        
+
 #if os(tvOS)
         tableView.rowHeight = UITableView.automaticDimension
         splitViewController?.view.backgroundColor = .black
@@ -45,28 +45,28 @@ final class CoreOptionsTableViewController: QuickTableViewController {
         navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
 #endif
     }
-    
+
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         splitViewController?.title = "Core Options"
     }
-    
+
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
-    
+
 #if os(tvOS)
     private var heightDictionary: [IndexPath: CGFloat] = [:]
-    
+
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         heightDictionary[indexPath] = cell.frame.size.height
     }
-    
+
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         let height = heightDictionary[indexPath]
         return height ?? UITableView.automaticDimension
     }
-    
+
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
@@ -75,10 +75,10 @@ final class CoreOptionsTableViewController: QuickTableViewController {
         return cell
     }
 #endif
-    
+
     func generateTableViewViewModels() {
         typealias TableRow = Row & RowStyle
-        
+
         // MARK: -- Core Options
         let realm = try! Realm()
         let cores: [NavigationRow] = realm.objects(PVCore.self).sorted(byKeyPath: "projectName").compactMap { pvcore in
@@ -100,13 +100,13 @@ final class CoreOptionsTableViewController: QuickTableViewController {
                 self?.navigationController?.pushViewController(coreOptionsVC, animated: true)
             })
         }
-        
+
         let coreOptionsSection = Section(title: NSLocalizedString("Core Options", comment: "Core Options"), rows: cores)
-       
+
         // Set table data
         tableContents = [coreOptionsSection]
     }
-    
+
     @IBAction func done(_: Any) {
         presentingViewController?.dismiss(animated: true) { () -> Void in }
     }

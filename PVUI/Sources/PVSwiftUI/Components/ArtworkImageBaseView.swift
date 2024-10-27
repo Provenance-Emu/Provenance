@@ -23,7 +23,7 @@ struct ArtworkImageBaseView: SwiftUI.View {
         if let artwork = artwork {
             SwiftUI.Image(uiImage: artwork)
                 .resizable()
-                .aspectRatio(artwork.size.height / artwork.size.width, contentMode: .fit)
+                .aspectRatio(artwork.size.width / artwork.size.height, contentMode: .fit)
         } else {
             SwiftUI.Image(uiImage: UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: boxartAspectRatio.rawValue))
                 .resizable()

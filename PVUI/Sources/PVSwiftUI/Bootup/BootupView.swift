@@ -10,8 +10,10 @@ import SwiftUI
 import Foundation
 import PVLogging
 import PVUIBase
+import PVThemes
 
 public struct BootupView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
 
     public init() {
@@ -19,9 +21,17 @@ public struct BootupView: View {
     }
 
     public var body: some View {
-        VStack {
-            Text("Initializing...")
-            Text(appState.bootupState.localizedDescription)
+        ZStack {
+            themeManager.currentPalette.gameLibraryBackground.swiftUIColor
+                .ignoresSafeArea()
+
+            VStack {
+                Text("Initializing...")
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+
+                Text(appState.bootupState.localizedDescription)
+                    .foregroundColor(themeManager.currentPalette.gameLibraryCellText.swiftUIColor)
+            }
         }
         .onAppear {
             ILOG("BootupView: Appeared, current state: \(appState.bootupState.localizedDescription)")

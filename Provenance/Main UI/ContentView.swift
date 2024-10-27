@@ -2,8 +2,10 @@ import SwiftUI
 import PVLogging
 import PVSwiftUI
 import PVUIBase
+import PVThemes
 
 struct ContentView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject var appState: AppState
     let appDelegate: PVAppDelegate
     
@@ -13,9 +15,6 @@ struct ContentView: View {
             case .completed:
                 ZStack {
                     MainView(appDelegate: appDelegate)
-                    
-//                    FirstResponderViewControllerWrapper()
-//                        .edgesIgnoringSafeArea(.all)
                 }
             case .error(let error):
                 ErrorView(error: error) {
@@ -23,11 +22,16 @@ struct ContentView: View {
                 }
             default:
                 BootupView()
+                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
         }
         .edgesIgnoringSafeArea(.all)
         .onAppear {
             ILOG("ContentView: Appeared")
         }
+        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+
     }
 }

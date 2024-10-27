@@ -164,7 +164,8 @@ let package = Package(
                 "PVSupport",
                 "PVLibrary",
                 "PVThemes",
-                "MBProgressHUD"
+                "MBProgressHUD",
+                "FreemiumKit"
             ]
         ),
         

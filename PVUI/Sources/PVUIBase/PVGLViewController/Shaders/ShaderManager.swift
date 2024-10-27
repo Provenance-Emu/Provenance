@@ -15,17 +15,10 @@ public enum ShaderType: UInt, Codable {
     case vertex
 }
 
-@objc
-public final class Shader: NSObject, Codable {
-
-    @objc
-    let type: ShaderType
-
-    @objc
-    let name: String
-
-    @objc
-    let function: String
+@objc public final class Shader: NSObject, Codable {
+    @objc public let type: ShaderType
+    @objc public let name: String
+    @objc public let function: String
 
     @objc
     public init(type: ShaderType, name: String, function: String) {
@@ -43,7 +36,7 @@ public protocol ShaderProvider {
 public final class MetalShaderManager: NSObject, ShaderProvider {
 
     @objc(sharedInstance)
-    static let shared: MetalShaderManager = MetalShaderManager()
+    public static let shared: MetalShaderManager = MetalShaderManager()
 
     @objc
     public var shaders: [Shader] = {
