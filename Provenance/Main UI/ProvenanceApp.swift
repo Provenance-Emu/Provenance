@@ -9,8 +9,11 @@ struct ProvenanceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(appState: appState, appDelegate: appDelegate)
+            ContentView()
                 .environmentObject(appState)
+                .onAppear {
+                    appDelegate.appState = appState
+                }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {

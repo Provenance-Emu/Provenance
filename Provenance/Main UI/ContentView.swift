@@ -2,8 +2,8 @@ import SwiftUI
 import PVLogging
 
 struct ContentView: View {
-    @ObservedObject var appState: AppState
-    let appDelegate: PVAppDelegate
+    @EnvironmentObject var appState: AppState
+    @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
 
     var body: some View {
         Group {
@@ -20,7 +20,6 @@ struct ContentView: View {
         }
         .onAppear {
             ILOG("ContentView: Appeared")
-            appDelegate.appState = appState
         }
     }
 }

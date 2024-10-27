@@ -193,10 +193,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         ILOG("PVAppDelegate: Application did finish launching")
-        appState = AppState()
+        // Remove the AppState initialization from here
         initializeAppComponents()
         configureApplication(application)
-
         return true
     }
 
@@ -428,16 +427,24 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 
         ILOG("PVAppDelegate: Setting up SwiftUI interface")
         let viewModel = PVRootViewModel()
+
+        guard let libraryUpdatesController = appState.libraryUpdatesController,
+              let gameLibrary = appState.gameLibrary,
+              let gameImporter = appState.gameImporter else {
+            ELOG("Required components in appState are nil")
+            return .init()
+        }
+
         let rootViewController = PVRootViewController.instantiate(
-            updatesController: appState.libraryUpdatesController!,
-            gameLibrary: appState.gameLibrary!,
-            gameImporter: appState.gameImporter!,
+            updatesController: libraryUpdatesController,
+            gameLibrary: gameLibrary,
+            gameImporter: gameImporter,
             viewModel: viewModel)
         self.rootNavigationVC = rootViewController
         let sideNavHostedNavigationController = PVRootViewNavigationController(rootViewController: rootViewController)
 
         let sideNav = setupSideNavigation(mainViewController: sideNavHostedNavigationController,
-                                          gameLibrary: appState.gameLibrary!,
+                                          gameLibrary: gameLibrary,
                                           viewModel: viewModel,
                                           rootViewController: rootViewController)
 
