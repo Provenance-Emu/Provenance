@@ -57,7 +57,7 @@ class AppState: ObservableObject {
             }
         }
     }
-    
+
     private let disposeBag = DisposeBag()
 
 
@@ -66,13 +66,14 @@ class AppState: ObservableObject {
 
     /// Initializer
     init() {
-        ILOG("AppState initialized")
+        ILOG("AppState: Initializing")
         useUIKitObservationTask = Task { @MainActor in
             for await value in Defaults.updates(.useUIKit) {
                 useUIKit = value
             }
         }
         self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: GameImporter.shared)
+        ILOG("AppState: Initialization completed")
     }
 
     /// Method to start the bootup sequence
@@ -122,6 +123,10 @@ class AppState: ObservableObject {
         RomDatabase.reloadCache()
         ILOG("AppState: RomDatabase cache reloaded")
 
+        // Initialize gameLibrary
+        self.gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
+        ILOG("AppState: GameLibrary initialized")
+
         // Initialize gameImporter
         self.gameImporter = GameImporter.shared
         ILOG("AppState: GameImporter set")
@@ -161,9 +166,11 @@ class AppState: ObservableObject {
         bootupStateManager.transition(to: .completed)
         ILOG("AppState: Bootup state transitioned to completed")
         ILOG("AppState: Bootup finalized")
-        
-        try? await withTimeout(seconds: 5) {
-            self.setupShortcutsListener()
+
+        Task {
+            try? await withTimeout(seconds: 5) {
+                self.setupShortcutsListener()
+            }
         }
     }
 
@@ -181,8 +188,8 @@ class AppState: ObservableObject {
             return result
         }
     }
-    
-    
+
+
     @MainActor
     func setupShortcutsListener() {
         guard let gameLibrary = gameLibrary else {
@@ -200,6 +207,14 @@ class AppState: ObservableObject {
             })
             .disposed(by: disposeBag)
 #endif
+    }
+
+    @MainActor
+    func initializeComponents() async {
+        ILOG("AppState: Starting component initialization")
+        // Initialize gameLibrary, gameImporter, libraryUpdatesController here
+        // Add logging after each initialization
+        ILOG("AppState: Component initialization completed")
     }
 }
 

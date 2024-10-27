@@ -13,8 +13,9 @@ struct ProvenanceApp: App {
             ContentView(appDelegate: appDelegate)
                 .environmentObject(appState)
                 .onAppear {
-                    ILOG("onAppear called, setting `appDelegate.appState = appState`")
+                    ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
+//                    appState.startBootupSequence()
                 }
         }
         .onChange(of: scenePhase) { newPhase in

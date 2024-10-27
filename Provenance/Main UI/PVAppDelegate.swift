@@ -420,21 +420,34 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 
     @MainActor
     func setupSwiftUIInterface() -> UIViewController {
+        ILOG("PVAppDelegate: Starting SwiftUI interface setup")
         guard let appState = appState else {
-            ELOG("`appState` was nil. Never set?")
+            ELOG("PVAppDelegate: `appState` was nil. Never set?")
             return .init()
         }
 
-        ILOG("PVAppDelegate: Setting up SwiftUI interface")
+        ILOG("PVAppDelegate: AppState is set")
         let viewModel = PVRootViewModel()
+
+        ILOG("PVAppDelegate: Checking required components")
+        if appState.libraryUpdatesController == nil {
+            ELOG("PVAppDelegate: libraryUpdatesController is nil")
+        }
+        if appState.gameLibrary == nil {
+            ELOG("PVAppDelegate: gameLibrary is nil")
+        }
+        if appState.gameImporter == nil {
+            ELOG("PVAppDelegate: gameImporter is nil")
+        }
 
         guard let libraryUpdatesController = appState.libraryUpdatesController,
               let gameLibrary = appState.gameLibrary,
               let gameImporter = appState.gameImporter else {
-            ELOG("Required components in appState are nil")
+            ELOG("PVAppDelegate: Required components in appState are nil")
             return .init()
         }
 
+        ILOG("PVAppDelegate: All required components are available")
         let rootViewController = PVRootViewController.instantiate(
             updatesController: libraryUpdatesController,
             gameLibrary: gameLibrary,
