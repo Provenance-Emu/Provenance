@@ -47,10 +47,14 @@ import FreemiumKit
 final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDelegate {
     internal var window: UIWindow? = nil
     var shortcutItemGame: PVGame?
-    var bootupState: AppBootupState {
-        appState.bootupStateManager
+    var bootupState: AppBootupState? {
+        appState?.bootupStateManager
     }
-    var appState: AppState!
+    var appState: AppState? {
+        didSet {
+            ILOG("Did set appstate")
+        }
+    }
 
     // Check if the app is running in App Store mode
     var isAppStore: Bool {
@@ -67,9 +71,65 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 #endif
 
     @MainActor weak var rootNavigationVC: UIViewController? = nil
-    @MainActor weak var gameLibraryViewController: PVGameLibraryViewController? = nil
+    @MainActor weak var gameLibraryViewController: PVGameLibraryViewController? = nil {
+        didSet {
+            if gameLibraryViewController != nil {
+                _initLibraryNotificationHandlers()
+            }
+        }
+    }
 
+    private var cancellables = Set<AnyCancellable>()
+    @MainActor
+    func _initLibraryNotificationHandlers() {
+        cancellables.forEach { $0.cancel() }
+        NotificationCenter.default.publisher(for: .PVReimportLibrary)
+            .flatMap { _ in
+                Future<Void, Never> { promise in
+                    RomDatabase.refresh()
+                    self.gameLibraryViewController?.checkROMs(false)
+                    promise(.success(()))
+                }
+            }
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+            .store(in: &cancellables)
 
+        NotificationCenter.default.publisher(for: .PVRefreshLibrary)
+            .flatMap { _ in
+                Future<Void, Error> { promise in
+                    do {
+                        try RomDatabase.sharedInstance.deleteAllGames()
+                        self.gameLibraryViewController?.checkROMs(false)
+                        promise(.success(()))
+                    } catch {
+                        ELOG("Failed to refresh all objects. \(error.localizedDescription)")
+                        promise(.failure(error))
+                    }
+                }
+            }
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .PVResetLibrary)
+            .flatMap { _ in
+                Future<Void, Error> { promise in
+                    do {
+                        ILOG("PVAppDelegate: Completed ResetLibrary, Re-Importing")
+                        try RomDatabase.sharedInstance.deleteAllData()
+                        Task {
+                            await GameImporter.shared.initSystems()
+                            self.gameLibraryViewController?.checkROMs(false)
+                            promise(.success(()))
+                        }
+                    } catch {
+                        ELOG("Failed to delete all objects. \(error.localizedDescription)")
+                        promise(.failure(error))
+                    }
+                }
+            }
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+            .store(in: &cancellables)
+    }
     // Initialize the UI theme
     @MainActor
     func _initUITheme() {
@@ -391,60 +451,14 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
             stopCore(app)
         }
     }
-
-//    private var cancellables = Set<AnyCancellable>()
-//    func _initLibraryNotificationHandlers() {
-//        NotificationCenter.default.publisher(for: .PVReimportLibrary)
-//            .flatMap { _ in
-//                Future<Void, Never> { promise in
-//                    RomDatabase.refresh()
-//                    self.gameLibraryViewController?.checkROMs(false)
-//                    promise(.success(()))
-//                }
-//            }
-//            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-//            .store(in: &cancellables)
-//
-//        NotificationCenter.default.publisher(for: .PVRefreshLibrary)
-//            .flatMap { _ in
-//                Future<Void, Error> { promise in
-//                    do {
-//                        try RomDatabase.sharedInstance.deleteAllGames()
-//                        self.gameLibraryViewController?.checkROMs(false)
-//                        promise(.success(()))
-//                    } catch {
-//                        ELOG("Failed to refresh all objects. \(error.localizedDescription)")
-//                        promise(.failure(error))
-//                    }
-//                }
-//            }
-//            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-//            .store(in: &cancellables)
-//
-//        NotificationCenter.default.publisher(for: .PVResetLibrary)
-//            .flatMap { _ in
-//                Future<Void, Error> { promise in
-//                    do {
-//                        ILOG("PVAppDelegate: Completed ResetLibrary, Re-Importing")
-//                        try RomDatabase.sharedInstance.deleteAllData()
-//                        Task {
-//                            await GameImporter.shared.initSystems()
-//                            self.gameLibraryViewController?.checkROMs(false)
-//                            promise(.success(()))
-//                        }
-//                    } catch {
-//                        ELOG("Failed to delete all objects. \(error.localizedDescription)")
-//                        promise(.failure(error))
-//                    }
-//                }
-//            }
-//            .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-//            .store(in: &cancellables)
-//    }
-//
   
     @MainActor
     func setupUIKitInterface() -> UIViewController {
+        guard let appState = appState else {
+            ELOG("`appState` was nil. Never set?")
+            return .init()
+        }
+        
         ILOG("PVAppDelegate: Setting up UIKit interface")
         let storyboard = UIStoryboard(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
         guard let rootNavigation = storyboard.instantiateInitialViewController() as? UINavigationController else {
@@ -467,6 +481,11 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 
     @MainActor
     func setupSwiftUIInterface() -> UIViewController {
+        guard let appState = appState else {
+            ELOG("`appState` was nil. Never set?")
+            return .init()
+        }
+        
         ILOG("PVAppDelegate: Setting up SwiftUI interface")
         let viewModel = PVRootViewModel()
         let rootViewController = PVRootViewController.instantiate(
