@@ -196,6 +196,9 @@ private struct SavesSection: View {
                     Image(systemName: "tortoise")
                 }
             }
+            Text("Number of minutes between timed auto saves.")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
         }
     }
 }
@@ -576,6 +579,8 @@ private struct AdvancedTogglesView: View {
     @Default(.useUIKit) var useUIKit
     @Default(.webDavAlwaysOn) var webDavAlwaysOn
     @Default(.unsupportedCores) var unsupportedCores
+    @Default(.monoAudio) var monoAudio
+    @Default(.useLegacyAudioEngine) var useLegacyAudioEngine
 
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
@@ -618,6 +623,18 @@ private struct AdvancedTogglesView: View {
                            subtitle: "Use UIKit interface instead of SwiftUI.",
                            icon: .sfSymbol("switch.2"))
             }
+
+             PremiumThemedToggle(isOn: $monoAudio) {
+                 SettingsRow(title: "Mono Audio",
+                            subtitle: "Combine left and right audio channels.",
+                            icon: .sfSymbol("speaker.wave.1"))
+             }
+
+//             PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
+//                 SettingsRow(title: "Legacy Audio",
+//                            subtitle: "Use legacy audio engine for compatibility.",
+//                            icon: .sfSymbol("waveform"))
+//             }
 
             PremiumThemedToggle(isOn: $webDavAlwaysOn) {
                 SettingsRow(title: "WebDAV Always On",
