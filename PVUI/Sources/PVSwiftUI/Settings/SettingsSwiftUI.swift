@@ -26,7 +26,7 @@ import PVWebServer
 
 // MARK: - PVSettingsView
 public struct PVSettingsView: View {
-    
+
     @StateObject private var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
     var dismissAction: () -> Void  // Add this
@@ -47,22 +47,17 @@ public struct PVSettingsView: View {
                 AppSection(viewModel: viewModel)
                     .environmentObject(viewModel)
                 CoreOptionsSection()
-                SavesSection(viewModel: viewModel)
-                    .environmentObject(viewModel)
-                AudioSection(viewModel: viewModel)
-                    .environmentObject(viewModel)
-                VideoSection(viewModel: viewModel)
-                    .environmentObject(viewModel)
+                SavesSection()
+                AudioSection()
+                VideoSection()
                 MetalSection(viewModel: viewModel)
                     .environmentObject(viewModel)
-                ControllerSection(viewModel: viewModel)
-                    .environmentObject(viewModel)
+                ControllerSection()
                 LibrarySection(viewModel: viewModel)
                     .environmentObject(viewModel)
                 LibrarySection2(viewModel: viewModel)
                     .environmentObject(viewModel)
-                AdvancedSection(viewModel: viewModel)
-                    .environmentObject(viewModel)
+                AdvancedSection()
                 SocialLinksSection()
                 DocumentationSection()
                 BuildSection(viewModel: viewModel)
@@ -139,7 +134,7 @@ private struct AppSection: View {
                            icon: .sfSymbol("paintpalette"))
             }
 
-            NavigationLink(destination: AppearanceView(viewModel: viewModel)) {
+            NavigationLink(destination: AppearanceView()) {
                 SettingsRow(title: "Appearance",
                            subtitle: "Visual options for Game Library",
                            icon: .sfSymbol("eye"))
@@ -161,26 +156,31 @@ private struct CoreOptionsSection: View {
 }
 
 private struct SavesSection: View {
-    @ObservedObject var viewModel: PVSettingsViewModel
+
+    @Default(.autoSave) var autoSave
+    @Default(.timedAutoSaves) var timedAutoSaves
+    @Default(.autoLoadSaves) var autoLoadSaves
+    @Default(.askToAutoLoad) var askToAutoLoad
+    @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
 
     var body: some View {
         Section(header: Text("Saves")) {
-            ThemedToggle(isOn: viewModel.$autoSave) {
+            ThemedToggle(isOn: $autoSave) {
                 SettingsRow(title: "Auto Save",
                            subtitle: "Auto-save game state on close. Must be playing for 30 seconds more.",
                            icon: .sfSymbol("autostartstop"))
             }
-            ThemedToggle(isOn: viewModel.$timedAutoSaves) {
+            ThemedToggle(isOn: $timedAutoSaves) {
                 SettingsRow(title: "Timed Auto Saves",
                            subtitle: "Periodically create save states while you play.",
                            icon: .sfSymbol("clock.badge"))
             }
-            ThemedToggle(isOn: viewModel.$autoLoadSaves) {
+            ThemedToggle(isOn: $autoLoadSaves) {
                 SettingsRow(title: "Auto Load Saves",
                            subtitle: "Automatically load the last save of a game if one exists. Disables the load prompt.",
-                           icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
+                           icon: .sfSymbol("autostartstop"))
             }
-            ThemedToggle(isOn: viewModel.$askToAutoLoad) {
+            ThemedToggle(isOn: $askToAutoLoad) {
                 SettingsRow(title: "Ask to Load Saves",
                            subtitle: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active.",
                            icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
@@ -188,7 +188,7 @@ private struct SavesSection: View {
 
             HStack {
                 Text("Auto-save Time")
-                Slider(value: $viewModel.timedAutoSaveInterval, in: 1...30, step: 1) {
+                Slider(value: $timedAutoSaveInterval, in: 1...30, step: 1) {
                     Text("Auto-save Time")
                 } minimumValueLabel: {
                     Image(systemName: "hare")
@@ -301,18 +301,19 @@ private struct ExtraInfoSection: View {
 }
 
 private struct AudioSection: View {
-    @ObservedObject var viewModel: PVSettingsViewModel
+    @Default(.volume) var volume
+    @Default(.volumeHUD) var volumeHUD
 
     var body: some View {
-        Section(header: Text("Audio / Video")) {
-            ThemedToggle(isOn: viewModel.$volumeHUD) {
+        Section(header: Text("Audio")) {
+            ThemedToggle(isOn: $volumeHUD) {
                 SettingsRow(title: "Volume HUD",
                            subtitle: "Show volume indicator when changing volume.",
                            icon: .sfSymbol("speaker.wave.2"))
             }
             HStack {
                 Text("Volume")
-                Slider(value: $viewModel.volume, in: 0...1, step: 0.1) {
+                Slider(value: $volume, in: 0...1, step: 0.1) {
                     Text("Volume Level")
                 } minimumValueLabel: {
                     Image(systemName: "speaker")
@@ -328,56 +329,64 @@ private struct AudioSection: View {
 }
 
 private struct VideoSection: View {
-    @ObservedObject var viewModel: PVSettingsViewModel
+    @Default(.multiThreadedGL) var multiThreadedGL
+    @Default(.multiSampling) var multiSampling
+    @Default(.imageSmoothing) var imageSmoothing
+    @Default(.showFPSCount) var showFPSCount
+    @Default(.nativeScaleEnabled) var nativeScaleEnabled
+    @Default(.integerScaleEnabled) var integerScaleEnabled
+    @Default(.crtFilterEnabled) var crtFilterEnabled
+    @Default(.lcdFilterEnabled) var lcdFilterEnabled
 
     var body: some View {
-        Section(header: Text("Audio / Video")) {
-            ThemedToggle(isOn: viewModel.$multiThreadedGL) {
+        Section(header: Text("Video")) {
+            ThemedToggle(isOn: $multiThreadedGL) {
                 SettingsRow(title: "Multi-threaded Rendering",
                            subtitle: "Improves performance but may cause graphical glitches.",
                            icon: .sfSymbol("cpu"))
             }
-            ThemedToggle(isOn: viewModel.$multiSampling) {
+            ThemedToggle(isOn: $multiSampling) {
                 SettingsRow(title: "4X Multisampling GL",
                            subtitle: "Smoother graphics at the cost of performance.",
                            icon: .sfSymbol("square.stack.3d.up"))
             }
-            ThemedToggle(isOn: viewModel.$nativeScaleEnabled) {
+            ThemedToggle(isOn: $nativeScaleEnabled) {
                 SettingsRow(title: "Native Scaling",
                            subtitle: "Use the original console's resolution.",
                            icon: .sfSymbol("arrow.up.left.and.arrow.down.right"))
             }
-            ThemedToggle(isOn: viewModel.$integerScaleEnabled) {
+            ThemedToggle(isOn: $integerScaleEnabled) {
                 SettingsRow(title: "Integer Scaling",
                            subtitle: "Scale by whole numbers only for pixel-perfect display.",
                            icon: .sfSymbol("square.grid.4x3.fill"))
             }
-            ThemedToggle(isOn: viewModel.$imageSmoothing) {
+            ThemedToggle(isOn: $imageSmoothing) {
                 SettingsRow(title: "Image Smoothing",
                            subtitle: "Smooth scaled graphics. Off for sharp pixels.",
                            icon: .sfSymbol("paintbrush.pointed"))
             }
-            ThemedToggle(isOn: viewModel.$showFPSCount) {
+            ThemedToggle(isOn: $showFPSCount) {
                 SettingsRow(title: "FPS Counter",
                            subtitle: "Show frames per second counter.",
                            icon: .sfSymbol("speedometer"))
             }
-            FiltersSection(viewModel: viewModel)
+            FiltersSection()
         }
     }
 }
 
 private struct FiltersSection: View {
-    @ObservedObject var viewModel: PVSettingsViewModel
+    @Default(.crtFilterEnabled) var crtFilter
+    @Default(.crtFilterEnabled) var lcdFilter
 
     var body: some View {
         Section(header: Text("Filters")) {
-            ThemedToggle(isOn: viewModel.$crtFilter) {
+            ThemedToggle(isOn: $crtFilter) {
                 SettingsRow(title: "CRT Filter",
                            subtitle: "Apply CRT screen effect to games.",
                            icon: .sfSymbol("tv"))
             }
-            ThemedToggle(isOn: viewModel.$lcdFilter) {
+            ThemedToggle(isOn: $lcdFilter) {
                 SettingsRow(title: "LCD Filter",
                            subtitle: "Apply LCD screen effect to games.",
                            icon: .sfSymbol("rectangle.on.rectangle"))
@@ -387,27 +396,29 @@ private struct FiltersSection: View {
 }
 
 private struct MetalSection: View {
+    @Default(.metalFilter) var metalFilter
     @ObservedObject var viewModel: PVSettingsViewModel
 
     var body: some View {
         Section(header: Text("Metal")) {
-            Picker("Metal Filter", selection: $viewModel.metalFilter) {
+            Picker("Metal Filter", selection: $metalFilter) {
                 ForEach(viewModel.metalFilters, id: \.self) { filter in
-                    Text(filter)
+                    Text(filter).tag(filter)
                 }
             }
+            .pickerStyle(.menu)
         }
     }
 }
 
 private struct ControllerSection: View {
-    @ObservedObject var viewModel: PVSettingsViewModel
+    @Default(.use8BitdoM30) var use8BitdoM30
 
     var body: some View {
         Group {
             Section(header: Text("Controllers")) {
                 NavigationLink(destination: ControllerSettingsView()) {
-                    SettingsRow(title: "Controller Settings",
+                    SettingsRow(title: "Controller Selection",
                                subtitle: "Configure external controller mappings.",
                                icon: .sfSymbol("gamecontroller"))
                 }
@@ -416,37 +427,75 @@ private struct ControllerSection: View {
                                subtitle: "Configure iCade and 8Bitdo controller settings.",
                                icon: .sfSymbol("keyboard"))
                 }
+                ThemedToggle(isOn: $use8BitdoM30) {
+                    SettingsRow(title: "Use 8BitDo M30 Mapping",
+                               subtitle: "For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine",
+                               icon: .sfSymbol("arrow.triangle.swap"))
+                }
             }
 
-            OnScreenControllerSection(viewModel: viewModel)
+            OnScreenControllerSection()
         }
     }
 }
 
 private struct OnScreenControllerSection: View {
-    @ObservedObject var viewModel: PVSettingsViewModel
+    @Default(.controllerOpacity) var controllerOpacity
+    @Default(.buttonTints) var buttonTints
+    @Default(.allRightShoulders) var allRightShoulders
+    @Default(.buttonVibration) var buttonVibration
+    @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
+    @Default(.onscreenJoypad) var onscreenJoypad
+    @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
+    @Default(.movableButtons) var movableButtons
 
     var body: some View {
         Section(header: Text("On-Screen Controller")) {
-            ThemedToggle(isOn: viewModel.$buttonTints) {
+            HStack {
+                Text("Controller Opacity")
+                Slider(value: $controllerOpacity, in: 0...1.0, step: 0.05) {
+                    Text("Transparency amount of on-screen controls overlays.")
+                } minimumValueLabel: {
+                    Image(systemName: "sun.min")
+                } maximumValueLabel: {
+                    Image(systemName: "sun.max")
+                }
+            }
+            ThemedToggle(isOn: $buttonTints) {
                 SettingsRow(title: "Button Colors",
                            subtitle: "Show colored buttons matching original hardware.",
                            icon: .sfSymbol("paintpalette"))
             }
-            ThemedToggle(isOn: viewModel.$allRightShoulders) {
+            ThemedToggle(isOn: $allRightShoulders) {
                 SettingsRow(title: "All Right Shoulder Buttons",
                            subtitle: "Show all shoulder buttons on the right side.",
                            icon: .sfSymbol("l.joystick.tilt.right"))
             }
-            ThemedToggle(isOn: viewModel.$buttonVibration) {
+            ThemedToggle(isOn: $buttonVibration) {
                 SettingsRow(title: "Haptic Feedback",
                            subtitle: "Vibrate when pressing on-screen buttons.",
                            icon: .sfSymbol("hand.point.up.braille"))
             }
-            ThemedToggle(isOn: viewModel.$missingButtonsAlwaysOn) {
+            ThemedToggle(isOn: $missingButtonsAlwaysOn) {
                 SettingsRow(title: "Missing Buttons Always On",
                            subtitle: "Always show buttons not present on original hardware.",
                            icon: .sfSymbol("l.rectangle.roundedbottom"))
+            }
+            Divider()
+            ThemedToggle(isOn: $onscreenJoypad) {
+                SettingsRow(title: "On-Screen Joystick",
+                           subtitle: "Show a touch Joystick pad on supported systems.",
+                           icon: .sfSymbol(""))
+            }
+            ThemedToggle(isOn: $onscreenJoypadWithKeyboard) {
+                SettingsRow(title: "On-Screen Joypad with keyboard",
+                           subtitle: "",
+                           icon: .sfSymbol("l.joystick.tilt.left.fill"))
+            }
+            ThemedToggle(isOn: $movableButtons) {
+                SettingsRow(title: "On-Screen Joypad with keyboard",
+                           subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
+                           icon: .sfSymbol("keyboard.badge.eye"))
             }
         }
     }
@@ -506,8 +555,6 @@ private struct LibrarySection2: View {
 }
 
 private struct AdvancedSection: View {
-    @ObservedObject var viewModel: PVSettingsViewModel
-
     var body: some View {
         Group {
             Section(header: Text("Advanced")) {
@@ -515,14 +562,20 @@ private struct AdvancedSection: View {
                 PaidStatusView(style: .decorative(icon: .star))
                     .listRowBackground(Color.accentColor)
                 #endif
-                AdvancedTogglesView(viewModel: viewModel)
+                AdvancedTogglesView()
             }
         }
     }
 }
 
 private struct AdvancedTogglesView: View {
-    @ObservedObject var viewModel: PVSettingsViewModel
+    @Default(.autoJIT) var autoJIT
+    @Default(.disableAutoLock) var disableAutoLock
+    @Default(.iCloudSync) var iCloudSync
+    @Default(.useMetal) var useMetalRenderer
+    @Default(.useUIKit) var useUIKit
+    @Default(.webDavAlwaysOn) var webDavAlwaysOn
+    @Default(.unsupportedCores) var unsupportedCores
 
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
@@ -530,54 +583,92 @@ private struct AdvancedTogglesView: View {
     }()
 
     var body: some View {
-        
+
         Group {
             if !isAppStore {
-                PremiumThemedToggle(isOn: viewModel.$autoJIT) {
+                PremiumThemedToggle(isOn: $autoJIT) {
                     SettingsRow(title: "Auto JIT",
                                subtitle: "Automatically enable JIT when available.",
                                icon: .sfSymbol("bolt"))
                 }
             }
 
-            PremiumThemedToggle(isOn: viewModel.$disableAutoLock) {
+            PremiumThemedToggle(isOn: $disableAutoLock) {
                 SettingsRow(title: "Disable Auto Lock",
                            subtitle: "Prevent device from auto-locking during gameplay.",
                            icon: .sfSymbol("lock.open"))
             }
 
             if !isAppStore {
-                PremiumThemedToggle(isOn: viewModel.$iCloudSync) {
+                PremiumThemedToggle(isOn: $iCloudSync) {
                     SettingsRow(title: "iCloud Sync",
                                 subtitle: "Sync save states and settings across devices.",
                                 icon: .sfSymbol("icloud"))
                 }
             }
 
-            PremiumThemedToggle(isOn: viewModel.$useMetalRenderer) {
+            PremiumThemedToggle(isOn: $useMetalRenderer) {
                 SettingsRow(title: "Metal Renderer",
                            subtitle: "Use Metal for improved graphics performance.",
                            icon: .sfSymbol("cpu"))
             }
 
-            PremiumThemedToggle(isOn: viewModel.$useUIKit) {
+            PremiumThemedToggle(isOn: $useUIKit) {
                 SettingsRow(title: "Use UIKit",
                            subtitle: "Use UIKit interface instead of SwiftUI.",
                            icon: .sfSymbol("switch.2"))
             }
 
-            PremiumThemedToggle(isOn: viewModel.$webDavAlwaysOn) {
+            PremiumThemedToggle(isOn: $webDavAlwaysOn) {
                 SettingsRow(title: "WebDAV Always On",
                            subtitle: "Keep WebDAV server running in background.",
                            icon: .sfSymbol("network"))
             }
 
             if !isAppStore {
-                PremiumThemedToggle(isOn: viewModel.$unsupportedCores) {
+                PremiumThemedToggle(isOn: $unsupportedCores) {
                     SettingsRow(title: "Show Unsupported Cores",
                                 subtitle: "Display experimental and unsupported cores.",
                                 icon: .sfSymbol("exclamationmark.triangle"))
                 }
+            }
+        }
+    }
+}
+
+private struct AppearanceSection: View {
+    @Default(.showGameTitles) var showGameTitles
+    @Default(.showRecentGames) var showRecentGames
+    @Default(.showRecentSaveStates) var showRecentSaveStates
+    @Default(.showGameBadges) var showGameBadges
+    @Default(.showFavorites) var showFavorites
+
+    var body: some View {
+        Section(header: Text("Appearance")) {
+            ThemedToggle(isOn: $showGameTitles) {
+                SettingsRow(title: "Show Game Titles",
+                           subtitle: "Display game titles under artwork.",
+                           icon: .sfSymbol("text.below.photo"))
+            }
+            ThemedToggle(isOn: $showRecentGames) {
+                SettingsRow(title: "Show Recent Games",
+                           subtitle: "Display recently played games section.",
+                           icon: .sfSymbol("clock"))
+            }
+            ThemedToggle(isOn: $showRecentSaveStates) {
+                SettingsRow(title: "Show Recent Saves",
+                           subtitle: "Display recent save states section.",
+                           icon: .sfSymbol("clock.badge.checkmark"))
+            }
+            ThemedToggle(isOn: $showGameBadges) {
+                SettingsRow(title: "Show Game Badges",
+                           subtitle: "Display badges for favorite and recent games.",
+                           icon: .sfSymbol("star.circle"))
+            }
+            ThemedToggle(isOn: $showFavorites) {
+                SettingsRow(title: "Show Favorites",
+                           subtitle: "Display favorites section.",
+                           icon: .sfSymbol("star"))
             }
         }
     }

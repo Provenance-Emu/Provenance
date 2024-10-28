@@ -35,49 +35,7 @@ class PVSettingsViewModel: ObservableObject {
         }
     }
 
-    @Default(.theme) var currentTheme
     @Published var numberOfConflicts: Int = 0
-
-    #if os(tvOS) || targetEnvironment(macCatalyst)
-        @Default(.largeGameArt) var largeGameArt
-    #endif
-    @Default(.allRightShoulders) var allRightShoulders
-    @Default(.askToAutoLoad) var askToAutoLoad
-    @Default(.autoJIT) var autoJIT
-    @Default(.autoLoadSaves) var autoLoadSaves
-    @Default(.autoSave) var autoSave
-    @Default(.buttonTints) var buttonTints
-    @Default(.buttonVibration) var buttonVibration
-    @Default(.controllerOpacity) var controllerOpacity
-    @Default(.crtFilterEnabled) var crtFilter
-    @Default(.disableAutoLock) var disableAutoLock
-    @Default(.use8BitdoM30) var use8BitdoM30
-    @Default(.iCloudSync) var iCloudSync
-    @Default(.imageSmoothing) var imageSmoothing
-    @Default(.integerScaleEnabled) var integerScaleEnabled
-    @Default(.lcdFilterEnabled) var lcdFilter
-    @Default(.metalFilter) var metalFilter
-    @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
-    @Default(.movableButtons) var movableButtons
-    @Default(.multiSampling) var multiSampling
-    @Default(.multiThreadedGL) var multiThreadedGL
-    @Default(.nativeScaleEnabled) var nativeScaleEnabled
-    @Default(.onscreenJoypad) var onscreenJoypad
-    @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
-    @Default(.showFPSCount) var showFPSCount
-    @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
-    @Default(.timedAutoSaves) var timedAutoSaves
-    @Default(.unsupportedCores) var unsupportedCores
-    @Default(.useMetal) var useMetalRenderer
-    @Default(.useUIKit) var useUIKit
-    @Default(.volume) var volume
-    @Default(.volumeHUD) var volumeHUD
-    @Default(.webDavAlwaysOn) var webDavAlwaysOn
-    @Default(.showGameTitles) var showGameTitles
-    @Default(.showRecentGames) var showRecentGames
-    @Default(.showRecentSaveStates) var showRecentSaveStates
-    @Default(.showGameBadges) var showGameBadges
-    @Default(.showFavorites) var showFavorites
 
     private var cancellables = Set<AnyCancellable>()
     private let reachability = try? Reachability()
@@ -233,8 +191,6 @@ class PVSettingsViewModel: ObservableObject {
 
             // Apply the theme again
             ThemeManager.applySavedTheme()
-
-            self.currentTheme = theme
         }
     }
 
@@ -374,23 +330,23 @@ class PVSettingsViewModel: ObservableObject {
 
     // Add these computed properties
     var crtFilterEnabled: Bool {
-        get { crtFilter }
+        get { Defaults[.crtFilterEnabled] }
         set {
-            crtFilter = newValue
+            Defaults[.crtFilterEnabled]  = newValue
             if newValue {
                 // Turn off LCD filter if CRT is enabled
-                lcdFilter = false
+                Defaults[.lcdFilterEnabled]  = false
             }
         }
     }
 
     var lcdFilterEnabled: Bool {
-        get { lcdFilter }
+        get { Defaults[.lcdFilterEnabled]  }
         set {
-            lcdFilter = newValue
+            Defaults[.lcdFilterEnabled]  = newValue
             if newValue {
                 // Turn off CRT filter if LCD is enabled
-                crtFilter = false
+                Defaults[.crtFilterEnabled]  = false
             }
         }
     }
