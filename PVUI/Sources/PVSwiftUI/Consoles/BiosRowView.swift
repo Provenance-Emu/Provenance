@@ -31,8 +31,8 @@ struct BiosRowView: SwiftUI.View {
     var bios: PVBIOS
 
     @MainActor
-    @State
-    var biosState: BIOSStatus.State? = nil
+    @State var biosState: BIOSStatus.State? = nil
+    @State private var showMD5Alert = false
 
     @ObservedObject private var themeManager = ThemeManager.shared
 
@@ -85,6 +85,17 @@ struct BiosRowView: SwiftUI.View {
         .task { @MainActor in
             let biosState  = (bios as BIOSStatusProvider).status
             self.biosState = biosState.state
+        }
+        .onTapGesture {
+            if case .missing = biosState {
+                UIPasteboard.general.string = bios.expectedMD5
+                showMD5Alert = true
+            }
+        }
+        .alert("MD5 Copied", isPresented: $showMD5Alert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("The MD5 for \(bios.expectedFilename) has been copied to the pasteboard")
         }
     }
 }
