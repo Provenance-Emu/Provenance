@@ -164,7 +164,7 @@ private struct SavesSection: View {
     @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
     
     var volumeSubtitleText: String {
-        "\(minutes(timedAutoSaveInterval)) minutes between timed auto saves."
+        "\(timedAutoSaveInterval/60.0) minutes between timed auto saves."
     }
 
     var body: some View {
