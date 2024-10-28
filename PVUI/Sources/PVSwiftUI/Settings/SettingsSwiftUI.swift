@@ -162,6 +162,10 @@ private struct SavesSection: View {
     @Default(.autoLoadSaves) var autoLoadSaves
     @Default(.askToAutoLoad) var askToAutoLoad
     @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
+    
+    var volumeSubtitleText: String {
+        "\(timedAutoSaveInterval) minutes between timed auto saves."
+    }
 
     var body: some View {
         Section(header: Text("Saves")) {
@@ -196,7 +200,7 @@ private struct SavesSection: View {
                     Image(systemName: "tortoise")
                 }
             }
-            Text("Number of minutes between timed auto saves.")
+            Text(volumeSubtitleText)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -450,7 +454,6 @@ private struct OnScreenControllerSection: View {
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
-    @Default(.movableButtons) var movableButtons
 
     var body: some View {
         Section(header: Text("On-Screen Controller")) {
@@ -484,18 +487,12 @@ private struct OnScreenControllerSection: View {
                            subtitle: "Always show buttons not present on original hardware.",
                            icon: .sfSymbol("l.rectangle.roundedbottom"))
             }
-            Divider()
             ThemedToggle(isOn: $onscreenJoypad) {
                 SettingsRow(title: "On-Screen Joystick",
                            subtitle: "Show a touch Joystick pad on supported systems.",
-                           icon: .sfSymbol(""))
-            }
-            ThemedToggle(isOn: $onscreenJoypadWithKeyboard) {
-                SettingsRow(title: "On-Screen Joypad with keyboard",
-                           subtitle: "",
                            icon: .sfSymbol("l.joystick.tilt.left.fill"))
             }
-            ThemedToggle(isOn: $movableButtons) {
+            ThemedToggle(isOn: $onscreenJoypadWithKeyboard) {
                 SettingsRow(title: "On-Screen Joypad with keyboard",
                            subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
                            icon: .sfSymbol("keyboard.badge.eye"))
@@ -581,6 +578,7 @@ private struct AdvancedTogglesView: View {
     @Default(.unsupportedCores) var unsupportedCores
     @Default(.monoAudio) var monoAudio
     @Default(.useLegacyAudioEngine) var useLegacyAudioEngine
+    @Default(.movableButtons) var movableButtons
 
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
@@ -629,6 +627,12 @@ private struct AdvancedTogglesView: View {
                             subtitle: "Combine left and right audio channels.",
                             icon: .sfSymbol("speaker.wave.1"))
              }
+            
+            PremiumThemedToggle(isOn: $movableButtons) {
+                SettingsRow(title: "Movable Buttons",
+                            subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
+                            icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
+            }
 
 //             PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
 //                 SettingsRow(title: "Legacy Audio",

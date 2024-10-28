@@ -18,9 +18,14 @@ struct SystemSettingsView: View {
     
     var filteredSystems: [PVSystem] {
         if searchText.isEmpty {
-            return systems.sorted(by: { $0.identifier < $1.identifier })
+            return systems
+                .filter { system in
+                    !system.cores.isEmpty
+                }
+                .sorted(by: { $0.identifier < $1.identifier })
         }
         return systems.filter { system in
+            !system.cores.isEmpty &&
             system.name.localizedCaseInsensitiveContains(searchText) ||
             system.manufacturer.localizedCaseInsensitiveContains(searchText) ||
             system.cores.contains { core in
@@ -134,9 +139,9 @@ struct BIOSRow: View {
         case .match:
             return .clear
         case .missing:
-            return Color(status.required ? UIColor(hex: "#700")! : UIColor(hex: "#77404C")!)
+            return Color(status.required ? UIColor.systemRed : UIColor.systemYellow)
         case .mismatch:
-            return Color(.systemRed.withAlphaComponent(0.5))
+            return Color(UIColor.systemOrange)
         }
     }
 }
