@@ -52,7 +52,7 @@ final class PVIntellivisionControllerViewController: PVControllerViewController<
             } else if (button.titleLabel?.text == "9") {
                 button.buttonTag = .button9
             } else if (button.titleLabel?.text == "0") {
-                button.buttonTag = .button9
+                button.buttonTag = .button0
             }
         }
 
