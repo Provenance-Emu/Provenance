@@ -164,7 +164,7 @@ private struct SavesSection: View {
     @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
     
     var volumeSubtitleText: String {
-        "\(timedAutoSaveInterval) minutes between timed auto saves."
+        "\(minutes(timedAutoSaveInterval)) minutes between timed auto saves."
     }
 
     var body: some View {
@@ -192,7 +192,7 @@ private struct SavesSection: View {
 
             HStack {
                 Text("Auto-save Time")
-                Slider(value: $timedAutoSaveInterval, in: 1...30, step: 1) {
+                Slider(value: $timedAutoSaveInterval, in: minutes(1)...minutes(30), step: minutes(1)) {
                     Text("Auto-save Time")
                 } minimumValueLabel: {
                     Image(systemName: "hare")
