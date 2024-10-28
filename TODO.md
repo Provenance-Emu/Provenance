@@ -3,6 +3,7 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [ ] manually copying a bios into bios's works, but database isn't updated with instance reference
 - [ ] (Lite) Sega CD is borked
 - [X] wrap advanced settings in freemiumview
 - [X] fix launching webserver from swiftui menu
