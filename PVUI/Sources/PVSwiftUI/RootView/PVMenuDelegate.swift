@@ -45,15 +45,21 @@ public protocol PVMenuDelegate: AnyObject {
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate {
     public func didTapSettings() {
-        let settingsView = PVSettingsView(conflictsController: updatesController)
-            .environmentObject(updatesController) // Assuming updatesController conforms to ObservableObject
+        let settingsView = PVSettingsView(
+            conflictsController: updatesController,
+            menuDelegate: self,
+            dismissAction: { [weak self] in
+                self?.dismiss(animated: true)
+            }
+        )
+        .environmentObject(updatesController)
         #if canImport(FreemiumKit)
             .environmentObject(FreemiumKit.shared)
         #endif
 
         let hostingController = UIHostingController(rootView: settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
-        
+
         self.closeMenu()
         self.present(navigationController, animated: true)
     }
@@ -92,7 +98,7 @@ extension PVRootViewController: PVMenuDelegate {
         #endif
         actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
-        
+
         actionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
 //        actionSheet.popoverPresentationController?.sourceView = self.view
 //        actionSheet.popoverPresentationController?.sourceRect = self.view?.bounds ?? UIScreen.main.bounds
@@ -174,7 +180,10 @@ extension PVRootViewController: PVMenuDelegate {
     }
 
     func showServer() {
-        let ipURL: String = PVWebServer.shared.urlString
+        guard let ipURL: String = PVWebServer.shared.urlString else {
+            ELOG("`PVWebServer.shared.urlString` was nil")
+            return
+        }
         let url = URL(string: ipURL)!
 #if targetEnvironment(macCatalyst)
         UIApplication.shared.open(url, options: [:]) { completed in
@@ -196,7 +205,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
     public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         updatesController.handlePickedDocuments(urls)
     }
-    
+
     public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
         ILOG("Document picker was cancelled")
     }

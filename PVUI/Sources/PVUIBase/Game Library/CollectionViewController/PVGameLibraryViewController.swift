@@ -804,7 +804,9 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 #if os(iOS) && canImport(PVWebServer)
     // Show web server (stays on)
     func showServer() {
-        let ipURL: String = PVWebServer.shared.urlString
+        guard let ipURL: String = PVWebServer.shared.urlString else {
+            return
+        }
         let url = URL(string: ipURL)!
 #if targetEnvironment(macCatalyst)
         UIApplication.shared.open(url, options: [:]) { completed in

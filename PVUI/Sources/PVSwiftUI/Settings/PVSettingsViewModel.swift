@@ -21,7 +21,21 @@ import PVWebServer
 
 /// View Model for Settings
 class PVSettingsViewModel: ObservableObject {
-    @Published var currentTheme: ThemeOption = Defaults[.theme]
+    
+    weak var menuDelegate: PVMenuDelegate!
+    
+    init(menuDelegate: PVMenuDelegate!, conflictsController: PVGameLibraryUpdatesController) {
+        self.menuDelegate = menuDelegate
+        self.conflictsController = conflictsController
+    }
+    
+    @ObservedObject var conflictsController: PVGameLibraryUpdatesController {
+        didSet {
+            setupConflictsObserver()
+        }
+    }
+
+    @Default(.theme) var currentTheme
     @Published var numberOfConflicts: Int = 0
 
     #if os(tvOS) || targetEnvironment(macCatalyst)
@@ -65,14 +79,8 @@ class PVSettingsViewModel: ObservableObject {
     @Default(.showGameBadges) var showGameBadges
     @Default(.showFavorites) var showFavorites
 
-    var conflictsController: PVGameLibraryUpdatesController! {
-        didSet {
-            setupConflictsObserver()
-        }
-    }
-
     private var cancellables = Set<AnyCancellable>()
-    private let reachability: Reachability = try! Reachability()
+    private let reachability = try? Reachability()
 
     /// Metal filters
     var metalFilters: [String] {
@@ -162,7 +170,7 @@ class PVSettingsViewModel: ObservableObject {
 
     /// Function to setup conflicts observer
     public func setupConflictsObserver() {
-        conflictsController?.$conflicts
+        conflictsController.$conflicts
             .receive(on: DispatchQueue.main)
             .sink { [weak self] conflicts in
                 self?.numberOfConflicts = conflicts.count
@@ -338,84 +346,79 @@ class PVSettingsViewModel: ObservableObject {
         }
     }
 
+    public
+    var webserverSuccessfulAlertMessage: String {
+        let webServerAddress: String = PVWebServer.shared.urlString ?? PVWebServer.shared.ipAddress ?? "Unknown"
+        let webDavAddress: String = PVWebServer.shared.webDavURLString ?? "Unknown"
+        let message = """
+        Read about how to import ROMs on the Provenance wiki at:
+        https://wiki.provenance-emu.com
+
+        Upload/Download files to your device at:
+
+        \(webServerAddress)  ᵂᵉᵇᵁᴵ
+        \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
+        
+        WebDAV file management requires WebDAV support.
+        We recommend:
+        • macOS Finder
+        • Windows: WinSCP
+        • iOS: Documents by Readdle
+        """
+        return message
+    }
+
     func launchWebServer() {
-        #if canImport(PVWebServer)
-        if reachability.connection == .wifi {
-            // connected via wifi, let's continue
-            // start web transfer service
-            if PVWebServer.shared.startServers() {
-                // show alert view
-                let alert = UIAlertController(
-                    title: "Web Server Active",
-                    message: """
-                        Visit \(PVWebServer.shared.webDavURLString) in your browser
-
-                        Web browser file management requires WebDAV support.
-                        We recommend:
-                        • macOS Finder
-                        • Windows: WinSCP
-                        • iOS: Documents by Readdle
-                        """,
-                    preferredStyle: .alert
-                )
-
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-
-                if let window = UIApplication.shared.windows.first,
-                   let rootViewController = window.rootViewController {
-                    rootViewController.present(alert, animated: true)
-                }
-            } else {
-                // Display error
-                let alert = UIAlertController(
-                    title: "Unable to start web server!",
-                    message: "Check your network connection or settings and free up ports: 80, 81.",
-                    preferredStyle: .alert
-                )
-
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-
-                if let window = UIApplication.shared.windows.first,
-                   let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
-                    rootViewController.present(alert, animated: true)
-                }
-            }
-        } else {
-            let alert = UIAlertController(
-                title: "Unable to start web server!",
-                message: "Your device needs to be connected to a WiFi network to continue!",
-                preferredStyle: .alert
-            )
-
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-
-            if let window = UIApplication.shared.windows.first,
-               let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
-                rootViewController.present(alert, animated: true)
-            }
-        }
-#endif
+        menuDelegate.didTapAddGames()
     }
 
     // Add these computed properties
     var crtFilterEnabled: Bool {
-        get { Defaults[.crtFilterEnabled] }
+        get { crtFilter }
         set {
-            Defaults[.crtFilterEnabled] = newValue
+            crtFilter = newValue
             if newValue {
                 // Turn off LCD filter if CRT is enabled
-                Defaults[.lcdFilterEnabled] = false
+                lcdFilter = false
             }
         }
     }
 
     var lcdFilterEnabled: Bool {
-        get { Defaults[.lcdFilterEnabled] }
+        get { lcdFilter }
         set {
-            Defaults[.lcdFilterEnabled] = newValue
+            lcdFilter = newValue
             if newValue {
                 // Turn off CRT filter if LCD is enabled
-                Defaults[.crtFilterEnabled] = false
+                crtFilter = false
+            }
+        }
+    }
+}
+
+extension PVSettingsViewModel {
+    enum WebServerError: LocalizedError {
+        case noWiFiConnection
+        case serverStartFailed
+        case unsupported
+
+        var errorDescription: String? {
+            switch self {
+            case .noWiFiConnection:
+                return "Your device needs to be connected to a WiFi network to continue!"
+            case .serverStartFailed:
+                return "Check your network connection or settings and free up ports: 80, 81."
+            case .unsupported:
+                return "Unsupported platform!"
+            }
+        }
+
+        var title: String {
+            switch self {
+            case .noWiFiConnection, .serverStartFailed:
+                return "Unable to start web server!"
+            case .unsupported:
+                return "Unsupported platform!"
             }
         }
     }

@@ -36,7 +36,7 @@ import PVLogging
 //    private let _defaultButtonColor = UIColor.systemGray4
 //#endif
 
-protocol UIAlertControllerProtocol : UIViewController {
+public protocol UIAlertControllerProtocol : UIViewController {
 
      func addAction(_ action: UIAlertAction)
      var actions: [UIAlertAction] { get }
@@ -53,7 +53,7 @@ protocol UIAlertControllerProtocol : UIViewController {
 }
 
 // take over (aka mock) the UIAlertController initializer and return our class
-func UIAlertController(title: String?, message: String?, preferredStyle style: UIAlertController.Style) -> UIAlertControllerProtocol {
+public func UIAlertController(title: String?, message: String?, preferredStyle style: UIAlertController.Style = .alert) -> UIAlertControllerProtocol {
     TVAlertController.init(title:title, message: message, preferredStyle: style)
 }
 
@@ -61,10 +61,10 @@ extension UIAlertController : UIAlertControllerProtocol { }
 
 public final class TVAlertController: UIViewController, UIAlertControllerProtocol {
 
-    var preferredStyle = UIAlertController.Style.alert
-    var actions = [UIAlertAction]()
-    var textFields:[UITextField]?
-    var preferredAction: UIAlertAction?
+    public var preferredStyle = UIAlertController.Style.alert
+    public var actions = [UIAlertAction]()
+    public var textFields:[UITextField]?
+    public var preferredAction: UIAlertAction?
     var cancelAction: UIAlertAction?
 
     var autoDismiss = true          // a UIAlertController is always autoDismiss
@@ -128,7 +128,7 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
         }
     }
 
-    var message: String? {
+    public var message: String? {
         set {
             let label = stack.arrangedSubviews[1] as! UILabel
             label.text = newValue
@@ -142,7 +142,7 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
         }
     }
 
-    func addAction(_ action: UIAlertAction) {
+    public func addAction(_ action: UIAlertAction) {
         if action.style == .cancel {
             cancelAction = action
             if preferredStyle == .actionSheet {
@@ -153,7 +153,7 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
         stack.addArrangedSubview(makeButton(action))
     }
 
-    func addTextField(configurationHandler: ((UITextField) -> Void)? = nil) {
+    public func addTextField(configurationHandler: ((UITextField) -> Void)? = nil) {
         let textField = UITextField()
         textField.font = font
         textField.borderStyle = .roundedRect

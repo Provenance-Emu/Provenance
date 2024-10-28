@@ -19,12 +19,12 @@ NS_ASSUME_NONNULL_BEGIN;
 
 @property (class, nonatomic, strong, readonly, nonnull) PVWebServer * sharedInstance NS_SWIFT_NAME(shared);
 
-@property (nonatomic, strong, readonly) NSString *documentsDirectory;
-@property (nonatomic, strong, readonly) NSString *IPAddress;
-@property (nonatomic, strong, readonly) NSString *URLString;
-@property (nonatomic, strong, readonly) NSString *WebDavURLString;
-@property (nonatomic, strong, readonly) NSURL *URL;
-@property (nonatomic, strong, readonly) NSURL *bonjourSeverURL;
+@property (nonatomic, strong, readonly, nullable) NSString *documentsDirectory;
+@property (nonatomic, strong, readonly, nullable) NSString *IPAddress;
+@property (nonatomic, strong, readonly, nullable) NSString *URLString;
+@property (nonatomic, strong, readonly, nullable) NSString *WebDavURLString;
+@property (nonatomic, strong, readonly, nullable) NSURL *URL;
+@property (nonatomic, strong, readonly, nullable) NSURL *bonjourSeverURL;
 
 @property (nonatomic, assign, readonly) BOOL isWWWUploadServerRunning;
 @property (nonatomic, assign, readonly) BOOL isWebDavServerRunning;

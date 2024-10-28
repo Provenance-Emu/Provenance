@@ -11,16 +11,11 @@ import PVThemes
 struct ThemedToggle<Label: View>: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @Binding var isOn: Bool
-    let label: Label
-
-    init(isOn: Binding<Bool>, @ViewBuilder label: () -> Label) {
-        self._isOn = isOn
-        self.label = label()
-    }
+    @ViewBuilder let label: () -> Label
 
     var body: some View {
         Toggle(isOn: $isOn) {
-            label
+            label()
         }
         .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
         .onAppear {

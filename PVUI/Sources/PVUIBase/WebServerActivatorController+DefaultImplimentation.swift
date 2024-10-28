@@ -30,8 +30,8 @@ extension WebServerActivatorController where Self: UIViewController & SFSafariVi
     // Show "Web Server Active" alert view
     public
     var webServerAlertMessage: String {
-        let webServerAddress: String = PVWebServer.shared.urlString
-        let webDavAddress: String = PVWebServer.shared.webDavURLString
+        let webServerAddress: String = PVWebServer.shared.urlString ?? "null"
+        let webDavAddress: String = PVWebServer.shared.webDavURLString ?? "null"
         let message = """
         Read about how to import ROMs on the Provenance wiki at:
         https://wiki.provenance-emu.com
@@ -62,7 +62,9 @@ extension WebServerActivatorController where Self: UIViewController & SFSafariVi
     }
 
     func showServer() {
-        let ipURL: String = PVWebServer.shared.urlString
+        guard let ipURL: String = PVWebServer.shared.urlString else {
+            return
+        }
         let url = URL(string: ipURL)!
         #if targetEnvironment(macCatalyst) || os(macOS)
         UIApplication.shared.open(url, options: [:]) { completed in
@@ -91,8 +93,8 @@ public
 extension WebServerActivatorController where Self: WebServerActivatorControllerRootClass {
     var webServerAlertMessage: String {
         // get the IP address or bonjour name of the device
-        let webServerAddress: String = PVWebServer.shared.urlString
-        let webDavAddress: String = PVWebServer.shared.webDavURLString
+        let webServerAddress: String = PVWebServer.shared.urlString ?? "null"
+        let webDavAddress: String = PVWebServer.shared.webDavURLString ?? "null"
         let message = """
         Read about how to import ROMs on the Provenance wiki at:
         https://wiki.provenance-emu.com

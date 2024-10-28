@@ -53,6 +53,7 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] Swift UI Settings should use the themed alerts via the delegate or something
 - [ ] theme switching doesn't update nav bar color
 - [ ] Box art is clipped in swift ui -- need better aspect ratios
 - [ ] Game Info in swift ui crashes on next game scroll

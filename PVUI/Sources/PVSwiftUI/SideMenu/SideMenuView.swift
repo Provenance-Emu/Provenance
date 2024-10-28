@@ -123,13 +123,6 @@ SideMenuView: SwiftUI.View {
                         .listRowBackground(Color.accentColor)
                         .padding(.vertical, 10)
                         .padding(.horizontal, 10)
-//                    if freemiumKit.purchasedTier == nil {
-//                        Divider()
-//                        Button("Unlock Plus") {
-//                            showPaywall = true
-//                        }
-//                        .paywall(isPresented: $showPaywall)
-//                    }
 #endif
                     if consoles.count > 0 {
                         MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
