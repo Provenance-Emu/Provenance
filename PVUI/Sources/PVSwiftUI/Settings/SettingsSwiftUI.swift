@@ -342,8 +342,6 @@ private struct VideoSection: View {
     @Default(.showFPSCount) var showFPSCount
     @Default(.nativeScaleEnabled) var nativeScaleEnabled
     @Default(.integerScaleEnabled) var integerScaleEnabled
-    @Default(.crtFilterEnabled) var crtFilterEnabled
-    @Default(.lcdFilterEnabled) var lcdFilterEnabled
 
     var body: some View {
         Section(header: Text("Video")) {
@@ -384,7 +382,7 @@ private struct VideoSection: View {
 
 private struct FiltersSection: View {
     @Default(.crtFilterEnabled) var crtFilter
-    @Default(.crtFilterEnabled) var lcdFilter
+    @Default(.lcdFilterEnabled) var lcdFilter
 
     var body: some View {
         Section(header: Text("Filters")) {

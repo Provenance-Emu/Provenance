@@ -103,7 +103,7 @@ _My personal TODO notes_
 ## AppStore Review
 
 - [ ] Screenshots
-- [ ] Remove "beta" text
+- [X] Remove "beta" text
 
 ## Provenance Plus
 
