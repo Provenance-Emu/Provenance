@@ -14,9 +14,9 @@ import RxRealm
 import RxSwift
 import RealmSwift
 
-//#if canImport(FreemiumKit)
+#if canImport(FreemiumKit)
 import FreemiumKit
-//#endif
+#endif
 #if canImport(SafariServices)
 import SafariServices
 #endif
@@ -33,6 +33,11 @@ public struct PVSettingsView: View {
 
     /// Theme manager
     @ObservedObject private var themeManager = ThemeManager.shared
+    
+#if canImport(FreemiumKit)
+    @State var showPaywall: Bool = false
+    @EnvironmentObject var freemiumKit: FreemiumKit
+#endif
 
     /// State manager observable conflicts controller
     let conflictsController: PVGameLibraryUpdatesController
@@ -214,11 +219,6 @@ public struct PVSettingsView: View {
     /// Section for metal settings
     var metalSection: some View {
         Section(header: Text("Metal")) {
-            ThemedToggle(isOn: $viewModel.useMetalRenderer) {
-                SettingsRow(title: "Use Metal Renderer",
-                           subtitle: "Modern graphics API. Disable to use OpenGL.",
-                           icon: .sfSymbol("cpu"))
-            }
             Picker("Metal Filter", selection: $viewModel.metalFilter) {
                 ForEach(viewModel.metalFilters, id: \.self) { filter in
                     Text(filter)
@@ -318,23 +318,44 @@ public struct PVSettingsView: View {
 
     // Section for advanced settings
     var advancedSection: some View {
-        Section(header: Text("Advanced")) {
-            ThemedToggle(isOn: $viewModel.useMetalRenderer) {
+        Group {
+            Section(header: Text("Advanced")) {
+                advancedToggles
+            }
+#if canImport(FreemiumKit)
+            if freemiumKit.purchasedTier == nil {
+                Divider()
+                HStack {
+                    Image(systemName: "Lock")
+                    Button("Unlock Plus") {
+                       showPaywall = true
+                    }
+                    .paywall(isPresented: $showPaywall)
+                }
+            }
+#endif
+        }
+    }
+    
+    /// Toggles for Advanced setting section
+    var advancedToggles: some View {
+        Group {
+            PremiumThemedToggle(isOn: $viewModel.useMetalRenderer) {
                 SettingsRow(title: "Use Metal Renderer",
                            subtitle: "Modern graphics API for better performance.",
                            icon: .sfSymbol("m.square.fill"))
             }
-            ThemedToggle(isOn: $viewModel.useUIKit) {
+            PremiumThemedToggle(isOn: $viewModel.useUIKit) {
                 SettingsRow(title: "Use Legacy UIKit UI",
                            subtitle: "Switch to classic interface. Requires app restart.",
                            icon: .sfSymbol("swift"))
             }
-            ThemedToggle(isOn: $viewModel.movableButtons) {
+            PremiumThemedToggle(isOn: $viewModel.movableButtons) {
                 SettingsRow(title: "Movable Buttons",
                            subtitle: "Allow moving on-screen buttons. Triple-tap with three fingers to ThemedToggle.",
                            icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
-            ThemedToggle(isOn: $viewModel.onscreenJoypad) {
+            PremiumThemedToggle(isOn: $viewModel.onscreenJoypad) {
                 SettingsRow(title: "On-screen Joypad",
                            subtitle: "Show touch joystick on supported systems.",
                            icon: .sfSymbol("l.joystick.tilt.left.fill"))
@@ -1023,6 +1044,49 @@ public enum SettingsIcon: Equatable {
             return nil
         }
     }
+}
+
+struct PremiumThemedToggle<Label: View>: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @Binding var isOn: Bool
+    let label: Label
+    
+    init(isOn: Binding<Bool>, @ViewBuilder label: () -> Label) {
+        self._isOn = isOn
+        self.label = label()
+    }
+    
+#if canImport(FreemiumKit)
+    var body: some View {
+        PaidFeatureView {
+            Toggle(isOn: $isOn) {
+                label
+            }
+            .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
+            .onAppear {
+                UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
+            }
+        } lockedView: {
+            Toggle(isOn: $isOn) {
+                label
+            }
+            .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
+            .onAppear {
+                UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
+            }.disabled(true)
+        }
+    }
+#else
+    var body: some View {
+        Toggle(isOn: $isOn) {
+            label
+        }
+        .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
+        .onAppear {
+            UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
+        }
+    }
+#endif
 }
 
 struct ThemedToggle<Label: View>: View {

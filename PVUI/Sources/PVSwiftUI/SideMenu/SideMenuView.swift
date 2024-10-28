@@ -17,6 +17,9 @@ import PVThemes
 #if canImport(Introspect)
 import Introspect
 #endif
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 // generate a preview
 
@@ -45,6 +48,11 @@ SideMenuView: SwiftUI.View {
     @ObservedObject var searchBar: SearchBar
 
     @ObservedObject private var themeManager = ThemeManager.shared
+    
+#if canImport(FreemiumKit)
+    @State var showPaywall: Bool = false
+    @EnvironmentObject var freemiumKit: FreemiumKit
+#endif
 
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
@@ -110,6 +118,15 @@ SideMenuView: SwiftUI.View {
                     MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
                         delegate.didTapAddGames()
                     }
+#if canImport(FreemiumKit)
+                    if freemiumKit.purchasedTier == nil {
+                        Divider()
+                        Button("Unlock Plus") {
+                            showPaywall = true
+                        }
+                        .paywall(isPresented: $showPaywall)
+                    }
+#endif
                     if consoles.count > 0 {
                         MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
                             viewModel.sortConsolesAscending.toggle()

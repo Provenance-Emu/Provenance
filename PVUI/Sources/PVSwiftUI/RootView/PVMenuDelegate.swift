@@ -21,6 +21,9 @@ import PVRealm
 import PVPrimitives
 import PVLogging
 import UniformTypeIdentifiers
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 #if canImport(PVWebServer)
 import PVWebServer
@@ -44,7 +47,10 @@ extension PVRootViewController: PVMenuDelegate {
     public func didTapSettings() {
         let settingsView = PVSettingsView(conflictsController: updatesController)
             .environmentObject(updatesController) // Assuming updatesController conforms to ObservableObject
-        
+        #if canImport(FreemiumKit)
+            .environmentObject(FreemiumKit.shared)
+        #endif
+
         let hostingController = UIHostingController(rootView: settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
         
