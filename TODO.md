@@ -3,9 +3,9 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [X] wrap advanced settings in freemiumview
-- [ ] fix launching webserver from swiftui menu
 - [ ] (Lite) Sega CD is borked
+- [X] wrap advanced settings in freemiumview
+- [X] fix launching webserver from swiftui menu
 - [X] iCloud sync isn't working, remove or fix
 - [X] Swift UI long press on roms menu missing actions {rename, ~~share~~}
 - [X] Progress hud on unzips isn't hiding
@@ -98,6 +98,8 @@ _My personal TODO notes_
 - [ ] PVFreeIntV
 - [ ] PVfMSX
 
+--------------------------------------
+
 ## AppStore Review
 
 - [ ] Screenshots
@@ -105,11 +107,14 @@ _My personal TODO notes_
 
 ## Provenance Plus
 
-- [ ] Add in-app purchase and screen
+## High Priority
+- [ ] Privacy policy / EULA in settings!
+- [X] Add in-app purchase and screen
+- [ ] Add app rating with SiruisRating
+### Low Priority
+- [ ] Finish themes
 - [ ] Add new logo
 - [ ] Add Shiragame
-- [ ] Finish themes
-- [ ] Add app rating with SiruisRating
-- [ ] Hide some features behind is plus in app store builds
-    - [ ] Advanced settings
-    - [ ] Extra themes
+- [X] Hide some features behind is plus in app store builds
+    - [X] Advanced settings
+    - [X] Extra themes
