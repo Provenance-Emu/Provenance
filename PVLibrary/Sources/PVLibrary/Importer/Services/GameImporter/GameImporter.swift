@@ -410,16 +410,15 @@ extension GameImporter {
 
     /// Moves a file and overwrites if it already exists at the destination
     public func moveAndOverWrite(sourcePath: URL, destinationPath: URL) throws {
-        do {
-            if FileManager.default.fileExists(atPath: destinationPath.path) {
-                try FileManager.default.removeItem(atPath: destinationPath.path)
-            }
-            try FileManager.default.moveItem(at: sourcePath, to: destinationPath)
-            DLOG("Moved \(sourcePath.path) to \(destinationPath.path)")
-        } catch {
-            ELOG("Unable to move \(sourcePath.path) to \(destinationPath.path) because: \(error.localizedDescription)")
-            throw error
+        let fileManager = FileManager.default
+
+        // If file exists at destination, remove it first
+        if fileManager.fileExists(atPath: destinationPath.path) {
+            try fileManager.removeItem(at: destinationPath)
         }
+
+        // Now move the file
+        try fileManager.moveItem(at: sourcePath, to: destinationPath)
     }
 }
 
