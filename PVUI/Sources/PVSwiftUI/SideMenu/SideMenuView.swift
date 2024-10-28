@@ -119,13 +119,17 @@ SideMenuView: SwiftUI.View {
                         delegate.didTapAddGames()
                     }
 #if canImport(FreemiumKit)
-                    if freemiumKit.purchasedTier == nil {
-                        Divider()
-                        Button("Unlock Plus") {
-                            showPaywall = true
-                        }
-                        .paywall(isPresented: $showPaywall)
-                    }
+                    PaidStatusView(style: .plain)
+                        .listRowBackground(Color.accentColor)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+//                    if freemiumKit.purchasedTier == nil {
+//                        Divider()
+//                        Button("Unlock Plus") {
+//                            showPaywall = true
+//                        }
+//                        .paywall(isPresented: $showPaywall)
+//                    }
 #endif
                     if consoles.count > 0 {
                         MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {

@@ -315,25 +315,25 @@ public struct PVSettingsView: View {
             }
         }
     }
-
+    
     // Section for advanced settings
     var advancedSection: some View {
         Group {
             Section(header: Text("Advanced")) {
+#if canImport(FreemiumKit)
+                PaidStatusView(style: .decorative(icon: .star))
+                    .listRowBackground(Color.accentColor)
+//                    .padding(.vertical, -10)
+#endif
                 advancedToggles
             }
-#if canImport(FreemiumKit)
-            if freemiumKit.purchasedTier == nil {
-                Divider()
-                HStack {
-                    Image(systemName: "Lock")
-                    Button("Unlock Plus") {
-                       showPaywall = true
-                    }
-                    .paywall(isPresented: $showPaywall)
-                }
-            }
-#endif
+//#if canImport(FreemiumKit)
+//            Section {
+//                PaidStatusView(style: .decorative(icon: .laurel))
+//                    .listRowBackground(Color.accentColor)
+//                    .padding(.vertical, -10)
+//            }
+//#endif
         }
     }
     
