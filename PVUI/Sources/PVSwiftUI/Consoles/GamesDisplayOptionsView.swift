@@ -44,8 +44,6 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         HStack(spacing: spacing) {
-            Spacer()
-
             Menu {
                 Toggle(isOn: $showGameTitles) {
                     Label("Show Game Titles", systemImage: "textformat")
@@ -66,7 +64,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 Image(systemName: "line.3.horizontal.decrease.circle")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(font)
-            }.padding(.horizontal, padding)
+            }.padding(.horizontal, 30)
 
             Spacer()
             OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
