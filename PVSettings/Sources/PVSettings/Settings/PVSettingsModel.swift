@@ -83,6 +83,7 @@ extension Defaults.Keys {
     static let haveWarnedAboutDebug = Key<Bool>("haveWarnedAboutDebug", default: false)
     static let collapsedSystems = Key<Set<String>>("collapsedSystems", default: [])
 
+    static let collapsedSections = Key<Set<String>>("collapsedSections", default: Set<String>())
 
 #if os(tvOS) || targetEnvironment(macCatalyst)
     static let largeGameArt = Key<Bool>("largeGameArt", default: true)

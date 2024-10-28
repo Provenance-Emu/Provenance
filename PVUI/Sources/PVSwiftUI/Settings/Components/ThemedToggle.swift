@@ -17,9 +17,11 @@ struct ThemedToggle<Label: View>: View {
         Toggle(isOn: $isOn) {
             label()
         }
+#if !os(tvOS)
         .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
         .onAppear {
             UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
         }
+#endif
     }
 }

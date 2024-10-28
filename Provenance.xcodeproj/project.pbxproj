@@ -725,10 +725,8 @@
 		B36C8E7F2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B37228CA2CCDC7A700E6F627 /* FreemiumKit in Frameworks */ = {isa = PBXBuildFile; productRef = B37228C92CCDC7A700E6F627 /* FreemiumKit */; };
 		B37228CC2CCDC7D300E6F627 /* FreemiumKit in Frameworks */ = {isa = PBXBuildFile; productRef = B37228CB2CCDC7D300E6F627 /* FreemiumKit */; };
-		B37228D02CCDC80B00E6F627 /* AppStoreAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B37228CD2CCDC80B00E6F627 /* AppStoreAssets.xcassets */; };
 		B37228D12CCDC80B00E6F627 /* AppStoreAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B37228CD2CCDC80B00E6F627 /* AppStoreAssets.xcassets */; };
 		B37228D32CCDC80B00E6F627 /* AppStoreAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B37228CD2CCDC80B00E6F627 /* AppStoreAssets.xcassets */; };
-		B37228D42CCDC80B00E6F627 /* AppStoreAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B37228CD2CCDC80B00E6F627 /* AppStoreAssets.xcassets */; };
 		B373219E2C900A5200CF59EF /* PVPicoDrive-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */; };
 		B373219F2C900A5200CF59EF /* PVPicoDrive-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B37321A12C900A6400CF59EF /* PVAtari800-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */; };
@@ -982,6 +980,9 @@
 		B3E0CFA22C054F9F00F45074 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3E0CFA12C054F9F00F45074 /* ZipArchive */; };
 		B3E0CFA52C054FC200F45074 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3E0CFA42C054FC200F45074 /* PVEmulatorCore */; };
 		B3E0CFA82C05508500F45074 /* PVCoreAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B3E0CFA72C05508500F45074 /* PVCoreAudio */; };
+		B3E17E232CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3E17E222CCF91B000732AEA /* AppStoreAssets-Lite.xcassets */; };
+		B3E17E292CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3E17E222CCF91B000732AEA /* AppStoreAssets-Lite.xcassets */; };
+		B3E17E2B2CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3E17E222CCF91B000732AEA /* AppStoreAssets-Lite.xcassets */; };
 		B3E1BC4B2C96DD0500EB4238 /* PVProSystem-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3E1BC4A2C96DD0500EB4238 /* PVProSystem-Dynamic */; };
 		B3E1BF942C96F21400EB4238 /* PVBliss-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3E1BF932C96F21400EB4238 /* PVBliss-Dynamic */; };
 		B3E1C0462C96F84300EB4238 /* PVBliss-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3E1BF932C96F21400EB4238 /* PVBliss-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -2490,6 +2491,7 @@
 		B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ColoredIcons.xcassets; sourceTree = "<group>"; };
 		B3E0A580215647BD004B4322 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		B3E0AB38289214F500DB1E39 /* PVHatari.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVHatari.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E17E222CCF91B000732AEA /* AppStoreAssets-Lite.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "AppStoreAssets-Lite.xcassets"; sourceTree = "<group>"; };
 		B3E21D6B203211BE009939D3 /* Spotlight.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Spotlight.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRequestHandler.swift; sourceTree = "<group>"; };
 		B3E21D6F203211BE009939D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -3930,6 +3932,7 @@
 				B3296EEA26CAC3ED0088AC32 /* Strings.strings */,
 				B3375EB1278EA28E004B0DC0 /* Shaders */,
 				B37228CD2CCDC80B00E6F627 /* AppStoreAssets.xcassets */,
+				B3E17E222CCF91B000732AEA /* AppStoreAssets-Lite.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -5508,6 +5511,7 @@
 				B347B36F2BC4CA98006A3B2D /* licenses.html in Resources */,
 				B347B3702BC4CA98006A3B2D /* CRT.fsh in Resources */,
 				B347B3712BC4CA98006A3B2D /* AAOmniScaleLegacy.fsh in Resources */,
+				B3E17E2B2CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,
 				B347B3722BC4CA98006A3B2D /* Cheats.storyboard in Resources */,
 				B347B3732BC4CA98006A3B2D /* Provenance.storyboard in Resources */,
 				B347B3742BC4CA98006A3B2D /* Bilinear.fsh in Resources */,
@@ -5556,6 +5560,7 @@
 			files = (
 				B35EEFE32C6C6D1A00EBD1A8 /* InfoPlist.strings in Resources */,
 				B35EEFE42C6C6D1A00EBD1A8 /* Strings.strings in Resources */,
+				B3E17E232CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,
 				B3DF8EE02CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B35EEFE52C6C6D1A00EBD1A8 /* HQ2x.fsh in Resources */,
 				B35EEFE62C6C6D1A00EBD1A8 /* AAScale2x.fsh in Resources */,
@@ -5564,7 +5569,6 @@
 				B35EEFE92C6C6D1A00EBD1A8 /* Settings.bundle in Resources */,
 				B35EEFEA2C6C6D1A00EBD1A8 /* Bilinear.fsh in Resources */,
 				B35EEFEB2C6C6D1A00EBD1A8 /* AAOmniScaleLegacy.fsh in Resources */,
-				B37228D42CCDC80B00E6F627 /* AppStoreAssets.xcassets in Resources */,
 				B35EEFEC2C6C6D1A00EBD1A8 /* OmniScale.fsh in Resources */,
 				B35EEFED2C6C6D1A00EBD1A8 /* LaunchImageTV.png in Resources */,
 				B35EEFEE2C6C6D1A00EBD1A8 /* MasterShader.fsh in Resources */,
@@ -5670,7 +5674,6 @@
 				B3F7E3D1297736BE00362B92 /* OmniScale.fsh in Resources */,
 				B3F7E3D2297736BE00362B92 /* MasterShader.fsh in Resources */,
 				B3F7E3D3297736BE00362B92 /* AAScale4x.fsh in Resources */,
-				B37228D02CCDC80B00E6F627 /* AppStoreAssets.xcassets in Resources */,
 				B3A3D0302CCCC62B00589F82 /* TVAssets.xcassets in Resources */,
 				B3F7E3D7297736BE00362B92 /* SmoothBilinear.fsh in Resources */,
 				B3F7E3D9297736BE00362B92 /* licenses.html in Resources */,
@@ -5682,6 +5685,7 @@
 				B3DF8EDD2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B3F7E3E3297736BE00362B92 /* OmniScaleLegacy.fsh in Resources */,
 				B3F7E3E5297736BE00362B92 /* GLES in Resources */,
+				B3E17E292CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10608,7 +10612,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -10680,7 +10684,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -10752,7 +10756,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;

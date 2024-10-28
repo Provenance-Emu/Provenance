@@ -26,6 +26,7 @@ struct HomeView: SwiftUI.View {
 //    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
 
     weak var rootDelegate: PVRootDelegate?
+    @ObservedObject var viewModel: PVRootViewModel
 
     @Default(.showRecentSaveStates) private var showRecentSaveStates
     @Default(.showRecentGames) private var showRecentGames
@@ -62,9 +63,10 @@ struct HomeView: SwiftUI.View {
 
 
 
-    init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil) {
+    init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil, viewModel: PVRootViewModel) {
 //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
+        self.viewModel = viewModel
     }
 
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -114,9 +116,9 @@ struct HomeView: SwiftUI.View {
                     }
                     
                     HomeDividerView()
-                    HomeSection(title: "All Games") {
-                        showGamesGrid(allGames)
-                    }
+                    NeumorphismView()
+                    displayOptionsView()
+                    showGamesGrid(allGames)
                 }
             }
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
@@ -124,6 +126,18 @@ struct HomeView: SwiftUI.View {
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
     
+    private func displayOptionsView() -> some View {
+        GamesDisplayOptionsView(
+            sortAscending: viewModel.sortGamesAscending,
+            isGrid: viewModel.viewGamesAsGrid,
+            toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
+            toggleSortAction: { viewModel.sortGamesAscending.toggle() },
+            toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
+        )
+        .padding(.top, 16)
+        .padding(.bottom, 16)
+    }
+
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in

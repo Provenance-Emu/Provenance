@@ -22,13 +22,16 @@ struct PremiumThemedToggle<Label: View>: View {
 
 #if canImport(FreemiumKit)
     var body: some View {
+    #if !os(tvOS)
         PaidFeatureView {
             Toggle(isOn: $isOn) {
                 label
             }
             .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
             .onAppear {
+                #if !os(tvOS)
                 UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
+                #endif
             }
         } lockedView: {
             ZStack {
@@ -42,6 +45,21 @@ struct PremiumThemedToggle<Label: View>: View {
                 }.disabled(true)
             }
         }
+        #else
+        PaidFeatureView {
+            Toggle(isOn: $isOn) {
+                label
+            }
+        } lockedView: {
+            ZStack {
+                Color(.clear)
+                Toggle(isOn: $isOn) {
+                    label
+                }
+                .disabled(true)
+            }
+        }
+        #endif
     }
 #else
     var body: some View {

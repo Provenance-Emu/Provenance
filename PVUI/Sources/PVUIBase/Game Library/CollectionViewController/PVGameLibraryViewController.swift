@@ -561,7 +561,9 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         becomeFirstResponder()
 
                 // Extend edges under top bars
-        navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
+        if #available(iOS 17.0, tvOS 17.0, *) {
+            navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
+        }
         extendedLayoutIncludesOpaqueBars = true
         edgesForExtendedLayout = .all
 

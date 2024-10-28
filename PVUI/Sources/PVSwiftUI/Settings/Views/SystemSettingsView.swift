@@ -68,8 +68,9 @@ struct SystemSection: View {
             if let bioses = system.BIOSes, !bioses.isEmpty {
                 Text("BIOSES")
                     .font(.headline)
+                #if !os(tvOS)
                     .listRowBackground(Color(.systemBackground.withAlphaComponent(0.9)))
-
+                #endif
                 ForEach(bioses) { bios in
                     BIOSRow(bios: bios)
                 }
@@ -100,6 +101,7 @@ struct BIOSRow: View {
         }
         .listRowBackground(backgroundColor(for: biosStatus))
         .contentShape(Rectangle()) // Makes entire row tappable
+#if !os(tvOS)
         .onTapGesture {
             if case .match = biosStatus?.state {
                 return // Don't do anything for matched BIOSes
@@ -107,6 +109,7 @@ struct BIOSRow: View {
             UIPasteboard.general.string = bios.expectedMD5.uppercased()
             showCopiedAlert = true
         }
+#endif
         .task {
             biosStatus = await (bios as BIOSStatusProvider).status
         }

@@ -66,7 +66,7 @@ extension PVRootViewController: PVMenuDelegate {
 
     public func didTapHome() {
         self.closeMenu()
-        let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self)
+        let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self, viewModel: self.viewModel)
         self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
     }
 

@@ -44,25 +44,66 @@ public struct PVSettingsView: View {
     public var body: some View {
         NavigationView {
             List {
-                AppSection(viewModel: viewModel)
-                    .environmentObject(viewModel)
-                CoreOptionsSection()
-                SavesSection()
-                AudioSection()
-                VideoSection()
-                MetalSection(viewModel: viewModel)
-                    .environmentObject(viewModel)
-                ControllerSection()
-                LibrarySection(viewModel: viewModel)
-                    .environmentObject(viewModel)
-                LibrarySection2(viewModel: viewModel)
-                    .environmentObject(viewModel)
-                AdvancedSection()
-                SocialLinksSection()
-                DocumentationSection()
-                BuildSection(viewModel: viewModel)
-                    .environmentObject(viewModel)
-                ExtraInfoSection()
+                CollapsibleSection(title: "App") {
+                    AppSection(viewModel: viewModel)
+                        .environmentObject(viewModel)
+                }
+
+                CollapsibleSection(title: "Core Options") {
+                    CoreOptionsSection()
+                }
+
+                CollapsibleSection(title: "Saves") {
+                    SavesSection()
+                }
+#if !os(tvOS)
+                CollapsibleSection(title: "Audio") {
+                    AudioSection()
+                }
+#endif
+                CollapsibleSection(title: "Video") {
+                    VideoSection()
+                }
+
+                CollapsibleSection(title: "Metal") {
+                    MetalSection(viewModel: viewModel)
+                        .environmentObject(viewModel)
+                }
+
+                CollapsibleSection(title: "Controller") {
+                    ControllerSection()
+                }
+
+                CollapsibleSection(title: "Library") {
+                    LibrarySection(viewModel: viewModel)
+                        .environmentObject(viewModel)
+                }
+
+                CollapsibleSection(title: "Library Management") {
+                    LibrarySection2(viewModel: viewModel)
+                        .environmentObject(viewModel)
+                }
+
+                CollapsibleSection(title: "Advanced") {
+                    AdvancedSection()
+                }
+
+                CollapsibleSection(title: "Social Links") {
+                    SocialLinksSection()
+                }
+
+                CollapsibleSection(title: "Documentation") {
+                    DocumentationSection()
+                }
+
+                CollapsibleSection(title: "Build") {
+                    BuildSection(viewModel: viewModel)
+                        .environmentObject(viewModel)
+                }
+
+                CollapsibleSection(title: "Extra Info") {
+                    ExtraInfoSection()
+                }
             }
             .listStyle(GroupedListStyle())
             .navigationTitle("Settings")
@@ -162,8 +203,8 @@ private struct SavesSection: View {
     @Default(.autoLoadSaves) var autoLoadSaves
     @Default(.askToAutoLoad) var askToAutoLoad
     @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
-    
-    var volumeSubtitleText: String {
+
+    var timedAutosaveLabelText: String {
         "\(timedAutoSaveInterval/60.0) minutes between timed auto saves."
     }
 
@@ -189,7 +230,7 @@ private struct SavesSection: View {
                            subtitle: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active.",
                            icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
             }
-
+#if !os(tvOS)
             HStack {
                 Text("Auto-save Time")
                 Slider(value: $timedAutoSaveInterval, in: minutes(1)...minutes(30), step: minutes(1)) {
@@ -200,9 +241,12 @@ private struct SavesSection: View {
                     Image(systemName: "tortoise")
                 }
             }
-            Text(volumeSubtitleText)
+            Text(timedAutosaveLabelText)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+#else
+            // TODO: TVOS Selection of autosave time
+#endif
         }
     }
 }
@@ -307,6 +351,7 @@ private struct ExtraInfoSection: View {
     }
 }
 
+#if !os(tvOS)
 private struct AudioSection: View {
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
@@ -334,6 +379,7 @@ private struct AudioSection: View {
         }
     }
 }
+#endif
 
 private struct VideoSection: View {
     @Default(.multiThreadedGL) var multiThreadedGL
@@ -411,7 +457,9 @@ private struct MetalSection: View {
                     Text(filter).tag(filter)
                 }
             }
+#if !os(tvOS)
             .pickerStyle(.menu)
+#endif
         }
     }
 }
@@ -438,12 +486,14 @@ private struct ControllerSection: View {
                                icon: .sfSymbol("arrow.triangle.swap"))
                 }
             }
-
+#if !os(tvOS)
             OnScreenControllerSection()
+#endif
         }
     }
 }
 
+#if !os(tvOS)
 private struct OnScreenControllerSection: View {
     @Default(.controllerOpacity) var controllerOpacity
     @Default(.buttonTints) var buttonTints
@@ -485,6 +535,7 @@ private struct OnScreenControllerSection: View {
                            subtitle: "Always show buttons not present on original hardware.",
                            icon: .sfSymbol("l.rectangle.roundedbottom"))
             }
+
             ThemedToggle(isOn: $onscreenJoypad) {
                 SettingsRow(title: "On-Screen Joystick",
                            subtitle: "Show a touch Joystick pad on supported systems.",
@@ -495,9 +546,11 @@ private struct OnScreenControllerSection: View {
                            subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
                            icon: .sfSymbol("keyboard.badge.eye"))
             }
+
         }
     }
 }
+#endif
 
 private struct LibrarySection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
@@ -576,7 +629,9 @@ private struct AdvancedTogglesView: View {
     @Default(.unsupportedCores) var unsupportedCores
     @Default(.monoAudio) var monoAudio
     @Default(.useLegacyAudioEngine) var useLegacyAudioEngine
+#if !os(tvOS)
     @Default(.movableButtons) var movableButtons
+#endif
 
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
@@ -625,12 +680,13 @@ private struct AdvancedTogglesView: View {
                             subtitle: "Combine left and right audio channels.",
                             icon: .sfSymbol("speaker.wave.1"))
              }
-            
+#if !os(tvOS)
             PremiumThemedToggle(isOn: $movableButtons) {
                 SettingsRow(title: "Movable Buttons",
                             subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
                             icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
+#endif
 
 //             PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
 //                 SettingsRow(title: "Legacy Audio",
@@ -688,6 +744,49 @@ private struct AppearanceSection: View {
                 SettingsRow(title: "Show Favorites",
                            subtitle: "Display favorites section.",
                            icon: .sfSymbol("star"))
+            }
+        }
+    }
+}
+
+private struct CollapsibleSection<Content: View>: View {
+    let title: String
+    let content: Content
+    @Default(.collapsedSections) var collapsedSections
+
+    init(title: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.content = content()
+        isExpanded = Defaults[.collapsedSystems].contains(title)
+    }
+
+    @State private var isExpanded: Bool {
+        didSet {
+            if isExpanded {
+                collapsedSections.remove(title)
+            } else {
+                collapsedSections.insert(title)
+            }
+        }
+    }
+
+    var body: some View {
+        Section {
+            if isExpanded {
+                content
+            }
+        } header: {
+            Button(action: {
+                withAnimation {
+                    self.isExpanded.toggle()
+                }
+            }) {
+                HStack {
+                    Text(title)
+                    Spacer()
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(.accentColor)
+                }
             }
         }
     }

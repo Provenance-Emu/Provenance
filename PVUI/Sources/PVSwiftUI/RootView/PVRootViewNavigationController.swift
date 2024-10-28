@@ -52,9 +52,11 @@ public final class PVRootViewNavigationController: UINavigationController {
         appearance.titleTextAttributes = [.foregroundColor: palette.gameLibraryHeaderText]
         appearance.largeTitleTextAttributes = [.foregroundColor: palette.gameLibraryHeaderText ]
         
-        navigationBar.standardAppearance = appearance
-        navigationBar.scrollEdgeAppearance = appearance
-        navigationBar.compactAppearance = appearance
+        if #available (iOS 17.0, tvOS 17.0, *) {
+            navigationBar.standardAppearance = appearance
+            navigationBar.scrollEdgeAppearance = appearance
+            navigationBar.compactAppearance = appearance
+        }
         
         navigationBar.tintColor = palette.defaultTintColor // This affects the color of the back button and other bar button items
     }
@@ -63,9 +65,11 @@ public final class PVRootViewNavigationController: UINavigationController {
         let defaultAppearance = UINavigationBarAppearance()
         defaultAppearance.configureWithDefaultBackground()
         
-        navigationBar.standardAppearance = defaultAppearance
-        navigationBar.scrollEdgeAppearance = defaultAppearance
-        navigationBar.compactAppearance = defaultAppearance
+        if #available (iOS 17.0, tvOS 17.0, *) {
+            navigationBar.standardAppearance = defaultAppearance
+            navigationBar.scrollEdgeAppearance = defaultAppearance
+            navigationBar.compactAppearance = defaultAppearance
+        }
         
         navigationBar.tintColor = nil // Reset to default tint color
     }

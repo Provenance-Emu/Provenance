@@ -105,20 +105,21 @@ public extension ThemeManager {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = palette.navigationBarBackgroundColor
-
+        
         if let navigationBarTitleColor = palette.navigationBarTitleColor {
             appearance.titleTextAttributes = [.foregroundColor: palette.navigationBarTitleColor]
             appearance.largeTitleTextAttributes = [.foregroundColor: palette.navigationBarTitleColor]
         }
-
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().compactAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        if #available(iOS 15.0, *) {
-            UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
+        
+        if #available(iOS 17.0, tvOS 17.0, *) {
+            UINavigationBar.appearance().standardAppearance = appearance
+            UINavigationBar.appearance().compactAppearance = appearance
+            UINavigationBar.appearance().scrollEdgeAppearance = appearance
+            if #available(iOS 15.0, *) {
+                UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
+            }
+            UINavigationBar.appearance().tintColor = palette.barButtonItemTint
         }
-
-        UINavigationBar.appearance().tintColor = palette.barButtonItemTint
         DLOG("Navigation bar - tintColor: \(palette.barButtonItemTint?.debugDescription ?? "nil"), backgroundColor: \(palette.navigationBarBackgroundColor?.debugDescription ?? "nil")")
     }
 

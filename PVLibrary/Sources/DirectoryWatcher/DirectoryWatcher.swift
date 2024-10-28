@@ -60,11 +60,11 @@ let TIMER_DELAY_IN_SECONDS = 2.0
 /// The directory watcher class
 import Perception
 
-//#if !os(tvOS)
+#if !os(tvOS)
 @Observable
-//#else
-//@Perceptible
-//#endif
+#else
+@Perceptible
+#endif
 public final class DirectoryWatcher: ObservableObject {
     
     private let watchedDirectory: URL
@@ -108,10 +108,12 @@ public final class DirectoryWatcher: ObservableObject {
         }
     }
 
-//    #if !os(tvOS)
-    @ObservationIgnored
-//    #endif
+    #if os(tvOS)
     private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
+    #else
+    @ObservationIgnored
+    private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
+    #endif
 
     /// A sequence of completed files
     public var completedFilesSequence: AsyncStream<[URL]> {

@@ -48,6 +48,7 @@ struct CoreSection: View {
 
                 // Systems
                 if !systems.isEmpty {
+                    #if !os(tvOS)
                     DisclosureGroup(isExpanded: $isExpanded) {
                         ForEach(systems.sorted(by: { $0.name < $1.name }), id: \.self) { system in
                             Text("• \(system.name)")
@@ -57,6 +58,15 @@ struct CoreSection: View {
                     } label: {
                         Text("Supported Systems (\(systems.count))")
                     }
+                    #else
+                    List {
+                        ForEach(systems.sorted(by: { $0.name < $1.name }), id: \.self) { system in
+                            Text("• \(system.name)")
+                                .padding(.leading, 4)
+                                .padding(.vertical, 2)
+                        }
+                    }
+                    #endif
                 }
             }
             .padding(.vertical, 8)

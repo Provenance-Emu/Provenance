@@ -143,15 +143,18 @@ SideMenuView: SwiftUI.View {
         }
 #if canImport(Introspect)
         .introspectNavigationController(customize: { navController in
-           let appearance = UINavigationBarAppearance()
-           appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = themeManager.currentPalette.menuHeaderBackground
-            appearance.titleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText]
-           appearance.largeTitleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText ]
    
-            navController.navigationBar.standardAppearance = appearance
-            navController.navigationBar.scrollEdgeAppearance = appearance
-            navController.navigationBar.compactAppearance = appearance
+            if #available(iOS 17.0, tvOS 17.0, * ) {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithOpaqueBackground()
+                appearance.backgroundColor = themeManager.currentPalette.menuHeaderBackground
+                appearance.titleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText]
+                appearance.largeTitleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText ]
+                
+                navController.navigationBar.standardAppearance = appearance
+                navController.navigationBar.scrollEdgeAppearance = appearance
+                navController.navigationBar.compactAppearance = appearance
+            }
 
             navController.navigationBar.tintColor = themeManager.currentPalette.menuHeaderIconTint
         })

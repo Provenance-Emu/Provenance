@@ -43,7 +43,11 @@ import SteamController
 import FreemiumKit
 #endif
 
+#if os(tvOS)
+//@Perceptible
+#else
 @Observable
+#endif
 final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDelegate {
     /// This is set by the UIApplicationDelegateAdaptor
     internal var window: UIWindow? = nil
@@ -217,12 +221,14 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 
     private func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
         // Handle if started from shortcut
+        #if !os(tvOS)
         if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
            shortcut.type == "kRecentGameShortcut",
            let md5Value = shortcut.userInfo?["PVGameHash"] as? String,
            let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
             shortcutItemGame = matchedGame
         }
+        #endif
 
         Task {
             for await value in Defaults.updates(.disableAutoLock) {
@@ -284,7 +290,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
                 Task.detached { @MainActor in
                     self._initUITheme()
                     if self.isAppStore {
+                        #if !os(tvOS)
                         self.appRatingSignifigantEvent()
+                        #endif
                     }
                 }
             }
@@ -298,7 +306,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
                         Task { @MainActor in
                             self?._initUITheme()
                             if self?.isAppStore == true {
+#if !os(tvOS)
                                 self?.appRatingSignifigantEvent()
+#endif
                             }
                         }
                     }
@@ -312,7 +322,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
                 Task.detached { @MainActor in
                     self._initUITheme()
                     if self.isAppStore {
+#if !os(tvOS)
                         self.appRatingSignifigantEvent()
+#endif
                     }
                 }
             }
@@ -327,7 +339,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
                     Task { @MainActor in
                         self._initUITheme()
                         if self.isAppStore == true {
+#if !os(tvOS)
                             self.appRatingSignifigantEvent()
+#endif
                         }
                     }
                 }
@@ -344,7 +358,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
             }
         }
         if isAppStore {
+#if !os(tvOS)
             appRatingSignifigantEvent()
+#endif
         }
     }
 
@@ -355,7 +371,9 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
             core.setPauseEmulation(true)
         }
         if isAppStore {
+#if !os(tvOS)
             appRatingSignifigantEvent()
+#endif
         }
     }
 

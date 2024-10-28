@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 10/27/24.
 //
 
+#if !os(tvOS)
 import SwiftUI
 import UIKit
 import PVThemes
@@ -70,4 +71,4 @@ private struct SwitchRepresentable: UIViewRepresentable {
         }
     }
 }
-
+#endif

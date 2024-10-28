@@ -70,7 +70,7 @@ public final class PVLicensesViewController: UIViewController {
     }
 
     #if os(tvOS)
-        override var preferredFocusedView: UIView? {
+    public override var preferredFocusedView: UIView? {
             return textView
         }
     #endif

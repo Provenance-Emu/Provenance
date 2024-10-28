@@ -44,6 +44,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         HStack(spacing: spacing) {
+#if !os(tvOS)
             Menu {
                 Toggle(isOn: $showGameTitles) {
                     Label("Show Game Titles", systemImage: "textformat")
@@ -60,11 +61,32 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 Toggle(isOn: $showGameBadges) {
                     Label("Show Badges", systemImage: "rosette")
                 }
-            } label: {
+            }
+            label: {
                 Image(systemName: "line.3.horizontal.decrease.circle")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(font)
-            }.padding(.horizontal, 30)
+            }
+            .padding(.horizontal, 30)
+#else
+//            Menu {
+//                Toggle(isOn: $showGameTitles) {
+//                    Label("Show Game Titles", systemImage: "textformat")
+//                }
+//                Toggle(isOn: $showRecentGames) {
+//                    Label("Show Recent Games", systemImage: "clock")
+//                }
+//                Toggle(isOn: $showRecentSaveStates) {
+//                    Label("Show Save States", systemImage: "bookmark")
+//                }
+//                Toggle(isOn: $showFavorites) {
+//                    Label("Show Favorites", systemImage: "star")
+//                }
+//                Toggle(isOn: $showGameBadges) {
+//                    Label("Show Badges", systemImage: "rosette")
+//                }
+//            }
+#endif
 
             Spacer()
             OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
