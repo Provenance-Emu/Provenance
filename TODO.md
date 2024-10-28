@@ -24,6 +24,7 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [ ] Dark mode toggle doens't refresh all views if theme set to auto
 - [ ] iCloud sync removed
 - [ ] (Lite) Turbo GFX 16 no video for some roms
 - [ ] (Lite) Intellivision (PVBliss) audio crashes on button press
@@ -52,28 +53,18 @@ _My personal TODO notes_
 
 ## Minor bugs
 
-- [ ] theme switching doesn't update everything
-- [X] purple and rainbow themes not selectable
-- [X] Themes page indicator not right
+- [ ] theme switching doesn't update nav bar color
 - [ ] Box art is clipped in swift ui -- need better aspect ratios
-- [ ] add tap for bios to clipboard in swiftui on missing
 - [ ] Game Info in swift ui crashes on next game scroll
-- [ ] Fix button 9 repeat on Intellivision controls
-- [ ] Dark mode toggle doens't refresh all views if theme set to auto
-- [ ] Importer should overwrite or delete on duplicate imports
-- [ ] Swift UI console view, games could use some improvments
-    - [ ] side padding minimums
-    - [ ] even spacing
-    - [ ] game title text sometimes overflows the width
+- [X] Fix button 9 repeat on Intellivision controls
+- [X] Importer should overwrite or delete on duplicate imports
 - [ ] Spotlignt/extensions can't build with spm modules
-- [ ] Add Show recent saves on console itself
 - [ ] See if psx mednafen has more options
 - [ ] Short names are abreviations not shortname
 - [ ] Sega Master System short name showing as SMS
 - [ ] Mupen CoreOptions code is trash 
 - [ ] Opening roms from md5/siri search doesn't work
 - [ ] Swift UI should open on home and be scrollable to systems
-- [ ] Swift UI sort consoles by bits/brand/name/year order ascend/descend
 - [ ] N64 onscreen controls are kind of high
 - [ ] Themes are ugly on old UI
     - [ ] Fix default no-artwork background
@@ -82,7 +73,15 @@ _My personal TODO notes_
     - [ ] Main background not themed
     - [ ] Game text not themed
     - [ ] New import indicator not themed
-- Swift UI doesn't have "Share" menu item
+- [ ] Swift UI doesn't have "Share" menu item
+- [X] purple and rainbow themes not selectable
+- [X] Themes page indicator not right
+- [X] add tap for bios to clipboard in swiftui on missing
+- [X] Swift UI console view, games could use some improvments
+    - [X] side padding minimums
+    - [X] even spacing
+    - [X] game title text sometimes overflows the width
+- [X] Add Show recent saves on console itself
 - [X] Dolphin won't build due to stdint.h in extern C
 - [X] Nes fix button layout
 - [X] Test/fix CrabEMU save states
