@@ -50,8 +50,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <streams/file_stream.h>
-//#include <streams/file_stream_transforms.h>
+#include <streams/file_stream.h>
+#include <streams/file_stream_transforms.h>
 
 #define MAX_INPUTS 8
 #define MAX_KEYS 8

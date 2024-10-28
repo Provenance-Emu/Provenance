@@ -125,6 +125,11 @@
 		B3A9F4201DE7EB67008450F5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F41F1DE7EB67008450F5 /* libz.tbd */; };
 		B3A9F4221DE7F5F2008450F5 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA85C17F752610031B1C9 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AFCF7E2977A70400A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF7D2977A70400A01010 /* PVLogging */; };
+		B3FD53672CD0244200175917 /* chd.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE69289627AC00F75595 /* chd.c */; };
+		B3FD53682CD0244200175917 /* chd.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE69289627AC00F75595 /* chd.c */; };
+		B3FD53E72CD02A0000175917 /* file_stream_transforms.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEE8289627AD00F75595 /* file_stream_transforms.c */; };
+		B3FD53E82CD02A1400175917 /* file_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEE9289627AD00F75595 /* file_stream.c */; };
+		B3FD53E92CD02A2C00175917 /* vfs_implementation.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEE3289627AD00F75595 /* vfs_implementation.c */; };
 		C66E093B2586D34B00EA6170 /* scrc32.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09382586D34B00EA6170 /* scrc32.h */; };
 		C66E09452586D39E00EA6170 /* opll.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093E2586D39D00EA6170 /* opll.h */; };
 		C66E09472586D39E00EA6170 /* psg.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093F2586D39D00EA6170 /* psg.h */; };
@@ -850,11 +855,42 @@
 			);
 			target = B3E432031DE6917700D3C91E /* PVGenesis */;
 		};
+		B3FD53CC2CD026B900175917 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				deps/libFLAC/bitmath.c,
+				deps/libFLAC/bitreader.c,
+				deps/libFLAC/cpu.c,
+				deps/libFLAC/crc.c,
+				deps/libFLAC/fixed.c,
+				deps/libFLAC/float.c,
+				deps/libFLAC/format.c,
+				deps/libFLAC/lpc.c,
+				deps/libFLAC/md5.c,
+				deps/libFLAC/memory.c,
+				deps/libFLAC/stream_decoder.c,
+				deps/lzma/LzFind.c,
+				deps/lzma/LzmaDec.c,
+				deps/lzma/LzmaEnc.c,
+				deps/zlib/adler32.c,
+				deps/zlib/inffast.c,
+				deps/zlib/inflate.c,
+				deps/zlib/inftrees.c,
+				deps/zlib/zutil.c,
+				src/bitstream.c,
+				src/cdrom.c,
+				src/chd.c,
+				src/flac.c,
+				src/huffman.c,
+			);
+			target = B36700402896290E00F75595 /* genesisPlusGX-legacy */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B3816E042CA91C6200DBA1A0 /* PVCoreGenesisPlus */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = PVCoreGenesisPlus; sourceTree = "<group>"; };
 		B3816E0A2CA91C6200DBA1A0 /* PVCoreGenesisPlusBridge */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3816E132CA91C6E00DBA1A0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = PVCoreGenesisPlusBridge; sourceTree = "<group>"; };
+		B3FD53C62CD026A800175917 /* libchdr */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD53CC2CD026B900175917 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libchdr; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1017,6 +1053,7 @@
 		1ACEA70017F752600031B1C9 /* cd_hw */ = {
 			isa = PBXGroup;
 			children = (
+				B3FD53C62CD026A800175917 /* libchdr */,
 				1ACEA70117F752600031B1C9 /* cd_cart.c */,
 				1ACEA70317F752600031B1C9 /* cdc.c */,
 				1ACEA70517F752600031B1C9 /* cdd.c */,
@@ -2355,6 +2392,8 @@
 				B36700992896293700F75595 /* cd_cart.c in Sources */,
 				B367008A2896293700F75595 /* paddle.c in Sources */,
 				B36700AF2896293700F75595 /* sms_cart.c in Sources */,
+				B3FD53682CD0244200175917 /* chd.c in Sources */,
+				B3FD53E92CD02A2C00175917 /* vfs_implementation.c in Sources */,
 				B36700AB2896293700F75595 /* system.c in Sources */,
 				B36700A52896293700F75595 /* opll.c in Sources */,
 				B36700A92896293700F75595 /* xe_1ap.c in Sources */,
@@ -2389,6 +2428,7 @@
 				B367009D2896293700F75595 /* teamplayer.c in Sources */,
 				B36700A32896293700F75595 /* ggenie.c in Sources */,
 				B36700922896293700F75595 /* input.c in Sources */,
+				B3FD53E72CD02A0000175917 /* file_stream_transforms.c in Sources */,
 				B36700842896293700F75595 /* blip_buf.c in Sources */,
 				B36700AC2896293700F75595 /* genesis.c in Sources */,
 				B367009A2896293700F75595 /* eeprom_spi.c in Sources */,
@@ -2401,6 +2441,7 @@
 				B367007E2896293700F75595 /* gfx.c in Sources */,
 				B36700AA2896293700F75595 /* eeprom_93c.c in Sources */,
 				B367007C2896293700F75595 /* md_ntsc.c in Sources */,
+				B3FD53E82CD02A1400175917 /* file_stream.c in Sources */,
 				B36700A82896293700F75595 /* eq.c in Sources */,
 				B367008D2896293700F75595 /* m68kcpu.c in Sources */,
 			);
@@ -2425,6 +2466,7 @@
 				B3670025289628BB00F75595 /* sram.c in Sources */,
 				B3670035289628EF00F75595 /* activator.c in Sources */,
 				B367001E2896289500F75595 /* ym2612.c in Sources */,
+				B3FD53672CD0244200175917 /* chd.c in Sources */,
 				B367016828962BC900F75595 /* libretro.c in Sources */,
 				B36700142896283B00F75595 /* vdp_ctrl.c in Sources */,
 				B367002A289628D400F75595 /* ssp16.c in Sources */,
@@ -2729,6 +2771,7 @@
 				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/libgenesisplus/Genesis-Plus-GX/libretro/libretro-common/include\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2883,9 +2926,15 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/libgenesisplus/genplusgx_source/cd_hw/libchdr/deps\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/genplusgx_source/cd_hw/libchdr/src\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/genplusgx_source\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/libretro\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/other\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/Genesis-Plus-GX/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/Genesis-Plus-GX/core/cd_hw/libchdr/deps/libFLAC/include\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/genplusgx_source/cd_hw/libchdr/deps/libFLAC/include\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/other\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -2919,9 +2968,15 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/libgenesisplus/genplusgx_source/cd_hw/libchdr/deps\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/genplusgx_source/cd_hw/libchdr/src\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/genplusgx_source\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/libretro\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/other\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/Genesis-Plus-GX/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/Genesis-Plus-GX/core/cd_hw/libchdr/deps/libFLAC/include\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/genplusgx_source/cd_hw/libchdr/deps/libFLAC/include\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/other\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2955,9 +3010,15 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/libgenesisplus/genplusgx_source/cd_hw/libchdr/deps\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/genplusgx_source/cd_hw/libchdr/src\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/genplusgx_source\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/libretro\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/other\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/Genesis-Plus-GX/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/Genesis-Plus-GX/core/cd_hw/libchdr/deps/libFLAC/include\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/genplusgx_source/cd_hw/libchdr/deps/libFLAC/include\"",
+					"\"$(SRCROOT)/Sources/libgenesisplus/other\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2998,6 +3059,7 @@
 				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/libgenesisplus/Genesis-Plus-GX/libretro/libretro-common/include\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3054,6 +3116,7 @@
 				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/libgenesisplus/Genesis-Plus-GX/libretro/libretro-common/include\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
