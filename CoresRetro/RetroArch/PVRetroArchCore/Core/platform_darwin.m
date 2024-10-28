@@ -437,6 +437,7 @@ void frontend_darwin_get_env(int *argc, char *argv[],
     fill_pathname_join_special(assets_zip_path, bundle_path_buf, "Frameworks/PVRetroArch.framework/assets.zip", sizeof(assets_zip_path));
     //fill_pathname_join_special(assets_zip_path, bundle_path_buf, "assets.zip", sizeof(assets_zip_path));
 #else
+    /// TODO: For Mac Catalyst or Mac, this path may need to be "Contents/..."
     fill_pathname_join_special(assets_zip_path, full_resource_path_buf, "Frameworks/PVRetroArch.framework/assets.zip", sizeof(assets_zip_path));
     //fill_pathname_join_special(assets_zip_path, full_resource_path_buf, "assets.zip", sizeof(assets_zip_path));
     CFURLRef resource_url;

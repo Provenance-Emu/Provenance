@@ -77,6 +77,7 @@
  */
 - (bool)setDisableDisplaySleep:(bool)disable;
 - (void)setupMainWindow;
+- (void)setupEmulation;
 //
 - (void) setupView;
 - (void) setRootView:(BOOL)flag;

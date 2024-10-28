@@ -78,6 +78,29 @@ int argc =  1;
 @end
 
 @implementation PVRetroArchCore (RetroArchUI)
+
+- (void)initialize {
+    [super initialize];
+//    [self setupEmulation];
+    NSLog(@"RetroArch: Extract %d\n", self.extractArchive);
+}
+
+- (void)setupEmulation {
+    self.alwaysUseMetal = true;
+    self.skipLayout = true;
+    [self parseOptions];
+    settings_t *settings = config_get_ptr();
+    if (!settings) {
+        retroarch_config_init();
+        config_set_defaults(global_get_ptr());
+        frontend_darwin_get_env(argc, argv, NULL, NULL);
+        dir_check_defaults(NULL);
+    }
+    [self writeConfigFile];
+    [self syncResources:self.BIOSPath
+                     to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system" ]];
+}
+
 - (void)startEmulation {
 	@autoreleasepool {
         _current=self;
@@ -242,27 +265,14 @@ void extract_bundles();
     return true;
 }
 #pragma mark - Running
-- (void)setupEmulation {
-    self.alwaysUseMetal = true;
-    self.skipLayout = true;
-    [self parseOptions];
-	settings_t *settings = config_get_ptr();
-	if (!settings) {
-        retroarch_config_init();
-		config_set_defaults(global_get_ptr());
-		frontend_darwin_get_env(argc, argv, NULL, NULL);
-		dir_check_defaults(NULL);
-	}
-    [self writeConfigFile];
-    [self syncResources:self.BIOSPath
-                     to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system" ]];
-}
+
 - (void)setVolume {
     [self parseOptions];
     settings_t *settings = config_get_ptr();
     settings->floats.audio_mixer_volume = 92.0 * self.volume/92.0 - 80;
     command_event_set_mixer_volume(settings, 0);
 }
+
 - (void)syncResources:(NSString*)from to:(NSString*)to {
 	if (!from)
 		return;
@@ -282,6 +292,7 @@ void extract_bundles();
 		}
 	}
 }
+
 - (void)syncResource:(NSString*)from to:(NSString*)to {
     if (!from)
         return;
@@ -291,6 +302,7 @@ void extract_bundles();
     NSData *fileData = [NSData dataWithContentsOfFile:from];
     [fileData writeToFile:to atomically:NO];
 }
+
 - (void)setViewType:(apple_view_type_t)vt
 {
     if (vt == _vt)
@@ -310,7 +322,7 @@ void extract_bundles();
             MetalView *v = [MetalView new];
             v.paused                = YES;
             v.enableSetNeedsDisplay = NO;
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_TV && !TARGET_OS_OSX
             v.multipleTouchEnabled  = YES;
 #endif
             v.autoresizesSubviews=true;
@@ -324,7 +336,7 @@ void extract_bundles();
             MetalView *v = [MetalView new];
             v.paused                = YES;
             v.enableSetNeedsDisplay = NO;
-#if TARGET_OS_IOS && !TARGET_OS_TV
+#if TARGET_OS_IOS && !TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_OSX
             v.multipleTouchEnabled  = YES;
 #endif
             if (!self.isRootView) {

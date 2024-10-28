@@ -154,7 +154,7 @@ void *glkitview_init(void);
 
 - (void)draggingExited:(id <NSDraggingInfo>)sender { [self setNeedsDisplay: YES]; }
 
-#elif TARGET_OS_IOS
+#elif TARGET_OS_IOS || TARGET_OS_TV
 -(void) showNativeMenu
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -412,7 +412,7 @@ void *glkitview_init(void);
     if (server.bonjourServerURL != nil)
         [servers appendString:[NSString stringWithFormat:@"%@",server.bonjourServerURL]];
     
-#if TARGET_OS_TV || TARGET_OS_IOS
+#if TARGET_OS_TV || TARGET_OS_IOS || TARGET_OS_OSX
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Welcome to RetroArch" message:[NSString stringWithFormat:@"To transfer files from your computer, go to one of these addresses on your web browser:\n\n%@",servers] preferredStyle:UIAlertControllerStyleAlert];
 #if TARGET_OS_TV
     [alert addAction:[UIAlertAction actionWithTitle:@"OK"

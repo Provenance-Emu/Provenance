@@ -244,7 +244,7 @@
 #include "lakka.h"
 #endif
 
-#if defined(HAVE_COCOATOUCH) && TARGET_OS_IOS
+#if defined(HAVE_COCOATOUCH) && (TARGET_OS_IOS || TARGET_OS_IOS)
 #include "JITSupport.h"
 #endif
 
