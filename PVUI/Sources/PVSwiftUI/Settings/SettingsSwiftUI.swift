@@ -753,21 +753,13 @@ private struct CollapsibleSection<Content: View>: View {
     let title: String
     let content: Content
     @Default(.collapsedSections) var collapsedSections
+    @State private var isExpanded: Bool
 
     init(title: String, @ViewBuilder content: () -> Content) {
         self.title = title
         self.content = content()
-        isExpanded = Defaults[.collapsedSystems].contains(title)
-    }
-
-    @State private var isExpanded: Bool {
-        didSet {
-            if isExpanded {
-                collapsedSections.remove(title)
-            } else {
-                collapsedSections.insert(title)
-            }
-        }
+        self._isExpanded = State(initialValue: !Defaults[.collapsedSections].contains(title))
+        print("Init CollapsibleSection '\(title)' - collapsed sections: \(Defaults[.collapsedSections])")
     }
 
     var body: some View {
@@ -778,7 +770,15 @@ private struct CollapsibleSection<Content: View>: View {
         } header: {
             Button(action: {
                 withAnimation {
-                    self.isExpanded.toggle()
+                    isExpanded.toggle()
+                    print("Setting isExpanded for '\(title)' to \(isExpanded)")
+                    print("Before - collapsed sections: \(collapsedSections)")
+                    if isExpanded {
+                        collapsedSections.remove(title)
+                    } else {
+                        collapsedSections.insert(title)
+                    }
+                    print("After - collapsed sections: \(collapsedSections)")
                 }
             }) {
                 HStack {
