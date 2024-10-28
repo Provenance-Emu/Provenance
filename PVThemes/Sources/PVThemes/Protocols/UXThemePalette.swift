@@ -31,7 +31,7 @@ public protocol PaletteProvider {
     var palette: any UXThemePalette { get }
 }
 
-public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
+public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable, CustomStringConvertible  {
 
     var name: String { get }
     var group: String? { get }
@@ -138,6 +138,12 @@ public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
     var menuSectionHeaderText: UIColor { get }
     ///         Icon
     var menuSectionHeaderIconTint: UIColor { get }
+}
+
+extension UXThemePalette {
+    public var description: String {
+        name
+    }
 }
 
 // MARK: - Default implimentnations

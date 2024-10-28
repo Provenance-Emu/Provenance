@@ -23,8 +23,8 @@ struct ProvenanceApp: App {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
 #if canImport(FreemiumKit)
-                    #if DEBUG
-//                    FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
+                    #if targetEnvironment(simulator)
+                    FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
                     #else
                     if !appDelegate.isAppStore {
                         FreemiumKit.shared.overrideForDebug(purchasedTier: 1)

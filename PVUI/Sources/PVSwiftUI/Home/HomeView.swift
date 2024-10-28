@@ -27,6 +27,10 @@ struct HomeView: SwiftUI.View {
 
     weak var rootDelegate: PVRootDelegate?
 
+    @Default(.showRecentSaveStates) private var showRecentSaveStates
+    @Default(.showRecentGames) private var showRecentGames
+    @Default(.showFavorites) private var showFavorites
+
     @ObservedResults(
         PVSaveState.self,
         filter: NSPredicate(format: "game != nil && game.system != nil"),
@@ -60,27 +64,36 @@ struct HomeView: SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
                 LazyVStack {
-                    HomeContinueSection(rootDelegate: rootDelegate)
-                    HomeSection(title: "Recently Played") {
-                        ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
-                            GameItemView(game: game, constrainHeight: true) {
-                                Task.detached { @MainActor in
-                                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)}
-                            }
-                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
-                        }
+                    if showRecentSaveStates {
+                        HomeContinueSection(rootDelegate: rootDelegate)
                     }
-                    HomeDividerView()
-                    HomeSection(title: "Favorites") {
-                        ForEach(favorites, id: \.self) { favorite in
-                            GameItemView(game: favorite, constrainHeight: true) {
-                                Task.detached { @MainActor in
-                                    await rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)}
+
+                    if showRecentGames {
+                        HomeSection(title: "Recently Played") {
+                            ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
+                                GameItemView(game: game, constrainHeight: true) {
+                                    Task.detached { @MainActor in
+                                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)}
+                                }
+                                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                             }
-                            .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate) }
                         }
+                        HomeDividerView()
                     }
-                    HomeDividerView()
+
+                    if showFavorites {
+                        HomeSection(title: "Favorites") {
+                            ForEach(favorites, id: \.self) { favorite in
+                                GameItemView(game: favorite, constrainHeight: true) {
+                                    Task.detached { @MainActor in
+                                        await rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)}
+                                }
+                                .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate) }
+                            }
+                        }
+                        HomeDividerView()
+                    }
+
                     HomeSection(title: "Most Played") {
                         ForEach(mostPlayed, id: \.self) { playedGame in
                             GameItemView(game: playedGame, constrainHeight: true) {
