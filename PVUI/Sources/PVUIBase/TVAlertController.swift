@@ -65,9 +65,9 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
     public var actions = [UIAlertAction]()
     public var textFields:[UITextField]?
     public var preferredAction: UIAlertAction?
-    var cancelAction: UIAlertAction?
+    public var cancelAction: UIAlertAction?
 
-    var autoDismiss = true          // a UIAlertController is always autoDismiss
+    public var autoDismiss = true          // a UIAlertController is always autoDismiss
 
     internal private(set) var doubleStackHeight = 0
 
@@ -82,7 +82,7 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
 
     // MARK: init
 
-    convenience init(title: String?, message: String?, preferredStyle: UIAlertController.Style) {
+    public convenience init(title: String?, message: String?, preferredStyle: UIAlertController.Style) {
         self.init(nibName:nil, bundle: nil)
         self.title = title
         self.message = message
@@ -96,7 +96,7 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
         #endif
     }
 
-    var spacing: CGFloat {
+    public var spacing: CGFloat {
         get {
             return stack.spacing
         }
@@ -105,7 +105,7 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
         }
     }
 
-    var font = _font {
+    public var font = _font {
         didSet {
              spacing = floor(font.lineHeight / 4.0)
         }

@@ -3,6 +3,8 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [X] wrap advanced settings in freemiumview
+- [ ] fix launching webserver from swiftui menu
 - [ ] (Lite) Sega CD is borked
 - [X] iCloud sync isn't working, remove or fix
 - [X] Swift UI long press on roms menu missing actions {rename, ~~share~~}
@@ -53,6 +55,7 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] should store last page view for next open
 - [ ] Swift UI Settings should use the themed alerts via the delegate or something
 - [ ] theme switching doesn't update nav bar color
 - [ ] Box art is clipped in swift ui -- need better aspect ratios

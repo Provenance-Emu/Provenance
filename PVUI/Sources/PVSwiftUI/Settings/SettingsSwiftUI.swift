@@ -45,18 +45,28 @@ public struct PVSettingsView: View {
         NavigationView {
             List {
                 AppSection(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 CoreOptionsSection()
                 SavesSection(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 AudioSection(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 VideoSection(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 MetalSection(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 ControllerSection(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 LibrarySection(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 LibrarySection2(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 AdvancedSection(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 SocialLinksSection()
                 DocumentationSection()
                 BuildSection(viewModel: viewModel)
+                    .environmentObject(viewModel)
                 ExtraInfoSection()
             }
             .listStyle(GroupedListStyle())
@@ -66,10 +76,6 @@ public struct PVSettingsView: View {
                 trailing: Button("Help") { viewModel.showHelp() }
             )
         }
-//        .onAppear {
-//            viewModel.menuDelegate = menuDelegate
-//            viewModel.conflictsController = conflictsController
-//        }
     }
 }
 
@@ -524,49 +530,50 @@ private struct AdvancedTogglesView: View {
     }()
 
     var body: some View {
+        
         Group {
             if !isAppStore {
-                ThemedToggle(isOn: viewModel.$autoJIT) {
+                PremiumThemedToggle(isOn: viewModel.$autoJIT) {
                     SettingsRow(title: "Auto JIT",
                                subtitle: "Automatically enable JIT when available.",
                                icon: .sfSymbol("bolt"))
                 }
             }
 
-            ThemedToggle(isOn: viewModel.$disableAutoLock) {
+            PremiumThemedToggle(isOn: viewModel.$disableAutoLock) {
                 SettingsRow(title: "Disable Auto Lock",
                            subtitle: "Prevent device from auto-locking during gameplay.",
                            icon: .sfSymbol("lock.open"))
             }
 
             if !isAppStore {
-                ThemedToggle(isOn: viewModel.$iCloudSync) {
+                PremiumThemedToggle(isOn: viewModel.$iCloudSync) {
                     SettingsRow(title: "iCloud Sync",
                                 subtitle: "Sync save states and settings across devices.",
                                 icon: .sfSymbol("icloud"))
                 }
             }
 
-            ThemedToggle(isOn: viewModel.$useMetalRenderer) {
+            PremiumThemedToggle(isOn: viewModel.$useMetalRenderer) {
                 SettingsRow(title: "Metal Renderer",
                            subtitle: "Use Metal for improved graphics performance.",
                            icon: .sfSymbol("cpu"))
             }
 
-            ThemedToggle(isOn: viewModel.$useUIKit) {
+            PremiumThemedToggle(isOn: viewModel.$useUIKit) {
                 SettingsRow(title: "Use UIKit",
                            subtitle: "Use UIKit interface instead of SwiftUI.",
                            icon: .sfSymbol("switch.2"))
             }
 
-            ThemedToggle(isOn: viewModel.$webDavAlwaysOn) {
+            PremiumThemedToggle(isOn: viewModel.$webDavAlwaysOn) {
                 SettingsRow(title: "WebDAV Always On",
                            subtitle: "Keep WebDAV server running in background.",
                            icon: .sfSymbol("network"))
             }
 
             if !isAppStore {
-                ThemedToggle(isOn: viewModel.$unsupportedCores) {
+                PremiumThemedToggle(isOn: viewModel.$unsupportedCores) {
                     SettingsRow(title: "Show Unsupported Cores",
                                 subtitle: "Display experimental and unsupported cores.",
                                 icon: .sfSymbol("exclamationmark.triangle"))

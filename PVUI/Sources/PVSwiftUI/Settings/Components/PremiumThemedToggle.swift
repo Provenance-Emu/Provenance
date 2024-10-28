@@ -31,13 +31,16 @@ struct PremiumThemedToggle<Label: View>: View {
                 UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
             }
         } lockedView: {
-            Toggle(isOn: $isOn) {
-                label
+            ZStack {
+                Color(.clear)
+                Toggle(isOn: $isOn) {
+                    label
+                }
+                .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
+                .onAppear {
+                    UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
+                }.disabled(true)
             }
-            .toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
-            .onAppear {
-                UISwitch.appearance().thumbTintColor = themeManager.currentPalette.switchThumb
-            }.disabled(true)
         }
     }
 #else

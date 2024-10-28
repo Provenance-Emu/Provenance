@@ -103,7 +103,11 @@ extension PVRootViewController: PVMenuDelegate {
 //        actionSheet.popoverPresentationController?.sourceView = self.view
 //        actionSheet.popoverPresentationController?.sourceRect = self.view?.bounds ?? UIScreen.main.bounds
 
-        present(actionSheet, animated: true, completion: nil)
+        if let presentedViewController = presentedViewController {
+            presentedViewController.present(actionSheet, animated: true, completion: nil)
+        } else {
+            present(actionSheet, animated: true, completion: nil)
+        }
         #endif
     }
 

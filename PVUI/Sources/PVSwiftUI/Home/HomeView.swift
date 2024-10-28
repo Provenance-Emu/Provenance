@@ -52,6 +52,15 @@ struct HomeView: SwiftUI.View {
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
+    
+    /// Sorted by systemIdentifier, then title
+    @ObservedResults(
+        PVGame.self,
+        sortDescriptor: .init(keyPath: \PVGame.title, ascending: true)
+    ) var allGames
+    // RomDatabase.sharedInstance.allGamesSortedBySystemThenTitle
+
+
 
     init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil) {
 //        self.gameLibrary = gameLibrary
@@ -103,11 +112,44 @@ struct HomeView: SwiftUI.View {
                             .contextMenu { GameContextMenu(game: playedGame, rootDelegate: rootDelegate) }
                         }
                     }
+                    
+                    HomeDividerView()
+                    HomeSection(title: "All Games") {
+                        showGamesGrid(allGames)
+                    }
                 }
             }
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
         }
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+    }
+    
+    private func showGamesList(_ games: Results<PVGame>) -> some View {
+        LazyVStack(spacing: 8) {
+            ForEach(games, id: \.self) { game in
+                GameItemView(game: game, constrainHeight: false, viewType: .cell) {
+                    Task.detached { @MainActor in
+                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)}
+                }
+                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+            }
+        }
+    }
+    
+    private func showGamesGrid(_ games: Results<PVGame>) -> some View {
+        let gamesPerRow = min(8, games.count)
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: gamesPerRow)
+        return LazyVGrid(columns: columns, spacing: 10) {
+            ForEach(games, id: \.self) { game in
+                GameItemView(game: game, constrainHeight: false) {
+                    Task.detached { @MainActor in
+                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    }
+                }
+                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+            }
+        }
+        .padding(.horizontal, 10)
     }
 }
 

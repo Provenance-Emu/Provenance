@@ -59,16 +59,17 @@ struct BiosRowView: SwiftUI.View {
                 case .missing:
                     Text("Missing")
                         .font(.caption)
-                        .foregroundColor(Color.yellow)
+                        .foregroundColor(Color.red)
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(Color.yellow)
+                        .foregroundColor(Color.red)
                         .font(.caption.weight(.light))
                 case .mismatch(_):
                     Text("Mismatch")
                         .font(.caption)
-                        .foregroundColor(Color.red)
+                        .foregroundColor(Color.yellow)
+                        .border(Color.yellow)
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(Color.red)
+                        .foregroundColor(Color.yellow)
                         .font(.caption.weight(.medium))
                 case .none:
                     Text("Loading...")
@@ -92,11 +93,12 @@ struct BiosRowView: SwiftUI.View {
                 showMD5Alert = true
             }
         }
-        .alert("MD5 Copied", isPresented: $showMD5Alert) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text("The MD5 for \(bios.expectedFilename) has been copied to the pasteboard")
-        }
+        .uiKitAlert("MD5 Copied",
+                    message: "The MD5 for \(bios.expectedFilename) has been copied to the pasteboard",
+                    isPresented: $showMD5Alert,
+                    buttons: {
+            UIAlertAction(title: "OK", style: .default)
+        })
     }
 }
 #endif

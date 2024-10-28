@@ -8,7 +8,7 @@
 import Foundation
 
 public struct BIOSStatus: Codable, Sendable {
-    public enum Mismatch: Codable, Sendable {
+    public enum Mismatch: Codable, Sendable, CustomStringConvertible {
         public enum CodingError: Error { case decoding(String) }
 
         enum CodableKeys: String, CodingKey { case md5, size, filename, expectedMD5, actualMD5, expectedSize, actualSize, expectedFilename, actualFilename }
@@ -56,6 +56,17 @@ public struct BIOSStatus: Codable, Sendable {
         case md5(expected: String, actual: String)
         case size(expected: UInt, actual: UInt)
         case filename(expected: String, actual: String)
+        
+        public var description: String {
+            switch self {
+            case let .md5(expected, actual):
+                return "MD5 mismatch: expected \(expected), actual \(actual)"
+            case let .size(expected, actual):
+                return "Size mismatch: expected \(expected), actual \(actual)"
+            case let .filename(expected, actual):
+                return "Filename mismatch: expected \(expected), actual \(actual)"
+            }
+        }
     }
 
     public enum State: Codable, Sendable{

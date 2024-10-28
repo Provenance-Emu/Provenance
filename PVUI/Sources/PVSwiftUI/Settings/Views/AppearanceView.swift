@@ -16,10 +16,10 @@ struct AppearanceView: View {
             Section(header: Text("Display Options")) {
                 ThemedToggle(isOn: $viewModel.showGameTitles) {
                     SettingsRow(title: "Show Game Titles",
-                                subtitle: "Display game titles under artwork.",
-                                icon: .sfSymbol("textformat"))
+                              subtitle: "Display game titles under artwork.",
+                              icon: .sfSymbol("textformat"))
                 }
-            }
+
                 ThemedToggle(isOn: $viewModel.showRecentGames) {
                     SettingsRow(title: "Show Recently Played Games",
                               subtitle: "Display recently played games section.",
