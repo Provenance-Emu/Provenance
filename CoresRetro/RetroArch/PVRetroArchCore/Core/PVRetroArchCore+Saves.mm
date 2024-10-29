@@ -25,13 +25,13 @@ NSString *autoLoadStatefileName;
 #pragma mark - Methods
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-	return content_save_state(fileName.UTF8String, true, true);
+	return content_save_state(fileName.UTF8String, true);
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
 	bool success=false;
 	if (_isInitialized) {
-		content_save_state(fileName.UTF8String, true, true);
+		content_save_state(fileName.UTF8String, true);
 		success=true;
 	}
     if (!success) {

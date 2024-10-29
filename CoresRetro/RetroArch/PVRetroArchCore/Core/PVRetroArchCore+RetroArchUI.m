@@ -722,3 +722,29 @@ void main_msg_queue_push(const char *msg,
 void menuToggle() {
     command_event(CMD_EVENT_MENU_TOGGLE, NULL);
 }
+
+bool ios_running_on_ipad(void)
+{
+   return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+}
+
+ui_companion_driver_t ui_companion_cocoatouch = {
+   NULL, /* init */
+   NULL, /* deinit */
+   NULL, /* toggle */
+   ui_companion_cocoatouch_event_command,
+   NULL, /* notify_refresh */
+   NULL, /* msg_queue_push */
+   NULL, /* render_messagebox */
+   NULL, /* get_main_window */
+   NULL, /* log_msg */
+   NULL, /* is_active */
+   NULL, // ui_companion_cocoatouch_get_app_icons,
+   NULL, // ui_companion_cocoatouch_set_app_icon,
+   NULL, // ui_companion_cocoatouch_get_app_icon_texture,
+   NULL, /* browser_window */
+   NULL, /* msg_window */
+   NULL, /* window */
+   NULL, /* application */
+   "cocoatouch",
+};

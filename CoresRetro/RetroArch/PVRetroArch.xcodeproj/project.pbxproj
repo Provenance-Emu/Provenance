@@ -251,6 +251,8 @@
 		B3FC974E2CB8D29100C6DB31 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */; };
 		B3FC974F2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */; };
 		B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC975D2CB8D44400C6DB31 /* PVPlists */; };
+		B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53EB2CD17D8200175917 /* JITSupport.m */; };
+		B3FD53FB2CD17E2200175917 /* dispserv_apple.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53FA2CD17E2200175917 /* dispserv_apple.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -859,6 +861,10 @@
 		B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRetroArchCoreCore.swift; sourceTree = "<group>"; };
+		B3FD53EA2CD17D8200175917 /* JITSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JITSupport.h; sourceTree = "<group>"; };
+		B3FD53EB2CD17D8200175917 /* JITSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JITSupport.m; sourceTree = "<group>"; };
+		B3FD53FA2CD17E2200175917 /* dispserv_apple.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = dispserv_apple.m; sourceTree = "<group>"; };
+		B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_cpp.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -1652,6 +1658,7 @@
 		B30C8C812BF45AE200C91991 /* retroarch */ = {
 			isa = PBXGroup;
 			children = (
+				B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */,
 				B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */,
 				B30C8C7E2BF45AE200C91991 /* griffin.c */,
 				B30C8C7F2BF45AE200C91991 /* griffin.m */,
@@ -1694,6 +1701,9 @@
 				9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */,
 				B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */,
 				9328B14E2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m */,
+				B3FD53EA2CD17D8200175917 /* JITSupport.h */,
+				B3FD53EB2CD17D8200175917 /* JITSupport.m */,
+				B3FD53FA2CD17E2200175917 /* dispserv_apple.m */,
 				93AC9F662A48952700D3F4D6 /* runloop.c */,
 				B3447EA0218B881000557ACE /* PVRetroArch.mm */,
 				938E5BB4298B31D400F8596C /* PVDebug.c */,
@@ -2352,6 +2362,8 @@
 				93448E562980043F002F87BB /* PVRetroArchCore+Controls+PSX.m in Sources */,
 				93FF38242965FF9C00772659 /* PVRetroArchCore+Video.mm in Sources */,
 				93FF38252965FF9C00772659 /* PVRetroArchCore+Saves.h in Sources */,
+				B3FD53FB2CD17E2200175917 /* dispserv_apple.m in Sources */,
+				B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */,
 				B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */,
 				93C372692A8B68000007671D /* PVRetroArchCore+Controls+3DO.m in Sources */,
 				93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */,

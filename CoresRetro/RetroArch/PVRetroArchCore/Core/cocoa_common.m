@@ -16,7 +16,6 @@
 // Updates swift includes / apple platform
 // Update small keyboard setting on hide/show keyboard
 
-#import <PVRetroArch/RetroArch-Swift.h>
 #import "PVRetroArchCore.h"
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
@@ -34,15 +33,49 @@
 #ifdef HAVE_COCOATOUCH
 #import "../../../pkg/apple/WebServer/GCDWebUploader/GCDWebUploader.h"
 #import "WebServer.h"
+#ifdef HAVE_IOS_SWIFT
+#import <PVRetroArch/RetroArch-Swift.h>
+#endif
+#if TARGET_OS_TV
+#import <TVServices/TVServices.h>
+#import "../../pkg/apple/RetroArchTopShelfExtension/ContentProvider.h"
+#endif
+#if TARGET_OS_IOS
+#import <MobileCoreServices/MobileCoreServices.h>
+#import "../../../menu/menu_cbs.h"
+#endif
 #endif
 
 #include "../../../configuration.h"
+#include "../../../content.h"
+#include "../../../core_info.h"
+#include "../../../defaults.h"
+#include "../../../frontend/frontend.h"
+#include "../../../file_path_special.h"
+#include "../../../menu/menu_cbs.h"
+#include "../../../paths.h"
 #include "../../../retroarch.h"
+#include "../../../tasks/task_content.h"
 #include "../../../verbosity.h"
 
 #include "../../input/drivers/cocoa_input.h"
 #include "../../input/drivers_keyboard/keyboard_event_apple.h"
 
+#if IOS
+#import <UIKit/UIAccessibility.h>
+extern bool RAIsVoiceOverRunning(void)
+{
+   return UIAccessibilityIsVoiceOverRunning();
+}
+#elif OSX
+#import <AppKit/AppKit.h>
+extern bool RAIsVoiceOverRunning(void)
+{
+   if (@available(macOS 10.13, *))
+      return [[NSWorkspace sharedWorkspace] isVoiceOverEnabled];
+   return false;
+}
+#endif
 
 #if defined(HAVE_COCOA_METAL) || defined(HAVE_COCOATOUCH)
 id<ApplePlatform> apple_platform;
@@ -54,6 +87,7 @@ static CocoaView* g_instance;
 
 #ifdef HAVE_COCOATOUCH
 void *glkitview_init(void);
+void cocoa_file_load_with_detect_core(const char *filename);
 
 @interface CocoaView()<GCDWebUploaderDelegate, UIGestureRecognizerDelegate
 #ifdef HAVE_IOS_TOUCHMOUSE
@@ -73,6 +107,31 @@ void *glkitview_init(void);
 - (void)scrollWheel:(NSEvent *)theEvent { }
 #endif
 
+#if !defined(OSX) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000
+-(void)step:(CADisplayLink*)target API_AVAILABLE(macos(14.0), ios(3.1), tvos(3.1))
+{
+#if defined(IOS)
+   if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive)
+      return;
+
+   int ret = runloop_iterate();
+
+   task_queue_check();
+
+   if (ret == -1)
+   {
+      main_exit(NULL);
+      exit(0);
+      return;
+   }
+
+   uint32_t runloop_flags = runloop_get_flags();
+   if (!(runloop_flags & RUNLOOP_FLAG_IDLE))
+      CFRunLoopWakeUp(CFRunLoopGetMain());
+#endif
+}
+#endif
+
 + (CocoaView*)get
 {
    CocoaView *view = (BRIDGE CocoaView*)nsview_get_ptr();
@@ -80,6 +139,22 @@ void *glkitview_init(void);
    {
       view = [CocoaView new];
       nsview_set_ptr(view);
+       // TODO: Fix Display link setup, step probably needs fixing or something @JoeMatt
+//#if defined(IOS)
+//      view.displayLink = [CADisplayLink displayLinkWithTarget:view selector:@selector(step:)];
+//#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 150000 || __TV_OS_VERSION_MAX_ALLOWED >= 150000
+//      if (@available(iOS 15.0, tvOS 15.0, *))
+//         [view.displayLink setPreferredFrameRateRange:CAFrameRateRangeDefault];
+//#endif
+//      [view.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+//#elif defined(OSX) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000
+//      if (@available(macOS 14.0, *))
+//      {
+//         view.displayLink = [view displayLinkWithTarget:view selector:@selector(step:)];
+//         view.displayLink.preferredFrameRateRange = CAFrameRateRangeMake(60, 120, 120);
+//         [view.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+//      }
+//#endif
    }
    return view;
 }
@@ -107,6 +182,50 @@ void *glkitview_init(void);
 
    return self;
 }
+
+#if TARGET_OS_IOS
+
+#pragma mark UIDocumentPickerViewController
+
+-(void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url
+{
+   NSFileManager *manager = [NSFileManager defaultManager];
+   NSString     *filename = (NSString*)url.path.lastPathComponent;
+   NSError         *error = nil;
+   settings_t *settings   = config_get_ptr();
+   char fullpath[PATH_MAX_LENGTH] = {0};
+   fill_pathname_join_special(fullpath, settings->paths.directory_core_assets, [filename UTF8String], sizeof(fullpath));
+   NSString  *destination = [NSString stringWithUTF8String:fullpath];
+   NSString *documentsDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+   /* Copy file to documents directory if it's not already
+    * inside Documents directory */
+   if (![[url path] containsString:documentsDir])
+      if (![manager fileExistsAtPath:destination])
+         [manager copyItemAtPath:[url path] toPath:destination error:&error];
+   if (filebrowser_get_type() == 3) // FILEBROWSER_SCAN_FILE
+      action_scan_file(fullpath, NULL, 0, 0);
+   else
+   {
+      cocoa_file_load_with_detect_core(fullpath);
+   }
+}
+
+-(void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
+{
+}
+
+-(void)showDocumentPicker
+{
+   UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc]
+                                                     initWithDocumentTypes:@[(NSString *)kUTTypeDirectory,
+                                                                             (NSString *)kUTTypeItem]
+                                                     inMode:UIDocumentPickerModeImport];
+   documentPicker.delegate = self;
+   documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
+   [self presentViewController:documentPicker animated:YES completion:nil];
+}
+
+#endif
 
 #if defined(OSX)
 - (void)setFrame:(NSRect)frameRect
@@ -193,7 +312,7 @@ void *glkitview_init(void);
     } else {
         settings_t *settings         = config_get_ptr();
         settings->bools.input_small_keyboard_enable = true;
-        command_event(CMD_EVENT_OVERLAY_DEINIT, NULL);
+        command_event(CMD_EVENT_OVERLAY_UNLOAD, NULL);
     }
 #endif
 }
@@ -432,6 +551,13 @@ void *glkitview_init(void);
 #endif
 
 @end
+
+#if TARGET_OS_IOS
+void ios_show_file_sheet(void)
+{
+//   [[CocoaView get] showDocumentPicker];
+}
+#endif
 
 void *cocoa_screen_get_chosen(void)
 {
@@ -706,3 +832,45 @@ void write_userdefaults_config_file(void)
         [NSUserDefaults.standardUserDefaults setObject:conf forKey:@FILE_PATH_MAIN_CONFIG];
 }
 #endif
+
+void cocoa_file_load_with_detect_core(const char *filename)
+{
+//   /* largely copied from file_load_with_detect_core() in menu_cbs_ok.c */
+//   core_info_list_t *list = NULL;
+//   const core_info_t *info = NULL;
+//   size_t supported = 0;
+//
+//   if (path_is_compressed_file(filename))
+//   {
+//      generic_action_ok_displaylist_push(filename, NULL,
+//            msg_hash_to_str(MENU_ENUM_LABEL_VALUE_DOWNLOADED_FILE_DETECT_CORE_LIST),
+//            FILE_TYPE_CARCHIVE, 0, 0, ACTION_OK_DL_COMPRESSED_ARCHIVE_PUSH_DETECT_CORE);
+//      return;
+//   }
+//
+//   core_info_get_list(&list);
+//   core_info_list_get_supported_cores(list, filename, &info, &supported);
+//   if (supported > 1)
+//   {
+//      struct menu_state *menu_st          = menu_state_get_ptr();
+//      menu_handle_t *menu                 = menu_st->driver_data;
+//      strlcpy(menu->deferred_path, filename, sizeof(menu->deferred_path));
+//      strlcpy(menu->detect_content_path, filename, sizeof(menu->detect_content_path));
+//      generic_action_ok_displaylist_push(filename, NULL, NULL, FILE_TYPE_NONE, 0, 0, ACTION_OK_DL_DEFERRED_CORE_LIST);
+//   }
+//   else if (supported == 1)
+//   {
+//      content_ctx_info_t content_info;
+//
+//      content_info.argc        = 0;
+//      content_info.argv        = NULL;
+//      content_info.args        = NULL;
+//      content_info.environ_get = NULL;
+//
+//      task_push_load_content_with_new_core_from_menu(
+//               info->path, filename,
+//               &content_info,
+//               CORE_TYPE_PLAIN,
+//               NULL, NULL);
+//   }
+}
