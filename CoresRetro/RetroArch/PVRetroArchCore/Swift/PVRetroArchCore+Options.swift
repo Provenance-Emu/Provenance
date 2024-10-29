@@ -408,11 +408,11 @@ extension PVRetroArchCoreCore: GameWithCheat {
 
 extension PVRetroArchCoreCore: CoreActions {
     public var coreActions: [CoreAction]? {
-        return [CoreAction(title: "Game Options (RetroArch Options Menu)", options: nil, style:.default)]
+        return [CoreAction(title: "Game Options\n(RetroArch Options Menu)", options: nil, style:.default)]
     }
     public func selected(action: CoreAction) {
         switch action.title {
-            case "Game Options (RetroArch Options Menu)":
+            case "Game Options\n(RetroArch Options Menu)":
                 menuToggle()
                 break;
             default:
