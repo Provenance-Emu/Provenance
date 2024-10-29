@@ -485,7 +485,7 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var gameLibraryText: UIColor { .CGA.red }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.redShadow.brightness(backgroundBrightness) }
+    public var gameLibraryHeaderBackground: UIColor { .CGA.redShadow.brightness(0.8) }
     ///         Text
     public var gameLibraryHeaderText: UIColor { .black }
     ///     Cell
@@ -514,7 +514,7 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
 
     /// Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.red.brightness(0.7) }
+    public var menuBackground: UIColor { .CGA.redShadow.brightness(0.3) }
     ///     Text
     public var menuText: UIColor { .CGA.red.brightness(1.0) }
     ///     Divider
