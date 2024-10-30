@@ -6,17 +6,15 @@
 //  Copyright (c) 2013 Testut Tech. All rights reserved.
 //
 
-import Combine
 import Foundation
-import Observation
+import PVLogging
 import PVEmulatorCore
 import PVFileSystem
-import PVLogging
 @_exported import PVSupport
-/// The directory watcher class
-import Perception
 import SWCompression
 @_exported import ZipArchive
+import Combine
+import Observation
 
 /// Extension for FileManager to remove an item asynchronously
 extension FileManager {
@@ -35,7 +33,7 @@ public enum ExtractionStatus: Equatable {
     case started(path: URL)
     case updated(path: URL)
     case completed(paths: [URL])
-    
+
     public static func == (lhs: ExtractionStatus, rhs: ExtractionStatus) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
@@ -53,12 +51,14 @@ public enum ExtractionStatus: Equatable {
 }
 
 /// Notification names for the directory watcher
-extension NSNotification.Name {
-    public static let PVArchiveInflationFailed = NSNotification.Name(
-        "PVArchiveInflationFailedNotification")
+public extension NSNotification.Name {
+    static let PVArchiveInflationFailed = NSNotification.Name("PVArchiveInflationFailedNotification")
 }
 
 let TIMER_DELAY_IN_SECONDS = 2.0
+
+/// The directory watcher class
+import Perception
 
 #if !os(tvOS)
 @Observable
@@ -68,64 +68,53 @@ let TIMER_DELAY_IN_SECONDS = 2.0
 public final class DirectoryWatcher: ObservableObject {
     
     private let watchedDirectory: URL
-    private let queue = DispatchQueue(
-        label: "org.provenance-emu.directoryWatcher", qos: .userInitiated)
+
+    /// The dispatch source for the file system object
     private var dispatchSource: DispatchSourceFileSystemObject?
-    
-    private actor WatcherState {
-        var watchers: [URL: FileWatcher] = [:]
-        var extractionStatus: ExtractionStatus = .idle
-        var extractionProgress: Double = 0
-        
-        func addWatcher(_ watcher: FileWatcher, for url: URL) {
-            watchers[url] = watcher
-        }
-        
-        func removeWatcher(for url: URL) {
-            watchers[url]?.stop()
-            watchers[url] = nil
-        }
-        
-        func updateStatus(_ status: ExtractionStatus) {
-            extractionStatus = status
-        }
-        
-        func updateProgress(_ progress: Double) {
-            extractionProgress = progress
-        }
-    }
-    
-    private let state: WatcherState
-    private let statusStream: AsyncStream<ExtractionStatus>
-    private let statusContinuation: AsyncStream<ExtractionStatus>.Continuation
-    
+    /// The serial queue for the extractor
+    private let serialQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
+    /// The file watchers for the files being watched
+    private var fileWatchers: [URL: DispatchSourceFileSystemObject] = [:]
+    private var lastKnownSizes: [URL: Int64] = [:]
+    private var fileTimers: [URL: Timer] = [:]
+    private var lastKnownModificationDates: [URL: Date] = [:]
+
     /// The extractors for the supported archive types
     private let extractors: [ArchiveType: ArchiveExtractor] = [
         .zip: ZipExtractor(),
         .sevenZip: SevenZipExtractor(),
         .tar: TarExtractor(),
         .bzip2: BZip2Extractor(),
-        .gzip: GZipExtractor(),
+        .gzip: GZipExtractor()
     ]
-    
+
     /// The current extraction progress
     public var extractionProgress: Double = 0
-    
+
     /// The current extraction status
     public var extractionStatus: ExtractionStatus = .idle
-    
+//    #if !os(tvOS)
+    @ObservationIgnored
+//    #endif
+    private var statusContinuation: AsyncStream<ExtractionStatus>.Continuation?
+
     /// A sequence of extraction statuses
     public var extractionStatusSequence: AsyncStream<ExtractionStatus> {
-        statusStream
+        AsyncStream { continuation in
+            statusContinuation = continuation
+            continuation.onTermination = { @Sendable _ in
+                self.statusContinuation = nil
+            }
+        }
     }
-    
-#if os(tvOS)
+
+    #if os(tvOS)
     private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
-#else
+    #else
     @ObservationIgnored
     private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
-#endif
-    
+    #endif
+
     /// A sequence of completed files
     public var completedFilesSequence: AsyncStream<[URL]> {
         AsyncStream { continuation in
@@ -135,60 +124,37 @@ public final class DirectoryWatcher: ObservableObject {
             }
         }
     }
-    
-    private var fileWatchers: [URL: Task<Void, Error>] = [:]
-    private var fileTimers: [URL: Timer] = [:]
-    private var lastKnownSizes: [URL: Int64] = [:]
-    private var lastKnownModificationDates: [URL: Date] = [:]
-    private let serialQueue = DispatchQueue(label: "com.provenance.directorywatcher")
-    
+
     /// Initialize the directory watcher with a directory
     public init(directory: URL) {
         self.watchedDirectory = directory
-        self.state = WatcherState()
-        
-        let (stream, continuation) = AsyncStream.makeStream(of: ExtractionStatus.self)
-        self.statusStream = stream
-        self.statusContinuation = continuation
-        
+        ILOG("DirectoryWatcher initialized with directory: \(directory.path)")
         createDirectoryIfNeeded()
         processExistingArchives()
     }
-    
+
     /// Start monitoring the directory for changes
     public func startMonitoring() throws {
         ILOG("Starting monitoring for directory: \(watchedDirectory.path)")
         stopMonitoring()
-        
         let fileDescriptor = open(watchedDirectory.path, O_EVTONLY)
         guard fileDescriptor >= 0 else {
-            throw DirectoryWatcherError.monitoringFailed(
-                reason: "Failed to open directory: \(String(describing: errno))"
-            )
+            ILOG("Failed to open file descriptor for directory: \(watchedDirectory.path)")
+            throw NSError(domain: POSIXError.errorDomain, code: Int(errno))
         }
-        
-        do {
-            dispatchSource = DispatchSource.makeFileSystemObjectSource(
-                fileDescriptor: fileDescriptor,
-                eventMask: .write,
-                queue: queue
-            )
-            
-            dispatchSource?.setEventHandler { [weak self] in
-                self?.handleFileSystemEvent()
-            }
-            
-            dispatchSource?.setCancelHandler {
-                close(fileDescriptor)
-            }
-            
-            dispatchSource?.resume()
-        } catch {
+
+        dispatchSource = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: .write, queue: serialQueue)
+        dispatchSource?.setEventHandler { [weak self] in
+            self?.handleFileSystemEvent()
+        }
+        dispatchSource?.setCancelHandler {
+            ILOG("Closing file descriptor for directory: \(self.watchedDirectory.path)")
             close(fileDescriptor)
-            throw DirectoryWatcherError.monitoringFailed(reason: error.localizedDescription)
         }
+        dispatchSource?.resume()
+        ILOG("Monitoring started for directory: \(watchedDirectory.path)")
     }
-    
+
     /// Stop monitoring the directory for changes
     public func stopMonitoring() {
         ILOG("Stopping monitoring for directory: \(watchedDirectory.path)")
@@ -197,101 +163,77 @@ public final class DirectoryWatcher: ObservableObject {
         fileWatchers.keys.forEach { stopWatchingFile(at: $0) }
         ILOG("Monitoring stopped for directory: \(watchedDirectory.path)")
     }
-    
+
+
     /// Extract an archive from a file path
     public func extractArchive(at filePath: URL) async throws {
         ILOG("Starting archive extraction for file: \(filePath.path)")
-        stopMonitoring()
-        
+        stopMonitoring() // Stop monitoring to avoid interference
+
         defer {
             Task {
-                do {
-                    try await delay(2) {
-                        try self.startMonitoring()
-                    }
-                } catch {
-                    ELOG("Failed to restart monitoring: \(error)")
+                ILOG("Scheduling delayed start of monitoring after extraction")
+                try? await delay(2) {
+                    try self.startMonitoring()
                 }
             }
         }
-        
-        // Validate file
-        guard !filePath.path.contains("MACOSX") else {
-            throw DirectoryWatcherError.fileNotFound(path: filePath.path)
+
+        guard !filePath.path.contains("MACOSX"),
+              FileManager.default.fileExists(atPath: filePath.path) else {
+            ILOG("Invalid file path or file doesn't exist: \(filePath.path)")
+            return
         }
-        
-        guard FileManager.default.fileExists(atPath: filePath.path) else {
-            throw DirectoryWatcherError.fileNotFound(path: filePath.path)
-        }
-        
-        // Validate archive type
+
         guard let archiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased()),
-              let extractor = extractors[archiveType]
-        else {
-            throw DirectoryWatcherError.unsupportedArchiveType(extension: filePath.pathExtension)
+              let extractor = extractors[archiveType] else {
+            ILOG("Unsupported archive type or no extractor available for: \(filePath.pathExtension)")
+            return
         }
-        
+
         do {
-            await state.updateStatus(.started(path: filePath))
-            
-            let tempDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(
-                UUID().uuidString)
-            do {
-                try FileManager.default.createDirectory(
-                    at: tempDirectory,
-                    withIntermediateDirectories: true,
-                    attributes: nil)
-            } catch {
-                throw DirectoryWatcherError.fileSystemError(underlying: error)
-            }
-            
-            // Extract files
+            updateExtractionStatus(.started(path: filePath))
+
+            let tempDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            try FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
+
             var extractedFiles: [URL] = []
-            do {
-                for try await extractedFile in extractor.extract(at: filePath, to: tempDirectory) {
-                    progress in
-                    ILOG("Extraction progress: \(Int(progress * 100))%")
-                    await state.updateProgress(progress)
-                    extractedFiles.append(extractedFile)
-                    await state.updateStatus(.updated(path: extractedFile))
-                }
-            } catch {
-                throw DirectoryWatcherError.extractionFailed(reason: error.localizedDescription)
+            for try await extractedFile in extractor.extract(at: filePath, to: tempDirectory) { progress in
+                ILOG("Extraction progress for \(filePath.lastPathComponent): \(Int(progress * 100))%")
+                self.extractionProgress = progress
+            } {
+                extractedFiles.append(extractedFile)
+                updateExtractionStatus(.updated(path: extractedFile))
+                ILOG("Extracted file: \(extractedFile.path)")
             }
-            
-            // Cleanup and move files
-            do {
-                try await FileManager.default.removeItem(at: filePath)
-                
-                let sortedFiles = sortExtractedFiles(extractedFiles)
-                let movedFiles = try await moveExtractedFiles(
-                    sortedFiles,
-                    from: tempDirectory,
-                    to: watchedDirectory)
-                
-                await state.updateStatus(.completed(paths: movedFiles))
-                completedFilesContinuation?.yield(movedFiles)
-                
-                try await FileManager.default.removeItem(at: tempDirectory)
-            } catch {
-                throw DirectoryWatcherError.fileSystemError(underlying: error)
-            }
-            
-        } catch let error as DirectoryWatcherError {
-            await state.updateStatus(.idle)
-            throw error
+
+            try await FileManager.default.removeItem(at: filePath)
+            updateExtractionStatus(.completed(paths: extractedFiles))
+            ILOG("Archive extraction completed for file: \(filePath.path)")
+
+            // Sort extracted files, prioritizing .m3u and .cue files
+            let sortedFiles = sortExtractedFiles(extractedFiles)
+
+            // Move files to the watched directory
+            let movedFiles = try await moveExtractedFiles(sortedFiles, from: tempDirectory, to: watchedDirectory)
+
+            // Notify about the completed files
+            completedFilesContinuation?.yield(movedFiles)
+
+            // Clean up temporary directory
+            try await FileManager.default.removeItem(at: tempDirectory)
         } catch {
-            await state.updateStatus(.idle)
-            throw DirectoryWatcherError.extractionFailed(reason: error.localizedDescription)
+            ELOG("Error during archive extraction: \(error.localizedDescription)")
+            // Handle the error appropriately, maybe update the UI or retry the operation
         }
     }
-    
+
     private func sortExtractedFiles(_ files: [URL]) -> [URL] {
         let priorityExtensions = ["m3u", "cue"]
         return files.sorted { file1, file2 in
             let ext1 = file1.pathExtension.lowercased()
             let ext2 = file2.pathExtension.lowercased()
-            
+
             if priorityExtensions.contains(ext1) && !priorityExtensions.contains(ext2) {
                 return true
             } else if !priorityExtensions.contains(ext1) && priorityExtensions.contains(ext2) {
@@ -301,10 +243,8 @@ public final class DirectoryWatcher: ObservableObject {
             }
         }
     }
-    
-    private func moveExtractedFiles(_ files: [URL], from sourceDir: URL, to destinationDir: URL)
-    async throws -> [URL]
-    {
+
+    private func moveExtractedFiles(_ files: [URL], from sourceDir: URL, to destinationDir: URL) async throws -> [URL] {
         var movedFiles: [URL] = []
         for file in files {
             let destinationURL = destinationDir.appendingPathComponent(file.lastPathComponent)
@@ -313,7 +253,14 @@ public final class DirectoryWatcher: ObservableObject {
         }
         return movedFiles
     }
-    
+
+    /// Update the extraction status
+    private func updateExtractionStatus(_ newStatus: ExtractionStatus) {
+        extractionStatus = newStatus
+        statusContinuation?.yield(newStatus)
+        ILOG("Extraction status updated: \(newStatus)")
+    }
+
     /// Schedule a delayed start of monitoring
     public func delayedStartMonitoring() {
         ILOG("Scheduling delayed start of monitoring")
@@ -323,7 +270,7 @@ public final class DirectoryWatcher: ObservableObject {
             }
         }
     }
-    
+
     /// Stop watching a file
     private func stopWatchingFile(at path: URL) {
         ILOG("Stopping watch for file: \(path.lastPathComponent)")
@@ -334,11 +281,9 @@ public final class DirectoryWatcher: ObservableObject {
         fileTimers[path] = nil
         lastKnownSizes[path] = nil
         lastKnownModificationDates[path] = nil
-        ILOG(
-            "File watcher, timer, last known size, and last known modification date removed for: \(path.lastPathComponent)"
-        )
+        ILOG("File watcher, timer, last known size, and last known modification date removed for: \(path.lastPathComponent)")
     }
-    
+
     /// Cleanup nonexistent file watchers
     private func cleanupNonexistentFileWatchers() {
         ILOG("Starting cleanup of nonexistent file watchers")
@@ -352,8 +297,8 @@ public final class DirectoryWatcher: ObservableObject {
     }
 }
 
-extension DirectoryWatcher {
-    
+public extension DirectoryWatcher {
+
     /// Check if a file is an archive
     public func isArchive(_ url: URL) -> Bool {
         let result = extractors.keys.contains { archiveType in
@@ -364,36 +309,31 @@ extension DirectoryWatcher {
     }
 }
 
-extension DirectoryWatcher {
-    
+fileprivate extension DirectoryWatcher {
+
     /// Create the directory if it doesn't exist
-    fileprivate func createDirectoryIfNeeded() {
+    func createDirectoryIfNeeded() {
         do {
             guard !FileManager.default.fileExists(atPath: watchedDirectory.path) else {
                 ILOG("Watched directory already exists at: \(watchedDirectory.path), skipping creation")
                 return
             }
             ILOG("Attempting to create directory at: \(watchedDirectory.path)")
-            try FileManager.default.createDirectory(
-                at: watchedDirectory, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(at: watchedDirectory, withIntermediateDirectories: true, attributes: nil)
             ILOG("Successfully created directory at: \(watchedDirectory.path)")
         } catch {
-            ILOG(
-                "Unable to create directory at: \(watchedDirectory.path), because: \(error.localizedDescription)"
-            )
+            ILOG("Unable to create directory at: \(watchedDirectory.path), because: \(error.localizedDescription)")
         }
     }
-    
+
     /// Process existing archives
-    fileprivate func processExistingArchives() {
+    func processExistingArchives() {
         ILOG("Starting to process existing archives")
         Task.detached {
             do {
-                let contents = try FileManager.default.contentsOfDirectory(
-                    at: self.watchedDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+                let contents = try FileManager.default.contentsOfDirectory(at: self.watchedDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
                 ILOG("Found \(contents.count) items in directory")
-                for file in contents
-                where Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) {
+                for file in contents where Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) {
                     ILOG("Processing existing archive: \(file.lastPathComponent)")
                     try await self.extractArchive(at: file)
                 }
@@ -403,15 +343,14 @@ extension DirectoryWatcher {
             }
         }
     }
-    
+
     /// Handle a file system event
     private func handleFileSystemEvent() {
         ILOG("Handling file system event for directory: \(watchedDirectory.path)")
         do {
-            let contents = try FileManager.default.contentsOfDirectory(
-                at: watchedDirectory,
-                includingPropertiesForKeys: nil,
-                options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+            let contents = try FileManager.default.contentsOfDirectory(at: watchedDirectory,
+                                                                       includingPropertiesForKeys: nil,
+                                                                       options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
             ILOG("Found \(contents.count) items in directory after file system event")
             contents.filter(isValidFile).forEach { file in
                 if !isWatchingFile(at: file) {
@@ -420,43 +359,41 @@ extension DirectoryWatcher {
                 }
             }
             cleanupNonexistentFileWatchers()
-            
+
         } catch {
             ELOG("Error handling file system event: \(error.localizedDescription)")
         }
     }
-    
+
     /// Check if a file is valid
-    fileprivate func isValidFile(_ url: URL) -> Bool {
+    func isValidFile(_ url: URL) -> Bool {
         let filename = url.lastPathComponent
         let isValid = !filename.starts(with: ".") && !url.path.contains("_MACOSX") && filename != "0"
         ILOG("Checked if file is valid: \(filename), result: \(isValid)")
         return isValid
     }
-    
+
     /// Trigger an initial import
-    fileprivate func triggerInitialImport() throws {
+    func triggerInitialImport() throws {
         ILOG("Triggering initial import")
         let triggerPath = watchedDirectory.appendingPathComponent("0")
         try "0".write(to: triggerPath, atomically: false, encoding: .utf8)
         try FileManager.default.removeItem(at: triggerPath)
         ILOG("Initial import triggered")
     }
-    
+
     /// Watch a file
     private func watchFile(at path: URL) {
         ILOG("Starting to watch file: \(path.lastPathComponent)")
         let fileDescriptor = open(path.path, O_EVTONLY)
         guard fileDescriptor != -1 else {
-            ELOG(
-                "Error opening file for watching: \(path.path), error: \(String(cString: strerror(errno)))")
+            ELOG("Error opening file for watching: \(path.path), error: \(String(cString: strerror(errno)))")
             return
         }
-        
-        let source = DispatchSource.makeFileSystemObjectSource(
-            fileDescriptor: fileDescriptor,
-            eventMask: [.write, .extend],
-            queue: serialQueue)
+
+        let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor,
+                                                               eventMask: [.write, .extend],
+                                                               queue: serialQueue)
         source.setEventHandler { [weak self] in
             self?.handleFileChange(at: path)
         }
@@ -466,13 +403,13 @@ extension DirectoryWatcher {
         }
         source.resume()
         fileWatchers[path] = source
-        
+
         // Start a repeating task to check if the file has stopped changing
         Task {
             ILOG("Starting repeating task for file: \(path.lastPathComponent)")
             var checkCount = 0
-            while checkCount < 30 {  // Check for up to 1 minute (30 * 2 seconds)
-                try await Task.sleep(for: .seconds(2))
+            while checkCount < 30 { // Check for up to 1 minute (30 * 2 seconds)
+                await try Task.sleep(for: .seconds(2))
                 ILOG("Repeating task fired for file: \(path.lastPathComponent)")
                 await MainActor.run {
                     self.checkFileStatus(at: path)
@@ -485,10 +422,10 @@ extension DirectoryWatcher {
             }
             ILOG("Repeating task ended for file: \(path.lastPathComponent)")
         }
-        
+
         ILOG("File watcher and repeating task set up for: \(path.lastPathComponent)")
     }
-    
+
     private func handleFileChange(at path: URL) {
         ILOG("File change detected for: \(path.lastPathComponent)")
         do {
@@ -501,44 +438,40 @@ extension DirectoryWatcher {
         // Reset the timer when the file changes
         fileTimers[path]?.invalidate()
         ILOG("Timer invalidated for file: \(path.lastPathComponent)")
-        fileTimers[path] = Timer.scheduledTimer(withTimeInterval: TIMER_DELAY_IN_SECONDS, repeats: true)
-        { [weak self] _ in
+        fileTimers[path] = Timer.scheduledTimer(withTimeInterval: TIMER_DELAY_IN_SECONDS, repeats: true) { [weak self] _ in
             ILOG("New timer fired for file: \(path.lastPathComponent)")
             self?.checkFileStatus(at: path)
         }
         ILOG("New timer scheduled for file: \(path.lastPathComponent)")
     }
-    
+
     private func checkFileStatus(at path: URL) {
         ILOG("Checking file status for: \(path)")
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
             let currentSize = attributes[.size] as? Int64 ?? 0
             let currentModificationDate = attributes[.modificationDate] as? Date
-            
+
             ILOG("Current size of file \(path.lastPathComponent): \(currentSize)")
-            ILOG(
-                "Current modification date of file \(path.lastPathComponent): \(String(describing: currentModificationDate))"
-            )
-            
+            ILOG("Current modification date of file \(path.lastPathComponent): \(String(describing: currentModificationDate))")
+
             if let lastSize = lastKnownSizes[path] {
                 ILOG("Last known size of file \(path.lastPathComponent): \(lastSize)")
             } else {
                 ILOG("No last known size for file \(path.lastPathComponent)")
             }
-            
+
             if let lastModDate = lastKnownModificationDates[path] {
                 ILOG("Last known modification date of file \(path.lastPathComponent): \(lastModDate)")
             } else {
                 ILOG("No last known modification date for file \(path.lastPathComponent)")
             }
-            
+
             // If the file size and modification date haven't changed in 2 seconds, consider it done
             if let lastSize = lastKnownSizes[path],
                let lastModDate = lastKnownModificationDates[path],
                lastSize == currentSize,
-               lastModDate == currentModificationDate
-            {
+               lastModDate == currentModificationDate {
                 ILOG("File upload completed: \(path.lastPathComponent)")
                 stopWatchingFile(at: path)
                 handleCompletedFile(at: path)
@@ -558,7 +491,7 @@ extension DirectoryWatcher {
             stopWatchingFile(at: path)
         }
     }
-    
+
     private func handleCompletedFile(at path: URL) {
         ILOG("Handling completed file: \(path.lastPathComponent)")
         if Extensions.archiveExtensions.contains(path.pathExtension.lowercased()) {
@@ -568,13 +501,11 @@ extension DirectoryWatcher {
             }
         } else {
             ILOG("Completed file is not an archive: \(path.lastPathComponent)")
-            Task {
-                await state.updateStatus(.completed(paths: [path]))
-            }
+            updateExtractionStatus(.completed(paths: [path]))
             completedFilesContinuation?.yield([path])
         }
     }
-    
+
     private func isWatchingFile(at path: URL) -> Bool {
         let isWatching = fileWatchers[path] != nil
         ILOG("Checked if watching file: \(path.lastPathComponent), result: \(isWatching)")
@@ -589,39 +520,39 @@ extension DirectoryWatcher {
     public func handleImportedFile(at url: URL) {
         ILOG("Handling imported file: \(url.lastPathComponent)")
         let secureDoc = url.startAccessingSecurityScopedResource()
-        
+
         defer {
             if secureDoc {
                 url.stopAccessingSecurityScopedResource()
                 ILOG("Stopped accessing security scoped resource for file: \(url.lastPathComponent)")
             }
         }
-        
+
         let coordinator = NSFileCoordinator()
         var error: NSError?
-        
+
         coordinator.coordinate(readingItemAt: url, options: .forUploading, error: &error) { (newURL) in
             do {
                 let destinationURL = watchedDirectory.appendingPathComponent(newURL.lastPathComponent)
                 ILOG("Moving imported file from \(newURL.path) to \(destinationURL.path)")
                 try FileManager.default.moveItem(at: newURL, to: destinationURL)
-                
+
                 Task {
                     // Delay starting the extraction to allow the file system to settle
                     ILOG("Scheduling delayed extraction for file: \(destinationURL.lastPathComponent)")
-                    try await Task.sleep(nanoseconds: 1_000_000_000)  // 1 second delay
+                    try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
                     try await self.extractArchive(at: destinationURL)
                 }
             } catch {
                 ELOG("Error handling imported file: \(error.localizedDescription)")
             }
         }
-        
+
         if let error = error {
             ELOG("File coordination error: \(error.localizedDescription)")
         }
     }
-    
+
 }
 
 // MARK: - Utility Functions
@@ -637,23 +568,23 @@ func repeatingTimer(interval: TimeInterval, _ operation: @escaping () async -> V
 struct TimerSequence: AsyncSequence {
     typealias Element = Date
     let interval: TimeInterval
-    
+
     struct AsyncIterator: AsyncIteratorProtocol {
         let interval: TimeInterval
-        
+
         mutating func next() async -> Date? {
             try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
             return Date()
         }
     }
-    
+
     func makeAsyncIterator() -> AsyncIterator {
         AsyncIterator(interval: interval)
     }
 }
 
 // MARK: - Extracted Files Stream
-extension DirectoryWatcher {
+public extension DirectoryWatcher {
     /// Create a stream of extracted files
     public func extractedFilesStream(at path: URL) -> AsyncStream<[URL]> {
         ILOG("Creating extracted files stream for path: \(path.path)")
@@ -687,100 +618,4 @@ func delay(_ duration: TimeInterval, operation: @escaping () async throws -> Voi
     try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
     try await operation()
     ILOG("Delayed operation completed")
-}
-
-private final class FileWatcher {
-    private let url: URL
-    private let source: DispatchSourceFileSystemObject
-    private let onComplete: (URL) -> Void
-    private var isComplete = false
-    
-    init?(url: URL, queue: DispatchQueue, onComplete: @escaping (URL) -> Void) {
-        let fileDescriptor = open(url.path, O_EVTONLY)
-        guard fileDescriptor >= 0 else { return nil }
-        
-        self.url = url
-        self.onComplete = onComplete
-        
-        source = DispatchSource.makeFileSystemObjectSource(
-            fileDescriptor: fileDescriptor,
-            eventMask: [.write, .extend],
-            queue: queue
-        )
-        
-        source.setEventHandler { [weak self] in
-            self?.handleFileChange()
-        }
-        
-        source.setCancelHandler {
-            close(fileDescriptor)
-        }
-        
-        source.resume()
-        
-        // Start stability check timer
-        Task {
-            try? await Task.sleep(for: .seconds(2))
-            await checkFileStability()
-        }
-    }
-    
-    private func handleFileChange() {
-        guard !isComplete else { return }
-        
-        // Reset stability check
-        Task {
-            try? await Task.sleep(for: .seconds(2))
-            await checkFileStability()
-        }
-    }
-    
-    private func checkFileStability() async {
-        guard !isComplete else { return }
-        
-        do {
-            let size = try await url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
-            let modDate = try await url.resourceValues(forKeys: [.contentModificationDateKey])
-                .contentModificationDate
-            
-            // If file hasn't changed in 2 seconds, consider it complete
-            if !isComplete {
-                isComplete = true
-                onComplete(url)
-                stop()
-            }
-        } catch {
-            stop()
-        }
-    }
-    
-    func stop() {
-        source.cancel()
-    }
-}
-
-public enum DirectoryWatcherError: LocalizedError {
-    case fileAccessDenied(path: String)
-    case fileNotFound(path: String)
-    case unsupportedArchiveType(extension: String)
-    case extractionFailed(reason: String)
-    case fileSystemError(underlying: Error)
-    case monitoringFailed(reason: String)
-    
-    public var errorDescription: String? {
-        switch self {
-        case .fileAccessDenied(let path):
-            return "Access denied to file at path: \(path)"
-        case .fileNotFound(let path):
-            return "File not found at path: \(path)"
-        case .unsupportedArchiveType(let ext):
-            return "Unsupported archive type: \(ext)"
-        case .extractionFailed(let reason):
-            return "Archive extraction failed: \(reason)"
-        case .fileSystemError(let error):
-            return "File system error: \(error.localizedDescription)"
-        case .monitoringFailed(let reason):
-            return "Directory monitoring failed: \(reason)"
-        }
-    }
 }
