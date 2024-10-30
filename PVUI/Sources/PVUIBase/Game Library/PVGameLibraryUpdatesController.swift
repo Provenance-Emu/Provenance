@@ -35,6 +35,8 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     private let directoryWatcher: DirectoryWatcher
     private let conflictsWatcher: ConflictsWatcher
 
+    private var statusCheckTimer: Timer?
+
     public enum HudState {
         case hidden
         case title(String)
@@ -55,6 +57,12 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     }
 
     private func setupObservers() {
+        setupImportHandlers()
+        setupExtractionStatusObserver()
+        setupCompletedFilesObserver()
+    }
+
+    private func setupImportHandlers() {
         gameImporter.importStartedHandler = { [weak self] path in
             self?.hudState = .title("Checking Import: \(URL(fileURLWithPath: path).lastPathComponent)")
         }
@@ -71,145 +79,153 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             }
             self?.hudState = .hidden
         }
+    }
+
+    private func setupExtractionStatusObserver() {
+        let taskID = UUID()
+        DLOG("Starting extraction status observer task: \(taskID)")
 
         Task {
+            defer { DLOG("Ending extraction status observer task: \(taskID)") }
+
             var hideTask: Task<Void, Never>?
             var isHidingHUD = false
 
-            for await status in directoryWatcherStatusStream() {
+            for await status in extractionStatusStream() {
                 await MainActor.run {
-                    DLOG("Received status: \(status)")
+                    DLOG("[\(taskID)] Received status: \(status)")
 
                     if isHidingHUD {
-                        DLOG("Already hiding HUD, skipping this status update")
+                        DLOG("[\(taskID)] Already hiding HUD, skipping update")
                         return
                     }
 
                     self.hudState = Self.handleExtractionStatus(status)
-                    DLOG("HUD State updated: \(self.hudState)")
 
-                    // Cancel the previous hide task if it exists
-                    if let existingTask = hideTask {
-                        existingTask.cancel()
-                        DLOG("Cancelled existing hide task")
-                    }
+                    hideTask?.cancel()
 
                     switch status {
                     case .completed:
-                        DLOG("Extraction completed, scheduling HUD hide task")
                         isHidingHUD = true
-                        // Create a new task to hide the HUD after a 1-second delay
-                        hideTask = Task.detached { @MainActor in
-                            do {
-                                DLOG("Starting 1-second delay before hiding HUD")
-                                try await Task.sleep(for: .seconds(1))
-                                if !Task.isCancelled {
-                                    DLOG("Delay completed, hiding HUD")
-                                    self.hudState = .hidden
-                                    isHidingHUD = false
-                                } else {
-                                    DLOG("Task was cancelled during delay")
-                                    isHidingHUD = false
-                                }
-                            } catch {
-                                DLOG("Error during HUD hide delay: \(error)")
-                                isHidingHUD = false
-                            }
+                        hideTask = createHideHUDTask(taskID: taskID) {
+                            isHidingHUD = false
                         }
                     case .idle:
-                        DLOG("Received idle status, hiding HUD immediately")
                         self.hudState = .hidden
                     default:
-                        DLOG("Extraction status: \(status)")
+                        break
                     }
                 }
             }
         }
+    }
+
+    private func createHideHUDTask(taskID: UUID, completion: @escaping () -> Void) -> Task<Void, Never> {
+        Task.detached { @MainActor in
+            DLOG("[\(taskID)] Starting HUD hide delay")
+            do {
+                try await Task.sleep(for: .seconds(1))
+                if !Task.isCancelled {
+                    DLOG("[\(taskID)] Hiding HUD after delay")
+                    self.hudState = .hidden
+                    completion()
+                }
+            } catch {
+                DLOG("[\(taskID)] Error during hide delay: \(error)")
+                completion()
+            }
+        }
+    }
+
+    private func setupCompletedFilesObserver() {
+        let taskID = UUID()
+        DLOG("Starting completed files observer task: \(taskID)")
 
         Task {
+            defer { DLOG("Ending completed files observer task: \(taskID)") }
+
             for await completedFiles in directoryWatcher.completedFilesSequence {
                 await processCompletedFiles(completedFiles)
             }
         }
     }
-    var statusCheckTimer: Timer?
-    private func directoryWatcherStatusStream() -> AsyncStream<ExtractionStatus> {
-        AsyncStream { continuation in
+
+    private func extractionStatusStream() -> AsyncStream<ExtractionStatus> {
+        let streamID = UUID()
+        DLOG("Creating extraction status stream: \(streamID)")
+
+        return AsyncStream { continuation in
             let task = Task {
-                var lastStatus: ExtractionStatus?
-                while !Task.isCancelled {
-                    if #available(iOS 17.0, tvOS 17.0, *) {
-                        let status = withObservationTracking {
-                            directoryWatcher.extractionStatus
-                        } onChange: {
-                            let newStatus = self.directoryWatcher.extractionStatus
-                            if newStatus != lastStatus {
-                                DLOG("DirectoryWatcher status changed: \(newStatus)")
-                                continuation.yield(newStatus)
-                                lastStatus = newStatus
-                            }
-                        }
-                        
-                        // Initial yield if the status is different
-                        if status != lastStatus {
-                            DLOG("DirectoryWatcher initial status: \(status)")
-                            continuation.yield(status)
-                            lastStatus = status
-                        }
-                    } else {
-                        withPerceptionTracking {
-                            directoryWatcher.extractionStatus
-                        } onChange: {
-                            let newStatus = self.directoryWatcher.extractionStatus
-                            if newStatus != lastStatus {
-                                DLOG("DirectoryWatcher status changed: \(newStatus)")
-                                continuation.yield(newStatus)
-                                lastStatus = newStatus
-                            }
-                        }
+                defer { DLOG("Ending extraction status stream task: \(streamID)") }
 
-                        // Fallback for tvOS versions earlier than 17.0
-                        let initialStatus = directoryWatcher.extractionStatus
-                        
-                        // Set up a timer to periodically check for status changes
-                        let timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
-                            guard let self = self else { return }
-                            let newStatus = self.directoryWatcher.extractionStatus
-                            if newStatus != lastStatus {
-                                DLOG("DirectoryWatcher status changed: \(newStatus)")
-                                continuation.yield(newStatus)
-                                lastStatus = newStatus
-                            }
-                        }
-                        
-                        // Store the timer somewhere to keep it alive
-                        // For example, you might have a property like this:
-                        // var statusCheckTimer: Timer?
-                        statusCheckTimer = timer
-                        
-                        // Initial yield if the status is different
-                        if initialStatus != lastStatus {
-                            DLOG("DirectoryWatcher initial status: \(initialStatus)")
-                            continuation.yield(initialStatus)
-                            lastStatus = initialStatus
-                        }
-                    }
-
-
-                    try? await Task.sleep(for: .seconds(0.1))
+                if #available(iOS 17.0, tvOS 17.0, *) {
+                    await observeStatusWithTracking(streamID: streamID, continuation: continuation)
+                } else {
+                    await observeStatusWithTimer(streamID: streamID, continuation: continuation)
                 }
             }
 
             continuation.onTermination = { _ in
+                DLOG("Stream \(streamID) terminated, cancelling task")
                 task.cancel()
+                self.statusCheckTimer?.invalidate()
+                self.statusCheckTimer = nil
             }
         }
     }
-    
+
+    @available(iOS 17.0, tvOS 17.0, *)
+    private func observeStatusWithTracking(streamID: UUID, continuation: AsyncStream<ExtractionStatus>.Continuation) async {
+        var lastStatus: ExtractionStatus?
+
+        while !Task.isCancelled {
+            let status = withObservationTracking {
+                directoryWatcher.extractionStatus
+            } onChange: {
+                let newStatus = self.directoryWatcher.extractionStatus
+                if newStatus != lastStatus {
+                    DLOG("[\(streamID)] Status changed: \(newStatus)")
+                    continuation.yield(newStatus)
+                    lastStatus = newStatus
+                }
+            }
+
+            if status != lastStatus {
+                DLOG("[\(streamID)] Initial status: \(status)")
+                continuation.yield(status)
+                lastStatus = status
+            }
+
+            try? await Task.sleep(for: .seconds(0.1))
+        }
+    }
+
+    private func observeStatusWithTimer(streamID: UUID, continuation: AsyncStream<ExtractionStatus>.Continuation) async {
+        var lastStatus: ExtractionStatus?
+
+        statusCheckTimer?.invalidate()
+        statusCheckTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            let newStatus = self.directoryWatcher.extractionStatus
+            if newStatus != lastStatus {
+                DLOG("[\(streamID)] Timer status changed: \(newStatus)")
+                continuation.yield(newStatus)
+                lastStatus = newStatus
+            }
+        }
+
+        let initialStatus = directoryWatcher.extractionStatus
+        if initialStatus != lastStatus {
+            DLOG("[\(streamID)] Timer initial status: \(initialStatus)")
+            continuation.yield(initialStatus)
+            lastStatus = initialStatus
+        }
+    }
+
     deinit {
         stopObserving()
     }
-    
+
     func stopObserving() {
         statusCheckTimer?.invalidate()
         statusCheckTimer = nil
