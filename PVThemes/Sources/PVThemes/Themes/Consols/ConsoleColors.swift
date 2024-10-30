@@ -6,6 +6,12 @@
 //
 
 import Foundation
+#if canImport(UIKit)
+import UIKit.UIColor
+#elseif canImport(AppKit)
+import AppKit
+#endif
+import HexColors
 
 public extension UIColor {
     enum ConsoleColors: CaseIterable {
@@ -26,7 +32,7 @@ public extension UIColor {
         
         public static let gameboyGold: UIColor          = #uiColor(0x9ca04c)
         public static let gameboyGrey: UIColor          = #uiColor(0x717286)
-        public static let gameboyLightGrey: UIColor     = #uiColor(0xdd6d7)
+        public static let gameboyLightGrey: UIColor     = #uiColor(0xdad6d7)
         public static let gameboyBlack: UIColor         = #uiColor(0x010105)
         public static let gameboyRed: UIColor           = #uiColor(0xad1035)
 
@@ -35,7 +41,6 @@ public extension UIColor {
              .ConsoleColors.psxRed, .ConsoleColors.psxYellow, .ConsoleColors.psxCyan, .ConsoleColors.psxBlue,
              .ConsoleColors.famicomWhite, .ConsoleColors.famicomGold, .ConsoleColors.famicomRed, .ConsoleColors.famicomGrey,
              .ConsoleColors.gameboyGold, .ConsoleColors.gameboyGrey, .ConsoleColors.gameboyLightGrey, .ConsoleColors.gameboyBlack, .ConsoleColors.gameboyRed]
-            ]
         }
 
         static public func random() -> UIColor {
