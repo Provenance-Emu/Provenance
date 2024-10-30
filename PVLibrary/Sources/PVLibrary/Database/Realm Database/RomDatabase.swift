@@ -461,12 +461,14 @@ public enum RomDeletionError: Error {
 public extension RomDatabase {
     @objc
     func writeTransaction(_ block: () -> Void) throws {
-        let realm = Thread.isMainThread ? self.realm : try Realm()
-        if realm.isInWriteTransaction {
-            block()
-        } else {
-            try realm.write {
+        try autoreleasepool {
+            let realm = Thread.isMainThread ? self.realm : try Realm()
+            if realm.isInWriteTransaction {
                 block()
+            } else {
+                try realm.write {
+                    block()
+                }
             }
         }
     }
