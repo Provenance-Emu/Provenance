@@ -56,7 +56,8 @@ class BaseExtractor: ArchiveExtractor {
     }
 }
 
-struct ZipExtractor: ArchiveExtractor {
+class ZipExtractor: BaseExtractor {
+    #if false
     func extract(at path: URL, to destination: URL, progress: @escaping (Double) -> Void) -> AsyncThrowingStream<URL, Error> {
         AsyncThrowingStream { continuation in
             Task {
@@ -90,6 +91,21 @@ struct ZipExtractor: ArchiveExtractor {
             }
         }
     }
+    #else
+    override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
+        let container = try Data(contentsOf: path)
+        let entries = try ZipContainer.open(container: container)
+        
+        for (index, item) in entries.enumerated() where item.info.type != .directory {
+            let fullPath = destination.appendingPathComponent(item.info.name)
+            if let data = item.data {
+                try await data.write(to: fullPath, options: [.atomic, .noFileProtection])
+                yieldPath(fullPath)
+            }
+            progress(Double(index + 1) / Double(entries.count))
+        }
+    }
+    #endif
 }
 
 class SevenZipExtractor: BaseExtractor {
