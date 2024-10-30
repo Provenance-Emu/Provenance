@@ -199,7 +199,7 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
 
             let fm = FileManager.default
             if fm.fileExists(atPath: url.path) {
-                try! fm.removeItem(at: url)
+                try! await fm.removeItem(at: url)
             }
 
             do {

@@ -60,7 +60,7 @@ public final class PVEmulatorConfiguration: NSObject {
             DLOG("iCloudContainerDirectory: \(String(describing: dir))")
         }
     }
-    
+
     @objc
     public class func systemIDWantsStartAndSelectInMenu(_ systemID: String) -> Bool {
         let systems: [String] = [SystemIdentifier.PSX.rawValue, SystemIdentifier.PS2.rawValue, SystemIdentifier.PSP.rawValue]
@@ -99,7 +99,7 @@ public final class PVEmulatorConfiguration: NSObject {
 // MARK: - Realm queries
 
 public extension PVEmulatorConfiguration {
-    
+
     static var systems: [PVSystem] {
         return Array(RomDatabase.sharedInstance.all(PVSystem.self))
     }
@@ -112,7 +112,7 @@ public extension PVEmulatorConfiguration {
             return system
         })
     }
-    
+
     class func systems(forFileExtension fileExtension: String) -> [PVSystem]? {
         return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
@@ -124,15 +124,15 @@ public extension PVEmulatorConfiguration {
             }
         })
     }
-    
+
     class func core(forSystem system: PVSystem) -> [PVCore] {
         system.cores.map { $0 }
     }
-    
+
     class func games(forSystem system: PVSystem) -> [PVGame] {
         system.games.map { $0 }
     }
-    
+
     class func cores(forSystem system: any SystemProtocol) -> [PVCore] {
         guard let system = RomDatabase.systemCache[system.identifier] else {
             ELOG("No system cached for id \(system.identifier)")
@@ -140,7 +140,7 @@ public extension PVEmulatorConfiguration {
         }
         return system.cores.map{ $0 } ?? []
     }
-    
+
     class func games(forSystem system: any SystemProtocol) -> [PVGame] {
         guard let system = RomDatabase.systemCache[system.identifier] else {
             ELOG("No system cached for id \(system.identifier)")
@@ -148,7 +148,7 @@ public extension PVEmulatorConfiguration {
         }
         return system.games.map(\.self) ?? []
     }
-    
+
     class func gamesCount(forSystem system: any SystemProtocol) -> Int {
         guard let system = RomDatabase.systemCache[system.identifier] else {
             ELOG("No system cached for id \(system.identifier)")
@@ -156,7 +156,7 @@ public extension PVEmulatorConfiguration {
         }
         return system.games.count ?? 0
     }
-    
+
     class func systemsFromCache(forFileExtension fileExtension: String) -> [PVSystem]? {
         let systems = RomDatabase.systemCache.values
         return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
@@ -182,16 +182,16 @@ public extension PVEmulatorConfiguration {
 // MARK: - System queries
 
 public extension PVEmulatorConfiguration {
-    
-    
+
+
     @objc
     class func system(forDatabaseID databaseID : Int) -> PVSystem? {
         let systemID = systemID(forDatabaseID: databaseID)
         let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
         return system
     }
-    
-    
+
+
     @objc
     class func system(forIdentifier systemID: String) -> PVSystem? {
         let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
@@ -285,23 +285,23 @@ public extension PVEmulatorConfiguration {
     class func batterySavesPath(forGame game: PVGame) -> URL {
         return Paths.batterySavesPath(forROM: game.url)
     }
-    
+
     class func saveStatePath(forGame game: PVGame)  -> URL {
         return Paths.saveStatePath(forROM: game.url)
     }
-    
+
     class func screenshotsPath(forGame game: PVGame) -> URL {
         let screenshotsPath = Paths.screenShotsPath.appendingPathComponent(game.system.shortName, isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
-        
+
         do {
             try FileManager.default.createDirectory(at: screenshotsPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             ELOG("Error creating screenshots directory: \(screenshotsPath.path) : \(error.localizedDescription)")
         }
-        
+
         return screenshotsPath
     }
-    
+
     class func path(forGame game: PVGame) -> URL {
         return URL.documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
     }
@@ -435,5 +435,70 @@ public extension PVEmulatorConfiguration {
 
     class func romDirectory(forSystemIdentifier system: String) -> URL {
         return Paths.romsPath.appendingPathComponent(system, isDirectory: true)
+    }
+}
+
+public extension PVEmulatorConfiguration {
+    public enum BIOSError: Error {
+        case unknownBIOSFile
+        case invalidMD5Hash
+        case systemNotFound
+        case biosAlreadyExists
+    }
+
+    static func validateAndImportBIOS(at url: URL) async throws {
+        let fileName = url.lastPathComponent
+        let fileData = try Data(contentsOf: url)
+        let md5Hash = fileData.md5
+
+        // First check if we have a known BIOS entry for this filename
+        let database = RomDatabase.sharedInstance
+        if let existingBIOS = database.object(ofType: PVBIOS.self, wherePrimaryKeyEquals: fileName) {
+            // Validate MD5
+            if existingBIOS.expectedMD5 != md5Hash {
+                throw BIOSError.invalidMD5Hash
+            }
+
+            // Move file to correct location if needed
+            if let system = existingBIOS.system {
+                let destinationPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
+                    .appendingPathComponent(fileName)
+
+                if url.path != destinationPath.path {
+                    try FileManager.default.moveItem(at: url, to: destinationPath)
+                }
+            }
+
+            return // BIOS already exists and is valid
+        }
+
+        // If no existing entry, look for matching BIOS definition
+        guard let biosEntry = biosEntry(forFilename: fileName) else {
+            throw BIOSError.unknownBIOSFile
+        }
+
+        guard biosEntry.expectedMD5 == md5Hash else {
+            throw BIOSError.invalidMD5Hash
+        }
+
+        guard let system = biosEntry.system else {
+            throw BIOSError.systemNotFound
+        }
+
+        // Create new BIOS entry
+        let newBIOS = PVBIOS(withSystem: system,
+                            descriptionText: biosEntry.descriptionText,
+                            optional: biosEntry.optional,
+                            expectedMD5: biosEntry.expectedMD5,
+                            expectedSize: biosEntry.expectedSize,
+                            expectedFilename: biosEntry.expectedFilename)
+
+        try await database.addAsync(newBIOS)
+        RomDatabase.reloadBIOSCache()
+
+        // Move file to correct system BIOS directory
+        let destinationPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
+            .appendingPathComponent(fileName)
+        try FileManager.default.moveItem(at: url, to: destinationPath)
     }
 }

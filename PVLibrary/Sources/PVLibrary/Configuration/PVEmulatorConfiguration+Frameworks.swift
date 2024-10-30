@@ -201,13 +201,17 @@ public extension PVEmulatorConfiguration {
                 }
             } else {
                 let newBIOS = PVBIOS(withSystem: pvSystem, descriptionText: entry.Description, optional: entry.Optional ?? false, expectedMD5: entry.MD5, expectedSize: entry.Size, expectedFilename: entry.Name)
-
+                let database = RomDatabase.sharedInstance
                 if database.realm.isInWriteTransaction {
                     database.realm.add(newBIOS)
                 } else {
                     RomDatabase.refresh()
                     //avoids conflicts if two BIOS share the same name - looking at you jagboot.rom
-                    try! database.add(newBIOS, update: true)
+                    do {
+                        try database.add(newBIOS, update: true)
+                    } catch {
+                        ELOG("Failed to add BIOS: \(error)")
+                    }
                 }
             }
         }

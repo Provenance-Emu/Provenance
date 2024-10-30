@@ -17,7 +17,6 @@ import PVRealm
 import RealmSwift
 import PVLogging
 import PVFileSystem
-import DirectoryWatcher
 import Combine
 import Observation
 import Perception
@@ -34,6 +33,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     private let gameImporter: GameImporter
     private let directoryWatcher: DirectoryWatcher
     private let conflictsWatcher: ConflictsWatcher
+    private let biosWatcher: BIOSWatcher
 
     private var statusCheckTimer: Timer?
 
@@ -51,6 +51,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         directoryWatcher.delayedStartMonitoring()
 
         self.conflictsWatcher = .shared
+        self.biosWatcher = .shared
 
         setupObservers()
         handleFileImports(importPath: importPath)
@@ -60,6 +61,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         setupImportHandlers()
         setupExtractionStatusObserver()
         setupCompletedFilesObserver()
+        setupBIOSObserver()
     }
 
     private func setupImportHandlers() {
@@ -380,6 +382,25 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         // Then process other files
         if !otherFiles.isEmpty {
             gameImporter.startImport(forPaths: otherFiles)
+        }
+    }
+
+    private func setupBIOSObserver() {
+        Task {
+            for await newBIOSFiles in biosWatcher.newBIOSFilesSequence {
+                await processBIOSFiles(newBIOSFiles)
+            }
+        }
+    }
+
+    private func processBIOSFiles(_ files: [URL]) async {
+        for file in files {
+            do {
+                try await PVEmulatorConfiguration.validateAndImportBIOS(at: file)
+                ILOG("Successfully imported BIOS file: \(file.lastPathComponent)")
+            } catch {
+                ELOG("Failed to import BIOS file: \(error)")
+            }
         }
     }
 }

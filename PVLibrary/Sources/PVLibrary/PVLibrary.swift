@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 9/8/24.
 //
 
-@_exported import DirectoryWatcher
 @_exported import Extractor
 @_exported import PVFileSystem
 @_exported import PVMediaCache
