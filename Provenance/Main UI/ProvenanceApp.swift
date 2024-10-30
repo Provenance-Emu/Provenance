@@ -23,22 +23,23 @@ struct ProvenanceApp: App {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
 
-#if canImport(FreemiumKit)
-                    #if targetEnvironment(simulator)
+            #if canImport(FreemiumKit)
+                #if targetEnvironment(simulator)
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
-                    #else
+                #else
                     if !appDelegate.isAppStore {
                         FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
                     }
-                    #endif
-#endif
-                    /// Swizzle sendEvent(UIEvent)
-                    UIApplication.swizzleSendEvent()
+                #endif
+            #endif
                 }
         }
         .onChange(of: scenePhase) { oldPhase, newPhase in
             if newPhase == .active {
                 appState.startBootupSequence()
+                
+                /// Swizzle sendEvent(UIEvent)
+                UIApplication.swizzleSendEvent()
             }
         }
     }
@@ -48,6 +49,8 @@ struct ProvenanceApp: App {
 
 extension UIApplication {
     
+    /// Swap implipmentations of sendEvent() while
+    /// maintaing a reference back to the original
     @objc static func swizzleSendEvent() {
             let originalSelector = #selector(UIApplication.sendEvent(_:))
             let swizzledSelector = #selector(UIApplication.pv_sendEvent(_:))
@@ -60,8 +63,10 @@ extension UIApplication {
             method_exchangeImplementations(originalMethod, swizzledMethod)
     }
     
+    /// Placeholder for storing original selector
     @objc func originalSendEvent(_ event: UIEvent) { }
     
+    /// The sendEvent that will be called
     @objc func pv_sendEvent(_ event: UIEvent) {
 //        print("Handling touch event: \(event.type.rawValue ?? -1)")
         if let core = AppState.shared.emulationState.core {
