@@ -230,11 +230,11 @@
 		B30C8C882BF45AFB00C91991 /* PVRetroArchCore+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */; };
 		B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */; };
 		B30C8C8C2BF45BDC00C91991 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */; };
-		B30E9ABA2C6F241200C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AB92C6F241200C1431E /* PVCoreBridge */; };
 		B3135B9C26E4CC290047F338 /* PVRetroArchCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVRetroArchCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVRetroArch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B32111B52CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m in Sources */ = {isa = PBXBuildFile; fileRef = B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
+		B348E0022CD1B66400DBB0F4 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B348E0012CD1B66400DBB0F4 /* PVCoreBridge */; };
 		B34A8EF7295848360000D110 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
@@ -954,7 +954,6 @@
 				93B716DC296591EE00F4CDC7 /* CoreMedia.framework in Frameworks */,
 				93B716DD296591EE00F4CDC7 /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
-				B30E9ABA2C6F241200C1431E /* PVCoreBridge in Frameworks */,
 				B3F8DFFF2CB3741500017D1B /* PVCoreObjCBridge in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */,
@@ -962,6 +961,7 @@
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				936E99EC2A35A94900B1D0F8 /* PVLogging in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
+				B348E0022CD1B66400DBB0F4 /* PVCoreBridge in Frameworks */,
 				B3E2AA6B2CB65E9A00E2636D /* PVLogging in Frameworks */,
 				B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */,
 				B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */,
@@ -2053,10 +2053,10 @@
 				B3C439522BF442920021B9C3 /* PVSupport */,
 				B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */,
 				B37C00582BFF6A1000FEC6AC /* MoltenVK */,
-				B30E9AB92C6F241200C1431E /* PVCoreBridge */,
 				B3F8DFFE2CB3741500017D1B /* PVCoreObjCBridge */,
 				B3E2AA6A2CB65E9A00E2636D /* PVLogging */,
 				B3FC975D2CB8D44400C6DB31 /* PVPlists */,
+				B348E0012CD1B66400DBB0F4 /* PVCoreBridge */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
@@ -3568,8 +3568,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
 		};
-		B30E9AB92C6F241200C1431E /* PVCoreBridge */ = {
+		B348E0012CD1B66400DBB0F4 /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */;
 			productName = PVCoreBridge;
 		};
 		B37C00582BFF6A1000FEC6AC /* MoltenVK */ = {
