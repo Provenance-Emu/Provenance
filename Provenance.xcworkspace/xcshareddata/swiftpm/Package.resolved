@@ -281,6 +281,15 @@
         }
       },
       {
+        "package": "Unrar",
+        "repositoryURL": "https://github.com/mtgto/Unrar.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "510d61c954f27b196bef732b06125e29a619ebe6",
+          "version": "0.3.16"
+        }
+      },
+      {
         "package": "xctest-dynamic-overlay",
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {

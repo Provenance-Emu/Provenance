@@ -88,7 +88,6 @@
 		93B3B1992A8CBA5F00B60325 /* PVRetroArchCore+Archive.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B3B1982A8CBA5F00B60325 /* PVRetroArchCore+Archive.h */; };
 		93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */; };
 		93B3B2722A8CC8C200B60325 /* libRarArchive_RetroArch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1B32A8CC39800B60325 /* libRarArchive_RetroArch.a */; };
-		93B3B52A2A8CE65500B60325 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B5262A8CE56A00B60325 /* libunrar.a */; };
 		93B3BCE62A8CE91900B60325 /* lh5_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC902A8CE91800B60325 /* lh5_decoder.c */; };
 		93B3BCE72A8CE91900B60325 /* lha_endian.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC912A8CE91800B60325 /* lha_endian.c */; };
 		93B3BCE82A8CE91900B60325 /* lha_file_header.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC922A8CE91800B60325 /* lha_file_header.c */; };
@@ -240,6 +239,7 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B364D5CB2CD2A8B70082D177 /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = B364D5CA2CD2A8B70082D177 /* Unrar */; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
 		B3C439532BF442920021B9C3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C439522BF442920021B9C3 /* PVSupport */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
@@ -276,20 +276,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 93B3B19C2A8CC39800B60325;
 			remoteInfo = RarArchive;
-		};
-		93B3B5252A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7AC29A5D1F83C08200DA4DE6;
-			remoteInfo = unrar;
-		};
-		93B3B5272A8CE5F100B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 7AC29A5C1F83C08200DA4DE6;
-			remoteInfo = unrarRetroArchLib;
 		};
 		93B3BD052A8CE97B00B60325 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -884,7 +870,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93B3B52A2A8CE65500B60325 /* libunrar.a in Frameworks */,
+				B364D5CB2CD2A8B70082D177 /* Unrar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1153,7 +1139,6 @@
 		93B3B4362A8CE56900B60325 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				93B3B5262A8CE56A00B60325 /* libunrar.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1947,7 +1932,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				93B3B5282A8CE5F100B60325 /* PBXTargetDependency */,
 			);
 			name = RarArchive_RetroArch;
 			productName = ZipArchive;
@@ -2119,6 +2103,7 @@
 				B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B3E2AA692CB65E9A00E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3FC975C2CB8D44400C6DB31 /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -2145,16 +2130,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		93B3B5262A8CE56A00B60325 /* libunrar.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libunrar.a;
-			remoteRef = 93B3B5252A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		93D6B0AE296A0DAA00D5EE11 /* Resources */ = {
@@ -2400,17 +2375,6 @@
 			isa = PBXTargetDependency;
 			target = 93B3B19C2A8CC39800B60325 /* RarArchive_RetroArch */;
 			targetProxy = 93B3B2702A8CC8B700B60325 /* PBXContainerItemProxy */;
-		};
-		93B3B5282A8CE5F100B60325 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = unrarRetroArchLib;
-			platformFilters = (
-				ios,
-				maccatalyst,
-				tvos,
-				watchos,
-			);
-			targetProxy = 93B3B5272A8CE5F100B60325 /* PBXContainerItemProxy */;
 		};
 		93B3BD062A8CE97B00B60325 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2940,7 +2904,7 @@
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Release;
@@ -3154,7 +3118,7 @@
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
@@ -3555,6 +3519,17 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mtgto/Unrar.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.16;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		93102A592A30F2DB002C86C6 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3572,6 +3547,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */;
 			productName = PVCoreBridge;
+		};
+		B364D5CA2CD2A8B70082D177 /* Unrar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */;
+			productName = Unrar;
 		};
 		B37C00582BFF6A1000FEC6AC /* MoltenVK */ = {
 			isa = XCSwiftPackageProductDependency;
