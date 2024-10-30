@@ -3,7 +3,8 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] manually copying a bios into bios's works, but database isn't updated with instance reference
+- [ ] UI is unresponsive after closing emulator
+- [ ] RetroArch GLES cores are crashing
 - [ ] (Lite) Sega CD is borked
 - [X] wrap advanced settings in freemiumview
 - [X] fix launching webserver from swiftui menu
@@ -27,10 +28,11 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [X] manually copying a bios into bios's works, but database isn't updated with instance reference
 - [ ] The notch is in retroarch view
 - [ ] look at the displaylink thing in retroarch
-- [ ] Dark mode toggle doens't refresh all views if theme set to auto
 - [ ] iCloud sync removed
+- [ ] Share on old UI crashes app (realm threading issue)
 - [ ] (Lite) Turbo GFX 16 no video for some roms
 - [ ] (Lite) Intellivision (PVBliss) audio crashes on button press
 - [ ] (Lite) Intellivision video is glitched
@@ -58,6 +60,7 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] Dark mode toggle doens't refresh all views if theme set to auto
 - [ ] SwiftUI game long press menu missing item
     - [ ] View save states
     - [ ] Share
