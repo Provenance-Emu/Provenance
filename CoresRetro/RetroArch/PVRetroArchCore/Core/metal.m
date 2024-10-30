@@ -15,10 +15,10 @@
 // Adds _library=[_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:[PVRetroArchCore class]] error:&error];
 // Adds cocoa_common / apple_platform local includes
 
-#include <Foundation/Foundation.h>
-#include <Metal/Metal.h>
-#include <MetalKit/MetalKit.h>
-#include <QuartzCore/QuartzCore.h>
+#import <Foundation/Foundation.h>
+#import <Metal/Metal.h>
+#import <MetalKit/MetalKit.h>
+#import <QuartzCore/QuartzCore.h>
 #import <PVRetroArch/RetroArch-Swift.h>
 
 #include <stdio.h>
@@ -67,8 +67,8 @@
 //#include "../../ui/drivers/cocoa/apple_platform.h"
 //#include "../../ui/drivers/cocoa/cocoa_common.h"
 
-#include "./apple_platform.h"
-#include "./cocoa_common.h"
+#import "./apple_platform.h"
+#import "./cocoa_common.h"
 
 #define STRUCT_ASSIGN(x, y) \
 { \
