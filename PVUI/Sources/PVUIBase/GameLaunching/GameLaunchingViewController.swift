@@ -59,7 +59,7 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
     @MainActor
-    func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil, showCoreSelection: Bool = false) async {
+    func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
         
         @ThreadSafe var game: PVGame! = game
         @ThreadSafe var core = core
@@ -154,8 +154,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
                 // See if the system or game has a default selection already set
                 if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID,
-                    let chosenCore = cores.first(where: { $0.identifier == userSelecion }),
-                    !showCoreSelection{
+                    let chosenCore = cores.first(where: { $0.identifier == userSelecion }) {
                     ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
                     let presentingView = self.view
                     Task { @MainActor in
