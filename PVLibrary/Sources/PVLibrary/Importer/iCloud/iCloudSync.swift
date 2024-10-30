@@ -40,7 +40,7 @@ public protocol SyncFileToiCloud: Container {
     var metadataQuery: NSMetadataQuery { get }
     func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
     func queryFile(completionHandler: @escaping (URL?) -> Void) // -> Single<URL>
-    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) // -> Single<SyncResult>
+    func downloadingFile(completionHandler: @escaping (Result<Void, PVLibraryError>) -> Void) async // -> Single<SyncResult>
 }
 
 public protocol iCloudTypeSyncer: Container {
@@ -244,34 +244,29 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
 
     /// - Parameters:
     ///   - completionHandler: Non-main
-    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) async {
+    func downloadingFile(completionHandler: @escaping (Result<Void, PVLibraryError>) -> Void) async {
         guard let destinationURL = await destinationURL else {
-            completionHandler(.denied)
+            completionHandler(.failure(.iCloudSync(.noUbiquityURL)))
             return
         }
 
-        DispatchQueue.global(qos: .utility).async {
-            if !FileManager.default.isUbiquitousItem(at: destinationURL) {
-                completionHandler(.fileNotExist)
-                return
+        do {
+            guard FileManager.default.isUbiquitousItem(at: destinationURL) else {
+                throw SyncError.fileNotExist
             }
 
             self.metadataQuery.disableUpdates()
-            defer {
-                self.metadataQuery.enableUpdates()
-            }
+            defer { self.metadataQuery.enableUpdates() }
 
-            let fm = FileManager.default
+            try await Task {
+                try FileManager.default.startDownloadingUbiquitousItem(at: destinationURL)
+            }.value
 
-            do {
-                // TODO: Should really wait and listen for it to finish downloading, this call is async
-                try fm.startDownloadingUbiquitousItem(at: destinationURL)
-                completionHandler(.success)
-            } catch {
-                ELOG("iCloud Download error: \(error.localizedDescription)")
-                completionHandler(.saveFailure)
-                return
-            }
+            completionHandler(.success(()))
+        } catch let error as SyncError {
+            completionHandler(.failure(.iCloudSync(error)))
+        } catch {
+            completionHandler(.failure(.iCloudSync(.downloadFailed(error))))
         }
     }
 }
@@ -377,7 +372,7 @@ public enum iCloudSync {
                 await jsonFiles.concurrentForEach { @MainActor json in
                     let realm = try! await Realm()
                     do {
-                        
+
                         let secureDoc = json.startAccessingSecurityScopedResource()
 
                         defer {
@@ -385,7 +380,7 @@ public enum iCloudSync {
                                 json.stopAccessingSecurityScopedResource()
                             }
                         }
-                        
+
                         var dataMaybe = FileManager.default.contents(atPath: json.path)
                         if dataMaybe == nil {
                             dataMaybe = try Data(contentsOf: json, options: [.uncached])

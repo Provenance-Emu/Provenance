@@ -246,14 +246,27 @@ extension GameImporter {
     public func importFiles(atPaths paths: [URL]) async throws -> [URL] {
         let sortedPaths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
         var importedFiles: [URL] = []
+        var failures: [(path: String, error: Error)] = []
 
         for path in sortedPaths {
             do {
                 if let importedFile = try await importSingleFile(at: path) {
                     importedFiles.append(importedFile)
                 }
+            } catch let error as GameImporterError {
+                failures.append((path.path, error))
+                ELOG("Failed to import file: \(error.localizedDescription)")
             } catch {
-                ELOG("Failed to import file at \(path.path): \(error.localizedDescription)")
+                failures.append((path.path, GameImporterError.importFailed(.singleFile(path: path.path, error: error))))
+                ELOG("Unexpected error during import: \(error.localizedDescription)")
+            }
+        }
+
+        if !failures.isEmpty {
+            if importedFiles.isEmpty {
+                throw GameImporterError.importFailed(.multipleFiles(failures: failures))
+            } else {
+                WLOG("Partial import success. Failed imports: \(failures.map { $0.path }.joined(separator: ", "))")
             }
         }
 
@@ -261,18 +274,12 @@ extension GameImporter {
     }
 
     /// Imports a single file from the given path
-    private func importSingleFile(at path: URL) async throws -> URL? {
-        guard FileManager.default.fileExists(atPath: path.path) else {
-            WLOG("File doesn't exist at \(path.path)")
-            return nil
-        }
-
-        if isCDROM(path) {
-            return try await handleCDROM(at: path)
-        } else if isArtwork(path) {
-            return try await handleArtwork(at: path)
+    private func importSingleFile(at file: URL) async throws -> URL {
+        if file.pathExtension.lowercased() == "png" ||
+           file.pathExtension.lowercased() == "jpg" {
+            return try await handleArtwork(at: file) ?? file
         } else {
-            return try await handleROM(at: path)
+            return try await handleROM(at: file) ?? file
         }
     }
 
@@ -288,43 +295,54 @@ extension GameImporter {
 
     /// Handles importing artwork
     private func handleArtwork(at path: URL) async throws -> URL? {
-        if let game = await GameImporter.importArtwork(fromPath: path) {
+        do {
+            guard let game = await GameImporter.importArtwork(fromPath: path) else {
+                throw GameImporterError.artworkImportFailed(.noMatchingGame(path.lastPathComponent))
+            }
+
             ILOG("Found artwork \(path.lastPathComponent) for game <\(game.title)>")
+            return path
+        } catch {
+            throw GameImporterError.artworkImportFailed(.processingFailed(error))
         }
-        return nil
     }
 
     /// Handles importing a ROM
     private func handleROM(at path: URL) async throws -> URL? {
-        let candidate = ImportCandidateFile(filePath: path)
-        return try await moveROM(toAppropriateSubfolder: candidate)
+        do {
+            let candidate = ImportCandidateFile(filePath: path)
+            return try await moveROM(toAppropriateSubfolder: candidate)
+        } catch let error as GameImporterError {
+            throw error
+        } catch {
+            throw GameImporterError.importFailed(.processingFailed(path: path.path, error: error))
+        }
     }
 
     public func startImport(forPaths paths: [URL]) {
-        // Pre-sort
-        let paths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
         let scanOperation = BlockOperation {
             Task {
                 do {
                     let newPaths = try await self.importFiles(atPaths: paths)
-                    self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
+                    try await self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
+                } catch let error as GameImporterError {
+                    ELOG("Import failed: \(error.localizedDescription)")
+                    self.encounteredConflicts = true
                 } catch {
-                    ELOG("\(error)")
+                    ELOG("Unexpected error during import: \(error.localizedDescription)")
+                    self.encounteredConflicts = true
+                }
+
+                // Always call completion handler
+                if let completionHandler = self.completionHandler {
+                    await MainActor.run {
+                        completionHandler(self.encounteredConflicts)
+                    }
                 }
             }
         }
 
-        let completionOperation = BlockOperation {
-            if self.completionHandler != nil {
-                DispatchQueue.main.sync(execute: { () -> Void in
-                    self.completionHandler?(self.encounteredConflicts)
-                })
-            }
-        }
-
-        completionOperation.addDependency(scanOperation)
         serialImportQueue.addOperation(scanOperation)
-        serialImportQueue.addOperation(completionOperation)
     }
 }
 
@@ -564,7 +582,7 @@ public extension GameImporter {
                     success = true
                     ILOG("Set custom artwork of game \(game.title) from file \(imageFullPath.lastPathComponent)")
                 } catch {
-                    ELOG("Couldn't update game \(game.title) with new artwork URL \(hash)")
+                    throw GameImporterError.artworkImportFailed(.processingFailed(error))
                 }
 
                 return game
@@ -600,7 +618,7 @@ public extension GameImporter {
                     }
                     success = true
                 } catch {
-                    ELOG("Couldn't update game \(onlyMatch.title) with new artwork URL")
+                    throw GameImporterError.artworkImportFailed(.processingFailed(error))
                 }
                 return onlyMatch
             } else {
@@ -651,35 +669,35 @@ public extension GameImporter {
             }
             success = true
         } catch {
-            ELOG("Couldn't update game with new artwork URL")
+            throw GameImporterError.artworkImportFailed(.processingFailed(error))
         }
 
         return game
     }
 
     /// Scales and moves an image to the cache
-    fileprivate class func scaleAndMoveImageToCache(imageFullPath: URL) -> String? {
+    private func scaleAndMoveImageToCache(imageFullPath: URL) throws -> String {
         let coverArtFullData: Data
         do {
             coverArtFullData = try Data(contentsOf: imageFullPath, options: [])
         } catch {
             ELOG("Couldn't read data from image file \(imageFullPath.path)\n\(error.localizedDescription)")
-            return nil
+            throw GameImporterError.artworkImportFailed(.processingFailed(URLError(.cannotDecodeContentData)))
         }
 
 #if canImport(UIKit)
         guard let coverArtFullImage = UIImage(data: coverArtFullData) else {
             ELOG("Failed to create Image from data")
-            return nil
+            throw GameImporterError.artworkImportFailed(.processingFailed(URLError(.cannotDecodeContentData)))
         }
         guard let coverArtScaledImage = coverArtFullImage.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)) else {
             ELOG("Failed to create scale image")
-            return nil
+            throw GameImporterError.artworkImportFailed(.processingFailed(URLError(.cannotDecodeContentData)))
         }
 #else
         guard let coverArtFullImage = NSImage(data: coverArtFullData) else {
             ELOG("Failed to create Image from data")
-            return nil
+            throw GameImporterError.artworkImportFailed(.processingFailed(URLError(.cannotDecodeContentData)))
         }
         let coverArtScaledImage = coverArtFullImage
 #endif
@@ -687,22 +705,14 @@ public extension GameImporter {
 #if canImport(UIKit)
         guard let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85) else {
             ELOG("Failed to create data representation of scaled image")
-            return nil
+            throw GameImporterError.artworkImportFailed(.processingFailed(URLError(.cannotDecodeContentData)))
         }
 #else
         let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85)
 #endif
 
-        let hash: String = (coverArtScaledData as NSData).md5
-
-        do {
-            let destinationURL = try PVMediaCache.writeData(toDisk: coverArtScaledData, withKey: hash)
-            VLOG("Scaled and moved image from \(imageFullPath.path) to \(destinationURL.path)")
-        } catch {
-            ELOG("Failed to save artwork to cache: \(error.localizedDescription)")
-            return nil
-        }
-
+        let hash = coverArtScaledData.md5
+        try PVMediaCache.writeData(toDisk: coverArtScaledData, withKey: hash)
         return hash
     }
 }
@@ -747,7 +757,7 @@ extension GameImporter {
                 return system
             }
         } catch {
-            ELOG("Error querying OpenVGDB for filename: \(error.localizedDescription)")
+            throw GameImporterError.lookupFailed(.databaseError(error))
         }
 
         return nil
@@ -904,7 +914,7 @@ extension GameImporter {
                     return system
                 }
             } catch {
-                ELOG("Error searching OpenVGDB by MD5: \(error.localizedDescription)")
+                throw GameImporterError.lookupFailed(.databaseError(error))
             }
         }
 
@@ -1197,7 +1207,7 @@ extension GameImporter {
     }
 
     /// Imports a ROM to the database
-    private func importToDatabaseROM(atPath path: URL, system: PVSystem, relatedFiles: [URL]?) async throws {
+    private func importToDatabaseROM(atPath path: URL, system: PVSystem, relatedFiles: [URL]?) async throws -> PVGame {
         let filename = path.lastPathComponent
         let filenameSansExtension = path.deletingPathExtension().lastPathComponent
         let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
@@ -1224,7 +1234,7 @@ extension GameImporter {
         }
         guard let md5 = calculateMD5(forGame: game) else {
             ELOG("Couldn't calculate MD5 for game \(partialPath)")
-            throw GameImporterError.couldNotCalculateMD5
+            throw GameImporterError.lookupFailed(.emptyMD5Hash)
         }
         game.relatedFiles.append(objectsIn: relatedPVFiles)
         game.md5Hash = md5
@@ -1234,45 +1244,61 @@ extension GameImporter {
 
     /// Finishes the update or import of a game
     private func finishUpdateOrImport(ofGame game: PVGame, path: URL) async throws {
-        // Only process if rom doensn't exist in DB
+        // Check for existing ROM
         if await RomDatabase.gamesCache[game.romPath] != nil {
             throw GameImporterError.romAlreadyExistsInDatabase
         }
+
         var modified = false
-        var game:PVGame = game
+        var game = game
+
         if game.requiresSync {
-            if importStartedHandler != nil {
+            if let importStartedHandler {
                 let fullpath = PVEmulatorConfiguration.path(forGame: game)
-                Task { @MainActor in
-                    self.importStartedHandler?(fullpath.path)
+                await MainActor.run {
+                    importStartedHandler(fullpath.path)
                 }
             }
-            game = lookupInfo(for: game, overwrite: true)
-            modified = true
+
+            do {
+                game = try lookupInfo(for: game, overwrite: true)
+                modified = true
+            } catch {
+                throw GameImporterError.lookupFailed(.databaseError(error))
+            }
         }
-        let wasModified = modified
-        if finishedImportHandler != nil {
-            let md5: String = game.md5Hash
-//            Task { @MainActor in
-                self.finishedImportHandler?(md5, wasModified)
-//            }
+
+        if let finishedImportHandler {
+            finishedImportHandler(game.md5Hash, modified)
         }
+
         if game.originalArtworkFile == nil {
-            game = await getArtwork(forGame: game)
+            do {
+                game = try await getArtwork(forGame: game)
+            } catch let error as GameImporterError {
+                throw error
+            } catch {
+                throw GameImporterError.artworkImportFailed(.downloadFailed(path, error))
+            }
         }
-        self.saveGame(game)
+
+        do {
+            try saveGame(game)
+        } catch {
+            throw GameImporterError.databaseWriteFailed(error)
+        }
     }
 
     /// Saves a game to the database
-    func saveGame(_ game:PVGame) {
+    func saveGame(_ game: PVGame) throws {
+        let database = RomDatabase.sharedInstance
         do {
-            let database = RomDatabase.sharedInstance
             try database.writeTransaction {
-                database.realm.create(PVGame.self, value:game, update:.modified)
+                database.realm.create(PVGame.self, value: game, update: .modified)
             }
             RomDatabase.addGamesCache(game)
         } catch {
-            ELOG("Couldn't add new game \(error.localizedDescription)")
+            throw GameImporterError.databaseWriteFailed(error)
         }
     }
 
@@ -1298,6 +1324,36 @@ extension GameImporter {
             return filteredGames.isEmpty ? nil : Array(filteredGames)
         } else {
             return allGames.isEmpty ? nil : Array(allGames)
+        }
+    }
+}
+
+extension GameImporter {
+    private func handleGameImport(from url: URL) async throws {
+        let watcher = DirectoryWatcher(directory: romsImportPath)
+
+        do {
+            for await files in try await watcher.extractAndWatch(archive: url) {
+                for file in files {
+                    if let importedFile = try await importSingleFile(at: file) {
+                        try await processImportedGame(at: importedFile)
+                    }
+                }
+            }
+        } catch let error as DirectoryWatcherError {
+            throw GameImporterError.importFailed(.processingFailed(path: url.path, error: error))
+        } catch let error as GameImporterError {
+            throw error
+        } catch {
+            throw GameImporterError.importFailed(.batchImportFailed(error))
+        }
+    }
+
+    private func processImportedGame(at path: URL) async throws {
+        do {
+            try await getRomInfoForFiles(atPaths: [path], userChosenSystem: nil)
+        } catch {
+            throw GameImporterError.importFailed(.singleFile(path: path.path, error: error))
         }
     }
 }
