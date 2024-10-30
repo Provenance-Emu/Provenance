@@ -83,9 +83,9 @@ static GLContextClass* g_hw_ctx     = NULL;
 static GLContextClass* g_ctx        = NULL;
 static unsigned g_gl_minor          = 0;
 static unsigned g_gl_major          = 0;
-//#if defined(HAVE_COCOATOUCH)
+#if defined(HAVE_COCOATOUCH)
 GLKView *glk_view            = NULL;
-//#endif
+#endif
 
 /* Forward declaration */
 CocoaView *cocoaview_get(void);

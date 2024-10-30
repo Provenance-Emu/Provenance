@@ -323,17 +323,18 @@ void extract_bundles();
     
     switch (vt)
     {
+#ifdef HAVE_COCOA_METAL
         case APPLE_VIEW_TYPE_VULKAN: {
             self.gsPreference = 2;
             MetalView *v = [MetalView new];
             v.paused                = YES;
             v.enableSetNeedsDisplay = NO;
-#if !TARGET_OS_TV && !TARGET_OS_TV && !TARGET_OS_OSX
+#if TARGET_OS_IOS
             v.multipleTouchEnabled  = YES;
 #endif
-            v.autoresizesSubviews=true;
-            v.autoResizeDrawable=true;
-            v.contentMode=UIViewContentModeScaleToFill;
+//            v.autoresizesSubviews=true;
+//            v.autoResizeDrawable=true;
+//            v.contentMode=UIViewContentModeScaleToFill;
             _renderView = v;
         }
             break;
@@ -355,6 +356,7 @@ void extract_bundles();
             _renderView = v;
         }
             break;
+#endif
         case APPLE_VIEW_TYPE_OPENGL_ES:
             self.gsPreference = 1;
             glkitview_init();
@@ -368,10 +370,10 @@ void extract_bundles();
     _renderView.translatesAutoresizingMaskIntoConstraints = NO;
     UIView *rootView = [CocoaView get].view;
     [rootView addSubview:_renderView];
-    [[_renderView.topAnchor constraintEqualToAnchor:rootView.topAnchor] setActive:YES];
-    [[_renderView.bottomAnchor constraintEqualToAnchor:rootView.bottomAnchor] setActive:YES];
-    [[_renderView.leadingAnchor constraintEqualToAnchor:rootView.leadingAnchor] setActive:YES];
-    [[_renderView.trailingAnchor constraintEqualToAnchor:rootView.trailingAnchor] setActive:YES];
+    [[_renderView.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.topAnchor] setActive:YES];
+    [[_renderView.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
+    [[_renderView.safeAreaLayoutGuide.leadingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.leadingAnchor] setActive:YES];
+    [[_renderView.safeAreaLayoutGuide.trailingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.trailingAnchor] setActive:YES];
 }
 
 - (void)setupView {
