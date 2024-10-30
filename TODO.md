@@ -3,7 +3,7 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] RetroArch GLES cores are crashing
+- [ ] RetroArch GLES cores are crashing?
 - [ ] (Lite) Sega CD is borked
 - [X] UI is unresponsive after closing emulator
 - [X] wrap advanced settings in freemiumview
