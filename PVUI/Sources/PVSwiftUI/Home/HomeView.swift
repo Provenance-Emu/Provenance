@@ -116,7 +116,6 @@ struct HomeView: SwiftUI.View {
                     }
                     
                     HomeDividerView()
-                    NeumorphismView()
                     displayOptionsView()
                     showGamesGrid(allGames)
                 }
