@@ -332,15 +332,25 @@ void cocoa_file_load_with_detect_core(const char *filename);
 
 -(void)adjustViewFrameForSafeArea
 {
-#if !TARGET_OS_TV
    /* This is for adjusting the view frame to account for
     * the notch in iPhone X phones */
    if (@available(iOS 11, *))
    {
+      settings_t *settings               = config_get_ptr();
       RAScreen *screen                   = (BRIDGE RAScreen*)cocoa_screen_get_chosen();
       CGRect screenSize                  = [screen bounds];
       UIEdgeInsets inset                 = [[UIApplication sharedApplication] delegate].window.safeAreaInsets;
       UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+
+      if (settings->bools.video_notch_write_over_enable)
+      {
+         self.view.frame = CGRectMake(screenSize.origin.x,
+                     screenSize.origin.y,
+                     screenSize.size.width,
+                     screenSize.size.height);
+         return;
+      }
+
       switch (orientation)
       {
          case UIInterfaceOrientationPortrait:
@@ -366,8 +376,8 @@ void cocoa_file_load_with_detect_core(const char *filename);
             break;
       }
    }
-#endif
 }
+
 
 - (void)viewWillLayoutSubviews
 {
