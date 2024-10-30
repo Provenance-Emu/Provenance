@@ -27,15 +27,15 @@ import Defaults
 // Main AppState class
 @MainActor
 public class AppState: ObservableObject {
-    
+
     @ObservedObject
     public static private(set) var shared: AppState = .init()
-    
+
     /// Computed property to access current bootup state
     public var bootupState: AppBootupState.State {
         bootupStateManager.currentState
     }
-    
+
     /// Hold the emulation core and other info
     @Published
     public var emulationState :EmulationState = .init()
@@ -174,9 +174,9 @@ public class AppState: ObservableObject {
         ILOG("AppState: Bootup state transitioned to completed")
         ILOG("AppState: Bootup finalized")
 
-        Task {
-            try? await withTimeout(seconds: 5) {
-                self.setupShortcutsListener()
+        Task.detached {
+            try? await self.withTimeout(seconds: 15) {
+                await self.setupShortcutsListener()
             }
         }
     }
@@ -205,14 +205,17 @@ public class AppState: ObservableObject {
         }
 #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
         // Setup shortcuts for favorites and recent games
+        let maxShortcuts = 6 // iOS typically shows 4-6 shortcuts
         Observable.combineLatest(
-            gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
-            gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }
-        ) { $0 + $1 }
-            .bind(onNext: { shortcuts in
-                UIApplication.shared.shortcutItems = shortcuts
-            })
-            .disposed(by: disposeBag)
+            gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) }.map { Array($0.prefix(3)) },
+            gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }.map { Array($0.prefix(3)) }
+        ) { favorites, recents in
+            Array((favorites + recents).prefix(maxShortcuts))
+        }
+        .bind(onNext: { shortcuts in
+            UIApplication.shared.shortcutItems = shortcuts
+        })
+        .disposed(by: disposeBag)
 #endif
     }
 }
@@ -226,7 +229,11 @@ struct TimeoutError: Error {
 extension PVGame {
     func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
         let icon: UIApplicationShortcutIcon = isFavorite ? .init(type: .favorite) : .init(type: .play)
-        return UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: systemIdentifier), icon: icon, userInfo: ["PVGameHash": md5Hash as NSSecureCoding])
+        return UIApplicationShortcutItem(type: "kRecentGameShortcut",
+                                         localizedTitle: title,
+                                         localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: systemIdentifier),
+                                         icon: icon,
+                                         userInfo: ["PVGameHash": md5Hash as NSSecureCoding])
     }
 }
 #endif
