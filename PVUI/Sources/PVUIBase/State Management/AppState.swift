@@ -66,6 +66,8 @@ public class AppState: ObservableObject {
             }
         }
     }
+    
+    public var sendEventWasSwizzled = false
 
     private let disposeBag = DisposeBag()
 

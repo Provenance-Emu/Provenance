@@ -39,7 +39,10 @@ struct ProvenanceApp: App {
                 appState.startBootupSequence()
                 
                 /// Swizzle sendEvent(UIEvent)
-                UIApplication.swizzleSendEvent()
+                if !appState.sendEventWasSwizzled {
+                    UIApplication.swizzleSendEvent()
+                    appState.sendEventWasSwizzled = true
+                }
             }
         }
     }
