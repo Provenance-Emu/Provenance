@@ -3,9 +3,9 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] UI is unresponsive after closing emulator
 - [ ] RetroArch GLES cores are crashing
 - [ ] (Lite) Sega CD is borked
+- [X] UI is unresponsive after closing emulator
 - [X] wrap advanced settings in freemiumview
 - [X] fix launching webserver from swiftui menu
 - [X] iCloud sync isn't working, remove or fix
@@ -28,16 +28,17 @@ _My personal TODO notes_
 
 ## Major bugs
 
-- [X] manually copying a bios into bios's works, but database isn't updated with instance reference
-- [ ] The notch is in retroarch view
-- [ ] look at the displaylink thing in retroarch
-- [ ] iCloud sync removed
-- [ ] Share on old UI crashes app (realm threading issue)
-- [ ] (Lite) Turbo GFX 16 no video for some roms
 - [ ] (Lite) Intellivision (PVBliss) audio crashes on button press
 - [ ] (Lite) Intellivision video is glitched
-- [ ] (Lite) SuperVision video dimensions wrong
 - [ ] (Lite) Odyssey2 needs a way to enter game number 1,2 (3,4)?
+- [ ] (Lite) SuperVision video dimensions wrong
+- [ ] (Lite) Turbo GFX 16 no video for some roms
+- [ ] Share on old UI crashes app (realm threading issue)
+- [ ] iCloud sync removed
+- [ ] look at the displaylink thing in retroarch
+- [ ] Flycast crashes with error `NSInvalidArgumentException', reason: '-[MetalView naturalDrawableSizeMVK]: unrecognized selector sent`
+- [X] The notch is in retroarch view
+- [X] manually copying a bios into bios's works, but database isn't updated with instance reference
 - [X] Mupen video crashes with update metal code
 - [X] CrabEMU (Genesis) no buttons work
 - [X] Mednafen GB crashing
@@ -61,27 +62,23 @@ _My personal TODO notes_
 ## Minor bugs
 
 - [ ] Dark mode toggle doens't refresh all views if theme set to auto
+- [ ] Box art is clipped in swift ui -- need better aspect ratios
+- [ ] Game Info in swift ui crashes on next game scroll
+- [ ] Mupen CoreOptions code is trash 
+- [ ] N64 onscreen controls are kind of high
+- [ ] Opening roms from md5/siri search doesn't work (Claude had good sample code)
+- [ ] See if psx mednafen has more options
+- [ ] Should add loading screen for starting emulator
+- [ ] Spotlignt/extensions can't build with spm modules (this is working now? was an xcode bug?)
 - [ ] SwiftUI game long press menu missing item
     - [ ] View save states
     - [ ] Share
     - [ ] Hide
     - [ ] Choose disc
-- [ ] should store last page view for next open
-- [ ] When switching from SwiftUI to old UI, the game lib is zoomed way too much, need to change how it uses Scaling Factor
-- [ ] Swift UI Settings should use the themed alerts via the delegate or something
-- [ ] theme switching doesn't update nav bar color
-- [ ] Box art is clipped in swift ui -- need better aspect ratios
-- [ ] Game Info in swift ui crashes on next game scroll
-- [X] Fix button 9 repeat on Intellivision controls
-- [X] Importer should overwrite or delete on duplicate imports
-- [ ] Spotlignt/extensions can't build with spm modules
-- [ ] See if psx mednafen has more options
-- [ ] Short names are abreviations not shortname
-- [ ] Sega Master System short name showing as SMS
-- [ ] Mupen CoreOptions code is trash 
-- [ ] Opening roms from md5/siri search doesn't work
 - [ ] Swift UI should open on home and be scrollable to systems
-- [ ] N64 onscreen controls are kind of high
+- [ ] When switching from SwiftUI to old UI, the game lib is zoomed way too much, need to change how it uses Scaling Factor Defaults[.gameLibraryScale]
+- [ ] should store last page view for next open
+- [ ] theme switching doesn't update nav bar color
 - [ ] Themes are ugly on old UI
     - [ ] Fix default no-artwork background
     - [ ] Fix section header colors
@@ -89,7 +86,9 @@ _My personal TODO notes_
     - [ ] Main background not themed
     - [ ] Game text not themed
     - [ ] New import indicator not themed
-- [ ] Swift UI doesn't have "Share" menu item
+- [X] Fix button 9 repeat on Intellivision controls
+- [X] Importer should overwrite or delete on duplicate imports
+- [X] Swift UI Settings should use the themed alerts via the delegate or something
 - [X] purple and rainbow themes not selectable
 - [X] Themes page indicator not right
 - [X] add tap for bios to clipboard in swiftui on missing
@@ -120,9 +119,11 @@ _My personal TODO notes_
 ## Provenance Plus
 
 ## High Priority
+
 - [ ] Privacy policy / EULA in settings!
 - [X] Add in-app purchase and screen
 - [ ] Add app rating with SiruisRating
+
 ### Low Priority
 - [ ] Finish themes
 - [ ] Add new logo
