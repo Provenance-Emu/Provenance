@@ -175,6 +175,10 @@ void get_ios_version(int *major, int *minor);
 - (void)display;
 #endif
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000
+@property(nonatomic,readwrite) CADisplayLink *displayLink API_AVAILABLE(macos(14.0));
+#endif
+
 @end
 #endif
 
