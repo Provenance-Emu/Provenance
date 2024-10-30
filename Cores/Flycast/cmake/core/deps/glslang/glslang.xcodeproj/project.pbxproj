@@ -1450,7 +1450,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1467,7 +1467,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MachineIndependent;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/MachineIndependent.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1479,7 +1479,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1495,7 +1495,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = GenericCodeGen;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/GenericCodeGen.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1529,9 +1529,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = RelWithDebInfo;
 		};
@@ -1541,7 +1541,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/OGLCompilersDLL/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1557,7 +1557,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OGLCompiler;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/OGLCompiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1589,7 +1589,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/SPIRV/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1606,7 +1606,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SPIRV;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/SPIRV.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1618,7 +1618,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1635,7 +1635,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glslang;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/glslang.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1687,7 +1687,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1704,7 +1704,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glslang;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/glslang.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1716,7 +1716,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/SPIRV/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1733,7 +1733,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SPIRV;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/SPIRV.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1745,7 +1745,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1762,7 +1762,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "glslang-default-resource-limits";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/glslang-default-resource-limits.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1774,7 +1774,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/OGLCompilersDLL/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1790,7 +1790,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OGLCompiler;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/OGLCompiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1822,7 +1822,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/OGLCompilersDLL/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1838,7 +1838,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OGLCompiler;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/OGLCompiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1870,7 +1870,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1887,7 +1887,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MachineIndependent;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/MachineIndependent.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1919,7 +1919,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1935,7 +1935,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = GenericCodeGen;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/GenericCodeGen.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1947,7 +1947,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1964,7 +1964,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glslang;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/glslang.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1976,7 +1976,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1992,7 +1992,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = GenericCodeGen;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/GenericCodeGen.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2004,7 +2004,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2021,7 +2021,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "glslang-default-resource-limits";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/glslang-default-resource-limits.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2033,7 +2033,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2050,7 +2050,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "glslang-default-resource-limits";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/glslang-default-resource-limits.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2062,7 +2062,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/OSDependent/Unix/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2078,7 +2078,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OSDependent;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/OSDependent.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2090,7 +2090,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/OSDependent/Unix/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2106,7 +2106,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OSDependent;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/OSDependent.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2118,7 +2118,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/OSDependent/Unix/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2134,7 +2134,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OSDependent;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/OSDependent.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2146,7 +2146,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2162,7 +2162,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = GenericCodeGen;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/GenericCodeGen.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2174,7 +2174,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2191,7 +2191,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glslang;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/glslang.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2205,9 +2205,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = Release;
 		};
@@ -2219,8 +2219,8 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				SDKROOT = auto;
+				BUILD_DIR = ../lib;
 			};
 			name = Debug;
 		};
@@ -2250,7 +2250,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/SPIRV/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2267,7 +2267,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SPIRV;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/SPIRV.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2301,9 +2301,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = MinSizeRel;
 		};
@@ -2313,7 +2313,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2330,7 +2330,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "glslang-default-resource-limits";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/glslang-default-resource-limits.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2362,7 +2362,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2379,7 +2379,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MachineIndependent;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/MachineIndependent.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2411,7 +2411,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/OGLCompilersDLL/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2427,7 +2427,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OGLCompiler;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/OGLCompiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2439,7 +2439,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2456,7 +2456,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MachineIndependent;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/MachineIndependent.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2468,7 +2468,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/glslang/OSDependent/Unix/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2484,7 +2484,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = OSDependent;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/OSDependent.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -2496,7 +2496,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/glslang/SPIRV/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2513,7 +2513,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SPIRV;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/SPIRV.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};

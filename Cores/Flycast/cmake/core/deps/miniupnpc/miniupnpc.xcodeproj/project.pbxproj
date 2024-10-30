@@ -508,7 +508,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -525,7 +525,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = miniupnpc;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/libminiupnpc-static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -539,9 +539,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = MinSizeRel;
 		};
@@ -553,8 +553,8 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				SDKROOT = auto;
+				BUILD_DIR = ../lib;
 			};
 			name = Debug;
 		};
@@ -566,9 +566,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = RelWithDebInfo;
 		};
@@ -618,7 +618,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -635,7 +635,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = miniupnpc;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/libminiupnpc-static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -647,7 +647,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -664,7 +664,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = miniupnpc;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/libminiupnpc-static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -718,9 +718,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = Release;
 		};
@@ -750,7 +750,7 @@ fi
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -767,7 +767,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = miniupnpc;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build/libminiupnpc-static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};

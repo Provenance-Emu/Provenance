@@ -165,7 +165,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = 3FA2FD9756EC439882D24D84;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/Vulkan-Headers";
+			projectDirPath = "../flycast";
 			projectRoot = "";
 			targets = (
 				6DB80BBE8DA7D6D87A8D27FD /* ALL_BUILD */,
@@ -402,9 +402,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = RelWithDebInfo;
 		};
@@ -436,9 +436,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = MinSizeRel;
 		};
@@ -550,8 +550,8 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				SDKROOT = auto;
+				BUILD_DIR = ../lib;
 			};
 			name = Debug;
 		};
@@ -603,9 +603,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = Release;
 		};
