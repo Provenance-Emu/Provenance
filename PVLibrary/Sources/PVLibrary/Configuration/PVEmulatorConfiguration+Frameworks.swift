@@ -26,7 +26,7 @@ public extension PVEmulatorConfiguration {
 
         let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.supportedSystems]))
         let unsupportedCoresAvailable: Bool = Defaults[.unsupportedCores]
-        
+
         if core.disabled, unsupportedCoresAvailable {
             // Do nothing
             ILOG("Skipping disabled core \(core.identifier)")
@@ -82,47 +82,81 @@ public extension PVEmulatorConfiguration {
         let decoder = PropertyListDecoder()
 
         await plists.asyncForEach { plist in
-            do {
-                let data = try Data(contentsOf: plist)
-                let systems: SystemPlistEntries? = try decoder.decode(SystemPlistEntries.self, from: data)
+            await processSystemPlist(plist, using: decoder)
+        }
+    }
 
-                await systems?.concurrentForEach { system in
-                    let database = RomDatabase.sharedInstance
+    private static func processSystemPlist(_ plist: URL, using decoder: PropertyListDecoder) async {
+        do {
+            let systems = try loadSystemEntries(from: plist, using: decoder)
+            await updateSystemEntries(systems)
+        } catch {
+            handlePlistError(error, for: plist)
+        }
+    }
 
-                    if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
-                        do {
-                            RomDatabase.refresh()
-                            try database.writeTransaction {
-                                setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
-                                VLOG("Updated system for id \(system.PVSystemIdentifier)")
-                            }
-                        } catch {
-                            ELOG("Failed to make update system: \(error)")
-                        }
-                    } else {
-                        let newSystem = PVSystem()
-                        newSystem.identifier = system.PVSystemIdentifier
-                        setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
-                        do {
-                            RomDatabase.refresh()
-                            try database.add(newSystem, update: true)
-                            DLOG("Added new system for id \(system.PVSystemIdentifier)")
-                        } catch {
-                            ELOG("Failed to make new system: \(error)")
-                        }
-                    }
-                }
-            } catch let error as DecodingError {
-                switch error {
-                case let .keyNotFound(key, context):
-                    ELOG("Failed to parse plist \(plist.path)\n, key:\(key),\n codingPath: \(context.codingPath.map { $0.stringValue }.joined(separator: ","))\nError: \(error)")
-                default:
-                    ELOG("Failed to parse plist \(plist.path), : \(error)")
-                }
-            } catch {
-                // Handle error
-                ELOG("Failed to parse plist \(plist.path) : \(error)")
+    private static func loadSystemEntries(from url: URL, using decoder: PropertyListDecoder) throws -> [SystemPlistEntry] {
+        let data = try Data(contentsOf: url)
+        return try decoder.decode([SystemPlistEntry].self, from: data)
+    }
+
+    private static func updateSystemEntries(_ systems: [SystemPlistEntry]?) async {
+        await systems?.concurrentForEach(priority: .userInitiated) { system in
+            await updateOrCreateSystem(system)
+        }
+    }
+
+    private static func updateOrCreateSystem(_ system: SystemPlistEntry) async {
+        let database = RomDatabase.sharedInstance
+
+        if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
+            await updateExistingSystem(existingSystem, with: system, using: database)
+        } else {
+            await createNewSystem(from: system, using: database)
+        }
+    }
+
+    private static func updateExistingSystem(_ existingSystem: PVSystem, with system: SystemPlistEntry, using database: RomDatabase) async {
+        do {
+            RomDatabase.refresh()
+            try database.writeTransaction {
+                setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
+                VLOG("Updated system for id \(system.PVSystemIdentifier)")
             }
+        } catch {
+            ELOG("Failed to update system: \(error)")
+        }
+    }
+
+    private static func createNewSystem(from system: SystemPlistEntry, using database: RomDatabase) async {
+        let newSystem = PVSystem()
+        newSystem.identifier = system.PVSystemIdentifier
+        setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
+
+        do {
+            RomDatabase.refresh()
+            try database.add(newSystem, update: true)
+            DLOG("Added new system for id \(system.PVSystemIdentifier)")
+        } catch {
+            ELOG("Failed to create new system: \(error)")
+        }
+    }
+
+    private static func handlePlistError(_ error: Error, for plist: URL) {
+        if let decodingError = error as? DecodingError {
+            switch decodingError {
+            case let .keyNotFound(key, context):
+                ELOG("""
+                    Failed to parse plist \(plist.path)
+                    Key: \(key)
+                    Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: ","))
+                    Error: \(error)
+                    """)
+            default:
+                ELOG("Failed to parse plist \(plist.path): \(error)")
+            }
+        } else {
+            ELOG("Failed to parse plist \(plist.path): \(error)")
         }
     }
 
@@ -150,7 +184,7 @@ public extension PVEmulatorConfiguration {
         } else {
             pvSystem.screenType = .unknown
         }
-        
+
         // Iterate extensions and add to Realm object
         pvSystem.supportedExtensions.removeAll()
         pvSystem.supportedExtensions.append(objectsIn: system.PVSupportedExtensions)
