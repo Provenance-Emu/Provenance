@@ -408,7 +408,7 @@
 		B3A3CC662CCC783B00589F82 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC4E2CCC77D100589F82 /* liblzma.a */; platformFilters = (ios, maccatalyst, ); };
 		B3A3CC682CCC783B00589F82 /* libminiupnpc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC4C2CCC77D100589F82 /* libminiupnpc.a */; platformFilters = (ios, maccatalyst, ); };
 		B3A3CC6D2CCC783B00589F82 /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC522CCC77D100589F82 /* libxxhash.a */; platformFilters = (ios, maccatalyst, ); };
-		B3A3CC6E2CCC783B00589F82 /* libzlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC562CCC77D100589F82 /* libzlib.a */; platformFilters = (ios, maccatalyst, ); };
+		B3A3CC6E2CCC783B00589F82 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC562CCC77D100589F82 /* libz.a */; platformFilters = (ios, maccatalyst, ); };
 		B3A3CC6F2CCC783B00589F82 /* libzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC542CCC77D100589F82 /* libzip.a */; platformFilters = (ios, maccatalyst, ); };
 		B3A3CC702CCC787D00589F82 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B3A3CC712CCC787D00589F82 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
@@ -8643,7 +8643,7 @@
 				B3A3CDB32CCC87DF00589F82 /* lib_unused_flycast-libretro.a in Frameworks */,
 				B3A3CC6F2CCC783B00589F82 /* libzip.a in Frameworks */,
 				B3A3CC662CCC783B00589F82 /* liblzma.a in Frameworks */,
-				B3A3CC6E2CCC783B00589F82 /* libzlib.a in Frameworks */,
+				B3A3CC6E2CCC783B00589F82 /* libz.a in Frameworks */,
 				B3A3CC6D2CCC783B00589F82 /* libxxhash.a in Frameworks */,
 				B3A3CDB92CCC883700589F82 /* libflycast.a in Frameworks */,
 				B3A3CC5B2CCC782D00589F82 /* PVCoreBridgeRetro.framework in Frameworks */,
@@ -8661,7 +8661,7 @@
 				B3A3CC4E2CCC77D100589F82 /* liblzma.a */,
 				B3A3CC522CCC77D100589F82 /* libxxhash.a */,
 				B3A3CC542CCC77D100589F82 /* libzip.a */,
-				B3A3CC562CCC77D100589F82 /* libzlib.a */,
+				B3A3CC562CCC77D100589F82 /* libz.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -22917,10 +22917,10 @@
 			remoteRef = B3A3CC532CCC77D100589F82 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3A3CC562CCC77D100589F82 /* libzlib.a */ = {
+		B3A3CC562CCC77D100589F82 /* libz.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libzlib.a;
+			path = libz.a;
 			remoteRef = B3A3CC552CCC77D100589F82 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
