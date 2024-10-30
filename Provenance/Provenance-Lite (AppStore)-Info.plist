@@ -6,6 +6,8 @@
 	<string></string>
 	<key>APP_GROUP_IDENTIFIER</key>
 	<string>$(APP_GROUP_IDENTIFIER)</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

@@ -8,6 +8,8 @@
 	<string>$(APP_GROUP_IDENTIFIER)</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
