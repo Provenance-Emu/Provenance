@@ -55,7 +55,7 @@ struct GameContextMenu: SwiftUI.View {
             if game.system.cores.count > 1 {
                 Button {
                     Task { @MainActor in
-                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil, showCoreSelection: true)
                     }
                 } label: { Label("Open in...", systemImage: "gamecontroller") }
             }

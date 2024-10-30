@@ -48,7 +48,7 @@ import FreemiumKit
 #else
 @Observable
 #endif
-final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDelegate {
+final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationDelegate {
     /// This is set by the UIApplicationDelegateAdaptor
     internal var window: UIWindow? = nil
 
@@ -201,7 +201,7 @@ final class PVAppDelegate: NSObject, GameLaunchingAppDelegate, UIApplicationDele
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         ILOG("PVAppDelegate: Application did finish launching")
-        // Remove the AppState initialization from here
+
         initializeAppComponents()
         configureApplication(application)
         return true

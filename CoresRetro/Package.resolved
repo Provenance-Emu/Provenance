@@ -1,14 +1,24 @@
 {
+  "originHash" : "e8f74e2329af49116c5fcd48925fd8ca9f27f5e7cec2eddb65e480646bfdc4d4",
   "pins" : [
     {
-      "identity" : "swiftgenplugin",
+      "identity" : "checksum",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftGen/SwiftGenPlugin",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
       "state" : {
-        "revision" : "879b85a470cacd70c19e22eb7e11a3aed66f4068",
-        "version" : "6.6.2"
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

@@ -32,6 +32,5 @@ struct ContentView: View {
         }
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-
     }
 }

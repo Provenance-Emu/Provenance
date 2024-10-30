@@ -8,6 +8,7 @@
 import Foundation
 import PVLogging
 import PVEmulatorCore
+import PVPlists
 
 public final class CoreClasses: Sendable {
     nonisolated(unsafe) public static let coreClasses: [ClassInfo] = {

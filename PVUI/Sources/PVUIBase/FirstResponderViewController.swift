@@ -25,20 +25,20 @@ public struct FirstResponderViewControllerWrapper: UIViewControllerRepresentable
     }
 }
 
-public class FirstResponderViewController: UIViewController {
+open class FirstResponderViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
         view.isUserInteractionEnabled = true
     }
 
-    public override var canBecomeFirstResponder: Bool {
-        return true
-    }
-
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         becomeFirstResponder()
+    }
+
+    public override var canBecomeFirstResponder: Bool {
+        return true
     }
 
     // Handle and forward touch events

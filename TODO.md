@@ -27,6 +27,8 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [ ] The notch is in retroarch view
+- [ ] look at the displaylink thing in retroarch
 - [ ] Dark mode toggle doens't refresh all views if theme set to auto
 - [ ] iCloud sync removed
 - [ ] (Lite) Turbo GFX 16 no video for some roms
@@ -56,7 +58,13 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] SwiftUI game long press menu missing item
+    - [ ] View save states
+    - [ ] Share
+    - [ ] Hide
+    - [ ] Choose disc
 - [ ] should store last page view for next open
+- [ ] When switching from SwiftUI to old UI, the game lib is zoomed way too much, need to change how it uses Scaling Factor
 - [ ] Swift UI Settings should use the themed alerts via the delegate or something
 - [ ] theme switching doesn't update nav bar color
 - [ ] Box art is clipped in swift ui -- need better aspect ratios

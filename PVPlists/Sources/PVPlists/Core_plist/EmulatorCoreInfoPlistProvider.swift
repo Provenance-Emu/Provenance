@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import PVPlists
 
 @objc public protocol EmulatorCoreInfoPlistProvider {
     static var corePlist: EmulatorCoreInfoPlist { get }

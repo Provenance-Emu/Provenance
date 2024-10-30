@@ -32,8 +32,8 @@ extension PVRootViewController: PVRootDelegate {
         try await self.canLoad(game.warmUp())
     }
 
-    public func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
-        await self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
+    public func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?, showCoreSelection: Bool = false) async {
+        await self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp(), showCoreSelection: showCoreSelection)
     }
 
     public func root_openSaveState(_ saveState: PVSaveState) async {

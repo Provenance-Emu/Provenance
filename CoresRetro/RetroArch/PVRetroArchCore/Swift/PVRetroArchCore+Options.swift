@@ -1,6 +1,7 @@
 import Foundation
 import PVSupport
 import PVEmulatorCore
+import PVCoreBridge
 
 extension PVRetroArchCoreCore: CoreOptional {
     public static var options: [PVCoreBridge.CoreOption] {

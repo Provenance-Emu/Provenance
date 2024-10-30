@@ -50,6 +50,12 @@
 
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
+static void rarch_draw_observer(CFRunLoopObserverRef observer,
+                                CFRunLoopActivity activity, void *info);
+
+static CFRunLoopObserverRef iterate_observer;
+
+
 apple_frontend_settings_t apple_frontend_settings;
 extern id<ApplePlatform> apple_platform;
 extern void *apple_gamecontroller_joypad_init(void *data);
@@ -604,9 +610,16 @@ void extract_bundles();
 - (void)setupMainWindow { }
 /* Delegate */
 - (void)applicationDidFinishLaunching:(UIApplication *)application { }
-- (void)applicationDidEnterBackground:(UIApplication *)application { }
-- (void)applicationWillTerminate:(UIApplication *)application { }
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    rarch_stop_draw_observer();
+    command_event(CMD_EVENT_SAVE_FILES, NULL);
+}
+- (void)applicationWillTerminate:(UIApplication *)application {
+    rarch_stop_draw_observer();
+}
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    rarch_start_draw_observer();
+
    settings_t *settings            = config_get_ptr();
    bool ui_companion_start_on_boot = settings->bools.ui_companion_start_on_boot;
    if (!ui_companion_start_on_boot)
@@ -649,9 +662,32 @@ void extract_bundles();
    [self refreshSystemConfig];
 }
 
+void rarch_start_draw_observer(void)
+{
+   if (iterate_observer && CFRunLoopObserverIsValid(iterate_observer))
+       return;
+
+   if (iterate_observer != NULL)
+      CFRelease(iterate_observer);
+   iterate_observer = CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting,
+                                              true, 0, rarch_draw_observer, 0);
+   CFRunLoopAddObserver(CFRunLoopGetMain(), iterate_observer, kCFRunLoopCommonModes);
+}
+
+void rarch_stop_draw_observer(void)
+{
+    if (!iterate_observer || !CFRunLoopObserverIsValid(iterate_observer))
+        return;
+    CFRunLoopObserverInvalidate(iterate_observer);
+    CFRelease(iterate_observer);
+    iterate_observer = NULL;
+}
+
 @end
 
 /* RetroArch */
+
+
 void ui_companion_cocoatouch_event_command(
 	  void *data, enum event_command cmd) { }
 

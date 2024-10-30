@@ -19,46 +19,6 @@ let cSettings_retroarch: [CSetting] = [[
     "libretro-common/include"
 ].map { CSetting.headerSearchPath("../../RetroArch/\($0)") }, cSettings_DEFINES].flatMap { $0 }
 
-let sources_lhasa: [String] =  [
-    [
-        // This files are #include'd
-//        "bit_stream_reader.c",
-//        "lh_new_decoder.c",
-//        "pma_common.c",
-//        "tree_decode.c",
-
-        "crc16.c",
-        "ext_header.c",
-        "lha_arch_unix.c",
-        "lha_arch_win32.c",
-        "lha_decoder.c",
-        "lha_endian.c",
-        "lha_file_header.c",
-        "lha_input_stream.c",
-        "lha_basic_reader.c",
-        "lha_reader.c",
-        "macbinary.c",
-        "null_decoder.c",
-        "lh1_decoder.c",
-        "lh5_decoder.c",
-        "lh6_decoder.c",
-        "lh7_decoder.c",
-        "lhx_decoder.c",
-        "lk7_decoder.c",
-        "lz5_decoder.c",
-        "lzs_decoder.c",
-        "pm1_decoder.c",
-        "pm2_decoder.c"
-    ].map { "lib/\($0)" },
-    [
-        "extract.c",
-        "filter.c",
-        "list.c",
-        "safe.c"
-    ].map { "src/\($0)" }
-].flatMap{ $0 }
-
-
 let package = Package(
     name: "PVRetroArch",
     platforms: [
@@ -82,7 +42,7 @@ let package = Package(
             type: .static,
             targets: ["PVRetroArch"]),
     ],
-
+    
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(name: "PVLogging", path: "../PVLogging/"),
@@ -92,12 +52,173 @@ let package = Package(
         .package(name: "PVAudio", path: "../PVAudio/"),
         .package(name: "SSZipArchive", path: "./RetroArch/ZipArchive"),
     ],
-
+    
     // MARK: - Targets
     targets: [
-        // MARK: - C compression Libs
+        
+        // MARK: - iOS Code
+        
+        // ------------------------------------
+        // MARK: - PVRetroArchSwift
+        // ------------------------------------
+        .target (
+            name: "PVRetroArchSwift",
+            dependencies: [
+                "PVRetroArch"
+            ],
+            path: "RetroArch/PVRetroArchCore/Swift"
+        ),
 
+        // ------------------------------------
+        // MARK: - PVRetroArch
+        // ------------------------------------
+            
+        .target(
+            name: "PVRetroArch",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVObjCUtils",
+                "PVSupport",
+                "PVAudio",
+                "PVLogging",
+                "libretroarch",
+                "lhasa",
+                "LzhArchive",
+                "RarArchive",
+                .product(name: "ZipArchive", package: "SSZipArchive")
+            ],
+            path: "RetroArch/PVRetroArchCore/Core",
+            sources: [
+                "PVRetroArch.mm",
+                "PVRetroArchCore+Archive+AppleII.m",
+                "PVRetroArchCore+Archive+MAME.m",
+                "PVRetroArchCore+Archive+PC98.m",
+                //                    "PVRetroArchCore+Archive.h",
+                "PVRetroArchCore+Archive.m",
+                //                    "PVRetroArchCore+Audio.h",
+                "PVRetroArchCore+Audio.mm",
+                "PVRetroArchCore+Cheats.mm",
+                "PVRetroArchCore+Controls+3DO.m",
+                "PVRetroArchCore+Controls+DS.m",
+                "PVRetroArchCore+Controls+Dreamcast.m",
+                "PVRetroArchCore+Controls+GB.m",
+                "PVRetroArchCore+Controls+GBA.m",
+                "PVRetroArchCore+Controls+Genesis.m",
+                "PVRetroArchCore+Controls+MAME.m",
+                "PVRetroArchCore+Controls+N64.m",
+                "PVRetroArchCore+Controls+NES.m",
+                "PVRetroArchCore+Controls+NeoGeo.m",
+                "PVRetroArchCore+Controls+PCE.m",
+                "PVRetroArchCore+Controls+PSP.m",
+                "PVRetroArchCore+Controls+PSX.m",
+                "PVRetroArchCore+Controls+SNES.m",
+                "PVRetroArchCore+Controls+Saturn.m",
+                //                    "PVRetroArchCore+Controls.h",
+                "PVRetroArchCore+Controls.m",
+                "PVRetroArchCore+RetroArchUI.m",
+                //                    "PVRetroArchCore+Saves.h",
+                "PVRetroArchCore+Saves.mm",
+                //                    "PVRetroArchCore+Video.h",
+                "PVRetroArchCore+Video.mm",
+                //                    "PVRetroArchCore.h",
+                "PVRetroArchCore.mm",
+                "Shaders.metal",
+                //                    "apple_platform.h",
+                //                    "cocoa_common.h",
+                "cocoa_common.m",
+                "cocoa_gl_ctx.m",
+                "cocoa_vk_ctx.m",
+                "dylib.c",
+                "menu_pipeline.metal",
+                "metal.m",
+                "platform_darwin.m",
+                "runloop.c",
+                "vulkan_common.c",
+                //                    "vulkan_common.h",
+                //                    "vulkan_metal.h",
+            ],
+            publicHeadersPath: ".",
+            cSettings: [
+                .define("LIBRETRO", to: "1"),
+                .headerSearchPath("include"),
+                .headerSearchPath("../PVSupport/include"),
+                .headerSearchPath("../PVEmulatorCoreObjC/include"),
+                .headerSearchPath("./PVRetroArch"),
+                .headerSearchPath("./PVRetroArchCore"),
+                .headerSearchPath("../PVRetroArchCore/Core"),
+                .headerSearchPath("."),
+                .headerSearchPath("../Retroarch/pkg/apple"),
+                .headerSearchPath("../Retroarch/pkg"),
+                .headerSearchPath("../RetroArch/ui/drivers"),
+                .headerSearchPath("../Retroarch/ui/drivers/cocoa"),
+                .headerSearchPath("../Retroarch/pkg/apple/iOS"),
+                .headerSearchPath("../Retroarch/pkg/apple/WebServer/GCDWebUploader"),
+                .headerSearchPath("../Retroarch/"),
+                .headerSearchPath("../Retroarch/libretro-common/include"),
+                .headerSearchPath("../Retroarch/libretro-common/include/compat/zlib"),
+                .headerSearchPath("../Retroarch/deps/stb"),
+                .headerSearchPath("../Retroarch/deps/rcheevos/include"),
+                .headerSearchPath("../Retroarch/deps"),
+                .headerSearchPath("../Retroarch/libretro-common/include"),
+                .headerSearchPath("../RetroArch/gfx/drivers_context"),
+                .headerSearchPath("../Retroarch/gfx"),
+                .headerSearchPath("../RetroArch/gfx/include/"),
+                .headerSearchPath("../RetroArch/pkg/apple/WebServer/GCDWebUploader"),
+                .headerSearchPath("../RetroArch/pkg/apple/WebServer/GCDWebServer/Responses"),
+                .headerSearchPath("../RetroArch/pkg/apple/WebServer/GCDWebServer/Requests"),
+                .headerSearchPath("../RetroArch/pkg/apple/WebServer/GCDWebServer/Core"),
+                .headerSearchPath("../RetroArch/pkg/apple/WebServer"),
+                .headerSearchPath("../RetroArch/gfx/common/"),
+                .headerSearchPath("../RetroArch/gfx/common/metal/"),
+                .headerSearchPath("../RetroArch/gfx/drivers/"),
+                .headerSearchPath("./RetroArch/frontend/drivers"),
+                .headerSearchPath("./RetroArch/input"),
+                .headerSearchPath("./RetroArch/input/drivers"),
+                .headerSearchPath("./RetroArch/libretro-common/include"),
+                .headerSearchPath("./RetroArch/input/include/GameController/"),
+                .headerSearchPath("./PVRetroArchCore/Core"),
+                .headerSearchPath("./PVRetroArchCore/Archive/LzhArchive"),
+                .headerSearchPath("./PVRetroArchCore/Archive/ZipArchive/SSZipArchive"),
+                .headerSearchPath("./PVRetroArchCore/Archive/RarArchive"),
+                .headerSearchPath("../RetroArch/deps/glslang"),
+                .headerSearchPath("../RetroArch/deps/SPIRV-Cross"),
+                .headerSearchPath("../RetroArch/deps/glslang/glslang/glslang/Public"),
+                .headerSearchPath("../RetroArch/deps/glslang/glslang/glslang/OSDependent/Unix"),
+                .headerSearchPath("../RetroArch/deps/glslang/glslang/SPIRV"),
+                .headerSearchPath("../RetroArch/deps/glslang/glslang/glslang/MachineIndependent"),
+            ],
+            swiftSettings: pvemulatorCoreSwiftFlags,
+            linkerSettings: [
+                //              "-Wl,-segalign,4000"
+                .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS, .macCatalyst, .macOS])),
+                .linkedFramework("CoreGraphics", .when(platforms: [.iOS, .tvOS, .macCatalyst, .macOS])),
+                .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst, .macOS])),
+            ]),
+        
+        // ------------------------------------
+        // MARK: - libretroarch
+        // ------------------------------------
+        .target (
+            name: "libretroarch",
+            path: "RetroArch/PVRetroArchCore/retroarch/",
+            sources: [
+                "griffin.c",
+                "griffin.m",
+                "griffin_slang.cpp",
+                "griffin_cpp.cpp"
+            ],
+            publicHeadersPath: "",
+            cSettings: cSettings_retroarch,
+            linkerSettings: [
+                .linkedLibrary("z"),
+                .linkedLibrary("iconv")
+            ]
+        ),
+        // MARK: - C compression Libs
+        
+        // ------------------------------------
         // MARK: - LzhArchive
+        // ------------------------------------
         .target (
             name: "LzhArchive",
             path: "RetroArch/LzhArchive/",
@@ -120,21 +241,24 @@ let package = Package(
                 .linkedLibrary("lzma")
             ]
         ),
-
+        
+        // ------------------------------------
+        // MARK: - lhasa
+        // ------------------------------------
         .target (
             name: "lhasa",
             dependencies: [
                 "LzhArchive"
             ],
             path: "RetroArch/lhasa/",
-            sources: sources_lhasa,
+            sources: Sources.lhasa,
             publicHeadersPath: "lib/public",
             cSettings: [
                 .headerSearchPath("./"),
                 .headerSearchPath("./lib"),
                 .headerSearchPath("./lib/public"),
                 .headerSearchPath("./src")
-
+                
             ],
             linkerSettings: [
                 .unsafeFlags([
@@ -142,7 +266,10 @@ let package = Package(
                 ])
             ]
         ),
-
+    
+        // ------------------------------------
+        // MARK: - RarArchive
+        // ------------------------------------
         .target (
             name: "RarArchive",
             path: "RetroArch/RarArchive",
@@ -152,155 +279,9 @@ let package = Package(
             linkerSettings: [
                 .linkedLibrary("unrar")
             ]
-        ),
-
-        // MARK: - iOS Code
-            .target (
-                name: "retroarch",
-                path: "RetroArch/PVRetroArchCore/retroarch/",
-                sources: [
-                    "griffin.c",
-                    "griffin.m",
-                    "griffin_slang.cpp",
-                    "griffin_cpp.cpp"
-                ],
-                publicHeadersPath: "",
-                cSettings: cSettings_retroarch,
-                linkerSettings: [
-                    .linkedLibrary("z"),
-                    .linkedLibrary("iconv")
-                ]
-            ),
-
-            .target (
-                name: "PVRetroArchSwift",
-                dependencies: [
-                    "PVRetroArch"
-                ],
-                path: "RetroArch/PVRetroArchCore/Swift"
-            ),
-
-            .target(
-                name: "PVRetroArch",
-                dependencies: [
-                    "PVEmulatorCore",
-                    .product(name: "PVObjCUtils", package: "PVObjCUtils"),
-                    .product(name: "PVSupport", package: "PVSupport"),
-                    .product(name: "PVAudio", package: "PVAudio"),
-                    .product(name: "PVLogging", package: "PVLogging"),
-                    "lhasa",
-                    "retroarch",
-                    "RarArchive",
-                    .product(name: "ZipArchive", package: "SSZipArchive")
-                ],
-                path: "RetroArch/PVRetroArchCore/Core",
-                sources: [
-                    "PVRetroArch.mm",
-                    "PVRetroArchCore+Archive+AppleII.m",
-                    "PVRetroArchCore+Archive+MAME.m",
-                    "PVRetroArchCore+Archive+PC98.m",
-//                    "PVRetroArchCore+Archive.h",
-                    "PVRetroArchCore+Archive.m",
-//                    "PVRetroArchCore+Audio.h",
-                    "PVRetroArchCore+Audio.mm",
-                    "PVRetroArchCore+Cheats.mm",
-                    "PVRetroArchCore+Controls+3DO.m",
-                    "PVRetroArchCore+Controls+DS.m",
-                    "PVRetroArchCore+Controls+Dreamcast.m",
-                    "PVRetroArchCore+Controls+GB.m",
-                    "PVRetroArchCore+Controls+GBA.m",
-                    "PVRetroArchCore+Controls+Genesis.m",
-                    "PVRetroArchCore+Controls+MAME.m",
-                    "PVRetroArchCore+Controls+N64.m",
-                    "PVRetroArchCore+Controls+NES.m",
-                    "PVRetroArchCore+Controls+NeoGeo.m",
-                    "PVRetroArchCore+Controls+PCE.m",
-                    "PVRetroArchCore+Controls+PSP.m",
-                    "PVRetroArchCore+Controls+PSX.m",
-                    "PVRetroArchCore+Controls+SNES.m",
-                    "PVRetroArchCore+Controls+Saturn.m",
-//                    "PVRetroArchCore+Controls.h",
-                    "PVRetroArchCore+Controls.m",
-                    "PVRetroArchCore+RetroArchUI.m",
-//                    "PVRetroArchCore+Saves.h",
-                    "PVRetroArchCore+Saves.mm",
-//                    "PVRetroArchCore+Video.h",
-                    "PVRetroArchCore+Video.mm",
-//                    "PVRetroArchCore.h",
-                    "PVRetroArchCore.mm",
-                    "Shaders.metal",
-//                    "apple_platform.h",
-//                    "cocoa_common.h",
-                    "cocoa_common.m",
-                    "cocoa_gl_ctx.m",
-                    "cocoa_vk_ctx.m",
-                    "dylib.c",
-                    "menu_pipeline.metal",
-                    "metal.m",
-                    "platform_darwin.m",
-                    "runloop.c",
-                    "vulkan_common.c",
-//                    "vulkan_common.h",
-//                    "vulkan_metal.h",
-                ],
-                publicHeadersPath: ".",
-                cSettings: [
-                    .define("LIBRETRO", to: "1"),
-                    .headerSearchPath("include"),
-                    .headerSearchPath("../PVSupport/include"),
-                    .headerSearchPath("../PVEmulatorCoreObjC/include"),
-                    .headerSearchPath("./PVRetroArch"),
-                    .headerSearchPath("./PVRetroArchCore"),
-                    .headerSearchPath("../PVRetroArchCore/Core"),
-                    .headerSearchPath("."),
-                    .headerSearchPath("../Retroarch/pkg/apple"),
-                    .headerSearchPath("../Retroarch/pkg"),
-                    .headerSearchPath("../RetroArch/ui/drivers"),
-                    .headerSearchPath("../Retroarch/ui/drivers/cocoa"),
-                    .headerSearchPath("../Retroarch/pkg/apple/iOS"),
-                    .headerSearchPath("../Retroarch/pkg/apple/WebServer/GCDWebUploader"),
-                    .headerSearchPath("../Retroarch/"),
-                    .headerSearchPath("../Retroarch/libretro-common/include"),
-                    .headerSearchPath("../Retroarch/libretro-common/include/compat/zlib"),
-                    .headerSearchPath("../Retroarch/deps/stb"),
-                    .headerSearchPath("../Retroarch/deps/rcheevos/include"),
-                    .headerSearchPath("../Retroarch/deps"),
-                    .headerSearchPath("../Retroarch/libretro-common/include"),
-                    .headerSearchPath("../RetroArch/gfx/drivers_context"),
-                    .headerSearchPath("../Retroarch/gfx"),
-                    .headerSearchPath("../RetroArch/gfx/include/"),
-                    .headerSearchPath("../RetroArch/pkg/apple/WebServer/GCDWebUploader"),
-                    .headerSearchPath("../RetroArch/pkg/apple/WebServer/GCDWebServer/Responses"),
-                    .headerSearchPath("../RetroArch/pkg/apple/WebServer/GCDWebServer/Requests"),
-                    .headerSearchPath("../RetroArch/pkg/apple/WebServer/GCDWebServer/Core"),
-                    .headerSearchPath("../RetroArch/pkg/apple/WebServer"),
-                    .headerSearchPath("../RetroArch/gfx/common/"),
-                    .headerSearchPath("../RetroArch/gfx/common/metal/"),
-                    .headerSearchPath("../RetroArch/gfx/drivers/"),
-                    .headerSearchPath("./RetroArch/frontend/drivers"),
-                    .headerSearchPath("./RetroArch/input"),
-                    .headerSearchPath("./RetroArch/input/drivers"),
-                    .headerSearchPath("./RetroArch/libretro-common/include"),
-                    .headerSearchPath("./RetroArch/input/include/GameController/"),
-                    .headerSearchPath("./PVRetroArchCore/Core"),
-                    .headerSearchPath("./PVRetroArchCore/Archive/LzhArchive"),
-                    .headerSearchPath("./PVRetroArchCore/Archive/ZipArchive/SSZipArchive"),
-                    .headerSearchPath("./PVRetroArchCore/Archive/RarArchive"),
-                    .headerSearchPath("../RetroArch/deps/glslang"),
-                    .headerSearchPath("../RetroArch/deps/SPIRV-Cross"),
-                    .headerSearchPath("../RetroArch/deps/glslang/glslang/glslang/Public"),
-                    .headerSearchPath("../RetroArch/deps/glslang/glslang/glslang/OSDependent/Unix"),
-                    .headerSearchPath("../RetroArch/deps/glslang/glslang/SPIRV"),
-                    .headerSearchPath("../RetroArch/deps/glslang/glslang/glslang/MachineIndependent"),
-                ],
-                swiftSettings: pvemulatorCoreSwiftFlags,
-                linkerSettings: [
-                    //              "-Wl,-segalign,4000"
-                    .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS, .macCatalyst, .macOS])),
-                    .linkedFramework("CoreGraphics", .when(platforms: [.iOS, .tvOS, .macCatalyst, .macOS])),
-                    .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst, .macOS])),
-                ])],
-    swiftLanguageVersions: [.v5],
+        )
+    ],
+    swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu17,
     cxxLanguageStandard: .cxx20
 )
@@ -402,7 +383,7 @@ let cSettings_DEFINES: [CSetting] = [
     .define("HAVE_SWRESAMPLE", to: "1", .when(configuration: .debug)),
     .define("VULKAN_HDR_SWAPCHAIN", to: "1", .when(configuration: .debug)),
     .define("HAVE_SHADERPIPELINE", .when(configuration: .debug)),
-
+    
         .define("NDEBUG", .when(configuration: .release)),
     .define("DONT_WANT_ARM_OPTIMIZATIONS", .when(configuration: .release)),
     .define("ENABLE_HLSL", .when(configuration: .release)),
@@ -492,3 +473,45 @@ let cSettings_DEFINES: [CSetting] = [
     .define("VULKAN_HDR_SWAPCHAIN", to: "1", .when(configuration: .release)),
     .define("HAVE_SHADERPIPELINE", .when(configuration: .release))
 ]
+
+enum Sources {
+    static var lhasa: [String] { [
+        [
+            // This files are #include'd
+            //        "bit_stream_reader.c",
+            //        "lh_new_decoder.c",
+            //        "pma_common.c",
+            //        "tree_decode.c",
+            
+            "crc16.c",
+            "ext_header.c",
+            "lha_arch_unix.c",
+            "lha_arch_win32.c",
+            "lha_decoder.c",
+            "lha_endian.c",
+            "lha_file_header.c",
+            "lha_input_stream.c",
+            "lha_basic_reader.c",
+            "lha_reader.c",
+            "macbinary.c",
+            "null_decoder.c",
+            "lh1_decoder.c",
+            "lh5_decoder.c",
+            "lh6_decoder.c",
+            "lh7_decoder.c",
+            "lhx_decoder.c",
+            "lk7_decoder.c",
+            "lz5_decoder.c",
+            "lzs_decoder.c",
+            "pm1_decoder.c",
+            "pm2_decoder.c"
+        ].map { "lib/\($0)" },
+        [
+            "extract.c",
+            "filter.c",
+            "list.c",
+            "safe.c"
+        ].map { "src/\($0)" }
+    ].flatMap{ $0 }
+    }
+}

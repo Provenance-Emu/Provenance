@@ -485,9 +485,9 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var gameLibraryText: UIColor { .CGA.red }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.redShadow.brightness(0.8) }
+    public var gameLibraryHeaderBackground: UIColor { .CGA.redShadow.brightness(0.25) }
     ///         Text
-    public var gameLibraryHeaderText: UIColor { .black }
+    public var gameLibraryHeaderText: UIColor { .CGA.red.brightness(1.0) }
     ///     Cell
     ///         Background
     public var gameLibraryCellBackground: UIColor? { .CGA.redShadow.brightness(0.20) }
@@ -523,12 +523,12 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var menuIconTint: UIColor { .CGA.red.brightness(1.0) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor { .CGA.redShadow.brightness(0.7) }
+    public var menuHeaderBackground: UIColor { .CGA.redShadow.brightness(0.3) }
     ///         Icon Tint
     public var menuHeaderIconTint: UIColor { .CGA.red.brightness(1.0) }
     ///     Section Header
     ///         Background
-    public var menuSectionHeaderBackground: UIColor {  .CGA.redShadow.brightness(0.1) }
+    public var menuSectionHeaderBackground: UIColor {  .CGA.redShadow.brightness(0.2) }
     ///         Text
     public var menuSectionHeaderText: UIColor { .CGA.red.brightness(1.0) }
     ///         Icon

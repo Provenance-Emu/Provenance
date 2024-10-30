@@ -24,17 +24,6 @@ let package = Package(
             name: "PVCoreBridge-Static",
             type: .static,
             targets: ["PVCoreBridge"]),
-//        .library(
-//            name: "PVCoreObjCBridge",
-//            targets: ["PVCoreObjCBridge"]),
-//        .library(
-//            name: "PVCoreObjCBridge-Dynamic",
-//            type: .dynamic,
-//            targets: ["PVCoreObjCBridge"]),
-//        .library(
-//            name: "PVCoreObjCBridge-Static",
-//            type: .static,
-//            targets: ["PVCoreObjCBridge"]),
     ],
 
     dependencies: [

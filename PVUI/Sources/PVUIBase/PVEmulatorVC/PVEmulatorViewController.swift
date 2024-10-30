@@ -44,7 +44,7 @@ public
 typealias PVEmulatorViewControllerRootClass = GCEventViewController
 #else
 public
-typealias PVEmulatorViewControllerRootClass = FirstResponderViewController
+typealias PVEmulatorViewControllerRootClass = UIViewController
 #endif
 
 public
@@ -72,6 +72,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         return controller
     }()
     
+
     var audioInited: Bool = false
     private(set) lazy var gameAudio: any AudioEngineProtocol = {
         audioInited = true
@@ -288,6 +289,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         super.viewDidLoad()
         title = game.title
         view.backgroundColor = UIColor.black
+        view.insetsLayoutMarginsFromSafeArea = true
         
         let emulationState = AppState.shared.emulationState
 

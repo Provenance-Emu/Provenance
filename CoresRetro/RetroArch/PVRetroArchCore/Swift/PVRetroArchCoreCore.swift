@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import PVCoreBridge
 #if canImport(GameController)
 import GameController
 #endif
@@ -19,6 +18,7 @@ import PVLogging
 import PVAudio
 import PVEmulatorCore
 import PVCoreObjCBridge
+//import PVCoreBridge
 
 @objc
 @objcMembers
