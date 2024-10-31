@@ -34,6 +34,7 @@
 			<string>zip</string>
 			<string>pbp</string>
 			<string>iso</string>
+			<string>7z</string>
 			<string>cso</string>
 		</array>
 		<key>PVControlLayout</key>
@@ -1319,7 +1320,6 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>ngp</string>
-			<string>7z</string>
 			<string>zip</string>
 		</array>
 		<key>PVControlLayout</key>
@@ -1650,7 +1650,6 @@
 		<array>
 			<string>ng</string>
 			<string>zip</string>
-			<string>7z</string>
 			<string>cmd</string>
 		</array>
 		<key>PVControlLayout</key>
@@ -1815,7 +1814,6 @@
 			<string>ngc</string>
 			<string>ngpc</string>
 			<string>npc</string>
-			<string>7z</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
