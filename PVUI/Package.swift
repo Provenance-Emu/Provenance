@@ -45,7 +45,12 @@ let package = Package(
         .package(url: "https://github.com/FlineDev/FreemiumKit.git", from: "1.11.0"),
         /// SwiftUIKit
         .package(url: "https://github.com/danielsaidi/SwiftUIKit.git", from: "5.0.0"),
-    
+        /// SwiftUIX
+        /// https://github.com/SwiftUIX/SwiftUIX/wiki
+        .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", from: "0.2.3")
+        
+        /// https://swiftpackageindex.com/SvenTiigi/WhatsNewKit
+//        .package(url: "https://github.com/SvenTiigi/WhatsNewKit.git", from: "2.2.1")
     ],
     targets: [
         
