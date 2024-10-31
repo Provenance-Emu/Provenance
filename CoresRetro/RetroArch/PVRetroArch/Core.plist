@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.retroarch</string>
 	<key>PVPrincipleClass</key>
-	<string>PVRetroArchCore</string>
+	<string>PVRetroArch.PVRetroArchCoreCore</string>
 	<key>PVProjectName</key>
 	<string>RetroArch</string>
 	<key>PVSupportedSystems</key>
@@ -20,9 +20,9 @@
 	<array>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>mednafen_psx_hw_libretro_ios.dylib</string>
+			<string>mednafen.psx.hw.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>RetroArch - Beetle PSX (HW Renderer)</string>
 			<key>PVSupportedSystems</key>
@@ -35,26 +35,26 @@
 			<string>0.9.44.1</string>
 		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>mednafen_psx_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Beetle PSX (SW Renderer)</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.psx</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/beetle-psx-libretro</string>
-                        <key>PVProjectVersion</key>
-                        <string>0.9.44.1</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>mednafen.psx.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Beetle PSX (SW Renderer)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.psx</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/beetle-psx-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>0.9.44.1</string>
+		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>snes9x_libretro_ios.dylib</string>
+			<string>snes9x.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Snes9x (RetroArch)</string>
 			<key>PVSupportedSystems</key>
@@ -68,9 +68,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>flycast_libretro_ios.dylib</string>
+			<string>flycast.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Flycast (RetroArch)</string>
 			<key>PVSupportedSystems</key>
@@ -84,9 +84,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>mupen64plus_next_libretro_ios.dylib</string>
+			<string>mupen64plus.next.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Mupen64Plus-Next (RetroArch)</string>
 			<key>PVSupportedSystems</key>
@@ -100,9 +100,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>fuse_libretro.dylib</string>
+			<string>fuse.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Fuse (RetroArch)</string>
 			<key>PVSupportedSystems</key>
@@ -116,9 +116,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>minivmac_libretro_ios.dylib</string>
+			<string>minivmac.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.macintosh</string>
@@ -132,9 +132,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>dosbox_pure_libretro_ios.dylib</string>
+			<string>dosbox.pure.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dos</string>
@@ -148,9 +148,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>melonds_libretro_ios.dylib</string>
+			<string>melonds.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.ds</string>
@@ -164,9 +164,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>opera_libretro_ios.dylib</string>
+			<string>opera.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.3DO</string>
@@ -180,9 +180,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>np2kai_libretro_ios.dylib</string>
+			<string>np2kai.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.pc98</string>
@@ -196,9 +196,9 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>mednafen_supergrafx_libretro_ios.dylib</string>
+			<string>mednafen.supergrafx.libretro.framework</string>
 			<key>PVPrincipleClass</key>
-			<string>PVRetroArchCore</string>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.sgfx</string>
@@ -213,370 +213,418 @@
 			<string>v1.29.0</string>
 		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>nestopia_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.nes</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Nestopia</string> 
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/nestopia</string>
-                        <key>PVProjectVersion</key>
-                        <string>v1.51.1</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>nestopia.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.nes</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Nestopia</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/nestopia</string>
+			<key>PVProjectVersion</key>
+			<string>v1.51.1</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>mednafen_saturn_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
+			<key>PVCoreIdentifier</key>
+			<string>mednafen.saturn.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
 				<string>com.provenance.saturn</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Beetle Saturn</string>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/beetle-saturn-libretro</string>
-                        <key>PVProjectVersion</key>
-                        <string>v0.9.45.1</string>
-                </dict>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Beetle Saturn</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/beetle-saturn-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>v0.9.45.1</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>yabause_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.saturn</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Yabause (Saturn)</string>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/yabause</string>
-                        <key>PVProjectVersion</key>
-                        <string>v0.9.15</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>yabause.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.saturn</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Yabause (Saturn)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/yabause</string>
+			<key>PVProjectVersion</key>
+			<string>v0.9.15</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>genesis_plus_gx_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.segacd</string>
-                                <string>com.provenance.genesis</string>
-                                <string>com.provenance.gamegear</string>
+			<key>PVCoreIdentifier</key>
+			<string>genesis.plus.gx.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.segacd</string>
+				<string>com.provenance.genesis</string>
+				<string>com.provenance.gamegear</string>
 				<string>com.provenance.sg1000</string>
-                                <string>com.provenance.mastersystem</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Genesis Plus GX - MS/GG/MD/CD</string>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/Genesis-Plus-GX</string>
-                        <key>PVProjectVersion</key>
-                        <string>1.7.4</string>
-                </dict>
+				<string>com.provenance.mastersystem</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Genesis Plus GX - MS/GG/MD/CD</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/Genesis-Plus-GX</string>
+			<key>PVProjectVersion</key>
+			<string>1.7.4</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>fbneo_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.mame</string>
-                                <string>com.provenance.neogeo</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - FBNeo</string>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/FBNeo</string>
-                        <key>PVProjectVersion</key>
-                        <string>v1.0.0.02</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>fbneo.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.mame</string>
+				<string>com.provenance.neogeo</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - FBNeo</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/FBNeo</string>
+			<key>PVProjectVersion</key>
+			<string>v1.0.0.02</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>mednafen_gba_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.gba</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Beetle GBA</string>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/beetle-gba-libretro</string>
-                        <key>PVProjectVersion</key>
-                        <string>v0.9.36</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>mednafen.gba.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.gba</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Beetle GBA</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/beetle-gba-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>v0.9.36</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>mednafen_vb_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.vb</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Beetle VB</string>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/beetle-vb-libretro</string>
-                        <key>PVProjectVersion</key>
-                        <string>v0.9.36.1</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>mednafen.vb.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.vb</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Beetle VB</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/beetle-vb-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>v0.9.36.1</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>mgba_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>   
-                                <string>com.provenance.gb</string>
-                                <string>com.provenance.gbc</string>
-                                <string>com.provenance.gba</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - mGBA</string>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/mgba</string>
-                        <key>PVProjectVersion</key>
-                        <string>v0.10-dev</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>mgba.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.gb</string>
+				<string>com.provenance.gbc</string>
+				<string>com.provenance.gba</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - mGBA</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mgba</string>
+			<key>PVProjectVersion</key>
+			<string>v0.10-dev</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>sameboy_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.gb</string>
-                                <string>com.provenance.gbc</string>
-                        </array>  
-                        <key>PVProjectName</key>
-                        <string>RetroArch - SameBoy</string>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/SameBoy</string>
-                        <key>PVProjectVersion</key>
-                        <string>v0.14.7</string>
-        </dict>
+			<key>PVCoreIdentifier</key>
+			<string>sameboy.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.gb</string>
+				<string>com.provenance.gbc</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - SameBoy</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/SameBoy</string>
+			<key>PVProjectVersion</key>
+			<string>v0.14.7</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>mame2010_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.mame</string>
-                                <string>com.provenance.neogeo</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - MAME 2010</string>
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/mame2010-libretro</string>
-                        <key>PVProjectVersion</key>
-                        <string>v0.139</string>
-        </dict>
+			<key>PVCoreIdentifier</key>
+			<string>mame2010.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.mame</string>
+				<string>com.provenance.neogeo</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - MAME 2010</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mame2010-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>v0.139</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>mame_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.appleII</string>
-                                <string>com.provenance.mame</string>
-                                <string>com.provenance.neogeo</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - MAME (Current)</string>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/development/cores/core-specific/mame/</string>
-                        <key>PVProjectVersion</key>
-                        <string>v0.258</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>mame.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.appleII</string>
+				<string>com.provenance.mame</string>
+				<string>com.provenance.neogeo</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - MAME (Current)</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/development/cores/core-specific/mame/</string>
+			<key>PVProjectVersion</key>
+			<string>v0.258</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>pcsx_rearmed_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - PCSX ReARMed</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.psx</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/pcsx_rearmed/</string>
-                        <key>PVProjectVersion</key>
-                        <string>r21</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>pcsx.rearmed.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - PCSX ReARMed</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.psx</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/pcsx_rearmed/</string>
+			<key>PVProjectVersion</key>
+			<string>r21</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>ppsspp_libretro.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - PPSSPP</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.psp</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/ppsspp/</string>
-                        <key>PVProjectVersion</key>
-                        <string>Git</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>play.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Play!</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.ps2</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/play/</string>
+			<key>PVProjectVersion</key>
+			<string>0.66</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>atari800_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Atari 400/800/600XL/800XL/130XE</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.atari8bit</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/atari800/</string>
-                        <key>PVProjectVersion</key>
-                        <string>3.1.0</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>ppsspp.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - PPSSPP</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.psp</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/ppsspp/</string>
+			<key>PVProjectVersion</key>
+			<string>Git</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>a5200_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Atari 5200</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.5200</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/atari800/</string>
-                        <key>PVProjectVersion</key>
-                        <string>3.1.0</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>atari800.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Atari 400/800/600XL/800XL/130XE</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.atari8bit</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/atari800/</string>
+			<key>PVProjectVersion</key>
+			<string>3.1.0</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>stella2014_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Atari 2600</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.2600</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/stella/</string>
-                        <key>PVProjectVersion</key>
-                        <string>6.6</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>a5200.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Atari 5200</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.5200</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/atari800/</string>
+			<key>PVProjectVersion</key>
+			<string>3.1.0</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>prosystem_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Atari 7800</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.7800</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/prosystem/</string>
-                        <key>PVProjectVersion</key>
-                        <string>1.3e</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>stella2014.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Atari 2600</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.2600</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/stella/</string>
+			<key>PVProjectVersion</key>
+			<string>6.6</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>hatari_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Atari ST/STE/TT/Falcon</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.atarist</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/hatari/</string>
-                        <key>PVProjectVersion</key>
-                        <string>1.8</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>prosystem.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Atari 7800</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.7800</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/prosystem/</string>
+			<key>PVProjectVersion</key>
+			<string>1.3e</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>mednafen_lynx_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Atari Lynx</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.lynx</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/beetle_lynx/</string>
-                        <key>PVProjectVersion</key>
-                        <string>1.24.0</string>
-                </dict>
+			<key>PVCoreIdentifier</key>
+			<string>hatari.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Atari ST/STE/TT/Falcon</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.atarist</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/hatari/</string>
+			<key>PVProjectVersion</key>
+			<string>1.8</string>
+		</dict>
 		<dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>virtualjaguar_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Atari Jaguar (Virtual Jaguar)</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.jaguar</string>
-                        </array>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/virtual_jaguar/</string>
-                        <key>PVProjectVersion</key>
-                        <string>2.1.0</string>
-        </dict>
-        <dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>race_libretro_ios.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.ngp</string>
-                                <string>com.provenance.ngpc</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - RACE</string>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/race/</string>
-                        <key>PVProjectVersion</key>
-                        <string>v2.16</string>
-        </dict>
-        <dict>
-                        <key>PVCoreIdentifier</key>
-                        <string>mednafen_ngp_libretro.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.ngp</string>
-                                <string>com.provenance.ngpc</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - Beetle Neopop</string>
-                        <key>PVProjectURL</key>
-                        <string>https://docs.libretro.com/library/beetle_neopop/</string>
-                        <key>PVProjectVersion</key>
-                        <string>v0.9.36.1</string>
-        </dict>
+			<key>PVCoreIdentifier</key>
+			<string>mednafen.lynx.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Atari Lynx</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.lynx</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/beetle_lynx/</string>
+			<key>PVProjectVersion</key>
+			<string>1.24.0</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>virtualjaguar.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Atari Jaguar (Virtual Jaguar)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.jaguar</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/virtual_jaguar/</string>
+			<key>PVProjectVersion</key>
+			<string>2.1.0</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>race.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.ngp</string>
+				<string>com.provenance.ngpc</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - RACE</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/race/</string>
+			<key>PVProjectVersion</key>
+			<string>v2.16</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mednafen.ngp.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.ngp</string>
+				<string>com.provenance.ngpc</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Beetle Neopop</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/beetle_neopop/</string>
+			<key>PVProjectVersion</key>
+			<string>v0.9.36.1</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>gme.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.music</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Game Music Emu</string>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/game_music_emu/</string>
+			<key>PVProjectVersion</key>
+			<string>v0.6.3</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>potator.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.supervision</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Potator</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/potator</string>
+			<key>PVProjectVersion</key>
+			<string>v20200223</string>
+		</dict>
 	</array>
 </dict>
 </plist>

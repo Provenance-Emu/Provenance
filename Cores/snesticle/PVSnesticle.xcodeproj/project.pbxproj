@@ -3,10 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30E992A2C6EF2B400C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99292C6EF2B400C1431E /* PVSupport */; };
+		B30E9AD22C6FB21F00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AD12C6FB21F00C1431E /* PVCoreBridge */; };
+		B30E9AD52C6FB22E00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AD42C6FB22E00C1431E /* PVEmulatorCore */; };
 		B33FADB3279BCAB40013AAD8 /* snesticle_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FADB2279BCAB40013AAD8 /* snesticle_iOS.swift */; };
 		B33FADB8279BCCDC0013AAD8 /* libsnesticle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33FADB0279BCAB40013AAD8 /* libsnesticle.a */; };
 		B33FB2D0279BCED80013AAD8 /* snspc_c.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADEA279BCE900013AAD8 /* snspc_c.c */; };
@@ -33,7 +36,6 @@
 		B33FB2E7279BCEF50013AAD8 /* snspctimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADFD279BCE900013AAD8 /* snspctimer.cpp */; };
 		B33FB2E8279BCEF50013AAD8 /* snio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADE7279BCE900013AAD8 /* snio.cpp */; };
 		B33FB2E9279BCEF50013AAD8 /* snppurender8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE09279BCE900013AAD8 /* snppurender8.cpp */; };
-		B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5832106DEA000C45F09 /* PVSupport.framework */; };
 		B34CFF60295F2D4D0014C8AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34CFF5F295F2D4C0014C8AF /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3547B632058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
 		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
@@ -1306,11 +1308,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30E9AD52C6FB22E00C1431E /* PVEmulatorCore in Frameworks */,
 				B365107E21782E95008FDB7B /* libz.tbd in Frameworks */,
 				B34CFF60295F2D4D0014C8AF /* OpenGL.framework in Frameworks */,
-				B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */,
 				B33FADB8279BCCDC0013AAD8 /* libsnesticle.a in Frameworks */,
 				B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */,
+				B30E9AD22C6FB21F00C1431E /* PVCoreBridge in Frameworks */,
+				B30E992A2C6EF2B400C1431E /* PVSupport in Frameworks */,
 				B3C9D54C1DEA842B0068D057 /* OpenGLES.framework in Frameworks */,
 				B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */,
 				B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */,
@@ -3190,7 +3194,7 @@
 				CLASSPREFIX = PV;
 				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1300;
-				ORGANIZATIONNAME = "Provenance Emu";
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B33FADAF279BCAB40013AAD8 = {
 						CreatedOnToolsVersion = 13.2.1;
@@ -3202,7 +3206,7 @@
 				};
 			};
 			buildConfigurationList = 1ACEA8DF17F75F350031B1C9 /* Build configuration list for PBXProject "PVSnesticle" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -3210,6 +3214,12 @@
 				Base,
 			);
 			mainGroup = 1ACEA8DB17F75F350031B1C9;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E99282C6EF2B400C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E9AD02C6FB21F00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B30E9AD32C6FB22E00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+			);
 			productRefGroup = 1ACEA8E517F75F350031B1C9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -3744,6 +3754,36 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E99282C6EF2B400C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E9AD02C6FB21F00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B30E9AD32C6FB22E00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E99292C6EF2B400C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9AD12C6FB21F00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B30E9AD42C6FB22E00C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1ACEA8DC17F75F350031B1C9 /* Project object */;
 }

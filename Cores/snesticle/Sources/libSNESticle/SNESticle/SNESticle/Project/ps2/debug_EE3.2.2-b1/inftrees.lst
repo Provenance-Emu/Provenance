@@ -1,0 +1,3678 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/zlib/inftrees.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.globl inflate_copyright
+   5              	.rdata
+   6              	.align 3
+   7              	.type inflate_copyright,@object
+   8              	.size inflate_copyright,47
+   9              	inflate_copyright:
+  10 0000 20696E66 	.ascii " inflate 1.1.3 Copyright 1995-1998 Mark Adler \000"
+  10      6C617465 
+  10      20312E31 
+  10      2E332043 
+  10      6F707972 
+  11 002f 00       	.align 3
+  12              	.type cplens,@object
+  13              	.size cplens,124
+  14              	cplens:
+  15 0030 03000000 	.word 3
+  16 0034 04000000 	.word 4
+  17 0038 05000000 	.word 5
+  18 003c 06000000 	.word 6
+  19 0040 07000000 	.word 7
+  20 0044 08000000 	.word 8
+  21 0048 09000000 	.word 9
+  22 004c 0A000000 	.word 10
+  23 0050 0B000000 	.word 11
+  24 0054 0D000000 	.word 13
+  25 0058 0F000000 	.word 15
+  26 005c 11000000 	.word 17
+  27 0060 13000000 	.word 19
+  28 0064 17000000 	.word 23
+  29 0068 1B000000 	.word 27
+  30 006c 1F000000 	.word 31
+  31 0070 23000000 	.word 35
+  32 0074 2B000000 	.word 43
+  33 0078 33000000 	.word 51
+  34 007c 3B000000 	.word 59
+  35 0080 43000000 	.word 67
+  36 0084 53000000 	.word 83
+  37 0088 63000000 	.word 99
+  38 008c 73000000 	.word 115
+  39 0090 83000000 	.word 131
+  40 0094 A3000000 	.word 163
+  41 0098 C3000000 	.word 195
+  42 009c E3000000 	.word 227
+  43 00a0 02010000 	.word 258
+  44 00a4 00000000 	.word 0
+  45 00a8 00000000 	.word 0
+  46 00ac 00000000 	.align 3
+  47              	.type cplext,@object
+  48              	.size cplext,124
+  49              	cplext:
+  50 00b0 00000000 	.word 0
+  51 00b4 00000000 	.word 0
+  52 00b8 00000000 	.word 0
+  53 00bc 00000000 	.word 0
+GAS LISTING  			page 2
+
+
+  54 00c0 00000000 	.word 0
+  55 00c4 00000000 	.word 0
+  56 00c8 00000000 	.word 0
+  57 00cc 00000000 	.word 0
+  58 00d0 01000000 	.word 1
+  59 00d4 01000000 	.word 1
+  60 00d8 01000000 	.word 1
+  61 00dc 01000000 	.word 1
+  62 00e0 02000000 	.word 2
+  63 00e4 02000000 	.word 2
+  64 00e8 02000000 	.word 2
+  65 00ec 02000000 	.word 2
+  66 00f0 03000000 	.word 3
+  67 00f4 03000000 	.word 3
+  68 00f8 03000000 	.word 3
+  69 00fc 03000000 	.word 3
+  70 0100 04000000 	.word 4
+  71 0104 04000000 	.word 4
+  72 0108 04000000 	.word 4
+  73 010c 04000000 	.word 4
+  74 0110 05000000 	.word 5
+  75 0114 05000000 	.word 5
+  76 0118 05000000 	.word 5
+  77 011c 05000000 	.word 5
+  78 0120 00000000 	.word 0
+  79 0124 70000000 	.word 112
+  80 0128 70000000 	.word 112
+  81 012c 00000000 	.align 3
+  82              	.type cpdist,@object
+  83              	.size cpdist,120
+  84              	cpdist:
+  85 0130 01000000 	.word 1
+  86 0134 02000000 	.word 2
+  87 0138 03000000 	.word 3
+  88 013c 04000000 	.word 4
+  89 0140 05000000 	.word 5
+  90 0144 07000000 	.word 7
+  91 0148 09000000 	.word 9
+  92 014c 0D000000 	.word 13
+  93 0150 11000000 	.word 17
+  94 0154 19000000 	.word 25
+  95 0158 21000000 	.word 33
+  96 015c 31000000 	.word 49
+  97 0160 41000000 	.word 65
+  98 0164 61000000 	.word 97
+  99 0168 81000000 	.word 129
+ 100 016c C1000000 	.word 193
+ 101 0170 01010000 	.word 257
+ 102 0174 81010000 	.word 385
+ 103 0178 01020000 	.word 513
+ 104 017c 01030000 	.word 769
+ 105 0180 01040000 	.word 1025
+ 106 0184 01060000 	.word 1537
+ 107 0188 01080000 	.word 2049
+ 108 018c 010C0000 	.word 3073
+ 109 0190 01100000 	.word 4097
+ 110 0194 01180000 	.word 6145
+GAS LISTING  			page 3
+
+
+ 111 0198 01200000 	.word 8193
+ 112 019c 01300000 	.word 12289
+ 113 01a0 01400000 	.word 16385
+ 114 01a4 01600000 	.word 24577
+ 115              	.align 3
+ 116              	.type cpdext,@object
+ 117              	.size cpdext,120
+ 118              	cpdext:
+ 119 01a8 00000000 	.word 0
+ 120 01ac 00000000 	.word 0
+ 121 01b0 00000000 	.word 0
+ 122 01b4 00000000 	.word 0
+ 123 01b8 01000000 	.word 1
+ 124 01bc 01000000 	.word 1
+ 125 01c0 02000000 	.word 2
+ 126 01c4 02000000 	.word 2
+ 127 01c8 03000000 	.word 3
+ 128 01cc 03000000 	.word 3
+ 129 01d0 04000000 	.word 4
+ 130 01d4 04000000 	.word 4
+ 131 01d8 05000000 	.word 5
+ 132 01dc 05000000 	.word 5
+ 133 01e0 06000000 	.word 6
+ 134 01e4 06000000 	.word 6
+ 135 01e8 07000000 	.word 7
+ 136 01ec 07000000 	.word 7
+ 137 01f0 08000000 	.word 8
+ 138 01f4 08000000 	.word 8
+ 139 01f8 09000000 	.word 9
+ 140 01fc 09000000 	.word 9
+ 141 0200 0A000000 	.word 10
+ 142 0204 0A000000 	.word 10
+ 143 0208 0B000000 	.word 11
+ 144 020c 0B000000 	.word 11
+ 145 0210 0C000000 	.word 12
+ 146 0214 0C000000 	.word 12
+ 147 0218 0D000000 	.word 13
+ 148 021c 0D000000 	.word 13
+ 149              	.text
+ 150              	.align 2
+ 151              	.p2align 3,,7
+ 152              	.ent huft_build
+ 153              	huft_build:
+ 154              	.frame $sp,400,$31
+ 155              	.mask 0x40ff0000,-16
+ 156              	.fmask 0x00000000,0
+ 157 0000 70FEBD27 	subu $sp,$sp,400
+ 158 0004 2D788000 	move $15,$4
+ 159 0008 7001B7FF 	sd $23,368($sp)
+ 160 000c 2D708000 	move $14,$4
+ 161 0010 6001B6FF 	sd $22,352($sp)
+ 162 0014 2D68A000 	move $13,$5
+ 163 0018 5001B5FF 	sd $21,336($sp)
+ 164 001c 3001B3FF 	sd $19,304($sp)
+ 165 0020 2001B2FF 	sd $18,288($sp)
+ 166 0024 1001B1FF 	sd $17,272($sp)
+ 167 0028 0001B0FF 	sd $16,256($sp)
+GAS LISTING  			page 4
+
+
+ 168 002c 0000A0AF 	sw $0,0($sp)
+ 169 0030 D000A6AF 	sw $6,208($sp)
+ 170 0034 0400A0AF 	sw $0,4($sp)
+ 171 0038 D400A7AF 	sw $7,212($sp)
+ 172 003c 0800A0AF 	sw $0,8($sp)
+ 173 0040 D800A8AF 	sw $8,216($sp)
+ 174 0044 0C00A0AF 	sw $0,12($sp)
+ 175 0048 DC00A9AF 	sw $9,220($sp)
+ 176 004c 1000A0AF 	sw $0,16($sp)
+ 177 0050 1400A0AF 	sw $0,20($sp)
+ 178 0054 1800A0AF 	sw $0,24($sp)
+ 179 0058 1C00A0AF 	sw $0,28($sp)
+ 180 005c 2000A0AF 	sw $0,32($sp)
+ 181 0060 2400A0AF 	sw $0,36($sp)
+ 182 0064 2800A0AF 	sw $0,40($sp)
+ 183 0068 2C00A0AF 	sw $0,44($sp)
+ 184 006c 3000A0AF 	sw $0,48($sp)
+ 185 0070 3400A0AF 	sw $0,52($sp)
+ 186 0074 3800A0AF 	sw $0,56($sp)
+ 187 0078 3C00A0AF 	sw $0,60($sp)
+ 188 007c 8001BEFF 	sd $fp,384($sp)
+ 189 0080 2DF06001 	move $fp,$11
+ 190 0084 4001B4FF 	sd $20,320($sp)
+ 191 0088 2DA0A000 	move $20,$5
+ 192 008c 00000000 	.p2align 3
+ 193              	$L2:
+ 194 0090 0000C38D 	lw $3,0($14)
+ 195 0094 FFFFAD25 	addu $13,$13,-1
+ 196 0098 0400CE25 	addu $14,$14,4
+ 197 009c 80180300 	sll $3,$3,2
+ 198 00a0 21187D00 	addu $3,$3,$sp
+ 199 00a4 0000628C 	lw $2,0($3)
+ 200              	
+ 201 00a8 01004224 	addu $2,$2,1
+ 202              	.set noreorder
+ 203              	.set nomacro
+ 204 00ac F8FFA015 	bne $13,$0,$L2
+ 205 00b0 000062AC 	sw $2,0($3)
+ 206              	.set macro
+ 207              	.set reorder
+ 208              	
+ 209 00b4 0000A28F 	lw $2,0($sp)
+ 210              	
+ 211              	.set noreorder
+ 212              	.set nomacro
+ 213 00b8 31015410 	beq $2,$20,$L105
+ 214 00bc 0400A327 	addu $3,$sp,4
+ 215              	.set macro
+ 216              	.set reorder
+ 217              	
+ 218 00c0 0000458D 	lw $5,0($10)
+ 219 00c4 01000C24 	li $12,1
+ 220 00c8 0000628C 	lw $2,0($3)
+ 221              	$L107:
+ 222              	.set noreorder
+ 223              	.set nomacro
+ 224 00cc 05004014 	bne $2,$0,$L8
+GAS LISTING  			page 5
+
+
+ 225 00d0 04006324 	addu $3,$3,4
+ 226              	.set macro
+ 227              	.set reorder
+ 228              	
+ 229 00d4 01008C25 	addu $12,$12,1
+ 230 00d8 1000822D 	sltu $2,$12,16
+ 231              	.set noreorder
+ 232              	.set nomacro
+ 233 00dc FBFF4054 	bnel $2,$0,$L107
+ 234 00e0 0000628C 	lw $2,0($3)
+ 235              	.set macro
+ 236              	.set reorder
+ 237              	
+ 238              	$L8:
+ 239 00e4 2B10AC00 	sltu $2,$5,$12
+ 240 00e8 2D488001 	move $9,$12
+ 241 00ec 0F000D24 	li $13,15
+ 242 00f0 3C00A327 	addu $3,$sp,60
+ 243 00f4 0B288201 	movn $5,$12,$2
+ 244 00f8 0000628C 	lw $2,0($3)
+ 245              	$L108:
+ 246              	.set noreorder
+ 247              	.set nomacro
+ 248 00fc 04004014 	bne $2,$0,$L15
+ 249 0100 FCFF6324 	addu $3,$3,-4
+ 250              	.set macro
+ 251              	.set reorder
+ 252              	
+ 253 0104 FFFFAD25 	addu $13,$13,-1
+ 254              	.set noreorder
+ 255              	.set nomacro
+ 256 0108 FCFFA055 	bnel $13,$0,$L108
+ 257 010c 0000628C 	lw $2,0($3)
+ 258              	.set macro
+ 259              	.set reorder
+ 260              	
+ 261              	$L15:
+ 262 0110 2B10A501 	sltu $2,$13,$5
+ 263 0114 01000324 	li $3,1
+ 264 0118 0B28A201 	movn $5,$13,$2
+ 265 011c 2B208D01 	sltu $4,$12,$13
+ 266 0120 2D90A001 	move $18,$13
+ 267 0124 04408301 	sll $8,$3,$12
+ 268              	.set noreorder
+ 269              	.set nomacro
+ 270 0128 0B008010 	beq $4,$0,$L86
+ 271 012c 000045AD 	sw $5,0($10)
+ 272              	.set macro
+ 273              	.set reorder
+ 274              	
+ 275 0130 80100C00 	sll $2,$12,2
+ 276 0134 21185D00 	addu $3,$2,$sp
+ 277              	.p2align 3
+ 278              	$L26:
+ 279 0138 0000628C 	lw $2,0($3)
+ 280 013c 01008C25 	addu $12,$12,1
+ 281 0140 2B208D01 	sltu $4,$12,$13
+GAS LISTING  			page 6
+
+
+ 282 0144 23400201 	subu $8,$8,$2
+ 283              	.set noreorder
+ 284              	.set nomacro
+ 285 0148 0B010005 	bltz $8,$L103
+ 286 014c 04006324 	addu $3,$3,4
+ 287              	.set macro
+ 288              	.set reorder
+ 289              	
+ 290              	.set noreorder
+ 291              	.set nomacro
+ 292 0150 F9FF8014 	bne $4,$0,$L26
+ 293 0154 40400800 	sll $8,$8,1
+ 294              	.set macro
+ 295              	.set reorder
+ 296              	
+ 297              	$L86:
+ 298 0158 80100D00 	sll $2,$13,2
+ 299 015c 21185D00 	addu $3,$2,$sp
+ 300 0160 0000628C 	lw $2,0($3)
+ 301              	
+ 302 0164 23400201 	subu $8,$8,$2
+ 303              	.set noreorder
+ 304              	.set nomacro
+ 305 0168 CE000005 	bltz $8,$L1
+ 306 016c FDFF0424 	li $4,-3
+ 307              	.set macro
+ 308              	.set reorder
+ 309              	
+ 310 0170 21104800 	addu $2,$2,$8
+ 311 0174 FFFFAD25 	addu $13,$13,-1
+ 312 0178 000062AC 	sw $2,0($3)
+ 313 017c 0400AE27 	addu $14,$sp,4
+ 314 0180 9400A0AF 	sw $0,148($sp)
+ 315 0184 2D600000 	move $12,$0
+ 316              	.set noreorder
+ 317              	.set nomacro
+ 318 0188 0900A011 	beq $13,$0,$L88
+ 319 018c 9800AA27 	addu $10,$sp,152
+ 320              	.set macro
+ 321              	.set reorder
+ 322              	
+ 323              	.p2align 3
+ 324              	$L31:
+ 325 0190 0000C28D 	lw $2,0($14)
+ 326 0194 FFFFAD25 	addu $13,$13,-1
+ 327 0198 0400CE25 	addu $14,$14,4
+ 328 019c 21608201 	addu $12,$12,$2
+ 329 01a0 00004CAD 	sw $12,0($10)
+ 330              	.set noreorder
+ 331 01a4 00000000 	nop
+ 332              	.set reorder
+ 333              	.set noreorder
+ 334              	.set nomacro
+ 335 01a8 F9FFA015 	bne $13,$0,$L31
+ 336 01ac 04004A25 	addu $10,$10,4
+ 337              	.set macro
+ 338              	.set reorder
+GAS LISTING  			page 7
+
+
+ 339              	
+ 340              	$L88:
+ 341 01b0 2D70E001 	move $14,$15
+ 342 01b4 2D680000 	move $13,$0
+ 343 01b8 0000CC8D 	lw $12,0($14)
+ 344              	$L109:
+ 345 01bc 0400CE25 	addu $14,$14,4
+ 346              	.set noreorder
+ 347              	.set nomacro
+ 348 01c0 09008011 	beq $12,$0,$L34
+ 349 01c4 80100C00 	sll $2,$12,2
+ 350              	.set macro
+ 351              	.set reorder
+ 352              	
+ 353 01c8 21105D00 	addu $2,$2,$sp
+ 354 01cc 9801A68F 	lw $6,408($sp)
+ 355 01d0 9000438C 	lw $3,144($2)
+ 356              	
+ 357 01d4 80200300 	sll $4,$3,2
+ 358 01d8 01006324 	addu $3,$3,1
+ 359 01dc 21208600 	addu $4,$4,$6
+ 360 01e0 900043AC 	sw $3,144($2)
+ 361 01e4 00008DAC 	sw $13,0($4)
+ 362              	$L34:
+ 363 01e8 0100AD25 	addu $13,$13,1
+ 364 01ec 2B10B401 	sltu $2,$13,$20
+ 365              	.set noreorder
+ 366              	.set nomacro
+ 367 01f0 F2FF4054 	bnel $2,$0,$L109
+ 368 01f4 0000CC8D 	lw $12,0($14)
+ 369              	.set macro
+ 370              	.set reorder
+ 371              	
+ 372 01f8 80101200 	sll $2,$18,2
+ 373 01fc 2A184902 	slt $3,$18,$9
+ 374 0200 21105D00 	addu $2,$2,$sp
+ 375 0204 5000A0AF 	sw $0,80($sp)
+ 376 0208 9000548C 	lw $20,144($2)
+ 377 020c 2D680000 	move $13,$0
+ 378 0210 9000A0AF 	sw $0,144($sp)
+ 379 0214 FFFF0724 	li $7,-1
+ 380 0218 9801AE8F 	lw $14,408($sp)
+ 381 021c 23780500 	subu $15,$0,$5
+ 382 0220 2D580000 	move $11,$0
+ 383              	.set noreorder
+ 384              	.set nomacro
+ 385 0224 99006014 	bne $3,$0,$L90
+ 386 0228 2D300000 	move $6,$0
+ 387              	.set macro
+ 388              	.set reorder
+ 389              	
+ 390 022c 80600900 	sll $12,$9,2
+ 391              	$L119:
+ 392 0230 21109D01 	addu $2,$12,$sp
+ 393 0234 F000ACAF 	sw $12,240($sp)
+ 394 0238 0000518C 	lw $17,0($2)
+ 395 023c FFFF0224 	li $2,-1
+GAS LISTING  			page 8
+
+
+ 396 0240 FFFF3126 	addu $17,$17,-1
+ 397              	.set noreorder
+ 398              	.set nomacro
+ 399 0244 8D002212 	beq $17,$2,$L92
+ 400 0248 9801B38F 	lw $19,408($sp)
+ 401              	.set macro
+ 402              	.set reorder
+ 403              	
+ 404 024c 80101400 	sll $2,$20,2
+ 405 0250 FFFF3025 	addu $16,$9,-1
+ 406 0254 21106202 	addu $2,$19,$2
+ 407 0258 E400B0AF 	sw $16,228($sp)
+ 408 025c E000A2AF 	sw $2,224($sp)
+ 409 0260 21C0E501 	addu $24,$15,$5
+ 410              	$L118:
+ 411 0264 2A100903 	slt $2,$24,$9
+ 412              	.set noreorder
+ 413              	.set nomacro
+ 414 0268 C0004010 	beq $2,$0,$L102
+ 415 026c 80100700 	sll $2,$7,2
+ 416              	.set macro
+ 417              	.set reorder
+ 418              	
+ 419 0270 01003326 	addu $19,$17,1
+ 420 0274 21C85D00 	addu $25,$2,$sp
+ 421 0278 01001624 	li $22,1
+ 422 027c 01001524 	li $21,1
+ 423 0280 23603801 	subu $12,$9,$24
+ 424              	$L112:
+ 425 0284 23305802 	subu $6,$18,$24
+ 426 0288 04209601 	sll $4,$22,$12
+ 427 028c 2B10A600 	sltu $2,$5,$6
+ 428 0290 2B186402 	sltu $3,$19,$4
+ 429 0294 2D780003 	move $15,$24
+ 430 0298 04003927 	addu $25,$25,4
+ 431 029c 0B30A200 	movn $6,$5,$2
+ 432 02a0 0100E724 	addu $7,$7,1
+ 433              	.set noreorder
+ 434              	.set nomacro
+ 435 02a4 16006010 	beq $3,$0,$L48
+ 436 02a8 2D808001 	move $16,$12
+ 437              	.set macro
+ 438              	.set reorder
+ 439              	
+ 440 02ac F000B78F 	lw $23,240($sp)
+ 441 02b0 23109100 	subu $2,$4,$17
+ 442 02b4 2B188601 	sltu $3,$12,$6
+ 443 02b8 FFFF4424 	addu $4,$2,-1
+ 444              	.set noreorder
+ 445              	.set nomacro
+ 446 02bc 10006010 	beq $3,$0,$L48
+ 447 02c0 2150B703 	addu $10,$sp,$23
+ 448              	.set macro
+ 449              	.set reorder
+ 450              	
+ 451 02c4 01008C25 	addu $12,$12,1
+ 452 02c8 2B108601 	sltu $2,$12,$6
+GAS LISTING  			page 9
+
+
+ 453              	.set noreorder
+ 454              	.set nomacro
+ 455 02cc 0D004010 	beq $2,$0,$L110
+ 456 02d0 9001A28F 	lw $2,400($sp)
+ 457              	.set macro
+ 458              	.set reorder
+ 459              	
+ 460 02d4 04004A25 	addu $10,$10,4
+ 461              	$L111:
+ 462 02d8 40200400 	sll $4,$4,1
+ 463 02dc 0000428D 	lw $2,0($10)
+ 464              	
+ 465 02e0 2B184400 	sltu $3,$2,$4
+ 466              	.set noreorder
+ 467              	.set nomacro
+ 468 02e4 06006010 	beq $3,$0,$L48
+ 469 02e8 23208200 	subu $4,$4,$2
+ 470              	.set macro
+ 471              	.set reorder
+ 472              	
+ 473 02ec 01008C25 	addu $12,$12,1
+ 474 02f0 2B108601 	sltu $2,$12,$6
+ 475              	.set noreorder
+ 476              	.set nomacro
+ 477 02f4 F8FF4054 	bnel $2,$0,$L111
+ 478 02f8 04004A25 	addu $10,$10,4
+ 479              	.set macro
+ 480              	.set reorder
+ 481              	
+ 482 02fc 00000000 	.p2align 3
+ 483              	$L48:
+ 484 0300 9001A28F 	lw $2,400($sp)
+ 485              	$L110:
+ 486 0304 04309501 	sll $6,$21,$12
+ 487 0308 0000448C 	lw $4,0($2)
+ 488              	
+ 489 030c 21188600 	addu $3,$4,$6
+ 490 0310 A105622C 	sltu $2,$3,1441
+ 491              	.set noreorder
+ 492              	.set nomacro
+ 493 0314 93004010 	beq $2,$0,$L104
+ 494 0318 C0100400 	sll $2,$4,3
+ 495              	.set macro
+ 496              	.set reorder
+ 497              	
+ 498 031c 80500700 	sll $10,$7,2
+ 499 0320 9001A48F 	lw $4,400($sp)
+ 500 0324 2158C203 	addu $11,$fp,$2
+ 501 0328 50002BAF 	sw $11,80($25)
+ 502              	.set noreorder
+ 503              	.set nomacro
+ 504 032c 8A00E010 	beq $7,$0,$L56
+ 505 0330 000083AC 	sw $3,0($4)
+ 506              	.set macro
+ 507              	.set reorder
+ 508              	
+ 509 0334 4C00248F 	lw $4,76($25)
+GAS LISTING  			page 10
+
+
+ 510 0338 23180503 	subu $3,$24,$5
+ 511 033c 4000ACA3 	sb $12,64($sp)
+ 512 0340 06606D00 	srl $12,$13,$3
+ 513 0344 23106401 	subu $2,$11,$4
+ 514 0348 C0180C00 	sll $3,$12,3
+ 515 034c C3100200 	sra $2,$2,3
+ 516 0350 4100A5A3 	sb $5,65($sp)
+ 517 0354 23104C00 	subu $2,$2,$12
+ 518 0358 21186400 	addu $3,$3,$4
+ 519 035c 4400A2AF 	sw $2,68($sp)
+ 520 0360 90002DAF 	sw $13,144($25)
+ 521 0364 4700AC6B 	ldl $12,71($sp)
+ 522 0368 4000AC6F 	ldr $12,64($sp)
+ 523 036c 07006CB0 	sdl $12,7($3)
+ 524 0370 00006CB4 	sdr $12,0($3)
+ 525              	$L44:
+ 526 0374 21C00503 	addu $24,$24,$5
+ 527 0378 2A100903 	slt $2,$24,$9
+ 528              	.set noreorder
+ 529              	.set nomacro
+ 530 037c C1FF4014 	bne $2,$0,$L112
+ 531 0380 23603801 	subu $12,$9,$24
+ 532              	.set macro
+ 533              	.set reorder
+ 534              	
+ 535              	$L94:
+ 536 0384 E000B38F 	lw $19,224($sp)
+ 537              	
+ 538 0388 2B10D301 	sltu $2,$14,$19
+ 539              	.set noreorder
+ 540              	.set nomacro
+ 541 038c 53004014 	bne $2,$0,$L59
+ 542 0390 4100B0A3 	sb $16,65($sp)
+ 543              	.set macro
+ 544              	.set reorder
+ 545              	
+ 546 0394 C0FF0224 	li $2,-64
+ 547 0398 4000A2A3 	sb $2,64($sp)
+ 548              	$L60:
+ 549 039c 0660ED01 	srl $12,$13,$15
+ 550 03a0 01000224 	li $2,1
+ 551 03a4 2B188601 	sltu $3,$12,$6
+ 552              	.set noreorder
+ 553              	.set nomacro
+ 554 03a8 0D006010 	beq $3,$0,$L97
+ 555 03ac 04200202 	sll $4,$2,$16
+ 556              	.set macro
+ 557              	.set reorder
+ 558              	
+ 559 03b0 C0100C00 	sll $2,$12,3
+ 560              	$L113:
+ 561 03b4 21608401 	addu $12,$12,$4
+ 562 03b8 21104B00 	addu $2,$2,$11
+ 563 03bc 2B188601 	sltu $3,$12,$6
+ 564 03c0 4700B06B 	ldl $16,71($sp)
+ 565 03c4 4000B06F 	ldr $16,64($sp)
+ 566 03c8 070050B0 	sdl $16,7($2)
+GAS LISTING  			page 11
+
+
+ 567 03cc 000050B4 	sdr $16,0($2)
+ 568              	.set noreorder
+ 569 03d0 00000000 	nop
+ 570              	.set reorder
+ 571              	.set noreorder
+ 572 03d4 00000000 	nop
+ 573              	.set reorder
+ 574              	.set noreorder
+ 575              	.set nomacro
+ 576 03d8 F6FF6014 	bne $3,$0,$L113
+ 577 03dc C0100C00 	sll $2,$12,3
+ 578              	.set macro
+ 579              	.set reorder
+ 580              	
+ 581              	$L97:
+ 582 03e0 E400B78F 	lw $23,228($sp)
+ 583 03e4 01000224 	li $2,1
+ 584 03e8 0460E202 	sll $12,$2,$23
+ 585 03ec 2418AC01 	and $3,$13,$12
+ 586              	.set noreorder
+ 587              	.set nomacro
+ 588 03f0 0C006050 	beql $3,$0,$L114
+ 589 03f4 21205D01 	addu $4,$10,$sp
+ 590              	.set macro
+ 591              	.set reorder
+ 592              	
+ 593 03f8 2668AC01 	xor $13,$13,$12
+ 594              	$L115:
+ 595 03fc 42600C00 	srl $12,$12,1
+ 596 0400 2410AC01 	and $2,$13,$12
+ 597              	.set noreorder
+ 598 0404 00000000 	nop
+ 599              	.set reorder
+ 600              	.set noreorder
+ 601 0408 00000000 	nop
+ 602              	.set reorder
+ 603              	.set noreorder
+ 604 040c 00000000 	nop
+ 605              	.set reorder
+ 606              	.set noreorder
+ 607 0410 00000000 	nop
+ 608              	.set reorder
+ 609              	.set noreorder
+ 610              	.set nomacro
+ 611 0414 F9FF4054 	bnel $2,$0,$L115
+ 612 0418 2668AC01 	xor $13,$13,$12
+ 613              	.set macro
+ 614              	.set reorder
+ 615              	
+ 616 041c 01000224 	li $2,1
+ 617 0420 21205D01 	addu $4,$10,$sp
+ 618              	$L114:
+ 619 0424 0410E201 	sll $2,$2,$15
+ 620 0428 2668AC01 	xor $13,$13,$12
+ 621 042c FFFF4A24 	addu $10,$2,-1
+ 622 0430 9000838C 	lw $3,144($4)
+ 623 0434 2410AA01 	and $2,$13,$10
+GAS LISTING  			page 12
+
+
+ 624              	.set noreorder
+ 625              	.set nomacro
+ 626 0438 0D004350 	beql $2,$3,$L116
+ 627 043c FFFF3126 	addu $17,$17,-1
+ 628              	.set macro
+ 629              	.set reorder
+ 630              	
+ 631 0440 01000C24 	li $12,1
+ 632 0444 FFFFE724 	addu $7,$7,-1
+ 633              	$L117:
+ 634 0448 2378E501 	subu $15,$15,$5
+ 635 044c 80100700 	sll $2,$7,2
+ 636 0450 0418EC01 	sll $3,$12,$15
+ 637 0454 21105D00 	addu $2,$2,$sp
+ 638 0458 FFFF6A24 	addu $10,$3,-1
+ 639 045c 9000448C 	lw $4,144($2)
+ 640 0460 2418AA01 	and $3,$13,$10
+ 641              	.set noreorder
+ 642              	.set nomacro
+ 643 0464 F8FF6454 	bnel $3,$4,$L117
+ 644 0468 FFFFE724 	addu $7,$7,-1
+ 645              	.set macro
+ 646              	.set reorder
+ 647              	
+ 648 046c FFFF3126 	addu $17,$17,-1
+ 649              	$L116:
+ 650 0470 FFFF0224 	li $2,-1
+ 651              	.set noreorder
+ 652              	.set nomacro
+ 653 0474 7BFF2256 	bnel $17,$2,$L118
+ 654 0478 21C0E501 	addu $24,$15,$5
+ 655              	.set macro
+ 656              	.set reorder
+ 657              	
+ 658              	$L92:
+ 659 047c 01002925 	addu $9,$9,1
+ 660 0480 2A104902 	slt $2,$18,$9
+ 661              	.set noreorder
+ 662              	.set nomacro
+ 663 0484 6AFF4050 	beql $2,$0,$L119
+ 664 0488 80600900 	sll $12,$9,2
+ 665              	.set macro
+ 666              	.set reorder
+ 667              	
+ 668              	$L90:
+ 669              	.set noreorder
+ 670              	.set nomacro
+ 671 048c 04000011 	beq $8,$0,$L82
+ 672 0490 2D180000 	move $3,$0
+ 673              	.set macro
+ 674              	.set reorder
+ 675              	
+ 676 0494 01000224 	li $2,1
+ 677              	.set noreorder
+ 678              	.set nomacro
+ 679 0498 0E004212 	beq $18,$2,$L81
+ 680 049c FBFF0324 	li $3,-5
+GAS LISTING  			page 13
+
+
+ 681              	.set macro
+ 682              	.set reorder
+ 683              	
+ 684              	$L82:
+ 685 04a0 2D206000 	move $4,$3
+ 686              	$L1:
+ 687 04a4 8001BEDF 	ld $fp,384($sp)
+ 688 04a8 2D108000 	move $2,$4
+ 689 04ac 7001B7DF 	ld $23,368($sp)
+ 690 04b0 6001B6DF 	ld $22,352($sp)
+ 691 04b4 5001B5DF 	ld $21,336($sp)
+ 692 04b8 4001B4DF 	ld $20,320($sp)
+ 693 04bc 3001B3DF 	ld $19,304($sp)
+ 694 04c0 2001B2DF 	ld $18,288($sp)
+ 695 04c4 1001B1DF 	ld $17,272($sp)
+ 696 04c8 0001B0DF 	ld $16,256($sp)
+ 697              	
+ 698              	.set noreorder
+ 699              	.set nomacro
+ 700 04cc 0800E003 	j $31
+ 701 04d0 9001BD27 	addu $sp,$sp,400
+ 702              	.set macro
+ 703              	.set reorder
+ 704              	
+ 705              	$L81:
+ 706              	.set noreorder
+ 707              	.set nomacro
+ 708 04d4 F2FF0010 	b $L82
+ 709 04d8 2D180000 	move $3,$0
+ 710              	.set macro
+ 711              	.set reorder
+ 712              	
+ 713              	$L59:
+ 714 04dc 0000C38D 	lw $3,0($14)
+ 715 04e0 D000B58F 	lw $21,208($sp)
+ 716              	
+ 717 04e4 2B107500 	sltu $2,$3,$21
+ 718              	.set noreorder
+ 719              	.set nomacro
+ 720 04e8 0A004010 	beq $2,$0,$L61
+ 721 04ec D000B68F 	lw $22,208($sp)
+ 722              	.set macro
+ 723              	.set reorder
+ 724              	
+ 725 04f0 0001622C 	sltu $2,$3,256
+ 726              	.set noreorder
+ 727              	.set nomacro
+ 728 04f4 02004010 	beq $2,$0,$L63
+ 729 04f8 60000324 	li $3,96
+ 730              	.set macro
+ 731              	.set reorder
+ 732              	
+ 733 04fc 2D180000 	move $3,$0
+ 734              	$L63:
+ 735 0500 4000A3A3 	sb $3,64($sp)
+ 736 0504 0000C28D 	lw $2,0($14)
+ 737 0508 0400CE25 	addu $14,$14,4
+GAS LISTING  			page 14
+
+
+ 738              	.set noreorder
+ 739              	.set nomacro
+ 740 050c A3FF0010 	b $L60
+ 741 0510 4400A2AF 	sw $2,68($sp)
+ 742              	.set macro
+ 743              	.set reorder
+ 744              	
+ 745              	$L61:
+ 746 0514 D800B78F 	lw $23,216($sp)
+ 747 0518 23107600 	subu $2,$3,$22
+ 748 051c 80100200 	sll $2,$2,2
+ 749 0520 21105700 	addu $2,$2,$23
+ 750 0524 00004390 	lbu $3,0($2)
+ 751              	
+ 752 0528 50006324 	addu $3,$3,80
+ 753 052c 4000A3A3 	sb $3,64($sp)
+ 754 0530 D400A38F 	lw $3,212($sp)
+ 755 0534 0000C28D 	lw $2,0($14)
+ 756 0538 0400CE25 	addu $14,$14,4
+ 757 053c 23105600 	subu $2,$2,$22
+ 758 0540 80100200 	sll $2,$2,2
+ 759 0544 21104300 	addu $2,$2,$3
+ 760 0548 0000438C 	lw $3,0($2)
+ 761              	.set noreorder
+ 762              	.set nomacro
+ 763 054c 93FF0010 	b $L60
+ 764 0550 4400A3AF 	sw $3,68($sp)
+ 765              	.set macro
+ 766              	.set reorder
+ 767              	
+ 768 0554 00000000 	.p2align 3
+ 769              	$L56:
+ 770 0558 DC00AC8F 	lw $12,220($sp)
+ 771              	.set noreorder
+ 772              	.set nomacro
+ 773 055c 85FF0010 	b $L44
+ 774 0560 00008BAD 	sw $11,0($12)
+ 775              	.set macro
+ 776              	.set reorder
+ 777              	
+ 778              	$L104:
+ 779              	.set noreorder
+ 780              	.set nomacro
+ 781 0564 CFFF0010 	b $L1
+ 782 0568 FCFF0424 	li $4,-4
+ 783              	.set macro
+ 784              	.set reorder
+ 785              	
+ 786              	$L102:
+ 787 056c 23802F01 	subu $16,$9,$15
+ 788              	.set noreorder
+ 789              	.set nomacro
+ 790 0570 84FF0010 	b $L94
+ 791 0574 80500700 	sll $10,$7,2
+ 792              	.set macro
+ 793              	.set reorder
+ 794              	
+GAS LISTING  			page 15
+
+
+ 795              	$L103:
+ 796              	.set noreorder
+ 797              	.set nomacro
+ 798 0578 CAFF0010 	b $L1
+ 799 057c FDFF0424 	li $4,-3
+ 800              	.set macro
+ 801              	.set reorder
+ 802              	
+ 803              	$L105:
+ 804 0580 DC00A28F 	lw $2,220($sp)
+ 805 0584 2D200000 	move $4,$0
+ 806 0588 000040AD 	sw $0,0($10)
+ 807              	.set noreorder
+ 808              	.set nomacro
+ 809 058c C5FF0010 	b $L1
+ 810 0590 000040AC 	sw $0,0($2)
+ 811              	.set macro
+ 812              	.set reorder
+ 813              	
+ 814              	.end huft_build
+ 815              	$Lfe1:
+ 816              	.size huft_build,$Lfe1-huft_build
+ 817              	.rdata
+ 818              	.align 3
+ 819              	$LC0:
+ 820 0220 6F766572 	.ascii "oversubscribed dynamic bit lengths tree\000"
+ 820      73756273 
+ 820      63726962 
+ 820      65642064 
+ 820      796E616D 
+ 821              	.align 3
+ 822              	$LC1:
+ 823 0248 696E636F 	.ascii "incomplete dynamic bit lengths tree\000"
+ 823      6D706C65 
+ 823      74652064 
+ 823      796E616D 
+ 823      69632062 
+ 824              	.text
+ 825              	.align 2
+ 826 0594 00000000 	.p2align 3,,7
+ 827              	.globl inflate_trees_bits
+ 828              	.ent inflate_trees_bits
+ 829              	inflate_trees_bits:
+ 830              	.frame $sp,144,$31
+ 831              	.mask 0x803f0000,-16
+ 832              	.fmask 0x00000000,0
+ 833 0598 70FFBD27 	subu $sp,$sp,144
+ 834 059c 7000B5FF 	sd $21,112($sp)
+ 835 05a0 2DA8A000 	move $21,$5
+ 836 05a4 6000B4FF 	sd $20,96($sp)
+ 837 05a8 13000524 	li $5,19
+ 838 05ac 5000B3FF 	sd $19,80($sp)
+ 839 05b0 2DA08000 	move $20,$4
+ 840 05b4 4000B2FF 	sd $18,64($sp)
+ 841 05b8 2D98C000 	move $19,$6
+ 842 05bc 3000B1FF 	sd $17,48($sp)
+ 843 05c0 04000624 	li $6,4
+GAS LISTING  			page 16
+
+
+ 844 05c4 2000B0FF 	sd $16,32($sp)
+ 845 05c8 2D880001 	move $17,$8
+ 846 05cc 8000BFFF 	sd $31,128($sp)
+ 847 05d0 2D80E000 	move $16,$7
+ 848 05d4 1000A0AF 	sw $0,16($sp)
+ 849 05d8 2800028D 	lw $2,40($8)
+ 850              	
+ 851              	.set noreorder
+ 852              	.set nomacro
+ 853 05dc 09F84000 	jal $31,$2
+ 854 05e0 3000048D 	lw $4,48($8)
+ 855              	.set macro
+ 856              	.set reorder
+ 857              	
+ 858 05e4 2D904000 	move $18,$2
+ 859              	.set noreorder
+ 860              	.set nomacro
+ 861 05e8 20004012 	beq $18,$0,$L120
+ 862 05ec FCFF0224 	li $2,-4
+ 863              	.set macro
+ 864              	.set reorder
+ 865              	
+ 866 05f0 2D580002 	move $11,$16
+ 867 05f4 1000A227 	addu $2,$sp,16
+ 868 05f8 2D208002 	move $4,$20
+ 869 05fc 2D486002 	move $9,$19
+ 870 0600 13000524 	li $5,19
+ 871 0604 13000624 	li $6,19
+ 872 0608 2D380000 	move $7,$0
+ 873 060c 2D400000 	move $8,$0
+ 874 0610 2D50A002 	move $10,$21
+ 875 0614 0800B2AF 	sw $18,8($sp)
+ 876              	.set noreorder
+ 877              	.set nomacro
+ 878 0618 0000000C 	jal huft_build
+ 879 061c 0000A2AF 	sw $2,0($sp)
+ 880              	.set macro
+ 881              	.set reorder
+ 882              	
+ 883 0620 2D804000 	move $16,$2
+ 884 0624 FDFF0224 	li $2,-3
+ 885              	.set noreorder
+ 886              	.set nomacro
+ 887 0628 19000212 	beq $16,$2,$L127
+ 888 062c 0000023C 	lui $2,%hi($LC0)
+ 889              	.set macro
+ 890              	.set reorder
+ 891              	
+ 892 0630 FBFF0224 	li $2,-5
+ 893              	.set noreorder
+ 894              	.set nomacro
+ 895 0634 05000212 	beq $16,$2,$L128
+ 896 0638 0000023C 	lui $2,%hi($LC1)
+ 897              	.set macro
+ 898              	.set reorder
+ 899              	
+ 900 063c 0000A28E 	lw $2,0($21)
+GAS LISTING  			page 17
+
+
+ 901              	
+ 902              	.set noreorder
+ 903              	.set nomacro
+ 904 0640 06004054 	bnel $2,$0,$L129
+ 905 0644 2C00228E 	lw $2,44($17)
+ 906              	.set macro
+ 907              	.set reorder
+ 908              	
+ 909              	
+ 910 0648 0000023C 	lui $2,%hi($LC1)
+ 911              	$L128:
+ 912 064c FDFF1024 	li $16,-3
+ 913 0650 48024224 	addiu $2,$2,%lo($LC1)
+ 914              	$L126:
+ 915 0654 200022AE 	sw $2,32($17)
+ 916 0658 2C00228E 	lw $2,44($17)
+ 917              	$L129:
+ 918 065c 2D284002 	move $5,$18
+ 919              	.set noreorder
+ 920              	.set nomacro
+ 921 0660 09F84000 	jal $31,$2
+ 922 0664 3000248E 	lw $4,48($17)
+ 923              	.set macro
+ 924              	.set reorder
+ 925              	
+ 926 0668 2D100002 	move $2,$16
+ 927              	$L120:
+ 928 066c 8000BFDF 	ld $31,128($sp)
+ 929 0670 7000B5DF 	ld $21,112($sp)
+ 930 0674 6000B4DF 	ld $20,96($sp)
+ 931 0678 5000B3DF 	ld $19,80($sp)
+ 932 067c 4000B2DF 	ld $18,64($sp)
+ 933 0680 3000B1DF 	ld $17,48($sp)
+ 934 0684 2000B0DF 	ld $16,32($sp)
+ 935              	
+ 936              	.set noreorder
+ 937              	.set nomacro
+ 938 0688 0800E003 	j $31
+ 939 068c 9000BD27 	addu $sp,$sp,144
+ 940              	.set macro
+ 941              	.set reorder
+ 942              	
+ 943              	.p2align 3
+ 944              	$L127:
+ 945              	.set noreorder
+ 946              	.set nomacro
+ 947 0690 F0FF0010 	b $L126
+ 948 0694 20024224 	addiu $2,$2,%lo($LC0)
+ 949              	.set macro
+ 950              	.set reorder
+ 951              	
+ 952              	.end inflate_trees_bits
+ 953              	$Lfe2:
+ 954              	.size inflate_trees_bits,$Lfe2-inflate_trees_bits
+ 955              	.rdata
+ 956 026c 00000000 	.align 3
+ 957              	$LC2:
+GAS LISTING  			page 18
+
+
+ 958 0270 6F766572 	.ascii "oversubscribed literal/length tree\000"
+ 958      73756273 
+ 958      63726962 
+ 958      6564206C 
+ 958      69746572 
+ 959 0293 00000000 	.align 3
+ 959      00
+ 960              	$LC3:
+ 961 0298 696E636F 	.ascii "incomplete literal/length tree\000"
+ 961      6D706C65 
+ 961      7465206C 
+ 961      69746572 
+ 961      616C2F6C 
+ 962 02b7 00       	.align 3
+ 963              	$LC4:
+ 964 02b8 6F766572 	.ascii "oversubscribed distance tree\000"
+ 964      73756273 
+ 964      63726962 
+ 964      65642064 
+ 964      69737461 
+ 965 02d5 000000   	.align 3
+ 966              	$LC5:
+ 967 02d8 696E636F 	.ascii "incomplete distance tree\000"
+ 967      6D706C65 
+ 967      74652064 
+ 967      69737461 
+ 967      6E636520 
+ 968 02f1 00000000 	.align 3
+ 968      000000
+ 969              	$LC6:
+ 970 02f8 656D7074 	.ascii "empty distance tree with lengths\000"
+ 970      79206469 
+ 970      7374616E 
+ 970      63652074 
+ 970      72656520 
+ 971 0319 00000000 	.text
+ 971      000000
+ 972              	.align 2
+ 973              	.p2align 3,,7
+ 974              	.globl inflate_trees_dynamic
+ 975              	.ent inflate_trees_dynamic
+ 976              	inflate_trees_dynamic:
+ 977              	.frame $sp,192,$31
+ 978              	.mask 0xc0ff0000,-16
+ 979              	.fmask 0x00000000,0
+ 980 0698 40FFBD27 	subu $sp,$sp,192
+ 981 069c A000BEFF 	sd $fp,160($sp)
+ 982 06a0 2DF0A000 	move $fp,$5
+ 983 06a4 9000B7FF 	sd $23,144($sp)
+ 984 06a8 20010524 	li $5,288
+ 985 06ac 8000B6FF 	sd $22,128($sp)
+ 986 06b0 2DB84001 	move $23,$10
+ 987 06b4 7000B5FF 	sd $21,112($sp)
+ 988 06b8 2DB06001 	move $22,$11
+ 989 06bc 6000B4FF 	sd $20,96($sp)
+ 990 06c0 2DA8C000 	move $21,$6
+ 991 06c4 5000B3FF 	sd $19,80($sp)
+GAS LISTING  			page 19
+
+
+ 992 06c8 2DA08000 	move $20,$4
+ 993 06cc 4000B2FF 	sd $18,64($sp)
+ 994 06d0 04000624 	li $6,4
+ 995 06d4 3000B1FF 	sd $17,48($sp)
+ 996 06d8 2D98E000 	move $19,$7
+ 997 06dc 2000B0FF 	sd $16,32($sp)
+ 998 06e0 2D802001 	move $16,$9
+ 999 06e4 B000BFFF 	sd $31,176($sp)
+ 1000 06e8 C000B28F 	lw $18,192($sp)
+ 1001 06ec 1000A0AF 	sw $0,16($sp)
+ 1002 06f0 2800428E 	lw $2,40($18)
+ 1003 06f4 3000448E 	lw $4,48($18)
+ 1004              	.set noreorder
+ 1005              	.set nomacro
+ 1006 06f8 09F84000 	jal $31,$2
+ 1007 06fc 1400A8AF 	sw $8,20($sp)
+ 1008              	.set macro
+ 1009              	.set reorder
+ 1010              	
+ 1011 0700 2D884000 	move $17,$2
+ 1012              	.set noreorder
+ 1013              	.set nomacro
+ 1014 0704 22002012 	beq $17,$0,$L130
+ 1015 0708 FCFF0224 	li $2,-4
+ 1016              	.set macro
+ 1017              	.set reorder
+ 1018              	
+ 1019 070c 0000073C 	lui $7,%hi(cplens)
+ 1020 0710 0000083C 	lui $8,%hi(cplext)
+ 1021 0714 2D480002 	move $9,$16
+ 1022 0718 1000A227 	addu $2,$sp,16
+ 1023 071c 3000E724 	addiu $7,$7,%lo(cplens)
+ 1024 0720 B0000825 	addiu $8,$8,%lo(cplext)
+ 1025 0724 2D20A002 	move $4,$21
+ 1026 0728 2D288002 	move $5,$20
+ 1027 072c 01010624 	li $6,257
+ 1028 0730 2D506002 	move $10,$19
+ 1029 0734 2D58C002 	move $11,$22
+ 1030 0738 0000A2AF 	sw $2,0($sp)
+ 1031              	.set noreorder
+ 1032              	.set nomacro
+ 1033 073c 0000000C 	jal huft_build
+ 1034 0740 0800B1AF 	sw $17,8($sp)
+ 1035              	.set macro
+ 1036              	.set reorder
+ 1037              	
+ 1038              	.set noreorder
+ 1039              	.set nomacro
+ 1040 0744 04004014 	bne $2,$0,$L133
+ 1041 0748 2D804000 	move $16,$2
+ 1042              	.set macro
+ 1043              	.set reorder
+ 1044              	
+ 1045 074c 0000628E 	lw $2,0($19)
+ 1046              	
+ 1047              	.set noreorder
+ 1048              	.set nomacro
+GAS LISTING  			page 20
+
+
+ 1049 0750 1D004014 	bne $2,$0,$L132
+ 1050 0754 80201400 	sll $4,$20,2
+ 1051              	.set macro
+ 1052              	.set reorder
+ 1053              	
+ 1054              	$L133:
+ 1055 0758 FDFF0224 	li $2,-3
+ 1056              	.set noreorder
+ 1057              	.set nomacro
+ 1058 075c 18000212 	beq $16,$2,$L146
+ 1059 0760 0000023C 	lui $2,%hi($LC2)
+ 1060              	.set macro
+ 1061              	.set reorder
+ 1062              	
+ 1063 0764 FCFF0224 	li $2,-4
+ 1064              	.set noreorder
+ 1065              	.set nomacro
+ 1066 0768 04000212 	beq $16,$2,$L140
+ 1067 076c 0000023C 	lui $2,%hi($LC3)
+ 1068              	.set macro
+ 1069              	.set reorder
+ 1070              	
+ 1071 0770 FDFF1024 	li $16,-3
+ 1072 0774 98024224 	addiu $2,$2,%lo($LC3)
+ 1073              	$L145:
+ 1074 0778 200042AE 	sw $2,32($18)
+ 1075              	$L140:
+ 1076 077c 2C00428E 	lw $2,44($18)
+ 1077 0780 2D282002 	move $5,$17
+ 1078              	.set noreorder
+ 1079              	.set nomacro
+ 1080 0784 09F84000 	jal $31,$2
+ 1081 0788 3000448E 	lw $4,48($18)
+ 1082              	.set macro
+ 1083              	.set reorder
+ 1084              	
+ 1085 078c 2D100002 	move $2,$16
+ 1086              	$L130:
+ 1087 0790 B000BFDF 	ld $31,176($sp)
+ 1088 0794 A000BEDF 	ld $fp,160($sp)
+ 1089 0798 9000B7DF 	ld $23,144($sp)
+ 1090 079c 8000B6DF 	ld $22,128($sp)
+ 1091 07a0 7000B5DF 	ld $21,112($sp)
+ 1092 07a4 6000B4DF 	ld $20,96($sp)
+ 1093 07a8 5000B3DF 	ld $19,80($sp)
+ 1094 07ac 4000B2DF 	ld $18,64($sp)
+ 1095 07b0 3000B1DF 	ld $17,48($sp)
+ 1096 07b4 2000B0DF 	ld $16,32($sp)
+ 1097              	
+ 1098              	.set noreorder
+ 1099              	.set nomacro
+ 1100 07b8 0800E003 	j $31
+ 1101 07bc C000BD27 	addu $sp,$sp,192
+ 1102              	.set macro
+ 1103              	.set reorder
+ 1104              	
+ 1105              	.p2align 3
+GAS LISTING  			page 21
+
+
+ 1106              	$L146:
+ 1107              	.set noreorder
+ 1108              	.set nomacro
+ 1109 07c0 EDFF0010 	b $L145
+ 1110 07c4 70024224 	addiu $2,$2,%lo($LC2)
+ 1111              	.set macro
+ 1112              	.set reorder
+ 1113              	
+ 1114              	$L132:
+ 1115 07c8 0000073C 	lui $7,%hi(cpdist)
+ 1116 07cc 0000083C 	lui $8,%hi(cpdext)
+ 1117 07d0 1400AA8F 	lw $10,20($sp)
+ 1118 07d4 1000A327 	addu $3,$sp,16
+ 1119 07d8 2120A402 	addu $4,$21,$4
+ 1120 07dc 2D28C003 	move $5,$fp
+ 1121 07e0 3001E724 	addiu $7,$7,%lo(cpdist)
+ 1122 07e4 A8010825 	addiu $8,$8,%lo(cpdext)
+ 1123 07e8 2D48E002 	move $9,$23
+ 1124 07ec 2D58C002 	move $11,$22
+ 1125 07f0 2D300000 	move $6,$0
+ 1126 07f4 0000A3AF 	sw $3,0($sp)
+ 1127              	.set noreorder
+ 1128              	.set nomacro
+ 1129 07f8 0000000C 	jal huft_build
+ 1130 07fc 0800B1AF 	sw $17,8($sp)
+ 1131              	.set macro
+ 1132              	.set reorder
+ 1133              	
+ 1134              	.set noreorder
+ 1135              	.set nomacro
+ 1136 0800 08004014 	bne $2,$0,$L138
+ 1137 0804 2D804000 	move $16,$2
+ 1138              	.set macro
+ 1139              	.set reorder
+ 1140              	
+ 1141 0808 1400A38F 	lw $3,20($sp)
+ 1142              	
+ 1143 080c 0000628C 	lw $2,0($3)
+ 1144              	
+ 1145              	.set noreorder
+ 1146              	.set nomacro
+ 1147 0810 15004054 	bnel $2,$0,$L149
+ 1148 0814 2C00428E 	lw $2,44($18)
+ 1149              	.set macro
+ 1150              	.set reorder
+ 1151              	
+ 1152              	
+ 1153 0818 0201822E 	sltu $2,$20,258
+ 1154              	.set noreorder
+ 1155              	.set nomacro
+ 1156 081c 12004054 	bnel $2,$0,$L137
+ 1157 0820 2C00428E 	lw $2,44($18)
+ 1158              	.set macro
+ 1159              	.set reorder
+ 1160              	
+ 1161              	$L138:
+ 1162 0824 FDFF0224 	li $2,-3
+GAS LISTING  			page 22
+
+
+ 1163              	.set noreorder
+ 1164              	.set nomacro
+ 1165 0828 0D000212 	beq $16,$2,$L147
+ 1166 082c 0000023C 	lui $2,%hi($LC4)
+ 1167              	.set macro
+ 1168              	.set reorder
+ 1169              	
+ 1170 0830 FBFF0224 	li $2,-5
+ 1171              	.set noreorder
+ 1172              	.set nomacro
+ 1173 0834 07000212 	beq $16,$2,$L148
+ 1174 0838 0000023C 	lui $2,%hi($LC5)
+ 1175              	.set macro
+ 1176              	.set reorder
+ 1177              	
+ 1178 083c FCFF0224 	li $2,-4
+ 1179              	.set noreorder
+ 1180              	.set nomacro
+ 1181 0840 CEFF0212 	beq $16,$2,$L140
+ 1182 0844 0000023C 	lui $2,%hi($LC6)
+ 1183              	.set macro
+ 1184              	.set reorder
+ 1185              	
+ 1186 0848 FDFF1024 	li $16,-3
+ 1187              	.set noreorder
+ 1188              	.set nomacro
+ 1189 084c CAFF0010 	b $L145
+ 1190 0850 F8024224 	addiu $2,$2,%lo($LC6)
+ 1191              	.set macro
+ 1192              	.set reorder
+ 1193              	
+ 1194              	$L148:
+ 1195 0854 FDFF1024 	li $16,-3
+ 1196              	.set noreorder
+ 1197              	.set nomacro
+ 1198 0858 C7FF0010 	b $L145
+ 1199 085c D8024224 	addiu $2,$2,%lo($LC5)
+ 1200              	.set macro
+ 1201              	.set reorder
+ 1202              	
+ 1203              	$L147:
+ 1204              	.set noreorder
+ 1205              	.set nomacro
+ 1206 0860 C5FF0010 	b $L145
+ 1207 0864 B8024224 	addiu $2,$2,%lo($LC4)
+ 1208              	.set macro
+ 1209              	.set reorder
+ 1210              	
+ 1211              	$L137:
+ 1212              	$L149:
+ 1213 0868 2D282002 	move $5,$17
+ 1214              	.set noreorder
+ 1215              	.set nomacro
+ 1216 086c 09F84000 	jal $31,$2
+ 1217 0870 3000448E 	lw $4,48($18)
+ 1218              	.set macro
+ 1219              	.set reorder
+GAS LISTING  			page 23
+
+
+ 1220              	
+ 1221              	.set noreorder
+ 1222              	.set nomacro
+ 1223 0874 C6FF0010 	b $L130
+ 1224 0878 2D100000 	move $2,$0
+ 1225              	.set macro
+ 1226              	.set reorder
+ 1227              	
+ 1228              	.end inflate_trees_dynamic
+ 1229              	$Lfe3:
+ 1230              	.size inflate_trees_dynamic,$Lfe3-inflate_trees_dynamic
+ 1231              	.data
+ 1232              	.align 2
+ 1233              	.type fixed_bl,@object
+ 1234              	.size fixed_bl,4
+ 1235              	fixed_bl:
+ 1236 0000 09000000 	.word 9
+ 1237              	.align 2
+ 1238              	.type fixed_bd,@object
+ 1239              	.size fixed_bd,4
+ 1240              	fixed_bd:
+ 1241 0004 05000000 	.word 5
+ 1242              	.align 3
+ 1243              	.type fixed_tl,@object
+ 1244              	.size fixed_tl,4096
+ 1245              	fixed_tl:
+ 1246 0008 60       	.byte 96
+ 1247 0009 07       	.byte 7
+ 1248 000a 0000     	.space 2
+ 1249 000c 00010000 	.word 256
+ 1250 0010 00       	.byte 0
+ 1251 0011 08       	.byte 8
+ 1252 0012 0000     	.space 2
+ 1253 0014 50000000 	.word 80
+ 1254 0018 00       	.byte 0
+ 1255 0019 08       	.byte 8
+ 1256 001a 0000     	.space 2
+ 1257 001c 10000000 	.word 16
+ 1258 0020 54       	.byte 84
+ 1259 0021 08       	.byte 8
+ 1260 0022 0000     	.space 2
+ 1261 0024 73000000 	.word 115
+ 1262 0028 52       	.byte 82
+ 1263 0029 07       	.byte 7
+ 1264 002a 0000     	.space 2
+ 1265 002c 1F000000 	.word 31
+ 1266 0030 00       	.byte 0
+ 1267 0031 08       	.byte 8
+ 1268 0032 0000     	.space 2
+ 1269 0034 70000000 	.word 112
+ 1270 0038 00       	.byte 0
+ 1271 0039 08       	.byte 8
+ 1272 003a 0000     	.space 2
+ 1273 003c 30000000 	.word 48
+ 1274 0040 00       	.byte 0
+ 1275 0041 09       	.byte 9
+ 1276 0042 0000     	.space 2
+GAS LISTING  			page 24
+
+
+ 1277 0044 C0000000 	.word 192
+ 1278 0048 50       	.byte 80
+ 1279 0049 07       	.byte 7
+ 1280 004a 0000     	.space 2
+ 1281 004c 0A000000 	.word 10
+ 1282 0050 00       	.byte 0
+ 1283 0051 08       	.byte 8
+ 1284 0052 0000     	.space 2
+ 1285 0054 60000000 	.word 96
+ 1286 0058 00       	.byte 0
+ 1287 0059 08       	.byte 8
+ 1288 005a 0000     	.space 2
+ 1289 005c 20000000 	.word 32
+ 1290 0060 00       	.byte 0
+ 1291 0061 09       	.byte 9
+ 1292 0062 0000     	.space 2
+ 1293 0064 A0000000 	.word 160
+ 1294 0068 00       	.byte 0
+ 1295 0069 08       	.byte 8
+ 1296 006a 0000     	.space 2
+ 1297 006c 00000000 	.word 0
+ 1298 0070 00       	.byte 0
+ 1299 0071 08       	.byte 8
+ 1300 0072 0000     	.space 2
+ 1301 0074 80000000 	.word 128
+ 1302 0078 00       	.byte 0
+ 1303 0079 08       	.byte 8
+ 1304 007a 0000     	.space 2
+ 1305 007c 40000000 	.word 64
+ 1306 0080 00       	.byte 0
+ 1307 0081 09       	.byte 9
+ 1308 0082 0000     	.space 2
+ 1309 0084 E0000000 	.word 224
+ 1310 0088 50       	.byte 80
+ 1311 0089 07       	.byte 7
+ 1312 008a 0000     	.space 2
+ 1313 008c 06000000 	.word 6
+ 1314 0090 00       	.byte 0
+ 1315 0091 08       	.byte 8
+ 1316 0092 0000     	.space 2
+ 1317 0094 58000000 	.word 88
+ 1318 0098 00       	.byte 0
+ 1319 0099 08       	.byte 8
+ 1320 009a 0000     	.space 2
+ 1321 009c 18000000 	.word 24
+ 1322 00a0 00       	.byte 0
+ 1323 00a1 09       	.byte 9
+ 1324 00a2 0000     	.space 2
+ 1325 00a4 90000000 	.word 144
+ 1326 00a8 53       	.byte 83
+ 1327 00a9 07       	.byte 7
+ 1328 00aa 0000     	.space 2
+ 1329 00ac 3B000000 	.word 59
+ 1330 00b0 00       	.byte 0
+ 1331 00b1 08       	.byte 8
+ 1332 00b2 0000     	.space 2
+ 1333 00b4 78000000 	.word 120
+GAS LISTING  			page 25
+
+
+ 1334 00b8 00       	.byte 0
+ 1335 00b9 08       	.byte 8
+ 1336 00ba 0000     	.space 2
+ 1337 00bc 38000000 	.word 56
+ 1338 00c0 00       	.byte 0
+ 1339 00c1 09       	.byte 9
+ 1340 00c2 0000     	.space 2
+ 1341 00c4 D0000000 	.word 208
+ 1342 00c8 51       	.byte 81
+ 1343 00c9 07       	.byte 7
+ 1344 00ca 0000     	.space 2
+ 1345 00cc 11000000 	.word 17
+ 1346 00d0 00       	.byte 0
+ 1347 00d1 08       	.byte 8
+ 1348 00d2 0000     	.space 2
+ 1349 00d4 68000000 	.word 104
+ 1350 00d8 00       	.byte 0
+ 1351 00d9 08       	.byte 8
+ 1352 00da 0000     	.space 2
+ 1353 00dc 28000000 	.word 40
+ 1354 00e0 00       	.byte 0
+ 1355 00e1 09       	.byte 9
+ 1356 00e2 0000     	.space 2
+ 1357 00e4 B0000000 	.word 176
+ 1358 00e8 00       	.byte 0
+ 1359 00e9 08       	.byte 8
+ 1360 00ea 0000     	.space 2
+ 1361 00ec 08000000 	.word 8
+ 1362 00f0 00       	.byte 0
+ 1363 00f1 08       	.byte 8
+ 1364 00f2 0000     	.space 2
+ 1365 00f4 88000000 	.word 136
+ 1366 00f8 00       	.byte 0
+ 1367 00f9 08       	.byte 8
+ 1368 00fa 0000     	.space 2
+ 1369 00fc 48000000 	.word 72
+ 1370 0100 00       	.byte 0
+ 1371 0101 09       	.byte 9
+ 1372 0102 0000     	.space 2
+ 1373 0104 F0000000 	.word 240
+ 1374 0108 50       	.byte 80
+ 1375 0109 07       	.byte 7
+ 1376 010a 0000     	.space 2
+ 1377 010c 04000000 	.word 4
+ 1378 0110 00       	.byte 0
+ 1379 0111 08       	.byte 8
+ 1380 0112 0000     	.space 2
+ 1381 0114 54000000 	.word 84
+ 1382 0118 00       	.byte 0
+ 1383 0119 08       	.byte 8
+ 1384 011a 0000     	.space 2
+ 1385 011c 14000000 	.word 20
+ 1386 0120 55       	.byte 85
+ 1387 0121 08       	.byte 8
+ 1388 0122 0000     	.space 2
+ 1389 0124 E3000000 	.word 227
+ 1390 0128 53       	.byte 83
+GAS LISTING  			page 26
+
+
+ 1391 0129 07       	.byte 7
+ 1392 012a 0000     	.space 2
+ 1393 012c 2B000000 	.word 43
+ 1394 0130 00       	.byte 0
+ 1395 0131 08       	.byte 8
+ 1396 0132 0000     	.space 2
+ 1397 0134 74000000 	.word 116
+ 1398 0138 00       	.byte 0
+ 1399 0139 08       	.byte 8
+ 1400 013a 0000     	.space 2
+ 1401 013c 34000000 	.word 52
+ 1402 0140 00       	.byte 0
+ 1403 0141 09       	.byte 9
+ 1404 0142 0000     	.space 2
+ 1405 0144 C8000000 	.word 200
+ 1406 0148 51       	.byte 81
+ 1407 0149 07       	.byte 7
+ 1408 014a 0000     	.space 2
+ 1409 014c 0D000000 	.word 13
+ 1410 0150 00       	.byte 0
+ 1411 0151 08       	.byte 8
+ 1412 0152 0000     	.space 2
+ 1413 0154 64000000 	.word 100
+ 1414 0158 00       	.byte 0
+ 1415 0159 08       	.byte 8
+ 1416 015a 0000     	.space 2
+ 1417 015c 24000000 	.word 36
+ 1418 0160 00       	.byte 0
+ 1419 0161 09       	.byte 9
+ 1420 0162 0000     	.space 2
+ 1421 0164 A8000000 	.word 168
+ 1422 0168 00       	.byte 0
+ 1423 0169 08       	.byte 8
+ 1424 016a 0000     	.space 2
+ 1425 016c 04000000 	.word 4
+ 1426 0170 00       	.byte 0
+ 1427 0171 08       	.byte 8
+ 1428 0172 0000     	.space 2
+ 1429 0174 84000000 	.word 132
+ 1430 0178 00       	.byte 0
+ 1431 0179 08       	.byte 8
+ 1432 017a 0000     	.space 2
+ 1433 017c 44000000 	.word 68
+ 1434 0180 00       	.byte 0
+ 1435 0181 09       	.byte 9
+ 1436 0182 0000     	.space 2
+ 1437 0184 E8000000 	.word 232
+ 1438 0188 50       	.byte 80
+ 1439 0189 07       	.byte 7
+ 1440 018a 0000     	.space 2
+ 1441 018c 08000000 	.word 8
+ 1442 0190 00       	.byte 0
+ 1443 0191 08       	.byte 8
+ 1444 0192 0000     	.space 2
+ 1445 0194 5C000000 	.word 92
+ 1446 0198 00       	.byte 0
+ 1447 0199 08       	.byte 8
+GAS LISTING  			page 27
+
+
+ 1448 019a 0000     	.space 2
+ 1449 019c 1C000000 	.word 28
+ 1450 01a0 00       	.byte 0
+ 1451 01a1 09       	.byte 9
+ 1452 01a2 0000     	.space 2
+ 1453 01a4 98000000 	.word 152
+ 1454 01a8 54       	.byte 84
+ 1455 01a9 07       	.byte 7
+ 1456 01aa 0000     	.space 2
+ 1457 01ac 53000000 	.word 83
+ 1458 01b0 00       	.byte 0
+ 1459 01b1 08       	.byte 8
+ 1460 01b2 0000     	.space 2
+ 1461 01b4 7C000000 	.word 124
+ 1462 01b8 00       	.byte 0
+ 1463 01b9 08       	.byte 8
+ 1464 01ba 0000     	.space 2
+ 1465 01bc 3C000000 	.word 60
+ 1466 01c0 00       	.byte 0
+ 1467 01c1 09       	.byte 9
+ 1468 01c2 0000     	.space 2
+ 1469 01c4 D8000000 	.word 216
+ 1470 01c8 52       	.byte 82
+ 1471 01c9 07       	.byte 7
+ 1472 01ca 0000     	.space 2
+ 1473 01cc 17000000 	.word 23
+ 1474 01d0 00       	.byte 0
+ 1475 01d1 08       	.byte 8
+ 1476 01d2 0000     	.space 2
+ 1477 01d4 6C000000 	.word 108
+ 1478 01d8 00       	.byte 0
+ 1479 01d9 08       	.byte 8
+ 1480 01da 0000     	.space 2
+ 1481 01dc 2C000000 	.word 44
+ 1482 01e0 00       	.byte 0
+ 1483 01e1 09       	.byte 9
+ 1484 01e2 0000     	.space 2
+ 1485 01e4 B8000000 	.word 184
+ 1486 01e8 00       	.byte 0
+ 1487 01e9 08       	.byte 8
+ 1488 01ea 0000     	.space 2
+ 1489 01ec 0C000000 	.word 12
+ 1490 01f0 00       	.byte 0
+ 1491 01f1 08       	.byte 8
+ 1492 01f2 0000     	.space 2
+ 1493 01f4 8C000000 	.word 140
+ 1494 01f8 00       	.byte 0
+ 1495 01f9 08       	.byte 8
+ 1496 01fa 0000     	.space 2
+ 1497 01fc 4C000000 	.word 76
+ 1498 0200 00       	.byte 0
+ 1499 0201 09       	.byte 9
+ 1500 0202 0000     	.space 2
+ 1501 0204 F8000000 	.word 248
+ 1502 0208 50       	.byte 80
+ 1503 0209 07       	.byte 7
+ 1504 020a 0000     	.space 2
+GAS LISTING  			page 28
+
+
+ 1505 020c 03000000 	.word 3
+ 1506 0210 00       	.byte 0
+ 1507 0211 08       	.byte 8
+ 1508 0212 0000     	.space 2
+ 1509 0214 52000000 	.word 82
+ 1510 0218 00       	.byte 0
+ 1511 0219 08       	.byte 8
+ 1512 021a 0000     	.space 2
+ 1513 021c 12000000 	.word 18
+ 1514 0220 55       	.byte 85
+ 1515 0221 08       	.byte 8
+ 1516 0222 0000     	.space 2
+ 1517 0224 A3000000 	.word 163
+ 1518 0228 53       	.byte 83
+ 1519 0229 07       	.byte 7
+ 1520 022a 0000     	.space 2
+ 1521 022c 23000000 	.word 35
+ 1522 0230 00       	.byte 0
+ 1523 0231 08       	.byte 8
+ 1524 0232 0000     	.space 2
+ 1525 0234 72000000 	.word 114
+ 1526 0238 00       	.byte 0
+ 1527 0239 08       	.byte 8
+ 1528 023a 0000     	.space 2
+ 1529 023c 32000000 	.word 50
+ 1530 0240 00       	.byte 0
+ 1531 0241 09       	.byte 9
+ 1532 0242 0000     	.space 2
+ 1533 0244 C4000000 	.word 196
+ 1534 0248 51       	.byte 81
+ 1535 0249 07       	.byte 7
+ 1536 024a 0000     	.space 2
+ 1537 024c 0B000000 	.word 11
+ 1538 0250 00       	.byte 0
+ 1539 0251 08       	.byte 8
+ 1540 0252 0000     	.space 2
+ 1541 0254 62000000 	.word 98
+ 1542 0258 00       	.byte 0
+ 1543 0259 08       	.byte 8
+ 1544 025a 0000     	.space 2
+ 1545 025c 22000000 	.word 34
+ 1546 0260 00       	.byte 0
+ 1547 0261 09       	.byte 9
+ 1548 0262 0000     	.space 2
+ 1549 0264 A4000000 	.word 164
+ 1550 0268 00       	.byte 0
+ 1551 0269 08       	.byte 8
+ 1552 026a 0000     	.space 2
+ 1553 026c 02000000 	.word 2
+ 1554 0270 00       	.byte 0
+ 1555 0271 08       	.byte 8
+ 1556 0272 0000     	.space 2
+ 1557 0274 82000000 	.word 130
+ 1558 0278 00       	.byte 0
+ 1559 0279 08       	.byte 8
+ 1560 027a 0000     	.space 2
+ 1561 027c 42000000 	.word 66
+GAS LISTING  			page 29
+
+
+ 1562 0280 00       	.byte 0
+ 1563 0281 09       	.byte 9
+ 1564 0282 0000     	.space 2
+ 1565 0284 E4000000 	.word 228
+ 1566 0288 50       	.byte 80
+ 1567 0289 07       	.byte 7
+ 1568 028a 0000     	.space 2
+ 1569 028c 07000000 	.word 7
+ 1570 0290 00       	.byte 0
+ 1571 0291 08       	.byte 8
+ 1572 0292 0000     	.space 2
+ 1573 0294 5A000000 	.word 90
+ 1574 0298 00       	.byte 0
+ 1575 0299 08       	.byte 8
+ 1576 029a 0000     	.space 2
+ 1577 029c 1A000000 	.word 26
+ 1578 02a0 00       	.byte 0
+ 1579 02a1 09       	.byte 9
+ 1580 02a2 0000     	.space 2
+ 1581 02a4 94000000 	.word 148
+ 1582 02a8 54       	.byte 84
+ 1583 02a9 07       	.byte 7
+ 1584 02aa 0000     	.space 2
+ 1585 02ac 43000000 	.word 67
+ 1586 02b0 00       	.byte 0
+ 1587 02b1 08       	.byte 8
+ 1588 02b2 0000     	.space 2
+ 1589 02b4 7A000000 	.word 122
+ 1590 02b8 00       	.byte 0
+ 1591 02b9 08       	.byte 8
+ 1592 02ba 0000     	.space 2
+ 1593 02bc 3A000000 	.word 58
+ 1594 02c0 00       	.byte 0
+ 1595 02c1 09       	.byte 9
+ 1596 02c2 0000     	.space 2
+ 1597 02c4 D4000000 	.word 212
+ 1598 02c8 52       	.byte 82
+ 1599 02c9 07       	.byte 7
+ 1600 02ca 0000     	.space 2
+ 1601 02cc 13000000 	.word 19
+ 1602 02d0 00       	.byte 0
+ 1603 02d1 08       	.byte 8
+ 1604 02d2 0000     	.space 2
+ 1605 02d4 6A000000 	.word 106
+ 1606 02d8 00       	.byte 0
+ 1607 02d9 08       	.byte 8
+ 1608 02da 0000     	.space 2
+ 1609 02dc 2A000000 	.word 42
+ 1610 02e0 00       	.byte 0
+ 1611 02e1 09       	.byte 9
+ 1612 02e2 0000     	.space 2
+ 1613 02e4 B4000000 	.word 180
+ 1614 02e8 00       	.byte 0
+ 1615 02e9 08       	.byte 8
+ 1616 02ea 0000     	.space 2
+ 1617 02ec 0A000000 	.word 10
+ 1618 02f0 00       	.byte 0
+GAS LISTING  			page 30
+
+
+ 1619 02f1 08       	.byte 8
+ 1620 02f2 0000     	.space 2
+ 1621 02f4 8A000000 	.word 138
+ 1622 02f8 00       	.byte 0
+ 1623 02f9 08       	.byte 8
+ 1624 02fa 0000     	.space 2
+ 1625 02fc 4A000000 	.word 74
+ 1626 0300 00       	.byte 0
+ 1627 0301 09       	.byte 9
+ 1628 0302 0000     	.space 2
+ 1629 0304 F4000000 	.word 244
+ 1630 0308 50       	.byte 80
+ 1631 0309 07       	.byte 7
+ 1632 030a 0000     	.space 2
+ 1633 030c 05000000 	.word 5
+ 1634 0310 00       	.byte 0
+ 1635 0311 08       	.byte 8
+ 1636 0312 0000     	.space 2
+ 1637 0314 56000000 	.word 86
+ 1638 0318 00       	.byte 0
+ 1639 0319 08       	.byte 8
+ 1640 031a 0000     	.space 2
+ 1641 031c 16000000 	.word 22
+ 1642 0320 C0       	.byte -64
+ 1643 0321 08       	.byte 8
+ 1644 0322 0000     	.space 2
+ 1645 0324 00000000 	.word 0
+ 1646 0328 53       	.byte 83
+ 1647 0329 07       	.byte 7
+ 1648 032a 0000     	.space 2
+ 1649 032c 33000000 	.word 51
+ 1650 0330 00       	.byte 0
+ 1651 0331 08       	.byte 8
+ 1652 0332 0000     	.space 2
+ 1653 0334 76000000 	.word 118
+ 1654 0338 00       	.byte 0
+ 1655 0339 08       	.byte 8
+ 1656 033a 0000     	.space 2
+ 1657 033c 36000000 	.word 54
+ 1658 0340 00       	.byte 0
+ 1659 0341 09       	.byte 9
+ 1660 0342 0000     	.space 2
+ 1661 0344 CC000000 	.word 204
+ 1662 0348 51       	.byte 81
+ 1663 0349 07       	.byte 7
+ 1664 034a 0000     	.space 2
+ 1665 034c 0F000000 	.word 15
+ 1666 0350 00       	.byte 0
+ 1667 0351 08       	.byte 8
+ 1668 0352 0000     	.space 2
+ 1669 0354 66000000 	.word 102
+ 1670 0358 00       	.byte 0
+ 1671 0359 08       	.byte 8
+ 1672 035a 0000     	.space 2
+ 1673 035c 26000000 	.word 38
+ 1674 0360 00       	.byte 0
+ 1675 0361 09       	.byte 9
+GAS LISTING  			page 31
+
+
+ 1676 0362 0000     	.space 2
+ 1677 0364 AC000000 	.word 172
+ 1678 0368 00       	.byte 0
+ 1679 0369 08       	.byte 8
+ 1680 036a 0000     	.space 2
+ 1681 036c 06000000 	.word 6
+ 1682 0370 00       	.byte 0
+ 1683 0371 08       	.byte 8
+ 1684 0372 0000     	.space 2
+ 1685 0374 86000000 	.word 134
+ 1686 0378 00       	.byte 0
+ 1687 0379 08       	.byte 8
+ 1688 037a 0000     	.space 2
+ 1689 037c 46000000 	.word 70
+ 1690 0380 00       	.byte 0
+ 1691 0381 09       	.byte 9
+ 1692 0382 0000     	.space 2
+ 1693 0384 EC000000 	.word 236
+ 1694 0388 50       	.byte 80
+ 1695 0389 07       	.byte 7
+ 1696 038a 0000     	.space 2
+ 1697 038c 09000000 	.word 9
+ 1698 0390 00       	.byte 0
+ 1699 0391 08       	.byte 8
+ 1700 0392 0000     	.space 2
+ 1701 0394 5E000000 	.word 94
+ 1702 0398 00       	.byte 0
+ 1703 0399 08       	.byte 8
+ 1704 039a 0000     	.space 2
+ 1705 039c 1E000000 	.word 30
+ 1706 03a0 00       	.byte 0
+ 1707 03a1 09       	.byte 9
+ 1708 03a2 0000     	.space 2
+ 1709 03a4 9C000000 	.word 156
+ 1710 03a8 54       	.byte 84
+ 1711 03a9 07       	.byte 7
+ 1712 03aa 0000     	.space 2
+ 1713 03ac 63000000 	.word 99
+ 1714 03b0 00       	.byte 0
+ 1715 03b1 08       	.byte 8
+ 1716 03b2 0000     	.space 2
+ 1717 03b4 7E000000 	.word 126
+ 1718 03b8 00       	.byte 0
+ 1719 03b9 08       	.byte 8
+ 1720 03ba 0000     	.space 2
+ 1721 03bc 3E000000 	.word 62
+ 1722 03c0 00       	.byte 0
+ 1723 03c1 09       	.byte 9
+ 1724 03c2 0000     	.space 2
+ 1725 03c4 DC000000 	.word 220
+ 1726 03c8 52       	.byte 82
+ 1727 03c9 07       	.byte 7
+ 1728 03ca 0000     	.space 2
+ 1729 03cc 1B000000 	.word 27
+ 1730 03d0 00       	.byte 0
+ 1731 03d1 08       	.byte 8
+ 1732 03d2 0000     	.space 2
+GAS LISTING  			page 32
+
+
+ 1733 03d4 6E000000 	.word 110
+ 1734 03d8 00       	.byte 0
+ 1735 03d9 08       	.byte 8
+ 1736 03da 0000     	.space 2
+ 1737 03dc 2E000000 	.word 46
+ 1738 03e0 00       	.byte 0
+ 1739 03e1 09       	.byte 9
+ 1740 03e2 0000     	.space 2
+ 1741 03e4 BC000000 	.word 188
+ 1742 03e8 00       	.byte 0
+ 1743 03e9 08       	.byte 8
+ 1744 03ea 0000     	.space 2
+ 1745 03ec 0E000000 	.word 14
+ 1746 03f0 00       	.byte 0
+ 1747 03f1 08       	.byte 8
+ 1748 03f2 0000     	.space 2
+ 1749 03f4 8E000000 	.word 142
+ 1750 03f8 00       	.byte 0
+ 1751 03f9 08       	.byte 8
+ 1752 03fa 0000     	.space 2
+ 1753 03fc 4E000000 	.word 78
+ 1754 0400 00       	.byte 0
+ 1755 0401 09       	.byte 9
+ 1756 0402 0000     	.space 2
+ 1757 0404 FC000000 	.word 252
+ 1758 0408 60       	.byte 96
+ 1759 0409 07       	.byte 7
+ 1760 040a 0000     	.space 2
+ 1761 040c 00010000 	.word 256
+ 1762 0410 00       	.byte 0
+ 1763 0411 08       	.byte 8
+ 1764 0412 0000     	.space 2
+ 1765 0414 51000000 	.word 81
+ 1766 0418 00       	.byte 0
+ 1767 0419 08       	.byte 8
+ 1768 041a 0000     	.space 2
+ 1769 041c 11000000 	.word 17
+ 1770 0420 55       	.byte 85
+ 1771 0421 08       	.byte 8
+ 1772 0422 0000     	.space 2
+ 1773 0424 83000000 	.word 131
+ 1774 0428 52       	.byte 82
+ 1775 0429 07       	.byte 7
+ 1776 042a 0000     	.space 2
+ 1777 042c 1F000000 	.word 31
+ 1778 0430 00       	.byte 0
+ 1779 0431 08       	.byte 8
+ 1780 0432 0000     	.space 2
+ 1781 0434 71000000 	.word 113
+ 1782 0438 00       	.byte 0
+ 1783 0439 08       	.byte 8
+ 1784 043a 0000     	.space 2
+ 1785 043c 31000000 	.word 49
+ 1786 0440 00       	.byte 0
+ 1787 0441 09       	.byte 9
+ 1788 0442 0000     	.space 2
+ 1789 0444 C2000000 	.word 194
+GAS LISTING  			page 33
+
+
+ 1790 0448 50       	.byte 80
+ 1791 0449 07       	.byte 7
+ 1792 044a 0000     	.space 2
+ 1793 044c 0A000000 	.word 10
+ 1794 0450 00       	.byte 0
+ 1795 0451 08       	.byte 8
+ 1796 0452 0000     	.space 2
+ 1797 0454 61000000 	.word 97
+ 1798 0458 00       	.byte 0
+ 1799 0459 08       	.byte 8
+ 1800 045a 0000     	.space 2
+ 1801 045c 21000000 	.word 33
+ 1802 0460 00       	.byte 0
+ 1803 0461 09       	.byte 9
+ 1804 0462 0000     	.space 2
+ 1805 0464 A2000000 	.word 162
+ 1806 0468 00       	.byte 0
+ 1807 0469 08       	.byte 8
+ 1808 046a 0000     	.space 2
+ 1809 046c 01000000 	.word 1
+ 1810 0470 00       	.byte 0
+ 1811 0471 08       	.byte 8
+ 1812 0472 0000     	.space 2
+ 1813 0474 81000000 	.word 129
+ 1814 0478 00       	.byte 0
+ 1815 0479 08       	.byte 8
+ 1816 047a 0000     	.space 2
+ 1817 047c 41000000 	.word 65
+ 1818 0480 00       	.byte 0
+ 1819 0481 09       	.byte 9
+ 1820 0482 0000     	.space 2
+ 1821 0484 E2000000 	.word 226
+ 1822 0488 50       	.byte 80
+ 1823 0489 07       	.byte 7
+ 1824 048a 0000     	.space 2
+ 1825 048c 06000000 	.word 6
+ 1826 0490 00       	.byte 0
+ 1827 0491 08       	.byte 8
+ 1828 0492 0000     	.space 2
+ 1829 0494 59000000 	.word 89
+ 1830 0498 00       	.byte 0
+ 1831 0499 08       	.byte 8
+ 1832 049a 0000     	.space 2
+ 1833 049c 19000000 	.word 25
+ 1834 04a0 00       	.byte 0
+ 1835 04a1 09       	.byte 9
+ 1836 04a2 0000     	.space 2
+ 1837 04a4 92000000 	.word 146
+ 1838 04a8 53       	.byte 83
+ 1839 04a9 07       	.byte 7
+ 1840 04aa 0000     	.space 2
+ 1841 04ac 3B000000 	.word 59
+ 1842 04b0 00       	.byte 0
+ 1843 04b1 08       	.byte 8
+ 1844 04b2 0000     	.space 2
+ 1845 04b4 79000000 	.word 121
+ 1846 04b8 00       	.byte 0
+GAS LISTING  			page 34
+
+
+ 1847 04b9 08       	.byte 8
+ 1848 04ba 0000     	.space 2
+ 1849 04bc 39000000 	.word 57
+ 1850 04c0 00       	.byte 0
+ 1851 04c1 09       	.byte 9
+ 1852 04c2 0000     	.space 2
+ 1853 04c4 D2000000 	.word 210
+ 1854 04c8 51       	.byte 81
+ 1855 04c9 07       	.byte 7
+ 1856 04ca 0000     	.space 2
+ 1857 04cc 11000000 	.word 17
+ 1858 04d0 00       	.byte 0
+ 1859 04d1 08       	.byte 8
+ 1860 04d2 0000     	.space 2
+ 1861 04d4 69000000 	.word 105
+ 1862 04d8 00       	.byte 0
+ 1863 04d9 08       	.byte 8
+ 1864 04da 0000     	.space 2
+ 1865 04dc 29000000 	.word 41
+ 1866 04e0 00       	.byte 0
+ 1867 04e1 09       	.byte 9
+ 1868 04e2 0000     	.space 2
+ 1869 04e4 B2000000 	.word 178
+ 1870 04e8 00       	.byte 0
+ 1871 04e9 08       	.byte 8
+ 1872 04ea 0000     	.space 2
+ 1873 04ec 09000000 	.word 9
+ 1874 04f0 00       	.byte 0
+ 1875 04f1 08       	.byte 8
+ 1876 04f2 0000     	.space 2
+ 1877 04f4 89000000 	.word 137
+ 1878 04f8 00       	.byte 0
+ 1879 04f9 08       	.byte 8
+ 1880 04fa 0000     	.space 2
+ 1881 04fc 49000000 	.word 73
+ 1882 0500 00       	.byte 0
+ 1883 0501 09       	.byte 9
+ 1884 0502 0000     	.space 2
+ 1885 0504 F2000000 	.word 242
+ 1886 0508 50       	.byte 80
+ 1887 0509 07       	.byte 7
+ 1888 050a 0000     	.space 2
+ 1889 050c 04000000 	.word 4
+ 1890 0510 00       	.byte 0
+ 1891 0511 08       	.byte 8
+ 1892 0512 0000     	.space 2
+ 1893 0514 55000000 	.word 85
+ 1894 0518 00       	.byte 0
+ 1895 0519 08       	.byte 8
+ 1896 051a 0000     	.space 2
+ 1897 051c 15000000 	.word 21
+ 1898 0520 50       	.byte 80
+ 1899 0521 08       	.byte 8
+ 1900 0522 0000     	.space 2
+ 1901 0524 02010000 	.word 258
+ 1902 0528 53       	.byte 83
+ 1903 0529 07       	.byte 7
+GAS LISTING  			page 35
+
+
+ 1904 052a 0000     	.space 2
+ 1905 052c 2B000000 	.word 43
+ 1906 0530 00       	.byte 0
+ 1907 0531 08       	.byte 8
+ 1908 0532 0000     	.space 2
+ 1909 0534 75000000 	.word 117
+ 1910 0538 00       	.byte 0
+ 1911 0539 08       	.byte 8
+ 1912 053a 0000     	.space 2
+ 1913 053c 35000000 	.word 53
+ 1914 0540 00       	.byte 0
+ 1915 0541 09       	.byte 9
+ 1916 0542 0000     	.space 2
+ 1917 0544 CA000000 	.word 202
+ 1918 0548 51       	.byte 81
+ 1919 0549 07       	.byte 7
+ 1920 054a 0000     	.space 2
+ 1921 054c 0D000000 	.word 13
+ 1922 0550 00       	.byte 0
+ 1923 0551 08       	.byte 8
+ 1924 0552 0000     	.space 2
+ 1925 0554 65000000 	.word 101
+ 1926 0558 00       	.byte 0
+ 1927 0559 08       	.byte 8
+ 1928 055a 0000     	.space 2
+ 1929 055c 25000000 	.word 37
+ 1930 0560 00       	.byte 0
+ 1931 0561 09       	.byte 9
+ 1932 0562 0000     	.space 2
+ 1933 0564 AA000000 	.word 170
+ 1934 0568 00       	.byte 0
+ 1935 0569 08       	.byte 8
+ 1936 056a 0000     	.space 2
+ 1937 056c 05000000 	.word 5
+ 1938 0570 00       	.byte 0
+ 1939 0571 08       	.byte 8
+ 1940 0572 0000     	.space 2
+ 1941 0574 85000000 	.word 133
+ 1942 0578 00       	.byte 0
+ 1943 0579 08       	.byte 8
+ 1944 057a 0000     	.space 2
+ 1945 057c 45000000 	.word 69
+ 1946 0580 00       	.byte 0
+ 1947 0581 09       	.byte 9
+ 1948 0582 0000     	.space 2
+ 1949 0584 EA000000 	.word 234
+ 1950 0588 50       	.byte 80
+ 1951 0589 07       	.byte 7
+ 1952 058a 0000     	.space 2
+ 1953 058c 08000000 	.word 8
+ 1954 0590 00       	.byte 0
+ 1955 0591 08       	.byte 8
+ 1956 0592 0000     	.space 2
+ 1957 0594 5D000000 	.word 93
+ 1958 0598 00       	.byte 0
+ 1959 0599 08       	.byte 8
+ 1960 059a 0000     	.space 2
+GAS LISTING  			page 36
+
+
+ 1961 059c 1D000000 	.word 29
+ 1962 05a0 00       	.byte 0
+ 1963 05a1 09       	.byte 9
+ 1964 05a2 0000     	.space 2
+ 1965 05a4 9A000000 	.word 154
+ 1966 05a8 54       	.byte 84
+ 1967 05a9 07       	.byte 7
+ 1968 05aa 0000     	.space 2
+ 1969 05ac 53000000 	.word 83
+ 1970 05b0 00       	.byte 0
+ 1971 05b1 08       	.byte 8
+ 1972 05b2 0000     	.space 2
+ 1973 05b4 7D000000 	.word 125
+ 1974 05b8 00       	.byte 0
+ 1975 05b9 08       	.byte 8
+ 1976 05ba 0000     	.space 2
+ 1977 05bc 3D000000 	.word 61
+ 1978 05c0 00       	.byte 0
+ 1979 05c1 09       	.byte 9
+ 1980 05c2 0000     	.space 2
+ 1981 05c4 DA000000 	.word 218
+ 1982 05c8 52       	.byte 82
+ 1983 05c9 07       	.byte 7
+ 1984 05ca 0000     	.space 2
+ 1985 05cc 17000000 	.word 23
+ 1986 05d0 00       	.byte 0
+ 1987 05d1 08       	.byte 8
+ 1988 05d2 0000     	.space 2
+ 1989 05d4 6D000000 	.word 109
+ 1990 05d8 00       	.byte 0
+ 1991 05d9 08       	.byte 8
+ 1992 05da 0000     	.space 2
+ 1993 05dc 2D000000 	.word 45
+ 1994 05e0 00       	.byte 0
+ 1995 05e1 09       	.byte 9
+ 1996 05e2 0000     	.space 2
+ 1997 05e4 BA000000 	.word 186
+ 1998 05e8 00       	.byte 0
+ 1999 05e9 08       	.byte 8
+ 2000 05ea 0000     	.space 2
+ 2001 05ec 0D000000 	.word 13
+ 2002 05f0 00       	.byte 0
+ 2003 05f1 08       	.byte 8
+ 2004 05f2 0000     	.space 2
+ 2005 05f4 8D000000 	.word 141
+ 2006 05f8 00       	.byte 0
+ 2007 05f9 08       	.byte 8
+ 2008 05fa 0000     	.space 2
+ 2009 05fc 4D000000 	.word 77
+ 2010 0600 00       	.byte 0
+ 2011 0601 09       	.byte 9
+ 2012 0602 0000     	.space 2
+ 2013 0604 FA000000 	.word 250
+ 2014 0608 50       	.byte 80
+ 2015 0609 07       	.byte 7
+ 2016 060a 0000     	.space 2
+ 2017 060c 03000000 	.word 3
+GAS LISTING  			page 37
+
+
+ 2018 0610 00       	.byte 0
+ 2019 0611 08       	.byte 8
+ 2020 0612 0000     	.space 2
+ 2021 0614 53000000 	.word 83
+ 2022 0618 00       	.byte 0
+ 2023 0619 08       	.byte 8
+ 2024 061a 0000     	.space 2
+ 2025 061c 13000000 	.word 19
+ 2026 0620 55       	.byte 85
+ 2027 0621 08       	.byte 8
+ 2028 0622 0000     	.space 2
+ 2029 0624 C3000000 	.word 195
+ 2030 0628 53       	.byte 83
+ 2031 0629 07       	.byte 7
+ 2032 062a 0000     	.space 2
+ 2033 062c 23000000 	.word 35
+ 2034 0630 00       	.byte 0
+ 2035 0631 08       	.byte 8
+ 2036 0632 0000     	.space 2
+ 2037 0634 73000000 	.word 115
+ 2038 0638 00       	.byte 0
+ 2039 0639 08       	.byte 8
+ 2040 063a 0000     	.space 2
+ 2041 063c 33000000 	.word 51
+ 2042 0640 00       	.byte 0
+ 2043 0641 09       	.byte 9
+ 2044 0642 0000     	.space 2
+ 2045 0644 C6000000 	.word 198
+ 2046 0648 51       	.byte 81
+ 2047 0649 07       	.byte 7
+ 2048 064a 0000     	.space 2
+ 2049 064c 0B000000 	.word 11
+ 2050 0650 00       	.byte 0
+ 2051 0651 08       	.byte 8
+ 2052 0652 0000     	.space 2
+ 2053 0654 63000000 	.word 99
+ 2054 0658 00       	.byte 0
+ 2055 0659 08       	.byte 8
+ 2056 065a 0000     	.space 2
+ 2057 065c 23000000 	.word 35
+ 2058 0660 00       	.byte 0
+ 2059 0661 09       	.byte 9
+ 2060 0662 0000     	.space 2
+ 2061 0664 A6000000 	.word 166
+ 2062 0668 00       	.byte 0
+ 2063 0669 08       	.byte 8
+ 2064 066a 0000     	.space 2
+ 2065 066c 03000000 	.word 3
+ 2066 0670 00       	.byte 0
+ 2067 0671 08       	.byte 8
+ 2068 0672 0000     	.space 2
+ 2069 0674 83000000 	.word 131
+ 2070 0678 00       	.byte 0
+ 2071 0679 08       	.byte 8
+ 2072 067a 0000     	.space 2
+ 2073 067c 43000000 	.word 67
+ 2074 0680 00       	.byte 0
+GAS LISTING  			page 38
+
+
+ 2075 0681 09       	.byte 9
+ 2076 0682 0000     	.space 2
+ 2077 0684 E6000000 	.word 230
+ 2078 0688 50       	.byte 80
+ 2079 0689 07       	.byte 7
+ 2080 068a 0000     	.space 2
+ 2081 068c 07000000 	.word 7
+ 2082 0690 00       	.byte 0
+ 2083 0691 08       	.byte 8
+ 2084 0692 0000     	.space 2
+ 2085 0694 5B000000 	.word 91
+ 2086 0698 00       	.byte 0
+ 2087 0699 08       	.byte 8
+ 2088 069a 0000     	.space 2
+ 2089 069c 1B000000 	.word 27
+ 2090 06a0 00       	.byte 0
+ 2091 06a1 09       	.byte 9
+ 2092 06a2 0000     	.space 2
+ 2093 06a4 96000000 	.word 150
+ 2094 06a8 54       	.byte 84
+ 2095 06a9 07       	.byte 7
+ 2096 06aa 0000     	.space 2
+ 2097 06ac 43000000 	.word 67
+ 2098 06b0 00       	.byte 0
+ 2099 06b1 08       	.byte 8
+ 2100 06b2 0000     	.space 2
+ 2101 06b4 7B000000 	.word 123
+ 2102 06b8 00       	.byte 0
+ 2103 06b9 08       	.byte 8
+ 2104 06ba 0000     	.space 2
+ 2105 06bc 3B000000 	.word 59
+ 2106 06c0 00       	.byte 0
+ 2107 06c1 09       	.byte 9
+ 2108 06c2 0000     	.space 2
+ 2109 06c4 D6000000 	.word 214
+ 2110 06c8 52       	.byte 82
+ 2111 06c9 07       	.byte 7
+ 2112 06ca 0000     	.space 2
+ 2113 06cc 13000000 	.word 19
+ 2114 06d0 00       	.byte 0
+ 2115 06d1 08       	.byte 8
+ 2116 06d2 0000     	.space 2
+ 2117 06d4 6B000000 	.word 107
+ 2118 06d8 00       	.byte 0
+ 2119 06d9 08       	.byte 8
+ 2120 06da 0000     	.space 2
+ 2121 06dc 2B000000 	.word 43
+ 2122 06e0 00       	.byte 0
+ 2123 06e1 09       	.byte 9
+ 2124 06e2 0000     	.space 2
+ 2125 06e4 B6000000 	.word 182
+ 2126 06e8 00       	.byte 0
+ 2127 06e9 08       	.byte 8
+ 2128 06ea 0000     	.space 2
+ 2129 06ec 0B000000 	.word 11
+ 2130 06f0 00       	.byte 0
+ 2131 06f1 08       	.byte 8
+GAS LISTING  			page 39
+
+
+ 2132 06f2 0000     	.space 2
+ 2133 06f4 8B000000 	.word 139
+ 2134 06f8 00       	.byte 0
+ 2135 06f9 08       	.byte 8
+ 2136 06fa 0000     	.space 2
+ 2137 06fc 4B000000 	.word 75
+ 2138 0700 00       	.byte 0
+ 2139 0701 09       	.byte 9
+ 2140 0702 0000     	.space 2
+ 2141 0704 F6000000 	.word 246
+ 2142 0708 50       	.byte 80
+ 2143 0709 07       	.byte 7
+ 2144 070a 0000     	.space 2
+ 2145 070c 05000000 	.word 5
+ 2146 0710 00       	.byte 0
+ 2147 0711 08       	.byte 8
+ 2148 0712 0000     	.space 2
+ 2149 0714 57000000 	.word 87
+ 2150 0718 00       	.byte 0
+ 2151 0719 08       	.byte 8
+ 2152 071a 0000     	.space 2
+ 2153 071c 17000000 	.word 23
+ 2154 0720 C0       	.byte -64
+ 2155 0721 08       	.byte 8
+ 2156 0722 0000     	.space 2
+ 2157 0724 00000000 	.word 0
+ 2158 0728 53       	.byte 83
+ 2159 0729 07       	.byte 7
+ 2160 072a 0000     	.space 2
+ 2161 072c 33000000 	.word 51
+ 2162 0730 00       	.byte 0
+ 2163 0731 08       	.byte 8
+ 2164 0732 0000     	.space 2
+ 2165 0734 77000000 	.word 119
+ 2166 0738 00       	.byte 0
+ 2167 0739 08       	.byte 8
+ 2168 073a 0000     	.space 2
+ 2169 073c 37000000 	.word 55
+ 2170 0740 00       	.byte 0
+ 2171 0741 09       	.byte 9
+ 2172 0742 0000     	.space 2
+ 2173 0744 CE000000 	.word 206
+ 2174 0748 51       	.byte 81
+ 2175 0749 07       	.byte 7
+ 2176 074a 0000     	.space 2
+ 2177 074c 0F000000 	.word 15
+ 2178 0750 00       	.byte 0
+ 2179 0751 08       	.byte 8
+ 2180 0752 0000     	.space 2
+ 2181 0754 67000000 	.word 103
+ 2182 0758 00       	.byte 0
+ 2183 0759 08       	.byte 8
+ 2184 075a 0000     	.space 2
+ 2185 075c 27000000 	.word 39
+ 2186 0760 00       	.byte 0
+ 2187 0761 09       	.byte 9
+ 2188 0762 0000     	.space 2
+GAS LISTING  			page 40
+
+
+ 2189 0764 AE000000 	.word 174
+ 2190 0768 00       	.byte 0
+ 2191 0769 08       	.byte 8
+ 2192 076a 0000     	.space 2
+ 2193 076c 07000000 	.word 7
+ 2194 0770 00       	.byte 0
+ 2195 0771 08       	.byte 8
+ 2196 0772 0000     	.space 2
+ 2197 0774 87000000 	.word 135
+ 2198 0778 00       	.byte 0
+ 2199 0779 08       	.byte 8
+ 2200 077a 0000     	.space 2
+ 2201 077c 47000000 	.word 71
+ 2202 0780 00       	.byte 0
+ 2203 0781 09       	.byte 9
+ 2204 0782 0000     	.space 2
+ 2205 0784 EE000000 	.word 238
+ 2206 0788 50       	.byte 80
+ 2207 0789 07       	.byte 7
+ 2208 078a 0000     	.space 2
+ 2209 078c 09000000 	.word 9
+ 2210 0790 00       	.byte 0
+ 2211 0791 08       	.byte 8
+ 2212 0792 0000     	.space 2
+ 2213 0794 5F000000 	.word 95
+ 2214 0798 00       	.byte 0
+ 2215 0799 08       	.byte 8
+ 2216 079a 0000     	.space 2
+ 2217 079c 1F000000 	.word 31
+ 2218 07a0 00       	.byte 0
+ 2219 07a1 09       	.byte 9
+ 2220 07a2 0000     	.space 2
+ 2221 07a4 9E000000 	.word 158
+ 2222 07a8 54       	.byte 84
+ 2223 07a9 07       	.byte 7
+ 2224 07aa 0000     	.space 2
+ 2225 07ac 63000000 	.word 99
+ 2226 07b0 00       	.byte 0
+ 2227 07b1 08       	.byte 8
+ 2228 07b2 0000     	.space 2
+ 2229 07b4 7F000000 	.word 127
+ 2230 07b8 00       	.byte 0
+ 2231 07b9 08       	.byte 8
+ 2232 07ba 0000     	.space 2
+ 2233 07bc 3F000000 	.word 63
+ 2234 07c0 00       	.byte 0
+ 2235 07c1 09       	.byte 9
+ 2236 07c2 0000     	.space 2
+ 2237 07c4 DE000000 	.word 222
+ 2238 07c8 52       	.byte 82
+ 2239 07c9 07       	.byte 7
+ 2240 07ca 0000     	.space 2
+ 2241 07cc 1B000000 	.word 27
+ 2242 07d0 00       	.byte 0
+ 2243 07d1 08       	.byte 8
+ 2244 07d2 0000     	.space 2
+ 2245 07d4 6F000000 	.word 111
+GAS LISTING  			page 41
+
+
+ 2246 07d8 00       	.byte 0
+ 2247 07d9 08       	.byte 8
+ 2248 07da 0000     	.space 2
+ 2249 07dc 2F000000 	.word 47
+ 2250 07e0 00       	.byte 0
+ 2251 07e1 09       	.byte 9
+ 2252 07e2 0000     	.space 2
+ 2253 07e4 BE000000 	.word 190
+ 2254 07e8 00       	.byte 0
+ 2255 07e9 08       	.byte 8
+ 2256 07ea 0000     	.space 2
+ 2257 07ec 0F000000 	.word 15
+ 2258 07f0 00       	.byte 0
+ 2259 07f1 08       	.byte 8
+ 2260 07f2 0000     	.space 2
+ 2261 07f4 8F000000 	.word 143
+ 2262 07f8 00       	.byte 0
+ 2263 07f9 08       	.byte 8
+ 2264 07fa 0000     	.space 2
+ 2265 07fc 4F000000 	.word 79
+ 2266 0800 00       	.byte 0
+ 2267 0801 09       	.byte 9
+ 2268 0802 0000     	.space 2
+ 2269 0804 FE000000 	.word 254
+ 2270 0808 60       	.byte 96
+ 2271 0809 07       	.byte 7
+ 2272 080a 0000     	.space 2
+ 2273 080c 00010000 	.word 256
+ 2274 0810 00       	.byte 0
+ 2275 0811 08       	.byte 8
+ 2276 0812 0000     	.space 2
+ 2277 0814 50000000 	.word 80
+ 2278 0818 00       	.byte 0
+ 2279 0819 08       	.byte 8
+ 2280 081a 0000     	.space 2
+ 2281 081c 10000000 	.word 16
+ 2282 0820 54       	.byte 84
+ 2283 0821 08       	.byte 8
+ 2284 0822 0000     	.space 2
+ 2285 0824 73000000 	.word 115
+ 2286 0828 52       	.byte 82
+ 2287 0829 07       	.byte 7
+ 2288 082a 0000     	.space 2
+ 2289 082c 1F000000 	.word 31
+ 2290 0830 00       	.byte 0
+ 2291 0831 08       	.byte 8
+ 2292 0832 0000     	.space 2
+ 2293 0834 70000000 	.word 112
+ 2294 0838 00       	.byte 0
+ 2295 0839 08       	.byte 8
+ 2296 083a 0000     	.space 2
+ 2297 083c 30000000 	.word 48
+ 2298 0840 00       	.byte 0
+ 2299 0841 09       	.byte 9
+ 2300 0842 0000     	.space 2
+ 2301 0844 C1000000 	.word 193
+ 2302 0848 50       	.byte 80
+GAS LISTING  			page 42
+
+
+ 2303 0849 07       	.byte 7
+ 2304 084a 0000     	.space 2
+ 2305 084c 0A000000 	.word 10
+ 2306 0850 00       	.byte 0
+ 2307 0851 08       	.byte 8
+ 2308 0852 0000     	.space 2
+ 2309 0854 60000000 	.word 96
+ 2310 0858 00       	.byte 0
+ 2311 0859 08       	.byte 8
+ 2312 085a 0000     	.space 2
+ 2313 085c 20000000 	.word 32
+ 2314 0860 00       	.byte 0
+ 2315 0861 09       	.byte 9
+ 2316 0862 0000     	.space 2
+ 2317 0864 A1000000 	.word 161
+ 2318 0868 00       	.byte 0
+ 2319 0869 08       	.byte 8
+ 2320 086a 0000     	.space 2
+ 2321 086c 00000000 	.word 0
+ 2322 0870 00       	.byte 0
+ 2323 0871 08       	.byte 8
+ 2324 0872 0000     	.space 2
+ 2325 0874 80000000 	.word 128
+ 2326 0878 00       	.byte 0
+ 2327 0879 08       	.byte 8
+ 2328 087a 0000     	.space 2
+ 2329 087c 40000000 	.word 64
+ 2330 0880 00       	.byte 0
+ 2331 0881 09       	.byte 9
+ 2332 0882 0000     	.space 2
+ 2333 0884 E1000000 	.word 225
+ 2334 0888 50       	.byte 80
+ 2335 0889 07       	.byte 7
+ 2336 088a 0000     	.space 2
+ 2337 088c 06000000 	.word 6
+ 2338 0890 00       	.byte 0
+ 2339 0891 08       	.byte 8
+ 2340 0892 0000     	.space 2
+ 2341 0894 58000000 	.word 88
+ 2342 0898 00       	.byte 0
+ 2343 0899 08       	.byte 8
+ 2344 089a 0000     	.space 2
+ 2345 089c 18000000 	.word 24
+ 2346 08a0 00       	.byte 0
+ 2347 08a1 09       	.byte 9
+ 2348 08a2 0000     	.space 2
+ 2349 08a4 91000000 	.word 145
+ 2350 08a8 53       	.byte 83
+ 2351 08a9 07       	.byte 7
+ 2352 08aa 0000     	.space 2
+ 2353 08ac 3B000000 	.word 59
+ 2354 08b0 00       	.byte 0
+ 2355 08b1 08       	.byte 8
+ 2356 08b2 0000     	.space 2
+ 2357 08b4 78000000 	.word 120
+ 2358 08b8 00       	.byte 0
+ 2359 08b9 08       	.byte 8
+GAS LISTING  			page 43
+
+
+ 2360 08ba 0000     	.space 2
+ 2361 08bc 38000000 	.word 56
+ 2362 08c0 00       	.byte 0
+ 2363 08c1 09       	.byte 9
+ 2364 08c2 0000     	.space 2
+ 2365 08c4 D1000000 	.word 209
+ 2366 08c8 51       	.byte 81
+ 2367 08c9 07       	.byte 7
+ 2368 08ca 0000     	.space 2
+ 2369 08cc 11000000 	.word 17
+ 2370 08d0 00       	.byte 0
+ 2371 08d1 08       	.byte 8
+ 2372 08d2 0000     	.space 2
+ 2373 08d4 68000000 	.word 104
+ 2374 08d8 00       	.byte 0
+ 2375 08d9 08       	.byte 8
+ 2376 08da 0000     	.space 2
+ 2377 08dc 28000000 	.word 40
+ 2378 08e0 00       	.byte 0
+ 2379 08e1 09       	.byte 9
+ 2380 08e2 0000     	.space 2
+ 2381 08e4 B1000000 	.word 177
+ 2382 08e8 00       	.byte 0
+ 2383 08e9 08       	.byte 8
+ 2384 08ea 0000     	.space 2
+ 2385 08ec 08000000 	.word 8
+ 2386 08f0 00       	.byte 0
+ 2387 08f1 08       	.byte 8
+ 2388 08f2 0000     	.space 2
+ 2389 08f4 88000000 	.word 136
+ 2390 08f8 00       	.byte 0
+ 2391 08f9 08       	.byte 8
+ 2392 08fa 0000     	.space 2
+ 2393 08fc 48000000 	.word 72
+ 2394 0900 00       	.byte 0
+ 2395 0901 09       	.byte 9
+ 2396 0902 0000     	.space 2
+ 2397 0904 F1000000 	.word 241
+ 2398 0908 50       	.byte 80
+ 2399 0909 07       	.byte 7
+ 2400 090a 0000     	.space 2
+ 2401 090c 04000000 	.word 4
+ 2402 0910 00       	.byte 0
+ 2403 0911 08       	.byte 8
+ 2404 0912 0000     	.space 2
+ 2405 0914 54000000 	.word 84
+ 2406 0918 00       	.byte 0
+ 2407 0919 08       	.byte 8
+ 2408 091a 0000     	.space 2
+ 2409 091c 14000000 	.word 20
+ 2410 0920 55       	.byte 85
+ 2411 0921 08       	.byte 8
+ 2412 0922 0000     	.space 2
+ 2413 0924 E3000000 	.word 227
+ 2414 0928 53       	.byte 83
+ 2415 0929 07       	.byte 7
+ 2416 092a 0000     	.space 2
+GAS LISTING  			page 44
+
+
+ 2417 092c 2B000000 	.word 43
+ 2418 0930 00       	.byte 0
+ 2419 0931 08       	.byte 8
+ 2420 0932 0000     	.space 2
+ 2421 0934 74000000 	.word 116
+ 2422 0938 00       	.byte 0
+ 2423 0939 08       	.byte 8
+ 2424 093a 0000     	.space 2
+ 2425 093c 34000000 	.word 52
+ 2426 0940 00       	.byte 0
+ 2427 0941 09       	.byte 9
+ 2428 0942 0000     	.space 2
+ 2429 0944 C9000000 	.word 201
+ 2430 0948 51       	.byte 81
+ 2431 0949 07       	.byte 7
+ 2432 094a 0000     	.space 2
+ 2433 094c 0D000000 	.word 13
+ 2434 0950 00       	.byte 0
+ 2435 0951 08       	.byte 8
+ 2436 0952 0000     	.space 2
+ 2437 0954 64000000 	.word 100
+ 2438 0958 00       	.byte 0
+ 2439 0959 08       	.byte 8
+ 2440 095a 0000     	.space 2
+ 2441 095c 24000000 	.word 36
+ 2442 0960 00       	.byte 0
+ 2443 0961 09       	.byte 9
+ 2444 0962 0000     	.space 2
+ 2445 0964 A9000000 	.word 169
+ 2446 0968 00       	.byte 0
+ 2447 0969 08       	.byte 8
+ 2448 096a 0000     	.space 2
+ 2449 096c 04000000 	.word 4
+ 2450 0970 00       	.byte 0
+ 2451 0971 08       	.byte 8
+ 2452 0972 0000     	.space 2
+ 2453 0974 84000000 	.word 132
+ 2454 0978 00       	.byte 0
+ 2455 0979 08       	.byte 8
+ 2456 097a 0000     	.space 2
+ 2457 097c 44000000 	.word 68
+ 2458 0980 00       	.byte 0
+ 2459 0981 09       	.byte 9
+ 2460 0982 0000     	.space 2
+ 2461 0984 E9000000 	.word 233
+ 2462 0988 50       	.byte 80
+ 2463 0989 07       	.byte 7
+ 2464 098a 0000     	.space 2
+ 2465 098c 08000000 	.word 8
+ 2466 0990 00       	.byte 0
+ 2467 0991 08       	.byte 8
+ 2468 0992 0000     	.space 2
+ 2469 0994 5C000000 	.word 92
+ 2470 0998 00       	.byte 0
+ 2471 0999 08       	.byte 8
+ 2472 099a 0000     	.space 2
+ 2473 099c 1C000000 	.word 28
+GAS LISTING  			page 45
+
+
+ 2474 09a0 00       	.byte 0
+ 2475 09a1 09       	.byte 9
+ 2476 09a2 0000     	.space 2
+ 2477 09a4 99000000 	.word 153
+ 2478 09a8 54       	.byte 84
+ 2479 09a9 07       	.byte 7
+ 2480 09aa 0000     	.space 2
+ 2481 09ac 53000000 	.word 83
+ 2482 09b0 00       	.byte 0
+ 2483 09b1 08       	.byte 8
+ 2484 09b2 0000     	.space 2
+ 2485 09b4 7C000000 	.word 124
+ 2486 09b8 00       	.byte 0
+ 2487 09b9 08       	.byte 8
+ 2488 09ba 0000     	.space 2
+ 2489 09bc 3C000000 	.word 60
+ 2490 09c0 00       	.byte 0
+ 2491 09c1 09       	.byte 9
+ 2492 09c2 0000     	.space 2
+ 2493 09c4 D9000000 	.word 217
+ 2494 09c8 52       	.byte 82
+ 2495 09c9 07       	.byte 7
+ 2496 09ca 0000     	.space 2
+ 2497 09cc 17000000 	.word 23
+ 2498 09d0 00       	.byte 0
+ 2499 09d1 08       	.byte 8
+ 2500 09d2 0000     	.space 2
+ 2501 09d4 6C000000 	.word 108
+ 2502 09d8 00       	.byte 0
+ 2503 09d9 08       	.byte 8
+ 2504 09da 0000     	.space 2
+ 2505 09dc 2C000000 	.word 44
+ 2506 09e0 00       	.byte 0
+ 2507 09e1 09       	.byte 9
+ 2508 09e2 0000     	.space 2
+ 2509 09e4 B9000000 	.word 185
+ 2510 09e8 00       	.byte 0
+ 2511 09e9 08       	.byte 8
+ 2512 09ea 0000     	.space 2
+ 2513 09ec 0C000000 	.word 12
+ 2514 09f0 00       	.byte 0
+ 2515 09f1 08       	.byte 8
+ 2516 09f2 0000     	.space 2
+ 2517 09f4 8C000000 	.word 140
+ 2518 09f8 00       	.byte 0
+ 2519 09f9 08       	.byte 8
+ 2520 09fa 0000     	.space 2
+ 2521 09fc 4C000000 	.word 76
+ 2522 0a00 00       	.byte 0
+ 2523 0a01 09       	.byte 9
+ 2524 0a02 0000     	.space 2
+ 2525 0a04 F9000000 	.word 249
+ 2526 0a08 50       	.byte 80
+ 2527 0a09 07       	.byte 7
+ 2528 0a0a 0000     	.space 2
+ 2529 0a0c 03000000 	.word 3
+ 2530 0a10 00       	.byte 0
+GAS LISTING  			page 46
+
+
+ 2531 0a11 08       	.byte 8
+ 2532 0a12 0000     	.space 2
+ 2533 0a14 52000000 	.word 82
+ 2534 0a18 00       	.byte 0
+ 2535 0a19 08       	.byte 8
+ 2536 0a1a 0000     	.space 2
+ 2537 0a1c 12000000 	.word 18
+ 2538 0a20 55       	.byte 85
+ 2539 0a21 08       	.byte 8
+ 2540 0a22 0000     	.space 2
+ 2541 0a24 A3000000 	.word 163
+ 2542 0a28 53       	.byte 83
+ 2543 0a29 07       	.byte 7
+ 2544 0a2a 0000     	.space 2
+ 2545 0a2c 23000000 	.word 35
+ 2546 0a30 00       	.byte 0
+ 2547 0a31 08       	.byte 8
+ 2548 0a32 0000     	.space 2
+ 2549 0a34 72000000 	.word 114
+ 2550 0a38 00       	.byte 0
+ 2551 0a39 08       	.byte 8
+ 2552 0a3a 0000     	.space 2
+ 2553 0a3c 32000000 	.word 50
+ 2554 0a40 00       	.byte 0
+ 2555 0a41 09       	.byte 9
+ 2556 0a42 0000     	.space 2
+ 2557 0a44 C5000000 	.word 197
+ 2558 0a48 51       	.byte 81
+ 2559 0a49 07       	.byte 7
+ 2560 0a4a 0000     	.space 2
+ 2561 0a4c 0B000000 	.word 11
+ 2562 0a50 00       	.byte 0
+ 2563 0a51 08       	.byte 8
+ 2564 0a52 0000     	.space 2
+ 2565 0a54 62000000 	.word 98
+ 2566 0a58 00       	.byte 0
+ 2567 0a59 08       	.byte 8
+ 2568 0a5a 0000     	.space 2
+ 2569 0a5c 22000000 	.word 34
+ 2570 0a60 00       	.byte 0
+ 2571 0a61 09       	.byte 9
+ 2572 0a62 0000     	.space 2
+ 2573 0a64 A5000000 	.word 165
+ 2574 0a68 00       	.byte 0
+ 2575 0a69 08       	.byte 8
+ 2576 0a6a 0000     	.space 2
+ 2577 0a6c 02000000 	.word 2
+ 2578 0a70 00       	.byte 0
+ 2579 0a71 08       	.byte 8
+ 2580 0a72 0000     	.space 2
+ 2581 0a74 82000000 	.word 130
+ 2582 0a78 00       	.byte 0
+ 2583 0a79 08       	.byte 8
+ 2584 0a7a 0000     	.space 2
+ 2585 0a7c 42000000 	.word 66
+ 2586 0a80 00       	.byte 0
+ 2587 0a81 09       	.byte 9
+GAS LISTING  			page 47
+
+
+ 2588 0a82 0000     	.space 2
+ 2589 0a84 E5000000 	.word 229
+ 2590 0a88 50       	.byte 80
+ 2591 0a89 07       	.byte 7
+ 2592 0a8a 0000     	.space 2
+ 2593 0a8c 07000000 	.word 7
+ 2594 0a90 00       	.byte 0
+ 2595 0a91 08       	.byte 8
+ 2596 0a92 0000     	.space 2
+ 2597 0a94 5A000000 	.word 90
+ 2598 0a98 00       	.byte 0
+ 2599 0a99 08       	.byte 8
+ 2600 0a9a 0000     	.space 2
+ 2601 0a9c 1A000000 	.word 26
+ 2602 0aa0 00       	.byte 0
+ 2603 0aa1 09       	.byte 9
+ 2604 0aa2 0000     	.space 2
+ 2605 0aa4 95000000 	.word 149
+ 2606 0aa8 54       	.byte 84
+ 2607 0aa9 07       	.byte 7
+ 2608 0aaa 0000     	.space 2
+ 2609 0aac 43000000 	.word 67
+ 2610 0ab0 00       	.byte 0
+ 2611 0ab1 08       	.byte 8
+ 2612 0ab2 0000     	.space 2
+ 2613 0ab4 7A000000 	.word 122
+ 2614 0ab8 00       	.byte 0
+ 2615 0ab9 08       	.byte 8
+ 2616 0aba 0000     	.space 2
+ 2617 0abc 3A000000 	.word 58
+ 2618 0ac0 00       	.byte 0
+ 2619 0ac1 09       	.byte 9
+ 2620 0ac2 0000     	.space 2
+ 2621 0ac4 D5000000 	.word 213
+ 2622 0ac8 52       	.byte 82
+ 2623 0ac9 07       	.byte 7
+ 2624 0aca 0000     	.space 2
+ 2625 0acc 13000000 	.word 19
+ 2626 0ad0 00       	.byte 0
+ 2627 0ad1 08       	.byte 8
+ 2628 0ad2 0000     	.space 2
+ 2629 0ad4 6A000000 	.word 106
+ 2630 0ad8 00       	.byte 0
+ 2631 0ad9 08       	.byte 8
+ 2632 0ada 0000     	.space 2
+ 2633 0adc 2A000000 	.word 42
+ 2634 0ae0 00       	.byte 0
+ 2635 0ae1 09       	.byte 9
+ 2636 0ae2 0000     	.space 2
+ 2637 0ae4 B5000000 	.word 181
+ 2638 0ae8 00       	.byte 0
+ 2639 0ae9 08       	.byte 8
+ 2640 0aea 0000     	.space 2
+ 2641 0aec 0A000000 	.word 10
+ 2642 0af0 00       	.byte 0
+ 2643 0af1 08       	.byte 8
+ 2644 0af2 0000     	.space 2
+GAS LISTING  			page 48
+
+
+ 2645 0af4 8A000000 	.word 138
+ 2646 0af8 00       	.byte 0
+ 2647 0af9 08       	.byte 8
+ 2648 0afa 0000     	.space 2
+ 2649 0afc 4A000000 	.word 74
+ 2650 0b00 00       	.byte 0
+ 2651 0b01 09       	.byte 9
+ 2652 0b02 0000     	.space 2
+ 2653 0b04 F5000000 	.word 245
+ 2654 0b08 50       	.byte 80
+ 2655 0b09 07       	.byte 7
+ 2656 0b0a 0000     	.space 2
+ 2657 0b0c 05000000 	.word 5
+ 2658 0b10 00       	.byte 0
+ 2659 0b11 08       	.byte 8
+ 2660 0b12 0000     	.space 2
+ 2661 0b14 56000000 	.word 86
+ 2662 0b18 00       	.byte 0
+ 2663 0b19 08       	.byte 8
+ 2664 0b1a 0000     	.space 2
+ 2665 0b1c 16000000 	.word 22
+ 2666 0b20 C0       	.byte -64
+ 2667 0b21 08       	.byte 8
+ 2668 0b22 0000     	.space 2
+ 2669 0b24 00000000 	.word 0
+ 2670 0b28 53       	.byte 83
+ 2671 0b29 07       	.byte 7
+ 2672 0b2a 0000     	.space 2
+ 2673 0b2c 33000000 	.word 51
+ 2674 0b30 00       	.byte 0
+ 2675 0b31 08       	.byte 8
+ 2676 0b32 0000     	.space 2
+ 2677 0b34 76000000 	.word 118
+ 2678 0b38 00       	.byte 0
+ 2679 0b39 08       	.byte 8
+ 2680 0b3a 0000     	.space 2
+ 2681 0b3c 36000000 	.word 54
+ 2682 0b40 00       	.byte 0
+ 2683 0b41 09       	.byte 9
+ 2684 0b42 0000     	.space 2
+ 2685 0b44 CD000000 	.word 205
+ 2686 0b48 51       	.byte 81
+ 2687 0b49 07       	.byte 7
+ 2688 0b4a 0000     	.space 2
+ 2689 0b4c 0F000000 	.word 15
+ 2690 0b50 00       	.byte 0
+ 2691 0b51 08       	.byte 8
+ 2692 0b52 0000     	.space 2
+ 2693 0b54 66000000 	.word 102
+ 2694 0b58 00       	.byte 0
+ 2695 0b59 08       	.byte 8
+ 2696 0b5a 0000     	.space 2
+ 2697 0b5c 26000000 	.word 38
+ 2698 0b60 00       	.byte 0
+ 2699 0b61 09       	.byte 9
+ 2700 0b62 0000     	.space 2
+ 2701 0b64 AD000000 	.word 173
+GAS LISTING  			page 49
+
+
+ 2702 0b68 00       	.byte 0
+ 2703 0b69 08       	.byte 8
+ 2704 0b6a 0000     	.space 2
+ 2705 0b6c 06000000 	.word 6
+ 2706 0b70 00       	.byte 0
+ 2707 0b71 08       	.byte 8
+ 2708 0b72 0000     	.space 2
+ 2709 0b74 86000000 	.word 134
+ 2710 0b78 00       	.byte 0
+ 2711 0b79 08       	.byte 8
+ 2712 0b7a 0000     	.space 2
+ 2713 0b7c 46000000 	.word 70
+ 2714 0b80 00       	.byte 0
+ 2715 0b81 09       	.byte 9
+ 2716 0b82 0000     	.space 2
+ 2717 0b84 ED000000 	.word 237
+ 2718 0b88 50       	.byte 80
+ 2719 0b89 07       	.byte 7
+ 2720 0b8a 0000     	.space 2
+ 2721 0b8c 09000000 	.word 9
+ 2722 0b90 00       	.byte 0
+ 2723 0b91 08       	.byte 8
+ 2724 0b92 0000     	.space 2
+ 2725 0b94 5E000000 	.word 94
+ 2726 0b98 00       	.byte 0
+ 2727 0b99 08       	.byte 8
+ 2728 0b9a 0000     	.space 2
+ 2729 0b9c 1E000000 	.word 30
+ 2730 0ba0 00       	.byte 0
+ 2731 0ba1 09       	.byte 9
+ 2732 0ba2 0000     	.space 2
+ 2733 0ba4 9D000000 	.word 157
+ 2734 0ba8 54       	.byte 84
+ 2735 0ba9 07       	.byte 7
+ 2736 0baa 0000     	.space 2
+ 2737 0bac 63000000 	.word 99
+ 2738 0bb0 00       	.byte 0
+ 2739 0bb1 08       	.byte 8
+ 2740 0bb2 0000     	.space 2
+ 2741 0bb4 7E000000 	.word 126
+ 2742 0bb8 00       	.byte 0
+ 2743 0bb9 08       	.byte 8
+ 2744 0bba 0000     	.space 2
+ 2745 0bbc 3E000000 	.word 62
+ 2746 0bc0 00       	.byte 0
+ 2747 0bc1 09       	.byte 9
+ 2748 0bc2 0000     	.space 2
+ 2749 0bc4 DD000000 	.word 221
+ 2750 0bc8 52       	.byte 82
+ 2751 0bc9 07       	.byte 7
+ 2752 0bca 0000     	.space 2
+ 2753 0bcc 1B000000 	.word 27
+ 2754 0bd0 00       	.byte 0
+ 2755 0bd1 08       	.byte 8
+ 2756 0bd2 0000     	.space 2
+ 2757 0bd4 6E000000 	.word 110
+ 2758 0bd8 00       	.byte 0
+GAS LISTING  			page 50
+
+
+ 2759 0bd9 08       	.byte 8
+ 2760 0bda 0000     	.space 2
+ 2761 0bdc 2E000000 	.word 46
+ 2762 0be0 00       	.byte 0
+ 2763 0be1 09       	.byte 9
+ 2764 0be2 0000     	.space 2
+ 2765 0be4 BD000000 	.word 189
+ 2766 0be8 00       	.byte 0
+ 2767 0be9 08       	.byte 8
+ 2768 0bea 0000     	.space 2
+ 2769 0bec 0E000000 	.word 14
+ 2770 0bf0 00       	.byte 0
+ 2771 0bf1 08       	.byte 8
+ 2772 0bf2 0000     	.space 2
+ 2773 0bf4 8E000000 	.word 142
+ 2774 0bf8 00       	.byte 0
+ 2775 0bf9 08       	.byte 8
+ 2776 0bfa 0000     	.space 2
+ 2777 0bfc 4E000000 	.word 78
+ 2778 0c00 00       	.byte 0
+ 2779 0c01 09       	.byte 9
+ 2780 0c02 0000     	.space 2
+ 2781 0c04 FD000000 	.word 253
+ 2782 0c08 60       	.byte 96
+ 2783 0c09 07       	.byte 7
+ 2784 0c0a 0000     	.space 2
+ 2785 0c0c 00010000 	.word 256
+ 2786 0c10 00       	.byte 0
+ 2787 0c11 08       	.byte 8
+ 2788 0c12 0000     	.space 2
+ 2789 0c14 51000000 	.word 81
+ 2790 0c18 00       	.byte 0
+ 2791 0c19 08       	.byte 8
+ 2792 0c1a 0000     	.space 2
+ 2793 0c1c 11000000 	.word 17
+ 2794 0c20 55       	.byte 85
+ 2795 0c21 08       	.byte 8
+ 2796 0c22 0000     	.space 2
+ 2797 0c24 83000000 	.word 131
+ 2798 0c28 52       	.byte 82
+ 2799 0c29 07       	.byte 7
+ 2800 0c2a 0000     	.space 2
+ 2801 0c2c 1F000000 	.word 31
+ 2802 0c30 00       	.byte 0
+ 2803 0c31 08       	.byte 8
+ 2804 0c32 0000     	.space 2
+ 2805 0c34 71000000 	.word 113
+ 2806 0c38 00       	.byte 0
+ 2807 0c39 08       	.byte 8
+ 2808 0c3a 0000     	.space 2
+ 2809 0c3c 31000000 	.word 49
+ 2810 0c40 00       	.byte 0
+ 2811 0c41 09       	.byte 9
+ 2812 0c42 0000     	.space 2
+ 2813 0c44 C3000000 	.word 195
+ 2814 0c48 50       	.byte 80
+ 2815 0c49 07       	.byte 7
+GAS LISTING  			page 51
+
+
+ 2816 0c4a 0000     	.space 2
+ 2817 0c4c 0A000000 	.word 10
+ 2818 0c50 00       	.byte 0
+ 2819 0c51 08       	.byte 8
+ 2820 0c52 0000     	.space 2
+ 2821 0c54 61000000 	.word 97
+ 2822 0c58 00       	.byte 0
+ 2823 0c59 08       	.byte 8
+ 2824 0c5a 0000     	.space 2
+ 2825 0c5c 21000000 	.word 33
+ 2826 0c60 00       	.byte 0
+ 2827 0c61 09       	.byte 9
+ 2828 0c62 0000     	.space 2
+ 2829 0c64 A3000000 	.word 163
+ 2830 0c68 00       	.byte 0
+ 2831 0c69 08       	.byte 8
+ 2832 0c6a 0000     	.space 2
+ 2833 0c6c 01000000 	.word 1
+ 2834 0c70 00       	.byte 0
+ 2835 0c71 08       	.byte 8
+ 2836 0c72 0000     	.space 2
+ 2837 0c74 81000000 	.word 129
+ 2838 0c78 00       	.byte 0
+ 2839 0c79 08       	.byte 8
+ 2840 0c7a 0000     	.space 2
+ 2841 0c7c 41000000 	.word 65
+ 2842 0c80 00       	.byte 0
+ 2843 0c81 09       	.byte 9
+ 2844 0c82 0000     	.space 2
+ 2845 0c84 E3000000 	.word 227
+ 2846 0c88 50       	.byte 80
+ 2847 0c89 07       	.byte 7
+ 2848 0c8a 0000     	.space 2
+ 2849 0c8c 06000000 	.word 6
+ 2850 0c90 00       	.byte 0
+ 2851 0c91 08       	.byte 8
+ 2852 0c92 0000     	.space 2
+ 2853 0c94 59000000 	.word 89
+ 2854 0c98 00       	.byte 0
+ 2855 0c99 08       	.byte 8
+ 2856 0c9a 0000     	.space 2
+ 2857 0c9c 19000000 	.word 25
+ 2858 0ca0 00       	.byte 0
+ 2859 0ca1 09       	.byte 9
+ 2860 0ca2 0000     	.space 2
+ 2861 0ca4 93000000 	.word 147
+ 2862 0ca8 53       	.byte 83
+ 2863 0ca9 07       	.byte 7
+ 2864 0caa 0000     	.space 2
+ 2865 0cac 3B000000 	.word 59
+ 2866 0cb0 00       	.byte 0
+ 2867 0cb1 08       	.byte 8
+ 2868 0cb2 0000     	.space 2
+ 2869 0cb4 79000000 	.word 121
+ 2870 0cb8 00       	.byte 0
+ 2871 0cb9 08       	.byte 8
+ 2872 0cba 0000     	.space 2
+GAS LISTING  			page 52
+
+
+ 2873 0cbc 39000000 	.word 57
+ 2874 0cc0 00       	.byte 0
+ 2875 0cc1 09       	.byte 9
+ 2876 0cc2 0000     	.space 2
+ 2877 0cc4 D3000000 	.word 211
+ 2878 0cc8 51       	.byte 81
+ 2879 0cc9 07       	.byte 7
+ 2880 0cca 0000     	.space 2
+ 2881 0ccc 11000000 	.word 17
+ 2882 0cd0 00       	.byte 0
+ 2883 0cd1 08       	.byte 8
+ 2884 0cd2 0000     	.space 2
+ 2885 0cd4 69000000 	.word 105
+ 2886 0cd8 00       	.byte 0
+ 2887 0cd9 08       	.byte 8
+ 2888 0cda 0000     	.space 2
+ 2889 0cdc 29000000 	.word 41
+ 2890 0ce0 00       	.byte 0
+ 2891 0ce1 09       	.byte 9
+ 2892 0ce2 0000     	.space 2
+ 2893 0ce4 B3000000 	.word 179
+ 2894 0ce8 00       	.byte 0
+ 2895 0ce9 08       	.byte 8
+ 2896 0cea 0000     	.space 2
+ 2897 0cec 09000000 	.word 9
+ 2898 0cf0 00       	.byte 0
+ 2899 0cf1 08       	.byte 8
+ 2900 0cf2 0000     	.space 2
+ 2901 0cf4 89000000 	.word 137
+ 2902 0cf8 00       	.byte 0
+ 2903 0cf9 08       	.byte 8
+ 2904 0cfa 0000     	.space 2
+ 2905 0cfc 49000000 	.word 73
+ 2906 0d00 00       	.byte 0
+ 2907 0d01 09       	.byte 9
+ 2908 0d02 0000     	.space 2
+ 2909 0d04 F3000000 	.word 243
+ 2910 0d08 50       	.byte 80
+ 2911 0d09 07       	.byte 7
+ 2912 0d0a 0000     	.space 2
+ 2913 0d0c 04000000 	.word 4
+ 2914 0d10 00       	.byte 0
+ 2915 0d11 08       	.byte 8
+ 2916 0d12 0000     	.space 2
+ 2917 0d14 55000000 	.word 85
+ 2918 0d18 00       	.byte 0
+ 2919 0d19 08       	.byte 8
+ 2920 0d1a 0000     	.space 2
+ 2921 0d1c 15000000 	.word 21
+ 2922 0d20 50       	.byte 80
+ 2923 0d21 08       	.byte 8
+ 2924 0d22 0000     	.space 2
+ 2925 0d24 02010000 	.word 258
+ 2926 0d28 53       	.byte 83
+ 2927 0d29 07       	.byte 7
+ 2928 0d2a 0000     	.space 2
+ 2929 0d2c 2B000000 	.word 43
+GAS LISTING  			page 53
+
+
+ 2930 0d30 00       	.byte 0
+ 2931 0d31 08       	.byte 8
+ 2932 0d32 0000     	.space 2
+ 2933 0d34 75000000 	.word 117
+ 2934 0d38 00       	.byte 0
+ 2935 0d39 08       	.byte 8
+ 2936 0d3a 0000     	.space 2
+ 2937 0d3c 35000000 	.word 53
+ 2938 0d40 00       	.byte 0
+ 2939 0d41 09       	.byte 9
+ 2940 0d42 0000     	.space 2
+ 2941 0d44 CB000000 	.word 203
+ 2942 0d48 51       	.byte 81
+ 2943 0d49 07       	.byte 7
+ 2944 0d4a 0000     	.space 2
+ 2945 0d4c 0D000000 	.word 13
+ 2946 0d50 00       	.byte 0
+ 2947 0d51 08       	.byte 8
+ 2948 0d52 0000     	.space 2
+ 2949 0d54 65000000 	.word 101
+ 2950 0d58 00       	.byte 0
+ 2951 0d59 08       	.byte 8
+ 2952 0d5a 0000     	.space 2
+ 2953 0d5c 25000000 	.word 37
+ 2954 0d60 00       	.byte 0
+ 2955 0d61 09       	.byte 9
+ 2956 0d62 0000     	.space 2
+ 2957 0d64 AB000000 	.word 171
+ 2958 0d68 00       	.byte 0
+ 2959 0d69 08       	.byte 8
+ 2960 0d6a 0000     	.space 2
+ 2961 0d6c 05000000 	.word 5
+ 2962 0d70 00       	.byte 0
+ 2963 0d71 08       	.byte 8
+ 2964 0d72 0000     	.space 2
+ 2965 0d74 85000000 	.word 133
+ 2966 0d78 00       	.byte 0
+ 2967 0d79 08       	.byte 8
+ 2968 0d7a 0000     	.space 2
+ 2969 0d7c 45000000 	.word 69
+ 2970 0d80 00       	.byte 0
+ 2971 0d81 09       	.byte 9
+ 2972 0d82 0000     	.space 2
+ 2973 0d84 EB000000 	.word 235
+ 2974 0d88 50       	.byte 80
+ 2975 0d89 07       	.byte 7
+ 2976 0d8a 0000     	.space 2
+ 2977 0d8c 08000000 	.word 8
+ 2978 0d90 00       	.byte 0
+ 2979 0d91 08       	.byte 8
+ 2980 0d92 0000     	.space 2
+ 2981 0d94 5D000000 	.word 93
+ 2982 0d98 00       	.byte 0
+ 2983 0d99 08       	.byte 8
+ 2984 0d9a 0000     	.space 2
+ 2985 0d9c 1D000000 	.word 29
+ 2986 0da0 00       	.byte 0
+GAS LISTING  			page 54
+
+
+ 2987 0da1 09       	.byte 9
+ 2988 0da2 0000     	.space 2
+ 2989 0da4 9B000000 	.word 155
+ 2990 0da8 54       	.byte 84
+ 2991 0da9 07       	.byte 7
+ 2992 0daa 0000     	.space 2
+ 2993 0dac 53000000 	.word 83
+ 2994 0db0 00       	.byte 0
+ 2995 0db1 08       	.byte 8
+ 2996 0db2 0000     	.space 2
+ 2997 0db4 7D000000 	.word 125
+ 2998 0db8 00       	.byte 0
+ 2999 0db9 08       	.byte 8
+ 3000 0dba 0000     	.space 2
+ 3001 0dbc 3D000000 	.word 61
+ 3002 0dc0 00       	.byte 0
+ 3003 0dc1 09       	.byte 9
+ 3004 0dc2 0000     	.space 2
+ 3005 0dc4 DB000000 	.word 219
+ 3006 0dc8 52       	.byte 82
+ 3007 0dc9 07       	.byte 7
+ 3008 0dca 0000     	.space 2
+ 3009 0dcc 17000000 	.word 23
+ 3010 0dd0 00       	.byte 0
+ 3011 0dd1 08       	.byte 8
+ 3012 0dd2 0000     	.space 2
+ 3013 0dd4 6D000000 	.word 109
+ 3014 0dd8 00       	.byte 0
+ 3015 0dd9 08       	.byte 8
+ 3016 0dda 0000     	.space 2
+ 3017 0ddc 2D000000 	.word 45
+ 3018 0de0 00       	.byte 0
+ 3019 0de1 09       	.byte 9
+ 3020 0de2 0000     	.space 2
+ 3021 0de4 BB000000 	.word 187
+ 3022 0de8 00       	.byte 0
+ 3023 0de9 08       	.byte 8
+ 3024 0dea 0000     	.space 2
+ 3025 0dec 0D000000 	.word 13
+ 3026 0df0 00       	.byte 0
+ 3027 0df1 08       	.byte 8
+ 3028 0df2 0000     	.space 2
+ 3029 0df4 8D000000 	.word 141
+ 3030 0df8 00       	.byte 0
+ 3031 0df9 08       	.byte 8
+ 3032 0dfa 0000     	.space 2
+ 3033 0dfc 4D000000 	.word 77
+ 3034 0e00 00       	.byte 0
+ 3035 0e01 09       	.byte 9
+ 3036 0e02 0000     	.space 2
+ 3037 0e04 FB000000 	.word 251
+ 3038 0e08 50       	.byte 80
+ 3039 0e09 07       	.byte 7
+ 3040 0e0a 0000     	.space 2
+ 3041 0e0c 03000000 	.word 3
+ 3042 0e10 00       	.byte 0
+ 3043 0e11 08       	.byte 8
+GAS LISTING  			page 55
+
+
+ 3044 0e12 0000     	.space 2
+ 3045 0e14 53000000 	.word 83
+ 3046 0e18 00       	.byte 0
+ 3047 0e19 08       	.byte 8
+ 3048 0e1a 0000     	.space 2
+ 3049 0e1c 13000000 	.word 19
+ 3050 0e20 55       	.byte 85
+ 3051 0e21 08       	.byte 8
+ 3052 0e22 0000     	.space 2
+ 3053 0e24 C3000000 	.word 195
+ 3054 0e28 53       	.byte 83
+ 3055 0e29 07       	.byte 7
+ 3056 0e2a 0000     	.space 2
+ 3057 0e2c 23000000 	.word 35
+ 3058 0e30 00       	.byte 0
+ 3059 0e31 08       	.byte 8
+ 3060 0e32 0000     	.space 2
+ 3061 0e34 73000000 	.word 115
+ 3062 0e38 00       	.byte 0
+ 3063 0e39 08       	.byte 8
+ 3064 0e3a 0000     	.space 2
+ 3065 0e3c 33000000 	.word 51
+ 3066 0e40 00       	.byte 0
+ 3067 0e41 09       	.byte 9
+ 3068 0e42 0000     	.space 2
+ 3069 0e44 C7000000 	.word 199
+ 3070 0e48 51       	.byte 81
+ 3071 0e49 07       	.byte 7
+ 3072 0e4a 0000     	.space 2
+ 3073 0e4c 0B000000 	.word 11
+ 3074 0e50 00       	.byte 0
+ 3075 0e51 08       	.byte 8
+ 3076 0e52 0000     	.space 2
+ 3077 0e54 63000000 	.word 99
+ 3078 0e58 00       	.byte 0
+ 3079 0e59 08       	.byte 8
+ 3080 0e5a 0000     	.space 2
+ 3081 0e5c 23000000 	.word 35
+ 3082 0e60 00       	.byte 0
+ 3083 0e61 09       	.byte 9
+ 3084 0e62 0000     	.space 2
+ 3085 0e64 A7000000 	.word 167
+ 3086 0e68 00       	.byte 0
+ 3087 0e69 08       	.byte 8
+ 3088 0e6a 0000     	.space 2
+ 3089 0e6c 03000000 	.word 3
+ 3090 0e70 00       	.byte 0
+ 3091 0e71 08       	.byte 8
+ 3092 0e72 0000     	.space 2
+ 3093 0e74 83000000 	.word 131
+ 3094 0e78 00       	.byte 0
+ 3095 0e79 08       	.byte 8
+ 3096 0e7a 0000     	.space 2
+ 3097 0e7c 43000000 	.word 67
+ 3098 0e80 00       	.byte 0
+ 3099 0e81 09       	.byte 9
+ 3100 0e82 0000     	.space 2
+GAS LISTING  			page 56
+
+
+ 3101 0e84 E7000000 	.word 231
+ 3102 0e88 50       	.byte 80
+ 3103 0e89 07       	.byte 7
+ 3104 0e8a 0000     	.space 2
+ 3105 0e8c 07000000 	.word 7
+ 3106 0e90 00       	.byte 0
+ 3107 0e91 08       	.byte 8
+ 3108 0e92 0000     	.space 2
+ 3109 0e94 5B000000 	.word 91
+ 3110 0e98 00       	.byte 0
+ 3111 0e99 08       	.byte 8
+ 3112 0e9a 0000     	.space 2
+ 3113 0e9c 1B000000 	.word 27
+ 3114 0ea0 00       	.byte 0
+ 3115 0ea1 09       	.byte 9
+ 3116 0ea2 0000     	.space 2
+ 3117 0ea4 97000000 	.word 151
+ 3118 0ea8 54       	.byte 84
+ 3119 0ea9 07       	.byte 7
+ 3120 0eaa 0000     	.space 2
+ 3121 0eac 43000000 	.word 67
+ 3122 0eb0 00       	.byte 0
+ 3123 0eb1 08       	.byte 8
+ 3124 0eb2 0000     	.space 2
+ 3125 0eb4 7B000000 	.word 123
+ 3126 0eb8 00       	.byte 0
+ 3127 0eb9 08       	.byte 8
+ 3128 0eba 0000     	.space 2
+ 3129 0ebc 3B000000 	.word 59
+ 3130 0ec0 00       	.byte 0
+ 3131 0ec1 09       	.byte 9
+ 3132 0ec2 0000     	.space 2
+ 3133 0ec4 D7000000 	.word 215
+ 3134 0ec8 52       	.byte 82
+ 3135 0ec9 07       	.byte 7
+ 3136 0eca 0000     	.space 2
+ 3137 0ecc 13000000 	.word 19
+ 3138 0ed0 00       	.byte 0
+ 3139 0ed1 08       	.byte 8
+ 3140 0ed2 0000     	.space 2
+ 3141 0ed4 6B000000 	.word 107
+ 3142 0ed8 00       	.byte 0
+ 3143 0ed9 08       	.byte 8
+ 3144 0eda 0000     	.space 2
+ 3145 0edc 2B000000 	.word 43
+ 3146 0ee0 00       	.byte 0
+ 3147 0ee1 09       	.byte 9
+ 3148 0ee2 0000     	.space 2
+ 3149 0ee4 B7000000 	.word 183
+ 3150 0ee8 00       	.byte 0
+ 3151 0ee9 08       	.byte 8
+ 3152 0eea 0000     	.space 2
+ 3153 0eec 0B000000 	.word 11
+ 3154 0ef0 00       	.byte 0
+ 3155 0ef1 08       	.byte 8
+ 3156 0ef2 0000     	.space 2
+ 3157 0ef4 8B000000 	.word 139
+GAS LISTING  			page 57
+
+
+ 3158 0ef8 00       	.byte 0
+ 3159 0ef9 08       	.byte 8
+ 3160 0efa 0000     	.space 2
+ 3161 0efc 4B000000 	.word 75
+ 3162 0f00 00       	.byte 0
+ 3163 0f01 09       	.byte 9
+ 3164 0f02 0000     	.space 2
+ 3165 0f04 F7000000 	.word 247
+ 3166 0f08 50       	.byte 80
+ 3167 0f09 07       	.byte 7
+ 3168 0f0a 0000     	.space 2
+ 3169 0f0c 05000000 	.word 5
+ 3170 0f10 00       	.byte 0
+ 3171 0f11 08       	.byte 8
+ 3172 0f12 0000     	.space 2
+ 3173 0f14 57000000 	.word 87
+ 3174 0f18 00       	.byte 0
+ 3175 0f19 08       	.byte 8
+ 3176 0f1a 0000     	.space 2
+ 3177 0f1c 17000000 	.word 23
+ 3178 0f20 C0       	.byte -64
+ 3179 0f21 08       	.byte 8
+ 3180 0f22 0000     	.space 2
+ 3181 0f24 00000000 	.word 0
+ 3182 0f28 53       	.byte 83
+ 3183 0f29 07       	.byte 7
+ 3184 0f2a 0000     	.space 2
+ 3185 0f2c 33000000 	.word 51
+ 3186 0f30 00       	.byte 0
+ 3187 0f31 08       	.byte 8
+ 3188 0f32 0000     	.space 2
+ 3189 0f34 77000000 	.word 119
+ 3190 0f38 00       	.byte 0
+ 3191 0f39 08       	.byte 8
+ 3192 0f3a 0000     	.space 2
+ 3193 0f3c 37000000 	.word 55
+ 3194 0f40 00       	.byte 0
+ 3195 0f41 09       	.byte 9
+ 3196 0f42 0000     	.space 2
+ 3197 0f44 CF000000 	.word 207
+ 3198 0f48 51       	.byte 81
+ 3199 0f49 07       	.byte 7
+ 3200 0f4a 0000     	.space 2
+ 3201 0f4c 0F000000 	.word 15
+ 3202 0f50 00       	.byte 0
+ 3203 0f51 08       	.byte 8
+ 3204 0f52 0000     	.space 2
+ 3205 0f54 67000000 	.word 103
+ 3206 0f58 00       	.byte 0
+ 3207 0f59 08       	.byte 8
+ 3208 0f5a 0000     	.space 2
+ 3209 0f5c 27000000 	.word 39
+ 3210 0f60 00       	.byte 0
+ 3211 0f61 09       	.byte 9
+ 3212 0f62 0000     	.space 2
+ 3213 0f64 AF000000 	.word 175
+ 3214 0f68 00       	.byte 0
+GAS LISTING  			page 58
+
+
+ 3215 0f69 08       	.byte 8
+ 3216 0f6a 0000     	.space 2
+ 3217 0f6c 07000000 	.word 7
+ 3218 0f70 00       	.byte 0
+ 3219 0f71 08       	.byte 8
+ 3220 0f72 0000     	.space 2
+ 3221 0f74 87000000 	.word 135
+ 3222 0f78 00       	.byte 0
+ 3223 0f79 08       	.byte 8
+ 3224 0f7a 0000     	.space 2
+ 3225 0f7c 47000000 	.word 71
+ 3226 0f80 00       	.byte 0
+ 3227 0f81 09       	.byte 9
+ 3228 0f82 0000     	.space 2
+ 3229 0f84 EF000000 	.word 239
+ 3230 0f88 50       	.byte 80
+ 3231 0f89 07       	.byte 7
+ 3232 0f8a 0000     	.space 2
+ 3233 0f8c 09000000 	.word 9
+ 3234 0f90 00       	.byte 0
+ 3235 0f91 08       	.byte 8
+ 3236 0f92 0000     	.space 2
+ 3237 0f94 5F000000 	.word 95
+ 3238 0f98 00       	.byte 0
+ 3239 0f99 08       	.byte 8
+ 3240 0f9a 0000     	.space 2
+ 3241 0f9c 1F000000 	.word 31
+ 3242 0fa0 00       	.byte 0
+ 3243 0fa1 09       	.byte 9
+ 3244 0fa2 0000     	.space 2
+ 3245 0fa4 9F000000 	.word 159
+ 3246 0fa8 54       	.byte 84
+ 3247 0fa9 07       	.byte 7
+ 3248 0faa 0000     	.space 2
+ 3249 0fac 63000000 	.word 99
+ 3250 0fb0 00       	.byte 0
+ 3251 0fb1 08       	.byte 8
+ 3252 0fb2 0000     	.space 2
+ 3253 0fb4 7F000000 	.word 127
+ 3254 0fb8 00       	.byte 0
+ 3255 0fb9 08       	.byte 8
+ 3256 0fba 0000     	.space 2
+ 3257 0fbc 3F000000 	.word 63
+ 3258 0fc0 00       	.byte 0
+ 3259 0fc1 09       	.byte 9
+ 3260 0fc2 0000     	.space 2
+ 3261 0fc4 DF000000 	.word 223
+ 3262 0fc8 52       	.byte 82
+ 3263 0fc9 07       	.byte 7
+ 3264 0fca 0000     	.space 2
+ 3265 0fcc 1B000000 	.word 27
+ 3266 0fd0 00       	.byte 0
+ 3267 0fd1 08       	.byte 8
+ 3268 0fd2 0000     	.space 2
+ 3269 0fd4 6F000000 	.word 111
+ 3270 0fd8 00       	.byte 0
+ 3271 0fd9 08       	.byte 8
+GAS LISTING  			page 59
+
+
+ 3272 0fda 0000     	.space 2
+ 3273 0fdc 2F000000 	.word 47
+ 3274 0fe0 00       	.byte 0
+ 3275 0fe1 09       	.byte 9
+ 3276 0fe2 0000     	.space 2
+ 3277 0fe4 BF000000 	.word 191
+ 3278 0fe8 00       	.byte 0
+ 3279 0fe9 08       	.byte 8
+ 3280 0fea 0000     	.space 2
+ 3281 0fec 0F000000 	.word 15
+ 3282 0ff0 00       	.byte 0
+ 3283 0ff1 08       	.byte 8
+ 3284 0ff2 0000     	.space 2
+ 3285 0ff4 8F000000 	.word 143
+ 3286 0ff8 00       	.byte 0
+ 3287 0ff9 08       	.byte 8
+ 3288 0ffa 0000     	.space 2
+ 3289 0ffc 4F000000 	.word 79
+ 3290 1000 00       	.byte 0
+ 3291 1001 09       	.byte 9
+ 3292 1002 0000     	.space 2
+ 3293 1004 FF000000 	.word 255
+ 3294              	.align 3
+ 3295              	.type fixed_td,@object
+ 3296              	.size fixed_td,256
+ 3297              	fixed_td:
+ 3298 1008 50       	.byte 80
+ 3299 1009 05       	.byte 5
+ 3300 100a 0000     	.space 2
+ 3301 100c 01000000 	.word 1
+ 3302 1010 57       	.byte 87
+ 3303 1011 05       	.byte 5
+ 3304 1012 0000     	.space 2
+ 3305 1014 01010000 	.word 257
+ 3306 1018 53       	.byte 83
+ 3307 1019 05       	.byte 5
+ 3308 101a 0000     	.space 2
+ 3309 101c 11000000 	.word 17
+ 3310 1020 5B       	.byte 91
+ 3311 1021 05       	.byte 5
+ 3312 1022 0000     	.space 2
+ 3313 1024 01100000 	.word 4097
+ 3314 1028 51       	.byte 81
+ 3315 1029 05       	.byte 5
+ 3316 102a 0000     	.space 2
+ 3317 102c 05000000 	.word 5
+ 3318 1030 59       	.byte 89
+ 3319 1031 05       	.byte 5
+ 3320 1032 0000     	.space 2
+ 3321 1034 01040000 	.word 1025
+ 3322 1038 55       	.byte 85
+ 3323 1039 05       	.byte 5
+ 3324 103a 0000     	.space 2
+ 3325 103c 41000000 	.word 65
+ 3326 1040 5D       	.byte 93
+ 3327 1041 05       	.byte 5
+ 3328 1042 0000     	.space 2
+GAS LISTING  			page 60
+
+
+ 3329 1044 01400000 	.word 16385
+ 3330 1048 50       	.byte 80
+ 3331 1049 05       	.byte 5
+ 3332 104a 0000     	.space 2
+ 3333 104c 03000000 	.word 3
+ 3334 1050 58       	.byte 88
+ 3335 1051 05       	.byte 5
+ 3336 1052 0000     	.space 2
+ 3337 1054 01020000 	.word 513
+ 3338 1058 54       	.byte 84
+ 3339 1059 05       	.byte 5
+ 3340 105a 0000     	.space 2
+ 3341 105c 21000000 	.word 33
+ 3342 1060 5C       	.byte 92
+ 3343 1061 05       	.byte 5
+ 3344 1062 0000     	.space 2
+ 3345 1064 01200000 	.word 8193
+ 3346 1068 52       	.byte 82
+ 3347 1069 05       	.byte 5
+ 3348 106a 0000     	.space 2
+ 3349 106c 09000000 	.word 9
+ 3350 1070 5A       	.byte 90
+ 3351 1071 05       	.byte 5
+ 3352 1072 0000     	.space 2
+ 3353 1074 01080000 	.word 2049
+ 3354 1078 56       	.byte 86
+ 3355 1079 05       	.byte 5
+ 3356 107a 0000     	.space 2
+ 3357 107c 81000000 	.word 129
+ 3358 1080 C0       	.byte -64
+ 3359 1081 05       	.byte 5
+ 3360 1082 0000     	.space 2
+ 3361 1084 01600000 	.word 24577
+ 3362 1088 50       	.byte 80
+ 3363 1089 05       	.byte 5
+ 3364 108a 0000     	.space 2
+ 3365 108c 02000000 	.word 2
+ 3366 1090 57       	.byte 87
+ 3367 1091 05       	.byte 5
+ 3368 1092 0000     	.space 2
+ 3369 1094 81010000 	.word 385
+ 3370 1098 53       	.byte 83
+ 3371 1099 05       	.byte 5
+ 3372 109a 0000     	.space 2
+ 3373 109c 19000000 	.word 25
+ 3374 10a0 5B       	.byte 91
+ 3375 10a1 05       	.byte 5
+ 3376 10a2 0000     	.space 2
+ 3377 10a4 01180000 	.word 6145
+ 3378 10a8 51       	.byte 81
+ 3379 10a9 05       	.byte 5
+ 3380 10aa 0000     	.space 2
+ 3381 10ac 07000000 	.word 7
+ 3382 10b0 59       	.byte 89
+ 3383 10b1 05       	.byte 5
+ 3384 10b2 0000     	.space 2
+ 3385 10b4 01060000 	.word 1537
+GAS LISTING  			page 61
+
+
+ 3386 10b8 55       	.byte 85
+ 3387 10b9 05       	.byte 5
+ 3388 10ba 0000     	.space 2
+ 3389 10bc 61000000 	.word 97
+ 3390 10c0 5D       	.byte 93
+ 3391 10c1 05       	.byte 5
+ 3392 10c2 0000     	.space 2
+ 3393 10c4 01600000 	.word 24577
+ 3394 10c8 50       	.byte 80
+ 3395 10c9 05       	.byte 5
+ 3396 10ca 0000     	.space 2
+ 3397 10cc 04000000 	.word 4
+ 3398 10d0 58       	.byte 88
+ 3399 10d1 05       	.byte 5
+ 3400 10d2 0000     	.space 2
+ 3401 10d4 01030000 	.word 769
+ 3402 10d8 54       	.byte 84
+ 3403 10d9 05       	.byte 5
+ 3404 10da 0000     	.space 2
+ 3405 10dc 31000000 	.word 49
+ 3406 10e0 5C       	.byte 92
+ 3407 10e1 05       	.byte 5
+ 3408 10e2 0000     	.space 2
+ 3409 10e4 01300000 	.word 12289
+ 3410 10e8 52       	.byte 82
+ 3411 10e9 05       	.byte 5
+ 3412 10ea 0000     	.space 2
+ 3413 10ec 0D000000 	.word 13
+ 3414 10f0 5A       	.byte 90
+ 3415 10f1 05       	.byte 5
+ 3416 10f2 0000     	.space 2
+ 3417 10f4 010C0000 	.word 3073
+ 3418 10f8 56       	.byte 86
+ 3419 10f9 05       	.byte 5
+ 3420 10fa 0000     	.space 2
+ 3421 10fc C1000000 	.word 193
+ 3422 1100 C0       	.byte -64
+ 3423 1101 05       	.byte 5
+ 3424 1102 0000     	.space 2
+ 3425 1104 01600000 	.word 24577
+ 3426              	.text
+ 3427              	.align 2
+ 3428 087c 00000000 	.p2align 3,,7
+ 3429              	.globl inflate_trees_fixed
+ 3430              	.ent inflate_trees_fixed
+ 3431              	inflate_trees_fixed:
+ 3432              	.frame $sp,0,$31
+ 3433              	.mask 0x00000000,0
+ 3434              	.fmask 0x00000000,0
+ 3435 0880 0000023C 	lui $2,%hi(fixed_bl)
+ 3436 0884 0000438C 	lw $3,%lo(fixed_bl)($2)
+ 3437 0888 0000023C 	lui $2,%hi(fixed_tl)
+ 3438 088c 08004224 	addiu $2,$2,%lo(fixed_tl)
+ 3439 0890 000083AC 	sw $3,0($4)
+ 3440 0894 0000033C 	lui $3,%hi(fixed_bd)
+ 3441 0898 0000C2AC 	sw $2,0($6)
+ 3442 089c 2D100000 	move $2,$0
+GAS LISTING  			page 62
+
+
+ 3443 08a0 0400648C 	lw $4,%lo(fixed_bd)($3)
+ 3444 08a4 0000033C 	lui $3,%hi(fixed_td)
+ 3445 08a8 08106324 	addiu $3,$3,%lo(fixed_td)
+ 3446 08ac 0000A4AC 	sw $4,0($5)
+ 3447              	.set noreorder
+ 3448              	.set nomacro
+ 3449 08b0 0800E003 	j $31
+ 3450 08b4 0000E3AC 	sw $3,0($7)
+ 3451              	.set macro
+ 3452              	.set reorder
+ 3453              	
+ 3454              	.end inflate_trees_fixed
+ 3455              	$Lfe4:
+ 3456              	.size inflate_trees_fixed,$Lfe4-inflate_trees_fixed
+ 3457              	.ident "GCC: (GNU) 3.2.2"

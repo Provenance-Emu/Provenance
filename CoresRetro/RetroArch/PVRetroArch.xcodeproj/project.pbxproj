@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -20,8 +20,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		930155F12970B3D400E5782C /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B66BA12967DF5700A621DD /* MoltenVK.xcframework */; };
-		930155F22970B3D400E5782C /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93B66BA12967DF5700A621DD /* MoltenVK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93102A5A2A30F2DB002C86C6 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93102A592A30F2DB002C86C6 /* PVLogging */; };
 		93102A5B2A30F2DB002C86C6 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 93102A592A30F2DB002C86C6 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9319F10A2976C15900A7414A /* PVRetroArchCore+Controls+SNES.m in Sources */ = {isa = PBXBuildFile; fileRef = 9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */; };
@@ -32,19 +30,14 @@
 		932A5CC129686AEB0032C168 /* retroarch.h in Headers */ = {isa = PBXBuildFile; fileRef = 932A5CC029686AEB0032C168 /* retroarch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93323F862AAB891200EB0C43 /* mame_plugins in Resources */ = {isa = PBXBuildFile; fileRef = 93323F812AAB891100EB0C43 /* mame_plugins */; };
 		933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5FE2951FB9F0070CF1D /* GLKit.framework */; platformFilters = (ios, tvos, watchos, ); };
-		93402040296A2976005742C2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93D6B0F5296A16FB00D5EE11 /* CFNetwork.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93402041296A37D3005742C2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F66EE229672D9000203EB3 /* IOKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93448E562980043F002F87BB /* PVRetroArchCore+Controls+PSX.m in Sources */ = {isa = PBXBuildFile; fileRef = 93448E552980043E002F87BB /* PVRetroArchCore+Controls+PSX.m */; };
 		935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B66BA82967EFCA00A621DD /* vulkan_common.c */; };
-		935E7D4D29A4C7AC00D92748 /* localintermediate.h in Sources */ = {isa = PBXBuildFile; fileRef = 935E7D4C29A4C6E200D92748 /* localintermediate.h */; };
-		935E7D4F29A4C98C00D92748 /* griffin_slang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935E7D4E29A4C98C00D92748 /* griffin_slang.cpp */; };
 		935E7D5329A4CA7F00D92748 /* griffin_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935E7D5129A4CA7E00D92748 /* griffin_cpp.cpp */; };
 		93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */ = {isa = PBXBuildFile; fileRef = 93654F78298F4A2C0046503F /* PVRetroArchCore+Controls+PCE.m */; };
 		93654F7B298F4A2D0046503F /* PVRetroArchCore+Controls+DS.m in Sources */ = {isa = PBXBuildFile; fileRef = 93654F79298F4A2C0046503F /* PVRetroArchCore+Controls+DS.m */; };
 		936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */ = {isa = PBXBuildFile; fileRef = 936B47F92969798B00C7D2A3 /* platform_darwin.m */; };
-		936BFD7E2986A4E1001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD7D2986A4E1001FF097 /* libMoltenVK.dylib */; platformFilter = ios; };
 		936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BA743C2965B96D00A49D66 /* cocoa_vk_ctx.m */; };
-		936E99E62A35A15900B1D0F8 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E52A35A15900B1D0F8 /* PVSupport.framework */; };
 		936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E72A35A3A400B1D0F8 /* Metal.framework */; };
 		936E99EA2A35A3E600B1D0F8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E92A35A3E600B1D0F8 /* CoreGraphics.framework */; };
 		936E99EC2A35A94900B1D0F8 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 936E99EB2A35A94900B1D0F8 /* PVLogging */; };
@@ -89,14 +82,12 @@
 		93AA124F296DCE58007C9808 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA124E296DCE58007C9808 /* libiconv.tbd */; };
 		93AA1253296DCEE8007C9808 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA1252296DCEE8007C9808 /* VideoToolbox.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93AC9F672A48952800D3F4D6 /* runloop.c in Sources */ = {isa = PBXBuildFile; fileRef = 93AC9F662A48952700D3F4D6 /* runloop.c */; };
-		93ACAAB22A4A763400A744F8 /* griffin.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B66BEC2968382700A621DD /* griffin.m */; };
 		93B3B1932A8CAA7800B60325 /* libZipArchive_RetroArch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1532A8CA9D100B60325 /* libZipArchive_RetroArch.a */; };
 		93B3B1952A8CAB0E00B60325 /* liblzma.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1942A8CAB0E00B60325 /* liblzma.tbd */; };
 		93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */; };
 		93B3B1992A8CBA5F00B60325 /* PVRetroArchCore+Archive.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B3B1982A8CBA5F00B60325 /* PVRetroArchCore+Archive.h */; };
 		93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */; };
 		93B3B2722A8CC8C200B60325 /* libRarArchive_RetroArch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1B32A8CC39800B60325 /* libRarArchive_RetroArch.a */; };
-		93B3B52A2A8CE65500B60325 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B5262A8CE56A00B60325 /* libunrar.a */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93B3BCE62A8CE91900B60325 /* lh5_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC902A8CE91800B60325 /* lh5_decoder.c */; };
 		93B3BCE72A8CE91900B60325 /* lha_endian.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC912A8CE91800B60325 /* lha_endian.c */; };
 		93B3BCE82A8CE91900B60325 /* lha_file_header.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC922A8CE91800B60325 /* lha_file_header.c */; };
@@ -171,12 +162,11 @@
 		93B3BD542A8CEB9F00B60325 /* filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B3BCDB2A8CE91800B60325 /* filter.h */; };
 		93B66B9F2967DB7600A621DD /* menu_pipeline.metal in Sources */ = {isa = PBXBuildFile; fileRef = 93B66B992967C64300A621DD /* menu_pipeline.metal */; };
 		93B66BA02967DB7600A621DD /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 93B66B982967C64300A621DD /* Shaders.metal */; };
-		93B66C1C296854C000A621DD /* griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B66BEA2968382700A621DD /* griffin.c */; };
 		93B716DC296591EE00F4CDC7 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DA296591ED00F4CDC7 /* CoreMedia.framework */; };
 		93B716DD296591EE00F4CDC7 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DB296591EE00F4CDC7 /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, ); };
 		93B716E02965921000F4CDC7 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DE2965921000F4CDC7 /* CoreVideo.framework */; };
 		93B716E12965921000F4CDC7 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DF2965921000F4CDC7 /* CoreText.framework */; };
-		93B716E32965922200F4CDC7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716E22965922200F4CDC7 /* MobileCoreServices.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
+		93B716E32965922200F4CDC7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716E22965922200F4CDC7 /* MobileCoreServices.framework */; };
 		93B716F2296595F600F4CDC7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716F1296595F500F4CDC7 /* AppKit.framework */; platformFilters = (maccatalyst, macos, ); };
 		93BC0F952A4C0615003D97EC /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F732A4C0614003D97EC /* GCDWebServerResponse.m */; };
 		93BC0F962A4C0615003D97EC /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F762A4C0614003D97EC /* GCDWebServerRequest.m */; };
@@ -215,17 +205,14 @@
 		93D6B106296A1AAD00D5EE11 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		93D6B108296A1AC100D5EE11 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93D6B107296A1ABE00D5EE11 /* CoreLocation.framework */; };
 		93D6B109296A1AC600D5EE11 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DA296591ED00F4CDC7 /* CoreMedia.framework */; };
-		93D6B10A296A1ACF00D5EE11 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DF2965921000F4CDC7 /* CoreText.framework */; };
 		93D6B10B296A1AEC00D5EE11 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DF2965921000F4CDC7 /* CoreText.framework */; };
 		93D6B10C296A1AF700D5EE11 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DE2965921000F4CDC7 /* CoreVideo.framework */; };
 		93D6B10D296A1B0100D5EE11 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		93F66E9B29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F66E9A29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m */; };
 		93F66EC52966D6E100203EB3 /* cocoa_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FF38392966337100772659 /* cocoa_common.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		93F66ED02967246B00203EB3 /* PVRetroArchCore+Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F66ECF2967246B00203EB3 /* PVRetroArchCore+Controls.swift */; };
 		93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BA743D2965B96D00A49D66 /* cocoa_gl_ctx.m */; };
-		93FF381E2965FF9C00772659 /* PVRetroArchCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC6022952034E0070CF1D /* PVRetroArchCore.swift */; };
 		93FF381F2965FF9C00772659 /* PVRetroArchCore.h in Sources */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVRetroArchCore.h */; };
-		93FF38202965FF9C00772659 /* PVRetroArchCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVRetroArchCore.mm */; };
+		93FF38202965FF9C00772659 /* PVRetroArchCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVRetroArchCore.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
 		93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVRetroArchCore+Audio.h */; };
 		93FF38222965FF9C00772659 /* PVRetroArchCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVRetroArchCore+Audio.mm */; };
 		93FF38232965FF9C00772659 /* PVRetroArchCore+Video.h in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVRetroArchCore+Video.h */; };
@@ -236,16 +223,36 @@
 		93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */; };
 		93FF38292965FF9C00772659 /* PVRetroArchCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */; };
 		93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVRetroArch.mm */; };
+		B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */; };
+		B30C8C832BF45AE200C91991 /* griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7E2BF45AE200C91991 /* griffin.c */; };
+		B30C8C842BF45AE200C91991 /* griffin.m in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7F2BF45AE200C91991 /* griffin.m */; };
+		B30C8C882BF45AFB00C91991 /* PVRetroArchCore+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */; };
+		B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */; };
+		B30C8C8C2BF45BDC00C91991 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */; };
 		B3135B9C26E4CC290047F338 /* PVRetroArchCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVRetroArchCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVRetroArch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B32111B52CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m in Sources */ = {isa = PBXBuildFile; fileRef = B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
+		B348E0022CD1B66400DBB0F4 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B348E0012CD1B66400DBB0F4 /* PVCoreBridge */; };
 		B34A8EF7295848360000D110 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B364D5CB2CD2A8B70082D177 /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = B364D5CA2CD2A8B70082D177 /* Unrar */; };
+		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
+		B3C439532BF442920021B9C3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C439522BF442920021B9C3 /* PVSupport */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */; };
+		B3CC631D2BEF17A5002F3C8B /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */; };
+		B3E2AA6B2CB65E9A00E2636D /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA6A2CB65E9A00E2636D /* PVLogging */; };
+		B3F8DFFF2CB3741500017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFFE2CB3741500017D1B /* PVCoreObjCBridge */; };
+		B3FC974E2CB8D29100C6DB31 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */; };
+		B3FC974F2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */; };
+		B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3FC975D2CB8D44400C6DB31 /* PVPlists */; };
+		B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53EB2CD17D8200175917 /* JITSupport.m */; };
+		B3FD53FB2CD17E2200175917 /* dispserv_apple.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FD53FA2CD17E2200175917 /* dispserv_apple.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -269,48 +276,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 93B3B19C2A8CC39800B60325;
 			remoteInfo = RarArchive;
-		};
-		93B3B5192A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B42D2A8CE56900B60325 /* UnrarExample.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1D6058910D05DD3D006BFB54;
-			remoteInfo = UnrarExample;
-		};
-		93B3B51F2A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 96EA535B1B3CB04300F79DC6;
-			remoteInfo = UnrarKit;
-		};
-		93B3B5212A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 964C8ABB18D28EE000AD7321;
-			remoteInfo = "UnrarKit Tests";
-		};
-		93B3B5232A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7A22B1EA1F60A05F004B8050;
-			remoteInfo = UnrarKitResources;
-		};
-		93B3B5252A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7AC29A5D1F83C08200DA4DE6;
-			remoteInfo = unrar;
-		};
-		93B3B5272A8CE5F100B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 7AC29A5C1F83C08200DA4DE6;
-			remoteInfo = unrarRetroArchLib;
 		};
 		93B3BD052A8CE97B00B60325 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -342,7 +307,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				930155F22970B3D400E5782C /* MoltenVK.xcframework in Embed Frameworks */,
 				931A43FA296A26B400D27F9D /* PVRetroArch.framework in Embed Frameworks */,
 				93102A5B2A30F2DB002C86C6 /* PVLogging in Embed Frameworks */,
 			);
@@ -396,11 +360,8 @@
 		932A5CC92968710B0032C168 /* modules */ = {isa = PBXFileReference; lastKnownFileType = folder; path = modules; sourceTree = "<group>"; };
 		93323F812AAB891100EB0C43 /* mame_plugins */ = {isa = PBXFileReference; lastKnownFileType = folder; path = mame_plugins; sourceTree = "<group>"; };
 		933CC5FE2951FB9F0070CF1D /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		933CC6022952034E0070CF1D /* PVRetroArchCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRetroArchCore.swift; sourceTree = "<group>"; };
 		93448E552980043E002F87BB /* PVRetroArchCore+Controls+PSX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PSX.m"; sourceTree = "<group>"; };
 		934BE7CD296E969500FB9933 /* OpenMP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenMP.framework; path = ../../Cores/Flycast/cmake/OpenMP.framework; sourceTree = "<group>"; };
-		935E7D4C29A4C6E200D92748 /* localintermediate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = localintermediate.h; sourceTree = "<group>"; };
-		935E7D4E29A4C98C00D92748 /* griffin_slang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_slang.cpp; sourceTree = "<group>"; };
 		935E7D5029A4CA7E00D92748 /* griffin_glslang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = griffin_glslang.cpp; path = RetroArch/griffin/griffin_glslang.cpp; sourceTree = SOURCE_ROOT; };
 		935E7D5129A4CA7E00D92748 /* griffin_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = griffin_cpp.cpp; path = RetroArch/griffin/griffin_cpp.cpp; sourceTree = SOURCE_ROOT; };
 		93654F78298F4A2C0046503F /* PVRetroArchCore+Controls+PCE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PCE.m"; sourceTree = "<group>"; };
@@ -782,14 +743,11 @@
 		93B3BCDB2A8CE91800B60325 /* filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filter.h; sourceTree = "<group>"; };
 		93B66B982967C64300A621DD /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		93B66B992967C64300A621DD /* menu_pipeline.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = menu_pipeline.metal; sourceTree = "<group>"; };
-		93B66BA12967DF5700A621DD /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "../../Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 		93B66BA32967DFE200A621DD /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ../../Cores/PPSSPP/ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib; sourceTree = "<group>"; };
 		93B66BA72967EFC900A621DD /* vulkan_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vulkan_common.h; sourceTree = "<group>"; };
 		93B66BA82967EFCA00A621DD /* vulkan_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vulkan_common.c; sourceTree = "<group>"; };
 		93B66BCC2968004900A621DD /* vulkan_metal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vulkan_metal.h; sourceTree = "<group>"; };
 		93B66BDC29680D2D00A621DD /* libMoltenVK_RetroArch.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_RetroArch.dylib; path = lib/libMoltenVK_RetroArch.dylib; sourceTree = "<group>"; };
-		93B66BEA2968382700A621DD /* griffin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = griffin.c; sourceTree = "<group>"; };
-		93B66BEC2968382700A621DD /* griffin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = griffin.m; sourceTree = "<group>"; };
 		93B66E39296854C000A621DD /* libretroarch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretroarch.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B716DA296591ED00F4CDC7 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		93B716DB296591EE00F4CDC7 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/iOSSupport/System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -842,7 +800,6 @@
 		93C372662A8B68000007671D /* PVRetroArchCore+Controls+NES.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+NES.m"; sourceTree = "<group>"; };
 		93C3726E2A8B80090007671D /* PVRetroArchCore+Controls+Saturn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Saturn.m"; sourceTree = "<group>"; };
 		93CFF5F4296C10C600D19529 /* dylib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dylib.c; sourceTree = "<group>"; };
-		93CFF608296C138D00D19529 /* code-sign-test-cores.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "code-sign-test-cores.sh"; sourceTree = "<group>"; };
 		93D104FC29782C9D00C31705 /* pv_ui_overlay */ = {isa = PBXFileReference; lastKnownFileType = folder; path = pv_ui_overlay; sourceTree = "<group>"; };
 		93D6B0B0296A0DAB00D5EE11 /* PVRetroArch_Test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PVRetroArch_Test.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93D6B0C4296A0DAE00D5EE11 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -850,11 +807,16 @@
 		93D6B0F5296A16FB00D5EE11 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		93D6B107296A1ABE00D5EE11 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		93F66E9A29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+RetroArchUI.m"; sourceTree = "<group>"; };
-		93F66ECF2967246B00203EB3 /* PVRetroArchCore+Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+Controls.swift"; sourceTree = "<group>"; };
 		93F66EE229672D9000203EB3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		93F66F182967465500203EB3 /* code-sign-cores.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "code-sign-cores.sh"; sourceTree = "<group>"; };
 		93FF38392966337100772659 /* cocoa_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoa_common.h; sourceTree = "<group>"; };
 		93FF383A2966337100772659 /* apple_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform.h; sourceTree = "<group>"; };
+		B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_slang.cpp; sourceTree = "<group>"; };
+		B30C8C7E2BF45AE200C91991 /* griffin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = griffin.c; sourceTree = "<group>"; };
+		B30C8C7F2BF45AE200C91991 /* griffin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = griffin.m; sourceTree = "<group>"; };
+		B30C8C802BF45AE200C91991 /* localintermediate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = localintermediate.h; sourceTree = "<group>"; };
+		B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+Options.swift"; sourceTree = "<group>"; };
+		B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+Controls.swift"; sourceTree = "<group>"; };
+		B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Supervision.m"; sourceTree = "<group>"; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447E96218B809200557ACE /* PVRetroArchCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCore+Controls.h"; sourceTree = "<group>"; };
@@ -872,6 +834,7 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVRetroArch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRetroArch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVRetroArch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArch.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -880,7 +843,19 @@
 		B3C76223207833DE009950E4 /* PVRetroArchCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVRetroArchCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVRetroArchCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PS2.m"; sourceTree = "<group>"; };
+		B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
+		B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRetroArchCoreCore.swift; sourceTree = "<group>"; };
+		B3FD53EA2CD17D8200175917 /* JITSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JITSupport.h; sourceTree = "<group>"; };
+		B3FD53EB2CD17D8200175917 /* JITSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JITSupport.m; sourceTree = "<group>"; };
+		B3FD53FA2CD17E2200175917 /* dispserv_apple.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = dispserv_apple.m; sourceTree = "<group>"; };
+		B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_cpp.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B3CC2E0A2CBBDC5700D90EB1 /* scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = scripts; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		93B3B1502A8CA9D100B60325 /* Frameworks */ = {
@@ -895,7 +870,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93B3B52A2A8CE65500B60325 /* libunrar.a in Frameworks */,
+				B364D5CB2CD2A8B70082D177 /* Unrar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -932,19 +907,17 @@
 				93D6B0F9296A171300D5EE11 /* MobileCoreServices.framework in Frameworks */,
 				93D6B0F8296A170D00D5EE11 /* CoreAudio.framework in Frameworks */,
 				93D6B109296A1AC600D5EE11 /* CoreMedia.framework in Frameworks */,
-				930155F12970B3D400E5782C /* MoltenVK.xcframework in Frameworks */,
 				93D6B10D296A1B0100D5EE11 /* Foundation.framework in Frameworks */,
 				93D6B0F6296A16FB00D5EE11 /* CFNetwork.framework in Frameworks */,
 				93D6B0F3296A16E500D5EE11 /* SwiftUI.framework in Frameworks */,
 				93D6B10C296A1AF700D5EE11 /* CoreVideo.framework in Frameworks */,
 				93D6B10B296A1AEC00D5EE11 /* CoreText.framework in Frameworks */,
-				93402040296A2976005742C2 /* CFNetwork.framework in Frameworks */,
-				93D6B10A296A1ACF00D5EE11 /* CoreText.framework in Frameworks */,
 				93D6B106296A1AAD00D5EE11 /* AVFoundation.framework in Frameworks */,
 				93102A5A2A30F2DB002C86C6 /* PVLogging in Frameworks */,
 				93D6B108296A1AC100D5EE11 /* CoreLocation.framework in Frameworks */,
 				93D6B105296A1A9800D5EE11 /* AudioToolbox.framework in Frameworks */,
 				93402041296A37D3005742C2 /* IOKit.framework in Frameworks */,
+				B3CC631D2BEF17A5002F3C8B /* MoltenVK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -960,21 +933,26 @@
 				936E9A212A35AC6100B1D0F8 /* CFNetwork.framework in Frameworks */,
 				936E99EA2A35A3E600B1D0F8 /* CoreGraphics.framework in Frameworks */,
 				936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */,
+				B30C8C8C2BF45BDC00C91991 /* PVEmulatorCore in Frameworks */,
 				93B716E32965922200F4CDC7 /* MobileCoreServices.framework in Frameworks */,
 				93B716E02965921000F4CDC7 /* CoreVideo.framework in Frameworks */,
 				93B716E12965921000F4CDC7 /* CoreText.framework in Frameworks */,
 				93B716DC296591EE00F4CDC7 /* CoreMedia.framework in Frameworks */,
 				93B716DD296591EE00F4CDC7 /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B3F8DFFF2CB3741500017D1B /* PVCoreObjCBridge in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				936E99EC2A35A94900B1D0F8 /* PVLogging in Frameworks */,
-				936E99E62A35A15900B1D0F8 /* PVSupport.framework in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
-				936BFD7E2986A4E1001FF097 /* libMoltenVK.dylib in Frameworks */,
+				B348E0022CD1B66400DBB0F4 /* PVCoreBridge in Frameworks */,
+				B3E2AA6B2CB65E9A00E2636D /* PVLogging in Frameworks */,
+				B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */,
+				B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */,
 				93B716F2296595F600F4CDC7 /* AppKit.framework in Frameworks */,
+				B3C439532BF442920021B9C3 /* PVSupport in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 			);
@@ -1066,18 +1044,6 @@
 			path = RarArchive;
 			sourceTree = "<group>";
 		};
-		93B3B0E82A8C9AC200B60325 /* Archive */ = {
-			isa = PBXGroup;
-			children = (
-				937CCB5E2A8E132A0007F6DF /* SSZipArchive */,
-				938F2A162A8D4E24002F783A /* RarArchive */,
-				938F29DA2A8D2F2B002F783A /* LzhArchive */,
-				93B3B58E2A8CE90D00B60325 /* lhasa */,
-				93B3B4112A8CE56800B60325 /* UnrarKit */,
-			);
-			path = Archive;
-			sourceTree = "<group>";
-		};
 		93B3B4112A8CE56800B60325 /* UnrarKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -1156,7 +1122,6 @@
 		93B3B42E2A8CE56900B60325 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				93B3B51A2A8CE56A00B60325 /* UnrarExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1174,10 +1139,6 @@
 		93B3B4362A8CE56900B60325 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				93B3B5202A8CE56A00B60325 /* UnrarKit.framework */,
-				93B3B5222A8CE56A00B60325 /* UnrarKit Tests.xctest */,
-				93B3B5242A8CE56A00B60325 /* UnrarKitResources.bundle */,
-				93B3B5262A8CE56A00B60325 /* libunrar.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1477,43 +1438,43 @@
 		93B3BC8F2A8CE91800B60325 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				93B3BCA12A8CE91800B60325 /* Makefile.am */,
+				93B3BCB92A8CE91800B60325 /* bit_stream_reader.c */,
+				93B3BCAF2A8CE91800B60325 /* crc16.c */,
+				93B3BC932A8CE91800B60325 /* ext_header.c */,
+				93B3BCAE2A8CE91800B60325 /* lh_new_decoder.c */,
+				93B3BCAC2A8CE91800B60325 /* lh1_decoder.c */,
 				93B3BC902A8CE91800B60325 /* lh5_decoder.c */,
+				93B3BCB42A8CE91800B60325 /* lh6_decoder.c */,
+				93B3BCA32A8CE91800B60325 /* lh7_decoder.c */,
+				93B3BC972A8CE91800B60325 /* lha_arch_unix.c */,
+				93B3BCB72A8CE91800B60325 /* lha_arch_win32.c */,
+				93B3BC992A8CE91800B60325 /* lha_basic_reader.c */,
+				93B3BCBA2A8CE91800B60325 /* lha_decoder.c */,
 				93B3BC912A8CE91800B60325 /* lha_endian.c */,
 				93B3BC922A8CE91800B60325 /* lha_file_header.c */,
-				93B3BC932A8CE91800B60325 /* ext_header.c */,
-				93B3BC942A8CE91800B60325 /* lzs_decoder.c */,
-				93B3BC952A8CE91800B60325 /* crc16.h */,
-				93B3BC962A8CE91800B60325 /* pm2_decoder.c */,
-				93B3BC972A8CE91800B60325 /* lha_arch_unix.c */,
-				93B3BC982A8CE91800B60325 /* macbinary.h */,
-				93B3BC992A8CE91800B60325 /* lha_basic_reader.c */,
-				93B3BC9A2A8CE91800B60325 /* tree_decode.c */,
-				93B3BC9B2A8CE91800B60325 /* null_decoder.c */,
-				93B3BC9C2A8CE91800B60325 /* lha_reader.c */,
-				93B3BC9D2A8CE91800B60325 /* lha_decoder.h */,
-				93B3BC9E2A8CE91800B60325 /* lk7_decoder.c */,
-				93B3BC9F2A8CE91800B60325 /* lha_input_stream.h */,
-				93B3BCA02A8CE91800B60325 /* pma_common.c */,
-				93B3BCA12A8CE91800B60325 /* Makefile.am */,
-				93B3BCA22A8CE91800B60325 /* lha_file_header.h */,
-				93B3BCA32A8CE91800B60325 /* lh7_decoder.c */,
-				93B3BCA42A8CE91800B60325 /* lha_endian.h */,
-				93B3BCA52A8CE91800B60325 /* public */,
-				93B3BCAC2A8CE91800B60325 /* lh1_decoder.c */,
-				93B3BCAD2A8CE91800B60325 /* lhx_decoder.c */,
-				93B3BCAE2A8CE91800B60325 /* lh_new_decoder.c */,
-				93B3BCAF2A8CE91800B60325 /* crc16.c */,
-				93B3BCB02A8CE91800B60325 /* ext_header.h */,
-				93B3BCB12A8CE91800B60325 /* lz5_decoder.c */,
-				93B3BCB22A8CE91800B60325 /* macbinary.c */,
-				93B3BCB32A8CE91800B60325 /* lha_basic_reader.h */,
-				93B3BCB42A8CE91800B60325 /* lh6_decoder.c */,
-				93B3BCB52A8CE91800B60325 /* pm1_decoder.c */,
 				93B3BCB62A8CE91800B60325 /* lha_input_stream.c */,
-				93B3BCB72A8CE91800B60325 /* lha_arch_win32.c */,
+				93B3BC9C2A8CE91800B60325 /* lha_reader.c */,
+				93B3BCAD2A8CE91800B60325 /* lhx_decoder.c */,
+				93B3BC9E2A8CE91800B60325 /* lk7_decoder.c */,
+				93B3BCB12A8CE91800B60325 /* lz5_decoder.c */,
+				93B3BC942A8CE91800B60325 /* lzs_decoder.c */,
+				93B3BCB22A8CE91800B60325 /* macbinary.c */,
+				93B3BC9B2A8CE91800B60325 /* null_decoder.c */,
+				93B3BCB52A8CE91800B60325 /* pm1_decoder.c */,
+				93B3BC962A8CE91800B60325 /* pm2_decoder.c */,
+				93B3BCA02A8CE91800B60325 /* pma_common.c */,
+				93B3BC9A2A8CE91800B60325 /* tree_decode.c */,
+				93B3BC952A8CE91800B60325 /* crc16.h */,
+				93B3BCB02A8CE91800B60325 /* ext_header.h */,
 				93B3BCB82A8CE91800B60325 /* lha_arch.h */,
-				93B3BCB92A8CE91800B60325 /* bit_stream_reader.c */,
-				93B3BCBA2A8CE91800B60325 /* lha_decoder.c */,
+				93B3BCB32A8CE91800B60325 /* lha_basic_reader.h */,
+				93B3BC9D2A8CE91800B60325 /* lha_decoder.h */,
+				93B3BCA42A8CE91800B60325 /* lha_endian.h */,
+				93B3BCA22A8CE91800B60325 /* lha_file_header.h */,
+				93B3BC9F2A8CE91800B60325 /* lha_input_stream.h */,
+				93B3BC982A8CE91800B60325 /* macbinary.h */,
+				93B3BCA52A8CE91800B60325 /* public */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -1679,13 +1640,27 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		93F66F172967465500203EB3 /* scripts */ = {
+		B30C8C812BF45AE200C91991 /* retroarch */ = {
 			isa = PBXGroup;
 			children = (
-				93CFF608296C138D00D19529 /* code-sign-test-cores.sh */,
-				93F66F182967465500203EB3 /* code-sign-cores.sh */,
+				B3FD53FC2CD1889700175917 /* griffin_cpp.cpp */,
+				B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */,
+				B30C8C7E2BF45AE200C91991 /* griffin.c */,
+				B30C8C7F2BF45AE200C91991 /* griffin.m */,
+				B30C8C802BF45AE200C91991 /* localintermediate.h */,
 			);
-			path = scripts;
+			path = retroarch;
+			sourceTree = "<group>";
+		};
+		B30C8C872BF45AFA00C91991 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				B3FC974C2CB8D29100C6DB31 /* CorePlist.swift */,
+				B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */,
+				B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */,
+				B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */,
+			);
+			path = Swift;
 			sourceTree = "<group>";
 		};
 		B3447EB5218BCE2000557ACE /* Core */ = {
@@ -1707,16 +1682,17 @@
 				93654F79298F4A2C0046503F /* PVRetroArchCore+Controls+DS.m */,
 				93654F78298F4A2C0046503F /* PVRetroArchCore+Controls+PCE.m */,
 				93448E552980043E002F87BB /* PVRetroArchCore+Controls+PSX.m */,
+				B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */,
 				9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */,
+				B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */,
 				9328B14E2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m */,
-				93B66BEC2968382700A621DD /* griffin.m */,
+				B3FD53EA2CD17D8200175917 /* JITSupport.h */,
+				B3FD53EB2CD17D8200175917 /* JITSupport.m */,
+				B3FD53FA2CD17E2200175917 /* dispserv_apple.m */,
 				93AC9F662A48952700D3F4D6 /* runloop.c */,
-				935E7D4E29A4C98C00D92748 /* griffin_slang.cpp */,
-				935E7D4C29A4C6E200D92748 /* localintermediate.h */,
 				B3447EA0218B881000557ACE /* PVRetroArch.mm */,
 				938E5BB4298B31D400F8596C /* PVDebug.c */,
 				93CFF5F4296C10C600D19529 /* dylib.c */,
-				93B66BEA2968382700A621DD /* griffin.c */,
 				93B66BA82967EFCA00A621DD /* vulkan_common.c */,
 				93FF383A2966337100772659 /* apple_platform.h */,
 				93FF38392966337100772659 /* cocoa_common.h */,
@@ -1743,8 +1719,6 @@
 				9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */,
 				B3447EAA218BC59D00557ACE /* PVRetroArchCore+Saves.mm */,
 				B3447EAE218BC5C500557ACE /* PVRetroArchCore+Video.mm */,
-				933CC6022952034E0070CF1D /* PVRetroArchCore.swift */,
-				93F66ECF2967246B00203EB3 /* PVRetroArchCore+Controls.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1755,8 +1729,13 @@
 				932A5CC92968710B0032C168 /* modules */,
 				93B66E422968602E00A621DD /* libretroarch */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				93F66F172967465500203EB3 /* scripts */,
+				937CCB5E2A8E132A0007F6DF /* SSZipArchive */,
+				938F2A162A8D4E24002F783A /* RarArchive */,
+				938F29DA2A8D2F2B002F783A /* LzhArchive */,
+				93B3B58E2A8CE90D00B60325 /* lhasa */,
+				93B3B4112A8CE56800B60325 /* UnrarKit */,
 				B3C7621220783162009950E4 /* PVRetroArch */,
+				B3CC2E0A2CBBDC5700D90EB1 /* scripts */,
 				B3C762202078327B009950E4 /* PVRetroArchCore */,
 				93F66F0A296745A100203EB3 /* Resources */,
 				93D6B0B1296A0DAB00D5EE11 /* PVRetroArch_Test */,
@@ -1793,6 +1772,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */,
+				B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */,
 				93B3B1942A8CAB0E00B60325 /* liblzma.tbd */,
 				939EE7EF2A79038A0021C20F /* libretroarch.a */,
 				936E9A202A35AC6100B1D0F8 /* CFNetwork.framework */,
@@ -1815,7 +1796,6 @@
 				93D6B0F2296A16E500D5EE11 /* SwiftUI.framework */,
 				93B66BDC29680D2D00A621DD /* libMoltenVK_RetroArch.dylib */,
 				93B66BA32967DFE200A621DD /* libMoltenVK.dylib */,
-				93B66BA12967DF5700A621DD /* MoltenVK.xcframework */,
 				93F66EE229672D9000203EB3 /* IOKit.framework */,
 				93B716F1296595F500F4CDC7 /* AppKit.framework */,
 				93B716E22965922200F4CDC7 /* MobileCoreServices.framework */,
@@ -1840,7 +1820,8 @@
 		B3C762202078327B009950E4 /* PVRetroArchCore */ = {
 			isa = PBXGroup;
 			children = (
-				93B3B0E82A8C9AC200B60325 /* Archive */,
+				B30C8C872BF45AFA00C91991 /* Swift */,
+				B30C8C812BF45AE200C91991 /* retroarch */,
 				B3447EB5218BCE2000557ACE /* Core */,
 			);
 			path = PVRetroArchCore;
@@ -1951,7 +1932,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				93B3B5282A8CE5F100B60325 /* PBXTargetDependency */,
 			);
 			name = RarArchive_RetroArch;
 			productName = ZipArchive;
@@ -2054,6 +2034,13 @@
 			name = PVRetroArch;
 			packageProductDependencies = (
 				936E99EB2A35A94900B1D0F8 /* PVLogging */,
+				B3C439522BF442920021B9C3 /* PVSupport */,
+				B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */,
+				B37C00582BFF6A1000FEC6AC /* MoltenVK */,
+				B3F8DFFE2CB3741500017D1B /* PVCoreObjCBridge */,
+				B3E2AA6A2CB65E9A00E2636D /* PVLogging */,
+				B3FC975D2CB8D44400C6DB31 /* PVPlists */,
+				B348E0012CD1B66400DBB0F4 /* PVCoreBridge */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
@@ -2067,7 +2054,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					93B3B1522A8CA9D100B60325 = {
@@ -2088,7 +2075,7 @@
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVRetroArch" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -2107,7 +2094,16 @@
 				nl,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				B3C439512BF442920021B9C3 /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30C8C8A2BF45BDC00C91991 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B37C00572BFF6A1000FEC6AC /* XCLocalSwiftPackageReference "../../MoltenVK" */,
+				B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3E2AA692CB65E9A00E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */,
+				B3FC975C2CB8D44400C6DB31 /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -2134,44 +2130,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		93B3B51A2A8CE56A00B60325 /* UnrarExample.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = UnrarExample.app;
-			remoteRef = 93B3B5192A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93B3B5202A8CE56A00B60325 /* UnrarKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = UnrarKit.framework;
-			remoteRef = 93B3B51F2A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93B3B5222A8CE56A00B60325 /* UnrarKit Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "UnrarKit Tests.xctest";
-			remoteRef = 93B3B5212A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93B3B5242A8CE56A00B60325 /* UnrarKitResources.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = UnrarKitResources.bundle;
-			remoteRef = 93B3B5232A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93B3B5262A8CE56A00B60325 /* libunrar.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libunrar.a;
-			remoteRef = 93B3B5252A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		93D6B0AE296A0DAA00D5EE11 /* Resources */ = {
@@ -2305,11 +2263,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93B66C1C296854C000A621DD /* griffin.c in Sources */,
-				93ACAAB22A4A763400A744F8 /* griffin.m in Sources */,
+				B30C8C842BF45AE200C91991 /* griffin.m in Sources */,
+				B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */,
 				935E7D5329A4CA7F00D92748 /* griffin_cpp.cpp in Sources */,
-				935E7D4F29A4C98C00D92748 /* griffin_slang.cpp in Sources */,
-				935E7D4D29A4C7AC00D92748 /* localintermediate.h in Sources */,
+				B30C8C832BF45AE200C91991 /* griffin.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2365,8 +2322,6 @@
 				93CFF5F5296C10C700D19529 /* dylib.c in Sources */,
 				93814F902AAA9E9900DEB9B9 /* PVRetroArchCore+Archive+AppleII.m in Sources */,
 				93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */,
-				93F66ED02967246B00203EB3 /* PVRetroArchCore+Controls.swift in Sources */,
-				93FF381E2965FF9C00772659 /* PVRetroArchCore.swift in Sources */,
 				93F66E9B29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m in Sources */,
 				93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */,
 				93FF381F2965FF9C00772659 /* PVRetroArchCore.h in Sources */,
@@ -2374,12 +2329,17 @@
 				93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Sources */,
 				93A7278A2AAEB1C60052B279 /* PVRetroArchCore+Controls+MAME.m in Sources */,
 				9319F10A2976C15900A7414A /* PVRetroArchCore+Controls+SNES.m in Sources */,
+				B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */,
+				B30C8C882BF45AFB00C91991 /* PVRetroArchCore+Options.swift in Sources */,
 				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
 				93FF38222965FF9C00772659 /* PVRetroArchCore+Audio.mm in Sources */,
 				93FF38232965FF9C00772659 /* PVRetroArchCore+Video.h in Sources */,
 				93448E562980043F002F87BB /* PVRetroArchCore+Controls+PSX.m in Sources */,
 				93FF38242965FF9C00772659 /* PVRetroArchCore+Video.mm in Sources */,
 				93FF38252965FF9C00772659 /* PVRetroArchCore+Saves.h in Sources */,
+				B3FD53FB2CD17E2200175917 /* dispserv_apple.m in Sources */,
+				B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */,
+				B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */,
 				93C372692A8B68000007671D /* PVRetroArchCore+Controls+3DO.m in Sources */,
 				93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */,
 				93C372682A8B68000007671D /* PVRetroArchCore+Controls+Dreamcast.m in Sources */,
@@ -2390,6 +2350,9 @@
 				93FF38292965FF9C00772659 /* PVRetroArchCore+Cheats.mm in Sources */,
 				93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */,
 				93C372672A8B68000007671D /* PVRetroArchCore+Controls+Genesis.m in Sources */,
+				B3FC974E2CB8D29100C6DB31 /* CorePlist.swift in Sources */,
+				B32111B52CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m in Sources */,
+				B3FC974F2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift in Sources */,
 				9328B14F2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m in Sources */,
 				93A7278B2AAEB1C60052B279 /* PVRetroArchCore+Controls+NeoGeo.m in Sources */,
 			);
@@ -2412,11 +2375,6 @@
 			isa = PBXTargetDependency;
 			target = 93B3B19C2A8CC39800B60325 /* RarArchive_RetroArch */;
 			targetProxy = 93B3B2702A8CC8B700B60325 /* PBXContainerItemProxy */;
-		};
-		93B3B5282A8CE5F100B60325 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = unrarRetroArchLib;
-			targetProxy = 93B3B5272A8CE5F100B60325 /* PBXContainerItemProxy */;
 		};
 		93B3BD062A8CE97B00B60325 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2461,6 +2419,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -2474,15 +2433,19 @@
 					"${SRCROOT}/PVRetroArchCore/Archive/ZipArchive/SSZipArchive/",
 					"$(inherited)",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/zip";
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -2492,6 +2455,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -2501,18 +2465,24 @@
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/PVRetroArchCore/Archive/RarArchive",
-					"${SRCROOT}/PVRetroArchCore/Archive/RarArchive/Categories",
-					"${SRCROOT}/PVRetroArchCore/Archive/UnrarKit/Libraries/unrar",
+					"${SRCROOT}/RarArchive",
+					"${SRCROOT}/RarArchive/Categories",
+					"${SRCROOT}/UnrarKit/Libraries/unrar",
 					"$(inherited)",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/rar";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -2522,6 +2492,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INPUT_FILETYPE = automatic;
@@ -2533,12 +2504,13 @@
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/lib",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/src",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/lib/public",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/",
+					"${SRCROOT}/lhasa/lib",
+					"${SRCROOT}/lhasa/src",
+					"${SRCROOT}/lhasa/lib/public",
+					"${SRCROOT}/lhasa/",
 					"$(inherited)",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -2553,8 +2525,13 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/lha";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -2562,6 +2539,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				OTHER_LDFLAGS = (
 					"-Wl,-segalign,4000",
 					"$(inherited)",
@@ -2575,7 +2553,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEPS_DIR = ./RetroArch/deps;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2614,18 +2592,26 @@
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
 					./RetroArch/gfx/drivers/,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib",
 					"$(PROJECT_DIR)/cmake/FFmpeg-iOS/lib",
 				);
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-Wno-module-import-in-extern-c",
+				);
 				OTHER_LDFLAGS = "-Wl,-segalign,4000";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_SWIFT_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -2635,16 +2621,21 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -2656,10 +2647,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DONT_GENERATE_INFOPLIST_FILE = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -2714,7 +2706,7 @@
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -2750,7 +2742,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -2791,7 +2783,7 @@
 					"$(DEPS_DIR)/glslang/glslang/SPIRV",
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_ENABLE_MODULES = YES;
 				MTL_HEADER_SEARCH_PATHS = "";
@@ -2803,7 +2795,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SYMROOT = "$(SRCROOT)/lib/retroarch/$(CONFIGURATION)";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2817,8 +2809,8 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEAD_CODE_STRIPPING = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEPS_DIR = ./RetroArch/deps;
 				DEVELOPMENT_TEAM = "";
@@ -2879,6 +2871,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVRetroArch/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2892,6 +2885,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/lib",
 				);
+				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_ENABLE_MODULES = YES;
 				MTL_FAST_MATH = YES;
@@ -2900,15 +2894,17 @@
 				PRODUCT_NAME = PVRetroArch;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				STRIP_SWIFT_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RetroArch-Swift.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Release;
@@ -2923,7 +2919,7 @@
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -2954,12 +2950,13 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPS_DIR = ./RetroArch/deps;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3000,7 +2997,7 @@
 					"$(DEPS_DIR)/glslang/glslang/SPIRV",
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_ENABLE_MODULES = YES;
 				MTL_HEADER_SEARCH_PATHS = "";
@@ -3012,7 +3009,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SYMROOT = "$(SRCROOT)/lib/retroarch/$(CONFIGURATION)";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -3027,7 +3024,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEPS_DIR = ./RetroArch/deps;
 				DEVELOPMENT_TEAM = "";
@@ -3088,6 +3085,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVRetroArch/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3101,6 +3099,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/lib",
 				);
+				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_ENABLE_MODULES = YES;
 				MTL_FAST_MATH = YES;
@@ -3109,14 +3108,17 @@
 				PRODUCT_NAME = PVRetroArch;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				STRIP_SWIFT_SYMBOLS = NO;
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RetroArch-Swift.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
@@ -3125,6 +3127,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				OTHER_LDFLAGS = (
 					"-Wl,-segalign,4000",
 					"$(inherited)",
@@ -3138,7 +3141,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEPS_DIR = ./RetroArch/deps;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -3176,18 +3179,26 @@
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
 					./RetroArch/gfx/drivers/,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib",
 					"$(PROJECT_DIR)/cmake/FFmpeg-iOS/lib",
 				);
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-Wno-module-import-in-extern-c",
+				);
 				OTHER_LDFLAGS = "-Wl,-segalign,4000";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_SWIFT_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -3199,10 +3210,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DONT_GENERATE_INFOPLIST_FILE = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3253,16 +3265,21 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -3272,6 +3289,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3285,15 +3303,19 @@
 					"${SRCROOT}/PVRetroArchCore/Archive/ZipArchive/SSZipArchive/",
 					"$(inherited)",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/zip";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -3303,6 +3325,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3312,20 +3335,24 @@
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/PVRetroArchCore/Archive/RarArchive",
-					"${SRCROOT}/PVRetroArchCore/Archive/RarArchive/Categories",
-					"${SRCROOT}/PVRetroArchCore/Archive/UnrarKit/Libraries/unrar",
+					"${SRCROOT}/RarArchive",
+					"${SRCROOT}/RarArchive/Categories",
+					"${SRCROOT}/UnrarKit/Libraries/unrar",
 					"$(inherited)",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/rar";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -3335,6 +3362,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INPUT_FILETYPE = automatic;
@@ -3346,13 +3374,13 @@
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/lib",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/src",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/lib/public",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/",
+					"${SRCROOT}/lhasa/lib",
+					"${SRCROOT}/lhasa/src",
+					"${SRCROOT}/lhasa/lib/public",
+					"${SRCROOT}/lhasa/",
 					"$(inherited)",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -3363,10 +3391,14 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/lha";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -3456,6 +3488,48 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30C8C8A2BF45BDC00C91991 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B37C00572BFF6A1000FEC6AC /* XCLocalSwiftPackageReference "../../MoltenVK" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../MoltenVK;
+		};
+		B3C439512BF442920021B9C3 /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B3E2AA692CB65E9A00E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLogging;
+		};
+		B3F8DFFD2CB3741500017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3FC975C2CB8D44400C6DB31 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mtgto/Unrar.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.16;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		93102A592A30F2DB002C86C6 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3464,6 +3538,40 @@
 		936E99EB2A35A94900B1D0F8 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B348E0012CD1B66400DBB0F4 /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B30E9AB82C6F241200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */;
+			productName = PVCoreBridge;
+		};
+		B364D5CA2CD2A8B70082D177 /* Unrar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B364D5C92CD2A8B70082D177 /* XCRemoteSwiftPackageReference "Unrar.swift" */;
+			productName = Unrar;
+		};
+		B37C00582BFF6A1000FEC6AC /* MoltenVK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MoltenVK;
+		};
+		B3C439522BF442920021B9C3 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B3E2AA6A2CB65E9A00E2636D /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+		B3F8DFFE2CB3741500017D1B /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3FC975D2CB8D44400C6DB31 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -5,6 +5,7 @@
 #include <atomic>
 #include <cstdarg>
 #include <cstdlib>
+#include <cstdint>
 
 #include "Common/CommonFuncs.h"
 #include "Common/DynamicLibrary.h"

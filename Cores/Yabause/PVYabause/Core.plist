@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.Yabause</string>
+	<string>com.provenance.core.Yabause</string>
 	<key>PVPrincipleClass</key>
-	<string>PVYabauseCore</string>
+	<string>PVYabause.PVYabauseCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.saturn</string>

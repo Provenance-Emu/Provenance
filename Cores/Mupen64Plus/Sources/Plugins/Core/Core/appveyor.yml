@@ -1,0 +1,19 @@
+version: 1.0.{build}
+
+configuration:
+  - New_Dynarec_Release
+  - Release
+platform:
+  - x86
+  - x64
+
+matrix:
+  exclude:
+    - platform: x64
+      configuration: New_Dynarec_Release
+
+before_build:
+- cmd: git clone --depth 1 https://github.com/mupen64plus/mupen64plus-win32-deps.git ../mupen64plus-win32-deps
+build:
+  project: projects/VisualStudio2013/mupen64plus-core.vcxproj
+  verbosity: minimal

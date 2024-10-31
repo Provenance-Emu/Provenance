@@ -9,8 +9,8 @@ import GLKit
 import os
 
 @objc public class PPSSPPOGLViewController: GLKViewController {
-	private var core: PVPPSSPPCore!
-	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVPPSSPPCore) {
+	private var core: PVPPSSPPCoreBridge!
+	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVPPSSPPCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
 		self.core = core;
 		self.view.isUserInteractionEnabled = false
@@ -29,7 +29,7 @@ import os
 		super.viewDidLoad()
 		if core != nil {
 			NSLog("Starting VM\n");
-			core.startVM(self.view);
+            core.startVM(self.view);
 		}
 	}
 

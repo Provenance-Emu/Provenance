@@ -3,11 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		B304085429700E3000180897 /* arm_jit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E44272E2C9800FF72B9 /* arm_jit.cpp */; };
+		B30E98CE2C6EF02200C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98CD2C6EF02200C1431E /* PVSupport */; };
+		B30E98D02C6EF03500C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98CF2C6EF03500C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B30E99C42C6F00C600C1431E /* PVDesmume2015Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E99C32C6F00C600C1431E /* PVDesmume2015Core.swift */; };
+		B30E99C62C6F022900C1431E /* PVDesmume2015Core-Bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = B30E99C52C6F022900C1431E /* PVDesmume2015Core-Bridge.h */; };
+		B30E99FB2C6F05C900C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99FA2C6F05C900C1431E /* PVCoreBridge */; };
 		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B338055B28757C3A0009C732 /* PVDesmume2015Core+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */; };
@@ -25,7 +30,13 @@
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B364D4B72870E7D300B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4B62870E7D300B93A4B /* PVLibRetro.framework */; };
+		B377EBCC2CB29BE700E9B750 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBCB2CB29BE700E9B750 /* PVCoreBridgeRetro.framework */; };
+		B377EBD32CB29F7F00E9B750 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBD22CB29F7F00E9B750 /* PVEmulatorCore */; };
+		B377EBD62CB29FEF00E9B750 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBD52CB29FEF00E9B750 /* PVCoreObjCBridge */; };
+		B377EBD92CB2A04100E9B750 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBD82CB2A04100E9B750 /* PVSettings */; };
+		B377EBDC2CB2A09E00E9B750 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBDB2CB2A09E00E9B750 /* PVPlists */; };
+		B377EBE22CB2B10500E9B750 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B377EBE12CB2B10500E9B750 /* CorePlist-Generated.swift */; };
+		B377EBE32CB2B10500E9B750 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B377EBE02CB2B10500E9B750 /* CorePlist.swift */; };
 		B39312F32870FB8E00372EBB /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E8D272E2C9800FF72B9 /* matrix.cpp */; };
 		B39312F42870FB8E00372EBB /* readwrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC8272E2C9800FF72B9 /* readwrite.cpp */; };
 		B39312F52870FB8E00372EBB /* slot2_gbagame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DE5272E2C9800FF72B9 /* slot2_gbagame.cpp */; };
@@ -118,9 +129,8 @@
 		B393138628710F9100372EBB /* arm_gen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E46272E2C9800FF72B9 /* arm_gen.cpp */; };
 		B3AFCF922977A7B100A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF912977A7B100A01010 /* PVLogging */; };
 		B3C7621520783162009950E4 /* PVDesmume2015.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVDesmume2015.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3C76225207833DE009950E4 /* PVDesmume2015Core.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDesmume2015Core.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C76226207833DE009950E4 /* PVDesmume2015Core.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDesmume2015Core.mm */; };
 /* End PBXBuildFile section */
@@ -149,6 +159,9 @@
 
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libdesmume2015.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdesmume2015.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30E98CF2C6EF03500C1431E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		B30E99C32C6F00C600C1431E /* PVDesmume2015Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDesmume2015Core.swift; sourceTree = "<group>"; };
+		B30E99C52C6F022900C1431E /* PVDesmume2015Core-Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVDesmume2015Core-Bridge.h"; sourceTree = "<group>"; };
 		B316B4E621926FE500693472 /* emu.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu.cfg; sourceTree = "<group>"; };
 		B31B2D54272E2C9800FF72B9 /* template.pnproj */ = {isa = PBXFileReference; lastKnownFileType = text; path = template.pnproj; sourceTree = "<group>"; };
 		B31B2D55272E2C9800FF72B9 /* template.prj */ = {isa = PBXFileReference; lastKnownFileType = text; path = template.prj; sourceTree = "<group>"; };
@@ -685,6 +698,9 @@
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B364D4B62870E7D300B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B377EBCB2CB29BE700E9B750 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B377EBE02CB2B10500E9B750 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B377EBE12CB2B10500E9B750 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDesmume2015.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDesmume2015.h; sourceTree = "<group>"; };
@@ -710,16 +726,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
+				B377EBD92CB2A04100E9B750 /* PVSettings in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3AFCF922977A7B100A01010 /* PVLogging in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
+				B30E98D02C6EF03500C1431E /* OpenGL.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
+				B377EBCC2CB29BE700E9B750 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B39313802870FB9A00372EBB /* libdesmume2015.a in Frameworks */,
+				B377EBD32CB29F7F00E9B750 /* PVEmulatorCore in Frameworks */,
+				B377EBD62CB29FEF00E9B750 /* PVCoreObjCBridge in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B364D4B72870E7D300B93A4B /* PVLibRetro.framework in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
+				B30E99FB2C6F05C900C1431E /* PVCoreBridge in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B377EBDC2CB2A09E00E9B750 /* PVPlists in Frameworks */,
+				B30E98CE2C6EF02200C1431E /* PVSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1176,28 +1198,28 @@
 		B31B2DD0272E2C9800FF72B9 /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				B31B2DD1272E2C9800FF72B9 /* slot1_r4.cpp */,
 				B31B2DD2272E2C9800FF72B9 /* slot1_none.cpp */,
-				B31B2DD3272E2C9800FF72B9 /* slot2_paddle.cpp */,
-				B31B2DD4272E2C9800FF72B9 /* slot1comp_mc.h */,
-				B31B2DD5272E2C9800FF72B9 /* slot2_mpcf.cpp */,
-				B31B2DD6272E2C9800FF72B9 /* slot1comp_mc.cpp */,
-				B31B2DD7272E2C9800FF72B9 /* slot2_passme.cpp */,
-				B31B2DD8272E2C9800FF72B9 /* slot2_rumblepak.cpp */,
-				B31B2DD9272E2C9800FF72B9 /* slot2_auto.cpp */,
+				B31B2DD1272E2C9800FF72B9 /* slot1_r4.cpp */,
+				B31B2DE2272E2C9800FF72B9 /* slot1_retail_auto.cpp */,
 				B31B2DDA272E2C9800FF72B9 /* slot1_retail_mcrom_debug.cpp */,
 				B31B2DDB272E2C9800FF72B9 /* slot1_retail_mcrom.cpp */,
-				B31B2DDC272E2C9800FF72B9 /* slot2_piano.cpp */,
-				B31B2DDD272E2C9800FF72B9 /* slot1comp_rom.h */,
-				B31B2DDE272E2C9800FF72B9 /* slot2_none.cpp */,
-				B31B2DDF272E2C9800FF72B9 /* slot1comp_protocol.h */,
-				B31B2DE0272E2C9800FF72B9 /* slot2_expMemory.cpp */,
-				B31B2DE1272E2C9800FF72B9 /* slot1comp_rom.cpp */,
-				B31B2DE2272E2C9800FF72B9 /* slot1_retail_auto.cpp */,
-				B31B2DE3272E2C9800FF72B9 /* slot2_guitarGrip.cpp */,
 				B31B2DE4272E2C9800FF72B9 /* slot1_retail_nand.cpp */,
-				B31B2DE5272E2C9800FF72B9 /* slot2_gbagame.cpp */,
+				B31B2DD6272E2C9800FF72B9 /* slot1comp_mc.cpp */,
 				B31B2DE6272E2C9800FF72B9 /* slot1comp_protocol.cpp */,
+				B31B2DE1272E2C9800FF72B9 /* slot1comp_rom.cpp */,
+				B31B2DD9272E2C9800FF72B9 /* slot2_auto.cpp */,
+				B31B2DE0272E2C9800FF72B9 /* slot2_expMemory.cpp */,
+				B31B2DE5272E2C9800FF72B9 /* slot2_gbagame.cpp */,
+				B31B2DE3272E2C9800FF72B9 /* slot2_guitarGrip.cpp */,
+				B31B2DD5272E2C9800FF72B9 /* slot2_mpcf.cpp */,
+				B31B2DDE272E2C9800FF72B9 /* slot2_none.cpp */,
+				B31B2DD3272E2C9800FF72B9 /* slot2_paddle.cpp */,
+				B31B2DD7272E2C9800FF72B9 /* slot2_passme.cpp */,
+				B31B2DDC272E2C9800FF72B9 /* slot2_piano.cpp */,
+				B31B2DD8272E2C9800FF72B9 /* slot2_rumblepak.cpp */,
+				B31B2DD4272E2C9800FF72B9 /* slot1comp_mc.h */,
+				B31B2DDF272E2C9800FF72B9 /* slot1comp_protocol.h */,
+				B31B2DDD272E2C9800FF72B9 /* slot1comp_rom.h */,
 			);
 			path = addons;
 			sourceTree = "<group>";
@@ -2204,6 +2226,9 @@
 				B3447EAA218BC59D00557ACE /* PVDesmume2015Core+Saves.m */,
 				B3447E96218B809200557ACE /* PVDesmume2015Core+Controls.h */,
 				B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */,
+				B30E99C32C6F00C600C1431E /* PVDesmume2015Core.swift */,
+				B377EBE02CB2B10500E9B750 /* CorePlist.swift */,
+				B377EBE12CB2B10500E9B750 /* CorePlist-Generated.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -2243,6 +2268,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B377EBCB2CB29BE700E9B750 /* PVCoreBridgeRetro.framework */,
+				B30E98CF2C6EF03500C1431E /* OpenGL.framework */,
 				B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */,
 				B364D4B62870E7D300B93A4B /* PVLibRetro.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
@@ -2267,6 +2294,7 @@
 				B3447EB5218BCE2000557ACE /* Core */,
 				B3447EA8218BC51300557ACE /* Audio */,
 				B3447EA0218B881000557ACE /* PVDesmume2015.mm */,
+				B30E99C52C6F022900C1431E /* PVDesmume2015Core-Bridge.h */,
 			);
 			path = PVDesmume2015Core;
 			sourceTree = "<group>";
@@ -2281,6 +2309,7 @@
 				B3C7621520783162009950E4 /* PVDesmume2015.h in Headers */,
 				B3C76225207833DE009950E4 /* PVDesmume2015Core.h in Headers */,
 				B3447E9C218B826F00557ACE /* PVDesmume2015+Audio.h in Headers */,
+				B30E99C62C6F022900C1431E /* PVDesmume2015Core-Bridge.h in Headers */,
 				B3447EB3218BC69700557ACE /* PVDesmume2015Core+Audio.h in Headers */,
 				B3447EAB218BC59D00557ACE /* PVDesmume2015Core+Saves.h in Headers */,
 				B3447EA3218BBFBC00557ACE /* PVDesmume2015+AudioTypes.h in Headers */,
@@ -2327,6 +2356,12 @@
 			name = PVDesmume2015;
 			packageProductDependencies = (
 				B3AFCF912977A7B100A01010 /* PVLogging */,
+				B30E98CD2C6EF02200C1431E /* PVSupport */,
+				B30E99FA2C6F05C900C1431E /* PVCoreBridge */,
+				B377EBD22CB29F7F00E9B750 /* PVEmulatorCore */,
+				B377EBD52CB29FEF00E9B750 /* PVCoreObjCBridge */,
+				B377EBD82CB2A04100E9B750 /* PVSettings */,
+				B377EBDB2CB2A09E00E9B750 /* PVPlists */,
 			);
 			productName = PVDesmume2015;
 			productReference = B3C7621020783162009950E4 /* PVDesmume2015.framework */;
@@ -2349,11 +2384,12 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1610;
 					};
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVDesmume2015" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -2361,6 +2397,15 @@
 				Base,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E98CC2C6EF02200C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E99F92C6F05C900C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B377EBD12CB29F7F00E9B750 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B377EBD42CB29FEF00E9B750 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B377EBD72CB2A04100E9B750 /* XCLocalSwiftPackageReference "../../PVSettings" */,
+				B377EBDA2CB2A09E00E9B750 /* XCLocalSwiftPackageReference "../../PVPlists" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2485,6 +2530,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B338055D287582CE0009C732 /* PVDesmume2015Core+Audio.m in Sources */,
+				B30E99C42C6F00C600C1431E /* PVDesmume2015Core.swift in Sources */,
+				B377EBE22CB2B10500E9B750 /* CorePlist-Generated.swift in Sources */,
+				B377EBE32CB2B10500E9B750 /* CorePlist.swift in Sources */,
 				B338055B28757C3A0009C732 /* PVDesmume2015Core+Controls.mm in Sources */,
 				B338055F287583AD0009C732 /* PVDesmume2015Core+Video.m in Sources */,
 				B3C76226207833DE009950E4 /* PVDesmume2015Core.mm in Sources */,
@@ -2635,8 +2683,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -2648,7 +2697,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = PVDesmume2015/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2668,9 +2717,11 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Archive;
 		};
@@ -2859,8 +2910,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -2872,7 +2924,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = PVDesmume2015/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2892,9 +2944,12 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -2902,8 +2957,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -2915,7 +2971,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = PVDesmume2015/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2935,9 +2991,11 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -2976,7 +3034,58 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98CC2C6EF02200C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E99F92C6F05C900C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B377EBD12CB29F7F00E9B750 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B377EBD42CB29FEF00E9B750 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B377EBD72CB2A04100E9B750 /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+		B377EBDA2CB2A09E00E9B750 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E98CD2C6EF02200C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E99FA2C6F05C900C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B377EBD22CB29F7F00E9B750 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B377EBD52CB29FEF00E9B750 /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B377EBD82CB2A04100E9B750 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B377EBDB2CB2A09E00E9B750 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
 		B3AFCF912977A7B100A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

@@ -8,7 +8,8 @@
 
 #import <PVDesmume2015/PVDesmume2015.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
@@ -51,7 +52,7 @@ typedef unsigned int   u32;
 //u32 vks[4];
 //s8 joyx[4], joyy[4];
 
-@implementation PVDesmume2015Core (Controls)
+@implementation PVDesmume2015CoreBridge (Controls)
 
 - (void)initControllBuffers {
 //    memset(&kcode, 0xFFFF, sizeof(kcode));

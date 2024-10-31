@@ -20,7 +20,7 @@
 #import <GLKit/GLKit.h>
 #endif
 
-@implementation PVFlycastCore (Video)
+@implementation PVFlycastCoreBridge (Video)
 
 # pragma mark - Methods
 

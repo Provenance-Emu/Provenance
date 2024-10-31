@@ -6,34 +6,88 @@
         "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
         "state": {
           "branch": null,
-          "revision": "1120c26835925f8314d035127c580bc71689c620",
-          "version": "5.0.4"
+          "revision": "ab54f758243f282d290b33027e8aac910d3d859a",
+          "version": "5.0.5"
         }
       },
       {
-        "package": "CocoaLumberjack",
-        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
+        "package": "BitByteData",
+        "repositoryURL": "https://github.com/tsolomko/BitByteData",
         "state": {
           "branch": null,
-          "revision": "4b8714a7fb84d42393314ce897127b3939885ec3",
-          "version": "3.8.5"
+          "revision": "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
+          "version": "2.0.4"
         }
       },
       {
-        "package": "KeychainAccess",
-        "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess.git",
+        "package": "BuildEnvironment",
+        "repositoryURL": "https://github.com/DimaRU/BuildEnvironment.git",
         "state": {
           "branch": null,
-          "revision": "84e546727d66f1adc5439debad16270d0fdd04e7",
-          "version": "4.2.2"
+          "revision": "5f7dc4a7f9bde8414764b8a342b091b2e987e674",
+          "version": "1.0.0"
         }
       },
       {
-        "package": "NSLogger",
-        "repositoryURL": "https://github.com/fpillet/NSLogger",
+        "package": "Checksum",
+        "repositoryURL": "https://github.com/JoeMatt/Checksum.git",
+        "state": {
+          "branch": null,
+          "revision": "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+          "version": "1.1.1"
+        }
+      },
+      {
+        "package": "Defaults",
+        "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
+        "state": {
+          "branch": "main",
+          "revision": "a89f799930c92a85aa04b72131849d46c0833ab3",
+          "version": null
+        }
+      },
+      {
+        "package": "FreemiumKit",
+        "repositoryURL": "https://github.com/FlineDev/FreemiumKit.git",
+        "state": {
+          "branch": null,
+          "revision": "034f0a9c67eb24be90ec4334369dc23d44245f35",
+          "version": "1.11.0"
+        }
+      },
+      {
+        "package": "HexColors",
+        "repositoryURL": "https://github.com/JoeMatt/HexColors.git",
+        "state": {
+          "branch": "main",
+          "revision": "96bcc8d806e58cf31ee32d419cabccd827ce6550",
+          "version": null
+        }
+      },
+      {
+        "package": "Lighter",
+        "repositoryURL": "https://github.com/JoeMatt/Lighter.git",
+        "state": {
+          "branch": "develop",
+          "revision": "b1c78989db429349427cd90b9b99925ff3253853",
+          "version": null
+        }
+      },
+      {
+        "package": "MBProgressHUD",
+        "repositoryURL": "https://github.com/jdg/MBProgressHUD.git",
+        "state": {
+          "branch": null,
+          "revision": "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
+          "version": "1.2.0"
+        }
+      },
+      {
+        "package": "PackageBuildInfo",
+        "repositoryURL": "https://github.com/JoeMatt/PackageBuildInfo",
         "state": {
           "branch": "master",
-          "revision": "640681c81ed021136aeacf71a4dee1e90940e5b5",
+          "revision": "d9c2c27e799b00dedf0620e5d6268968bcf5320e",
           "version": null
         }
       },
@@ -47,11 +101,20 @@
         }
       },
       {
+        "package": "PLzmaSDK",
+        "repositoryURL": "https://github.com/OlehKulykov/PLzmaSDK.git",
+        "state": {
+          "branch": "1.2.5",
+          "revision": "ee2666a06aa1f6632d5060d1cf316520ed8aecbd",
+          "version": null
+        }
+      },
+      {
         "package": "Reachability",
         "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
         "state": {
           "branch": "master",
-          "revision": "57da4b1270cab7c2228919eabc0e4e1bf93e48ea",
+          "revision": "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
           "version": null
         }
       },
@@ -60,8 +123,8 @@
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "4d815c6e6883bfdcb67cf755d0f0f29a4b399ea7",
-          "version": "14.5.2"
+          "revision": "85eeca41654cc9070ad81a21a4b1d153ad467c33",
+          "version": "14.13.1"
         }
       },
       {
@@ -69,8 +132,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "a4d731076e6a52f4366d844c78369ac7c9c6b1c0",
-          "version": "10.49.2"
+          "revision": "5553cfd1c789efdb3d6daf7f0cc0733cfe601846",
+          "version": "10.54.1"
         }
       },
       {
@@ -87,8 +150,8 @@
         "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
         "state": {
           "branch": null,
-          "revision": "fafdc8209b64a2d5ba22437a86532872bdb1efe3",
-          "version": "5.0.6"
+          "revision": "267cc8b587a5d5c74b57105050f9838cf20e2541",
+          "version": "5.1.0"
         }
       },
       {
@@ -96,8 +159,26 @@
         "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
         "state": {
           "branch": null,
-          "revision": "5949cbd3d4f3f97968bb40b6cd232f8315c6341c",
-          "version": "6.7.0"
+          "revision": "c7c7d2cf50a3211fe2843f76869c698e4e417930",
+          "version": "6.8.0"
+        }
+      },
+      {
+        "package": "SideKit",
+        "repositoryURL": "https://github.com/SideStore/SideKit.git",
+        "state": {
+          "branch": "main",
+          "revision": "ab959a54fc2217464ffabd09322ec3351e3ca456",
+          "version": null
+        }
+      },
+      {
+        "package": "SiriusRating",
+        "repositoryURL": "https://github.com/theappcapital/SiriusRating-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
+          "version": "1.0.8"
         }
       },
       {
@@ -119,12 +200,66 @@
         }
       },
       {
-        "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log",
+        "package": "SWCompression",
+        "repositoryURL": "https://github.com/JoeMatt/SWCompression.git",
+        "state": {
+          "branch": "develop",
+          "revision": "6ab39d1a3d9db303947ea5408925c48b9367204f",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-async-algorithms",
+        "repositoryURL": "https://github.com/apple/swift-async-algorithms",
         "state": {
           "branch": null,
-          "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
-          "version": "1.5.4"
+          "revision": "5c8bd186f48c16af0775972700626f0b74588278",
+          "version": "1.0.2"
+        }
+      },
+      {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections.git",
+        "state": {
+          "branch": null,
+          "revision": "671108c96644956dddcd89dd59c203dcdb36cec7",
+          "version": "1.1.4"
+        }
+      },
+      {
+        "package": "swift-perception",
+        "repositoryURL": "https://github.com/pointfreeco/swift-perception.git",
+        "state": {
+          "branch": "main",
+          "revision": "7335e4aab6136e42adeb7545a10570e543336d11",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-syntax",
+        "repositoryURL": "https://github.com/swiftlang/swift-syntax.git",
+        "state": {
+          "branch": null,
+          "revision": "0687f71944021d616d34d922343dcef086855920",
+          "version": "600.0.1"
+        }
+      },
+      {
+        "package": "SwiftGenPlugin",
+        "repositoryURL": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
+        "state": {
+          "branch": "develop",
+          "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
+          "version": null
+        }
+      },
+      {
+        "package": "SwiftMacros",
+        "repositoryURL": "https://github.com/JoeMatt/SwiftMacros.git",
+        "state": {
+          "branch": "main",
+          "revision": "cb30be65a3f121d756c98d442194c41eb24e9f09",
+          "version": null
         }
       },
       {
@@ -137,12 +272,48 @@
         }
       },
       {
-        "package": "ZipArchive",
-        "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
+        "package": "Turbo-Base64.swift",
+        "repositoryURL": "https://github.com/JoeMatt/Turbo-Base64.swift.git",
+        "state": {
+          "branch": "master",
+          "revision": "8195ad501aa970e7b9cbe26bc6800f4e3e6e192a",
+          "version": null
+        }
+      },
+      {
+        "package": "Unrar",
+        "repositoryURL": "https://github.com/mtgto/Unrar.swift.git",
         "state": {
           "branch": null,
-          "revision": "79d4dc9729096c6ad83dd3cee2b9f354d1b4ab7b",
-          "version": "2.5.5"
+          "revision": "510d61c954f27b196bef732b06125e29a619ebe6",
+          "version": "0.3.16"
+        }
+      },
+      {
+        "package": "xctest-dynamic-overlay",
+        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
+        "state": {
+          "branch": null,
+          "revision": "770f990d3e4eececb57ac04a6076e22f8c97daeb",
+          "version": "1.4.2"
+        }
+      },
+      {
+        "package": "ZipArchive",
+        "repositoryURL": "https://github.com/ZipArchive/ZipArchive.git",
+        "state": {
+          "branch": "master",
+          "revision": "4b4cccf56923c554f08c1554b1480821706c2000",
+          "version": null
+        }
+      },
+      {
+        "package": "zstd",
+        "repositoryURL": "https://github.com/facebook/zstd",
+        "state": {
+          "branch": "dev",
+          "revision": "7fb5347e88f10472226c9aa1962a148e55d8c480",
+          "version": null
         }
       }
     ]

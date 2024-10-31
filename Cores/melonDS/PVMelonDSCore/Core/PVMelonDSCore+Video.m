@@ -22,7 +22,7 @@
 #import <UIKit/UIKit.h>
 #endif
 
-@implementation PVMelonDSCore (Video)
+@implementation PVMelonDSCoreBridge (Video)
 
 # pragma mark - Methods
 
@@ -56,9 +56,9 @@
 //    return CGRectMake(0, 0, self.videoWidth, self.videoHeight);
 //}
 //
-- (CGSize)aspectSize {
-    return CGSizeMake(256, 192);
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(256, 192);
+//}
 //
 //- (BOOL)rendersToOpenGL {
 //    return YES;
@@ -96,7 +96,7 @@
 
 - (GLenum)internalPixelFormat {
     // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
-#if !TARGET_OS_MAC && !TARGET_OS_MACCATALYST
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
         return GL_RGB565;
 #else
          return GL_UNSIGNED_SHORT_5_6_5;

@@ -10,21 +10,24 @@
 #import "PVPPSSPPCore+Video.h"
 #import <PVPPSSPP/PVPPSSPP-Swift.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVLogging/PVLogging.h>
+@import PVSupport;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVLoggingObjC;
 
 /* PPSSPP Includes */
-#import <dlfcn.h>
-#import <pthread.h>
-#import <signal.h>
-#import <string>
-#import <stdio.h>
-#import <stdlib.h>
-#import <sys/syscall.h>
-#import <sys/types.h>
-#import <sys/sysctl.h>
-#import <mach/mach.h>
-#import <mach/machine.h>
+//#import <dlfcn.h>
+//#import <pthread.h>
+//#import <signal.h>
+//#import <string>
+//#import <stdio.h>
+//#import <stdlib.h>
+//#import <sys/syscall.h>
+//#import <sys/types.h>
+//#import <sys/sysctl.h>
+//#import <mach/mach.h>
+//#import <mach/machine.h>
 
 #include "Common/MemoryUtil.h"
 #include "Common/Profiler/Profiler.h"
@@ -41,7 +44,7 @@
 #include "Common/Thread/ThreadManager.h"
 #include "Common/File/VFS/VFS.h"
 #include "Common/Data/Text/I18n.h"
-#include "Common/StringUtils.h""
+#include "Common/StringUtils.h"
 #include "Common/System/Display.h"
 #include "Common/System/NativeApp.h"
 #include "Common/System/System.h"
@@ -59,7 +62,7 @@
 #include "Common/GraphicsContext.h"
 
 #include "GPU/GPUState.h"
-#include "GPU/GPUInterface.h""
+#include "GPU/GPUInterface.h"
 
 #include "Core/Config.h"
 #include "Core/ConfigValues.h"

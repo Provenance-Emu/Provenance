@@ -1,0 +1,5 @@
+SCC = This is a Source Code Control file
+
+[ProSystem.dsp]
+SCC_Aux_Path = "C:\Program Files\Microsoft Visual Studio\VSS"
+SCC_Project_Name = "$/ProSystem", UPAAAAAA

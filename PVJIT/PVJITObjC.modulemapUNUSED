@@ -1,0 +1,12 @@
+framework module PVJITObjC {
+    umbrella header "PVJIT-Swift.h"
+    umbrella header "PVJITObjC.h"
+
+    export *
+    module * { export * }
+//    explicit module PVLoggingObjC {
+//        requires objc
+//        header "PVLoggingObjC.h"
+//        export *
+//    }
+}

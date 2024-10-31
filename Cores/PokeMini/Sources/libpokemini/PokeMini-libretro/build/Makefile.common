@@ -1,0 +1,67 @@
+LIBRETRO_COMM_DIR = $(CORE_DIR)/libretro/libretro-common
+INCFLAGS   := -I$(CORE_DIR)/libretro -I$(LIBRETRO_COMM_DIR)/include -I$(CORE_DIR)/source -I$(CORE_DIR)/resource -I$(CORE_DIR)/freebios
+COREDEFINES = -D__LIBRETRO__
+
+ifneq (,$(findstring msvc200,$(platform)))
+INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
+endif
+
+ifneq (,$(findstring msvc,$(platform)))
+COREDEFINES += -DINLINE=_inline
+else
+COREDEFINES += -DINLINE=inline
+endif
+
+SOURCES_C := $(CORE_DIR)/freebios/freebios.c \
+	$(CORE_DIR)/source/CommandLine.c \
+	$(CORE_DIR)/source/Hardware.c \
+	$(CORE_DIR)/source/Joystick.c \
+	$(CORE_DIR)/source/Keyboard.c \
+	$(CORE_DIR)/source/MinxAudio.c \
+	$(CORE_DIR)/source/MinxColorPRC.c \
+	$(CORE_DIR)/source/MinxCPU_CE.c \
+	$(CORE_DIR)/source/MinxCPU_CF.c \
+	$(CORE_DIR)/source/MinxCPU_SP.c \
+	$(CORE_DIR)/source/MinxCPU_XX.c \
+	$(CORE_DIR)/source/MinxCPU.c \
+	$(CORE_DIR)/source/MinxIO.c \
+	$(CORE_DIR)/source/MinxIRQ.c \
+	$(CORE_DIR)/source/MinxLCD.c \
+	$(CORE_DIR)/source/MinxPRC.c \
+	$(CORE_DIR)/source/MinxTimers.c \
+	$(CORE_DIR)/source/Missing.c \
+	$(CORE_DIR)/source/Multicart.c \
+	$(CORE_DIR)/source/PMCommon.c \
+	$(CORE_DIR)/source/PokeMini.c \
+	$(CORE_DIR)/source/UI.c \
+	$(CORE_DIR)/source/Video_x1.c \
+	$(CORE_DIR)/source/Video_x2.c \
+	$(CORE_DIR)/source/Video_x3.c \
+	$(CORE_DIR)/source/Video_x4.c \
+	$(CORE_DIR)/source/Video_x5.c \
+	$(CORE_DIR)/source/Video_x6.c \
+	$(CORE_DIR)/source/Video.c \
+	$(CORE_DIR)/resource/PokeMini_BG2.c \
+	$(CORE_DIR)/resource/PokeMini_BG3.c \
+	$(CORE_DIR)/resource/PokeMini_BG4.c \
+	$(CORE_DIR)/resource/PokeMini_BG5.c \
+	$(CORE_DIR)/resource/PokeMini_BG6.c \
+	$(CORE_DIR)/resource/PokeMini_ColorPal.c \
+	$(CORE_DIR)/resource/PokeMini_Font12.c \
+	$(CORE_DIR)/resource/PokeMini_Icons12.c \
+	$(CORE_DIR)/libretro/libretro.c
+
+ifneq ($(STATIC_LINKING),1)
+SOURCES_C += $(LIBRETRO_COMM_DIR)/file/retro_dirent.c \
+				 $(LIBRETRO_COMM_DIR)/file/file_path.c \
+				 $(LIBRETRO_COMM_DIR)/compat/compat_posix_string.c \
+				 $(LIBRETRO_COMM_DIR)/compat/compat_strl.c \
+				 $(LIBRETRO_COMM_DIR)/compat/compat_strcasestr.c \
+				 $(LIBRETRO_COMM_DIR)/compat/compat_snprintf.c \
+				 $(LIBRETRO_COMM_DIR)/compat/fopen_utf8.c \
+				 $(LIBRETRO_COMM_DIR)/string/stdstring.c \
+				 $(LIBRETRO_COMM_DIR)/encodings/encoding_utf.c
+endif
+
+#i know this is hacky but am not currently intresed in rewriting all the makefiles
+INCFLAGS += -DNO_ZIP

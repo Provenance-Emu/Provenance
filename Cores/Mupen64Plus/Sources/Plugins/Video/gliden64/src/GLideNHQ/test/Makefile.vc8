@@ -1,0 +1,68 @@
+# This MUST be processed by GNU make
+#
+# Texture Filtering Test MSVC Makefile
+# Version:  1.0
+#
+# Copyright (C) 2007  Hiroshi Morii   All Rights Reserved.
+# Email koolsmoky(at)users.sourceforge.net
+# Web   http://www.3dfxzone.it/koolsmoky
+#
+# this is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# this is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GNU Make; see the file COPYING.  If not, write to
+# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+
+#
+#  Available options:
+#
+#    Targets:
+#	all:		build everything
+#	clean:		remove object files
+#       realclean:      remove all generated files
+#
+
+.PHONY: all clean realclean
+.SUFFIXES: .cpp .obj
+
+CC = cl
+LD = _link # change this to suite your build environment
+
+UNLINK = $(RM) $(1)
+
+CFLAGS += -D__MSC__ -DWIN32 -D_CONSOLE -EHa -D_CRT_SECURE_NO_DEPRECATE
+CFLAGS += -I. -I../
+CFLAGS += -DGHQCHK=1
+
+#LDFLAGS += -ltcg:STATUS
+
+SOURCES = \
+	test.cpp \
+	../Ext_TxFilter.cpp
+
+OBJECTS = $(SOURCES:.cpp=.obj)
+
+.cpp.obj:
+	$(CC) -Fo$@ $(CFLAGS) -c $<
+
+all: test.exe
+
+test.exe: $(OBJECTS)
+	$(LD) -out:$@ $(LDFLAGS) $(OBJECTS)
+
+$(OBJECTS): $(SOURCES)
+
+clean:
+	-$(RM) *.obj *.pdb *.ilk
+
+realclean: clean
+	-$(RM) test.exe

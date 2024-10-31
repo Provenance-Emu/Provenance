@@ -1,0 +1,19 @@
+{
+  "images" : [
+    {
+      "filename" : "prov_snes_icon.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "prov_snes_icon-1.pdf",
+      "idiom" : "iphone"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

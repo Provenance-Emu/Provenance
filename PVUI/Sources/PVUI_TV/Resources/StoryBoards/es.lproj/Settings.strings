@@ -1,0 +1,21 @@
+
+/* Class = "UITabBarItem"; title = "Settings"; ObjectID = "CO1-nQ-39N"; */
+"CO1-nQ-39N.title" = "Settings";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "I9Q-S7-0ni"; */
+"I9Q-S7-0ni.text" = "Title";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "JNb-CJ-NyQ"; */
+"JNb-CJ-NyQ.text" = "Title";
+
+/* Class = "UITextView"; text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."; ObjectID = "Rk3-2C-Fod"; */
+"Rk3-2C-Fod.text" = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "YKo-bn-DWL"; */
+"YKo-bn-DWL.text" = "Title";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "nQR-Qa-dFK"; */
+"nQR-Qa-dFK.text" = "Detail";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "oFm-Az-31h"; */
+"oFm-Az-31h.text" = "Detail";

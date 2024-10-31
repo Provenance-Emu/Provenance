@@ -1,0 +1,40 @@
+path: subdir/
+compress_method: -lhd-
+compressed_length: 0
+length: 0
+header_level: 2
+os_type: 85 ('U')
+crc: 0000
+timestamp: 1335295879
+unix_perms: 040700
+unix_uid: 1000
+unix_gid: 1000
+common_crc: 574c
+--
+path: subdir/subdir2/
+compress_method: -lhd-
+compressed_length: 0
+length: 0
+header_level: 2
+os_type: 85 ('U')
+crc: 0000
+timestamp: 1335295879
+unix_perms: 040555
+unix_uid: 1000
+unix_gid: 1000
+common_crc: 1adc
+--
+path: subdir/subdir2/
+filename: hello.txt
+compress_method: -lh0-
+compressed_length: 12
+length: 12
+header_level: 2
+os_type: 85 ('U')
+crc: 9778
+timestamp: 1262304000
+unix_perms: 0100644
+unix_uid: 1000
+unix_gid: 1000
+common_crc: d40f
+--

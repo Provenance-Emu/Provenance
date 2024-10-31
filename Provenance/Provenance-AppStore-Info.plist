@@ -4,6 +4,8 @@
 <dict>
 	<key>ALTDeviceID</key>
 	<string></string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>APP_GROUP_IDENTIFIER</key>
 	<string>$(APP_GROUP_IDENTIFIER)</string>
 	<key>CFBundleAllowMixedLocalizations</key>
@@ -15,12 +17,12 @@
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFiles</key>
 			<array/>
 			<key>CFBundleTypeName</key>
 			<string>ROM</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 			<key>LSHandlerRank</key>
 			<string>Default</string>
 			<key>LSItemContentTypes</key>
@@ -29,12 +31,12 @@
 			</array>
 		</dict>
 		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
 			<key>CFBundleTypeIconFiles</key>
 			<array/>
 			<key>CFBundleTypeName</key>
 			<string>Save State</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>LSHandlerRank</key>
 			<string>Owner</string>
 			<key>LSItemContentTypes</key>
@@ -43,12 +45,12 @@
 			</array>
 		</dict>
 		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>None</string>
 			<key>CFBundleTypeIconFiles</key>
 			<array/>
 			<key>CFBundleTypeName</key>
 			<string>Artwork</string>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
 			<key>LSHandlerRank</key>
 			<string>None</string>
 			<key>LSItemContentTypes</key>
@@ -97,7 +99,7 @@
 	<key>CFBundleIcons~ipad</key>
 	<dict/>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>$(ORG_PREFIX).$(PROJECT_NAME:lower)</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>Spanish</string>
@@ -253,6 +255,10 @@
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
+	<key>NSServices</key>
+	<array>
+		<dict/>
+	</array>
 	<key>NSSupportsPurgeableLocalStorage</key>
 	<true/>
 	<key>NSUbiquitousContainers</key>
@@ -262,7 +268,7 @@
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>
-			<string>Provenance</string>
+			<string>provenance</string>
 			<key>NSUbiquitousContainerSupportedFolderLevels</key>
 			<string>Any</string>
 		</dict>
@@ -272,6 +278,8 @@
 		<string>org.provenance-emu.game.play</string>
 		<string>org.provenance-emu.webserver</string>
 	</array>
+	<key>PVAppType</key>
+	<string>standard.appstore</string>
 	<key>Revision</key>
 	<string>78dc628</string>
 	<key>TVTopShelflmage</key>
@@ -285,6 +293,7 @@
 		<string>bluetooth-central</string>
 		<string>fetch</string>
 		<string>location</string>
+		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
@@ -295,6 +304,8 @@
 		<key>UIImageName</key>
 		<string>LaunchImage.png</string>
 	</dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen.storyboard</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -401,15 +412,14 @@
 					<string>32x</string>
 					<string>32X</string>
 					<string>min</string>
-					<string>7z</string>
 					<string>cdi</string>
 					<string>gdi</string>
 					<string>bios</string>
 					<string>z80</string>
 					<string>tzx</string>
-					<string>rar</string>
 					<string>chd</string>
 					<string>rvz</string>
+					<string>j64</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>
@@ -420,6 +430,8 @@
 			<string>ROM file</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
+			<key>UTTypeIcons</key>
+			<dict/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
 			<key>UTTypeTagSpecification</key>
@@ -462,17 +474,16 @@
 					<string>32x</string>
 					<string>32X</string>
 					<string>min</string>
-					<string>7z</string>
 					<string>cdi</string>
 					<string>gdi</string>
 					<string>bios</string>
 					<string>msx</string>
 					<string>col</string>
-					<string>rar</string>
 					<string>z80</string>
 					<string>tzx</string>
 					<string>chd</string>
 					<string>rvz</string>
+					<string>j64</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>
@@ -485,6 +496,7 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>jpeg</string>
 					<string>jpg</string>
 					<string>png</string>
 				</array>
@@ -494,11 +506,14 @@
 				<string>public.image</string>
 				<string>public.png</string>
 				<string>public.jpeg</string>
+				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>Artwork</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
+			<key>UTTypeIcons</key>
+			<dict/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.artwork</string>
 			<key>UTTypeTagSpecification</key>
@@ -507,6 +522,12 @@
 				<array>
 					<string>jpg</string>
 					<string>png</string>
+					<string>jpeg</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>image/jpeg</string>
+					<string>image/png</string>
 				</array>
 			</dict>
 		</dict>
@@ -537,6 +558,62 @@
 				<key>public.mime-type</key>
 				<array>
 					<string>com.provenance.savestate</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.archive</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>7zip</string>
+			<key>UTTypeIcons</key>
+			<dict>
+				<key>UTTypeIconText</key>
+				<string>7zip</string>
+			</dict>
+			<key>UTTypeIdentifier</key>
+			<string>org.7-zip.7-zip-archive</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>7z</string>
+					<string>7zip</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/x-7z-compressed</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.archive</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>RAR Archive</string>
+			<key>UTTypeIcons</key>
+			<dict>
+				<key>UTTypeIconText</key>
+				<string>RAR</string>
+			</dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.rarlab.rar-archive</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>rar</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/x-rar</string>
+					<string>application/x-rar-compressed</string>
 				</array>
 			</dict>
 		</dict>

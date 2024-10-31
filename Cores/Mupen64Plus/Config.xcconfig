@@ -26,7 +26,7 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(inherited) 3DMathNeon.cpp gSPNeon.cp
 
 // iPhone
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
-OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -DOS_IOS -mfpu=neon -D__VEC4_OPT -D__NEON_OPT
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -DOS_IOS -D__VEC4_OPT -D__NEON_OPT
 
 // Simulator
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
@@ -34,7 +34,7 @@ OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited) -DOS_IOS
 
 // tvOS Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
-OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DOS_IOS -mfpu=neon  -D__VEC4_OPT -D__NEON_OPT
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DOS_IOS -D__VEC4_OPT -D__NEON_OPT
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*] = $(inherited) 3DMath.cpp  RSP_LoadMatrix.cpp CRC_OPT.cpp
 // gSPNeon.cpp
 
@@ -43,3 +43,4 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) OS_IOS GLESX 
 OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited) -DOS_IOS 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
 INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c
+

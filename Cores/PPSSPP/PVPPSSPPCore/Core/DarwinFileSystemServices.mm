@@ -93,8 +93,13 @@ Path DarwinFileSystemServices::appropriateMemoryStickDirectoryToUse() {
 
 Path DarwinFileSystemServices::__defaultMemoryStickPath() {
 #if PPSSPP_PLATFORM(IOS)
-    NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)
-                               objectAtIndex:0];
+    #if TARGET_OS_TV
+        NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)
+                                   objectAtIndex:0];
+    #else
+        NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)
+                                   objectAtIndex:0];
+    #endif
     return Path(documentsPath.UTF8String);
 #elif PPSSPP_PLATFORM(MAC)
     return g_Config.defaultCurrentDirectory / ".config/ppsspp";

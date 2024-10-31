@@ -1,0 +1,12 @@
+<?xml  version="1.0" encoding="UTF-8" standalone="no"?>
+<xmi:XMI xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmi:version="2.0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:layout="http://scade.com/sdk/layout" xmlns:navigation="http://scade.com/lattice/navigation" xmlns:widgets="http://scade.com/sdk/view/widgets" xmi:id="0.6">
+  <widgets:Page name="main">
+    <backgroundColor Red="248" Green="248" Blue="248"/>
+    <layout xsi:type="layout:AutoLayout"/>
+    <maxArea width="430" height="932"/>
+    <minArea width="430" height="932"/>
+    <location/>
+    <size width="430" height="932"/>
+  </widgets:Page>
+  <navigation:Navigation page="/0"/>
+</xmi:XMI>

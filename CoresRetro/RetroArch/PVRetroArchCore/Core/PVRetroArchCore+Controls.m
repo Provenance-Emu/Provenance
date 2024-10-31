@@ -8,7 +8,6 @@
 
 #import <PVRetroArch/PVRetroArch.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
 #import "PVRetroArchCore.h"
 #import "PVRetroArchCore+Controls.h"
 #import "./cocoa_common.h"
@@ -308,6 +307,22 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
         {
             controller = _current.controller4;
         }
+        else if (_current.controller5 && player == 4)
+        {
+            controller = _current.controller5;
+        }
+        else if (_current.controller6 && player == 5)
+        {
+            controller = _current.controller6;
+        }
+        else if (_current.controller7 && player == 6)
+        {
+            controller = _current.controller7;
+        }
+        else if (_current.controller8 && player == 7)
+        {
+            controller = _current.controller8;
+        }
         if (controller) {
             apple_gamecontroller_joypad_connect(controller);
         }
@@ -601,7 +616,7 @@ static void apple_gamecontroller_joypad_poll(void)
 /* GCGamepad is deprecated */
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
-static void apple_gamecontroller_joypad_register(GCExtendedGamepad *gamepad)
+static void apple_gamecontroller_joypad_register(GCExtendedGamepad * _Nullable __strong gamepad)
 {
 #ifdef __IPHONE_14_0
 	/* Don't let tvOS or iOS do anything with **our** buttons!!
@@ -708,7 +723,7 @@ void apple_gamecontroller_joypad_connect(GCController *controller)
 		/* desired slot is unused, take it */
 		if (!mfi_controllers[desired_index])
 		{
-			controller.playerIndex = desired_index;
+			controller.playerIndex = (GCControllerPlayerIndex)desired_index;
 			mfi_controllers[desired_index] = (uint32_t)controller.hash;
 		}
 		else
@@ -722,7 +737,7 @@ void apple_gamecontroller_joypad_connect(GCController *controller)
 					continue;
 
 				mfi_controllers[i] = (uint32_t)controller.hash;
-				controller.playerIndex = i;
+				controller.playerIndex = (GCControllerPlayerIndex)i;
 				break;
 			}
 		}
@@ -749,7 +764,7 @@ void apple_gamecontroller_joypad_connect(GCController *controller)
 			  [mfiControllers addObject:nonGameController];
 		   }
 		   for (GCController *gc in mfiControllers)
-			  gc.playerIndex = newPlayerIndex++;
+			  gc.playerIndex = (GCControllerPlayerIndex)newPlayerIndex++;
 		}
         if (controller.extendedGamepad)
             apple_gamecontroller_joypad_register(controller.extendedGamepad);
@@ -785,7 +800,7 @@ void *apple_gamecontroller_joypad_init(void *data) {
     }
     if (!touch_controller) {
         touch_controller=[[GCController controllerWithExtendedGamepad] init];
-        touch_controller.playerIndex=0;
+        touch_controller.playerIndex=(GCControllerPlayerIndex)0;
         apple_gamecontroller_joypad_connect(touch_controller);
     }
     [_current refresh_gamecontrollers];
@@ -900,18 +915,22 @@ static const char *apple_gamecontroller_joypad_name(unsigned pad)
 }
 
 input_device_driver_t mfi_joypad = {
-	apple_gamecontroller_joypad_init,
-	apple_gamecontroller_joypad_query_pad,
-	apple_gamecontroller_joypad_destroy,
-	apple_gamecontroller_joypad_button,
-	apple_gamecontroller_joypad_state,
-	apple_gamecontroller_joypad_get_buttons,
-	apple_gamecontroller_joypad_axis,
-	apple_gamecontroller_joypad_poll,
-	NULL,
-	NULL,
-	apple_gamecontroller_joypad_name,
-	"mfi",
+	apple_gamecontroller_joypad_init,       // void *(*init)(void *data);
+	apple_gamecontroller_joypad_query_pad,  // bool (*query_pad)(unsigned);
+	apple_gamecontroller_joypad_destroy,    // void (*destroy)(void);
+	apple_gamecontroller_joypad_button,     // int32_t (*button)(unsigned, uint16_t);
+	apple_gamecontroller_joypad_state,      // int16_t (*state)(rarch_joypad_info_t *joypad_info,
+                                            //          const struct retro_keybind *binds, unsigned port);
+	apple_gamecontroller_joypad_get_buttons,// void (*get_buttons)(unsigned, input_bits_t *);
+	apple_gamecontroller_joypad_axis,       // int16_t (*axis)(unsigned, uint32_t);
+	apple_gamecontroller_joypad_poll,       // void (*poll)(void);
+	NULL,                                   // bool (*set_rumble)(unsigned, enum retro_rumble_effect, uint16_t);
+	NULL,                                   // bool (*set_rumble_gain)(unsigned, unsigned);
+    NULL,                                   // bool (*set_sensor_state)(void *data, unsigned port,
+                                            //       enum retro_sensor_action action, unsigned rate);
+    NULL,                                   // float (*get_sensor_input)(void *data, unsigned port, unsigned id);
+	apple_gamecontroller_joypad_name,       // const char *(*name)(unsigned);
+	"mfi",                                  // const char *ident;
 };
 
 @interface CocoaView (Utility)
@@ -920,7 +939,7 @@ input_device_driver_t mfi_joypad = {
 @implementation CocoaView (Utility)
 // A native swift wrapper around displaying notifications
 -(void) showRetroArchNotification:_:(NSString *)title _:(NSString *)message _:(enum message_queue_icon)icon _:(enum message_queue_category)category {
-	runloop_msg_queue_push([message UTF8String], 1, 100, true, [title UTF8String], icon, category);
+    runloop_msg_queue_push([message UTF8String], 1, 100, true, [title UTF8String], icon, category);
 }
 @end
 

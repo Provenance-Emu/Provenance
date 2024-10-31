@@ -1,0 +1,28 @@
+************
+**Old TODO**:
+************
+
+The following games are broken to some extent:
+
+Crystalis:		Mostly working, but the screen jumps around during
+			dialogue.  It apparently resets the MMC3 IRQ counter
+			mid-scanline.  It'll require low-level PPU and MMC3
+			IRQ counter emulation to function properly.
+
+Kickmaster:		IRQ occurs a few CPU cycles too late, interferes with NMI routine,
+			and causes the game to lock up after the second boss.  Luckily, there
+			are passwords, at least.
+			*"FIXED" BY HACK*
+
+Star Wars(PAL Beam Software version):
+			MMC3 IRQ occurs when it shouldn't, similar to the problem in
+			Kickmaster.
+			*"FIXED" BY HACK*
+
+*** Emulation:
+
+ Figure out what mapper 113 really is.
+
+ Sound frame count stuff on PAL games(is it correct?).
+ 
+ Fix Zapper emulation(one version of Chiller still doesn't always work correctly).

@@ -1,14 +1,16 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
 let package = Package(
     name: "PVAudio",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
-        .watchOS(.v7),
-        .macOS(.v11)
+        .iOS(.v15),
+        .tvOS(.v16),
+        .watchOS(.v9),
+        .macOS(.v11),
+        .macCatalyst(.v17),
+        .visionOS(.v1)
     ],
     products: [
         .library(
@@ -25,10 +27,7 @@ let package = Package(
     ],
 
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        .package(name: "PVLogging", path: "../PVLogging/"),
-        .package(name: "PVSupport", path: "../PVSupport/"),
-        .package(name: "PVObjCUtils", path: "../PVObjCUtils/")
+        .package(name: "PVLogging", path: "../PVLogging/")
     ],
 
     // MARK: - Targets
@@ -37,29 +36,67 @@ let package = Package(
         .target(
             name: "PVAudio",
             dependencies: [
-                .product(name: "PVSupport", package: "PVSupport"),
-                .product(name: "PVLogging", package: "PVLogging"),
-                .product(name: "PVObjCUtils", package: "PVObjCUtils")
+                "RingBuffer",
+                "PVRingBuffer",
+                "AppleRingBuffer",
+                "OERingBuffer",
+                "CARingBuffer",
+                .product(name: "PVLogging", package: "PVLogging")
             ],
-            publicHeadersPath: "include",
-            cSettings: [
-                .define("LIBRETRO", to: "1"),
-                .headerSearchPath("include"),
-                .headerSearchPath("../PVSupport/include"),
-                .headerSearchPath("../PVAudioObjC/include")
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "RingBuffer",
+            dependencies: [
+                .product(name: "PVLogging", package: "PVLogging")
             ],
-            swiftSettings: [
-                .define("LIBRETRO"),
-                .unsafeFlags([
-                    "-Xfrontend", "-enabled-cxx-interop"
-                ])
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "PVRingBuffer",
+            dependencies: [
+                "RingBuffer",
+                .product(name: "PVLogging", package: "PVLogging")
             ],
-            linkerSettings: [
-                .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS])),
-                .linkedFramework("CoreGraphics", .when(platforms: [.iOS, .tvOS])),
-                .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS])),
-                .linkedFramework("WatchKit", .when(platforms: [.watchOS]))
-            ])],
-    cLanguageStandard: .c11,
-    cxxLanguageStandard: .cxx17
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "AppleRingBuffer",
+            dependencies: [
+                "RingBuffer",
+                .product(name: "PVLogging", package: "PVLogging")
+            ],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "OERingBuffer",
+            dependencies: [
+                "RingBuffer",
+                .product(name: "PVLogging", package: "PVLogging")
+            ],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "CARingBuffer",
+            dependencies: [
+                "RingBuffer",
+                .product(name: "PVLogging", package: "PVLogging")
+            ],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+            
+        // MARK: - Tests
+        .testTarget(
+            name: "PVAudioTests",
+            dependencies: ["PVAudio", "OERingBuffer", "PVRingBuffer", "AppleRingBuffer"]
+        )
+    ],
+    swiftLanguageModes: [.v5, .v6],
+    cLanguageStandard: .gnu11,
+    cxxLanguageStandard: .gnucxx20
 )

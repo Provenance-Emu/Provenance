@@ -1,29 +1,26 @@
-[submodule "PVMupen64Plus/mupen64plus-video-gliden64"]
-	path = Cores/Mupen64Plus/Plugins/Video/gliden64
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/gliden64"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Video/gliden64
 	url = https://github.com/Provenance-Emu/GLideN64.git
-[submodule "PVMupen64Plus/Plugins/mupen64plus-core"]
-	path = Cores/Mupen64Plus/Plugins/Core
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Core/Core"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Core/Core
 	url = https://github.com/Provenance-Emu/mupen64plus-core.git
-[submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-hle"]
-	path = Cores/Mupen64Plus/Plugins/rsp/hle
+[submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/hle"]
+	path = Cores/Mupen64Plus/Sources/Plugins/rsp/hle
 	url = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
-[submodule "PVMupen64Plus/Plugins/mupen64plus-video-rice"]
-	path = Cores/Mupen64Plus/Plugins/Video/rice
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice
 	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
-[submodule "PVLibrary/LzmaSDKObjC"]
-	path = PVLibrary/LzmaSDKObjC
-	url = https://github.com/Provenance-Emu/LzmaSDKObjC.git
 [submodule "Cores/VirtualJaguar"]
 	path = Cores/VirtualJaguar
 	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
 [submodule "Cores/Reicast/reicast-emulator"]
 	path = Cores/Reicast/reicast-emulator
 	url = https://github.com/Provenance-Emu/reicast-emulator.git
-[submodule "Cores/PokeMini/PokeMini-libretro"]
-	path = Cores/PokeMini/PokeMini-libretro
+[submodule "Cores/PokeMini/Sources/libpokemini/PokeMini-libretro"]
+	path = Cores/PokeMini/Sources/libpokemini/PokeMini-libretro
 	url = https://github.com/libretro/PokeMini.git
-[submodule "Cores/TGBDual/tgbdual-emulator"]
-	path = Cores/TGBDual/tgbdual-emulator
+[submodule "Cores/TGBDual/Sources/libtgbdual/tgbdual-emulator"]
+	path = Cores/TGBDual/Sources/libtgbdual/tgbdual-emulator
 	url = https://github.com/libretro/tgbdual-libretro.git
 [submodule "Cores/Flycast/flycast"]
 	path = Cores/Flycast/flycast
@@ -49,17 +46,14 @@
 [submodule "Cores/4DO"]
 	path = Cores/4DO
 	url = https://github.com/Provenance-Emu/4DO-Core.git
-[submodule "Cores/mGBA/mGBA-Core"]
-	path = Cores/mGBA/mGBA-Core
-	url = https://github.com/Provenance-Emu/mGBA-Core.git
-[submodule "Cores/snesticle/SNESticle"]
-	path = Cores/snesticle/SNESticle
+[submodule "Cores/snesticle/Sources/libSNESticle/SNESticle"]
+	path = Cores/snesticle/Sources/libSNESticle/SNESticle
 	url = https://github.com/Provenance-Emu/SNESticle.git
 [submodule "Cores/sm64ex/sm64ex-ios"]
 	path = Cores/sm64ex/sm64ex-ios
 	url = https://github.com/Provenance-Emu/sm64ex-ios.git
-[submodule "Cores/ProSystem/ProSystem1_3"]
-	path = Cores/ProSystem/ProSystem1_3
+[submodule "Cores/ProSystem/Sources/libprosystem/ProSystem1_3"]
+	path = Cores/ProSystem/Sources/libprosystem/ProSystem1_3
 	url = https://github.com/Provenance-Emu/ProSystem1_3.git
 [submodule "Cores/FinalBurnNeo/FBNeo"]
 	path = Cores/FinalBurnNeo/FBNeo
@@ -109,11 +103,11 @@
 [submodule "Cores/GameMusicEmu/libretro-gme"]
 	path = Cores/GameMusicEmu/libretro-gme
 	url = https://github.com/Provenance-Emu/libretro-gme.git
-[submodule "Cores/VecX/libretro-vecx"]
-	path = Cores/VecX/libretro-vecx
+[submodule "Cores/VecX/Sources/libvecx/libretro-vecx"]
+	path = Cores/VecX/Sources/libvecx/libretro-vecx
 	url = https://github.com/Provenance-Emu/libretro-vecx.git
-[submodule "Cores/Stella/Stella/stella"]
-	path = Cores/Stella/Stella/stella
+[submodule "Cores/Stella/Sources/libstella/stella"]
+	path = Cores/Stella/Sources/libstella/stella
 	url = https://github.com/Provenance-Emu/stella.git
 [submodule "Cores/SameDuck/SameBoy"]
 	path = Cores/SameDuck/SameBoy
@@ -130,11 +124,11 @@
 [submodule "Cores/FreeIntv/FreeIntv"]
 	path = Cores/FreeIntv/FreeIntv
 	url = https://github.com/Provenance-Emu/FreeIntv.git
-[submodule "Cores/Genesis-Plus-GX/PVGenesis/Deps/Genesis-Plus-GX"]
-	path = Cores/Genesis-Plus-GX/PVGenesis/Deps/Genesis-Plus-GX
+[submodule "Cores/Genesis-Plus-GX/Sources/libgenesisplus/Genesis-Plus-GX"]
+	path = Cores/Genesis-Plus-GX/Sources/libgenesisplus/Genesis-Plus-GX
 	url = https://github.com/Provenance-Emu/Genesis-Plus-GX.git
-[submodule "Cores/Mupen64Plus/Plugins/rsp/cxd4"]
-	path = Cores/Mupen64Plus/Plugins/rsp/cxd4
+[submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4"]
+	path = Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4
 	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
 [submodule "Cores/TIC80/TIC-80"]
 	path = Cores/TIC80/TIC-80
@@ -160,6 +154,9 @@
 [submodule "Cores/snes9x/libretro-snes9x"]
 	path = Cores/snes9x/libretro-snes9x
 	url = https://github.com/libretro/snes9x.git
+[submodule "Cores/emuThree/emuthree"]
+        path = Cores/emuThree/emuthree
+        url = https://github.com/rf2222222/emuThreeDS.git
 [submodule "Cores/supergrafx/libretro-supergrafx"]
 	path = Cores/supergrafx/libretro-supergrafx
 	url = https://github.com/libretro/beetle-supergrafx-libretro.git
@@ -173,11 +170,20 @@
 	path = Cores/Play/Play-
 	url = https://github.com/jpd002/Play-.git
 [submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/UnrarKit"]
-	path = CoresRetro/RetroArch/PVRetroArchCore/Archive/UnrarKit
+	path = CoresRetro/RetroArch/UnrarKit
 	url = https://github.com/abbeycode/UnrarKit.git
-[submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/lhasa"]
-	path = CoresRetro/RetroArch/PVRetroArchCore/Archive/lhasa
+[submodule "CoresRetro/RetroArch/lhasa"]
+	path = CoresRetro/RetroArch/lhasa
 	url = https://github.com/fragglet/lhasa.git
-[submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/ZipArchive"]
-	path = CoresRetro/RetroArch/PVRetroArchCore/Archive/ZipArchive
+[submodule "Cores/emuThree/cmake/zstd"]
+	path = Cores/emuThree/cmake/zstd
+	url = https://github.com/facebook/zstd.git
+[submodule "Cores/JollyGoodEmulation"]
+	path = Cores/JollyGoodEmulation
+	url = https://JoeMatt@github.com/Provenance-Emu/JollyGoodEmulation.git
+[submodule "Cores/mGBA/Sources/libmGBA"]
+	path = Cores/mGBA/Sources/libmGBA
+	url = https://github.com/Provenance-Emu/mGBA-Core.git
+[submodule "CoresRetro/RetroArch/ZipArchive"]
+	path = CoresRetro/RetroArch/ZipArchive
 	url = https://github.com/ZipArchive/ZipArchive.git

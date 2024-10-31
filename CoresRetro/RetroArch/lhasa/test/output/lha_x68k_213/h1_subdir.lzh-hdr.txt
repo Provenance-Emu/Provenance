@@ -1,0 +1,31 @@
+path: subdir/
+compress_method: -lhd-
+compressed_length: 0
+length: 0
+header_level: 1
+os_type: 72 ('H')
+crc: 0000
+timestamp: 1333628778
+common_crc: c179
+--
+path: subdir/subdir2/
+compress_method: -lhd-
+compressed_length: 0
+length: 0
+header_level: 1
+os_type: 72 ('H')
+crc: 0000
+timestamp: 1333628782
+common_crc: 1816
+--
+path: subdir/subdir2/
+filename: HELLO.TXT
+compress_method: -lh0-
+compressed_length: 12
+length: 12
+header_level: 1
+os_type: 72 ('H')
+crc: 9778
+timestamp: 1333572270
+common_crc: fa03
+--

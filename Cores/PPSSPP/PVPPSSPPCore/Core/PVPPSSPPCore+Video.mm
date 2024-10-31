@@ -7,78 +7,107 @@
 //
 
 #import "PVPPSSPPCore+Video.h"
-#import "PVPPSSPPCore.h"
+//#import "PVPPSSPPCore.h"
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
 #import <AVFoundation/AVFoundation.h>
-#import "OGLGraphicsContext.h"
-#import "VulkanGraphicsContext.h"
 
-/* PSP Includes */
-#import <dlfcn.h>
-#import <pthread.h>
-#import <signal.h>
-#import <string>
-#import <stdio.h>
-#import <stdlib.h>
-#import <sys/syscall.h>
-#import <sys/types.h>
-#import <sys/sysctl.h>
-#import <mach/mach.h>
-#import <mach/machine.h>
+/* PPSSPP Includes */
+#ifdef __cplusplus
+    #include <vector>
+    #include <string>
+    #include <cstring>
+#endif
 
-#import <AudioToolbox/AudioToolbox.h>
-
-#include "Common/MemoryUtil.h"
-#include "Common/Profiler/Profiler.h"
-#include "Common/CPUDetect.h"
-#include "Common/Log.h"
-#include "Common/LogManager.h"
-#include "Common/TimeUtil.h"
-#include "Common/File/FileUtil.h"
-#include "Common/Serialize/Serializer.h"
-#include "Common/ConsoleListener.h"
-#include "Common/Input/InputState.h"
-#include "Common/Input/KeyCodes.h"
-#include "Common/Thread/ThreadUtil.h"
-#include "Common/Thread/ThreadManager.h"
-#include "Common/File/VFS/VFS.h"
-#include "Common/Data/Text/I18n.h"
-#include "Common/StringUtils.h"
 #include "Common/System/Display.h"
 #include "Common/System/NativeApp.h"
 #include "Common/System/System.h"
-#include "Common/GraphicsContext.h"
-#include "Common/Net/Resolve.h"
-#include "Common/UI/Screen.h"
+#include "Common/GPU/Vulkan/VulkanContext.h"
+#include "Common/GPU/Vulkan/VulkanDebug.h"
+#include "Common/GPU/Vulkan/VulkanLoader.h"
+#ifdef __cplusplus
+    #include "Common/GPU/Vulkan/VulkanRenderManager.h"
+#endif
 #include "Common/GPU/thin3d.h"
 #include "Common/GPU/thin3d_create.h"
-#include "Common/GPU/OpenGL/GLRenderManager.h"
-#include "Common/GPU/OpenGL/GLFeatures.h"
-#include "Common/System/NativeApp.h"
-#include "Common/File/VFS/VFS.h"
+#include "Common/Data/Text/Parsers.h"
+#include "Common/VR/PPSSPPVR.h"
 #include "Common/Log.h"
-#include "Common/TimeUtil.h"
-#include "Common/GraphicsContext.h"
-
-#include "GPU/GPUState.h"
-#include "GPU/GPUInterface.h"
-
 #include "Core/Config.h"
 #include "Core/ConfigValues.h"
-#include "Core/Core.h"
-#include "Core/CoreParameter.h"
-#include "Core/HLE/sceCtrl.h"
-#include "Core/HLE/sceUtility.h"
-#include "Core/HW/MemoryStick.h"
-#include "Core/MemMap.h"
 #include "Core/System.h"
-#include "Core/CoreTiming.h"
-#include "Core/HW/Display.h"
-#include "Core/CwCheat.h"
-#include "Core/ELF/ParamSFO.h"
-#include "Core/SaveState.h"
+#if !PPSSPP_PLATFORM(WINDOWS) && !PPSSPP_PLATFORM(SWITCH)
+    #include <dlfcn.h>
+#endif
+
+#include "OGLGraphicsContext.h"
+#include "VulkanGraphicsContext.h"
+
+/* PSP Includes */
+//#import <dlfcn.h>
+//#import <pthread.h>
+//#import <signal.h>
+//#import <string>
+//#import <stdio.h>
+//#import <stdlib.h>
+//#import <sys/syscall.h>
+//#import <sys/types.h>
+//#import <sys/sysctl.h>
+//#import <mach/mach.h>
+//#import <mach/machine.h>
+
+#import <AudioToolbox/AudioToolbox.h>
+
+//#include "Common/MemoryUtil.h"
+//#include "Common/Profiler/Profiler.h"
+//#include "Common/CPUDetect.h"
+//#include "Common/Log.h"
+//#include "Common/LogManager.h"
+//#include "Common/TimeUtil.h"
+//#include "Common/File/FileUtil.h"
+//#include "Common/Serialize/Serializer.h"
+//#include "Common/ConsoleListener.h"
+//#include "Common/Input/InputState.h"
+//#include "Common/Input/KeyCodes.h"
+//#include "Common/Thread/ThreadUtil.h"
+//#include "Common/Thread/ThreadManager.h"
+//#include "Common/File/VFS/VFS.h"
+//#include "Common/Data/Text/I18n.h"
+//#include "Common/StringUtils.h"
+//#include "Common/System/Display.h"
+//#include "Common/System/NativeApp.h"
+//#include "Common/System/System.h"
+//#include "Common/GraphicsContext.h"
+//#include "Common/Net/Resolve.h"
+//#include "Common/UI/Screen.h"
+//#include "Common/GPU/thin3d.h"
+//#include "Common/GPU/thin3d_create.h"
+//#include "Common/GPU/OpenGL/GLRenderManager.h"
+//#include "Common/GPU/OpenGL/GLFeatures.h"
+//#include "Common/System/NativeApp.h"
+//#include "Common/File/VFS/VFS.h"
+//#include "Common/Log.h"
+//#include "Common/TimeUtil.h"
+//#include "Common/GraphicsContext.h"
+
+//#include "GPU/GPUState.h"
+//#include "GPU/GPUInterface.h"
+
+//#include "Core/Config.h"
+//#include "Core/ConfigValues.h"
+//#include "Core/Core.h"
+//#include "Core/CoreParameter.h"
+//#include "Core/HLE/sceCtrl.h"
+//#include "Core/HLE/sceUtility.h"
+//#include "Core/HW/MemoryStick.h"
+//#include "Core/MemMap.h"
+//#include "Core/System.h"
+//#include "Core/CoreTiming.h"
+//#include "Core/HW/Display.h"
+//#include "Core/CwCheat.h"
+//#include "Core/ELF/ParamSFO.h"
+//#include "Core/SaveState.h"
 
 #define IS_IPAD() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
@@ -93,7 +122,7 @@ static UIView *m_view;
 static bool threadEnabled = true;
 static bool threadStopped = false;
 
-@implementation PVPPSSPPCore (Video)
+@implementation PVPPSSPPCoreBridge (Video)
 
 # pragma mark - Methods
 - (void)videoInterrupt {
@@ -241,6 +270,27 @@ static bool threadStopped = false;
         rootController = cgsh_view_controller;
     }
     [self setupVideo];
+
+#if TARGET_OS_TV
+    [gl_view_controller addChildViewController:rootController];
+    [rootController didMoveToParentViewController:gl_view_controller];
+    if ([gl_view_controller respondsToSelector:@selector(mtlView)]) {
+        self.renderDelegate.mtlView.autoresizesSubviews = true;
+        self.renderDelegate.mtlView.clipsToBounds = true;
+        [self.renderDelegate.mtlView addSubview:m_view];
+    } else {
+        gl_view_controller.view.autoresizesSubviews = true;
+        gl_view_controller.view.clipsToBounds = true;
+        [gl_view_controller.view addSubview:m_view];
+    }
+    CGRect bounds = [[UIScreen mainScreen] bounds];
+    [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor].active=true;
+    [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;
+    [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
+    [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
+    [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
+    [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+#else
     if (self.touchViewController) {
         NSLog(@"setupView: Touch View");
         [self.touchViewController.view addSubview:m_view];
@@ -255,16 +305,14 @@ static bool threadStopped = false;
         [[rootController.view.trailingAnchor constraintEqualToAnchor:self.touchViewController.view.trailingAnchor] setActive:YES];
         self.touchViewController.view.userInteractionEnabled=true;
         self.touchViewController.view.autoresizesSubviews=true;
-#if !TARGET_OS_TV
         self.touchViewController.view.multipleTouchEnabled=true;
-#endif
     } else {
         [gl_view_controller addChildViewController:rootController];
         [rootController didMoveToParentViewController:gl_view_controller];
-        if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
-            self.renderDelegate.mtlview.autoresizesSubviews=true;
-            self.renderDelegate.mtlview.clipsToBounds=true;
-            [self.renderDelegate.mtlview addSubview:m_view];
+        if ([gl_view_controller respondsToSelector:@selector(mtlView)]) {
+            self.renderDelegate.mtlView.autoresizesSubviews=true;
+            self.renderDelegate.mtlView.clipsToBounds=true;
+            [self.renderDelegate.mtlView addSubview:m_view];
         } else {
             gl_view_controller.view.autoresizesSubviews=true;
             gl_view_controller.view.clipsToBounds=true;
@@ -288,7 +336,8 @@ static bool threadStopped = false;
             [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
         }
     }
-     
+#endif
+
     // Display connected
     [[NSNotificationCenter defaultCenter] addObserverForName:UIScreenDidConnectNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
             UIScreen *screen = (UIScreen *) notification.object;
@@ -317,7 +366,10 @@ static bool threadStopped = false;
         // GPUCORE_VULKAN
         g_Config.iGPUBackend = (int)GPUBackend::VULKAN;
         PSP_CoreParameter().gpuCore         = GPUCORE_VULKAN;
-        graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/libMoltenVK_PPSSPP.dylib");
+        graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/MoltenVK.framework/MoltenVK");
+        if(!graphicsContext) {
+            graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/libMoltenVK.dylib");
+        }
     }
     graphicsContext->GetDrawContext()->SetErrorCallback([](const char *shortDesc, const char *details, void *userdata) {
         NSLog(@"setupVideo: Notify User Message: %s %s\n", shortDesc, details);
@@ -342,16 +394,16 @@ static bool threadStopped = false;
         threadEnabled=true;
         NSLog(@"runVM: NativeInitGraphics Starting\n");
         NativeInitGraphics(graphicsContext);
-        _isInitialized=true;
+        self->_isInitialized=true;
         UpdateUIState(UISTATE_INGAME);
         NSLog(@"runVM: NativeInitGraphics OK\n");
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            isPaused=false;
+            self->isPaused=false;
             [self refreshScreenSize];
         });
         NSLog(@"runVM: Emulation thread starting\n");
 		while (graphicsContext != NULL && threadEnabled) {
-            if (isPaused) {
+            if (self->isPaused) {
                 usleep(700 * 1000);
             } else {
                 NativeUpdate();
@@ -405,7 +457,7 @@ static bool threadStopped = false;
 # pragma mark - Properties
 
 - (CGSize)bufferSize {
-	return CGSizeMake(0,0);
+    return CGSizeMake(0,0);
 }
 
 - (CGRect)screenRect {

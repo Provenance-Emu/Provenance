@@ -1,0 +1,604 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Source/common/snppucolor.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.section .bss
+   5              	_SNPPUColor_Pal15to32:
+   6              	.align 3
+   7 0000 00000000 	.space 131072
+   7      00000000 
+   7      00000000 
+   7      00000000 
+   7      00000000 
+   8              	.previous
+   9              	.text
+  10              	.align 2
+  11              	.p2align 3,,7
+  12              	.ent _Z25_SNPPUColorCalibrateColorRfS_S_ffff
+  13              	_Z25_SNPPUColorCalibrateColorRfS_S_ffff:
+  14              	.frame $sp,80,$31
+  15              	.mask 0x80070000,-32
+  16              	.fmask 0x05500000,-4
+  17 0000 000086C4 	l.s $f6,0($4)
+  18 0004 B0FFBD27 	subu $sp,$sp,80
+  19 0008 0000A8C4 	l.s $f8,0($5)
+  20 000c 163F013C 	li.s $f0,5.87000012397766113281e-1
+  20      A2452134 
+  20      00008144 
+  21 0018 993E013C 	li.s $f2,2.98999994993209838867e-1
+  21      87162134 
+  21      00108144 
+  22 0024 02420046 	mul.s $f8,$f8,$f0
+  23 0028 0000C4C4 	l.s $f4,0($6)
+  24 002c 82300246 	mul.s $f2,$f6,$f2
+  25 0030 E93D013C 	li.s $f0,1.14000000059604644775e-1
+  25      D5782134 
+  25      00008144 
+  26 003c 4000B4E7 	s.s $f20,64($sp)
+  27 0040 02200046 	mul.s $f0,$f4,$f0
+  28 0044 4800B8E7 	s.s $f24,72($sp)
+  29 0048 80100846 	add.s $f2,$f2,$f8
+  30 004c 4400B6E7 	s.s $f22,68($sp)
+  31 0050 2000B2FF 	sd $18,32($sp)
+  32 0054 2D90A000 	move $18,$5
+  33 0058 1000B1FF 	sd $17,16($sp)
+  34 005c 2D888000 	move $17,$4
+  35 0060 00150046 	add.s $f20,$f2,$f0
+  36 0064 0000B0FF 	sd $16,0($sp)
+  37 0068 603F013C 	li.s $f2,8.76999974250793457031e-1
+  37      12832134 
+  37      00108144 
+  38 0074 2D80C000 	move $16,$6
+  39 0078 FB3E013C 	li.s $f0,4.92000013589859008789e-1
+  39      6DE72134 
+  39      00008144 
+  40 0084 01211446 	sub.s $f4,$f4,$f20
+  41 0088 4C00BAE7 	s.s $f26,76($sp)
+  42 008c 81311446 	sub.s $f6,$f6,$f20
+  43 0090 3000BFFF 	sd $31,48($sp)
+GAS LISTING  			page 2
+
+
+  44 0094 02A50E46 	mul.s $f20,$f20,$f14
+  45 0098 867E0046 	mov.s $f26,$f15
+  46 009c 02210046 	mul.s $f4,$f4,$f0
+  47 00a0 82310246 	mul.s $f6,$f6,$f2
+  48 00a4 026A0446 	mul.s $f8,$f13,$f4
+  49 00a8 02600646 	mul.s $f0,$f12,$f6
+  50 00ac 826A0646 	mul.s $f10,$f13,$f6
+  51 00b0 02630446 	mul.s $f12,$f12,$f4
+  52 00b4 00060846 	add.s $f24,$f0,$f8
+  53 00b8 81550C46 	sub.s $f22,$f10,$f12
+  54 00bc 02C01846 	mul.s $f0,$f24,$f24
+  55 00c0 02B31646 	mul.s $f12,$f22,$f22
+  56              	.set noreorder
+  57              	.set nomacro
+  58 00c4 0000000C 	jal sqrtf
+  59 00c8 00630046 	add.s $f12,$f12,$f0
+  60              	.set macro
+  61              	.set reorder
+  62              	
+  63 00cc 87D10046 	neg.s $f6,$f26
+  64 00d0 06010046 	mov.s $f4,$f0
+  65 00d4 00A20046 	add.s $f8,$f20,$f0
+  66 00d8 803F013C 	li.s $f0,1.00000000000000000000e0
+  66      00008144 
+  67 00e0 00000000 	
+  68 00e4 80D00046 	add.s $f2,$f26,$f0
+  69 00e8 34100846 	c.lt.s $f2,$f8
+  70              	
+  71 00ec 00000000 	.set noreorder
+  72              	.set nomacro
+  73 00f0 09000145 	bc1t $L7
+  74 00f4 01A00446 	sub.s $f0,$f20,$f4
+  75              	.set macro
+  76              	.set reorder
+  77              	
+  78 00f8 34000646 	c.lt.s $f0,$f6
+  79 00fc 00000000 	
+  80 0100 0E000045 	bc1f $L2
+  80      00000000 
+  81 0108 34100846 	c.lt.s $f2,$f8
+  82              	
+  83 010c 00000000 	.set noreorder
+  84              	.set nomacro
+  85 0110 35000245 	bc1fl $L4
+  86 0114 00A01A46 	add.s $f0,$f20,$f26
+  87              	.set macro
+  88              	.set reorder
+  89              	
+  90              	$L7:
+  91 0118 833A013C 	li.s $f0,1.00000004749745130539e-3
+  91      6F122134 
+  91      00008144 
+  92 0124 00000000 	
+  93 0128 01100046 	sub.s $f0,$f2,$f0
+  94 012c 01001446 	sub.s $f0,$f0,$f20
+  95              	$L8:
+  96 0130 03000446 	div.s $f0,$f0,$f4
+GAS LISTING  			page 3
+
+
+  97 0134 02C60046 	mul.s $f24,$f24,$f0
+  98 0138 82B50046 	mul.s $f22,$f22,$f0
+  99              	$L2:
+ 100 013c 8D3F013C 	li.s $f8,1.10800004005432128906e0
+ 100      F2D22134 
+ 100      00408144 
+ 101 0148 743F013C 	li.s $f6,9.55999970436096191406e-1
+ 101      6ABC2134 
+ 101      00308144 
+ 102 0154 8B3E013C 	li.s $f2,2.72000014781951904297e-1
+ 102      96432134 
+ 102      00108144 
+ 103 0160 02B20846 	mul.s $f8,$f22,$f8
+ 104 0164 82B10646 	mul.s $f6,$f22,$f6
+ 105 0168 DA3F013C 	li.s $f10,1.70500004291534423828e0
+ 105      713D2134 
+ 105      00508144 
+ 106 0174 82B00246 	mul.s $f2,$f22,$f2
+ 107 0178 1E3F013C 	li.s $f4,6.20000004768371582031e-1
+ 107      52B82134 
+ 107      00208144 
+ 108 0184 253F013C 	li.s $f0,6.47000014781951904297e-1
+ 108      CBA12134 
+ 108      00008144 
+ 109 0190 82C20A46 	mul.s $f10,$f24,$f10
+ 110 0194 02C10446 	mul.s $f4,$f24,$f4
+ 111 0198 3000BFDF 	ld $31,48($sp)
+ 112 019c 02C00046 	mul.s $f0,$f24,$f0
+ 113 01a0 4C00BAC7 	l.s $f26,76($sp)
+ 114 01a4 01A20846 	sub.s $f8,$f20,$f8
+ 115 01a8 4800B8C7 	l.s $f24,72($sp)
+ 116 01ac 80A10646 	add.s $f6,$f20,$f6
+ 117 01b0 4400B6C7 	l.s $f22,68($sp)
+ 118 01b4 81A00246 	sub.s $f2,$f20,$f2
+ 119 01b8 4000B4C7 	l.s $f20,64($sp)
+ 120 01bc 00420A46 	add.s $f8,$f8,$f10
+ 121 01c0 80310446 	add.s $f6,$f6,$f4
+ 122 01c4 81100046 	sub.s $f2,$f2,$f0
+ 123 01c8 000026E6 	s.s $f6,0($17)
+ 124 01cc 000042E6 	s.s $f2,0($18)
+ 125 01d0 1000B1DF 	ld $17,16($sp)
+ 126 01d4 000008E6 	s.s $f8,0($16)
+ 127 01d8 2000B2DF 	ld $18,32($sp)
+ 128 01dc 0000B0DF 	ld $16,0($sp)
+ 129              	
+ 130              	.set noreorder
+ 131              	.set nomacro
+ 132 01e0 0800E003 	j $31
+ 133 01e4 5000BD27 	addu $sp,$sp,80
+ 134              	.set macro
+ 135              	.set reorder
+ 136              	
+ 137              	.p2align 3
+ 138              	$L4:
+ 139 01e8 833A013C 	li.s $f2,1.00000004749745130539e-3
+ 139      6F122134 
+ 139      00108144 
+GAS LISTING  			page 4
+
+
+ 140              	.set noreorder
+ 141              	.set nomacro
+ 142 01f4 CEFF0010 	b $L8
+ 143 01f8 01000246 	sub.s $f0,$f0,$f2
+ 144              	.set macro
+ 145              	.set reorder
+ 146              	
+ 147              	.end _Z25_SNPPUColorCalibrateColorRfS_S_ffff
+ 148              	$Lfe1:
+ 149              	.size _Z25_SNPPUColorCalibrateColorRfS_S_ffff,$Lfe1-_Z25_SNPPUColorCalibrateColorRfS_S_ffff
+ 150              	.align 2
+ 151 01fc 00000000 	.p2align 3,,7
+ 152              	.globl _Z23SNPPUColorConvert15to32t
+ 153              	.ent _Z23SNPPUColorConvert15to32t
+ 154              	_Z23SNPPUColorConvert15to32t:
+ 155              	.frame $sp,0,$31
+ 156              	.mask 0x00000000,0
+ 157              	.fmask 0x00000000,0
+ 158 0200 FF7F8430 	andi $4,$4,0x7fff
+ 159 0204 0000023C 	lui $2,%hi(_SNPPUColor_Pal15to32)
+ 160 0208 00004224 	addiu $2,$2,%lo(_SNPPUColor_Pal15to32)
+ 161 020c 80200400 	sll $4,$4,2
+ 162 0210 21208200 	addu $4,$4,$2
+ 163              	.set noreorder
+ 164              	.set nomacro
+ 165 0214 0800E003 	j $31
+ 166 0218 0000828C 	lw $2,0($4)
+ 167              	.set macro
+ 168              	.set reorder
+ 169              	
+ 170              	.end _Z23SNPPUColorConvert15to32t
+ 171              	$Lfe2:
+ 172              	.size _Z23SNPPUColorConvert15to32t,$Lfe2-_Z23SNPPUColorConvert15to32t
+ 173              	.align 2
+ 174 021c 00000000 	.p2align 3,,7
+ 175              	.globl _Z19SNPPUColorSetColorsPKji
+ 176              	.ent _Z19SNPPUColorSetColorsPKji
+ 177              	_Z19SNPPUColorSetColorsPKji:
+ 178              	.frame $sp,16,$31
+ 179              	.mask 0x80000000,-16
+ 180              	.fmask 0x00000000,0
+ 181 0220 00800334 	li $3,32768
+ 182 0224 2D30A000 	move $6,$5
+ 183 0228 2A106500 	slt $2,$3,$5
+ 184 022c F0FFBD27 	subu $sp,$sp,16
+ 185 0230 0B306200 	movn $6,$3,$2
+ 186 0234 2D288000 	move $5,$4
+ 187 0238 80300600 	sll $6,$6,2
+ 188 023c 0000043C 	lui $4,%hi(_SNPPUColor_Pal15to32)
+ 189 0240 3C300600 	dsll $6,$6,32
+ 190 0244 00008424 	addiu $4,$4,%lo(_SNPPUColor_Pal15to32)
+ 191 0248 0000BFFF 	sd $31,0($sp)
+ 192              	.set noreorder
+ 193              	.set nomacro
+ 194 024c 0000000C 	jal memcpy
+ 195 0250 3E300600 	dsrl $6,$6,32
+ 196              	.set macro
+GAS LISTING  			page 5
+
+
+ 197              	.set reorder
+ 198              	
+ 199 0254 0000BFDF 	ld $31,0($sp)
+ 200              	
+ 201              	.set noreorder
+ 202              	.set nomacro
+ 203 0258 0800E003 	j $31
+ 204 025c 1000BD27 	addu $sp,$sp,16
+ 205              	.set macro
+ 206              	.set reorder
+ 207              	
+ 208              	.end _Z19SNPPUColorSetColorsPKji
+ 209              	$Lfe3:
+ 210              	.size _Z19SNPPUColorSetColorsPKji,$Lfe3-_Z19SNPPUColorSetColorsPKji
+ 211              	.align 2
+ 212              	.p2align 3,,7
+ 213              	.globl _Z20SNPPUColorGetPalettev
+ 214              	.ent _Z20SNPPUColorGetPalettev
+ 215              	_Z20SNPPUColorGetPalettev:
+ 216              	.frame $sp,0,$31
+ 217              	.mask 0x00000000,0
+ 218              	.fmask 0x00000000,0
+ 219 0260 0000023C 	lui $2,%hi(_SNPPUColor_Pal15to32)
+ 220              	.set noreorder
+ 221              	.set nomacro
+ 222 0264 0800E003 	j $31
+ 223 0268 00004224 	addiu $2,$2,%lo(_SNPPUColor_Pal15to32)
+ 224              	.set macro
+ 225              	.set reorder
+ 226              	
+ 227              	.end _Z20SNPPUColorGetPalettev
+ 228              	$Lfe4:
+ 229              	.size _Z20SNPPUColorGetPalettev,$Lfe4-_Z20SNPPUColorGetPalettev
+ 230              	.align 2
+ 231 026c 00000000 	.p2align 3,,7
+ 232              	.globl _Z19SNPPUColorCalibratePK16SNPPUColorCalibT
+ 233              	.ent _Z19SNPPUColorCalibratePK16SNPPUColorCalibT
+ 234              	_Z19SNPPUColorCalibratePK16SNPPUColorCalibT:
+ 235              	.frame $sp,112,$31
+ 236              	.mask 0x800f0000,-32
+ 237              	.fmask 0x01500000,-8
+ 238 0270 90FFBD27 	subu $sp,$sp,112
+ 239 0274 5000BFFF 	sd $31,80($sp)
+ 240 0278 4000B3FF 	sd $19,64($sp)
+ 241 027c 0080133C 	li $19,-2147483648
+ 242 0280 3000B2FF 	sd $18,48($sp)
+ 243 0284 2000B1FF 	sd $17,32($sp)
+ 244 0288 2D888000 	move $17,$4
+ 245 028c 1000B0FF 	sd $16,16($sp)
+ 246 0290 2D800000 	move $16,$0
+ 247 0294 6800B8E7 	s.s $f24,104($sp)
+ 248 0298 6400B6E7 	s.s $f22,100($sp)
+ 249 029c 6000B4E7 	s.s $f20,96($sp)
+ 250 02a0 4940013C 	li.s $f22,3.14159274101257324219e0
+ 250      DB0F2134 
+ 250      00B08144 
+ 251 02ac 04008CC4 	l.s $f12,4($4)
+GAS LISTING  			page 6
+
+
+ 252 02b0 3443013C 	li.s $f20,1.80000000000000000000e2
+ 252      00A08144 
+ 253 02b8 02631646 	mul.s $f12,$f12,$f22
+ 254              	.set noreorder
+ 255              	.set nomacro
+ 256 02bc 0000000C 	jal cosf
+ 257 02c0 03631446 	div.s $f12,$f12,$f20
+ 258              	.set macro
+ 259              	.set reorder
+ 260              	
+ 261 02c4 04002CC6 	l.s $f12,4($17)
+ 262 02c8 06060046 	mov.s $f24,$f0
+ 263 02cc 02631646 	mul.s $f12,$f12,$f22
+ 264              	.set noreorder
+ 265              	.set nomacro
+ 266 02d0 0000000C 	jal sinf
+ 267 02d4 03631446 	div.s $f12,$f12,$f20
+ 268              	.set macro
+ 269              	.set reorder
+ 270              	
+ 271 02d8 0000023C 	lui $2,%hi(_SNPPUColor_Pal15to32)
+ 272 02dc 06050046 	mov.s $f20,$f0
+ 273 02e0 00005224 	addiu $18,$2,%lo(_SNPPUColor_Pal15to32)
+ 274 02e4 00000000 	.p2align 3
+ 275              	$L42:
+ 276 02e8 42111000 	srl $2,$16,5
+ 277 02ec 821A1000 	srl $3,$16,10
+ 278 02f0 1F000632 	andi $6,$16,0x1f
+ 279 02f4 1F004430 	andi $4,$2,0x1f
+ 280              	.set noreorder
+ 281              	.set nomacro
+ 282 02f8 A500C004 	bltz $6,$L19
+ 283 02fc 1F006530 	andi $5,$3,0x1f
+ 284              	.set macro
+ 285              	.set reorder
+ 286              	
+ 287 0300 00108644 	mtc1 $6,$f2
+ 287      00000000 
+ 288 0308 A0108046 	cvt.s.w $f2,$f2
+ 289              	$L18:
+ 290 030c 043D013C 	li.s $f0,3.22580635547637939453e-2
+ 290      08212134 
+ 290      00008144 
+ 291 0318 00000000 	
+ 292 031c 82100046 	mul.s $f2,$f2,$f0
+ 293              	.set noreorder
+ 294              	.set nomacro
+ 295 0320 93008004 	bltz $4,$L21
+ 296 0324 0000A2E7 	s.s $f2,0($sp)
+ 297              	.set macro
+ 298              	.set reorder
+ 299              	
+ 300 0328 00108444 	mtc1 $4,$f2
+ 300      00000000 
+ 301 0330 A0108046 	cvt.s.w $f2,$f2
+ 302              	$L20:
+ 303 0334 043D013C 	li.s $f0,3.22580635547637939453e-2
+GAS LISTING  			page 7
+
+
+ 303      08212134 
+ 303      00008144 
+ 304 0340 00000000 	
+ 305 0344 02110046 	mul.s $f4,$f2,$f0
+ 306              	.set noreorder
+ 307              	.set nomacro
+ 308 0348 8100A004 	bltz $5,$L23
+ 309 034c 0400A4E7 	s.s $f4,4($sp)
+ 310              	.set macro
+ 311              	.set reorder
+ 312              	
+ 313 0350 00108544 	mtc1 $5,$f2
+ 313      00000000 
+ 314 0358 A0108046 	cvt.s.w $f2,$f2
+ 315              	$L22:
+ 316 035c 043D013C 	li.s $f0,3.22580635547637939453e-2
+ 316      08212134 
+ 316      00008144 
+ 317 0368 2D20A003 	move $4,$sp
+ 318 036c 00002EC6 	l.s $f14,0($17)
+ 319 0370 0400A527 	addu $5,$sp,4
+ 320 0374 82110046 	mul.s $f6,$f2,$f0
+ 321 0378 08002FC6 	l.s $f15,8($17)
+ 322 037c 0800A627 	addu $6,$sp,8
+ 323 0380 06A30046 	mov.s $f12,$f20
+ 324 0384 46C30046 	mov.s $f13,$f24
+ 325              	.set noreorder
+ 326              	.set nomacro
+ 327 0388 0000000C 	jal _Z25_SNPPUColorCalibrateColorRfS_S_ffff
+ 328 038c 0800A6E7 	s.s $f6,8($sp)
+ 329              	.set macro
+ 330              	.set reorder
+ 331              	
+ 332 0390 0000A2C7 	l.s $f2,0($sp)
+ 333 0394 803F013C 	li.s $f8,1.00000000000000000000e0
+ 333      00408144 
+ 334 039c 00000000 	
+ 335 03a0 34400246 	c.lt.s $f8,$f2
+ 336 03a4 00000000 	
+ 337 03a8 03000045 	bc1f $L24
+ 337      00000000 
+ 338 03b0 0000A8E7 	s.s $f8,0($sp)
+ 339 03b4 86400046 	mov.s $f2,$f8
+ 340              	$L24:
+ 341 03b8 00008044 	mtc1 $0,$f0
+ 342 03bc 00000000 	
+ 343 03c0 34100046 	c.lt.s $f2,$f0
+ 344              	
+ 345 03c4 00000000 	.set noreorder
+ 346              	.set nomacro
+ 347 03c8 04000045 	bc1f $L45
+ 348 03cc 0400A4C7 	l.s $f4,4($sp)
+ 349              	.set macro
+ 350              	.set reorder
+ 351              	
+ 352 03d0 0000A0E7 	s.s $f0,0($sp)
+ 353 03d4 86000046 	mov.s $f2,$f0
+GAS LISTING  			page 8
+
+
+ 354 03d8 0400A4C7 	l.s $f4,4($sp)
+ 355              	$L45:
+ 356 03dc 34400446 	c.lt.s $f8,$f4
+ 357 03e0 00000000 	
+ 358 03e4 03000045 	bc1f $L28
+ 358      00000000 
+ 359 03ec 0400A8E7 	s.s $f8,4($sp)
+ 360 03f0 06410046 	mov.s $f4,$f8
+ 361              	$L28:
+ 362 03f4 34200046 	c.lt.s $f4,$f0
+ 363              	
+ 364 03f8 00000000 	.set noreorder
+ 365              	.set nomacro
+ 366 03fc 04000045 	bc1f $L46
+ 367 0400 0800A6C7 	l.s $f6,8($sp)
+ 368              	.set macro
+ 369              	.set reorder
+ 370              	
+ 371 0404 0400A0E7 	s.s $f0,4($sp)
+ 372 0408 06010046 	mov.s $f4,$f0
+ 373 040c 0800A6C7 	l.s $f6,8($sp)
+ 374              	$L46:
+ 375 0410 34400646 	c.lt.s $f8,$f6
+ 376 0414 00000000 	
+ 377 0418 03000045 	bc1f $L32
+ 377      00000000 
+ 378 0420 0800A8E7 	s.s $f8,8($sp)
+ 379 0424 86410046 	mov.s $f6,$f8
+ 380              	$L32:
+ 381 0428 34300046 	c.lt.s $f6,$f0
+ 382 042c 00000000 	
+ 383 0430 03000045 	bc1f $L34
+ 383      00000000 
+ 384 0438 0800A0E7 	s.s $f0,8($sp)
+ 385 043c 86010046 	mov.s $f6,$f0
+ 386              	$L34:
+ 387 0440 7F43013C 	li.s $f0,2.55000000000000000000e2
+ 387      00008144 
+ 388 0448 004F013C 	li.s $f8,2.14748364800000000000e9
+ 388      00408144 
+ 389 0450 02100046 	mul.s $f0,$f2,$f0
+ 390 0454 36400046 	c.le.s $f8,$f0
+ 391 0458 A4000046 	cvt.w.s $f2,$f0
+ 392 045c 00100244 	mfc1 $2,$f2
+ 393 0460 06000045 	bc1f $L37
+ 393      00000000 
+ 394 0468 01000846 	sub.s $f0,$f0,$f8
+ 395 046c A4000046 	cvt.w.s $f2,$f0
+ 396 0470 00100244 	mfc1 $2,$f2
+ 397 0474 00000000 	
+ 398 0478 25105300 	or $2,$2,$19
+ 399              	$L37:
+ 400 047c 7F43013C 	li.s $f0,2.55000000000000000000e2
+ 400      00008144 
+ 401 0484 FF004630 	andi $6,$2,0x00ff
+ 402 0488 004F013C 	li.s $f2,2.14748364800000000000e9
+ 402      00108144 
+GAS LISTING  			page 9
+
+
+ 403 0490 02200046 	mul.s $f0,$f4,$f0
+ 404 0494 36100046 	c.le.s $f2,$f0
+ 405 0498 24010046 	cvt.w.s $f4,$f0
+ 406 049c 00200344 	mfc1 $3,$f4
+ 407 04a0 06000045 	bc1f $L39
+ 407      00000000 
+ 408 04a8 01000246 	sub.s $f0,$f0,$f2
+ 409 04ac A4000046 	cvt.w.s $f2,$f0
+ 410 04b0 00100344 	mfc1 $3,$f2
+ 411 04b4 0080023C 	li $2,-2147483648
+ 412 04b8 25186200 	or $3,$3,$2
+ 413              	$L39:
+ 414 04bc 7F43013C 	li.s $f0,2.55000000000000000000e2
+ 414      00008144 
+ 415 04c4 FF006430 	andi $4,$3,0x00ff
+ 416 04c8 004F013C 	li.s $f2,2.14748364800000000000e9
+ 416      00108144 
+ 417 04d0 02300046 	mul.s $f0,$f6,$f0
+ 418 04d4 36100046 	c.le.s $f2,$f0
+ 419 04d8 24010046 	cvt.w.s $f4,$f0
+ 420 04dc 00200344 	mfc1 $3,$f4
+ 421              	.set noreorder
+ 422              	.set nomacro
+ 423 04e0 07000045 	bc1f $L47
+ 424 04e4 FF006530 	andi $5,$3,0x00ff
+ 425              	.set macro
+ 426              	.set reorder
+ 427              	
+ 428 04e8 01000246 	sub.s $f0,$f0,$f2
+ 429 04ec A4000046 	cvt.w.s $f2,$f0
+ 430 04f0 00100344 	mfc1 $3,$f2
+ 431 04f4 0080023C 	li $2,-2147483648
+ 432 04f8 25186200 	or $3,$3,$2
+ 433 04fc FF006530 	andi $5,$3,0x00ff
+ 434              	$L47:
+ 435 0500 00120400 	sll $2,$4,8
+ 436 0504 001C0500 	sll $3,$5,16
+ 437 0508 2510C200 	or $2,$6,$2
+ 438 050c 25104300 	or $2,$2,$3
+ 439 0510 01001026 	addu $16,$16,1
+ 440 0514 FF7F0324 	li $3,32767
+ 441 0518 000042AE 	sw $2,0($18)
+ 442 051c 2B187000 	sltu $3,$3,$16
+ 443              	.set noreorder
+ 444              	.set nomacro
+ 445 0520 71FF6010 	beq $3,$0,$L42
+ 446 0524 04005226 	addu $18,$18,4
+ 447              	.set macro
+ 448              	.set reorder
+ 449              	
+ 450 0528 5000BFDF 	ld $31,80($sp)
+ 451 052c 4000B3DF 	ld $19,64($sp)
+ 452 0530 3000B2DF 	ld $18,48($sp)
+ 453 0534 2000B1DF 	ld $17,32($sp)
+ 454 0538 1000B0DF 	ld $16,16($sp)
+ 455 053c 6800B8C7 	l.s $f24,104($sp)
+ 456 0540 6400B6C7 	l.s $f22,100($sp)
+GAS LISTING  			page 10
+
+
+ 457 0544 6000B4C7 	l.s $f20,96($sp)
+ 458              	
+ 459              	.set noreorder
+ 460              	.set nomacro
+ 461 0548 0800E003 	j $31
+ 462 054c 7000BD27 	addu $sp,$sp,112
+ 463              	.set macro
+ 464              	.set reorder
+ 465              	
+ 466              	.p2align 3
+ 467              	$L23:
+ 468 0550 42180500 	srl $3,$5,1
+ 469 0554 0100A230 	andi $2,$5,0x1
+ 470 0558 25104300 	or $2,$2,$3
+ 471 055c 00108244 	mtc1 $2,$f2
+ 471      00000000 
+ 472 0564 A0108046 	cvt.s.w $f2,$f2
+ 473              	.set noreorder
+ 474              	.set nomacro
+ 475 0568 7CFF0010 	b $L22
+ 476 056c 80100246 	add.s $f2,$f2,$f2
+ 477              	.set macro
+ 478              	.set reorder
+ 479              	
+ 480              	.p2align 3
+ 481              	$L21:
+ 482 0570 42180400 	srl $3,$4,1
+ 483 0574 01008230 	andi $2,$4,0x1
+ 484 0578 25104300 	or $2,$2,$3
+ 485 057c 00108244 	mtc1 $2,$f2
+ 485      00000000 
+ 486 0584 A0108046 	cvt.s.w $f2,$f2
+ 487              	.set noreorder
+ 488              	.set nomacro
+ 489 0588 6AFF0010 	b $L20
+ 490 058c 80100246 	add.s $f2,$f2,$f2
+ 491              	.set macro
+ 492              	.set reorder
+ 493              	
+ 494              	.p2align 3
+ 495              	$L19:
+ 496 0590 42180600 	srl $3,$6,1
+ 497 0594 01000232 	andi $2,$16,0x1
+ 498 0598 25104300 	or $2,$2,$3
+ 499 059c 00108244 	mtc1 $2,$f2
+ 499      00000000 
+ 500 05a4 A0108046 	cvt.s.w $f2,$f2
+ 501              	.set noreorder
+ 502              	.set nomacro
+ 503 05a8 58FF0010 	b $L18
+ 504 05ac 80100246 	add.s $f2,$f2,$f2
+ 505              	.set macro
+ 506              	.set reorder
+ 507              	
+ 508              	.end _Z19SNPPUColorCalibratePK16SNPPUColorCalibT
+ 509              	$Lfe5:
+ 510              	.size _Z19SNPPUColorCalibratePK16SNPPUColorCalibT,$Lfe5-_Z19SNPPUColorCalibratePK16SNPPUColorCalibT
+GAS LISTING  			page 11
+
+
+ 511              	.ident "GCC: (GNU) 3.2.2"

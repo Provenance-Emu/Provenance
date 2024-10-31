@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.MelonDS</string>
 	<key>PVPrincipleClass</key>
-	<string>PVMelonDSCore</string>
+	<string>PVMelonDS.PVMelonDSCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.ds</string>

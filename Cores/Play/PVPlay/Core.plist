@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.play</string>
 	<key>PVPrincipleClass</key>
-	<string>PVPlayCore</string>
+	<string>PVPlay.PVPlayCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.ps2</string>

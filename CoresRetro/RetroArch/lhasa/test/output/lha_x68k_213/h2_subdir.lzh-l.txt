@@ -1,0 +1,7 @@
+ PERMSSN    UID  GID      SIZE  RATIO     STAMP           NAME
+---------- ----------- ------- ------ ------------ --------------------
+[Human68K]                   0 ****** Apr  5 05:26 subdir/
+[Human68K]                   0 ****** Apr  5 05:26 subdir/subdir2/
+[Human68K]                  12 100.0% Apr  4 13:44 subdir/subdir2/HELLO.TXT
+---------- ----------- ------- ------ ------------ --------------------
+ Total         3 files      12 100.0% Jan  1  2000

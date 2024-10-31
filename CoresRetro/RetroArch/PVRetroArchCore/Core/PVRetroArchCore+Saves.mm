@@ -9,6 +9,10 @@
 #import "PVRetroArchCore+Saves.h"
 #import "PVRetroArchCore.h"
 #include "content.h"
+#include "core_info.h"
+
+@import PVCoreBridge;
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 extern bool _isInitialized;
 bool firstLoad = true;
@@ -16,48 +20,75 @@ NSString *autoLoadStatefileName;
 @implementation PVRetroArchCore (Saves)
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {
-	return YES;
+	return core_info_current_supports_savestate();
 }
 #pragma mark - Methods
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-	content_save_state(fileName.UTF8String, true, true);
-    return true;
+	return content_save_state(fileName.UTF8String, true);
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
 	bool success=false;
 	if (_isInitialized) {
-		content_save_state(fileName.UTF8String, true, true);
+		content_save_state(fileName.UTF8String, true);
 		success=true;
 	}
-	block(success, nil);
+    if (!success) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to save state.",
+                                   NSLocalizedFailureReasonErrorKey: @"This core either doesn't support save states or failed to create one.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @""
+                                   };
+
+        NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                            userInfo:userInfo];
+        block(newError);
+    } else {
+        block(nil);
+    }
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+    BOOL success = NO;
 	if (!_isInitialized) {
 		autoLoadStatefileName = fileName;
 		[NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
 	} else {
-		content_load_state(fileName.UTF8String, false, true);
+        success = content_load_state(fileName.UTF8String, false, true);
 	}
-    return true;
+    return success;
 }
 
 #define LOAD_WAIT_INTERVAL 1
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     NSLog(@"Loading State: Loading...\n");
+    bool success = false;
     while (!_isInitialized)
         sleep(LOAD_WAIT_INTERVAL);
     if (firstLoad && [self.coreIdentifier containsString:@"opera"]) {
         autoLoadStatefileName = fileName;
-        content_load_state(autoLoadStatefileName.UTF8String, true, true);
+        success = content_load_state(autoLoadStatefileName.UTF8String, true, true);
         [NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
     } else {
-        content_load_state(fileName.UTF8String, false, true);
+        success = content_load_state(fileName.UTF8String, false, true);
     }
-	bool success=true;
-	block(success, nil);
+    
+    if (!success) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to save state.",
+                                   NSLocalizedFailureReasonErrorKey: @"This core either doesn't support save states or failed to create one.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @""
+                                   };
+
+        NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                            userInfo:userInfo];
+        block(newError);
+    } else {
+        block(nil);
+    }
 }
 
 #define START_WAIT_TIME 15

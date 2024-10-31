@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'PVPicoDrive' in project 'PVPicoDrive'
+➜ Explicit dependency on target 'picodrive' in project 'PVPicoDrive'
+Target 'picodrive' in project 'PVPicoDrive' (no dependencies)

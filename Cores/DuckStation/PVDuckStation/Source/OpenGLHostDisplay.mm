@@ -38,6 +38,7 @@
 
 #import "PVDuckStation.h"
 #import <PVDuckStation/PVDuckStation-Swift.h>
+#import <PVLogging/PVLoggingObjC.h>
 
 namespace OpenEmu {
 class ContextGL final : public GL::Context
@@ -99,7 +100,7 @@ using namespace OpenEmu;
 
 #pragma mark -
 
-PVOpenGLHostDisplay::PVOpenGLHostDisplay(PVDuckStationCore *core) :
+PVOpenGLHostDisplay::PVOpenGLHostDisplay(PVDuckStationCoreBridge *core) :
 _current(core)
 {
 
@@ -201,13 +202,13 @@ std::unique_ptr<GPUTexture> PVOpenGLHostDisplay::CreateTexture(u32 width, u32 he
 bool PVOpenGLHostDisplay::BeginTextureUpdate(GPUTexture* texture, u32 width, u32 height, void** out_buffer,
                                            u32* out_pitch)
 {
-    WLOG(@"STUB BeginTextureUpdate")
+    WLOG(@"STUB BeginTextureUpdate");
     return true;
 }
 
 void PVOpenGLHostDisplay::EndTextureUpdate(GPUTexture* texture, u32 x, u32 y, u32 width, u32 height)
 {
-    WLOG(@"STUB EndTextureUpdate")
+    WLOG(@"STUB EndTextureUpdate");
 }
 
 bool PVOpenGLHostDisplay::UpdateTexture(GPUTexture* texture, u32 x, u32 y, u32 width, u32 height, const void* data,
@@ -342,7 +343,7 @@ bool PVOpenGLHostDisplay::CreateDevice(const WindowInfo& wi, bool vsync)
 
     m_gl_context = ContextGL::Create(wi, versArray.data(), versArray.size());
     if (!m_gl_context) {
-        os_log_fault(OE_CORE_LOG, "Failed to create any GL context");
+        ELOG(@"Failed to create any GL context");
         m_gl_context.reset();
         return false;
     }
@@ -372,7 +373,7 @@ bool PVOpenGLHostDisplay::SetupDevice()
 bool PVOpenGLHostDisplay::MakeCurrent()
 {
     if (!m_gl_context->MakeCurrent()) {
-        os_log_fault(OE_CORE_LOG, "Failed to make GL context current");
+        ELOG(@"Failed to make GL context current");
         return false;
     }
 
@@ -389,7 +390,7 @@ bool PVOpenGLHostDisplay::ChangeWindow(const WindowInfo& new_wi)
     Assert(m_gl_context);
 
     if (!m_gl_context->ChangeSurface(new_wi)) {
-        os_log_fault(OE_CORE_LOG, "Failed to change surface");
+        ELOG(@"Failed to change surface");
         return false;
     }
 
@@ -434,7 +435,7 @@ void PVOpenGLHostDisplay::DestroySurface()
 
     m_window_info = {};
     if (!m_gl_context->ChangeSurface(m_window_info)) {
-        os_log_fault(OE_CORE_LOG, "Failed to switch to surfaceless");
+        ELOG(@"Failed to switch to surfaceless");
     }
 }
 
@@ -480,7 +481,7 @@ void main()
                                    GetGLSLVersionHeader() + display_fragment_shader) ||
         !m_cursor_program.Compile(GetGLSLVersionHeader() + fullscreen_quad_vertex_shader, {},
                                   GetGLSLVersionHeader() + cursor_fragment_shader)) {
-        os_log_fault(OE_CORE_LOG, "Failed to compile display shaders");
+        ELOG(@"Failed to compile display shaders");
         return false;
     }
 
@@ -488,7 +489,7 @@ void main()
     m_cursor_program.BindFragData(0, "o_col0");
 
     if (!m_display_program.Link() || !m_cursor_program.Link()) {
-        os_log_fault(OE_CORE_LOG, "Failed to link display programs");
+        ELOG(@"Failed to link display programs");
         return false;
     }
 

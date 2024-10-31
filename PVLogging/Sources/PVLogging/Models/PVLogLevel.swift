@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  PVLogLevel.swift
 //  
 //
 //  Created by Joseph Mattiello on 1/4/23.
@@ -7,7 +7,8 @@
 
 import Foundation
 
-public enum PVLogLevel: String {
+@objc
+public enum PVLogLevel: Int, CaseIterable, Sendable {
     case U
     case Error
     case Warn
@@ -19,4 +20,19 @@ public enum PVLogLevel: String {
     #else
     public static let defaultDebugLevel: PVLogLevel = .Warn
     #endif
+}
+
+extension PVLogLevel: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .U: return "U"
+        case .Error: return "Error"
+        case .Warn: return "Warn"
+        case .Info: return "Info"
+        case .Debug: return "Debug"
+        }
+    }
+}
+
+extension PVLogLevel: RawRepresentable {
 }

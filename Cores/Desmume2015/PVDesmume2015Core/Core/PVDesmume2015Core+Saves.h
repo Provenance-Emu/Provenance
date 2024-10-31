@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVDesmume2015Core (Saves)
+@interface PVDesmume2015CoreBridge (Saves)
 
 @end
 

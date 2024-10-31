@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.emuThree</string>
+	<string>com.provenance.core.emuThree</string>
 	<key>PVPrincipleClass</key>
-	<string>PVEmuThreeCore</string>
+	<string>PVEmuThree.PVEmuThreeCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.3ds</string>

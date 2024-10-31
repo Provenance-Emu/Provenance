@@ -1,0 +1,65 @@
+---
+name: Build
+
+on:
+  pull_request:
+  push:
+
+permissions: {}
+
+jobs:
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+      - name: Install SDL2
+        run: |
+          sudo apt-get update
+          sudo apt-get install libsdl2-dev
+      - name: Build Stella
+        run: |
+          ./configure && make -j2 all
+
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+      - name: Install SDL2
+        run: |
+          curl https://www.libsdl.org/release/SDL2-2.26.0.tar.gz | tar xzf -
+          mkdir SDL2-2.26.0/build
+          cd SDL2-2.26.0/build
+          ../configure && make -j3 && sudo make install
+      - name: Build Stella
+        run: |
+          ./configure && make -j3 all
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        platform: [x64, Win32]
+    env:
+      Platform: ${{ matrix.platform }}
+      SDL2_version: 2.26.0
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+      - name: Set up MSBUILD
+        uses: microsoft/setup-msbuild@34cfbaee7f672c76950673338facd8a73f637506
+      - name: Install SDL2
+        shell: cmd
+        run: |
+          curl -o "C:\SDL2-devel.zip" "https://www.libsdl.org/release/SDL2-devel-%SDL2_version%-VC.zip"
+          7z x "C:\SDL2-devel.zip" -o"C:\"
+          xcopy /S "C:\SDL2-%SDL2_version%\include" src\common
+          if %Platform%==x64 xcopy /S "C:\SDL2-%SDL2_version%\lib\x64" src\os\windows
+          if %Platform%==Win32 xcopy /S "C:\SDL2-%SDL2_version%\lib\x86" src\os\windows
+      - name: Build Stella
+        run: |
+          msbuild src\os\windows\Stella.sln

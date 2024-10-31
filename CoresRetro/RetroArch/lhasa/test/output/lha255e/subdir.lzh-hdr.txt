@@ -1,0 +1,11 @@
+path: subdir/subdir2/
+filename: hello.txt
+compress_method: -lh0-
+compressed_length: 12
+length: 12
+header_level: 1
+os_type: 77 ('M')
+crc: 9778
+timestamp: 1262304000
+common_crc: 0129
+--

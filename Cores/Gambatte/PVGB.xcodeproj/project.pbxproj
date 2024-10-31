@@ -3,57 +3,87 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB55B2106D58F00C45F09 /* PVSupport.framework */; };
+		B30E9AFF2C6FBA5300C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AFE2C6FBA5300C1431E /* PVCoreBridge */; };
+		B30E9B012C6FBA6300C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B002C6FBA6300C1431E /* PVEmulatorCore */; };
+		B30E9B042C6FBA7300C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B032C6FBA7300C1431E /* PVSupport */; };
 		B3547B4E205857E300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4D205857E300CFF7D8 /* Core.plist */; };
 		B35E6C42207F09CC0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C41207F09CC0040709A /* CoreOptions.swift */; };
+		B37C008B2C01A6B300FEC6AC /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B37C008A2C01A6B300FEC6AC /* PVEmulatorCore */; };
+		B3A47A0D2C96583F0052500A /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3A47A0C2C96583F0052500A /* PVCoreObjCBridge */; };
+		B3A47A352C965C230052500A /* PVGB.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D43C1DEA6AFB0068D057 /* PVGB.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A47A362C965C7D0052500A /* state_osd_elements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0781ABE373800FF6AEF /* state_osd_elements.cpp */; };
+		B3A47A372C965C7D0052500A /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE05D1ABE373800FF6AEF /* rtc.cpp */; };
+		B3A47A382C965C7D0052500A /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0431ABE373800FF6AEF /* file.cpp */; };
+		B3A47A392C965C7D0052500A /* loadres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0551ABE373800FF6AEF /* loadres.cpp */; };
+		B3A47A3A2C965C7D0052500A /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE08B1ABE373800FF6AEF /* video.cpp */; };
+		B3A47A3B2C965C7D0052500A /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0761ABE373800FF6AEF /* sound.cpp */; };
+		B3A47A3C2C965C7D0052500A /* sprite_mapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0891ABE373800FF6AEF /* sprite_mapper.cpp */; };
+		B3A47A3D2C965C7D0052500A /* tima.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE07C1ABE373800FF6AEF /* tima.cpp */; };
+		B3A47A3E2C965C7D0052500A /* kaiser50sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE00D1ABE373800FF6AEF /* kaiser50sinc.cpp */; };
+		B3A47A3F2C965C7D0052500A /* lyc_irq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0821ABE373800FF6AEF /* lyc_irq.cpp */; };
+		B3A47A402C965C7D0052500A /* bitmap_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE03D1ABE373800FF6AEF /* bitmap_font.cpp */; };
+		B3A47A412C965C7D0052500A /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0871ABE373800FF6AEF /* ppu.cpp */; };
+		B3A47A422C965C7D0052500A /* channel1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0651ABE373800FF6AEF /* channel1.cpp */; };
+		B3A47A432C965C7D0052500A /* duty_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE06D1ABE373800FF6AEF /* duty_unit.cpp */; };
+		B3A47A442C965C7D0052500A /* pakinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE05B1ABE373800FF6AEF /* pakinfo.cpp */; };
+		B3A47A452C965C7D0052500A /* statesaver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE07A1ABE373800FF6AEF /* statesaver.cpp */; };
+		B3A47A462C965C7D0052500A /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0401ABE373800FF6AEF /* cpu.cpp */; };
+		B3A47A472C965C7D0052500A /* interruptrequester.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0531ABE373800FF6AEF /* interruptrequester.cpp */; };
+		B3A47A482C965C7D0052500A /* chainresampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0051ABE373700FF6AEF /* chainresampler.cpp */; };
+		B3A47A492C965C7D0052500A /* interrupter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0511ABE373800FF6AEF /* interrupter.cpp */; };
+		B3A47A4A2C965C7D0052500A /* length_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0711ABE373800FF6AEF /* length_counter.cpp */; };
+		B3A47A4B2C965C7D0052500A /* kaiser70sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE00F1ABE373800FF6AEF /* kaiser70sinc.cpp */; };
+		B3A47A4C2C965C7D0052500A /* u48div.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0191ABE373800FF6AEF /* u48div.cpp */; };
+		B3A47A4D2C965C7D0052500A /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE05F1ABE373800FF6AEF /* memory.cpp */; };
+		B3A47A4E2C965C7D0052500A /* initstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE04E1ABE373800FF6AEF /* initstate.cpp */; };
+		B3A47A4F2C965C7D0052500A /* makesinckernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0121ABE373800FF6AEF /* makesinckernel.cpp */; };
+		B3A47A502C965C7D0052500A /* resamplerinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0161ABE373800FF6AEF /* resamplerinfo.cpp */; };
+		B3A47A512C965C7D0052500A /* channel3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0691ABE373800FF6AEF /* channel3.cpp */; };
+		B3A47A522C965C7D0052500A /* next_m0_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0851ABE373800FF6AEF /* next_m0_time.cpp */; };
+		B3A47A532C965C7D0052500A /* envelope_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE06F1ABE373800FF6AEF /* envelope_unit.cpp */; };
+		B3A47A542C965C7D0052500A /* gambatte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE04D1ABE373800FF6AEF /* gambatte.cpp */; };
+		B3A47A552C965C7D0052500A /* memptrs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0591ABE373800FF6AEF /* memptrs.cpp */; };
+		B3A47A562C965C7D0052500A /* channel2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0671ABE373800FF6AEF /* channel2.cpp */; };
+		B3A47A572C965C7D0052500A /* i0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE00B1ABE373800FF6AEF /* i0.cpp */; };
+		B3A47A582C965C7D0052500A /* cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0571ABE373800FF6AEF /* cartridge.cpp */; };
+		B3A47A592C965C7D0052500A /* channel4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE06B1ABE373800FF6AEF /* channel4.cpp */; };
+		B3A47A5A2C965C7D0052500A /* ly_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0801ABE373800FF6AEF /* ly_counter.cpp */; };
+		B3A47A5B2C965C860052500A /* gambatte.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A479D62C9656C90052500A /* gambatte.framework */; };
+		B3A47A5C2C965C860052500A /* gambatte.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A479D62C9656C90052500A /* gambatte.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AFCF9C2977A84500A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF9B2977A84500A01010 /* PVLogging */; };
-		B3C9D43E1DEA6AFB0068D057 /* PVGB.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D43C1DEA6AFB0068D057 /* PVGB.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C9D4531DEA6DE80068D057 /* interrupter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0511ABE373800FF6AEF /* interrupter.cpp */; };
-		B3C9D4541DEA6DE80068D057 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE08B1ABE373800FF6AEF /* video.cpp */; };
-		B3C9D4551DEA6DE80068D057 /* lyc_irq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0821ABE373800FF6AEF /* lyc_irq.cpp */; };
-		B3C9D4561DEA6DE80068D057 /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE05D1ABE373800FF6AEF /* rtc.cpp */; };
-		B3C9D4571DEA6DE80068D057 /* loadres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0551ABE373800FF6AEF /* loadres.cpp */; };
-		B3C9D4581DEA6DE80068D057 /* channel3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0691ABE373800FF6AEF /* channel3.cpp */; };
-		B3C9D4591DEA6DE80068D057 /* channel1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0651ABE373800FF6AEF /* channel1.cpp */; };
-		B3C9D45A1DEA6DE80068D057 /* u48div.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0191ABE373800FF6AEF /* u48div.cpp */; };
-		B3C9D45B1DEA6DE80068D057 /* state_osd_elements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0781ABE373800FF6AEF /* state_osd_elements.cpp */; };
-		B3C9D45C1DEA6DE80068D057 /* kaiser50sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE00D1ABE373800FF6AEF /* kaiser50sinc.cpp */; };
-		B3C9D45D1DEA6DE80068D057 /* resamplerinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0161ABE373800FF6AEF /* resamplerinfo.cpp */; };
-		B3C9D45E1DEA6DE80068D057 /* cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0571ABE373800FF6AEF /* cartridge.cpp */; };
-		B3C9D45F1DEA6DE80068D057 /* channel2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0671ABE373800FF6AEF /* channel2.cpp */; };
-		B3C9D4601DEA6DE80068D057 /* pakinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE05B1ABE373800FF6AEF /* pakinfo.cpp */; };
-		B3C9D4611DEA6DE80068D057 /* interruptrequester.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0531ABE373800FF6AEF /* interruptrequester.cpp */; };
-		B3C9D4621DEA6DE80068D057 /* i0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE00B1ABE373800FF6AEF /* i0.cpp */; };
-		B3C9D4631DEA6DE80068D057 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE05F1ABE373800FF6AEF /* memory.cpp */; };
-		B3C9D4641DEA6DE80068D057 /* statesaver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE07A1ABE373800FF6AEF /* statesaver.cpp */; };
-		B3C9D4651DEA6DE80068D057 /* tima.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE07C1ABE373800FF6AEF /* tima.cpp */; };
-		B3C9D4661DEA6DE80068D057 /* envelope_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE06F1ABE373800FF6AEF /* envelope_unit.cpp */; };
-		B3C9D4671DEA6DE80068D057 /* memptrs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0591ABE373800FF6AEF /* memptrs.cpp */; };
-		B3C9D4681DEA6DE80068D057 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0761ABE373800FF6AEF /* sound.cpp */; };
-		B3C9D4691DEA6DE80068D057 /* sprite_mapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0891ABE373800FF6AEF /* sprite_mapper.cpp */; };
-		B3C9D46A1DEA6DE80068D057 /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0401ABE373800FF6AEF /* cpu.cpp */; };
 		B3C9D46B1DEA6DE80068D057 /* PVGBEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE08D1ABE373800FF6AEF /* PVGBEmulatorCore.mm */; };
-		B3C9D46C1DEA6DE80068D057 /* bitmap_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE03D1ABE373800FF6AEF /* bitmap_font.cpp */; };
-		B3C9D46D1DEA6DE80068D057 /* chainresampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0051ABE373700FF6AEF /* chainresampler.cpp */; };
-		B3C9D46E1DEA6DE80068D057 /* channel4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE06B1ABE373800FF6AEF /* channel4.cpp */; };
-		B3C9D46F1DEA6DE80068D057 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0431ABE373800FF6AEF /* file.cpp */; };
-		B3C9D4701DEA6DE80068D057 /* next_m0_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0851ABE373800FF6AEF /* next_m0_time.cpp */; };
-		B3C9D4711DEA6DE80068D057 /* length_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0711ABE373800FF6AEF /* length_counter.cpp */; };
-		B3C9D4721DEA6DE80068D057 /* ly_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0801ABE373800FF6AEF /* ly_counter.cpp */; };
-		B3C9D4731DEA6DE80068D057 /* kaiser70sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE00F1ABE373800FF6AEF /* kaiser70sinc.cpp */; };
-		B3C9D4741DEA6DE80068D057 /* gambatte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE04D1ABE373800FF6AEF /* gambatte.cpp */; };
-		B3C9D4751DEA6DE80068D057 /* duty_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE06D1ABE373800FF6AEF /* duty_unit.cpp */; };
-		B3C9D4761DEA6DE80068D057 /* initstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE04E1ABE373800FF6AEF /* initstate.cpp */; };
-		B3C9D4771DEA6DE80068D057 /* makesinckernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0121ABE373800FF6AEF /* makesinckernel.cpp */; };
-		B3C9D4781DEA6DE80068D057 /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0871ABE373800FF6AEF /* ppu.cpp */; };
 		B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C31ABE378D00FF6AEF /* Foundation.framework */; };
 		B3C9D4AA1DEA730D0068D057 /* PVGBEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3E4817720C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B3A47A5D2C965C860052500A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1AABDFD41ABE366000FF6AEF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3A479D52C9656C90052500A;
+			remoteInfo = gambatte;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B3A47A5F2C965C860052500A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3A47A5C2C965C860052500A /* gambatte.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1AABDFF71ABE373700FF6AEF /* gbcpalettes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gbcpalettes.h; sourceTree = "<group>"; };
@@ -196,11 +226,13 @@
 		1AABE0C11ABE378800FF6AEF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1AABE0C31ABE378D00FF6AEF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		1AABE0C91ABE380200FF6AEF /* PVGB-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVGB-Prefix.pch"; sourceTree = "<group>"; };
 		B324C63D21920E38009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB55B2106D58F00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B4D205857E300CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B35E6C41207F09CC0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
+		B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
+		B3A479D02C9656A00052500A /* swiftgen.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = "<group>"; };
+		B3A479D62C9656C90052500A /* gambatte.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = gambatte.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D43A1DEA6AFB0068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D43C1DEA6AFB0068D057 /* PVGB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGB.h; sourceTree = "<group>"; };
 		B3C9D43D1DEA6AFB0068D057 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -209,17 +241,27 @@
 		B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGBEmulatorCore.swift; sourceTree = "<group>"; };
 		B3EA6C9429261AF500010224 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
-		B3EF26F92BE80CE70066D4B6 /* PVGB_UB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGB_UB.h; sourceTree = "<group>"; };
-		B3EF27032BE80CE70066D4B6 /* PVGB_UBTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGB_UBTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B3A479D32C9656C90052500A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C9D4361DEA6AFB0068D057 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30E9B042C6FBA7300C1431E /* PVSupport in Frameworks */,
+				B30E9B012C6FBA6300C1431E /* PVEmulatorCore in Frameworks */,
+				B3A47A0D2C96583F0052500A /* PVCoreObjCBridge in Frameworks */,
+				B3A47A5B2C965C860052500A /* gambatte.framework in Frameworks */,
+				B30E9AFF2C6FBA5300C1431E /* PVCoreBridge in Frameworks */,
 				B3AFCF9C2977A84500A01010 /* PVLogging in Frameworks */,
-				B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */,
+				B37C008B2C01A6B300FEC6AC /* PVEmulatorCore in Frameworks */,
 				B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -230,10 +272,10 @@
 		1AABDFD31ABE366000FF6AEF = {
 			isa = PBXGroup;
 			children = (
+				B3A479D02C9656A00052500A /* swiftgen.yml */,
+				B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */,
 				1AABDFDE1ABE366000FF6AEF /* PVGB */,
 				B3C9D43B1DEA6AFB0068D057 /* PVGB */,
-				B3EF26F82BE80CE70066D4B6 /* PVGB-UB */,
-				B3EF27022BE80CE70066D4B6 /* PVGB-UBTests */,
 				1AABE0C71ABE37A400FF6AEF /* Frameworks */,
 				1AABDFDD1ABE366000FF6AEF /* Products */,
 			);
@@ -243,6 +285,7 @@
 			isa = PBXGroup;
 			children = (
 				B3C9D43A1DEA6AFB0068D057 /* PVGB.framework */,
+				B3A479D62C9656C90052500A /* gambatte.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -259,13 +302,13 @@
 			isa = PBXGroup;
 			children = (
 				1AABDFF71ABE373700FF6AEF /* gbcpalettes.h */,
+				B3C9D43C1DEA6AFB0068D057 /* PVGB.h */,
 				1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */,
 				1AABE08D1ABE373800FF6AEF /* PVGBEmulatorCore.mm */,
 				B35E6C41207F09CC0040709A /* CoreOptions.swift */,
 				B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */,
 				1AABDFF91ABE373700FF6AEF /* common */,
 				1AABE0341ABE373800FF6AEF /* libgambatte */,
-				1AABE0C81ABE37D800FF6AEF /* Supporting Files */,
 			);
 			path = GB;
 			sourceTree = "<group>";
@@ -522,55 +565,57 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		1AABE0C81ABE37D800FF6AEF /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				1AABE0C91ABE380200FF6AEF /* PVGB-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		B3C9D43B1DEA6AFB0068D057 /* PVGB */ = {
 			isa = PBXGroup;
 			children = (
 				B3547B4D205857E300CFF7D8 /* Core.plist */,
-				B3C9D43C1DEA6AFB0068D057 /* PVGB.h */,
 				B3C9D43D1DEA6AFB0068D057 /* Info.plist */,
 			);
 			path = PVGB;
 			sourceTree = "<group>";
 		};
-		B3EF26F82BE80CE70066D4B6 /* PVGB-UB */ = {
-			isa = PBXGroup;
-			children = (
-				B3EF26F92BE80CE70066D4B6 /* PVGB_UB.h */,
-			);
-			path = "PVGB-UB";
-			sourceTree = "<group>";
-		};
-		B3EF27022BE80CE70066D4B6 /* PVGB-UBTests */ = {
-			isa = PBXGroup;
-			children = (
-				B3EF27032BE80CE70066D4B6 /* PVGB_UBTests.swift */,
-			);
-			path = "PVGB-UBTests";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		B3A479D12C9656C90052500A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C9D4371DEA6AFB0068D057 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C9D43E1DEA6AFB0068D057 /* PVGB.h in Headers */,
 				B3C9D4AA1DEA730D0068D057 /* PVGBEmulatorCore.h in Headers */,
+				B3A47A352C965C230052500A /* PVGB.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		B3A479D52C9656C90052500A /* gambatte */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3A479DB2C9656C90052500A /* Build configuration list for PBXNativeTarget "gambatte" */;
+			buildPhases = (
+				B3A479D12C9656C90052500A /* Headers */,
+				B3A479D22C9656C90052500A /* Sources */,
+				B3A479D32C9656C90052500A /* Frameworks */,
+				B3A479D42C9656C90052500A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gambatte;
+			packageProductDependencies = (
+			);
+			productName = gambatte;
+			productReference = B3A479D62C9656C90052500A /* gambatte.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		B3C9D4391DEA6AFB0068D057 /* PVGB */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C9D43F1DEA6AFB0068D057 /* Build configuration list for PBXNativeTarget "PVGB" */;
@@ -579,14 +624,21 @@
 				B3C9D4351DEA6AFB0068D057 /* Sources */,
 				B3C9D4361DEA6AFB0068D057 /* Frameworks */,
 				B3C9D4381DEA6AFB0068D057 /* Resources */,
+				B3A47A5F2C965C860052500A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B3A47A5E2C965C860052500A /* PBXTargetDependency */,
 			);
 			name = PVGB;
 			packageProductDependencies = (
 				B3AFCF9B2977A84500A01010 /* PVLogging */,
+				B37C008A2C01A6B300FEC6AC /* PVEmulatorCore */,
+				B30E9AFE2C6FBA5300C1431E /* PVCoreBridge */,
+				B30E9B002C6FBA6300C1431E /* PVEmulatorCore */,
+				B30E9B032C6FBA7300C1431E /* PVSupport */,
+				B3A47A0C2C96583F0052500A /* PVCoreObjCBridge */,
 			);
 			productName = PVGB;
 			productReference = B3C9D43A1DEA6AFB0068D057 /* PVGB.framework */;
@@ -601,9 +653,12 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				LastSwiftUpdateCheck = 1530;
-				LastUpgradeCheck = 1300;
-				ORGANIZATIONNAME = "Provenance Emu";
+				LastUpgradeCheck = 1600;
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
+					B3A479D52C9656C90052500A = {
+						CreatedOnToolsVersion = 16.0;
+					};
 					B3C9D4391DEA6AFB0068D057 = {
 						CreatedOnToolsVersion = 8.1;
 						LastSwiftMigration = 1020;
@@ -611,7 +666,7 @@
 				};
 			};
 			buildConfigurationList = 1AABDFD71ABE366000FF6AEF /* Build configuration list for PBXProject "PVGB" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -619,16 +674,30 @@
 				Base,
 			);
 			mainGroup = 1AABDFD31ABE366000FF6AEF;
+			packageReferences = (
+				B37C00892C01A6B300FEC6AC /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B30E9AFD2C6FBA5300C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B30E9B022C6FBA7300C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B3A47A0B2C96583F0052500A /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+			);
 			productRefGroup = 1AABDFDD1ABE366000FF6AEF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				B3C9D4391DEA6AFB0068D057 /* PVGB */,
+				B3A479D52C9656C90052500A /* gambatte */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B3A479D42C9656C90052500A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C9D4381DEA6AFB0068D057 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -640,58 +709,74 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B3A479D22C9656C90052500A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A47A362C965C7D0052500A /* state_osd_elements.cpp in Sources */,
+				B3A47A372C965C7D0052500A /* rtc.cpp in Sources */,
+				B3A47A382C965C7D0052500A /* file.cpp in Sources */,
+				B3A47A392C965C7D0052500A /* loadres.cpp in Sources */,
+				B3A47A3A2C965C7D0052500A /* video.cpp in Sources */,
+				B3A47A3B2C965C7D0052500A /* sound.cpp in Sources */,
+				B3A47A3C2C965C7D0052500A /* sprite_mapper.cpp in Sources */,
+				B3A47A3D2C965C7D0052500A /* tima.cpp in Sources */,
+				B3A47A3E2C965C7D0052500A /* kaiser50sinc.cpp in Sources */,
+				B3A47A3F2C965C7D0052500A /* lyc_irq.cpp in Sources */,
+				B3A47A402C965C7D0052500A /* bitmap_font.cpp in Sources */,
+				B3A47A412C965C7D0052500A /* ppu.cpp in Sources */,
+				B3A47A422C965C7D0052500A /* channel1.cpp in Sources */,
+				B3A47A432C965C7D0052500A /* duty_unit.cpp in Sources */,
+				B3A47A442C965C7D0052500A /* pakinfo.cpp in Sources */,
+				B3A47A452C965C7D0052500A /* statesaver.cpp in Sources */,
+				B3A47A462C965C7D0052500A /* cpu.cpp in Sources */,
+				B3A47A472C965C7D0052500A /* interruptrequester.cpp in Sources */,
+				B3A47A482C965C7D0052500A /* chainresampler.cpp in Sources */,
+				B3A47A492C965C7D0052500A /* interrupter.cpp in Sources */,
+				B3A47A4A2C965C7D0052500A /* length_counter.cpp in Sources */,
+				B3A47A4B2C965C7D0052500A /* kaiser70sinc.cpp in Sources */,
+				B3A47A4C2C965C7D0052500A /* u48div.cpp in Sources */,
+				B3A47A4D2C965C7D0052500A /* memory.cpp in Sources */,
+				B3A47A4E2C965C7D0052500A /* initstate.cpp in Sources */,
+				B3A47A4F2C965C7D0052500A /* makesinckernel.cpp in Sources */,
+				B3A47A502C965C7D0052500A /* resamplerinfo.cpp in Sources */,
+				B3A47A512C965C7D0052500A /* channel3.cpp in Sources */,
+				B3A47A522C965C7D0052500A /* next_m0_time.cpp in Sources */,
+				B3A47A532C965C7D0052500A /* envelope_unit.cpp in Sources */,
+				B3A47A542C965C7D0052500A /* gambatte.cpp in Sources */,
+				B3A47A552C965C7D0052500A /* memptrs.cpp in Sources */,
+				B3A47A562C965C7D0052500A /* channel2.cpp in Sources */,
+				B3A47A572C965C7D0052500A /* i0.cpp in Sources */,
+				B3A47A582C965C7D0052500A /* cartridge.cpp in Sources */,
+				B3A47A592C965C7D0052500A /* channel4.cpp in Sources */,
+				B3A47A5A2C965C7D0052500A /* ly_counter.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C9D4351DEA6AFB0068D057 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C9D4531DEA6DE80068D057 /* interrupter.cpp in Sources */,
 				B3E4817720C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */,
-				B3C9D4541DEA6DE80068D057 /* video.cpp in Sources */,
-				B3C9D4551DEA6DE80068D057 /* lyc_irq.cpp in Sources */,
-				B3C9D4561DEA6DE80068D057 /* rtc.cpp in Sources */,
-				B3C9D4571DEA6DE80068D057 /* loadres.cpp in Sources */,
-				B3C9D4581DEA6DE80068D057 /* channel3.cpp in Sources */,
-				B3C9D4591DEA6DE80068D057 /* channel1.cpp in Sources */,
-				B3C9D45A1DEA6DE80068D057 /* u48div.cpp in Sources */,
 				B35E6C42207F09CC0040709A /* CoreOptions.swift in Sources */,
-				B3C9D45B1DEA6DE80068D057 /* state_osd_elements.cpp in Sources */,
-				B3C9D45C1DEA6DE80068D057 /* kaiser50sinc.cpp in Sources */,
-				B3C9D45D1DEA6DE80068D057 /* resamplerinfo.cpp in Sources */,
-				B3C9D45E1DEA6DE80068D057 /* cartridge.cpp in Sources */,
-				B3C9D45F1DEA6DE80068D057 /* channel2.cpp in Sources */,
-				B3C9D4601DEA6DE80068D057 /* pakinfo.cpp in Sources */,
-				B3C9D4611DEA6DE80068D057 /* interruptrequester.cpp in Sources */,
-				B3C9D4621DEA6DE80068D057 /* i0.cpp in Sources */,
-				B3C9D4631DEA6DE80068D057 /* memory.cpp in Sources */,
-				B3C9D4641DEA6DE80068D057 /* statesaver.cpp in Sources */,
-				B3C9D4651DEA6DE80068D057 /* tima.cpp in Sources */,
-				B3C9D4661DEA6DE80068D057 /* envelope_unit.cpp in Sources */,
-				B3C9D4671DEA6DE80068D057 /* memptrs.cpp in Sources */,
-				B3C9D4681DEA6DE80068D057 /* sound.cpp in Sources */,
-				B3C9D4691DEA6DE80068D057 /* sprite_mapper.cpp in Sources */,
-				B3C9D46A1DEA6DE80068D057 /* cpu.cpp in Sources */,
 				B3C9D46B1DEA6DE80068D057 /* PVGBEmulatorCore.mm in Sources */,
-				B3C9D46C1DEA6DE80068D057 /* bitmap_font.cpp in Sources */,
-				B3C9D46D1DEA6DE80068D057 /* chainresampler.cpp in Sources */,
-				B3C9D46E1DEA6DE80068D057 /* channel4.cpp in Sources */,
-				B3C9D46F1DEA6DE80068D057 /* file.cpp in Sources */,
-				B3C9D4701DEA6DE80068D057 /* next_m0_time.cpp in Sources */,
-				B3C9D4711DEA6DE80068D057 /* length_counter.cpp in Sources */,
-				B3C9D4721DEA6DE80068D057 /* ly_counter.cpp in Sources */,
-				B3C9D4731DEA6DE80068D057 /* kaiser70sinc.cpp in Sources */,
-				B3C9D4741DEA6DE80068D057 /* gambatte.cpp in Sources */,
-				B3C9D4751DEA6DE80068D057 /* duty_unit.cpp in Sources */,
-				B3C9D4761DEA6DE80068D057 /* initstate.cpp in Sources */,
-				B3C9D4771DEA6DE80068D057 /* makesinckernel.cpp in Sources */,
-				B3C9D4781DEA6DE80068D057 /* ppu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		B3A47A5E2C965C860052500A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3A479D52C9656C90052500A /* gambatte */;
+			targetProxy = B3A47A5D2C965C860052500A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		1AABDFEE1ABE366100FF6AEF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -721,6 +806,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -754,6 +840,7 @@
 		};
 		1AABDFEF1ABE366100FF6AEF /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -783,6 +870,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -811,6 +899,7 @@
 		};
 		B324C5142191A3BA009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -840,6 +929,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -873,8 +963,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -885,12 +977,12 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/GB/libgambatte/include\"",
 					"$(SRCROOT)/**",
 				);
 				INFOPLIST_FILE = PVGB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -918,6 +1010,192 @@
 			};
 			name = Archive;
 		};
+		B3A479DC2C9656C90052500A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/GB/libgambatte/include\"",
+					"$(SRCROOT)/**",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.gambatte";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		B3A479DD2C9656C90052500A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/GB/libgambatte/include\"",
+					"$(SRCROOT)/**",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.gambatte";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		B3A479DE2C9656C90052500A /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/GB/libgambatte/include\"",
+					"$(SRCROOT)/**",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.gambatte";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Archive;
+		};
 		B3C9D4401DEA6AFB0068D057 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -926,8 +1204,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -938,12 +1218,12 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/GB/libgambatte/include\"",
 					"$(SRCROOT)/**",
 				);
 				INFOPLIST_FILE = PVGB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -980,8 +1260,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -992,12 +1274,12 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/GB/libgambatte/include\"",
 					"$(SRCROOT)/**",
 				);
 				INFOPLIST_FILE = PVGB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1038,6 +1320,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B3A479DB2C9656C90052500A /* Build configuration list for PBXNativeTarget "gambatte" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3A479DC2C9656C90052500A /* Debug */,
+				B3A479DD2C9656C90052500A /* Release */,
+				B3A479DE2C9656C90052500A /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B3C9D43F1DEA6AFB0068D057 /* Build configuration list for PBXNativeTarget "PVGB" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1050,7 +1342,46 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E9AFD2C6FBA5300C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B30E9B022C6FBA7300C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B37C00892C01A6B300FEC6AC /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B3A47A0B2C96583F0052500A /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E9AFE2C6FBA5300C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B30E9B002C6FBA6300C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B30E9B032C6FBA7300C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B37C008A2C01A6B300FEC6AC /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B3A47A0C2C96583F0052500A /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
 		B3AFCF9B2977A84500A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

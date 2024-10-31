@@ -1,0 +1,190 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/vram.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.ent _VramBlockAlloc
+   8              	_VramBlockAlloc:
+   9              	.frame $sp,0,$31
+  10              	.mask 0x00000000,0
+  11              	.fmask 0x00000000,0
+  12 0000 0000063C 	lui $6,%hi(_Vram_nBlocks)
+  13 0004 0004C28C 	lw $2,%lo(_Vram_nBlocks)($6)
+  14              	
+  15 0008 80200200 	sll $4,$2,2
+  16 000c 01004324 	addu $3,$2,1
+  17 0010 0001422C 	sltu $2,$2,256
+  18              	.set noreorder
+  19              	.set nomacro
+  20 0014 05004010 	beq $2,$0,$L1
+  21 0018 2D280000 	move $5,$0
+  22              	.set macro
+  23              	.set reorder
+  24              	
+  25 001c 0000023C 	lui $2,%hi(_Vram_Blocks)
+  26 0020 0004C3AC 	sw $3,%lo(_Vram_nBlocks)($6)
+  27 0024 00004224 	addiu $2,$2,%lo(_Vram_Blocks)
+  28 0028 21288200 	addu $5,$4,$2
+  29              	$L1:
+  30              	.set noreorder
+  31              	.set nomacro
+  32 002c 0800E003 	j $31
+  33 0030 2D10A000 	move $2,$5
+  34              	.set macro
+  35              	.set reorder
+  36              	
+  37              	.end _VramBlockAlloc
+  38              	$Lfe1:
+  39              	.size _VramBlockAlloc,$Lfe1-_VramBlockAlloc
+  40              	.align 2
+  41 0034 00000000 	.p2align 3,,7
+  42              	.globl VramInit
+  43              	.ent VramInit
+  44              	VramInit:
+  45              	.frame $sp,0,$31
+  46              	.mask 0x00000000,0
+  47              	.fmask 0x00000000,0
+  48 0038 0000023C 	lui $2,%hi(_Vram_uAddr)
+  49 003c 0000033C 	lui $3,%hi(_Vram_nBlocks)
+  50 0040 040440AC 	sw $0,%lo(_Vram_uAddr)($2)
+  51              	.set noreorder
+  52              	.set nomacro
+  53 0044 0800E003 	j $31
+  54 0048 000460AC 	sw $0,%lo(_Vram_nBlocks)($3)
+  55              	.set macro
+  56              	.set reorder
+  57              	
+GAS LISTING  			page 2
+
+
+  58              	.end VramInit
+  59              	$Lfe2:
+  60              	.size VramInit,$Lfe2-VramInit
+  61              	.align 2
+  62 004c 00000000 	.p2align 3,,7
+  63              	.globl VramShutdown
+  64              	.ent VramShutdown
+  65              	VramShutdown:
+  66              	.frame $sp,0,$31
+  67              	.mask 0x00000000,0
+  68              	.fmask 0x00000000,0
+  69 0050 0800E003 	j $31
+  69      00000000 
+  70              	.end VramShutdown
+  71              	$Lfe3:
+  72              	.size VramShutdown,$Lfe3-VramShutdown
+  73              	.align 2
+  74              	.p2align 3,,7
+  75              	.globl VramAlloc
+  76              	.ent VramAlloc
+  77              	VramAlloc:
+  78              	.frame $sp,64,$31
+  79              	.mask 0x80070000,-16
+  80              	.fmask 0x00000000,0
+  81 0058 C0FFBD27 	subu $sp,$sp,64
+  82 005c 23300500 	subu $6,$0,$5
+  83 0060 2000B2FF 	sd $18,32($sp)
+  84 0064 2D180000 	move $3,$0
+  85 0068 0000123C 	lui $18,%hi(_Vram_uAddr)
+  86 006c 1000B1FF 	sd $17,16($sp)
+  87 0070 0000B0FF 	sd $16,0($sp)
+  88 0074 FFFF9130 	andi $17,$4,0xffff
+  89 0078 3000BFFF 	sd $31,48($sp)
+  90              	.set noreorder
+  91              	.set nomacro
+  92 007c 0400A010 	beq $5,$0,$L7
+  93 0080 0404508E 	lw $16,%lo(_Vram_uAddr)($18)
+  94              	.set macro
+  95              	.set reorder
+  96              	
+  97              	
+  98 0084 21100502 	addu $2,$16,$5
+  99 0088 FFFF5024 	addu $16,$2,-1
+ 100 008c 24800602 	and $16,$16,$6
+ 101              	$L7:
+ 102 0090 FFFF0234 	li $2,65535
+ 103 0094 2B105000 	sltu $2,$2,$16
+ 104 0098 09004010 	beq $2,$0,$L10
+ 104      00000000 
+ 105              	$L8:
+ 106 00a0 3000BFDF 	ld $31,48($sp)
+ 107 00a4 2D106000 	move $2,$3
+ 108 00a8 2000B2DF 	ld $18,32($sp)
+ 109 00ac 1000B1DF 	ld $17,16($sp)
+ 110 00b0 0000B0DF 	ld $16,0($sp)
+ 111              	
+ 112              	.set noreorder
+GAS LISTING  			page 3
+
+
+ 113              	.set nomacro
+ 114 00b4 0800E003 	j $31
+ 115 00b8 4000BD27 	addu $sp,$sp,64
+ 116              	.set macro
+ 117              	.set reorder
+ 118              	
+ 119 00bc 00000000 	.p2align 3
+ 120              	$L10:
+ 121 00c0 0000000C 	jal _VramBlockAlloc
+ 121      00000000 
+ 122              	.set noreorder
+ 123              	.set nomacro
+ 124 00c8 03004010 	beq $2,$0,$L9
+ 125 00cc 2D184000 	move $3,$2
+ 126              	.set macro
+ 127              	.set reorder
+ 128              	
+ 129 00d0 020051A4 	sh $17,2($2)
+ 130 00d4 000050A4 	sh $16,0($2)
+ 131              	$L9:
+ 132 00d8 21801102 	addu $16,$16,$17
+ 133              	.set noreorder
+ 134              	.set nomacro
+ 135 00dc F0FF0010 	b $L8
+ 136 00e0 040450AE 	sw $16,%lo(_Vram_uAddr)($18)
+ 137              	.set macro
+ 138              	.set reorder
+ 139              	
+ 140              	.end VramAlloc
+ 141              	$Lfe4:
+ 142              	.size VramAlloc,$Lfe4-VramAlloc
+ 143              	.align 2
+ 144 00e4 00000000 	.p2align 3,,7
+ 145              	.globl VramFree
+ 146              	.ent VramFree
+ 147              	VramFree:
+ 148              	.frame $sp,0,$31
+ 149              	.mask 0x00000000,0
+ 150              	.fmask 0x00000000,0
+ 151 00e8 0800E003 	j $31
+ 151      00000000 
+ 152              	.end VramFree
+ 153              	$Lfe5:
+ 154              	.size VramFree,$Lfe5-VramFree
+ 155              	.section .bss
+ 156              	_Vram_Blocks:
+ 157              	.align 3
+ 158 0000 00000000 	.space 1024
+ 158      00000000 
+ 158      00000000 
+ 158      00000000 
+ 158      00000000 
+ 159              	.previous
+ 160              	.section .bss
+ 161              	_Vram_nBlocks:
+ 162              	.align 2
+ 163 0400 00000000 	.space 4
+GAS LISTING  			page 4
+
+
+ 164              	.previous
+ 165              	.section .bss
+ 166              	_Vram_uAddr:
+ 167              	.align 2
+ 168 0404 00000000 	.space 4
+ 169              	.previous
+ 170              	.ident "GCC: (GNU) 3.2.2"

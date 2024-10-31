@@ -1,0 +1,24 @@
+{
+  "images" : [
+    {
+      "idiom" : "iphone",
+      "filename" : "sort.pdf"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "sort-1.pdf"
+    },
+    {
+      "idiom" : "tv",
+      "filename" : "sort-tv.pdf"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  },
+  "properties" : {
+    "template-rendering-intent" : "template",
+    "preserves-vector-representation" : true
+  }
+}

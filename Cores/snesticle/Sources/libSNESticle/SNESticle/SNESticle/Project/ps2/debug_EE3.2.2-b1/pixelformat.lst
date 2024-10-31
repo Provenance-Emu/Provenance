@@ -1,0 +1,271 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/pixelformat.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 3
+   6              	.type _PixelFormat_CI8,@object
+   7              	.size _PixelFormat_CI8,16
+   8              	_PixelFormat_CI8:
+   9 0000 02000000 	.word 2
+  10 0004 01       	.byte 1
+  11 0005 08       	.byte 8
+  12 0006 00       	.byte 0
+  13 0007 08       	.byte 8
+  14 0008 08       	.byte 8
+  15 0009 08       	.byte 8
+  16 000a 10       	.byte 16
+  17 000b 08       	.byte 8
+  18 000c 18       	.byte 24
+  19 000d 08       	.byte 8
+  20 000e 0000     	.space 2
+  21              	.align 3
+  22              	.type _PixelFormat_BGRA8,@object
+  23              	.size _PixelFormat_BGRA8,16
+  24              	_PixelFormat_BGRA8:
+  25 0010 06000000 	.word 6
+  26 0014 00       	.byte 0
+  27 0015 20       	.byte 32
+  28 0016 10       	.byte 16
+  29 0017 08       	.byte 8
+  30 0018 08       	.byte 8
+  31 0019 08       	.byte 8
+  32 001a 00       	.byte 0
+  33 001b 08       	.byte 8
+  34 001c 18       	.byte 24
+  35 001d 08       	.byte 8
+  36 001e 0000     	.space 2
+  37              	.align 3
+  38              	.type _PixelFormat_RGBA8,@object
+  39              	.size _PixelFormat_RGBA8,16
+  40              	_PixelFormat_RGBA8:
+  41 0020 0A000000 	.word 10
+  42 0024 00       	.byte 0
+  43 0025 20       	.byte 32
+  44 0026 00       	.byte 0
+  45 0027 08       	.byte 8
+  46 0028 08       	.byte 8
+  47 0029 08       	.byte 8
+  48 002a 10       	.byte 16
+  49 002b 08       	.byte 8
+  50 002c 18       	.byte 24
+  51 002d 08       	.byte 8
+  52 002e 0000     	.space 2
+  53              	.align 3
+  54              	.type _PixelFormat_BGR8,@object
+  55              	.size _PixelFormat_BGR8,16
+  56              	_PixelFormat_BGR8:
+  57 0030 05000000 	.word 5
+GAS LISTING  			page 2
+
+
+  58 0034 00       	.byte 0
+  59 0035 18       	.byte 24
+  60 0036 10       	.byte 16
+  61 0037 08       	.byte 8
+  62 0038 08       	.byte 8
+  63 0039 08       	.byte 8
+  64 003a 00       	.byte 0
+  65 003b 08       	.byte 8
+  66 003c 00       	.byte 0
+  67 003d 00       	.byte 0
+  68 003e 0000     	.space 2
+  69              	.align 3
+  70              	.type _PixelFormat_BGR555,@object
+  71              	.size _PixelFormat_BGR555,16
+  72              	_PixelFormat_BGR555:
+  73 0040 04000000 	.word 4
+  74 0044 00       	.byte 0
+  75 0045 10       	.byte 16
+  76 0046 0A       	.byte 10
+  77 0047 05       	.byte 5
+  78 0048 05       	.byte 5
+  79 0049 05       	.byte 5
+  80 004a 00       	.byte 0
+  81 004b 05       	.byte 5
+  82 004c 0F       	.byte 15
+  83 004d 01       	.byte 1
+  84 004e 0000     	.space 2
+  85              	.align 3
+  86              	.type _PixelFormat_BGR565,@object
+  87              	.size _PixelFormat_BGR565,16
+  88              	_PixelFormat_BGR565:
+  89 0050 03000000 	.word 3
+  90 0054 00       	.byte 0
+  91 0055 10       	.byte 16
+  92 0056 0B       	.byte 11
+  93 0057 05       	.byte 5
+  94 0058 05       	.byte 5
+  95 0059 06       	.byte 6
+  96 005a 00       	.byte 0
+  97 005b 05       	.byte 5
+  98 005c 00       	.byte 0
+  99 005d 00       	.byte 0
+ 100 005e 0000     	.space 2
+ 101              	.align 3
+ 102              	.type _PixelFormat_RGB555,@object
+ 103              	.size _PixelFormat_RGB555,16
+ 104              	_PixelFormat_RGB555:
+ 105 0060 09000000 	.word 9
+ 106 0064 00       	.byte 0
+ 107 0065 10       	.byte 16
+ 108 0066 00       	.byte 0
+ 109 0067 05       	.byte 5
+ 110 0068 05       	.byte 5
+ 111 0069 05       	.byte 5
+ 112 006a 0A       	.byte 10
+ 113 006b 05       	.byte 5
+ 114 006c 00       	.byte 0
+GAS LISTING  			page 3
+
+
+ 115 006d 00       	.byte 0
+ 116 006e 0000     	.space 2
+ 117              	.align 3
+ 118              	.type _PixelFormat_RGBA5551,@object
+ 119              	.size _PixelFormat_RGBA5551,16
+ 120              	_PixelFormat_RGBA5551:
+ 121 0070 08000000 	.word 8
+ 122 0074 00       	.byte 0
+ 123 0075 10       	.byte 16
+ 124 0076 00       	.byte 0
+ 125 0077 05       	.byte 5
+ 126 0078 05       	.byte 5
+ 127 0079 05       	.byte 5
+ 128 007a 0A       	.byte 10
+ 129 007b 05       	.byte 5
+ 130 007c 0F       	.byte 15
+ 131 007d 01       	.byte 1
+ 132 007e 0000     	.space 2
+ 133              	.text
+ 134              	.align 2
+ 135              	.p2align 3,,7
+ 136              	.globl _Z20PixelFormatGetByEnum12PixelFormatE
+ 137              	.ent _Z20PixelFormatGetByEnum12PixelFormatE
+ 138              	_Z20PixelFormatGetByEnum12PixelFormatE:
+ 139              	.frame $sp,0,$31
+ 140              	.mask 0x00000000,0
+ 141              	.fmask 0x00000000,0
+ 142 0000 0B00822C 	sltu $2,$4,11
+ 143              	.set noreorder
+ 144              	.set nomacro
+ 145 0004 16004010 	beq $2,$0,$L11
+ 146 0008 0000033C 	lui $3,%hi($L12)
+ 147              	.set macro
+ 148              	.set reorder
+ 149              	
+ 150 000c 80100400 	sll $2,$4,2
+ 151 0010 00006324 	addiu $3,$3,%lo($L12)
+ 152 0014 21104300 	addu $2,$2,$3
+ 153 0018 0000448C 	lw $4,0($2)
+ 154              	
+ 155 001c 08008000 	j $4
+ 155      00000000 
+ 156              	.rdata
+ 157              	.align 2
+ 158              	$L12:
+ 159 0000 60000000 	.word $L11
+ 160 0004 60000000 	.word $L11
+ 161 0008 30000000 	.word $L10
+ 162 000c 3C000000 	.word $L7
+ 163 0010 48000000 	.word $L6
+ 164 0014 54000000 	.word $L5
+ 165 0018 24000000 	.word $L3
+ 166 001c 60000000 	.word $L11
+ 167 0020 68000000 	.word $L8
+ 168 0024 74000000 	.word $L9
+ 169 0028 80000000 	.word $L4
+ 170              	.text
+GAS LISTING  			page 4
+
+
+ 171              	$L3:
+ 172 0024 0000023C 	lui $2,%hi(_PixelFormat_BGRA8)
+ 173              	.set noreorder
+ 174              	.set nomacro
+ 175 0028 0800E003 	j $31
+ 176 002c 10004224 	addiu $2,$2,%lo(_PixelFormat_BGRA8)
+ 177              	.set macro
+ 178              	.set reorder
+ 179              	
+ 180              	$L10:
+ 181 0030 0000023C 	lui $2,%hi(_PixelFormat_CI8)
+ 182              	.set noreorder
+ 183              	.set nomacro
+ 184 0034 0800E003 	j $31
+ 185 0038 00004224 	addiu $2,$2,%lo(_PixelFormat_CI8)
+ 186              	.set macro
+ 187              	.set reorder
+ 188              	
+ 189              	$L7:
+ 190 003c 0000023C 	lui $2,%hi(_PixelFormat_BGR565)
+ 191              	.set noreorder
+ 192              	.set nomacro
+ 193 0040 0800E003 	j $31
+ 194 0044 50004224 	addiu $2,$2,%lo(_PixelFormat_BGR565)
+ 195              	.set macro
+ 196              	.set reorder
+ 197              	
+ 198              	$L6:
+ 199 0048 0000023C 	lui $2,%hi(_PixelFormat_BGR555)
+ 200              	.set noreorder
+ 201              	.set nomacro
+ 202 004c 0800E003 	j $31
+ 203 0050 40004224 	addiu $2,$2,%lo(_PixelFormat_BGR555)
+ 204              	.set macro
+ 205              	.set reorder
+ 206              	
+ 207              	$L5:
+ 208 0054 0000023C 	lui $2,%hi(_PixelFormat_BGR8)
+ 209              	.set noreorder
+ 210              	.set nomacro
+ 211 0058 0800E003 	j $31
+ 212 005c 30004224 	addiu $2,$2,%lo(_PixelFormat_BGR8)
+ 213              	.set macro
+ 214              	.set reorder
+ 215              	
+ 216              	.p2align 3
+ 217              	$L11:
+ 218              	.set noreorder
+ 219              	.set nomacro
+ 220 0060 0800E003 	j $31
+ 221 0064 2D100000 	move $2,$0
+ 222              	.set macro
+ 223              	.set reorder
+ 224              	
+ 225              	$L8:
+ 226 0068 0000023C 	lui $2,%hi(_PixelFormat_RGBA5551)
+ 227              	.set noreorder
+GAS LISTING  			page 5
+
+
+ 228              	.set nomacro
+ 229 006c 0800E003 	j $31
+ 230 0070 70004224 	addiu $2,$2,%lo(_PixelFormat_RGBA5551)
+ 231              	.set macro
+ 232              	.set reorder
+ 233              	
+ 234              	$L9:
+ 235 0074 0000023C 	lui $2,%hi(_PixelFormat_RGB555)
+ 236              	.set noreorder
+ 237              	.set nomacro
+ 238 0078 0800E003 	j $31
+ 239 007c 60004224 	addiu $2,$2,%lo(_PixelFormat_RGB555)
+ 240              	.set macro
+ 241              	.set reorder
+ 242              	
+ 243              	$L4:
+ 244 0080 0000023C 	lui $2,%hi(_PixelFormat_RGBA8)
+ 245              	.set noreorder
+ 246              	.set nomacro
+ 247 0084 0800E003 	j $31
+ 248 0088 20004224 	addiu $2,$2,%lo(_PixelFormat_RGBA8)
+ 249              	.set macro
+ 250              	.set reorder
+ 251              	
+ 252              	.end _Z20PixelFormatGetByEnum12PixelFormatE
+ 253              	$Lfe1:
+ 254              	.size _Z20PixelFormatGetByEnum12PixelFormatE,$Lfe1-_Z20PixelFormatGetByEnum12PixelFormatE
+ 255 008c 00000000 	.ident "GCC: (GNU) 3.2.2"

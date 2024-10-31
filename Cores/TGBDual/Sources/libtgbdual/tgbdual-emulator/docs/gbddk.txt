@@ -1,0 +1,48 @@
+
+	TGB Device DLL 仕様書
+
+ 1.エクスポートする関数:
+
+bool InitDevice(HWND hWnd,GBDEV_DAT *dat);
+  デバイスの初期化を行います。
+
+void UninitDevice(void);
+  デバイスの開放を行います
+
+void GetDeviceName(char *name);
+  デバイス名(説明)を返します
+
+BYTE SerialTransfer(BYTE dat);
+  GB側から転送されたときに呼ばれます
+
+bool GetInfraredLED(void);
+  デバイスの赤外線LEDが点灯しているかどうかを返します
+  そもそも赤外線が無い場合はOFFを返してください
+  (1:ON 0:OFF)
+
+
+ 2.GBDEV_DAT構造体
+   TGB側が提供するサービスルーチンの集まりです
+
+struct GBDEV_DAT{
+	void(*trash_device)();
+	BYTE(*send_dat)(BYTE);
+	bool(*get_led)();
+};
+
+ ・trash_device
+   これを呼ぶとGBからデバイスが切り離されます。
+   trash_deviceからUninitDeviceが呼ばれます。
+
+ ・send_dat
+   デバイス側からGBにデータを送ります。
+   (実際にはデータは交換されるので､デバイス側クロックでの通信と言うこと)
+
+ ・get_led
+   GBの赤外線LEDの状態が帰ります
+
+
+ 3.出来ること(出来るかもしれないこと)
+   ポケットプリンタ､リモコンシミュレータ､ポケットピカチュウ､…
+   など､GBと通信を行うあらゆるデバイス。
+   実機との通信レイヤみたいなのも出来るかもしれません。

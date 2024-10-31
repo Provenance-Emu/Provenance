@@ -13,7 +13,10 @@
 #import <PVDolphin/PVDolphin-Swift.h>
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+#import <PVDolphin/PVDolphin-Swift.h>
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVEmulatorCore;
 
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
@@ -104,14 +107,14 @@ static std::mutex s_host_identity_lock;
 static bool _isOff = false;
 static bool can_enable_fastmem = CanEnableFastmem();
 static bool hacky_fastmem = GetFastmemType() == DOLFastmemTypeHacky;
-__weak PVDolphinCore *_current = 0;
+__weak PVDolphinCoreBridge *_current = 0;
 bool _isInitialized;
 std::string user_dir;
 static bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgType style);
 static void UpdateWiiPointer();
 
 #pragma mark - Private
-@interface PVDolphinCore() {
+@interface PVDolphinCoreBridge() {
 
 }
 
@@ -119,7 +122,7 @@ static void UpdateWiiPointer();
 
 #pragma mark - PVDolphinCore Begin
 
-@implementation PVDolphinCore
+@implementation PVDolphinCoreBridge
 {
     //DolHost *dol_host;
     uint16_t *_soundBuffer;
@@ -425,7 +428,7 @@ static void UpdateWiiPointer();
 - (void)stopEmulation {
     [super stopEmulation];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    self->shouldStop = YES;
+    self.shouldStop = YES;
     _isInitialized = false;
     g_controller_interface.Shutdown();
     Core::SetState(Core::State::Running);
@@ -552,14 +555,14 @@ static void UpdateWiiPointer();
             [gl_view_controller addChildViewController:cgsh_view_controller];
             [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
         }
-        if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
-            self.renderDelegate.mtlview.autoresizesSubviews=true;
-            self.renderDelegate.mtlview.clipsToBounds=true;
-            [self.renderDelegate.mtlview addSubview:m_view];
-            [m_view.topAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.topAnchor constant:0].active = true;
-            [m_view.leadingAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.leadingAnchor constant:0].active = true;
-            [m_view.trailingAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.trailingAnchor constant:0].active = true;
-            [m_view.bottomAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.bottomAnchor constant:0].active = true;
+        if ([gl_view_controller respondsToSelector:@selector(mtlView)]) {
+            self.renderDelegate.mtlView.autoresizesSubviews=true;
+            self.renderDelegate.mtlView.clipsToBounds=true;
+            [self.renderDelegate.mtlView addSubview:m_view];
+            [m_view.topAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.topAnchor constant:0].active = true;
+            [m_view.leadingAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.leadingAnchor constant:0].active = true;
+            [m_view.trailingAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.trailingAnchor constant:0].active = true;
+            [m_view.bottomAnchor constraintEqualToAnchor:self.renderDelegate.mtlView.bottomAnchor constant:0].active = true;
         } else {
             gl_view_controller.view.autoresizesSubviews=true;
             gl_view_controller.view.clipsToBounds=true;

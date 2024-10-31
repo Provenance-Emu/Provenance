@@ -4,97 +4,55 @@
    <FileRef
       location = "container:Provenance.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:PVUI/PVUI/PVUI.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVLibrary/PVLibrary.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:PVSupport/PVSupport.xcodeproj">
-   </FileRef>
    <Group
       location = "container:"
       name = "Cores">
       <FileRef
-         location = "group:Cores/4DO/PV4DO.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Atari800/PVAtari800.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Bliss/PVBliss.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/CrabEMU/PVCrabEmu.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/FCEU/PVFCEU.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Gambatte/PVGB.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/VisualBoyAdvance-M/PVGBA.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Genesis-Plus-GX/PVGenesis.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Mednafen/PVMednafen.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
+         location = "group:Cores/snes9x/PVSNES9x.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/O2EM/PVO2EM.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/PicoDrive/PVPicoDrive.xcodeproj">
+         location = "group:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Play/PVPlayCore.xcodeproj">
+         location = "group:Cores/Genesis-Plus-GX/PVGenesis.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/PokeMini/PVPokeMini.xcodeproj">
+         location = "group:Cores/emuThree/PVEmuThree.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/ProSystem/PVProSystem.xcodeproj">
+         location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Play/PVPlayCore.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Reicast/PVReicast.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/snes9x/PVSNES.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Stella/PVStella.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/TGBDual/PVTGBDual.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/VirtualJaguar/PVVirtualJaguar.xcodeproj">
       </FileRef>
    </Group>
    <Group
       location = "group:"
       name = "Cores Libretro">
+      <FileRef
+         location = "group:PVCoreBridgeRetro/PVCoreBridgeRetro.xcodeproj">
+      </FileRef>
       <Group
          location = "container:"
          name = "Broken">
+         <FileRef
+            location = "group:Cores/NP2Kai/PVNP2Kai.xcodeproj">
+         </FileRef>
          <FileRef
             location = "group:Cores/Hatari/PVHatari.xcodeproj">
          </FileRef>
@@ -152,9 +110,6 @@
       </FileRef>
       <FileRef
          location = "group:Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/NP2Kai/PVNP2Kai.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Opera/PVOpera.xcodeproj">

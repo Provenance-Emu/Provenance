@@ -1,0 +1,15 @@
+{
+  "originHash" : "fab602922ea6048a3f532e10250b6f22df40eb315fe31f665703e231ec657676",
+  "pins" : [
+    {
+      "identity" : "turbo-base64.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Turbo-Base64.swift.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "8195ad501aa970e7b9cbe26bc6800f4e3e6e192a"
+      }
+    }
+  ],
+  "version" : 3
+}

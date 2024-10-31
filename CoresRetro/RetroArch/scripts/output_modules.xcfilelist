@@ -10,6 +10,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/fuse_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gambatte_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/gearcoleco_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/genesis_plus_gx_libretro_ios.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/gme_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/hatari_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/mame2010_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/mame_libretro_ios.dylib
@@ -38,6 +39,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/o2em_libretro_ios.dylib
 #$(SRCROOT)/CoresRetro/RetroArch/modules/opera_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/parallel_n64_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/pcsx_rearmed_libretro_ios.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/play_libretro.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/ppsspp_libretro.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/prosystem_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/race_libretro_ios.dylib

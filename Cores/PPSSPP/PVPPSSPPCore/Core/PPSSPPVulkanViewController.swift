@@ -12,11 +12,11 @@ import MetalKit
 import os
 
 @objc public class PPSSPPVulkanViewController: UIViewController {
-	private var core: PVPPSSPPCore!
+	private var core: PVPPSSPPCoreBridge!
 	private var metalView: MTKView!
 	private var dev: MTLDevice!
 
-	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVPPSSPPCore) {
+    @objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVPPSSPPCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
 		self.core = core;
 		self.dev = MTLCreateSystemDefaultDevice()!
@@ -40,12 +40,12 @@ import os
 		NSLog("View Did Load\n");
 		self.view=metalView;
 		NSLog("Starting VM\n");
-		core.startVM(self.view);
+        core.startVM(self.view);
 	}
 
 	@objc public override func viewDidLayoutSubviews() {
 		NSLog("View Size Changed\n");
-		core.refreshScreenSize();
+        core.refreshScreenSize();
 	}
 }
 

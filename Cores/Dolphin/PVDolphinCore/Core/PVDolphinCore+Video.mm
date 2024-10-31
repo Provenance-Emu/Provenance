@@ -37,7 +37,7 @@
 #include "VideoBackends/Vulkan/VideoBackend.h"
 #include "VideoBackends/Vulkan/VulkanContext.h"
 
-@implementation PVDolphinCore (Video)
+@implementation PVDolphinCoreBridge (Video)
 
 # pragma mark - Methods
 - (void)videoInterrupt {

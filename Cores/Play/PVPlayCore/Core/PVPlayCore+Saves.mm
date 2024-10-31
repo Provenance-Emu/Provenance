@@ -18,7 +18,7 @@ extern CPH_Generic *padHandler;
 extern UIView *m_view;
 extern CPS2VM *_ps2VM;
 
-@implementation PVPlayCore (Saves)
+@implementation PVPlayCoreBridge (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {

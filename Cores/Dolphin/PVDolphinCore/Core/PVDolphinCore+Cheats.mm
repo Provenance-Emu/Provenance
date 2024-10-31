@@ -1,6 +1,6 @@
 #import <PVDolphin/PVDolphin.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 /* Dolphin Includes */
 #include <algorithm>
@@ -33,7 +33,7 @@
 
 std::map<int, Gecko::GeckoCode> gcodes{};
 std::map<int, ActionReplay::ARCode> arcodes{};
-@implementation PVDolphinCore (Cheats)
+@implementation PVDolphinCoreBridge (Cheats)
 #pragma mark - Cheats
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType: (NSString *)codeType
         setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled  error:(NSError**)error {

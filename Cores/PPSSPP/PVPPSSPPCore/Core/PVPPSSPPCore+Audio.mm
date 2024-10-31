@@ -7,6 +7,11 @@
 //
 
 #import "PVPPSSPPCore+Audio.h"
+@import PVSupport;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVLoggingObjC;
 
 /* PPSSPP Includes */
 #include "Common/Log.h"
@@ -24,7 +29,7 @@
 #define AUDIO_BUFFERSIZE   (AUDIO_SAMPLESIZE * AUDIO_CHANNELS * AUDIO_SAMPLES)
 #define SAMPLE_SIZE 44100
 
-@implementation PVPPSSPPCore (Audio)
+@implementation PVPPSSPPCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
 	return isNTSC ? 60 : 50;

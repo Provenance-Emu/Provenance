@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.fceu</string>
 	<key>PVPrincipleClass</key>
-	<string>PVFCEUEmulatorCore</string>
+	<string>PVFCEU.PVFCEUEmulatorCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.nes</string>

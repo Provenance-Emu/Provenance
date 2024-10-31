@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVCoreObjCBridge;
+
+@protocol PVPS2SystemResponderClient;
+@protocol ObjCBridgedCoreBridge;
+
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
@@ -17,9 +19,9 @@
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
 PVCORE
-@interface PVPlayCore : PVEmulatorCore <PVPS2SystemResponderClient>
+@interface PVPlayCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVPS2SystemResponderClient>
 {
-	uint8_t padData[4][PVPS2ButtonCount];
+    uint8_t padData[4][27];//[PVPS2ButtonCount];
 	int8_t xAxis[4];
 	int8_t yAxis[4];
     int videoDepthBitDepth; // eh
@@ -56,8 +58,8 @@ PVCORE
 -(void)setupPad;
 @end
 
-@interface PVPlayCore (Cheats)
+@interface PVPlayCoreBridge (Cheats)
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
 @end
 
-extern __weak PVPlayCore *_current;
+extern __weak PVPlayCoreBridge *_current;

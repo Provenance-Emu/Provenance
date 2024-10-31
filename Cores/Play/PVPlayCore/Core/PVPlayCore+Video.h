@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 PVCORE_DIRECT_MEMBERS
-@interface PVPlayCore (Video)
+@interface PVPlayCoreBridge (Video)
 
 - (void)videoInterrupt;
 

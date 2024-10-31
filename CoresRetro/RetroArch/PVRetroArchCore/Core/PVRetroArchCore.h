@@ -1,14 +1,17 @@
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+
 #import <PVLogging/PVLogging.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
+
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 
-@interface PVRetroArchCore : PVEmulatorCore<PVRetroArchCoreResponderClient, UIApplicationDelegate> {
+@protocol PVRetroArchCoreResponderClient;
+@protocol ObjCBridgedCoreBridge;
+
+@interface PVRetroArchCore : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVRetroArchCoreResponderClient, UIApplicationDelegate> {
     int videoWidth;
     int videoHeight;
     int videoBitDepth;
@@ -49,7 +52,7 @@
 @property (nonatomic, assign) bool bindAnalogDpad;
 @property (nonatomic, assign) bool hasSecondScreen;
 @property (nonatomic, assign) int machineType;
-@property (nonatomic) NSString* coreIdentifier;
+@property (nonatomic, retain) NSString* coreIdentifier;
 @property (nonatomic) NSString* coreOptionConfigPath;
 @property (nonatomic) NSString* coreOptionConfig;
 @property (nonatomic) bool coreOptionOverwrite;
@@ -74,6 +77,7 @@
  */
 - (bool)setDisableDisplaySleep:(bool)disable;
 - (void)setupMainWindow;
+- (void)setupEmulation;
 //
 - (void) setupView;
 - (void) setRootView:(BOOL)flag;
@@ -150,6 +154,13 @@
 @property(nonatomic,strong) UIView *helperBarView;
 #endif
 
+#if TARGET_OS_IOS
+@property(readwrite) BOOL shouldLockCurrentInterfaceOrientation;
+@property(readwrite) UIInterfaceOrientation lockInterfaceOrientation;
+#endif
+
+@property(nonatomic,readwrite) CADisplayLink *displayLink;
+
 + (CocoaView*)get;
 @end
 
@@ -162,6 +173,10 @@ void get_ios_version(int *major, int *minor);
 + (CocoaView*)get;
 #if !defined(HAVE_COCOA) && !defined(HAVE_COCOA_METAL)
 - (void)display;
+#endif
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000
+@property(nonatomic,readwrite) CADisplayLink *displayLink API_AVAILABLE(macos(14.0));
 #endif
 
 @end
@@ -331,12 +346,18 @@ enum
 	KEY_RightAlt = 230,
 	KEY_RightGUI = 231
 };
+#ifdef __cplusplus
+extern "C" {
+#endif
 void apple_input_keyboard_event(bool down,
-		unsigned code, uint32_t character, uint32_t mod, unsigned device);
+                                unsigned code, uint32_t character, uint32_t mod, unsigned device);
 void apple_direct_input_keyboard_event(bool down,
-		unsigned code, uint32_t character, uint32_t mod, unsigned device);
+                                       unsigned code, uint32_t character, uint32_t mod, unsigned device);
 void apple_init_small_keyboard();
 void menuToggle();
+#ifdef __cplusplus
+}
+#endif
 #endif
 
 // Options

@@ -1,0 +1,106 @@
+spm:
+  - url:
+    from:
+    path:
+    branch:
+    exact:
+    revision:
+    search-paths: []
+    linked-libs: []
+
+search-paths: []
+linked-libs: []
+
+ios:
+  name: ScadeProject
+  id: com.scade.scadeproject
+  device-family: iphone # iphone, ipad or universal
+  supported-interface-orientations: ['portrait'] # portrait, upside_down, landscape_left or landscape_right
+  supported-interface-orientationsiPad: ['portrait']
+  entitlements-file:
+  app-delegate-file:
+  export-method: ad-hoc # app-store, enterprise or development
+  simulator:
+    os: 12.1
+    output: ScadeProject/.build/ios-simulator
+    extra-args:
+    search-paths: []
+    linked-libs: []
+  device:
+    os: 12.1
+    output: ScadeProject/.build/ios-device
+    product-path: ScadeProject/Product/ios-device
+    extra-args:
+    search-paths: []
+    linked-libs: []
+  mac:
+    os: 10.11
+    output:  ScadeProject/.build/scade-simulator
+    extra-args:
+    search-paths: []
+    linked-libs: []
+  sign:
+    provision-profile:
+    certificate:
+  icons:
+    iphone: # or ipad, sizes: 20X20, 29X29, 40X40, 60X60, 76X76, 83.5X83.5
+      60X60_2X:
+      76X76_2X:
+      76X76_3X:
+      83.5X83.5_2X:
+    marketing:
+      1024X1024_1X:
+  plist:
+    CFBundleShortVersionString: string# 1.0
+    CFBundleVersion: string# 1
+    NSLocationWhenInUseUsageDescription:
+    NSCameraUsageDescription: Take pictures from camera
+    NSPhotoLibraryUsageDescription: Choose a photo from your library
+    NSPrivacyAccessedAPITypes:
+      - NSPrivacyAccessedAPIType: NSPrivacyAccessedAPICategoryUserDefaults
+        NSPrivacyAccessedAPITypeReasons:
+          - CA92.1
+
+android:
+  name: ScadeProject
+  id: com.scade.scadeproject
+  version-name: 1.0.0
+  version-code: 1
+  build-type: Debug
+  key-store-properties:
+  google-api-key:
+  manifest-file:
+  permissions: []
+  armeabi-v7a:
+    output: ScadeProject/.build/android-armeabi-v7a
+    product-path: ScadeProject/Product/android-armeabi-v7a
+    extra-args:
+    search-paths: []
+    linked-libs: []
+  arm64-v8a:
+    output: ScadeProject/.build/android-arm64-v8a
+    product-path: ScadeProject/Product/android-arm64-v8a
+    extra-args:
+    search-paths: []
+    linked-libs: []
+  x86:
+    output: ScadeProject/.build/android-x86
+    product-path: ScadeProject/Product/android-x86
+    extra-args:
+    search-paths: []
+    linked-libs: []
+  x86_64:
+    output: ScadeProject/.build/android-x86_64
+    product-path: ScadeProject/Product/android-x86_64
+    extra-args:
+    search-paths: []
+    linked-libs: []
+  intent-filters:
+    - action:
+      scheme:
+      categories: []
+  icons:
+    mdpi:
+    hdpi:
+    xhdpi:
+    xxhdpi:

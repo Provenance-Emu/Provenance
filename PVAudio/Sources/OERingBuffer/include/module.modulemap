@@ -1,0 +1,5 @@
+module OERingBuffer {
+    header "../OERingBuffer.h"
+    header "../TPCircularBuffer.h"
+    export *
+}

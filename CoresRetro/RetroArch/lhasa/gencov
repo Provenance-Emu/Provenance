@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+#
+# Copyright (c) 2011, 2012, Simon Howard
+#
+# Permission to use, copy, modify, and/or distribute this software
+# for any purpose with or without fee is hereby granted, provided
+# that the above copyright notice and this permission notice appear
+# in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+# WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+# AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+# LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+# NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+from re import match
+from os import rename, popen, getcwd, chdir
+from os.path import exists, dirname, basename
+from os.path import join as path_join
+from glob import glob
+import sys
+
+def parse_stats(text):
+	m = match(r"(.*)% of (.*)", text)
+
+	pct = m.group(1)
+	lines = int(m.group(2))
+	cov_lines = int(float(pct) * lines / 100 + 0.5)
+	uncov_lines = lines - cov_lines
+
+	return (pct + "%", uncov_lines, cov_lines, lines)
+
+
+def gcov(filename):
+
+	# gcov must be run from within the same directory as the source
+	# file that we are analysing.
+
+	old_wd = getcwd()
+	src_dir = dirname(filename)
+	chdir(src_dir)
+	s = popen("gcov %s" % basename(filename))
+	chdir(old_wd)
+
+	# Process output from gcov.
+	# This may cover multiple files when one .c file includes another.
+
+	results = {}
+	filename = None
+
+	# File 'lha_file_header.c'
+	# Lines executed:88.97% of 136
+
+	for line in s:
+		m = match(r"File '(.*)'", line)
+		if m:
+			filename = m.group(1)
+
+		m = match(r"Lines executed:(.*)", line)
+		if m:
+			full_path = path_join(src_dir, filename)
+			results[full_path] = parse_stats(m.group(1))
+
+	s.close()
+
+	return results
+
+def format_output(filename, stats):
+	print("  %-35s%7s%7s%7s%7s" % ((filename, ) + stats))
+
+print()
+format_output("Filename", ("Percent", "Uncov", "Cov", "Total"))
+print(" " + ("-" * 65))
+
+for filename in sorted(sys.argv[1:]):
+	gcno = filename.replace(".c", ".gcno")
+	gcda = filename.replace(".c", ".gcda")
+
+	xgcno = glob(path_join(dirname(gcno), "*-" + basename(gcno)))
+	xgcda = glob(path_join(dirname(gcda), "*-" + basename(gcda)))
+
+	# Must rename e.g. liblhasatest_a-foo.gcno to foo.gcno:
+
+	if len(xgcno) > 0:
+		rename(xgcno[0], gcno)
+
+	if len(xgcda) > 0:
+		rename(xgcda[0], gcda)
+
+	if not exists(gcno) or not exists(gcda):
+		continue
+
+	# Run gcov and parse output:
+
+	results = gcov(filename)
+
+	if len(results) > 0:
+		if filename in results:
+			format_output(filename, results[filename])
+		else:
+			format_output(filename, ("", "", "", ""))
+
+	for subfile in sorted(results.keys()):
+		if subfile.endswith(".h"):
+			continue
+
+		if subfile != filename:
+			format_output(" -> " + subfile, results[subfile])
+
+print()

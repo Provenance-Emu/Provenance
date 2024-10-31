@@ -1,0 +1,6 @@
+framework module PVTGBDual {
+  umbrella header "PVTGBDual.h"
+  export *
+
+  module * { export * }
+}

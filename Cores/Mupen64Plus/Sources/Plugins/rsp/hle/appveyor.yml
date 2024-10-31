@@ -1,0 +1,25 @@
+version: 1.0.{build}
+
+configuration:
+  - Release
+platform:
+  - Win32
+  - x64
+
+before_build:
+  - git clone --depth 1 https://github.com/mupen64plus/mupen64plus-core.git ..\mupen64plus-core
+
+build_script:
+  - msbuild projects\msvc\mupen64plus-rsp-hle.vcxproj /p:Configuration=%configuration%;Platform=%platform%
+
+after_build:
+  - ps: $env:rev1 = git describe --tags
+  - set rev2=%platform%
+  - if "%rev2%"=="Win32" set rev2=x86
+  - set filepkg=mupen64plus-rsp-hle_v%rev1%_%rev2%
+  - cd projects\msvc\%platform%\%configuration%
+  - 7z a -t7z ..\..\..\..\build\%filepkg%.7z *.dll
+
+artifacts:
+  - path: build\$(filepkg).7z
+    name: $(filepkg)

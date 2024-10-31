@@ -1,0 +1,1291 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Modules/sjpcm/ee/sjpcm_rpc.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.globl sjpcm_inited
+   5              	.data
+   6              	.align 2
+   7              	.type sjpcm_inited,@object
+   8              	.size sjpcm_inited,4
+   9              	sjpcm_inited:
+  10 0000 00000000 	.word 0
+  11              	.align 2
+  12              	.type _Buffered,@object
+  13              	.size _Buffered,4
+  14              	_Buffered:
+  15 0004 00000000 	.word 0
+  16              	.text
+  17              	.align 2
+  18              	.p2align 3,,7
+  19              	.globl SjPCM_Play
+  20              	.ent SjPCM_Play
+  21              	SjPCM_Play:
+  22              	.frame $sp,32,$31
+  23              	.mask 0x80000000,-16
+  24              	.fmask 0x00000000,0
+  25 0000 E0FFBD27 	subu $sp,$sp,32
+  26 0004 0000023C 	lui $2,%hi(sjpcm_inited)
+  27 0008 1000BFFF 	sd $31,16($sp)
+  28 000c 0000073C 	lui $7,%hi(sbuff)
+  29 0010 0000E724 	addiu $7,$7,%lo(sbuff)
+  30 0014 0000043C 	lui $4,%hi(cd0)
+  31 0018 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+  32 001c 00058424 	addiu $4,$4,%lo(cd0)
+  33 0020 03000524 	li $5,3
+  34 0024 2D300000 	move $6,$0
+  35 0028 2D400000 	move $8,$0
+  36 002c 2D48E000 	move $9,$7
+  37 0030 2D500000 	move $10,$0
+  38              	.set noreorder
+  39              	.set nomacro
+  40 0034 04006014 	bne $3,$0,$L3
+  41 0038 2D580000 	move $11,$0
+  42              	.set macro
+  43              	.set reorder
+  44              	
+  45 003c 1000BFDF 	ld $31,16($sp)
+  46              	$L4:
+  47              	.set noreorder
+  48              	.set nomacro
+  49 0040 0800E003 	j $31
+  50 0044 2000BD27 	addu $sp,$sp,32
+  51              	.set macro
+  52              	.set reorder
+  53              	
+  54              	.p2align 3
+  55              	$L3:
+  56              	.set noreorder
+  57              	.set nomacro
+GAS LISTING  			page 2
+
+
+  58 0048 0000000C 	jal SifCallRpc
+  59 004c 0000A0AF 	sw $0,0($sp)
+  60              	.set macro
+  61              	.set reorder
+  62              	
+  63              	.set noreorder
+  64              	.set nomacro
+  65 0050 FBFF0010 	b $L4
+  66 0054 1000BFDF 	ld $31,16($sp)
+  67              	.set macro
+  68              	.set reorder
+  69              	
+  70              	.end SjPCM_Play
+  71              	$Lfe1:
+  72              	.size SjPCM_Play,$Lfe1-SjPCM_Play
+  73              	.align 2
+  74              	.p2align 3,,7
+  75              	.globl SjPCM_Pause
+  76              	.ent SjPCM_Pause
+  77              	SjPCM_Pause:
+  78              	.frame $sp,32,$31
+  79              	.mask 0x80000000,-16
+  80              	.fmask 0x00000000,0
+  81 0058 E0FFBD27 	subu $sp,$sp,32
+  82 005c 0000023C 	lui $2,%hi(sjpcm_inited)
+  83 0060 1000BFFF 	sd $31,16($sp)
+  84 0064 0000073C 	lui $7,%hi(sbuff)
+  85 0068 0000E724 	addiu $7,$7,%lo(sbuff)
+  86 006c 0000043C 	lui $4,%hi(cd0)
+  87 0070 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+  88 0074 00058424 	addiu $4,$4,%lo(cd0)
+  89 0078 04000524 	li $5,4
+  90 007c 2D300000 	move $6,$0
+  91 0080 2D400000 	move $8,$0
+  92 0084 2D48E000 	move $9,$7
+  93 0088 2D500000 	move $10,$0
+  94              	.set noreorder
+  95              	.set nomacro
+  96 008c 04006014 	bne $3,$0,$L7
+  97 0090 2D580000 	move $11,$0
+  98              	.set macro
+  99              	.set reorder
+ 100              	
+ 101 0094 1000BFDF 	ld $31,16($sp)
+ 102              	$L8:
+ 103              	.set noreorder
+ 104              	.set nomacro
+ 105 0098 0800E003 	j $31
+ 106 009c 2000BD27 	addu $sp,$sp,32
+ 107              	.set macro
+ 108              	.set reorder
+ 109              	
+ 110              	.p2align 3
+ 111              	$L7:
+ 112              	.set noreorder
+ 113              	.set nomacro
+ 114 00a0 0000000C 	jal SifCallRpc
+GAS LISTING  			page 3
+
+
+ 115 00a4 0000A0AF 	sw $0,0($sp)
+ 116              	.set macro
+ 117              	.set reorder
+ 118              	
+ 119              	.set noreorder
+ 120              	.set nomacro
+ 121 00a8 FBFF0010 	b $L8
+ 122 00ac 1000BFDF 	ld $31,16($sp)
+ 123              	.set macro
+ 124              	.set reorder
+ 125              	
+ 126              	.end SjPCM_Pause
+ 127              	$Lfe2:
+ 128              	.size SjPCM_Pause,$Lfe2-SjPCM_Pause
+ 129              	.align 2
+ 130              	.p2align 3,,7
+ 131              	.globl SjPCM_Setvol
+ 132              	.ent SjPCM_Setvol
+ 133              	SjPCM_Setvol:
+ 134              	.frame $sp,32,$31
+ 135              	.mask 0x80000000,-16
+ 136              	.fmask 0x00000000,0
+ 137 00b0 E0FFBD27 	subu $sp,$sp,32
+ 138 00b4 0000023C 	lui $2,%hi(sbuff)
+ 139 00b8 1000BFFF 	sd $31,16($sp)
+ 140 00bc 00004C24 	addiu $12,$2,%lo(sbuff)
+ 141 00c0 0000023C 	lui $2,%hi(sjpcm_inited)
+ 142 00c4 2D388001 	move $7,$12
+ 143 00c8 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+ 144 00cc 05000524 	li $5,5
+ 145 00d0 FF3F8230 	andi $2,$4,0x3fff
+ 146 00d4 2D300000 	move $6,$0
+ 147 00d8 0000043C 	lui $4,%hi(cd0)
+ 148 00dc 40000824 	li $8,64
+ 149 00e0 2D488001 	move $9,$12
+ 150 00e4 40000A24 	li $10,64
+ 151 00e8 2D580000 	move $11,$0
+ 152              	.set noreorder
+ 153              	.set nomacro
+ 154 00ec 04006014 	bne $3,$0,$L11
+ 155 00f0 00058424 	addiu $4,$4,%lo(cd0)
+ 156              	.set macro
+ 157              	.set reorder
+ 158              	
+ 159 00f4 1000BFDF 	ld $31,16($sp)
+ 160              	$L12:
+ 161              	.set noreorder
+ 162              	.set nomacro
+ 163 00f8 0800E003 	j $31
+ 164 00fc 2000BD27 	addu $sp,$sp,32
+ 165              	.set macro
+ 166              	.set reorder
+ 167              	
+ 168              	.p2align 3
+ 169              	$L11:
+ 170 0100 140082AD 	sw $2,20($12)
+ 171              	.set noreorder
+GAS LISTING  			page 4
+
+
+ 172              	.set nomacro
+ 173 0104 0000000C 	jal SifCallRpc
+ 174 0108 0000A0AF 	sw $0,0($sp)
+ 175              	.set macro
+ 176              	.set reorder
+ 177              	
+ 178              	.set noreorder
+ 179              	.set nomacro
+ 180 010c FAFF0010 	b $L12
+ 181 0110 1000BFDF 	ld $31,16($sp)
+ 182              	.set macro
+ 183              	.set reorder
+ 184              	
+ 185              	.end SjPCM_Setvol
+ 186              	$Lfe3:
+ 187              	.size SjPCM_Setvol,$Lfe3-SjPCM_Setvol
+ 188              	.align 2
+ 189 0114 00000000 	.p2align 3,,7
+ 190              	.globl SjPCM_Clearbuff
+ 191              	.ent SjPCM_Clearbuff
+ 192              	SjPCM_Clearbuff:
+ 193              	.frame $sp,32,$31
+ 194              	.mask 0x80000000,-16
+ 195              	.fmask 0x00000000,0
+ 196 0118 E0FFBD27 	subu $sp,$sp,32
+ 197 011c 0000023C 	lui $2,%hi(sjpcm_inited)
+ 198 0120 1000BFFF 	sd $31,16($sp)
+ 199 0124 0000073C 	lui $7,%hi(sbuff)
+ 200 0128 0000E724 	addiu $7,$7,%lo(sbuff)
+ 201 012c 0000043C 	lui $4,%hi(cd0)
+ 202 0130 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+ 203 0134 00058424 	addiu $4,$4,%lo(cd0)
+ 204 0138 07000524 	li $5,7
+ 205 013c 2D300000 	move $6,$0
+ 206 0140 2D400000 	move $8,$0
+ 207 0144 2D48E000 	move $9,$7
+ 208 0148 2D500000 	move $10,$0
+ 209              	.set noreorder
+ 210              	.set nomacro
+ 211 014c 04006014 	bne $3,$0,$L15
+ 212 0150 2D580000 	move $11,$0
+ 213              	.set macro
+ 214              	.set reorder
+ 215              	
+ 216 0154 1000BFDF 	ld $31,16($sp)
+ 217              	$L16:
+ 218              	.set noreorder
+ 219              	.set nomacro
+ 220 0158 0800E003 	j $31
+ 221 015c 2000BD27 	addu $sp,$sp,32
+ 222              	.set macro
+ 223              	.set reorder
+ 224              	
+ 225              	.p2align 3
+ 226              	$L15:
+ 227              	.set noreorder
+ 228              	.set nomacro
+GAS LISTING  			page 5
+
+
+ 229 0160 0000000C 	jal SifCallRpc
+ 230 0164 0000A0AF 	sw $0,0($sp)
+ 231              	.set macro
+ 232              	.set reorder
+ 233              	
+ 234              	.set noreorder
+ 235              	.set nomacro
+ 236 0168 FBFF0010 	b $L16
+ 237 016c 1000BFDF 	ld $31,16($sp)
+ 238              	.set macro
+ 239              	.set reorder
+ 240              	
+ 241              	.end SjPCM_Clearbuff
+ 242              	$Lfe4:
+ 243              	.size SjPCM_Clearbuff,$Lfe4-SjPCM_Clearbuff
+ 244              	.align 2
+ 245              	.p2align 3,,7
+ 246              	.globl SjPCM_Init
+ 247              	.ent SjPCM_Init
+ 248              	SjPCM_Init:
+ 249              	.frame $sp,128,$31
+ 250              	.mask 0x800f0000,-16
+ 251              	.fmask 0x00000000,0
+ 252 0170 80FFBD27 	subu $sp,$sp,128
+ 253 0174 0000023C 	lui $2,%hi(cd0)
+ 254 0178 7000BFFF 	sd $31,112($sp)
+ 255 017c 6000B3FF 	sd $19,96($sp)
+ 256 0180 2D98C000 	move $19,$6
+ 257 0184 5000B2FF 	sd $18,80($sp)
+ 258 0188 2D90A000 	move $18,$5
+ 259 018c 4000B1FF 	sd $17,64($sp)
+ 260 0190 2D888000 	move $17,$4
+ 261 0194 3000B0FF 	sd $16,48($sp)
+ 262 0198 00055024 	addiu $16,$2,%lo(cd0)
+ 263 019c 010B053C 	li $5,184614912
+ 264              	$L29:
+ 265 01a0 2D200002 	move $4,$16
+ 266 01a4 C510A534 	ori $5,$5,0x10c5
+ 267              	.set noreorder
+ 268              	.set nomacro
+ 269 01a8 0000000C 	jal SifBindRpc
+ 270 01ac 2D300000 	move $6,$0
+ 271              	.set macro
+ 272              	.set reorder
+ 273              	
+ 274              	.set noreorder
+ 275              	.set nomacro
+ 276 01b0 3D004004 	bltz $2,$L17
+ 277 01b4 FFFF0424 	li $4,-1
+ 278              	.set macro
+ 279              	.set reorder
+ 280              	
+ 281 01b8 2400028E 	lw $2,36($16)
+ 282              	
+ 283              	.set noreorder
+ 284              	.set nomacro
+ 285 01bc 0D004014 	bne $2,$0,$L19
+GAS LISTING  			page 6
+
+
+ 286 01c0 0100023C 	li $2,65536
+ 287              	.set macro
+ 288              	.set reorder
+ 289              	
+ 290 01c4 FFFF0324 	li $3,-1
+ 291 01c8 FFFF4224 	addu $2,$2,-1
+ 292              	$L30:
+ 293              	.set noreorder
+ 294 01cc 00000000 	nop
+ 295              	.set reorder
+ 296              	.set noreorder
+ 297 01d0 00000000 	nop
+ 298              	.set reorder
+ 299              	.set noreorder
+ 300 01d4 00000000 	nop
+ 301              	.set reorder
+ 302              	.set noreorder
+ 303 01d8 00000000 	nop
+ 304              	.set reorder
+ 305              	.set noreorder
+ 306 01dc 00000000 	nop
+ 307              	.set reorder
+ 308              	.set noreorder
+ 309 01e0 00000000 	nop
+ 310              	.set reorder
+ 311              	.set noreorder
+ 312              	.set nomacro
+ 313 01e4 F9FF4314 	bne $2,$3,$L30
+ 314 01e8 FFFF4224 	addu $2,$2,-1
+ 315              	.set macro
+ 316              	.set reorder
+ 317              	
+ 318              	.set noreorder
+ 319              	.set nomacro
+ 320 01ec ECFF0010 	b $L29
+ 321 01f0 010B053C 	li $5,184614912
+ 322              	.set macro
+ 323              	.set reorder
+ 324              	
+ 325              	$L19:
+ 326 01f4 0000023C 	lui $2,%hi(sbuff)
+ 327 01f8 2D200000 	move $4,$0
+ 328 01fc 00005024 	addiu $16,$2,%lo(sbuff)
+ 329 0200 000051AC 	sw $17,%lo(sbuff)($2)
+ 330 0204 040012AE 	sw $18,4($16)
+ 331 0208 01001124 	li $17,1
+ 332              	.set noreorder
+ 333              	.set nomacro
+ 334 020c 0000000C 	jal FlushCache
+ 335 0210 080013AE 	sw $19,8($16)
+ 336              	.set macro
+ 337              	.set reorder
+ 338              	
+ 339 0214 0000A0AF 	sw $0,0($sp)
+ 340 0218 0000043C 	lui $4,%hi(cd0)
+ 341 021c 02000524 	li $5,2
+ 342 0220 2D300000 	move $6,$0
+GAS LISTING  			page 7
+
+
+ 343 0224 2D380002 	move $7,$16
+ 344 0228 40000824 	li $8,64
+ 345 022c 2D480002 	move $9,$16
+ 346 0230 40000A24 	li $10,64
+ 347 0234 2D580000 	move $11,$0
+ 348              	.set noreorder
+ 349              	.set nomacro
+ 350 0238 0000000C 	jal SifCallRpc
+ 351 023c 00058424 	addiu $4,$4,%lo(cd0)
+ 352              	.set macro
+ 353              	.set reorder
+ 354              	
+ 355              	.set noreorder
+ 356              	.set nomacro
+ 357 0240 0000000C 	jal FlushCache
+ 358 0244 2D200000 	move $4,$0
+ 359              	.set macro
+ 360              	.set reorder
+ 361              	
+ 362 0248 2400A0AF 	sw $0,36($sp)
+ 363 024c 0400058E 	lw $5,4($16)
+ 364 0250 0000023C 	lui $2,%hi(pcmbufl)
+ 365 0254 0C00078E 	lw $7,12($16)
+ 366 0258 0000033C 	lui $3,%hi(pcmbufr)
+ 367 025c 0800068E 	lw $6,8($16)
+ 368 0260 1000A427 	addu $4,$sp,16
+ 369 0264 000045AC 	sw $5,%lo(pcmbufl)($2)
+ 370 0268 0000023C 	lui $2,%hi(bufpos)
+ 371 026c 000066AC 	sw $6,%lo(pcmbufr)($3)
+ 372 0270 000047AC 	sw $7,%lo(bufpos)($2)
+ 373 0274 1800B1AF 	sw $17,24($sp)
+ 374              	.set noreorder
+ 375              	.set nomacro
+ 376 0278 0000000C 	jal CreateSema
+ 377 027c 1400B1AF 	sw $17,20($sp)
+ 378              	.set macro
+ 379              	.set reorder
+ 380              	
+ 381 0280 0000033C 	lui $3,%hi(_sjpcm_sema)
+ 382 0284 FFFF0424 	li $4,-1
+ 383              	.set noreorder
+ 384              	.set nomacro
+ 385 0288 07004004 	bltz $2,$L17
+ 386 028c 280562AC 	sw $2,%lo(_sjpcm_sema)($3)
+ 387              	.set macro
+ 388              	.set reorder
+ 389              	
+ 390 0290 0000023C 	lui $2,%hi(sjpcm_inited)
+ 391              	.set noreorder
+ 392              	.set nomacro
+ 393 0294 0000000C 	jal SjPCM_BufferedAsyncStart
+ 394 0298 000051AC 	sw $17,%lo(sjpcm_inited)($2)
+ 395              	.set macro
+ 396              	.set reorder
+ 397              	
+ 398 029c 0000000C 	jal SjPCM_BufferedAsyncGet
+ 398      00000000 
+GAS LISTING  			page 8
+
+
+ 399 02a4 2D200000 	move $4,$0
+ 400              	$L17:
+ 401 02a8 7000BFDF 	ld $31,112($sp)
+ 402 02ac 2D108000 	move $2,$4
+ 403 02b0 6000B3DF 	ld $19,96($sp)
+ 404 02b4 5000B2DF 	ld $18,80($sp)
+ 405 02b8 4000B1DF 	ld $17,64($sp)
+ 406 02bc 3000B0DF 	ld $16,48($sp)
+ 407              	
+ 408              	.set noreorder
+ 409              	.set nomacro
+ 410 02c0 0800E003 	j $31
+ 411 02c4 8000BD27 	addu $sp,$sp,128
+ 412              	.set macro
+ 413              	.set reorder
+ 414              	
+ 415              	.end SjPCM_Init
+ 416              	$Lfe5:
+ 417              	.size SjPCM_Init,$Lfe5-SjPCM_Init
+ 418              	.align 2
+ 419              	.p2align 3,,7
+ 420              	.globl SjPCM_Enqueue
+ 421              	.ent SjPCM_Enqueue
+ 422              	SjPCM_Enqueue:
+ 423              	.frame $sp,128,$31
+ 424              	.mask 0x801f0000,-16
+ 425              	.fmask 0x00000000,0
+ 426 02c8 80FFBD27 	subu $sp,$sp,128
+ 427 02cc 0000023C 	lui $2,%hi(sjpcm_inited)
+ 428 02d0 6000B4FF 	sd $20,96($sp)
+ 429 02d4 2D408000 	move $8,$4
+ 430 02d8 4000B2FF 	sd $18,64($sp)
+ 431 02dc 2DA0C000 	move $20,$6
+ 432 02e0 3000B1FF 	sd $17,48($sp)
+ 433 02e4 2D90A000 	move $18,$5
+ 434 02e8 7000BFFF 	sd $31,112($sp)
+ 435 02ec 5000B3FF 	sd $19,80($sp)
+ 436 02f0 2000B0FF 	sd $16,32($sp)
+ 437 02f4 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+ 438              	
+ 439              	.set noreorder
+ 440              	.set nomacro
+ 441 02f8 09006014 	bne $3,$0,$L41
+ 442 02fc 2D88E000 	move $17,$7
+ 443              	.set macro
+ 444              	.set reorder
+ 445              	
+ 446              	$L31:
+ 447 0300 7000BFDF 	ld $31,112($sp)
+ 448 0304 6000B4DF 	ld $20,96($sp)
+ 449 0308 5000B3DF 	ld $19,80($sp)
+ 450 030c 4000B2DF 	ld $18,64($sp)
+ 451 0310 3000B1DF 	ld $17,48($sp)
+ 452 0314 2000B0DF 	ld $16,32($sp)
+ 453              	
+ 454              	.set noreorder
+ 455              	.set nomacro
+GAS LISTING  			page 9
+
+
+ 456 0318 0800E003 	j $31
+ 457 031c 8000BD27 	addu $sp,$sp,128
+ 458              	.set macro
+ 459              	.set reorder
+ 460              	
+ 461              	.p2align 3
+ 462              	$L41:
+ 463 0320 0000023C 	lui $2,%hi(pcmbufl)
+ 464 0324 40980600 	sll $19,$6,1
+ 465 0328 0000438C 	lw $3,%lo(pcmbufl)($2)
+ 466 032c 2D200000 	move $4,$0
+ 467 0330 0000023C 	lui $2,%hi(bufpos)
+ 468 0334 1000A8AF 	sw $8,16($sp)
+ 469 0338 0000458C 	lw $5,%lo(bufpos)($2)
+ 470 033c 1800B3AF 	sw $19,24($sp)
+ 471 0340 21186500 	addu $3,$3,$5
+ 472 0344 1C00A0AF 	sw $0,28($sp)
+ 473              	.set noreorder
+ 474              	.set nomacro
+ 475 0348 0000000C 	jal FlushCache
+ 476 034c 1400A3AF 	sw $3,20($sp)
+ 477              	.set macro
+ 478              	.set reorder
+ 479              	
+ 480 0350 1000A427 	addu $4,$sp,16
+ 481              	.set noreorder
+ 482              	.set nomacro
+ 483 0354 0000000C 	jal SifSetDma
+ 484 0358 01000524 	li $5,1
+ 485              	.set macro
+ 486              	.set reorder
+ 487              	
+ 488 035c 2D804000 	move $16,$2
+ 489              	.p2align 3
+ 490              	$L33:
+ 491              	.set noreorder
+ 492              	.set nomacro
+ 493 0360 05002012 	beq $17,$0,$L34
+ 494 0364 2D200002 	move $4,$16
+ 495              	.set macro
+ 496              	.set reorder
+ 497              	
+ 498 0368 0000000C 	jal SifDmaStat
+ 498      00000000 
+ 499 0370 FBFF4104 	bgez $2,$L33
+ 499      00000000 
+ 500              	$L34:
+ 501 0378 0000023C 	lui $2,%hi(pcmbufr)
+ 502 037c 2D200000 	move $4,$0
+ 503 0380 0000438C 	lw $3,%lo(pcmbufr)($2)
+ 504 0384 0000023C 	lui $2,%hi(bufpos)
+ 505 0388 0000458C 	lw $5,%lo(bufpos)($2)
+ 506 038c 1000B2AF 	sw $18,16($sp)
+ 507 0390 21186500 	addu $3,$3,$5
+ 508 0394 1800B3AF 	sw $19,24($sp)
+ 509 0398 1400A3AF 	sw $3,20($sp)
+ 510              	.set noreorder
+GAS LISTING  			page 10
+
+
+ 511              	.set nomacro
+ 512 039c 0000000C 	jal FlushCache
+ 513 03a0 1C00A0AF 	sw $0,28($sp)
+ 514              	.set macro
+ 515              	.set reorder
+ 516              	
+ 517 03a4 1000A427 	addu $4,$sp,16
+ 518              	.set noreorder
+ 519              	.set nomacro
+ 520 03a8 0000000C 	jal SifSetDma
+ 521 03ac 01000524 	li $5,1
+ 522              	.set macro
+ 523              	.set reorder
+ 524              	
+ 525 03b0 2D804000 	move $16,$2
+ 526 03b4 00000000 	.p2align 3
+ 527              	$L37:
+ 528              	.set noreorder
+ 529              	.set nomacro
+ 530 03b8 05002012 	beq $17,$0,$L38
+ 531 03bc 2D200002 	move $4,$16
+ 532              	.set macro
+ 533              	.set reorder
+ 534              	
+ 535 03c0 0000000C 	jal SifDmaStat
+ 535      00000000 
+ 536 03c8 FBFF4104 	bgez $2,$L37
+ 536      00000000 
+ 537              	$L38:
+ 538 03d0 0000023C 	lui $2,%hi(sbuff)
+ 539 03d4 0000043C 	lui $4,%hi(cd0)
+ 540 03d8 00005024 	addiu $16,$2,%lo(sbuff)
+ 541 03dc 00058424 	addiu $4,$4,%lo(cd0)
+ 542 03e0 06000524 	li $5,6
+ 543 03e4 2D300000 	move $6,$0
+ 544 03e8 2D380002 	move $7,$16
+ 545 03ec 40000824 	li $8,64
+ 546 03f0 2D480002 	move $9,$16
+ 547 03f4 40000A24 	li $10,64
+ 548 03f8 2D580000 	move $11,$0
+ 549 03fc 000054AC 	sw $20,%lo(sbuff)($2)
+ 550              	.set noreorder
+ 551              	.set nomacro
+ 552 0400 0000000C 	jal SifCallRpc
+ 553 0404 0000A0AF 	sw $0,0($sp)
+ 554              	.set macro
+ 555              	.set reorder
+ 556              	
+ 557 0408 0C00038E 	lw $3,12($16)
+ 558 040c 0000023C 	lui $2,%hi(bufpos)
+ 559              	.set noreorder
+ 560              	.set nomacro
+ 561 0410 BBFF0010 	b $L31
+ 562 0414 000043AC 	sw $3,%lo(bufpos)($2)
+ 563              	.set macro
+ 564              	.set reorder
+ 565              	
+GAS LISTING  			page 11
+
+
+ 566              	.end SjPCM_Enqueue
+ 567              	$Lfe6:
+ 568              	.size SjPCM_Enqueue,$Lfe6-SjPCM_Enqueue
+ 569              	.align 2
+ 570              	.p2align 3,,7
+ 571              	.globl _SjPCM_EnqueueIntr
+ 572              	.ent _SjPCM_EnqueueIntr
+ 573              	_SjPCM_EnqueueIntr:
+ 574              	.frame $sp,16,$31
+ 575              	.mask 0x80000000,-16
+ 576              	.fmask 0x00000000,0
+ 577 0418 F0FFBD27 	subu $sp,$sp,16
+ 578 041c 0000023C 	lui $2,%hi(_sjpcm_sema)
+ 579 0420 0000BFFF 	sd $31,0($sp)
+ 580 0424 0000033C 	lui $3,%hi(bufpos)
+ 581 0428 0C00858C 	lw $5,12($4)
+ 582 042c 2805448C 	lw $4,%lo(_sjpcm_sema)($2)
+ 583              	.set noreorder
+ 584              	.set nomacro
+ 585 0430 0000000C 	jal iSignalSema
+ 586 0434 000065AC 	sw $5,%lo(bufpos)($3)
+ 587              	.set macro
+ 588              	.set reorder
+ 589              	
+ 590 0438 0000BFDF 	ld $31,0($sp)
+ 591              	
+ 592              	.set noreorder
+ 593              	.set nomacro
+ 594 043c 0800E003 	j $31
+ 595 0440 1000BD27 	addu $sp,$sp,16
+ 596              	.set macro
+ 597              	.set reorder
+ 598              	
+ 599              	.end _SjPCM_EnqueueIntr
+ 600              	$Lfe7:
+ 601              	.size _SjPCM_EnqueueIntr,$Lfe7-_SjPCM_EnqueueIntr
+ 602              	.align 2
+ 603 0444 00000000 	.p2align 3,,7
+ 604              	.globl SjPCM_Sync
+ 605              	.ent SjPCM_Sync
+ 606              	SjPCM_Sync:
+ 607              	.frame $sp,32,$31
+ 608              	.mask 0x80010000,-16
+ 609              	.fmask 0x00000000,0
+ 610 0448 E0FFBD27 	subu $sp,$sp,32
+ 611 044c 0000B0FF 	sd $16,0($sp)
+ 612 0450 0000103C 	lui $16,%hi(_sjpcm_sema)
+ 613 0454 2805048E 	lw $4,%lo(_sjpcm_sema)($16)
+ 614 0458 1000BFFF 	sd $31,16($sp)
+ 615 045c 0000000C 	jal WaitSema
+ 615      00000000 
+ 616              	.set noreorder
+ 617              	.set nomacro
+ 618 0464 0000000C 	jal SignalSema
+ 619 0468 2805048E 	lw $4,%lo(_sjpcm_sema)($16)
+ 620              	.set macro
+ 621              	.set reorder
+GAS LISTING  			page 12
+
+
+ 622              	
+ 623 046c 0000B0DF 	ld $16,0($sp)
+ 624 0470 1000BFDF 	ld $31,16($sp)
+ 625              	
+ 626              	.set noreorder
+ 627              	.set nomacro
+ 628 0474 0800E003 	j $31
+ 629 0478 2000BD27 	addu $sp,$sp,32
+ 630              	.set macro
+ 631              	.set reorder
+ 632              	
+ 633              	.end SjPCM_Sync
+ 634              	$Lfe8:
+ 635              	.size SjPCM_Sync,$Lfe8-SjPCM_Sync
+ 636              	.align 2
+ 637 047c 00000000 	.p2align 3,,7
+ 638              	.globl SjPCM_EnqueueAsync
+ 639              	.ent SjPCM_EnqueueAsync
+ 640              	SjPCM_EnqueueAsync:
+ 641              	.frame $sp,128,$31
+ 642              	.mask 0x801f0000,-16
+ 643              	.fmask 0x00000000,0
+ 644 0480 80FFBD27 	subu $sp,$sp,128
+ 645 0484 0000023C 	lui $2,%hi(sjpcm_inited)
+ 646 0488 6000B4FF 	sd $20,96($sp)
+ 647 048c 0000143C 	lui $20,%hi(bufpos)
+ 648 0490 5000B3FF 	sd $19,80($sp)
+ 649 0494 40980600 	sll $19,$6,1
+ 650 0498 4000B2FF 	sd $18,64($sp)
+ 651 049c 2D90C000 	move $18,$6
+ 652 04a0 3000B1FF 	sd $17,48($sp)
+ 653 04a4 2D88A000 	move $17,$5
+ 654 04a8 2000B0FF 	sd $16,32($sp)
+ 655 04ac 7000BFFF 	sd $31,112($sp)
+ 656 04b0 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+ 657              	
+ 658              	.set noreorder
+ 659              	.set nomacro
+ 660 04b4 0A006014 	bne $3,$0,$L54
+ 661 04b8 2D808000 	move $16,$4
+ 662              	.set macro
+ 663              	.set reorder
+ 664              	
+ 665 04bc 7000BFDF 	ld $31,112($sp)
+ 666              	$L55:
+ 667 04c0 6000B4DF 	ld $20,96($sp)
+ 668 04c4 5000B3DF 	ld $19,80($sp)
+ 669 04c8 4000B2DF 	ld $18,64($sp)
+ 670 04cc 3000B1DF 	ld $17,48($sp)
+ 671 04d0 2000B0DF 	ld $16,32($sp)
+ 672              	
+ 673              	.set noreorder
+ 674              	.set nomacro
+ 675 04d4 0800E003 	j $31
+ 676 04d8 8000BD27 	addu $sp,$sp,128
+ 677              	.set macro
+ 678              	.set reorder
+GAS LISTING  			page 13
+
+
+ 679              	
+ 680 04dc 00000000 	.p2align 3
+ 681              	$L54:
+ 682 04e0 0000023C 	lui $2,%hi(_sjpcm_sema)
+ 683              	.set noreorder
+ 684              	.set nomacro
+ 685 04e4 0000000C 	jal WaitSema
+ 686 04e8 2805448C 	lw $4,%lo(_sjpcm_sema)($2)
+ 687              	.set macro
+ 688              	.set reorder
+ 689              	
+ 690 04ec 1C00A0AF 	sw $0,28($sp)
+ 691 04f0 0000023C 	lui $2,%hi(pcmbufl)
+ 692 04f4 0000858E 	lw $5,%lo(bufpos)($20)
+ 693 04f8 0000438C 	lw $3,%lo(pcmbufl)($2)
+ 694 04fc 2D200000 	move $4,$0
+ 695 0500 1000B0AF 	sw $16,16($sp)
+ 696 0504 21186500 	addu $3,$3,$5
+ 697 0508 1800B3AF 	sw $19,24($sp)
+ 698              	.set noreorder
+ 699              	.set nomacro
+ 700 050c 0000000C 	jal FlushCache
+ 701 0510 1400A3AF 	sw $3,20($sp)
+ 702              	.set macro
+ 703              	.set reorder
+ 704              	
+ 705 0514 1000A427 	addu $4,$sp,16
+ 706              	.set noreorder
+ 707              	.set nomacro
+ 708 0518 0000000C 	jal SifSetDma
+ 709 051c 01000524 	li $5,1
+ 710              	.set macro
+ 711              	.set reorder
+ 712              	
+ 713 0520 1000B1AF 	sw $17,16($sp)
+ 714 0524 0000023C 	lui $2,%hi(pcmbufr)
+ 715 0528 0000438C 	lw $3,%lo(pcmbufr)($2)
+ 716 052c 2D200000 	move $4,$0
+ 717 0530 0000858E 	lw $5,%lo(bufpos)($20)
+ 718 0534 1800B3AF 	sw $19,24($sp)
+ 719 0538 21186500 	addu $3,$3,$5
+ 720 053c 1C00A0AF 	sw $0,28($sp)
+ 721              	.set noreorder
+ 722              	.set nomacro
+ 723 0540 0000000C 	jal FlushCache
+ 724 0544 1400A3AF 	sw $3,20($sp)
+ 725              	.set macro
+ 726              	.set reorder
+ 727              	
+ 728 0548 1000A427 	addu $4,$sp,16
+ 729              	.set noreorder
+ 730              	.set nomacro
+ 731 054c 0000000C 	jal SifSetDma
+ 732 0550 01000524 	li $5,1
+ 733              	.set macro
+ 734              	.set reorder
+ 735              	
+GAS LISTING  			page 14
+
+
+ 736 0554 0000103C 	lui $16,%hi(enqueue_sbuff)
+ 737 0558 0000113C 	lui $17,%hi(enqueue_rbuff)
+ 738 055c 00023126 	addiu $17,$17,%lo(enqueue_rbuff)
+ 739 0560 40000524 	li $5,64
+ 740 0564 2D202002 	move $4,$17
+ 741              	.set noreorder
+ 742              	.set nomacro
+ 743 0568 0000000C 	jal SifWriteBackDCache
+ 744 056c 000112AE 	sw $18,%lo(enqueue_sbuff)($16)
+ 745              	.set macro
+ 746              	.set reorder
+ 747              	
+ 748 0570 00011026 	addiu $16,$16,%lo(enqueue_sbuff)
+ 749 0574 0000043C 	lui $4,%hi(cd0)
+ 750 0578 00000B3C 	lui $11,%hi(_SjPCM_EnqueueIntr)
+ 751 057c 40000A24 	li $10,64
+ 752 0580 00058424 	addiu $4,$4,%lo(cd0)
+ 753 0584 2D380002 	move $7,$16
+ 754 0588 2D482002 	move $9,$17
+ 755 058c 00006B25 	addiu $11,$11,%lo(_SjPCM_EnqueueIntr)
+ 756 0590 06000524 	li $5,6
+ 757 0594 01000624 	li $6,1
+ 758 0598 40000824 	li $8,64
+ 759              	.set noreorder
+ 760              	.set nomacro
+ 761 059c 0000000C 	jal SifCallRpc
+ 762 05a0 0000B1AF 	sw $17,0($sp)
+ 763              	.set macro
+ 764              	.set reorder
+ 765              	
+ 766              	.set noreorder
+ 767              	.set nomacro
+ 768 05a4 C6FF0010 	b $L55
+ 769 05a8 7000BFDF 	ld $31,112($sp)
+ 770              	.set macro
+ 771              	.set reorder
+ 772              	
+ 773              	.end SjPCM_EnqueueAsync
+ 774              	$Lfe9:
+ 775              	.size SjPCM_EnqueueAsync,$Lfe9-SjPCM_EnqueueAsync
+ 776              	.align 2
+ 777 05ac 00000000 	.p2align 3,,7
+ 778              	.globl _SjPCM_BufferedIntr
+ 779              	.ent _SjPCM_BufferedIntr
+ 780              	_SjPCM_BufferedIntr:
+ 781              	.frame $sp,16,$31
+ 782              	.mask 0x80000000,-16
+ 783              	.fmask 0x00000000,0
+ 784 05b0 F0FFBD27 	subu $sp,$sp,16
+ 785 05b4 0000023C 	lui $2,%hi(_sjpcm_sema)
+ 786 05b8 0000BFFF 	sd $31,0($sp)
+ 787 05bc 0000033C 	lui $3,%hi(_Buffered)
+ 788 05c0 0C00858C 	lw $5,12($4)
+ 789 05c4 2805448C 	lw $4,%lo(_sjpcm_sema)($2)
+ 790              	.set noreorder
+ 791              	.set nomacro
+ 792 05c8 0000000C 	jal iSignalSema
+GAS LISTING  			page 15
+
+
+ 793 05cc 040065AC 	sw $5,%lo(_Buffered)($3)
+ 794              	.set macro
+ 795              	.set reorder
+ 796              	
+ 797 05d0 0000BFDF 	ld $31,0($sp)
+ 798              	
+ 799              	.set noreorder
+ 800              	.set nomacro
+ 801 05d4 0800E003 	j $31
+ 802 05d8 1000BD27 	addu $sp,$sp,16
+ 803              	.set macro
+ 804              	.set reorder
+ 805              	
+ 806              	.end _SjPCM_BufferedIntr
+ 807              	$Lfe10:
+ 808              	.size _SjPCM_BufferedIntr,$Lfe10-_SjPCM_BufferedIntr
+ 809              	.align 2
+ 810 05dc 00000000 	.p2align 3,,7
+ 811              	.globl SjPCM_BufferedAsyncStart
+ 812              	.ent SjPCM_BufferedAsyncStart
+ 813              	SjPCM_BufferedAsyncStart:
+ 814              	.frame $sp,48,$31
+ 815              	.mask 0x80010000,-16
+ 816              	.fmask 0x00000000,0
+ 817 05e0 D0FFBD27 	subu $sp,$sp,48
+ 818 05e4 0000023C 	lui $2,%hi(sjpcm_inited)
+ 819 05e8 2000BFFF 	sd $31,32($sp)
+ 820 05ec 1000B0FF 	sd $16,16($sp)
+ 821 05f0 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+ 822              	
+ 823              	.set noreorder
+ 824              	.set nomacro
+ 825 05f4 06006014 	bne $3,$0,$L59
+ 826 05f8 0000023C 	lui $2,%hi(_sjpcm_sema)
+ 827              	.set macro
+ 828              	.set reorder
+ 829              	
+ 830 05fc 2000BFDF 	ld $31,32($sp)
+ 831              	$L60:
+ 832 0600 1000B0DF 	ld $16,16($sp)
+ 833              	
+ 834              	.set noreorder
+ 835              	.set nomacro
+ 836 0604 0800E003 	j $31
+ 837 0608 3000BD27 	addu $sp,$sp,48
+ 838              	.set macro
+ 839              	.set reorder
+ 840              	
+ 841 060c 00000000 	.p2align 3
+ 842              	$L59:
+ 843 0610 0000103C 	lui $16,%hi(buffered_rbuff)
+ 844 0614 2805448C 	lw $4,%lo(_sjpcm_sema)($2)
+ 845              	.set noreorder
+ 846              	.set nomacro
+ 847 0618 0000000C 	jal WaitSema
+ 848 061c 00041026 	addiu $16,$16,%lo(buffered_rbuff)
+ 849              	.set macro
+GAS LISTING  			page 16
+
+
+ 850              	.set reorder
+ 851              	
+ 852 0620 2D200002 	move $4,$16
+ 853              	.set noreorder
+ 854              	.set nomacro
+ 855 0624 0000000C 	jal SifWriteBackDCache
+ 856 0628 40000524 	li $5,64
+ 857              	.set macro
+ 858              	.set reorder
+ 859              	
+ 860 062c 0000B0AF 	sw $16,0($sp)
+ 861 0630 0000043C 	lui $4,%hi(cd0)
+ 862 0634 0000073C 	lui $7,%hi(buffered_sbuff)
+ 863 0638 00000B3C 	lui $11,%hi(_SjPCM_BufferedIntr)
+ 864 063c 40000A24 	li $10,64
+ 865 0640 00058424 	addiu $4,$4,%lo(cd0)
+ 866 0644 0003E724 	addiu $7,$7,%lo(buffered_sbuff)
+ 867 0648 2D480002 	move $9,$16
+ 868 064c 00006B25 	addiu $11,$11,%lo(_SjPCM_BufferedIntr)
+ 869 0650 10000524 	li $5,16
+ 870 0654 2D300000 	move $6,$0
+ 871              	.set noreorder
+ 872              	.set nomacro
+ 873 0658 0000000C 	jal SifCallRpc
+ 874 065c 40000824 	li $8,64
+ 875              	.set macro
+ 876              	.set reorder
+ 877              	
+ 878              	.set noreorder
+ 879              	.set nomacro
+ 880 0660 E7FF0010 	b $L60
+ 881 0664 2000BFDF 	ld $31,32($sp)
+ 882              	.set macro
+ 883              	.set reorder
+ 884              	
+ 885              	.end SjPCM_BufferedAsyncStart
+ 886              	$Lfe11:
+ 887              	.size SjPCM_BufferedAsyncStart,$Lfe11-SjPCM_BufferedAsyncStart
+ 888              	.align 2
+ 889              	.p2align 3,,7
+ 890              	.globl SjPCM_IsInitialized
+ 891              	.ent SjPCM_IsInitialized
+ 892              	SjPCM_IsInitialized:
+ 893              	.frame $sp,0,$31
+ 894              	.mask 0x00000000,0
+ 895              	.fmask 0x00000000,0
+ 896 0668 0000033C 	lui $3,%hi(sjpcm_inited)
+ 897              	.set noreorder
+ 898              	.set nomacro
+ 899 066c 0800E003 	j $31
+ 900 0670 0000628C 	lw $2,%lo(sjpcm_inited)($3)
+ 901              	.set macro
+ 902              	.set reorder
+ 903              	
+ 904              	.end SjPCM_IsInitialized
+ 905              	$Lfe12:
+ 906              	.size SjPCM_IsInitialized,$Lfe12-SjPCM_IsInitialized
+GAS LISTING  			page 17
+
+
+ 907              	.align 2
+ 908 0674 00000000 	.p2align 3,,7
+ 909              	.globl SjPCM_BufferedAsyncGet
+ 910              	.ent SjPCM_BufferedAsyncGet
+ 911              	SjPCM_BufferedAsyncGet:
+ 912              	.frame $sp,16,$31
+ 913              	.mask 0x80000000,-16
+ 914              	.fmask 0x00000000,0
+ 915 0678 F0FFBD27 	subu $sp,$sp,16
+ 916 067c 0000023C 	lui $2,%hi(sjpcm_inited)
+ 917 0680 0000BFFF 	sd $31,0($sp)
+ 918 0684 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+ 919              	
+ 920              	.set noreorder
+ 921              	.set nomacro
+ 922 0688 05006014 	bne $3,$0,$L64
+ 923 068c 2D200000 	move $4,$0
+ 924              	.set macro
+ 925              	.set reorder
+ 926              	
+ 927              	$L62:
+ 928 0690 0000BFDF 	ld $31,0($sp)
+ 929 0694 2D108000 	move $2,$4
+ 930              	.set noreorder
+ 931              	.set nomacro
+ 932 0698 0800E003 	j $31
+ 933 069c 1000BD27 	addu $sp,$sp,16
+ 934              	.set macro
+ 935              	.set reorder
+ 936              	
+ 937              	.p2align 3
+ 938              	$L64:
+ 939 06a0 0000000C 	jal SjPCM_Sync
+ 939      00000000 
+ 940 06a8 0000023C 	lui $2,%hi(_Buffered)
+ 941              	.set noreorder
+ 942              	.set nomacro
+ 943 06ac F8FF0010 	b $L62
+ 944 06b0 0400448C 	lw $4,%lo(_Buffered)($2)
+ 945              	.set macro
+ 946              	.set reorder
+ 947              	
+ 948              	.end SjPCM_BufferedAsyncGet
+ 949              	$Lfe13:
+ 950              	.size SjPCM_BufferedAsyncGet,$Lfe13-SjPCM_BufferedAsyncGet
+ 951              	.align 2
+ 952 06b4 00000000 	.p2align 3,,7
+ 953              	.globl SjPCM_Available
+ 954              	.ent SjPCM_Available
+ 955              	SjPCM_Available:
+ 956              	.frame $sp,48,$31
+ 957              	.mask 0x80010000,-16
+ 958              	.fmask 0x00000000,0
+ 959 06b8 D0FFBD27 	subu $sp,$sp,48
+ 960 06bc 0000023C 	lui $2,%hi(sjpcm_inited)
+ 961 06c0 2000BFFF 	sd $31,32($sp)
+ 962 06c4 1000B0FF 	sd $16,16($sp)
+GAS LISTING  			page 18
+
+
+ 963 06c8 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+ 964              	
+ 965              	.set noreorder
+ 966              	.set nomacro
+ 967 06cc 06006014 	bne $3,$0,$L67
+ 968 06d0 2D200000 	move $4,$0
+ 969              	.set macro
+ 970              	.set reorder
+ 971              	
+ 972              	$L65:
+ 973 06d4 2000BFDF 	ld $31,32($sp)
+ 974 06d8 2D108000 	move $2,$4
+ 975 06dc 1000B0DF 	ld $16,16($sp)
+ 976              	
+ 977              	.set noreorder
+ 978              	.set nomacro
+ 979 06e0 0800E003 	j $31
+ 980 06e4 3000BD27 	addu $sp,$sp,48
+ 981              	.set macro
+ 982              	.set reorder
+ 983              	
+ 984              	.p2align 3
+ 985              	$L67:
+ 986 06e8 0000103C 	lui $16,%hi(sbuff)
+ 987 06ec 0000043C 	lui $4,%hi(cd0)
+ 988 06f0 00001026 	addiu $16,$16,%lo(sbuff)
+ 989 06f4 00058424 	addiu $4,$4,%lo(cd0)
+ 990 06f8 09000524 	li $5,9
+ 991 06fc 2D300000 	move $6,$0
+ 992 0700 2D380002 	move $7,$16
+ 993 0704 40000824 	li $8,64
+ 994 0708 2D480002 	move $9,$16
+ 995 070c 40000A24 	li $10,64
+ 996 0710 2D580000 	move $11,$0
+ 997              	.set noreorder
+ 998              	.set nomacro
+ 999 0714 0000000C 	jal SifCallRpc
+ 1000 0718 0000A0AF 	sw $0,0($sp)
+ 1001              	.set macro
+ 1002              	.set reorder
+ 1003              	
+ 1004              	.set noreorder
+ 1005              	.set nomacro
+ 1006 071c EDFF0010 	b $L65
+ 1007 0720 0C00048E 	lw $4,12($16)
+ 1008              	.set macro
+ 1009              	.set reorder
+ 1010              	
+ 1011              	.end SjPCM_Available
+ 1012              	$Lfe14:
+ 1013              	.size SjPCM_Available,$Lfe14-SjPCM_Available
+ 1014              	.align 2
+ 1015 0724 00000000 	.p2align 3,,7
+ 1016              	.globl SjPCM_Buffered
+ 1017              	.ent SjPCM_Buffered
+ 1018              	SjPCM_Buffered:
+ 1019              	.frame $sp,48,$31
+GAS LISTING  			page 19
+
+
+ 1020              	.mask 0x80010000,-16
+ 1021              	.fmask 0x00000000,0
+ 1022 0728 D0FFBD27 	subu $sp,$sp,48
+ 1023 072c 0000023C 	lui $2,%hi(sjpcm_inited)
+ 1024 0730 2000BFFF 	sd $31,32($sp)
+ 1025 0734 1000B0FF 	sd $16,16($sp)
+ 1026 0738 0000438C 	lw $3,%lo(sjpcm_inited)($2)
+ 1027              	
+ 1028              	.set noreorder
+ 1029              	.set nomacro
+ 1030 073c 06006014 	bne $3,$0,$L70
+ 1031 0740 2D200000 	move $4,$0
+ 1032              	.set macro
+ 1033              	.set reorder
+ 1034              	
+ 1035              	$L68:
+ 1036 0744 2000BFDF 	ld $31,32($sp)
+ 1037 0748 2D108000 	move $2,$4
+ 1038 074c 1000B0DF 	ld $16,16($sp)
+ 1039              	
+ 1040              	.set noreorder
+ 1041              	.set nomacro
+ 1042 0750 0800E003 	j $31
+ 1043 0754 3000BD27 	addu $sp,$sp,48
+ 1044              	.set macro
+ 1045              	.set reorder
+ 1046              	
+ 1047              	.p2align 3
+ 1048              	$L70:
+ 1049 0758 0000103C 	lui $16,%hi(sbuff)
+ 1050 075c 0000043C 	lui $4,%hi(cd0)
+ 1051 0760 00001026 	addiu $16,$16,%lo(sbuff)
+ 1052 0764 00058424 	addiu $4,$4,%lo(cd0)
+ 1053 0768 10000524 	li $5,16
+ 1054 076c 2D300000 	move $6,$0
+ 1055 0770 2D380002 	move $7,$16
+ 1056 0774 40000824 	li $8,64
+ 1057 0778 2D480002 	move $9,$16
+ 1058 077c 40000A24 	li $10,64
+ 1059 0780 2D580000 	move $11,$0
+ 1060              	.set noreorder
+ 1061              	.set nomacro
+ 1062 0784 0000000C 	jal SifCallRpc
+ 1063 0788 0000A0AF 	sw $0,0($sp)
+ 1064              	.set macro
+ 1065              	.set reorder
+ 1066              	
+ 1067              	.set noreorder
+ 1068              	.set nomacro
+ 1069 078c EDFF0010 	b $L68
+ 1070 0790 0C00048E 	lw $4,12($16)
+ 1071              	.set macro
+ 1072              	.set reorder
+ 1073              	
+ 1074              	.end SjPCM_Buffered
+ 1075              	$Lfe15:
+ 1076              	.size SjPCM_Buffered,$Lfe15-SjPCM_Buffered
+GAS LISTING  			page 20
+
+
+ 1077              	.align 2
+ 1078 0794 00000000 	.p2align 3,,7
+ 1079              	.globl SjPCM_Quit
+ 1080              	.ent SjPCM_Quit
+ 1081              	SjPCM_Quit:
+ 1082              	.frame $sp,48,$31
+ 1083              	.mask 0x80010000,-16
+ 1084              	.fmask 0x00000000,0
+ 1085 0798 D0FFBD27 	subu $sp,$sp,48
+ 1086 079c 0000073C 	lui $7,%hi(sbuff)
+ 1087 07a0 1000B0FF 	sd $16,16($sp)
+ 1088 07a4 0000E724 	addiu $7,$7,%lo(sbuff)
+ 1089 07a8 0000103C 	lui $16,%hi(sjpcm_inited)
+ 1090 07ac 0000043C 	lui $4,%hi(cd0)
+ 1091 07b0 0000028E 	lw $2,%lo(sjpcm_inited)($16)
+ 1092 07b4 00058424 	addiu $4,$4,%lo(cd0)
+ 1093 07b8 2000BFFF 	sd $31,32($sp)
+ 1094 07bc 08000524 	li $5,8
+ 1095 07c0 2D300000 	move $6,$0
+ 1096 07c4 2D400000 	move $8,$0
+ 1097 07c8 2D48E000 	move $9,$7
+ 1098 07cc 2D500000 	move $10,$0
+ 1099              	.set noreorder
+ 1100              	.set nomacro
+ 1101 07d0 05004014 	bne $2,$0,$L73
+ 1102 07d4 2D580000 	move $11,$0
+ 1103              	.set macro
+ 1104              	.set reorder
+ 1105              	
+ 1106              	$L71:
+ 1107 07d8 2000BFDF 	ld $31,32($sp)
+ 1108 07dc 1000B0DF 	ld $16,16($sp)
+ 1109              	
+ 1110              	.set noreorder
+ 1111              	.set nomacro
+ 1112 07e0 0800E003 	j $31
+ 1113 07e4 3000BD27 	addu $sp,$sp,48
+ 1114              	.set macro
+ 1115              	.set reorder
+ 1116              	
+ 1117              	.p2align 3
+ 1118              	$L73:
+ 1119              	.set noreorder
+ 1120              	.set nomacro
+ 1121 07e8 0000000C 	jal SifCallRpc
+ 1122 07ec 0000A0AF 	sw $0,0($sp)
+ 1123              	.set macro
+ 1124              	.set reorder
+ 1125              	
+ 1126              	.set noreorder
+ 1127              	.set nomacro
+ 1128 07f0 F9FF0010 	b $L71
+ 1129 07f4 000000AE 	sw $0,%lo(sjpcm_inited)($16)
+ 1130              	.set macro
+ 1131              	.set reorder
+ 1132              	
+ 1133              	.end SjPCM_Quit
+GAS LISTING  			page 21
+
+
+ 1134              	$Lfe16:
+ 1135              	.size SjPCM_Quit,$Lfe16-SjPCM_Quit
+ 1136              	.section .bss
+ 1137              	sbuff:
+ 1138              	.align 6
+ 1139 0000 00000000 	.space 256
+ 1139      00000000 
+ 1139      00000000 
+ 1139      00000000 
+ 1139      00000000 
+ 1140              	.previous
+ 1141              	.section .bss
+ 1142              	enqueue_sbuff:
+ 1143              	.align 6
+ 1144 0100 00000000 	.space 256
+ 1144      00000000 
+ 1144      00000000 
+ 1144      00000000 
+ 1144      00000000 
+ 1145              	.previous
+ 1146              	.section .bss
+ 1147              	enqueue_rbuff:
+ 1148              	.align 6
+ 1149 0200 00000000 	.space 256
+ 1149      00000000 
+ 1149      00000000 
+ 1149      00000000 
+ 1149      00000000 
+ 1150              	.previous
+ 1151              	.section .bss
+ 1152              	buffered_sbuff:
+ 1153              	.align 6
+ 1154 0300 00000000 	.space 256
+ 1154      00000000 
+ 1154      00000000 
+ 1154      00000000 
+ 1154      00000000 
+ 1155              	.previous
+ 1156              	.section .bss
+ 1157              	buffered_rbuff:
+ 1158              	.align 6
+ 1159 0400 00000000 	.space 256
+ 1159      00000000 
+ 1159      00000000 
+ 1159      00000000 
+ 1159      00000000 
+ 1160              	.previous
+ 1161              	.section .bss
+ 1162              	cd0:
+ 1163              	.align 3
+ 1164 0500 00000000 	.space 40
+ 1164      00000000 
+ 1164      00000000 
+ 1164      00000000 
+ 1164      00000000 
+ 1165              	.previous
+ 1166              	.globl pcmbufl
+GAS LISTING  			page 22
+
+
+ 1167              	.data
+ 1168              	.align 2
+ 1169              	.type pcmbufl,@object
+ 1170              	.size pcmbufl,4
+ 1171              	pcmbufl:
+ 1172 0008 00000000 	.space 4
+ 1173              	.globl pcmbufr
+ 1174              	.align 2
+ 1175              	.type pcmbufr,@object
+ 1176              	.size pcmbufr,4
+ 1177              	pcmbufr:
+ 1178 000c 00000000 	.space 4
+ 1179              	.globl bufpos
+ 1180              	.align 2
+ 1181              	.type bufpos,@object
+ 1182              	.size bufpos,4
+ 1183              	bufpos:
+ 1184 0010 00000000 	.space 4
+ 1185              	.section .bss
+ 1186              	_sjpcm_sema:
+ 1187              	.align 2
+ 1188 0528 00000000 	.space 4
+ 1189 052c 00000000 	.previous
+ 1189      00000000 
+ 1189      00000000 
+ 1189      00000000 
+ 1189      00000000 
+ 1190              	.ident "GCC: (GNU) 3.2.2"

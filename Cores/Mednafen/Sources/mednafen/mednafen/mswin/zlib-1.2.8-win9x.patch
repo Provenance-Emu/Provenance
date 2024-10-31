@@ -1,0 +1,38 @@
+--- zlib-1.2.8.orig/gzlib.c	2013-03-24 22:47:59.000000000 -0700
++++ zlib-1.2.8/gzlib.c	2020-12-10 15:47:38.745594809 -0800
+@@ -188,7 +188,7 @@ local gzFile gz_open(path, fd, mode)
+     }
+ 
+     /* save the path name for error messages */
+-#ifdef _WIN32
++#if 0 //def _WIN32
+     if (fd == -2) {
+         len = wcstombs(NULL, path, 0);
+         if (len == (size_t)-1)
+@@ -202,7 +202,7 @@ local gzFile gz_open(path, fd, mode)
+         free(state);
+         return NULL;
+     }
+-#ifdef _WIN32
++#if 0 //def _WIN32
+     if (fd == -2)
+         if (len)
+             wcstombs(state->path, path, len + 1);
+@@ -239,7 +239,7 @@ local gzFile gz_open(path, fd, mode)
+ 
+     /* open the file with the appropriate flags (or just use fd) */
+     state->fd = fd > -1 ? fd : (
+-#ifdef _WIN32
++#if 0 //def _WIN32
+         fd == -2 ? _wopen(path, oflag, 0666) :
+ #endif
+         open((const char *)path, oflag, 0666));
+@@ -301,7 +301,7 @@ gzFile ZEXPORT gzdopen(fd, mode)
+ }
+ 
+ /* -- see zlib.h -- */
+-#ifdef _WIN32
++#if 0 //def _WIN32
+ gzFile ZEXPORT gzopen_w(path, mode)
+     const wchar_t *path;
+     const char *mode;

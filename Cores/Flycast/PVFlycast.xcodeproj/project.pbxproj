@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -394,135 +394,34 @@
 		B36AEA32295F2B8100CC9D4F /* simulator-aarch64.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3980EE229239F3700A82429 /* simulator-aarch64.cc */; };
 		B36AEA33295F2B8100CC9D4F /* cpu-features-auditor-aarch64.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3980EDB29239F3700A82429 /* cpu-features-auditor-aarch64.cc */; };
 		B39831DC292413EF00A82429 /* emulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E4629239F3700A82429 /* emulator.cpp */; };
+		B3A3CC172CCC77D000589F82 /* PVFlycastCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVFlycastCore+Audio.m */; };
+		B3A3CC182CCC77D000589F82 /* PVFlycastCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVFlycastCore+Video.m */; };
+		B3A3CC192CCC77D000589F82 /* PVFlycastCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVFlycastCore+Saves.m */; };
+		B3A3CC1A2CCC77D000589F82 /* PVFlycastCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVFlycastCore+Controls.mm */; };
+		B3A3CC1B2CCC77D000589F82 /* PVFlycastCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVFlycastCore.mm */; };
+		B3A3CC572CCC77DB00589F82 /* PVFlycast+CoreAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA4218BC36B00557ACE /* PVFlycast+CoreAudio.mm */; };
+		B3A3CC582CCC77DB00589F82 /* PVFlycast+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E9B218B826F00557ACE /* PVFlycast+Audio.mm */; };
+		B3A3CC592CCC77FA00589F82 /* PVFlycast.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVFlycast.mm */; };
+		B3A3CC5B2CCC782D00589F82 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC5A2CCC782D00589F82 /* PVCoreBridgeRetro.framework */; };
+		B3A3CC5C2CCC782D00589F82 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC5A2CCC782D00589F82 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A3CC602CCC783B00589F82 /* libchdr-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC402CCC77D100589F82 /* libchdr-static.a */; platformFilters = (ios, maccatalyst, ); };
+		B3A3CC662CCC783B00589F82 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC4E2CCC77D100589F82 /* liblzma.a */; platformFilters = (ios, maccatalyst, ); };
+		B3A3CC682CCC783B00589F82 /* libminiupnpc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC4C2CCC77D100589F82 /* libminiupnpc.a */; platformFilters = (ios, maccatalyst, ); };
+		B3A3CC6D2CCC783B00589F82 /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC522CCC77D100589F82 /* libxxhash.a */; platformFilters = (ios, maccatalyst, ); };
+		B3A3CC6E2CCC783B00589F82 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC562CCC77D100589F82 /* libz.a */; platformFilters = (ios, maccatalyst, ); };
+		B3A3CC6F2CCC783B00589F82 /* libzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3CC542CCC77D100589F82 /* libzip.a */; platformFilters = (ios, maccatalyst, ); };
+		B3A3CC702CCC787D00589F82 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
+		B3A3CC712CCC787D00589F82 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
+		B3A3CC752CCC789100589F82 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A3CC732CCC789100589F82 /* CorePlist.swift */; };
+		B3A3CC762CCC789100589F82 /* PVFlycastEmuCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A3CC722CCC789100589F82 /* PVFlycastEmuCore.swift */; };
+		B3A3CC772CCC789100589F82 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A3CC742CCC789100589F82 /* CorePlist-Generated.swift */; };
+		B3A3CC782CCC79BE00589F82 /* PVFlycastCore+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F9F3A9295F4D7800DF8B8A /* PVFlycastCore+Options.swift */; };
+		B3A3CDB32CCC87DF00589F82 /* lib_unused_flycast-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE80B295F034C00CC9D4F /* lib_unused_flycast-libretro.a */; };
+		B3A3CDB62CCC882B00589F82 /* lib_unused_flycast-retroarch-module.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE7BE296E6BA200FB9933 /* lib_unused_flycast-retroarch-module.dylib */; };
+		B3A3CDB92CCC883700589F82 /* libflycast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libflycast.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		931C042A2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A38134A94AA54E9BB8D97552;
-			remoteInfo = GenericCodeGenFlycast;
-		};
-		931C042C2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9E3925D883E54283B9D9818B;
-			remoteInfo = MachineIndependentFlycast;
-		};
-		931C042E2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CEE02E2C2C304EDC9B6E7538;
-			remoteInfo = OGLCompilerFlycast;
-		};
-		931C04302A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8FC3FA13C6544DA0861763AC;
-			remoteInfo = OSDependentFlycast;
-		};
-		931C04322A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 633E7C7AB7AA4D64AF3DEE7A;
-			remoteInfo = SPIRVFlycast;
-		};
-		931C04362A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3A06ECA0ADF345BEB1C672FD;
-			remoteInfo = "chdr-staticFlycast";
-		};
-		931C04382A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EE552274B7A24CA192A5F683;
-			remoteInfo = elfFlycast;
-		};
-		931C043A2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 41465F1CC43748E5A1275471;
-			remoteInfo = "flycast-resourcesFlycast";
-		};
-		931C043C2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B28EC58696994C6F8B1071D7;
-			remoteInfo = flycast_libretroFlycast;
-		};
-		931C043E2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8583632333D54DFFBB1FF9EB;
-			remoteInfo = glslangFlycast;
-		};
-		931C04402A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 769D9D1BF78C4B8580D3452A;
-			remoteInfo = "glslang-default-resource-limitsFlycast";
-		};
-		931C04422A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CC6E2E9514914D8E9A601D1B;
-			remoteInfo = "libminiupnpc-staticFlycast";
-		};
-		931C04442A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C14EF6B0205E413BA4E583CE;
-			remoteInfo = lzmaFlycast;
-		};
-		931C04462A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4E35253DCFC6463391ECA222;
-			remoteInfo = nowideFlycast;
-		};
-		931C04482A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D9D2057BBE424F219134366D;
-			remoteInfo = xxhashFlycast;
-		};
-		931C044A2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6D914C31B10742A7B3B734BF;
-			remoteInfo = zipFlycast;
-		};
-		931C044C2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = AC7317D8DA9541D9A3308B23;
-			remoteInfo = zlibFlycast;
-		};
-		931C04CC2A89E12400759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4A6A904EFA0F4E0988C66DC1;
-			remoteInfo = flycast_libretroFlycast;
-		};
 		934BE7C1296E6C0F00FB9933 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -537,7 +436,84 @@
 			remoteGlobalIDString = 934BE7D5296EB34500FB9933;
 			remoteInfo = "libminiupnpc-static";
 		};
+		B3A3CC3F2CCC77D100589F82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 38DAB81F89EA4C36B7BF3E18;
+			remoteInfo = "chdr-static";
+		};
+		B3A3CC4B2CCC77D100589F82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2D50E8D58C044B92B1949960;
+			remoteInfo = "libminiupnpc-static";
+		};
+		B3A3CC4D2CCC77D100589F82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0F03D5BAC77F44C58DC8D64F;
+			remoteInfo = lzma;
+		};
+		B3A3CC512CCC77D100589F82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8F56903CFAEC427D88A93DEF;
+			remoteInfo = xxhash;
+		};
+		B3A3CC532CCC77D100589F82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D160102EFC234C7AA11FF5A6;
+			remoteInfo = zip;
+		};
+		B3A3CC552CCC77D100589F82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3F4785D5FE6F4FAF8724CC9A;
+			remoteInfo = zlib;
+		};
+		B3A3CDB42CCC87DF00589F82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B36AE80A295F034C00CC9D4F;
+			remoteInfo = "_unused_flycast-libretro";
+		};
+		B3A3CDB72CCC882B00589F82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934BE7A1296E6BA200FB9933;
+			remoteInfo = "_unused_flycast-retroarch-module";
+		};
+		B3A3CDBA2CCC883800589F82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B30178D2207C901D0051B93D;
+			remoteInfo = _unused_flycast;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B3A3CC5D2CCC782D00589F82 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3A3CC5C2CCC782D00589F82 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = flycast_libretro.xcodeproj; path = cmake/flycast_libretro.xcodeproj; sourceTree = "<group>"; };
@@ -8616,6 +8592,10 @@
 		B398301029239F4B00A82429 /* cdromfs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cdromfs.cpp; sourceTree = "<group>"; };
 		B398301129239F4B00A82429 /* cdromfs_imp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cdromfs_imp.h; sourceTree = "<group>"; };
 		B398301229239F4B00A82429 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		B3A3CC5A2CCC782D00589F82 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A3CC722CCC789100589F82 /* PVFlycastEmuCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVFlycastEmuCore.swift; sourceTree = "<group>"; };
+		B3A3CC732CCC789100589F82 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3A3CC742CCC789100589F82 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVFlycast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFlycast.h; sourceTree = "<group>"; };
@@ -8657,6 +8637,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A3CDB62CCC882B00589F82 /* lib_unused_flycast-retroarch-module.dylib in Frameworks */,
+				B3A3CC602CCC783B00589F82 /* libchdr-static.a in Frameworks */,
+				B3A3CC682CCC783B00589F82 /* libminiupnpc.a in Frameworks */,
+				B3A3CDB32CCC87DF00589F82 /* lib_unused_flycast-libretro.a in Frameworks */,
+				B3A3CC6F2CCC783B00589F82 /* libzip.a in Frameworks */,
+				B3A3CC662CCC783B00589F82 /* liblzma.a in Frameworks */,
+				B3A3CC6E2CCC783B00589F82 /* libz.a in Frameworks */,
+				B3A3CC6D2CCC783B00589F82 /* libxxhash.a in Frameworks */,
+				B3A3CDB92CCC883700589F82 /* libflycast.a in Frameworks */,
+				B3A3CC5B2CCC782D00589F82 /* PVCoreBridgeRetro.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8666,23 +8656,12 @@
 		931C04122A89B17D00759ACB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				931C042B2A89B17D00759ACB /* libGenericCodeGenFlycast.a */,
-				931C042D2A89B17D00759ACB /* libMachineIndependentFlycast.a */,
-				931C042F2A89B17D00759ACB /* libOGLCompilerFlycast.a */,
-				931C04312A89B17D00759ACB /* libOSDependentFlycast.a */,
-				931C04332A89B17D00759ACB /* libSPIRVFlycast.a */,
-				931C04372A89B17D00759ACB /* libchdr-staticFlycast.a */,
-				931C04392A89B17D00759ACB /* libelfFlycast.a */,
-				931C043B2A89B17D00759ACB /* libflycast-resourcesFlycast.a */,
-				931C043D2A89B17D00759ACB /* flycast_libretroFlycast.dylib */,
-				931C043F2A89B17D00759ACB /* libglslangFlycast.a */,
-				931C04412A89B17D00759ACB /* libglslang-default-resource-limitsFlycast.a */,
-				931C04432A89B17D00759ACB /* libminiupnpcFlycast.a */,
-				931C04452A89B17D00759ACB /* liblzmaFlycast.a */,
-				931C04472A89B17D00759ACB /* libnowideFlycast.a */,
-				931C04492A89B17D00759ACB /* libxxhashFlycast.a */,
-				931C044B2A89B17D00759ACB /* libzipFlycast.a */,
-				931C044D2A89B17D00759ACB /* libzFlycast.a */,
+				B3A3CC402CCC77D100589F82 /* libchdr-static.a */,
+				B3A3CC4C2CCC77D100589F82 /* libminiupnpc.a */,
+				B3A3CC4E2CCC77D100589F82 /* liblzma.a */,
+				B3A3CC522CCC77D100589F82 /* libxxhash.a */,
+				B3A3CC542CCC77D100589F82 /* libzip.a */,
+				B3A3CC562CCC77D100589F82 /* libz.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8724,6 +8703,9 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B3A3CC722CCC789100589F82 /* PVFlycastEmuCore.swift */,
+				B3A3CC732CCC789100589F82 /* CorePlist.swift */,
+				B3A3CC742CCC789100589F82 /* CorePlist-Generated.swift */,
 				93C68C43298AE2F80008E5A3 /* PVDebug.m */,
 				B3C76223207833DE009950E4 /* PVFlycastCore.h */,
 				B3C76224207833DE009950E4 /* PVFlycastCore.mm */,
@@ -22716,6 +22698,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3A3CC5A2CCC782D00589F82 /* PVCoreBridgeRetro.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
 				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
 				B35E6BF8207D00D00040709A /* AVFoundation.framework */,
@@ -22816,11 +22799,14 @@
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620E20783162009950E4 /* Resources */,
+				B3A3CC5D2CCC782D00589F82 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				931C04CD2A89E12400759ACB /* PBXTargetDependency */,
+				B3A3CDB52CCC87DF00589F82 /* PBXTargetDependency */,
+				B3A3CDB82CCC882B00589F82 /* PBXTargetDependency */,
+				B3A3CDBB2CCC883800589F82 /* PBXTargetDependency */,
 			);
 			name = PVFlycast;
 			packageProductDependencies = (
@@ -22849,12 +22835,12 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
-						LastSwiftMigration = 1420;
+						LastSwiftMigration = 1610;
 					};
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVFlycast" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -22875,6 +22861,7 @@
 				nl,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -22895,123 +22882,46 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		931C042B2A89B17D00759ACB /* libGenericCodeGenFlycast.a */ = {
+		B3A3CC402CCC77D100589F82 /* libchdr-static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libGenericCodeGenFlycast.a;
-			remoteRef = 931C042A2A89B17D00759ACB /* PBXContainerItemProxy */;
+			path = "libchdr-static.a";
+			remoteRef = B3A3CC3F2CCC77D100589F82 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		931C042D2A89B17D00759ACB /* libMachineIndependentFlycast.a */ = {
+		B3A3CC4C2CCC77D100589F82 /* libminiupnpc.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libMachineIndependentFlycast.a;
-			remoteRef = 931C042C2A89B17D00759ACB /* PBXContainerItemProxy */;
+			path = libminiupnpc.a;
+			remoteRef = B3A3CC4B2CCC77D100589F82 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		931C042F2A89B17D00759ACB /* libOGLCompilerFlycast.a */ = {
+		B3A3CC4E2CCC77D100589F82 /* liblzma.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libOGLCompilerFlycast.a;
-			remoteRef = 931C042E2A89B17D00759ACB /* PBXContainerItemProxy */;
+			path = liblzma.a;
+			remoteRef = B3A3CC4D2CCC77D100589F82 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		931C04312A89B17D00759ACB /* libOSDependentFlycast.a */ = {
+		B3A3CC522CCC77D100589F82 /* libxxhash.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libOSDependentFlycast.a;
-			remoteRef = 931C04302A89B17D00759ACB /* PBXContainerItemProxy */;
+			path = libxxhash.a;
+			remoteRef = B3A3CC512CCC77D100589F82 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		931C04332A89B17D00759ACB /* libSPIRVFlycast.a */ = {
+		B3A3CC542CCC77D100589F82 /* libzip.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libSPIRVFlycast.a;
-			remoteRef = 931C04322A89B17D00759ACB /* PBXContainerItemProxy */;
+			path = libzip.a;
+			remoteRef = B3A3CC532CCC77D100589F82 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		931C04372A89B17D00759ACB /* libchdr-staticFlycast.a */ = {
+		B3A3CC562CCC77D100589F82 /* libz.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libchdr-staticFlycast.a";
-			remoteRef = 931C04362A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04392A89B17D00759ACB /* libelfFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libelfFlycast.a;
-			remoteRef = 931C04382A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C043B2A89B17D00759ACB /* libflycast-resourcesFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libflycast-resourcesFlycast.a";
-			remoteRef = 931C043A2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C043D2A89B17D00759ACB /* flycast_libretroFlycast.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = flycast_libretroFlycast.dylib;
-			remoteRef = 931C043C2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C043F2A89B17D00759ACB /* libglslangFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libglslangFlycast.a;
-			remoteRef = 931C043E2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04412A89B17D00759ACB /* libglslang-default-resource-limitsFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libglslang-default-resource-limitsFlycast.a";
-			remoteRef = 931C04402A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04432A89B17D00759ACB /* libminiupnpcFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libminiupnpcFlycast.a;
-			remoteRef = 931C04422A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04452A89B17D00759ACB /* liblzmaFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = liblzmaFlycast.a;
-			remoteRef = 931C04442A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04472A89B17D00759ACB /* libnowideFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libnowideFlycast.a;
-			remoteRef = 931C04462A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04492A89B17D00759ACB /* libxxhashFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libxxhashFlycast.a;
-			remoteRef = 931C04482A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C044B2A89B17D00759ACB /* libzipFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libzipFlycast.a;
-			remoteRef = 931C044A2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C044D2A89B17D00759ACB /* libzFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libzFlycast.a;
-			remoteRef = 931C044C2A89B17D00759ACB /* PBXContainerItemProxy */;
+			path = libz.a;
+			remoteRef = B3A3CC552CCC77D100589F82 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -23021,6 +22931,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A3CC702CCC787D00589F82 /* Core.plist in Resources */,
+				B3A3CC712CCC787D00589F82 /* emu.cfg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23443,17 +23355,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				93C68C44298AE30D0008E5A3 /* PVDebug.m in Sources */,
+				B3A3CC572CCC77DB00589F82 /* PVFlycast+CoreAudio.mm in Sources */,
+				B3A3CC782CCC79BE00589F82 /* PVFlycastCore+Options.swift in Sources */,
+				B3A3CC582CCC77DB00589F82 /* PVFlycast+Audio.mm in Sources */,
+				B3A3CC172CCC77D000589F82 /* PVFlycastCore+Audio.m in Sources */,
+				B3A3CC182CCC77D000589F82 /* PVFlycastCore+Video.m in Sources */,
+				B3A3CC592CCC77FA00589F82 /* PVFlycast.mm in Sources */,
+				B3A3CC192CCC77D000589F82 /* PVFlycastCore+Saves.m in Sources */,
+				B3A3CC752CCC789100589F82 /* CorePlist.swift in Sources */,
+				B3A3CC762CCC789100589F82 /* PVFlycastEmuCore.swift in Sources */,
+				B3A3CC772CCC789100589F82 /* CorePlist-Generated.swift in Sources */,
+				B3A3CC1A2CCC77D000589F82 /* PVFlycastCore+Controls.mm in Sources */,
+				B3A3CC1B2CCC77D000589F82 /* PVFlycastCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		931C04CD2A89E12400759ACB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = flycast_libretroFlycast;
-			targetProxy = 931C04CC2A89E12400759ACB /* PBXContainerItemProxy */;
-		};
 		934BE7C2296E6C0F00FB9933 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B30178D2207C901D0051B93D /* _unused_flycast */;
@@ -23463,6 +23382,21 @@
 			isa = PBXTargetDependency;
 			target = 934BE7D5296EB34500FB9933 /* _unused_libminiupnpc-static */;
 			targetProxy = 934BE938296EB57F00FB9933 /* PBXContainerItemProxy */;
+		};
+		B3A3CDB52CCC87DF00589F82 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B36AE80A295F034C00CC9D4F /* _unused_flycast-libretro */;
+			targetProxy = B3A3CDB42CCC87DF00589F82 /* PBXContainerItemProxy */;
+		};
+		B3A3CDB82CCC882B00589F82 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 934BE7A1296E6BA200FB9933 /* _unused_flycast-retroarch-module */;
+			targetProxy = B3A3CDB72CCC882B00589F82 /* PBXContainerItemProxy */;
+		};
+		B3A3CDBB2CCC883800589F82 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B30178D2207C901D0051B93D /* _unused_flycast */;
+			targetProxy = B3A3CDBA2CCC883800589F82 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -23577,7 +23511,7 @@
 					"\"$(SRCROOT)/cmake/include\"",
 					"\"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -23588,8 +23522,6 @@
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
 					"-fno-operator-names",
 					"-fno-rtti",
 					"-ffast-math",
@@ -23607,8 +23539,12 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -23665,7 +23601,10 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
@@ -23723,7 +23662,10 @@
 				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
@@ -23767,7 +23709,10 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
@@ -23870,8 +23815,8 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -23902,6 +23847,7 @@
 				);
 				INFOPLIST_FILE = PVFlycast/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -23911,9 +23857,13 @@
 				PRODUCT_NAME = PVFlycast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -24015,8 +23965,8 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = NO;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -24047,6 +23997,7 @@
 				);
 				INFOPLIST_FILE = PVFlycast/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -24056,9 +24007,13 @@
 				PRODUCT_NAME = PVFlycast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -24115,7 +24070,10 @@
 				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
@@ -24159,7 +24117,10 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
@@ -24217,7 +24178,10 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
@@ -24267,7 +24231,7 @@
 					"\"$(SRCROOT)/cmake/include\"",
 					"\"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -24278,8 +24242,6 @@
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
 					"-fno-operator-names",
 					"-fno-rtti",
 					"-ffast-math",
@@ -24297,8 +24259,12 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};

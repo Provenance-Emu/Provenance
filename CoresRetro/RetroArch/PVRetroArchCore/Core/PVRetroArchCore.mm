@@ -13,7 +13,7 @@
 #import <PVRetroArch/RetroArch-Swift.h>
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 /* RetroArch Includes */
 #include <stdint.h>
@@ -78,14 +78,13 @@ extern int g_gs_preference;
 		g_gs_preference = self.gsPreference;
 		[self setRootView:false];
         [CocoaView get];
+        
+        [self setupEmulation];
 	}
 	_current=self;
 	return self;
 }
-- (void)initialize {
-    [self parseOptions];
-    NSLog(@"RetroArch: Extract %d\n", self.extractArchive);
-}
+
 - (void)dealloc {
 	_current = nil;
 }

@@ -10,7 +10,7 @@
 #import "PVFlycastCore+Saves.h"
 #import "PVFlycastCore.h"
 
-@implementation PVFlycastCore (Saves)
+@implementation PVFlycastCoreBridge (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {

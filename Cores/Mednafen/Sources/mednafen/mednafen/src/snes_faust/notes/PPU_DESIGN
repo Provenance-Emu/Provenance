@@ -1,0 +1,71 @@
+//////////////////////////
+// Linebuffer pixel format(lower 16-bits):
+//
+//  ssss B000 mmmm B0HC
+//
+//   ssss = subscreen priority
+//   mmmm = mainscreen priority
+//   C = Color math enable.
+//   H = Color half math allow(=1 on all BG and OBJ layers, unless cleared by color window).
+//   B = backdrop bit
+//	=1 on backdrop, so bytewise priority testing will work properly(and 16-bit-wise priority testing for subscreen), and for
+//	 hires color math(since we can't use the same optimization as we used for lores color math).
+//		Note: Color window code as it is now will force the upper copy(0x800) to zero when forcing a pixel to black(but not the lower copy, of course).
+
+///////////////////
+// All priority:
+//
+//  0x0 = backdrop
+//  0x3 = sprite prio 0
+//  0x6 = sprite prio 1
+//  0x9 = sprite prio 2
+//  0xC = sprite prio 3
+//  0xF = force FixedColor layer on top(part of non-hires color math optimization)
+//
+///////////////////
+// Mode 0 Priority:
+//
+//  0x1 = BG3 with prio 0
+//  0x2 = BG2 with prio 0
+//  0x3 = Sprites with prio 0
+//  0x4 = BG3 with prio 1
+//  0x5 = BG2 with prio 1
+//  0x6 = Sprites with prio 1
+//  0x7 = BG1 with prio 0
+//  0x8 = BG0 with prio 0
+//  0x9 = Sprites with prio 2
+//  0xA = BG1 with prio 1
+//  0xB = BG0 with prio 1
+//  0xC = Sprites with prio 3
+//
+//
+///////////////////
+// Mode 1 Priority:
+//
+//  0x2 = BG2 with prio 0
+//  0x3 = Sprites with prio 0
+//  0x5 = BG2 with prio 1 && BGMode.D3=0
+//  0x6 = Sprites with prio 1
+//  0x7 = BG1 with prio 0
+//  0x8 = BG0 with prio 0 
+//  0x9 = Sprites with prio 2
+//  0xA = BG1 with prio 1
+//  0xB = BG0 with prio 1
+//  0xC = Sprites with prio 3
+//  0xD = BG2 with prio 1 && BGMode.D3=1
+//
+//
+///////////////////
+// Mode 3 Priority:
+//
+// 0x2 = BG1 with prio 0
+// 0x3 = Sprites with prio 0
+// 0x4 = BG0 with prio 0
+// 0x6 = Sprites with prio 1
+// 0x8 = BG1 with prio 1
+// 0x9 = Sprites with prio 2
+// 0xA = BG0 with prio 1
+// 0xC = Sprites with prio 3
+//
+//
+

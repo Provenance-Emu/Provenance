@@ -1,0 +1,6430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cpu name="65816">
+	<ops>
+		<op code="0xEA" cycles="2" name="NOP_">
+		</op>
+		<op code="0x78" cycles="2" name="SEI_"> 
+			SF		I,1
+		</op>
+		<op code="0x58" cycles="2" name="CLI_"> 
+			SF		I,0
+		</op>
+		<op code="0xB8" cycles="2" name="CLV_"> 
+			SF		V,0
+		</op>
+		<op code="0x18" cycles="2" name="CLC_"> 
+			SF		C,0
+		</op>
+		<op code="0x38" cycles="2" name="SEC_"> 
+			SF		C,1
+		</op>
+		<op code="0xD8" cycles="2" name="CLD_"> 
+			SF		D,0
+		</op>
+		<op code="0xF8" cycles="2" name="SED_"> 
+			SF		D,1
+		</op>
+		<op code="0xFB" cycles="2" name="xce_">
+			LF		$1,E
+			LF		$0,C
+			SF		C,$1
+			SF		E,$0
+		</op>
+		<op code="0x5B" cycles="2" name="tcd_">
+			LR.16	$0,A
+			SR		DP,$0
+			SF.16	Z,$0
+			SF.16	N,$0
+		</op>
+		<op code="0x7B" cycles="2" name="TDC_"> 
+			LR		$0,DP
+			SR.16		A,$0
+			SF.16	Z,$0
+			SF.16	N,$0
+		</op>
+		<op code="0x3B" cycles="2" name="TSC_"> 
+			LR.16	$0,S
+			SR.16	A,$0
+			SF.16	Z,$0
+			SF.16	N,$0
+		</op>
+		<op code="0x1B" cycles="2" e="0" name="tas_">
+			LR.16	$0,A
+			SR.16	S,$0
+		</op>
+		<op code="0x1B" cycles="2" e="1" name="tas_">                                            
+			LR.8	$0,A
+			SR.8	S,$0
+		</op>
+		<op code="0x8A" size="16" cycles="2" m="0" name="txa_m0">
+			LR.x	$0,X
+			SR.x	A,$0                                             
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x8A" size="8" cycles="2" m="1" name="txa_m1">
+			LR.x	$0,X
+			SR.x	A,$0                                             
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x98" size="16" cycles="2" m="0" name="tya_m0">
+			LR.x	$0,Y
+			SR.x	A,$0                                             
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x98" size="8" cycles="2" m="1" name="tya_m1">
+			LR.x	$0,Y
+			SR.x	A,$0                                             
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xA8" size="16" cycles="2" x="0" name="tay_x0">
+			LR.x	$0,A
+			SR.x	Y,$0                   
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xA8" size="8" cycles="2" x="1" name="tay_x1">
+			LR.x	$0,A
+			SR.x	Y,$0                   
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xAA" size="16" cycles="2" x="0" name="tax_x0">
+			LR.x	$0,A
+			SR.x	X,$0                                             
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xAA" size="8" cycles="2" x="1" name="tax_x1">
+			LR.x	$0,A
+			SR.x	X,$0                                             
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x9B" size="16" cycles="2" x="0" name="TXY_x0"> 
+			LR.16	$0,X
+			SR.16	Y,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x9B" size="8" cycles="2" x="1" name="TXY_x1"> 
+			LR.16	$0,X
+			SR.16	Y,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xBB" size="16" cycles="2" x="0" name="TYX_x0"> 
+			LR.16	$0,Y
+			SR.16	X,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xBB" size="8" cycles="2" x="1" name="TYX_x1"> 
+			LR.16	$0,Y
+			SR.16	X,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x9A" cycles="2" e="0" name="txs_">
+			LR.16	$0,X
+			SR.16	S,$0
+		</op>
+		<op code="0x9A" cycles="2" e="1" name="txs_">                                            
+			LR.8	$0,X
+			SR.8	S,$0
+		</op>
+		<op code="0xBA" size="16" cycles="2" x="0" name="tsx_x0">
+			LR.x	$0,S
+			SR.x	X,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xBA" size="8" cycles="2" x="1" name="tsx_x1">
+			LR.x	$0,S
+			SR.x	X,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xCA" size="16" cycles="2" x="0" name="DEX_x0">
+; DEX
+    LR.x    $1,X
+    SUB	    $1,1
+    SR.x    X,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xCA" size="8" cycles="2" x="1" name="DEX_x1">
+; DEX
+    LR.x    $1,X
+    SUB	    $1,1
+    SR.x    X,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x88" size="16" cycles="2" x="0" name="DEY_x0">
+; DEY
+    LR.x    $1,Y
+    SUB	    $1,1
+    SR.x    Y,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x88" size="8" cycles="2" x="1" name="DEY_x1">
+; DEY
+    LR.x    $1,Y
+    SUB	    $1,1
+    SR.x    Y,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xE8" size="16" cycles="2" x="0" name="INX_x0">
+; INX
+    LR.x    $1,X
+    ADD	    $1,1
+    SR.x    X,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xE8" size="8" cycles="2" x="1" name="INX_x1">
+; INX
+    LR.x    $1,X
+    ADD	    $1,1
+    SR.x    X,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xC8" size="16" cycles="2" x="0" name="INY_x0">
+; INY
+    LR.x    $1,Y
+    ADD	    $1,1
+    SR.x    Y,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xC8" size="8" cycles="2" x="1" name="INY_x1">
+; INY
+    LR.x    $1,Y
+    ADD	    $1,1
+    SR.x    Y,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x61" size="16" cycles="7" m="0" name="addr_dp_ix_indirect_read_ADC_m0">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x61" size="8" cycles="6" m="1" name="addr_dp_ix_indirect_read_ADC_m1">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x63" size="16" cycles="5" m="0" name="addr_sr_read_ADC_m0">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x63" size="8" cycles="4" m="1" name="addr_sr_read_ADC_m1">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x65" size="16" cycles="4" m="0" name="addr_dp_read_ADC_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x65" size="8" cycles="3" m="1" name="addr_dp_read_ADC_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x67" size="16" cycles="7" m="0" name="addr_dp_indirectlong_read_ADC_m0">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x67" size="8" cycles="6" m="1" name="addr_dp_indirectlong_read_ADC_m1">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x69" size="16" cycles="3" m="0" name="addr_imma_ADC_m0">
+; Immediate #$xx
+	LI.x       $1
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x69" size="8" cycles="2" m="1" name="addr_imma_ADC_m1">
+; Immediate #$xx
+	LI.x       $1
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x6D" size="16" cycles="5" m="0" name="addr_abs_read_ADC_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x6D" size="8" cycles="4" m="1" name="addr_abs_read_ADC_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x6F" size="16" cycles="6" m="0" name="addr_abslong_read_ADC_m0">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x6F" size="8" cycles="5" m="1" name="addr_abslong_read_ADC_m1">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x71" size="16" cycles="6" m="0" name="addr_dp_indirect_iy_read_ADC_m0">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x71" size="8" cycles="5" m="1" name="addr_dp_indirect_iy_read_ADC_m1">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x72" size="16" cycles="6" m="0" name="addr_dp_indirect_read_ADC_m0">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x72" size="8" cycles="5" m="1" name="addr_dp_indirect_read_ADC_m1">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x73" size="16" cycles="8" m="0" name="addr_sr_indirect_iy_read_ADC_m0">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x73" size="8" cycles="7" m="1" name="addr_sr_indirect_iy_read_ADC_m1">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x75" size="16" cycles="5" m="0" name="addr_dp_ix_read_ADC_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x75" size="8" cycles="4" m="1" name="addr_dp_ix_read_ADC_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x77" size="16" cycles="7" m="0" name="addr_dp_indirectlong_iy_read_ADC_m0">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x77" size="8" cycles="6" m="1" name="addr_dp_indirectlong_iy_read_ADC_m1">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x79" size="16" cycles="5" m="0" name="addr_abs_iy_read_ADC_m0">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x79" size="8" cycles="4" m="1" name="addr_abs_iy_read_ADC_m1">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x7D" size="16" cycles="5" m="0" name="addr_abs_ix_read_ADC_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x7D" size="8" cycles="4" m="1" name="addr_abs_ix_read_ADC_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x7F" size="16" cycles="6" m="0" name="addr_abslong_ix_read_ADC_m0">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0x7F" size="8" cycles="5" m="1" name="addr_abslong_ix_read_ADC_m1">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ADC (A + B + C)
+	LR.x    $2,A	; A
+	ADC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE1" size="16" cycles="7" m="0" name="addr_dp_ix_indirect_read_SBC_m0">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE1" size="8" cycles="6" m="1" name="addr_dp_ix_indirect_read_SBC_m1">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE3" size="16" cycles="5" m="0" name="addr_sr_read_SBC_m0">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE3" size="8" cycles="4" m="1" name="addr_sr_read_SBC_m1">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE5" size="16" cycles="4" m="0" name="addr_dp_read_SBC_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE5" size="8" cycles="3" m="1" name="addr_dp_read_SBC_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE7" size="16" cycles="7" m="0" name="addr_dp_indirectlong_read_SBC_m0">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE7" size="8" cycles="6" m="1" name="addr_dp_indirectlong_read_SBC_m1">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE9" size="16" cycles="3" m="0" name="addr_imma_SBC_m0">
+; Immediate #$xx
+	LI.x       $1
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xE9" size="8" cycles="2" m="1" name="addr_imma_SBC_m1">
+; Immediate #$xx
+	LI.x       $1
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xED" size="16" cycles="5" m="0" name="addr_abs_read_SBC_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xED" size="8" cycles="4" m="1" name="addr_abs_read_SBC_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xEF" size="16" cycles="6" m="0" name="addr_abslong_read_SBC_m0">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xEF" size="8" cycles="5" m="1" name="addr_abslong_read_SBC_m1">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF1" size="16" cycles="6" m="0" name="addr_dp_indirect_iy_read_SBC_m0">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF1" size="8" cycles="5" m="1" name="addr_dp_indirect_iy_read_SBC_m1">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF2" size="16" cycles="6" m="0" name="addr_dp_indirect_read_SBC_m0">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF2" size="8" cycles="5" m="1" name="addr_dp_indirect_read_SBC_m1">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF3" size="16" cycles="8" m="0" name="addr_sr_indirect_iy_read_SBC_m0">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF3" size="8" cycles="7" m="1" name="addr_sr_indirect_iy_read_SBC_m1">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF5" size="16" cycles="5" m="0" name="addr_dp_ix_read_SBC_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF5" size="8" cycles="4" m="1" name="addr_dp_ix_read_SBC_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF7" size="16" cycles="7" m="0" name="addr_dp_indirectlong_iy_read_SBC_m0">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF7" size="8" cycles="6" m="1" name="addr_dp_indirectlong_iy_read_SBC_m1">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF9" size="16" cycles="5" m="0" name="addr_abs_iy_read_SBC_m0">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xF9" size="8" cycles="4" m="1" name="addr_abs_iy_read_SBC_m1">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xFD" size="16" cycles="5" m="0" name="addr_abs_ix_read_SBC_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xFD" size="8" cycles="4" m="1" name="addr_abs_ix_read_SBC_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xFF" size="16" cycles="6" m="0" name="addr_abslong_ix_read_SBC_m0">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xFF" size="8" cycles="5" m="1" name="addr_abslong_ix_read_SBC_m1">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; SBC (A + ~B + C)
+	NOT.x	$1			; invert operand
+	LR.x    $2,A	; A
+	SBC.x   $2,$1	; A + value + carry
+	SR.x	A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+	SF.x    C,$2
+</op>
+		<op code="0xA9" size="16" cycles="3" m="0" name="addr_imma_LDA_m0">
+; Immediate #$xx
+	LI.x       $1
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA9" size="8" cycles="2" m="1" name="addr_imma_LDA_m1">
+; Immediate #$xx
+	LI.x       $1
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xAD" size="16" cycles="5" m="0" name="addr_abs_read_LDA_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xAD" size="8" cycles="4" m="1" name="addr_abs_read_LDA_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xAF" size="16" cycles="6" m="0" name="addr_abslong_read_LDA_m0">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xAF" size="8" cycles="5" m="1" name="addr_abslong_read_LDA_m1">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xBF" size="16" cycles="6" m="0" name="addr_abslong_ix_read_LDA_m0">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xBF" size="8" cycles="5" m="1" name="addr_abslong_ix_read_LDA_m1">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA1" size="16" cycles="7" m="0" name="addr_dp_ix_indirect_read_LDA_m0">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA1" size="8" cycles="6" m="1" name="addr_dp_ix_indirect_read_LDA_m1">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA3" size="16" cycles="5" m="0" name="addr_sr_read_LDA_m0">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA3" size="8" cycles="4" m="1" name="addr_sr_read_LDA_m1">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA5" size="16" cycles="4" m="0" name="addr_dp_read_LDA_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA5" size="8" cycles="3" m="1" name="addr_dp_read_LDA_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA7" size="16" cycles="7" m="0" name="addr_dp_indirectlong_read_LDA_m0">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA7" size="8" cycles="6" m="1" name="addr_dp_indirectlong_read_LDA_m1">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB1" size="16" cycles="6" m="0" name="addr_dp_indirect_iy_read_LDA_m0">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB1" size="8" cycles="5" m="1" name="addr_dp_indirect_iy_read_LDA_m1">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB2" size="16" cycles="6" m="0" name="addr_dp_indirect_read_LDA_m0">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB2" size="8" cycles="5" m="1" name="addr_dp_indirect_read_LDA_m1">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB3" size="16" cycles="8" m="0" name="addr_sr_indirect_iy_read_LDA_m0">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB3" size="8" cycles="7" m="1" name="addr_sr_indirect_iy_read_LDA_m1">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB5" size="16" cycles="5" m="0" name="addr_dp_ix_read_LDA_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB5" size="8" cycles="4" m="1" name="addr_dp_ix_read_LDA_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB7" size="16" cycles="7" m="0" name="addr_dp_indirectlong_iy_read_LDA_m0">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB7" size="8" cycles="6" m="1" name="addr_dp_indirectlong_iy_read_LDA_m1">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB9" size="16" cycles="5" m="0" name="addr_abs_iy_read_LDA_m0">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB9" size="8" cycles="4" m="1" name="addr_abs_iy_read_LDA_m1">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xBD" size="16" cycles="5" m="0" name="addr_abs_ix_read_LDA_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xBD" size="8" cycles="4" m="1" name="addr_abs_ix_read_LDA_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; LDA
+    SR.x    A,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0x8D" size="16" cycles="5" m="0" name="addr_abs_STA_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x8D" size="8" cycles="4" m="1" name="addr_abs_STA_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x8F" size="16" cycles="6" m="0" name="addr_abslong_STA_m0">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x8F" size="8" cycles="5" m="1" name="addr_abslong_STA_m1">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x9F" size="16" cycles="6" m="0" name="addr_abslong_ix_STA_m0">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x9F" size="8" cycles="5" m="1" name="addr_abslong_ix_STA_m1">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x81" size="16" cycles="7" m="0" name="addr_dp_ix_indirect_STA_m0">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x81" size="8" cycles="6" m="1" name="addr_dp_ix_indirect_STA_m1">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x83" size="16" cycles="5" m="0" name="addr_sr_STA_m0">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x83" size="8" cycles="4" m="1" name="addr_sr_STA_m1">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x85" size="16" cycles="4" m="0" name="addr_dp_STA_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x85" size="8" cycles="3" m="1" name="addr_dp_STA_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x87" size="16" cycles="7" m="0" name="addr_dp_indirectlong_STA_m0">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x87" size="8" cycles="6" m="1" name="addr_dp_indirectlong_STA_m1">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x91" size="16" cycles="7" m="0" name="addr_dp_indirect_iy_cycle_STA_m0">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+	CYCLE 1
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x91" size="8" cycles="6" m="1" name="addr_dp_indirect_iy_cycle_STA_m1">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+	CYCLE 1
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x92" size="16" cycles="6" m="0" name="addr_dp_indirect_STA_m0">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x92" size="8" cycles="5" m="1" name="addr_dp_indirect_STA_m1">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x93" size="16" cycles="8" m="0" name="addr_sr_indirect_iy_STA_m0">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x93" size="8" cycles="7" m="1" name="addr_sr_indirect_iy_STA_m1">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x95" size="16" cycles="5" m="0" name="addr_dp_ix_STA_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x95" size="8" cycles="4" m="1" name="addr_dp_ix_STA_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x97" size="16" cycles="7" m="0" name="addr_dp_indirectlong_iy_STA_m0">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x97" size="8" cycles="6" m="1" name="addr_dp_indirectlong_iy_STA_m1">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x99" size="16" cycles="6" m="0" name="addr_abs_iy_cycle_STA_m0">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+	CYCLE 1
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x99" size="8" cycles="5" m="1" name="addr_abs_iy_cycle_STA_m1">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+	CYCLE 1
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x9D" size="16" cycles="6" m="0" name="addr_abs_ix_cycle_STA_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+	CYCLE 1
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x9D" size="8" cycles="5" m="1" name="addr_abs_ix_cycle_STA_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+	CYCLE 1
+
+; STA
+    LR.x    $1,A
+    SM.x    $0,$1
+</op>
+		<op code="0x86" size="16" cycles="4" x="0" name="addr_dp_STX_x0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+; STX
+    LR.x    $1,X
+    SM.x    $0,$1
+</op>
+		<op code="0x86" size="8" cycles="3" x="1" name="addr_dp_STX_x1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+; STX
+    LR.x    $1,X
+    SM.x    $0,$1
+</op>
+		<op code="0x8E" size="16" cycles="5" x="0" name="addr_abs_STX_x0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+; STX
+    LR.x    $1,X
+    SM.x    $0,$1
+</op>
+		<op code="0x8E" size="8" cycles="4" x="1" name="addr_abs_STX_x1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+; STX
+    LR.x    $1,X
+    SM.x    $0,$1
+</op>
+		<op code="0x96" size="16" cycles="5" x="0" name="addr_dp_iy_STX_x0">
+; Direct Indexed Y $xx,Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,Y 		; indexed y
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+; STX
+    LR.x    $1,X
+    SM.x    $0,$1
+</op>
+		<op code="0x96" size="8" cycles="4" x="1" name="addr_dp_iy_STX_x1">
+; Direct Indexed Y $xx,Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,Y 		; indexed y
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+; STX
+    LR.x    $1,X
+    SM.x    $0,$1
+</op>
+		<op code="0x84" size="16" cycles="4" x="0" name="addr_dp_STY_x0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+; STY
+    LR.x    $1,Y
+    SM.x    $0,$1
+</op>
+		<op code="0x84" size="8" cycles="3" x="1" name="addr_dp_STY_x1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+; STY
+    LR.x    $1,Y
+    SM.x    $0,$1
+</op>
+		<op code="0x8C" size="16" cycles="5" x="0" name="addr_abs_STY_x0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+; STY
+    LR.x    $1,Y
+    SM.x    $0,$1
+</op>
+		<op code="0x8C" size="8" cycles="4" x="1" name="addr_abs_STY_x1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+; STY
+    LR.x    $1,Y
+    SM.x    $0,$1
+</op>
+		<op code="0x94" size="16" cycles="5" x="0" name="addr_dp_ix_STY_x0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+; STY
+    LR.x    $1,Y
+    SM.x    $0,$1
+</op>
+		<op code="0x94" size="8" cycles="4" x="1" name="addr_dp_ix_STY_x1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+; STY
+    LR.x    $1,Y
+    SM.x    $0,$1
+</op>
+		<op code="0x64" size="16" cycles="4" m="0" name="addr_dp_STZ_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+; STZ
+    LR.x    $1,0
+    SM.x    $0,$1
+</op>
+		<op code="0x64" size="8" cycles="3" m="1" name="addr_dp_STZ_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+; STZ
+    LR.x    $1,0
+    SM.x    $0,$1
+</op>
+		<op code="0x74" size="16" cycles="5" m="0" name="addr_dp_ix_STZ_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+; STZ
+    LR.x    $1,0
+    SM.x    $0,$1
+</op>
+		<op code="0x74" size="8" cycles="4" m="1" name="addr_dp_ix_STZ_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+; STZ
+    LR.x    $1,0
+    SM.x    $0,$1
+</op>
+		<op code="0x9C" size="16" cycles="5" m="0" name="addr_abs_STZ_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+; STZ
+    LR.x    $1,0
+    SM.x    $0,$1
+</op>
+		<op code="0x9C" size="8" cycles="4" m="1" name="addr_abs_STZ_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+; STZ
+    LR.x    $1,0
+    SM.x    $0,$1
+</op>
+		<op code="0x9E" size="16" cycles="6" m="0" name="addr_abs_ix_cycle_STZ_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+	CYCLE 1
+
+; STZ
+    LR.x    $1,0
+    SM.x    $0,$1
+</op>
+		<op code="0x9E" size="8" cycles="5" m="1" name="addr_abs_ix_cycle_STZ_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+	CYCLE 1
+
+; STZ
+    LR.x    $1,0
+    SM.x    $0,$1
+</op>
+		<op code="0xA2" size="16" cycles="3" x="0" name="addr_immx_LDX_x0">
+; Immediate #$xx
+	LI.x       $1
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA2" size="8" cycles="2" x="1" name="addr_immx_LDX_x1">
+; Immediate #$xx
+	LI.x       $1
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA6" size="16" cycles="4" x="0" name="addr_dp_read_LDX_x0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA6" size="8" cycles="3" x="1" name="addr_dp_read_LDX_x1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xAE" size="16" cycles="5" x="0" name="addr_abs_read_LDX_x0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xAE" size="8" cycles="4" x="1" name="addr_abs_read_LDX_x1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB6" size="16" cycles="5" x="0" name="addr_dp_iy_read_LDX_x0">
+; Direct Indexed Y $xx,Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,Y 		; indexed y
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB6" size="8" cycles="4" x="1" name="addr_dp_iy_read_LDX_x1">
+; Direct Indexed Y $xx,Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,Y 		; indexed y
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xBE" size="16" cycles="5" x="0" name="addr_abs_iy_read_LDX_x0">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xBE" size="8" cycles="4" x="1" name="addr_abs_iy_read_LDX_x1">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; LDX
+    SR.x    X,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA0" size="16" cycles="3" x="0" name="addr_immx_LDY_x0">
+; Immediate #$xx
+	LI.x       $1
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA0" size="8" cycles="2" x="1" name="addr_immx_LDY_x1">
+; Immediate #$xx
+	LI.x       $1
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA4" size="16" cycles="4" x="0" name="addr_dp_read_LDY_x0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xA4" size="8" cycles="3" x="1" name="addr_dp_read_LDY_x1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xAC" size="16" cycles="5" x="0" name="addr_abs_read_LDY_x0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xAC" size="8" cycles="4" x="1" name="addr_abs_read_LDY_x1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB4" size="16" cycles="5" x="0" name="addr_dp_ix_read_LDY_x0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xB4" size="8" cycles="4" x="1" name="addr_dp_ix_read_LDY_x1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xBC" size="16" cycles="5" x="0" name="addr_abs_ix_read_LDY_x0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0xBC" size="8" cycles="4" x="1" name="addr_abs_ix_read_LDY_x1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; LDY
+    SR.x    Y,$1
+	SF.x    Z,$1
+	SF.x    N,$1
+</op>
+		<op code="0x21" size="16" cycles="7" m="0" name="addr_dp_ix_indirect_read_AND_m0">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x21" size="8" cycles="6" m="1" name="addr_dp_ix_indirect_read_AND_m1">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x23" size="16" cycles="5" m="0" name="addr_sr_read_AND_m0">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x23" size="8" cycles="4" m="1" name="addr_sr_read_AND_m1">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x25" size="16" cycles="4" m="0" name="addr_dp_read_AND_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x25" size="8" cycles="3" m="1" name="addr_dp_read_AND_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x27" size="16" cycles="7" m="0" name="addr_dp_indirectlong_read_AND_m0">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x27" size="8" cycles="6" m="1" name="addr_dp_indirectlong_read_AND_m1">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x29" size="16" cycles="3" m="0" name="addr_imma_AND_m0">
+; Immediate #$xx
+	LI.x       $1
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x29" size="8" cycles="2" m="1" name="addr_imma_AND_m1">
+; Immediate #$xx
+	LI.x       $1
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x2D" size="16" cycles="5" m="0" name="addr_abs_read_AND_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x2D" size="8" cycles="4" m="1" name="addr_abs_read_AND_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x2F" size="16" cycles="6" m="0" name="addr_abslong_read_AND_m0">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x2F" size="8" cycles="5" m="1" name="addr_abslong_read_AND_m1">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x31" size="16" cycles="6" m="0" name="addr_dp_indirect_iy_read_AND_m0">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x31" size="8" cycles="5" m="1" name="addr_dp_indirect_iy_read_AND_m1">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x32" size="16" cycles="6" m="0" name="addr_dp_indirect_read_AND_m0">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x32" size="8" cycles="5" m="1" name="addr_dp_indirect_read_AND_m1">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x33" size="16" cycles="8" m="0" name="addr_sr_indirect_iy_read_AND_m0">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x33" size="8" cycles="7" m="1" name="addr_sr_indirect_iy_read_AND_m1">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x35" size="16" cycles="5" m="0" name="addr_dp_ix_read_AND_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x35" size="8" cycles="4" m="1" name="addr_dp_ix_read_AND_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x37" size="16" cycles="7" m="0" name="addr_dp_indirectlong_iy_read_AND_m0">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x37" size="8" cycles="6" m="1" name="addr_dp_indirectlong_iy_read_AND_m1">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x39" size="16" cycles="5" m="0" name="addr_abs_iy_read_AND_m0">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x39" size="8" cycles="4" m="1" name="addr_abs_iy_read_AND_m1">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x3D" size="16" cycles="5" m="0" name="addr_abs_ix_read_AND_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x3D" size="8" cycles="4" m="1" name="addr_abs_ix_read_AND_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x3F" size="16" cycles="6" m="0" name="addr_abslong_ix_read_AND_m0">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x3F" size="8" cycles="5" m="1" name="addr_abslong_ix_read_AND_m1">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; AND
+	LR.x    $2,A
+	AND     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x41" size="16" cycles="7" m="0" name="addr_dp_ix_indirect_read_EOR_m0">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x41" size="8" cycles="6" m="1" name="addr_dp_ix_indirect_read_EOR_m1">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x43" size="16" cycles="5" m="0" name="addr_sr_read_EOR_m0">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x43" size="8" cycles="4" m="1" name="addr_sr_read_EOR_m1">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x45" size="16" cycles="4" m="0" name="addr_dp_read_EOR_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x45" size="8" cycles="3" m="1" name="addr_dp_read_EOR_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x47" size="16" cycles="7" m="0" name="addr_dp_indirectlong_read_EOR_m0">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x47" size="8" cycles="6" m="1" name="addr_dp_indirectlong_read_EOR_m1">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x49" size="16" cycles="3" m="0" name="addr_imma_EOR_m0">
+; Immediate #$xx
+	LI.x       $1
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x49" size="8" cycles="2" m="1" name="addr_imma_EOR_m1">
+; Immediate #$xx
+	LI.x       $1
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x4D" size="16" cycles="5" m="0" name="addr_abs_read_EOR_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x4D" size="8" cycles="4" m="1" name="addr_abs_read_EOR_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x4F" size="16" cycles="6" m="0" name="addr_abslong_read_EOR_m0">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x4F" size="8" cycles="5" m="1" name="addr_abslong_read_EOR_m1">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x51" size="16" cycles="6" m="0" name="addr_dp_indirect_iy_read_EOR_m0">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x51" size="8" cycles="5" m="1" name="addr_dp_indirect_iy_read_EOR_m1">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x52" size="16" cycles="6" m="0" name="addr_dp_indirect_read_EOR_m0">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x52" size="8" cycles="5" m="1" name="addr_dp_indirect_read_EOR_m1">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x53" size="16" cycles="8" m="0" name="addr_sr_indirect_iy_read_EOR_m0">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x53" size="8" cycles="7" m="1" name="addr_sr_indirect_iy_read_EOR_m1">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x55" size="16" cycles="5" m="0" name="addr_dp_ix_read_EOR_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x55" size="8" cycles="4" m="1" name="addr_dp_ix_read_EOR_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x57" size="16" cycles="7" m="0" name="addr_dp_indirectlong_iy_read_EOR_m0">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x57" size="8" cycles="6" m="1" name="addr_dp_indirectlong_iy_read_EOR_m1">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x59" size="16" cycles="5" m="0" name="addr_abs_iy_read_EOR_m0">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x59" size="8" cycles="4" m="1" name="addr_abs_iy_read_EOR_m1">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x5D" size="16" cycles="5" m="0" name="addr_abs_ix_read_EOR_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x5D" size="8" cycles="4" m="1" name="addr_abs_ix_read_EOR_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x5F" size="16" cycles="6" m="0" name="addr_abslong_ix_read_EOR_m0">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x5F" size="8" cycles="5" m="1" name="addr_abslong_ix_read_EOR_m1">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; EOR
+	LR.x    $2,A
+	XOR     $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x03" size="16" cycles="5" m="0" name="addr_sr_read_ORA_m0">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x03" size="8" cycles="4" m="1" name="addr_sr_read_ORA_m1">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x05" size="16" cycles="4" m="0" name="addr_dp_read_ORA_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x05" size="8" cycles="3" m="1" name="addr_dp_read_ORA_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x07" size="16" cycles="7" m="0" name="addr_dp_indirectlong_read_ORA_m0">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x07" size="8" cycles="6" m="1" name="addr_dp_indirectlong_read_ORA_m1">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x09" size="16" cycles="3" m="0" name="addr_imma_ORA_m0">
+; Immediate #$xx
+	LI.x       $1
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x09" size="8" cycles="2" m="1" name="addr_imma_ORA_m1">
+; Immediate #$xx
+	LI.x       $1
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x0D" size="16" cycles="5" m="0" name="addr_abs_read_ORA_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x0D" size="8" cycles="4" m="1" name="addr_abs_read_ORA_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x0F" size="16" cycles="6" m="0" name="addr_abslong_read_ORA_m0">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x0F" size="8" cycles="5" m="1" name="addr_abslong_read_ORA_m1">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x11" size="16" cycles="6" m="0" name="addr_dp_indirect_iy_read_ORA_m0">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x11" size="8" cycles="5" m="1" name="addr_dp_indirect_iy_read_ORA_m1">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x12" size="16" cycles="6" m="0" name="addr_dp_indirect_read_ORA_m0">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x12" size="8" cycles="5" m="1" name="addr_dp_indirect_read_ORA_m1">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x13" size="16" cycles="8" m="0" name="addr_sr_indirect_iy_read_ORA_m0">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x13" size="8" cycles="7" m="1" name="addr_sr_indirect_iy_read_ORA_m1">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x15" size="16" cycles="5" m="0" name="addr_dp_ix_read_ORA_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x15" size="8" cycles="4" m="1" name="addr_dp_ix_read_ORA_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x17" size="16" cycles="7" m="0" name="addr_dp_indirectlong_iy_read_ORA_m0">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x17" size="8" cycles="6" m="1" name="addr_dp_indirectlong_iy_read_ORA_m1">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x01" size="16" cycles="7" m="0" name="addr_dp_ix_indirect_read_ORA_m0">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x01" size="8" cycles="6" m="1" name="addr_dp_ix_indirect_read_ORA_m1">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x19" size="16" cycles="5" m="0" name="addr_abs_iy_read_ORA_m0">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x19" size="8" cycles="4" m="1" name="addr_abs_iy_read_ORA_m1">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x1D" size="16" cycles="5" m="0" name="addr_abs_ix_read_ORA_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x1D" size="8" cycles="4" m="1" name="addr_abs_ix_read_ORA_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x1F" size="16" cycles="6" m="0" name="addr_abslong_ix_read_ORA_m0">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0x1F" size="8" cycles="5" m="1" name="addr_abslong_ix_read_ORA_m1">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ORA
+	LR.x    $2,A
+	OR      $2,$1
+	SR.x    A,$2
+	SF.x    Z,$2
+	SF.x    N,$2
+</op>
+		<op code="0xC1" size="16" cycles="7" m="0" name="addr_dp_ix_indirect_read_CMP_m0">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC1" size="8" cycles="6" m="1" name="addr_dp_ix_indirect_read_CMP_m1">
+; Direct Indexed Indirect ($xx,X)
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X        ; indexed x
+	AND     $0,DPMASK   ; no wrapping beyond zero bank (or page)
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC3" size="16" cycles="5" m="0" name="addr_sr_read_CMP_m0">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC3" size="8" cycles="4" m="1" name="addr_sr_read_CMP_m1">
+; Stack Relative $xx,s
+	LI.8     $0			; stack 
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC5" size="16" cycles="4" m="0" name="addr_dp_read_CMP_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC5" size="8" cycles="3" m="1" name="addr_dp_read_CMP_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC7" size="16" cycles="7" m="0" name="addr_dp_indirectlong_read_CMP_m0">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC7" size="8" cycles="6" m="1" name="addr_dp_indirectlong_read_CMP_m1">
+; Direct Indirect Long [$xx]
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC9" size="16" cycles="3" m="0" name="addr_imma_CMP_m0">
+; Immediate #$xx
+	LI.x       $1
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC9" size="8" cycles="2" m="1" name="addr_imma_CMP_m1">
+; Immediate #$xx
+	LI.x       $1
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xCD" size="16" cycles="5" m="0" name="addr_abs_read_CMP_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xCD" size="8" cycles="4" m="1" name="addr_abs_read_CMP_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xCF" size="16" cycles="6" m="0" name="addr_abslong_read_CMP_m0">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xCF" size="8" cycles="5" m="1" name="addr_abslong_read_CMP_m1">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD1" size="16" cycles="6" m="0" name="addr_dp_indirect_iy_read_CMP_m0">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD1" size="8" cycles="5" m="1" name="addr_dp_indirect_iy_read_CMP_m1">
+; Direct Indirect Indexed ($xx),Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD2" size="16" cycles="6" m="0" name="addr_dp_indirect_read_CMP_m0">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD2" size="8" cycles="5" m="1" name="addr_dp_indirect_read_CMP_m1">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD3" size="16" cycles="8" m="0" name="addr_sr_indirect_iy_read_CMP_m0">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD3" size="8" cycles="7" m="1" name="addr_sr_indirect_iy_read_CMP_m1">
+; Stack Relative Indirect Indexed ($xx,s),y
+	LI.8     $0			; stack
+	ADD      $0,S 
+	AND      $0,0xFFFF
+    CYCLE   1           ; consume cycle
+
+	LM.16    $0,$0		; indirect
+	OR       $0,DB
+
+    CYCLE   1           ; consume cycle
+	ADD      $0,Y 		; indexed
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD5" size="16" cycles="5" m="0" name="addr_dp_ix_read_CMP_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD5" size="8" cycles="4" m="1" name="addr_dp_ix_read_CMP_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD7" size="16" cycles="7" m="0" name="addr_dp_indirectlong_iy_read_CMP_m0">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD7" size="8" cycles="6" m="1" name="addr_dp_indirectlong_iy_read_CMP_m1">
+; Direct Indirect Long Indexed [$xx],Y
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.24    $0,$0		; indirect long
+
+	ADD     $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD9" size="16" cycles="5" m="0" name="addr_abs_iy_read_CMP_m0">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xD9" size="8" cycles="4" m="1" name="addr_abs_iy_read_CMP_m1">
+; Absolute Indexed Y $xxxx,Y
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,Y 		; indexed y
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xDD" size="16" cycles="5" m="0" name="addr_abs_ix_read_CMP_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xDD" size="8" cycles="4" m="1" name="addr_abs_ix_read_CMP_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xDF" size="16" cycles="6" m="0" name="addr_abslong_ix_read_CMP_m0">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xDF" size="8" cycles="5" m="1" name="addr_abslong_ix_read_CMP_m1">
+; Absolute Long Indexed X $xxxxxx,X
+	LI.24    $0			; absolute long
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; CMP
+	LR.x    $2,A
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xE0" size="16" cycles="3" x="0" name="addr_immx_CPX_x0">
+; Immediate #$xx
+	LI.x       $1
+
+; CPX
+	LR.x    $2,X
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xE0" size="8" cycles="2" x="1" name="addr_immx_CPX_x1">
+; Immediate #$xx
+	LI.x       $1
+
+; CPX
+	LR.x    $2,X
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xE4" size="16" cycles="4" x="0" name="addr_dp_read_CPX_x0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; CPX
+	LR.x    $2,X
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xE4" size="8" cycles="3" x="1" name="addr_dp_read_CPX_x1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; CPX
+	LR.x    $2,X
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xEC" size="16" cycles="5" x="0" name="addr_abs_read_CPX_x0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CPX
+	LR.x    $2,X
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xEC" size="8" cycles="4" x="1" name="addr_abs_read_CPX_x1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CPX
+	LR.x    $2,X
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC0" size="16" cycles="3" x="0" name="addr_immx_CPY_x0">
+; Immediate #$xx
+	LI.x       $1
+
+; CPY
+	LR.x    $2,Y
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC0" size="8" cycles="2" x="1" name="addr_immx_CPY_x1">
+; Immediate #$xx
+	LI.x       $1
+
+; CPY
+	LR.x    $2,Y
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC4" size="16" cycles="4" x="0" name="addr_dp_read_CPY_x0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; CPY
+	LR.x    $2,Y
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xC4" size="8" cycles="3" x="1" name="addr_dp_read_CPY_x1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; CPY
+	LR.x    $2,Y
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xCC" size="16" cycles="5" x="0" name="addr_abs_read_CPY_x0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CPY
+	LR.x    $2,Y
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,16    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0xCC" size="8" cycles="4" x="1" name="addr_abs_read_CPY_x1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; CPY
+	LR.x    $2,Y
+	SUB     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$2
+    SHR     $2,8    ; set carry
+    XOR		$2,1
+	SF.x    C,$2
+</op>
+		<op code="0x20" cycles="6" name="addr_abs_zero_JSR_">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+
+	LR			$2,PC
+	SUB			$2,1
+	PUSH.16		$2		; push 16-bit PC
+	SR.16		PC,$0	; 16-bit jump
+</op>
+		<op code="0x4C" cycles="3" name="addr_abs_zero_JMP_">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+
+	SR.16		PC,$0	; 16-bit jump
+</op>
+		<op code="0x22" cycles="8" name="addr_abslong_JSL_">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+	LR			$2,PC
+	SUB			$2,1
+	PUSH.24		$2		; push 24-bit PC
+	SR.24		PC,$0	; 24-bit jump
+</op>
+		<op code="0x5C" cycles="4" name="addr_abslong_JMPL_">
+; Absolute Long $xxxxxx
+	LI.24    $0			; absolute long
+
+	SR.24		PC,$0	; 24-bit jump
+</op>
+		<op code="0x6C" cycles="5" name="addr_abs_indirect_JMP_">
+; Absolute Zero Indirect ($xxxx)
+	LI.16    $0			; absolute zero bank
+
+	LM.16    $0,$0		; indirect zero
+	AND     $0,0xFFFF
+
+	SR.16		PC,$0	; 16-bit jump
+</op>
+		<op code="0xDC" cycles="6" name="addr_abs_indirectlong_JMPL_">
+; Absolute Zero Indirect ($xxxx)
+	LI.16    $0			; absolute zero bank
+
+	LM.24    $0,$0		; indirect 
+
+	SR.24		PC,$0	; 24-bit jump
+</op>
+		<op code="0xFC" cycles="8" name="addr_pb_abs_ix_indirect_JSR_">
+; Absolute Zero Indexed Indirect ($xxxx,X)
+	LI.16    $0			; absolute zero bank
+	ADD     $0,X 		; indexed x
+	AND     $0,0xFFFF
+
+	LR		$1,PC		; get PC
+    SHR		$1,16
+    SHL		$1,16
+    OR		$0,$1
+
+	LM.16    $0,$0		; indirect zero 
+	AND     $0,0xFFFF
+
+	LR			$2,PC
+	SUB			$2,1
+	PUSH.16		$2		; push 16-bit PC
+	SR.16		PC,$0	; 16-bit jump
+</op>
+		<op code="0x7C" cycles="6" name="addr_pb_abs_ix_indirect_JMP_">
+; Absolute Zero Indexed Indirect ($xxxx,X)
+	LI.16    $0			; absolute zero bank
+	ADD     $0,X 		; indexed x
+	AND     $0,0xFFFF
+
+	LR		$1,PC		; get PC
+    SHR		$1,16
+    SHL		$1,16
+    OR		$0,$1
+
+	LM.16    $0,$0		; indirect zero 
+	AND     $0,0xFFFF
+
+	SR.16		PC,$0	; 16-bit jump
+</op>
+		<op code="0x60" cycles="6" name="RTS_"> 
+			POP.16		$0
+			ADD			$0,1
+			SR.16		PC,$0
+		</op>
+		<op code="0x6B" cycles="6" name="RTL_"> 
+			POP.24		$0
+			ADD			$0,1
+			SR.24		PC,$0
+		</op>
+		<op code="0x40" cycles="7" e="0" name="RTI_"> 
+			POP.8		$0
+			SR			P,$0
+			POP.24		$0
+			SR.24		PC,$0
+		</op>
+		<op code="0x40" cycles="6" e="1" name="RTI_"> 
+			POP.8		$0
+			SR			P,$0
+			POP.16		$0
+			SR.16		PC,$0
+		</op>
+		<op code="0x3A" size="16" cycles="2" m="0" name="DEA_m0">
+; DEA
+    LR.x    $1,A
+    SUB	    $1,1
+    SR.x    A,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x3A" size="8" cycles="2" m="1" name="DEA_m1">
+; DEA
+    LR.x    $1,A
+    SUB	    $1,1
+    SR.x    A,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x1A" size="16" cycles="2" m="0" name="INA_m0">
+; INA
+    LR.x    $1,A
+    ADD	    $1,1
+    SR.x    A,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x1A" size="8" cycles="2" m="1" name="INA_m1">
+; INA
+    LR.x    $1,A
+    ADD	    $1,1
+    SR.x    A,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x0A" size="16" cycles="2" m="0" name="ASLA_m0">
+; ASL A
+    LR.x    $1,A     ; $1 = dddddddd
+    SHL     $1,1     ; $1 = ddddddd0
+    SR.x    A,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,16     ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x0A" size="8" cycles="2" m="1" name="ASLA_m1">
+; ASL A
+    LR.x    $1,A     ; $1 = dddddddd
+    SHL     $1,1     ; $1 = ddddddd0
+    SR.x    A,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,8     ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x4A" size="16" cycles="2" m="0" name="LSRA_m0">
+; LSR A 
+    LR.x    $1,A     ; $1 = dddddddd
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SR.x    A,$1     ;  A = 0ddddddd
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x4A" size="8" cycles="2" m="1" name="LSRA_m1">
+; LSR A 
+    LR.x    $1,A     ; $1 = dddddddd
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SR.x    A,$1     ;  A = 0ddddddd
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x2A" size="16" cycles="2" m="0" name="ROLA_m0">
+; ROL A 
+    LR.x    $1,A
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SR.x    A,$1    ; A  = dddddddc
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,16    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x2A" size="8" cycles="2" m="1" name="ROLA_m1">
+; ROL A 
+    LR.x    $1,A
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SR.x    A,$1    ; A  = dddddddc
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,8    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x6A" size="16" cycles="2" m="0" name="RORA_m0">
+; ROR A 
+    LR.x    $1,A
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $2,16     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+    SR.x    A,$1     ; A  = cddddddd
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x6A" size="8" cycles="2" m="1" name="RORA_m1">
+; ROR A 
+    LR.x    $1,A
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $2,8     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+    SR.x    A,$1     ; A  = cddddddd
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xC6" size="16" cycles="7" m="0" name="addr_dp_read_DEC_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; DEC
+    SUB	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xC6" size="8" cycles="5" m="1" name="addr_dp_read_DEC_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; DEC
+    SUB	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xCE" size="16" cycles="8" m="0" name="addr_abs_read_DEC_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; DEC
+    SUB	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xCE" size="8" cycles="6" m="1" name="addr_abs_read_DEC_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; DEC
+    SUB	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xD6" size="16" cycles="8" m="0" name="addr_dp_ix_read_DEC_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; DEC
+    SUB	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xD6" size="8" cycles="6" m="1" name="addr_dp_ix_read_DEC_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; DEC
+    SUB	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xDE" size="16" cycles="9" m="0" name="addr_abs_ix_read_DEC_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; DEC
+    SUB	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xDE" size="8" cycles="7" m="1" name="addr_abs_ix_read_DEC_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; DEC
+    SUB	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xE6" size="16" cycles="7" m="0" name="addr_dp_read_INC_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; INC
+    ADD	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xE6" size="8" cycles="5" m="1" name="addr_dp_read_INC_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; INC
+    ADD	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xEE" size="16" cycles="8" m="0" name="addr_abs_read_INC_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; INC
+    ADD	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xEE" size="8" cycles="6" m="1" name="addr_abs_read_INC_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; INC
+    ADD	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xF6" size="16" cycles="8" m="0" name="addr_dp_ix_read_INC_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; INC
+    ADD	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xF6" size="8" cycles="6" m="1" name="addr_dp_ix_read_INC_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; INC
+    ADD	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xFE" size="16" cycles="9" m="0" name="addr_abs_ix_read_INC_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; INC
+    ADD	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0xFE" size="8" cycles="7" m="1" name="addr_abs_ix_read_INC_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; INC
+    ADD	    $1,1
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x06" size="16" cycles="7" m="0" name="addr_dp_read_ASL_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ASL
+    SHL         $1,1     ; $1 = ddddddd0
+    SM.x        $0,$1
+    SF.x        Z,$1
+    SF.x        N,$1
+    SHR         $1,16     ; set carry
+    SF.x        C,$1
+</op>
+		<op code="0x06" size="8" cycles="5" m="1" name="addr_dp_read_ASL_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ASL
+    SHL         $1,1     ; $1 = ddddddd0
+    SM.x        $0,$1
+    SF.x        Z,$1
+    SF.x        N,$1
+    SHR         $1,8     ; set carry
+    SF.x        C,$1
+</op>
+		<op code="0x0E" size="16" cycles="8" m="0" name="addr_abs_read_ASL_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ASL
+    SHL         $1,1     ; $1 = ddddddd0
+    SM.x        $0,$1
+    SF.x        Z,$1
+    SF.x        N,$1
+    SHR         $1,16     ; set carry
+    SF.x        C,$1
+</op>
+		<op code="0x0E" size="8" cycles="6" m="1" name="addr_abs_read_ASL_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ASL
+    SHL         $1,1     ; $1 = ddddddd0
+    SM.x        $0,$1
+    SF.x        Z,$1
+    SF.x        N,$1
+    SHR         $1,8     ; set carry
+    SF.x        C,$1
+</op>
+		<op code="0x16" size="16" cycles="8" m="0" name="addr_dp_ix_read_ASL_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ASL
+    SHL         $1,1     ; $1 = ddddddd0
+    SM.x        $0,$1
+    SF.x        Z,$1
+    SF.x        N,$1
+    SHR         $1,16     ; set carry
+    SF.x        C,$1
+</op>
+		<op code="0x16" size="8" cycles="6" m="1" name="addr_dp_ix_read_ASL_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ASL
+    SHL         $1,1     ; $1 = ddddddd0
+    SM.x        $0,$1
+    SF.x        Z,$1
+    SF.x        N,$1
+    SHR         $1,8     ; set carry
+    SF.x        C,$1
+</op>
+		<op code="0x1E" size="16" cycles="9" m="0" name="addr_abs_ix_read_ASL_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ASL
+    SHL         $1,1     ; $1 = ddddddd0
+    SM.x        $0,$1
+    SF.x        Z,$1
+    SF.x        N,$1
+    SHR         $1,16     ; set carry
+    SF.x        C,$1
+</op>
+		<op code="0x1E" size="8" cycles="7" m="1" name="addr_abs_ix_read_ASL_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ASL
+    SHL         $1,1     ; $1 = ddddddd0
+    SM.x        $0,$1
+    SF.x        Z,$1
+    SF.x        N,$1
+    SHR         $1,8     ; set carry
+    SF.x        C,$1
+</op>
+		<op code="0x46" size="16" cycles="7" m="0" name="addr_dp_read_LSR_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; LSR 
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x46" size="8" cycles="5" m="1" name="addr_dp_read_LSR_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; LSR 
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x4E" size="16" cycles="8" m="0" name="addr_abs_read_LSR_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LSR 
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x4E" size="8" cycles="6" m="1" name="addr_abs_read_LSR_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; LSR 
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x56" size="16" cycles="8" m="0" name="addr_dp_ix_read_LSR_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; LSR 
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x56" size="8" cycles="6" m="1" name="addr_dp_ix_read_LSR_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; LSR 
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x5E" size="16" cycles="9" m="0" name="addr_abs_ix_read_LSR_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; LSR 
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x5E" size="8" cycles="7" m="1" name="addr_abs_ix_read_LSR_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; LSR 
+    SF.x    C,$1     ;  C = 0000000d
+    SHR     $1,1     ; $1 = 0ddddddd
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x26" size="16" cycles="7" m="0" name="addr_dp_read_ROL_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ROL A 
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,16    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x26" size="8" cycles="5" m="1" name="addr_dp_read_ROL_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ROL A 
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,8    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x2E" size="16" cycles="8" m="0" name="addr_abs_read_ROL_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ROL A 
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,16    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x2E" size="8" cycles="6" m="1" name="addr_abs_read_ROL_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ROL A 
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,8    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x36" size="16" cycles="8" m="0" name="addr_dp_ix_read_ROL_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ROL A 
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,16    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x36" size="8" cycles="6" m="1" name="addr_dp_ix_read_ROL_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ROL A 
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,8    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x3E" size="16" cycles="9" m="0" name="addr_abs_ix_read_ROL_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ROL A 
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,16    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x3E" size="8" cycles="7" m="1" name="addr_abs_ix_read_ROL_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ROL A 
+    LF      $2,C     ; $2 = 0000000c
+    SHL     $1,1     ; $1 = ddddddd0
+    OR      $1,$2    ; $1 = dddddddc
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+    SHR     $1,8    ; set carry
+    SF.x    C,$1
+</op>
+		<op code="0x66" size="16" cycles="7" m="0" name="addr_dp_read_ROR_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ROR A 
+    LF      $2,C     ; $2 = 0000000c
+
+    SHL     $2,16     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x66" size="8" cycles="5" m="1" name="addr_dp_read_ROR_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; ROR A 
+    LF      $2,C     ; $2 = 0000000c
+
+    SHL     $2,8     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x6E" size="16" cycles="8" m="0" name="addr_abs_read_ROR_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ROR A 
+    LF      $2,C     ; $2 = 0000000c
+
+    SHL     $2,16     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x6E" size="8" cycles="6" m="1" name="addr_abs_read_ROR_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; ROR A 
+    LF      $2,C     ; $2 = 0000000c
+
+    SHL     $2,8     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x76" size="16" cycles="8" m="0" name="addr_dp_ix_read_ROR_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ROR A 
+    LF      $2,C     ; $2 = 0000000c
+
+    SHL     $2,16     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x76" size="8" cycles="6" m="1" name="addr_dp_ix_read_ROR_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; ROR A 
+    LF      $2,C     ; $2 = 0000000c
+
+    SHL     $2,8     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x7E" size="16" cycles="9" m="0" name="addr_abs_ix_read_ROR_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ROR A 
+    LF      $2,C     ; $2 = 0000000c
+
+    SHL     $2,16     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x7E" size="8" cycles="7" m="1" name="addr_abs_ix_read_ROR_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; ROR A 
+    LF      $2,C     ; $2 = 0000000c
+
+    SHL     $2,8     ; $2 = c0000000
+    SF.x    C,$1     ;  C = 0000000d
+    OR      $1,$2    ; $1 =cdddddddd
+    SHR     $1,1     ; $1 = cddddddd
+
+    SM.x    $0,$1
+    SF.x    Z,$1
+    SF.x    N,$1
+</op>
+		<op code="0x24" size="16" cycles="4" m="0" name="addr_dp_read_BIT_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; BIT
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$1
+	SHR		$1,14
+	SF.x    V,$1
+</op>
+		<op code="0x24" size="8" cycles="3" m="1" name="addr_dp_read_BIT_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; BIT
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$1
+	SHR		$1,6
+	SF.x    V,$1
+</op>
+		<op code="0x2C" size="16" cycles="5" m="0" name="addr_abs_read_BIT_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; BIT
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$1
+	SHR		$1,14
+	SF.x    V,$1
+</op>
+		<op code="0x2C" size="8" cycles="4" m="1" name="addr_abs_read_BIT_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; BIT
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$1
+	SHR		$1,6
+	SF.x    V,$1
+</op>
+		<op code="0x34" size="16" cycles="5" m="0" name="addr_dp_ix_read_BIT_m0">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; BIT
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$1
+	SHR		$1,14
+	SF.x    V,$1
+</op>
+		<op code="0x34" size="8" cycles="4" m="1" name="addr_dp_ix_read_BIT_m1">
+; Direct Indexed X $xx,X
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    CYCLE   1           ; consume cycle
+	ADD     $0,X 		; indexed x
+	AND     $0,DPMASK	; no wrapping beyond zero bank (or page)
+
+    LM.x    $1,$0	    
+
+; BIT
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$1
+	SHR		$1,6
+	SF.x    V,$1
+</op>
+		<op code="0x3C" size="16" cycles="5" m="0" name="addr_abs_ix_read_BIT_m0">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; BIT
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$1
+	SHR		$1,14
+	SF.x    V,$1
+</op>
+		<op code="0x3C" size="8" cycles="4" m="1" name="addr_abs_ix_read_BIT_m1">
+; Absolute Indexed X $xxxx,X
+	LI.16    $0			; absolute
+	OR       $0,DB
+
+	ADD      $0,X 		; indexed x
+
+    LM.x    $1,$0	    
+
+; BIT
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+	SF.x    N,$1
+	SHR		$1,6
+	SF.x    V,$1
+</op>
+		<op code="0x89" size="16" cycles="3" m="0" name="addr_imma_BITI_m0">
+; Immediate #$xx
+	LI.x       $1
+
+; BIT imm
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+</op>
+		<op code="0x89" size="8" cycles="2" m="1" name="addr_imma_BITI_m1">
+; Immediate #$xx
+	LI.x       $1
+
+; BIT imm
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+</op>
+		<op code="0x14" size="16" cycles="7" m="0" name="addr_dp_read_TRB_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; TRB
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+; RESET
+    LR.x		$2,A    
+    OR			$1,$2
+    XOR			$1,$2
+    SM.x        $0,$1
+</op>
+		<op code="0x14" size="8" cycles="5" m="1" name="addr_dp_read_TRB_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; TRB
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+; RESET
+    LR.x		$2,A    
+    OR			$1,$2
+    XOR			$1,$2
+    SM.x        $0,$1
+</op>
+		<op code="0x1C" size="16" cycles="8" m="0" name="addr_abs_read_TRB_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; TRB
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+; RESET
+    LR.x		$2,A    
+    OR			$1,$2
+    XOR			$1,$2
+    SM.x        $0,$1
+</op>
+		<op code="0x1C" size="8" cycles="6" m="1" name="addr_abs_read_TRB_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; TRB
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+; RESET
+    LR.x		$2,A    
+    OR			$1,$2
+    XOR			$1,$2
+    SM.x        $0,$1
+</op>
+		<op code="0x04" size="16" cycles="7" m="0" name="addr_dp_read_TSB_m0">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; TSB
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+; SET
+    LR.x		$2,A    
+    OR			$1,$2
+    SM.x        $0,$1
+</op>
+		<op code="0x04" size="8" cycles="5" m="1" name="addr_dp_read_TSB_m1">
+; Direct $xx
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+    LM.x    $1,$0	    
+
+; TSB
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+; SET
+    LR.x		$2,A    
+    OR			$1,$2
+    SM.x        $0,$1
+</op>
+		<op code="0x0C" size="16" cycles="8" m="0" name="addr_abs_read_TSB_m0">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; TSB
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+; SET
+    LR.x		$2,A    
+    OR			$1,$2
+    SM.x        $0,$1
+</op>
+		<op code="0x0C" size="8" cycles="6" m="1" name="addr_abs_read_TSB_m1">
+; Absolute $xxxx
+	LI.16    $0			; absolute
+	OR      $0,DB
+
+    LM.x    $1,$0	    
+
+; TSB
+	LR.x    $2,A
+	AND     $2,$1
+	SF.x    Z,$2
+; SET
+    LR.x		$2,A    
+    OR			$1,$2
+    SM.x        $0,$1
+</op>
+		<op code="0x62" cycles="6" name="PER_"> 
+			LI.16	$0
+			LR		$1,PC
+			ADD		$0,$1
+			PUSH.16	$0
+		</op>
+		<op code="0xF4" cycles="5" name="PEA_"> 
+			LI.16	$0
+			PUSH.16	$0
+		</op>
+		<op code="0xD4" cycles="6" name="PEI_addr_dp_indirect_">
+; Direct Indirect ($xx) 
+	LI.8     $0			; direct
+	ADD     $0,DP 
+	AND     $0,0xFFFF
+
+	LM.16    $0,$0		; indirect
+	OR      $0,DB
+
+			PUSH.16	$0
+		</op>
+		<op code="0x4B" cycles="3" name="PHK_"> 
+			LR		$0,PC
+			SHR		$0,16
+			PUSH.8	$0
+		</op>
+		<op code="0x08" cycles="3" name="PHP_"> 
+			LR		$0,P
+			PUSH.8	$0
+		</op>
+		<op code="0x28" cycles="4" name="PLP_"> 
+			POP.8	$0
+			SR		P,$0
+		</op>
+		<op code="0x48" size="16" cycles="4" m="0" name="PHA_m0"> 
+			LR.x	$0,A
+			PUSH.x	$0
+		</op>
+		<op code="0x48" size="8" cycles="3" m="1" name="PHA_m1"> 
+			LR.x	$0,A
+			PUSH.x	$0
+		</op>
+		<op code="0x68" size="16" cycles="5" m="0" name="PLA_m0"> 
+			POP.x	$0
+			SR.x	A,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x68" size="8" cycles="4" m="1" name="PLA_m1"> 
+			POP.x	$0
+			SR.x	A,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xDA" size="16" cycles="4" x="0" name="PHX_x0"> 
+			LR.x	$0,X
+			PUSH.x	$0
+		</op>
+		<op code="0xDA" size="8" cycles="3" x="1" name="PHX_x1"> 
+			LR.x	$0,X
+			PUSH.x	$0
+		</op>
+		<op code="0xFA" size="16" cycles="5" x="0" name="PLX_x0"> 
+			POP.x	$0
+			SR.x	X,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0xFA" size="8" cycles="4" x="1" name="PLX_x1"> 
+			POP.x	$0
+			SR.x	X,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x5A" size="16" cycles="4" x="0" name="PHY_x0"> 
+			LR.x	$0,Y
+			PUSH.x	$0
+		</op>
+		<op code="0x5A" size="8" cycles="3" x="1" name="PHY_x1"> 
+			LR.x	$0,Y
+			PUSH.x	$0
+		</op>
+		<op code="0x7A" size="16" cycles="5" x="0" name="PLY_x0"> 
+			POP.x	$0
+			SR.x	Y,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x7A" size="8" cycles="4" x="1" name="PLY_x1"> 
+			POP.x	$0
+			SR.x	Y,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x0B" cycles="4" name="PHD_"> 
+			LR		$0,DP
+			PUSH.16	$0
+		</op>
+		<op code="0x2B" cycles="5" name="PLD_"> 
+			POP.16	$0
+			SR		DP,$0
+			SF.16	N,$0
+			SF.16	Z,$0
+		</op>
+		<op code="0x8B" cycles="3" name="PHB_"> 
+			LR		$0,DB
+			SHR		$0,16
+			PUSH.8	$0
+		</op>
+		<op code="0xAB" cycles="4" name="PLB_"> 
+			POP.8	$0
+			SF.8	N,$0
+			SF.8	Z,$0
+			SHL		$0,16
+			SR		DB,$0
+		</op>
+		<op code="0xEB" cycles="3" name="XBA_"> 
+			LR.16	$0,A
+			LR.16	$1,A
+			SHR		$0,8
+			SHL		$1,8
+			OR		$1,$0
+			SR.16	A,$1
+			SF.8	N,$0	; set flag based on AL
+			SF.8	Z,$0
+		</op>
+		<op code="0x00" cycles="8" e="0" name="BRK_"> 
+        	LR			$2,PC
+            ADD			$2,1
+            PUSH.24		$2
+            LR			$0,P
+            PUSH.8		$0
+            SF			D,0
+            SF			I,1
+            LR			$0,0x00FFE6
+            LM.16		$0,$0
+            SR.24		PC,$0
+		</op>
+		<op code="0x02" cycles="8" name="COP_"> 
+        	LR			$2,PC
+            ADD			$2,1
+            PUSH.24		$2
+            LR			$0,P
+            PUSH.8		$0
+            SF			D,0
+            SF			I,1
+            LR			$0,0x00FFE4
+            LM.16		$0,$0
+            SR.24		PC,$0
+		</op>
+		<op code="0x00" cycles="8" e="1" name="BRK_"> 
+        	LR			$2,PC
+            ADD			$2,1
+            PUSH.16		$2
+            LR			$0,P
+            PUSH.8		$0
+            SF			D,0
+            SF			I,1
+            LR			$0,0x00FFF6
+            LM.16		$0,$0
+            SR.24		PC,$0
+		</op>
+	</ops>
+</cpu>

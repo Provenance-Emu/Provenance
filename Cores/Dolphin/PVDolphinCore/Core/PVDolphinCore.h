@@ -6,21 +6,23 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVCoreObjCBridge;
+
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 
+@protocol PVWiiSystemResponderClient;
+@protocol PVGameCubeSystemResponderClient;
+@protocol ObjCBridgedCoreBridge;
+
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
-@interface PVDolphinCore : PVEmulatorCore
-<PVGameCubeSystemResponderClient, PVWiiSystemResponderClient>
+@interface PVDolphinCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVGameCubeSystemResponderClient, PVWiiSystemResponderClient>
 {
-    uint8_t padData[4][PVDreamcastButtonCount];
+    uint8_t padData[4][74]; // [PVDreamcastButtonCount];
     int8_t xAxis[4];
     int8_t yAxis[4];
 //    int videoWidth;
@@ -73,7 +75,7 @@
 -(void)controllerDisconnected:(NSNotification *)notification;
 -(void)optionUpdated:(NSNotification *)notification;
 @end
-extern __weak PVDolphinCore *_current;
+extern __weak PVDolphinCoreBridge *_current;
 
 // Options
 #define MAP_MULTIPLAYER "Assign Controllers to Multiple Players"

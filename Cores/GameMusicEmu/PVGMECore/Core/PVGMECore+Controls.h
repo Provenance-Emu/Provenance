@@ -8,19 +8,20 @@
 
 #import <PVGME/PVGMECore.h>
 
+@import PVCoreObjCBridge;
+
+typedef enum PVNESButton: NSInteger PVDOSButton;
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVGMECore (Controls) <PVDOSSystemResponderClient>
+@interface PVGMECoreBridge (Controls) <PVNESSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;
 
 #pragma mark - Control
-
-- (void)didPushDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player;
-- (void)didReleaseDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player;
-- (void)didMoveDOSJoystickDirection:(enum PVDOSButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
-- (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+-(void)didPushNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player;
+-(void)didReleaseNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player;
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player;

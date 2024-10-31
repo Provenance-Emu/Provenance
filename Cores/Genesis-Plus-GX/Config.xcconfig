@@ -1,0 +1,20 @@
+//
+//  Config.xcconfig
+//  PVGenesis
+//
+//  Created by Joseph Mattiello on 10/13/24.
+//  Copyright © 2024 Provenance EMU. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) NS_BLOCK_ASSERTIONS=1 LSB_FIRST HAVE_ZLIB USE_32BPP_RENDERING __LIBRETRO__ HAVE_OVERCLOCK HAVE_OPLL_CORE HAVE_YM3438_CORE INLINE="static inline" Z80_OVERCLOCK_SHIFT=20 M68K_OVERCLOCK_SHIFT=20 USE_LIBCHDR=1 _7ZIP_ST=1 FLAC__NO_DLL=1 FLAC__HAS_OGG=0 MAXROMSIZE=33554432 PACKAGE_VERSION=\"1.3.2\" HAVE_LROUND=1 HAVE_CONFIG_H=1
+
+C_FLAGS = $(inherited) -I..\..\core\cd_hw\libchdr\deps\libFLAC\include\ -I..\..\core\cd_hw\libchdr\deps\lzma\
+//USE_16BPP_RENDERING
+// USE_LIBTREMOR
+
+GCC_PREPROCESSOR_DEFINITIONS[config=Archive] = NDEBUG=1 $(inherited)
+GCC_PREPROCESSOR_DEFINITIONS[config=Debug] = DEBUG=1 $(inherited)
+GCC_PREPROCESSOR_DEFINITIONS[config=Release] = NDEBUG=1 $(inherited)

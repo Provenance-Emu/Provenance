@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.duckstation</string>
 	<key>PVPrincipleClass</key>
-	<string>PVDuckStationCore</string>
+	<string>PVDuckStation.PVDuckStationCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.psx</string>

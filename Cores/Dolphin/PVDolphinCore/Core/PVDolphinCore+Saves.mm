@@ -23,7 +23,7 @@
 
 extern bool _isInitialized;
 NSString *autoLoadStatefileName;
-@implementation PVDolphinCore (Saves)
+@implementation PVDolphinCoreBridge (Saves)
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {
 	return YES;

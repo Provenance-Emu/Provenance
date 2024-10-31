@@ -8,7 +8,7 @@
 
 #import "PVDolphinCore+Audio.h"
 
-@implementation PVDolphinCore (Audio)
+@implementation PVDolphinCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
     return isNTSC ? 60 : 50;
