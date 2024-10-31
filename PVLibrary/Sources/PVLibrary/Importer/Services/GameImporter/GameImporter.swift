@@ -368,6 +368,50 @@ extension GameImporter {
 
         let fileManager = FileManager.default
         let fileName = candidate.filePath.lastPathComponent
+        
+        // Check first if known BIOS
+        if let biosEntry = biosEntryMatching(candidateFile: candidate) {
+            ILOG("Candidate file matches as a known BIOS")
+            // We have a BIOS file match
+            let destinationPath = biosEntry.expectedPath
+            let biosDirectory = biosEntry.system.biosDirectory
+
+            if !fileManager.fileExists(atPath: biosDirectory.path) {
+                do {
+                    try fileManager.createDirectory(at: biosEntry.system.biosDirectory, withIntermediateDirectories: true, attributes: nil)
+                    ILOG("Created BIOS directory \(biosDirectory)")
+                } catch {
+                    ELOG("Unable to create BIOS directory \(biosDirectory), \(error.localizedDescription)")
+                    throw error
+                }
+            }
+
+            do {
+                if fileManager.fileExists(atPath: destinationPath.path) {
+                    ILOG("BIOS already at \(destinationPath.path). Will try to delete before moving new file.")
+                    try await fileManager.removeItem(at: destinationPath)
+                }
+                try fileManager.moveItem(at: candidate.filePath, to: destinationPath)
+            } catch {
+                ELOG("Unable to move BIOS \(candidate.filePath.path) to \(destinationPath.path) : \(error.localizedDescription)")
+                throw error
+            }
+
+            do {
+                if let file = biosEntry.file {
+                    try file.delete()
+                }
+
+                let file = PVFile(withURL: destinationPath)
+                try RomDatabase.sharedInstance.writeTransaction {
+                    biosEntry.file = file
+                }
+            } catch {
+                ELOG("Failed to update BIOS file path in database: \(error)")
+                throw error
+            }
+            return nil
+        }
 
         guard let system = try? await determineSystem(for: candidate) else {
             throw GameImporterError.unsupportedSystem
@@ -422,6 +466,21 @@ extension GameImporter {
 
         // Now move the file
         try fileManager.moveItem(at: sourcePath, to: destinationPath)
+    }
+    
+    /// BIOS entry matching
+    public func biosEntryMatching(candidateFile: ImportCandidateFile) -> PVBIOS? {
+        // Check if BIOS by filename - should possibly just only check MD5?
+        if let bios = PVEmulatorConfiguration.biosEntry(forFilename: candidateFile.filePath.lastPathComponent) {
+            return bios
+        } else {
+            // Now check by MD5 - md5 is a lazy load var
+            if let fileMD5 = candidateFile.md5, let bios = PVEmulatorConfiguration.biosEntry(forMD5: fileMD5) {
+                return bios
+            }
+        }
+
+        return nil
     }
 }
 
@@ -991,6 +1050,27 @@ extension GameImporter {
         }
 
         let fileExtension = candidate.filePath.pathExtension.lowercased()
+
+        DLOG("Checking MD5: \(md5) for possible BIOS match")
+        // First check if this is a BIOS file by MD5
+        let biosMatches = PVEmulatorConfiguration.biosEntries.filter("expectedMD5 == %@", md5).map({ $0 })
+        if !biosMatches.isEmpty {
+            DLOG("Found BIOS matches: \(biosMatches.map { $0.expectedFilename }.joined(separator: ", "))")
+            // Copy BIOS to all matching system directories
+            for bios in biosMatches {
+                if let system = bios.system {
+                    DLOG("Copying BIOS to system: \(system.name)")
+                    let biosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
+                        .appendingPathComponent(bios.expectedFilename)
+                    try FileManager.default.copyItem(at: candidate.filePath, to: biosPath)
+                }
+            }
+            // Return the first system that uses this BIOS
+            if let firstSystem = biosMatches.first?.system {
+                DLOG("Using first matching system for BIOS: \(firstSystem.name)")
+                return firstSystem
+            }
+        }
 
         // Check if it's a CD-based game first
         if PVEmulatorConfiguration.supportedCDFileExtensions.contains(fileExtension) {
