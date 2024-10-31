@@ -343,15 +343,29 @@ private struct BuildSection: View {
 private struct ExtraInfoSection: View {
     var body: some View {
         Section(header: Text("3rd Party & Legal")) {
+            /// Links to projects
             NavigationLink(destination: CoreProjectsView()) {
                 SettingsRow(title: "Cores",
                             subtitle: "Emulator cores provided by these projects.",
                             icon: .sfSymbol("square.3.layers.3d.middle.filled"))
             }
+            /// Open source licenses
             NavigationLink(destination: LicensesView()) {
                 SettingsRow(title: "Licenses",
                             subtitle: "Open-source libraries Provenance uses and their respective licenses.",
                             icon: .sfSymbol("doc.text"))
+            }
+            /// Privacy Policy
+            Link(destination: URL(string: "https://provenance-emu.com/privacy/")!) {
+                SettingsRow(title: "Privacy Policy",
+                            subtitle: nil,
+                            icon: .sfSymbol("hand.raised"))
+            }
+            /// End User License Agreement
+            Link(destination: URL(string: " https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!) {
+                SettingsRow(title: "End User License Agreement (EULA)",
+                            subtitle: nil,
+                            icon: .sfSymbol("signature"))
             }
         }
     }
