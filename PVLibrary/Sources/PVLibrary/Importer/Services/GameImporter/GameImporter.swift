@@ -302,14 +302,15 @@ extension GameImporter {
         return try await moveROM(toAppropriateSubfolder: candidate)
     }
 
-    public func startImport(forPaths paths: [URL]) {
+    /// Starts an import for the given paths
+    public func startImport(forPaths paths: [URL]) async {
         // Pre-sort
         let paths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
         let scanOperation = BlockOperation {
             Task {
                 do {
                     let newPaths = try await self.importFiles(atPaths: paths)
-                    self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
+                    await self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
                 } catch {
                     ELOG("\(error)")
                 }
@@ -502,7 +503,7 @@ extension GameImporter {
                     if let system = RomDatabase.systemCache[system.identifier] {
                         RomDatabase.addFileSystemROMCache(system)
                     }
-                    self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
+                    await self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
                 }
             }
         }
@@ -852,7 +853,6 @@ extension GameImporter {
 
         // Add pattern for short name
         patterns.append("\\b\(shortName)\\b")
-
         // Add some common variations and abbreviations
         switch system.identifier {
         case "com.provenance.nes":
@@ -867,7 +867,58 @@ extension GameImporter {
             patterns.append("\\b(n64|nintendo\\s*64)\\b")
         case "com.provenance.psx":
             patterns.append("\\b(psx|playstation|ps1)\\b")
-        // Add more cases for other systems as needed
+        case "com.provenance.ps2":
+            patterns.append("\\b(ps2|playstation\\s*2)\\b")
+        case "com.provenance.gb":
+            patterns.append("\\b(gb|game\\s*boy)\\b")
+        case "com.provenance.3DO":
+            patterns.append("\\b(3do|panasonic\\s*3do)\\b")
+        case "com.provenance.3ds":
+            patterns.append("\\b(3ds|nintendo\\s*3ds)\\b")
+        case "com.provenance.2600":
+            patterns.append("\\b(2600|atari\\s*2600|vcs)\\b")
+        case "com.provenance.5200":
+            patterns.append("\\b(5200|atari\\s*5200)\\b")
+        case "com.provenance.7800":
+            patterns.append("\\b(7800|atari\\s*7800)\\b")
+        case "com.provenance.jaguar":
+            patterns.append("\\b(jaguar|atari\\s*jaguar)\\b")
+        case "com.provenance.colecovision":
+            patterns.append("\\b(coleco|colecovision)\\b")
+        case "com.provenance.dreamcast":
+            patterns.append("\\b(dc|dreamcast|sega\\s*dreamcast)\\b")
+        case "com.provenance.ds":
+            patterns.append("\\b(nds|nintendo\\s*ds)\\b")
+        case "com.provenance.gamegear":
+            patterns.append("\\b(gg|game\\s*gear|sega\\s*game\\s*gear)\\b")
+        case "com.provenance.gbc":
+            patterns.append("\\b(gbc|game\\s*boy\\s*color)\\b")
+        case "com.provenance.lynx":
+            patterns.append("\\b(lynx|atari\\s*lynx)\\b")
+        case "com.provenance.mastersystem":
+            patterns.append("\\b(sms|master\\s*system|sega\\s*master\\s*system)\\b")
+        case "com.provenance.neogeo":
+            patterns.append("\\b(neo\\s*geo|neogeo|neo-geo)\\b")
+        case "com.provenance.ngp":
+            patterns.append("\\b(ngp|neo\\s*geo\\s*pocket)\\b")
+        case "com.provenance.ngpc":
+            patterns.append("\\b(ngpc|neo\\s*geo\\s*pocket\\s*color)\\b")
+        case "com.provenance.psp":
+            patterns.append("\\b(psp|playstation\\s*portable)\\b")
+        case "com.provenance.saturn":
+            patterns.append("\\b(saturn|sega\\s*saturn)\\b")
+        case "com.provenance.32X":
+            patterns.append("\\b(32x|sega\\s*32x)\\b")
+        case "com.provenance.segacd":
+            patterns.append("\\b(scd|sega\\s*cd|mega\\s*cd)\\b")
+        case "com.provenance.sg1000":
+            patterns.append("\\b(sg1000|sg-1000|sega\\s*1000)\\b")
+        case "com.provenance.vb":
+            patterns.append("\\b(vb|virtual\\s*boy)\\b")
+        case "com.provenance.ws":
+            patterns.append("\\b(ws|wonderswan)\\b")
+        case "com.provenance.wsc":
+            patterns.append("\\b(wsc|wonderswan\\s*color)\\b")
         default:
             // For systems without specific patterns, we'll just use the general ones created above
             break
@@ -877,7 +928,7 @@ extension GameImporter {
     }
 
     /// Determines the system for a given candidate file
-    private func determineSystemFromContent(for candidate: ImportCandidateFile, possibleSystems: [PVSystem]) async throws -> PVSystem {
+    private func determineSystemFromContent(for candidate: ImportCandidateFile, possibleSystems: [PVSystem]) throws -> PVSystem {
         // Implement logic to determine system based on file content or metadata
         // This could involve checking file headers, parsing content, or using a database of known games
 
@@ -914,7 +965,7 @@ extension GameImporter {
         // This is a placeholder for more advanced content-based detection
         // You might want to implement system-specific logic here
         for system in possibleSystems {
-            if await doesFileContentMatch(candidate, forSystem: system) {
+            if doesFileContentMatch(candidate, forSystem: system) {
                 ILOG("System determined by file content match: \(system.name)")
                 return system
             }
@@ -926,7 +977,7 @@ extension GameImporter {
     }
 
     /// Checks if a file content matches a given system
-    private func doesFileContentMatch(_ candidate: ImportCandidateFile, forSystem system: PVSystem) async -> Bool {
+    private func doesFileContentMatch(_ candidate: ImportCandidateFile, forSystem system: PVSystem) -> Bool {
         // Implement system-specific file content matching logic here
         // This could involve checking file headers, file structure, or other system-specific traits
         // For now, we'll return false as a placeholder
@@ -948,7 +999,7 @@ extension GameImporter {
                     return systems[0]
                 } else if systems.count > 1 {
                     // For CD games with multiple possible systems, use content detection
-                    return try await determineSystemFromContent(for: candidate, possibleSystems: systems)
+                    return try determineSystemFromContent(for: candidate, possibleSystems: systems)
                 }
             }
         }
@@ -1023,7 +1074,7 @@ extension GameImporter {
 public extension GameImporter {
 
     /// Retrieves ROM information for files at given paths
-    func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) {
+    func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) async {
         // If directory, map out sub directories if folder
         let paths: [URL] = paths.compactMap { (url) -> [URL]? in
             if url.hasDirectoryPath {
@@ -1034,9 +1085,9 @@ public extension GameImporter {
         }.joined().map { $0 }
 
         let sortedPaths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
-        sortedPaths.forEach { path in
+        await sortedPaths.asyncForEach { path in
             do {
-                try self._handlePath(path: path, userChosenSystem: chosenSystem)
+                try await self._handlePath(path: path, userChosenSystem: chosenSystem)
             } catch {
                 ELOG("\(error)")
             }
@@ -1078,7 +1129,7 @@ extension GameImporter {
     }
 
     /// Handles the import of a path
-    func _handlePath(path: URL, userChosenSystem chosenSystem: System?) throws {
+    func _handlePath(path: URL, userChosenSystem chosenSystem: System?) async throws {
         // Skip hidden files and directories
         if path.lastPathComponent.hasPrefix(".") {
             VLOG("Skipping hidden file or directory: \(path.lastPathComponent)")
@@ -1091,7 +1142,7 @@ extension GameImporter {
 
         // Handle directories
         if isDirectory {
-            try handleDirectory(path: path, chosenSystem: chosenSystem)
+            try await handleDirectory(path: path, chosenSystem: chosenSystem)
             return
         }
 
@@ -1100,7 +1151,7 @@ extension GameImporter {
 
         // Handle conflicts
         if systems.count > 1 {
-            try handleSystemConflict(path: path, systems: systems)
+            try await handleSystemConflict(path: path, systems: systems)
             return
         }
 
@@ -1116,24 +1167,43 @@ extension GameImporter {
     // Helper functions
 
     /// Handles a directory
-    private func handleDirectory(path: URL, chosenSystem: System?) throws {
+    private func handleDirectory(path: URL, chosenSystem: System?) async throws {
         guard chosenSystem == nil else { return }
 
         do {
             let subContents = try FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             if subContents.isEmpty {
-                try FileManager.default.removeItem(at: path)
+                try await FileManager.default.removeItem(at: path)
                 ILOG("Deleted empty import folder \(path.path)")
             } else {
                 ILOG("Found non-empty folder in imports dir. Will iterate subcontents for import")
                 for subFile in subContents {
-                    try self._handlePath(path: subFile, userChosenSystem: nil)
+                    try await self._handlePath(path: subFile, userChosenSystem: nil)
                 }
             }
         } catch {
             ELOG("Error handling directory: \(error)")
             throw error
         }
+    }
+    private func determineSystemByMD5(_ candidate: ImportCandidateFile) async throws -> PVSystem? {
+        guard let md5 = candidate.md5?.uppercased() else {
+            throw GameImporterError.couldNotCalculateMD5
+        }
+
+        DLOG("Attempting MD5 lookup for: \(md5)")
+
+        // Try to find system by MD5 using OpenVGDB
+        if let results = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: md5),
+        let firstResult = results.first,
+        let systemID = firstResult["systemID"] as? NSNumber,
+        let system = PVEmulatorConfiguration.system(forIdentifier: String(systemID.intValue)) {
+            DLOG("System determined by MD5 match: \(system.name)")
+            return system
+        }
+
+        DLOG("No system found by MD5")
+        return nil
     }
 
     /// Determines the systems for a given path
@@ -1149,13 +1219,27 @@ extension GameImporter {
     }
 
     /// Handles a system conflict
-    private func handleSystemConflict(path: URL, systems: [PVSystem]) throws {
-        if let systemIDMatch = systemIdFromCache(forROMCandidate: ImportCandidateFile(filePath: path)),
-           let system = RomDatabase.systemCache[systemIDMatch] {
-            try importGame(path: path, system: system)
+    private func handleSystemConflict(path: URL, systems: [PVSystem]) async throws {
+        let candidate = ImportCandidateFile(filePath: path)
+        DLOG("Handling system conflict for path: \(path.lastPathComponent)")
+        DLOG("Possible systems: \(systems.map { $0.name }.joined(separator: ", "))")
+
+        // Try to determine system using all available methods
+        if let system = try? await determineSystem(for: candidate) {
+            if systems.contains(system) {
+                DLOG("Found matching system: \(system.name)")
+                try importGame(path: path, system: system)
+                return
+            } else {
+                DLOG("Determined system \(system.name) not in possible systems list")
+            }
         } else {
-            try handleMultipleSystemMatch(path: path, systems: systems)
+            DLOG("Could not determine system automatically")
         }
+
+        // Fall back to multiple system handling
+        DLOG("Falling back to multiple system handling")
+        try handleMultipleSystemMatch(path: path, systems: systems)
     }
 
     /// Handles a multiple system match
@@ -1179,16 +1263,20 @@ extension GameImporter {
     }
 
     private func importGame(path: URL, system: PVSystem) throws {
+        DLOG("Attempting to import game: \(path.lastPathComponent) for system: \(system.name)")
         let filename = path.lastPathComponent
         let partialPath = (system.identifier as NSString).appendingPathComponent(filename)
         let similarName = RomDatabase.altName(path, systemIdentifier: system.identifier)
 
+        DLOG("Checking game cache for partialPath: \(partialPath) or similarName: \(similarName)")
         let gamesCache = RomDatabase.gamesCache
 
         if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
            system.identifier == existingGame.systemIdentifier {
+            DLOG("Found existing game in cache, saving relative path")
             saveRelativePath(existingGame, partialPath: partialPath, file: path)
         } else {
+            DLOG("No existing game found, starting import to database")
             Task.detached(priority: .utility) {
                 try await self.importToDatabaseROM(atPath: path, system: system, relatedFiles: nil)
             }
@@ -1203,30 +1291,38 @@ extension GameImporter {
 
     /// Imports a ROM to the database
     private func importToDatabaseROM(atPath path: URL, system: PVSystem, relatedFiles: [URL]?) async throws {
+        DLOG("Starting database ROM import for: \(path.lastPathComponent)")
         let filename = path.lastPathComponent
         let filenameSansExtension = path.deletingPathExtension().lastPathComponent
         let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
         let destinationDir = (system.identifier as NSString)
         let partialPath: String = (system.identifier as NSString).appendingPathComponent(filename)
+
+        DLOG("Creating game object with title: \(title), partialPath: \(partialPath)")
         let file = PVFile(withURL: path)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
         game.title = title
         game.requiresSync = true
-
         var relatedPVFiles = [PVFile]()
         let files = RomDatabase.getFileSystemROMCache(for: system).keys
         let name = RomDatabase.altName(path, systemIdentifier: system.identifier)
 
+        DLOG("Searching for related files with name: \(name)")
+
         await files.asyncForEach { url in
             let relativeName = RomDatabase.altName(url, systemIdentifier: system.identifier)
+            DLOG("Checking file \(url.lastPathComponent) with relative name: \(relativeName)")
             if relativeName == name {
+                DLOG("Found matching related file: \(url.lastPathComponent)")
                 relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
             }
         }
 
         if let relatedFiles = relatedFiles {
+            DLOG("Processing \(relatedFiles.count) additional related files")
             for url in relatedFiles {
+                DLOG("Adding related file: \(url.lastPathComponent)")
                 relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
             }
         }
@@ -1235,10 +1331,19 @@ extension GameImporter {
             ELOG("Couldn't calculate MD5 for game \(partialPath)")
             throw GameImporterError.couldNotCalculateMD5
         }
+        DLOG("Calculated MD5: \(md5)")
+
+        // Register import with coordinator
+        guard await importCoordinator.checkAndRegisterImport(md5: md5) else {
+            DLOG("Import already in progress for MD5: \(md5)")
+            throw GameImporterError.romAlreadyExistsInDatabase
+        }
+        DLOG("Registered import with coordinator for MD5: \(md5)")
 
         defer {
             Task {
                 await importCoordinator.completeImport(md5: md5)
+                DLOG("Completed import coordination for MD5: \(md5)")
             }
         }
 

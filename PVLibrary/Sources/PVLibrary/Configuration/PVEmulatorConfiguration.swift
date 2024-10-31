@@ -446,7 +446,7 @@ public extension PVEmulatorConfiguration {
         case biosAlreadyExists
     }
 
-    static func validateAndImportBIOS(at url: URL) async throws {
+    public static func validateAndImportBIOS(at url: URL) async throws {
         let fileName = url.lastPathComponent
         let fileData = try Data(contentsOf: url)
         let md5Hash = fileData.md5

@@ -237,11 +237,11 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         Task {
             let initialScan = await scanInitialFiles(at: importPath)
             if !initialScan.isEmpty {
-                gameImporter.startImport(forPaths: initialScan)
+                await gameImporter.startImport(forPaths: initialScan)
             }
 
             for await extractedFiles in directoryWatcher.extractedFilesStream(at: importPath) {
-                gameImporter.startImport(forPaths: extractedFiles)
+                await gameImporter.startImport(forPaths: extractedFiles)
             }
         }
     }
@@ -272,7 +272,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             }
             if !newGames.isEmpty {
                 ILOG("PVGameLibraryUpdatesController: Importing \(newGames)")
-                gameImporter.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
+                await gameImporter.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
                 #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
                 await MainActor.run {
                     Task {
@@ -376,12 +376,12 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
         // Process priority files first
         if !priorityFiles.isEmpty {
-            gameImporter.startImport(forPaths: priorityFiles)
+            await gameImporter.startImport(forPaths: priorityFiles)
         }
 
         // Then process other files
         if !otherFiles.isEmpty {
-            gameImporter.startImport(forPaths: otherFiles)
+            await gameImporter.startImport(forPaths: otherFiles)
         }
     }
 
@@ -394,7 +394,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     }
 
     private func processBIOSFiles(_ files: [URL]) async {
-        for file in files {
+        await files.asyncForEach { file in
             do {
                 try await PVEmulatorConfiguration.validateAndImportBIOS(at: file)
                 ILOG("Successfully imported BIOS file: \(file.lastPathComponent)")
