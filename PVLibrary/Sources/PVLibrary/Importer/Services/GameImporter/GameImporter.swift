@@ -145,6 +145,8 @@ public final class GameImporter: ObservableObject {
     /// DispatchGroup for initialization
     public let initialized = DispatchGroup()
 
+    private let importCoordinator = ImportCoordinator()
+
     /// Initializes the GameImporter
     fileprivate init() {
         let fm = FileManager.default
@@ -933,22 +935,37 @@ extension GameImporter {
 
     /// Determines the system for a given candidate file
     private func determineSystem(for candidate: ImportCandidateFile) async throws -> PVSystem {
-        let fileExtension = candidate.filePath.pathExtension.lowercased()
-        let fileName = candidate.filePath.lastPathComponent
+        guard let md5 = candidate.md5?.uppercased() else {
+            throw GameImporterError.couldNotCalculateMD5
+        }
 
-        // First, try to determine the system based on MD5
-        if let fileMD5 = candidate.md5?.uppercased(), !fileMD5.isEmpty {
-            do {
-                if let searchResults = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
-                   let firstResult = searchResults.first,
-                   let systemID = firstResult["systemID"] as? Int,
-                   let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: systemID).first {
-                    ILOG("System determined by MD5 match: \(system.name)")
-                    return system
+        let fileExtension = candidate.filePath.pathExtension.lowercased()
+
+        // Check if it's a CD-based game first
+        if PVEmulatorConfiguration.supportedCDFileExtensions.contains(fileExtension) {
+            if let systems = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) {
+                if systems.count == 1 {
+                    return systems[0]
+                } else if systems.count > 1 {
+                    // For CD games with multiple possible systems, use content detection
+                    return try await determineSystemFromContent(for: candidate, possibleSystems: systems)
                 }
-            } catch {
-                ELOG("Error searching database by MD5: \(error.localizedDescription)")
             }
+        }
+
+        // Try to find system by MD5 using OpenVGDB
+        if let results = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: md5),
+           let firstResult = results.first,
+           let systemID = firstResult["systemID"] as? NSNumber,
+           let system = PVEmulatorConfiguration.system(forIdentifier: String(systemID.intValue)) {
+            ILOG("System determined by MD5 match: \(system.name)")
+
+            // Check if this ROM is already being imported
+            guard await importCoordinator.checkAndRegisterImport(md5: md5) else {
+                throw GameImporterError.romAlreadyExistsInDatabase
+            }
+
+            return system
         }
 
         // If MD5 lookup fails, try to determine the system based on file extension
@@ -961,19 +978,7 @@ extension GameImporter {
             }
         }
 
-        // Check if it's a CD-based game
-        if PVEmulatorConfiguration.supportedCDFileExtensions.contains(fileExtension) {
-            let cdSystems = PVEmulatorConfiguration.cdBasedSystems
-            return try await determineSystemFromContent(for: candidate, possibleSystems: cdSystems)
-        }
-
-        // Try to match based on filename patterns or known game titles
-        if let system = try await matchSystemByFileName(fileName) {
-            return system
-        }
-
-        // If all else fails, throw an error
-        throw GameImporterError.unsupportedSystem
+        throw GameImporterError.noSystemMatched
     }
 
     /// Retrieves the system ID from the cache for a given ROM candidate
@@ -1208,27 +1213,37 @@ extension GameImporter {
         game.romPath = partialPath
         game.title = title
         game.requiresSync = true
+
         var relatedPVFiles = [PVFile]()
         let files = RomDatabase.getFileSystemROMCache(for: system).keys
         let name = RomDatabase.altName(path, systemIdentifier: system.identifier)
+
         await files.asyncForEach { url in
-            let relativeName=RomDatabase.altName(url, systemIdentifier: system.identifier)
+            let relativeName = RomDatabase.altName(url, systemIdentifier: system.identifier)
             if relativeName == name {
                 relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
             }
         }
+
         if let relatedFiles = relatedFiles {
             for url in relatedFiles {
                 relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
             }
         }
-        guard let md5 = calculateMD5(forGame: game) else {
+
+        guard let md5 = calculateMD5(forGame: game)?.uppercased() else {
             ELOG("Couldn't calculate MD5 for game \(partialPath)")
             throw GameImporterError.couldNotCalculateMD5
         }
+
+        defer {
+            Task {
+                await importCoordinator.completeImport(md5: md5)
+            }
+        }
+
         game.relatedFiles.append(objectsIn: relatedPVFiles)
         game.md5Hash = md5
-        // Write at finishUpdateOrImport
         try await finishUpdateOrImport(ofGame: game, path: path)
     }
 
@@ -1299,5 +1314,19 @@ extension GameImporter {
         } else {
             return allGames.isEmpty ? nil : Array(allGames)
         }
+    }
+}
+
+private actor ImportCoordinator {
+    private var activeImports: Set<String> = []
+
+    func checkAndRegisterImport(md5: String) -> Bool {
+        guard !activeImports.contains(md5) else { return false }
+        activeImports.insert(md5)
+        return true
+    }
+
+    func completeImport(md5: String) {
+        activeImports.remove(md5)
     }
 }
