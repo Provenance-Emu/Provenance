@@ -1006,17 +1006,28 @@ extension GameImporter {
 
         // Try to find system by MD5 using OpenVGDB
         if let results = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: md5),
-           let firstResult = results.first,
-           let systemID = firstResult["systemID"] as? NSNumber,
-           let system = PVEmulatorConfiguration.system(forIdentifier: String(systemID.intValue)) {
-            ILOG("System determined by MD5 match: \(system.name)")
+        let firstResult = results.first,
+        let systemID = firstResult["systemID"] as? NSNumber {
 
-            // Check if this ROM is already being imported
-            guard await importCoordinator.checkAndRegisterImport(md5: md5) else {
-                throw GameImporterError.romAlreadyExistsInDatabase
+            // Get all matching systems
+            let matchingSystems = results.compactMap { result -> PVSystem? in
+                guard let sysID = (result["systemID"] as? NSNumber).map(String.init) else { return nil }
+                return PVEmulatorConfiguration.system(forIdentifier: sysID)
             }
 
-            return system
+            if !matchingSystems.isEmpty {
+                // Sort by release year and take the oldest
+                if let oldestSystem = matchingSystems.sorted(by: { $0.releaseYear < $1.releaseYear }).first {
+                    DLOG("System determined by MD5 match (oldest): \(oldestSystem.name) (\(oldestSystem.releaseYear))")
+                    return oldestSystem
+                }
+            }
+
+            // Fallback to original single system match if sorting fails
+            if let system = PVEmulatorConfiguration.system(forIdentifier: String(systemID.intValue)) {
+                DLOG("System determined by MD5 match (fallback): \(system.name)")
+                return system
+            }
         }
 
         // If MD5 lookup fails, try to determine the system based on file extension
