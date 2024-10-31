@@ -469,6 +469,14 @@ extension GameImporter {
             return try await moveM3UAndReferencedFiles(candidate, to: destinationDir)
         }
         
+        // CD-ROM handling
+        if let system = try await handleCDROMFile(candidate) {
+            DLOG("Moving CD-ROM files to system: \(system.name)")
+            let destinationDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
+            return try await moveCDROMFiles(candidate, to: destinationDir)
+        }
+        
+        
         guard let system = try? await determineSystem(for: candidate) else {
             throw GameImporterError.unsupportedSystem
         }
@@ -483,6 +491,66 @@ extension GameImporter {
         } catch {
             throw GameImporterError.failedToMoveROM(error)
         }
+    }
+    
+    private func handleCDROMFile(_ candidate: ImportCandidateFile) async throws -> PVSystem? {
+        let `extension` = candidate.filePath.pathExtension.lowercased()
+        guard PVEmulatorConfiguration.supportedCDFileExtensions.contains(`extension`) else {
+            return nil
+        }
+        
+        DLOG("Handling CD-ROM file: \(candidate.filePath.lastPathComponent)")
+        
+        // First try MD5 matching
+        if let system = try? await determineSystem(for: candidate) {
+            DLOG("Found system match for CD-ROM by MD5: \(system.name)")
+            return system
+        }
+        
+        // If cue file, try to match its bin file
+        if `extension` == "cue" {
+            if let binFile = try findAssociatedBinFile(for: candidate) {
+                DLOG("Found associated bin file, trying to match: \(binFile.lastPathComponent)")
+                let binCandidate = ImportCandidateFile(filePath: binFile)
+                if let system = try? await determineSystem(for: binCandidate) {
+                    DLOG("Found system match from associated bin file: \(system.name)")
+                    return system
+                }
+            }
+        }
+        
+        // Try exact filename match
+        if let system = await matchSystemByFileName(candidate.filePath.lastPathComponent) {
+            DLOG("Found system match by filename: \(system.name)")
+            return system
+        }
+        
+        DLOG("No system match found for CD-ROM file")
+        return nil
+    }
+    
+    private func findAssociatedBinFile(for cueFile: ImportCandidateFile) throws -> URL? {
+        let cueContents = try String(contentsOf: cueFile.filePath, encoding: .utf8)
+        let lines = cueContents.components(separatedBy: .newlines)
+        
+        // Look for FILE "something.bin" BINARY line
+        for line in lines {
+            let components = line.trimmingCharacters(in: .whitespaces)
+                .components(separatedBy: "\"")
+            guard components.count >= 2,
+                  line.lowercased().contains("file") && line.lowercased().contains("binary") else {
+                continue
+            }
+            
+            let binFileName = components[1]
+            let binPath = cueFile.filePath.deletingLastPathComponent().appendingPathComponent(binFileName)
+            
+            if FileManager.default.fileExists(atPath: binPath.path) {
+                return binPath
+            }
+        }
+        
+        return nil
     }
     
     private func moveM3UAndReferencedFiles(_ m3uFile: ImportCandidateFile, to destination: URL) async throws -> URL {
@@ -511,6 +579,29 @@ extension GameImporter {
         DLOG("Moved M3U file to: \(m3uDestPath.path)")
         
         return m3uDestPath
+    }
+    
+    private func moveCDROMFiles(_ cdFile: ImportCandidateFile, to destination: URL) async throws -> URL {
+        let fileManager = FileManager.default
+        try fileManager.createDirectory(at: destination, withIntermediateDirectories: true)
+        
+        let `extension` = cdFile.filePath.pathExtension.lowercased()
+        let destPath = destination.appendingPathComponent(cdFile.filePath.lastPathComponent)
+        
+        // If it's a cue file, move both cue and bin
+        if `extension` == "cue" {
+            if let binPath = try findAssociatedBinFile(for: cdFile) {
+                let binDestPath = destination.appendingPathComponent(binPath.lastPathComponent)
+                try fileManager.moveItem(at: binPath, to: binDestPath)
+                DLOG("Moved bin file to: \(binDestPath.path)")
+            }
+        }
+        
+        // Move the main CD-ROM file
+        try fileManager.moveItem(at: cdFile.filePath, to: destPath)
+        DLOG("Moved CD-ROM file to: \(destPath.path)")
+        
+        return destPath
     }
     
     /// Moves related files for a given candidate
@@ -1629,7 +1720,7 @@ extension GameImporter {
         DLOG("Handling M3U file: \(candidate.filePath.lastPathComponent)")
         
         // First try to match the M3U file itself by MD5
-        if let system = try await determineSystem(for: candidate) {
+        if let system = try? await determineSystem(for: candidate) {
             DLOG("Found system match for M3U by MD5: \(system.name)")
             return system
         }
@@ -1648,7 +1739,7 @@ extension GameImporter {
             guard FileManager.default.fileExists(atPath: filePath.path) else { continue }
             
             let candidateFile = ImportCandidateFile(filePath: filePath)
-            if let system = try await determineSystem(for: candidateFile) {
+            if let system = try? await determineSystem(for: candidateFile) {
                 DLOG("Found system match from M3U entry: \(file) -> \(system.name)")
                 return system
             }
