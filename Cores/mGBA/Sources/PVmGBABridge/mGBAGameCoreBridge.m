@@ -67,7 +67,7 @@ const int GBAMap[] = {
 
 const char* const binaryName = "mGBA";
 const char* const projectName = "Provenance EMU";
-const char* const projectVersion = "2.3.0";
+const char* const projectVersion = "3.0.0";
 
 @interface PVmGBAGameCoreBridge () <PVGBASystemResponderClient> {
     struct mCore* core;
