@@ -57,8 +57,8 @@ class BaseExtractor: ArchiveExtractor {
 }
 
 class ZipExtractor: BaseExtractor {
-    #if false
-    func extract(at path: URL, to destination: URL, progress: @escaping (Double) -> Void) -> AsyncThrowingStream<URL, Error> {
+    #if true
+    override func extract(at path: URL, to destination: URL, progress: @escaping (Double) -> Void) -> AsyncThrowingStream<URL, Error> {
         AsyncThrowingStream { continuation in
             Task {
                 do {
