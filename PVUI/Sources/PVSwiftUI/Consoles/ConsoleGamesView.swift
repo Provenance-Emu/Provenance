@@ -67,6 +67,9 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @Default(.showFavorites) private var showFavorites
     @Default(.showRecentGames) private var showRecentGames
 
+    @State private var showingSystemPicker = false
+    @State private var gameToMove: PVGame?
+
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
         self.console = console
         self.viewModel = viewModel
@@ -130,6 +133,11 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             renameAlertView()
         } message: {
             Text("Enter a new name for \(gameToRename?.title ?? "")")
+        }
+        .sheet(isPresented: $showingSystemPicker) {
+            if let game = gameToMove {
+                SystemPickerView(game: game, isPresented: $showingSystemPicker)
+            }
         }
     }
 
@@ -444,6 +452,12 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             DLOG("Error details: \(error)")
             rootDelegate?.showMessage("Failed to set custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
         }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+        DLOG("ConsoleGamesView: Received request to move game to system")
+        gameToMove = game.freeze()
+        showingSystemPicker = true
     }
 }
 

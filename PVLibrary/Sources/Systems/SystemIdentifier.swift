@@ -55,6 +55,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
     case PS3 = "com.provenance.ps3"
     case PSP = "com.provenance.psp"
     case PSX = "com.provenance.psx"
+    case RetroArch = "com.provenance.retroarch"
     case Saturn = "com.provenance.saturn"
     case Sega32X = "com.provenance.32X"
     case SegaCD = "com.provenance.segacd"
@@ -200,6 +201,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
             true
         case .Unknown:
             true
+        case .RetroArch:
+            false
         }
     }
     

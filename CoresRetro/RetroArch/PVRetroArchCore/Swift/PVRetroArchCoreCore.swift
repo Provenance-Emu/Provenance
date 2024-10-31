@@ -35,6 +35,10 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
 }
+// MARK: RetroArch
+extension PVRetroArchCoreCore: PVRetroArchCoreResponderClient {
+}
+
 // MARK: GameBoy
 extension PVRetroArchCoreCore: PVGBSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVGBButton, forPlayer player: Int) {

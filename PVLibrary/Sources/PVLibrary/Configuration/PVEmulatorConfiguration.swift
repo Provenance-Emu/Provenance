@@ -100,8 +100,13 @@ public final class PVEmulatorConfiguration: NSObject {
 
 public extension PVEmulatorConfiguration {
 
+    static var pvSystems: Results<PVSystem> {
+        let sortedSystems = RomDatabase.sharedInstance.all(PVSystem.self, sortedByKeyPath: #keyPath(PVSystem.name))
+        return sortedSystems
+    }
+    
     static var systems: [PVSystem] {
-        return Array(RomDatabase.sharedInstance.all(PVSystem.self))
+        return Array(pvSystems)
     }
 
     static var cdBasedSystems: [PVSystem] {

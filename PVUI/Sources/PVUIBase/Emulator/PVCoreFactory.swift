@@ -343,6 +343,13 @@ public final class PVCoreFactory: NSObject {
                 fatalError("Core doesn't implement PVMSXSystemResponderClient")
             }
             break;
+        case .RetroArch:
+            if let core = core as? PVRetroArchCoreResponderClient {
+                return PVRetroArchControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if (!skipError) {
+                fatalError("Core doesn't implement PVRetroArchSystemResponderClient")
+            }
+            break;
         case .Unknown:
             if (!skipError) {
                 ELOG("No known system named: \(system.name) id: \(system.identifier)")
@@ -350,9 +357,10 @@ public final class PVCoreFactory: NSObject {
             }
             break;
         case .AtariST, .C64, .Macintosh:
-            if (!skipError) {
-                ELOG("No known system named: \(system.name) id: \(system.identifier)")
-                assertionFailure("No known system named: \(system.name) id: \(system.identifier)")
+            if let core = core as? PVRetroArchCoreResponderClient {
+                return PVRetroArchControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if (!skipError) {
+                fatalError("Core doesn't implement PVRetroArchSystemResponderClient")
             }
             break;
         @unknown default:
