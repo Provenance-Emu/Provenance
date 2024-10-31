@@ -61,6 +61,7 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] BIOS importer should work when multiple systems match the same bios
 - [ ] Dark mode toggle doens't refresh all views if theme set to auto
 - [ ] Box art is clipped in swift ui -- need better aspect ratios
 - [ ] Game Info in swift ui crashes on next game scroll
