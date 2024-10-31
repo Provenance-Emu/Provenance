@@ -63,6 +63,7 @@ public extension PVEmulatorConfiguration {
         }
     }
 
+    /// Parse all core classes
     class func updateCores(fromPlists plists: [EmulatorCoreInfoPlist]) async {
         typealias CorePlistEntries = [CorePlistEntry]
 
@@ -75,8 +76,10 @@ public extension PVEmulatorConfiguration {
         }
         //this calls refresh anyway
         RomDatabase.reloadCache(force: true)
+        printListOfSystems()
     }
 
+    /// Parse plists to update PVSystems
     class func updateSystems(fromPlists plists: [URL]) async {
         typealias SystemPlistEntries = [SystemPlistEntry]
         let decoder = PropertyListDecoder()
@@ -84,6 +87,21 @@ public extension PVEmulatorConfiguration {
         await plists.asyncForEach { plist in
             await processSystemPlist(plist, using: decoder)
         }
+    }
+    
+    /// Print a list of systems for debug use
+    class func printListOfSystems() {
+        let database = RomDatabase.sharedInstance
+        let supportedSystems = database.all(PVSystem.self)
+        let systemsList = supportedSystems
+            .filter{ $0.cores.count > 0 }
+            .sorted{ $0.manufacturer < $1.manufacturer || $0.name < $1.name }
+            .map{ "\($0.manufacturer) - \($0.name)" }
+            .joined(separator: "\n")
+        ILOG("""
+                Supported Systems:
+                \(systemsList)
+                """)
     }
 
     private static func processSystemPlist(_ plist: URL, using decoder: PropertyListDecoder) async {

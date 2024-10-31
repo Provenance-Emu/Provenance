@@ -43,6 +43,8 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
     private var statusCheckTimer: Timer?
 
+    private let hudCoordinator = HUDCoordinator()
+
     public init(gameImporter: GameImporter, importPath: URL? = nil) {
         let importPath = importPath ?? Paths.romsImportPath
 
@@ -67,26 +69,33 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     private func setupImportHandlers() {
         gameImporter.importStartedHandler = { [weak self] path in
             DLOG("Import started for path: \(path)")
-            self?.hudState = .title("Checking Import: \(URL(fileURLWithPath: path).lastPathComponent)")
-            DLOG("HUD state updated for import start")
+            Task { @MainActor [weak self] in
+                DLOG("HUD state updated for import start")
+                await self?.hudCoordinator.updateHUD(.title("Checking Import: \(URL(fileURLWithPath: path).lastPathComponent)"))
+                self?.hudState = await self?.hudCoordinator.getCurrentState() ?? .hidden
+            }
         }
 
         gameImporter.finishedImportHandler = { [weak self] md5, modified in
             DLOG("Import finished for MD5: \(md5), modified: \(modified)")
-            self?.hudState = .title("Import Successful")
-            DLOG("HUD state updated for import finish")
+            Task { @MainActor [weak self] in
+                DLOG("HUD state updated for import finish")
+                await self?.hudCoordinator.updateHUD(.title("Import Successful"), autoHide: true)
+                self?.hudState = await self?.hudCoordinator.getCurrentState() ?? .hidden
+            }
         }
 
         gameImporter.completionHandler = { [weak self] encounteredConflicts in
             DLOG("Import completion handler called with conflicts: \(encounteredConflicts)")
-            if encounteredConflicts {
-                Task { @MainActor in
+            Task { @MainActor [weak self] in
+                if encounteredConflicts {
                     DLOG("Updating conflicts due to encountered conflicts")
                     await self?.updateConflicts()
                 }
+                await self?.hudCoordinator.updateHUD(.hidden)
+                self?.hudState = await self?.hudCoordinator.getCurrentState() ?? .hidden
+                DLOG("HUD state updated for import completion")
             }
-            self?.hudState = .hidden
-            DLOG("HUD state hidden after completion")
         }
     }
 
