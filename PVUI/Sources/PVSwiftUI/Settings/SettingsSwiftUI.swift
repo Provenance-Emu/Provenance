@@ -675,11 +675,11 @@ private struct AdvancedTogglesView: View {
                            icon: .sfSymbol("switch.2"))
             }
 
-             PremiumThemedToggle(isOn: $monoAudio) {
-                 SettingsRow(title: "Mono Audio",
-                            subtitle: "Combine left and right audio channels.",
-                            icon: .sfSymbol("speaker.wave.1"))
-             }
+//             PremiumThemedToggle(isOn: $monoAudio) {
+//                 SettingsRow(title: "Mono Audio",
+//                            subtitle: "Combine left and right audio channels.",
+//                            icon: .sfSymbol("speaker.wave.1"))
+//             }
 #if !os(tvOS)
             PremiumThemedToggle(isOn: $movableButtons) {
                 SettingsRow(title: "Movable Buttons",
