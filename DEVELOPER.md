@@ -105,3 +105,100 @@ By following these guidelines, you can safely work with Realm objects across dif
 - https://provenance-emu.com/test_roms/240pee.nes
 - https://provenance-emu.com/test_roms/240pee_mb.gba
 - https://provenance-emu.com/test_roms/gb240p.gb
+
+### Supported systems as of 2024.10.31
+
+- Apple
+  - Apple II
+  - Macintosh
+
+- Atari
+  - Atari 2600
+  - Atari 5200
+  - Atari 7800
+  - Atari 8bit Computer
+  - Atari Jaguar
+  - Atari Jaguar CD
+  - Atari Lynx
+  - Atari ST
+
+- Bandai
+  - WonderSwan
+
+- CBS
+  - CBS ColecoVision
+
+- Enterprise
+  - Enterprise 128
+
+- IBM
+  - IBM PC DOS
+
+- Libretro
+  - RetroArch
+
+- Magnavox
+  - Magnavox Odyssey2
+
+- MAME
+  - MAME
+
+- Mattel
+  - Mattel Intellivision
+
+- NEC
+  - PC98
+  - PCFX
+  - SuperGrafx
+  - TurboGrafx-16
+  - TurboGrafx-CD
+
+- Nintendo
+  - DS
+  - Famicom Disk System
+  - Game Boy
+  - Game Boy Advance
+  - Game Boy Color
+  - Nintendo
+  - Nintendo 64
+  - Nintendo GameCube
+  - Nintendo Wii
+  - Pokémon mini
+  - Super Nintendo
+  - Virtual Boy
+
+- Panasonic
+  - 3DO
+
+- Sega
+  - 32X
+  - Dreamcast
+  - Game Gear
+  - Genesis
+  - Master System
+  - Saturn
+  - Sega CD
+  - SG-1000
+
+- Smith Engineering
+  - Smith Engineering Vectrex
+
+- SNK
+  - Neo Geo
+  - Neo Geo Pocket
+  - Neo Geo Pocket Color
+
+- Sony
+  - PlayStation
+  - PlayStation 2
+  - PlayStation Portable
+
+- Various
+  - Game Music
+
+- Watara
+  - Supervision
+
+- ZX
+  - ZX Spectrum
+
