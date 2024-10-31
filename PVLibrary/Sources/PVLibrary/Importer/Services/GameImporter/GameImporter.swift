@@ -30,6 +30,42 @@ import UIKit
 import AppKit
 #endif
 
+/*
+ 
+ Logic how the importer should work:
+ 
+ 1. Detect if special file (BIOS, Artwork)
+    1. Detect if the file is artwork
+    2. Detect if file is a BIOS
+        1. if single match, move to BIOS for system
+        2. if multiple matches, move to all matching systems
+ 2. Detect if the file is a CD-ROM (bin/cue) or m3u
+    3. Detect if the file is m3u
+        1. Match by filename of m3u or md5 of 
+            1. If m3u matches, move all files in m3u to the system that's matched
+    4. Detect if the file is a CD-ROM (bin/cue)
+        1. match cue by md5
+            1. if single match, move to system
+            2. if multiple matches, move to conflicts
+        2. match by exact filename
+            1. if single match, move to system
+            2. if multiple matches, move to conflicts
+ 3. Detect if single file ROM
+    1. match by md5
+        1. if single match, move to system
+        2. if multiple matches, move to conflicts
+    2. match by exact filename
+        1. if single match, move to system
+        2. if multiple matches, move to conflicts
+    3. Match by extension
+        1. if single match, move to system
+        2. if multiple matches, move to conflicts
+    4. Match by partial filename contains system identifier
+        1. if single match, move to system
+        2. if multiple matches, move to conflicts
+ 
+ */
+
 /// Merges two dictionaries
 public func + <K, V>(lhs: [K: V], rhs: [K: V]) -> [K: V] {
     var combined = lhs
@@ -368,7 +404,7 @@ extension GameImporter {
 
         let fileManager = FileManager.default
         let fileName = candidate.filePath.lastPathComponent
-        
+
         // Check first if known BIOS
         if let biosEntry = biosEntryMatching(candidateFile: candidate) {
             ILOG("Candidate file matches as a known BIOS")
@@ -467,7 +503,7 @@ extension GameImporter {
         // Now move the file
         try fileManager.moveItem(at: sourcePath, to: destinationPath)
     }
-    
+
     /// BIOS entry matching
     public func biosEntryMatching(candidateFile: ImportCandidateFile) -> PVBIOS? {
         // Check if BIOS by filename - should possibly just only check MD5?
@@ -774,7 +810,7 @@ public extension GameImporter {
 extension GameImporter {
 
     /// Matches a system based on the file name
-    private func matchSystemByFileName(_ fileName: String) async throws -> PVSystem? {
+    private func matchSystemByFileName(_ fileName: String) async -> PVSystem? {
         let systems = PVEmulatorConfiguration.systems
         let lowercasedFileName = fileName.lowercased()
         let fileExtension = (fileName as NSString).pathExtension.lowercased()
@@ -1109,6 +1145,18 @@ extension GameImporter {
                 return system
             }
         }
+
+        DLOG("MD5 lookup failed, trying filename matching")
+
+        // Try filename matching next
+        let fileName = candidate.filePath.lastPathComponent
+   
+        if let matchedSystem = await matchSystemByFileName(fileName) {
+            DLOG("Found system by filename match: \(matchedSystem.name)")
+            return matchedSystem
+        }
+
+        let possibleSystems = PVEmulatorConfiguration.systems(forFileExtension: candidate.filePath.pathExtension.lowercased()) ?? []
 
         // If MD5 lookup fails, try to determine the system based on file extension
         if let systems = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) {
