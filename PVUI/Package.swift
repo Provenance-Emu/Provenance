@@ -43,6 +43,8 @@ let package = Package(
         .package(url: "https://github.com/JoeMatt/PackageBuildInfo", branch: "master"),
         /// FreemiumKit
         .package(url: "https://github.com/FlineDev/FreemiumKit.git", from: "1.11.0"),
+        /// SwiftUIKit
+        .package(url: "https://github.com/danielsaidi/SwiftUIKit.git", from: "5.0.0"),
     
     ],
     targets: [
