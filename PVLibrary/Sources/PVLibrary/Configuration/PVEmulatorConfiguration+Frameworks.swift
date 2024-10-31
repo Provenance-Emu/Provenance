@@ -95,7 +95,7 @@ public extension PVEmulatorConfiguration {
         let supportedSystems = database.all(PVSystem.self)
         let systemsList = supportedSystems
             .filter{ $0.cores.count > 0 }
-            .sorted{ $0.manufacturer < $1.manufacturer || $0.name < $1.name }
+            .sorted{ "\($0.manufacturer)\($0.name)" < "\($1.manufacturer)\($1.name)" }
             .map{ "\($0.manufacturer) - \($0.name)" }
             .joined(separator: "\n")
         ILOG("""
