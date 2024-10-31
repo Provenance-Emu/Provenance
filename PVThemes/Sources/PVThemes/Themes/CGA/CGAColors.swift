@@ -320,6 +320,13 @@ public struct CGACyanThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var menuHeaderBackground: UIColor { .CGA.cyanShadow.brightness(0.7) }
     ///         Icon Tint
     public var menuHeaderIconTint: UIColor { .CGA.cyanShadow.brightness(1.0) }
+    ///     Section Header
+    ///         Background
+    public var menuSectionHeaderBackground: UIColor { .CGA.cyan.brightness(0.3) }
+    ///         Text
+    public var menuSectionHeaderText: UIColor { .CGA.cyanShadow.brightness(0.5) }
+    ///         Icon
+    public var menuSectionHeaderIconTint: UIColor {.CGA.cyan }
 }
 
 public struct CGAPurpleThemePalette: UXThemePalette, Codable, Sendable, Hashable {
