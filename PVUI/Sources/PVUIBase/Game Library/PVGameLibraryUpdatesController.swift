@@ -66,20 +66,27 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
     private func setupImportHandlers() {
         gameImporter.importStartedHandler = { [weak self] path in
+            DLOG("Import started for path: \(path)")
             self?.hudState = .title("Checking Import: \(URL(fileURLWithPath: path).lastPathComponent)")
+            DLOG("HUD state updated for import start")
         }
 
-        gameImporter.finishedImportHandler = { [weak self] _, _ in
+        gameImporter.finishedImportHandler = { [weak self] md5, modified in
+            DLOG("Import finished for MD5: \(md5), modified: \(modified)")
             self?.hudState = .title("Import Successful")
+            DLOG("HUD state updated for import finish")
         }
 
         gameImporter.completionHandler = { [weak self] encounteredConflicts in
+            DLOG("Import completion handler called with conflicts: \(encounteredConflicts)")
             if encounteredConflicts {
                 Task { @MainActor in
+                    DLOG("Updating conflicts due to encountered conflicts")
                     await self?.updateConflicts()
                 }
             }
             self?.hudState = .hidden
+            DLOG("HUD state hidden after completion")
         }
     }
 
@@ -372,18 +379,26 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     }
 
     private func processCompletedFiles(_ files: [URL]) async {
+        DLOG("Processing \(files.count) completed files")
+
         // Process files in batches, prioritizing .m3u and .cue files
         let priorityFiles = files.filter { ["m3u", "cue"].contains($0.pathExtension.lowercased()) }
         let otherFiles = files.filter { !["m3u", "cue"].contains($0.pathExtension.lowercased()) }
 
+        DLOG("Found \(priorityFiles.count) priority files and \(otherFiles.count) other files")
+
         // Process priority files first
         if !priorityFiles.isEmpty {
+            DLOG("Starting import for priority files")
             await gameImporter.startImport(forPaths: priorityFiles)
+            DLOG("Finished importing priority files")
         }
 
         // Then process other files
         if !otherFiles.isEmpty {
+            DLOG("Starting import for other files")
             await gameImporter.startImport(forPaths: otherFiles)
+            DLOG("Finished importing other files")
         }
     }
 
