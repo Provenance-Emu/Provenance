@@ -50,6 +50,8 @@ struct GameContextMenu: SwiftUI.View {
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
 
+    @State private var showingSystemPicker = false
+
     var body: some SwiftUI.View {
         Group {
             if game.system.cores.count > 1 {
@@ -94,6 +96,12 @@ struct GameContextMenu: SwiftUI.View {
                 } label: { Label("Clear Custom Artwork", systemImage: "xmark.circle") }
             }
             Divider()
+            Button {
+                showingSystemPicker = true
+            } label: { Label("Move to System", systemImage: "folder.fill.badge.plus") }
+            .sheet(isPresented: $showingSystemPicker) {
+                SystemPickerView(game: game, isPresented: $showingSystemPicker)
+            }
             if #available(iOS 15, tvOS 15, macOS 12, *) {
                 Button(role: .destructive) {
                     rootDelegate?.attemptToDelete(game: game)
@@ -230,6 +238,63 @@ extension GameContextMenu {
         } catch {
             DLOG("Failed to clear custom artwork: \(error.localizedDescription)")
             rootDelegate?.showMessage("Failed to clear custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
+        }
+    }
+}
+
+struct SystemPickerView: View {
+    let game: PVGame
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(PVEmulatorConfiguration.systems.filter { $0.identifier != game.systemIdentifier }) { system in
+                    Button {
+                        moveGame(to: system)
+                        isPresented = false
+                    } label: {
+                        HStack {
+                            Text(system.name)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Select System")
+            .navigationBarItems(trailing: Button("Cancel") {
+                isPresented = false
+            })
+        }
+    }
+
+    private func moveGame(to newSystem: PVSystem) {
+        DLOG("Moving game '\(game.title)' to system: \(newSystem.name)")
+
+        do {
+            let realm = try Realm()
+            try realm.write {
+                let thawedGame = game.thaw()
+                thawedGame?.system = newSystem
+                thawedGame?.systemIdentifier = newSystem.identifier
+
+                // Update file path to new system directory
+                let fileName = (thawedGame?.romPath as NSString?)?.lastPathComponent ?? ""
+                thawedGame?.romPath = "\(newSystem.identifier)/\(fileName)"
+            }
+
+            // Move the actual file
+            let sourceURL = PVEmulatorConfiguration.path(forGame: game)
+            let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: newSystem.identifier)
+                .appendingPathComponent(sourceURL.lastPathComponent)
+
+            try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
+            DLOG("Successfully moved game file to new system directory")
+
+        } catch {
+            ELOG("Failed to move game to new system: \(error.localizedDescription)")
         }
     }
 }
