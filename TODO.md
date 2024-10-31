@@ -3,10 +3,10 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] Refresh library and conflicts on new UI not working
 - [ ] RetroArch GLES cores are crashing?
 - [ ] Delete isn't deleting
-- [ ] Checking Import UI is hanging
+- [X] Refresh library and conflicts on new UI not working
+- [X] Checking Import UI is hanging
 - [X] UI is unresponsive after closing emulator
 - [X] wrap advanced settings in freemiumview
 - [X] fix launching webserver from swiftui menu
