@@ -99,7 +99,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             }
         }
     }
-    private func updateHUD(hud: MBProgressHUD, state: PVGameLibraryUpdatesController.HudState) {
+    private func updateHUD(hud: MBProgressHUD, state: HudState) {
         switch state {
         case .hidden:
             hud.hide(animated: true)

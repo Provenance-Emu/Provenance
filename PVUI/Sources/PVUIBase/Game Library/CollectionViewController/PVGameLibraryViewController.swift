@@ -596,7 +596,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     }
 
     @MainActor
-    private func handleHudState(_ state: PVGameLibraryUpdatesController.HudState) {
+    private func handleHudState(_ state: HudState) {
         switch state {
         case .hidden:
             self.hud.hide(animated: true, afterDelay: 1.0)

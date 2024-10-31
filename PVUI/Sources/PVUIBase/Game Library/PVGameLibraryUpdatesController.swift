@@ -21,6 +21,12 @@ import Combine
 import Observation
 import Perception
 
+public enum HudState {
+    case hidden
+    case title(String)
+    case titleAndProgress(title: String, progress: Float)
+}
+
 //@Observable
 public final class PVGameLibraryUpdatesController: ObservableObject {
 
@@ -36,12 +42,6 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     private let biosWatcher: BIOSWatcher
 
     private var statusCheckTimer: Timer?
-
-    public enum HudState {
-        case hidden
-        case title(String)
-        case titleAndProgress(title: String, progress: Float)
-    }
 
     public init(gameImporter: GameImporter, importPath: URL? = nil) {
         let importPath = importPath ?? Paths.romsImportPath
@@ -487,5 +487,59 @@ public extension PVGameLibraryUpdatesController {
         } catch {
             ELOG("Failed to copy file from \(sourceURL.path) to \(destinationURL.path). Error: \(error)")
         }
+    }
+}
+
+/// Coordinates HUD state updates
+private actor HUDCoordinator {
+    private var hudState: HudState = .hidden
+    private var isHidingHUD = false
+    private var hideTask: Task<Void, Never>?
+
+    /// Updates the HUD state and manages visibility
+    func updateHUD(_ newState: HudState, autoHide: Bool = false) async {
+        DLOG("Updating HUD state to: \(newState)")
+
+        if isHidingHUD {
+            DLOG("HUD is currently hiding, skipping update")
+            return
+        }
+
+        hudState = newState
+        hideTask?.cancel()
+
+        if autoHide {
+            isHidingHUD = true
+            hideTask = createHideTask()
+        }
+    }
+
+    /// Creates a task to hide the HUD after a delay
+    private func createHideTask() -> Task<Void, Never> {
+        Task.detached { [weak self] in
+            DLOG("Starting HUD hide delay")
+            do {
+                try await Task.sleep(for: .seconds(1))
+                if !Task.isCancelled {
+                    DLOG("Hiding HUD after delay")
+                    await self?.hideHUD()
+                }
+            } catch {
+                DLOG("Error during hide delay: \(error)")
+                await self?.hideHUD()
+            }
+        }
+    }
+
+    /// Hides the HUD and resets state
+    private func hideHUD() async {
+        hudState = .hidden
+        isHidingHUD = false
+        DLOG("HUD hidden and state reset")
+    }
+
+    /// Gets the current HUD state
+    func getCurrentState() -> HudState {
+        hudState
     }
 }
