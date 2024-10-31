@@ -362,7 +362,7 @@ private struct ExtraInfoSection: View {
                             icon: .sfSymbol("hand.raised"))
             }
             /// End User License Agreement
-            Link(destination: URL(string: " https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!) {
+            Link(destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!) {
                 SettingsRow(title: "End User License Agreement (EULA)",
                             subtitle: nil,
                             icon: .sfSymbol("signature"))
