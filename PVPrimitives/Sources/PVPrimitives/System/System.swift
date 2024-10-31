@@ -139,7 +139,7 @@ public extension System {
         let requiresBIOS = system.requiresBIOS
         #warning("Fix this causing infinite loop")
         // TODO: fix this causing infinite loop
-        let userPreferredCore = system.userPreferredCore
+//        let userPreferredCore = system.userPreferredCore
 
         let usesCDs = system.usesCDs
         let portableSystem = system.portableSystem
@@ -160,7 +160,7 @@ public extension System {
                   options: options,
                   bioses: bioses,
                   extensions: extensions,
-                  userPreferredCore: userPreferredCore,
+                  userPreferredCore: nil, //userPreferredCore,
                   usesCDs: usesCDs,
                   portableSystem: portableSystem,
                   supportsRumble: supportsRumble,
