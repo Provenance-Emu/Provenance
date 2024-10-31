@@ -3,8 +3,8 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [ ] Refresh library and conflicts on new UI not working
 - [ ] RetroArch GLES cores are crashing?
-- [ ] (Lite) Sega CD is borked
 - [X] UI is unresponsive after closing emulator
 - [X] wrap advanced settings in freemiumview
 - [X] fix launching webserver from swiftui menu
@@ -28,15 +28,16 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [ ] Share on old UI crashes app (realm threading issue)
+- [ ] iCloud sync removed
+- [ ] look at the displaylink thing in retroarch
+- [ ] Flycast crashes with error `NSInvalidArgumentException', reason: '-[MetalView naturalDrawableSizeMVK]: unrecognized selector sent`
 - [ ] (Lite) Intellivision (PVBliss) audio crashes on button press
 - [ ] (Lite) Intellivision video is glitched
 - [ ] (Lite) Odyssey2 needs a way to enter game number 1,2 (3,4)?
 - [ ] (Lite) SuperVision video dimensions wrong
 - [ ] (Lite) Turbo GFX 16 no video for some roms
-- [ ] Share on old UI crashes app (realm threading issue)
-- [ ] iCloud sync removed
-- [ ] look at the displaylink thing in retroarch
-- [ ] Flycast crashes with error `NSInvalidArgumentException', reason: '-[MetalView naturalDrawableSizeMVK]: unrecognized selector sent`
+- [ ] (Lite) Sega CD is borked
 - [X] The notch is in retroarch view
 - [X] manually copying a bios into bios's works, but database isn't updated with instance reference
 - [X] Mupen video crashes with update metal code
