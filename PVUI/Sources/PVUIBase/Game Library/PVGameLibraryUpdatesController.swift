@@ -320,6 +320,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     }
 
     /// Assitant for Spotlight indexing
+    @MainActor
     private func addGameToSpotlight(md5: String, spotlightIndex: CSSearchableIndex, database: RomDatabase) {
         do {
             let realm = try Realm()
@@ -347,6 +348,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     #endif
 
     /// Converter for `ExtractionStatus` to `HudState`
+    @MainActor
     private static func handleExtractionStatus(_ status: ExtractionStatus) -> HudState {
         switch status {
         case .started(let path):

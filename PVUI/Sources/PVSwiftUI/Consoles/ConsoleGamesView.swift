@@ -52,14 +52,6 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    private var isSimulator: Bool {
-        #if targetEnvironment(simulator)
-        return true
-        #else
-        return false
-        #endif
-    }
-
     @State private var gameLibraryItemsPerRow: Int = 4
     @Default(.gameLibraryScale) private var gameLibraryScale
 
@@ -115,6 +107,9 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                         }
                         .padding(.horizontal, 10)
                         .padding(.bottom, 44)
+                    }.refreshable {
+                        ILOG("Refreshing game library")
+                        await AppState.shared.libraryUpdatesController?.importROMDirectories()
                     }
                 }
             }
@@ -197,7 +192,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func gamesSection() -> some View {
         Group {
-            if games.isEmpty && isSimulator {
+            if games.isEmpty && AppState.shared.isSimulator {
                 let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
                 if viewModel.viewGamesAsGrid {
                     showGamesGrid(fakeGames)
@@ -279,7 +274,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         // If games is less than count, just use the games to fill the row.
         // also don't go below 0
         let count: Int
-        if isSimulator {
+        if AppState.shared.isSimulator {
             count = max(0,roundedScale )
         } else {
             count = min(max(0, roundedScale), games.count)

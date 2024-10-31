@@ -67,6 +67,20 @@ public class AppState: ObservableObject {
         }
     }
     
+    public var isAppStore: Bool {
+        guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
+        return appType.lowercased().contains("appstore")
+    }
+    
+    public var isSimulator: Bool {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return false
+        #endif
+    }
+
+    
     public var sendEventWasSwizzled = false
 
     private let disposeBag = DisposeBag()

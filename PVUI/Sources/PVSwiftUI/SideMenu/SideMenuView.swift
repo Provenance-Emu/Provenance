@@ -89,7 +89,9 @@ SideMenuView: SwiftUI.View {
         let masterBranch: Bool = gitBranch.lowercased() == "master"
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
-        if !masterBranch {
+        if AppState.shared.isAppStore {
+            versionText = "\(versionText ?? "")"
+        } else if !masterBranch {
             versionText = "\(versionText ?? "") Experimental"
         }
         return versionText ?? ""
