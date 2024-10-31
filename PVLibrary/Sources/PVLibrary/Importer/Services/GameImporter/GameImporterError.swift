@@ -10,6 +10,7 @@ public enum GameImporterError: Error, Sendable {
     case romAlreadyExistsInDatabase
     case noSystemMatched
     case unsupportedSystem
+    case systemNotDetermined
     case failedToMoveCDROM(Error)
     case failedToMoveROM(Error)
 }
