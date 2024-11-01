@@ -174,7 +174,11 @@ public final class DirectoryWatcher: ObservableObject {
             Task {
                 ILOG("Scheduling delayed start of monitoring after extraction")
                 try? await delay(2) {
-                    try self.startMonitoring()
+                    do {
+                        try self.startMonitoring()
+                    } catch {
+                        ELOG("Error starting monitoring after extraction: \(error.localizedDescription)")
+                    }
                 }
             }
         }
