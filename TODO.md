@@ -5,8 +5,10 @@ _My personal TODO notes_
 
 - [ ] RetroArch GLES cores are crashing?
 - [ ] Delete isn't deleting
+    - [X] throw an error on file manager error
+- [ ] Checking Import UI is hanging (removed for now)
+    - [ ] fix public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async
 - [X] Refresh library and conflicts on new UI not working
-- [X] Checking Import UI is hanging
 - [X] UI is unresponsive after closing emulator
 - [X] wrap advanced settings in freemiumview
 - [X] fix launching webserver from swiftui menu
@@ -30,6 +32,7 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [ ] Re-add and fix "Launch Web Server" from Swift UI settings
 - [ ] Share on old UI crashes app (realm threading issue)
 - [ ] iCloud sync removed
 - [ ] look at the displaylink thing in retroarch
