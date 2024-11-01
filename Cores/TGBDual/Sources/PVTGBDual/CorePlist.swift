@@ -8,6 +8,7 @@
 import Foundation
 import PVCoreBridge
 import PVLogging
+import PVPlists
 
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
