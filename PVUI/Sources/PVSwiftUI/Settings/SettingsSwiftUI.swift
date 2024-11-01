@@ -578,13 +578,13 @@ private struct LibrarySection: View {
     
     var body: some View {
         Section(header: Text("Library")) {
-#if canImport(PVWebServer)
-            Button(action: viewModel.launchWebServer) {
-                SettingsRow(title: "Launch Web Server",
-                            subtitle: "Transfer ROMs and saves over WiFi.",
-                            icon: .sfSymbol("xserve"))
-            }
-#endif
+//#if canImport(PVWebServer)
+//            Button(action: viewModel.launchWebServer) {
+//                SettingsRow(title: "Launch Web Server",
+//                            subtitle: "Transfer ROMs and saves over WiFi.",
+//                            icon: .sfSymbol("xserve"))
+//            }
+//#endif
             
             NavigationLink(destination: ConflictsView().environmentObject(viewModel)) {
                 SettingsRow(title: "Manage Conflicts",
