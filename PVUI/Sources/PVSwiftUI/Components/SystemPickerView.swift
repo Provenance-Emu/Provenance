@@ -17,12 +17,20 @@ import PVUIBase
 struct SystemPickerView: View {
     let game: PVGame
     @Binding var isPresented: Bool
+//    @ObservedResults(PVSystem.self) private var systems: Results<PVSystem>
+//    
+//    init(game: PVGame, isPresented: Binding<Bool>) {
+//        self.game = game
+//        _isPresented = isPresented
+//        
+//        let filter =  NSPredicate(format: "identifier != %@", argumentArray: [game.systemIdentifier])
+//        _systems = ObservedResults(PVSystem.self, filter: filter, sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true))
+//    }
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(PVEmulatorConfiguration.systems
-                    .filter { $0.identifier != game.systemIdentifier }) { system in
+                ForEach(PVEmulatorConfiguration.systems) { system in
                     Button {
                         moveGame(to: system)
                         isPresented = false
@@ -40,6 +48,10 @@ struct SystemPickerView: View {
             .navigationBarItems(trailing: Button("Cancel") {
                 isPresented = false
             })
+        }.onAppear {
+            DLOG("Loading systems for game: \(game.title)")
+            let systemsList = PVEmulatorConfiguration.systems.map{ $0.identifier }.joined(separator: ", ")
+            ILOG("Systemslist: \(systemsList)")
         }
     }
 
