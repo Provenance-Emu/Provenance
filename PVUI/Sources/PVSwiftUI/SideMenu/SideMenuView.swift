@@ -118,7 +118,7 @@ SideMenuView: SwiftUI.View {
                     }
                     Divider()
                     MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
-                        delegate.didTapAddGames()
+                        delegate?.didTapAddGames()
                     }
 #if canImport(FreemiumKit)
                     PaidStatusView(style: .plain)

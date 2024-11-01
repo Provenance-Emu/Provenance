@@ -36,7 +36,8 @@ class PVSettingsViewModel: ObservableObject {
     }
 
     @Published var numberOfConflicts: Int = 0
-
+    
+    
     private var cancellables = Set<AnyCancellable>()
     private let reachability = try? Reachability()
 
@@ -302,30 +303,8 @@ class PVSettingsViewModel: ObservableObject {
         }
     }
 
-    public
-    var webserverSuccessfulAlertMessage: String {
-        let webServerAddress: String = PVWebServer.shared.urlString ?? PVWebServer.shared.ipAddress ?? "Unknown"
-        let webDavAddress: String = PVWebServer.shared.webDavURLString ?? "Unknown"
-        let message = """
-        Read about how to import ROMs on the Provenance wiki at:
-        https://wiki.provenance-emu.com
-
-        Upload/Download files to your device at:
-
-        \(webServerAddress)  ᵂᵉᵇᵁᴵ
-        \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
-        
-        WebDAV file management requires WebDAV support.
-        We recommend:
-        • macOS Finder
-        • Windows: WinSCP
-        • iOS: Documents by Readdle
-        """
-        return message
-    }
-
     func launchWebServer() {
-        menuDelegate.didTapAddGames()
+        menuDelegate?.didTapAddGames()
     }
 
     // Add these computed properties
