@@ -22,6 +22,10 @@ import PVMediaCache
 
 let schemaVersion: UInt64 = 11
 
+public enum RomDeletionError: Error {
+    case relatedFiledDeletionError
+    case fileManagerDeletionError(Error)
+}
 
 public final class RealmConfiguration {
     public class var supportsAppGroups: Bool {
@@ -452,10 +456,6 @@ public extension RomDatabase {
     }
 }
 
-public enum RomDeletionError: Error {
-    case relatedFiledDeletionError
-}
-
 // MARK: - Update
 
 public extension RomDatabase {
@@ -596,7 +596,7 @@ public extension RomDatabase {
             do {
                 try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
             } catch {
-                NSLog("Failed to delete image " + game.customArtworkURL)
+                WLOG("Failed to delete image " + game.customArtworkURL)
                 // Don't throw, not a big deal
             }
         }
@@ -624,6 +624,7 @@ public extension RomDatabase {
                 try FileManager.default.removeItem(at: romURL)
             } catch {
                 ELOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
+                throw RomDeletionError.fileManagerDeletionError(error)
             }
         }
         // Delete from Spotlight search
