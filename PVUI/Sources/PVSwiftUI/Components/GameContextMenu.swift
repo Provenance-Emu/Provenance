@@ -94,7 +94,6 @@ extension GameContextMenu {
             let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module)
                 .instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
             firstVC.game = game
-//            let firstVC = PVGameMoreInfoViewController(game: game, nibName: "GameMoreInfo", bundle: BundleLoader.module)
 
             let moreInfoCollectionVC = GameMoreInfoPageViewController()
             moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)

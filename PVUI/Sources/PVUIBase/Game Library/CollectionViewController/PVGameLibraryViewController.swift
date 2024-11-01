@@ -796,7 +796,9 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
             let game = sender as! PVGame
 
             let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
-            firstVC.game = game
+            let frozenGame = game.isFrozen ? game : game.freeze()
+
+            firstVC.game = frozenGame
 
             let moreInfoCollectionVC = segue.destination as! GameMoreInfoPageViewController
             moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)

@@ -282,16 +282,16 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
 
     var mustRefreshDataSource = false
     
-    @MainActor
-    public init(game: PVGame, nibName nibNameOrNil: String? = nil, bundle nibBundleOrNil: Bundle? = nil) {
-        self.game = game
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
+//    @MainActor
+//    public init(game: PVGame, nibName nibNameOrNil: String? = nil, bundle nibBundleOrNil: Bundle? = nil) {
+//        self.game = game
+//        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+//    }
     
-    @MainActor
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
+//    @MainActor
+//    public required init?(coder: NSCoder) {
+//        super.init(coder: coder)
+//    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
