@@ -156,11 +156,13 @@ public final class DirectoryWatcher: ObservableObject {
     }
 
     /// Stop monitoring the directory for changes
-    public func stopMonitoring() {
+    public func stopMonitoring(includingFileWatchers: Bool = false) {
         ILOG("Stopping monitoring for directory: \(watchedDirectory.path)")
         dispatchSource?.cancel()
         dispatchSource = nil
-        fileWatchers.keys.forEach { stopWatchingFile(at: $0) }
+        if includingFileWatchers {
+            fileWatchers.keys.forEach { stopWatchingFile(at: $0) }
+        }
         ILOG("Monitoring stopped for directory: \(watchedDirectory.path)")
     }
 
@@ -168,20 +170,21 @@ public final class DirectoryWatcher: ObservableObject {
     /// Extract an archive from a file path
     public func extractArchive(at filePath: URL) async throws {
         ILOG("Starting archive extraction for file: \(filePath.path)")
-        stopMonitoring() // Stop monitoring to avoid interference
+        stopWatchingFile(at: filePath)
+        //stopMonitoring() // Stop monitoring to avoid interference
 
-        defer {
-            Task {
-                ILOG("Scheduling delayed start of monitoring after extraction")
-                try? await delay(2) {
-                    do {
-                        try self.startMonitoring()
-                    } catch {
-                        ELOG("Error starting monitoring after extraction: \(error.localizedDescription)")
-                    }
-                }
-            }
-        }
+//        defer {
+//            Task {
+//                ILOG("Scheduling delayed start of monitoring after extraction")
+//                try? await delay(2) {
+//                    do {
+//                        try self.startMonitoring()
+//                    } catch {
+//                        ELOG("Error starting monitoring after extraction: \(error.localizedDescription)")
+//                    }
+//                }
+//            }
+//        }
 
         guard !filePath.path.contains("MACOSX"),
               FileManager.default.fileExists(atPath: filePath.path) else {
@@ -511,7 +514,7 @@ fileprivate extension DirectoryWatcher {
     }
 
     private func isWatchingFile(at path: URL) -> Bool {
-        let isWatching = fileWatchers[path] != nil
+        let isWatching = fileWatchers[path] != nil && !fileWatchers[path]!.isCancelled
         ILOG("Checked if watching file: \(path.lastPathComponent), result: \(isWatching)")
         return isWatching
     }

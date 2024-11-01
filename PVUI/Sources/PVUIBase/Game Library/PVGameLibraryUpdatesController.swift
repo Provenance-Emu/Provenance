@@ -42,8 +42,10 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     private let biosWatcher: BIOSWatcher
 
     private var statusCheckTimer: Timer?
-
-    private let hudCoordinator = HUDCoordinator()
+    
+    private var hudCoordinator: HUDCoordinator {
+        AppState.shared.hudCoordinator
+    }
 
     public init(gameImporter: GameImporter, importPath: URL? = nil) {
         let importPath = importPath ?? Paths.romsImportPath
@@ -306,16 +308,18 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     /// Spotlight indexing support
     @MainActor
     public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async {
+        // TODO: This is all wrong, we should register to listen to spotlightImportHandler,
+        // not overwrite it
         enum ImportEvent {
             case finished(md5: String, modified: Bool)
             case completed(encounteredConflicts: Bool)
         }
 
         let eventStream = AsyncStream<ImportEvent> { continuation in
-            GameImporter.shared.finishedImportHandler = { md5, modified in
+            GameImporter.shared.spotlightFinishedImportHandler = { md5, modified in
                 continuation.yield(.finished(md5: md5, modified: modified))
             }
-            GameImporter.shared.completionHandler = { encounteredConflicts in
+            GameImporter.shared.spotlightCompletionHandler = { encounteredConflicts in
                 continuation.yield(.completed(encounteredConflicts: encounteredConflicts))
                 continuation.finish()
             }
@@ -331,8 +335,8 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
 
         // Clean up handlers
-        GameImporter.shared.finishedImportHandler = nil
-        GameImporter.shared.completionHandler = nil
+        GameImporter.shared.spotlightFinishedImportHandler = nil
+        GameImporter.shared.spotlightCompletionHandler = nil
     }
 
     /// Assitant for Spotlight indexing
@@ -496,59 +500,5 @@ public extension PVGameLibraryUpdatesController {
         } catch {
             ELOG("Failed to copy file from \(sourceURL.path) to \(destinationURL.path). Error: \(error)")
         }
-    }
-}
-
-/// Coordinates HUD state updates
-private actor HUDCoordinator {
-    private var hudState: HudState = .hidden
-    private var isHidingHUD = false
-    private var hideTask: Task<Void, Never>?
-
-    /// Updates the HUD state and manages visibility
-    func updateHUD(_ newState: HudState, autoHide: Bool = false) async {
-        DLOG("Updating HUD state to: \(newState)")
-
-        if isHidingHUD {
-            DLOG("HUD is currently hiding, skipping update")
-            return
-        }
-
-        hudState = newState
-        hideTask?.cancel()
-
-        if autoHide {
-            isHidingHUD = true
-            hideTask = createHideTask()
-        }
-    }
-
-    /// Creates a task to hide the HUD after a delay
-    private func createHideTask() -> Task<Void, Never> {
-        Task.detached { [weak self] in
-            DLOG("Starting HUD hide delay")
-            do {
-                try await Task.sleep(for: .seconds(1))
-                if !Task.isCancelled {
-                    DLOG("Hiding HUD after delay")
-                    await self?.hideHUD()
-                }
-            } catch {
-                DLOG("Error during hide delay: \(error)")
-                await self?.hideHUD()
-            }
-        }
-    }
-
-    /// Hides the HUD and resets state
-    private func hideHUD() async {
-        hudState = .hidden
-        isHidingHUD = false
-        DLOG("HUD hidden and state reset")
-    }
-
-    /// Gets the current HUD state
-    func getCurrentState() -> HudState {
-        hudState
     }
 }

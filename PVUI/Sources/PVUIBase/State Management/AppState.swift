@@ -56,6 +56,8 @@ public class AppState: ObservableObject {
     @Published
     public var libraryUpdatesController: PVGameLibraryUpdatesController?
 
+    public let hudCoordinator = HUDCoordinator()
+
     /// Whether the app has been initialized
     @Published
     public var isInitialized = false {

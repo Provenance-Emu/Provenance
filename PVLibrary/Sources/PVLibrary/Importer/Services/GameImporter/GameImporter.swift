@@ -102,6 +102,12 @@ public final class GameImporter: ObservableObject {
     public var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler?
     /// Flag indicating if conflicts were encountered during import
     public private(set) var encounteredConflicts = false
+    
+    /// Spotlight Handerls
+    /// Closure called when spotlight completes
+    public var spotlightCompletionHandler: GameImporterCompletionHandler?
+    /// Closure called when a game finishes importing
+    public var spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler?
 
     /// Singleton instance of GameImporter
     public static let shared: GameImporter = GameImporter()
