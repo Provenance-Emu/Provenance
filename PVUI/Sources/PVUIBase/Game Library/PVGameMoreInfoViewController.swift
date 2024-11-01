@@ -168,24 +168,35 @@ public final class GameMoreInfoPageViewController: GameMoreInfoPageViewControlle
 //    public func presentationCount(for pageViewController: UIPageViewController) -> Int // The number of items reflected in the page indicator.
 //    public func presentationIndex(for pageViewController: UIPageViewController) -> Int // The selected item reflected in the page indicator.
 
-    private func nextFrom(viewController: PVGameMoreInfoViewController, direction: UIPageViewController.NavigationDirection) -> PVGameMoreInfoViewController? {
-        guard let game = viewController.game, let currentIndex = games.index(of: game) else {
-            ELOG("Game or current index was nil")
+    private func nextFrom(viewController: PVGameMoreInfoViewController, direction: UIPageViewController.NavigationDirection) -> UIViewController? {
+        guard let currentGame = viewController.game?.thaw() else {
+            ELOG("Current game is invalid or couldn't be thawed")
             return nil
         }
 
-        let nextGameIndex = direction == .forward ? games.index(after: currentIndex) : games.index(before: currentIndex)
-        guard nextGameIndex != currentIndex, nextGameIndex < games.count, nextGameIndex >= 0 else {
-            ELOG("Game or current index was nil")
+        guard let currentIndex = games.index(of: currentGame) else {
+            ELOG("Couldn't find index of current game in results")
             return nil
         }
 
-        let storyboard = UIStoryboard(name: "Provenance", bundle: BundleLoader.module)
-        let nextViewController = storyboard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+        let nextIndex: Int
+        switch direction {
+        case .forward:
+            nextIndex = currentIndex + 1
+        case .reverse:
+            nextIndex = currentIndex - 1
+        @unknown default:
+            ELOG("Unknown page direction")
+            return nil
+        }
 
-        let nextGame = games[nextGameIndex]
-        nextViewController.game = nextGame
-        return nextViewController
+        guard nextIndex >= 0 && nextIndex < games.count else {
+            return nil
+        }
+
+        let nextGame = games[nextIndex]
+        let nextVC = PVGameMoreInfoViewController(game: nextGame.freeze())
+        return nextVC
     }
 
     // MARK: Actions
@@ -222,25 +233,11 @@ public typealias PVGameMoreInfoViewControllerBase = NSViewController
 #endif
 
 public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, GameLaunchingViewController, GameSharingViewController {
-    @objc public var game: PVGame! {
-        willSet {
-            if newValue == game {
-                return
-            }
-            if let game = newValue {
-                let thawedGame = game.isFrozen ? game.thaw() : game
-                self.game = thawedGame
-            }
-        }
+    @objc public var game: PVGame? {
         didSet {
-            assert(game != nil, "Set a nil game")
-
-            if game != oldValue {
-                registerForChange()
-
-                if isViewLoaded {
-                    updateContent()
-                }
+            // Ensure we're working with a frozen copy
+            if let game = game, !game.isFrozen {
+                self.game = game.freeze()
             }
         }
     }
@@ -300,6 +297,7 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
 
     deinit {
         token?.invalidate()
+        gamesNotificationToken?.invalidate()
     }
 
 //    override func viewWillDisappear(_ animated: Bool) {
@@ -724,6 +722,24 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
             }
         })
     }
+
+    // 2. Properly retain and handle Results
+    private var gamesNotificationToken: NotificationToken?
+    lazy var games: Results<PVGame> = {
+        let results = RomDatabase.sharedInstance.allGamesSortedBySystemThenTitle()
+        // Retain notification token to keep results alive
+        gamesNotificationToken = results.observe { [weak self] changes in
+            switch changes {
+            case .initial:
+                break
+            case .update:
+                self?.mustRefreshDataSource = true
+            case .error(let error):
+                ELOG("Error observing games: \(error)")
+            }
+        }
+        return results
+    }()
 }
 
 extension PVGameMoreInfoViewController {
@@ -1123,7 +1139,6 @@ public final class MediaZoom: UIView, UIScrollViewDelegate {
                 target: self,
                 action: #selector(handleSingleTap(sender:))
             )
-        )
         contentView.addSubview(imageView)
         contentView.delegate = self
         addSubview(backgroundView)
