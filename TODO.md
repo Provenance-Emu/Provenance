@@ -79,6 +79,7 @@ _My personal TODO notes_
     - [ ] Share
     - [ ] Hide
     - [ ] Choose disc
+- [ ] Make an LCD Filter then add it back to settings
 - [ ] Swift UI should open on home and be scrollable to systems
 - [ ] When switching from SwiftUI to old UI, the game lib is zoomed way too much, need to change how it uses Scaling Factor Defaults[.gameLibraryScale]
 - [ ] should store last page view for next open
