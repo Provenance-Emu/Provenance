@@ -118,7 +118,7 @@ class PVSettingsViewModel: ObservableObject {
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !isMasterBranch {
             if isAppStore {
-                versionText = "\(versionText ?? "") TestFlight"
+                versionText = "\(versionText ?? "") AppStore"
             } else {
                 versionText = "\(versionText ?? "") Beta"
             }

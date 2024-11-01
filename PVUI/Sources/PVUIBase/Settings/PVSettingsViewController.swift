@@ -688,7 +688,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !masterBranch {
             if IsAppStore {
-                versionText = "\(versionText ?? "") TestFlight"
+                versionText = "\(versionText ?? "") AppStore"
             } else {
                 versionText = "\(versionText ?? "") Beta"
             }
