@@ -100,22 +100,21 @@ public final class PVEmulatorConfiguration: NSObject {
 
 public extension PVEmulatorConfiguration {
 
-    static var pvSystems: Results<PVSystem> {
+    @MainActor
+    static var pvSystems: Results<PVSystem> = {
         let sortedSystems = RomDatabase.sharedInstance.all(PVSystem.self, sortedByKeyPath: #keyPath(PVSystem.name))
         return sortedSystems
-    }
+    }()
+    
     
     static var systems: [PVSystem] {
-        return Array(pvSystems)
+        return Array(RomDatabase.sharedInstance.all(PVSystem.self).sorted(by: { $0.name < $1.name }))
     }
 
     static var cdBasedSystems: [PVSystem] {
-        return systems.compactMap({ (system) -> PVSystem? in
-            guard system.usesCDs else {
-                return nil
-            }
-            return system
-        })
+        return systems.filter {
+            $0.usesCDs
+        }
     }
 
     class func systems(forFileExtension fileExtension: String) -> [PVSystem]? {
