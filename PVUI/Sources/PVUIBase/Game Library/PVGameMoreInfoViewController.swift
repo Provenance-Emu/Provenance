@@ -195,7 +195,10 @@ public final class GameMoreInfoPageViewController: GameMoreInfoPageViewControlle
         }
 
         let nextGame = games[nextIndex]
-        let nextVC = PVGameMoreInfoViewController(game: nextGame.freeze())
+        
+        let storyboard = UIStoryboard(name: "Provenance", bundle: BundleLoader.module)
+        let nextVC = storyboard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+        nextVC.game = nextGame.freeze()
         return nextVC
     }
 
@@ -278,7 +281,18 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
     @IBOutlet var playBarButtonItem: UIBarButtonItem!
 
     var mustRefreshDataSource = false
-
+    
+    @MainActor
+    public init(game: PVGame, nibName nibNameOrNil: String? = nil, bundle nibBundleOrNil: Bundle? = nil) {
+        self.game = game
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
+    @MainActor
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -474,7 +488,7 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
 
     @IBAction func shareButtonClicked(_ sender: Any) {
         Task.detached { @MainActor [weak self] in
-            guard let self = self else { return }
+            guard let self = self, let game = game else { return }
             await self.share(for: game, sender: sender)
         }
     }
@@ -530,12 +544,16 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
                                 self.flipImageView(withImage: image)
                             }
                         } else {
-                            self.artworkImageView.image = self.image(withText: self.game.title)
+                            if let game = self.game {
+                                self.artworkImageView.image = self.image(withText: game.title)
+                            }
                         }
                     }
                 })
             } else {
-                artworkImageView.image = image(withText: game.title)
+                if let game = game {
+                    artworkImageView.image = image(withText: game.title)
+                }
             }
         } else {
             if let imageKey = game?.boxBackArtworkURL, !imageKey.isEmpty {
@@ -680,14 +698,16 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
                 self.present(errAlert, animated: true, completion: nil)
             } else if submittedValue != currentValue, let newValue = submittedValue {
                 do {
-                    try RomDatabase.sharedInstance.writeTransaction {
-                        self.game.realm?.refresh()
-                        self.game![keyPath: key] = newValue
-                        label.text = newValue
-                        if reloadGameInfoAfter, self.game.releaseID == nil || self.game.releaseID!.isEmpty {
-                            Task { [weak self] in
-                                guard let self = self else { return }
-                                self.game = GameImporter.shared.lookupInfo(for: self.game, overwrite: false)
+                    if var game = self.game {
+                        try RomDatabase.sharedInstance.writeTransaction {
+                            game.realm?.refresh()
+                            game[keyPath: key] = newValue
+                            label.text = newValue
+                            if reloadGameInfoAfter, game.releaseID == nil || game.releaseID!.isEmpty {
+                                Task { [weak self] in
+                                    guard let self = self else { return }
+                                    self.game = GameImporter.shared.lookupInfo(for: game, overwrite: false)
+                                }
                             }
                         }
                     }
@@ -702,6 +722,7 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
 
     var token: NotificationToken?
     func registerForChange() {
+        guard let game = game else { return }
         token?.invalidate()
         let thawedGame = game.thaw()
         token = thawedGame?.observe({ [weak self] change in
@@ -760,8 +781,10 @@ extension PVGameMoreInfoViewController {
         let isFavorite = game.isFavorite
         let favoriteToggle = UIPreviewAction(title: "Favorite", style: isFavorite ? .selected : .default) { _, _ in
             do {
-                try RomDatabase.sharedInstance.writeTransaction {
-                    self.game.isFavorite = !self.game.isFavorite
+                if let game = self.game {
+                    try RomDatabase.sharedInstance.writeTransaction {
+                        game.isFavorite = !game.isFavorite
+                    }
                 }
             } catch {
                 ELOG("\(error)")
@@ -1139,6 +1162,7 @@ public final class MediaZoom: UIView, UIScrollViewDelegate {
                 target: self,
                 action: #selector(handleSingleTap(sender:))
             )
+        )
         contentView.addSubview(imageView)
         contentView.delegate = self
         addSubview(backgroundView)
