@@ -457,11 +457,12 @@ private struct FiltersSection: View {
                             subtitle: "Apply CRT screen effect to games.",
                             icon: .sfSymbol("tv"))
             }
-            ThemedToggle(isOn: $lcdFilter) {
-                SettingsRow(title: "LCD Filter",
-                            subtitle: "Apply LCD screen effect to games.",
-                            icon: .sfSymbol("rectangle.on.rectangle"))
-            }
+            // TODO: Implement LCD Filter
+//            ThemedToggle(isOn: $lcdFilter) {
+//                SettingsRow(title: "LCD Filter",
+//                            subtitle: "Apply LCD screen effect to games.",
+//                            icon: .sfSymbol("rectangle.on.rectangle"))
+//            }
         }
     }
 }
