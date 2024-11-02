@@ -18,7 +18,6 @@
 #else
 #import <PVGenesis/PVGenesis-Swift.h>
 #include "types.h"
-#include "macros.h"
 #include "loadrom.h"
 #include "genesis.h"
 #include "system.h"
