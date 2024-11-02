@@ -33,7 +33,7 @@ extension Moveable where Self: UIView {
 }
 
 class MovableButtonView: UIView, Moveable {
-    public private(set) var isCustomMoved: Bool = false
+    public  var isCustomMoved: Bool = false
     private var moveStartTime: TimeInterval?
     private var startMoveFrame: CGRect?
     private var panGestureRecognizer: UIPanGestureRecognizer?
@@ -124,12 +124,15 @@ class MovableButtonView: UIView, Moveable {
     }
 
     var positionKey: String {
-        // Create a unique key for this button based on its type and system
+        /// Create a unique key for this button based on its type and system
         guard let controller = findViewController() as? any ControllerVC else {
+            WLOG("Could not generate position key")
             return ""
         }
-        let systemID = controller.system.identifier 
-        return "ButtonPosition_\(systemID)_\(String(describing: type(of: self)))"
+        let systemID = controller.system.identifier
+        let buttonType = String(describing: type(of: self))
+        ILOG("Generated position key: ButtonPosition_\(systemID)_\(buttonType)")
+        return "ButtonPosition_\(systemID)_\(buttonType)"
     }
 
     private func findViewController() -> UIViewController? {

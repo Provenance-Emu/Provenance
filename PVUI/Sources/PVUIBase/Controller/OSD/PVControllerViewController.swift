@@ -81,53 +81,53 @@ let volumeHeight: CGFloat = 3
 
 open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC {
     func layoutViews() {}
-    
+
     func pressStart(forPlayer _: Int) {
         vibrate()
     }
-    
+
     func releaseStart(forPlayer _: Int) {}
-    
+
     func pressSelect(forPlayer _: Int) {
         vibrate()
     }
-    
+
     func releaseSelect(forPlayer _: Int) {}
-    
+
     func pressAnalogMode(forPlayer _: Int) {}
-    
+
     func releaseAnalogMode(forPlayer _: Int) {}
-    
+
     func pressL3(forPlayer _: Int) {}
-    
+
     func releaseL3(forPlayer _: Int) {}
-    
+
     func pressR3(forPlayer _: Int) {}
-    
+
     func releaseR3(forPlayer _: Int) {}
-    
+
     func buttonPressed(_: JSButton) {
         vibrate()
     }
-    
+
     func buttonReleased(_: JSButton) {}
-    
+
     func dPad(_: JSDPad, didPress _: JSDPadDirection) {
         vibrate()
     }
-    
+
     func dPad(_: JSDPad, didRelease _: JSDPadDirection) {
     }
-    
+
     func dPad(_: JSDPad, joystick _: JoystickValue) { }
     func dPad(_: JSDPad, joystick2 _: JoystickValue) { }
-    
+
     typealias ResponderType = T
     var emulatorCore: ResponderType
-    
+
     var system: PVSystem
     var controlLayout: [ControlLayoutEntry]
-    
+
     var dPad: JSDPad?
     var dPad2: JSDPad?
     var joyPad: JSDPad?
@@ -142,9 +142,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     var selectButton: JSButton?
     var leftAnalogButton: JSButton?
     var rightAnalogButton: JSButton?
-    
+
     let alpha: CGFloat = CGFloat(Defaults[.controllerOpacity])
-    
+
     var alwaysRightAlign = false
     var alwaysJoypadOverDpad = false
     var topRightJoyPad2 = false
@@ -162,25 +162,25 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
     }
 #endif
-    
+
     required public init(controlLayout: [ControlLayoutEntry], system: PVSystem, responder: T) {
         emulatorCore = responder
         self.controlLayout = controlLayout
         self.system = system
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required public init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
         GCController.controllers().forEach {
             $0.clearPauseHandler()
         }
     }
-    
+
     func updateHideTouchControls() {
         if PVControllerManager.shared.hasControllers {
             if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
@@ -188,15 +188,16 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         }
     }
-    
+
     var blurView : UIVisualEffectView?
     var moveLabel : UILabel?
+		var resetButton: UIButton?
     var inMoveMode: Bool = false {
         didSet {
             if let emuCore = emulatorCore as? PVEmulatorCore {
                 emuCore.setPauseEmulation(inMoveMode)
             }
-            
+
             self.view.subviews.compactMap { subview -> (UIView & Moveable)? in
                 if let moveable = subview as? UIView & Moveable {
                     return moveable
@@ -210,7 +211,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }.forEach { moveable in
                 moveable.inMoveMode = inMoveMode
             }
-            
+
             if inMoveMode {
                 if blurView == nil {
                     blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
@@ -218,9 +219,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     blurView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
                     view.insertSubview(blurView!, at: 0)
                 }
-                
+
                 if moveLabel == nil {
-                    moveLabel = UILabel(frame: CGRect(x: 0, y: 88, width: view.bounds.width, height: 88))
+                    moveLabel = UILabel(frame: CGRect(x: 0, y: 44, width: view.bounds.width, height: 44))
                     moveLabel?.text = "Move Mode - Drag buttons to reposition\nTap with 3 fingers 3 times to exit."
                     moveLabel?.numberOfLines = 2
                     moveLabel?.textAlignment = .center
@@ -228,15 +229,50 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     moveLabel?.autoresizingMask = [.flexibleWidth]
                     view.addSubview(moveLabel!)
                 }
+
+                if resetButton == nil {
+                    resetButton = UIButton(type: .system)
+                    resetButton?.frame = CGRect(x: view.bounds.width/2 - 50, y: moveLabel!.frame.maxY + 20, width: 100, height: 44)
+                    resetButton?.setTitle("Reset", for: .normal)
+                    resetButton?.setTitleColor(.white, for: .normal)
+                    resetButton?.backgroundColor = UIColor.red.withAlphaComponent(0.6)
+                    resetButton?.layer.cornerRadius = 8
+                    resetButton?.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
+                    resetButton?.addTarget(self, action: #selector(resetButtonPositions), for: .touchUpInside)
+                    view.addSubview(resetButton!)
+                }
             } else {
                 blurView?.removeFromSuperview()
                 blurView = nil
                 moveLabel?.removeFromSuperview()
                 moveLabel = nil
+                resetButton?.removeFromSuperview()
+                resetButton = nil
             }
         }
     }
-    
+
+    @objc private func resetButtonPositions() {
+        ILOG("Reset button pressed")
+
+        // Clear saved positions from UserDefaults
+        allButtons.forEach { button in
+            if let movableButton = button as? MovableButtonView {
+                ILOG("Clearing position for button: \(type(of: movableButton))")
+                UserDefaults.standard.removeObject(forKey: movableButton.positionKey)
+            }
+        }
+
+        // Force layout refresh
+        PVControllerManager.shared.hasLayout = false
+        setupTouchControls()
+
+        // Provide haptic feedback
+        #if os(iOS)
+        feedbackGenerator?.selectionChanged()
+        #endif
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
@@ -247,11 +283,11 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         feedbackGenerator = UISelectionFeedbackGenerator()
         feedbackGenerator?.prepare()
         updateHideTouchControls()
-        
+
 #if !targetEnvironment(macCatalyst)
         if Defaults[.movableButtons] {
             let tripleTapGesture = UITapGestureRecognizer(target: self, action: #selector(PVControllerViewController.tripleTapRecognized(_:)))
-            
+
             tripleTapGesture.numberOfTapsRequired = 3
             tripleTapGesture.numberOfTouchesRequired = 3
             view.addGestureRecognizer(tripleTapGesture)
@@ -262,16 +298,16 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             volume.animation = .slideDown
             view.addSubview(volume)
         }
-        
+
         NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
 #endif // !macCatalyst
 #endif // os(iOS)
     }
-    
+
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {
         self.inMoveMode = !self.inMoveMode
     }
-    
+
     // MARK: - GameController Notifications
     @objc func hideTouchControls(_: Notification?) {
 #if os(iOS) && !targetEnvironment(macCatalyst)
@@ -307,7 +343,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
 #endif
     }
-    
+
     @objc func controllerDidConnect(_: Notification?) {
 #if os(iOS) && !targetEnvironment(macCatalyst)
         if PVControllerManager.shared.hasControllers {
@@ -325,13 +361,20 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         setupTouchControls()
 #endif // os(iOS)
     }
-    
-    var allButtons: [UIView] {
-        return [dPad, dPad2, joyPad, joyPad2, buttonGroup, selectButton, startButton, leftShoulderButton, rightShoulderButton, leftShoulderButton2, rightShoulderButton2, zTriggerButton, leftAnalogButton, rightAnalogButton].compactMap {$0}
+
+    private var allButtons: [UIView] {
+        return [
+            dPad, dPad2, joyPad, joyPad2, buttonGroup,
+            leftShoulderButton, rightShoulderButton,
+            leftShoulderButton2, rightShoulderButton2,
+            zTriggerButton, startButton, selectButton,
+            leftAnalogButton, rightAnalogButton
+        ].compactMap { $0 }
     }
+
     @objc func controllerDidDisconnect(_: Notification?) {
 #if os(iOS) && !targetEnvironment(macCatalyst)
-        
+
         if PVControllerManager.shared.hasControllers {
             if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
                 hideTouchControls(for: controller)
@@ -347,7 +390,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         setupTouchControls()
 #endif
     }
-    
+
     func vibrate() {
 #if os(iOS) && !targetEnvironment(macCatalyst)
         if Defaults[.buttonVibration] {
@@ -355,26 +398,26 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
 #endif
     }
-    
+
 #if os(iOS) && !targetEnvironment(macCatalyst)
     open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .landscape
     }
 #endif
-    
+
     open override func didMove(toParent parent: UIViewController?) {
         super.didMove(toParent: parent)
         if let s = view.superview {
             view.frame = s.bounds
         }
     }
-    
+
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if inMoveMode { return }
         PVControllerManager.shared.hasLayout=false
 #if os(iOS) && !targetEnvironment(macCatalyst)
-        
+
         setupTouchControls()
         layoutViews()
         if Defaults[.volumeHUD] {
@@ -383,29 +426,29 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         updateHideTouchControls()
 #endif
     }
-    
+
     func prelayoutSettings() {
     }
-    
+
 #if os(iOS) && !targetEnvironment(macCatalyst)
-    
+
     func layoutVolume() {
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
-        
+
         volume.superview?.bringSubviewToFront(volume)
         volume.layer.cornerRadius = volumeHeight / 2
         volume.frame = CGRect(x: view.safeAreaInsets.left + volumeXPadding, y: view.safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - view.safeAreaInsets.left - view.safeAreaInsets.right, height: volumeHeight)
     }
 #endif
-    
+
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         if inMoveMode {
             inMoveMode = false
         }
         super.viewWillTransition(to: size, with: coordinator)
     }
-    
+
     @objc
     func hideTouchControls(for controller: GCController) {
         dPad?.isHidden = true
@@ -417,7 +460,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         leftShoulderButton2?.isHidden = true
         rightShoulderButton2?.isHidden = true
         zTriggerButton?.isHidden = true
-        
+
         if !Defaults[.missingButtonsAlwaysOn] {
             selectButton?.isHidden = true
             startButton?.isHidden = true
@@ -427,10 +470,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             leftAnalogButton?.isHidden = true
             rightAnalogButton?.isHidden = true
         }
-        
+
         setupTouchControls()
     }
-    
+
     // MARK: - Controller Position And Size Editing
 #if !os(iOS)
     func setupTouchControls() { }
@@ -438,8 +481,18 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     func setupTouchControls() {
         if inMoveMode { return }
         prelayoutSettings()
-        if (PVControllerManager.shared.hasLayout) { return }
-        PVControllerManager.shared.hasLayout=true
+
+        // Clear hasLayout when resetting
+        if !PVControllerManager.shared.hasLayout {
+            ILOG("Setting up fresh layout")
+            allButtons.forEach { button in
+                if let movableButton = button as? MovableButtonView {
+                    movableButton.isCustomMoved = false
+                }
+            }
+        }
+        PVControllerManager.shared.hasLayout = true
+
         let alpha = self.alpha
         for control in controlLayout {
             let controlType: String = control.PVControlType
@@ -508,7 +561,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 if !joyPad.isCustomMoved {
                     joyPad.frame = joyPadFrame
                 }
-                
+
                 if let tintColor = control.PVControlTint {
                     joyPad.tintColor = UIColor(hex: tintColor)
                 }
@@ -554,26 +607,26 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     let buttonGroup = MovableButtonView(frame: buttonsFrame)
                     self.buttonGroup = buttonGroup
                     buttonGroup.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin]
-                    
+
                     var buttons = [JSButton]()
-                    
+
                     let groupedButtons = control.PVGroupedButtons
                     groupedButtons?.forEach { groupedButton in
                         let buttonFrame: CGRect = NSCoder.cgRect(for: groupedButton.PVControlFrame)
                         let button = JSButton(frame: buttonFrame)
                         button.titleLabel?.text = groupedButton.PVControlTitle
-                        
+
                         if let tintColor = groupedButton.PVControlTint {
                             button.tintColor = UIColor(hex: tintColor)
                         }
-                        
+
                         button.backgroundImage = UIImage(named: "button")
                         button.backgroundImagePressed = UIImage(named: "button-pressed")
                         button.delegate = self
                         buttonGroup.addSubview(button)
                         buttons.append(button)
                     }
-                    
+
                     let buttonOverlay = PVButtonGroupOverlayView(buttons: buttons)
                     buttonOverlay.setSize(buttonGroup.bounds.size)
                     buttonGroup.addSubview(buttonOverlay)
@@ -677,7 +730,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
     }
 #endif // os(iOS)
-    
+
 #if os(iOS)
     func layoutRightShoulderButtons(control: ControlLayoutEntry) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
@@ -753,13 +806,13 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         }
     }
-    
+
     func layoutZTriggerButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = view.safeAreaInsets.right + 10
         let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
         var zTriggerFrame: CGRect!
-        
+
         if rightShoulderButton != nil {
             zTriggerFrame = CGRect(x: (rightShoulderButton?.frame.minX)! - controlSize.width, y: (rightShoulderButton?.frame.minY)!, width: controlSize.width, height: controlSize.height)
         } else {
@@ -767,7 +820,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             let y: CGFloat = view.frame.size.height - (controlSize.height * 2) - yPadding
             zTriggerFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
         }
-        
+
         if let zTriggerButton = self.zTriggerButton {
             if !zTriggerButton.isCustomMoved {
                 zTriggerButton.frame = zTriggerFrame
@@ -792,7 +845,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         }
     }
-    
+
     func layoutLeftShoulderButtons(control: ControlLayoutEntry) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = view.safeAreaInsets.left + 10
@@ -867,7 +920,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
     }
 #endif
-    
+
 #if os(iOS)
     func layoutSelectButton( control: ControlLayoutEntry ) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
@@ -875,7 +928,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         let xPadding: CGFloat = view.safeAreaInsets.left + 10
         let spacing: CGFloat = 20
         var selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-        
+
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             if dPad != nil, !(dPad?.isHidden)! {
                 selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 3), y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
@@ -890,11 +943,11 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             let y: CGFloat = view.frame.height - yPadding - controlSize.height
             selectFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
         }
-        
+
         if selectFrame.maxY >= view.frame.size.height {
             selectFrame.origin.y -= (selectFrame.maxY - view.frame.size.height) + yPadding
         }
-        
+
         if (view.frame.width > view.frame.height) {
             selectFrame.origin.x = (view.frame.size.width / 2) - controlSize.width - (spacing / 2)
         }
@@ -904,7 +957,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 selectFrame.origin.x = dPad.frame.maxX + (xPadding * 2)
             }
         }
-        
+
         if let selectButton = self.selectButton {
             if !selectButton.isCustomMoved {
                 selectButton.frame = selectFrame
@@ -929,7 +982,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         }
     }
-    
+
     func layoutStartButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let yPadding: CGFloat = view.safeAreaInsets.bottom
@@ -938,7 +991,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                                 y: view.frame.height - yPadding - controlSize.height,
                                 width: controlSize.width,
                                 height: controlSize.height)
-        
+
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             if let selectButton = selectButton {
                 startFrame = CGRect(x: selectButton.frame.maxX + spacing,
@@ -997,7 +1050,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         }
     }
-    
+
     func layoutLeftAnalogButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = view.safeAreaInsets.left + 10
@@ -1008,7 +1061,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             layoutIsLandscape = true
         }
-        
+
         if !layoutIsLandscape {
             if let selectButton = selectButton {
                 leftAnalogFrame = selectButton.frame.offsetBy(dx: 0, dy: (controlSize.height + spacing / 2))
@@ -1061,7 +1114,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         }
     }
-    
+
     func layoutRightAnalogButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = view.safeAreaInsets.left + 10
@@ -1120,12 +1173,12 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         }
     }
-    
+
     fileprivate func adjustJoystick() {
         guard  let joyPad = joyPad else {
             return
         }
-        
+
         //        guard Defaults[.onscreenJoypad] else {
         //            DLOG("onscreenJoypad false, hiding")
         //            joyPad.isHidden = true
