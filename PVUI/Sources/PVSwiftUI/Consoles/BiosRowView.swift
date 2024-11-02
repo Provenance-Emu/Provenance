@@ -99,7 +99,10 @@ struct BiosRowView: SwiftUI.View {
                     message: "The MD5 for \(bios.expectedFilename) has been copied to the pasteboard",
                     isPresented: $showMD5Alert,
                     buttons: {
-            UIAlertAction(title: "OK", style: .default)
+            UIAlertAction(title: "OK", style: .default, handler: {
+                _ in
+                showMD5Alert = false
+            })
         })
     }
 }

@@ -25,8 +25,12 @@ import PVUIBase
          ) {
              UIAlertAction(title: "OK", style: .default) { _ in
                  print("OK tapped")
+                 showAlert = false
              }
-             UIAlertAction(title: "Cancel", style: .cancel)
+             UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                print("Cancel tapped")
+                 showAlert = false
+            }
          }
      }
  }

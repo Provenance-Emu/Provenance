@@ -117,7 +117,10 @@ struct BIOSRow: View {
                     message: "The MD5 for \(bios.expectedFilename) has been copied to the pasteboard",
                     isPresented: $showCopiedAlert,
                     buttons: {
-            UIAlertAction(title: "OK", style: .default)
+            UIAlertAction(title: "OK", style: .default, handler: {
+                _ in
+                showCopiedAlert = false
+            })
         })
     }
 
