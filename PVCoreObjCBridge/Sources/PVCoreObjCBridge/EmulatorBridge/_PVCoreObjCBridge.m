@@ -712,7 +712,7 @@ static NSString *_systemName;
 
 - (id<RingBufferProtocol>)ringBufferAtIndex:(NSUInteger)index {
     if (UNLIKELY(ringBuffers.count <= index)) {
-        NSInteger length = [self audioBufferSizeForBuffer:index] * 16;
+        NSInteger length = [self audioBufferSizeForBuffer:index] * 32;
         BOOL useLegacyAudioEngine = [PVSettingsWrapper useLegacyAudioEngine];
         RingBufferType bufferType = useLegacyAudioEngine ? RingBufferTypeOpenEMU : RingBufferTypeProvenance;
         

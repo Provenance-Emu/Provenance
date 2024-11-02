@@ -192,6 +192,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     var blurView : UIVisualEffectView?
     var moveLabel : UILabel?
 		var resetButton: UIButton?
+		private var skipLayoutOnModeChange: Bool = false
+
     var inMoveMode: Bool = false {
         didSet {
             if let emuCore = emulatorCore as? PVEmulatorCore {
@@ -241,7 +243,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     resetButton?.addTarget(self, action: #selector(resetButtonPositions), for: .touchUpInside)
                     view.addSubview(resetButton!)
                 }
-            } else {
+            } else if !skipLayoutOnModeChange {
                 blurView?.removeFromSuperview()
                 blurView = nil
                 moveLabel?.removeFromSuperview()
@@ -249,26 +251,27 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 resetButton?.removeFromSuperview()
                 resetButton = nil
             }
+            skipLayoutOnModeChange = false
         }
     }
 
+    private var isResettingLayout: Bool = false
     @objc private func resetButtonPositions() {
         ILOG("Reset button pressed")
 
-        // Clear saved positions from UserDefaults and reset flags
+        isResettingLayout = true
+
+        // Clear saved positions from UserDefaults
         allButtons.forEach { button in
             if let movableButton = button as? MovableButtonView {
                 ILOG("Clearing position for button: \(type(of: movableButton))")
                 UserDefaults.standard.removeObject(forKey: movableButton.positionKey)
-                movableButton.isCustomMoved = false
             }
         }
 
-        // Force complete layout refresh
+        // Force layout refresh
         PVControllerManager.shared.hasLayout = false
-        inMoveMode = false  // Exit move mode temporarily
-        setupTouchControls() // Perform initial layout
-        inMoveMode = true   // Re-enter move mode
+        setupTouchControls()
 
         // Provide haptic feedback
         #if os(iOS)
@@ -485,16 +488,19 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if inMoveMode { return }
         prelayoutSettings()
 
-        // Clear hasLayout when resetting
-        if !PVControllerManager.shared.hasLayout {
+        if PVControllerManager.shared.hasLayout { return }
+        PVControllerManager.shared.hasLayout = true
+
+        // Only log and reset custom moves during explicit reset
+        if isResettingLayout {
             ILOG("Setting up fresh layout")
             allButtons.forEach { button in
                 if let movableButton = button as? MovableButtonView {
                     movableButton.isCustomMoved = false
                 }
             }
+            isResettingLayout = false
         }
-        PVControllerManager.shared.hasLayout = true
 
         let alpha = self.alpha
         for control in controlLayout {
