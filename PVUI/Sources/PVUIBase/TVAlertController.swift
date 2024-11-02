@@ -533,7 +533,7 @@ extension UIAlertControllerProtocol {
 
 // MARK: Button
 
-extension UIControl.State : Hashable {}
+extension UIControl.State : @retroactive Hashable {}
 
 private class TVButton : UIButton {
 

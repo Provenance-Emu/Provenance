@@ -8,7 +8,6 @@
 
 import SwiftUI
 import Foundation
-import PVUIBase
 
 public struct FirstResponderViewControllerWrapper: UIViewControllerRepresentable {
     public init() {

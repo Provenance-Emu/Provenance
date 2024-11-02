@@ -600,17 +600,19 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         switch state {
         case .hidden:
             self.hud.hide(animated: true, afterDelay: 1.0)
-        case .title(let title):
+        case .title(let title, let subtitle):
             self.hud.mode = .indeterminate
             self.hud.label.text = title
             self.hud.label.numberOfLines = 2
+            self.hud.detailsLabel.text = subtitle
             self.hud.show(animated: true)
             self.hud.hide(animated: true, afterDelay: 1.0)
-        case .titleAndProgress(let title, let progress):
+        case .titleAndProgress(let title, let subtitle, let progress):
             self.hud.mode = .annularDeterminate
             self.hud.progress = progress
             self.hud.label.text = title
             self.hud.label.numberOfLines = 2
+            self.hud.detailsLabel.text = subtitle
             self.hud.show(animated: true)
             if progress == 1.0 {
                 self.hud.hide(animated: true, afterDelay: 1.0)

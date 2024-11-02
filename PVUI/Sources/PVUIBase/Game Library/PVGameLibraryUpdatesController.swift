@@ -21,12 +21,6 @@ import Combine
 import Observation
 import Perception
 
-public enum HudState {
-    case hidden
-    case title(String)
-    case titleAndProgress(title: String, progress: Float)
-}
-
 //@Observable
 public final class PVGameLibraryUpdatesController: ObservableObject {
 
@@ -367,29 +361,6 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     }
     #endif
 
-    /// Converter for `ExtractionStatus` to `HudState`
-    @MainActor
-    private static func handleExtractionStatus(_ status: ExtractionStatus) -> HudState {
-        switch status {
-        case .started(let path):
-            return .titleAndProgress(title: labelMaker(path), progress: 0)
-        case .updated(let path):
-            return .titleAndProgress(title: labelMaker(path), progress: 0.5)
-        case .completed(_):
-            return .titleAndProgress(title: "Extraction Complete!", progress: 1)
-        case .idle:
-            return .hidden
-        }
-    }
-
-    /// Assistant for `HudState` titles.
-    private static func labelMaker(_ path: URL) -> String {
-        #if os(tvOS)
-        return "Extracting Archive: \(path.lastPathComponent)"
-        #else
-        return "Extracting Archive\n\(path.lastPathComponent)"
-        #endif
-    }
 
     private func processCompletedFiles(_ files: [URL]) async {
         DLOG("Processing \(files.count) completed files")
@@ -432,6 +403,33 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 ELOG("Failed to import BIOS file: \(error)")
             }
         }
+    }
+}
+
+/// Hud state for the game library updates controller
+extension PVGameLibraryUpdatesController {
+    /// Converter for `ExtractionStatus` to `HudState`
+    @MainActor
+    private static func handleExtractionStatus(_ status: ExtractionStatus) -> HudState {
+        switch status {
+        case .started(let path):
+            return .titleAndProgress(title: labelMaker(path), progress: 0)
+        case .updated(let path):
+            return .titleAndProgress(title: labelMaker(path), progress: 0.5)
+        case .completed(_):
+            return .titleAndProgress(title: "Extraction Complete!", progress: 1)
+        case .idle:
+            return .hidden
+        }
+    }
+
+    /// Assistant for `HudState` titles.
+    private static func labelMaker(_ path: URL) -> String {
+        #if os(tvOS)
+        return "Extracting Archive: \(path.lastPathComponent)"
+        #else
+        return "Extracting Archive\n\(path.lastPathComponent)"
+        #endif
     }
 }
 

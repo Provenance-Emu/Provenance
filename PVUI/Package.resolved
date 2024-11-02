@@ -1,5 +1,5 @@
 {
-  "originHash" : "13285f1a5da75945096ed0899dd8080470118b8bd5d3ada8f6eeabc6b2f36fb9",
+  "originHash" : "c76af2cf0ed3103331d746b738bc8973bf534246a714d82da5869cb0caca17ee",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -215,6 +215,24 @@
       "state" : {
         "branch" : "main",
         "revision" : "cb30be65a3f121d756c98d442194c41eb24e9f09"
+      }
+    },
+    {
+      "identity" : "swiftuikit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/danielsaidi/SwiftUIKit.git",
+      "state" : {
+        "revision" : "7ec03cf8ea6d5a5dfc4739c8c55f370d195ca5d5",
+        "version" : "5.0.0"
+      }
+    },
+    {
+      "identity" : "swiftuix",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftUIX/SwiftUIX.git",
+      "state" : {
+        "revision" : "e984fd2e08140ad5a95d084be38fe02b774bc15d",
+        "version" : "0.2.3"
       }
     },
     {

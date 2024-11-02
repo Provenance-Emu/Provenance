@@ -8,6 +8,12 @@
 import Foundation
 import PVLogging
 
+public enum HudState {
+    case hidden
+    case title(String, subtitle: String? =  nil)
+    case titleAndProgress(title: String, subtitle: String? =  nil, progress: Float)
+}
+
 /// Coordinates HUD state updates
 public actor HUDCoordinator {
     private var hudState: HudState = .hidden

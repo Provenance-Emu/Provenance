@@ -92,30 +92,6 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     }
 
     private var cancellables = Set<AnyCancellable>()
-    private func setupHUDObserver(hud: MBProgressHUD) {
-        Task { @MainActor in
-            for try await state in updatesController.$hudState.values {
-                updateHUD(hud: hud, state: state)
-            }
-        }
-    }
-    private func updateHUD(hud: MBProgressHUD, state: HudState) {
-        switch state {
-        case .hidden:
-            hud.hide(animated: true)
-        case .title(let title):
-            hud.show(animated: true)
-            hud.mode = .indeterminate
-            hud.label.text = title
-            hud.label.numberOfLines = 2
-        case .titleAndProgress(let title, let progress):
-            hud.show(animated: true)
-            hud.mode = .annularDeterminate
-            hud.progress = progress
-            hud.label.text = title
-            hud.label.numberOfLines = 2
-        }
-    }
 
     deinit {
         selectedTabCancellable?.cancel()
@@ -153,6 +129,37 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         // load new view
         self.addChildViewController(newVC, toContainerView: self.containerView)
         self.fillParentView(child: newVC.view, parent: self.containerView)
+    }
+}
+
+// MARK: - HUD State
+/// HUD State for the view controller
+extension PVRootViewController {
+    private func setupHUDObserver(hud: MBProgressHUD) {
+        Task { @MainActor in
+            for try await state in updatesController.$hudState.values {
+                updateHUD(hud: hud, state: state)
+            }
+        }
+    }
+    private func updateHUD(hud: MBProgressHUD, state: HudState) {
+        switch state {
+        case .hidden:
+            hud.hide(animated: true)
+        case .title(let title, let subtitle):
+            hud.show(animated: true)
+            hud.mode = .indeterminate
+            hud.label.text = title
+            hud.label.numberOfLines = 2
+            hud.detailsLabel.text = subtitle
+        case .titleAndProgress(let title, let subtitle, let progress):
+            hud.show(animated: true)
+            hud.mode = .annularDeterminate
+            hud.progress = progress
+            hud.label.text = title
+            hud.label.numberOfLines = 2
+            hud.detailsLabel.text = subtitle
+        }
     }
 }
 

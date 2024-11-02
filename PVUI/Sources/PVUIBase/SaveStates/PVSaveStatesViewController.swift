@@ -216,7 +216,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { [weak self] _ in
                 Task {
                     do {
-                        try await PVSaveState.delete(saveState)
+                        try PVSaveState.delete(saveState)
                         self?.refreshSaves()
                     } catch {
                         NSLog("Error deleting save state: \(error.localizedDescription)")
@@ -287,7 +287,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
             }
             Task { [weak self] in
                 do {
-                    try await PVSaveState.delete(saveState)
+                    try PVSaveState.delete(saveState)
                     self?.refreshSaves()
                 } catch {
                     ELOG("Error deleting save state: \(error.localizedDescription)")

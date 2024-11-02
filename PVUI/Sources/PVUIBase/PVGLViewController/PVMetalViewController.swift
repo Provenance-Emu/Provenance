@@ -859,8 +859,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         // no-op
+        DLOG("drawableSizeWillChange: \(size), UNSUPPORTED")
     }
 
+    @inlinable
     func draw(in view: MTKView) {
         guard let emulatorCore = emulatorCore else {
             ELOG("EmulatorCore is nil")
@@ -909,7 +911,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     @inlinable
-    @inline (__always)
+    @inline(__always)
     func _render(_ emulatorCore: PVEmulatorCore, in view: MTKView) {
         guard let outputTexture = view.currentDrawable?.texture else {
             return

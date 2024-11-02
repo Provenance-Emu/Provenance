@@ -184,7 +184,7 @@ extension PVSaveStateInfoViewController {
                 Task { @MainActor in
                     if let saveState = self.saveState {
                         do {
-                            try await PVSaveState.delete(saveState)
+                            try PVSaveState.delete(saveState)
                         } catch {
                             self.presentError("Error deleting save state: " + error.localizedDescription, source: self.view)
                         }
