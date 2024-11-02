@@ -17,30 +17,20 @@ import PVUIBase
 struct SystemPickerView: View {
     let game: PVGame
     @Binding var isPresented: Bool
-//    @ObservedResults(PVSystem.self) private var systems: Results<PVSystem>
-//    
-//    init(game: PVGame, isPresented: Binding<Bool>) {
-//        self.game = game
-//        _isPresented = isPresented
-//        
-//        let filter =  NSPredicate(format: "identifier != %@", argumentArray: [game.systemIdentifier])
-//        _systems = ObservedResults(PVSystem.self, filter: filter, sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true))
-//    }
+
+    private var availableSystems: [PVSystem] {
+        PVEmulatorConfiguration.systems.filter { $0.identifier != game.systemIdentifier }
+    }
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(PVEmulatorConfiguration.systems) { system in
+                ForEach(availableSystems) { system in
                     Button {
                         moveGame(to: system)
                         isPresented = false
                     } label: {
-                        HStack {
-                            Text(system.name)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
-                        }
+                        SystemRowView(system: system)
                     }
                 }
             }
@@ -65,12 +55,13 @@ struct SystemPickerView: View {
 
             let realm = try Realm()
             try realm.write {
+                /// Thaw the PVGame for editing
                 let thawedGame = game.thaw()
                 thawedGame?.system = newSystem
                 DLOG("Updated game system to: \(newSystem.name)")
                 thawedGame?.systemIdentifier = newSystem.identifier
                 DLOG("Updated game system to: \(newSystem.identifier)")
-                
+
                 // Update file path to new system directory
                 let fileName = (thawedGame?.romPath as NSString?)?.lastPathComponent ?? ""
                 let partialPath: String = (newSystem.identifier as NSString).appendingPathComponent(fileName)
@@ -87,5 +78,21 @@ struct SystemPickerView: View {
         } catch {
             ELOG("Failed to move game to new system: \(error.localizedDescription)")
         }
+    }
+}
+
+struct SystemRowView: View {
+    let system: PVSystem
+
+    var body: some View {
+        HStack {
+            Text(system.name)
+                .foregroundColor(.primary)
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundColor(.gray)
+        }
+        .contentShape(Rectangle())
+        .padding(.vertical, 8)
     }
 }

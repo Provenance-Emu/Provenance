@@ -22,8 +22,6 @@ struct GameContextMenu: SwiftUI.View {
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
 
-    @State private var showingSystemPicker = false
-
     var body: some SwiftUI.View {
         Group {
             if game.system.cores.count > 1 {

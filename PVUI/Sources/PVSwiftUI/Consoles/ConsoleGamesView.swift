@@ -28,6 +28,12 @@ struct ConsoleGamesFilterModeFlags: OptionSet {
     static let recentlyPlayed = ConsoleGamesFilterModeFlags(rawValue: 1 << 3)
 }
 
+private struct SystemMoveState: Identifiable {
+    var id: String { game.id }
+    let game: PVGame
+    var isPresenting: Bool = true
+}
+
 struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     @ObservedObject var viewModel: PVRootViewModel
@@ -67,8 +73,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @Default(.showFavorites) private var showFavorites
     @Default(.showRecentGames) private var showRecentGames
 
-    @State private var showingSystemPicker = false
-    @State private var gameToMove: PVGame?
+    @State private var systemMoveState: SystemMoveState?
 
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
         self.console = console
@@ -134,10 +139,18 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         } message: {
             Text("Enter a new name for \(gameToRename?.title ?? "")")
         }
-        .sheet(isPresented: $showingSystemPicker) {
-            if let game = gameToMove {
-                SystemPickerView(game: game, isPresented: $showingSystemPicker)
-            }
+        .sheet(item: $systemMoveState) { state in
+            SystemPickerView(
+                game: state.game,
+                isPresented: Binding(
+                    get: { state.isPresenting },
+                    set: { newValue in
+                        if !newValue {
+                            systemMoveState = nil
+                        }
+                    }
+                )
+            )
         }
     }
 
@@ -456,8 +469,8 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to move game to system")
-        gameToMove = game.freeze()
-        showingSystemPicker = true
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        systemMoveState = SystemMoveState(game: frozenGame)
     }
 }
 
