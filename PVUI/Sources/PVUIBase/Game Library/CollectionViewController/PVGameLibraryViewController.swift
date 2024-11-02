@@ -573,13 +573,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 
     func setupObservers() {
         Task { @MainActor in
-            for await state in updatesController.$hudState.values {
-                handleHudState(state)
-            }
-        }
-
-        Task { @MainActor in
-            for await state in updatesController.$hudState.values {
+            for await state in await AppState.shared.hudCoordinator.$hudState.values {
                 handleHudState(state)
             }
         }

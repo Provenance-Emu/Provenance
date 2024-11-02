@@ -137,7 +137,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 extension PVRootViewController {
     private func setupHUDObserver(hud: MBProgressHUD) {
         Task { @MainActor in
-            for try await state in updatesController.$hudState.values {
+            for try await state in await AppState.shared.hudCoordinator.$hudState.values {
                 updateHUD(hud: hud, state: state)
             }
         }

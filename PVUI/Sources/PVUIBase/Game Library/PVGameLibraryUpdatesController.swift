@@ -25,9 +25,6 @@ import Perception
 public final class PVGameLibraryUpdatesController: ObservableObject {
 
     @Published
-    public var hudState: HudState = .hidden
-
-    @Published
     public var conflicts: [ConflictsController.ConflictItem] = []
 
     private let gameImporter: GameImporter
@@ -68,7 +65,6 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             Task { @MainActor [weak self] in
                 DLOG("HUD state updated for import start")
                 await self?.hudCoordinator.updateHUD(.title("Checking Import: \(URL(fileURLWithPath: path).lastPathComponent)"))
-                self?.hudState = await self?.hudCoordinator.getCurrentState() ?? .hidden
             }
         }
 
@@ -77,7 +73,6 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             Task { @MainActor [weak self] in
                 DLOG("HUD state updated for import finish")
                 await self?.hudCoordinator.updateHUD(.title("Import Successful"), autoHide: true)
-                self?.hudState = await self?.hudCoordinator.getCurrentState() ?? .hidden
             }
         }
 
@@ -89,7 +84,6 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                     await self?.updateConflicts()
                 }
                 await self?.hudCoordinator.updateHUD(.hidden)
-                self?.hudState = await self?.hudCoordinator.getCurrentState() ?? .hidden
                 DLOG("HUD state updated for import completion")
             }
         }
@@ -114,8 +108,11 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                         return
                     }
 
-                    self.hudState = Self.handleExtractionStatus(status)
-
+                    Task {
+                        let hudState = Self.handleExtractionStatus(status)
+                        await self.hudCoordinator.updateHUD(hudState)
+                    }
+                    
                     hideTask?.cancel()
 
                     switch status {
@@ -125,7 +122,10 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                             isHidingHUD = false
                         }
                     case .idle:
-                        self.hudState = .hidden
+                        Task {
+                            let hudState: HudState = .hidden
+                            await self.hudCoordinator.updateHUD(hudState)
+                        }
                     default:
                         break
                     }
@@ -141,7 +141,10 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 try await Task.sleep(for: .seconds(1))
                 if !Task.isCancelled {
                     DLOG("[\(taskID)] Hiding HUD after delay")
-                    self.hudState = .hidden
+                    Task {
+                        let hudState: HudState = .hidden
+                        await self.hudCoordinator.updateHUD(hudState)
+                    }
                     completion()
                 }
             } catch {

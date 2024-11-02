@@ -16,7 +16,8 @@ public enum HudState {
 
 /// Coordinates HUD state updates
 public actor HUDCoordinator {
-    private var hudState: HudState = .hidden
+    @Published
+    public var hudState: HudState = .hidden
     private var isHidingHUD = false
     private var hideTask: Task<Void, Never>?
 
