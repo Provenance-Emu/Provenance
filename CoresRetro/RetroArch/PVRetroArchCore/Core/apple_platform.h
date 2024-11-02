@@ -7,7 +7,8 @@
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
-#import "PVRetroArchCore.h"
+#import <PVRetroArch/PVRetroArchCore.h>
+
 #include "../gfx/video_driver.h"
 
 /* RetroArch Includes */
