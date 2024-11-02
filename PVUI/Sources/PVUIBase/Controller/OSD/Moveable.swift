@@ -119,7 +119,49 @@ class MovableButtonView: UIView, Moveable {
         DLOG("Button finished moving with velocity: \(velocity)")
         if let startFrame = startMoveFrame, startFrame != frame {
             isCustomMoved = true
+            savePosition()
         }
+    }
+
+    var positionKey: String {
+        // Create a unique key for this button based on its type and system
+        guard let controller = findViewController() as? any ControllerVC else {
+            return ""
+        }
+        let systemID = controller.system.identifier 
+        return "ButtonPosition_\(systemID)_\(String(describing: type(of: self)))"
+    }
+
+    private func findViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while let nextResponder = responder?.next {
+            if let viewController = nextResponder as? UIViewController {
+                return viewController
+            }
+            responder = nextResponder
+        }
+        return nil
+    }
+
+    func savePosition() {
+        guard !positionKey.isEmpty else { return }
+        let position = ButtonPosition(view: self, identifier: positionKey)
+        if let encoded = try? JSONEncoder().encode(position) {
+            UserDefaults.standard.set(encoded, forKey: positionKey)
+        }
+    }
+
+    func loadSavedPosition() {
+        guard !positionKey.isEmpty,
+              let data = UserDefaults.standard.data(forKey: positionKey),
+              let position = try? JSONDecoder().decode(ButtonPosition.self, from: data),
+              position.identifier == positionKey else {
+            return
+        }
+
+        frame.origin.x = position.x
+        frame.origin.y = position.y
+        isCustomMoved = true
     }
 }
 
@@ -129,5 +171,17 @@ extension MovableButtonView: UIGestureRecognizerDelegate {
         DLOG("Checking simultaneous recognition between \(gestureRecognizer) and \(otherGestureRecognizer)")
         // Only allow pan gesture to work exclusively
         return !(gestureRecognizer is UIPanGestureRecognizer || otherGestureRecognizer is UIPanGestureRecognizer)
+    }
+}
+
+struct ButtonPosition: Codable {
+    let x: CGFloat
+    let y: CGFloat
+    let identifier: String
+
+    init(view: UIView, identifier: String) {
+        self.x = view.frame.origin.x
+        self.y = view.frame.origin.y
+        self.identifier = identifier
     }
 }
