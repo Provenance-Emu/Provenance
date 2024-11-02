@@ -259,19 +259,25 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     @objc private func resetButtonPositions() {
         ILOG("Reset button pressed")
 
-        isResettingLayout = true
-
         // Clear saved positions from UserDefaults
         allButtons.forEach { button in
             if let movableButton = button as? MovableButtonView {
                 ILOG("Clearing position for button: \(type(of: movableButton))")
                 UserDefaults.standard.removeObject(forKey: movableButton.positionKey)
+                movableButton.isCustomMoved = false
             }
         }
+
+        // Temporarily exit move mode to allow layout
+        let wasInMoveMode = inMoveMode
+        inMoveMode = false
 
         // Force layout refresh
         PVControllerManager.shared.hasLayout = false
         setupTouchControls()
+
+        // Restore move mode
+        inMoveMode = wasInMoveMode
 
         // Provide haptic feedback
         #if os(iOS)
