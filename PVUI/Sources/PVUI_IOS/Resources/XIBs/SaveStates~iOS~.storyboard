@@ -27,7 +27,7 @@
         <!--Game More Info Page View Controller-->
         <scene sceneID="9pW-XQ-eWJ">
             <objects>
-                <pageViewController storyboardIdentifier="gameMoreInfoPageVC" autoresizesArchivedViewToFullSize="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="iWs-z6-SNP" customClass="GameMoreInfoPageViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <pageViewController storyboardIdentifier="gameMoreInfoPageVC" autoresizesArchivedViewToFullSize="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="iWs-z6-SNP" customClass="GameMoreInfoPageViewController" customModule="PVUIBase" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="v5U-SS-fQX">
                         <rightBarButtonItems>
                             <barButtonItem systemItem="bookmarks" id="kDw-kM-Yw5">
@@ -60,7 +60,7 @@
         <!--Game More Info View Controller-->
         <scene sceneID="ZjI-cp-Va1">
             <objects>
-                <viewController storyboardIdentifier="gameMoreInfoVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="7RB-u6-8KS" customClass="PVGameMoreInfoViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="gameMoreInfoVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="7RB-u6-8KS" customClass="PVGameMoreInfoViewController" customModule="PVUIBase" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="hhb-pt-htj">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

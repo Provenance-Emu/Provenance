@@ -30,8 +30,9 @@ struct GameMoreInfoViewController: UIViewControllerRepresentable {
         let frozenGame = game.isFrozen ? game : game.freeze()
         firstVC.game = frozenGame
 
-        let moreInfoCollectionVC = GameMoreInfoPageViewController()
-        moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
-        return moreInfoCollectionVC
+        let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
+
+        moreInfoGamePageVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
+        return moreInfoGamePageVC
     }
 }
