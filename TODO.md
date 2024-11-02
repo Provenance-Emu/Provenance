@@ -94,6 +94,7 @@ _My personal TODO notes_
     - [ ] Main background not themed
     - [ ] Game text not themed
     - [ ] New import indicator not themed
+- [ ] Make GameMoreInfoVC and it's equivlant PageViewController into native swifttUI with editing of properties
 - [X] Fix button 9 repeat on Intellivision controls
 - [X] Importer should overwrite or delete on duplicate imports
 - [X] Swift UI Settings should use the themed alerts via the delegate or something
@@ -121,14 +122,14 @@ _My personal TODO notes_
 
 ## AppStore Review
 
-- [ ] Screenshots
+- [X] Screenshots
 - [X] Remove "beta" text
 
 ## Provenance Plus
 
 ## High Priority
 
-- [ ] Privacy policy / EULA in settings!
+- [X] Privacy policy / EULA in settings!
 - [X] Add in-app purchase and screen
 - [ ] Add app rating with SiruisRating
 
