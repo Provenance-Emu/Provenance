@@ -233,7 +233,6 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 extension PVEmulatorCore : ResponderClient {
     open func sendEvent(_ event: UIEvent?) {
         #warning("This is empty in the ObjC version too, but why does this exist? @JoeMatt")
-        print("sendEvent: is empty \(String(describing: event))")
         bridge.sendEvent(event)
     }
 }
