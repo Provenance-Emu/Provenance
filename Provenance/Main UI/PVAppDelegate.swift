@@ -471,10 +471,10 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         }
 
         // Refresh the library
-        Task.detached(priority: .background) {
-            await libraryUpdatesController.updateConflicts()
-            await libraryUpdatesController.importROMDirectories()
-        }
+//        Task.detached(priority: .background) {
+//            await libraryUpdatesController.updateConflicts()
+//            await libraryUpdatesController.importROMDirectories()
+//        }
         
         ILOG("PVAppDelegate: All required components are available")
         let rootViewController = PVRootViewController.instantiate(
