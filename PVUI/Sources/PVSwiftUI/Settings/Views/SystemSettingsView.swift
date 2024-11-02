@@ -13,6 +13,7 @@ import PVPrimitives
 
 struct SystemSettingsView: View {
     @ObservedResults(PVSystem.self) private var systems
+//    private let systems: [PVSystem] = PVEmulatorConfiguration.systems
     @State private var searchText = ""
 
     

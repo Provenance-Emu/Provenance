@@ -163,10 +163,19 @@ private struct AppSection: View {
     
     var body: some View {
         Section(header: Text("App")) {
+            
+            /// Information about PVSystems
             NavigationLink(destination: SystemSettingsView()) {
                 SettingsRow(title: "Systems",
-                            subtitle: "Information on cores, their bioses, links and stats.",
+                            subtitle: "Information on system cores, their bioses, links and stats.",
                             icon: .sfSymbol("square.stack.3d.down.forward"))
+            }
+            
+            /// Links to projects
+            NavigationLink(destination: CoreProjectsView()) {
+                SettingsRow(title: "Cores",
+                            subtitle: "Emulator cores provided by these projects.",
+                            icon: .sfSymbol("square.3.layers.3d.middle.filled"))
             }
             
             PaidFeatureView {
@@ -343,12 +352,6 @@ private struct BuildSection: View {
 private struct ExtraInfoSection: View {
     var body: some View {
         Section(header: Text("3rd Party & Legal")) {
-            /// Links to projects
-            NavigationLink(destination: CoreProjectsView()) {
-                SettingsRow(title: "Cores",
-                            subtitle: "Emulator cores provided by these projects.",
-                            icon: .sfSymbol("square.3.layers.3d.middle.filled"))
-            }
             /// Open source licenses
             NavigationLink(destination: LicensesView()) {
                 SettingsRow(title: "Licenses",
