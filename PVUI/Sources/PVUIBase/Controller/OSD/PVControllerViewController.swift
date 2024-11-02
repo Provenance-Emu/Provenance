@@ -191,83 +191,48 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
 	var blurView : UIVisualEffectView?
 	var moveLabel : UILabel?
-	var inMoveMode : Bool = false {
+	var inMoveMode: Bool = false {
 		didSet {
-			self.view.subviews.compactMap {
-                if let _ = $0 as? UIView & Moveable {
-                    return $0 as? UIView & Moveable ?? $0.subviews.compactMap {
-                        $0 as? UIView & Moveable
-                    }.first
-                } else {
-                    $0.isHidden = inMoveMode
-                    return nil
-                }
-			}.forEach {
-				let view = $0
-                _ = inMoveMode ? view.makeMoveable() : view.makeUnmovable()
+            if let emuCore = emulatorCore as? PVEmulatorCore {
+                emuCore.setPauseEmulation(inMoveMode)
+            }
+            
+			self.view.subviews.compactMap { subview -> (UIView & Moveable)? in
+				if let moveable = subview as? UIView & Moveable {
+					return moveable
+				} else if let firstMoveable = subview.subviews.compactMap({ $0 as? UIView & Moveable }).first {
+					subview.isHidden = inMoveMode
+					return firstMoveable
+				} else {
+					subview.isHidden = inMoveMode
+					return nil
+				}
+			}.forEach { moveable in
+				moveable.inMoveMode = inMoveMode
 			}
 
 			if inMoveMode {
-                // Blur
-				let blurEffect = UIBlurEffect(style: .light)
-				let blurView = UIVisualEffectView(effect: blurEffect)
-                blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-				blurView.translatesAutoresizingMaskIntoConstraints = true
-				blurView.frame = view.bounds
-                // Vibrancy filter
-				let vibrancyEffect = UIVibrancyEffect(blurEffect: blurEffect)
-				let vibrancyView = UIVisualEffectView(effect: vibrancyEffect)
-				vibrancyView.translatesAutoresizingMaskIntoConstraints = false
-                // Text label
-				var labelFrame = view.bounds
-				labelFrame.size.height = 88.0
-				labelFrame.origin.y = 158.0
-				let label = UILabel(frame: labelFrame)
-				label.adjustsFontSizeToFitWidth = true
-				label.translatesAutoresizingMaskIntoConstraints = false
-				label.contentMode = .center
-				label.numberOfLines = 0
-                #if !os(tvOS)
-                let size = UIFont.labelFontSize * 2
-                label.textColor = UIColor.darkText
-                #else
-                let size: CGFloat = 28
-                #endif
-				label.font = UIFont.italicSystemFont(ofSize: size)
-				label.text = "Drag buttons to Move.\nTap 3 fingers 3 times to close."
-                label.textAlignment = .center
-				moveLabel = label
-                // Build the view heirachry
-				vibrancyView.contentView.addSubview(label)
-				blurView.contentView.addSubview(vibrancyView)
-                // Layout constraints
-                NSLayoutConstraint.activate([
-                    vibrancyView.heightAnchor.constraint(equalTo: blurView.contentView.heightAnchor),
-                    vibrancyView.widthAnchor.constraint(equalTo: blurView.contentView.widthAnchor),
-                    vibrancyView.centerXAnchor.constraint(equalTo: blurView.contentView.centerXAnchor),
-                    vibrancyView.centerYAnchor.constraint(equalTo: blurView.contentView.centerYAnchor)
-                ])
-                NSLayoutConstraint.activate([
-                    label.centerXAnchor.constraint(equalTo: vibrancyView.contentView.centerXAnchor),
-                    label.centerYAnchor.constraint(equalTo: vibrancyView.contentView.centerYAnchor),
-                    label.heightAnchor.constraint(equalTo: vibrancyView.contentView.heightAnchor),
-                    label.widthAnchor.constraint(equalTo: vibrancyView.contentView.widthAnchor),
-                ])
-                NSLayoutConstraint.activate([
-                    vibrancyView.centerXAnchor.constraint(equalTo: label.centerXAnchor),
-                    vibrancyView.centerYAnchor.constraint(equalTo: label.centerYAnchor)
-                ])
-				self.blurView = blurView
-                if let emuCore = emulatorCore as? PVEmulatorCore, emuCore.skipLayout {
-                    // Skip Layout
-                } else {
-                    view.insertSubview(blurView, at: 0)
-                }
+				if blurView == nil {
+					blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+					blurView?.frame = view.bounds
+					blurView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+					view.insertSubview(blurView!, at: 0)
+				}
+
+				if moveLabel == nil {
+					moveLabel = UILabel(frame: CGRect(x: 0, y: 88, width: view.bounds.width, height: 88))
+					moveLabel?.text = "Move Mode - Drag buttons to reposition\nTap with 3 fingers 3 times to exit."
+                    moveLabel?.numberOfLines = 2
+					moveLabel?.textAlignment = .center
+					moveLabel?.textColor = .white
+					moveLabel?.autoresizingMask = [.flexibleWidth]
+					view.addSubview(moveLabel!)
+				}
 			} else {
-				self.blurView?.removeFromSuperview()
-			}
-			if let emuCore = emulatorCore as? PVEmulatorCore {
-				emuCore.setPauseEmulation(inMoveMode)
+				blurView?.removeFromSuperview()
+				blurView = nil
+				moveLabel?.removeFromSuperview()
+				moveLabel = nil
 			}
 		}
 	}
@@ -403,7 +368,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 			view.frame = s.bounds
 		}
 	}
-    
+
 	open override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
         if inMoveMode { return }
@@ -418,7 +383,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 		updateHideTouchControls()
 #endif
 	}
-    
+
     func prelayoutSettings() {
     }
 
@@ -537,7 +502,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 if !joyPad.isCustomMoved {
                     joyPad.frame = joyPadFrame
                 }
-                
+
 				if let tintColor = control.PVControlTint {
 					joyPad.tintColor = UIColor(hex: tintColor)
 				}
@@ -910,7 +875,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
  				selectFrame.origin.x = dPad.frame.maxX + (xPadding * 2)
  			}
  		}
-        
+
 		if let selectButton = self.selectButton {
 			if !selectButton.isCustomMoved {
 				selectButton.frame = selectFrame
@@ -1008,7 +973,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 		if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
 			layoutIsLandscape = true
 		}
-        
+
 		if !layoutIsLandscape {
 			if let selectButton = selectButton {
 				leftAnalogFrame = selectButton.frame.offsetBy(dx: 0, dy: (controlSize.height + spacing / 2))
