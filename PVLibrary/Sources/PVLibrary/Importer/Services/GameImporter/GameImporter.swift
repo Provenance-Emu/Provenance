@@ -268,16 +268,19 @@ public final class GameImporter: ObservableObject {
                 switch changes {
                 case .initial:
                     Task.detached {
+                        ILOG("RealmCollection changed state to .initial")
                         self.systemToPathMap = await updateSystemToPathMap()
                         self.romExtensionToSystemsMap = updateromExtensionToSystemsMap()
                         self.initialized.leave()
                     }
                 case .update:
                     Task.detached {
+                        ILOG("RealmCollection changed state to .update")
                         self.systemToPathMap = await updateSystemToPathMap()
                         self.romExtensionToSystemsMap = updateromExtensionToSystemsMap()
                     }
                 case let .error(error):
+                    ELOG("RealmCollection changed state to .error")
                     fatalError("\(error)")
                 }
             }

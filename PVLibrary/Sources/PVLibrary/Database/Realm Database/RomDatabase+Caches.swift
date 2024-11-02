@@ -65,6 +65,8 @@ public extension RomDatabase {
     static func reloadSystemsCache(force: Bool = false) {
         let systems = PVSystem.all.toArray()
 
+        ILOG("Current systems count: \(systems.count)")
+        
         if systems.count == _systemCache?.count && !systems.isEmpty && !force {
             ILOG("Skipping reload system cache, not required for forced")
             return
