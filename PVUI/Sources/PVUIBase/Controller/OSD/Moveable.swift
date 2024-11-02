@@ -6,69 +6,61 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-#if canImport(UIKit)
 import UIKit
-#endif
+import PVLogging
 
 class MovableButtonView : UIView, Moveable {
     public private(set) var isCustomMoved : Bool = false
-
-    //    func canMoveToX(x:CGFloat) -> Bool {
-    //        // Don't move buttons in groups
-    //        if superview is PVButtonGroupOverlayView {
-    //            return false
-    //        }
-    ////        if let superviewFrame = self.superview?.frame {
-    ////            let diameter = self.frame.size.width / 2.0
-    ////            if x + diameter > superviewFrame.size.width {
-    ////                return false
-    ////            }
-    ////            if x - diameter < 0.0 {
-    ////                return false
-    ////            }
-    ////        }
-    //        return true
-    //    }
-    //
-    //    func canMoveToY(y:CGFloat) -> Bool {
-    //        // Don't move buttons in groups
-    //        if superview is PVButtonGroupOverlayView {
-    //            return false
-    //        }
-    ////        if let superviewFrame = self.superview?.frame {
-    ////            let diameter = self.frame.size.height / 2.0
-    ////            if y + diameter > superviewFrame.size.height {
-    ////                return false
-    ////            }
-    ////            if y - diameter < 0.0 {
-    ////                return false
-    ////            }
-    ////        }
-    //        return true
-    //    }
+    private var moveStartTime: TimeInterval?
 
     var startMoveFrame : CGRect?
     func didStartMoving() {
-		startMoveFrame = frame
+        DLOG("Button started moving")
+        moveStartTime = CACurrentMediaTime()
+        startMoveFrame = frame
 
-		if let superMove = superview as? Moveable ?? superview?.superview as? Moveable {
+        DLOG("Initial frame: \(String(describing: startMoveFrame))")
+
+        if let superMove = superview as? Moveable ?? superview?.superview as? Moveable {
+            DLOG("Propagating move start to super view")
             superMove.didStartMoving()
         }
     }
 
     func didFinishMoving(velocity:CGPoint) {
+        if let startTime = moveStartTime {
+            let duration = CACurrentMediaTime() - startTime
+            DLOG("Button finished moving after \(duration)s with velocity: \(velocity)")
+        }
+
+        if let startMoveFrame = startMoveFrame {
+            let distance = hypot(frame.origin.x - startMoveFrame.origin.x,
+                               frame.origin.y - startMoveFrame.origin.y)
+            DLOG("Total movement distance: \(distance)pts")
+        }
+
         if let superMove = superview as? Moveable {
             superMove.didFinishMoving(velocity: velocity)
         }
-        // TODO: When done moving, figure out which quadrant the button is in
-        // and generate new contraints to the top left, bottom left, etc so
-        // on rotate they will be around the same spot from the closest edges
+
         if let startMoveFrame = startMoveFrame, startMoveFrame != frame {
             isCustomMoved = true
+            DLOG("Button position was customized")
         }
+
+        moveStartTime = nil
     }
 
-	var inMoveMode: Bool = false
+	var inMoveMode: Bool = false {
+        didSet {
+            DLOG("JSButton move mode changed: \(oldValue) -> \(inMoveMode)")
+            if inMoveMode {
+                DLOG("Disabling normal button behavior for move mode")
+            } else {
+                DLOG("Restoring normal button behavior")
+            }
+        }
+    }
 }
 
 import ObjectiveC
@@ -107,6 +99,7 @@ class Associator {
 
 private class MultiDelegate : NSObject, UIGestureRecognizerDelegate {
     @objc func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        DLOG("Checking simultaneous gesture recognition between \(gestureRecognizer) and \(otherGestureRecognizer)")
         return true
     }
 }
@@ -196,14 +189,18 @@ public extension Moveable {
 //    }
 
     var isMovable : Bool {
-		if let superMovable = superview as? Moveable {
-			return !superMovable.isMovable
-		}
-		if let superMovable = superview?.superview as? Moveable {
-			return !superMovable.isMovable
-		}
-		return true
-	}
+        DLOG("Checking if view is movable")
+        if let superMovable = superview as? Moveable {
+            DLOG("Found movable superview")
+            return true
+        }
+        if let superMovable = superview?.superview as? Moveable {
+            DLOG("Found movable super-superview")
+            return true
+        }
+        DLOG("No movable parent views found")
+        return true
+    }
 
     func makeUnmovable() {
 		inMoveMode = false
@@ -218,7 +215,10 @@ public extension Moveable {
     func makeMoveable() {
 		inMoveMode = true
 
+		DLOG("Making view moveable. isMovable: \(isMovable)")
+
 		if !isMovable {
+			DLOG("View is not movable, returning")
 			return
 		}
 
@@ -226,12 +226,22 @@ public extension Moveable {
         var currentPoint:CGPoint = .zero
 
         if let existingGestures = gestureRecognizers?.filter({ return $0 is UIPanGestureRecognizer }), !existingGestures.isEmpty {
+            DLOG("Enabling existing pan gestures")
             existingGestures.forEach { $0.isEnabled = true }
         } else {
-            let gestureRecognizer = UIPanGestureRecognizer { [unowned self] (recognizer) -> Void in
+            DLOG("Creating new pan gesture recognizer")
+            let gestureRecognizer = UIPanGestureRecognizer { [weak self] (recognizer) -> Void in
+                guard let self = self else {
+                    DLOG("Self deallocated during gesture - aborting")
+                    return
+                }
+
                 let pan = recognizer as! UIPanGestureRecognizer
                 let velocity = pan.velocity(in: self.superview)
                 let translation = pan.translation(in: self.superview)
+
+                DLOG("Pan gesture update - velocity: \(velocity), translation: \(translation)")
+
                 switch recognizer?.state {
                 case .began:
                     startPoint = self.center
@@ -251,31 +261,44 @@ public extension Moveable {
     }
 
     func animateToMovedTransform(transform:CGAffineTransform) {
-        UIView.animate(withDuration: 0.01) { () -> Void in
+        DLOG("Starting move animation to transform: \(transform)")
+        UIView.animate(withDuration: 0.01, animations: { [weak self] in
+            guard let self = self else { return }
             self.transform = transform
-        }
+        }, completion: { finished in
+            DLOG("Move animation completed: \(finished)")
+        })
     }
 
     func translateCenter(translation:CGPoint, velocity:CGPoint, startPoint:CGPoint, currentPoint:CGPoint) -> CGPoint {
+        DLOG("Translating from \(currentPoint) with translation \(translation)")
         var point = startPoint
 
         if (self.canMoveToX(x: point.x + translation.x)) {
             point.x += translation.x
+            DLOG("X translation allowed to \(point.x)")
         } else {
             point.x = translation.x > 0.0 ? maximumPoint().x : minimumPoint().x
+            DLOG("X translation limited to \(point.x)")
         }
 
         if (self.canMoveToY(y: point.y + translation.y)) {
             point.y += translation.y
+            DLOG("Y translation allowed to \(point.y)")
         } else {
             point.y = translation.y > 0.0 ? maximumPoint().y : minimumPoint().y
+            DLOG("Y translation limited to \(point.y)")
         }
 
+        DLOG("Final translation point: \(point)")
         return point
     }
 
     func transformFromCenter(center:CGPoint, currentPoint:CGPoint) -> CGAffineTransform {
-        return self.transform.translatedBy(x: center.x - currentPoint.x, y: center.y - currentPoint.y)
+        let transform = self.transform.translatedBy(x: center.x - currentPoint.x, y: center.y - currentPoint.y)
+        DLOG("Creating transform from center: \(center) to current: \(currentPoint)")
+        DLOG("Resulting transform: \(transform)")
+        return transform
     }
 
     func didStartMoving() {
@@ -287,30 +310,39 @@ public extension Moveable {
     }
 
     func canMoveToX(x:CGFloat) -> Bool {
-//        if let superview = superview {
-//            let superviewFrame = superview.bounds
-//
-//            let diameter = self.bounds.size.width / 2.0
-//            if x + diameter > superviewFrame.size.width {
-//                return false
-//            }
-//            if x - diameter < 0.0 {
-//                return false
-//            }
-//        }
+        DLOG("Checking X movement to \(x)")
+        if let superview = superview {
+            let superviewFrame = superview.bounds
+            let diameter = self.bounds.size.width / 2.0
+            DLOG("Superview width: \(superviewFrame.width), button diameter: \(diameter)")
+            if x + diameter > superviewFrame.size.width {
+                DLOG("X movement rejected - would exceed right boundary")
+                return false
+            }
+            if x - diameter < 0.0 {
+                DLOG("X movement rejected - would exceed left boundary")
+                return false
+            }
+        }
+        DLOG("X movement allowed")
         return true
     }
 
     func canMoveToY(y:CGFloat) -> Bool {
-//        if let superviewFrame = self.superview?.frame {
-//            let diameter = self.frame.size.height / 2.0
-//            if y + diameter > superviewFrame.size.height {
-//                return false
-//            }
-//            if y - diameter < 0.0 {
-//                return false
-//            }
-//        }
+        DLOG("Checking Y movement to \(y)")
+        if let superviewFrame = self.superview?.frame {
+            let diameter = self.frame.size.height / 2.0
+            DLOG("Superview height: \(superviewFrame.height), button diameter: \(diameter)")
+            if y + diameter > superviewFrame.size.height {
+                DLOG("Y movement rejected - would exceed bottom boundary")
+                return false
+            }
+            if y - diameter < 0.0 {
+                DLOG("Y movement rejected - would exceed top boundary")
+                return false
+            }
+        }
+        DLOG("Y movement allowed")
         return true
     }
 

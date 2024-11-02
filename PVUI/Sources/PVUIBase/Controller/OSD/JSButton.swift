@@ -157,13 +157,18 @@ final class JSButton: MovableButtonView {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		if !isUserInteractionEnabled {  return }
+        if !isUserInteractionEnabled {
+            DLOG("Touch ignored - button not enabled")
+            return
+        }
 
         if inMoveMode {
+            DLOG("Touch in move mode - delegating to super")
             super.touchesBegan(touches, with: event)
             return
         }
 
+        DLOG("Normal button touch began")
         delegate?.buttonPressed(self)
         pressed = true
     }
