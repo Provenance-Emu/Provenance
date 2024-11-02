@@ -363,7 +363,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let pixelFormat = getMTLPixelFormat(from: emulatorCore.pixelFormat,
                                                type: emulatorCore.pixelType)
 
-        ILOG("Updating input texture with screenRect: \(screenRect), pixelFormat: \(pixelFormat)")
+//        VLOG("Updating input texture with screenRect: \(screenRect), pixelFormat: \(pixelFormat)")
 
         #if targetEnvironment(simulator)
         var mtlPixelFormat: MTLPixelFormat = .astc_6x5_srgb
@@ -564,7 +564,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     func getMTLPixelFormatNeo(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
-        VLOG("Getting MTLPixelFormat for pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString)")
+//        VLOG("Getting MTLPixelFormat for pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString)")
         switch (pixelFormat, pixelType) {
         case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_BYTE)),
              (GLenum(GL_BGRA), GLenum(0x8367)): // GL_UNSIGNED_INT_8_8_8_8_REV
