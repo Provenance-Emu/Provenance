@@ -33,7 +33,11 @@ extension Moveable where Self: UIView {
 }
 
 class MovableButtonView: UIView, Moveable {
-    public  var isCustomMoved: Bool = false
+    public var isCustomMoved: Bool = false {
+        didSet {
+            ILOG("isCustomMoved changed to: \(isCustomMoved)")
+        }
+    }
     private var moveStartTime: TimeInterval?
     private var startMoveFrame: CGRect?
     private var panGestureRecognizer: UIPanGestureRecognizer?

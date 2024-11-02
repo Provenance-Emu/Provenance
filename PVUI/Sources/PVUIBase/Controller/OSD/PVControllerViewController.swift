@@ -221,7 +221,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 }
 
                 if moveLabel == nil {
-                    moveLabel = UILabel(frame: CGRect(x: 0, y: 44, width: view.bounds.width, height: 44))
+                    moveLabel = UILabel(frame: CGRect(x: 0, y: 88, width: view.bounds.width, height: 44))
                     moveLabel?.text = "Move Mode - Drag buttons to reposition\nTap with 3 fingers 3 times to exit."
                     moveLabel?.numberOfLines = 2
                     moveLabel?.textAlignment = .center
@@ -255,17 +255,20 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     @objc private func resetButtonPositions() {
         ILOG("Reset button pressed")
 
-        // Clear saved positions from UserDefaults
+        // Clear saved positions from UserDefaults and reset flags
         allButtons.forEach { button in
             if let movableButton = button as? MovableButtonView {
                 ILOG("Clearing position for button: \(type(of: movableButton))")
                 UserDefaults.standard.removeObject(forKey: movableButton.positionKey)
+                movableButton.isCustomMoved = false
             }
         }
 
-        // Force layout refresh
+        // Force complete layout refresh
         PVControllerManager.shared.hasLayout = false
-        setupTouchControls()
+        inMoveMode = false  // Exit move mode temporarily
+        setupTouchControls() // Perform initial layout
+        inMoveMode = true   // Re-enter move mode
 
         // Provide haptic feedback
         #if os(iOS)
