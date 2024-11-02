@@ -721,6 +721,40 @@ font_renderer_t metal_raster_font = {
 - (BOOL)isFlipped { return YES; }
 @end
 
+@implementation MetalView (MoltenVK)
+
+-(CGSize) naturalDrawableSizeMVK {
+    CGSize drawSize = self.bounds.size;
+    CGFloat scaleFactor = self.layer.contentsScale;
+    drawSize.width = trunc(drawSize.width * scaleFactor);
+    drawSize.height = trunc(drawSize.height * scaleFactor);
+    return drawSize;
+}
+
+// Only update drawableSize property value if it needs to be,
+// in case updating to same value causes internal reconfigurations.
+-(CGSize) updatedDrawableSizeMVK {
+    CGSize drawSize = self.naturalDrawableSizeMVK;
+    if ( !CGSizeEqualToSize(drawSize, self.drawableSize) ) {
+        self.drawableSize = drawSize;
+    }
+    return drawSize;
+}
+
+-(BOOL) displaySyncEnabledMVK {
+#if MVK_MACOS
+    if ( [self respondsToSelector: @selector(displaySyncEnabled)] ) { return self.displaySyncEnabled; }
+#endif
+    return YES;
+}
+
+-(void) setDisplaySyncEnabledMVK: (BOOL) enabled {
+#if MVK_MACOS
+    if ( [self respondsToSelector: @selector(setDisplaySyncEnabled:)] ) { self.displaySyncEnabled = enabled; }
+#endif
+}
+@end
+
 #pragma mark - private categories
 
 @interface FrameView()
