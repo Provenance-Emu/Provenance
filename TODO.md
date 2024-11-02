@@ -37,6 +37,7 @@ _My personal TODO notes_
 - [ ] iCloud sync removed
 - [ ] look at the displaylink thing in retroarch
 - [ ] Flycast crashes with error `NSInvalidArgumentException', reason: '-[MetalView naturalDrawableSizeMVK]: unrecognized selector sent`
+    - [ ] Try downgrading MoltenVK.xcframework to fix dolphin, flycast others
 - [ ] (Lite) Intellivision (PVBliss) audio crashes on button press
 - [ ] (Lite) Intellivision video is glitched
 - [ ] (Lite) Odyssey2 needs a way to enter game number 1,2 (3,4)?
