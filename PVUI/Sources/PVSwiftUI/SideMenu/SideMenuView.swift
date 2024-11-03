@@ -109,6 +109,10 @@ SideMenuView: SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
+                    MenuItemView(imageName: "prov_settings_gear", rowTitle: "Imports") {
+                        delegate.didTapImports()
+                    }
+                    Divider()
                     MenuItemView(imageName: "prov_settings_gear", rowTitle: "Settings") {
                         delegate.didTapSettings()
                     }
