@@ -23,15 +23,18 @@ let GCC_PREPROCESSOR_DEFINITIONS: [CSetting] = [
     .define("WANT_GBA_EMU"),
     .define("WANT_LYNX_EMU"),
     .define("WANT_NES_EMU"),
+    
 //    .define("WANT_NES_NEW_EMU"), // experimental, alternate new(ish) NES emulation
     .define("WANT_NGP_EMU"),
     .define("WANT_PCE_EMU"),
     .define("WANT_PCE_FAST_EMU"),
     .define("WANT_PCFX_EMU"),
     .define("WANT_PSX_EMU"),
+    .define("WANT_SASPLAY_EMU"),
     .define("WANT_SNES_EMU"),
     .define("WANT_SNES_FAUST_EMU"),
     .define("WANT_SS_EMU"),
+    .define("WANT_SSFPLAY_EMU"),
     .define("WANT_VB_EMU"),
     .define("WANT_WSWAN_EMU"),
     .define("WANT_STEREO_SOUND"),
