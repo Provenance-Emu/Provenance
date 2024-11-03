@@ -757,7 +757,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             if dPad != nil, !(dPad?.isHidden)! {
                 rightShoulderFrame.origin.y = (dPad?.frame.minY)! < (buttonGroup?.frame.minY)! ? (dPad?.frame.minY)! : (buttonGroup?.frame.minY)!
             }
-            if Defaults[.allRightShoulders], (system.shortName == "GBA" || system.shortName == "VB") {
+            if Defaults[.allRightShoulders], (system.shortName == "GBA" || system.shortName == "VB") || system.shortName == "SNES" {
                 rightShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
             }
         } else {
