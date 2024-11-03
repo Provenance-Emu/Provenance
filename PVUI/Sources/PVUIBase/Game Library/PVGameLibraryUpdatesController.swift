@@ -27,7 +27,8 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     @Published
     public var conflicts: [ConflictsController.ConflictItem] = []
 
-    private let gameImporter: GameImporter
+    public let gameImporter: GameImporter
+    
     private let directoryWatcher: DirectoryWatcher
     private let conflictsWatcher: ConflictsWatcher
     private let biosWatcher: BIOSWatcher
