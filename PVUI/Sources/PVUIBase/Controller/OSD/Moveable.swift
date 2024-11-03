@@ -12,6 +12,7 @@ import PVLogging
 protocol Moveable: AnyObject {
     var isCustomMoved: Bool { get }
     var inMoveMode: Bool { get set }
+    var currentScale: CGFloat { get }
     func didStartMoving()
     func didFinishMoving(velocity: CGPoint)
     func canMoveToX(x: CGFloat) -> Bool
@@ -41,6 +42,14 @@ class MovableButtonView: UIView, Moveable {
     private var moveStartTime: TimeInterval?
     private var startMoveFrame: CGRect?
     private var panGestureRecognizer: UIPanGestureRecognizer?
+    private var pinchGestureRecognizer: UIPinchGestureRecognizer?
+    private var initialBounds: CGRect?
+
+    public private(set) var currentScale: CGFloat = 1.0 {
+        didSet {
+            DLOG("Scale changed from \(oldValue) to \(currentScale)")
+        }
+    }
 
     override var isUserInteractionEnabled: Bool {
         didSet {
@@ -54,8 +63,10 @@ class MovableButtonView: UIView, Moveable {
             DLOG("Move mode changed: \(oldValue) -> \(inMoveMode)")
             if inMoveMode {
                 setupPanGesture()
+                setupPinchGesture()
             } else {
                 removePanGesture()
+                removePinchGesture()
             }
         }
     }
@@ -115,6 +126,62 @@ class MovableButtonView: UIView, Moveable {
         gesture.setTranslation(.zero, in: superview)
     }
 
+    private func setupPinchGesture() {
+        DLOG("Setting up pinch gesture")
+        removePinchGesture()
+
+        let gesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
+        gesture.delegate = self
+        pinchGestureRecognizer = gesture
+        addGestureRecognizer(gesture)
+    }
+
+    private func removePinchGesture() {
+        DLOG("Removing pinch gesture")
+        if let gesture = pinchGestureRecognizer {
+            removeGestureRecognizer(gesture)
+            pinchGestureRecognizer = nil
+        }
+    }
+
+    @objc private func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        switch gesture.state {
+        case .began:
+            initialBounds = bounds
+
+        case .changed:
+            guard let initialBounds = initialBounds else { return }
+
+            /// Limit scale between 1.0 and 2.0
+            let newScale = min(max(gesture.scale, 1.0), 2.0)
+            currentScale = newScale
+
+            /// Calculate new size while maintaining center point
+            let center = center
+            let newWidth = initialBounds.width * newScale
+            let newHeight = initialBounds.height * newScale
+
+            /// Update frame while keeping center constant
+            bounds = CGRect(x: 0, y: 0, width: newWidth, height: newHeight)
+            self.center = center
+
+        case .ended, .cancelled:
+            saveScale()
+            initialBounds = nil
+
+        default:
+            break
+        }
+    }
+
+    private func saveScale() {
+        guard !positionKey.isEmpty else { return }
+        let position = ButtonPosition(view: self, scale: currentScale, identifier: positionKey)
+        if let encoded = try? JSONEncoder().encode(position) {
+            UserDefaults.standard.set(encoded, forKey: positionKey)
+        }
+    }
+
     func didStartMoving() {
         DLOG("Button started moving")
     }
@@ -152,7 +219,7 @@ class MovableButtonView: UIView, Moveable {
 
     func savePosition() {
         guard !positionKey.isEmpty else { return }
-        let position = ButtonPosition(view: self, identifier: positionKey)
+        let position = ButtonPosition(view: self, scale: currentScale, identifier: positionKey)
         if let encoded = try? JSONEncoder().encode(position) {
             UserDefaults.standard.set(encoded, forKey: positionKey)
         }
@@ -168,6 +235,15 @@ class MovableButtonView: UIView, Moveable {
 
         frame.origin.x = position.x
         frame.origin.y = position.y
+
+        /// Apply saved scale
+        if position.scale != 1.0 {
+            currentScale = position.scale
+            let newWidth = bounds.width * position.scale
+            let newHeight = bounds.height * position.scale
+            bounds = CGRect(x: 0, y: 0, width: newWidth, height: newHeight)
+        }
+
         isCustomMoved = true
     }
 }
@@ -184,11 +260,13 @@ extension MovableButtonView: UIGestureRecognizerDelegate {
 struct ButtonPosition: Codable {
     let x: CGFloat
     let y: CGFloat
+    let scale: CGFloat
     let identifier: String
 
-    init(view: UIView, identifier: String) {
+    init(view: UIView, scale: CGFloat, identifier: String) {
         self.x = view.frame.origin.x
         self.y = view.frame.origin.y
+        self.scale = scale
         self.identifier = identifier
     }
 }
