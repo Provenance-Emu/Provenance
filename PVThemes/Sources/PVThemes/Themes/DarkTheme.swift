@@ -33,7 +33,7 @@ struct DarkThemePalette: UXThemePalette {
 #if !os(tvOS)
     public var statusBarColor: UIColor { .grey.g1C }
 #endif
-    public var defaultTintColor: UIColor? { Colors.blueishGrey }
+    public var defaultTintColor: UIColor? { .Provenance.blue }
     
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance = .dark
