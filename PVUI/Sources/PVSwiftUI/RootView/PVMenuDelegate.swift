@@ -21,6 +21,7 @@ import PVRealm
 import PVPrimitives
 import PVLogging
 import UniformTypeIdentifiers
+
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -35,6 +36,7 @@ import SafariServices
 // MARK: - Menu Delegate
 
 public protocol PVMenuDelegate: AnyObject {
+    func didTapImports()
     func didTapSettings()
     func didTapHome()
     func didTapAddGames()
@@ -44,6 +46,17 @@ public protocol PVMenuDelegate: AnyObject {
 
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate {
+    
+    public func didTapImports() {
+        let settingsView = ImportStatusView(updatesController:updatesController, viewModel: ImportViewModel(), delegate: self)
+        
+        let hostingController = UIHostingController(rootView: settingsView)
+        let navigationController = UINavigationController(rootViewController: hostingController)
+
+        self.closeMenu()
+        self.present(navigationController, animated: true)
+    }
+    
     public func didTapSettings() {
         let settingsView = PVSettingsView(
             conflictsController: updatesController,
@@ -72,8 +85,13 @@ extension PVRootViewController: PVMenuDelegate {
 
     public func didTapAddGames() {
         self.closeMenu()
-        #if os(iOS) || os(tvOS)
+        
 
+        self.showImportOptionsAlert()
+    }
+    
+    public func showImportOptionsAlert() {
+#if os(iOS) || os(tvOS)
         /// from PVGameLibraryViewController#getMoreROMs
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
 #if !os(tvOS)
@@ -212,6 +230,21 @@ extension PVRootViewController: UIDocumentPickerDelegate {
 
     public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
         ILOG("Document picker was cancelled")
+    }
+}
+
+extension PVRootViewController: ImportStatusDelegate {
+    public func dismissAction() {
+        self.dismiss(animated: true)
+    }
+    
+    public func addImportsAction() {
+//        self.showImportOptionsAlert()
+        
+        let importItem = ImportItem(url: URL(fileURLWithPath: "game.rom"),
+                                    fileType: .game,
+                                    system: "NES")
+        gameImporter.addImport(importItem)
     }
 }
 #endif

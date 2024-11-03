@@ -23,6 +23,7 @@ import PVLogging
 import PVPrimitives
 import PVRealm
 import Perception
+import SwiftUI
 
 #if canImport(UIKit)
 import UIKit
@@ -101,6 +102,67 @@ public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, 
 /// Type alias for a closure that handles the finish of getting artwork
 public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
+
+// Enum to define the possible statuses of each import
+public enum ImportStatus: String {
+    case queued
+    case processing
+    case success
+    case failure
+    case conflict  // Indicates additional action needed by user after successful import
+    
+    public var description: String {
+        switch self {
+            case .queued: return "Queued"
+            case .processing: return "Processing"
+            case .success: return "Completed"
+            case .failure: return "Failed"
+            case .conflict: return "Conflict"
+        }
+    }
+        
+    public var color: Color {
+        switch self {
+            case .queued: return .gray
+            case .processing: return .blue
+            case .success: return .green
+            case .failure: return .red
+            case .conflict: return .yellow
+        }
+    }
+}
+
+// Enum to define file types for each import
+public enum FileType {
+    case bios, artwork, game, cdRom, unknown
+}
+
+// Enum to track processing state
+public enum ProcessingState {
+    case idle
+    case processing
+}
+
+// ImportItem model to hold each file's metadata and progress
+@Observable
+public class ImportItem: Identifiable, ObservableObject {
+    public let id = UUID()
+    public let url: URL
+    public let fileType: FileType
+    public let system: String  // Can be set to the specific system type
+    
+    // Observable status for individual imports
+    public var status: ImportStatus = .queued
+    
+    public init(url: URL, fileType: FileType, system: String) {
+        self.url = url
+        self.fileType = fileType
+        self.system = system
+    }
+}
+
+
+
 #if !os(tvOS)
 @Observable
 #else
@@ -150,6 +212,79 @@ public final class GameImporter: ObservableObject {
     public private(set) var systemToPathMap = [String: URL]()
     /// Map of ROM extensions to their corresponding system identifiers
     public private(set) var romExtensionToSystemsMap = [String: [String]]()
+    
+    // MARK: - Queue
+    
+    public var importStatus: String = ""
+    
+    public var importQueue: [ImportItem] = []
+    
+    public var processingState: ProcessingState = .idle  // Observable state for processing status
+
+    // Adds an ImportItem to the queue without starting processing
+    public func addImport(_ item: ImportItem) {
+        importQueue.append(item)
+        
+        startProcessing()
+    }
+
+    // Public method to manually start processing if needed
+    public func startProcessing() {
+        // Only start processing if it's not already active
+        guard processingState == .idle else { return }
+        Task {
+            await processQueue()
+        }
+    }
+
+    // Processes each ImportItem in the queue sequentially
+    private func processQueue() async {
+        DispatchQueue.main.async {
+            self.processingState = .processing
+        }
+        
+        for item in importQueue where item.status == .queued {
+            await processItem(item)
+        }
+        
+        DispatchQueue.main.async {
+            self.processingState = .idle  // Reset processing status when queue is fully processed
+        }
+    }
+
+    // Process a single ImportItem and update its status
+    private func processItem(_ item: ImportItem) async {
+        item.status = .processing
+        updateStatus("Importing \(item.url.lastPathComponent) for \(item.system)")
+
+        do {
+            // Simulate file processing
+            try await performImport(for: item)
+            item.status = .success
+            updateStatus("Completed \(item.url.lastPathComponent) for \(item.system)")
+        } catch {
+            if error.localizedDescription.contains("Conflict") {
+                item.status = .conflict
+                updateStatus("Conflict for \(item.url.lastPathComponent). User action needed.")
+            } else {
+                item.status = .failure
+                updateStatus("Failed \(item.url.lastPathComponent) with error: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func performImport(for item: ImportItem) async throws {
+        try await Task.sleep(nanoseconds: 5_000_000_000)
+    }
+
+    // General status update for GameImporter
+    private func updateStatus(_ message: String) {
+        DispatchQueue.main.async {
+            self.importStatus = message
+        }
+    }
+    
+
     
     // MARK: - Paths
     
