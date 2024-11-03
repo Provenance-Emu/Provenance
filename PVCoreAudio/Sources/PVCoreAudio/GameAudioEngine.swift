@@ -172,14 +172,14 @@ public class GameAudioEngine: AudioEngineProtocol {
         let bytesPerSample = Int(context.bytesPerSample)
         let bytesRequested = Int(buffer.frameLength) * channelCount * bytesPerSample
         
-        let availableBytes = context.buffer.availableBytesForWriting
+        let availableBytes = context.buffer?.availableBytesForWriting ?? 0
         let bytesToWrite = min(availableBytes, bytesRequested)
         
         if bytesToWrite > 0 {
             let tempBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bytesToWrite)
             defer { tempBuffer.deallocate() }
             
-            context.buffer.read(tempBuffer, preferredSize: bytesToWrite)
+            context.buffer?.read(tempBuffer, preferredSize: bytesToWrite)
             
             for channel in 0..<channelCount {
                 guard let channelData = buffer.floatChannelData?[channel] else { continue }
