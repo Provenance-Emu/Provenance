@@ -3492,7 +3492,7 @@
 				<key>PVControlTitle</key>
 				<string>L</string>
 				<key>PVControlSize</key>
-				<string>{60,84}</string>
+				<string>{120,84}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -3500,7 +3500,7 @@
 				<key>PVControlTitle</key>
 				<string>R</string>
 				<key>PVControlSize</key>
-				<string>{60,84}</string>
+				<string>{120,84}</string>
 			</dict>
 		</array>
 	</dict>
