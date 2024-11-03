@@ -699,11 +699,6 @@ private struct AdvancedTogglesView: View {
                             icon: .sfSymbol("switch.2"))
             }
             
-            //             PremiumThemedToggle(isOn: $monoAudio) {
-            //                 SettingsRow(title: "Mono Audio",
-            //                            subtitle: "Combine left and right audio channels.",
-            //                            icon: .sfSymbol("speaker.wave.1"))
-            //             }
 #if !os(tvOS)
             PremiumThemedToggle(isOn: $movableButtons) {
                 SettingsRow(title: "Movable Buttons",
@@ -711,18 +706,27 @@ private struct AdvancedTogglesView: View {
                             icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
 #endif
-            
-            //             PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
-            //                 SettingsRow(title: "Legacy Audio",
-            //                            subtitle: "Use legacy audio engine for compatibility.",
-            //                            icon: .sfSymbol("waveform"))
-            //             }
-            
             PremiumThemedToggle(isOn: $webDavAlwaysOn) {
                 SettingsRow(title: "WebDAV Always On",
                             subtitle: "Keep WebDAV server running in background.",
                             icon: .sfSymbol("network"))
             }
+            
+            #if DEBUG
+             PremiumThemedToggle(isOn: $monoAudio) {
+                 SettingsRow(title: "Mono Audio",
+                            subtitle: "Combine left and right audio channels.",
+                            icon: .sfSymbol("speaker.wave.1"))
+             }
+
+
+             PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
+                 SettingsRow(title: "Legacy Audio",
+                            subtitle: "Use legacy audio engine for compatibility.",
+                            icon: .sfSymbol("waveform"))
+             }
+            #endif
+
             
             if !isAppStore {
                 PremiumThemedToggle(isOn: $unsupportedCores) {
