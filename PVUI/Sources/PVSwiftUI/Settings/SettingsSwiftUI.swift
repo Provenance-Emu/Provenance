@@ -653,6 +653,8 @@ private struct AdvancedTogglesView: View {
     @Default(.unsupportedCores) var unsupportedCores
     @Default(.monoAudio) var monoAudio
     @Default(.useLegacyAudioEngine) var useLegacyAudioEngine
+    @Default(.useLegacyRingBuffer) var useLegacyRingBuffer
+
 #if !os(tvOS)
     @Default(.movableButtons) var movableButtons
 #endif
@@ -711,23 +713,7 @@ private struct AdvancedTogglesView: View {
                             subtitle: "Keep WebDAV server running in background.",
                             icon: .sfSymbol("network"))
             }
-            
-            #if DEBUG
-             PremiumThemedToggle(isOn: $monoAudio) {
-                 SettingsRow(title: "Mono Audio",
-                            subtitle: "Combine left and right audio channels.",
-                            icon: .sfSymbol("speaker.wave.1"))
-             }
-
-
-             PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
-                 SettingsRow(title: "Legacy Audio",
-                            subtitle: "Use legacy audio engine for compatibility.",
-                            icon: .sfSymbol("waveform"))
-             }
-            #endif
-
-            
+                        
             if !isAppStore {
                 PremiumThemedToggle(isOn: $unsupportedCores) {
                     SettingsRow(title: "Show Unsupported Cores",
@@ -735,6 +721,28 @@ private struct AdvancedTogglesView: View {
                                 icon: .sfSymbol("exclamationmark.triangle"))
                 }
             }
+            
+            #if DEBUG
+            ThemedToggle(isOn: $monoAudio) {
+                 SettingsRow(title: "Mono Audio",
+                            subtitle: "Combine left and right audio channels.",
+                            icon: .sfSymbol("speaker.wave.1"))
+             }
+
+
+            ThemedToggle(isOn: $useLegacyAudioEngine) {
+                 SettingsRow(title: "Legacy Audio",
+                            subtitle: "Use legacy audio engine for compatibility.",
+                            icon: .sfSymbol("waveform"))
+             }
+
+            ThemedToggle(isOn: $useLegacyRingBuffer) {
+                SettingsRow(title: "Legacy Audio Buffer",
+                           subtitle: "Use legacy audio buffer for compatibility.",
+                           icon: .sfSymbol("arrow.trianglehead.clockwise"))
+            }
+            #endif
+
         }
     }
 }

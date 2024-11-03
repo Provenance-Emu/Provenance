@@ -65,8 +65,8 @@ func RenderCallback(inRefCon : UnsafeMutableRawPointer,
 
 import AudioToolbox
 
-@objc(OEGameAudio)
-public final class OEGameAudio: NSObject, AudioEngineProtocol {
+@objc(OEGameAudioEngine)
+public final class OEGameAudioEngine: NSObject, AudioEngineProtocol {
 
     
     private var _contexts: [OEGameAudioContext] = [OEGameAudioContext]()
@@ -419,7 +419,7 @@ public final class OEGameAudio: NSObject, AudioEngineProtocol {
     }
 }
 
-extension OEGameAudio {
+extension OEGameAudioEngine {
     @discardableResult
     func _setAudioOutputDevice(for audioUnit: AudioUnit, deviceID: AudioDeviceID) throws -> OSStatus {
         var deviceIDCopy = deviceID

@@ -123,6 +123,8 @@ public extension Defaults.Keys {
 #endif
 
     static let useLegacyAudioEngine = Key<Bool>("useLegacyAudioEngine", default: false)
+    static let useLegacyRingBuffer = Key<Bool>("useLegacyRingBuffer", default: false)
+
     static let monoAudio = Key<Bool>("monoAudio", default: false)
 
 }
@@ -143,6 +145,11 @@ public final class PVSettingsWrapper: NSObject {
     public static var useLegacyAudioEngine: Bool {
         get { Defaults[.useLegacyAudioEngine] }
         set { Defaults[.useLegacyAudioEngine] = newValue }}
+    
+    @objc
+    public static var useLegacyRingBuffer: Bool {
+        get { Defaults[.useLegacyRingBuffer] }
+        set { Defaults[.useLegacyRingBuffer] = newValue }}
 
     @objc
     public static var use8BitdoM30: Bool {

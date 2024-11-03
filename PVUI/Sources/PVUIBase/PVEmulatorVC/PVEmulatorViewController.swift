@@ -78,7 +78,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         audioInited = true
         
         if Defaults[.useLegacyAudioEngine] {
-            let engine = OEGameAudio()
+//            let engine = GameAudioEngine()
+            let engine = OEGameAudioEngine()
             return engine
         } else {
             let engine = GameAudioEngine2()
