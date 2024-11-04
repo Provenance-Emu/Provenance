@@ -89,15 +89,16 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     public func startAudio() {
         precondition(gameCore.audioBufferCount == 1,
-                     "nly one buffer supported; got \(gameCore.audioBufferCount)")
+                     "Only one buffer supported; got \(gameCore.audioBufferCount)")
+
+        /// Configure for lower latency before setting up nodes
+        adjustBufferSize()
 
         updateSourceNode()
         connectNodes()
         setOutputDeviceID(outputDeviceID)
 
         engine.prepare()
-        // per the following, we need to wait before resuming to allow devices to start 🤦🏻‍♂️
-        //  https://github.com/AudioKit/AudioKit/blob/f2a404ff6cf7492b93759d2cd954c8a5387c8b75/Examples/macOS/OutputSplitter/OutputSplitter/Audio/Output.swift#L88-L95
         performResumeAudio()
         startMonitoringEngineConfiguration()
     }
@@ -218,6 +219,10 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         intermediateFormat = format
         DLOG("Using format: \(format)")
 
+        /// Use smaller buffer size for more frequent processing
+        let preferredIOBufferDuration = 0.010 // 10ms
+        try? AVAudioSession.sharedInstance().setPreferredIOBufferDuration(preferredIOBufferDuration)
+
         src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
             let bytesPerFrame = Int(originalSD.mBytesPerFrame)
@@ -225,8 +230,6 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
             for i in 0..<ablPointer.count {
                 var audioBuffer = ablPointer[i]
-
-                /// Direct read for 16-bit audio
                 let bytesRead = read(audioBuffer.mData!, bytesToRead)
                 audioBuffer.mDataByteSize = UInt32(bytesRead)
             }
@@ -442,9 +445,12 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let desiredLatency = 0.005 // 5ms
         let sampleRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
         let bufferSize = AVAudioFrameCount(sampleRate * desiredLatency)
+
         engine.reset()
         engine.prepare()
-        try? engine.enableManualRenderingMode(.realtime, format: engine.outputNode.outputFormat(forBus: 0), maximumFrameCount: bufferSize)
+        try? engine.enableManualRenderingMode(.realtime,
+                                            format: engine.outputNode.outputFormat(forBus: 0),
+                                            maximumFrameCount: bufferSize)
     }
 
     private func configureAudioSession() {
