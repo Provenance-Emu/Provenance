@@ -166,27 +166,48 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         return !(value == "" || value == "off")
     }
 
+    override func loadView() {
+        /// Create MTKView with initial frame from screen bounds
+        let screenBounds = UIScreen.main.bounds
+        let metalView = MTKView(frame: screenBounds, device: device)
+        metalView.autoresizingMask = [] // Disable autoresizing
+        self.view = metalView
+        self.mtlView = metalView
+
+        #if DEBUG
+        ILOG("Initial MTKView frame: \(metalView.frame)")
+        #endif
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-#if !(targetEnvironment(macCatalyst) || os(macOS))
-        if emulatorCore?.rendersToOpenGL ?? false {
-            glContext = bestContext
-
-            ILOG("Initiated GLES version \(String(describing: glContext?.api))")
-
-            glContext?.isMultiThreaded = Defaults[.multiThreadedGL]
-
-            EAGLContext.setCurrent(glContext)
+        guard let metalView = view as? MTKView else {
+            return
         }
-#endif
+
+        metalView.device = device
+        metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+        metalView.depthStencilPixelFormat = .depth32Float_stencil8
+        metalView.sampleCount = 1
+        metalView.delegate = self
+        metalView.autoResizeDrawable = true
+
+        // Set paused and only trigger redraw when needs display is set.
+        metalView.isPaused = false
+        metalView.enableSetNeedsDisplay = false
+
+        view.isOpaque = true
+        view.layer.isOpaque = true
+        view.isUserInteractionEnabled = false
+
+        #if DEBUG
+        ILOG("MTKView frame after setup: \(metalView.frame)")
+        #endif
 
         frameCount = 0
         device = MTLCreateSystemDefaultDevice()
 
-        let metalView = MTKView(frame: view.bounds, device: device)
-        self.mtlView = metalView
-        view.addSubview(mtlView)
         metalView.device = device
         metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
         metalView.depthStencilPixelFormat = .depth32Float_stencil8
@@ -292,6 +313,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
+        #if DEBUG
+        ILOG("Before layout - MTKView frame: \(mtlView.frame)")
+        #endif
+
         if emulatorCore.skipLayout {
             return
         }
@@ -307,17 +332,20 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 ratio = aspectSize.height / aspectSize.width
             }
 
+            /// Get parent size in points (not scaled)
             var parentSize = parent?.view.bounds.size ?? CGSize.zero
             if let window = view.window {
                 parentSize = window.bounds.size
             }
 
+            #if DEBUG
+            ILOG("Parent size for calculations: \(parentSize)")
+            #endif
+
             var height: CGFloat = 0
             var width: CGFloat = 0
 
-            /// Account for scale when calculating dimensions
-            let scale = Defaults[.nativeScaleEnabled] ? UIScreen.main.scale : 1.0
-
+            /// Calculate dimensions in points first
             if parentSize.width > parentSize.height {
                 if Defaults[.integerScaleEnabled] {
                     height = floor(parentSize.height / aspectSize.height) * aspectSize.height
@@ -337,29 +365,72 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 }
                 height = width / ratio
                 if height > parentSize.height {
-                    height = parentSize.width
-                    width = height / ratio
+                    height = parentSize.height
+                    width = height * ratio
                 }
             }
 
-            /// Calculate origin in parent's coordinate space, accounting for scale
-            var origin = CGPoint(x: (parentSize.width - width) / 2, y: 0)
-            if traitCollection.userInterfaceIdiom == .phone && parentSize.height > parentSize.width {
-                origin.y = parentSafeAreaInsets.top + 40 // below menu button
+            /// Calculate center position
+            let x = (parentSize.width - width) / 2
+            let y = traitCollection.userInterfaceIdiom == .phone && parentSize.height > parentSize.width ?
+                parentSafeAreaInsets.top + 40 : // below menu button
+                (parentSize.height - height) / 2 // centered
+
+            /// Create frame with calculated position and size
+            let frame = CGRect(x: x, y: y, width: width, height: height)
+
+            #if DEBUG
+            ILOG("Calculated frame: \(frame)")
+            #endif
+
+            if Defaults[.nativeScaleEnabled] {
+                let scale = UIScreen.main.scale
+
+                /// Apply frame to main view
+                view.frame = frame
+
+                /// Position MTKView using frame directly
+                mtlView.frame = CGRect(x: x, y: y, width: width, height: height)
+                mtlView.contentScaleFactor = scale
+
+                #if DEBUG
+                ILOG("Applied scale factor: \(scale)")
+                ILOG("Final MTKView frame: \(mtlView.frame)")
+                #endif
             } else {
-                origin.y = (parentSize.height - height) / 2 // centered
+                view.frame = frame
+                mtlView.frame = frame
+                mtlView.contentScaleFactor = 1.0
+
+                #if DEBUG
+                ILOG("Final MTKView frame (no scale): \(mtlView.frame)")
+                #endif
             }
-
-            /// Apply frame in parent's coordinate space
-            let frame = CGRect(origin: origin, size: CGSize(width: width, height: height))
-            view.frame = frame
-
-            /// Set MTKView frame in view's coordinate space
-            mtlView.frame = CGRect(origin: .zero, size: frame.size)
         }
 
         updatePreferredFPS()
     }
+
+    #if DEBUG
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        /// Print full view hierarchy for debugging
+        ILOG("Full view hierarchy:")
+        var currentView: UIView? = mtlView
+        while let view = currentView {
+            ILOG("View: \(type(of: view))")
+            ILOG("Frame: \(view.frame)")
+            ILOG("Bounds: \(view.bounds)")
+            ILOG("Transform: \(view.transform)")
+            ILOG("AutoresizingMask: \(view.autoresizingMask)")
+            ILOG("Constraints: \(view.constraints)")
+            ILOG("SuperView: \(String(describing: view.superview))")
+            ILOG("----------------")
+            currentView = view.superview
+        }
+    }
+    #endif
 
     func updateInputTexture() {
         guard let emulatorCore = emulatorCore else {
