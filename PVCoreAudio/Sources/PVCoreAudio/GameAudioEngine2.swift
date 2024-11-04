@@ -165,21 +165,26 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     private var streamDescription: AudioStreamBasicDescription {
         let channelCount    = UInt32(gameCore.channelCount(forBuffer: 0))
         let bytesPerSample  = UInt32(gameCore.audioBitDepth / 8)
+        let sampleRate = gameCore.audioSampleRate(forBuffer: 0)
 
+        /// Simplified format flags for common cases
         let formatFlags: AudioFormatFlags = bytesPerSample == 4
-        // assume 32-bit float
-        ? kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsNonInterleaved | kAudioFormatFlagIsPacked
-        : kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian
+            ? kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
+            : kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
 
-        return AudioStreamBasicDescription(mSampleRate: gameCore.audioSampleRate(forBuffer: 0),
-                                           mFormatID: kAudioFormatLinearPCM,
-                                           mFormatFlags: formatFlags,
-                                           mBytesPerPacket: bytesPerSample * channelCount,
-                                           mFramesPerPacket: 1,
-                                           mBytesPerFrame: bytesPerSample * channelCount,
-                                           mChannelsPerFrame: channelCount,
-                                           mBitsPerChannel: 8 * bytesPerSample,
-                                           mReserved: 0)
+        DLOG("Creating stream description - Rate: \(sampleRate), Channels: \(channelCount), Bits: \(8 * bytesPerSample)")
+
+        return AudioStreamBasicDescription(
+            mSampleRate: sampleRate,
+            mFormatID: kAudioFormatLinearPCM,
+            mFormatFlags: formatFlags,
+            mBytesPerPacket: bytesPerSample * channelCount,
+            mFramesPerPacket: 1,
+            mBytesPerFrame: bytesPerSample * channelCount,
+            mChannelsPerFrame: channelCount,
+            mBitsPerChannel: 8 * bytesPerSample,
+            mReserved: 0
+        )
     }
 
     private var renderFormat: AVAudioFormat {
@@ -203,57 +208,27 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         }
 
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
-        let originalSD = streamDescription
-        let channelCount = originalSD.mChannelsPerFrame
+        var originalSD = streamDescription
 
-        DLOG("Original stream description: \(describeAudioFormat(originalSD))")
-
-        // Create an intermediate 16-bit format for 8-bit audio
-        var sd = originalSD
-        if sd.mBitsPerChannel == 8 {
-            sd.mBitsPerChannel = 16
-            sd.mBytesPerPacket *= 2
-            sd.mBytesPerFrame *= 2
-            DLOG("Converting 8-bit to 16-bit format")
-        }
-        sd.mFormatID = kAudioFormatLinearPCM
-        sd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked
-
-        DLOG("Modified stream description: \(describeAudioFormat(sd))")
-
-        guard let format = AVAudioFormat(streamDescription: &sd) else {
-            ELOG("Failed to create AVAudioFormat from stream description")
-            return
-        }
+        /// For 16-bit audio, use the format directly without conversion
+        let format = originalSD.mBitsPerChannel == 16
+            ? AVAudioFormat(streamDescription: &originalSD)!
+            : createIntermediateFormat(from: originalSD)
 
         intermediateFormat = format
-        DLOG("Created intermediate AVAudioFormat: \(format)")
+        DLOG("Using format: \(format)")
 
-        src = AVAudioSourceNode(format: format) { _, _, frameCount, audioBufferList -> OSStatus in
+        src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
+            let bytesPerFrame = Int(originalSD.mBytesPerFrame)
+            let bytesToRead = Int(frameCount) * bytesPerFrame
+
             for i in 0..<ablPointer.count {
                 var audioBuffer = ablPointer[i]
-                let bytesToRead = Int(frameCount) * Int(originalSD.mBytesPerFrame)
-                var bytesRead = 0
 
-                if originalSD.mBitsPerChannel == 8 {
-                    // Read 8-bit data into a temporary buffer
-                    let tempBuffer = UnsafeMutablePointer<Int8>.allocate(capacity: bytesToRead)
-                    defer { tempBuffer.deallocate() }
-                    bytesRead = read(tempBuffer, bytesToRead)
-
-                    // Convert 8-bit to 16-bit
-                    let output = audioBuffer.mData!.assumingMemoryBound(to: Int16.self)
-                    for j in 0..<bytesRead {
-                        output[j] = Int16(tempBuffer[j]) << 8
-                    }
-                    audioBuffer.mDataByteSize = UInt32(bytesRead * 2)
-                } else {
-                    bytesRead = read(audioBuffer.mData!, bytesToRead)
-                    audioBuffer.mDataByteSize = UInt32(bytesRead)
-                }
-
-//                VLOG("Read \(bytesRead) bytes for buffer \(i)")
+                /// Direct read for 16-bit audio
+                let bytesRead = read(audioBuffer.mData!, bytesToRead)
+                audioBuffer.mDataByteSize = UInt32(bytesRead)
             }
             return noErr
         }
@@ -261,10 +236,21 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         if let src {
             engine.attach(src)
             DLOG("Attached new source node")
-        } else {
-            ELOG("Failed to create source node")
         }
         DLOG("Exiting updateSourceNode")
+    }
+
+    private func createIntermediateFormat(from original: AudioStreamBasicDescription) -> AVAudioFormat {
+        var sd = original
+
+        if sd.mBitsPerChannel == 8 {
+            sd.mBitsPerChannel = 16
+            sd.mBytesPerPacket *= 2
+            sd.mBytesPerFrame *= 2
+            DLOG("Converting 8-bit to 16-bit format")
+        }
+
+        return AVAudioFormat(streamDescription: &sd)!
     }
 
     private func destroyNodes() {
@@ -280,30 +266,38 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         DLOG("Entering connectNodes")
         guard let src else {
             ELOG("Source node is nil")
-            assertionFailure("Expected src node")
             return
-        }
-        if isMonoOutput {
-            updateMonoSetting()
-            DLOG("Updated mono setting")
         }
 
         let outputFormat = engine.outputNode.inputFormat(forBus: 0)
         DLOG("Output format: \(outputFormat)")
 
-        // Use the intermediate format for connection
         if let intermediateFormat = intermediateFormat {
             do {
-                DLOG("Attempting to connect with intermediate format: \(intermediateFormat)")
-                try engine.connect(src, to: engine.mainMixerNode, format: intermediateFormat)
-                DLOG("Successfully connected with intermediate format")
+                /// Create a format converter to match output format
+                let targetFormat = AVAudioFormat(
+                    commonFormat: outputFormat.commonFormat,
+                    sampleRate: intermediateFormat.sampleRate,
+                    channels: intermediateFormat.channelCount,
+                    interleaved: outputFormat.isInterleaved
+                )
+
+                guard let targetFormat = targetFormat else {
+                    ELOG("Failed to create target format")
+                    return
+                }
+
+                /// Use intermediate mixer for format conversion
+                let intermediateMixer = AVAudioMixerNode()
+                engine.attach(intermediateMixer)
+
+                try engine.connect(src, to: intermediateMixer, format: intermediateFormat)
+                try engine.connect(intermediateMixer, to: engine.mainMixerNode, format: targetFormat)
+
+                DLOG("Connected with format conversion: \(intermediateFormat) -> \(targetFormat)")
             } catch {
-                ELOG("Failed to connect with intermediate format: \(error.localizedDescription)")
-                return
+                ELOG("Failed to connect: \(error.localizedDescription)")
             }
-        } else {
-            ELOG("Intermediate format is nil")
-            return
         }
 
         engine.mainMixerNode.outputVolume = volume
@@ -313,24 +307,75 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     private func updateSampleRateConversion() {
         let outputFormat = engine.outputNode.inputFormat(forBus: 0)
+        let sourceRate = renderFormat.sampleRate
+        let targetRate = outputFormat.sampleRate
 
-        if abs(renderFormat.sampleRate - outputFormat.sampleRate) > 1 {
+        DLOG("Source rate: \(sourceRate), Target rate: \(targetRate)")
+        DLOG("Source format: \(renderFormat), Output format: \(outputFormat)")
+
+        /// Only use sample rate conversion if difference is significant
+        if abs(sourceRate - targetRate) > 1.0 {
             if sampleRateConverter == nil {
                 sampleRateConverter = AVAudioUnitVarispeed()
                 engine.attach(sampleRateConverter!)
             }
 
-            sampleRateConverter?.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
+            let rate = Float(targetRate / sourceRate)
+            DLOG("Setting sample rate conversion ratio: \(rate)")
+            sampleRateConverter?.rate = rate
+
+            engine.disconnectNodeInput(engine.mainMixerNode)
+            if let src = src, let converter = sampleRateConverter {
+                /// Create a format matching the output format's configuration
+                let converterFormat = AVAudioFormat(
+                    commonFormat: outputFormat.commonFormat,
+                    sampleRate: sourceRate,
+                    channels: outputFormat.channelCount,
+                    interleaved: outputFormat.isInterleaved
+                )
+
+                guard let converterFormat = converterFormat else {
+                    ELOG("Failed to create converter format")
+                    return
+                }
+
+                DLOG("Connecting with converter format: \(converterFormat)")
+
+                do {
+                    /// First connect through format converter
+                    let formatConverter = AVAudioConverter(from: renderFormat, to: converterFormat)
+                    guard let formatConverter = formatConverter else {
+                        ELOG("Failed to create format converter")
+                        return
+                    }
+
+                    /// Create an intermediate mixer for format conversion
+                    let intermediateMixer = AVAudioMixerNode()
+                    engine.attach(intermediateMixer)
+
+                    /// Connect source to intermediate mixer
+                    try engine.connect(src, to: intermediateMixer, format: renderFormat)
+
+                    /// Connect intermediate mixer to converter
+                    try engine.connect(intermediateMixer, to: converter, format: converterFormat)
+
+                    /// Connect converter to main mixer
+                    try engine.connect(converter, to: engine.mainMixerNode, format: nil)
+
+                    DLOG("Successfully connected through converter chain")
+                } catch {
+                    ELOG("Failed to connect through converter: \(error.localizedDescription)")
+                    /// Fallback to direct connection
+                    try? engine.connect(src, to: engine.mainMixerNode, format: renderFormat)
+                }
+            }
         } else {
             if let converter = sampleRateConverter {
                 engine.detach(converter)
                 sampleRateConverter = nil
             }
+            connectNodes()
         }
-
-        // Reconnect nodes to apply changes
-        engine.disconnectNodeInput(engine.mainMixerNode)
-        connectNodes()
     }
 
     private var token: NSObjectProtocol?
