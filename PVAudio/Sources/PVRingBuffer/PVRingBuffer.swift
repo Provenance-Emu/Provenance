@@ -49,172 +49,113 @@ private func trunc_page(_ x: vm_size_t) -> vm_size_t {
 private func round_page(_ x: vm_size_t) -> vm_size_t {
     return trunc_page(x + (vm_size_t(VM_PAGE_SIZE) - 1))
 }
+/// Ring buffer implementation
+public final class PVRingBuffer: NSObject, RingBufferProtocol {
+    private var buffer: UnsafeMutableRawPointer
+    private let bufferLength: Int
 
-@objc
-@objcMembers
-public final class PVRingBuffer: NSObject, RingBufferProtocol
-{
+    /// Read position in buffer
+    private var readPosition: Int = 0
+
+    /// Write position in buffer
+    private var writePosition: Int = 0
+
+    /// Number of bytes currently used in buffer
+    private var bytesInBuffer: Int = 0
+
     public var isEnabled: Bool = true
 
-    @objc(availableBytes)
-    public var availableBytesForWriting: Int {
-        return Int(self.bufferLength - Int(self.usedBytesCount))
+    /// Required initializer from RingBufferProtocol
+    public required init?(withLength length: RingBufferSize) {
+        guard length > 0 else { return nil }
+        self.bufferLength = length
+        self.buffer = malloc(length)
+        super.init()
     }
 
-    public var availableBytesForReading: Int {
-        return Int(self.usedBytesCount)
+    deinit {
+        free(buffer)
     }
 
-    private var head: UnsafeMutableRawPointer {
-        let head = self.buffer.advanced(by: self.headOffset)
-        return head
+    /// Available space for writing
+    public var availableBytesForWriting: RingBufferSize {
+        return bufferLength - bytesInBuffer
     }
 
-    private var tail: UnsafeMutableRawPointer {
-        let head = self.buffer.advanced(by: self.tailOffset)
-        return head
+    /// Available bytes for reading (matches protocol requirement)
+    public var availableBytesForReading: RingBufferSize {
+        return bytesInBuffer
     }
 
-    private let buffer: UnsafeMutableRawPointer
-    public private(set) var bufferLength = 0
-    public private(set) var tailOffset = 0
-    public private(set) var headOffset = 0
-    public private(set) var usedBytesCount: Int32 = 0
-
-    public var availableBytes: RingBufferSize {
+    /// Objective-C compatible property (matches protocol requirement)
+    @objc public var availableBytes: RingBufferSize {
         return availableBytesForReading
     }
 
-    public init?(withLength length: Int) {
-        guard length > 0 else { return nil }
-//        assert(length > 0)
+    /// Write data to buffer
+    @discardableResult
+    public func write(_ buffer: UnsafeRawPointer, size: Int) -> Int {
+        guard isEnabled, size > 0 else { return 0 }
 
-        // To handle race conditions, repeat initialization process up to 3 times before failing.
-        for _ in 1...3
-        {
-            let length = round_page(vm_size_t(length))
-            self.bufferLength = Int(length)
-
-            var bufferAddress: vm_address_t = 0
-            guard vm_allocate(MACH_TASK_SELF, &bufferAddress, vm_size_t(length * 2), VM_FLAGS_ANYWHERE) == ERR_SUCCESS else { continue }
-
-            guard vm_deallocate(MACH_TASK_SELF, bufferAddress + length, length) == ERR_SUCCESS else {
-                vm_deallocate(MACH_TASK_SELF, bufferAddress, length)
-                continue
-            }
-
-            var virtualAddress: vm_address_t = bufferAddress + length
-            var current_protection: vm_prot_t = 0
-            var max_protection: vm_prot_t = 0
-
-            guard vm_remap(MACH_TASK_SELF, &virtualAddress, length, 0, 0, MACH_TASK_SELF, bufferAddress, 0, &current_protection, &max_protection, VM_INHERIT_DEFAULT) == ERR_SUCCESS else {
-                vm_deallocate(MACH_TASK_SELF, bufferAddress, length)
-                continue
-            }
-
-            guard virtualAddress == bufferAddress + length else {
-                vm_deallocate(MACH_TASK_SELF, virtualAddress, length)
-                vm_deallocate(MACH_TASK_SELF, bufferAddress, length)
-
-                continue
-            }
-
-            self.buffer = UnsafeMutableRawPointer(bitPattern: UInt(bufferAddress))!
-
-            return
-        }
-
-        return nil
-    }
-
-    deinit
-    {
-        let address = UInt(bitPattern: self.buffer)
-        vm_deallocate(MACH_TASK_SELF, vm_address_t(address), vm_size_t(self.bufferLength * 2))
-    }
-}
-
-public extension PVRingBuffer
-{
-    /// Writes `size` bytes from `buffer` to ring buffer if possible. Otherwise, writes as many as possible.
-    @objc
-    @discardableResult func write(_ buffer: UnsafeRawPointer, size: Int) -> Int
-    {
-        guard self.isEnabled else { return 0 }
-        guard self.availableBytesForWriting > 0 else { return 0 }
-
-        if size > self.availableBytesForWriting
-        {
-            WLOG("Ring Buffer Capacity reached. Available: \(self.availableBytesForWriting). Requested: \(size) Max: \(self.bufferLength). Filled: \(self.usedBytesCount).")
-            debugBufferState()
-            self.reset()
-        }
-
-        let size = min(size, self.availableBytesForWriting)
-        memcpy(self.head, buffer, size)
-
-        self.decrementAvailableBytes(by: size)
-
-//        print("wrote \(size) bytes on thread \(Thread.current.name ?? Thread.current.debugDescription)")
-
-        return size
-    }
-
-    /// Copies `size` bytes from ring buffer to `buffer` if possible. Otherwise, copies as many as possible.
-    @objc
-    @discardableResult func read(_ buffer: UnsafeMutableRawPointer, preferredSize: Int) -> Int
-    {
-//        print("Entered read requesting \(preferredSize) bytes")
-        guard self.isEnabled else { return 0 }
-        guard self.availableBytesForReading > 0 else { return 0 }
-
-        if preferredSize > self.availableBytesForReading
-        {
-            VLOG("Ring Buffer Empty. Available: \(self.availableBytesForReading). Requested: \(preferredSize) Max: \(self.bufferLength). Filled: \(self.usedBytesCount).")
-
-            self.reset()
-        }
-
-        let size = min(preferredSize, self.availableBytesForReading)
-        memcpy(buffer, self.tail, size)
-
-        self.incrementAvailableBytes(by: size)
-
-//        print("read \(size) bytes on thread \(Thread.current.name ?? Thread.current.debugDescription)")
-
-        return size
-    }
-
-    func reset()
-    {
-        let size = self.availableBytesForReading
-        self.incrementAvailableBytes(by: size)
-    }
-
-    /// Add debug method to verify buffer state
-    public func debugBufferState() {
-        DLOG("Buffer State - Head: \(headOffset), Tail: \(tailOffset), Used: \(usedBytesCount), Length: \(bufferLength)")
         let available = availableBytesForWriting
-        let used = availableBytesForReading
-        DLOG("Available for writing: \(available), Available for reading: \(used)")
-    }
-}
+        guard available > 0 else {
+            WLOG("Buffer full - resetting")
+            debugBufferState()
+            reset()
+            return 0
+        }
 
-private extension PVRingBuffer
-{
-    func incrementAvailableBytes(by size: Int)
-    {
-        /// Ensure atomic update of both offset and count
-        OSAtomicAdd32(-Int32(size), &self.usedBytesCount)
-        OSMemoryBarrier()  /// Memory barrier to ensure ordering
-        self.tailOffset = (self.tailOffset + size) % self.bufferLength
+        let writeSize = min(size, available)
+
+        /// First chunk: from write position to end of buffer
+        let firstChunkSize = min(writeSize, bufferLength - writePosition)
+        memcpy(self.buffer.advanced(by: writePosition), buffer, firstChunkSize)
+
+        /// Second chunk: wrap around to start if needed
+        if firstChunkSize < writeSize {
+            let secondChunkSize = writeSize - firstChunkSize
+            memcpy(self.buffer, buffer.advanced(by: firstChunkSize), secondChunkSize)
+        }
+
+        writePosition = (writePosition + writeSize) % bufferLength
+        bytesInBuffer += writeSize
+
+        return writeSize
     }
 
-    func decrementAvailableBytes(by size: Int)
-    {
-        /// Update count first to prevent underflow
-        OSAtomicAdd32(Int32(size), &self.usedBytesCount)
-        OSMemoryBarrier()  /// Memory barrier to ensure ordering
-        self.headOffset = (self.headOffset + size) % self.bufferLength
+    /// Read data from buffer
+    @discardableResult
+    public func read(_ buffer: UnsafeMutableRawPointer, preferredSize size: Int) -> Int {
+        guard isEnabled, bytesInBuffer > 0, size > 0 else { return 0 }
+
+        let readSize = min(size, bytesInBuffer)
+
+        /// First chunk: from read position to end of buffer
+        let firstChunkSize = min(readSize, bufferLength - readPosition)
+        memcpy(buffer, self.buffer.advanced(by: readPosition), firstChunkSize)
+
+        /// Second chunk: wrap around to start if needed
+        if firstChunkSize < readSize {
+            let secondChunkSize = readSize - firstChunkSize
+            memcpy(buffer.advanced(by: firstChunkSize), self.buffer, secondChunkSize)
+        }
+
+        readPosition = (readPosition + readSize) % bufferLength
+        bytesInBuffer -= readSize
+
+        return readSize
+    }
+
+    /// Reset buffer state
+    public func reset() {
+        readPosition = 0
+        writePosition = 0
+        bytesInBuffer = 0
+    }
+
+    /// Debug current buffer state
+    public func debugBufferState() {
+        DLOG("Buffer State - Read: \(readPosition), Write: \(writePosition), Used: \(bytesInBuffer), Length: \(bufferLength)")
+        DLOG("Available for writing: \(availableBytesForWriting), Available for reading: \(bytesInBuffer)")
     }
 }
