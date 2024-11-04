@@ -239,12 +239,7 @@ extension PVRootViewController: ImportStatusDelegate {
     }
     
     public func addImportsAction() {
-//        self.showImportOptionsAlert()
-        
-        let importItem = ImportItem(url: URL(fileURLWithPath: "game.rom"),
-                                    fileType: .game,
-                                    system: "NES")
-        gameImporter.addImport(importItem)
+        self.showImportOptionsAlert()
     }
 }
 #endif

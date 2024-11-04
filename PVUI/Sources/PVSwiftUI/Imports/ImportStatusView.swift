@@ -19,12 +19,29 @@ class ImportViewModel: ObservableObject {
     public let gameImporter = GameImporter.shared
 }
 
+func iconNameForFileType(_ type: FileType) -> String {
+    
+    switch type {
+        case .bios:
+            return "bios_filled"
+        case .artwork:
+            return "prov_snes_icon"
+        case .game:
+            return "prov_snes_icon"
+        case .cdRom:
+            return "prov_ps1_icon"
+        case .unknown:
+            return "questionMark"
+    }
+}
+
 // Individual Import Task Row View
 struct ImportTaskRowView: View {
-    let item: ImportItem
+    let item: ImportQueueItem
     
     var body: some View {
         HStack {
+            //TODO: add icon for fileType
             VStack(alignment: .leading) {
                 Text(item.url.lastPathComponent)
                     .font(.headline)
