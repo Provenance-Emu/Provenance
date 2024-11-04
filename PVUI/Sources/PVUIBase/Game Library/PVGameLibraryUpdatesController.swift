@@ -253,11 +253,11 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         Task {
             let initialScan = await scanInitialFiles(at: importPath)
             if !initialScan.isEmpty {
-                await gameImporter.startImport(forPaths: initialScan)
+                gameImporter.addImports(forPaths: initialScan)
             }
 
             for await extractedFiles in directoryWatcher.extractedFilesStream(at: importPath) {
-                await gameImporter.startImport(forPaths: extractedFiles)
+                gameImporter.addImports(forPaths: extractedFiles)
             }
         }
     }
@@ -378,14 +378,14 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         // Process priority files first
         if !priorityFiles.isEmpty {
             DLOG("Starting import for priority files")
-            await gameImporter.startImport(forPaths: priorityFiles)
+            gameImporter.addImports(forPaths: priorityFiles)
             DLOG("Finished importing priority files")
         }
 
         // Then process other files
         if !otherFiles.isEmpty {
             DLOG("Starting import for other files")
-            await gameImporter.startImport(forPaths: otherFiles)
+            gameImporter.addImports(forPaths: otherFiles)
             DLOG("Finished importing other files")
         }
     }
