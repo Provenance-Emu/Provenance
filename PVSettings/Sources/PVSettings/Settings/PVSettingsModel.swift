@@ -53,7 +53,7 @@ extension Defaults.Keys {
 
     static let showGameTitles = Key<Bool>("showGameTitles", default: true)
 
-    static let gameLibraryScale = Key<Float>("gameLibraryScale", default: 1.0)
+    static let gameLibraryScale = Key<Float>("gameLibraryScale", default: 4.0)
 
 #if os(tvOS)
     static let webDavAlwaysOn = Key<Bool>("webDavAlwaysOn", default: true)
