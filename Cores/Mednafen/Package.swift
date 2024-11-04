@@ -30,7 +30,7 @@ let GCC_PREPROCESSOR_DEFINITIONS: [CSetting] = [
     .define("WANT_PCE_FAST_EMU"),
     .define("WANT_PCFX_EMU"),
     .define("WANT_PSX_EMU"),
-    .define("WANT_SASPLAY_EMU"),
+//    .define("WANT_SASPLAY_EMU"),
     .define("WANT_SNES_EMU"),
     .define("WANT_SNES_FAUST_EMU"),
     .define("WANT_SS_EMU"),
