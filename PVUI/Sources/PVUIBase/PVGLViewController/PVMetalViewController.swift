@@ -315,6 +315,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             var height: CGFloat = 0
             var width: CGFloat = 0
 
+            /// Account for scale when calculating dimensions
+            let scale = Defaults[.nativeScaleEnabled] ? UIScreen.main.scale : 1.0
+
             if parentSize.width > parentSize.height {
                 if Defaults[.integerScaleEnabled] {
                     height = floor(parentSize.height / aspectSize.height) * aspectSize.height
@@ -339,6 +342,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 }
             }
 
+            /// Calculate origin in parent's coordinate space, accounting for scale
             var origin = CGPoint(x: (parentSize.width - width) / 2, y: 0)
             if traitCollection.userInterfaceIdiom == .phone && parentSize.height > parentSize.width {
                 origin.y = parentSafeAreaInsets.top + 40 // below menu button
@@ -346,8 +350,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 origin.y = (parentSize.height - height) / 2 // centered
             }
 
-            view.frame = CGRect(origin: origin, size: CGSize(width: width, height: height))
-            mtlView.frame = CGRect(origin: .zero, size: CGSize(width: width, height: height))
+            /// Apply frame in parent's coordinate space
+            let frame = CGRect(origin: origin, size: CGSize(width: width, height: height))
+            view.frame = frame
+
+            /// Set MTKView frame in view's coordinate space
+            mtlView.frame = CGRect(origin: .zero, size: frame.size)
         }
 
         updatePreferredFPS()
