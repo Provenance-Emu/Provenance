@@ -654,6 +654,7 @@ private struct AdvancedTogglesView: View {
     @Default(.monoAudio) var monoAudio
     @Default(.useLegacyAudioEngine) var useLegacyAudioEngine
     @Default(.useLegacyRingBuffer) var useLegacyRingBuffer
+    @Default(.audioLatency) var audioLatency
 
 #if !os(tvOS)
     @Default(.movableButtons) var movableButtons
@@ -742,7 +743,24 @@ private struct AdvancedTogglesView: View {
                            icon: .sfSymbol("arrow.trianglehead.clockwise"))
             }
 
+            HStack {
+                Text("Audio Latency")
+                Slider(value: $audioLatency, in: 5.0...25.0, step: 0.5) {
+                    Text("Audio Latency (\(Int(audioLatency)) ms)")
+                } minimumValueLabel: {
+                    Image(systemName: "hare")
+                } maximumValueLabel: {
+                    Image(systemName: "tortoise")
+                }
+            }
+            Text(audioLatencySubLabelText)
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
+    }
+    
+    var audioLatencySubLabelText: String {
+        "Increase latency to improve performance on slower devices.(\(Int(audioLatency))ms)"
     }
 }
 

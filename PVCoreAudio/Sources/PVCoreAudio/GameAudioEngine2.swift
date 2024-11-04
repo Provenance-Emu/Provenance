@@ -29,6 +29,7 @@ import PVAudio
 import PVCoreBridge
 import AudioToolbox
 import CoreAudio
+import PVSettings
 
 @available(macOS 11.0, iOS 14.0, *)
 final public class GameAudioEngine2: AudioEngineProtocol {
@@ -220,8 +221,14 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         DLOG("Using format: \(format)")
 
         /// Use smaller buffer size for more frequent processing
-        let preferredIOBufferDuration = 0.010 // 10ms
-        try? AVAudioSession.sharedInstance().setPreferredIOBufferDuration(preferredIOBufferDuration)
+        let preferredIOBufferDuration = Defaults[.audioLatency] / 100.0 //0.010 // 10ms
+        
+        do {
+            DLOG("Setting audio latency to \(preferredIOBufferDuration) S")
+            try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(preferredIOBufferDuration)
+        } catch {
+            ELOG("Error setting latency to \(preferredIOBufferDuration) S")
+        }
 
         src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)

@@ -75,9 +75,6 @@ extension Defaults.Keys {
     static let missingButtonsAlwaysOn = Key<Bool>("missingButtonsAlwaysOn", default: false)
 #endif
 
-    static let volume = Key<Float>("volume", default: 1.0)
-    static let volumeHUD = Key<Bool>("volumeHUD", default: true)
-
     static let sort = Key<SortOptions>("sort", default: SortOptions.title)
 
     static let haveWarnedAboutDebug = Key<Bool>("haveWarnedAboutDebug", default: false)
@@ -88,6 +85,20 @@ extension Defaults.Keys {
 #if os(tvOS) || targetEnvironment(macCatalyst)
     static let largeGameArt = Key<Bool>("largeGameArt", default: true)
 #endif
+}
+
+// MARK: Audio Options
+public extension Defaults.Keys {
+    
+    static let volume = Key<Float>("volume", default: 1.0)
+    static let volumeHUD = Key<Bool>("volumeHUD", default: true)
+
+    static let useLegacyAudioEngine = Key<Bool>("useLegacyAudioEngine", default: false)
+    static let useLegacyRingBuffer = Key<Bool>("useLegacyRingBuffer", default: false)
+
+    static let monoAudio = Key<Bool>("monoAudio", default: false)
+
+    static let audioLatency = Key<TimeInterval>("audioLatency", default: 10.0)
 }
 
 // MARK: Beta Options
@@ -121,11 +132,6 @@ public extension Defaults.Keys {
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif
-
-    static let useLegacyAudioEngine = Key<Bool>("useLegacyAudioEngine", default: false)
-    static let useLegacyRingBuffer = Key<Bool>("useLegacyRingBuffer", default: false)
-
-    static let monoAudio = Key<Bool>("monoAudio", default: false)
 
 }
 
