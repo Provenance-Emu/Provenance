@@ -202,3 +202,86 @@ By following these guidelines, you can safely work with Realm objects across dif
 - ZX
   - ZX Spectrum
 
+## Audio Debugging notes
+
+### GameBoy Advanced: 
+
+Notes: Crackles sometimes, sounds slowed down
+
+Logs:
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+ℹ️ PVMetalViewController.swift:268 - updatePreferredFPS(): updatePreferredFPS (59)
+🔍 GameAudioEngine2.swift:203 - updateSourceNode(): Entering updateSourceNode
+🔍 GameAudioEngine2.swift:207 - updateSourceNode(): Detached existing source node
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:219 - updateSourceNode(): Using format: <AVAudioFormat 0x301b47840:  2 ch,  44100 Hz, Int16, interleaved>
+🔍 GameAudioEngine2.swift:238 - updateSourceNode(): Attached new source node
+🔍 GameAudioEngine2.swift:240 - updateSourceNode(): Exiting updateSourceNode
+🔍 GameAudioEngine2.swift:266 - connectNodes(): Entering connectNodes
+🔍 GameAudioEngine2.swift:273 - connectNodes(): Output format: <AVAudioFormat 0x30185d590:  2 ch,  48000 Hz, Float32, deinterleaved>
+
+### Sega Genesis
+
+Notes: Sounds slowed down, drunk. Sometimes pops / cracks
+
+Logs:
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 1, Bits: 16
+🔍 GameAudioEngine2.swift:219 - updateSourceNode(): Using format: <AVAudioFormat 0x301dcfa20:  1 ch,  44100 Hz, Int16>
+🔍 GameAudioEngine2.swift:238 - updateSourceNode(): Attached new source node
+🔍 GameAudioEngine2.swift:240 - updateSourceNode(): Exiting updateSourceNode
+🔍 GameAudioEngine2.swift:266 - connectNodes(): Entering connectNodes
+🔍 GameAudioEngine2.swift:273 - connectNodes(): Output format: <AVAudioFormat 0x301dced50:  2 ch,  48000 Hz, Float32, deinterleaved>
+🔍 GameAudioEngine2.swift:297 - connectNodes(): Connected with format conversion: <AVAudioFormat 0x301dcfa20:  1 ch,  44100 Hz, Int16> -> <AVAudioFormat 0x301dcee90:  1 ch,  44100 Hz, Float32>
+🔍 GameAudioEngine2.swift:304 - connectNodes(): Set main mixer node output volume to 1.0
+🔍 GameAudioEngine2.swift:305 - connectNodes(): Exiting connectNodes
+
+### NES via FCEUX
+
+I think it sounds fine
+
+Logs:
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:219 - updateSourceNode(): Using format: <AVAudioFormat 0x301afb4d0:  2 ch,  44100 Hz, Int16, interleaved>
+🔍 GameAudioEngine2.swift:238 - updateSourceNode(): Attached new source node
+🔍 GameAudioEngine2.swift:240 - updateSourceNode(): Exiting updateSourceNode
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:313 - updateSampleRateConversion(): Source rate: 44100.0, Target rate: 48000.0
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:314 - updateSampleRateConversion(): Source format: <AVAudioFormat 0x301b60320:  2 ch,  44100 Hz, Int16, interleaved>, Output format: <AVAudioFormat 0x301af9680:  2 ch,  48000 Hz, Float32, deinterleaved>
+🔍 GameAudioEngine2.swift:324 - updateSampleRateConversion(): Setting sample rate conversion ratio: 1.0884354
+🔍 GameAudioEngine2.swift:342 - updateSampleRateConversion(): Connecting with converter format: <AVAudioFormat 0x301b60370:  2 ch,  44100 Hz, Float32, deinterleaved>
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:365 - updateSampleRateConversion(): Successfully connected through converter chain
+
+### SNES via SNES9X
+
+Notes: Sounds fine
+
+Logs:
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:219 - updateSourceNode(): Using format: <AVAudioFormat 0x305bba170:  2 ch,  44100 Hz, Int16, interleaved>
+🔍 GameAudioEngine2.swift:238 - updateSourceNode(): Attached new source node
+🔍 GameAudioEngine2.swift:240 - updateSourceNode(): Exiting updateSourceNode
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:313 - updateSampleRateConversion(): Source rate: 44100.0, Target rate: 48000.0
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:314 - updateSampleRateConversion(): Source format: <AVAudioFormat 0x305bbb480:  2 ch,  44100 Hz, Int16, interleaved>, Output format: <AVAudioFormat 0x305bba260:  2 ch,  48000 Hz, Float32, deinterleaved>
+🔍 GameAudioEngine2.swift:324 - updateSampleRateConversion(): Setting sample rate conversion ratio: 1.0884354
+🔍 GameAudioEngine2.swift:342 - updateSampleRateConversion(): Connecting with converter format: <AVAudioFormat 0x305bba580:  2 ch,  44100 Hz, Float32, deinterleaved>
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:365 - updateSampleRateConversion(): Successfully connected through converter chain
+🔍 PVMediaCache.swift:292 - image(forKey:completion:): Image found in memory cache: true
+🔍 PVMediaCache.swift:292 - image(forKey:completion:): Image found in memory cache: true
+🔍 GameAudioEngine2.swift:203 - updateSourceNode(): Entering updateSourceNode
+🔍 GameAudioEngine2.swift:207 - updateSourceNode(): Detached existing source node
+🔍 GameAudioEngine2.swift:175 - streamDescription: Creating stream description - Rate: 44100.0, Channels: 2, Bits: 16
+🔍 GameAudioEngine2.swift:219 - updateSourceNode(): Using format: <AVAudioFormat 0x305b09450:  2 ch,  44100 Hz, Int16, interleaved>
+🔍 GameAudioEngine2.swift:238 - updateSourceNode(): Attached new source node
+🔍 GameAudioEngine2.swift:240 - updateSourceNode(): Exiting updateSourceNode
+🔍 GameAudioEngine2.swift:266 - connectNodes(): Entering connectNodes
+🔍 GameAudioEngine2.swift:273 - connectNodes(): Output format: <AVAudioFormat 0x305b094a0:  2 ch,  48000 Hz, Float32, deinterleaved>
+🔍 GameAudioEngine2.swift:297 - connectNodes(): Connected with format conversion: <AVAudioFormat 0x305b09450:  2 ch,  44100 Hz, Int16, interleaved> -> <AVAudioFormat 0x305b09c20:  2 ch,  44100 Hz, Float32, deinterleaved>
+🔍 GameAudioEngine2.swift:304 - connectNodes(): Set main mixer node output volume to 1.0
+🔍 GameAudioEngine2.swift:305 - connectNodes(): Exiting connectNodes
