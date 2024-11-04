@@ -146,7 +146,7 @@ public extension PVRingBuffer
         if size > self.availableBytesForWriting
         {
             WLOG("Ring Buffer Capacity reached. Available: \(self.availableBytesForWriting). Requested: \(size) Max: \(self.bufferLength). Filled: \(self.usedBytesCount).")
-
+            debugBufferState()
             self.reset()
         }
 
@@ -190,19 +190,31 @@ public extension PVRingBuffer
         let size = self.availableBytesForReading
         self.incrementAvailableBytes(by: size)
     }
+
+    /// Add debug method to verify buffer state
+    public func debugBufferState() {
+        DLOG("Buffer State - Head: \(headOffset), Tail: \(tailOffset), Used: \(usedBytesCount), Length: \(bufferLength)")
+        let available = availableBytesForWriting
+        let used = availableBytesForReading
+        DLOG("Available for writing: \(available), Available for reading: \(used)")
+    }
 }
 
 private extension PVRingBuffer
 {
     func incrementAvailableBytes(by size: Int)
     {
-        self.tailOffset = (self.tailOffset + size) % self.bufferLength
+        /// Ensure atomic update of both offset and count
         OSAtomicAdd32(-Int32(size), &self.usedBytesCount)
+        OSMemoryBarrier()  /// Memory barrier to ensure ordering
+        self.tailOffset = (self.tailOffset + size) % self.bufferLength
     }
 
     func decrementAvailableBytes(by size: Int)
     {
-        self.headOffset = (self.headOffset + size) % self.bufferLength
+        /// Update count first to prevent underflow
         OSAtomicAdd32(Int32(size), &self.usedBytesCount)
+        OSMemoryBarrier()  /// Memory barrier to ensure ordering
+        self.headOffset = (self.headOffset + size) % self.bufferLength
     }
 }
