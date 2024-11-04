@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum MatchType: Sendable {
+package enum MatchType: Sendable {
     case byExtension
     case byHash(MatchHashType)
     case byFolder

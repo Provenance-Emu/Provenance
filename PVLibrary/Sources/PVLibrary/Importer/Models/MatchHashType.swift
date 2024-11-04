@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum MatchHashType: String, Codable, Equatable, Hashable, Sendable {
+package enum MatchHashType: String, Codable, Equatable, Hashable, Sendable {
     case MD5
     case CRC
     case SHA1
