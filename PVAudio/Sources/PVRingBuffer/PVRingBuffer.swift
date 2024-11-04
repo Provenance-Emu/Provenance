@@ -69,7 +69,11 @@ public final class PVRingBuffer: NSObject, RingBufferProtocol {
     public required init?(withLength length: RingBufferSize) {
         guard length > 0 else { return nil }
         self.bufferLength = length
+
+        /// Allocate and zero out the buffer
         self.buffer = malloc(length)
+        memset(self.buffer, 0, length)
+
         super.init()
     }
 

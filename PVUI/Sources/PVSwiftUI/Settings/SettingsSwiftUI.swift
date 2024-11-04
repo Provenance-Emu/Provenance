@@ -728,20 +728,19 @@ private struct AdvancedTogglesView: View {
                             subtitle: "Combine left and right audio channels.",
                             icon: .sfSymbol("speaker.wave.1"))
              }
+            #endif
 
-
-            ThemedToggle(isOn: $useLegacyAudioEngine) {
-                 SettingsRow(title: "Legacy Audio",
+            PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
+                 SettingsRow(title: "Legacy Audio Engine",
                             subtitle: "Use legacy audio engine for compatibility.",
                             icon: .sfSymbol("waveform"))
              }
 
-            ThemedToggle(isOn: $useLegacyRingBuffer) {
+            PremiumThemedToggle(isOn: $useLegacyRingBuffer) {
                 SettingsRow(title: "Legacy Audio Buffer",
                            subtitle: "Use legacy audio buffer for compatibility.",
                            icon: .sfSymbol("arrow.trianglehead.clockwise"))
             }
-            #endif
 
         }
     }
