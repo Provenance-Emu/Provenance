@@ -80,6 +80,8 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     public init() {
         volume = 1
+        configureAudioSession()
+        setupInterruptionHandling()
     }
 
     deinit {
@@ -389,7 +391,9 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     private func configureAudioSession() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers, .defaultToSpeaker])
+            try AVAudioSession.sharedInstance().setCategory(.playback,
+                                                          mode: .default,
+                                                          options: [.mixWithOthers, .defaultToSpeaker])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
@@ -516,6 +520,7 @@ extension GameAudioEngine2: MonoAudioEngine {
         do {
             try engine.start()
         } catch {
+            ELOG("Failed to start audio engine: \(error.localizedDescription)")
             throw AudioEngineError.engineStartFailed
         }
     }
