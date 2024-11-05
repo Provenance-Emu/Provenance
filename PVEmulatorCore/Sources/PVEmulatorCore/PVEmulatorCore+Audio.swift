@@ -66,7 +66,9 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
 //        }
     }
     @objc dynamic open var channelCount: UInt {
-        bridge.channelCount ?? 1
+        let channelCount = bridge.channelCount ?? 1
+        DLOG("channelCount: \(channelCount)")
+        return channelCount
     }
 
     @objc dynamic open var audioBufferCount: UInt {
