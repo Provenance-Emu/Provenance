@@ -179,12 +179,22 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let channelCount = UInt32(gameCore.channelCount(forBuffer: 0))
         let sampleRate = gameCore.audioSampleRate(forBuffer: 0)
         let bitDepth = gameCore.audioBitDepth
+        let bufferSize = gameCore.audioBufferSize(forBuffer: 0)
+        let bytesPerSample = bitDepth / 8
 
-        DLOG("Checking format - Channels: \(channelCount), Rate: \(sampleRate), Bits: \(bitDepth)")
+        DLOG("Core audio properties - Channels: \(channelCount), Rate: \(sampleRate), Bits: \(bitDepth)")
+        DLOG("Buffer size: \(bufferSize), Bytes per sample: \(bytesPerSample)")
 
-        /// Handle 16-bit interleaved stereo format (like Genesis)
-        if bitDepth == 16 {
-            DLOG("Using Genesis-style 16-bit stereo format")
+        /// Check if audio is interleaved:
+        /// - Reports 1 channel but writes pairs of samples
+        /// - Uses 16-bit samples
+        /// - Buffer size must accommodate pairs of samples
+        let isInterleaved = channelCount == 1 &&
+                           bitDepth == 16 &&
+                           bufferSize % (bytesPerSample * 2) == 0
+
+        if isInterleaved {
+            DLOG("Using interleaved stereo format")
             return AudioStreamBasicDescription(
                 mSampleRate: sampleRate,
                 mFormatID: kAudioFormatLinearPCM,
@@ -198,8 +208,6 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         }
 
         DLOG("Using standard format")
-        /// Handle other formats
-        let bytesPerSample = UInt32(bitDepth / 8)
         let formatFlags: AudioFormatFlags = bitDepth == 32
             ? kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
             : kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
@@ -208,9 +216,9 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             mSampleRate: sampleRate,
             mFormatID: kAudioFormatLinearPCM,
             mFormatFlags: formatFlags,
-            mBytesPerPacket: bytesPerSample * channelCount,
+            mBytesPerPacket: UInt32(bytesPerSample) * channelCount,
             mFramesPerPacket: 1,
-            mBytesPerFrame: bytesPerSample * channelCount,
+            mBytesPerFrame: UInt32(bytesPerSample) * channelCount,
             mChannelsPerFrame: channelCount,
             mBitsPerChannel: UInt32(bitDepth),
             mReserved: 0)
