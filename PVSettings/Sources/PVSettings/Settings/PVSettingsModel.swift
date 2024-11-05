@@ -34,7 +34,7 @@ extension Defaults.Keys {
 
     static let buttonVibration = Key<Bool>("buttonVibration", default: true)
 #if os(iOS) || os(wathcOS) || targetEnvironment(macCatalyst)
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
 #else
     static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
 #endif
