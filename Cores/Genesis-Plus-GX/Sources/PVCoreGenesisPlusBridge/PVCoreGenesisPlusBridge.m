@@ -812,7 +812,9 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 - (NSUInteger)channelCount {
-    return PVCoreGenesisPlusOptions.mono ? 1 : 2;
+    BOOL isMono = PVCoreGenesisPlusOptions.mono;
+    NSUInteger channelCount = isMono ? 1 : 2;
+    return channelCount;
 }
 
 #pragma mark - Input

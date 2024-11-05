@@ -121,7 +121,7 @@ public class PVCoreGenesisPlusOptions: NSObject, CoreOptions {
                     title: "Mono",
                     description: "Mono audio output",
                     requiresRestart: true),
-                      defaultValue: true)
+                      defaultValue: false)
             
         //            static var filter_range: CoreOption = {
 //                .enumeration(.init(
