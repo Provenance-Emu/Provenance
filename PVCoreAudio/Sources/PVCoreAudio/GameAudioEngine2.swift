@@ -391,9 +391,9 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     private func configureAudioSession() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback,
-                                                          mode: .default,
-                                                          options: [.mixWithOthers, .defaultToSpeaker])
+            /// Use ambient category for better iOS behavior
+            try AVAudioSession.sharedInstance().setCategory(.ambient,
+                                                          mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
