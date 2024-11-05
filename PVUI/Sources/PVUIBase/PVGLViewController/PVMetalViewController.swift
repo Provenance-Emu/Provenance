@@ -186,22 +186,34 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        #if !(targetEnvironment(macCatalyst) || os(macOS))
         /// Setup OpenGL context if core renders to OpenGL
         if emulatorCore?.rendersToOpenGL ?? false {
+            #if os(macOS) || targetEnvironment(macCatalyst)
+            if let context = createMacOpenGLContext() {
+                glContext = context
+                alternateThreadGLContext = createMacOpenGLContext()
+                alternateThreadBufferCopyGLContext = createMacOpenGLContext()
+
+                #if DEBUG
+                ILOG("Created macOS/Catalyst OpenGL contexts for core that renders to OpenGL")
+                #endif
+            } else {
+                ELOG("Failed to create macOS/Catalyst OpenGL context")
+            }
+            #else
             if let context = bestContext {
                 glContext = context
                 alternateThreadGLContext = EAGLContext(api: context.api)
                 alternateThreadBufferCopyGLContext = EAGLContext(api: context.api)
 
                 #if DEBUG
-                ILOG("Created OpenGL contexts for core that renders to OpenGL")
+                ILOG("Created iOS OpenGL contexts for core that renders to OpenGL")
                 #endif
             } else {
-                ELOG("Failed to create OpenGL context")
+                ELOG("Failed to create iOS OpenGL context")
             }
+            #endif
         }
-        #endif
 
         metalView.device = device
         metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
@@ -283,22 +295,40 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         alternateThreadDepthRenderbuffer = 0
     }
 
-#if !(targetEnvironment(macCatalyst) || os(macOS))
+#if os(macOS) || targetEnvironment(macCatalyst)
+/// Create OpenGL context for macOS/Catalyst
+private func createMacOpenGLContext() -> NSOpenGLContext? {
+    let attributes: [NSOpenGLPixelFormatAttribute] = [
+        NSOpenGLPixelFormatAttribute(NSOpenGLPFADoubleBuffer),
+        NSOpenGLPixelFormatAttribute(NSOpenGLPFAColorSize), 24,
+        NSOpenGLPixelFormatAttribute(NSOpenGLPFAAlphaSize), 8,
+        NSOpenGLPixelFormatAttribute(NSOpenGLPFADepthSize), 16,
+        NSOpenGLPixelFormatAttribute(0)
+    ]
 
-    lazy var bestContext: EAGLContext? = {
-        if let context = EAGLContext(api: .openGLES3) {
-            glesVersion = .version3
-            return context
-        } else if let context = EAGLContext(api: .openGLES2) {
-            glesVersion = .version2
-            return context
-        } else if let context = EAGLContext(api: .openGLES1) {
-            glesVersion = .version1
-            return context
-        } else {
-            return nil
-        }
-    }()
+    guard let pixelFormat = NSOpenGLPixelFormat(attributes: attributes) else {
+        ELOG("Failed to create NSOpenGLPixelFormat")
+        return nil
+    }
+
+    return NSOpenGLContext(format: pixelFormat, share: nil)
+}
+#else
+/// iOS OpenGL context getter
+lazy var bestContext: EAGLContext? = {
+    if let context = EAGLContext(api: .openGLES3) {
+        glesVersion = .version3
+        return context
+    } else if let context = EAGLContext(api: .openGLES2) {
+        glesVersion = .version2
+        return context
+    } else if let context = EAGLContext(api: .openGLES1) {
+        glesVersion = .version1
+        return context
+    } else {
+        return nil
+    }
+}()
 #endif
 
     func updatePreferredFPS() {
