@@ -13,7 +13,7 @@ import Foundation
     @objc var frameInterval: TimeInterval { get }
     @objc weak var audioDelegate: PVAudioDelegate? { get set }
 
-    @objc var sampleRate: Double { get set }
+    @objc var audioSampleRate: Double { get set }
     @objc var audioBitDepth: UInt { get }
     @objc dynamic var channelCount: UInt { get }
 

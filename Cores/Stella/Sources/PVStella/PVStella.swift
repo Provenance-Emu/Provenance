@@ -41,7 +41,7 @@ public final class PVStellaGameCore: PVEmulatorCore {
     @objc
     public var _sampleRate: Double = 31400.0
     @objc
-    public override var sampleRate: Double {
+    public override var audioSampleRate: Double {
         get { _sampleRate }
         set { _sampleRate = newValue }
     }

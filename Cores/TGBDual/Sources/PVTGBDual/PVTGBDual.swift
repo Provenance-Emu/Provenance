@@ -24,10 +24,10 @@ public final class PVTGBDualCore: PVEmulatorCore, @unchecked Sendable {
     
     // TGBDual
     private var _sampleRate: Double = 44100
-    override public var sampleRate: Double { get {_sampleRate}
+    override public var audioSampleRate: Double { get {_sampleRate}
         set {
             _sampleRate = newValue
-            bridge.sampleRate = newValue
+            bridge.audioSampleRate = newValue
         }}
 //    // MARK: Lifecycle
 

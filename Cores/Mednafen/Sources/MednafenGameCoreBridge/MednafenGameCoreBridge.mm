@@ -93,7 +93,7 @@ int mednafenCurrentDisplayMode = 1;
 static __weak MednafenGameCoreBridge *_current;
 
 @implementation MednafenGameCoreBridge
-@dynamic sampleRate;
+@dynamic audioSampleRate;
 -(const void *)getGame {
     return (const void *)game;
 }

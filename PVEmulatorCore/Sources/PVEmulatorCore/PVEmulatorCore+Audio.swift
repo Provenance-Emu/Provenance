@@ -24,22 +24,13 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
         }
     }
 
-    @objc dynamic  open var sampleRate: Double {
+    @objc dynamic  open var audioSampleRate: Double {
         get {
-            if let objcBridge: any ObjCBridgedCore = self as? (any ObjCBridgedCore),
-                let bridge = objcBridge.bridge as? any ObjCBridgedCoreBridge & EmulatorCoreAudioDataSource,
-                bridge.responds(to: #selector(getter: bridge.sampleRate)) {
-                let sampleRate = bridge.sampleRate
-                return sampleRate
-            } else {
-                return 44100.0
-            }
+            bridge.audioSampleRate ?? 44100.0
         }
         set {
-            if let objcBridge: any ObjCBridgedCore = self as? (any ObjCBridgedCore),
-                let bridge = objcBridge.bridge as? any ObjCBridgedCoreBridge & EmulatorCoreAudioDataSource,
-                bridge.responds(to: #selector(setter: bridge.sampleRate)) {
-                bridge.sampleRate = newValue
+            if let objcBridge: any ObjCBridgedCore = self as? (any ObjCBridgedCore), bridge.responds(to: #selector(setter: bridge.audioSampleRate)) {
+                bridge.audioSampleRate = newValue
             } else {
                 fatalError("Should be overridden by subclass")
             }
@@ -120,7 +111,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
 
     @objc public func audioSampleRate(forBuffer buffer: UInt = 0) -> Double {
         if buffer == 0 {
-            return sampleRate
+            return audioSampleRate
         }
 
         ELOG("Buffer count is greater than 1, must implement audioSampleRate(forBuffer)")
@@ -136,7 +127,7 @@ internal extension PVEmulatorCore {
     }
 
     func setPreferredSampleRate(_ preferredSampleRate: Double) throws {
-        let preferredSampleRate: Double = (self.sampleRate > 0) ? self.sampleRate : 44100
+        let preferredSampleRate: Double = (self.audioSampleRate > 0) ? self.audioSampleRate : 44100
         try AVAudioSession.sharedInstance().setPreferredSampleRate(preferredSampleRate)
     }
 }

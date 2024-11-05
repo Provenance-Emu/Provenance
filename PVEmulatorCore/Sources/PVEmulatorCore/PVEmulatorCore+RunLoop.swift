@@ -62,7 +62,7 @@ import PVLogging
         #if !os(tvOS) && !os(macOS) && !os(watchOS)
 //        startHaptic()
         do {
-            try setPreferredSampleRate(sampleRate)
+            try setPreferredSampleRate(audioSampleRate)
         } catch {
             ELOG("\(error.localizedDescription)")
         }

@@ -726,6 +726,7 @@ static void *dlopen_myself()
 }
 
 - (double)audioSampleRate {
+    DLOG("Audio Sample Rate: %d", _mupenSampleRate);
     return _mupenSampleRate;
 }
 
