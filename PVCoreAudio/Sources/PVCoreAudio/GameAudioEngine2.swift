@@ -176,19 +176,43 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     }
 
     private var streamDescription: AudioStreamBasicDescription {
-        // Genesis always uses 16-bit stereo
-        let channelCount: UInt32 = 2
-        let bytesPerSample: UInt32 = 2  // 16-bit = 2 bytes
+        let channelCount = UInt32(gameCore.channelCount(forBuffer: 0))
+        let sampleRate = gameCore.audioSampleRate(forBuffer: 0)
+        let bitDepth = gameCore.audioBitDepth
+
+        DLOG("Checking format - Channels: \(channelCount), Rate: \(sampleRate), Bits: \(bitDepth)")
+
+        /// Handle 16-bit interleaved stereo format (like Genesis)
+        if bitDepth == 16 {
+            DLOG("Using Genesis-style 16-bit stereo format")
+            return AudioStreamBasicDescription(
+                mSampleRate: sampleRate,
+                mFormatID: kAudioFormatLinearPCM,
+                mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked,
+                mBytesPerPacket: 4,  // 2 bytes * 2 channels
+                mFramesPerPacket: 1,
+                mBytesPerFrame: 4,   // 2 bytes * 2 channels
+                mChannelsPerFrame: 2,  // Force stereo for interleaved data
+                mBitsPerChannel: 16,
+                mReserved: 0)
+        }
+
+        DLOG("Using standard format")
+        /// Handle other formats
+        let bytesPerSample = UInt32(bitDepth / 8)
+        let formatFlags: AudioFormatFlags = bitDepth == 32
+            ? kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
+            : kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
 
         return AudioStreamBasicDescription(
-            mSampleRate: gameCore.audioSampleRate(forBuffer: 0),
+            mSampleRate: sampleRate,
             mFormatID: kAudioFormatLinearPCM,
-            mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked,
+            mFormatFlags: formatFlags,
             mBytesPerPacket: bytesPerSample * channelCount,
             mFramesPerPacket: 1,
             mBytesPerFrame: bytesPerSample * channelCount,
             mChannelsPerFrame: channelCount,
-            mBitsPerChannel: 16,
+            mBitsPerChannel: UInt32(bitDepth),
             mReserved: 0)
     }
 
@@ -255,12 +279,6 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         /// Connect directly with source format
         engine.connect(src, to: engine.mainMixerNode, format: renderFormat)
-
-        /// Update time pitch rate based on sample rates
-        let outputRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
-        let inputRate = renderFormat.sampleRate
-        DLOG("Output rate: \(outputRate), Input rate: \(inputRate)")
-        timePitchNode.rate = Float(outputRate / inputRate)
 
         engine.mainMixerNode.outputVolume = volume
     }
