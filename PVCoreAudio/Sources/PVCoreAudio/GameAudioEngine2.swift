@@ -29,6 +29,7 @@ import PVAudio
 import PVCoreBridge
 import AudioToolbox
 import CoreAudio
+import PVSettings
 
 @available(macOS 11.0, iOS 14.0, *)
 final public class GameAudioEngine2: AudioEngineProtocol {
@@ -374,8 +375,8 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     //    }
 
     private func adjustBufferSize() {
-        /// Use larger buffer for more stability
-        let desiredLatency = 0.01 // 10ms
+        /// Use user-configurable latency setting
+        let desiredLatency = Defaults[.audioLatency] / 100.0
         let sampleRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
         let bufferSize = AVAudioFrameCount(sampleRate * desiredLatency)
 
