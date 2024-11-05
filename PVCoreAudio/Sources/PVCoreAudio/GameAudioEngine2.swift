@@ -29,11 +29,23 @@ import PVAudio
 import PVCoreBridge
 import AudioToolbox
 import CoreAudio
-import PVSettings
 
 @available(macOS 11.0, iOS 14.0, *)
 final public class GameAudioEngine2: AudioEngineProtocol {
 
+    /// Add time pitch node for better rate control
+    private lazy var timePitchNode: AVAudioUnitTimePitch = {
+        let node = AVAudioUnitTimePitch()
+        node.rate = 1.0
+        return node
+    }()
+
+    /// Internal format for consistent processing
+    private lazy var internalFormat: AVAudioFormat = {
+        /// Use same sample rate as input but with float32 format
+        let sampleRate = gameCore.audioSampleRate(forBuffer: 0)
+        return AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 2)!
+    }()
 
     public func setVolume(_ volume: Float) {
         self.volume = volume
@@ -90,16 +102,15 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     public func startAudio() {
         precondition(gameCore.audioBufferCount == 1,
-                     "Only one buffer supported; got \(gameCore.audioBufferCount)")
-
-        /// Configure for lower latency before setting up nodes
-        adjustBufferSize()
+                     "nly one buffer supported; got \(gameCore.audioBufferCount)")
 
         updateSourceNode()
         connectNodes()
         setOutputDeviceID(outputDeviceID)
 
         engine.prepare()
+        // per the following, we need to wait before resuming to allow devices to start 🤦🏻‍♂️
+        //  https://github.com/AudioKit/AudioKit/blob/f2a404ff6cf7492b93759d2cd954c8a5387c8b75/Examples/macOS/OutputSplitter/OutputSplitter/Audio/Output.swift#L88-L95
         performResumeAudio()
         startMonitoringEngineConfiguration()
     }
@@ -165,28 +176,20 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     }
 
     private var streamDescription: AudioStreamBasicDescription {
-        let channelCount    = UInt32(gameCore.channelCount(forBuffer: 0))
-        let bytesPerSample  = UInt32(gameCore.audioBitDepth / 8)
-        let sampleRate = gameCore.audioSampleRate(forBuffer: 0)
-
-        /// Simplified format flags for common cases
-        let formatFlags: AudioFormatFlags = bytesPerSample == 4
-            ? kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
-            : kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
-
-        DLOG("Creating stream description - Rate: \(sampleRate), Channels: \(channelCount), Bits: \(8 * bytesPerSample)")
+        // Genesis always uses 16-bit stereo
+        let channelCount: UInt32 = 2
+        let bytesPerSample: UInt32 = 2  // 16-bit = 2 bytes
 
         return AudioStreamBasicDescription(
-            mSampleRate: sampleRate,
+            mSampleRate: gameCore.audioSampleRate(forBuffer: 0),
             mFormatID: kAudioFormatLinearPCM,
-            mFormatFlags: formatFlags,
+            mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked,
             mBytesPerPacket: bytesPerSample * channelCount,
             mFramesPerPacket: 1,
             mBytesPerFrame: bytesPerSample * channelCount,
             mChannelsPerFrame: channelCount,
-            mBitsPerChannel: 8 * bytesPerSample,
-            mReserved: 0
-        )
+            mBitsPerChannel: 16,
+            mReserved: 0)
     }
 
     private var renderFormat: AVAudioFormat {
@@ -197,70 +200,40 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     // MARK: - Helpers
 
-    private var converter: AudioConverterRef?
-
-    private var intermediateFormat: AVAudioFormat?
-
     private func updateSourceNode() {
-        DLOG("Entering updateSourceNode")
         if let src {
             engine.detach(src)
             self.src = nil
-            DLOG("Detached existing source node")
         }
 
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
-        var originalSD = streamDescription
+        var sd = streamDescription
+        let bytesPerFrame = sd.mBytesPerFrame
 
-        /// For 16-bit audio, use the format directly without conversion
-        let format = originalSD.mBitsPerChannel == 16
-            ? AVAudioFormat(streamDescription: &originalSD)!
-            : createIntermediateFormat(from: originalSD)
+        DLOG("Audio format - Rate: \(sd.mSampleRate), Channels: \(sd.mChannelsPerFrame), Bits: \(sd.mBitsPerChannel)")
 
-        intermediateFormat = format
-        DLOG("Using format: \(format)")
-
-        /// Use smaller buffer size for more frequent processing
-        let preferredIOBufferDuration = Defaults[.audioLatency] / 100.0 //0.010 // 10ms
-        
-        do {
-            DLOG("Setting audio latency to \(preferredIOBufferDuration) S")
-            try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(preferredIOBufferDuration)
-        } catch {
-            ELOG("Error setting latency to \(preferredIOBufferDuration) S")
+        guard let format = AVAudioFormat(streamDescription: &sd) else {
+            ELOG("Failed to create AVAudioFormat")
+            return
         }
 
-        src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, audioBufferList -> OSStatus in
-            let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
-            let bytesPerFrame = Int(originalSD.mBytesPerFrame)
-            let bytesToRead = Int(frameCount) * bytesPerFrame
+        src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, inputData in
+            guard let self = self else { return noErr }
 
-            for i in 0..<ablPointer.count {
-                var audioBuffer = ablPointer[i]
-                let bytesRead = read(audioBuffer.mData!, bytesToRead)
-                audioBuffer.mDataByteSize = UInt32(bytesRead)
-            }
+            let bytesRequested = Int(frameCount * bytesPerFrame)
+            let bytesCopied = read(inputData.pointee.mBuffers.mData!, bytesRequested)
+
+            DLOG("Requested: \(bytesRequested) bytes, Copied: \(bytesCopied) bytes")
+
+            inputData.pointee.mBuffers.mDataByteSize = UInt32(bytesCopied)
+            inputData.pointee.mBuffers.mNumberChannels = 2  // Always stereo for Genesis
+
             return noErr
         }
 
         if let src {
             engine.attach(src)
-            DLOG("Attached new source node")
         }
-        DLOG("Exiting updateSourceNode")
-    }
-
-    private func createIntermediateFormat(from original: AudioStreamBasicDescription) -> AVAudioFormat {
-        var sd = original
-
-        if sd.mBitsPerChannel == 8 {
-            sd.mBitsPerChannel = 16
-            sd.mBytesPerPacket *= 2
-            sd.mBytesPerFrame *= 2
-            DLOG("Converting 8-bit to 16-bit format")
-        }
-
-        return AVAudioFormat(streamDescription: &sd)!
     }
 
     private func destroyNodes() {
@@ -273,119 +246,45 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     private var sampleRateConverter: AVAudioUnitVarispeed?
 
     private func connectNodes() {
-        DLOG("Entering connectNodes")
-        guard let src else {
-            ELOG("Source node is nil")
+        guard let src else { fatalError("Expected src node") }
+
+        if isMonoOutput {
+            updateMonoSetting()
             return
         }
 
-        let outputFormat = engine.outputNode.inputFormat(forBus: 0)
-        DLOG("Output format: \(outputFormat)")
+        /// Connect directly with source format
+        engine.connect(src, to: engine.mainMixerNode, format: renderFormat)
 
-        if let intermediateFormat = intermediateFormat {
-            do {
-                /// Create a format converter to match output format
-                let targetFormat = AVAudioFormat(
-                    commonFormat: outputFormat.commonFormat,
-                    sampleRate: intermediateFormat.sampleRate,
-                    channels: intermediateFormat.channelCount,
-                    interleaved: outputFormat.isInterleaved
-                )
-
-                guard let targetFormat = targetFormat else {
-                    ELOG("Failed to create target format")
-                    return
-                }
-
-                /// Use intermediate mixer for format conversion
-                let intermediateMixer = AVAudioMixerNode()
-                engine.attach(intermediateMixer)
-
-                try engine.connect(src, to: intermediateMixer, format: intermediateFormat)
-                try engine.connect(intermediateMixer, to: engine.mainMixerNode, format: targetFormat)
-
-                DLOG("Connected with format conversion: \(intermediateFormat) -> \(targetFormat)")
-            } catch {
-                ELOG("Failed to connect: \(error.localizedDescription)")
-            }
-        }
+        /// Update time pitch rate based on sample rates
+        let outputRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
+        let inputRate = renderFormat.sampleRate
+        DLOG("Output rate: \(outputRate), Input rate: \(inputRate)")
+        timePitchNode.rate = Float(outputRate / inputRate)
 
         engine.mainMixerNode.outputVolume = volume
-        DLOG("Set main mixer node output volume to \(volume)")
-        DLOG("Exiting connectNodes")
     }
 
     private func updateSampleRateConversion() {
         let outputFormat = engine.outputNode.inputFormat(forBus: 0)
-        let sourceRate = renderFormat.sampleRate
-        let targetRate = outputFormat.sampleRate
 
-        DLOG("Source rate: \(sourceRate), Target rate: \(targetRate)")
-        DLOG("Source format: \(renderFormat), Output format: \(outputFormat)")
-
-        /// Only use sample rate conversion if difference is significant
-        if abs(sourceRate - targetRate) > 1.0 {
+        if abs(renderFormat.sampleRate - outputFormat.sampleRate) > 1 {
             if sampleRateConverter == nil {
                 sampleRateConverter = AVAudioUnitVarispeed()
                 engine.attach(sampleRateConverter!)
             }
 
-            let rate = Float(targetRate / sourceRate)
-            DLOG("Setting sample rate conversion ratio: \(rate)")
-            sampleRateConverter?.rate = rate
-
-            engine.disconnectNodeInput(engine.mainMixerNode)
-            if let src = src, let converter = sampleRateConverter {
-                /// Create a format matching the output format's configuration
-                let converterFormat = AVAudioFormat(
-                    commonFormat: outputFormat.commonFormat,
-                    sampleRate: sourceRate,
-                    channels: outputFormat.channelCount,
-                    interleaved: outputFormat.isInterleaved
-                )
-
-                guard let converterFormat = converterFormat else {
-                    ELOG("Failed to create converter format")
-                    return
-                }
-
-                DLOG("Connecting with converter format: \(converterFormat)")
-
-                do {
-                    /// First connect through format converter
-                    let formatConverter = AVAudioConverter(from: renderFormat, to: converterFormat)
-                    guard let formatConverter = formatConverter else {
-                        ELOG("Failed to create format converter")
-                        return
-                    }
-
-                    /// Create an intermediate mixer for format conversion
-                    let intermediateMixer = AVAudioMixerNode()
-                    engine.attach(intermediateMixer)
-
-                    /// Connect source to intermediate mixer
-                    try engine.connect(src, to: intermediateMixer, format: renderFormat)
-
-                    /// Connect intermediate mixer to converter
-                    try engine.connect(intermediateMixer, to: converter, format: converterFormat)
-
-                    /// Connect converter to main mixer
-                    try engine.connect(converter, to: engine.mainMixerNode, format: nil)
-
-                    DLOG("Successfully connected through converter chain")
-                } catch {
-                    ELOG("Failed to connect through converter: \(error.localizedDescription)")
-                    /// Fallback to direct connection
-                    try? engine.connect(src, to: engine.mainMixerNode, format: renderFormat)
-                }
-            }
+            sampleRateConverter?.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
         } else {
             if let converter = sampleRateConverter {
                 engine.detach(converter)
                 sampleRateConverter = nil
             }
-            connectNodes()
         }
+
+        // Reconnect nodes to apply changes
+        engine.disconnectNodeInput(engine.mainMixerNode)
+        connectNodes()
     }
 
     private var token: NSObjectProtocol?
@@ -449,7 +348,8 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     //    }
 
     private func adjustBufferSize() {
-        let desiredLatency = 0.005 // 5ms
+        /// Use larger buffer for more stability
+        let desiredLatency = 0.01 // 10ms
         let sampleRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
         let bufferSize = AVAudioFrameCount(sampleRate * desiredLatency)
 
@@ -462,11 +362,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     private func configureAudioSession() {
         do {
-            #if os(tvOS)
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
-            #else
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers, .defaultToSpeaker])
-            #endif
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
@@ -531,19 +427,6 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             engine.connect(sourceNode, to: engine.mainMixerNode, format: renderFormat)
         }
     }
-
-    private func describeAudioFormat(_ format: AudioStreamBasicDescription) -> String {
-        return """
-        Sample Rate: \(format.mSampleRate),
-        Format ID: \(format.mFormatID),
-        Format Flags: \(format.mFormatFlags),
-        Bytes Per Packet: \(format.mBytesPerPacket),
-        Frames Per Packet: \(format.mFramesPerPacket),
-        Bytes Per Frame: \(format.mBytesPerFrame),
-        Channels Per Frame: \(format.mChannelsPerFrame),
-        Bits Per Channel: \(format.mBitsPerChannel)
-        """
-    }
 }
 
 extension GameAudioEngine2 {
@@ -579,44 +462,26 @@ extension GameAudioEngine2: MonoAudioEngine {
     }
     private func updateMonoSetting() {
         guard let src = src else { return }
-        let format = renderFormat
-        if isMonoOutput {
-            // Remove any existing connection to mainMixerNode
-            engine.disconnectNodeOutput(src)
 
-            // Connect playerNode to monoMixerNode
-            engine.connect(src, to: monoMixerNode, format: format)
+        /// For mono, connect through mono mixer first
+        engine.connect(src, to: timePitchNode, format: renderFormat)
+        engine.connect(timePitchNode, to: monoMixerNode, format: internalFormat)
+        engine.connect(monoMixerNode, to: engine.mainMixerNode, format: internalFormat)
 
-            // Create mono format
-            let monoFormat = AVAudioFormat(commonFormat: format.commonFormat,
-                                           sampleRate: format.sampleRate,
-                                           channels: 1,
-                                           interleaved: format.isInterleaved)
+        monoMixerNode.installTap(onBus: 0, bufferSize: 4096, format: nil) { buffer, _ in
+            guard let channelData = buffer.floatChannelData else { return }
+            let frameLength = buffer.frameLength
+            let channelCount = buffer.format.channelCount
 
-            // Install tap on the monoMixerNode to convert stereo to mono
-            monoMixerNode.installTap(onBus: 0, bufferSize: 4096, format: nil) { (buffer, time) in
-                guard let channelData = buffer.floatChannelData else { return }
+            guard channelCount == 2 else { return }
 
-                let frameLength = buffer.frameLength
-                let channelCount = buffer.format.channelCount
+            let leftChannel = channelData[0]
+            let rightChannel = channelData[1]
 
-                // If input is already mono, no need to process
-                guard channelCount == 2 else { return }
-
-                let leftChannel = channelData[0]
-                let rightChannel = channelData[1]
-
-                // Mix down to mono
-                for frame in 0..<Int(frameLength) {
-                    leftChannel[frame] = (leftChannel[frame] + rightChannel[frame]) / 2
-                    rightChannel[frame] = leftChannel[frame]
-                }
+            for frame in 0..<Int(frameLength) {
+                leftChannel[frame] = (leftChannel[frame] + rightChannel[frame]) / 2
+                rightChannel[frame] = leftChannel[frame]
             }
-        } else {
-            // Remove the tap and reconnect playerNode directly to mainMixerNode
-            monoMixerNode.removeTap(onBus: 0)
-            engine.disconnectNodeInput(monoMixerNode)
-            engine.connect(src, to: engine.mainMixerNode, format: format)
         }
     }
 
