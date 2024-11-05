@@ -45,6 +45,7 @@
 #import "PVMupenBridge+Saves.h"
 
 #import "api/config.h"
+#import "main/rom.h"
 #import "api/m64p_common.h"
 #import "api/m64p_config.h"
 #import "api/m64p_frontend.h"
@@ -121,9 +122,9 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
-    
+
     m64p_dynlib_handle core_handle;
-    
+
     m64p_dynlib_handle plugins[4];
 }
 
@@ -131,20 +132,20 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     if (self = [super init]) {
         mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
-   
+
         [self calculateSize];
 //        controllerMode = {PLUGIN_MEMPAK, PLUGIN_MEMPAK, PLUGIN_MEMPAK, PLUGIN_MEMPAK};
-        
+
         _videoBitDepth = 32; // ignored
         _videoDepthBitDepth = 0; // TODO
-        
+
         _mupenSampleRate = 33600;
-        
+
         _isNTSC = YES;
 
         _callbackQueue = dispatch_queue_create("org.openemu.MupenGameCore.CallbackHandlerQueue", DISPATCH_QUEUE_SERIAL);
         _callbackHandlers = [[NSMutableDictionary alloc] init];
-        
+
         _inputQueue = [[NSOperationQueue alloc] init];
         _inputQueue.name = @"mupen.input";
         _inputQueue.qualityOfService = NSOperationQueuePriorityHigh;
@@ -155,14 +156,16 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 }
 
 - (void)dealloc {
+    CoreShutdown();
+    romdatabase_close();
     SetStateCallback(NULL, NULL);
     SetDebugCallback(NULL, NULL);
-    
+
     [_inputQueue cancelAllOperations];
-    
+
     [self pluginsUnload];
     [self detachCoreLib];
-    
+
 #if !__has_feature(objc_arc)
     dispatch_release(mupenWaitToBeginFrameSemaphore);
     dispatch_release(coreWaitToEndFrameSemaphore);
