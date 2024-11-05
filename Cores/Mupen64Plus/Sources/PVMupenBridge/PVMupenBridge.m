@@ -256,9 +256,9 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 static void *dlopen_myself()
 {
     Dl_info info;
-    
+
     dladdr(dlopen_myself, &info);
-    
+
     return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
 }
 
@@ -287,7 +287,7 @@ static void *dlopen_myself()
 			}
 		}
 	}
-    
+
 //    [self parseOptions];
 
     NSError *copyError = nil;
@@ -354,18 +354,18 @@ static void *dlopen_myself()
     m64p_error openStatus = CoreDoCommand(M64CMD_ROM_OPEN, [romData length], (void *)[romData bytes]);
     if ( openStatus != M64ERR_SUCCESS) {
         ELOG(@"Error loading ROM at path: %@\n Error code was: %i", path, openStatus);
-   
+
 		if(error != NULL) {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
                                    NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load game.",
                                    NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mupen64Plus ROM format."
                                    };
-        
+
         NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                                 code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
-        
+
         *error = newError;
 		}
         return NO;
@@ -398,7 +398,7 @@ static void *dlopen_myself()
         NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", pluginName,pluginName];
         NSBundle *frameworkBundle = [NSBundle mainBundle]; //[NSBundle bundleWithIdentifier:@"org.provenance-emu.Cores"];
         NSString *rspPath = [frameworkBundle.privateFrameworksPath stringByAppendingPathComponent:frameworkPath];
-        
+
         rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_LAZY | RTLD_LOCAL);
         ptr_PluginStartup rsp_start = osal_dynlib_getproc(rsp_handle, "PluginStartup");
         m64p_error err = rsp_start(core_handle, (__bridge void *)self, MupenDebugCallback);
@@ -406,19 +406,19 @@ static void *dlopen_myself()
             ELOG(@"Error code %i loading plugin of type %i, name: %@", err, pluginType, pluginType);
             return NO;
         }
-        
+
         err = CoreAttachPlugin(pluginType, rsp_handle);
         if (err != M64ERR_SUCCESS) {
             ELOG(@"Error code %i attaching plugin of type %i, name: %@", err, pluginType, pluginType);
             return NO;
         }
-        
+
         // Store handle for later unload
         plugins[pluginType] = rsp_handle;
-        
+
         return YES;
     };
-    
+
     // Load Video
 
 	BOOL success = NO;
@@ -452,16 +452,16 @@ static void *dlopen_myself()
                                    NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load GFX Plugin.",
                                    NSLocalizedRecoverySuggestionErrorKey: @"Provenance may not be compiled correctly."
                                    };
-        
+
         NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                                 code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
-        
+
         *error = newError;
 		}
         return NO;
     }
-    
+
 
     // Load Audio
     audio.aiDacrateChanged = MupenAudioSampleRateChanged;
@@ -478,7 +478,7 @@ static void *dlopen_myself()
     input.initiateControllers = MupenInitiateControllers;
     input.controllerCommand = MupenControllerCommand;
     plugin_start(M64PLUGIN_INPUT);
-    
+
 
     if(MupenGameCoreOptions.useCXD4) {
             // Load RSP
@@ -568,21 +568,21 @@ static void *dlopen_myself()
         } else {
             ILOG(@"Core finished executing main");
         }
-        
+
         if(CoreDetachPlugin(M64PLUGIN_GFX) != M64ERR_SUCCESS) {
             ELOG(@"Failed to detach GFX plugin");
         } else {
             ILOG(@"Detached GFX plugin");
         }
-        
+
         if(CoreDetachPlugin(M64PLUGIN_RSP) != M64ERR_SUCCESS) {
             ELOG(@"Failed to detach RSP plugin");
         } else {
             ILOG(@"Detached RSP plugin");
         }
-        
+
         [self pluginsUnload];
-        
+
         if(CoreDoCommand(M64CMD_ROM_CLOSE, 0, NULL) != M64ERR_SUCCESS) {
             ELOG(@"Failed to close ROM");
         } else {
@@ -604,11 +604,11 @@ static void *dlopen_myself()
 
 - (m64p_error)pluginsUnload {
     // shutdown and unload frameworks for plugins
-    
+
     typedef m64p_error (*ptr_PluginShutdown)(void);
     ptr_PluginShutdown PluginShutdown;
     int i;
-    
+
     /* shutdown each type of plugin */
     for (i = 0; i < 4; i++)
     {
@@ -632,7 +632,7 @@ static void *dlopen_myself()
         }
         plugins[i] = NULL;
     }
-    
+
     return M64ERR_SUCCESS;
 }
 
@@ -645,7 +645,7 @@ static void *dlopen_myself()
 
 - (void)videoInterrupt {
     dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
-    
+
     dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, [self frameTime]);
 }
 
@@ -655,7 +655,7 @@ static void *dlopen_myself()
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-    
+
     dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
 }
 
@@ -683,12 +683,12 @@ static void *dlopen_myself()
     [_inputQueue cancelAllOperations];
 
     CoreDoCommand(M64CMD_STOP, 0, NULL);
-    
+
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     [self.frontBufferCondition lock];
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
-    
+
     [super stopEmulation];
 }
 
@@ -702,13 +702,27 @@ static void *dlopen_myself()
     [self.frontBufferCondition unlock];
 }
 
-- (void) tryToResizeVideoTo:(CGSize)size {
-    DLOG(@"Calling set video mode size to (%f,%f)", screenWidth, screenHeight);
+- (void)tryToResizeVideoTo:(CGSize)size {
+    #if TARGET_OS_IOS || TARGET_OS_TV
+    CGFloat screenScale = UIScreen.mainScreen.scale;
 
-    VidExt_SetVideoMode(size.width, size.height, 32, M64VIDEO_FULLSCREEN, 0);
-	if (ptr_PV_ForceUpdateWindowSize != nil) {
-		ptr_PV_ForceUpdateWindowSize(size.width, size.height);
-	}
+    CGSize finalSize;
+    if (RESIZE_TO_FULLSCREEN) {
+        /// Keep original resolution (native scale)
+        finalSize = CGSizeMake(size.width * screenScale, size.height * screenScale);
+    } else {
+        /// Scale to fill screen
+        finalSize = size;
+    }
+
+    DLOG(@"Setting video mode size to (%f,%f) with screen scale %f, fullscreen: %d",
+         finalSize.width, finalSize.height, screenScale, RESIZE_TO_FULLSCREEN);
+
+    VidExt_SetVideoMode(finalSize.width, finalSize.height, 32, M64VIDEO_FULLSCREEN, 0);
+    if (ptr_PV_ForceUpdateWindowSize != nil) {
+        ptr_PV_ForceUpdateWindowSize(finalSize.width, finalSize.height);
+    }
+    #endif
 }
 
 - (double)audioSampleRate {

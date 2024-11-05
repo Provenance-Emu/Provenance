@@ -35,7 +35,7 @@ import GLKit
 #if os(tvOS)
 let RESIZE_TO_FULLSCREEN: Bool = true
 #else
-let RESIZE_TO_FULLSCREEN: Bool = Defaults[.nativeScaleEnabled]
+let RESIZE_TO_FULLSCREEN: Bool = !Defaults[.nativeScaleEnabled]
 #endif
 
 extension m64p_core_param: @retroactive Hashable, @retroactive Equatable, @retroactive Codable {
