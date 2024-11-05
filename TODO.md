@@ -3,11 +3,13 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [ ] moveable button joystick and dpad move at the same time
 - [ ] RetroArch GLES cores are crashing?
 - [ ] Delete isn't deleting
     - [X] throw an error on file manager error
 - [ ] Checking Import UI is hanging (removed for now)
     - [ ] fix public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async
+- [X] audio is fucked
 - [X] 4X multisampling crashes Mupen on iPad, (iphone?)
 - [X] Refresh library and conflicts on new UI not working
 - [X] UI is unresponsive after closing emulator
