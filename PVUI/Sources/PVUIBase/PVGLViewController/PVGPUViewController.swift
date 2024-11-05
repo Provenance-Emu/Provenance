@@ -19,7 +19,11 @@ public typealias BaseViewController = NSViewController
 public typealias BaseViewController = UIViewController
 #else
 import GLKit
-public typealias BaseViewController = GLKViewController
+#if USE_METAL
+public typealias BaseViewController = UIViewController  /// Use UIViewController for Metal
+#else
+public typealias BaseViewController = GLKViewController /// Use GLKViewController for OpenGL
+#endif
 #endif
 
 @usableFromInline

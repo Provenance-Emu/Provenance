@@ -1008,6 +1008,12 @@ lazy var bestContext: EAGLContext? = {
                 let isFrontBufferReady = emulatorCore.isFrontBufferReady
                 emulatorCore.frontBufferCondition.unlock()
                 if isFrontBufferReady {
+                    calculateViewportIfNeeded()
+                    glViewport(GLint(cachedViewportX),
+                             GLint(cachedViewportY),
+                             GLsizei(cachedViewportWidth),
+                             GLsizei(cachedViewportHeight))
+
                     self._render(emulatorCore, in: view)
                     emulatorCore.frontBufferCondition.lock()
                     emulatorCore.isFrontBufferReady = false
@@ -1303,5 +1309,70 @@ lazy var bestContext: EAGLContext? = {
         emulatorCore?.isFrontBufferReady = true
         emulatorCore?.frontBufferCondition.signal()
         emulatorCore?.frontBufferCondition.unlock()
+    }
+
+    /// Cached viewport values
+    private var cachedViewportWidth: CGFloat = 0
+    private var cachedViewportHeight: CGFloat = 0
+    private var cachedViewportX: CGFloat = 0
+    private var cachedViewportY: CGFloat = 0
+    private var lastBufferSize: CGSize = .zero
+    private var lastScreenBounds: CGRect = .zero
+    private var lastNativeScaleEnabled: Bool = false
+
+    private func calculateViewportIfNeeded() {
+        guard let emulatorCore = emulatorCore else { return }
+
+        #if os(iOS) || os(tvOS)
+        let screenBounds = UIScreen.main.bounds
+        let screenScale = UIScreen.main.scale
+        let useNativeScale = Defaults[.nativeScaleEnabled]
+        #else
+        let screenBounds = view.bounds
+        let screenScale = view.window?.screen?.backingScaleFactor ?? 1.0
+        let useNativeScale = true
+        #endif
+
+        // Check if we need to recalculate
+        let bufferSize = emulatorCore.bufferSize
+        if bufferSize == lastBufferSize &&
+           screenBounds == lastScreenBounds &&
+           useNativeScale == lastNativeScaleEnabled {
+            return
+        }
+
+        // Cache the current values
+        lastBufferSize = bufferSize
+        lastScreenBounds = screenBounds
+        lastNativeScaleEnabled = useNativeScale
+
+        #if DEBUG
+        ILOG("Recalculating viewport values:")
+        ILOG("EmulatorCore sizes:")
+        ILOG("- bufferSize: \(bufferSize)")
+        ILOG("Screen bounds: \(screenBounds)")
+        ILOG("Screen scale: \(screenScale)")
+        ILOG("Native scale enabled: \(useNativeScale)")
+        #endif
+
+        /// Calculate viewport size based on native scale setting
+        if useNativeScale {
+            cachedViewportWidth = CGFloat(bufferSize.width) * screenScale
+            cachedViewportHeight = CGFloat(bufferSize.height) * screenScale
+        } else {
+            cachedViewportWidth = CGFloat(bufferSize.width)
+            cachedViewportHeight = CGFloat(bufferSize.height)
+        }
+
+        /// Calculate center position based on native scale setting
+        let scaleFactor = useNativeScale ? screenScale : 1.0
+        cachedViewportX = ((screenBounds.width * scaleFactor) - cachedViewportWidth) / scaleFactor
+        cachedViewportY = ((screenBounds.height * scaleFactor) - cachedViewportHeight) / scaleFactor
+
+        #if DEBUG
+        ILOG("Cached viewport values:")
+        ILOG("Size: \(cachedViewportWidth)x\(cachedViewportHeight)")
+        ILOG("Position: \(cachedViewportX),\(cachedViewportY)")
+        #endif
     }
 }
