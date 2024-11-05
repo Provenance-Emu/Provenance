@@ -186,6 +186,23 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
+        #if !(targetEnvironment(macCatalyst) || os(macOS))
+        /// Setup OpenGL context if core renders to OpenGL
+        if emulatorCore?.rendersToOpenGL ?? false {
+            if let context = bestContext {
+                glContext = context
+                alternateThreadGLContext = EAGLContext(api: context.api)
+                alternateThreadBufferCopyGLContext = EAGLContext(api: context.api)
+
+                #if DEBUG
+                ILOG("Created OpenGL contexts for core that renders to OpenGL")
+                #endif
+            } else {
+                ELOG("Failed to create OpenGL context")
+            }
+        }
+        #endif
+
         metalView.device = device
         metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
         metalView.depthStencilPixelFormat = .depth32Float_stencil8
