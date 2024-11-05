@@ -502,11 +502,11 @@ static void *dlopen_myself()
                                    NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load RSP Plugin.",
                                    NSLocalizedRecoverySuggestionErrorKey: @"Provenance may not be compiled correctly."
                                    };
-        
+
         NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                                 code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
-        
+
         *error = newError;
 		}
         return NO;
@@ -517,10 +517,10 @@ static void *dlopen_myself()
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         if(keyWindow != nil) {
             CGSize fullScreenSize = keyWindow.bounds.size;
-            float widthScale = floor(fullScreenSize.height / WIDTHf);
-            float heightScale = floor(fullScreenSize.height / WIDTHf);
+            float widthScale = floor(fullScreenSize.width / WIDTHf);
+            float heightScale = floor(fullScreenSize.height / HEIGHTf);
             float scale = MAX(MIN(widthScale, heightScale), 1);
-            float widthScaled =  scale * WIDTHf;
+            float widthScaled = scale * WIDTHf;
             float heightScaled = scale * HEIGHTf;
 
             [self tryToResizeVideoTo:CGSizeMake(widthScaled, heightScaled)];
