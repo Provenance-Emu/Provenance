@@ -17,6 +17,8 @@ struct HomeContinueItemView: SwiftUI.View {
     let hideSystemLabel: Bool
     var action: () -> Void
 
+    @State private var showDeleteAlert = false
+
     var body: some SwiftUI.View {
         Button {
             action()
@@ -28,7 +30,7 @@ struct HomeContinueItemView: SwiftUI.View {
                         .aspectRatio(contentMode: .fill)
                         .frame(height: height)
                 } else {
-                    Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game.title, ratio: 1))
+                    Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game?.title ?? "Deleted", ratio: 1))
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(height: height)
@@ -58,6 +60,25 @@ struct HomeContinueItemView: SwiftUI.View {
                     .background(.ultraThinMaterial)
                 }
             }
+        }
+        .contextMenu {
+            Button(role: .destructive) {
+                showDeleteAlert = true
+            } label: {
+                Label("Delete Save State", systemImage: "trash")
+            }
+        }
+        .alert("Delete Save State", isPresented: $showDeleteAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                do {
+                    try RomDatabase.sharedInstance.delete(saveState: continueState)
+                } catch {
+                    ELOG("Failed to delete save state: \(error.localizedDescription)")
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete this save state for \(continueState.game.title)?")
         }
     }
 }

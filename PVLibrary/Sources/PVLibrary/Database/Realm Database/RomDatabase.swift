@@ -647,6 +647,54 @@ public extension RomDatabase {
         }
     }
 
+    // Deletes a save state and its associated files
+    /// Deletes a save state and its associated files
+    func delete(saveState: PVSaveState) throws {
+        // Get the actual save state file path from the PVFile
+        let actualSavePath = saveState.file.url
+        let imageURL = saveState.image?.url
+        
+        // Create a thread-safe reference to the save state
+        let saveStateRef = ThreadSafeReference(to: saveState)
+        
+        // First delete the database entry
+        do {
+            try realm.write {
+                // Resolve the reference in this Realm instance
+                if let saveStateToDelete = realm.resolve(saveStateRef) {
+                    realm.delete(saveStateToDelete)
+                } else {
+                    ELOG("Failed to resolve save state reference in current Realm")
+                    throw RomDeletionError.relatedFiledDeletionError
+                }
+            }
+        } catch {
+            ELOG("Failed to delete save state from database: \(error.localizedDescription)")
+            throw error
+        }
+        
+        // After successful database deletion, delete the files
+        if FileManager.default.fileExists(atPath: actualSavePath.path) {
+            do {
+                try FileManager.default.removeItem(at: actualSavePath)
+            } catch {
+                ELOG("Unable to delete save state at path: \(actualSavePath.path) because: \(error.localizedDescription)")
+                throw RomDeletionError.fileManagerDeletionError(error)
+            }
+        }
+        
+        // Delete the screenshot if it exists
+        if let imagePath = imageURL,
+        FileManager.default.fileExists(atPath: imagePath.path) {
+            do {
+                try FileManager.default.removeItem(at: imagePath)
+            } catch {
+                ELOG("Unable to delete screenshot at path: \(imagePath.path) because: \(error.localizedDescription)")
+                throw RomDeletionError.fileManagerDeletionError(error)
+            }
+        }
+    }
+
     func deleteRelatedFilesGame(_ game: PVGame) {
 //        guard let system = game.system else {
 //            ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
