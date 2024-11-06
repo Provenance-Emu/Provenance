@@ -655,6 +655,7 @@ private struct AdvancedTogglesView: View {
     @Default(.useLegacyAudioEngine) var useLegacyAudioEngine
     @Default(.useLegacyRingBuffer) var useLegacyRingBuffer
     @Default(.audioLatency) var audioLatency
+    @Default(.usePitchConversionInsteadOfSampleRate) var usePitchConversionInsteadOfSampleRate
 
 #if !os(tvOS)
     @Default(.movableButtons) var movableButtons
@@ -743,6 +744,12 @@ private struct AdvancedTogglesView: View {
                            icon: .sfSymbol("arrow.trianglehead.clockwise"))
             }
 
+            PremiumThemedToggle(isOn: $usePitchConversionInsteadOfSampleRate) {
+                SettingsRow(title: "Use Pitch Conversion Instead of Sample Rate",
+                           subtitle: "To adjust for different sample rates, use pitch conversion instead of sample rate audio units. Does not apply to legacy audio engine.",
+                           icon: .sfSymbol("arrow.trianglehead.clockwise"))
+            }
+            
             HStack {
                 Text("Audio Latency")
                 Slider(value: $audioLatency, in: 5.0...25.0, step: 0.5) {
