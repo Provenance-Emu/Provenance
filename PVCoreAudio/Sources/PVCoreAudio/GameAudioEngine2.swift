@@ -288,32 +288,70 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             return
         }
 
-        /// Connect directly with source format
-        engine.connect(src, to: engine.mainMixerNode, format: renderFormat)
-
-        engine.mainMixerNode.outputVolume = volume
+        /// Let updateSampleRateConversion handle the connections
+        updateSampleRateConversion()
     }
 
     private func updateSampleRateConversion() {
+        guard let src = src else { return }
+
+        /// Clean up existing connections
+        engine.disconnectNodeOutput(src)
+
         let outputFormat = engine.outputNode.inputFormat(forBus: 0)
 
         if abs(renderFormat.sampleRate - outputFormat.sampleRate) > 1 {
-            if sampleRateConverter == nil {
-                sampleRateConverter = AVAudioUnitVarispeed()
-                engine.attach(sampleRateConverter!)
-            }
+            if usesPitchConversion {
+                /// Clean up sample rate converter if it exists
+                if let converter = sampleRateConverter {
+                    engine.detach(converter)
+                    sampleRateConverter = nil
+                }
 
-            sampleRateConverter?.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
+                /// Ensure time pitch node is attached
+                if !engine.attachedNodes.contains(timePitchNode) {
+                    engine.attach(timePitchNode)
+                }
+
+                timePitchNode.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
+
+                /// Use source node's output format for first connection
+                engine.connect(src, to: timePitchNode, format: src.outputFormat(forBus: 0))
+                engine.connect(timePitchNode, to: engine.mainMixerNode, format: outputFormat)
+
+                DLOG("Using pitch conversion with rate: \(timePitchNode.rate)")
+            } else {
+                /// Clean up time pitch node
+                if engine.attachedNodes.contains(timePitchNode) {
+                    engine.detach(timePitchNode)
+                }
+
+                /// Setup sample rate converter
+                if sampleRateConverter == nil {
+                    sampleRateConverter = AVAudioUnitVarispeed()
+                    engine.attach(sampleRateConverter!)
+                }
+
+                sampleRateConverter?.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
+                engine.connect(src, to: sampleRateConverter!, format: src.outputFormat(forBus: 0))
+                engine.connect(sampleRateConverter!, to: engine.mainMixerNode, format: outputFormat)
+
+                DLOG("Using sample rate conversion with rate: \(sampleRateConverter?.rate ?? 0)")
+            }
         } else {
+            /// Direct connection if rates match
             if let converter = sampleRateConverter {
                 engine.detach(converter)
                 sampleRateConverter = nil
             }
+            if engine.attachedNodes.contains(timePitchNode) {
+                engine.detach(timePitchNode)
+            }
+
+            engine.connect(src, to: engine.mainMixerNode, format: src.outputFormat(forBus: 0))
         }
 
-        // Reconnect nodes to apply changes
-        engine.disconnectNodeInput(engine.mainMixerNode)
-        connectNodes()
+        engine.mainMixerNode.outputVolume = volume
     }
 
     private var token: NSObjectProtocol?
@@ -458,6 +496,11 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             engine.connect(sourceNode, to: engine.mainMixerNode, format: renderFormat)
         }
     }
+
+    /// Add property to track current conversion mode
+    private var usesPitchConversion: Bool {
+        return Defaults[.usePitchConversionInsteadOfSampleRate]
+    }
 }
 
 extension GameAudioEngine2 {
@@ -494,25 +537,102 @@ extension GameAudioEngine2: MonoAudioEngine {
     private func updateMonoSetting() {
         guard let src = src else { return }
 
-        /// For mono, connect through mono mixer first
-        engine.connect(src, to: timePitchNode, format: renderFormat)
-        engine.connect(timePitchNode, to: monoMixerNode, format: internalFormat)
-        engine.connect(monoMixerNode, to: engine.mainMixerNode, format: internalFormat)
+        /// Clean up any existing connections and taps first
+        engine.disconnectNodeOutput(src)
+        engine.disconnectNodeOutput(monoMixerNode)
+        monoMixerNode.removeTap(onBus: 0)
 
-        monoMixerNode.installTap(onBus: 0, bufferSize: 4096, format: nil) { buffer, _ in
-            guard let channelData = buffer.floatChannelData else { return }
-            let frameLength = buffer.frameLength
-            let channelCount = buffer.format.channelCount
+        /// Get system output format
+        let outputFormat = engine.outputNode.inputFormat(forBus: 0)
 
-            guard channelCount == 2 else { return }
+        /// Create intermediate format for consistent processing
+        guard let intermediateFormat = AVAudioFormat(standardFormatWithSampleRate: renderFormat.sampleRate,
+                                                   channels: 2) else {
+            ELOG("Failed to create intermediate format")
+            return
+        }
 
-            let leftChannel = channelData[0]
-            let rightChannel = channelData[1]
+        /// Ensure mono mixer is attached
+        if !engine.attachedNodes.contains(monoMixerNode) {
+            engine.attach(monoMixerNode)
+        }
 
-            for frame in 0..<Int(frameLength) {
-                leftChannel[frame] = (leftChannel[frame] + rightChannel[frame]) / 2
-                rightChannel[frame] = leftChannel[frame]
+        /// Check if we need rate conversion
+        if abs(renderFormat.sampleRate - outputFormat.sampleRate) > 1 {
+            if usesPitchConversion {
+                /// Use time pitch node for rate conversion
+                if sampleRateConverter != nil {
+                    engine.detach(sampleRateConverter!)
+                    sampleRateConverter = nil
+                }
+
+                /// Ensure time pitch node is attached
+                if !engine.attachedNodes.contains(timePitchNode) {
+                    engine.attach(timePitchNode)
+                }
+
+                /// Connect through time pitch node first
+                timePitchNode.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
+                engine.connect(src, to: timePitchNode, format: renderFormat)
+                engine.connect(timePitchNode, to: monoMixerNode, format: intermediateFormat)
+
+                DLOG("Using pitch conversion for mono with rate: \(timePitchNode.rate)")
+            } else {
+                /// Use sample rate converter
+                if sampleRateConverter == nil {
+                    sampleRateConverter = AVAudioUnitVarispeed()
+                    engine.attach(sampleRateConverter!)
+                }
+
+                timePitchNode.rate = 1.0
+                sampleRateConverter?.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
+                engine.connect(src, to: sampleRateConverter!, format: renderFormat)
+                engine.connect(sampleRateConverter!, to: monoMixerNode, format: intermediateFormat)
+
+                DLOG("Using sample rate conversion for mono with rate: \(sampleRateConverter?.rate ?? 0)")
             }
+        } else {
+            /// Direct connection if rates match
+            if let converter = sampleRateConverter {
+                engine.detach(converter)
+                sampleRateConverter = nil
+            }
+            timePitchNode.rate = 1.0
+            engine.connect(src, to: monoMixerNode, format: intermediateFormat)
+        }
+
+        /// Connect mono mixer to main mixer with proper format
+        engine.connect(monoMixerNode, to: engine.mainMixerNode, format: outputFormat)
+
+        /// Set volumes
+        monoMixerNode.outputVolume = 1.0
+        engine.mainMixerNode.outputVolume = volume
+
+        do {
+            /// Install mono processing tap with error handling
+            monoMixerNode.installTap(onBus: 0, bufferSize: 4096, format: intermediateFormat) { [weak self] buffer, _ in
+                guard let channelData = buffer.floatChannelData,
+                      buffer.format.channelCount == 2 else { return }
+
+                let frameLength = Int(buffer.frameLength)
+                let leftChannel = channelData[0]
+                let rightChannel = channelData[1]
+
+                /// Process in chunks for better performance
+                let chunkSize = 256
+                for frameOffset in stride(from: 0, to: frameLength, by: chunkSize) {
+                    let currentChunkSize = min(chunkSize, frameLength - frameOffset)
+                    for frame in 0..<currentChunkSize {
+                        let monoValue = (leftChannel[frameOffset + frame] + rightChannel[frameOffset + frame]) * 0.5
+                        leftChannel[frameOffset + frame] = monoValue
+                        rightChannel[frameOffset + frame] = monoValue
+                    }
+                }
+            }
+
+            DLOG("Successfully set up mono processing")
+        } catch {
+            ELOG("Failed to install mono tap: \(error.localizedDescription)")
         }
     }
 
