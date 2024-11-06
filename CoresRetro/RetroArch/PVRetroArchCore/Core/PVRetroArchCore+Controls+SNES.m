@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
-#import "PVRetroArchCore.h"
-#import "PVRetroArchCore+Controls.h"
 #import "./cocoa_common.h"
 
 /* RetroArch Includes */

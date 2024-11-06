@@ -7,7 +7,6 @@
 //
 
 #import "PVRetroArchCore+Saves.h"
-#import "PVRetroArchCore.h"
 #include "content.h"
 #include "core_info.h"
 
