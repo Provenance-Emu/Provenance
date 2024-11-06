@@ -78,6 +78,8 @@ _My personal TODO notes_
 - [ ] Game Info in swift ui crashes on next game scroll
 - [ ] Mupen CoreOptions code is trash 
 - [ ] N64 onscreen controls are kind of high
+- [ ] Add a way to delete a bios
+- [ ] Add core option for mGBA low pass filter
 - [ ] Opening roms from md5/siri search doesn't work (Claude had good sample code)
 - [ ] See if psx mednafen has more options
 - [ ] Should add loading screen for starting emulator
