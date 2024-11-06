@@ -357,25 +357,32 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     }
     
     private func updateSourceNode() {
+        // Detach previous source node if it exists
         if let src {
             engine.detach(src)
             self.src = nil
         }
         
-        /// Create format specifically for 32-bit float stereo
+        // Create audio format for 32-bit float stereo
         guard let format = AVAudioFormat(
-            commonFormat: .pcmFormatFloat32,
-            sampleRate: 48000.0,
-            channels: 2,
-            interleaved: true
+            commonFormat: .pcmFormatFloat32,  // 32-bit floating point
+            sampleRate: 48000.0,              // 48,000 Hz sample rate
+            channels: 2,                      // Stereo (2 channels)
+            interleaved: false                // Non-interleaved format (preferred for iOS)
         ) else {
             ELOG("Failed to create format")
             return
         }
         
-        let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
+        // Safely unwrap the ring buffer
+        guard let ringBuffer = gameCore.ringBuffer(atIndex: 0) else {
+            ELOG("Ring buffer is nil")
+            return
+        }
         
-        /// Create source node with rendering block
+        let read = readBlockForBuffer(ringBuffer)
+        
+        // Create render block for the source node
         let renderBlock: AVAudioSourceNodeRenderBlock = { isSilence, timestamp, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
             guard let mData = ablPointer[0].mData else {
@@ -383,34 +390,38 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                 return noErr
             }
             
-            let bytesRequested = Int(frameCount) * MemoryLayout<Float32>.stride * 2  /// Float32 * stereo
+            let bytesRequested = Int(frameCount) * MemoryLayout<Float32>.stride * 2  // Float32 * stereo
             let bytesCopied = read(mData, bytesRequested)
             
-            /// Handle silence case
             if bytesCopied == 0 {
+                // Handle silence case
                 isSilence.pointee = true
                 ablPointer[0].mDataByteSize = 0
+                ablPointer[0].mNumberChannels = 2
             } else {
                 isSilence.pointee = false
                 ablPointer[0].mDataByteSize = UInt32(bytesCopied)
+                ablPointer[0].mNumberChannels = 2
             }
             
             return noErr
         }
         
-        /// Create source node with explicit format and render block
-        src = AVAudioSourceNode(
-            format: format,
-            renderBlock: renderBlock
-        )
+        // Create the source node with the render block
+        src = AVAudioSourceNode(format: format, renderBlock: renderBlock)
         
         guard let src else {
             ELOG("Failed to create audio source node")
             return
         }
         
+        // Attach the source node to the audio engine
         engine.attach(src)
+        
+        // Connect the source node to the main mixer node
         engine.connect(src, to: engine.mainMixerNode, format: format)
+        
+        // Set the output volume for the main mixer node
         engine.mainMixerNode.outputVolume = volume
     }
     
