@@ -71,17 +71,23 @@ struct HomeContinueItemView: SwiftUI.View {
                     Label("Delete Save State", systemImage: "trash")
                 }
             }
-            .alert("Delete Save State", isPresented: $showDeleteAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Delete", role: .destructive) {
+            .uiKitAlert(
+                "Delete Save State",
+                message: "Are you sure you want to delete this save state for \(continueState.game?.isInvalidated == true ? "this game" : continueState.game?.title ?? "Deleted")?",
+                isPresented: $showDeleteAlert,
+                preferredContentSize: CGSize(width: 500, height: 300)
+            ) {
+                UIAlertAction(title: "Delete", style: .destructive) { _ in
                     do {
                         try RomDatabase.sharedInstance.delete(saveState: continueState)
                     } catch {
                         ELOG("Failed to delete save state: \(error.localizedDescription)")
                     }
+                    showDeleteAlert = false
                 }
-            } message: {
-                Text("Are you sure you want to delete this save state for \(continueState.game?.isInvalidated == true ? "this game" : continueState.game?.title ?? "Deleted")?")
+                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    showDeleteAlert = false
+                }
             }
         }
     }
