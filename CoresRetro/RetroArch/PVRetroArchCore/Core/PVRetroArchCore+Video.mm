@@ -7,7 +7,6 @@
 //
 
 #import "PVRetroArchCore+Video.h"
-#import "PVRetroArchCore.h"
 
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>

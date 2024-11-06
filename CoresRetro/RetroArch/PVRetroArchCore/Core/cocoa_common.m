@@ -16,7 +16,6 @@
 // Updates swift includes / apple platform
 // Update small keyboard setting on hide/show keyboard
 
-#import "PVRetroArchCore.h"
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
@@ -26,9 +25,9 @@
 #import <AvailabilityMacros.h>
 #include <sys/stat.h>
 
-#include "cocoa_common.h"
-#include "apple_platform.h"
-#include "../ui_cocoa.h"
+#import "cocoa_common.h"
+#import "apple_platform.h"
+#import "../ui_cocoa.h"
 
 #ifdef HAVE_COCOATOUCH
 #import "../../../pkg/apple/WebServer/GCDWebUploader/GCDWebUploader.h"

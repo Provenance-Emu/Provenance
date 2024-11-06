@@ -211,15 +211,14 @@
 		93F66E9B29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F66E9A29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m */; };
 		93F66EC52966D6E100203EB3 /* cocoa_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FF38392966337100772659 /* cocoa_common.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BA743D2965B96D00A49D66 /* cocoa_gl_ctx.m */; };
-		93FF381F2965FF9C00772659 /* PVRetroArchCore.h in Sources */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVRetroArchCore.h */; };
 		93FF38202965FF9C00772659 /* PVRetroArchCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVRetroArchCore.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
-		93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVRetroArchCore+Audio.h */; };
+		93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVRetroArchCore+Audio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38222965FF9C00772659 /* PVRetroArchCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVRetroArchCore+Audio.mm */; };
-		93FF38232965FF9C00772659 /* PVRetroArchCore+Video.h in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVRetroArchCore+Video.h */; };
+		93FF38232965FF9C00772659 /* PVRetroArchCore+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVRetroArchCore+Video.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38242965FF9C00772659 /* PVRetroArchCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVRetroArchCore+Video.mm */; };
-		93FF38252965FF9C00772659 /* PVRetroArchCore+Saves.h in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVRetroArchCore+Saves.h */; };
+		93FF38252965FF9C00772659 /* PVRetroArchCore+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVRetroArchCore+Saves.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVRetroArchCore+Saves.mm */; };
-		93FF38272965FF9C00772659 /* PVRetroArchCore+Controls.h in Sources */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVRetroArchCore+Controls.h */; };
+		93FF38272965FF9C00772659 /* PVRetroArchCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVRetroArchCore+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */; };
 		93FF38292965FF9C00772659 /* PVRetroArchCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */; };
 		93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVRetroArch.mm */; };
@@ -1892,6 +1891,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93FF38232965FF9C00772659 /* PVRetroArchCore+Video.h in Headers */,
+				93FF38252965FF9C00772659 /* PVRetroArchCore+Saves.h in Headers */,
+				93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Headers */,
+				93FF38272965FF9C00772659 /* PVRetroArchCore+Controls.h in Headers */,
 				B3135B9C26E4CC290047F338 /* PVRetroArchCore.h in Headers */,
 				932A5CC129686AEB0032C168 /* retroarch.h in Headers */,
 				932A5CBF29686A8E0032C168 /* libretro.h in Headers */,
@@ -2304,57 +2307,52 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93C3726B2A8B68000007671D /* PVRetroArchCore+Controls+GB.m in Sources */,
-				93814F922AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m in Sources */,
-				93C3726F2A8B80090007671D /* PVRetroArchCore+Controls+Saturn.m in Sources */,
+				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
-				93AC9F672A48952800D3F4D6 /* runloop.c in Sources */,
-				93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */,
+				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
 				935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */,
 				938E5BB5298B31D500F8596C /* PVDebug.c in Sources */,
+				93AC9F672A48952800D3F4D6 /* runloop.c in Sources */,
+				93CFF5F5296C10C700D19529 /* dylib.c in Sources */,
+				93C3726F2A8B80090007671D /* PVRetroArchCore+Controls+Saturn.m in Sources */,
+				93C3726B2A8B68000007671D /* PVRetroArchCore+Controls+GB.m in Sources */,
+				93814F922AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m in Sources */,
+				93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */,
 				93C3726A2A8B68000007671D /* PVRetroArchCore+Controls+N64.m in Sources */,
-				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				93654F7B298F4A2D0046503F /* PVRetroArchCore+Controls+DS.m in Sources */,
 				93C3726D2A8B68000007671D /* PVRetroArchCore+Controls+NES.m in Sources */,
 				93B66B9F2967DB7600A621DD /* menu_pipeline.metal in Sources */,
 				93B66BA02967DB7600A621DD /* Shaders.metal in Sources */,
 				93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */,
-				93CFF5F5296C10C700D19529 /* dylib.c in Sources */,
 				93814F902AAA9E9900DEB9B9 /* PVRetroArchCore+Archive+AppleII.m in Sources */,
 				93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */,
 				93F66E9B29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m in Sources */,
 				93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */,
-				93FF381F2965FF9C00772659 /* PVRetroArchCore.h in Sources */,
 				93FF38202965FF9C00772659 /* PVRetroArchCore.mm in Sources */,
-				93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Sources */,
 				93A7278A2AAEB1C60052B279 /* PVRetroArchCore+Controls+MAME.m in Sources */,
 				9319F10A2976C15900A7414A /* PVRetroArchCore+Controls+SNES.m in Sources */,
 				B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */,
 				B30C8C882BF45AFB00C91991 /* PVRetroArchCore+Options.swift in Sources */,
-				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
+				B3FC974E2CB8D29100C6DB31 /* CorePlist.swift in Sources */,
 				93FF38222965FF9C00772659 /* PVRetroArchCore+Audio.mm in Sources */,
-				93FF38232965FF9C00772659 /* PVRetroArchCore+Video.h in Sources */,
 				93448E562980043F002F87BB /* PVRetroArchCore+Controls+PSX.m in Sources */,
 				93FF38242965FF9C00772659 /* PVRetroArchCore+Video.mm in Sources */,
-				93FF38252965FF9C00772659 /* PVRetroArchCore+Saves.h in Sources */,
 				B3FD53FB2CD17E2200175917 /* dispserv_apple.m in Sources */,
+				9383580D296CDBB600A23231 /* metal.m in Sources */,
 				B3FD53ED2CD17D8200175917 /* JITSupport.m in Sources */,
 				B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */,
 				93C372692A8B68000007671D /* PVRetroArchCore+Controls+3DO.m in Sources */,
 				93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */,
 				93C372682A8B68000007671D /* PVRetroArchCore+Controls+Dreamcast.m in Sources */,
 				93C3726C2A8B68000007671D /* PVRetroArchCore+Controls+GBA.m in Sources */,
-				93FF38272965FF9C00772659 /* PVRetroArchCore+Controls.h in Sources */,
 				93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */,
-				9383580D296CDBB600A23231 /* metal.m in Sources */,
 				93FF38292965FF9C00772659 /* PVRetroArchCore+Cheats.mm in Sources */,
 				93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */,
 				93C372672A8B68000007671D /* PVRetroArchCore+Controls+Genesis.m in Sources */,
-				B3FC974E2CB8D29100C6DB31 /* CorePlist.swift in Sources */,
+				93A7278B2AAEB1C60052B279 /* PVRetroArchCore+Controls+NeoGeo.m in Sources */,
 				B32111B52CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m in Sources */,
 				B3FC974F2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift in Sources */,
 				9328B14F2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m in Sources */,
-				93A7278B2AAEB1C60052B279 /* PVRetroArchCore+Controls+NeoGeo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

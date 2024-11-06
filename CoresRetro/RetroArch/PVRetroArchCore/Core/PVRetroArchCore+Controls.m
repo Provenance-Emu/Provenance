@@ -6,10 +6,7 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import <PVRetroArch/PVRetroArch.h>
 #import <Foundation/Foundation.h>
-#import "PVRetroArchCore.h"
-#import "PVRetroArchCore+Controls.h"
 #import "./cocoa_common.h"
 
 /* RetroArch Includes */
