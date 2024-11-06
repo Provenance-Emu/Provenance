@@ -58,6 +58,9 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public var userChosenSystem: System?
     public var destinationUrl: URL?
     
+    //this is used when a single import has child items - e.g., m3u, cue, directory
+    public var childQueueItems:[ImportQueueItem]
+    
     // Observable status for individual imports
     public var status: ImportStatus = .queued
     
@@ -66,6 +69,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         self.fileType = fileType
         self.systems = []
         self.userChosenSystem = nil
+        self.childQueueItems = []
     }
     
     public var md5: String? {
