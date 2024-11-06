@@ -194,16 +194,64 @@ class MovableButtonView: UIView, Moveable {
         }
     }
 
+    /// Cache the position key once we successfully generate it
+    private var cachedPositionKey: String?
+
     var positionKey: String {
-        /// Create a unique key for this button based on its type and system
-        guard let controller = findViewController() as? any ControllerVC else {
-            WLOG("Could not generate position key")
-            return ""
+        // Return cached key if we have one
+        if let cached = cachedPositionKey {
+            return cached
         }
-        let systemID = controller.system.identifier
-        let buttonType = String(describing: type(of: self))
-        ILOG("Generated position key: ButtonPosition_\(systemID)_\(buttonType)")
-        return "ButtonPosition_\(systemID)_\(buttonType)"
+
+        // Try to find the controller
+        if let controller = findViewController() as? any ControllerVC {
+            let systemID = controller.system.identifier
+            let buttonType = String(describing: type(of: self))
+            let key = "ButtonPosition_\(systemID)_\(buttonType)"
+
+            // Cache the successful key
+            cachedPositionKey = key
+            ILOG("Generated and cached position key: \(key)")
+            return key
+        }
+
+        // If we can't find the controller yet, try again after a delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.attemptToGenerateKey()
+        }
+
+        WLOG("Could not generate position key - will retry")
+        return ""
+    }
+
+    private func attemptToGenerateKey() {
+        if cachedPositionKey == nil {
+            // This will trigger the positionKey computation again
+            _ = positionKey
+        }
+    }
+
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        // Try to generate key when added to view hierarchy
+        attemptToGenerateKey()
+        // Try to load position once we're in the view hierarchy
+        loadSavedPosition()
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+
+        // Only try to load position if we're actually in a window
+        if window != nil {
+            // Try to generate key when window is available
+            attemptToGenerateKey()
+
+            // Delay the position loading slightly to ensure controller is ready
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                self?.loadSavedPosition()
+            }
+        }
     }
 
     private func findViewController() -> UIViewController? {
@@ -217,26 +265,20 @@ class MovableButtonView: UIView, Moveable {
         return nil
     }
 
-    func savePosition() {
-        guard !positionKey.isEmpty else { return }
-        let position = ButtonPosition(view: self, scale: currentScale, identifier: positionKey)
-        if let encoded = try? JSONEncoder().encode(position) {
-            UserDefaults.standard.set(encoded, forKey: positionKey)
-        }
-    }
-
     func loadSavedPosition() {
-        guard !positionKey.isEmpty,
-              let data = UserDefaults.standard.data(forKey: positionKey),
+        // Only proceed if we have a valid key
+        guard let key = cachedPositionKey,
+              let data = UserDefaults.standard.data(forKey: key),
               let position = try? JSONDecoder().decode(ButtonPosition.self, from: data),
-              position.identifier == positionKey else {
+              position.identifier == key else {
             return
         }
+
+        ILOG("Loading saved position for key: \(key)")
 
         frame.origin.x = position.x
         frame.origin.y = position.y
 
-        /// Apply saved scale
         if position.scale != 1.0 {
             currentScale = position.scale
             let newWidth = bounds.width * position.scale
@@ -245,6 +287,19 @@ class MovableButtonView: UIView, Moveable {
         }
 
         isCustomMoved = true
+    }
+
+    private func savePosition() {
+        guard let key = cachedPositionKey else {
+            WLOG("Attempted to save position without valid key")
+            return
+        }
+
+        let position = ButtonPosition(view: self, scale: currentScale, identifier: key)
+        if let encoded = try? JSONEncoder().encode(position) {
+            UserDefaults.standard.set(encoded, forKey: key)
+            ILOG("Saved position for key: \(key)")
+        }
     }
 }
 
