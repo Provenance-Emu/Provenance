@@ -1,27 +1,3 @@
-// Copyright (c) 2022, OpenEmu Team
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the OpenEmu Team nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
-// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL OpenEmu Team BE LIABLE FOR ANY
-// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 import Foundation
 import AVFoundation
 import PVLogging
@@ -34,9 +10,56 @@ import PVSettings
 @available(macOS 11.0, iOS 14.0, *)
 final public class GameAudioEngine2: AudioEngineProtocol {
 
+    /// Add conversion state structure
+    private struct ConversionState {
+        var converter: AudioConverterRef?
+        var inputFormat: AudioStreamBasicDescription
+        var outputFormat: AudioStreamBasicDescription
+        var ringBuffer: RingBufferProtocol?
+    }
+
+    /// Static C callback function
+    private static let converterCallback: AudioConverterComplexInputDataProc = { (
+        converter,
+        ioNumberDataPackets,
+        ioData,
+        outDataPacketDescription,
+        inUserData
+    ) -> OSStatus in
+        guard let contextPtr = inUserData else {
+            return kAudio_ParamError
+        }
+
+        /// Get conversion state from context
+        let state = contextPtr.assumingMemoryBound(to: ConversionState.self).pointee
+
+        /// Read from ring buffer
+        let bytesRequested = Int(ioNumberDataPackets.pointee) * Int(state.inputFormat.mBytesPerFrame)
+        var buffer = [UInt8](repeating: 0, count: bytesRequested)
+
+        let bytesCopied = state.ringBuffer?.read(&buffer, preferredSize: bytesRequested) ?? 0
+
+        /// Setup buffer list
+        ioData.pointee.mBuffers.mData = UnsafeMutableRawPointer(mutating: buffer)
+        ioData.pointee.mBuffers.mDataByteSize = UInt32(bytesCopied)
+        ioData.pointee.mBuffers.mNumberChannels = state.inputFormat.mChannelsPerFrame
+
+        return noErr
+    }
+
+    /// Instance property to hold conversion state
+    private var conversionState: ConversionState?
+
     /// Add time pitch node for better rate control
     private lazy var timePitchNode: AVAudioUnitTimePitch = {
         let node = AVAudioUnitTimePitch()
+        node.rate = 1.0
+        return node
+    }()
+
+    /// Add varispeed node for better rate control
+    private lazy var varispeedNode: AVAudioUnitVarispeed = {
+        let node = AVAudioUnitVarispeed()
         node.rate = 1.0
         return node
     }()
@@ -93,7 +116,6 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         engine.stop()
         updateSourceNode()
-        updateSampleRateConversion()
         engine.prepare()
         performResumeAudio()
     }
@@ -121,7 +143,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     public func stopAudio() {
         engine.stop()
         destroyNodes()
-        isRunning = true
+        isRunning = false
     }
 
     public func pauseAudio() {
@@ -131,12 +153,6 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         if let src = src {
             engine.detach(src)
             self.src = nil
-        }
-
-        // Detach the sample rate converter if it exists
-        if let converter = sampleRateConverter {
-            engine.detach(converter)
-            sampleRateConverter = nil
         }
 
         isRunning = false
@@ -166,15 +182,20 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     private func readBlockForBuffer(_ buffer: RingBufferProtocol) -> OEAudioBufferReadBlock {
         return { buf, max -> Int in
             let bytesAvailable = buffer.availableBytes
-            let bytesToRead = min(bytesAvailable, max)
+            /// Ensure we read complete frames
+            let bytesPerFrame = Int(self.streamDescription.mBytesPerFrame)
+            let bytesToRead = min(bytesAvailable, max) & ~(bytesPerFrame - 1)
 
-            if bytesToRead < max {
-                // If we don't have enough data, fill the rest with silence
-                let silence = Data(count: max - bytesToRead)
-                silence.copyBytes(to: buf.assumingMemoryBound(to: UInt8.self).advanced(by: bytesToRead), count: max - bytesToRead)
+            let bytesCopied = buffer.read(buf, preferredSize: bytesToRead)
+
+            /// If we didn't read enough data, fill with silence
+            if bytesCopied < max {
+                let silence = Data(count: max - bytesCopied)
+                silence.copyBytes(to: buf.assumingMemoryBound(to: UInt8.self).advanced(by: bytesCopied),
+                                count: max - bytesCopied)
             }
 
-            return buffer.read(buf, preferredSize: bytesToRead)
+            return bytesCopied
         }
     }
 
@@ -197,16 +218,19 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                            bufferSize % (bytesPerSample * 2) == 0
 
         if isInterleaved {
+            let actualChannels: UInt32 = 2  /// Interleaved stereo
+            let bytesPerFrame = UInt32(bytesPerSample) * actualChannels
+
             DLOG("Using interleaved stereo format")
             return AudioStreamBasicDescription(
                 mSampleRate: sampleRate,
                 mFormatID: kAudioFormatLinearPCM,
                 mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked,
-                mBytesPerPacket: 4,  // 2 bytes * 2 channels
+                mBytesPerPacket: bytesPerFrame,
                 mFramesPerPacket: 1,
-                mBytesPerFrame: 4,   // 2 bytes * 2 channels
-                mChannelsPerFrame: 2,  // Force stereo for interleaved data
-                mBitsPerChannel: 16,
+                mBytesPerFrame: bytesPerFrame,
+                mChannelsPerFrame: actualChannels,
+                mBitsPerChannel: UInt32(bitDepth),
                 mReserved: 0)
         }
 
@@ -241,27 +265,76 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             self.src = nil
         }
 
-        let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
-        var sd = streamDescription
-        let bytesPerFrame = sd.mBytesPerFrame
+        var inputFormat = streamDescription
+        let outputRate = AVAudioSession.sharedInstance().sampleRate
 
-        DLOG("Audio format - Rate: \(sd.mSampleRate), Channels: \(sd.mChannelsPerFrame), Bits: \(sd.mBitsPerChannel)")
+        /// Setup output format (float32, stereo)
+        var outputFormat = AudioStreamBasicDescription(
+            mSampleRate: outputRate,
+            mFormatID: kAudioFormatLinearPCM,
+            mFormatFlags: kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked,
+            mBytesPerPacket: 8,
+            mFramesPerPacket: 1,
+            mBytesPerFrame: 8,
+            mChannelsPerFrame: 2,
+            mBitsPerChannel: 32,
+            mReserved: 0)
 
-        guard let format = AVAudioFormat(streamDescription: &sd) else {
-            ELOG("Failed to create AVAudioFormat")
+        /// Create audio converter
+        var audioConverter: AudioConverterRef?
+        var status = AudioConverterNew(&inputFormat, &outputFormat, &audioConverter)
+        guard status == noErr, let converter = audioConverter else {
+            ELOG("Failed to create audio converter: \(status)")
             return
         }
 
-        src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, inputData in
-            guard let self = self else { return noErr }
+        /// Setup conversion state
+        conversionState = ConversionState(
+            converter: converter,
+            inputFormat: inputFormat,
+            outputFormat: outputFormat,
+            ringBuffer: gameCore.ringBuffer(atIndex: 0)
+        )
 
-            let bytesRequested = Int(frameCount * bytesPerFrame)
-            let bytesCopied = read(inputData.pointee.mBuffers.mData!, bytesRequested)
+        DLOG("Converter setup - Input rate: \(inputFormat.mSampleRate), Output rate: \(outputRate)")
 
-            DLOG("Requested: \(bytesRequested) bytes, Copied: \(bytesCopied) bytes")
+        src = AVAudioSourceNode { [weak self] _, timeStamp, frameCount, audioBufferList in
+            guard let self = self,
+                  let state = self.conversionState else { return noErr }
 
-            inputData.pointee.mBuffers.mDataByteSize = UInt32(bytesCopied)
-            inputData.pointee.mBuffers.mNumberChannels = 2  // Always stereo for Genesis
+            /// Calculate output frames needed
+            let outputFrames = Int(frameCount)
+            var outputBuffer = [Float32](repeating: 0, count: outputFrames * 2)
+
+            /// Setup conversion
+            var outputBufferList = AudioBufferList(
+                mNumberBuffers: 1,
+                mBuffers: AudioBuffer(
+                    mNumberChannels: 2,
+                    mDataByteSize: UInt32(outputFrames * 8),
+                    mData: UnsafeMutableRawPointer(&outputBuffer)
+                )
+            )
+
+            var packets = UInt32(outputFrames)
+            withUnsafePointer(to: state) { statePtr in
+                status = AudioConverterFillComplexBuffer(
+                    state.converter!,
+                    Self.converterCallback,
+                    UnsafeMutableRawPointer(mutating: statePtr),
+                    &packets,
+                    &outputBufferList,
+                    nil
+                )
+            }
+
+            /// Copy converted data to output
+            let outputPtr = UnsafeMutableAudioBufferListPointer(audioBufferList)
+            outputPtr[0].mData?.copyMemory(
+                from: outputBuffer,
+                byteCount: Int(outputBufferList.mBuffers.mDataByteSize)
+            )
+            outputPtr[0].mDataByteSize = outputBufferList.mBuffers.mDataByteSize
 
             return noErr
         }
@@ -276,44 +349,72 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             engine.detach(src)
         }
         src = nil
-    }
 
-    private var sampleRateConverter: AVAudioUnitVarispeed?
+        // Clean up all attached nodes
+        if engine.attachedNodes.contains(varispeedNode) {
+            engine.detach(varispeedNode)
+        }
+        if engine.attachedNodes.contains(timePitchNode) {
+            engine.detach(timePitchNode)
+        }
+        if engine.attachedNodes.contains(monoMixerNode) {
+            engine.detach(monoMixerNode)
+        }
+    }
 
     private func connectNodes() {
         guard let src else { fatalError("Expected src node") }
 
-        if isMonoOutput {
-            updateMonoSetting()
-            return
-        }
+        let inputRate = gameCore.audioSampleRate(forBuffer: 0)
+        let outputRate = AVAudioSession.sharedInstance().sampleRate
 
-        /// Connect directly with source format
-        engine.connect(src, to: engine.mainMixerNode, format: renderFormat)
+        /// Always convert to float32 format first at input rate
+        let inputFormat = AVAudioFormat(
+            commonFormat: .pcmFormatFloat32,
+            sampleRate: inputRate,
+            channels: 2,
+            interleaved: false)!
 
-        engine.mainMixerNode.outputVolume = volume
-    }
+        /// Output format at device rate
+        let outputFormat = AVAudioFormat(
+            commonFormat: .pcmFormatFloat32,
+            sampleRate: outputRate,
+            channels: 2,
+            interleaved: false)!
 
-    private func updateSampleRateConversion() {
-        let outputFormat = engine.outputNode.inputFormat(forBus: 0)
+        if inputRate != outputRate {
+            DLOG("Sample rate conversion needed - Input: \(inputRate), Output: \(outputRate)")
 
-        if abs(renderFormat.sampleRate - outputFormat.sampleRate) > 1 {
-            if sampleRateConverter == nil {
-                sampleRateConverter = AVAudioUnitVarispeed()
-                engine.attach(sampleRateConverter!)
+            if Defaults[.usePitchConversionInsteadOfSampleRate] {
+                /// Attach both nodes before connecting
+                engine.attach(src)
+                engine.attach(timePitchNode)
+
+                /// Then adjust pitch to match rate difference
+                let rateRatio = outputRate / inputRate  /// Inverted ratio for pitch
+                timePitchNode.rate = Float(rateRatio)
+                DLOG("Using pitch conversion with rate ratio: \(rateRatio)")
+
+                /// Now connect the nodes
+                engine.connect(src, to: timePitchNode, format: inputFormat)
+                engine.connect(timePitchNode, to: engine.mainMixerNode, format: outputFormat)
+            } else {
+                /// For sample rate conversion, use mixer node's built-in converter
+                engine.attach(src)
+                /// Connect with input format, mixer will handle conversion to output rate
+                engine.connect(src, to: engine.mainMixerNode, format: inputFormat)
+                /// Connect mixer to output at the desired rate
+                engine.connect(engine.mainMixerNode, to: engine.outputNode, format: outputFormat)
             }
-
-            sampleRateConverter?.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
         } else {
-            if let converter = sampleRateConverter {
-                engine.detach(converter)
-                sampleRateConverter = nil
-            }
+            /// No conversion needed, but still use float32 format
+            engine.attach(src)
+            engine.connect(src, to: engine.mainMixerNode, format: inputFormat)
+            engine.connect(engine.mainMixerNode, to: engine.outputNode, format: outputFormat)
         }
 
-        // Reconnect nodes to apply changes
-        engine.disconnectNodeInput(engine.mainMixerNode)
-        connectNodes()
+        DLOG("Formats - Input: \(inputFormat), Output: \(engine.mainMixerNode.outputFormat(forBus: 0))")
+        engine.mainMixerNode.outputVolume = volume
     }
 
     private var token: NSObjectProtocol?
