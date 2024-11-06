@@ -312,7 +312,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
                 DLOG("Using pitch conversion with rate: \(timePitchNode.rate)")
             } else {
-                /// Clean up time pitch node
+                /// Clean up time pitch node if it exists
                 if engine.attachedNodes.contains(timePitchNode) {
                     engine.detach(timePitchNode)
                 }
@@ -323,11 +323,18 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                     engine.attach(sampleRateConverter!)
                 }
 
-                sampleRateConverter?.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
-                engine.connect(src, to: sampleRateConverter!, format: src.outputFormat(forBus: 0))
+                /// Use source format for first connection
+                let sourceFormat = src.outputFormat(forBus: 0)
+
+                /// Calculate and set the correct rate
+                let rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
+                sampleRateConverter?.rate = rate
+
+                /// Connect nodes with proper formats
+                engine.connect(src, to: sampleRateConverter!, format: sourceFormat)
                 engine.connect(sampleRateConverter!, to: engine.mainMixerNode, format: outputFormat)
 
-                DLOG("Using sample rate conversion with rate: \(sampleRateConverter?.rate ?? 0)")
+                DLOG("Sample rate conversion - Input: \(renderFormat.sampleRate)Hz, Output: \(outputFormat.sampleRate)Hz, Rate: \(rate)")
             }
         } else {
             /// Direct connection if rates match
