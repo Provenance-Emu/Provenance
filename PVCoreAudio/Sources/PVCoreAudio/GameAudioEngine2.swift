@@ -59,22 +59,119 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     typealias OEAudioBufferReadBlock = (UnsafeMutableRawPointer, Int) -> Int
     private func readBlockForBuffer(_ buffer: RingBufferProtocol) -> OEAudioBufferReadBlock {
-        return { buf, max -> Int in
-            let bytesAvailable = buffer.availableBytes
-            let bytesToRead = min(bytesAvailable, max)
+        /// Cache format information
+        let sourceChannels = Int(gameCore.channelCount(forBuffer: 0))
+        let sourceBitDepth = gameCore.audioBitDepth
+        let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
+        let sourceBytesPerSample = Int(sourceBitDepth / 8)
 
-            if bytesToRead == 0 {
-                memset(buf, 0, max)
-                return max
+        /// Get target format (audio session)
+        let targetRate: Double = AVAudioSession.sharedInstance().sampleRate // Or get from audio session
+        let resampleRatio = targetRate / sourceRate
+
+        return { outputBuffer, maxBytes -> Int in
+            /// Calculate frame counts
+            let targetFrameCount = maxBytes / 4 /// 2 channels * 2 bytes (16-bit)
+            let sourceFrameCount = Int(Double(targetFrameCount) / resampleRatio)
+            let sourceBytesToRead = sourceFrameCount * sourceChannels * sourceBytesPerSample
+
+            /// Read source data
+            let sourceBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: sourceBytesToRead)
+            defer { sourceBuffer.deallocate() }
+
+            let bytesRead = buffer.read(sourceBuffer, preferredSize: sourceBytesToRead)
+            if bytesRead == 0 {
+                memset(outputBuffer, 0, maxBytes)
+                return maxBytes
             }
 
-            let bytesRead = buffer.read(buf, preferredSize: bytesToRead)
+            /// Setup output buffer
+            let output = outputBuffer.assumingMemoryBound(to: Int16.self)
+            var outputIndex = 0
 
-            if bytesRead < max {
-                memset(buf.advanced(by: bytesRead), 0, max - bytesRead)
+            /// Handle different source formats
+            if sourceBitDepth == 8 {
+                sourceBuffer.withMemoryRebound(to: Int8.self, capacity: bytesRead) { input in
+                    for targetFrame in 0..<targetFrameCount {
+                        /// Calculate source position with interpolation
+                        let sourcePos = Double(targetFrame) / resampleRatio
+                        let sourceFrame = Int(sourcePos)
+                        let fraction = sourcePos - Double(sourceFrame)
+
+                        /// Ensure we have enough frames for interpolation
+                        guard sourceFrame < (bytesRead / sourceChannels) - 1 else { break }
+
+                        if sourceChannels == 1 {
+                            /// Mono to stereo conversion with interpolation
+                            let sample1 = Int16(input[sourceFrame]) << 8
+                            let sample2 = Int16(input[sourceFrame + 1]) << 8
+                            let interpolated = Int16(
+                                Double(sample1) * (1.0 - fraction) +
+                                Double(sample2) * fraction
+                            )
+
+                            /// Duplicate to both channels
+                            output[outputIndex] = interpolated     /// Left
+                            output[outputIndex + 1] = interpolated /// Right
+                            outputIndex += 2
+                        } else {
+                            /// Stereo with interpolation
+                            for channel in 0..<2 {
+                                let sample1 = Int16(input[sourceFrame * 2 + channel]) << 8
+                                let sample2 = Int16(input[(sourceFrame + 1) * 2 + channel]) << 8
+                                output[outputIndex + channel] = Int16(
+                                    Double(sample1) * (1.0 - fraction) +
+                                    Double(sample2) * fraction
+                                )
+                            }
+                            outputIndex += 2
+                        }
+                    }
+                }
+            } else {
+                /// Handle 16-bit input
+                sourceBuffer.withMemoryRebound(to: Int16.self, capacity: bytesRead / 2) { input in
+                    for targetFrame in 0..<targetFrameCount {
+                        let sourcePos = Double(targetFrame) / resampleRatio
+                        let sourceFrame = Int(sourcePos)
+                        let fraction = sourcePos - Double(sourceFrame)
+
+                        guard sourceFrame < (bytesRead / (sourceChannels * 2)) - 1 else { break }
+
+                        if sourceChannels == 1 {
+                            /// Mono to stereo with interpolation
+                            let sample1 = input[sourceFrame]
+                            let sample2 = input[sourceFrame + 1]
+                            let interpolated = Int16(
+                                Double(sample1) * (1.0 - fraction) +
+                                Double(sample2) * fraction
+                            )
+
+                            output[outputIndex] = interpolated
+                            output[outputIndex + 1] = interpolated
+                            outputIndex += 2
+                        } else {
+                            /// Stereo with interpolation
+                            for channel in 0..<2 {
+                                let sample1 = input[sourceFrame * 2 + channel]
+                                let sample2 = input[(sourceFrame + 1) * 2 + channel]
+                                output[outputIndex + channel] = Int16(
+                                    Double(sample1) * (1.0 - fraction) +
+                                    Double(sample2) * fraction
+                                )
+                            }
+                            outputIndex += 2
+                        }
+                    }
+                }
             }
 
-            return max
+            /// Fill any remaining buffer space with silence
+            if outputIndex * 2 < maxBytes {
+                memset(outputBuffer.advanced(by: outputIndex * 2), 0, maxBytes - (outputIndex * 2))
+            }
+
+            return maxBytes
         }
     }
 
