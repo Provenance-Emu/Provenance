@@ -594,11 +594,11 @@ static void *dlopen_myself()
 
         [super stopEmulation];
 
-		if(CoreShutdown() != M64ERR_SUCCESS) {
-			ELOG(@"Core shutdown failed");
-		}else {
-			ILOG(@"Core shutdown successfully");
-		}
+//		if(CoreShutdown() != M64ERR_SUCCESS) {
+//			ELOG(@"Core shutdown failed");
+//		}else {
+//			ILOG(@"Core shutdown successfully");
+//		}
     }
 }
 
