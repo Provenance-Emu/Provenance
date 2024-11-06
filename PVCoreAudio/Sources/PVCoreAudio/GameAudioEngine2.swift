@@ -15,6 +15,19 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         return engine
     }()
 
+    /// Time pitch node for sample rate conversion
+    private lazy var timePitch: AVAudioUnitTimePitch = {
+        let node = AVAudioUnitTimePitch()
+        node.rate = 1.0
+        return node
+    }()
+
+    /// Intermediate mixer for format conversion
+    private lazy var formatConverter: AVAudioMixerNode = {
+        let node = AVAudioMixerNode()
+        return node
+    }()
+
     private var src: AVAudioSourceNode?
     private weak var gameCore: EmulatorCoreAudioDataSource!
     private var isRunning = false
@@ -84,16 +97,29 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             self.src = nil
         }
 
+        /// Clean up existing nodes if attached
+        if engine.attachedNodes.contains(timePitch) {
+            engine.detach(timePitch)
+        }
+        if engine.attachedNodes.contains(formatConverter) {
+            engine.detach(formatConverter)
+        }
+
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
         var sd = streamDescription
         let bytesPerFrame = sd.mBytesPerFrame
 
-        guard let format = AVAudioFormat(streamDescription: &sd) else {
-            ELOG("Failed to create AVAudioFormat")
+        guard let sourceFormat = AVAudioFormat(streamDescription: &sd) else {
+            ELOG("Failed to create source AVAudioFormat")
             return
         }
 
-        src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, inputData in
+        let sessionRate = AVAudioSession.sharedInstance().sampleRate
+        let sourceRate = sourceFormat.sampleRate
+
+        DLOG("Source rate: \(sourceRate), Session rate: \(sessionRate)")
+
+        src = AVAudioSourceNode(format: sourceFormat) { [weak self] _, _, frameCount, inputData in
             guard let self = self else { return noErr }
 
             let bytesRequested = Int(frameCount * bytesPerFrame)
@@ -107,7 +133,27 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         if let src {
             engine.attach(src)
-            engine.connect(src, to: engine.mainMixerNode, format: format)
+
+            if abs(sourceRate - sessionRate) > 1.0 {
+                /// Setup conversion chain
+                engine.attach(formatConverter)
+//                engine.attach(timePitch)
+
+                /// Calculate rate ratio
+                let rate = Float(sessionRate / sourceRate)
+                timePitch.rate = rate
+                DLOG("Setting time pitch rate: \(rate)")
+
+                /// Connect through conversion chain
+                engine.connect(src, to: formatConverter, format: sourceFormat)
+                engine.connect(formatConverter, to: engine.mainMixerNode, format: nil)
+//                engine.connect(timePitch, to: engine.mainMixerNode, format: nil)
+                DLOG("Connected with format conversion chain - Rate: \(rate)")
+            } else {
+                /// Direct connection
+                engine.connect(src, to: engine.mainMixerNode, format: sourceFormat)
+                DLOG("Connected directly")
+            }
         }
     }
 
@@ -140,7 +186,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         engine.pause()
         isRunning = false
     }
-    
+
     var preferredAudioLatency: TimeInterval {
         Defaults[.audioLatency]
     }
