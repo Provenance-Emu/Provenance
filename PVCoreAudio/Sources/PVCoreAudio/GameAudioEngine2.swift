@@ -6,6 +6,7 @@ import PVCoreBridge
 import AudioToolbox
 import CoreAudio
 import PVSettings
+import Accelerate
 
 @available(macOS 11.0, iOS 14.0, *)
 final public class GameAudioEngine2: AudioEngineProtocol {
@@ -37,138 +38,154 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         self.gameCore = gameCore
     }
 
-    private var streamDescription: AudioStreamBasicDescription {
-        let channelCount = UInt32(gameCore.channelCount(forBuffer: 0))
-        let sampleRate = gameCore.audioSampleRate(forBuffer: 0)
-        let bitDepth = gameCore.audioBitDepth
-        let bytesPerSample = bitDepth / 8
-
-        DLOG("Core audio properties - Channels: \(channelCount), Rate: \(sampleRate), Bits: \(bitDepth)")
-
-        return AudioStreamBasicDescription(
-            mSampleRate: sampleRate,
-            mFormatID: kAudioFormatLinearPCM,
-            mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked,
-            mBytesPerPacket: UInt32(bytesPerSample) * channelCount,
-            mFramesPerPacket: 1,
-            mBytesPerFrame: UInt32(bytesPerSample) * channelCount,
-            mChannelsPerFrame: channelCount,
-            mBitsPerChannel: UInt32(bitDepth),
-            mReserved: 0)
-    }
-
     typealias OEAudioBufferReadBlock = (UnsafeMutableRawPointer, Int) -> Int
     private func readBlockForBuffer(_ buffer: RingBufferProtocol) -> OEAudioBufferReadBlock {
         /// Cache format information
         let sourceChannels = Int(gameCore.channelCount(forBuffer: 0))
         let sourceBitDepth = gameCore.audioBitDepth
         let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
-        let sourceBytesPerSample = Int(sourceBitDepth / 8)
+        let sourceBytesPerFrame = sourceChannels * (Int(sourceBitDepth) / 8)
 
-        /// Get target format (audio session)
-        let targetRate: Double = AVAudioSession.sharedInstance().sampleRate // Or get from audio session
+        /// Calculate scale factor based on bit depth
+        let scale = Float(1.0 / Float(1 << (sourceBitDepth - 1)))
+
+        /// Setup conversion parameters
+        let targetRate: Double = 48000.0
         let resampleRatio = targetRate / sourceRate
 
+        /// Keep track of last samples for smooth transitions
+        var lastSamples = [Float](repeating: 0.0, count: 2)
+
+        DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Ratio: \(resampleRatio)")
+
         return { outputBuffer, maxBytes -> Int in
-            /// Calculate frame counts
-            let targetFrameCount = maxBytes / 4 /// 2 channels * 2 bytes (16-bit)
-            let sourceFrameCount = Int(Double(targetFrameCount) / resampleRatio)
-            let sourceBytesToRead = sourceFrameCount * sourceChannels * sourceBytesPerSample
+            let targetFrameCount = maxBytes / 8  /// 2 channels * 4 bytes (Float32)
+            let sourceFrameCount = Int(ceil(Double(targetFrameCount) / resampleRatio)) + 2
+            let sourceBytesToRead = sourceFrameCount * sourceBytesPerFrame
 
             /// Read source data
             let sourceBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: sourceBytesToRead)
             defer { sourceBuffer.deallocate() }
 
             let bytesRead = buffer.read(sourceBuffer, preferredSize: sourceBytesToRead)
+            let output = outputBuffer.assumingMemoryBound(to: Float.self)
+
             if bytesRead == 0 {
-                memset(outputBuffer, 0, maxBytes)
+                /// Handle silence with fade out using vDSP
+                let fadeLength = min(32, targetFrameCount * 2)
+                var fadeWindow = [Float](repeating: 0.0, count: fadeLength)
+                vDSP_vgen(
+                    [1.0], [0.0],
+                    &fadeWindow, 1,
+                    vDSP_Length(fadeLength)
+                )
+
+                /// Create arrays for left and right channel fades
+                let leftFade = [Float](repeating: lastSamples[0], count: fadeLength)
+                let rightFade = [Float](repeating: lastSamples[1], count: fadeLength)
+
+                /// Apply fade to left channel
+                vDSP_vmul(
+                    fadeWindow,                /// Input array A
+                    1,                        /// Stride for A
+                    leftFade,                 /// Input array B
+                    1,                        /// Stride for B
+                    output,                   /// Output array C
+                    2,                        /// Stride for C (interleaved)
+                    vDSP_Length(fadeLength/2) /// Number of points
+                )
+
+                /// Apply fade to right channel
+                vDSP_vmul(
+                    fadeWindow,                    /// Input array A
+                    1,                            /// Stride for A
+                    rightFade,                    /// Input array B
+                    1,                            /// Stride for B
+                    output.advanced(by: 1),       /// Output array C (offset for right channel)
+                    2,                            /// Stride for C (interleaved)
+                    vDSP_Length(fadeLength/2)     /// Number of points
+                )
+
+                /// Clear remaining buffer
+                if fadeLength < targetFrameCount * 2 {
+                    memset(
+                        output.advanced(by: fadeLength),
+                        0,
+                        maxBytes - (fadeLength * 4)
+                    )
+                }
+
+                lastSamples = [0.0, 0.0]
                 return maxBytes
             }
 
-            /// Setup output buffer
-            let output = outputBuffer.assumingMemoryBound(to: Int16.self)
-            var outputIndex = 0
-
-            /// Handle different source formats
-            if sourceBitDepth == 8 {
-                sourceBuffer.withMemoryRebound(to: Int8.self, capacity: bytesRead) { input in
-                    for targetFrame in 0..<targetFrameCount {
-                        /// Calculate source position with interpolation
-                        let sourcePos = Double(targetFrame) / resampleRatio
-                        let sourceFrame = Int(sourcePos)
-                        let fraction = sourcePos - Double(sourceFrame)
-
-                        /// Ensure we have enough frames for interpolation
-                        guard sourceFrame < (bytesRead / sourceChannels) - 1 else { break }
-
-                        if sourceChannels == 1 {
-                            /// Mono to stereo conversion with interpolation
-                            let sample1 = Int16(input[sourceFrame]) << 8
-                            let sample2 = Int16(input[sourceFrame + 1]) << 8
-                            let interpolated = Int16(
-                                Double(sample1) * (1.0 - fraction) +
-                                Double(sample2) * fraction
-                            )
-
-                            /// Duplicate to both channels
-                            output[outputIndex] = interpolated     /// Left
-                            output[outputIndex + 1] = interpolated /// Right
-                            outputIndex += 2
-                        } else {
-                            /// Stereo with interpolation
-                            for channel in 0..<2 {
-                                let sample1 = Int16(input[sourceFrame * 2 + channel]) << 8
-                                let sample2 = Int16(input[(sourceFrame + 1) * 2 + channel]) << 8
-                                output[outputIndex + channel] = Int16(
-                                    Double(sample1) * (1.0 - fraction) +
-                                    Double(sample2) * fraction
-                                )
-                            }
-                            outputIndex += 2
-                        }
-                    }
-                }
-            } else {
-                /// Handle 16-bit input
+            if sourceBitDepth == 16 && sourceChannels == 2 {
                 sourceBuffer.withMemoryRebound(to: Int16.self, capacity: bytesRead / 2) { input in
-                    for targetFrame in 0..<targetFrameCount {
-                        let sourcePos = Double(targetFrame) / resampleRatio
-                        let sourceFrame = Int(sourcePos)
-                        let fraction = sourcePos - Double(sourceFrame)
+                    let framesAvailable = bytesRead / 4  /// 2 channels * 2 bytes
 
-                        guard sourceFrame < (bytesRead / (sourceChannels * 2)) - 1 else { break }
+                    /// Convert int16 to float and deinterleave
+                    var leftChannel = [Float](repeating: 0.0, count: framesAvailable)
+                    var rightChannel = [Float](repeating: 0.0, count: framesAvailable)
 
-                        if sourceChannels == 1 {
-                            /// Mono to stereo with interpolation
-                            let sample1 = input[sourceFrame]
-                            let sample2 = input[sourceFrame + 1]
-                            let interpolated = Int16(
-                                Double(sample1) * (1.0 - fraction) +
-                                Double(sample2) * fraction
-                            )
+                    vDSP_vflt16(
+                        input, 2,
+                        &leftChannel, 1,
+                        vDSP_Length(framesAvailable)
+                    )
+                    vDSP_vflt16(
+                        input.advanced(by: 1), 2,
+                        &rightChannel, 1,
+                        vDSP_Length(framesAvailable)
+                    )
 
-                            output[outputIndex] = interpolated
-                            output[outputIndex + 1] = interpolated
-                            outputIndex += 2
-                        } else {
-                            /// Stereo with interpolation
-                            for channel in 0..<2 {
-                                let sample1 = input[sourceFrame * 2 + channel]
-                                let sample2 = input[(sourceFrame + 1) * 2 + channel]
-                                output[outputIndex + channel] = Int16(
-                                    Double(sample1) * (1.0 - fraction) +
-                                    Double(sample2) * fraction
-                                )
-                            }
-                            outputIndex += 2
-                        }
+                    /// Scale to -1.0 to 1.0 range
+                    vDSP_vsmul(
+                        leftChannel, 1,
+                        [scale], &leftChannel, 1,
+                        vDSP_Length(framesAvailable)
+                    )
+                    vDSP_vsmul(
+                        rightChannel, 1,
+                        [scale], &rightChannel, 1,
+                        vDSP_Length(framesAvailable)
+                    )
+
+                    /// Resample each channel
+                    var resampledLeft = [Float](repeating: 0.0, count: targetFrameCount)
+                    var resampledRight = [Float](repeating: 0.0, count: targetFrameCount)
+
+                    let inputLength = vDSP_Length(framesAvailable)
+                    let outputLength = vDSP_Length(targetFrameCount)
+
+                    vDSP_vqint(
+                        leftChannel,                    /// Input signal
+                        [Float(resampleRatio)],        /// Stride factor
+                        0,                             /// Input stride
+                        &resampledLeft,                /// Output signal
+                        1,                             /// Output stride
+                        outputLength,                  /// Number of output points
+                        inputLength                    /// Number of input points
+                    )
+
+                    vDSP_vqint(
+                        rightChannel,                  /// Input signal
+                        [Float(resampleRatio)],        /// Stride factor
+                        0,                            /// Input stride
+                        &resampledRight,              /// Output signal
+                        1,                            /// Output stride
+                        outputLength,                 /// Number of output points
+                        inputLength                   /// Number of input points
+                    )
+
+                    /// Interleave channels back together
+                    for i in 0..<targetFrameCount {
+                        output[i * 2] = resampledLeft[i]
+                        output[i * 2 + 1] = resampledRight[i]
                     }
-                }
-            }
 
-            /// Fill any remaining buffer space with silence
-            if outputIndex * 2 < maxBytes {
-                memset(outputBuffer.advanced(by: outputIndex * 2), 0, maxBytes - (outputIndex * 2))
+                    /// Store last samples for fade out
+                    lastSamples = [resampledLeft.last ?? 0.0, resampledRight.last ?? 0.0]
+                }
             }
 
             return maxBytes
@@ -181,23 +198,26 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             self.src = nil
         }
 
-        let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
-        var sd = streamDescription
-        let bytesPerFrame = sd.mBytesPerFrame
-
-        guard let format = AVAudioFormat(streamDescription: &sd) else {
-            ELOG("Failed to create AVAudioFormat")
+        /// Create standard floating-point format
+        guard let format = AVAudioFormat(
+            standardFormatWithSampleRate: 48000.0,
+            channels: 2
+        ) else {
+            ELOG("Failed to create format")
             return
         }
 
-        src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, inputData in
+        let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
+
+        src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, audioBufferList -> OSStatus in
             guard let self = self else { return noErr }
 
-            let bytesRequested = Int(frameCount * bytesPerFrame)
-            let bytesCopied = read(inputData.pointee.mBuffers.mData!, bytesRequested)
+            let bufferList = UnsafeMutableAudioBufferListPointer(audioBufferList)
+            let bytesRequested = Int(frameCount) * 4 * 2  /// Float32 * stereo
+            let bytesCopied = read(bufferList[0].mData!, bytesRequested)
 
-            inputData.pointee.mBuffers.mDataByteSize = UInt32(bytesCopied)
-            inputData.pointee.mBuffers.mNumberChannels = sd.mChannelsPerFrame
+            bufferList[0].mDataByteSize = UInt32(bytesCopied)
+            bufferList[0].mNumberChannels = 2
 
             return noErr
         }
@@ -245,7 +265,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             try session.setCategory(.ambient,
                                   mode: .default,
                                   options: [.mixWithOthers])
-            try session.setPreferredIOBufferDuration(0.005)
+            try session.setPreferredIOBufferDuration(0.010)
             try session.setActive(true)
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
