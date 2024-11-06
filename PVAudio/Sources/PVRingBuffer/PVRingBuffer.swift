@@ -101,36 +101,42 @@ public final class PVRingBuffer: NSObject, RingBufferProtocol {
     public func write(_ buffer: UnsafeRawPointer, size: Int) -> Int {
         guard isEnabled, size > 0 else { return 0 }
 
-        let available = availableBytesForWriting
-        guard available > 0 else {
-            WLOG("Buffer full - resetting")
+        /// If buffer is full, overwrite oldest data
+        if bytesInBuffer == bufferLength {
+            /// Advance read position to make room
+            readPosition = (readPosition + size) % bufferLength
+            bytesInBuffer -= size
+            WLOG("Buffer overrun - overwriting oldest \(size) bytes")
             debugBufferState()
-            reset()
-            return 0
         }
 
-        let writeSize = min(size, available)
-
         /// First chunk: from write position to end of buffer
-        let firstChunkSize = min(writeSize, bufferLength - writePosition)
+        let firstChunkSize = min(size, bufferLength - writePosition)
         memcpy(self.buffer.advanced(by: writePosition), buffer, firstChunkSize)
 
         /// Second chunk: wrap around to start if needed
-        if firstChunkSize < writeSize {
-            let secondChunkSize = writeSize - firstChunkSize
+        if firstChunkSize < size {
+            let secondChunkSize = size - firstChunkSize
             memcpy(self.buffer, buffer.advanced(by: firstChunkSize), secondChunkSize)
         }
 
-        writePosition = (writePosition + writeSize) % bufferLength
-        bytesInBuffer += writeSize
+        writePosition = (writePosition + size) % bufferLength
+        bytesInBuffer += size
 
-        return writeSize
+        return size
     }
 
     /// Read data from buffer
     @discardableResult
     public func read(_ buffer: UnsafeMutableRawPointer, preferredSize size: Int) -> Int {
-        guard isEnabled, bytesInBuffer > 0, size > 0 else { return 0 }
+        guard isEnabled, size > 0 else { return 0 }
+
+        /// Handle underrun by returning silence instead of nothing
+        if bytesInBuffer == 0 {
+            DLOG("Buffer underrun - filling with silence")
+            memset(buffer, 0, size)
+            return size
+        }
 
         let readSize = min(size, bytesInBuffer)
 
@@ -144,10 +150,16 @@ public final class PVRingBuffer: NSObject, RingBufferProtocol {
             memcpy(buffer.advanced(by: firstChunkSize), self.buffer, secondChunkSize)
         }
 
+        /// If we couldn't read enough, fill the rest with silence
+        if readSize < size {
+            DLOG("Partial read: \(readSize)/\(size) bytes - filling rest with silence")
+            memset(buffer.advanced(by: readSize), 0, size - readSize)
+        }
+
         readPosition = (readPosition + readSize) % bufferLength
         bytesInBuffer -= readSize
 
-        return readSize
+        return size  /// Always return requested size to maintain timing
     }
 
     /// Reset buffer state
