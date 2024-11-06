@@ -290,6 +290,78 @@ open class SideNavigationController: UIViewController {
         self.gestures.rightScreenEdgePan.isEnabled = enabled ? self.right?.options.panningEnabled ?? false : enabled
     }
     #endif
+
+    /// Add property to track current width percentage
+    private var currentWidthPercent: CGFloat = 0.3
+
+    /// Add method to update side menu width
+    public func updateSideMenuWidth(percent: CGFloat) {
+        currentWidthPercent = percent
+
+        // Update left side if it exists
+        if let leftSide = left {
+            // Create new options with updated width
+            var newOptions = leftSide.options
+            newOptions.widthPercent = percent
+
+            // Store the current view controller
+            let viewController = leftSide.viewController
+
+            // Create new side with new options
+            let newSide = Side(viewController: viewController, options: newOptions)
+
+            // Reset the side with new options
+            setSide(newSide, direction: .left)
+
+            // If the side was visible, show it again
+            if visibleSideViewController == viewController {
+                show(direction: .left, animated: false)
+            }
+        }
+
+        // Update right side if it exists
+        if let rightSide = right {
+            // Create new options with updated width
+            var newOptions = rightSide.options
+            newOptions.widthPercent = percent
+
+            // Store the current view controller
+            let viewController = rightSide.viewController
+
+            // Create new side with new options
+            let newSide = Side(viewController: viewController, options: newOptions)
+
+            // Reset the side with new options
+            setSide(newSide, direction: .right)
+
+            // If the side was visible, show it again
+            if visibleSideViewController == viewController {
+                show(direction: .right, animated: false)
+            }
+        }
+    }
+
+    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        // Calculate new width based on size class
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+        let newWidth: CGFloat = {
+            switch (isIpad, traitCollection.horizontalSizeClass) {
+            case (true, .regular):   return 0.3  // iPad regular
+            case (true, .compact):   return 0.3  // iPad compact (rare but possible)
+            case (true, .unspecified): return 0.3  // iPad fallback
+            case (false, .compact):  return 0.7  // iPhone portrait
+            case (false, .regular):  return 0.4  // iPhone landscape
+            case (false, .unspecified): return 0.7  // iPhone fallback
+            }
+        }()
+
+        // Update width if it changed
+        if newWidth != currentWidthPercent {
+            updateSideMenuWidth(percent: newWidth)
+        }
+    }
 }
 
 // NESTED TYPES

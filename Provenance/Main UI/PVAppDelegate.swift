@@ -165,21 +165,50 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                                      viewModel: PVRootViewModel,
                                      rootViewController: PVRootViewController) -> SideNavigationController {
         let sideNav = SideNavigationController(mainViewController: mainViewController)
+        let traits = UITraitCollection.current
         let isIpad = UIDevice.current.userInterfaceIdiom == .pad
-        let widthPercentage: CGFloat = isIpad ? 0.3 : 0.7
+
+        /// Calculate width percentage based on device and size class
+        let widthPercentage: CGFloat = {
+            switch (isIpad, traits.horizontalSizeClass) {
+            case (true, .regular):   return 0.3  // iPad regular
+            case (true, .compact):   return 0.3  // iPad compact (rare but possible)
+            case (true, .unspecified): return 0.3  // iPad fallback
+            case (false, .compact):  return 0.7  // iPhone portrait
+            case (false, .regular):  return 0.4  // iPhone landscape
+            case (false, .unspecified): return 0.7  // iPhone fallback
+            }
+        }()
+
         let overlayColor: UIColor = ThemeManager.shared.currentPalette.menuHeaderBackground
 
         sideNav.leftSide(
             viewController: SideMenuView.instantiate(gameLibrary: gameLibrary,
-                                                     viewModel: viewModel,
-                                                     delegate: rootViewController,
-                                                     rootDelegate: rootViewController),
+                                               viewModel: viewModel,
+                                               delegate: rootViewController,
+                                               rootDelegate: rootViewController),
             options: .init(widthPercent: widthPercentage,
-                           animationDuration: 0.18,
-                           overlayColor: overlayColor,
-                           overlayOpacity: 0.1,
-                           shadowOpacity: 0.2)
+                          animationDuration: 0.18,
+                          overlayColor: overlayColor,
+                          overlayOpacity: 0.1,
+                          shadowOpacity: 0.2)
         )
+
+        /// Add trait collection observer to update width when orientation changes
+        NotificationCenter.default.addObserver(forName: UIApplication.didChangeStatusBarOrientationNotification, object: nil, queue: .main) { _ in
+            let newWidth: CGFloat = {
+                switch (isIpad, UITraitCollection.current.horizontalSizeClass) {
+                case (true, .regular):   return 0.3  // iPad regular
+                case (true, .compact):   return 0.3  // iPad compact (rare but possible)
+                case (true, .unspecified): return 0.3  // iPad fallback
+                case (false, .compact):  return 0.3  // iPhone portrait
+                case (false, .regular):  return 0.4  // iPhone landscape
+                case (false, .unspecified): return 0.3  // iPhone fallback
+                }
+            }()
+            sideNav.updateSideMenuWidth(percent: newWidth)
+        }
+
         return sideNav
     }
 
@@ -475,7 +504,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
 //            await libraryUpdatesController.updateConflicts()
 //            await libraryUpdatesController.importROMDirectories()
 //        }
-        
+
         ILOG("PVAppDelegate: All required components are available")
         let rootViewController = PVRootViewController.instantiate(
             updatesController: libraryUpdatesController,
@@ -525,4 +554,3 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
 //    }
 
 }
-
