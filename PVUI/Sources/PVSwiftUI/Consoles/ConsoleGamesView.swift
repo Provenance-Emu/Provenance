@@ -75,6 +75,13 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     @State private var systemMoveState: SystemMoveState?
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var sectionHeight: CGFloat {
+        // Use compact size class to determine if we're in portrait on iPhone
+        horizontalSizeClass == .compact ? 150 : 75
+    }
+
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
         self.console = console
         self.viewModel = viewModel
@@ -188,7 +195,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                         .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate, contextMenuDelegate: self) }
                     }
                 }
-                .frame(height: 150)
+                .frame(height: sectionHeight)
                 HomeDividerView()
             }
         }
@@ -205,7 +212,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                         .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
                     }
                 }
-                .frame(height: 150)
+                .frame(height: sectionHeight)
                 HomeDividerView()
             }
         }
