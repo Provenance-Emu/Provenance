@@ -140,6 +140,10 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         engine.pause()
         isRunning = false
     }
+    
+    var preferredAudioLatency: TimeInterval {
+        Defaults[.audioLatency]
+    }
 
     private func configureAudioSession() {
         #if !os(macOS)
@@ -148,7 +152,9 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             try session.setCategory(.ambient,
                                   mode: .default,
                                   options: [.mixWithOthers])
-            try session.setPreferredIOBufferDuration(0.005)
+            let preferredLatency = (self.preferredAudioLatency / 1000.0)
+            DLOG("Setting preferred IO buffer duration: \(preferredLatency)")
+            try session.setPreferredIOBufferDuration(preferredLatency)
             try session.setActive(true)
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
