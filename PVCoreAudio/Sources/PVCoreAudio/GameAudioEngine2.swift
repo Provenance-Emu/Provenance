@@ -97,19 +97,24 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     public func stopAudio() {
         engine.stop()
         destroyNodes()
-        isRunning = true
+        isRunning = false
     }
 
     public func pauseAudio() {
+        /// Add state check to prevent redundant operations
+        guard isRunning else { return }
+
         engine.pause()
 
-        // Detach the source node to stop audio processing
+        /// Clean up nodes in a more controlled order
+        monoMixerNode.removeTap(onBus: 0)
+
         if let src = src {
+            engine.disconnectNodeOutput(src)
             engine.detach(src)
             self.src = nil
         }
 
-        // Detach the sample rate converter if it exists
         if let converter = sampleRateConverter {
             engine.detach(converter)
             sampleRateConverter = nil
@@ -144,13 +149,21 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             let bytesAvailable = buffer.availableBytes
             let bytesToRead = min(bytesAvailable, max)
 
-            if bytesToRead < max {
-                // If we don't have enough data, fill the rest with silence
-                let silence = Data(count: max - bytesToRead)
-                silence.copyBytes(to: buf.assumingMemoryBound(to: UInt8.self).advanced(by: bytesToRead), count: max - bytesToRead)
+            /// Add underrun protection
+            if bytesToRead == 0 {
+                /// Fill with silence if no data available
+                memset(buf, 0, max)
+                return max
             }
 
-            return buffer.read(buf, preferredSize: bytesToRead)
+            let bytesRead = buffer.read(buf, preferredSize: bytesToRead)
+
+            /// Fill remaining space with silence if partial read
+            if bytesRead < max {
+                memset(buf.advanced(by: bytesRead), 0, max - bytesRead)
+            }
+
+            return max  /// Always return requested size to maintain timing
         }
     }
 
@@ -393,10 +406,13 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     //    }
 
     private func adjustBufferSize() {
-        /// Use user-configurable latency setting
-        let desiredLatency = Defaults[.audioLatency] / 100.0
+        /// Consider adding minimum/maximum bounds for safety
+        let desiredLatency = max(0.005, min(Defaults[.audioLatency] / 100.0, 0.1))
         let sampleRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
         let bufferSize = AVAudioFrameCount(sampleRate * desiredLatency)
+
+        /// Ensure buffer size is a power of 2 for better performance
+        let powerOf2BufferSize = UInt32(1 << Int(log2(Double(bufferSize)).rounded()))
 
         engine.reset()
         engine.prepare()
@@ -407,10 +423,15 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     private func configureAudioSession() {
         do {
-            /// Use ambient category for better iOS behavior
-            try AVAudioSession.sharedInstance().setCategory(.ambient,
-                                                          mode: .default)
-            try AVAudioSession.sharedInstance().setActive(true)
+            let session = AVAudioSession.sharedInstance()
+            /// Add options for better background behavior
+            try session.setCategory(.ambient,
+                                mode: .default,
+                                options: [.mixWithOthers, .allowBluetooth])
+
+            /// Set preferred IOBuffer duration for better latency control
+            try session.setPreferredIOBufferDuration(Defaults[.audioLatency] / 100.0)
+            try session.setActive(true)
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
         }
