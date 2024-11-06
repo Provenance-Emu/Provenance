@@ -115,7 +115,7 @@ static void input_poll_callback(void) {
 }
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id) {
-    NSLog(@"polled input: port: %d device: %d id: %d", port, device, _id);
+//    DLOG(@"polled input: port: %d device: %d id: %d", port, device, _id);
     
     __strong PVStellaBridge *strongCurrent = _current;
     int16_t value = 0;
