@@ -198,10 +198,12 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             self.src = nil
         }
 
-        /// Create standard floating-point format
+        /// Create format specifically for 32-bit float stereo
         guard let format = AVAudioFormat(
-            standardFormatWithSampleRate: 48000.0,
-            channels: 2
+            commonFormat: .pcmFormatFloat32,    /// Explicitly specify float32
+            sampleRate: 48000.0,
+            channels: 2,
+            interleaved: true                   /// We're using interleaved stereo
         ) else {
             ELOG("Failed to create format")
             return
@@ -224,7 +226,12 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         if let src {
             engine.attach(src)
+
+            /// Connect source directly to main mixer with explicit format
             engine.connect(src, to: engine.mainMixerNode, format: format)
+
+            /// Set volume on main mixer
+            engine.mainMixerNode.outputVolume = volume
         }
     }
 
