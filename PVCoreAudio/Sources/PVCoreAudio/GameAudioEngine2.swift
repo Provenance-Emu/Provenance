@@ -47,14 +47,53 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let channelCount = UInt32(gameCore.channelCount(forBuffer: 0))
         let sampleRate = gameCore.audioSampleRate(forBuffer: 0)
         let bitDepth = gameCore.audioBitDepth
+        let bufferSize = gameCore.audioBufferSize(forBuffer: 0)
         let bytesPerSample = bitDepth / 8
 
         DLOG("Core audio properties - Channels: \(channelCount), Rate: \(sampleRate), Bits: \(bitDepth)")
+        DLOG("Buffer size: \(bufferSize), Bytes per sample: \(bytesPerSample)")
+
+        /// For 8-bit audio, we'll use 16-bit internally
+        if bitDepth == 8 {
+            return AudioStreamBasicDescription(
+                mSampleRate: sampleRate,
+                mFormatID: kAudioFormatLinearPCM,
+                mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked,
+                mBytesPerPacket: 2 * channelCount,
+                mFramesPerPacket: 1,
+                mBytesPerFrame: 2 * channelCount,
+                mChannelsPerFrame: channelCount,
+                mBitsPerChannel: 16,
+                mReserved: 0)
+        }
+
+        /// Check for interleaved format
+        let isInterleaved = channelCount == 1 &&
+                           bitDepth == 16 &&
+                           bufferSize % (bytesPerSample * 2) == 0
+
+        if isInterleaved {
+            DLOG("Using interleaved stereo format")
+            return AudioStreamBasicDescription(
+                mSampleRate: sampleRate,
+                mFormatID: kAudioFormatLinearPCM,
+                mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked,
+                mBytesPerPacket: 4,
+                mFramesPerPacket: 1,
+                mBytesPerFrame: 4,
+                mChannelsPerFrame: 2,
+                mBitsPerChannel: 16,
+                mReserved: 0)
+        }
+
+        let formatFlags: AudioFormatFlags = bitDepth == 32
+            ? kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
+            : kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked
 
         return AudioStreamBasicDescription(
             mSampleRate: sampleRate,
             mFormatID: kAudioFormatLinearPCM,
-            mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked,
+            mFormatFlags: formatFlags,
             mBytesPerPacket: UInt32(bytesPerSample) * channelCount,
             mFramesPerPacket: 1,
             mBytesPerFrame: UInt32(bytesPerSample) * channelCount,
@@ -91,27 +130,43 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         }
 
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
-        var sd = streamDescription
-        let bytesPerFrame = sd.mBytesPerFrame
+        var originalSD = streamDescription
+        let channelCount = originalSD.mChannelsPerFrame
+        let is8Bit = gameCore.audioBitDepth == 8
 
-        guard let sourceFormat = AVAudioFormat(streamDescription: &sd) else {
-            ELOG("Failed to create source AVAudioFormat")
+        /// Create source format from stream description
+        guard let sourceFormat = AVAudioFormat(streamDescription: &originalSD) else {
+            ELOG("Failed to create source format")
             return
         }
 
-        let sessionRate = AVAudioSession.sharedInstance().sampleRate
-        let sourceRate = sourceFormat.sampleRate
-
-        DLOG("Source rate: \(sourceRate), Session rate: \(sessionRate)")
+        DLOG("Source rate: \(sourceFormat.sampleRate), Session rate: \(AVAudioSession.sharedInstance().sampleRate)")
 
         src = AVAudioSourceNode(format: sourceFormat) { [weak self] _, _, frameCount, inputData in
             guard let self = self else { return noErr }
 
+            let bytesPerFrame = is8Bit ? 1 : originalSD.mBytesPerFrame
             let bytesRequested = Int(frameCount * bytesPerFrame)
-            let bytesCopied = read(inputData.pointee.mBuffers.mData!, bytesRequested)
 
-            inputData.pointee.mBuffers.mDataByteSize = UInt32(bytesCopied)
-            inputData.pointee.mBuffers.mNumberChannels = sd.mChannelsPerFrame
+            let tempBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bytesRequested)
+            defer { tempBuffer.deallocate() }
+
+            let bytesCopied = read(tempBuffer, bytesRequested)
+
+            if is8Bit {
+                /// Convert 8-bit to 16-bit
+                let outputBuffer = inputData.pointee.mBuffers.mData!.assumingMemoryBound(to: Int16.self)
+                for i in 0..<bytesCopied {
+                    outputBuffer[i] = Int16(tempBuffer[i]) << 8
+                }
+                inputData.pointee.mBuffers.mDataByteSize = UInt32(bytesCopied * 2)
+            } else {
+                /// Copy directly for other formats
+                memcpy(inputData.pointee.mBuffers.mData!, tempBuffer, bytesCopied)
+                inputData.pointee.mBuffers.mDataByteSize = UInt32(bytesCopied)
+            }
+
+            inputData.pointee.mBuffers.mNumberChannels = channelCount
 
             return noErr
         }
@@ -120,12 +175,11 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             engine.attach(src)
             engine.attach(mixerNode)
 
-            /// Connect source to mixer using source format
+            /// Connect through mixer for sample rate conversion
             engine.connect(src, to: mixerNode, format: sourceFormat)
-
-            /// Connect mixer to main mixer, letting the mixer handle sample rate conversion
             engine.connect(mixerNode, to: engine.mainMixerNode, format: nil)
 
+            mixerNode.outputVolume = 1.0
             DLOG("Connected through mixer node for sample rate conversion")
         }
     }
