@@ -291,6 +291,13 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         let outputFormat = engine.outputNode.inputFormat(forBus: 0)
 
+        /// Create intermediate format for consistent processing
+        guard let intermediateFormat = AVAudioFormat(standardFormatWithSampleRate: renderFormat.sampleRate,
+                                                   channels: 2) else {
+            ELOG("Failed to create intermediate format")
+            return
+        }
+
         if abs(renderFormat.sampleRate - outputFormat.sampleRate) > 1 {
             if usesPitchConversion {
                 /// Clean up sample rate converter if it exists
@@ -304,15 +311,17 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                     engine.attach(timePitchNode)
                 }
 
-                timePitchNode.rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
+                /// Calculate correct rate based on source and output formats
+                let rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
+                timePitchNode.rate = rate
 
                 /// Use source node's output format for first connection
                 engine.connect(src, to: timePitchNode, format: src.outputFormat(forBus: 0))
                 engine.connect(timePitchNode, to: engine.mainMixerNode, format: outputFormat)
 
-                DLOG("Using pitch conversion with rate: \(timePitchNode.rate)")
+                DLOG("Using pitch conversion - Source: \(renderFormat.sampleRate)Hz, Output: \(outputFormat.sampleRate)Hz, Rate: \(rate)")
             } else {
-                /// Clean up time pitch node if it exists
+                /// Clean up time pitch node
                 if engine.attachedNodes.contains(timePitchNode) {
                     engine.detach(timePitchNode)
                 }
@@ -323,18 +332,15 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                     engine.attach(sampleRateConverter!)
                 }
 
-                /// Use source format for first connection
-                let sourceFormat = src.outputFormat(forBus: 0)
-
-                /// Calculate and set the correct rate
+                /// Calculate correct rate based on source and output formats
                 let rate = Float(outputFormat.sampleRate / renderFormat.sampleRate)
                 sampleRateConverter?.rate = rate
 
-                /// Connect nodes with proper formats
-                engine.connect(src, to: sampleRateConverter!, format: sourceFormat)
+                /// Use source node's output format for first connection
+                engine.connect(src, to: sampleRateConverter!, format: src.outputFormat(forBus: 0))
                 engine.connect(sampleRateConverter!, to: engine.mainMixerNode, format: outputFormat)
 
-                DLOG("Sample rate conversion - Input: \(renderFormat.sampleRate)Hz, Output: \(outputFormat.sampleRate)Hz, Rate: \(rate)")
+                DLOG("Using sample rate conversion - Source: \(renderFormat.sampleRate)Hz, Output: \(outputFormat.sampleRate)Hz, Rate: \(rate)")
             }
         } else {
             /// Direct connection if rates match
@@ -347,6 +353,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             }
 
             engine.connect(src, to: engine.mainMixerNode, format: src.outputFormat(forBus: 0))
+            DLOG("Direct connection - Rate: \(renderFormat.sampleRate)Hz")
         }
 
         engine.mainMixerNode.outputVolume = volume
@@ -429,19 +436,21 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     }
 
     private func configureAudioSession() {
+        #if !os(macOS)
         do {
             let session = AVAudioSession.sharedInstance()
-            /// Add options for better background behavior
+            /// Use .game category for better performance with games
             try session.setCategory(.ambient,
-                                mode: .default,
-                                options: [.mixWithOthers, .allowBluetooth])
+                                  mode: .default,
+                                  options: [.mixWithOthers])
 
-            /// Set preferred IOBuffer duration for better latency control
-            try session.setPreferredIOBufferDuration(Defaults[.audioLatency] / 100.0)
+            /// Use a reasonable buffer duration
+            try session.setPreferredIOBufferDuration(0.005)
             try session.setActive(true)
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
         }
+        #endif
     }
 
     private func setupInterruptionHandling() {
