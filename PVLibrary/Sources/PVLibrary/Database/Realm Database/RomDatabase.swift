@@ -572,7 +572,8 @@ public extension RomDatabase {
                     game.title = title
                         if game.releaseID == nil || game.releaseID!.isEmpty {
                             ILOG("Game isn't already matched, going to try to re-match after a rename")
-                            GameImporter.shared.lookupInfo(for: game, overwrite: false)
+                            //TODO: figure out when this happens and fix
+                            //GameImporter.shared.lookupInfo(for: game, overwrite: false)
                         }
                 }
             } catch {
