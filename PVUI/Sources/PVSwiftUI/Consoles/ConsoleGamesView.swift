@@ -220,7 +220,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func gamesSection() -> some View {
         Group {
-            if games.isEmpty && AppState.shared.isSimulator {
+            if games.filter{!$0.isInvalidated}.isEmpty && AppState.shared.isSimulator {
                 let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
                 if viewModel.viewGamesAsGrid {
                     showGamesGrid(fakeGames)
@@ -313,7 +313,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     private func showGamesGrid(_ games: [PVGame]) -> some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(games, id: \.self) { game in
+            ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
                 GameItemView(game: game, constrainHeight: false) {
                     loadGame(game)
                 }
@@ -326,7 +326,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(games, id: \.self) { game in
+            ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
                 GameItemView(game: game, constrainHeight: false) {
                     loadGame(game)
                 }
