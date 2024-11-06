@@ -34,6 +34,7 @@ extension Moveable where Self: UIView {
 }
 
 class MovableButtonView: UIView, Moveable {
+
     public var isCustomMoved: Bool = false {
         didSet {
             ILOG("isCustomMoved changed to: \(isCustomMoved)")
@@ -207,8 +208,14 @@ class MovableButtonView: UIView, Moveable {
             case .joystick2:
                 return "JoyPad2"
             }
+        } else if let button = self as? JSButton {
+            // Use the button's tag and type to create a unique identifier
+            let buttonType = String(describing: type(of: self))
+            let buttonTag = tag
+            return "\(buttonType)_\(buttonTag)"
         }
-        return String(describing: type(of: self))
+        // Fallback for other movable views
+        return "\(String(describing: type(of: self)))_\(tag)"
     }
 
     private var cachedPositionKey: String?

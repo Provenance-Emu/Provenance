@@ -37,6 +37,24 @@ let volumeHeight: CGFloat = 3
 #endif
 
 open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC {
+    
+    enum ControlTag: Int {
+        case dpad1 = 100
+        case dpad2 = 101
+        case joypad1 = 102
+        case joypad2 = 103
+        case buttonGroup = 200
+        case leftShoulder = 301
+        case rightShoulder = 302
+        case leftShoulder2 = 303
+        case rightShoulder2 = 304
+        case zTrigger = 305
+        case start = 401
+        case select = 402
+        case leftAnalog = 501
+        case rightAnalog = 502
+    }
+    
     func layoutViews() {}
 
     func pressStart(forPlayer _: Int) {
@@ -85,20 +103,79 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     var system: PVSystem
     var controlLayout: [ControlLayoutEntry]
 
-    var dPad: JSDPad?
-    var dPad2: JSDPad?
-    var joyPad: JSDPad?
-    var joyPad2: JSDPad?
-    var buttonGroup: MovableButtonView?
-    var leftShoulderButton: JSButton?
-    var rightShoulderButton: JSButton?
-    var leftShoulderButton2: JSButton?
-    var rightShoulderButton2: JSButton?
-    var zTriggerButton: JSButton?
-    var startButton: JSButton?
-    var selectButton: JSButton?
-    var leftAnalogButton: JSButton?
-    var rightAnalogButton: JSButton?
+    var dPad: JSDPad? {
+        didSet {
+            dPad?.tag = ControlTag.dpad1.rawValue
+        }
+    }
+    var dPad2: JSDPad? {
+        didSet {
+            dPad2?.tag = ControlTag.dpad2.rawValue
+        }
+    }
+    var joyPad: JSDPad? {
+        didSet {
+            joyPad?.tag = ControlTag.joypad1.rawValue
+        }
+    }
+    var joyPad2: JSDPad? {
+        didSet {
+            joyPad2?.tag = ControlTag.joypad2.rawValue
+        }
+    }
+    var buttonGroup: MovableButtonView? {
+        didSet {
+            buttonGroup?.tag = ControlTag.buttonGroup.rawValue
+        }
+    }
+    var leftShoulderButton: JSButton? {
+        didSet {
+            leftShoulderButton?.tag = ControlTag.leftShoulder.rawValue
+        }
+    }
+    var rightShoulderButton: JSButton? {
+        didSet {
+            rightShoulderButton?.tag = ControlTag.rightShoulder.rawValue
+        }
+    }
+    var leftShoulderButton2: JSButton? {
+        didSet {
+            leftShoulderButton2?.tag = ControlTag.leftShoulder2.rawValue
+        }
+    }
+    var rightShoulderButton2: JSButton? {
+        didSet {
+            rightShoulderButton2?.tag = ControlTag.rightShoulder2.rawValue
+        }
+    }
+    var zTriggerButton: JSButton? {
+        didSet {
+            zTriggerButton?.tag = ControlTag.zTrigger.rawValue
+        }
+    }
+
+    var selectButton: JSButton? {
+        didSet {
+            selectButton?.tag = ControlTag.select.rawValue
+        }
+    }
+
+    var startButton: JSButton? {
+        didSet {
+            startButton?.tag = ControlTag.start.rawValue
+        }
+    }
+
+    var leftAnalogButton: JSButton? {
+        didSet {
+            leftAnalogButton?.tag = ControlTag.leftAnalog.rawValue
+        }
+    }
+    var rightAnalogButton: JSButton? {
+        didSet {
+            rightAnalogButton?.tag = ControlTag.rightAnalog.rawValue
+        }
+    }
 
     let alpha: CGFloat = CGFloat(Defaults[.controllerOpacity])
 
@@ -577,6 +654,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     }
                 } else {
                     let buttonGroup = MovableButtonView(frame: buttonsFrame)
+                    buttonGroup.tag = ControlTag.buttonGroup.rawValue
                     self.buttonGroup = buttonGroup
                     buttonGroup.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin]
 
@@ -586,6 +664,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     groupedButtons?.forEach { groupedButton in
                         let buttonFrame: CGRect = NSCoder.cgRect(for: groupedButton.PVControlFrame)
                         let button = JSButton(frame: buttonFrame)
+
                         button.titleLabel?.text = groupedButton.PVControlTitle
 
                         if let tintColor = groupedButton.PVControlTint {
@@ -726,6 +805,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
         if rightShoulderButton == nil {
             let rightShoulderButton = JSButton(frame: rightShoulderFrame)
+            rightShoulderButton.tag = ControlTag.rightShoulder.rawValue
             if let tintColor = control.PVControlTint {
                 rightShoulderButton.tintColor = UIColor(hex: tintColor)
             }
@@ -752,6 +832,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             var rightShoulderFrame2 = rightShoulderFrame
             rightShoulderFrame2!.origin.y -= controlSize.height
             let rightShoulderButton2 = JSButton(frame: rightShoulderFrame2!)
+            rightShoulderButton2.tag = ControlTag.rightShoulder2.rawValue
             if let tintColor = control.PVControlTint {
                 rightShoulderButton2.tintColor = UIColor(hex: tintColor)
             }
@@ -799,6 +880,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         } else {
             let zTriggerButton = JSButton(frame: zTriggerFrame)
+            zTriggerButton.tag = ControlTag.zTrigger.rawValue
             if let tintColor = control.PVControlTint {
                 zTriggerButton.tintColor = UIColor(hex: tintColor)
             }
@@ -843,6 +925,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         leftShoulderFrame.origin.y -= controlSize.height
         if leftShoulderButton == nil {
             let leftShoulderButton = JSButton(frame: leftShoulderFrame)
+            leftShoulderButton.tag = ControlTag.leftShoulder.rawValue
             self.leftShoulderButton = leftShoulderButton
             leftShoulderButton.titleLabel?.text = control.PVControlTitle
             leftShoulderButton.titleLabel?.font = UIFont.systemFont(ofSize: 8)
@@ -868,6 +951,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             var leftShoulderFrame2 = leftShoulderFrame;
             leftShoulderFrame2!.origin.y -= controlSize.height
             let leftShoulderButton2 = JSButton(frame: leftShoulderFrame2!)
+            leftShoulderButton2.tag = ControlTag.leftShoulder2.rawValue
             if let tintColor = control.PVControlTint {
                 leftShoulderButton2.tintColor = UIColor(hex: tintColor)
             }
@@ -936,6 +1020,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         } else {
             let selectButton = JSButton(frame: selectFrame)
+            selectButton.tag = ControlTag.select.rawValue
             if let tintColor = control.PVControlTint {
                 selectButton.tintColor = UIColor(hex: tintColor)
             }
@@ -1004,6 +1089,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         } else {
             let startButton = JSButton(frame: startFrame)
+            startButton.tag = ControlTag.start.rawValue
             if let tintColor = control.PVControlTint {
                 startButton.tintColor = UIColor(hex: tintColor)
             }
@@ -1068,6 +1154,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         } else {
             let leftAnalogButton = JSButton(frame: leftAnalogFrame)
+            leftAnalogButton.tag = ControlTag.leftAnalog.rawValue
             if let tintColor = control.PVControlTint {
                 leftAnalogButton.tintColor = UIColor(hex: tintColor)
             }
@@ -1127,6 +1214,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             }
         } else {
             let rightAnalogButton = JSButton(frame: rightAnalogFrame)
+            rightAnalogButton.tag = ControlTag.rightAnalog.rawValue
             if let tintColor = control.PVControlTint {
                 rightAnalogButton.tintColor = UIColor(hex: tintColor)
             }
