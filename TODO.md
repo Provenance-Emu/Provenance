@@ -3,7 +3,7 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] moveable button joystick and dpad move at the same time
+- [X] moveable button joystick and dpad move at the same time
 - [ ] RetroArch GLES cores are crashing?
 - [ ] Delete isn't deleting
     - [X] throw an error on file manager error
@@ -72,6 +72,7 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] Spotlight no worky, crashes
 - [ ] BIOS importer should work when multiple systems match the same bios
 - [ ] Dark mode toggle doens't refresh all views if theme set to auto
 - [ ] Box art is clipped in swift ui -- need better aspect ratios
