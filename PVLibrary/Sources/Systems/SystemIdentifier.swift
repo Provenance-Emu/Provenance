@@ -210,6 +210,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
     var offset: UInt64 {
         switch self {
         case .SNES: return 16
+        case .NES: return 16
         default: return 0
         }
     }

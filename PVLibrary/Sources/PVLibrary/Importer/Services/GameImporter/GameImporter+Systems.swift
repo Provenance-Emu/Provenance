@@ -69,8 +69,9 @@ extension GameImporter {
         }
         
         // If no match found, try querying the OpenVGDB
+        //TODO: fix me
         do {
-            if let results = try await openVGDB.searchDatabase(usingFilename: fileName),
+            if let results = try openVGDB.searchDatabase(usingFilename: fileName),
                let firstResult = results.first,
                let systemID = firstResult["systemID"] as? Int,
                let system = PVEmulatorConfiguration.system(forDatabaseID: systemID) {
@@ -114,7 +115,7 @@ extension GameImporter {
             let cleanedFileName = cleanFileName(lowercasedFileName)
             
             // Search the database using the cleaned filename
-            if let results = try await openVGDB.searchDatabase(usingFilename: cleanedFileName, systemID: system.openvgDatabaseID) {
+            if let results = try openVGDB.searchDatabase(usingFilename: cleanedFileName, systemID: system.openvgDatabaseID) {
                 // Check if we have any results
                 if !results.isEmpty {
                     // Optionally, you can add more strict matching here
@@ -255,11 +256,11 @@ extension GameImporter {
     }
     
     /// Determines the system for a given candidate file
-    private func determineSystemFromContent(for candidate: ImportCandidateFile, possibleSystems: [PVSystem]) throws -> PVSystem {
+    private func determineSystemFromContent(for queueItem: ImportQueueItem, possibleSystems: [PVSystem]) throws -> PVSystem {
         // Implement logic to determine system based on file content or metadata
         // This could involve checking file headers, parsing content, or using a database of known games
         
-        let fileName = candidate.filePath.deletingPathExtension().lastPathComponent
+        let fileName = queueItem.url.deletingPathExtension().lastPathComponent
         
         for system in possibleSystems {
             do {
@@ -274,7 +275,7 @@ extension GameImporter {
         }
         
         // If we couldn't determine the system, try a more detailed search
-        if let fileMD5 = candidate.md5?.uppercased(), !fileMD5.isEmpty {
+        if let fileMD5 = queueItem.md5?.uppercased(), !fileMD5.isEmpty {
             do {
                 if let results = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
                    let firstResult = results.first,
@@ -284,6 +285,7 @@ extension GameImporter {
                     return system
                 }
             } catch {
+                //what to do here, since this results in no system?
                 ELOG("Error searching OpenVGDB by MD5: \(error.localizedDescription)")
             }
         }
@@ -292,19 +294,20 @@ extension GameImporter {
         // This is a placeholder for more advanced content-based detection
         // You might want to implement system-specific logic here
         for system in possibleSystems {
-            if doesFileContentMatch(candidate, forSystem: system) {
+            if doesFileContentMatch(queueItem, forSystem: system) {
                 ILOG("System determined by file content match: \(system.name)")
                 return system
             }
         }
         
         // If we still couldn't determine the system, return the first possible system as a fallback
+        //TODO: should we actually do this?
         WLOG("Could not determine system from content, using first possible system as fallback")
         return possibleSystems[0]
     }
     
     /// Checks if a file content matches a given system
-    private func doesFileContentMatch(_ candidate: ImportCandidateFile, forSystem system: PVSystem) -> Bool {
+    private func doesFileContentMatch(_ queueItem: ImportQueueItem, forSystem system: PVSystem) -> Bool {
         // Implement system-specific file content matching logic here
         // This could involve checking file headers, file structure, or other system-specific traits
         // For now, we'll return false as a placeholder
@@ -312,42 +315,35 @@ extension GameImporter {
     }
     
     /// Determines the system for a given candidate file
-    internal func determineSystem(for candidate: ImportCandidateFile) async throws -> PVSystem {
-        guard let md5 = candidate.md5?.uppercased() else {
+    internal func determineSystems(for queueItem: ImportQueueItem) async throws -> [PVSystem] {
+        guard let md5 = queueItem.md5?.uppercased() else {
             throw GameImporterError.couldNotCalculateMD5
         }
         
-        let fileExtension = candidate.filePath.pathExtension.lowercased()
+        let fileExtension = queueItem.url.pathExtension.lowercased()
         
         DLOG("Checking MD5: \(md5) for possible BIOS match")
         // First check if this is a BIOS file by MD5
-        let biosMatches = PVEmulatorConfiguration.biosEntries.filter("expectedMD5 == %@", md5).map({ $0 })
-        if !biosMatches.isEmpty {
-            DLOG("Found BIOS matches: \(biosMatches.map { $0.expectedFilename }.joined(separator: ", "))")
-            // Copy BIOS to all matching system directories
+        
+        if queueItem.fileType == .bios {
+            let biosMatches = PVEmulatorConfiguration.biosEntries.filter("expectedMD5 == %@", md5).map({ $0 })
+            var biosSystemMatches:[PVSystem] = []
             for bios in biosMatches {
-                if let system = bios.system {
-                    DLOG("Copying BIOS to system: \(system.name)")
-                    let biosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
-                        .appendingPathComponent(bios.expectedFilename)
-                    try FileManager.default.copyItem(at: candidate.filePath, to: biosPath)
-                }
+                biosSystemMatches.append(bios.system)
             }
-            // Return the first system that uses this BIOS
-            if let firstSystem = biosMatches.first?.system {
-                DLOG("Using first matching system for BIOS: \(firstSystem.name)")
-                return firstSystem
-            }
+            return biosSystemMatches
         }
         
-        // Check if it's a CD-based game first
         if PVEmulatorConfiguration.supportedCDFileExtensions.contains(fileExtension) {
             if let systems = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) {
                 if systems.count == 1 {
-                    return systems[0]
+                    return [systems[0]]
                 } else if systems.count > 1 {
                     // For CD games with multiple possible systems, use content detection
-                    return try determineSystemFromContent(for: candidate, possibleSystems: systems)
+                    // but allow for the fact that this might not exclude a system
+                    //TODO: fixme
+                    let aSystem = try determineSystemFromContent(for: queueItem, possibleSystems: systems)
+                    return [aSystem]
                 }
             }
         }
@@ -365,38 +361,40 @@ extension GameImporter {
             
             if !matchingSystems.isEmpty {
                 // Sort by release year and take the oldest
+                //TODO: consider whether this is a good idea?
                 if let oldestSystem = matchingSystems.sorted(by: { $0.releaseYear < $1.releaseYear }).first {
+                    //TODO: is this the right move, i'm not sure - might be better to consider a conflict here
                     DLOG("System determined by MD5 match (oldest): \(oldestSystem.name) (\(oldestSystem.releaseYear))")
-                    return oldestSystem
+                    return [oldestSystem]
                 }
             }
             
             // Fallback to original single system match if sorting fails
             if let system = PVEmulatorConfiguration.system(forIdentifier: String(systemID.intValue)) {
                 DLOG("System determined by MD5 match (fallback): \(system.name)")
-                return system
+                return [system]
             }
         }
         
         DLOG("MD5 lookup failed, trying filename matching")
         
         // Try filename matching next
-        let fileName = candidate.filePath.lastPathComponent
+        let fileName = queueItem.url.lastPathComponent
         
         if let matchedSystem = await matchSystemByFileName(fileName) {
             DLOG("Found system by filename match: \(matchedSystem.name)")
-            return matchedSystem
+            return [matchedSystem]
         }
-        
-        let possibleSystems = PVEmulatorConfiguration.systems(forFileExtension: candidate.filePath.pathExtension.lowercased()) ?? []
         
         // If MD5 lookup fails, try to determine the system based on file extension
         if let systems = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) {
             if systems.count == 1 {
-                return systems[0]
+                return systems
             } else if systems.count > 1 {
                 // If multiple systems support this extension, try to determine based on file content or metadata
-                return try await determineSystemFromContent(for: candidate, possibleSystems: systems)
+                //TODO: fixme
+                let aSystem = try determineSystemFromContent(for: queueItem, possibleSystems: systems)
+                return [aSystem]
             }
         }
         
@@ -404,13 +402,15 @@ extension GameImporter {
     }
     
     /// Retrieves the system ID from the cache for a given ROM candidate
-    public func systemIdFromCache(forROMCandidate rom: ImportCandidateFile) -> String? {
-        guard let md5 = rom.md5 else {
+    public func systemIdFromCache(forQueueItem queueItem: ImportQueueItem) -> String? {
+        guard let md5 = queueItem.md5 else {
             ELOG("MD5 was blank")
             return nil
         }
-        if let result = RomDatabase.artMD5DBCache[md5] ?? RomDatabase.getArtCacheByFileName(rom.filePath.lastPathComponent),
-           let databaseID = result["systemID"] as? Int,
+        let result = RomDatabase.artMD5DBCache[md5] ?? RomDatabase.getArtCacheByFileName(queueItem.url.lastPathComponent)
+        
+        if let _res = result,
+           let databaseID = _res["systemID"] as? Int,
            let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
             return systemID
         }
@@ -418,20 +418,20 @@ extension GameImporter {
     }
     
     /// Matches a system based on the ROM candidate
-    public func systemId(forROMCandidate rom: ImportCandidateFile) -> String? {
-        guard let md5 = rom.md5 else {
+    public func systemId(forQueueItem queueItem: ImportQueueItem) -> String? {
+        guard let md5 = queueItem.md5 else {
             ELOG("MD5 was blank")
             return nil
         }
         
-        let fileName: String = rom.filePath.lastPathComponent
+        let fileName: String = queueItem.url.lastPathComponent
         
         do {
             if let databaseID = try openVGDB.system(forRomMD5: md5, or: fileName),
                let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
                 return systemID
             } else {
-                ILOG("Could't match \(rom.filePath.lastPathComponent) based off of MD5 {\(md5)}")
+                ILOG("Could't match \(queueItem.url.lastPathComponent) based off of MD5 {\(md5)}")
                 return nil
             }
         } catch {
@@ -440,8 +440,8 @@ extension GameImporter {
         }
     }
     
-    internal func determineSystemByMD5(_ candidate: ImportCandidateFile) async throws -> PVSystem? {
-        guard let md5 = candidate.md5?.uppercased() else {
+    internal func determineSystemByMD5(_ queueItem: ImportQueueItem) async throws -> PVSystem? {
+        guard let md5 = queueItem.md5?.uppercased() else {
             throw GameImporterError.couldNotCalculateMD5
         }
         

@@ -8,39 +8,10 @@
 
 extension GameImporter {
     
-    /// Calculates the MD5 hash for a given game
-    @objc
-    public func calculateMD5(forGame game: PVGame) -> String? {
-        var offset: UInt64 = 0
-        
-        if game.systemIdentifier == SystemIdentifier.SNES.rawValue {
-            offset = SystemIdentifier.SNES.offset
-        } else if let system = SystemIdentifier(rawValue: game.systemIdentifier) {
-            offset = system.offset
-        }
-        
-        let romPath = romsPath.appendingPathComponent(game.romPath, isDirectory: false)
-        let fm = FileManager.default
-        if !fm.fileExists(atPath: romPath.path) {
-            ELOG("Cannot find file at path: \(romPath)")
-            return nil
-        }
-        
-        return fm.md5ForFile(atPath: romPath.path, fromOffset: offset)
-    }
-    
-    /// Saves the relative path for a given game
-    func saveRelativePath(_ existingGame: PVGame, partialPath:String, file:URL) {
-        Task {
-            if await RomDatabase.gamesCache[partialPath] == nil {
-                await RomDatabase.addRelativeFileCache(file, game:existingGame)
-            }
-        }
-    }
     
     /// Checks if a given ROM file is a CD-ROM
-    internal func isCDROM(_ romFile: ImportCandidateFile) -> Bool {
-        return isCDROM(romFile.filePath)
+    internal func isCDROM(_ queueItem: ImportQueueItem) -> Bool {
+        return isCDROM(queueItem.url)
     }
     
     /// Checks if a given path is a CD-ROM
@@ -51,9 +22,23 @@ extension GameImporter {
     }
     
     /// Checks if a given path is artwork
-    package func isArtwork(_ path: URL) -> Bool {
+    internal func isArtwork(_ queueItem: ImportQueueItem) -> Bool {
         let artworkExtensions = Extensions.artworkExtensions
-        let fileExtension = path.pathExtension.lowercased()
+        let fileExtension = queueItem.url.pathExtension.lowercased()
         return artworkExtensions.contains(fileExtension)
+    }
+    
+    internal func isBIOS(_ queueItem: ImportQueueItem) throws -> Bool {
+        guard let md5 = queueItem.md5?.uppercased() else {
+            throw GameImporterError.couldNotCalculateMD5
+        }
+        
+        DLOG("Checking MD5: \(md5) for possible BIOS match")
+        
+        // First check if this is a BIOS file by MD5
+        let biosMatches = PVEmulatorConfiguration.biosEntries.filter("expectedMD5 == %@", md5).map({ $0 })
+        
+        //it's a bios if it's md5 matches known BIOS
+        return !biosMatches.isEmpty
     }
 }
