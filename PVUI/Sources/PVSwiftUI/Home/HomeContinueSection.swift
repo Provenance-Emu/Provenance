@@ -26,10 +26,15 @@ struct HomeContinueSection: SwiftUI.View {
     var consoleIdentifier: String?
 
     var filteredSaveStates: [PVSaveState] {
+        let validSaveStates = allSaveStates.filter { !$0.isInvalidated }
+
         if let consoleIdentifier = consoleIdentifier {
-            return allSaveStates.filter { $0.game?.systemIdentifier == consoleIdentifier }
+            return validSaveStates.filter {
+                !$0.game.isInvalidated &&
+                $0.game.systemIdentifier == consoleIdentifier
+            }
         } else {
-            return Array(allSaveStates)
+            return validSaveStates.filter { !$0.game.isInvalidated }
         }
     }
 
