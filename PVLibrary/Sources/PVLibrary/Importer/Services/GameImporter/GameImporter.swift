@@ -452,12 +452,24 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
     
-    private func addImportItemToQueue(_ item: ImportQueueItem) {
+    /// Checks the queue and all child elements in the queue to see if this file exists.  if it does, return true, else return false.  
+    private func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
         let duplicate = importQueue.contains { existing in
-            return (existing.url == item.url || existing.id == item.id) ? true : false
+            var exists = false
+            if (existing.url == queueItem.url || existing.id == queueItem.id) {
+                return true
+            } else if (!existing.childQueueItems.isEmpty) {
+                //check the child queue items for duplicates
+                return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: queueItem)
+            }
+            return false
         }
         
-        guard !duplicate else {
+        return duplicate
+    }
+    
+    private func addImportItemToQueue(_ item: ImportQueueItem) {
+        guard !importQueueContainsDuplicate(self.importQueue, ofItem: item) else {
             WLOG("GameImportQueue - Trying to add duplicate ImportItem to import queue with url: \(item.url) and id: \(item.id)")
             return;
         }
