@@ -197,10 +197,15 @@ class MovableButtonView: UIView, Moveable {
     /// Unique identifier for the control type
     var controlIdentifier: String {
         if let dpad = self as? JSDPad {
-            if dpad.analogMode {
-                return dpad.joyPad2 ? "JoyPad2" : "JoyPad"
-            } else {
-                return "DPad"
+            switch dpad.padType {
+            case .dpad1:
+                return "DPad1"
+            case .dpad2:
+                return "DPad2"
+            case .joystick1:
+                return "JoyPad1"
+            case .joystick2:
+                return "JoyPad2"
             }
         }
         return String(describing: type(of: self))

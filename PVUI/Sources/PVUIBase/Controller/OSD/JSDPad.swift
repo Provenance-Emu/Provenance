@@ -36,16 +36,38 @@ protocol JSDPadDelegate: AnyObject {
 }
 
 final class JSDPad: MovableButtonView {
+    enum PadType {
+        case dpad1
+        case dpad2
+        case joystick1
+        case joystick2
+    }
+
+    internal var padType: PadType = .dpad1
+
+    public class func DPad1(frame: CGRect) -> JSDPad {
+        let dpad = JSDPad(frame: frame)
+        dpad.padType = .dpad1
+        return dpad
+    }
+
+    public class func DPad2(frame: CGRect) -> JSDPad {
+        let dpad = JSDPad(frame: frame)
+        dpad.padType = .dpad2
+        return dpad
+    }
 
     public class func JoyPad(frame: CGRect, scale: CGFloat? = 0.5) -> JSDPad {
-        let dpad = JSDPad.init(frame: frame)
+        let dpad = JSDPad(frame: frame)
+        dpad.padType = .joystick1
         dpad.analogMode = true
         dpad.scale = scale ?? 0.5
         return dpad
     }
-    
+
     public class func JoyPad2(frame: CGRect, scale: CGFloat? = 0.5) -> JSDPad {
-        let dpad = JSDPad.init(frame: frame)
+        let dpad = JSDPad(frame: frame)
+        dpad.padType = .joystick2
         dpad.analogMode = true
         dpad.joyPad2 = true
         dpad.scale = scale ?? 0.5
@@ -57,7 +79,7 @@ final class JSDPad: MovableButtonView {
             dPadImageView.isHidden = analogMode
         }
     }
-    
+
     var joyPad2: Bool = false
     var scale:CGFloat = 1.0
 

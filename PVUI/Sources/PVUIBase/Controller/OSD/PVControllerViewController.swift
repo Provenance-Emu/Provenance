@@ -481,7 +481,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     dPadFrame.origin.y = dPadOriginY - controlSize.height - bottomPadding
                 }
                 if dPad2 == nil && (control.PVControlTitle == "Y") {
-                    let dPad2 = JSDPad(frame: dPadFrame)
+                    let dPad2 = JSDPad.DPad2(frame: dPadFrame)
                     if let tintColor = control.PVControlTint {
                         dPad2.tintColor = UIColor(hex: tintColor)
                     }
@@ -498,7 +498,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                         dPad.frame = dPadFrame
                     }
                 } else {
-                    let dPad = JSDPad(frame: dPadFrame)
+                    let dPad = JSDPad.DPad1(frame: dPadFrame)
                     if let tintColor = control.PVControlTint {
                         dPad.tintColor = UIColor(hex: tintColor)
                     }
