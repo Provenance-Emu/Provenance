@@ -15,8 +15,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
 
     @objc dynamic open var frameInterval: TimeInterval {
         if let objcBridge: any ObjCBridgedCore = self as? (any ObjCBridgedCore),
-            let bridge = objcBridge.bridge as? any ObjCBridgedCoreBridge & EmulatorCoreAudioDataSource,
-            bridge.responds(to: #selector(getter: bridge.frameInterval)) {
+           let bridge = objcBridge.bridge as? any ObjCBridgedCoreBridge & EmulatorCoreAudioDataSource {
             let frameInterval = bridge.frameInterval
             return frameInterval
         } else {
