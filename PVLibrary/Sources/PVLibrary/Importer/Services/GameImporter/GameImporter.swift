@@ -102,9 +102,19 @@ public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, 
 /// Type alias for a closure that handles the finish of getting artwork
 public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
-
-
-
+public protocol GameImporting {
+    func initSystems() async
+    
+    var importStatus: String { get }
+    
+    var importQueue: [ImportQueueItem] { get }
+    
+    var processingState: ProcessingState { get }
+    
+    func addImport(_ item: ImportQueueItem)
+    func addImports(forPaths paths: [URL])
+    func startProcessing()
+}
 
 
 #if !os(tvOS)
@@ -112,7 +122,7 @@ public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: Stri
 #else
 @Perceptible
 #endif
-public final class GameImporter: ObservableObject {
+public final class GameImporter: GameImporting, ObservableObject {
     /// Closure called when import starts
     public var importStartedHandler: GameImporterImportStartedHandler?
     /// Closure called when import completes
@@ -131,7 +141,9 @@ public final class GameImporter: ObservableObject {
     public var spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler?
     
     /// Singleton instance of GameImporter
-    public static let shared: GameImporter = GameImporter()
+    public static let shared: GameImporter = GameImporter(FileManager.default,
+                                                          GameImporterFileService(),
+                                                          GameImporterDatabaseService())
     
     /// Instance of OpenVGDB for database operations
     var openVGDB = OpenVGDB.init()
@@ -165,6 +177,9 @@ public final class GameImporter: ObservableObject {
     
     public var processingState: ProcessingState = .idle  // Observable state for processing status
     
+    internal var gameImporterFileService:GameImporterFileServicing
+    internal var gameImporterDatabaseService:GameImporterDatabaseServicing
+    
     // MARK: - Paths
     
     /// Path to the documents directory
@@ -194,9 +209,19 @@ public final class GameImporter: ObservableObject {
     internal let importCoordinator = ImportCoordinator()
     
     /// Initializes the GameImporter
-    fileprivate init() {
-        let fm = FileManager.default
+    internal init(_ fm: FileManager,
+                  _ fileService:GameImporterFileServicing,
+                  _ databaseService:GameImporterDatabaseServicing) {
+        gameImporterFileService = fileService
+        gameImporterDatabaseService = databaseService
+        
+        //create defaults
         createDefaultDirectories(fm: fm)
+        
+        //set the romsPath propery of the db service, since it needs access
+        gameImporterDatabaseService.setRomsPath(url: romsPath)
+        gameImporterDatabaseService.setOpenVGDB(openVGDB)
+        
     }
     
     /// Creates default directories
@@ -300,7 +325,7 @@ public final class GameImporter: ObservableObject {
     
     public func addImports(forPaths paths: [URL]) {
         paths.forEach({ (url) in
-            addImportItemToQueue(ImportQueueItem(url: url, fileType: .unknown, system: ""))
+            addImportItemToQueue(ImportQueueItem(url: url, fileType: .unknown))
         })
         
         startProcessing()
@@ -336,13 +361,13 @@ public final class GameImporter: ObservableObject {
     private func processItem(_ item: ImportQueueItem) async {
         ILOG("GameImportQueue - processing item in queue: \(item.url)")
         item.status = .processing
-        updateImporterStatus("Importing \(item.url.lastPathComponent) for \(item.system)")
+        updateImporterStatus("Importing \(item.url.lastPathComponent)")
 
         do {
             // Simulate file processing
             try await performImport(for: item)
             item.status = .success
-            updateImporterStatus("Completed \(item.url.lastPathComponent) for \(item.system)")
+            updateImporterStatus("Completed \(item.url.lastPathComponent)")
             ILOG("GameImportQueue - processing item in queue: \(item.url) completed.")
         } catch {
             ILOG("GameImportQueue - processing item in queue: \(item.url) caught error...")
@@ -360,11 +385,12 @@ public final class GameImporter: ObservableObject {
 
     private func performImport(for item: ImportQueueItem) async throws {
         
-        //detect type for updating UI
-        //todo: detect BIOS
-        if (isCDROM(item.url)) {
+        //detect type for updating UI and later processing
+        if (try isBIOS(item)) { //this can throw
+            item.fileType = .bios
+        } else if (isCDROM(item)) {
             item.fileType = .cdRom
-        } else if (isArtwork(item.url)) {
+        } else if (isArtwork(item)) {
             item.fileType = .artwork
         } else {
             item.fileType = .game
@@ -372,23 +398,48 @@ public final class GameImporter: ObservableObject {
         
         var importedFiles: [URL] = []
         
-        do {
-            if let importedFile = try await importSingleFile(at: item.url) {
-                importedFiles.append(importedFile)
-            }
-        } catch {
-            //TODO: what do i do here?
-            ELOG("Failed to import file at \(item.url): \(error.localizedDescription)")
+        //get valid systems that this object might support
+        guard let systems = try? await determineSystems(for: item), !systems.isEmpty else {
+            //this is actually an import error
+            item.status = .failure
+            throw GameImporterError.noSystemMatched
         }
         
-        await importedFiles.asyncForEach { path in
-            do {
-                try await self._handlePath(path: path, userChosenSystem: nil)
-            } catch {
-                //TODO: what do i do here?  I could just let this throw or try and process what happened...
-                ELOG("\(error)")
-            }
-        } // for each
+        //this might be a conflict if we can't infer what to do
+        if item.systems.count > 1 {
+            //conflict
+            item.status = .conflict
+            //start figuring out what to do, because this item is a conflict
+            try await gameImporterFileService.moveToConflictsFolder(item, conflictsPath: conflictPath)
+        }
+        
+        //move ImportQueueItem to appropriate file location
+        try await gameImporterFileService.moveImportItem(toAppropriateSubfolder: item)
+        
+        //import the copied file into our database
+        
+        
+//        do {
+//            //try moving it to the correct location - we may clean this up later.
+//            if let importedFile = try await importSingleFile(at: item.url) {
+//                importedFiles.append(importedFile)
+//            }
+//            
+//            //try importing the moved file[s] into the Roms DB
+//            
+//        } catch {
+//            //TODO: what do i do here?
+//            ELOG("Failed to import file at \(item.url): \(error.localizedDescription)")
+//        }
+        
+//        await importedFiles.asyncForEach { path in
+//            do {
+//                try await self._handlePath(path: path, userChosenSystem: nil)
+//            } catch {
+//                //TODO: what do i do here?  I could just let this throw or try and process what happened...
+//                ELOG("\(error)")
+//            }
+//        } // for each
         
         //external callers - might not be needed in the end
         self.completionHandler?(self.encounteredConflicts)

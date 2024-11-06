@@ -13,4 +13,7 @@ public enum GameImporterError: Error, Sendable {
     case systemNotDetermined
     case failedToMoveCDROM(Error)
     case failedToMoveROM(Error)
+    case unsupportedFile
+    case noBIOSMatchForBIOSFileType
+    case unsupportedCDROMFile
 }
