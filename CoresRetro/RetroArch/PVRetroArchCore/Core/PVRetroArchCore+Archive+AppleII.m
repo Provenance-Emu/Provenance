@@ -1,5 +1,4 @@
 #import <Foundation/Foundation.h>
-#import "PVRetroArchCore.h"
 #import "PVRetroArchCore+Archive.h"
 
 NSString* AppleII_EXTENSIONS  = @"dsk|do|bin|nib|fdi|td0|imd|cqm|d77|d88|1dd|image|dc|po|2mg|2img|img|chd|hdv|2mg";

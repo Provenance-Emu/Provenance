@@ -1,5 +1,4 @@
 #import <Foundation/Foundation.h>
-#import "PVRetroArchCore.h"
 #import "PVRetroArchCore+Archive.h"
 
 NSString* MAME_EXTENSIONS  = @"zip|cmd";

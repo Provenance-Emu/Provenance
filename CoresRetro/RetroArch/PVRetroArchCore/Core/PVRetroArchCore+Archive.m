@@ -1,6 +1,4 @@
-#import <PVRetroArch/PVRetroArch.h>
 #import <Foundation/Foundation.h>
-#import "PVRetroArchCore.h"
 #import "PVRetroArchCore+Archive.h"
 
 #import "ZipArchive.h"
