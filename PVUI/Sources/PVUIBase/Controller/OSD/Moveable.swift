@@ -194,7 +194,18 @@ class MovableButtonView: UIView, Moveable {
         }
     }
 
-    /// Cache the position key once we successfully generate it
+    /// Unique identifier for the control type
+    var controlIdentifier: String {
+        if let dpad = self as? JSDPad {
+            if dpad.analogMode {
+                return dpad.joyPad2 ? "JoyPad2" : "JoyPad"
+            } else {
+                return "DPad"
+            }
+        }
+        return String(describing: type(of: self))
+    }
+
     private var cachedPositionKey: String?
 
     var positionKey: String {
@@ -206,8 +217,7 @@ class MovableButtonView: UIView, Moveable {
         // Try to find the controller
         if let controller = findViewController() as? any ControllerVC {
             let systemID = controller.system.identifier
-            let buttonType = String(describing: type(of: self))
-            let key = "ButtonPosition_\(systemID)_\(buttonType)"
+            let key = "ButtonPosition_\(systemID)_\(controlIdentifier)"
 
             // Cache the successful key
             cachedPositionKey = key
