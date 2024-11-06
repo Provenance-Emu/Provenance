@@ -36,49 +36,6 @@ let volume = SubtleVolume(style: .roundedLine)
 let volumeHeight: CGFloat = 3
 #endif
 
-// Dummy implmentations
-// extension ControllerVC {
-// extension PVControllerViewController {
-//    func layoutViews() {
-//        ILOG("Dummy called")
-//    }
-//
-//    func pressStart(forPlayer player: Int) {
-//        vibrate()
-//        ILOG("Dummy called")
-//    }
-//
-//    func releaseStart(forPlayer player: Int) {
-//        ILOG("Dummy called")
-//    }
-//
-//    func pressSelect(forPlayer player: Int) {
-//        vibrate()
-//        ILOG("Dummy called")
-//    }
-//
-//    func releaseSelect(forPlayer player: Int) {
-//        ILOG("Dummy called")
-//    }
-//
-//    // MARK: - JSButtonDelegate
-//    func buttonPressed(_ button: JSButton) {
-//        ILOG("Dummy called")
-//    }
-//
-//    func buttonReleased(_ button: JSButton) {
-//        ILOG("Dummy called")
-//    }
-//
-//    // MARK: - JSDPadDelegate
-//    func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-//        ILOG("Dummy called")
-//    }
-//    func dPadDidReleaseDirection(_ dPad: JSDPad) {
-//        ILOG("Dummy called")
-//    }
-// }
-
 open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC {
     func layoutViews() {}
 
