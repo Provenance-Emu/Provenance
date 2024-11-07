@@ -1,8 +1,8 @@
 //
-//  GameImporter+Systems.swift
+//  File.swift
 //  PVLibrary
 //
-//  Created by David Proskin on 11/3/24.
+//  Created by David Proskin on 11/7/24.
 //
 
 import Foundation
@@ -21,7 +21,28 @@ import PVRealm
 import Perception
 import SwiftUI
 
-extension GameImporter {
+protocol GameImporterSystemsServicing {
+    func setOpenVGDB(_ vgdb: OpenVGDB)
+    func setExtensionsToSystemMapping(_ mapping: [String: [String]])
+    func determineSystems(for queueItem: ImportQueueItem) async throws -> [PVSystem]
+}
+
+class GameImporterSystemsService : GameImporterSystemsServicing {
+    var openVGDB: OpenVGDB?
+    /// Map of ROM extensions to their corresponding system identifiers
+    var romExtensionToSystemsMap = [String: [String]]()
+    
+    init() {
+        
+    }
+    
+    func setOpenVGDB(_ vgdb: OpenVGDB) {
+        openVGDB = vgdb
+    }
+    
+    func setExtensionsToSystemMapping(_ mapping: [String: [String]]) {
+        romExtensionToSystemsMap = mapping
+    }
     
     internal func matchSystemByPartialName(_ fileName: String, possibleSystems: [PVSystem]) -> PVSystem? {
         let cleanedName = fileName.lowercased()
@@ -71,7 +92,7 @@ extension GameImporter {
         // If no match found, try querying the OpenVGDB
         //TODO: fix me
         do {
-            if let results = try openVGDB.searchDatabase(usingFilename: fileName),
+            if let results = try openVGDB?.searchDatabase(usingFilename: fileName),
                let firstResult = results.first,
                let systemID = firstResult["systemID"] as? Int,
                let system = PVEmulatorConfiguration.system(forDatabaseID: systemID) {
@@ -115,7 +136,7 @@ extension GameImporter {
             let cleanedFileName = cleanFileName(lowercasedFileName)
             
             // Search the database using the cleaned filename
-            if let results = try openVGDB.searchDatabase(usingFilename: cleanedFileName, systemID: system.openvgDatabaseID) {
+            if let results = try openVGDB?.searchDatabase(usingFilename: cleanedFileName, systemID: system.openvgDatabaseID) {
                 // Check if we have any results
                 if !results.isEmpty {
                     // Optionally, you can add more strict matching here
@@ -264,7 +285,7 @@ extension GameImporter {
         
         for system in possibleSystems {
             do {
-                if let results = try openVGDB.searchDatabase(usingFilename: fileName, systemID: system.openvgDatabaseID),
+                if let results = try openVGDB?.searchDatabase(usingFilename: fileName, systemID: system.openvgDatabaseID),
                    !results.isEmpty {
                     ILOG("System determined by filename match in OpenVGDB: \(system.name)")
                     return system
@@ -277,7 +298,7 @@ extension GameImporter {
         // If we couldn't determine the system, try a more detailed search
         if let fileMD5 = queueItem.md5?.uppercased(), !fileMD5.isEmpty {
             do {
-                if let results = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
+                if let results = try openVGDB?.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
                    let firstResult = results.first,
                    let systemID = firstResult["systemID"] as? Int,
                    let system = possibleSystems.first(where: { $0.openvgDatabaseID == systemID }) {
@@ -315,7 +336,7 @@ extension GameImporter {
     }
     
     /// Determines the system for a given candidate file
-    internal func determineSystems(for queueItem: ImportQueueItem) async throws -> [PVSystem] {
+    public func determineSystems(for queueItem: ImportQueueItem) async throws -> [PVSystem] {
         guard let md5 = queueItem.md5?.uppercased() else {
             throw GameImporterError.couldNotCalculateMD5
         }
@@ -349,7 +370,7 @@ extension GameImporter {
         }
         
         // Try to find system by MD5 using OpenVGDB
-        if let results = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: md5),
+        if let results = try openVGDB?.searchDatabase(usingKey: "romHashMD5", value: md5),
            let firstResult = results.first,
            let systemID = firstResult["systemID"] as? NSNumber {
             
@@ -427,7 +448,7 @@ extension GameImporter {
         let fileName: String = queueItem.url.lastPathComponent
         
         do {
-            if let databaseID = try openVGDB.system(forRomMD5: md5, or: fileName),
+            if let databaseID = try openVGDB?.system(forRomMD5: md5, or: fileName),
                let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
                 return systemID
             } else {
@@ -448,7 +469,7 @@ extension GameImporter {
         DLOG("Attempting MD5 lookup for: \(md5)")
         
         // Try to find system by MD5 using OpenVGDB
-        if let results = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: md5),
+        if let results = try openVGDB?.searchDatabase(usingKey: "romHashMD5", value: md5),
            let firstResult = results.first,
            let systemID = firstResult["systemID"] as? NSNumber,
            let system = PVEmulatorConfiguration.system(forIdentifier: String(systemID.intValue)) {
@@ -503,3 +524,4 @@ extension GameImporter {
         return romExtensionToSystemsMap[fileExtension]
     }
 }
+    
