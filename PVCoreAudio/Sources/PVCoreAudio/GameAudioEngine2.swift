@@ -133,7 +133,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         var filteredRight = [Float](repeating: 0, count: sourceFrames + filterSize)
 
                         /// Convert to float
-                        var scale = Float(1.0 / 32768.0)
+                        var scale = Float(0.9 / 32768.0) // Use 0.9 to avoid clipping
                         vDSP_vflt16(input, 2, &leftChannel, 1, vDSP_Length(sourceFrames))
                         vDSP_vflt16(input.advanced(by: 1), 2, &rightChannel, 1, vDSP_Length(sourceFrames))
                         vDSP_vsmul(leftChannel, 1, &scale, &leftChannel, 1, vDSP_Length(sourceFrames))
