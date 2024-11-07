@@ -314,7 +314,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         notificationToken?.invalidate()
     }
     
-    //MARK: Queue Management
+    //MARK: Public Queue Management
     
     // Adds an ImportItem to the queue without starting processing
     public func addImport(_ item: ImportQueueItem) {
@@ -338,6 +338,176 @@ public final class GameImporter: GameImporting, ObservableObject {
         Task {
             await processQueue()
         }
+    }
+    
+    //MARK: Processing functions
+    
+    private func preProcessQueue() async {
+        //determine the type for all items in the queue
+        for importItem in self.importQueue {
+            //ideally this wouldn't be needed here
+            do {
+                importItem.fileType = try determineImportType(importItem)
+            } catch {
+                //caught an error trying to assign file type
+            }
+            
+        }
+        
+        //sort the queue to make sure m3us go first
+        importQueue = sortImportQueueItems(importQueue)
+        
+        //thirdly, we need to parse the queue and find any children for cue files
+        organizeCueAndBinFiles(in: &importQueue)
+        
+        //lastly, move and cue (and child bin) files under the parent m3u (if they exist)
+        organizeM3UFiles(in: &importQueue)
+    }
+    
+    internal func organizeM3UFiles(in importQueue: inout [ImportQueueItem]) {
+        
+        for m3uitem in importQueue where m3uitem.url.pathExtension.lowercased() == "m3u" {
+            let baseFileName = m3uitem.url.deletingPathExtension().lastPathComponent
+            
+            do {
+                let contents = try String(contentsOf: m3uitem.url, encoding: .utf8)
+                let files = contents.components(separatedBy: .newlines)
+                    .map { $0.trimmingCharacters(in: .whitespaces) }
+                    .filter { !$0.isEmpty && !$0.hasPrefix("#") }
+                
+                // Move all referenced files
+                for filename in files {
+                    if let cueIndex = importQueue.firstIndex(where: { item in
+                        item.url.lastPathComponent == filename
+                    }) {
+                        // Remove the .bin item from the queue and add it as a child of the .cue item
+                        let cueItem = importQueue.remove(at: cueIndex)
+                        cueItem.fileType = .cdRom
+                        m3uitem.childQueueItems.append(cueItem)
+                    }
+                }
+            } catch {
+                ELOG("Caught an error looking for a corresponding .cues to \(baseFileName) - probably bad things happening")
+            }
+        }
+    }
+    
+    // Function to process ImportQueueItems and associate .bin files with corresponding .cue files
+    internal func organizeCueAndBinFiles(in importQueue: inout [ImportQueueItem]) {
+        // Loop through a copy of the queue to avoid mutation issues while iterating
+        for cueItem in importQueue where cueItem.url.pathExtension.lowercased() == "cue" {
+            // Extract the base name of the .cue file (without extension)
+            let baseFileName = cueItem.url.deletingPathExtension().lastPathComponent
+
+            do {
+                if let candidateBinUrl = try self.findAssociatedBinFile(for: cueItem) {
+                    // Find any .bin item in the queue that matches the .cue base file name
+                    if let binIndex = importQueue.firstIndex(where: { item in
+                        item.url == candidateBinUrl
+                    }) {
+                        // Remove the .bin item from the queue and add it as a child of the .cue item
+                        let binItem = importQueue.remove(at: binIndex)
+                        binItem.fileType = .cdRom
+                        cueItem.childQueueItems.append(binItem)
+                    }
+                } else {
+                    //this is probably some kind of error...
+                    ELOG("Found a .cue \(baseFileName) without a .bin - probably bad things happening")
+                }
+            } catch {
+                ELOG("Caught an error looking for a corresponding .bin to \(baseFileName) - probably bad things happening")
+            }
+        }
+    }
+    
+    private func findAssociatedBinFile(for cueFileItem: ImportQueueItem) throws -> URL? {
+        let cueContents = try String(contentsOf: cueFileItem.url, encoding: .utf8)
+        let lines = cueContents.components(separatedBy: .newlines)
+        
+        // Look for FILE "something.bin" BINARY line
+        for line in lines {
+            let components = line.trimmingCharacters(in: .whitespaces)
+                .components(separatedBy: "\"")
+            guard components.count >= 2,
+                  line.lowercased().contains("file") && line.lowercased().contains("binary") else {
+                continue
+            }
+            
+            let binFileName = components[1]
+            let binPath = cueFileItem.url.deletingLastPathComponent().appendingPathComponent(binFileName)
+            
+            if FileManager.default.fileExists(atPath: binPath.path) {
+                return binPath
+            }
+        }
+        
+        return nil
+    }
+
+    
+    internal func cmpSpecialExt(obj1Extension: String, obj2Extension: String) -> Bool {
+        if obj1Extension == "m3u" && obj2Extension != "m3u" {
+            return obj1Extension > obj2Extension
+        } else if obj1Extension == "m3u" {
+            return false
+        } else if obj2Extension == "m3u" {
+            return true
+        }
+        if Extensions.artworkExtensions.contains(obj1Extension) {
+            return false
+        } else if Extensions.artworkExtensions.contains(obj2Extension) {
+            return true
+        }
+        return obj1Extension > obj2Extension
+    }
+
+    internal func cmp(obj1: ImportQueueItem, obj2: ImportQueueItem) -> Bool {
+        let url1 = obj1.url
+        let url2 = obj2.url
+        let obj1Filename = url1.lastPathComponent
+        let obj2Filename = url2.lastPathComponent
+        let obj1Extension = url1.pathExtension.lowercased()
+        let obj2Extension = url2.pathExtension.lowercased()
+        let name1=PVEmulatorConfiguration.stripDiscNames(fromFilename: obj1Filename)
+        let name2=PVEmulatorConfiguration.stripDiscNames(fromFilename: obj2Filename)
+        if name1 == name2 {
+             // Standard sort
+            if obj1Extension == obj2Extension {
+                return obj1Filename < obj2Filename
+            }
+            return obj1Extension > obj2Extension
+        } else {
+            return name1 < name2
+        }
+    }
+
+    internal func sortImportQueueItems(_ importQueueItems: [ImportQueueItem]) -> [ImportQueueItem] {
+        var ext:[String:[ImportQueueItem]] = [:]
+        // separate array by file extension
+        importQueueItems.forEach({ (queueItem) in
+            let fileExt = queueItem.url.pathExtension.lowercased()
+            if var itemsWithExtension = ext[fileExt] {
+                itemsWithExtension.append(queueItem)
+                ext[fileExt]=itemsWithExtension
+            } else {
+                ext[fileExt]=[queueItem]
+            }
+        })
+        // sort
+        var sorted: [ImportQueueItem] = []
+        ext.keys
+            .sorted(by: cmpSpecialExt)
+            .forEach {
+            if let values = ext[$0] {
+                let values = values.sorted { (obj1, obj2) -> Bool in
+                    return cmp(obj1: obj1, obj2: obj2)
+                }
+                sorted.append(contentsOf: values)
+                ext[$0] = values
+            }
+        }
+        VLOG(sorted.map { $0.url.lastPathComponent }.joined(separator: ", "))
+        return sorted
     }
 
     // Processes each ImportItem in the queue sequentially
@@ -383,20 +553,23 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    private func performImport(for item: ImportQueueItem) async throws {
-        
+    private func determineImportType(_ item: ImportQueueItem) throws -> FileType {
         //detect type for updating UI and later processing
         if (try isBIOS(item)) { //this can throw
-            item.fileType = .bios
+            return .bios
         } else if (isCDROM(item)) {
-            item.fileType = .cdRom
+            return .cdRom
         } else if (isArtwork(item)) {
-            item.fileType = .artwork
+            return .artwork
         } else {
-            item.fileType = .game
+            return .game
         }
+    }
+    
+    private func performImport(for item: ImportQueueItem) async throws {
         
-        var importedFiles: [URL] = []
+        //ideally this wouldn't be needed here
+        item.fileType = try determineImportType(item)
         
         //get valid systems that this object might support
         guard let systems = try? await determineSystems(for: item), !systems.isEmpty else {
@@ -452,7 +625,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
     
-    /// Checks the queue and all child elements in the queue to see if this file exists.  if it does, return true, else return false.  
+    /// Checks the queue and all child elements in the queue to see if this file exists.  if it does, return true, else return false.
     private func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
         let duplicate = importQueue.contains { existing in
             var exists = false
