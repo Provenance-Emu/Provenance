@@ -26,6 +26,15 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         }
     }
 
+    private lazy var audioFormat: AVAudioFormat? = {
+        return AVAudioFormat(
+            commonFormat: .pcmFormatFloat32,
+            sampleRate: 48000.0,
+            channels: 2,
+            interleaved: false
+        )
+    }()
+
     public init() {
         configureAudioSession()
     }
@@ -46,9 +55,6 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let sourceBitDepth = gameCore.audioBitDepth
         let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
         let sourceBytesPerFrame = sourceChannels * (Int(sourceBitDepth) / 8)
-
-        /// Calculate scale factor based on bit depth
-        let scale = Float(1.0 / Float(1 << (sourceBitDepth - 1)))
 
         /// Setup conversion parameters
         let targetRate: Double = 48000.0
@@ -89,14 +95,17 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         vDSP_vsmul(leftChannel, 1, [scale], &leftChannel, 1, vDSP_Length(framesAvailable))
                         vDSP_vsmul(rightChannel, 1, [scale], &rightChannel, 1, vDSP_Length(framesAvailable))
 
-                        /// Resample and copy to PCM buffer
+                        /// Setup resampling
                         let resampledLeft = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![0])
                         let resampledRight = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![1])
+
+                        /// Simple 2-point filter for resampling
+                        var filter = [Float](repeating: 1.0, count: 2)
 
                         vDSP_desamp(
                             leftChannel,
                             vDSP_Stride(resampleRatio),
-                            [1.0, 1.0],  /// Simple filter
+                            filter,
                             resampledLeft,
                             vDSP_Length(targetFrameCount),
                             vDSP_Length(2)
@@ -105,7 +114,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         vDSP_desamp(
                             rightChannel,
                             vDSP_Stride(resampleRatio),
-                            [1.0, 1.0],  /// Simple filter
+                            filter,
                             resampledRight,
                             vDSP_Length(targetFrameCount),
                             vDSP_Length(2)
