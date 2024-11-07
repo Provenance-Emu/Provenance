@@ -103,23 +103,43 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         return { pcmBuffer in
             let targetFrameCount = Int(pcmBuffer.frameCapacity)
-            /// Request extra frames for interpolation and filtering
-            let adjustedFrameCount = min(
-                Int(ceil(Double(targetFrameCount) * rateRatio)) + filterSize,
-                Int(pcmBuffer.frameCapacity)
-            )
-            let sourceBytesToRead = adjustedFrameCount * sourceBytesPerFrame
+
+            /// Check available bytes in ring buffer
+            let availableBytes = buffer.availableBytes
+            let availableFrames = availableBytes / sourceBytesPerFrame
+
+            /// Calculate needed frames including extra for interpolation and filtering
+            let neededFrames = Int(ceil(Double(targetFrameCount) * rateRatio)) + filterSize
+
+            /// Use the minimum of what we need and what's available
+            let framesToRead = min(neededFrames, availableFrames)
+            let bytesToRead = framesToRead * sourceBytesPerFrame
+
+            /// Early exit if we don't have enough data
+            if framesToRead < 2 {  /// Need at least 2 frames for interpolation
+                pcmBuffer.frameLength = 0
+                return 0
+            }
 
             /// Read source data
-            let sourceBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: sourceBytesToRead)
+            let sourceBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bytesToRead)
             defer { sourceBuffer.deallocate() }
 
-            let bytesRead = buffer.read(sourceBuffer, preferredSize: sourceBytesToRead)
+            let bytesRead = buffer.read(sourceBuffer, preferredSize: bytesToRead)
 
             if bytesRead == 0 {
                 pcmBuffer.frameLength = 0
                 return 0
             }
+
+            /// Calculate actual frames available from bytes read
+            let sourceFrames = bytesRead / sourceBytesPerFrame
+
+            /// Adjust output frames based on what we actually got
+            let outputFrames = min(
+                targetFrameCount,
+                Int(Double(sourceFrames - 1) / rateRatio)  /// -1 for interpolation safety
+            )
 
             if sourceBitDepth == 16 {
                 sourceBuffer.withMemoryRebound(to: Int16.self, capacity: bytesRead / 2) { input in
@@ -353,6 +373,9 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                     pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
                 }
             }
+
+            /// Set actual frame length
+            pcmBuffer.frameLength = AVAudioFrameCount(outputFrames)
 
             return bytesRead
         }
