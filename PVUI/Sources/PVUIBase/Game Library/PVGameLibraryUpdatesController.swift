@@ -288,7 +288,8 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             }
             if !newGames.isEmpty {
                 ILOG("PVGameLibraryUpdatesController: Importing \(newGames)")
-                await gameImporter.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
+                //TODO: I think we want to add items to the import queue here
+                //await gameImporter.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
                 #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
                 await MainActor.run {
                     Task {
@@ -439,7 +440,8 @@ extension PVGameLibraryUpdatesController {
 
 extension PVGameLibraryUpdatesController: ConflictsController {
     public func resolveConflicts(withSolutions solutions: [URL : System]) async {
-        await gameImporter.resolveConflicts(withSolutions: solutions)
+        //TODO: fix this
+//        await gameImporter.resolveConflicts(withSolutions: solutions)
         await updateConflicts()
     }
 
@@ -461,15 +463,16 @@ extension PVGameLibraryUpdatesController: ConflictsController {
 //            }
             let filesInConflictsFolder = conflictsWatcher.conflictFiles
 
-            let sortedFiles = PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
-
-            self.conflicts = sortedFiles.compactMap { file -> (path: URL, candidates: [System])? in
-                let candidates = RomDatabase.systemCache.values
-                    .filter { $0.supportedExtensions.contains(file.pathExtension.lowercased()) }
-                    .map { $0.asDomain() }
-
-                return candidates.isEmpty ? nil : .init((path: file, candidates: candidates))
-            }
+            //TODO: fix alongside conflicts
+//            let sortedFiles = PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
+//
+//            self.conflicts = sortedFiles.compactMap { file -> (path: URL, candidates: [System])? in
+//                let candidates = RomDatabase.systemCache.values
+//                    .filter { $0.supportedExtensions.contains(file.pathExtension.lowercased()) }
+//                    .map { $0.asDomain() }
+//
+//                return candidates.isEmpty ? nil : .init((path: file, candidates: candidates))
+//            }
         }
     }
 }
