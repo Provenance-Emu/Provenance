@@ -144,7 +144,8 @@ public final class GameImporter: GameImporting, ObservableObject {
     public static let shared: GameImporter = GameImporter(FileManager.default,
                                                           GameImporterFileService(),
                                                           GameImporterDatabaseService(),
-                                                          GameImporterSystemsService())
+                                                          GameImporterSystemsService(),
+                                                          ArtworkImporter())
     
     /// Instance of OpenVGDB for database operations
     var openVGDB = OpenVGDB.init()
@@ -178,6 +179,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     internal var gameImporterFileService:GameImporterFileServicing
     internal var gameImporterDatabaseService:GameImporterDatabaseServicing
     internal var gameImporterSystemsService:GameImporterSystemsServicing
+    internal var gameImporterArtworkImporter:ArtworkImporting
     
     // MARK: - Paths
     
@@ -211,10 +213,12 @@ public final class GameImporter: GameImporting, ObservableObject {
     internal init(_ fm: FileManager,
                   _ fileService:GameImporterFileServicing,
                   _ databaseService:GameImporterDatabaseServicing,
-                  _ systemsService:GameImporterSystemsServicing) {
+                  _ systemsService:GameImporterSystemsServicing,
+                  _ artworkImporter:ArtworkImporting) {
         gameImporterFileService = fileService
         gameImporterDatabaseService = databaseService
         gameImporterSystemsService = systemsService
+        gameImporterArtworkImporter = artworkImporter
         
         //create defaults
         createDefaultDirectories(fm: fm)
@@ -224,6 +228,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         gameImporterDatabaseService.setOpenVGDB(openVGDB)
         
         gameImporterSystemsService.setOpenVGDB(openVGDB)
+        
+        gameImporterArtworkImporter.setSystemsService(gameImporterSystemsService)
     }
     
     /// Creates default directories
@@ -570,8 +576,18 @@ public final class GameImporter: GameImporting, ObservableObject {
     
     private func performImport(for item: ImportQueueItem) async throws {
         
-        //ideally this wouldn't be needed here
+        //ideally this wouldn't be needed here because we'd have done it elsewhere
         item.fileType = try determineImportType(item)
+        
+        if item.fileType == .artwork {
+            //TODO: what do i do with the PVGame result here?
+            if let _ = await gameImporterArtworkImporter.importArtworkItem(item) {
+                item.status = .success
+            } else {
+                item.status = .failure
+            }
+            return
+        }
         
         //get valid systems that this object might support
         guard let systems = try? await gameImporterSystemsService.determineSystems(for: item), !systems.isEmpty else {
@@ -592,7 +608,9 @@ public final class GameImporter: GameImporting, ObservableObject {
         try await gameImporterFileService.moveImportItem(toAppropriateSubfolder: item)
         
         //import the copied file into our database
+        try await gameImporterDatabaseService.importGameIntoDatabase(queueItem: item)
         
+        //if everything went well and no exceptions, we're clear to indicate a successful import
         
 //        do {
 //            //try moving it to the correct location - we may clean this up later.
@@ -617,7 +635,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 //        } // for each
         
         //external callers - might not be needed in the end
-        self.completionHandler?(self.encounteredConflicts)
+//        self.completionHandler?(self.encounteredConflicts)
     }
 
     // General status update for GameImporter
@@ -630,7 +648,6 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Checks the queue and all child elements in the queue to see if this file exists.  if it does, return true, else return false.
     private func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
         let duplicate = importQueue.contains { existing in
-            var exists = false
             if (existing.url == queueItem.url || existing.id == queueItem.id) {
                 return true
             } else if (!existing.childQueueItems.isEmpty) {

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  GameImporterSystemsService.swift
 //  PVLibrary
 //
 //  Created by David Proskin on 11/7/24.
@@ -25,6 +25,7 @@ protocol GameImporterSystemsServicing {
     func setOpenVGDB(_ vgdb: OpenVGDB)
     func setExtensionsToSystemMapping(_ mapping: [String: [String]])
     func determineSystems(for queueItem: ImportQueueItem) async throws -> [PVSystem]
+    func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem]?, romFilename: String) -> [PVGame]?
 }
 
 class GameImporterSystemsService : GameImporterSystemsServicing {
@@ -494,7 +495,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
     }
     
     /// Finds any current game that could belong to any of the given systems
-    internal class func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem]?, romFilename: String) -> [PVGame]? {
+    func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem]?, romFilename: String) -> [PVGame]? {
         // Check if existing ROM
         
         let allGames = RomDatabase.gamesCache.values.filter ({
