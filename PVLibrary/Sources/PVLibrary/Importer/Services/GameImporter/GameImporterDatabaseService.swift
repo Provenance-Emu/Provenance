@@ -53,7 +53,13 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.systemNotDetermined
         }
         
-        DLOG("Attempting to import game: \(queueItem.destinationUrl?.lastPathComponent) for system: \(targetSystem.name)")
+        //TODO: is it an error if we don't have the destination url at this point?
+        guard let destUrl = queueItem.destinationUrl else {
+            //how did we get here, throw?
+            throw GameImporterError.incorrectDestinationURL
+        }
+        
+        DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.name)")
         
         let filename = queueItem.url.lastPathComponent
         let partialPath = (targetSystem.identifier as NSString).appendingPathComponent(filename)
@@ -74,6 +80,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     
     /// Imports a ROM to the database
     internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: PVSystem, relatedFiles: [URL]?) async throws {
+        
+        guard let _ = queueItem.destinationUrl else {
+            //how did we get here, throw?
+            throw GameImporterError.incorrectDestinationURL
+        }
+        
         DLOG("Starting database ROM import for: \(queueItem.url.lastPathComponent)")
         let filename = queueItem.url.lastPathComponent
         let filenameSansExtension = queueItem.url.deletingPathExtension().lastPathComponent
@@ -82,10 +94,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         let partialPath: String = (system.identifier as NSString).appendingPathComponent(filename)
         
         DLOG("Creating game object with title: \(title), partialPath: \(partialPath)")
-        guard let destUrl = queueItem.destinationUrl else {
-            //how did we get here, throw?
-            return
-        }
+        
         let file = PVFile(withURL: queueItem.destinationUrl!)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
@@ -296,7 +305,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         
         //step 1 - calculate md5 hash if needed
         if game.md5Hash.isEmpty {
-            if let romFullPath = romsPath?.appendingPathComponent(game.romPath).path {
+            if let _ = romsPath?.appendingPathComponent(game.romPath).path {
                 if let md5Hash = calculateMD5(forGame: game) {
                     game.md5Hash = md5Hash
                 }
