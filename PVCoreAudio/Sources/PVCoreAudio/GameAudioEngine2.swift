@@ -62,7 +62,12 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         /// Pre-calculate filter coefficients for a simple low-pass filter
         let filterSize = 3
-        var filterCoeff = [Float](repeating: 1.0 / Float(filterSize), count: filterSize)
+        var filterCoeff = [Double](repeating: 1.0 / Double(filterSize), count: filterSize)
+
+        /// Pop filter state
+        var lastLeftSample: Double = 0
+        var lastRightSample: Double = 0
+        var wasLastBufferSilent = false
 
         DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Ratio: \(resampleRatio)")
 
@@ -86,49 +91,58 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                 sourceBuffer.withMemoryRebound(to: Int16.self, capacity: bytesRead / 2) { input in
                     if sourceChannels == 2 {
                         let framesAvailable = bytesRead / 4  /// 2 channels * 2 bytes
-                        var leftChannel = [Float](repeating: 0.0, count: framesAvailable)
-                        var rightChannel = [Float](repeating: 0.0, count: framesAvailable)
+                        var leftChannel = [Double](repeating: 0.0, count: framesAvailable)
+                        var rightChannel = [Double](repeating: 0.0, count: framesAvailable)
 
-                        /// Convert to float
-                        vDSP_vflt16(input, 2, &leftChannel, 1, vDSP_Length(framesAvailable))
-                        vDSP_vflt16(input.advanced(by: 1), 2, &rightChannel, 1, vDSP_Length(framesAvailable))
+                        /// Convert to double (using vDSP_vflt16D for higher precision)
+                        vDSP_vflt16D(input, 2, &leftChannel, 1, vDSP_Length(framesAvailable))
+                        vDSP_vflt16D(input.advanced(by: 1), 2, &rightChannel, 1, vDSP_Length(framesAvailable))
 
                         /// Scale to -1.0 to 1.0
-                        let scale: Float = 1.0 / 32768.0
-                        vDSP_vsmul(leftChannel, 1, [scale], &leftChannel, 1, vDSP_Length(framesAvailable))
-                        vDSP_vsmul(rightChannel, 1, [scale], &rightChannel, 1, vDSP_Length(framesAvailable))
+                        let scale = 1.0 / 32768.0
+                        vDSP_vsmulD(leftChannel, 1, [scale], &leftChannel, 1, vDSP_Length(framesAvailable))
+                        vDSP_vsmulD(rightChannel, 1, [scale], &rightChannel, 1, vDSP_Length(framesAvailable))
 
-                        /// Apply low-pass filter before interpolation
-                        var filteredLeft = [Float](repeating: 0.0, count: framesAvailable)
-                        var filteredRight = [Float](repeating: 0.0, count: framesAvailable)
+                        /// Apply low-pass filter
+                        var filteredLeft = [Double](repeating: 0.0, count: framesAvailable)
+                        var filteredRight = [Double](repeating: 0.0, count: framesAvailable)
 
-                        vDSP_conv(leftChannel, 1, filterCoeff, 1, &filteredLeft, 1,
-                                vDSP_Length(framesAvailable - filterSize + 1), vDSP_Length(filterSize))
-                        vDSP_conv(rightChannel, 1, filterCoeff, 1, &filteredRight, 1,
-                                vDSP_Length(framesAvailable - filterSize + 1), vDSP_Length(filterSize))
+                        vDSP_convD(leftChannel, 1, filterCoeff, 1, &filteredLeft, 1,
+                                 vDSP_Length(framesAvailable - filterSize + 1), vDSP_Length(filterSize))
+                        vDSP_convD(rightChannel, 1, filterCoeff, 1, &filteredRight, 1,
+                                 vDSP_Length(framesAvailable - filterSize + 1), vDSP_Length(filterSize))
 
                         /// Get pointers to PCM buffer channels
                         let resampledLeft = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![0])
                         let resampledRight = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![1])
 
-                        /// Linear interpolation resampling
+                        /// Linear interpolation resampling with higher precision and safe conversion
                         for i in 0..<targetFrameCount {
                             let sourceIndex = Double(i) * resampleRatio
                             let index = Int(sourceIndex)
-                            let fraction = Float(sourceIndex - Double(index))
+                            let fraction = sourceIndex - floor(sourceIndex)
 
                             if index + 1 < framesAvailable - filterSize + 1 {
-                                /// Linear interpolation for left channel
-                                resampledLeft[i] = filteredLeft[index] * (1.0 - fraction) +
-                                                 filteredLeft[index + 1] * fraction
+                                /// Linear interpolation with doubles
+                                let leftSample = filteredLeft[index] * (1.0 - fraction) +
+                                                filteredLeft[index + 1] * fraction
+                                let rightSample = filteredRight[index] * (1.0 - fraction) +
+                                                 filteredRight[index + 1] * fraction
 
-                                /// Linear interpolation for right channel
-                                resampledRight[i] = filteredRight[index] * (1.0 - fraction) +
-                                                  filteredRight[index + 1] * fraction
+                                /// Safe conversion to Float
+                                resampledLeft[i] = Float(max(-1.0, min(1.0, leftSample)))   /// Clamp to [-1, 1]
+                                resampledRight[i] = Float(max(-1.0, min(1.0, rightSample))) /// Clamp to [-1, 1]
+
+                                /// Optional: Check for potential conversion issues
+                                #if DEBUG
+                                if abs(leftSample) > 1.0 || abs(rightSample) > 1.0 {
+                                    DLOG("Warning: Audio sample exceeded range: L:\(leftSample) R:\(rightSample)")
+                                }
+                                #endif
                             } else {
-                                /// Handle edge case
-                                resampledLeft[i] = filteredLeft[min(index, framesAvailable - filterSize)]
-                                resampledRight[i] = filteredRight[min(index, framesAvailable - filterSize)]
+                                /// Handle edge case with same safety measures
+                                resampledLeft[i] = Float(max(-1.0, min(1.0, filteredLeft[min(index, framesAvailable - filterSize)])))
+                                resampledRight[i] = Float(max(-1.0, min(1.0, filteredRight[min(index, framesAvailable - filterSize)])))
                             }
                         }
 
