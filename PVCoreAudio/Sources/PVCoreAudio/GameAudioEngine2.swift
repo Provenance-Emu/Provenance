@@ -58,13 +58,13 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         /// Setup conversion parameters
         let targetRate: Double = 48000.0
-        let resampleRatio = targetRate / sourceRate
+        let resampleRatio = Double(sourceRate) / targetRate
 
         DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Ratio: \(resampleRatio)")
 
         return { pcmBuffer in
             let targetFrameCount = Int(pcmBuffer.frameCapacity)
-            let sourceFrameCount = Int(ceil(Double(targetFrameCount) / resampleRatio)) + 2
+            let sourceFrameCount = Int(ceil(Double(targetFrameCount) * resampleRatio)) + 2
             let sourceBytesToRead = sourceFrameCount * sourceBytesPerFrame
 
             /// Read source data
@@ -74,7 +74,6 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             let bytesRead = buffer.read(sourceBuffer, preferredSize: sourceBytesToRead)
 
             if bytesRead == 0 {
-                /// Handle silence
                 pcmBuffer.frameLength = 0
                 return 0
             }
@@ -95,30 +94,30 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         vDSP_vsmul(leftChannel, 1, [scale], &leftChannel, 1, vDSP_Length(framesAvailable))
                         vDSP_vsmul(rightChannel, 1, [scale], &rightChannel, 1, vDSP_Length(framesAvailable))
 
-                        /// Setup resampling
+                        /// Get pointers to PCM buffer channels
                         let resampledLeft = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![0])
                         let resampledRight = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![1])
 
-                        /// Simple 2-point filter for resampling
-                        var filter = [Float](repeating: 1.0, count: 2)
+                        /// Linear interpolation resampling
+                        for i in 0..<targetFrameCount {
+                            let sourceIndex = Double(i) * resampleRatio
+                            let index = Int(sourceIndex)
+                            let fraction = Float(sourceIndex - Double(index))
 
-                        vDSP_desamp(
-                            leftChannel,
-                            vDSP_Stride(resampleRatio),
-                            filter,
-                            resampledLeft,
-                            vDSP_Length(targetFrameCount),
-                            vDSP_Length(2)
-                        )
+                            if index + 1 < framesAvailable {
+                                /// Linear interpolation for left channel
+                                resampledLeft[i] = leftChannel[index] * (1.0 - fraction) +
+                                                 leftChannel[index + 1] * fraction
 
-                        vDSP_desamp(
-                            rightChannel,
-                            vDSP_Stride(resampleRatio),
-                            filter,
-                            resampledRight,
-                            vDSP_Length(targetFrameCount),
-                            vDSP_Length(2)
-                        )
+                                /// Linear interpolation for right channel
+                                resampledRight[i] = rightChannel[index] * (1.0 - fraction) +
+                                                  rightChannel[index + 1] * fraction
+                            } else {
+                                /// Handle edge case
+                                resampledLeft[i] = leftChannel[min(index, framesAvailable - 1)]
+                                resampledRight[i] = rightChannel[min(index, framesAvailable - 1)]
+                            }
+                        }
 
                         pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
                     }
