@@ -80,10 +80,9 @@ class GameImporterFileService : GameImporterFileServicing {
         
         let fileName = queueItem.url.lastPathComponent
         let destinationFolder = targetSystem.romsDirectory
-        let destinationPath = destinationFolder.appendingPathComponent(fileName)
         
         do {
-            queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationPath)
+            queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationFolder)
             try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
         } catch {
             throw GameImporterError.failedToMoveROM(error)
