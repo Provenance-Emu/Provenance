@@ -149,19 +149,30 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         let outLeft = pcmBuffer.floatChannelData?[0]
                         let outRight = pcmBuffer.floatChannelData?[1]
 
-                        /// Use Accelerate's built-in interpolation
-                        var slope = Float(1.0 / rateRatio)
-                        vDSP_vqint(filteredLeft, &slope,
-                                  1,
-                                  outLeft!, 1,
-                                  vDSP_Length(targetFrameCount),
-                                  vDSP_Length(sourceFrames))
+                        /// Perform linear interpolation
+                        let outputFrames = min(targetFrameCount, sourceFrames - 1)
+                        for i in 0..<outputFrames {
+                            let sourcePos = Double(i) * rateRatio
+                            let sourceIndex = Int(floor(sourcePos))
+                            let fraction = Float(sourcePos - Double(sourceIndex))
 
-                        vDSP_vqint(filteredRight, &slope,
-                                  1,
-                                  outRight!, 1,
-                                  vDSP_Length(targetFrameCount),
-                                  vDSP_Length(sourceFrames))
+                            if sourceIndex + 1 < sourceFrames {
+                                /// Linear interpolation for left channel
+                                let leftSample = leftChannel[sourceIndex] * (1.0 - fraction) +
+                                               leftChannel[sourceIndex + 1] * fraction
+
+                                /// Linear interpolation for right channel
+                                let rightSample = rightChannel[sourceIndex] * (1.0 - fraction) +
+                                                rightChannel[sourceIndex + 1] * fraction
+
+                                outLeft?[i] = leftSample
+                                outRight?[i] = rightSample
+                            } else {
+                                /// Handle edge case
+                                outLeft?[i] = leftChannel[sourceIndex]
+                                outRight?[i] = rightChannel[sourceIndex]
+                            }
+                        }
 
                         pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
                     }
