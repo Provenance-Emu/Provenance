@@ -123,59 +123,116 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
             if sourceBitDepth == 16 {
                 sourceBuffer.withMemoryRebound(to: Int16.self, capacity: bytesRead / 2) { input in
+                    let sourceFrames = bytesRead / (2 * sourceChannels)  /// Account for mono/stereo
+
+                    /// Create temporary buffers
+                    var leftChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
+                    var rightChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
+                    var filteredLeft = [Float](repeating: 0, count: sourceFrames + filterSize)
+                    var filteredRight = [Float](repeating: 0, count: sourceFrames + filterSize)
+
+                    /// Convert to float with headroom
+                    var scale = Float(0.9 / 32768.0)
+
                     if sourceChannels == 2 {
-                        let sourceFrames = bytesRead / 4
-
-                        /// Create temporary buffers
-                        var leftChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
-                        var rightChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
-                        var filteredLeft = [Float](repeating: 0, count: sourceFrames + filterSize)
-                        var filteredRight = [Float](repeating: 0, count: sourceFrames + filterSize)
-
-                        /// Convert to float
-                        var scale = Float(0.9 / 32768.0) // Use 0.9 to avoid clipping
+                        /// Stereo source
                         vDSP_vflt16(input, 2, &leftChannel, 1, vDSP_Length(sourceFrames))
                         vDSP_vflt16(input.advanced(by: 1), 2, &rightChannel, 1, vDSP_Length(sourceFrames))
-                        vDSP_vsmul(leftChannel, 1, &scale, &leftChannel, 1, vDSP_Length(sourceFrames))
-                        vDSP_vsmul(rightChannel, 1, &scale, &rightChannel, 1, vDSP_Length(sourceFrames))
+                    } else {
+                        /// Mono source - convert once and copy to both channels
+                        vDSP_vflt16(input, 1, &leftChannel, 1, vDSP_Length(sourceFrames))
+                        vDSP_mmov(&leftChannel, &rightChannel, vDSP_Length(sourceFrames), 1, 1, 1)
+                    }
 
-                        /// Apply low-pass filter
-                        vDSP_conv(leftChannel, 1, filterCoeff, 1, &filteredLeft, 1,
-                                vDSP_Length(sourceFrames), vDSP_Length(filterSize))
-                        vDSP_conv(rightChannel, 1, filterCoeff, 1, &filteredRight, 1,
-                                vDSP_Length(sourceFrames), vDSP_Length(filterSize))
+                    /// Apply scaling
+                    vDSP_vsmul(leftChannel, 1, &scale, &leftChannel, 1, vDSP_Length(sourceFrames))
+                    vDSP_vsmul(rightChannel, 1, &scale, &rightChannel, 1, vDSP_Length(sourceFrames))
 
-                        /// Get output buffer pointers
-                        let outLeft = pcmBuffer.floatChannelData?[0]
-                        let outRight = pcmBuffer.floatChannelData?[1]
+                    /// Apply low-pass filter
+                    vDSP_conv(leftChannel, 1, filterCoeff, 1, &filteredLeft, 1,
+                            vDSP_Length(sourceFrames), vDSP_Length(filterSize))
+                    vDSP_conv(rightChannel, 1, filterCoeff, 1, &filteredRight, 1,
+                            vDSP_Length(sourceFrames), vDSP_Length(filterSize))
 
-                        /// Perform linear interpolation
-                        let outputFrames = min(targetFrameCount, sourceFrames - 1)
-                        for i in 0..<outputFrames {
-                            let sourcePos = Double(i) * rateRatio
-                            let sourceIndex = Int(floor(sourcePos))
-                            let fraction = Float(sourcePos - Double(sourceIndex))
+                    /// Get output buffer pointers
+                    let outLeft = pcmBuffer.floatChannelData?[0]
+                    let outRight = pcmBuffer.floatChannelData?[1]
 
-                            if sourceIndex + 1 < sourceFrames {
-                                /// Linear interpolation for left channel
-                                let leftSample = leftChannel[sourceIndex] * (1.0 - fraction) +
-                                               leftChannel[sourceIndex + 1] * fraction
+                    /// Perform SIMD linear interpolation
+                    let outputFrames = min(targetFrameCount, sourceFrames - 1)
+                    let simdCount = outputFrames & ~7  /// Round down to multiple of 8
 
-                                /// Linear interpolation for right channel
-                                let rightSample = rightChannel[sourceIndex] * (1.0 - fraction) +
-                                                rightChannel[sourceIndex + 1] * fraction
+                    /// Process 8 samples at a time using SIMD
+                    for i in stride(from: 0, to: simdCount, by: 8) {
+                        /// Calculate source positions for 8 samples
+                        let baseIndex = Double(i) * rateRatio
+                        let indices = SIMD8<Double>(
+                            baseIndex,
+                            baseIndex + rateRatio,
+                            baseIndex + rateRatio * 2,
+                            baseIndex + rateRatio * 3,
+                            baseIndex + rateRatio * 4,
+                            baseIndex + rateRatio * 5,
+                            baseIndex + rateRatio * 6,
+                            baseIndex + rateRatio * 7
+                        )
 
-                                outLeft?[i] = leftSample
-                                outRight?[i] = rightSample
-                            } else {
-                                /// Handle edge case
-                                outLeft?[i] = leftChannel[sourceIndex]
-                                outRight?[i] = rightChannel[sourceIndex]
-                            }
+                        /// Get integer indices and fractions
+                        var sourceIndices = SIMD8<Int>()
+                        var fractions = SIMD8<Float>()
+
+                        for j in 0..<8 {
+                            let index = floor(indices[j])
+                            sourceIndices[j] = Int(index)
+                            fractions[j] = Float(indices[j] - index)
                         }
 
-                        pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
+                        /// Load source samples
+                        var leftLow = SIMD8<Float>()
+                        var leftHigh = SIMD8<Float>()
+                        var rightLow = SIMD8<Float>()
+                        var rightHigh = SIMD8<Float>()
+
+                        for j in 0..<8 {
+                            leftLow[j] = filteredLeft[sourceIndices[j]]
+                            leftHigh[j] = filteredLeft[sourceIndices[j] + 1]
+                            rightLow[j] = filteredRight[sourceIndices[j]]
+                            rightHigh[j] = filteredRight[sourceIndices[j] + 1]
+                        }
+
+                        /// Perform linear interpolation
+                        let oneMinusFraction = 1.0 - fractions
+                        let leftResult = leftLow * oneMinusFraction + leftHigh * fractions
+                        let rightResult = rightLow * oneMinusFraction + rightHigh * fractions
+
+                        /// Store results
+                        for j in 0..<8 {
+                            outLeft?[i + j] = leftResult[j]
+                            outRight?[i + j] = rightResult[j]
+                        }
                     }
+
+                    /// Handle remaining samples
+                    for i in simdCount..<outputFrames {
+                        let sourcePos = Double(i) * rateRatio
+                        let sourceIndex = Int(floor(sourcePos))
+                        let fraction = Float(sourcePos - Double(sourceIndex))
+
+                        if sourceIndex + 1 < sourceFrames {
+                            let leftSample = filteredLeft[sourceIndex] * (1.0 - fraction) +
+                                           filteredLeft[sourceIndex + 1] * fraction
+                            let rightSample = filteredRight[sourceIndex] * (1.0 - fraction) +
+                                            filteredRight[sourceIndex + 1] * fraction
+
+                            outLeft?[i] = leftSample
+                            outRight?[i] = rightSample
+                        } else {
+                            outLeft?[i] = filteredLeft[sourceIndex]
+                            outRight?[i] = filteredRight[sourceIndex]
+                        }
+                    }
+
+                    pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
                 }
             }
 
