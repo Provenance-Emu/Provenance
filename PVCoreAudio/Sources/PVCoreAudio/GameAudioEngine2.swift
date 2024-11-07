@@ -60,6 +60,10 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let targetRate: Double = 48000.0
         let resampleRatio = Double(sourceRate) / targetRate
 
+        /// Pre-calculate filter coefficients for a simple low-pass filter
+        let filterSize = 3
+        var filterCoeff = [Float](repeating: 1.0 / Float(filterSize), count: filterSize)
+
         DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Ratio: \(resampleRatio)")
 
         return { pcmBuffer in
@@ -94,6 +98,15 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         vDSP_vsmul(leftChannel, 1, [scale], &leftChannel, 1, vDSP_Length(framesAvailable))
                         vDSP_vsmul(rightChannel, 1, [scale], &rightChannel, 1, vDSP_Length(framesAvailable))
 
+                        /// Apply low-pass filter before interpolation
+                        var filteredLeft = [Float](repeating: 0.0, count: framesAvailable)
+                        var filteredRight = [Float](repeating: 0.0, count: framesAvailable)
+
+                        vDSP_conv(leftChannel, 1, filterCoeff, 1, &filteredLeft, 1,
+                                vDSP_Length(framesAvailable - filterSize + 1), vDSP_Length(filterSize))
+                        vDSP_conv(rightChannel, 1, filterCoeff, 1, &filteredRight, 1,
+                                vDSP_Length(framesAvailable - filterSize + 1), vDSP_Length(filterSize))
+
                         /// Get pointers to PCM buffer channels
                         let resampledLeft = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![0])
                         let resampledRight = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![1])
@@ -104,18 +117,18 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                             let index = Int(sourceIndex)
                             let fraction = Float(sourceIndex - Double(index))
 
-                            if index + 1 < framesAvailable {
+                            if index + 1 < framesAvailable - filterSize + 1 {
                                 /// Linear interpolation for left channel
-                                resampledLeft[i] = leftChannel[index] * (1.0 - fraction) +
-                                                 leftChannel[index + 1] * fraction
+                                resampledLeft[i] = filteredLeft[index] * (1.0 - fraction) +
+                                                 filteredLeft[index + 1] * fraction
 
                                 /// Linear interpolation for right channel
-                                resampledRight[i] = rightChannel[index] * (1.0 - fraction) +
-                                                  rightChannel[index + 1] * fraction
+                                resampledRight[i] = filteredRight[index] * (1.0 - fraction) +
+                                                  filteredRight[index + 1] * fraction
                             } else {
                                 /// Handle edge case
-                                resampledLeft[i] = leftChannel[min(index, framesAvailable - 1)]
-                                resampledRight[i] = rightChannel[min(index, framesAvailable - 1)]
+                                resampledLeft[i] = filteredLeft[min(index, framesAvailable - filterSize)]
+                                resampledRight[i] = filteredRight[min(index, framesAvailable - filterSize)]
                             }
                         }
 
@@ -229,7 +242,8 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             try session.setCategory(.ambient,
                                     mode: .default,
                                     options: [.mixWithOthers])
-            try session.setPreferredIOBufferDuration(0.010)
+            let bufferDuration = Defaults[.audioLatency] / 1000.0
+            try session.setPreferredIOBufferDuration(bufferDuration)
             try session.setActive(true)
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
