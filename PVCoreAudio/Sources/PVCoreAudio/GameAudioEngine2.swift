@@ -90,11 +90,13 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let targetRate: Double = 48000.0
         let resampleRatio = Double(sourceRate) / targetRate
 
+        /// Adjust playback position to maintain correct timing
+        var playbackPosition: Double = 0.0
+        let playbackIncrement = resampleRatio  /// This maintains original timing
+
         /// 4-point interpolation
         let filterLength = 4
         var coefficients = [Float](repeating: 0, count: filterLength)
-
-        DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Ratio: \(resampleRatio)")
 
         return { pcmBuffer in
             let targetFrameCount = Int(pcmBuffer.frameCapacity)
@@ -140,39 +142,43 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
                         leftChannel.withUnsafeBufferPointer { leftPtr in
                             rightChannel.withUnsafeBufferPointer { rightPtr in
-                                for chunk in stride(from: 0, to: targetFrameCount, by: chunkSize) {
-                                    let count = min(chunkSize, targetFrameCount - chunk)
+                                for i in 0..<targetFrameCount {
+                                    let sourceIndex = Float(playbackPosition)
+                                    let index = Int(floor(Double(sourceIndex)))
+                                    let fraction = sourceIndex - Float(index)
 
-                                    for i in 0..<count {
-                                        let sourceIndex = Float(chunk + i) * Float(resampleRatio)
-                                        let index = Int(floor(sourceIndex))
-                                        let fraction = sourceIndex - Float(index)
+                                    /// Calculate cubic interpolation coefficients
+                                    coefficients[0] = (1.0 - fraction) * (1.0 - fraction) * (1.0 - fraction)
+                                    coefficients[1] = 3.0 * fraction * (1.0 - fraction) * (1.0 - fraction)
+                                    coefficients[2] = 3.0 * fraction * fraction * (1.0 - fraction)
+                                    coefficients[3] = fraction * fraction * fraction
 
-                                        /// Calculate cubic interpolation coefficients
-                                        coefficients[0] = (1.0 - fraction) * (1.0 - fraction) * (1.0 - fraction)
-                                        coefficients[1] = 3.0 * fraction * (1.0 - fraction) * (1.0 - fraction)
-                                        coefficients[2] = 3.0 * fraction * fraction * (1.0 - fraction)
-                                        coefficients[3] = fraction * fraction * fraction
+                                    if index + filterLength <= framesAvailable {
+                                        vDSP_dotpr(coefficients, 1,
+                                                 leftPtr.baseAddress!.advanced(by: index), 1,
+                                                 resampledLeft.advanced(by: i),
+                                                 vDSP_Length(1))
 
-                                        if index + filterLength <= framesAvailable {
-                                            vDSP_dotpr(coefficients, 1,
-                                                     leftPtr.baseAddress!.advanced(by: index), 1,
-                                                     resampledLeft.advanced(by: chunk + i), 1
-                                                     )
-
-                                            vDSP_dotpr(coefficients, 1,
-                                                     rightPtr.baseAddress!.advanced(by: index), 1,
-                                                     resampledRight.advanced(by: chunk + i), 1
-                                                     )
-                                        } else {
-                                            /// Handle edge case at end of buffer
-                                            let lastValidIndex = framesAvailable - 1
-                                            resampledLeft[chunk + i] = leftChannel[lastValidIndex]
-                                            resampledRight[chunk + i] = rightChannel[lastValidIndex]
-                                        }
+                                        vDSP_dotpr(coefficients, 1,
+                                                 rightPtr.baseAddress!.advanced(by: index), 1,
+                                                 resampledRight.advanced(by: i),
+                                                 vDSP_Length(1))
+                                    } else {
+                                        /// Handle edge case
+                                        let lastValidIndex = framesAvailable - 1
+                                        resampledLeft[i] = leftChannel[lastValidIndex]
+                                        resampledRight[i] = rightChannel[lastValidIndex]
                                     }
+
+                                    /// Increment playback position to maintain timing
+                                    playbackPosition += playbackIncrement
                                 }
                             }
+                        }
+
+                        /// Reset playback position if needed
+                        if playbackPosition >= Double(framesAvailable) {
+                            playbackPosition -= Double(framesAvailable)
                         }
 
                         pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
