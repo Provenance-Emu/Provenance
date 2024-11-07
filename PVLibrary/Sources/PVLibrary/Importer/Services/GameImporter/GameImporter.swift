@@ -600,6 +600,9 @@ public final class GameImporter: GameImporting, ObservableObject {
             throw GameImporterError.noSystemMatched
         }
         
+        //update item's candidate systems with the result of determineSystems
+        item.systems = systems
+        
         //this might be a conflict if we can't infer what to do
         if item.systems.count > 1 {
             //conflict
