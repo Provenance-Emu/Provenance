@@ -365,68 +365,6 @@ public extension PVEmulatorConfiguration {
             }
         }
     }
-
-    class func cmpSpecialExt(obj1Extension: String, obj2Extension: String) -> Bool {
-        if obj1Extension == "m3u" && obj2Extension != "m3u" {
-            return obj1Extension > obj2Extension
-        } else if obj1Extension == "m3u" {
-            return false
-        } else if obj2Extension == "m3u" {
-            return true
-        }
-        if Extensions.artworkExtensions.contains(obj1Extension) {
-            return false
-        } else if Extensions.artworkExtensions.contains(obj2Extension) {
-            return true
-        }
-        return obj1Extension > obj2Extension
-    }
-
-    class func cmp(obj1: URL, obj2: URL) -> Bool {
-        let obj1Filename = obj1.lastPathComponent
-        let obj2Filename = obj2.lastPathComponent
-        let obj1Extension = obj1.pathExtension.lowercased()
-        let obj2Extension = obj2.pathExtension.lowercased()
-        let name1=PVEmulatorConfiguration.stripDiscNames(fromFilename: obj1Filename)
-        let name2=PVEmulatorConfiguration.stripDiscNames(fromFilename: obj2Filename)
-        if name1 == name2 {
-             // Standard sort
-            if obj1Extension == obj2Extension {
-                return obj1Filename < obj2Filename
-            }
-            return obj1Extension > obj2Extension
-        } else {
-            return name1 < name2
-        }
-    }
-
-    class func sortImportURLs(urls: [URL]) -> [URL] {
-        var ext:[String:[URL]] = [:]
-        // separate array by file extension
-        urls.forEach({ (url) in
-            if var urls = ext[url.pathExtension.lowercased()] {
-                urls.append(url)
-                ext[url.pathExtension.lowercased()]=urls
-            } else {
-                ext[url.pathExtension.lowercased()]=[url]
-            }
-        })
-        // sort
-        var sorted: [URL] = []
-        ext.keys
-            .sorted(by: cmpSpecialExt)
-            .forEach {
-            if let values = ext[$0] {
-                let values = values.sorted { (obj1, obj2) -> Bool in
-                    return cmp(obj1: obj1, obj2: obj2)
-                }
-                sorted.append(contentsOf: values)
-                ext[$0] = values
-            }
-        }
-        VLOG(sorted.map { $0.lastPathComponent }.joined(separator: ", "))
-        return sorted
-    }
 }
 
 // MARK: System queries

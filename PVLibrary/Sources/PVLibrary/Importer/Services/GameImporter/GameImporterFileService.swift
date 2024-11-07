@@ -76,20 +76,15 @@ class GameImporterFileService : GameImporterFileServicing {
             throw GameImporterError.noSystemMatched
         }
         
-        let candidateSystems = queueItem.systems
-        if (candidateSystems.count > 1 && queueItem.userChosenSystem == nil) {
-            //conflict?
+        guard let targetSystem = queueItem.targetSystem() else {
             throw GameImporterError.systemNotDetermined
         }
         
-        let fileManager = FileManager.default
         let fileName = queueItem.url.lastPathComponent
+        let destinationFolder = targetSystem.romsDirectory
+        let destinationPath = destinationFolder.appendingPathComponent(fileName)
         
-        if let system = candidateSystems.first {
-            let destinationFolder = system.romsDirectory
-            let destinationPath = destinationFolder.appendingPathComponent(fileName)
-            queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationPath)
-        }
+        queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationPath)
     }
     
     // MARK: - CDROM
@@ -105,72 +100,21 @@ class GameImporterFileService : GameImporterFileServicing {
             throw GameImporterError.unsupportedCDROMFile
         }
         
-        let candidateSystems = queueItem.systems
-        if (candidateSystems.count > 1 && queueItem.userChosenSystem == nil) {
-            //conflict?
+        guard let targetSystem = queueItem.targetSystem() else {
             throw GameImporterError.systemNotDetermined
         }
         
-        let fileManager = FileManager.default
         let fileName = queueItem.url.lastPathComponent
+        let destinationFolder = targetSystem.romsDirectory
+        let destinationPath = destinationFolder.appendingPathComponent(fileName)
         
-        if let system = candidateSystems.first {
-            let destinationFolder = system.romsDirectory
-            let destinationPath = destinationFolder.appendingPathComponent(fileName)
-            
-            // Check for M3U
-            //TODO: implement handling for M3U and cue files
-            #if false
-            if let system = try await handleM3UFile(candidate) {
-                DLOG("Moving M3U and referenced files to system: \(system.name)")
-                // Move M3U and all referenced files to system directory
-                let destinationDir = system.romsDirectory
-                return try await moveM3UAndReferencedFiles(candidate, to: destinationDir)
-            }
-            
-            // If cue file, try to match its bin file
-            if `extension` == "cue" {
-                if let binFile = try findAssociatedBinFile(for: candidate) {
-                    DLOG("Found associated bin file, trying to match: \(binFile.lastPathComponent)")
-                    let binCandidate = ImportCandidateFile(filePath: binFile)
-                    if let system = try? await determineSystem(for: binCandidate) {
-                        DLOG("Found system match from associated bin file: \(system.name)")
-                        return system
-                    }
-                }
-            }
-            #endif
-            
-            do {
-                queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationPath)
-            } catch {
-                throw GameImporterError.failedToMoveCDROM(error)
-            }
+        //TODO: check and process children
+        
+        do {
+            queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationPath)
+        } catch {
+            throw GameImporterError.failedToMoveCDROM(error)
         }
-    }
-    
-    private func findAssociatedBinFile(for cueFileItem: ImportQueueItem) throws -> URL? {
-        let cueContents = try String(contentsOf: cueFileItem.url, encoding: .utf8)
-        let lines = cueContents.components(separatedBy: .newlines)
-        
-        // Look for FILE "something.bin" BINARY line
-        for line in lines {
-            let components = line.trimmingCharacters(in: .whitespaces)
-                .components(separatedBy: "\"")
-            guard components.count >= 2,
-                  line.lowercased().contains("file") && line.lowercased().contains("binary") else {
-                continue
-            }
-            
-            let binFileName = components[1]
-            let binPath = cueFileItem.url.deletingLastPathComponent().appendingPathComponent(binFileName)
-            
-            if FileManager.default.fileExists(atPath: binPath.path) {
-                return binPath
-            }
-        }
-        
-        return nil
     }
     
     // MARK: - Utility
