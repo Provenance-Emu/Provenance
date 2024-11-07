@@ -706,7 +706,8 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
                             if reloadGameInfoAfter, game.releaseID == nil || game.releaseID!.isEmpty {
                                 Task { [weak self] in
                                     guard let self = self else { return }
-                                    self.game = GameImporter.shared.lookupInfo(for: game, overwrite: false)
+                                    //TODO: fix this
+                                    //self.game = GameImporter.shared.lookupInfo(for: game, overwrite: false)
                                 }
                             }
                         }
