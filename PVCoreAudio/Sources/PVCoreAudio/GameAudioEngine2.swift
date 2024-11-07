@@ -238,7 +238,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
 
-        /// Create source node with rendering block
+        /// Create source node with SIMD-optimized rendering block
         let renderBlock: AVAudioSourceNodeRenderBlock = { isSilence, timestamp, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
 
@@ -258,15 +258,72 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                 return noErr
             }
 
-            /// Copy PCM buffer data to the audio buffer list
-            for i in 0..<Int(frameCount) {
-                ablPointer[0].mData?.assumingMemoryBound(to: Float.self)[i] = pcmBuffer.floatChannelData?.pointee[i] ?? 0
-                ablPointer[1].mData?.assumingMemoryBound(to: Float.self)[i] = pcmBuffer.floatChannelData?.advanced(by: 1).pointee[i] ?? 0
+            /// Get pointers for SIMD operations
+            let sourceLeft = pcmBuffer.floatChannelData?.pointee
+            let sourceRight = pcmBuffer.floatChannelData?.advanced(by: 1).pointee
+            let destLeft = ablPointer[0].mData?.assumingMemoryBound(to: Float.self)
+            let destRight = ablPointer[1].mData?.assumingMemoryBound(to: Float.self)
+
+            guard let sourceLeft = sourceLeft,
+                  let sourceRight = sourceRight,
+                  let destLeft = destLeft,
+                  let destRight = destRight else {
+                isSilence.pointee = true
+                return noErr
+            }
+
+            /// Process in chunks of 8 samples using SIMD
+            let simdCount = Int(frameCount) / 8
+            for i in 0..<simdCount {
+                let leftChunk = SIMD8<Float>(
+                    sourceLeft[i * 8 + 0],
+                    sourceLeft[i * 8 + 1],
+                    sourceLeft[i * 8 + 2],
+                    sourceLeft[i * 8 + 3],
+                    sourceLeft[i * 8 + 4],
+                    sourceLeft[i * 8 + 5],
+                    sourceLeft[i * 8 + 6],
+                    sourceLeft[i * 8 + 7]
+                )
+
+                let rightChunk = SIMD8<Float>(
+                    sourceRight[i * 8 + 0],
+                    sourceRight[i * 8 + 1],
+                    sourceRight[i * 8 + 2],
+                    sourceRight[i * 8 + 3],
+                    sourceRight[i * 8 + 4],
+                    sourceRight[i * 8 + 5],
+                    sourceRight[i * 8 + 6],
+                    sourceRight[i * 8 + 7]
+                )
+
+                /// Store SIMD vectors directly
+                withUnsafePointer(to: leftChunk) { ptr in
+                    ptr.withMemoryRebound(to: Float.self, capacity: 8) { floatPtr in
+                        (destLeft + (i * 8)).initialize(from: floatPtr, count: 8)
+                    }
+                }
+
+                withUnsafePointer(to: rightChunk) { ptr in
+                    ptr.withMemoryRebound(to: Float.self, capacity: 8) { floatPtr in
+                        (destRight + (i * 8)).initialize(from: floatPtr, count: 8)
+                    }
+                }
+            }
+
+            /// Handle remaining samples
+            let remainingSamples = Int(frameCount) % 8
+            if remainingSamples > 0 {
+                let startIdx = simdCount * 8
+                for i in 0..<remainingSamples {
+                    destLeft[startIdx + i] = sourceLeft[startIdx + i]
+                    destRight[startIdx + i] = sourceRight[startIdx + i]
+                }
             }
 
             isSilence.pointee = false
-            ablPointer[0].mDataByteSize = UInt32(frameCount * UInt32(MemoryLayout<Float>.size))
-            ablPointer[1].mDataByteSize = UInt32(frameCount * UInt32(MemoryLayout<Float>.size))
+            ablPointer[0].mDataByteSize = UInt32(frameCount * 4)
+            ablPointer[1].mDataByteSize = UInt32(frameCount * 4)
 
             return noErr
         }
