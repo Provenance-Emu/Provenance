@@ -27,7 +27,9 @@ let package = Package(
     ],
 
     dependencies: [
-        .package(name: "PVLogging", path: "../PVLogging/")
+        .package(name: "PVLogging", path: "../PVLogging/"),
+        .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.0"),
+
     ],
 
     // MARK: - Targets
@@ -45,7 +47,7 @@ let package = Package(
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-        
+
         .target(
             name: "RingBuffer",
             dependencies: [
@@ -53,16 +55,18 @@ let package = Package(
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-        
+
         .target(
             name: "PVRingBuffer",
             dependencies: [
                 "RingBuffer",
-                .product(name: "PVLogging", package: "PVLogging")
+                .product(name: "PVLogging", package: "PVLogging"),
+                .product(name: "Atomics", package: "swift-atomics")
+
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-        
+
         .target(
             name: "AppleRingBuffer",
             dependencies: [
@@ -71,7 +75,7 @@ let package = Package(
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-        
+
         .target(
             name: "OERingBuffer",
             dependencies: [
@@ -80,7 +84,7 @@ let package = Package(
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-        
+
         .target(
             name: "CARingBuffer",
             dependencies: [
@@ -89,7 +93,7 @@ let package = Package(
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-            
+
         // MARK: - Tests
         .testTarget(
             name: "PVAudioTests",

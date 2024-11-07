@@ -1,17 +1,17 @@
 //
 //  RingBuffer.swift
-//  DeltaCore
+//  PVAudio
 //
-//  Created by Riley Testut on 6/29/16.
-//  Copyright © 2016 Riley Testut. All rights reserved.
+//  Created by Joseph Mattiello on 11/7/24.
+//  Copyright © 2024 Joseph Mattiello. All rights reserved.
 //
-//  Heavily based on Michael Tyson's TPCircularBuffer (https://github.com/michaeltyson/TPCircularBuffer)
 //
 
 import Foundation
 import RingBuffer
 import PVLogging
-//@preconcurrency import Darwin.Mach.machine.vm_types
+import Atomics
+
 @preconcurrency import Darwin
 
 // Create constant wrappers for vm_page_size and mach_task_self_
@@ -21,23 +21,9 @@ private let VM_PAGE_SIZE: vm_size_t = {
     return size
 }()
 
-//@Sendable
-//private func getMachTaskSelf() -> mach_port_t {
-//    Darwin.mach_task_self_
-////    var task_info: mach_task_basic_info_t = mach_task_basic_info_t()
-//    //    Darwin.mach_task_flavor_t(MACH_TASK_BASIC_INFO, &task_info, MemoryLayout<mach_task_basic_info_t>.size)
-//
-//    //    Darwin.task_identity_token_get_task_port(token, flavor, port)
-//
-////    var task_info: thread_act_array_t = thread_act_array_t()
-////    Darwin.task_threads(mach_task_self(), &task_info, MemoryLayout<mach_task_basic_info_t>.size)
-//
-//}
-
 private let MACH_TASK_SELF: mach_port_t = {
     mach_task_self_
 }()
-
 
 private func trunc_page(_ x: vm_size_t) -> vm_size_t {
     @Sendable func truncate() -> vm_size_t {
@@ -49,129 +35,225 @@ private func trunc_page(_ x: vm_size_t) -> vm_size_t {
 private func round_page(_ x: vm_size_t) -> vm_size_t {
     return trunc_page(x + (vm_size_t(VM_PAGE_SIZE) - 1))
 }
-/// Ring buffer implementation
-public final class PVRingBuffer: NSObject, RingBufferProtocol {
-    private var buffer: UnsafeMutableRawPointer
+/// Ring buffer implementation optimized for audio processing
+@objc
+public final class PVRingBuffer: NSObject, RingBufferProtocol, @unchecked Sendable {
+    /// Cache line size for modern processors
+    private let cacheLineSize = 64
+    private let pageSize: Int = Int(VM_PAGE_SIZE)
+
+    /// Actual buffer storage
+    private let buffer: UnsafeMutableRawPointer
     private let bufferLength: Int
 
-    /// Read position in buffer
-    private var readPosition: Int = 0
-
-    /// Write position in buffer
-    private var writePosition: Int = 0
-
-    /// Number of bytes currently used in buffer
-    private var bytesInBuffer: Int = 0
+    /// Use atomic properties for thread-safe access
+    private var _readPosition: ManagedAtomic<Int>
+    private var _writePosition: ManagedAtomic<Int>
+    private var _bytesInBuffer: ManagedAtomic<Int>
 
     public var isEnabled: Bool = true
 
-    /// Required initializer from RingBufferProtocol
-    public required init?(withLength length: RingBufferSize) {
-        guard length > 0 else { return nil }
-        self.bufferLength = length
-
-        /// Allocate and zero out the buffer
-        self.buffer = malloc(length)
-        memset(self.buffer, 0, length)
-
-        super.init()
-    }
-
-    deinit {
-        free(buffer)
-    }
-
-    /// Available space for writing
+    /// Protocol conformance for available bytes properties
     public var availableBytesForWriting: RingBufferSize {
-        return bufferLength - bytesInBuffer
+        let currentBytes = _bytesInBuffer.load(ordering: .acquiring)
+        return bufferLength - currentBytes
     }
 
-    /// Available bytes for reading (matches protocol requirement)
     public var availableBytesForReading: RingBufferSize {
-        return bytesInBuffer
+        return _bytesInBuffer.load(ordering: .acquiring)
     }
 
-    /// Objective-C compatible property (matches protocol requirement)
     @objc public var availableBytes: RingBufferSize {
         return availableBytesForReading
     }
 
-    /// Write data to buffer
-    @discardableResult
-    public func write(_ buffer: UnsafeRawPointer, size: Int) -> Int {
-        guard isEnabled, size > 0 else { return 0 }
+    public required init?(withLength length: RingBufferSize) {
+        guard length > 0 else { return nil }
 
-        /// If buffer is full, overwrite oldest data
-        if bytesInBuffer == bufferLength {
-            /// Advance read position to make room
-            readPosition = (readPosition + size) % bufferLength
-            bytesInBuffer -= size
-            WLOG("Buffer overrun - overwriting oldest \(size) bytes")
-            debugBufferState()
+        /// Round up to nearest page size
+        let alignedLength = round_page(vm_size_t(length))
+        self.bufferLength = Int(alignedLength)
+
+        /// Allocate page-aligned memory
+        guard let aligned = aligned_alloc(pageSize, Int(alignedLength)) else {
+            return nil
         }
+        self.buffer = aligned
 
-        /// First chunk: from write position to end of buffer
-        let firstChunkSize = min(size, bufferLength - writePosition)
-        memcpy(self.buffer.advanced(by: writePosition), buffer, firstChunkSize)
+        /// Initialize atomic properties
+        self._readPosition = ManagedAtomic<Int>(0)
+        self._writePosition = ManagedAtomic<Int>(0)
+        self._bytesInBuffer = ManagedAtomic<Int>(0)
 
-        /// Second chunk: wrap around to start if needed
-        if firstChunkSize < size {
-            let secondChunkSize = size - firstChunkSize
-            memcpy(self.buffer, buffer.advanced(by: firstChunkSize), secondChunkSize)
-        }
+        super.init()
 
-        writePosition = (writePosition + size) % bufferLength
-        bytesInBuffer += size
-
-        return size
+        /// Zero the buffer
+        memset(self.buffer, 0, Int(alignedLength))
     }
 
-    /// Read data from buffer
+    deinit {
+        /// Free the buffer memory
+        free(buffer)
+    }
+
+    /// Thread-safe read with atomic operations
     @discardableResult
     public func read(_ buffer: UnsafeMutableRawPointer, preferredSize size: Int) -> Int {
         guard isEnabled, size > 0 else { return 0 }
 
-        /// Handle underrun by returning silence instead of nothing
-        if bytesInBuffer == 0 {
+        /// Check if buffer is empty
+        if _bytesInBuffer.load(ordering: .acquiring) == 0 {
             DLOG("Buffer underrun - filling with silence")
             memset(buffer, 0, size)
             return size
         }
 
-        let readSize = min(size, bytesInBuffer)
+        /// Get current state
+        let currentBytes = _bytesInBuffer.load(ordering: .acquiring)
+        let readSize = min(size, currentBytes)
+        let currentRead = _readPosition.load(ordering: .acquiring)
 
         /// First chunk: from read position to end of buffer
-        let firstChunkSize = min(readSize, bufferLength - readPosition)
-        memcpy(buffer, self.buffer.advanced(by: readPosition), firstChunkSize)
+        let firstChunkSize = min(readSize, bufferLength - currentRead)
+        optimizedCopy(from: self.buffer.advanced(by: currentRead),
+                     to: buffer,
+                     count: firstChunkSize)
 
         /// Second chunk: wrap around to start if needed
         if firstChunkSize < readSize {
             let secondChunkSize = readSize - firstChunkSize
-            memcpy(buffer.advanced(by: firstChunkSize), self.buffer, secondChunkSize)
+            optimizedCopy(from: self.buffer,
+                         to: buffer.advanced(by: firstChunkSize),
+                         count: secondChunkSize)
         }
 
-        /// If we couldn't read enough, fill the rest with silence
+        /// Fill remaining with silence if needed
         if readSize < size {
             DLOG("Partial read: \(readSize)/\(size) bytes - filling rest with silence")
             memset(buffer.advanced(by: readSize), 0, size - readSize)
         }
 
-        readPosition = (readPosition + readSize) % bufferLength
-        bytesInBuffer -= readSize
+        /// Update positions atomically
+        let newRead = fastMod(currentRead + readSize, bufferLength)
+        _readPosition.store(newRead, ordering: .releasing)
 
-        return size  /// Always return requested size to maintain timing
+        /// Update bytes in buffer atomically
+        var expected = currentBytes
+        while !_bytesInBuffer.compareExchange(
+            expected: expected,
+            desired: expected - readSize,
+            ordering: .releasing
+        ).exchanged {
+            expected = _bytesInBuffer.load(ordering: .acquiring)
+        }
+
+        return size
     }
 
-    /// Reset buffer state
+    /// Thread-safe write with atomic operations
+    @discardableResult
+    public func write(_ buffer: UnsafeRawPointer, size: Int) -> Int {
+        guard isEnabled, size > 0 else { return 0 }
+
+        /// Handle buffer full condition
+        let currentBytes = _bytesInBuffer.load(ordering: .acquiring)
+        if currentBytes == bufferLength {
+            let currentRead = _readPosition.load(ordering: .acquiring)
+            _readPosition.store(fastMod(currentRead + size, bufferLength),
+                              ordering: .releasing)
+
+            var expected = currentBytes
+            while !_bytesInBuffer.compareExchange(
+                expected: expected,
+                desired: expected - size,
+                ordering: .releasing
+            ).exchanged {
+                expected = _bytesInBuffer.load(ordering: .acquiring)
+            }
+
+            WLOG("Buffer overrun - overwriting oldest \(size) bytes")
+        }
+
+        let currentWrite = _writePosition.load(ordering: .acquiring)
+
+        /// Write first chunk
+        let firstChunkSize = min(size, bufferLength - currentWrite)
+        optimizedCopy(from: buffer,
+                     to: self.buffer.advanced(by: currentWrite),
+                     count: firstChunkSize)
+
+        /// Write second chunk if needed
+        if firstChunkSize < size {
+            let secondChunkSize = size - firstChunkSize
+            optimizedCopy(from: buffer.advanced(by: firstChunkSize),
+                         to: self.buffer,
+                         count: secondChunkSize)
+        }
+
+        /// Update write position atomically
+        let newWrite = fastMod(currentWrite + size, bufferLength)
+        _writePosition.store(newWrite, ordering: .releasing)
+
+        /// Update bytes in buffer atomically
+        var expected = currentBytes
+        while !_bytesInBuffer.compareExchange(
+            expected: expected,
+            desired: expected + size,
+            ordering: .releasing
+        ).exchanged {
+            expected = _bytesInBuffer.load(ordering: .acquiring)
+        }
+
+        return size
+    }
+
+    /// Reset with atomic operations
     public func reset() {
-        readPosition = 0
-        writePosition = 0
-        bytesInBuffer = 0
+        _readPosition.store(0, ordering: .releasing)
+        _writePosition.store(0, ordering: .releasing)
+        _bytesInBuffer.store(0, ordering: .releasing)
     }
 
-    /// Debug current buffer state
-    public func debugBufferState() {
-        DLOG("Buffer State - Read: \(readPosition), Write: \(writePosition), Used: \(bytesInBuffer), Length: \(bufferLength)")
-        DLOG("Available for writing: \(availableBytesForWriting), Available for reading: \(bytesInBuffer)")
+    /// Fast power of 2 check
+    private func isPowerOf2(_ value: Int) -> Bool {
+        return value > 0 && (value & (value - 1)) == 0
+    }
+
+    /// Optimized modulo for power of 2 sizes
+    private func fastMod(_ value: Int, _ modulus: Int) -> Int {
+        if isPowerOf2(modulus) {
+            return value & (modulus - 1)
+        }
+        return value % modulus
+    }
+
+    /// SIMD-optimized memory copy
+    private func optimizedCopy(from source: UnsafeRawPointer,
+                             to destination: UnsafeMutableRawPointer,
+                             count: Int) {
+        let alignment = MemoryLayout<Float>.alignment
+
+        if count >= 32 && Int(bitPattern: source) % alignment == 0 &&
+           Int(bitPattern: destination) % alignment == 0 {
+            /// Use SIMD for larger, aligned copies
+            let simdSource = source.assumingMemoryBound(to: SIMD8<Float>.self)
+            let simdDest = destination.assumingMemoryBound(to: SIMD8<Float>.self)
+            let simdCount = count / 32
+
+            for i in 0..<simdCount {
+                simdDest[i] = simdSource[i]
+            }
+
+            /// Handle remaining bytes
+            let remaining = count % 32
+            if remaining > 0 {
+                memcpy(destination.advanced(by: simdCount * 32),
+                       source.advanced(by: simdCount * 32),
+                       remaining)
+            }
+        } else {
+            /// Fall back to regular memcpy for small or unaligned copies
+            memcpy(destination, source, count)
+        }
     }
 }
