@@ -49,6 +49,36 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
     /// Type alias for the read block
     typealias OEAudioBufferReadBlock = (UnsafeMutableRawPointer, Int) -> Int
+
+    /// Kaiser window helper function
+    private func createKaiserWindow(size: Int, beta: Double) -> [Double] {
+        var window = [Double](repeating: 0.0, count: size)
+        let iZero = modifiedBessel0(beta)
+
+        for i in 0..<size {
+            let x = beta * sqrt(1.0 - pow(2.0 * Double(i) / Double(size - 1) - 1.0, 2))
+            window[i] = modifiedBessel0(x) / iZero
+        }
+
+        return window
+    }
+
+    /// Modified Bessel function of the first kind, order 0
+    private func modifiedBessel0(_ x: Double) -> Double {
+        var sum = 1.0
+        var term = 1.0
+
+        for k in 1...20 {  // 20 terms is usually sufficient
+            let xk = x / 2.0
+            term *= (xk * xk) / (Double(k) * Double(k))
+            sum += term
+
+            if term < 1e-12 { break }
+        }
+
+        return sum
+    }
+
     private func readBlockForBuffer(_ buffer: RingBufferProtocol) -> (AVAudioPCMBuffer) -> Int {
         /// Cache format information
         let sourceChannels = Int(gameCore.channelCount(forBuffer: 0))
@@ -63,11 +93,6 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         /// Pre-calculate filter coefficients for a simple low-pass filter
         let filterSize = 3
         var filterCoeff = [Double](repeating: 1.0 / Double(filterSize), count: filterSize)
-
-        /// Pop filter state
-        var lastLeftSample: Double = 0
-        var lastRightSample: Double = 0
-        var wasLastBufferSilent = false
 
         DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Ratio: \(resampleRatio)")
 
@@ -94,16 +119,14 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         var leftChannel = [Double](repeating: 0.0, count: framesAvailable)
                         var rightChannel = [Double](repeating: 0.0, count: framesAvailable)
 
-                        /// Convert to double (using vDSP_vflt16D for higher precision)
+                        /// Convert to double and scale in one step
+                        let scale = 1.0 / 32768.0
                         vDSP_vflt16D(input, 2, &leftChannel, 1, vDSP_Length(framesAvailable))
                         vDSP_vflt16D(input.advanced(by: 1), 2, &rightChannel, 1, vDSP_Length(framesAvailable))
-
-                        /// Scale to -1.0 to 1.0
-                        let scale = 1.0 / 32768.0
                         vDSP_vsmulD(leftChannel, 1, [scale], &leftChannel, 1, vDSP_Length(framesAvailable))
                         vDSP_vsmulD(rightChannel, 1, [scale], &rightChannel, 1, vDSP_Length(framesAvailable))
 
-                        /// Apply low-pass filter
+                        /// Apply simple low-pass filter
                         var filteredLeft = [Double](repeating: 0.0, count: framesAvailable)
                         var filteredRight = [Double](repeating: 0.0, count: framesAvailable)
 
@@ -116,31 +139,21 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         let resampledLeft = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![0])
                         let resampledRight = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![1])
 
-                        /// Linear interpolation resampling with higher precision and safe conversion
+                        /// Linear interpolation with filtered data
                         for i in 0..<targetFrameCount {
                             let sourceIndex = Double(i) * resampleRatio
                             let index = Int(sourceIndex)
                             let fraction = sourceIndex - floor(sourceIndex)
 
                             if index + 1 < framesAvailable - filterSize + 1 {
-                                /// Linear interpolation with doubles
                                 let leftSample = filteredLeft[index] * (1.0 - fraction) +
-                                                filteredLeft[index + 1] * fraction
+                                               filteredLeft[index + 1] * fraction
                                 let rightSample = filteredRight[index] * (1.0 - fraction) +
-                                                 filteredRight[index + 1] * fraction
+                                                filteredRight[index + 1] * fraction
 
-                                /// Safe conversion to Float
-                                resampledLeft[i] = Float(max(-1.0, min(1.0, leftSample)))   /// Clamp to [-1, 1]
-                                resampledRight[i] = Float(max(-1.0, min(1.0, rightSample))) /// Clamp to [-1, 1]
-
-                                /// Optional: Check for potential conversion issues
-                                #if DEBUG
-                                if abs(leftSample) > 1.0 || abs(rightSample) > 1.0 {
-                                    DLOG("Warning: Audio sample exceeded range: L:\(leftSample) R:\(rightSample)")
-                                }
-                                #endif
+                                resampledLeft[i] = Float(max(-1.0, min(1.0, leftSample)))
+                                resampledRight[i] = Float(max(-1.0, min(1.0, rightSample)))
                             } else {
-                                /// Handle edge case with same safety measures
                                 resampledLeft[i] = Float(max(-1.0, min(1.0, filteredLeft[min(index, framesAvailable - filterSize)])))
                                 resampledRight[i] = Float(max(-1.0, min(1.0, filteredRight[min(index, framesAvailable - filterSize)])))
                             }
