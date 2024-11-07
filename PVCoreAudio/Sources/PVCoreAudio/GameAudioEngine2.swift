@@ -90,33 +90,15 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let targetRate: Double = 48000.0
         let resampleRatio = Double(sourceRate) / targetRate
 
-        /// Use a larger filter for better quality when rates differ significantly
-        let filterSize = max(3, Int(abs(resampleRatio - 1.0) * 8))
+        /// 4-point interpolation
+        let filterLength = 4
+        var coefficients = [Float](repeating: 0, count: filterLength)
 
-        /// Create a better low-pass filter based on the ratio
-        let nyquistFreq = min(0.5, 0.5 * min(targetRate / sourceRate, sourceRate / targetRate))
-        var filterCoeff = [Double](repeating: 0.0, count: filterSize)
-
-        /// Compute Lanczos filter coefficients
-        for i in 0..<filterSize {
-            let x = Double.pi * (2.0 * nyquistFreq) * (Double(i) - Double(filterSize - 1) / 2.0)
-            if x != 0 {
-                filterCoeff[i] = sin(x) / x * sin(x / Double(filterSize)) / (x / Double(filterSize))
-            } else {
-                filterCoeff[i] = 1.0
-            }
-        }
-
-        /// Normalize filter coefficients
-        let sum = filterCoeff.reduce(0.0, +)
-        filterCoeff = filterCoeff.map { $0 / sum }
-
-        DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Ratio: \(resampleRatio), Filter size: \(filterSize)")
+        DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Ratio: \(resampleRatio)")
 
         return { pcmBuffer in
             let targetFrameCount = Int(pcmBuffer.frameCapacity)
-            /// Request more source frames for better interpolation
-            let sourceFrameCount = Int(ceil(Double(targetFrameCount) * resampleRatio)) + filterSize
+            let sourceFrameCount = Int(ceil(Double(targetFrameCount) * resampleRatio)) + filterLength
             let sourceBytesToRead = sourceFrameCount * sourceBytesPerFrame
 
             /// Read source data using SIMD-aligned buffer
@@ -137,85 +119,59 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             if sourceBitDepth == 16 {
                 sourceBuffer.withMemoryRebound(to: Int16.self, capacity: bytesRead / 2) { input in
                     if sourceChannels == 2 {
-                        let framesAvailable = bytesRead / 4  /// 2 channels * 2 bytes
+                        let framesAvailable = bytesRead / 4
 
-                        /// Allocate SIMD-aligned buffers
-                        let leftChannel = UnsafeMutablePointer<Double>.allocate(
-                            capacity: framesAvailable + filterSize
-                        )
-                        let rightChannel = UnsafeMutablePointer<Double>.allocate(
-                            capacity: framesAvailable + filterSize
-                        )
-                        defer {
-                            leftChannel.deallocate()
-                            rightChannel.deallocate()
-                        }
+                        /// Convert to float and scale
+                        var leftChannel = [Float](repeating: 0, count: framesAvailable + filterLength)
+                        var rightChannel = [Float](repeating: 0, count: framesAvailable + filterLength)
 
-                        /// Convert to double using SIMD
-                        let scale = 1.0 / 32768.0
-                        vDSP_vflt16D(input, 2, leftChannel, 1, vDSP_Length(framesAvailable))
-                        vDSP_vflt16D(input.advanced(by: 1), 2, rightChannel, 1, vDSP_Length(framesAvailable))
-                        vDSP_vsmulD(leftChannel, 1, [scale], leftChannel, 1, vDSP_Length(framesAvailable))
-                        vDSP_vsmulD(rightChannel, 1, [scale], rightChannel, 1, vDSP_Length(framesAvailable))
+                        vDSP_vflt16(input, 2, &leftChannel, 1, vDSP_Length(framesAvailable))
+                        vDSP_vflt16(input.advanced(by: 1), 2, &rightChannel, 1, vDSP_Length(framesAvailable))
 
-                        /// Apply filter using SIMD
-                        let filteredLeft = UnsafeMutablePointer<Double>.allocate(
-                            capacity: framesAvailable + filterSize
-                        )
-                        let filteredRight = UnsafeMutablePointer<Double>.allocate(
-                            capacity: framesAvailable + filterSize
-                        )
-                        defer {
-                            filteredLeft.deallocate()
-                            filteredRight.deallocate()
-                        }
+                        var scale = Float(1.0 / 32768.0)
+                        vDSP_vsmul(leftChannel, 1, &scale, &leftChannel, 1, vDSP_Length(framesAvailable))
+                        vDSP_vsmul(rightChannel, 1, &scale, &rightChannel, 1, vDSP_Length(framesAvailable))
 
-                        vDSP_convD(leftChannel, 1, filterCoeff, 1, filteredLeft, 1,
-                                 vDSP_Length(framesAvailable - filterSize + 1), vDSP_Length(filterSize))
-                        vDSP_convD(rightChannel, 1, filterCoeff, 1, filteredRight, 1,
-                                 vDSP_Length(framesAvailable - filterSize + 1), vDSP_Length(filterSize))
-
-                        /// Get pointers to PCM buffer channels
                         let resampledLeft = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![0])
                         let resampledRight = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![1])
 
-                        /// Use cubic interpolation for better quality
-                        for i in 0..<targetFrameCount {
-                            let sourceIndex = Double(i) * resampleRatio
-                            let index = Int(floor(sourceIndex))
-                            let fraction = sourceIndex - Double(index)
+                        /// Process in SIMD-friendly chunks
+                        let chunkSize = 8 * 16  // Process 128 samples at a time
 
-                            if index >= 1 && index < framesAvailable - filterSize - 2 {
-                                /// Cubic interpolation coefficients
-                                let x = fraction
-                                let x2 = x * x
-                                let x3 = x2 * x
+                        leftChannel.withUnsafeBufferPointer { leftPtr in
+                            rightChannel.withUnsafeBufferPointer { rightPtr in
+                                for chunk in stride(from: 0, to: targetFrameCount, by: chunkSize) {
+                                    let count = min(chunkSize, targetFrameCount - chunk)
 
-                                let c0 = -0.5 * x3 + x2 - 0.5 * x
-                                let c1 = 1.5 * x3 - 2.5 * x2 + 1.0
-                                let c2 = -1.5 * x3 + 2.0 * x2 + 0.5 * x
-                                let c3 = 0.5 * x3 - 0.5 * x2
+                                    for i in 0..<count {
+                                        let sourceIndex = Float(chunk + i) * Float(resampleRatio)
+                                        let index = Int(floor(sourceIndex))
+                                        let fraction = sourceIndex - Float(index)
 
-                                /// Interpolate left channel
-                                let leftSample =
-                                    filteredLeft[index - 1] * c0 +
-                                    filteredLeft[index] * c1 +
-                                    filteredLeft[index + 1] * c2 +
-                                    filteredLeft[index + 2] * c3
+                                        /// Calculate cubic interpolation coefficients
+                                        coefficients[0] = (1.0 - fraction) * (1.0 - fraction) * (1.0 - fraction)
+                                        coefficients[1] = 3.0 * fraction * (1.0 - fraction) * (1.0 - fraction)
+                                        coefficients[2] = 3.0 * fraction * fraction * (1.0 - fraction)
+                                        coefficients[3] = fraction * fraction * fraction
 
-                                /// Interpolate right channel
-                                let rightSample =
-                                    filteredRight[index - 1] * c0 +
-                                    filteredRight[index] * c1 +
-                                    filteredRight[index + 1] * c2 +
-                                    filteredRight[index + 2] * c3
+                                        if index + filterLength <= framesAvailable {
+                                            vDSP_dotpr(coefficients, 1,
+                                                     leftPtr.baseAddress!.advanced(by: index), 1,
+                                                     resampledLeft.advanced(by: chunk + i), 1
+                                                     )
 
-                                resampledLeft[i] = Float(max(-1.0, min(1.0, leftSample)))
-                                resampledRight[i] = Float(max(-1.0, min(1.0, rightSample)))
-                            } else {
-                                /// Fall back to nearest neighbor for edge cases
-                                resampledLeft[i] = Float(max(-1.0, min(1.0, filteredLeft[max(0, min(index, framesAvailable - filterSize))])))
-                                resampledRight[i] = Float(max(-1.0, min(1.0, filteredRight[max(0, min(index, framesAvailable - filterSize))])))
+                                            vDSP_dotpr(coefficients, 1,
+                                                     rightPtr.baseAddress!.advanced(by: index), 1,
+                                                     resampledRight.advanced(by: chunk + i), 1
+                                                     )
+                                        } else {
+                                            /// Handle edge case at end of buffer
+                                            let lastValidIndex = framesAvailable - 1
+                                            resampledLeft[chunk + i] = leftChannel[lastValidIndex]
+                                            resampledRight[chunk + i] = rightChannel[lastValidIndex]
+                                        }
+                                    }
+                                }
                             }
                         }
 
