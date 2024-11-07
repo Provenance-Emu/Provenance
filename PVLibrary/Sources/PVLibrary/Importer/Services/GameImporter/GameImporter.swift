@@ -143,7 +143,8 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Singleton instance of GameImporter
     public static let shared: GameImporter = GameImporter(FileManager.default,
                                                           GameImporterFileService(),
-                                                          GameImporterDatabaseService())
+                                                          GameImporterDatabaseService(),
+                                                          GameImporterSystemsService())
     
     /// Instance of OpenVGDB for database operations
     var openVGDB = OpenVGDB.init()
@@ -166,9 +167,6 @@ public final class GameImporter: GameImporting, ObservableObject {
     
     /// Map of system identifiers to their ROM paths
     public internal(set) var systemToPathMap = [String: URL]()
-    /// Map of ROM extensions to their corresponding system identifiers
-    public internal(set) var romExtensionToSystemsMap = [String: [String]]()
-    
     // MARK: - Queue
     
     public var importStatus: String = ""
@@ -179,6 +177,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     
     internal var gameImporterFileService:GameImporterFileServicing
     internal var gameImporterDatabaseService:GameImporterDatabaseServicing
+    internal var gameImporterSystemsService:GameImporterSystemsServicing
     
     // MARK: - Paths
     
@@ -211,17 +210,20 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Initializes the GameImporter
     internal init(_ fm: FileManager,
                   _ fileService:GameImporterFileServicing,
-                  _ databaseService:GameImporterDatabaseServicing) {
+                  _ databaseService:GameImporterDatabaseServicing,
+                  _ systemsService:GameImporterSystemsServicing) {
         gameImporterFileService = fileService
         gameImporterDatabaseService = databaseService
+        gameImporterSystemsService = systemsService
         
         //create defaults
         createDefaultDirectories(fm: fm)
         
-        //set the romsPath propery of the db service, since it needs access
+        //set service dependencies
         gameImporterDatabaseService.setRomsPath(url: romsPath)
         gameImporterDatabaseService.setOpenVGDB(openVGDB)
         
+        gameImporterSystemsService.setOpenVGDB(openVGDB)
     }
     
     /// Creates default directories
@@ -284,14 +286,14 @@ public final class GameImporter: GameImporting, ObservableObject {
                     Task.detached {
                         ILOG("RealmCollection changed state to .initial")
                         self.systemToPathMap = await updateSystemToPathMap()
-                        self.romExtensionToSystemsMap = updateromExtensionToSystemsMap()
+                        self.gameImporterSystemsService.setExtensionsToSystemMapping(updateromExtensionToSystemsMap())
                         self.initialized.leave()
                     }
                 case .update:
                     Task.detached {
                         ILOG("RealmCollection changed state to .update")
                         self.systemToPathMap = await updateSystemToPathMap()
-                        self.romExtensionToSystemsMap = updateromExtensionToSystemsMap()
+                        self.gameImporterSystemsService.setExtensionsToSystemMapping(updateromExtensionToSystemsMap())
                     }
                 case let .error(error):
                     ELOG("RealmCollection changed state to .error")
@@ -572,7 +574,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         item.fileType = try determineImportType(item)
         
         //get valid systems that this object might support
-        guard let systems = try? await determineSystems(for: item), !systems.isEmpty else {
+        guard let systems = try? await gameImporterSystemsService.determineSystems(for: item), !systems.isEmpty else {
             //this is actually an import error
             item.status = .failure
             throw GameImporterError.noSystemMatched

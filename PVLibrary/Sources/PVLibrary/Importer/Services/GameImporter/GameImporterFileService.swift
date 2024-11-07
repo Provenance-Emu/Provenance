@@ -28,11 +28,8 @@ class GameImporterFileService : GameImporterFileServicing {
         case .artwork:
             //TODO: implement me
             return
-        case .game:
-            _ = try await handleROM(queueItem)
-            return
-        case .cdRom:
-            _ = try await handleCDROMItem(queueItem)
+        case .game,.cdRom:
+            _ = try await processQueueItem(queueItem)
         case .unknown:
             throw GameImporterError.unsupportedFile
         }
@@ -64,14 +61,15 @@ class GameImporterFileService : GameImporterFileServicing {
             }
         }
     }
-    //MARK: - Normal ROMs
+    //MARK: - Normal ROMs and CDROMs
     
-    /// Moves a ROM to the appropriate subfolder
-    internal func handleROM(_ queueItem: ImportQueueItem) async throws {
-        guard queueItem.fileType == .game else {
+    /// Moves an ImportQueueItem to the appropriate subfolder
+    internal func processQueueItem(_ queueItem: ImportQueueItem) async throws {
+        guard queueItem.fileType == .game || queueItem.fileType == .cdRom else {
             throw GameImporterError.unsupportedFile
         }
         
+        //this might not be needed...
         guard !queueItem.systems.isEmpty else {
             throw GameImporterError.noSystemMatched
         }
@@ -84,40 +82,34 @@ class GameImporterFileService : GameImporterFileServicing {
         let destinationFolder = targetSystem.romsDirectory
         let destinationPath = destinationFolder.appendingPathComponent(fileName)
         
-        queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationPath)
-    }
-    
-    // MARK: - CDROM
-    
-    /// Ensures a BIOS file is copied to appropriate file destinations
-    ///  Returns the array of PVSystems that this BIOS file applies to
-    private func handleCDROMItem(_ queueItem: ImportQueueItem) async throws {
-        guard queueItem.fileType == .cdRom else {
-            throw GameImporterError.unsupportedCDROMFile
-        }
-        
-        guard !queueItem.systems.isEmpty else {
-            throw GameImporterError.unsupportedCDROMFile
-        }
-        
-        guard let targetSystem = queueItem.targetSystem() else {
-            throw GameImporterError.systemNotDetermined
-        }
-        
-        let fileName = queueItem.url.lastPathComponent
-        let destinationFolder = targetSystem.romsDirectory
-        let destinationPath = destinationFolder.appendingPathComponent(fileName)
-        
-        //TODO: check and process children
-        
         do {
             queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationPath)
+            try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
         } catch {
-            throw GameImporterError.failedToMoveCDROM(error)
+            throw GameImporterError.failedToMoveROM(error)
         }
     }
     
     // MARK: - Utility
+    
+    internal func moveChildImports(forQueueItem queueItem:ImportQueueItem, to destinationFolder:URL) async throws {
+        guard !queueItem.childQueueItems.isEmpty else {
+            return
+        }
+        
+        for childQueueItem in queueItem.childQueueItems {
+            let fileName = childQueueItem.url.lastPathComponent
+            let destinationPath = destinationFolder.appendingPathComponent(fileName)
+                    
+            do {
+                childQueueItem.destinationUrl = try await moveFile(childQueueItem.url, to: destinationPath)
+                //call recursively to keep moving child items to the target directory as a unit
+                try await moveChildImports(forQueueItem: childQueueItem, to: destinationFolder)
+            } catch {
+                throw GameImporterError.failedToMoveCDROM(error)
+            }
+        }
+    }
     
    
     /// Moves a file to the conflicts directory
