@@ -25,6 +25,7 @@ protocol GameImporterDatabaseServicing {
     func setOpenVGDB(_ vgdb: OpenVGDB)
     func setRomsPath(url:URL)
     func importGameIntoDatabase(queueItem: ImportQueueItem) async throws
+    func getArtwork(forGame game: PVGame) async -> PVGame
 }
 
 class GameImporterDatabaseService : GameImporterDatabaseServicing {
