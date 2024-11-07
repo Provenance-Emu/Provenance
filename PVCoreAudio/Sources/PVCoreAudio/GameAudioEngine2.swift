@@ -96,21 +96,16 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         /// Setup low-pass filter
         let filterSize = 4
         var filterCoeff = [Float](repeating: 0, count: filterSize)
-        let cutoff = Float(min(sourceRate, targetRate) / targetRate) * 0.45  /// Adjust cutoff based on rates
-
-        /// Create Hamming window with proper flag
         vDSP_hamm_window(&filterCoeff, vDSP_Length(filterSize), 0)
-
-        /// Normalize filter coefficients
         var sum: Float = 0
         vDSP_sve(filterCoeff, 1, &sum, vDSP_Length(filterSize))
         vDSP_vsdiv(filterCoeff, 1, &sum, &filterCoeff, 1, vDSP_Length(filterSize))
 
         return { pcmBuffer in
             let targetFrameCount = Int(pcmBuffer.frameCapacity)
-            /// Request extra frames for cubic interpolation and filtering
+            /// Request extra frames for interpolation and filtering
             let adjustedFrameCount = min(
-                Int(ceil(Double(targetFrameCount) * rateRatio)) + 3,  /// +3 for cubic interpolation
+                Int(ceil(Double(targetFrameCount) * rateRatio)) + filterSize,
                 Int(pcmBuffer.frameCapacity)
             )
             let sourceBytesToRead = adjustedFrameCount * sourceBytesPerFrame
@@ -154,43 +149,21 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         let outLeft = pcmBuffer.floatChannelData?[0]
                         let outRight = pcmBuffer.floatChannelData?[1]
 
-                        /// Perform cubic interpolation
-                        let outputFrames = min(targetFrameCount, sourceFrames - 3)
-                        for i in 0..<outputFrames {
-                            let sourcePos = Double(i) * rateRatio
-                            let sourceIndex = Int(floor(sourcePos))
-                            let fraction = Float(sourcePos - Double(sourceIndex))
+                        /// Use Accelerate's built-in interpolation
+                        var slope = Float(1.0 / rateRatio)
+                        vDSP_vqint(filteredLeft, &slope,
+                                  1,
+                                  outLeft!, 1,
+                                  vDSP_Length(targetFrameCount),
+                                  vDSP_Length(sourceFrames))
 
-                            if sourceIndex + 3 < sourceFrames {
-                                /// Cubic interpolation coefficients
-                                let x = fraction
-                                let x2 = x * x
-                                let x3 = x2 * x
+                        vDSP_vqint(filteredRight, &slope,
+                                  1,
+                                  outRight!, 1,
+                                  vDSP_Length(targetFrameCount),
+                                  vDSP_Length(sourceFrames))
 
-                                let c0 = -0.5 * x3 + x2 - 0.5 * x
-                                let c1 = 1.5 * x3 - 2.5 * x2 + 1.0
-                                let c2 = -1.5 * x3 + 2.0 * x2 + 0.5 * x
-                                let c3 = 0.5 * x3 - 0.5 * x2
-
-                                /// Interpolate left channel
-                                outLeft?[i] = filteredLeft[sourceIndex] * c0 +
-                                            filteredLeft[sourceIndex + 1] * c1 +
-                                            filteredLeft[sourceIndex + 2] * c2 +
-                                            filteredLeft[sourceIndex + 3] * c3
-
-                                /// Interpolate right channel
-                                outRight?[i] = filteredRight[sourceIndex] * c0 +
-                                             filteredRight[sourceIndex + 1] * c1 +
-                                             filteredRight[sourceIndex + 2] * c2 +
-                                             filteredRight[sourceIndex + 3] * c3
-                            } else {
-                                /// Handle edge case
-                                outLeft?[i] = filteredLeft[sourceIndex]
-                                outRight?[i] = filteredRight[sourceIndex]
-                            }
-                        }
-
-                        pcmBuffer.frameLength = AVAudioFrameCount(outputFrames)
+                        pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
                     }
                 }
             }
