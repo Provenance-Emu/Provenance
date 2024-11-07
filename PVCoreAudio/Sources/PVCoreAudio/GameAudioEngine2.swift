@@ -234,6 +234,124 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
                     pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
                 }
+            } else if sourceBitDepth == 8 {
+                sourceBuffer.withMemoryRebound(to: Int8.self, capacity: bytesRead) { input in
+                    let sourceFrames = bytesRead / sourceChannels
+
+                    /// Create temporary buffers
+                    var leftChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
+                    var rightChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
+                    var filteredLeft = [Float](repeating: 0, count: sourceFrames + filterSize)
+                    var filteredRight = [Float](repeating: 0, count: sourceFrames + filterSize)
+
+                    /// Convert to float with headroom (8-bit range is -128 to 127)
+                    var scale = Float(0.9 / 128.0)
+
+                    if sourceChannels == 2 {
+                        /// Stereo source
+                        var tempLeft = [Int8](repeating: 0, count: sourceFrames)
+                        var tempRight = [Int8](repeating: 0, count: sourceFrames)
+
+                        /// Deinterleave channels
+                        for i in 0..<sourceFrames {
+                            tempLeft[i] = input[i * 2]
+                            tempRight[i] = input[i * 2 + 1]
+                        }
+
+                        /// Convert to float
+                        vDSP_vflt8(tempLeft, 1, &leftChannel, 1, vDSP_Length(sourceFrames))
+                        vDSP_vflt8(tempRight, 1, &rightChannel, 1, vDSP_Length(sourceFrames))
+                    } else {
+                        /// Mono source - convert once and copy to both channels
+                        vDSP_vflt8(input, 1, &leftChannel, 1, vDSP_Length(sourceFrames))
+                        vDSP_mmov(&leftChannel, &rightChannel, vDSP_Length(sourceFrames), 1, 1, 1)
+                    }
+
+                    /// Apply scaling
+                    vDSP_vsmul(leftChannel, 1, &scale, &leftChannel, 1, vDSP_Length(sourceFrames))
+                    vDSP_vsmul(rightChannel, 1, &scale, &rightChannel, 1, vDSP_Length(sourceFrames))
+
+                    /// Apply low-pass filter
+                    vDSP_conv(leftChannel, 1, filterCoeff, 1, &filteredLeft, 1,
+                            vDSP_Length(sourceFrames), vDSP_Length(filterSize))
+                    vDSP_conv(rightChannel, 1, filterCoeff, 1, &filteredRight, 1,
+                            vDSP_Length(sourceFrames), vDSP_Length(filterSize))
+
+                    /// Get output buffer pointers
+                    let outLeft = pcmBuffer.floatChannelData?[0]
+                    let outRight = pcmBuffer.floatChannelData?[1]
+
+                    /// Perform SIMD linear interpolation
+                    let outputFrames = min(targetFrameCount, sourceFrames - 1)
+                    let simdCount = outputFrames & ~7  /// Round down to multiple of 8
+
+                    /// Process 8 samples at a time using SIMD
+                    for i in stride(from: 0, to: simdCount, by: 8) {
+                        let baseIndex = Double(i) * rateRatio
+                        let indices = SIMD8<Double>(
+                            baseIndex,
+                            baseIndex + rateRatio,
+                            baseIndex + rateRatio * 2,
+                            baseIndex + rateRatio * 3,
+                            baseIndex + rateRatio * 4,
+                            baseIndex + rateRatio * 5,
+                            baseIndex + rateRatio * 6,
+                            baseIndex + rateRatio * 7
+                        )
+
+                        var sourceIndices = SIMD8<Int>()
+                        var fractions = SIMD8<Float>()
+
+                        for j in 0..<8 {
+                            let index = floor(indices[j])
+                            sourceIndices[j] = Int(index)
+                            fractions[j] = Float(indices[j] - index)
+                        }
+
+                        var leftLow = SIMD8<Float>()
+                        var leftHigh = SIMD8<Float>()
+                        var rightLow = SIMD8<Float>()
+                        var rightHigh = SIMD8<Float>()
+
+                        for j in 0..<8 {
+                            leftLow[j] = filteredLeft[sourceIndices[j]]
+                            leftHigh[j] = filteredLeft[sourceIndices[j] + 1]
+                            rightLow[j] = filteredRight[sourceIndices[j]]
+                            rightHigh[j] = filteredRight[sourceIndices[j] + 1]
+                        }
+
+                        let oneMinusFraction = 1.0 - fractions
+                        let leftResult = leftLow * oneMinusFraction + leftHigh * fractions
+                        let rightResult = rightLow * oneMinusFraction + rightHigh * fractions
+
+                        for j in 0..<8 {
+                            outLeft?[i + j] = leftResult[j]
+                            outRight?[i + j] = rightResult[j]
+                        }
+                    }
+
+                    /// Handle remaining samples
+                    for i in simdCount..<outputFrames {
+                        let sourcePos = Double(i) * rateRatio
+                        let sourceIndex = Int(floor(sourcePos))
+                        let fraction = Float(sourcePos - Double(sourceIndex))
+
+                        if sourceIndex + 1 < sourceFrames {
+                            let leftSample = filteredLeft[sourceIndex] * (1.0 - fraction) +
+                                           filteredLeft[sourceIndex + 1] * fraction
+                            let rightSample = filteredRight[sourceIndex] * (1.0 - fraction) +
+                                            filteredRight[sourceIndex + 1] * fraction
+
+                            outLeft?[i] = leftSample
+                            outRight?[i] = rightSample
+                        } else {
+                            outLeft?[i] = filteredLeft[sourceIndex]
+                            outRight?[i] = filteredRight[sourceIndex]
+                        }
+                    }
+
+                    pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
+                }
             }
 
             return bytesRead
