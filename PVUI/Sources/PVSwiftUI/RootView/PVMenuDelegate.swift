@@ -241,5 +241,9 @@ extension PVRootViewController: ImportStatusDelegate {
     public func addImportsAction() {
         self.showImportOptionsAlert()
     }
+    
+    public func forceImportsAction() {
+        GameImporter.shared.startProcessing()
+    }
 }
 #endif

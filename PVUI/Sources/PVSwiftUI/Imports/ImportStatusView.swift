@@ -12,6 +12,7 @@ import PVLibrary
 public protocol ImportStatusDelegate : AnyObject {
     func dismissAction()
     func addImportsAction()
+    func forceImportsAction()
 }
 
 // View Model to manage import tasks
@@ -82,13 +83,22 @@ struct ImportStatusView: View {
                     .padding()
                 }
                 .navigationTitle("Import Status")
-                .navigationBarItems(
-                    leading: Button("Done") { delegate.dismissAction() },
-                    trailing:
-                    Button("Import Files") {
-                        delegate?.addImportsAction()
-                    }
-                )
+                .toolbar {
+                    ToolbarItemGroup(placement: .topBarLeading,
+                                     content: {
+                        Button("Done") { delegate.dismissAction()
+                        }
+                    })
+                    ToolbarItemGroup(placement: .topBarTrailing,
+                                     content:  {
+                        Button("Import Files") {
+                            delegate?.addImportsAction()
+                        }
+                        Button("Force Import") {
+                            delegate?.forceImportsAction()
+                        }
+                    })
+                }
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
