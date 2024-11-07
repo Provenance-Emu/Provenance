@@ -49,11 +49,11 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
     
     internal func importGameIntoDatabase(queueItem: ImportQueueItem) async throws {
-        guard let targetSystem = queueItem.systems.first else {
+        guard let targetSystem = queueItem.targetSystem() else {
             throw GameImporterError.systemNotDetermined
         }
         
-        DLOG("Attempting to import game: \(queueItem.url.lastPathComponent) for system: \(targetSystem.name)")
+        DLOG("Attempting to import game: \(queueItem.destinationUrl?.lastPathComponent) for system: \(targetSystem.name)")
         
         let filename = queueItem.url.lastPathComponent
         let partialPath = (targetSystem.identifier as NSString).appendingPathComponent(filename)
@@ -82,7 +82,11 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         let partialPath: String = (system.identifier as NSString).appendingPathComponent(filename)
         
         DLOG("Creating game object with title: \(title), partialPath: \(partialPath)")
-        let file = PVFile(withURL: queueItem.url)
+        guard let destUrl = queueItem.destinationUrl else {
+            //how did we get here, throw?
+            return
+        }
+        let file = PVFile(withURL: queueItem.destinationUrl!)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
         game.title = title
@@ -116,20 +120,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
         DLOG("Calculated MD5: \(md5)")
         
-//        // Register import with coordinator
-//        guard await importCoordinator.checkAndRegisterImport(md5: md5) else {
-//            DLOG("Import already in progress for MD5: \(md5)")
-//            throw GameImporterError.romAlreadyExistsInDatabase
-//        }
-//        DLOG("Registered import with coordinator for MD5: \(md5)")
-        
-//        defer {
-//            Task {
-//                await importCoordinator.completeImport(md5: md5)
-//                DLOG("Completed import coordination for MD5: \(md5)")
-//            }
-//        }
-        
         game.relatedFiles.append(objectsIn: relatedPVFiles)
         game.md5Hash = md5
         try await finishUpdateOrImport(ofGame: game)
@@ -148,25 +138,10 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         if RomDatabase.gamesCache[game.romPath] != nil {
             throw GameImporterError.romAlreadyExistsInDatabase
         }
-        var modified = false
         var game:PVGame = game
         if game.requiresSync {
-//            if importStartedHandler != nil {
-//                let fullpath = PVEmulatorConfiguration.path(forGame: game)
-//                Task { @MainActor in
-//                    self.importStartedHandler?(fullpath.path)
-//                }
-//            }
-            game = lookupInfo(for: game, overwrite: true)
-            modified = true
+            game = getUpdatedGameInfo(for: game, forceRefresh: true)
         }
-        let wasModified = modified
-//        if finishedImportHandler != nil {
-//            let md5: String = game.md5Hash
-//            //            Task { @MainActor in
-//            self.finishedImportHandler?(md5, wasModified)
-//            //            }
-//        }
         if game.originalArtworkFile == nil {
             game = await getArtwork(forGame: game)
         }
@@ -225,9 +200,101 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     //MARK: Utility
     
     
+    private func updateGameFields(_ game: PVGame, gameDBRecordInfo: [String : Any], forceRefresh: Bool) -> PVGame {
+        //we found the record for the target PVGame
+        
+        /* Optional results
+         gameTitle
+         boxImageURL
+         region
+         gameDescription
+         boxBackURL
+         developer
+         publisher
+         year
+         genres [comma array string]
+         referenceURL
+         releaseID
+         regionID
+         systemShortName
+         serial
+         */
+        
+        //this section updates the various fields in the return record.
+        if let title = gameDBRecordInfo["gameTitle"] as? String, !title.isEmpty, forceRefresh || game.title.isEmpty {
+            // Remove just (Disc 1) from the title. Discs with other numbers will retain their names
+            let revisedTitle = title.replacingOccurrences(of: "\\ \\(Disc 1\\)", with: "", options: .regularExpression)
+            game.title = revisedTitle
+        }
+        
+        if let boxImageURL = gameDBRecordInfo["boxImageURL"] as? String, !boxImageURL.isEmpty, forceRefresh || game.originalArtworkURL.isEmpty {
+            game.originalArtworkURL = boxImageURL
+        }
+        
+        if let regionName = gameDBRecordInfo["region"] as? String, !regionName.isEmpty, forceRefresh || game.regionName == nil {
+            game.regionName = regionName
+        }
+        
+        if let regionID = gameDBRecordInfo["regionID"] as? Int, forceRefresh || game.regionID.value == nil {
+            game.regionID.value = regionID
+        }
+        
+        if let gameDescription = gameDBRecordInfo["gameDescription"] as? String, !gameDescription.isEmpty, forceRefresh || game.gameDescription == nil {
+            let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
+            if let data = gameDescription.data(using: .isoLatin1) {
+                do {
+                    let htmlDecodedGameDescription = try NSMutableAttributedString(data: data, options: options, documentAttributes: nil)
+                    game.gameDescription = htmlDecodedGameDescription.string.replacingOccurrences(of: "(\\.|\\!|\\?)([A-Z][A-Za-z\\s]{2,})", with: "$1\n\n$2", options: .regularExpression)
+                } catch {
+                    ELOG("\(error.localizedDescription)")
+                }
+            }
+        }
+        
+        if let boxBackURL = gameDBRecordInfo["boxBackURL"] as? String, !boxBackURL.isEmpty, forceRefresh || game.boxBackArtworkURL == nil {
+            game.boxBackArtworkURL = boxBackURL
+        }
+        
+        if let developer = gameDBRecordInfo["developer"] as? String, !developer.isEmpty, forceRefresh || game.developer == nil {
+            game.developer = developer
+        }
+        
+        if let publisher = gameDBRecordInfo["publisher"] as? String, !publisher.isEmpty, forceRefresh || game.publisher == nil {
+            game.publisher = publisher
+        }
+        
+        if let genres = gameDBRecordInfo["genres"] as? String, !genres.isEmpty, forceRefresh || game.genres == nil {
+            game.genres = genres
+        }
+        
+        if let releaseDate = gameDBRecordInfo["releaseDate"] as? String, !releaseDate.isEmpty, forceRefresh || game.publishDate == nil {
+            game.publishDate = releaseDate
+        }
+        
+        if let referenceURL = gameDBRecordInfo["referenceURL"] as? String, !referenceURL.isEmpty, forceRefresh || game.referenceURL == nil {
+            game.referenceURL = referenceURL
+        }
+        
+        if let releaseID = gameDBRecordInfo["releaseID"] as? NSNumber, !releaseID.stringValue.isEmpty, forceRefresh || game.releaseID == nil {
+            game.releaseID = releaseID.stringValue
+        }
+        
+        if let systemShortName = gameDBRecordInfo["systemShortName"] as? String, !systemShortName.isEmpty, forceRefresh || game.systemShortName == nil {
+            game.systemShortName = systemShortName
+        }
+        
+        if let romSerial = gameDBRecordInfo["serial"] as? String, !romSerial.isEmpty, forceRefresh || game.romSerial == nil {
+            game.romSerial = romSerial
+        }
+        
+        return game
+    }
+    
     @discardableResult
-    func lookupInfo(for game: PVGame, overwrite: Bool = true) -> PVGame {
+    func getUpdatedGameInfo(for game: PVGame, forceRefresh: Bool = true) -> PVGame {
         game.requiresSync = false
+        
+        //step 1 - calculate md5 hash if needed
         if game.md5Hash.isEmpty {
             if let romFullPath = romsPath?.appendingPathComponent(game.romPath).path {
                 if let md5Hash = calculateMD5(forGame: game) {
@@ -239,6 +306,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             NSLog("Game md5 has was empty")
             return game
         }
+        
+        //step 2 - check art cache or database id for info based on md5 hash
         var resultsMaybe: [[String: Any]]?
         do {
             if let result = RomDatabase.getArtCache(game.md5Hash.uppercased(), systemIdentifier:game.systemIdentifier) {
@@ -249,6 +318,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         } catch {
             ELOG("\(error.localizedDescription)")
         }
+        
+        //step 3 - still didn't find any candidate results, check by file name
         if resultsMaybe == nil || resultsMaybe!.isEmpty { //PVEmulatorConfiguration.supportedROMFileExtensions.contains(game.file.url.pathExtension.lowercased()) {
             let fileName: String = game.file.url.lastPathComponent
             // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
@@ -270,6 +341,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 ELOG("\(error.localizedDescription)")
             }
         }
+        
+        //still got nothing, so just return the partial record we got.
         guard let results = resultsMaybe, !results.isEmpty else {
             // the file maybe exists but was wiped from DB,
             // try to re-import and rescan if can
@@ -289,6 +362,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
              */
             return game
         }
+    
+        //this block seems to pick the USA record from the DB if there are multiple options?
         var chosenResultMaybe: [String: Any]? =
         // Search by region id
         results.first { (dict) -> Bool in
@@ -308,100 +383,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             }
             chosenResultMaybe = results.first
         }
-        //write at the end of fininshOrUpdateImport
-        //autoreleasepool {
-        //        do {
+        
         game.requiresSync = false
         guard let chosenResult = chosenResultMaybe else {
             NSLog("Unable to find ROM \(game.romPath) in OpenVGDB")
             return game
         }
-        /* Optional results
-         gameTitle
-         boxImageURL
-         region
-         gameDescription
-         boxBackURL
-         developer
-         publisher
-         year
-         genres [comma array string]
-         referenceURL
-         releaseID
-         regionID
-         systemShortName
-         serial
-         */
-        if let title = chosenResult["gameTitle"] as? String, !title.isEmpty, overwrite || game.title.isEmpty {
-            // Remove just (Disc 1) from the title. Discs with other numbers will retain their names
-            let revisedTitle = title.replacingOccurrences(of: "\\ \\(Disc 1\\)", with: "", options: .regularExpression)
-            game.title = revisedTitle
-        }
-
-        if let boxImageURL = chosenResult["boxImageURL"] as? String, !boxImageURL.isEmpty, overwrite || game.originalArtworkURL.isEmpty {
-            game.originalArtworkURL = boxImageURL
-        }
-
-        if let regionName = chosenResult["region"] as? String, !regionName.isEmpty, overwrite || game.regionName == nil {
-            game.regionName = regionName
-        }
-
-        if let regionID = chosenResult["regionID"] as? Int, overwrite || game.regionID.value == nil {
-            game.regionID.value = regionID
-        }
-
-        if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
-            let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
-            if let data = gameDescription.data(using: .isoLatin1) {
-                do {
-                    let htmlDecodedGameDescription = try NSMutableAttributedString(data: data, options: options, documentAttributes: nil)
-                    game.gameDescription = htmlDecodedGameDescription.string.replacingOccurrences(of: "(\\.|\\!|\\?)([A-Z][A-Za-z\\s]{2,})", with: "$1\n\n$2", options: .regularExpression)
-                } catch {
-                    ELOG("\(error.localizedDescription)")
-                }
-            }
-        }
-
-        if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty, overwrite || game.boxBackArtworkURL == nil {
-            game.boxBackArtworkURL = boxBackURL
-        }
-
-        if let developer = chosenResult["developer"] as? String, !developer.isEmpty, overwrite || game.developer == nil {
-            game.developer = developer
-        }
-
-        if let publisher = chosenResult["publisher"] as? String, !publisher.isEmpty, overwrite || game.publisher == nil {
-            game.publisher = publisher
-        }
-
-        if let genres = chosenResult["genres"] as? String, !genres.isEmpty, overwrite || game.genres == nil {
-            game.genres = genres
-        }
-
-        if let releaseDate = chosenResult["releaseDate"] as? String, !releaseDate.isEmpty, overwrite || game.publishDate == nil {
-            game.publishDate = releaseDate
-        }
-
-        if let referenceURL = chosenResult["referenceURL"] as? String, !referenceURL.isEmpty, overwrite || game.referenceURL == nil {
-            game.referenceURL = referenceURL
-        }
-
-        if let releaseID = chosenResult["releaseID"] as? NSNumber, !releaseID.stringValue.isEmpty, overwrite || game.releaseID == nil {
-            game.releaseID = releaseID.stringValue
-        }
-
-        if let systemShortName = chosenResult["systemShortName"] as? String, !systemShortName.isEmpty, overwrite || game.systemShortName == nil {
-            game.systemShortName = systemShortName
-        }
-
-        if let romSerial = chosenResult["serial"] as? String, !romSerial.isEmpty, overwrite || game.romSerial == nil {
-            game.romSerial = romSerial
-        }
-        //            } catch {
-        //                ELOG("Failed to update game \(game.title) : \(error.localizedDescription)")
-        //            }
-        //}
-        return game
+        
+        return updateGameFields(game, gameDBRecordInfo:chosenResult, forceRefresh:forceRefresh)
     }
     
     func releaseID(forCRCs crcs: Set<String>) -> String? {
@@ -448,6 +437,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     /// Saves a game to the database
     func saveGame(_ game:PVGame) {
         do {
+            //TODO: this might crash if not on main thread - validate
             let database = RomDatabase.sharedInstance
             try database.writeTransaction {
                 database.realm.create(PVGame.self, value:game, update:.modified)
@@ -465,6 +455,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         
         //this seems to be spread in many places, not sure why.  it might be doable to put this in the queue item, but for now, trying to consolidate.
         //I have no history or explanation for why we need the 16 offset for SNES/NES
+        // the legacy code was actually inconsistently applied, so there's a good chance this causes some bugs (or fixes some)
         if game.systemIdentifier == SystemIdentifier.SNES.rawValue {
             offset = SystemIdentifier.SNES.offset
         } else if game.systemIdentifier == SystemIdentifier.NES.rawValue {
