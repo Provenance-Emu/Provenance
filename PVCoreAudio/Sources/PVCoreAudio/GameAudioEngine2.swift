@@ -34,7 +34,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
     private lazy var audioFormat: AVAudioFormat? = {
         return AVAudioFormat(
             commonFormat: .pcmFormatFloat32,
-            sampleRate: 48000.0,
+            sampleRate: AVAudioSession.sharedInstance().sampleRate,
             channels: 2,
             interleaved: false
         )
@@ -90,7 +90,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let sourceBitDepth = gameCore.audioBitDepth
         let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
         let sourceBytesPerFrame = sourceChannels * (Int(sourceBitDepth) / 8)
-        let targetRate = 48000.0
+        let targetRate = AVAudioSession.sharedInstance().sampleRate
         let rateRatio = Double(sourceRate) / targetRate
 
         /// Setup low-pass filter
@@ -390,7 +390,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         /// Create format for non-interleaved float stereo
         guard let format = AVAudioFormat(
             commonFormat: .pcmFormatFloat32,
-            sampleRate: 48000.0,
+            sampleRate: AVAudioSession.sharedInstance().sampleRate,
             channels: 2,
             interleaved: false
         ) else {
@@ -448,7 +448,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         /// Set varispeed rate based on source rate
         let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
-        let targetRate = 48000.0
+        let targetRate = AVAudioSession.sharedInstance().sampleRate
         let rateRatio = sourceRate / targetRate
 
         /// Adjust varispeed rate since we're also interpolating
