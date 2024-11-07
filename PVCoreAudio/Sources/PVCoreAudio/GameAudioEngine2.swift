@@ -90,13 +90,33 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let targetRate: Double = 48000.0
         let resampleRatio = Double(sourceRate) / targetRate
 
-        /// Pre-calculate filter coefficients
-        let filterSize = 3
-        var filterCoeff = [Double](repeating: 1.0 / Double(filterSize), count: filterSize)
+        /// Use a larger filter for better quality when rates differ significantly
+        let filterSize = max(3, Int(abs(resampleRatio - 1.0) * 8))
+
+        /// Create a better low-pass filter based on the ratio
+        let nyquistFreq = min(0.5, 0.5 * min(targetRate / sourceRate, sourceRate / targetRate))
+        var filterCoeff = [Double](repeating: 0.0, count: filterSize)
+
+        /// Compute Lanczos filter coefficients
+        for i in 0..<filterSize {
+            let x = Double.pi * (2.0 * nyquistFreq) * (Double(i) - Double(filterSize - 1) / 2.0)
+            if x != 0 {
+                filterCoeff[i] = sin(x) / x * sin(x / Double(filterSize)) / (x / Double(filterSize))
+            } else {
+                filterCoeff[i] = 1.0
+            }
+        }
+
+        /// Normalize filter coefficients
+        let sum = filterCoeff.reduce(0.0, +)
+        filterCoeff = filterCoeff.map { $0 / sum }
+
+        DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Ratio: \(resampleRatio), Filter size: \(filterSize)")
 
         return { pcmBuffer in
             let targetFrameCount = Int(pcmBuffer.frameCapacity)
-            let sourceFrameCount = Int(ceil(Double(targetFrameCount) * resampleRatio)) + 2
+            /// Request more source frames for better interpolation
+            let sourceFrameCount = Int(ceil(Double(targetFrameCount) * resampleRatio)) + filterSize
             let sourceBytesToRead = sourceFrameCount * sourceBytesPerFrame
 
             /// Read source data using SIMD-aligned buffer
@@ -121,10 +141,10 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
                         /// Allocate SIMD-aligned buffers
                         let leftChannel = UnsafeMutablePointer<Double>.allocate(
-                            capacity: framesAvailable + 8
+                            capacity: framesAvailable + filterSize
                         )
                         let rightChannel = UnsafeMutablePointer<Double>.allocate(
-                            capacity: framesAvailable + 8
+                            capacity: framesAvailable + filterSize
                         )
                         defer {
                             leftChannel.deallocate()
@@ -140,10 +160,10 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
                         /// Apply filter using SIMD
                         let filteredLeft = UnsafeMutablePointer<Double>.allocate(
-                            capacity: framesAvailable + 8
+                            capacity: framesAvailable + filterSize
                         )
                         let filteredRight = UnsafeMutablePointer<Double>.allocate(
-                            capacity: framesAvailable + 8
+                            capacity: framesAvailable + filterSize
                         )
                         defer {
                             filteredLeft.deallocate()
@@ -159,54 +179,43 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                         let resampledLeft = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![0])
                         let resampledRight = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![1])
 
-                        /// Use SIMD for interpolation
-                        let simdCount = targetFrameCount / 4
-                        for i in stride(from: 0, to: simdCount * 4, by: 4) {
-                            let indices = SIMD4<Double>(
-                                Double(i) * resampleRatio,
-                                Double(i + 1) * resampleRatio,
-                                Double(i + 2) * resampleRatio,
-                                Double(i + 3) * resampleRatio
-                            )
-                            let baseIndices = SIMD4<Int>(indices)
-                            let fractions = indices - indices.rounded(.down)
-
-                            for j in 0..<4 {
-                                let index = baseIndices[j]
-                                let fraction = fractions[j]
-
-                                if index + 1 < framesAvailable - filterSize + 1 {
-                                    let leftSample = filteredLeft[index] * (1.0 - fraction) +
-                                                   filteredLeft[index + 1] * fraction
-                                    let rightSample = filteredRight[index] * (1.0 - fraction) +
-                                                    filteredRight[index + 1] * fraction
-
-                                    resampledLeft[i + j] = Float(max(-1.0, min(1.0, leftSample)))
-                                    resampledRight[i + j] = Float(max(-1.0, min(1.0, rightSample)))
-                                } else {
-                                    resampledLeft[i + j] = Float(max(-1.0, min(1.0, filteredLeft[min(index, framesAvailable - filterSize)])))
-                                    resampledRight[i + j] = Float(max(-1.0, min(1.0, filteredRight[min(index, framesAvailable - filterSize)])))
-                                }
-                            }
-                        }
-
-                        /// Handle remaining frames
-                        for i in (simdCount * 4)..<targetFrameCount {
+                        /// Use cubic interpolation for better quality
+                        for i in 0..<targetFrameCount {
                             let sourceIndex = Double(i) * resampleRatio
-                            let index = Int(sourceIndex)
-                            let fraction = sourceIndex - floor(sourceIndex)
+                            let index = Int(floor(sourceIndex))
+                            let fraction = sourceIndex - Double(index)
 
-                            if index + 1 < framesAvailable - filterSize + 1 {
-                                let leftSample = filteredLeft[index] * (1.0 - fraction) +
-                                               filteredLeft[index + 1] * fraction
-                                let rightSample = filteredRight[index] * (1.0 - fraction) +
-                                                filteredRight[index + 1] * fraction
+                            if index >= 1 && index < framesAvailable - filterSize - 2 {
+                                /// Cubic interpolation coefficients
+                                let x = fraction
+                                let x2 = x * x
+                                let x3 = x2 * x
+
+                                let c0 = -0.5 * x3 + x2 - 0.5 * x
+                                let c1 = 1.5 * x3 - 2.5 * x2 + 1.0
+                                let c2 = -1.5 * x3 + 2.0 * x2 + 0.5 * x
+                                let c3 = 0.5 * x3 - 0.5 * x2
+
+                                /// Interpolate left channel
+                                let leftSample =
+                                    filteredLeft[index - 1] * c0 +
+                                    filteredLeft[index] * c1 +
+                                    filteredLeft[index + 1] * c2 +
+                                    filteredLeft[index + 2] * c3
+
+                                /// Interpolate right channel
+                                let rightSample =
+                                    filteredRight[index - 1] * c0 +
+                                    filteredRight[index] * c1 +
+                                    filteredRight[index + 1] * c2 +
+                                    filteredRight[index + 2] * c3
 
                                 resampledLeft[i] = Float(max(-1.0, min(1.0, leftSample)))
                                 resampledRight[i] = Float(max(-1.0, min(1.0, rightSample)))
                             } else {
-                                resampledLeft[i] = Float(max(-1.0, min(1.0, filteredLeft[min(index, framesAvailable - filterSize)])))
-                                resampledRight[i] = Float(max(-1.0, min(1.0, filteredRight[min(index, framesAvailable - filterSize)])))
+                                /// Fall back to nearest neighbor for edge cases
+                                resampledLeft[i] = Float(max(-1.0, min(1.0, filteredLeft[max(0, min(index, framesAvailable - filterSize))])))
+                                resampledRight[i] = Float(max(-1.0, min(1.0, filteredRight[max(0, min(index, framesAvailable - filterSize))])))
                             }
                         }
 
