@@ -266,7 +266,8 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         do {
             return try await FileManager.default.contentsOfDirectory(at: path,
                                                                      includingPropertiesForKeys: nil,
-                                                                     options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])
+                                                                     options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants,
+                                                                               .skipsHiddenFiles])
         } catch {
             ELOG("Error scanning initial files: \(error)")
             return []
