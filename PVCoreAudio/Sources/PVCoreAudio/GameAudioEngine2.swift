@@ -26,6 +26,11 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         }
     }
 
+    private lazy var varispeedNode: AVAudioUnitVarispeed = {
+        let node = AVAudioUnitVarispeed()
+        return node
+    }()
+
     private lazy var audioFormat: AVAudioFormat? = {
         return AVAudioFormat(
             commonFormat: .pcmFormatFloat32,
@@ -85,30 +90,20 @@ final public class GameAudioEngine2: AudioEngineProtocol {
         let sourceBitDepth = gameCore.audioBitDepth
         let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
         let sourceBytesPerFrame = sourceChannels * (Int(sourceBitDepth) / 8)
-
-        /// Setup conversion parameters
-        let targetRate: Double = 48000.0
-        let resampleRatio = Double(sourceRate) / targetRate
-
-        /// Adjust playback position to maintain correct timing
-        var playbackPosition: Double = 0.0
-        let playbackIncrement = resampleRatio  /// This maintains original timing
-
-        /// 4-point interpolation
-        let filterLength = 4
-        var coefficients = [Float](repeating: 0, count: filterLength)
+        let targetRate = 48000.0
+        let rateRatio = Double(sourceRate) / targetRate
 
         return { pcmBuffer in
             let targetFrameCount = Int(pcmBuffer.frameCapacity)
-            let sourceFrameCount = Int(ceil(Double(targetFrameCount) * resampleRatio)) + filterLength
-            let sourceBytesToRead = sourceFrameCount * sourceBytesPerFrame
-
-            /// Read source data using SIMD-aligned buffer
-            let alignment = MemoryLayout<SIMD8<Float>>.alignment
-            let sourceBuffer = UnsafeMutableRawPointer.allocate(
-                byteCount: sourceBytesToRead,
-                alignment: alignment
+            /// Request extra frames for interpolation
+            let adjustedFrameCount = min(
+                Int(ceil(Double(targetFrameCount) * rateRatio)) + 1,  /// +1 for interpolation overlap
+                Int(pcmBuffer.frameCapacity)
             )
+            let sourceBytesToRead = adjustedFrameCount * sourceBytesPerFrame
+
+            /// Read source data
+            let sourceBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: sourceBytesToRead)
             defer { sourceBuffer.deallocate() }
 
             let bytesRead = buffer.read(sourceBuffer, preferredSize: sourceBytesToRead)
@@ -121,67 +116,52 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             if sourceBitDepth == 16 {
                 sourceBuffer.withMemoryRebound(to: Int16.self, capacity: bytesRead / 2) { input in
                     if sourceChannels == 2 {
-                        let framesAvailable = bytesRead / 4
+                        /// Calculate actual frames available from bytes read
+                        let sourceFrames = bytesRead / 4  /// 2 channels * 2 bytes
 
-                        /// Convert to float and scale
-                        var leftChannel = [Float](repeating: 0, count: framesAvailable + filterLength)
-                        var rightChannel = [Float](repeating: 0, count: framesAvailable + filterLength)
+                        /// Create temporary buffers for source data
+                        var leftChannel = [Float](repeating: 0, count: sourceFrames)
+                        var rightChannel = [Float](repeating: 0, count: sourceFrames)
 
-                        vDSP_vflt16(input, 2, &leftChannel, 1, vDSP_Length(framesAvailable))
-                        vDSP_vflt16(input.advanced(by: 1), 2, &rightChannel, 1, vDSP_Length(framesAvailable))
-
+                        /// Convert source data to float
                         var scale = Float(1.0 / 32768.0)
-                        vDSP_vsmul(leftChannel, 1, &scale, &leftChannel, 1, vDSP_Length(framesAvailable))
-                        vDSP_vsmul(rightChannel, 1, &scale, &rightChannel, 1, vDSP_Length(framesAvailable))
+                        vDSP_vflt16(input, 2, &leftChannel, 1, vDSP_Length(sourceFrames))
+                        vDSP_vflt16(input.advanced(by: 1), 2, &rightChannel, 1, vDSP_Length(sourceFrames))
 
-                        let resampledLeft = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![0])
-                        let resampledRight = UnsafeMutablePointer<Float>(pcmBuffer.floatChannelData![1])
+                        vDSP_vsmul(leftChannel, 1, &scale, &leftChannel, 1, vDSP_Length(sourceFrames))
+                        vDSP_vsmul(rightChannel, 1, &scale, &rightChannel, 1, vDSP_Length(sourceFrames))
 
-                        /// Process in SIMD-friendly chunks
-                        let chunkSize = 8 * 16  // Process 128 samples at a time
+                        /// Get output buffer pointers
+                        let outLeft = pcmBuffer.floatChannelData?[0]
+                        let outRight = pcmBuffer.floatChannelData?[1]
 
-                        leftChannel.withUnsafeBufferPointer { leftPtr in
-                            rightChannel.withUnsafeBufferPointer { rightPtr in
-                                for i in 0..<targetFrameCount {
-                                    let sourceIndex = Float(playbackPosition)
-                                    let index = Int(floor(Double(sourceIndex)))
-                                    let fraction = sourceIndex - Float(index)
+                        /// Perform linear interpolation
+                        let outputFrames = min(targetFrameCount, sourceFrames - 1)
+                        for i in 0..<outputFrames {
+                            let sourcePos = Double(i) * rateRatio
+                            let sourceIndex = Int(floor(sourcePos))
+                            let fraction = Float(sourcePos - Double(sourceIndex))
 
-                                    /// Calculate cubic interpolation coefficients
-                                    coefficients[0] = (1.0 - fraction) * (1.0 - fraction) * (1.0 - fraction)
-                                    coefficients[1] = 3.0 * fraction * (1.0 - fraction) * (1.0 - fraction)
-                                    coefficients[2] = 3.0 * fraction * fraction * (1.0 - fraction)
-                                    coefficients[3] = fraction * fraction * fraction
+                            if sourceIndex + 1 < sourceFrames {
+                                /// Linear interpolation for left channel
+                                let leftSample = leftChannel[sourceIndex] * (1.0 - fraction) +
+                                               leftChannel[sourceIndex + 1] * fraction
 
-                                    if index + filterLength <= framesAvailable {
-                                        vDSP_dotpr(coefficients, 1,
-                                                 leftPtr.baseAddress!.advanced(by: index), 1,
-                                                 resampledLeft.advanced(by: i),
-                                                 vDSP_Length(1))
+                                /// Linear interpolation for right channel
+                                let rightSample = rightChannel[sourceIndex] * (1.0 - fraction) +
+                                                rightChannel[sourceIndex + 1] * fraction
 
-                                        vDSP_dotpr(coefficients, 1,
-                                                 rightPtr.baseAddress!.advanced(by: index), 1,
-                                                 resampledRight.advanced(by: i),
-                                                 vDSP_Length(1))
-                                    } else {
-                                        /// Handle edge case
-                                        let lastValidIndex = framesAvailable - 1
-                                        resampledLeft[i] = leftChannel[lastValidIndex]
-                                        resampledRight[i] = rightChannel[lastValidIndex]
-                                    }
-
-                                    /// Increment playback position to maintain timing
-                                    playbackPosition += playbackIncrement
-                                }
+                                outLeft?[i] = leftSample
+                                outRight?[i] = rightSample
+                            } else {
+                                /// Handle edge case
+                                outLeft?[i] = leftChannel[sourceIndex]
+                                outRight?[i] = rightChannel[sourceIndex]
                             }
                         }
 
-                        /// Reset playback position if needed
-                        if playbackPosition >= Double(framesAvailable) {
-                            playbackPosition -= Double(framesAvailable)
-                        }
-
-                        pcmBuffer.frameLength = AVAudioFrameCount(targetFrameCount)
+                        /// Set frame length to actual interpolated frames
+                        pcmBuffer.frameLength = AVAudioFrameCount(outputFrames)
                     }
                 }
             }
@@ -201,7 +181,7 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             commonFormat: .pcmFormatFloat32,
             sampleRate: 48000.0,
             channels: 2,
-            interleaved: false    /// Non-interleaved for mixer compatibility
+            interleaved: false
         ) else {
             ELOG("Failed to create format")
             return
@@ -209,17 +189,15 @@ final public class GameAudioEngine2: AudioEngineProtocol {
 
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
 
-        /// Create source node with SIMD-optimized rendering block
+        /// Create source node
         let renderBlock: AVAudioSourceNodeRenderBlock = { isSilence, timestamp, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
 
-            /// Create a PCM buffer to hold the audio data
             guard let pcmBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else {
                 isSilence.pointee = true
                 return noErr
             }
 
-            /// Read into PCM buffer
             let bytesCopied = read(pcmBuffer)
 
             if bytesCopied == 0 {
@@ -229,73 +207,17 @@ final public class GameAudioEngine2: AudioEngineProtocol {
                 return noErr
             }
 
-            /// Get pointers for SIMD operations
-            let sourceLeft = pcmBuffer.floatChannelData?.pointee
-            let sourceRight = pcmBuffer.floatChannelData?.advanced(by: 1).pointee
-            let destLeft = ablPointer[0].mData?.assumingMemoryBound(to: Float.self)
-            let destRight = ablPointer[1].mData?.assumingMemoryBound(to: Float.self)
+            /// Copy only the valid frames to output buffers
+            for i in 0..<2 {
+                let source = pcmBuffer.floatChannelData?[i]
+                let dest = ablPointer[i].mData?.assumingMemoryBound(to: Float.self)
+                let count = Int(pcmBuffer.frameLength)
 
-            guard let sourceLeft = sourceLeft,
-                  let sourceRight = sourceRight,
-                  let destLeft = destLeft,
-                  let destRight = destRight else {
-                isSilence.pointee = true
-                return noErr
-            }
-
-            /// Process in chunks of 8 samples using SIMD
-            let simdCount = Int(frameCount) / 8
-            for i in 0..<simdCount {
-                let leftChunk = SIMD8<Float>(
-                    sourceLeft[i * 8 + 0],
-                    sourceLeft[i * 8 + 1],
-                    sourceLeft[i * 8 + 2],
-                    sourceLeft[i * 8 + 3],
-                    sourceLeft[i * 8 + 4],
-                    sourceLeft[i * 8 + 5],
-                    sourceLeft[i * 8 + 6],
-                    sourceLeft[i * 8 + 7]
-                )
-
-                let rightChunk = SIMD8<Float>(
-                    sourceRight[i * 8 + 0],
-                    sourceRight[i * 8 + 1],
-                    sourceRight[i * 8 + 2],
-                    sourceRight[i * 8 + 3],
-                    sourceRight[i * 8 + 4],
-                    sourceRight[i * 8 + 5],
-                    sourceRight[i * 8 + 6],
-                    sourceRight[i * 8 + 7]
-                )
-
-                /// Store SIMD vectors directly
-                withUnsafePointer(to: leftChunk) { ptr in
-                    ptr.withMemoryRebound(to: Float.self, capacity: 8) { floatPtr in
-                        (destLeft + (i * 8)).initialize(from: floatPtr, count: 8)
-                    }
-                }
-
-                withUnsafePointer(to: rightChunk) { ptr in
-                    ptr.withMemoryRebound(to: Float.self, capacity: 8) { floatPtr in
-                        (destRight + (i * 8)).initialize(from: floatPtr, count: 8)
-                    }
-                }
-            }
-
-            /// Handle remaining samples
-            let remainingSamples = Int(frameCount) % 8
-            if remainingSamples > 0 {
-                let startIdx = simdCount * 8
-                for i in 0..<remainingSamples {
-                    destLeft[startIdx + i] = sourceLeft[startIdx + i]
-                    destRight[startIdx + i] = sourceRight[startIdx + i]
-                }
+                vDSP_mmov(source!, dest!, vDSP_Length(count), 1, 1, 1)
+                ablPointer[i].mDataByteSize = UInt32(count * 4)
             }
 
             isSilence.pointee = false
-            ablPointer[0].mDataByteSize = UInt32(frameCount * 4)
-            ablPointer[1].mDataByteSize = UInt32(frameCount * 4)
-
             return noErr
         }
 
@@ -306,8 +228,23 @@ final public class GameAudioEngine2: AudioEngineProtocol {
             return
         }
 
+        /// Setup audio chain with varispeed
         engine.attach(src)
-        engine.connect(src, to: engine.mainMixerNode, format: format)
+        engine.attach(varispeedNode)
+
+        engine.connect(src, to: varispeedNode, format: format)
+        engine.connect(varispeedNode, to: engine.mainMixerNode, format: format)
+
+        /// Set varispeed rate based on source rate
+        let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
+        let targetRate = 48000.0
+        let rateRatio = sourceRate / targetRate
+
+        /// Adjust varispeed rate since we're also interpolating
+        varispeedNode.rate = Float(rateRatio)
+
+        DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Rate ratio: \(rateRatio)")
+
         engine.mainMixerNode.outputVolume = volume
     }
 
