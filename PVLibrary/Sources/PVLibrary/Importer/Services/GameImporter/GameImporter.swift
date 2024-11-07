@@ -317,6 +317,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
     
+    public func getArtwork(forGame game: PVGame) async -> PVGame {
+        return await gameImporterDatabaseService.getArtwork(forGame: game)
+    }
+    
     /// Deinitializer
     deinit {
         notificationToken?.invalidate()
