@@ -16,8 +16,8 @@ struct SystemSelectionView: View {
             ForEach(item.systems, id: \.self) { system in
                 Button(action: {
                     // Set the chosen system and update the status
-//                    item.userChosenSystem = system
-//                    item.status = .queued
+                    item.userChosenSystem = system
+                    item.status = .queued
                     // Dismiss the view
                     presentationMode.wrappedValue.dismiss()
                 }) {
