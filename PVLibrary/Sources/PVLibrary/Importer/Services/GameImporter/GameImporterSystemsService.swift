@@ -244,7 +244,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
         if let results = try openVGDB?.searchDatabase(usingKey: "romHashMD5", value: md5),
            let firstResult = results.first,
            let systemID = firstResult["systemID"] as? NSNumber,
-           let system = PVEmulatorConfiguration.system(forIdentifier: String(systemID.intValue)) {
+           let system = PVEmulatorConfiguration.system(forDatabaseID: systemID.intValue) {
             DLOG("System determined by MD5 match: \(system.name)")
             return system
         }
