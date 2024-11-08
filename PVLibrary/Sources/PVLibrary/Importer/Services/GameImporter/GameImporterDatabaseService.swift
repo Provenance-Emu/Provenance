@@ -25,6 +25,7 @@ protocol GameImporterDatabaseServicing {
     func setOpenVGDB(_ vgdb: OpenVGDB)
     func setRomsPath(url:URL)
     func importGameIntoDatabase(queueItem: ImportQueueItem) async throws
+    func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws
     func getArtwork(forGame game: PVGame) async -> PVGame
 }
 
@@ -50,8 +51,9 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
     
     internal func importGameIntoDatabase(queueItem: ImportQueueItem) async throws {
-        //TODO: what do if this is a BIOS?
-        
+        guard queueItem.fileType != .bios else {
+            return
+        }
         
         guard let targetSystem = queueItem.targetSystem() else {
             throw GameImporterError.systemNotDetermined
@@ -80,6 +82,15 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("No existing game found, starting import to database")
             try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem, relatedFiles: nil)
         }
+    }
+    
+    internal func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws {
+        guard let _ = queueItem.destinationUrl else {
+            //how did we get here, throw?
+            throw GameImporterError.incorrectDestinationURL
+        }
+        
+        
     }
     
     /// Imports a ROM to the database
