@@ -57,7 +57,7 @@ class GameImporterFileService : GameImporterFileServicing {
                 let biosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
                     .appendingPathComponent(bios.expectedFilename)
                
-                queueItem.destinationUrl = try await moveFile(queueItem.url, to: biosPath)
+                queueItem.destinationUrl = try await moveFile(queueItem.url, toExplicitDestination: biosPath)
             }
         }
     }
@@ -118,12 +118,21 @@ class GameImporterFileService : GameImporterFileServicing {
     }
     
     /// Move a `URL` to a destination, creating the destination directory if needed
-    private func moveFile(_ file: URL, to destination: URL) async throws -> URL {
-        try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
-        let destPath = destination.appendingPathComponent(file.lastPathComponent)
+    private func moveFile(_ file: URL, to destinationDirectory: URL) async throws -> URL {
+        try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
+        let destPath = destinationDirectory.appendingPathComponent(file.lastPathComponent)
         try FileManager.default.moveItem(at: file, to: destPath)
         DLOG("Moved file to: \(destPath.path)")
         return destPath
+    }
+    
+    /// Move a `URL` to a destination, creating the destination directory if needed
+    private func moveFile(_ file: URL, toExplicitDestination destination: URL) async throws -> URL {
+        let destinationDirectory = destination.deletingLastPathComponent()
+        try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
+        try FileManager.default.moveItem(at: file, to: destination)
+        DLOG("Moved file to: \(destination.path)")
+        return destination
     }
     
     /// Moves a file and overwrites if it already exists at the destination
