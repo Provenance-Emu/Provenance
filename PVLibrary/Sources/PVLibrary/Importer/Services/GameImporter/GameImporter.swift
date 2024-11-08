@@ -551,17 +551,22 @@ public final class GameImporter: GameImporting, ObservableObject {
             item.status = .success
             updateImporterStatus("Completed \(item.url.lastPathComponent)")
             ILOG("GameImportQueue - processing item in queue: \(item.url) completed.")
-        } catch {
-            ILOG("GameImportQueue - processing item in queue: \(item.url) caught error...")
-            if error.localizedDescription.contains("Conflict") {
+        } catch let error as GameImporterError {
+            switch error {
+            case .conflictDetected:
                 item.status = .conflict
                 updateImporterStatus("Conflict for \(item.url.lastPathComponent). User action needed.")
                 WLOG("GameImportQueue - processing item in queue: \(item.url) restuled in conflict.")
-            } else {
+            default:
                 item.status = .failure
                 updateImporterStatus("Failed \(item.url.lastPathComponent) with error: \(error.localizedDescription)")
                 ELOG("GameImportQueue - processing item in queue: \(item.url) restuled in error: \(error.localizedDescription)")
             }
+        } catch {
+            ILOG("GameImportQueue - processing item in queue: \(item.url) caught error... \(error.localizedDescription)")
+            item.status = .failure
+            updateImporterStatus("Failed \(item.url.lastPathComponent) with error: \(error.localizedDescription)")
+            ELOG("GameImportQueue - processing item in queue: \(item.url) restuled in error: \(error.localizedDescription)")
         }
     }
 
@@ -604,11 +609,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         item.systems = systems
         
         //this might be a conflict if we can't infer what to do
-        if item.systems.count > 1 {
+        //for BIOS, we can handle multiple systems, so allow that to proceed
+        if item.fileType != .bios && item.targetSystem() == nil {
             //conflict
             item.status = .conflict
             //start figuring out what to do, because this item is a conflict
             try await gameImporterFileService.moveToConflictsFolder(item, conflictsPath: conflictPath)
+            throw GameImporterError.conflictDetected
         }
         
         //move ImportQueueItem to appropriate file location

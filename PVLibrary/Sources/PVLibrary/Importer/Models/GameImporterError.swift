@@ -17,4 +17,5 @@ public enum GameImporterError: Error, Sendable {
     case noBIOSMatchForBIOSFileType
     case unsupportedCDROMFile
     case incorrectDestinationURL
+    case conflictDetected
 }
