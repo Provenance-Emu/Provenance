@@ -21,7 +21,7 @@ import PVCoreBridge
 
 /// Second version of the game audio engine
 /// This one based on `AVAudioEngine`
-public class GameAudioEngine: AudioEngineProtocol {
+public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
     
     public var volume: Float {
         didSet {
@@ -214,7 +214,7 @@ public class GameAudioEngine: AudioEngineProtocol {
     }
 }
 
-extension GameAudioEngine {
+extension AVAudioEngineGameAudioEngine {
     private func performResumeAudio() {
         DispatchQueue.main
             .asyncAfter(deadline: .now() + 0.020) {
@@ -234,7 +234,7 @@ extension GameAudioEngine {
 
 
 // MARK: - Volume
-public extension GameAudioEngine {
+public extension AVAudioEngineGameAudioEngine {
     
     func setVolume(_ volume: Float) {
         self.volume = volume
@@ -256,7 +256,7 @@ public extension GameAudioEngine {
 }
 
 // MARK: - Runloop
-public extension GameAudioEngine {
+public extension AVAudioEngineGameAudioEngine {
     
     func startAudio() throws {
          guard !isPlaying else { return }
@@ -297,7 +297,7 @@ public extension GameAudioEngine {
 }
 
 // Mono Audio
-extension GameAudioEngine: MonoAudioEngine {
+extension AVAudioEngineGameAudioEngine: MonoAudioEngine {
     
     public func setMono(_ isMono: Bool) {
         self.isMonoOutput = isMono

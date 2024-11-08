@@ -77,14 +77,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     private(set) lazy var gameAudio: any AudioEngineProtocol = {
         audioInited = true
         
-        if Defaults[.useLegacyAudioEngine] {
-//            let engine = GameAudioEngine()
-            let engine = OEGameAudioEngine()
-            return engine
-        } else {
-            let engine = GameAudioEngine2()
-            return engine
-        }
+        let engineOption = Defaults[.audioEngine]
+        return engineOption.makeAudioEngine()
     }()
     
     var fpsTimer: Timer?
