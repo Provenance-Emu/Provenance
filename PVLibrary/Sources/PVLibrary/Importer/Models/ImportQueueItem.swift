@@ -52,10 +52,10 @@ public enum ProcessingState {
 @Observable
 public class ImportQueueItem: Identifiable, ObservableObject {
     public let id = UUID()
-    public let url: URL
+    public var url: URL
     public var fileType: FileType
     public var systems: [PVSystem]  // Can be set to the specific system type
-    public var userChosenSystem: System?
+    public var userChosenSystem: PVSystem?
     public var destinationUrl: URL?
     
     //this is used when a single import has child items - e.g., m3u, cue, directory
