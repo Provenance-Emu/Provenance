@@ -62,13 +62,16 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
             for bios in biosMatches {
                 biosSystemMatches.append(bios.system)
             }
+            DLOG("BIOS Match found, returning \(biosSystemMatches.count) valid systems")
             return biosSystemMatches
         }
         
         //not bios or artwork, start narrowing it down.
         
         if PVEmulatorConfiguration.supportedCDFileExtensions.contains(fileExtension) {
+            DLOG("Possible CD ROM - checking valid systems...")
             if let systems = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) {
+                DLOG("Possible CD ROM - checking valid systems...found \(systems.count) matches")
                 if systems.count == 1 {
                     return [systems[0]]
                 } else if systems.count > 1 {
@@ -83,8 +86,8 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
             
             // Get all matching systems
             let matchingSystems = results.compactMap { result -> PVSystem? in
-                guard let sysID = (result["systemID"] as? NSNumber).map(String.init) else { return nil }
-                return PVEmulatorConfiguration.system(forIdentifier: sysID)
+                guard let sysID = (result["systemID"] as? NSNumber) else { return nil }
+                return PVEmulatorConfiguration.system(forDatabaseID: sysID.intValue)
             }
             
             //temporarily removing this logic - if we have multiple valid systems, we'll reconcile later.
@@ -112,7 +115,6 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
         // Try filename matching next
         let fileName = queueItem.url.lastPathComponent
         
-        
         let matchedSystems = await matchSystemByFileName(fileName)
         if !matchedSystems.isEmpty {
             return matchedSystems
@@ -127,6 +129,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
             }
         }
         
+        ELOG("No System matched for this rom: \(fileName)")
         throw GameImporterError.noSystemMatched
     }
     
@@ -142,7 +145,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
             do {
                 if let results = try openVGDB?.searchDatabase(usingFilename: fileName, systemID: system.openvgDatabaseID),
                    !results.isEmpty {
-                    ILOG("System determined by filename match in OpenVGDB: \(system.name)")
+                    DLOG("System determined by filename match in OpenVGDB: \(system.name)")
                     matchedSystems.append(system)
                 }
             } catch {
@@ -164,7 +167,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
                             matchedSystems.append(system)
                         }
                     }
-                    ILOG("Number of Systems matched by MD5 match in OpenVGDB: \(matchedSystems.count)")
+                    DLOG("Number of Systems matched by MD5 match in OpenVGDB: \(matchedSystems.count)")
                     return matchedSystems
                 }
             } catch {
@@ -178,7 +181,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
         // You might want to implement system-specific logic here
         for system in possibleSystems {
             if doesFileContentMatch(queueItem, forSystem: system) {
-                ILOG("System determined by file content match: \(system.name)")
+                DLOG("System determined by file content match: \(system.name)")
                 matchedSystems.append(system)
             }
         }

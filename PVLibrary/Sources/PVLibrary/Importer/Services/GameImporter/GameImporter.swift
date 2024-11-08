@@ -602,6 +602,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         guard let systems = try? await gameImporterSystemsService.determineSystems(for: item), !systems.isEmpty else {
             //this is actually an import error
             item.status = .failure
+            ELOG("No system matched for this Import Item: \(item.url.lastPathComponent)")
             throw GameImporterError.noSystemMatched
         }
         
@@ -621,8 +622,12 @@ public final class GameImporter: GameImporting, ObservableObject {
         //move ImportQueueItem to appropriate file location
         try await gameImporterFileService.moveImportItem(toAppropriateSubfolder: item)
         
-        //import the copied file into our database
-        try await gameImporterDatabaseService.importGameIntoDatabase(queueItem: item)
+        if (item.fileType == .bios) {
+            try await gameImporterDatabaseService.importBIOSIntoDatabase(queueItem: item)
+        } else {
+            //import the copied file into our database
+            try await gameImporterDatabaseService.importGameIntoDatabase(queueItem: item)
+        }
         
         //if everything went well and no exceptions, we're clear to indicate a successful import
         
