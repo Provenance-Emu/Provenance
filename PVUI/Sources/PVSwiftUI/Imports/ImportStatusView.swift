@@ -82,7 +82,7 @@ struct ImportTaskRowView: View {
         .cornerRadius(10)
         .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 2)
         .onTapGesture {
-                    if item.status != .conflict {
+                    if item.status == .conflict {
                         isNavigatingToSystemSelection = true
                     }
                 }

@@ -113,7 +113,8 @@ class GameImporterFileService : GameImporterFileServicing {
     /// Moves a file to the conflicts directory
     internal func moveToConflictsFolder(_ queueItem: ImportQueueItem, conflictsPath: URL) async throws {
         let destination = conflictsPath.appendingPathComponent(queueItem.url.lastPathComponent)
-        queueItem.destinationUrl = try moveAndOverWrite(sourcePath: queueItem.url, destinationPath: destination)
+        //when moving the conflicts folder, we actually want to update the import item's source url to match
+        queueItem.url = try moveAndOverWrite(sourcePath: queueItem.url, destinationPath: destination)
     }
     
     /// Move a `URL` to a destination, creating the destination directory if needed
