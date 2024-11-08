@@ -85,12 +85,37 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
     
     internal func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws {
-        guard let _ = queueItem.destinationUrl else {
+        guard let destinationUrl = queueItem.destinationUrl,
+            let md5 = queueItem.md5?.uppercased() else {
             //how did we get here, throw?
             throw GameImporterError.incorrectDestinationURL
         }
         
+        // Get all BIOS entries that match this MD5
+        let matchingBIOSEntries = PVEmulatorConfiguration.biosEntries.filter { biosEntry in
+            let frozenBiosEntry = biosEntry.isFrozen ? biosEntry : biosEntry.freeze()
+            return frozenBiosEntry.expectedMD5.uppercased() == md5
+        }
         
+        for biosEntry in matchingBIOSEntries {
+            // Get the first matching system
+            if let firstBIOSEntry = matchingBIOSEntries.first {
+                let frozenBiosEntry = firstBIOSEntry.isFrozen ? firstBIOSEntry : firstBIOSEntry.freeze()
+                
+                // Update BIOS entry in Realm
+                try await MainActor.run {
+                    let realm = try Realm()
+                    try realm.write {
+                        if let thawedBios = frozenBiosEntry.thaw() {
+                            let biosFile = PVFile(withURL: destinationUrl)
+                            thawedBios.file = biosFile
+                        }
+                    }
+                }
+            }
+        }
+        
+        return
     }
     
     /// Imports a ROM to the database
