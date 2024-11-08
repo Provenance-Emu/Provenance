@@ -78,7 +78,6 @@ class GameImporterFileService : GameImporterFileServicing {
             throw GameImporterError.systemNotDetermined
         }
         
-        let fileName = queueItem.url.lastPathComponent
         let destinationFolder = targetSystem.romsDirectory
         
         do {

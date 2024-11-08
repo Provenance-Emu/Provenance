@@ -36,9 +36,26 @@ func iconNameForFileType(_ type: FileType) -> String {
     }
 }
 
+func iconNameForStatus(_ status: ImportStatus) -> String {
+    switch status {
+        
+    case .queued:
+        return "xmark.circle.fill"
+    case .processing:
+        return "progress.indicator"
+    case .success:
+        return "checkmark.circle.fill"
+    case .failure:
+        return "exclamationmark.triangle.fill"
+    case .conflict:
+        return "exclamationmark.triangle.fill"
+    }
+}
+
 // Individual Import Task Row View
 struct ImportTaskRowView: View {
     let item: ImportQueueItem
+    @State private var isNavigatingToSystemSelection = false
     
     var body: some View {
         HStack {
@@ -56,7 +73,7 @@ struct ImportTaskRowView: View {
             if item.status == .processing {
                 ProgressView().progressViewStyle(.circular).frame(width: 40, height: 40, alignment: .center)
             } else {
-                Image(systemName: item.status == .success ? "checkmark.circle.fill" : "xmark.circle.fill")
+                Image(systemName: iconNameForStatus(item.status))
                     .foregroundColor(item.status.color)
             }
         }
@@ -64,6 +81,17 @@ struct ImportTaskRowView: View {
         .background(Color.white)
         .cornerRadius(10)
         .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 2)
+        .onTapGesture {
+                    if item.status != .conflict {
+                        isNavigatingToSystemSelection = true
+                    }
+                }
+                .background(
+                    NavigationLink(destination: SystemSelectionView(item: item), isActive: $isNavigatingToSystemSelection) {
+                        EmptyView()
+                    }
+                    .hidden()
+                )
     }
 }
 
@@ -75,12 +103,18 @@ struct ImportStatusView: View {
     var body: some View {
             NavigationView {
                 ScrollView {
-                    LazyVStack(spacing: 10) {
-                        ForEach(viewModel.gameImporter.importQueue) { item in
-                            ImportTaskRowView(item: item).id(item.id)
+                    if viewModel.gameImporter.importQueue.isEmpty {
+                        Text("No items in the import queue")
+                            .foregroundColor(.gray)
+                            .padding()
+                    } else {
+                        LazyVStack(spacing: 10) {
+                            ForEach(viewModel.gameImporter.importQueue) { item in
+                                ImportTaskRowView(item: item).id(item.id)
+                            }
                         }
+                        .padding()
                     }
-                    .padding()
                 }
                 .navigationTitle("Import Status")
                 .toolbar {
@@ -91,10 +125,10 @@ struct ImportStatusView: View {
                     })
                     ToolbarItemGroup(placement: .topBarTrailing,
                                      content:  {
-                        Button("Import Files") {
+                        Button("Add Files") {
                             delegate?.addImportsAction()
                         }
-                        Button("Force Import") {
+                        Button("Force") {
                             delegate?.forceImportsAction()
                         }
                     })

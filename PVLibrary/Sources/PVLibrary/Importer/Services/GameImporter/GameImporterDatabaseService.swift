@@ -50,6 +50,9 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
     
     internal func importGameIntoDatabase(queueItem: ImportQueueItem) async throws {
+        //TODO: what do if this is a BIOS?
+        
+        
         guard let targetSystem = queueItem.targetSystem() else {
             throw GameImporterError.systemNotDetermined
         }
