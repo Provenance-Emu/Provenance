@@ -95,115 +95,196 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
 
     private func readBlockForBuffer(_ buffer: RingBufferProtocol) -> (AVAudioPCMBuffer) -> Int {
         /// Cache format information
-        let sourceChannels = Int(gameCore.channelCount(forBuffer: 0))
-        let sourceBitDepth = gameCore.audioBitDepth
-        let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
-        let sourceBytesPerFrame = sourceChannels * (Int(sourceBitDepth) / 8)
+        let sourceChannels: Int = Int(gameCore.channelCount(forBuffer: 0))
+        let sourceBitDepth: UInt = gameCore.audioBitDepth
+        let sourceRate: Double = gameCore.audioSampleRate(forBuffer: 0)
+        let sourceBytesPerFrame: Int = sourceChannels * (Int(sourceBitDepth) / 8)
 
-        /// Create source format (always 16-bit, we'll convert 8-bit data)
-        guard let sourceFormat = AVAudioFormat(
-            commonFormat: .pcmFormatInt16,
-            sampleRate: Double(sourceRate),
-            channels: AVAudioChannelCount(sourceChannels),
-            interleaved: true) else {
-            ELOG("Failed to create source format")
-            return { _ in 0 }
-        }
+        /// Pre-allocate conversion buffers - size for worst case
+        let maxFrames: Int = 4096
+        var sourceBuffer8: [Int8]? = nil
+        var sourceBuffer16: [Int16]? = nil
 
-        /// Create destination format
-        guard let destinationFormat = AVAudioFormat(
-            commonFormat: .pcmFormatInt16,
-            sampleRate: AVAudioSession.sharedInstance().sampleRate,
-            channels: 2,
-            interleaved: true
-        ) else {
-            ELOG("Failed to create destination format")
-            return { _ in 0 }
-        }
-
-        /// Create converter if needed
-        if audioConverter == nil {
-            audioConverter = AVAudioConverter(from: sourceFormat, to: destinationFormat)
-        }
-
-        /// Pre-allocate conversion buffers for 8-bit source
-        var int8Buffer: [Int8]?
-        var floatBuffer: [Float]?
         if sourceBitDepth == 8 {
-            int8Buffer = [Int8](repeating: 0, count: 4096 * sourceChannels)
-            floatBuffer = [Float](repeating: 0, count: 4096 * sourceChannels)
+            sourceBuffer8 = [Int8](repeating: 0, count: maxFrames * 2)
+        } else {
+            sourceBuffer16 = [Int16](repeating: 0, count: maxFrames * 2)
         }
 
-        return { pcmBuffer in
-            let availableBytes = buffer.availableBytes
+        return { [sourceBitDepth, sourceChannels, sourceBytesPerFrame] (pcmBuffer: AVAudioPCMBuffer) -> Int in
+            let availableBytes: Int = buffer.availableBytes
             if availableBytes == 0 {
                 pcmBuffer.frameLength = 0
                 return 0
             }
 
             /// Calculate frames we can read
-            let availableFrames = availableBytes / sourceBytesPerFrame
-            let bytesToRead = availableFrames * sourceBytesPerFrame
+            let availableFrames: Int = availableBytes / sourceBytesPerFrame
+            let framesToRead: Int = min(availableFrames, maxFrames)
+            let bytesToRead: Int = framesToRead * sourceBytesPerFrame
 
-            /// Create/reuse input buffer
-            if self.inputBuffer == nil || self.inputBuffer?.format != sourceFormat {
-                self.inputBuffer = AVAudioPCMBuffer(pcmFormat: sourceFormat,
-                                                  frameCapacity: AVAudioFrameCount(availableFrames))
-            }
+            guard let outputData: UnsafeMutablePointer<Int16> = pcmBuffer.int16ChannelData?[0] else { return 0 }
 
-            guard let inputBuffer = self.inputBuffer,
-                  let audioConverter = self.audioConverter else {
-                return 0
-            }
-
-            /// Handle 8-bit source
             if sourceBitDepth == 8 {
-                guard var int8Buffer = int8Buffer,
-                      var floatBuffer = floatBuffer else { return 0 }
+                /// Handle 8-bit source
+                guard var source8: [Int8] = sourceBuffer8 else { return 0 }
 
-                /// Read into temporary 8-bit buffer
-                let bytesRead = buffer.read(
-                    UnsafeMutableRawPointer(&int8Buffer),
+                let bytesRead: Int = buffer.read(
+                    UnsafeMutableRawPointer(&source8),
                     preferredSize: bytesToRead
                 )
-                let samplesRead = bytesRead
+                let samplesRead: Int = bytesRead
 
-                /// Convert Int8 to Float
-                vDSP_vflt8(&int8Buffer, 1, &floatBuffer, 1, vDSP_Length(samplesRead))
+                if sourceChannels == 1 {
+                    /// Process 8 samples at a time for mono
+                    let simdCount: Int = samplesRead / 8
+                    for i in 0..<simdCount {
+                        /// Load 8 samples
+                        let monoVector: SIMD8<Int8> = SIMD8<Int8>(
+                            source8[i * 8 + 0],
+                            source8[i * 8 + 1],
+                            source8[i * 8 + 2],
+                            source8[i * 8 + 3],
+                            source8[i * 8 + 4],
+                            source8[i * 8 + 5],
+                            source8[i * 8 + 6],
+                            source8[i * 8 + 7]
+                        )
 
-                /// Scale to 16-bit range (-32768 to 32767)
-                var scale = Float(32768.0)
-                vDSP_vsmul(floatBuffer, 1, &scale, &floatBuffer, 1, vDSP_Length(samplesRead))
+                        /// Convert Int8 to Int16 and shift
+                        let monoVector16: SIMD8<Int16> = SIMD8<Int16>(
+                            Int16(monoVector[0]) << 8,
+                            Int16(monoVector[1]) << 8,
+                            Int16(monoVector[2]) << 8,
+                            Int16(monoVector[3]) << 8,
+                            Int16(monoVector[4]) << 8,
+                            Int16(monoVector[5]) << 8,
+                            Int16(monoVector[6]) << 8,
+                            Int16(monoVector[7]) << 8
+                        )
 
-                /// Convert Float to Int16
-                guard let inputData = inputBuffer.int16ChannelData?[0] else { return 0 }
-                vDSP_vfix16(floatBuffer, 1, inputData, 1, vDSP_Length(samplesRead))
+                        /// Interleave mono samples to stereo
+                        for j in 0..<8 {
+                            let outputIndex: Int = (i * 16) + (j * 2)
+                            outputData[outputIndex] = monoVector16[j]     /// Left
+                            outputData[outputIndex + 1] = monoVector16[j] /// Right
+                        }
+                    }
 
-                inputBuffer.frameLength = AVAudioFrameCount(bytesRead / sourceBytesPerFrame)
+                    /// Handle remaining samples
+                    let remaining: Int = samplesRead % 8
+                    if remaining > 0 {
+                        let startIdx: Int = simdCount * 8
+                        for i in 0..<remaining {
+                            let sample: Int16 = Int16(source8[startIdx + i]) << 8
+                            let outputIndex: Int = (simdCount * 16) + (i * 2)
+                            outputData[outputIndex] = sample     /// Left
+                            outputData[outputIndex + 1] = sample /// Right
+                        }
+                    }
+
+                    pcmBuffer.frameLength = AVAudioFrameCount(samplesRead)
+                } else {
+                    /// Process 16 samples at a time for stereo
+                    let simdCount: Int = (samplesRead / 16) * 2  /// Process pairs for stereo
+                    for i in 0..<simdCount {
+                        let stereoVector: SIMD8<Int8> = SIMD8<Int8>(
+                            source8[i * 8 + 0],
+                            source8[i * 8 + 1],
+                            source8[i * 8 + 2],
+                            source8[i * 8 + 3],
+                            source8[i * 8 + 4],
+                            source8[i * 8 + 5],
+                            source8[i * 8 + 6],
+                            source8[i * 8 + 7]
+                        )
+
+                        let stereoVector16: SIMD8<Int16> = SIMD8<Int16>(
+                            Int16(stereoVector[0]) << 8,
+                            Int16(stereoVector[1]) << 8,
+                            Int16(stereoVector[2]) << 8,
+                            Int16(stereoVector[3]) << 8,
+                            Int16(stereoVector[4]) << 8,
+                            Int16(stereoVector[5]) << 8,
+                            Int16(stereoVector[6]) << 8,
+                            Int16(stereoVector[7]) << 8
+                        )
+
+                        /// Store converted stereo samples
+                        for j in 0..<8 {
+                            outputData[i * 8 + j] = stereoVector16[j]
+                        }
+                    }
+
+                    /// Handle remaining samples
+                    let remaining: Int = (samplesRead % 16) / 2
+                    if remaining > 0 {
+                        let startIdx: Int = simdCount * 8
+                        for i in 0..<remaining {
+                            outputData[startIdx + i] = Int16(source8[startIdx * 2 + i * 2]) << 8
+                            outputData[startIdx + i + 1] = Int16(source8[startIdx * 2 + i * 2 + 1]) << 8
+                        }
+                    }
+
+                    pcmBuffer.frameLength = AVAudioFrameCount(samplesRead / 2)
+                }
+
+                return bytesRead
 
             } else {
-                /// Direct 16-bit read
-                guard let inputData = inputBuffer.int16ChannelData?[0] else { return 0 }
-                let bytesRead = buffer.read(
-                    UnsafeMutableRawPointer(inputData),
+                /// Handle 16-bit source
+                guard var source16: [Int16] = sourceBuffer16 else { return 0 }
+
+                let bytesRead: Int = buffer.read(
+                    UnsafeMutableRawPointer(&source16),
                     preferredSize: bytesToRead
                 )
-                inputBuffer.frameLength = AVAudioFrameCount(bytesRead / sourceBytesPerFrame)
-            }
+                let samplesRead: Int = bytesRead / 2
 
-            /// Convert to output format
-            var error: NSError?
-            let status = audioConverter.convert(to: pcmBuffer, error: &error) { packetCount, status in
-                status.pointee = .haveData
-                return inputBuffer
-            }
+                if sourceChannels == 1 {
+                    /// Process 8 samples at a time
+                    let simdCount: Int = samplesRead / 8
+                    for i in 0..<simdCount {
+                        let monoVector: SIMD8<Int16> = SIMD8<Int16>(
+                            source16[i * 8 + 0],
+                            source16[i * 8 + 1],
+                            source16[i * 8 + 2],
+                            source16[i * 8 + 3],
+                            source16[i * 8 + 4],
+                            source16[i * 8 + 5],
+                            source16[i * 8 + 6],
+                            source16[i * 8 + 7]
+                        )
 
-            if status == .error {
-                ELOG("Conversion error: \(error?.localizedDescription ?? "unknown")")
-                return 0
-            }
+                        /// Interleave mono samples to stereo
+                        for j in 0..<8 {
+                            let outputIndex: Int = (i * 16) + (j * 2)
+                            outputData[outputIndex] = monoVector[j]     /// Left
+                            outputData[outputIndex + 1] = monoVector[j] /// Right
+                        }
+                    }
 
-            return Int(pcmBuffer.frameLength)
+                    /// Handle remaining samples
+                    let remaining: Int = samplesRead % 8
+                    if remaining > 0 {
+                        let startIdx: Int = simdCount * 8
+                        for i in 0..<remaining {
+                            let sample: Int16 = source16[startIdx + i]
+                            let outputIndex: Int = (simdCount * 16) + (i * 2)
+                            outputData[outputIndex] = sample     /// Left
+                            outputData[outputIndex + 1] = sample /// Right
+                        }
+                    }
+
+                    pcmBuffer.frameLength = AVAudioFrameCount(samplesRead)
+                } else {
+                    /// Already stereo, just copy
+                    memcpy(outputData, source16, bytesRead)
+                    pcmBuffer.frameLength = AVAudioFrameCount(samplesRead / 2)
+                }
+
+                return bytesRead
+            }
         }
     }
 
