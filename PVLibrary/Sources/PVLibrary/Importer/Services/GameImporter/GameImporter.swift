@@ -114,6 +114,8 @@ public protocol GameImporting {
     func addImport(_ item: ImportQueueItem)
     func addImports(forPaths paths: [URL])
     func startProcessing()
+    
+    func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool
 }
 
 
@@ -682,13 +684,22 @@ public final class GameImporter: GameImporting, ObservableObject {
     
     /// Checks the queue and all child elements in the queue to see if this file exists.  if it does, return true, else return false.
     /// Duplicates are considered if the filename, id, or md5 matches
-    private func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
-        let duplicate = importQueue.contains { existing in
+    public func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
+        let duplicate = queue.contains { existing in
             if (existing.url.lastPathComponent.lowercased() == queueItem.url.lastPathComponent.lowercased()
-                || existing.id == queueItem.id
-                || existing.md5?.uppercased() == queueItem.md5?.uppercased()) {
+                || existing.id == queueItem.id)
+            {
                 return true
-            } else if (!existing.childQueueItems.isEmpty) {
+            }
+            
+            if let eMd5 = existing.md5?.uppercased(),
+                let newMd5 = queueItem.md5?.uppercased(),
+                eMd5 == newMd5
+            {
+                return true
+            }
+            
+            if (!existing.childQueueItems.isEmpty) {
                 //check the child queue items for duplicates
                 return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: queueItem)
             }
