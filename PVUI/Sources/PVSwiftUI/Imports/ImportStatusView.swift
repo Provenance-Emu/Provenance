@@ -15,11 +15,6 @@ public protocol ImportStatusDelegate : AnyObject {
     func forceImportsAction()
 }
 
-// View Model to manage import tasks
-class ImportViewModel: ObservableObject {
-    public let gameImporter = GameImporter.shared
-}
-
 func iconNameForFileType(_ type: FileType) -> String {
     
     switch type {
@@ -97,19 +92,19 @@ struct ImportTaskRowView: View {
 
 struct ImportStatusView: View {
     @ObservedObject var updatesController: PVGameLibraryUpdatesController
-    var viewModel:ImportViewModel
+    var gameImporter:GameImporter
     weak var delegate:ImportStatusDelegate!
     
     var body: some View {
             NavigationView {
                 ScrollView {
-                    if viewModel.gameImporter.importQueue.isEmpty {
+                    if gameImporter.importQueue.isEmpty {
                         Text("No items in the import queue")
                             .foregroundColor(.gray)
                             .padding()
                     } else {
                         LazyVStack(spacing: 10) {
-                            ForEach(viewModel.gameImporter.importQueue) { item in
+                            ForEach(gameImporter.importQueue) { item in
                                 ImportTaskRowView(item: item).id(item.id)
                             }
                         }
