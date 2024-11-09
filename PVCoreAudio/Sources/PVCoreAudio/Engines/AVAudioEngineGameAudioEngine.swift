@@ -45,6 +45,10 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         )
     }()
 
+    /// Pre-allocated output buffer
+    private var outputBuffer: AVAudioPCMBuffer?
+    private let maxFrameCapacity: AVAudioFrameCount = 2048  /// Safe maximum size
+
     public init() {
         configureAudioSession()
     }
@@ -185,18 +189,38 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             return
         }
 
+        /// Pre-allocate output buffer
+        outputBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: maxFrameCapacity)
+
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
 
         /// Create source node
-        let renderBlock: AVAudioSourceNodeRenderBlock = { isSilence, timestamp, frameCount, audioBufferList -> OSStatus in
+        let renderBlock: AVAudioSourceNodeRenderBlock = { [weak self] isSilence, timestamp, frameCount, audioBufferList -> OSStatus in
+            guard let self = self else { return noErr }
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
 
-            guard let pcmBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else {
+            /// Validate frame count
+            if frameCount == 0 || frameCount > self.maxFrameCapacity {
+                ELOG("Invalid frame count requested: \(frameCount)")
+                isSilence.pointee = true
+                ablPointer[0].mDataByteSize = 0
+                ablPointer[1].mDataByteSize = 0
+                return noErr
+            }
+
+            /// Use pre-allocated buffer
+            guard let pcmBuffer = self.outputBuffer else {
+                ELOG("Output buffer not allocated")
                 isSilence.pointee = true
                 return noErr
             }
 
+            /// Reset frame length for new data
+            pcmBuffer.frameLength = frameCount
+
             let bytesCopied = read(pcmBuffer)
+
+            DLOG("Render callback - frames requested: \(frameCount), bytes copied: \(bytesCopied)")
 
             if bytesCopied == 0 {
                 isSilence.pointee = true
@@ -267,6 +291,7 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             engine.detach(src)
         }
         src = nil
+        outputBuffer = nil  /// Clean up buffer
         isRunning = false
     }
 
