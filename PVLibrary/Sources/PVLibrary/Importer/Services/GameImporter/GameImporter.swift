@@ -332,7 +332,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     public func addImport(_ item: ImportQueueItem) {
         addImportItemToQueue(item)
         
-        startProcessing()
+//        startProcessing()
     }
     
     public func addImports(forPaths paths: [URL]) {
@@ -340,14 +340,16 @@ public final class GameImporter: GameImporting, ObservableObject {
             addImportItemToQueue(ImportQueueItem(url: url, fileType: .unknown))
         })
         
-        startProcessing()
+//        startProcessing()
     }
 
     // Public method to manually start processing if needed
     public func startProcessing() {
         // Only start processing if it's not already active
         guard processingState == .idle else { return }
+        self.processingState = .processing
         Task {
+            await preProcessQueue()
             await processQueue()
         }
     }
@@ -361,6 +363,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             do {
                 importItem.fileType = try determineImportType(importItem)
             } catch {
+                ELOG("Caught error trying to assign file type \(error.localizedDescription)")
                 //caught an error trying to assign file type
             }
             
@@ -417,22 +420,26 @@ public final class GameImporter: GameImporting, ObservableObject {
                     if let binIndex = importQueue.firstIndex(where: { item in
                         item.url == candidateBinUrl
                     }) {
+                        DLOG("Located corresponding .bin for cue \(baseFileName) - re-parenting queue item")
                         // Remove the .bin item from the queue and add it as a child of the .cue item
                         let binItem = importQueue.remove(at: binIndex)
                         binItem.fileType = .cdRom
                         cueItem.childQueueItems.append(binItem)
+                    } else {
+                        WLOG("Located the corresponding bin[s] for \(baseFileName) - but no corresponding QueueItem detected.  Consider creating one here?")
                     }
                 } else {
                     //this is probably some kind of error...
-                    ELOG("Found a .cue \(baseFileName) without a .bin - probably bad things happening")
+                    ELOG("Found a .cue \(baseFileName) without a .bin - probably file system didn't settle yet")
                 }
             } catch {
-                ELOG("Caught an error looking for a corresponding .bin to \(baseFileName) - probably bad things happening")
+                ELOG("Caught an error looking for a corresponding .bin to \(baseFileName) - probably bad things happening - \(error.localizedDescription)")
             }
         }
     }
     
     private func findAssociatedBinFile(for cueFileItem: ImportQueueItem) throws -> URL? {
+        //TODO: handle multi-bin cue
         let cueContents = try String(contentsOf: cueFileItem.url, encoding: .utf8)
         let lines = cueContents.components(separatedBy: .newlines)
         
@@ -665,9 +672,12 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
     
     /// Checks the queue and all child elements in the queue to see if this file exists.  if it does, return true, else return false.
+    /// Duplicates are considered if the filename, id, or md5 matches
     private func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
         let duplicate = importQueue.contains { existing in
-            if (existing.url == queueItem.url || existing.id == queueItem.id) {
+            if (existing.url.lastPathComponent.lowercased() == queueItem.url.lastPathComponent.lowercased()
+                || existing.id == queueItem.id
+                || existing.md5?.uppercased() == queueItem.md5?.uppercased()) {
                 return true
             } else if (!existing.childQueueItems.isEmpty) {
                 //check the child queue items for duplicates

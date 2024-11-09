@@ -97,10 +97,9 @@ class GameImporterFileService : GameImporterFileServicing {
         
         for childQueueItem in queueItem.childQueueItems {
             let fileName = childQueueItem.url.lastPathComponent
-            let destinationPath = destinationFolder.appendingPathComponent(fileName)
                     
             do {
-                childQueueItem.destinationUrl = try await moveFile(childQueueItem.url, to: destinationPath)
+                childQueueItem.destinationUrl = try await moveFile(childQueueItem.url, to: destinationFolder)
                 //call recursively to keep moving child items to the target directory as a unit
                 try await moveChildImports(forQueueItem: childQueueItem, to: destinationFolder)
             } catch {
@@ -113,8 +112,12 @@ class GameImporterFileService : GameImporterFileServicing {
     /// Moves a file to the conflicts directory
     internal func moveToConflictsFolder(_ queueItem: ImportQueueItem, conflictsPath: URL) async throws {
         let destination = conflictsPath.appendingPathComponent(queueItem.url.lastPathComponent)
+        DLOG("Moving \(queueItem.url.lastPathComponent) to conflicts folder")
         //when moving the conflicts folder, we actually want to update the import item's source url to match
         queueItem.url = try moveAndOverWrite(sourcePath: queueItem.url, destinationPath: destination)
+        for childQueueItem in queueItem.childQueueItems {
+            try await moveToConflictsFolder(childQueueItem, conflictsPath: conflictsPath)
+        }
     }
     
     /// Move a `URL` to a destination, creating the destination directory if needed
