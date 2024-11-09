@@ -415,18 +415,21 @@ public final class GameImporter: GameImporting, ObservableObject {
             let baseFileName = cueItem.url.deletingPathExtension().lastPathComponent
 
             do {
-                if let candidateBinUrl = try self.findAssociatedBinFile(for: cueItem) {
-                    // Find any .bin item in the queue that matches the .cue base file name
-                    if let binIndex = importQueue.firstIndex(where: { item in
-                        item.url == candidateBinUrl
-                    }) {
-                        DLOG("Located corresponding .bin for cue \(baseFileName) - re-parenting queue item")
-                        // Remove the .bin item from the queue and add it as a child of the .cue item
-                        let binItem = importQueue.remove(at: binIndex)
-                        binItem.fileType = .cdRom
-                        cueItem.childQueueItems.append(binItem)
-                    } else {
-                        WLOG("Located the corresponding bin[s] for \(baseFileName) - but no corresponding QueueItem detected.  Consider creating one here?")
+                let candidateBinUrls = try self.findAssociatedBinFiles(for: cueItem)
+                if !candidateBinUrls.isEmpty {
+                    for candidateBinUrl in candidateBinUrls {
+                        // Find any .bin item in the queue that matches the .cue base file name
+                        if let binIndex = importQueue.firstIndex(where: { item in
+                            item.url == candidateBinUrl
+                        }) {
+                            DLOG("Located corresponding .bin for cue \(baseFileName) - re-parenting queue item")
+                            // Remove the .bin item from the queue and add it as a child of the .cue item
+                            let binItem = importQueue.remove(at: binIndex)
+                            binItem.fileType = .cdRom
+                            cueItem.childQueueItems.append(binItem)
+                        } else {
+                            WLOG("Located the corresponding bin[s] for \(baseFileName) - but no corresponding QueueItem detected.  Consider creating one here?")
+                        }
                     }
                 } else {
                     //this is probably some kind of error...
@@ -438,31 +441,37 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
     
-    private func findAssociatedBinFile(for cueFileItem: ImportQueueItem) throws -> URL? {
-        //TODO: handle multi-bin cue
+    private func findAssociatedBinFiles(for cueFileItem: ImportQueueItem) throws -> [URL] {
+        // Read the contents of the .cue file
         let cueContents = try String(contentsOf: cueFileItem.url, encoding: .utf8)
         let lines = cueContents.components(separatedBy: .newlines)
         
-        // Look for FILE "something.bin" BINARY line
+        // Array to hold multiple .bin file URLs
+        var binFiles: [URL] = []
+        
+        // Look for each line with FILE "something.bin" BINARY
         for line in lines {
             let components = line.trimmingCharacters(in: .whitespaces)
                 .components(separatedBy: "\"")
+            
             guard components.count >= 2,
                   line.lowercased().contains("file") && line.lowercased().contains("binary") else {
                 continue
             }
             
+            // Extract the .bin file name
             let binFileName = components[1]
             let binPath = cueFileItem.url.deletingLastPathComponent().appendingPathComponent(binFileName)
             
+            // Check if the .bin file exists and add to the array if it does
             if FileManager.default.fileExists(atPath: binPath.path) {
-                return binPath
+                binFiles.append(binPath)
             }
         }
         
-        return nil
+        // Return all found .bin file URLs, or an empty array if none found
+        return binFiles
     }
-
     
     internal func cmpSpecialExt(obj1Extension: String, obj2Extension: String) -> Bool {
         if obj1Extension == "m3u" && obj2Extension != "m3u" {
