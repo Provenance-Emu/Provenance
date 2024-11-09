@@ -24,11 +24,40 @@ final class OEGameAudioContext {
     let buffer: RingBufferProtocol?
     let channelCount: Int32
     let bytesPerSample: Int32
+    let sourceFormat: AVAudioFormat
+    let outputFormat: AVAudioFormat
+    let converter: AVAudioConverter?
+    let sourceBuffer: AVAudioPCMBuffer?
 
-    init(buffer: RingBufferProtocol?, channelCount: Int32, bytesPerSample: Int32) {
+    init(buffer: RingBufferProtocol?, channelCount: Int32, bytesPerSample: Int32, sampleRate: Double) {
         self.buffer = buffer
         self.channelCount = channelCount
         self.bytesPerSample = bytesPerSample
+
+        /// Create source format
+        sourceFormat = AVAudioFormat(
+            commonFormat: .pcmFormatInt16,
+            sampleRate: sampleRate,
+            channels: AVAudioChannelCount(channelCount),
+            interleaved: true
+        )!
+
+        /// Create output format (44.1kHz stereo)
+        outputFormat = AVAudioFormat(
+            commonFormat: .pcmFormatInt16,
+            sampleRate: 44100.0,
+            channels: 2,
+            interleaved: true
+        )!
+
+        /// Create converter
+        converter = AVAudioConverter(from: sourceFormat, to: outputFormat)
+
+        /// Pre-allocate source buffer
+        sourceBuffer = AVAudioPCMBuffer(
+            pcmFormat: sourceFormat,
+            frameCapacity: 4096
+        )
     }
 }
 
@@ -39,27 +68,38 @@ func RenderCallback(inRefCon: UnsafeMutableRawPointer,
                    inNumberFrames: UInt32,
                    ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
 
-    // Safely get context
     let context = Unmanaged<OEGameAudioContext>.fromOpaque(inRefCon).takeUnretainedValue()
 
-    guard let buffer = context.buffer else {
-        ELOG("Buffer is nil")
+    guard let buffer = context.buffer else { return noErr }
+
+    /// Calculate source frames needed based on sample rate ratio
+    let ratio = context.sourceFormat.sampleRate / context.outputFormat.sampleRate
+    let sourceFramesNeeded = UInt32(Double(inNumberFrames) * ratio)
+
+    /// Calculate bytes needed for source frames
+    let bytesPerFrame = Int(context.bytesPerSample * context.channelCount)
+    let bytesNeeded = Int(sourceFramesNeeded) * bytesPerFrame
+
+    /// Read from ring buffer
+    let availableBytes = buffer.availableBytesForReading
+    let bytesToRead = min(availableBytes, bytesNeeded)
+
+    guard bytesToRead > 0,
+          let outputData = ioData?.pointee.mBuffers.mData else {
         return noErr
     }
 
-    let availableBytes: Int = buffer.availableBytesForWriting
-    let bytesRequested: Int = Int(Int32(inNumberFrames) * context.bytesPerSample * context.channelCount)
-    let bytesToWrite: Int = min(availableBytes, bytesRequested)
+    /// Read from ring buffer
+    let bytesRead = buffer.read(outputData, preferredSize: bytesToRead)
 
-    guard let ioPtr = ioData?.pointee.mBuffers.mData else {
-        ELOG("Output buffer pointer was nil")
-        return noErr
-    }
+    /// Update buffer size
+    if bytesRead > 0 {
+        ioData?.pointee.mBuffers.mDataByteSize = UInt32(bytesRead)
 
-    if bytesToWrite > 0 {
-        let _ = buffer.read(ioPtr, preferredSize: bytesToWrite)
-    } else {
-        memset(ioPtr, 0, Int(bytesRequested))
+        /// Log if we didn't get all the bytes we needed
+        if bytesRead < bytesNeeded {
+            DLOG("Buffer underrun: got \(bytesRead) of \(bytesNeeded) bytes needed")
+        }
     }
 
     return noErr
@@ -406,7 +446,8 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
                 OEGameAudioContext(
                     buffer: gameCore.ringBuffer(atIndex: 0),
                     channelCount: Int32(channelCount),
-                    bytesPerSample: Int32(bytesPerSample)
+                    bytesPerSample: Int32(bytesPerSample),
+                    sampleRate: gameCore.audioSampleRate(forBuffer: 0)
                 )
             ).toOpaque()
         )
