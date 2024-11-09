@@ -6,6 +6,7 @@
 //
 
 import PVAudio
+import RingBuffer
 import Foundation
 
 @objc public protocol EmulatorCoreAudioDataSource {

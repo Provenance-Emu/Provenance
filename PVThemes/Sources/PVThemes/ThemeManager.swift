@@ -50,7 +50,7 @@ public final class ThemeManager: ObservableObject {
         currentPalette = palatte
         ThemeManager.applyPalette(palatte)
         Task { @MainActor in
-            await UIApplication.shared.refreshAppearance(animated: true)
+            UIApplication.shared.refreshAppearance(animated: true)
         }
     }
 

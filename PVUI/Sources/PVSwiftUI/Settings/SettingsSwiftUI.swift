@@ -651,11 +651,17 @@ private struct AdvancedTogglesView: View {
     @Default(.useUIKit) var useUIKit
     @Default(.webDavAlwaysOn) var webDavAlwaysOn
     @Default(.unsupportedCores) var unsupportedCores
+    /// Audio Settings
     @Default(.monoAudio) var monoAudio
-    @Default(.useLegacyAudioEngine) var useLegacyAudioEngine
-    @Default(.useLegacyRingBuffer) var useLegacyRingBuffer
+    // Radio Selection of `AudioEngines`
+    @Default(.audioEngine) var audioEngine
+    // Radio Selection for algoriths when .audioEngine is of type `dspGameAudioEngine`
+    @Default(.audioEngineDSPAlgorithm) var audioEngineDSPAlgorithm
+    // Radio select of type `RingBufferType`
+    @Default(.audioRingBufferType) var audioRingBufferType // Radio Selection
+    
+    
     @Default(.audioLatency) var audioLatency
-    @Default(.usePitchConversionInsteadOfSampleRate) var usePitchConversionInsteadOfSampleRate
 
 #if !os(tvOS)
     @Default(.movableButtons) var movableButtons
@@ -732,24 +738,20 @@ private struct AdvancedTogglesView: View {
              }
             #endif
 
-            PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
-                 SettingsRow(title: "Legacy Audio Engine",
-                            subtitle: "Use legacy audio engine for compatibility.",
-                            icon: .sfSymbol("waveform"))
-             }
-
-            PremiumThemedToggle(isOn: $useLegacyRingBuffer) {
-                SettingsRow(title: "Legacy Audio Buffer",
-                           subtitle: "Use legacy audio buffer for compatibility.",
-                           icon: .sfSymbol("arrow.trianglehead.clockwise"))
-            }
-
-            PremiumThemedToggle(isOn: $usePitchConversionInsteadOfSampleRate) {
-                SettingsRow(title: "Use Pitch Conversion Instead of Sample Rate",
-                           subtitle: "To adjust for different sample rates, use pitch conversion instead of sample rate audio units. Does not apply to legacy audio engine.",
-                           icon: .sfSymbol("arrow.trianglehead.clockwise"))
-            }
+            // Old audio settings toggles
+//            PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
+//                 SettingsRow(title: "Legacy Audio Engine",
+//                            subtitle: "Use legacy audio engine for compatibility.",
+//                            icon: .sfSymbol("waveform"))
+//             }
+//
+//            PremiumThemedToggle(isOn: $useLegacyRingBuffer) {
+//                SettingsRow(title: "Legacy Audio Buffer",
+//                           subtitle: "Use legacy audio buffer for compatibility.",
+//                           icon: .sfSymbol("arrow.trianglehead.clockwise"))
+//            }
             
+            /// User configuration about `audioEngine` latency
             HStack {
                 Text("Audio Latency")
                 Slider(value: $audioLatency, in: 5.0...25.0, step: 0.5) {

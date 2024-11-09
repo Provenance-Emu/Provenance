@@ -8,6 +8,7 @@
 
 #import "_PVCoreObjCBridge.h"
 @import PVAudio;
+@import PVCoreAudio;
 @import PVLogging;
 @import PVLoggingObjC;
 @import PVObjCUtils;
@@ -713,8 +714,7 @@ static NSString *_systemName;
 - (id<RingBufferProtocol>)ringBufferAtIndex:(NSUInteger)index {
     if (UNLIKELY(ringBuffers.count <= index)) {
         NSInteger length = [self audioBufferSizeForBuffer:index] * 32;
-        BOOL useLegacyRingBuffer = [PVSettingsWrapper useLegacyRingBuffer];
-        RingBufferType bufferType = useLegacyRingBuffer ? RingBufferTypeOpenEMU : RingBufferTypeProvenance;
+        RingBufferType bufferType = [PVSettingsWrapper audioRingBufferType];
         
         id<RingBufferProtocol> newRingBuffer = [RingBufferFactory makeWithType:bufferType withLength:length];
         [ringBuffers addObject:newRingBuffer];

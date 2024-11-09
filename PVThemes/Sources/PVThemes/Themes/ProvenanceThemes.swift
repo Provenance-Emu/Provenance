@@ -5,6 +5,8 @@
 //  Created by Joseph Mattiello on 10/23/24.
 //
 
+import UIKit
+
 public enum ProvenanceThemes: String, CaseIterable, PaletteProvider {
     case `default`
     case dark

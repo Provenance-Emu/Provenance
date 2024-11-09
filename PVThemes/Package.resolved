@@ -1,6 +1,15 @@
 {
-  "originHash" : "768eb328702f0549053f9b865698d0269785e043e6fa563725d71ac4e7f62b25",
+  "originHash" : "a73dcf195dd3b3614c977f612c1d072ddb7866f35edf6d1a1915a66053cc7ae6",
   "pins" : [
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
+      }
+    },
     {
       "identity" : "hexcolors",
       "kind" : "remoteSourceControl",
@@ -8,6 +17,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "96bcc8d806e58cf31ee32d419cabccd827ce6550"
+      }
+    },
+    {
+      "identity" : "swift-atomics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-atomics.git",
+      "state" : {
+        "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
+        "version" : "1.2.0"
       }
     },
     {

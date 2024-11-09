@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/FlineDev/FreemiumKit.git",
         "state": {
           "branch": null,
-          "revision": "034f0a9c67eb24be90ec4334369dc23d44245f35",
-          "version": "1.11.0"
+          "revision": "3c2fba45ac91008aa6a844af55eaac81ba66d127",
+          "version": "1.12.0"
         }
       },
       {
@@ -240,7 +240,7 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-perception.git",
         "state": {
           "branch": "main",
-          "revision": "7335e4aab6136e42adeb7545a10570e543336d11",
+          "revision": "81b311a6a0a7c4e286133690592dd814eb17011b",
           "version": null
         }
       },
@@ -312,7 +312,7 @@
         "repositoryURL": "https://github.com/ZipArchive/ZipArchive.git",
         "state": {
           "branch": "master",
-          "revision": "4b4cccf56923c554f08c1554b1480821706c2000",
+          "revision": "4ce93ff4ff60b21bf0bbb7ccc2b1900d0f4435ac",
           "version": null
         }
       },
@@ -321,7 +321,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "7fb5347e88f10472226c9aa1962a148e55d8c480",
+          "revision": "51eb7daf39c8e8a7c338ba214a9d4e2a6a086826",
           "version": null
         }
       }

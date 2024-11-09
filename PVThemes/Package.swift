@@ -27,6 +27,9 @@ let package = Package(
     ],
 
     dependencies: [
+        .package(path: "../PVLogging"),
+        .package(path: "../PVSettings"),
+
         /// Macros
 
         /// https://github.com/alvmo/HexColors
@@ -42,8 +45,10 @@ let package = Package(
         .target(
             name: "PVThemes",
             dependencies: [
-                .product(name: "HexColors", package: "HexColors"),
-                .product(name: "SwiftMacros", package: "SwiftMacros"),
+                "PVLogging",
+                "PVSettings",
+                "HexColors",
+                "SwiftMacros",
                 .product(name: "Perception", package: "swift-perception"),
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")],

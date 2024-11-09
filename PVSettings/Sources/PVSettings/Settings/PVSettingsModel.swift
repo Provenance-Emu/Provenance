@@ -33,7 +33,7 @@ extension Defaults.Keys {
 #endif
 
     static let buttonVibration = Key<Bool>("buttonVibration", default: true)
-#if os(iOS) || os(wathcOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(watchOS) || targetEnvironment(macCatalyst)
     static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
 #else
     static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
@@ -93,14 +93,9 @@ public extension Defaults.Keys {
     static let volume = Key<Float>("volume", default: 1.0)
     static let volumeHUD = Key<Bool>("volumeHUD", default: true)
 
-    static let useLegacyAudioEngine = Key<Bool>("useLegacyAudioEngine", default: false)
-    static let useLegacyRingBuffer = Key<Bool>("useLegacyRingBuffer", default: false)
-
     static let monoAudio = Key<Bool>("monoAudio", default: false)
 
     static let audioLatency = Key<TimeInterval>("audioLatency", default: 10.0)
-    
-    static let usePitchConversionInsteadOfSampleRate = Key<Bool>("usePitchConversionInsteadOfSampleRate", default: false)
 }
 
 // MARK: Beta Options
@@ -148,16 +143,6 @@ public extension Defaults.Keys {
 @objc
 @objcMembers
 public final class PVSettingsWrapper: NSObject {
-
-    @objc
-    public static var useLegacyAudioEngine: Bool {
-        get { Defaults[.useLegacyAudioEngine] }
-        set { Defaults[.useLegacyAudioEngine] = newValue }}
-    
-    @objc
-    public static var useLegacyRingBuffer: Bool {
-        get { Defaults[.useLegacyRingBuffer] }
-        set { Defaults[.useLegacyRingBuffer] = newValue }}
 
     @objc
     public static var use8BitdoM30: Bool {

@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PVCoreAudio",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v15),
         .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v11),
@@ -31,7 +31,8 @@ let package = Package(
         .package(name: "PVCoreBridge", path: "../PVCoreBridge/"),
         .package(name: "PVSettings", path: "../PVSettings/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
-        .package(name: "PVAudio", path: "../PVAudio/")
+        .package(name: "PVAudio", path: "../PVAudio/"),
+        .package(url: "https://github.com/sindresorhus/Defaults.git", branch: "main"),
     ],
 
     // MARK: - Targets
@@ -42,6 +43,7 @@ let package = Package(
             dependencies: [
                 "PVCoreBridge",
                 "PVSettings",
+                "Defaults",
                 .product(name: "PVAudio", package: "PVAudio"),
                 .product(name: "PVLogging", package: "PVLogging")
             ]

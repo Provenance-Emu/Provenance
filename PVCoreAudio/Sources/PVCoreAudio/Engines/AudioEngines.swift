@@ -7,7 +7,8 @@
 
 import Foundation
 
-public enum AudioEngines: String, CaseIterable, CustomStringConvertible {
+@objc
+public enum AudioEngines: Int, CaseIterable, CustomStringConvertible {
     case audioUnitGameAudioEngine
     case avAudioEngineGameAudioEngine
     case dspGameAudioEngine
@@ -35,14 +36,4 @@ public enum AudioEngines: String, CaseIterable, CustomStringConvertible {
             return DSPGameAudioEngine()
         }
     }
-}
-
-import PVSettings
-
-extension AudioEngines: Defaults.Serializable {}
-
-public
-extension Defaults.Keys {
-    static let audioEngine = Key<AudioEngines>("audioEngine",
-                                               default: AudioEngines.`default`)
 }

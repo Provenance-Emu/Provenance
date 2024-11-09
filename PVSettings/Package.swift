@@ -19,12 +19,9 @@ let package = Package(
     ],
 
     dependencies: [
-        .package(
-            name: "PVLogging",
-            path: "../PVLogging/"),
+        .package(path: "../PVLogging"),
 //        .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.0-beta.3"),
         .package(url: "https://github.com/sindresorhus/Defaults.git", branch: "main"),
-//        .package(url: "https://github.com/EngOmarElsayed/SwiftUserDefaults.git", from: "1.4.0")
     ],
 
     // MARK: - Targets

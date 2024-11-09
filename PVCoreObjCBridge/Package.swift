@@ -28,6 +28,7 @@ let package = Package(
 
     dependencies: [
         .package(name: "PVAudio", path: "../PVAudio/"),
+        .package(name: "PVCoreAudio", path: "../PVCoreAudio/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
         .package(name: "PVPlists", path: "../PVPlists/"),
         .package(name: "PVObjCUtils", path: "../PVObjCUtils/"),
@@ -50,6 +51,7 @@ let package = Package(
                 "PVCoreBridge",
                 "PVObjCUtils",
                 "PVAudio",
+                "PVCoreAudio",
                 "PVSettings"
             ],
             cSettings: [

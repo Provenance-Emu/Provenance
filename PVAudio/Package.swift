@@ -43,57 +43,64 @@ let package = Package(
                 "AppleRingBuffer",
                 "OERingBuffer",
                 "CARingBuffer",
-                .product(name: "PVLogging", package: "PVLogging")
+                "PVLogging"
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-
+        // MARK: - RingBuffer Protocol
         .target(
             name: "RingBuffer",
             dependencies: [
-                .product(name: "PVLogging", package: "PVLogging")
+                "PVLogging"
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-
+        // -----------------------------------------
+        // MARK: - RingBuffer Implementations
+        //==========================================
+        // MARK: - PVRingBuffer
         .target(
             name: "PVRingBuffer",
             dependencies: [
                 "RingBuffer",
-                .product(name: "PVLogging", package: "PVLogging"),
+                "PVLogging",
                 .product(name: "Atomics", package: "swift-atomics")
 
             ],
+            path: "Sources/Ring Buffers/PVRingBuffer",
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-
+        // MARK: - AppleRingBuffer
         .target(
             name: "AppleRingBuffer",
             dependencies: [
                 "RingBuffer",
-                .product(name: "PVLogging", package: "PVLogging")
+                "PVLogging"
             ],
+            path: "Sources/Ring Buffers/AppleRingBuffer",
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-
+        // MARK: - OERingBuffer
         .target(
             name: "OERingBuffer",
             dependencies: [
                 "RingBuffer",
-                .product(name: "PVLogging", package: "PVLogging")
+                "PVLogging"
             ],
+            path: "Sources/Ring Buffers/OERingBuffer",
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-
+        // MARK: - CARingBuffer
         .target(
             name: "CARingBuffer",
             dependencies: [
                 "RingBuffer",
-                .product(name: "PVLogging", package: "PVLogging")
+                "PVLogging"
             ],
+            path: "Sources/Ring Buffers/CARingBuffer",
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-
+        // -----------------------------------------
         // MARK: - Tests
         .testTarget(
             name: "PVAudioTests",
