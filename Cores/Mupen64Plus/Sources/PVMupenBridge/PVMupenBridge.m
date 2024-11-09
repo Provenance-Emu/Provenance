@@ -554,6 +554,7 @@ static void *dlopen_myself()
 
 - (void)startEmulation {
     if(!self.isRunning) {
+        romdatabase_init();
         [super startEmulation];
         [NSThread detachNewThreadSelector:@selector(runMupenEmuThread) toTarget:self withObject:nil];
     }
@@ -683,6 +684,7 @@ static void *dlopen_myself()
     [_inputQueue cancelAllOperations];
 
     CoreDoCommand(M64CMD_STOP, 0, NULL);
+    romdatabase_close();
 
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     [self.frontBufferCondition lock];

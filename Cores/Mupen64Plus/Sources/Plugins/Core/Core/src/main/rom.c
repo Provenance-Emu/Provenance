@@ -392,23 +392,50 @@ static void romdatabase_resolve(void)
 /********************************************************************************************/
 /* INI Rom database functions */
 
+void romdatabase_reset(void)
+{
+    if (!g_romdatabase.is_initialized) {
+        return;
+    }
+
+    // Close existing database if open
+    romdatabase_close();
+
+    // Reset all fields
+    memset(&g_romdatabase, 0, sizeof(_romdatabase));
+    g_romdatabase.is_initialized = 1;  // Keep initialized flag
+}
+
+void romdatabase_init(void)
+{
+    // Clear all fields
+    memset(&g_romdatabase, 0, sizeof(_romdatabase));
+    g_romdatabase.is_initialized = 1;
+}
+
+// Modify existing romdatabase_open to check initialization
 void romdatabase_open(void)
 {
     FILE *fPtr;
     char buffer[256];
     romdatabase_search* search = NULL;
     romdatabase_search** next_search;
-
-    int counter, value, lineno;
+    int counter;
+    int value, lineno;
     unsigned char index;
     const char *pathname = ConfigGetSharedDataFilepath("mupen64plus.ini");
 
-    if(g_romdatabase.have_database)
+    if (!g_romdatabase.is_initialized) {
+        DebugMessage(M64MSG_WARNING, "Attempting to open uninitialized ROM database");
+        romdatabase_init();
+    }
+
+    if (g_romdatabase.have_database) {
         return;
+    }
 
     /* Open romdatabase. */
-    if (pathname == NULL || (fPtr = fopen(pathname, "rb")) == NULL)
-    {
+    if (pathname == NULL || (fPtr = fopen(pathname, "rb")) == NULL) {
         DebugMessage(M64MSG_ERROR, "Unable to open rom database file '%s'.", pathname);
         return;
     }
@@ -660,22 +687,29 @@ void romdatabase_open(void)
     romdatabase_resolve();
 }
 
+// Modify existing romdatabase_close to handle initialization state
 void romdatabase_close(void)
 {
-    if (!g_romdatabase.have_database)
+    if (!g_romdatabase.is_initialized || !g_romdatabase.have_database) {
         return;
+    }
 
-    while (g_romdatabase.list != NULL)
-        {
+    while (g_romdatabase.list != NULL) {
         romdatabase_search* search = g_romdatabase.list->next_entry;
-        if(g_romdatabase.list->entry.goodname)
+        if (g_romdatabase.list->entry.goodname)
             free(g_romdatabase.list->entry.goodname);
-        if(g_romdatabase.list->entry.refmd5)
+        if (g_romdatabase.list->entry.refmd5)
             free(g_romdatabase.list->entry.refmd5);
-        free(g_romdatabase.list->entry.cheats);
+        if (g_romdatabase.list->entry.cheats)
+            free(g_romdatabase.list->entry.cheats);
         free(g_romdatabase.list);
         g_romdatabase.list = search;
-        }
+    }
+
+    memset(g_romdatabase.md5_lists, 0, sizeof(g_romdatabase.md5_lists));
+    memset(g_romdatabase.crc_lists, 0, sizeof(g_romdatabase.crc_lists));
+    g_romdatabase.have_database = 0;
+    // Note: We keep is_initialized as 1
 }
 
 static romdatabase_entry* ini_search_by_md5(md5_byte_t* md5)
@@ -700,7 +734,7 @@ romdatabase_entry* ini_search_by_crc(unsigned int crc1, unsigned int crc2)
 {
     romdatabase_search* search;
 
-    if(!g_romdatabase.have_database) 
+    if(!g_romdatabase.have_database)
         return NULL;
 
     search = g_romdatabase.crc_lists[((crc1 >> 24) & 0xff)];
@@ -708,10 +742,8 @@ romdatabase_entry* ini_search_by_crc(unsigned int crc1, unsigned int crc2)
     while (search != NULL && search->entry.crc1 != crc1 && search->entry.crc2 != crc2)
         search = search->next_crc;
 
-    if(search == NULL) 
+    if(search == NULL)
         return NULL;
 
     return &(search->entry);
 }
-
-

@@ -58,7 +58,7 @@ extern rom_params        ROM_PARAMS;
 extern m64p_rom_settings ROM_SETTINGS;
 
 /* Supported rom compressiontypes. */
-enum 
+enum
 {
     UNCOMPRESSED,
     ZIP_COMPRESSION,
@@ -69,7 +69,7 @@ enum
 };
 
 /* Supported rom image types. */
-enum 
+enum
 {
     Z64IMAGE,
     V64IMAGE,
@@ -154,6 +154,7 @@ typedef struct _romdatabase_search
 typedef struct
 {
     int have_database;
+    int is_initialized;
     romdatabase_search* crc_lists[256];
     romdatabase_search* md5_lists[256];
     romdatabase_search* list;
@@ -161,10 +162,11 @@ typedef struct
 
 void romdatabase_open(void);
 void romdatabase_close(void);
+void romdatabase_init(void);
+void romdatabase_reset(void);
 /* Should be used by current cheat system (isn't), when cheat system is
  * migrated to md5s, will be fully depreciated.
  */
 romdatabase_entry* ini_search_by_crc(unsigned int crc1, unsigned int crc2);
 
 #endif /* __ROM_H__ */
-
