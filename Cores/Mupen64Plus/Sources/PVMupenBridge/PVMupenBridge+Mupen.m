@@ -43,40 +43,10 @@ void MupenAudioLenChanged()
     GET_CURRENT_AND_RETURN();
 
     const int LenReg = *AudioInfo.AI_LEN_REG;
-    const uint32_t dram_addr = *AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF;
-    uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + dram_addr);
+    uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
 
-    /// Core uses 16-bit stereo samples (4 bytes per frame)
-    const int bytesPerFrame = 4;
-
-    /// Ensure length is aligned to frame boundary
-    const int numFrames = LenReg / bytesPerFrame;
-    const int alignedLen = numFrames * bytesPerFrame;
-
-    if (alignedLen > 0) {
-        /// Handle DMA transfer similar to core's do_dma function
-        if ((dram_addr + alignedLen) & 0x1FFF) {
-            /// Handle delayed carry similar to core
-            ptr += ((dram_addr + alignedLen) & 0x1FFF) ? 0 : 0x2000;
-        }
-
-        /// Swap channels and write to buffer
-        for (int i = 0; i < alignedLen; i += bytesPerFrame) {
-            uint8_t tmp[4];
-            /// Preserve original data
-            memcpy(tmp, ptr + i, 4);
-            /// Swap channels (L/R)
-            ptr[i] = tmp[2];
-            ptr[i + 1] = tmp[3];
-            ptr[i + 2] = tmp[0];
-            ptr[i + 3] = tmp[1];
-        }
-
-        [[current ringBufferAtIndex:0] write:ptr size:alignedLen];
-
-        DLOG(@"N64 Audio DMA: addr=%08x len=%d frames=%d",
-             dram_addr, alignedLen, numFrames);
-    }
+    // Write directly to ring buffer at 44.1kHz
+    [[current ringBufferAtIndex:0] write:ptr size:LenReg];
 }
 
 void SetIsNTSC()

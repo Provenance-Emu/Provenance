@@ -139,7 +139,7 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
         _videoBitDepth = 32; // ignored
         _videoDepthBitDepth = 0; // TODO
 
-        _mupenSampleRate = 33600;
+        _mupenSampleRate = 44100;
 
         _isNTSC = YES;
 
