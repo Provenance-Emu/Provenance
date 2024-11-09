@@ -45,9 +45,12 @@ void MupenAudioLenChanged()
     const int LenReg = *AudioInfo.AI_LEN_REG;
     uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
 
-    // Get actual N64 frequency from VI clock and DAC rate
-    unsigned int source_frequency = current.isNTSC ? 48681812 : 49656530;
-    source_frequency /= (1 + *AudioInfo.AI_DACRATE_REG);
+    // Get VI clock frequency based on system type
+    unsigned int vi_clock = current.isNTSC ? 48681812 : 49656530;
+
+    // Calculate source frequency using DAC rate
+    // This matches how ai_init sets up the frequency
+    unsigned int source_frequency = vi_clock / (1 + *AudioInfo.AI_DACRATE_REG);
 
     // Calculate number of samples (16-bit stereo)
     const size_t num_input_samples = LenReg / 4;
@@ -60,6 +63,9 @@ void MupenAudioLenChanged()
     if (num_output_samples * 4 > sizeof(resampled)) {
         return;
     }
+
+    // Calculate fixed-point step ratio
+    uint32_t step_ratio = (uint32_t)(((uint64_t)source_frequency << 16) / 44100);
 
     // Do the resampling
     const int16_t *src = (int16_t*)ptr;
@@ -76,7 +82,7 @@ void MupenAudioLenChanged()
             resampled[out_idx * 2 + ch] = (int16_t)(s1 + (((s2 - s1) * frac) >> 16));
         }
 
-        pos += ((uint64_t)33600 << 16) / 44100;
+        pos += step_ratio;
         out_idx++;
     }
 
