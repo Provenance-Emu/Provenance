@@ -34,23 +34,23 @@ final class OEGameAudioContext {
         self.channelCount = channelCount
         self.bytesPerSample = bytesPerSample
 
-        /// Create source format
+        /// Create source format with correct channel count (mono or stereo)
         sourceFormat = AVAudioFormat(
             commonFormat: .pcmFormatInt16,
             sampleRate: sampleRate,
-            channels: AVAudioChannelCount(channelCount),
+            channels: AVAudioChannelCount(channelCount),  /// 1 for mono, 2 for stereo
             interleaved: true
         )!
 
-        /// Create output format (44.1kHz stereo)
+        /// Create output format (always stereo)
         outputFormat = AVAudioFormat(
             commonFormat: .pcmFormatInt16,
             sampleRate: 44100.0,
-            channels: 2,
+            channels: 2,  /// Always stereo output
             interleaved: true
         )!
 
-        /// Create converter
+        /// Create converter - handles both sample rate and channel count conversion
         converter = AVAudioConverter(from: sourceFormat, to: outputFormat)
 
         /// Pre-allocate source buffer
@@ -70,36 +70,28 @@ func RenderCallback(inRefCon: UnsafeMutableRawPointer,
 
     let context = Unmanaged<OEGameAudioContext>.fromOpaque(inRefCon).takeUnretainedValue()
 
-    guard let buffer = context.buffer else { return noErr }
-
-    /// Calculate source frames needed based on sample rate ratio
-    let ratio = context.sourceFormat.sampleRate / context.outputFormat.sampleRate
-    let sourceFramesNeeded = UInt32(Double(inNumberFrames) * ratio)
-
-    /// Calculate bytes needed for source frames
-    let bytesPerFrame = Int(context.bytesPerSample * context.channelCount)
-    let bytesNeeded = Int(sourceFramesNeeded) * bytesPerFrame
-
-    /// Read from ring buffer
-    let availableBytes = buffer.availableBytesForReading
-    let bytesToRead = min(availableBytes, bytesNeeded)
-
-    guard bytesToRead > 0,
+    guard let buffer = context.buffer,
           let outputData = ioData?.pointee.mBuffers.mData else {
         return noErr
     }
 
-    /// Read from ring buffer
-    let bytesRead = buffer.read(outputData, preferredSize: bytesToRead)
+    /// Just read the raw frames without any conversion
+    let bytesPerFrame = Int(context.bytesPerSample * context.channelCount)
+    let bytesNeeded = Int(inNumberFrames) * bytesPerFrame
 
-    /// Update buffer size
-    if bytesRead > 0 {
-        ioData?.pointee.mBuffers.mDataByteSize = UInt32(bytesRead)
+    let availableBytes = buffer.availableBytesForReading
+    let bytesToRead = min(availableBytes, bytesNeeded)
 
-        /// Log if we didn't get all the bytes we needed
-        if bytesRead < bytesNeeded {
-            DLOG("Buffer underrun: got \(bytesRead) of \(bytesNeeded) bytes needed")
+    if bytesToRead > 0 {
+        /// Read directly into output buffer
+        let bytesRead = buffer.read(outputData, preferredSize: bytesToRead)
+        if bytesRead > 0 {
+            ioData?.pointee.mBuffers.mDataByteSize = UInt32(bytesRead)
         }
+    } else {
+        /// Fill with silence if no data
+        memset(outputData, 0, bytesNeeded)
+        ioData?.pointee.mBuffers.mDataByteSize = UInt32(bytesNeeded)
     }
 
     return noErr
