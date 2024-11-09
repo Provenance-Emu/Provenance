@@ -510,7 +510,7 @@ m64p_error main_core_state_query(m64p_core_param param, int *rval)
         case M64CORE_AUDIO_VOLUME:
         {
             if (!g_EmulatorRunning)
-                return M64ERR_INVALID_STATE;    
+                return M64ERR_INVALID_STATE;
             return main_volume_get_level(rval);
         }
         case M64CORE_AUDIO_MUTE:
@@ -538,7 +538,7 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
             if (!g_EmulatorRunning)
                 return M64ERR_INVALID_STATE;
             if (val == M64EMU_STOPPED)
-            {        
+            {
                 /* this stop function is asynchronous.  The emulator may not terminate until later */
                 main_stop();
                 return M64ERR_SUCCESS;
@@ -550,7 +550,7 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
                 return M64ERR_SUCCESS;
             }
             else if (val == M64EMU_PAUSED)
-            {    
+            {
                 if (!main_is_paused())
                     main_toggle_pause();
                 return M64ERR_SUCCESS;
@@ -1322,6 +1322,8 @@ m64p_error main_run(void)
         ijoybus_devices[i] = &g_ijoybus_device_cart;
     }
 
+    // Initialize AI for 44.1kHz output before device init
+    ai_init(&g_dev.ai);
 
     init_device(&g_dev,
                 g_mem_base,

@@ -30,6 +30,7 @@
 #include "device/rcp/ri/ri_controller.h"
 #include "device/rcp/vi/vi_controller.h"
 #include "device/rdram/rdram.h"
+#include "main/rom.h"
 
 
 #define AI_STATUS_BUSY UINT32_C(0x40000000)
@@ -159,8 +160,12 @@ void init_ai(struct ai_controller* ai,
 
 void poweron_ai(struct ai_controller* ai)
 {
-    memset(ai->regs, 0, AI_REGS_COUNT*sizeof(uint32_t));
-    memset(ai->fifo, 0, AI_DMA_FIFO_SIZE*sizeof(struct ai_dma));
+    /// Keep the DAC rate we set in ai_init
+    uint32_t saved_dacrate = ai->regs[AI_DACRATE_REG];
+    memset(ai->regs, 0, AI_REGS_COUNT * sizeof(uint32_t));
+    ai->regs[AI_DACRATE_REG] = saved_dacrate;
+
+    memset(ai->fifo, 0, 2 * sizeof(struct ai_dma));
     ai->samples_format_changed = 0;
     ai->last_read = 0;
     ai->delayed_carry = 0;
@@ -237,3 +242,31 @@ void ai_end_of_dma_event(void* opaque)
     raise_rcp_interrupt(ai->mi, MI_INTR_AI);
 }
 
+void ai_init(struct ai_controller* ai)
+{
+    /// Initialize base registers
+    memset(ai->regs, 0, AI_REGS_COUNT * sizeof(uint32_t));
+    memset(ai->fifo, 0, 2 * sizeof(struct ai_dma));
+
+    /// Calculate DAC rate for 44.1kHz
+    /// NTSC clock = 48681812 Hz, PAL clock = 49656530 Hz
+    /// Formula: Clock / (DAC rate + 1) = Sample rate
+    uint32_t dacrate;
+
+    if (ROM_PARAMS.systemtype == SYSTEM_PAL) {
+        /// PAL: 49656530 / (x + 1) = 44100
+        /// x = (49656530 / 44100) - 1
+        dacrate = 1126;  /// This gives us ~44.1kHz for PAL
+    } else {
+        /// NTSC: 48681812 / (x + 1) = 44100
+        /// x = (48681812 / 44100) - 1
+        dacrate = 1103;  /// This gives us ~44.1kHz for NTSC
+    }
+
+    ai->regs[AI_DACRATE_REG] = dacrate;
+    ai->regs[AI_BITRATE_REG] = 0;
+    ai->regs[AI_STATUS_REG] = 0;
+    ai->samples_format_changed = 0;
+    ai->last_read = 0;
+    ai->delayed_carry = 0;
+}

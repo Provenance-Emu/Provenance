@@ -87,4 +87,7 @@ void write_ai_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask
 
 void ai_end_of_dma_event(void* opaque);
 
+// Add this declaration
+void ai_init(struct ai_controller* ai);
+
 #endif

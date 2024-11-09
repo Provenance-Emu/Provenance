@@ -26,34 +26,15 @@ void MupenAudioSampleRateChanged(int SystemType)
 {
     GET_CURRENT_AND_RETURN();
 
-    /// Calculate actual sample rate from AI_DACRATE_REG
-    uint32_t dacrate = *AudioInfo.AI_DACRATE_REG;
-    float clockRate;
+    // Since we're forcing 44.1kHz in the AI controller, we can set this directly
+    float newRate = 44100.0f;
 
-    switch (SystemType) {
-        case SYSTEM_NTSC:
-            clockRate = 48681812.0f;
-            break;
-        case SYSTEM_PAL:
-            clockRate = 49656530.0f;
-            break;
-        case SYSTEM_MPAL:
-            clockRate = 48628316.0f;
-            break;
-        default:
-            clockRate = 48681812.0f;
-    }
-
-    /// Calculate frequency based on core's formula
-    float newRate = clockRate / (dacrate + 1);
-
-    /// Update sample rate if changed
+    // Update sample rate if changed
     if (current.mupenSampleRate != newRate) {
         current.mupenSampleRate = newRate;
         [[current audioDelegate] audioSampleRateDidChange];
 
-        DLOG(@"N64 Audio Rate: %f Hz (dacrate=%d, clock=%f)",
-             newRate, dacrate, clockRate);
+        DLOG(@"N64 Audio Rate: %f Hz (forced 44.1kHz)", newRate);
     }
 }
 
