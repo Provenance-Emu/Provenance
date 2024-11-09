@@ -1,412 +1,294 @@
-//
-//  GameAudioEngine.swift
-//  PVCoreAudio
-//
-//  Created by Joseph Mattiello on 9/10/24.
-//
-
-
-import AVFoundation
 import Foundation
-import AudioToolbox
-import AudioUnit
-import CoreGraphics
 import AVFoundation
-import CoreAudio
-
-import PVAudio
 import PVLogging
+import PVAudio
 import PVCoreBridge
+import AudioToolbox
+import CoreAudio
+import PVSettings
+import Accelerate
 
-
-/// Second version of the game audio engine
-/// This one based on `AVAudioEngine`
-public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
-    
-    public var volume: Float {
-        didSet {
-            mixerNode.volume = max(0, min(volume, 1))
-        }
-    }
-    
-    /// Format of ... audio
-    private var audioFormat: AVAudioFormat?
+@available(macOS 11.0, iOS 14.0, *)
+final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
 
     private lazy var engine: AVAudioEngine = {
         let engine = AVAudioEngine()
         return engine
     }()
-    
-    /// Final output mixer node
-    private lazy var mixerNode: AVAudioMixerNode = {
-        let node = AVAudioMixerNode()
-        engine.attach(node)
-        return node
-    }()
-    private lazy var monoMixerNode: AVAudioMixerNode = {
-        let node = AVAudioMixerNode()
-        return node
-    }()
-    private var playerNodes: [AVAudioPlayerNode]
-    private var converterNodes: [AVAudioUnit]
-    private var contexts: [OEGameAudioContext]
-    private var isPlaying: Bool = false
-    
-    private(set) var isMonoOutput = false {
+
+    private var src: AVAudioSourceNode?
+    internal weak var gameCore: EmulatorCoreAudioDataSource!
+    private var isRunning = false
+
+    public var volume: Float = 1.0 {
         didSet {
-            reconfigureAudioEngine()
+            engine.mainMixerNode.outputVolume = volume
         }
     }
+
+    private lazy var varispeedNode: AVAudioUnitVarispeed = {
+        let node = AVAudioUnitVarispeed()
+        return node
+    }()
+
+    private var audioConverter: AVAudioConverter?
+    private var audioConverterRequiredFrameCount: AVAudioFrameCount?
+    private var inputBuffer: AVAudioPCMBuffer?
+
+
+    private lazy var audioFormat: AVAudioFormat? = {
+        return AVAudioFormat(
+            commonFormat: .pcmFormatFloat32,
+            sampleRate: AVAudioSession.sharedInstance().sampleRate,
+            channels: 2,
+            interleaved: false
+        )
+    }()
 
     public init() {
-        playerNodes = []
-        converterNodes = []
-        contexts = []
-        self.volume = 1
-        engine.attach(mixerNode)
-        engine.connect(mixerNode, to: engine.mainMixerNode, format: nil)
+        configureAudioSession()
     }
-    
+
+    public func setVolume(_ volume: Float) {
+        self.volume = volume
+    }
+
     public func setupAudioGraph(for gameCore: EmulatorCoreAudioDataSource) throws {
-//        guard let gameCore = gameCore else {
-//            print("Error: gameCore is nil")
-//            return
-//        }
-        
-        // Clear existing nodes
-        for node in playerNodes + converterNodes {
-            engine.detach(node)
+        self.gameCore = gameCore
+    }
+
+    /// Type alias for the read block
+    typealias OEAudioBufferReadBlock = (UnsafeMutableRawPointer, Int) -> Int
+
+    /// Kaiser window helper function
+    private func createKaiserWindow(size: Int, beta: Double) -> [Double] {
+        var window = [Double](repeating: 0.0, count: size)
+        let iZero = modifiedBessel0(beta)
+
+        for i in 0..<size {
+            let x = beta * sqrt(1.0 - pow(2.0 * Double(i) / Double(size - 1) - 1.0, 2))
+            window[i] = modifiedBessel0(x) / iZero
         }
-        playerNodes.removeAll()
-        converterNodes.removeAll()
-        contexts.removeAll()
-        
-        let bufferCount = Int(gameCore.audioBufferCount)
-        
-        for i in 0..<bufferCount {
-            guard let ringBuffer = gameCore.ringBuffer(atIndex: UInt(i)) else {
-                ELOG("Error: Ring buffer at index \(i) was nil")
-                continue
-            }
-            
-            let coreChannelCount = gameCore.channelCount(forBuffer: UInt(i))
-            let coreSampleRate = gameCore.audioSampleRate(forBuffer: UInt(i))
-            let coreAudioBitDepth = gameCore.audioBitDepth
-            let bytesPerSample = Int32(coreAudioBitDepth / 8)
-            ringBuffer.reset()
-            
-            let newContext = OEGameAudioContext(buffer: ringBuffer,
-                                                channelCount: Int32(coreChannelCount),
-                                                bytesPerSample: bytesPerSample)
-            contexts.append(newContext)
-            
-            let playerNode = AVAudioPlayerNode()
-            engine.attach(playerNode)
-            playerNodes.append(playerNode)
-            
-            let converterNode = AVAudioUnitVarispeed()
-            engine.attach(converterNode)
-            converterNodes.append(converterNode)
-            
-            let commonFormat: AVAudioCommonFormat
-            if bytesPerSample == 2 {
-                commonFormat = .pcmFormatInt16
-            } else if bytesPerSample == 4 {
-                commonFormat = .pcmFormatFloat32
-            } else if bytesPerSample == 8 {
-                commonFormat = .pcmFormatFloat64
-            } else {
-                fatalError("Invalid bytes per audio sample: \(bytesPerSample)")
+
+        return window
+    }
+
+    /// Modified Bessel function of the first kind, order 0
+    private func modifiedBessel0(_ x: Double) -> Double {
+        var sum = 1.0
+        var term = 1.0
+
+        for k in 1...20 {  // 20 terms is usually sufficient
+            let xk = x / 2.0
+            term *= (xk * xk) / (Double(k) * Double(k))
+            sum += term
+
+            if term < 1e-12 { break }
+        }
+
+        return sum
+    }
+
+    private func readBlockForBuffer(_ buffer: RingBufferProtocol) -> (AVAudioPCMBuffer) -> Int {
+        /// Cache format information
+        let sourceChannels = Int(gameCore.channelCount(forBuffer: 0))
+        let sourceBitDepth = gameCore.audioBitDepth
+        let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
+        let sourceBytesPerFrame = sourceChannels * (Int(sourceBitDepth) / 8)
+
+        /// Create source format (input format)
+        guard let sourceFormat = AVAudioFormat(
+            commonFormat: .pcmFormatInt16,
+            sampleRate: Double(sourceRate),
+            channels: AVAudioChannelCount(sourceChannels),
+            interleaved: true) else {
+            ELOG("Failed to create source format")
+            return { _ in 0 }
+        }
+
+        /// Create destination format (output format)
+        guard let destinationFormat = AVAudioFormat(
+            standardFormatWithSampleRate: AVAudioSession.sharedInstance().sampleRate,
+            channels: 2
+        ) else {
+            ELOG("Failed to create destination format")
+            return { _ in 0 }
+        }
+
+        /// Create converter if needed
+        if audioConverter == nil {
+            audioConverter = AVAudioConverter(from: sourceFormat, to: destinationFormat)
+        }
+
+        return { pcmBuffer in
+            /// Check available bytes in ring buffer
+            let availableBytes = buffer.availableBytes
+            if availableBytes == 0 {
+                pcmBuffer.frameLength = 0
+                return 0
             }
 
-            
-            guard let format = AVAudioFormat(commonFormat: commonFormat,
-                                             sampleRate: Double(coreSampleRate),
-                                             channels: AVAudioChannelCount(coreChannelCount),
-                                             interleaved: true) else {
-                ELOG("Format for buffer \(i) could not be created")
-                engine.stop()
-                return
-            }
-            
-            audioFormat = format
-            
-            engine.connect(playerNode, to: converterNode, format: nil)
-            engine.connect(converterNode, to: mixerNode, format: nil)
-            
-            engine.attach(monoMixerNode)
-            engine.connect(monoMixerNode, to: engine.mainMixerNode, format: nil)
+            /// Calculate frames we can read
+            let availableFrames = availableBytes / sourceBytesPerFrame
+            let bytesToRead = availableFrames * sourceBytesPerFrame
 
-            scheduleBuffer(for: playerNode, with: newContext, format: format)
-        }
-        
-        do {
-            try engine.start()
-        } catch {
-            ELOG("Error starting AVAudioEngine: \(error)")
-            throw error
-        }
-    }
-    
-    private func scheduleBuffer(for playerNode: AVAudioPlayerNode, with context: OEGameAudioContext, format: AVAudioFormat) {
-        let frameCapacity = AVAudioFrameCount(2048)  // Adjust this value as needed
-        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCapacity) else {
-            fatalError("Unable to create AVAudioPCMBuffer")
-        }
-        
-        buffer.frameLength = frameCapacity
-        
-        let channelCount = Int(context.channelCount)
-        let bytesPerSample = Int(context.bytesPerSample)
-        
-        playerNode.scheduleBuffer(buffer) {
-            self.fillBuffer(buffer, with: context)
-            self.scheduleBuffer(for: playerNode, with: context, format: format)
-        }
-        
-        playerNode.play()
-    }
-    
-    private func fillBuffer(_ buffer: AVAudioPCMBuffer, with context: OEGameAudioContext) {
-        let channelCount = Int(context.channelCount)
-        let bytesPerSample = Int(context.bytesPerSample)
-        let bytesRequested = Int(buffer.frameLength) * channelCount * bytesPerSample
-        
-        let availableBytes = context.buffer?.availableBytesForWriting ?? 0
-        let bytesToWrite = min(availableBytes, bytesRequested)
-        
-        if bytesToWrite > 0 {
-            let tempBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bytesToWrite)
-            defer { tempBuffer.deallocate() }
-            
-            context.buffer?.read(tempBuffer, preferredSize: bytesToWrite)
-            
-            for channel in 0..<channelCount {
-                guard let channelData = buffer.floatChannelData?[channel] else { continue }
-                
-                for frame in 0..<Int(buffer.frameLength) {
-                    let byteOffset = (frame * channelCount + channel) * bytesPerSample
-                    if byteOffset < bytesToWrite {
-                        let value: Float
-                        switch bytesPerSample {
-                        case 1:
-                            value = Float(tempBuffer[byteOffset]) / Float(Int8.max)
-                        case 2:
-                            value = Float(Int16(bigEndian: tempBuffer.withMemoryRebound(to: Int16.self, capacity: 1) { $0.pointee })) / Float(Int16.max)
-                        case 4:
-                            value = tempBuffer.withMemoryRebound(to: Float.self, capacity: 1) { $0.pointee }
-                        default:
-                            value = 0
-                        }
-                        channelData[frame] = value
-                    } else {
-                        channelData[frame] = 0
-                    }
-                }
+            /// Create/reuse input buffer
+            if self.inputBuffer == nil || self.inputBuffer?.format != sourceFormat {
+                self.inputBuffer = AVAudioPCMBuffer(pcmFormat: sourceFormat,
+                                                  frameCapacity: AVAudioFrameCount(availableFrames))
             }
-        } else {
-            for channel in 0..<channelCount {
-                if let channelData = buffer.floatChannelData?[channel] {
-                    memset(channelData, 0, Int(buffer.frameLength) * MemoryLayout<Float>.size)
-                }
-            }
-        }
-    }
-}
 
-extension AVAudioEngineGameAudioEngine {
-    private func performResumeAudio() {
-        DispatchQueue.main
-            .asyncAfter(deadline: .now() + 0.020) {
-                self.resumeAudio()
+            guard let inputBuffer = self.inputBuffer,
+                  let audioConverter = self.audioConverter else {
+                return 0
             }
+
+            /// Read directly into input buffer's raw memory
+            if let inputData = inputBuffer.int16ChannelData?[0] {
+                let bytesRead = buffer.read(
+                    UnsafeMutableRawPointer(inputData),
+                    preferredSize: bytesToRead
+                )
+                inputBuffer.frameLength = AVAudioFrameCount(bytesRead / sourceBytesPerFrame)
+            }
+
+            /// Convert to output format
+            var error: NSError?
+            let status = audioConverter.convert(to: pcmBuffer, error: &error) { packetCount, status in
+                status.pointee = .haveData
+                return inputBuffer
+            }
+
+            if status == .error {
+                ELOG("Conversion error: \(error?.localizedDescription ?? "unknown")")
+                return 0
+            }
+
+            return Int(pcmBuffer.frameLength)
+        }
     }
-    
-    public func resumeAudio() {
-        isPlaying = true
+
+    private func updateSourceNode() {
+        if let src {
+            engine.detach(src)
+            self.src = nil
+        }
+
+        /// Create output format
+        guard let format = AVAudioFormat(
+            commonFormat: .pcmFormatFloat32,
+            sampleRate: AVAudioSession.sharedInstance().sampleRate,
+            channels: 2,
+            interleaved: false
+        ) else {
+            ELOG("Failed to create format")
+            return
+        }
+
+        let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
+
+        /// Create source node
+        let renderBlock: AVAudioSourceNodeRenderBlock = { isSilence, timestamp, frameCount, audioBufferList -> OSStatus in
+            let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
+
+            guard let pcmBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else {
+                isSilence.pointee = true
+                return noErr
+            }
+
+            let bytesCopied = read(pcmBuffer)
+
+            if bytesCopied == 0 {
+                isSilence.pointee = true
+                ablPointer[0].mDataByteSize = 0
+                ablPointer[1].mDataByteSize = 0
+                return noErr
+            }
+
+            /// Copy only the valid frames to output buffers
+            for i in 0..<2 {
+                let source = pcmBuffer.floatChannelData?[i]
+                let dest = ablPointer[i].mData?.assumingMemoryBound(to: Float.self)
+                let count = Int(pcmBuffer.frameLength)
+
+                vDSP_mmov(source!, dest!, vDSP_Length(count), 1, 1, 1)
+                ablPointer[i].mDataByteSize = UInt32(count * 4)
+            }
+
+            isSilence.pointee = false
+            return noErr
+        }
+
+        src = AVAudioSourceNode(format: format, renderBlock: renderBlock)
+
+        guard let src else {
+            ELOG("Failed to create audio source node")
+            return
+        }
+
+        /// Setup audio chain with varispeed
+        engine.attach(src)
+        engine.attach(varispeedNode)
+
+        engine.connect(src, to: varispeedNode, format: format)
+        engine.connect(varispeedNode, to: engine.mainMixerNode, format: format)
+
+        /// Set varispeed rate based on source rate
+        let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
+        let targetRate = AVAudioSession.sharedInstance().sampleRate
+        let rateRatio = sourceRate / targetRate
+
+        /// Adjust varispeed rate since we're also interpolating
+        varispeedNode.rate = Float(rateRatio)
+
+        DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Rate ratio: \(rateRatio)")
+
+        engine.mainMixerNode.outputVolume = volume
+    }
+
+    public func startAudio() {
+        precondition(gameCore.audioBufferCount == 1,
+                     "Only one buffer supported; got \(gameCore.audioBufferCount)")
+
+        updateSourceNode()
+        engine.prepare()
+
+        isRunning = true
         do {
             try engine.start()
         } catch {
             ELOG("Unable to start AVAudioEngine: \(error.localizedDescription)")
         }
     }
-}
 
-
-// MARK: - Volume
-public extension AVAudioEngineGameAudioEngine {
-    
-    func setVolume(_ volume: Float) {
-        self.volume = volume
-    }
-    
-    func increaseVolume() {
-        let newVolume = mixerNode.volume + 0.1
-        setVolume(newVolume)
-    }
-    
-    func decreaseVolume() {
-        let newVolume = mixerNode.volume - 0.1
-        setVolume(newVolume)
-    }
-    
-    func getVolume() -> Float {
-        return mixerNode.volume
-    }
-}
-
-// MARK: - Runloop
-public extension AVAudioEngineGameAudioEngine {
-    
-    func startAudio() throws {
-         guard !isPlaying else { return }
-         
-         do {
-             try engine.start()
-         } catch {
-             ELOG("Error starting audio engine: \(error)")
-             throw error
-         }
-        for playerNode in playerNodes {
-            updateMonoSetting()
-            playerNode.play()
+    public func stopAudio() {
+        engine.stop()
+        if let src {
+            engine.detach(src)
         }
-        isPlaying = true
-     }
-     
-    func pauseAudio() {
-         guard isPlaying else { return }
-         
-         for playerNode in playerNodes {
-             playerNode.pause()
-         }
-         isPlaying = false
-     }
-     
-    func stopAudio() {
-         for playerNode in playerNodes {
-             playerNode.stop()
-         }
-         engine.stop()
-         isPlaying = false
-     }
-     
-    func isAudioPlaying() -> Bool {
-         return isPlaying
-     }
-}
+        src = nil
+        isRunning = false
+    }
 
-// Mono Audio
-extension AVAudioEngineGameAudioEngine: MonoAudioEngine {
-    
-    public func setMono(_ isMono: Bool) {
-        self.isMonoOutput = isMono
-    }
-    
-    public func toggleMonoOutput() {
-        isMonoOutput.toggle()
-    }
-    
-    private func reconfigureAudioEngine() {
+    public func pauseAudio() {
+        guard isRunning else { return }
         engine.pause()
-        updateMonoSetting()
-        engine.prepare()
-        do {
-            try engine.start()
-        } catch {
-            ELOG("Error restarting audio engine after mono setting change: \(error)")
-        }
-    }
-   
-    private func updateMonoSetting() {
-//        guard let format = audioFormat else { return }
-//        
-//        if isMonoOutput {
-//            // Create mono format
-//            guard let monoFormat = AVAudioFormat(commonFormat: format.commonFormat,
-//                                                 sampleRate: format.sampleRate,
-//                                                 channels: 1,
-//                                                 interleaved: format.isInterleaved) else {
-//                ELOG("Failed to create mono audio format")
-//                return
-//            }
-//            
-//            // Disconnect all player nodes from main mixer
-//            playerNodes.forEach { playerNode in
-//                engine.disconnectNodeOutput(playerNode)
-//            }
-//            
-//            // Connect player nodes to mono mixer
-//            playerNodes.forEach { playerNode in
-//                engine.connect(playerNode, to: monoMixerNode, format: format)
-//            }
-//            
-//            // Connect mono mixer to main mixer
-//            engine.connect(monoMixerNode, to: engine.mainMixerNode, format: monoFormat)
-//        } else {
-//            // Disconnect mono mixer
-//            engine.disconnectNodeInput(monoMixerNode)
-//            engine.disconnectNodeOutput(monoMixerNode)
-//            
-//            // Connect player nodes directly to main mixer
-//            playerNodes.forEach { playerNode in
-//                engine.connect(playerNode, to: engine.mainMixerNode, format: format)
-//            }
-//        }
+        isRunning = false
     }
 
-//    private func updateMonoSetting() {
-//           guard let format = audioFormat else { return }
-//           
-//           if isMonoOutput {
-//               // Remove any existing connection to mainMixerNode
-//               playerNodes.forEach { playerNode in
-//                   engine.disconnectNodeOutput(playerNode)
-//                   
-//                   // Connect playerNode to monoMixerNode
-//                   engine.connect(playerNode, to: monoMixerNode, format: format)
-//               }
-//               
-//               // Create mono format
-//               let monoFormat = AVAudioFormat(commonFormat: format.commonFormat,
-//                                              sampleRate: format.sampleRate,
-//                                              channels: 1,
-//                                              interleaved: format.isInterleaved)
-//               
-//               // Install tap on monoMixerNode to convert to mono
-//               monoMixerNode.installTap(onBus: 0, bufferSize: 4096, format: format) { [weak self] buffer, _ in
-//                   guard let self = self, let monoFormat = monoFormat else { return }
-//                   
-//                   let frameCount = buffer.frameLength
-//                   let channelCount = buffer.format.channelCount
-//                   
-//                   // Create a new mono buffer
-//                   guard let monoBuffer = AVAudioPCMBuffer(pcmFormat: monoFormat, frameCapacity: frameCount) else { return }
-//                   monoBuffer.frameLength = frameCount
-//                   
-//                   // Get the audio buffers
-//                   let inputBuffers = UnsafeBufferPointer(start: buffer.floatChannelData, count: Int(channelCount))
-//                   let outputBuffers = UnsafeBufferPointer(start: monoBuffer.floatChannelData, count: 1)
-//                   
-//                   // Mix down to mono
-//                   for frame in 0..<Int(frameCount) {
-//                       var monoSample: Float = 0
-//                       for channel in 0..<channelCount {
-//                           monoSample += inputBuffers[Int(channel)][frame]
-//                       }
-//                       outputBuffers[0][frame] = monoSample / Float(channelCount)
-//                   }
-//                   
-//                   // Output the mono buffer
-//                   self.engine.mainMixerNode.scheduleBuffer(monoBuffer)
-//               }
-//           } else {
-//               // Remove the tap and reconnect playerNode directly to mainMixerNode
-//               monoMixerNode.removeTap(onBus: 0)
-//               engine.disconnectNodeInput(monoMixerNode)
-//               playerNodes.forEach { playerNode in
-//                   engine.connect(playerNode, to: engine.mainMixerNode, format: format)
-//               }
-//           }
-//       }
+    private func configureAudioSession() {
+#if !os(macOS)
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.ambient,
+                                    mode: .default,
+                                    options: [.mixWithOthers])
+            let bufferDuration = Defaults[.audioLatency] / 1000.0
+            try session.setPreferredIOBufferDuration(bufferDuration)
+            try session.setActive(true)
+        } catch {
+            ELOG("Failed to configure audio session: \(error.localizedDescription)")
+        }
+#endif
+    }
 }
