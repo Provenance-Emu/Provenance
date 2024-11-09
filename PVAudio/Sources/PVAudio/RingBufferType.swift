@@ -14,8 +14,8 @@ import PVLogging
 import PVLogging
 
 @objc public enum RingBufferType: Int, CaseIterable {
-    case provenance
     case openEMU
+    case provenance
     //    case appleRingBuffer
     //    case caRingBuffer
     
@@ -25,10 +25,10 @@ import PVLogging
 extension RingBufferType: CustomStringConvertible {
     public var description: String {
         switch self {
+        case .openEMU:
+            return "TPCircularBuffer (Legacy)"
         case .provenance:
             return "Provenance"
-        case .openEMU:
-            return "OpenEMU"
         }
     }
 }
