@@ -27,6 +27,9 @@
 #import "OERingBuffer.h"
 @import RingBuffer;
 @import PVLoggingObjC;
+@import Accelerate;  /// For vDSP operations
+#import <stdatomic.h>  /// For atomic operations
+#import <os/lock.h>    /// For memory fences
 
 __attribute__((objc_direct_members))
 @implementation OERingBuffer
@@ -38,9 +41,11 @@ __attribute__((objc_direct_members))
 }
 
 - (instancetype)initWithLength:(BufferSize)length {
-    if((self = [super init]))
-    {
-        TPCircularBufferInit(&buffer, length);
+    if((self = [super init])) {
+        if (!TPCircularBufferInit(&buffer, length)) {
+            return nil;  /// Handle initialization failure
+        }
+        atomic_thread_fence(memory_order_release);  /// Modern memory barrier
     }
     return self;
 }
@@ -56,26 +61,70 @@ __attribute__((objc_direct_members))
 - (void)setLength:(BufferSize)length {
     TPCircularBufferCleanup(&buffer);
     TPCircularBufferInit(&buffer, length);
+    atomic_thread_fence(memory_order_release);
 }
 
 - (BufferSize)write:(const void *)inBuffer size:(BufferSize)length {
-    if (inBuffer == nil) {
+    if (inBuffer == nil || length == 0) {
         return 0;
     }
+
+    /// Prevent buffer overflow
+    if (length > buffer.length) {
+        ELOG(@"Buffer overflow prevented - attempted write of %d bytes to %d byte buffer",
+             length, buffer.length);
+        return 0;
+    }
+
     bytesWritten += length;
-    VLOG(@"bytesWritten: %i", bytesRead);
+    VLOG(@"bytesWritten: %i", bytesWritten);
     return TPCircularBufferProduceBytes(&buffer, inBuffer, length);
 }
 
 - (BufferSize)read:(void *)outBuffer preferredSize:(BufferSize)len {
+    if (outBuffer == nil || len == 0) {
+        return 0;
+    }
+
     BufferSize availableBytes = 0;
     void *head = TPCircularBufferTail(&buffer, &availableBytes);
-    availableBytes = MIN(availableBytes, len);
-    memcpy(outBuffer, head, availableBytes);
-    TPCircularBufferConsume(&buffer, availableBytes);
-	bytesRead += availableBytes;
+
+    /// Handle empty buffer
+    if (availableBytes == 0) {
+        DLOG(@"Buffer underrun - filling with silence");
+        memset(outBuffer, 0, len);
+        bytesRead += len;
+        return len;
+    }
+
+    /// Calculate how much we can read
+    BufferSize bytesToRead = MIN(availableBytes, len);
+
+    /// Handle reads
+    if (head + bytesToRead <= (void *)((char *)buffer.buffer + buffer.length)) {
+        /// Single contiguous read
+        memcpy(outBuffer, head, bytesToRead);
+    } else {
+        /// Split read required
+        BufferSize firstPart = (BufferSize)((char *)buffer.buffer + buffer.length - (char *)head);
+        memcpy(outBuffer, head, firstPart);
+        memcpy((char *)outBuffer + firstPart, buffer.buffer, bytesToRead - firstPart);
+    }
+
+    TPCircularBufferConsume(&buffer, bytesToRead);
+    bytesRead += bytesToRead;
     VLOG(@"bytesRead: %i", bytesRead);
-    return availableBytes;
+
+    /// Fill remaining space with silence if needed
+    if (bytesToRead < len) {
+        DLOG(@"Partial read: %d/%d bytes - filling rest with silence",
+             bytesToRead, len);
+        memset((char *)outBuffer + bytesToRead, 0, len - bytesToRead);
+        bytesRead += (len - bytesToRead);
+        return len;
+    }
+
+    return bytesToRead;
 }
 
 - (BufferSize)availableBytesForWriting {
@@ -85,12 +134,17 @@ __attribute__((objc_direct_members))
 }
 
 - (BufferSize)availableBytesForReading {
-    return buffer.length - buffer.fillCount;
+    BufferSize availableBytes = 0;
+    TPCircularBufferTail(&buffer, &availableBytes);
+    return availableBytes;
 }
 
 - (void)reset {
     TPCircularBufferClear(&buffer);
     [self setLength:buffer.length];
+    bytesRead = 0;    /// Reset counters
+    bytesWritten = 0;
+    atomic_thread_fence(memory_order_release);
 }
 
 - (BufferSize)availableBytes {
