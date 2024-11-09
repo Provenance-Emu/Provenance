@@ -421,6 +421,58 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
         }
 
         ILOG("Audio graph setup complete")
+
+        /// After setting the converter output format, add:
+
+        /// Configure the converter's quality and sample rate conversion
+        if streamFormat.mSampleRate != outputFormat.mSampleRate {
+            /// Set maximum quality for sample rate conversion
+            var quality: UInt32 = kAudioConverterQuality_Max
+            err = AudioUnitSetProperty(
+                auMetaData.mConverterUnit!,
+                kAudioUnitProperty_RenderQuality,
+                kAudioUnitScope_Global,
+                0,
+                &quality,
+                UInt32(MemoryLayout<UInt32>.size)
+            )
+            if err != noErr {
+                ELOG("Error setting converter quality: \(err)")
+                throw AudioEngineError.failedToCreateAudioEngine(err)
+            }
+
+            /// Enable sample rate conversion if needed
+            var enableSRC: UInt32 = 1
+            err = AudioUnitSetProperty(
+                auMetaData.mConverterUnit!,
+                kAudioUnitProperty_SampleRateConverterComplexity,
+                kAudioUnitScope_Global,
+                0,
+                &enableSRC,
+                UInt32(MemoryLayout<UInt32>.size)
+            )
+            if err != noErr {
+                ELOG("Error enabling sample rate conversion: \(err)")
+                throw AudioEngineError.failedToCreateAudioEngine(err)
+            }
+
+            DLOG("Configured sample rate conversion: \(streamFormat.mSampleRate)Hz -> \(outputFormat.mSampleRate)Hz")
+        }
+
+        /// Set reasonable buffer size for converter
+        var maxFrames: UInt32 = 4096
+        err = AudioUnitSetProperty(
+            auMetaData.mConverterUnit!,
+            kAudioUnitProperty_MaximumFramesPerSlice,
+            kAudioUnitScope_Global,
+            0,
+            &maxFrames,
+            UInt32(MemoryLayout<UInt32>.size)
+        )
+        if err != noErr {
+            ELOG("Error setting max frames: \(err)")
+            throw AudioEngineError.failedToCreateAudioEngine(err)
+        }
     }
 
 //    @MainActor
