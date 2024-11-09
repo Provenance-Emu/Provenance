@@ -26,23 +26,35 @@ void MupenAudioSampleRateChanged(int SystemType)
 {
     GET_CURRENT_AND_RETURN();
 
-    float currentRate = current.mupenSampleRate;
+    /// Calculate actual sample rate from AI_DACRATE_REG
+    uint32_t dacrate = *AudioInfo.AI_DACRATE_REG;
+    float clockRate;
 
     switch (SystemType) {
-        default:
         case SYSTEM_NTSC:
-            current.mupenSampleRate = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
-            break;
-        case SYSTEM_MPAL:
-            current.mupenSampleRate = 48628316 / (*AudioInfo.AI_DACRATE_REG + 1);
+            clockRate = 48681812.0f;
             break;
         case SYSTEM_PAL:
-            current.mupenSampleRate = 49656530 / (*AudioInfo.AI_DACRATE_REG + 1);
+            clockRate = 49656530.0f;
             break;
+        case SYSTEM_MPAL:
+            clockRate = 48628316.0f;
+            break;
+        default:
+            clockRate = 48681812.0f;
     }
 
-    [[current audioDelegate] audioSampleRateDidChange];
-    ILOG(@"Mupen rate changed %f -> %f\n", currentRate, current.mupenSampleRate);
+    /// Calculate frequency based on core's formula
+    float newRate = clockRate / (dacrate + 1);
+
+    /// Update sample rate if changed
+    if (current.mupenSampleRate != newRate) {
+        current.mupenSampleRate = newRate;
+        [[current audioDelegate] audioSampleRateDidChange];
+
+        DLOG(@"N64 Audio Rate: %f Hz (dacrate=%d, clock=%f)",
+             newRate, dacrate, clockRate);
+    }
 }
 
 void MupenAudioLenChanged()
@@ -50,19 +62,40 @@ void MupenAudioLenChanged()
     GET_CURRENT_AND_RETURN();
 
     const int LenReg = *AudioInfo.AI_LEN_REG;
-    uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
-    
-    // Swap channels
-    for (uint32_t i = 0; i < LenReg; i += 4) {
-        ptr[i] ^= ptr[i + 2];
-        ptr[i + 2] ^= ptr[i];
-        ptr[i] ^= ptr[i + 2];
-        ptr[i + 1] ^= ptr[i + 3];
-        ptr[i + 3] ^= ptr[i + 1];
-        ptr[i + 1] ^= ptr[i + 3];
+    const uint32_t dram_addr = *AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF;
+    uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + dram_addr);
+
+    /// Core uses 16-bit stereo samples (4 bytes per frame)
+    const int bytesPerFrame = 4;
+
+    /// Ensure length is aligned to frame boundary
+    const int numFrames = LenReg / bytesPerFrame;
+    const int alignedLen = numFrames * bytesPerFrame;
+
+    if (alignedLen > 0) {
+        /// Handle DMA transfer similar to core's do_dma function
+        if ((dram_addr + alignedLen) & 0x1FFF) {
+            /// Handle delayed carry similar to core
+            ptr += ((dram_addr + alignedLen) & 0x1FFF) ? 0 : 0x2000;
+        }
+
+        /// Swap channels and write to buffer
+        for (int i = 0; i < alignedLen; i += bytesPerFrame) {
+            uint8_t tmp[4];
+            /// Preserve original data
+            memcpy(tmp, ptr + i, 4);
+            /// Swap channels (L/R)
+            ptr[i] = tmp[2];
+            ptr[i + 1] = tmp[3];
+            ptr[i + 2] = tmp[0];
+            ptr[i + 3] = tmp[1];
+        }
+
+        [[current ringBufferAtIndex:0] write:ptr size:alignedLen];
+
+        DLOG(@"N64 Audio DMA: addr=%08x len=%d frames=%d",
+             dram_addr, alignedLen, numFrames);
     }
-    
-    [[current ringBufferAtIndex:0] write:ptr size:LenReg];
 }
 
 void SetIsNTSC()
@@ -93,9 +126,9 @@ void SetIsNTSC()
 
 int MupenOpenAudio(AUDIO_INFO info) {
     AudioInfo = info;
-    
+
     SetIsNTSC();
-    
+
     ILOG(@"called");
 
     return M64ERR_SUCCESS;
@@ -148,7 +181,7 @@ void ConfigureCore(NSString *romFolder) {
     if (SiDmaDuration >= 0) {
         ConfigSetParameter(config, "SiDmaDuration", M64TYPE_INT, &SiDmaDuration);
     }
-    
+
 	int disableExtraMemory = [MupenGameCoreOptions boolForOption:@"Disable Extra Memory"];
 	ConfigSetParameter(config, "DisableExtraMem", M64TYPE_BOOL, &disableExtraMemory);
 
@@ -159,11 +192,11 @@ void ConfigureCore(NSString *romFolder) {
     if (countPerOp >= 1) {
         ConfigSetParameter(config, "CountPerOp", M64TYPE_INT, &countPerOp);
     }
-    
+
     // Save state slot (0-9) to use when saving/loading the emulator state
 //    int currentStateSlot = [MupenGameCore boolForOption:@"Save State Slot"];
 //    ConfigSetParameter(config, "CurrentStateSlot", M64TYPE_INT, &currentStateSlot);
-    
+
 
 		// Draw on-screen display if True, otherwise don't draw OSD
 	int osd = [MupenGameCoreOptions boolForOption:@"Debug OSD"];
