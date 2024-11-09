@@ -126,10 +126,12 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             audioConverter = AVAudioConverter(from: sourceFormat, to: destinationFormat)
         }
 
-        /// Temporary buffer for 8-bit to 16-bit conversion
-        var tempBuffer: [Int16]?
+        /// Pre-allocate conversion buffers for 8-bit source
+        var int8Buffer: [Int8]?
+        var floatBuffer: [Float]?
         if sourceBitDepth == 8 {
-            tempBuffer = [Int16](repeating: 0, count: 4096 * sourceChannels)
+            int8Buffer = [Int8](repeating: 0, count: 4096 * sourceChannels)
+            floatBuffer = [Float](repeating: 0, count: 4096 * sourceChannels)
         }
 
         return { pcmBuffer in
@@ -156,22 +158,27 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
 
             /// Handle 8-bit source
             if sourceBitDepth == 8 {
+                guard var int8Buffer = int8Buffer,
+                      var floatBuffer = floatBuffer else { return 0 }
+
                 /// Read into temporary 8-bit buffer
-                var int8Buffer = [Int8](repeating: 0, count: bytesToRead)
                 let bytesRead = buffer.read(
                     UnsafeMutableRawPointer(&int8Buffer),
                     preferredSize: bytesToRead
                 )
+                let samplesRead = bytesRead
 
-                /// Convert to 16-bit
-                guard var temp = tempBuffer else { return 0 }
-                for i in 0..<(bytesRead) {
-                    temp[i] = Int16(int8Buffer[i]) << 8
-                }
+                /// Convert Int8 to Float
+                vDSP_vflt8(&int8Buffer, 1, &floatBuffer, 1, vDSP_Length(samplesRead))
 
-                /// Copy to input buffer
+                /// Scale to 16-bit range (-32768 to 32767)
+                var scale = Float(32768.0)
+                vDSP_vsmul(floatBuffer, 1, &scale, &floatBuffer, 1, vDSP_Length(samplesRead))
+
+                /// Convert Float to Int16
                 guard let inputData = inputBuffer.int16ChannelData?[0] else { return 0 }
-                memcpy(inputData, temp, bytesRead * 2)
+                vDSP_vfix16(floatBuffer, 1, inputData, 1, vDSP_Length(samplesRead))
+
                 inputBuffer.frameLength = AVAudioFrameCount(bytesRead / sourceBytesPerFrame)
 
             } else {
@@ -206,16 +213,16 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             self.src = nil
         }
 
-        /// Create format for integer PCM
+        /// Create format using standard device format
         guard let format = AVAudioFormat(
-            commonFormat: .pcmFormatInt16,
-            sampleRate: AVAudioSession.sharedInstance().sampleRate,
-            channels: 2,
-            interleaved: true
+            standardFormatWithSampleRate: AVAudioSession.sharedInstance().sampleRate,
+            channels: 2  /// Standard stereo output
         ) else {
             ELOG("Failed to create format")
             return
         }
+
+        DLOG("Using standard device format: \(format.description)")
 
         /// Pre-allocate output buffer
         outputBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: maxFrameCapacity)
@@ -279,7 +286,6 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         let targetRate = AVAudioSession.sharedInstance().sampleRate
         let rateRatio = sourceRate / targetRate
 
-        /// Adjust varispeed rate since we're also interpolating
         varispeedNode.rate = Float(rateRatio)
 
         DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Rate ratio: \(rateRatio)")
