@@ -100,7 +100,7 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
         let sourceBytesPerFrame = sourceChannels * (Int(sourceBitDepth) / 8)
 
-        /// Create source format (input format)
+        /// Create source format (always 16-bit, we'll convert 8-bit data)
         guard let sourceFormat = AVAudioFormat(
             commonFormat: .pcmFormatInt16,
             sampleRate: Double(sourceRate),
@@ -110,10 +110,12 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             return { _ in 0 }
         }
 
-        /// Create destination format (output format)
+        /// Create destination format
         guard let destinationFormat = AVAudioFormat(
-            standardFormatWithSampleRate: AVAudioSession.sharedInstance().sampleRate,
-            channels: 2
+            commonFormat: .pcmFormatInt16,
+            sampleRate: AVAudioSession.sharedInstance().sampleRate,
+            channels: 2,
+            interleaved: true
         ) else {
             ELOG("Failed to create destination format")
             return { _ in 0 }
@@ -124,8 +126,13 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             audioConverter = AVAudioConverter(from: sourceFormat, to: destinationFormat)
         }
 
+        /// Temporary buffer for 8-bit to 16-bit conversion
+        var tempBuffer: [Int16]?
+        if sourceBitDepth == 8 {
+            tempBuffer = [Int16](repeating: 0, count: 4096 * sourceChannels)
+        }
+
         return { pcmBuffer in
-            /// Check available bytes in ring buffer
             let availableBytes = buffer.availableBytes
             if availableBytes == 0 {
                 pcmBuffer.frameLength = 0
@@ -147,8 +154,29 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
                 return 0
             }
 
-            /// Read directly into input buffer's raw memory
-            if let inputData = inputBuffer.int16ChannelData?[0] {
+            /// Handle 8-bit source
+            if sourceBitDepth == 8 {
+                /// Read into temporary 8-bit buffer
+                var int8Buffer = [Int8](repeating: 0, count: bytesToRead)
+                let bytesRead = buffer.read(
+                    UnsafeMutableRawPointer(&int8Buffer),
+                    preferredSize: bytesToRead
+                )
+
+                /// Convert to 16-bit
+                guard var temp = tempBuffer else { return 0 }
+                for i in 0..<(bytesRead) {
+                    temp[i] = Int16(int8Buffer[i]) << 8
+                }
+
+                /// Copy to input buffer
+                guard let inputData = inputBuffer.int16ChannelData?[0] else { return 0 }
+                memcpy(inputData, temp, bytesRead * 2)
+                inputBuffer.frameLength = AVAudioFrameCount(bytesRead / sourceBytesPerFrame)
+
+            } else {
+                /// Direct 16-bit read
+                guard let inputData = inputBuffer.int16ChannelData?[0] else { return 0 }
                 let bytesRead = buffer.read(
                     UnsafeMutableRawPointer(inputData),
                     preferredSize: bytesToRead
@@ -178,12 +206,12 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             self.src = nil
         }
 
-        /// Create output format
+        /// Create format for integer PCM
         guard let format = AVAudioFormat(
-            commonFormat: .pcmFormatFloat32,
+            commonFormat: .pcmFormatInt16,
             sampleRate: AVAudioSession.sharedInstance().sampleRate,
             channels: 2,
-            interleaved: false
+            interleaved: true
         ) else {
             ELOG("Failed to create format")
             return
@@ -194,49 +222,38 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
 
         let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
 
-        /// Create source node
         let renderBlock: AVAudioSourceNodeRenderBlock = { [weak self] isSilence, timestamp, frameCount, audioBufferList -> OSStatus in
             guard let self = self else { return noErr }
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
 
-            /// Validate frame count
             if frameCount == 0 || frameCount > self.maxFrameCapacity {
                 ELOG("Invalid frame count requested: \(frameCount)")
                 isSilence.pointee = true
                 ablPointer[0].mDataByteSize = 0
-                ablPointer[1].mDataByteSize = 0
                 return noErr
             }
 
-            /// Use pre-allocated buffer
             guard let pcmBuffer = self.outputBuffer else {
                 ELOG("Output buffer not allocated")
                 isSilence.pointee = true
                 return noErr
             }
 
-            /// Reset frame length for new data
             pcmBuffer.frameLength = frameCount
-
             let bytesCopied = read(pcmBuffer)
-
-            DLOG("Render callback - frames requested: \(frameCount), bytes copied: \(bytesCopied)")
 
             if bytesCopied == 0 {
                 isSilence.pointee = true
                 ablPointer[0].mDataByteSize = 0
-                ablPointer[1].mDataByteSize = 0
                 return noErr
             }
 
-            /// Copy only the valid frames to output buffers
-            for i in 0..<2 {
-                let source = pcmBuffer.floatChannelData?[i]
-                let dest = ablPointer[i].mData?.assumingMemoryBound(to: Float.self)
-                let count = Int(pcmBuffer.frameLength)
-
-                vDSP_mmov(source!, dest!, vDSP_Length(count), 1, 1, 1)
-                ablPointer[i].mDataByteSize = UInt32(count * 4)
+            /// Copy interleaved data directly
+            if let source = pcmBuffer.int16ChannelData?[0],
+               let dest = ablPointer[0].mData?.assumingMemoryBound(to: Int16.self) {
+                let count = Int(pcmBuffer.frameLength) * 2  /// 2 channels
+                memcpy(dest, source, count * 2)  /// 2 bytes per sample
+                ablPointer[0].mDataByteSize = UInt32(count * 2)
             }
 
             isSilence.pointee = false
