@@ -48,7 +48,7 @@ public protocol PVMenuDelegate: AnyObject {
 extension PVRootViewController: PVMenuDelegate {
     
     public func didTapImports() {
-        let settingsView = ImportStatusView(updatesController:updatesController, viewModel: ImportViewModel(), delegate: self)
+        let settingsView = ImportStatusView(updatesController:updatesController, gameImporter: GameImporter.shared, delegate: self)
         
         let hostingController = UIHostingController(rootView: settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
