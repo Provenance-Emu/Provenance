@@ -26,21 +26,21 @@ import PVWebServer
 
 // MARK: - PVSettingsView
 public struct PVSettingsView: View {
-    
+
     @StateObject private var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
     var dismissAction: () -> Void  // Add this
     weak var menuDelegate: PVMenuDelegate!
-    
+
     @ObservedObject var conflictsController: PVGameLibraryUpdatesController
-    
+
     // Update initializer to take dismissAction
     public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, dismissAction: @escaping () -> Void) {
         self.conflictsController = conflictsController
         self.dismissAction = dismissAction
         _viewModel = StateObject(wrappedValue: PVSettingsViewModel(menuDelegate: menuDelegate, conflictsController: conflictsController))
     }
-    
+
     public var body: some View {
         NavigationView {
             List {
@@ -48,11 +48,11 @@ public struct PVSettingsView: View {
                     AppSection(viewModel: viewModel)
                         .environmentObject(viewModel)
                 }
-                
+
                 CollapsibleSection(title: "Core Options") {
                     CoreOptionsSection()
                 }
-                
+
                 CollapsibleSection(title: "Saves") {
                     SavesSection()
                 }
@@ -64,43 +64,43 @@ public struct PVSettingsView: View {
                 CollapsibleSection(title: "Video") {
                     VideoSection()
                 }
-                
+
                 CollapsibleSection(title: "Metal") {
                     MetalSection(viewModel: viewModel)
                         .environmentObject(viewModel)
                 }
-                
+
                 CollapsibleSection(title: "Controller") {
                     ControllerSection()
                 }
-                
+
                 CollapsibleSection(title: "Library") {
                     LibrarySection(viewModel: viewModel)
                         .environmentObject(viewModel)
                 }
-                
+
                 CollapsibleSection(title: "Library Management") {
                     LibrarySection2(viewModel: viewModel)
                         .environmentObject(viewModel)
                 }
-                
+
                 CollapsibleSection(title: "Advanced") {
                     AdvancedSection()
                 }
-                
+
                 CollapsibleSection(title: "Social Links") {
                     SocialLinksSection()
                 }
-                
+
                 CollapsibleSection(title: "Documentation") {
                     DocumentationSection()
                 }
-                
+
                 CollapsibleSection(title: "Build") {
                     BuildSection(viewModel: viewModel)
                         .environmentObject(viewModel)
                 }
-                
+
                 CollapsibleSection(title: "Extra Info") {
                     ExtraInfoSection()
                 }
@@ -127,7 +127,7 @@ struct SettingsRow: View {
     var subtitle: String? = nil
     var value: String? = nil
     var icon: SettingsIcon? = nil
-    
+
     var body: some View {
         HStack {
             if let icon = icon {
@@ -137,7 +137,7 @@ struct SettingsRow: View {
                     .frame(width: 22, height: 22)
                     .foregroundColor(.accentColor)
             }
-            
+
             VStack(alignment: .leading) {
                 Text(title)
                 if let subtitle = subtitle {
@@ -146,7 +146,7 @@ struct SettingsRow: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             if let value = value {
                 Spacer()
                 Text(value)
@@ -160,24 +160,24 @@ struct SettingsRow: View {
 private struct AppSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     var body: some View {
         Section(header: Text("App")) {
-            
+
             /// Information about PVSystems
             NavigationLink(destination: SystemSettingsView()) {
                 SettingsRow(title: "Systems",
                             subtitle: "Information on system cores, their bioses, links and stats.",
                             icon: .sfSymbol("square.stack.3d.down.forward"))
             }
-            
+
             /// Links to projects
             NavigationLink(destination: CoreProjectsView()) {
                 SettingsRow(title: "Cores",
                             subtitle: "Emulator cores provided by these projects.",
                             icon: .sfSymbol("square.3.layers.3d.middle.filled"))
             }
-            
+
             PaidFeatureView {
                 NavigationLink(destination: ThemeSelectionView()) {
                     SettingsRow(title: "Theme",
@@ -189,7 +189,7 @@ private struct AppSection: View {
                             subtitle: "Unlock to change theme.",
                             icon: .sfSymbol("paintpalette"))
             }
-            
+
             NavigationLink(destination: AppearanceView()) {
                 SettingsRow(title: "Appearance",
                             subtitle: "Visual options for Game Library",
@@ -212,17 +212,17 @@ private struct CoreOptionsSection: View {
 }
 
 private struct SavesSection: View {
-    
+
     @Default(.autoSave) var autoSave
     @Default(.timedAutoSaves) var timedAutoSaves
     @Default(.autoLoadSaves) var autoLoadSaves
     @Default(.askToAutoLoad) var askToAutoLoad
     @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
-    
+
     var timedAutosaveLabelText: String {
         "\(timedAutoSaveInterval/60.0) minutes between timed auto saves."
     }
-    
+
     var body: some View {
         Section(header: Text("Saves")) {
             ThemedToggle(isOn: $autoSave) {
@@ -322,7 +322,7 @@ private struct DocumentationSection: View {
 
 private struct BuildSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
-    
+
     var body: some View {
         Section(header: Text("Build Information")) {
             SettingsRow(title: "Version",
@@ -378,7 +378,7 @@ private struct ExtraInfoSection: View {
 private struct AudioSection: View {
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
-    
+
     var body: some View {
         Section(header: Text("Audio")) {
             ThemedToggle(isOn: $volumeHUD) {
@@ -399,6 +399,19 @@ private struct AudioSection: View {
             Text("System-wide volume level for games.")
                 .font(.caption)
                 .foregroundColor(.secondary)
+
+            // Add the new navigation link wrapped in PaidFeatureView
+            PaidFeatureView {
+                NavigationLink(destination: AudioEngineSettingsView()) {
+                    SettingsRow(title: "Audio Engine",
+                               subtitle: "Configure audio engine, buffer and latency settings.",
+                               icon: .sfSymbol("waveform.circle"))
+                }
+            } lockedView: {
+                SettingsRow(title: "Audio Engine",
+                           subtitle: "Unlock to configure advanced audio settings.",
+                           icon: .sfSymbol("waveform.circle"))
+            }
         }
     }
 }
@@ -411,7 +424,7 @@ private struct VideoSection: View {
     @Default(.showFPSCount) var showFPSCount
     @Default(.nativeScaleEnabled) var nativeScaleEnabled
     @Default(.integerScaleEnabled) var integerScaleEnabled
-    
+
     var body: some View {
         Section(header: Text("Video")) {
             ThemedToggle(isOn: $multiThreadedGL) {
@@ -452,7 +465,7 @@ private struct VideoSection: View {
 private struct FiltersSection: View {
     @Default(.crtFilterEnabled) var crtFilter
     @Default(.lcdFilterEnabled) var lcdFilter
-    
+
     var body: some View {
         Section(header: Text("Filters")) {
             ThemedToggle(isOn: $crtFilter) {
@@ -473,7 +486,7 @@ private struct FiltersSection: View {
 private struct MetalSection: View {
     @Default(.metalFilter) var metalFilter
     @ObservedObject var viewModel: PVSettingsViewModel
-    
+
     var body: some View {
         Section(header: Text("Metal")) {
             Picker("Metal Filter", selection: $metalFilter) {
@@ -490,7 +503,7 @@ private struct MetalSection: View {
 
 private struct ControllerSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
-    
+
     var body: some View {
         Group {
             Section(header: Text("Controllers")) {
@@ -526,7 +539,7 @@ private struct OnScreenControllerSection: View {
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
-    
+
     var body: some View {
         Section(header: Text("On-Screen Controller")) {
             HStack {
@@ -559,7 +572,7 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Always show buttons not present on original hardware.",
                             icon: .sfSymbol("l.rectangle.roundedbottom"))
             }
-            
+
             ThemedToggle(isOn: $onscreenJoypad) {
                 SettingsRow(title: "On-Screen Joystick",
                             subtitle: "Show a touch Joystick pad on supported systems.",
@@ -570,7 +583,7 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
                             icon: .sfSymbol("keyboard.badge.eye"))
             }
-            
+
         }
     }
 }
@@ -578,7 +591,7 @@ private struct OnScreenControllerSection: View {
 
 private struct LibrarySection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
-    
+
     var body: some View {
         Section(header: Text("Library")) {
 //#if canImport(PVWebServer)
@@ -588,7 +601,7 @@ private struct LibrarySection: View {
 //                            icon: .sfSymbol("xserve"))
 //            }
 //#endif
-            
+
             NavigationLink(destination: ConflictsView().environmentObject(viewModel)) {
                 SettingsRow(title: "Manage Conflicts",
                             subtitle: "Resolve conflicting save states and files.",
@@ -602,7 +615,7 @@ private struct LibrarySection: View {
 
 private struct LibrarySection2: View {
     @ObservedObject var viewModel: PVSettingsViewModel
-    
+
     var body: some View {
         Section(header: Text("Library")) {
             Button(action: viewModel.reimportROMs) {
@@ -643,135 +656,6 @@ private struct AdvancedSection: View {
     }
 }
 
-private struct AdvancedTogglesView: View {
-    @Default(.autoJIT) var autoJIT
-    @Default(.disableAutoLock) var disableAutoLock
-    @Default(.iCloudSync) var iCloudSync
-    @Default(.useMetal) var useMetalRenderer
-    @Default(.useUIKit) var useUIKit
-    @Default(.webDavAlwaysOn) var webDavAlwaysOn
-    @Default(.unsupportedCores) var unsupportedCores
-    /// Audio Settings
-    @Default(.monoAudio) var monoAudio
-    // Radio Selection of `AudioEngines`
-    @Default(.audioEngine) var audioEngine
-    // Radio Selection for algoriths when .audioEngine is of type `dspGameAudioEngine`
-    @Default(.audioEngineDSPAlgorithm) var audioEngineDSPAlgorithm
-    // Radio select of type `RingBufferType`
-    @Default(.audioRingBufferType) var audioRingBufferType // Radio Selection
-    
-    
-    @Default(.audioLatency) var audioLatency
-
-#if !os(tvOS)
-    @Default(.movableButtons) var movableButtons
-#endif
-    
-    /// Check if the app is from the App Store
-    let isAppStore: Bool = {
-        Bundle.main.infoDictionary?["ALTDeviceID"] != nil
-    }()
-    
-    var body: some View {
-        
-        Group {
-            if !isAppStore {
-                PremiumThemedToggle(isOn: $autoJIT) {
-                    SettingsRow(title: "Auto JIT",
-                                subtitle: "Automatically enable JIT when available.",
-                                icon: .sfSymbol("bolt"))
-                }
-            }
-            
-            PremiumThemedToggle(isOn: $disableAutoLock) {
-                SettingsRow(title: "Disable Auto Lock",
-                            subtitle: "Prevent device from auto-locking during gameplay.",
-                            icon: .sfSymbol("lock.open"))
-            }
-            
-            if !isAppStore {
-                PremiumThemedToggle(isOn: $iCloudSync) {
-                    SettingsRow(title: "iCloud Sync",
-                                subtitle: "Sync save states and settings across devices.",
-                                icon: .sfSymbol("icloud"))
-                }
-            }
-            
-            PremiumThemedToggle(isOn: $useMetalRenderer) {
-                SettingsRow(title: "Metal Renderer",
-                            subtitle: "Use Metal for improved graphics performance.",
-                            icon: .sfSymbol("cpu"))
-            }
-            
-            PremiumThemedToggle(isOn: $useUIKit) {
-                SettingsRow(title: "Use UIKit",
-                            subtitle: "Use UIKit interface instead of SwiftUI.",
-                            icon: .sfSymbol("switch.2"))
-            }
-            
-#if !os(tvOS)
-            PremiumThemedToggle(isOn: $movableButtons) {
-                SettingsRow(title: "Movable Buttons",
-                            subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
-                            icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
-            }
-#endif
-            PremiumThemedToggle(isOn: $webDavAlwaysOn) {
-                SettingsRow(title: "WebDAV Always On",
-                            subtitle: "Keep WebDAV server running in background.",
-                            icon: .sfSymbol("network"))
-            }
-                        
-            if !isAppStore {
-                PremiumThemedToggle(isOn: $unsupportedCores) {
-                    SettingsRow(title: "Show Unsupported Cores",
-                                subtitle: "Display experimental and unsupported cores.",
-                                icon: .sfSymbol("exclamationmark.triangle"))
-                }
-            }
-            
-            #if DEBUG
-            ThemedToggle(isOn: $monoAudio) {
-                 SettingsRow(title: "Mono Audio",
-                            subtitle: "Combine left and right audio channels.",
-                            icon: .sfSymbol("speaker.wave.1"))
-             }
-            #endif
-
-            // Old audio settings toggles
-//            PremiumThemedToggle(isOn: $useLegacyAudioEngine) {
-//                 SettingsRow(title: "Legacy Audio Engine",
-//                            subtitle: "Use legacy audio engine for compatibility.",
-//                            icon: .sfSymbol("waveform"))
-//             }
-//
-//            PremiumThemedToggle(isOn: $useLegacyRingBuffer) {
-//                SettingsRow(title: "Legacy Audio Buffer",
-//                           subtitle: "Use legacy audio buffer for compatibility.",
-//                           icon: .sfSymbol("arrow.trianglehead.clockwise"))
-//            }
-            
-            /// User configuration about `audioEngine` latency
-            HStack {
-                Text("Audio Latency")
-                Slider(value: $audioLatency, in: 5.0...25.0, step: 0.5) {
-                    Text("Audio Latency (\(Int(audioLatency)) ms)")
-                } minimumValueLabel: {
-                    Image(systemName: "hare")
-                } maximumValueLabel: {
-                    Image(systemName: "tortoise")
-                }
-            }
-            Text(audioLatencySubLabelText)
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
-    }
-    
-    var audioLatencySubLabelText: String {
-        "Increase latency to improve performance on slower devices.(\(Int(audioLatency))ms)"
-    }
-}
 
 private struct AppearanceSection: View {
     @Default(.showGameTitles) var showGameTitles
@@ -779,7 +663,7 @@ private struct AppearanceSection: View {
     @Default(.showRecentSaveStates) var showRecentSaveStates
     @Default(.showGameBadges) var showGameBadges
     @Default(.showFavorites) var showFavorites
-    
+
     var body: some View {
         Section(header: Text("Appearance")) {
             ThemedToggle(isOn: $showGameTitles) {
@@ -806,49 +690,6 @@ private struct AppearanceSection: View {
                 SettingsRow(title: "Show Favorites",
                             subtitle: "Display favorites section.",
                             icon: .sfSymbol("star"))
-            }
-        }
-    }
-}
-
-private struct CollapsibleSection<Content: View>: View {
-    let title: String
-    let content: Content
-    @Default(.collapsedSections) var collapsedSections
-    @State private var isExpanded: Bool
-    
-    init(title: String, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.content = content()
-        self._isExpanded = State(initialValue: !Defaults[.collapsedSections].contains(title))
-        print("Init CollapsibleSection '\(title)' - collapsed sections: \(Defaults[.collapsedSections])")
-    }
-    
-    var body: some View {
-        Section {
-            if isExpanded {
-                content
-            }
-        } header: {
-            Button(action: {
-                withAnimation {
-                    isExpanded.toggle()
-                    print("Setting isExpanded for '\(title)' to \(isExpanded)")
-                    print("Before - collapsed sections: \(collapsedSections)")
-                    if isExpanded {
-                        collapsedSections.remove(title)
-                    } else {
-                        collapsedSections.insert(title)
-                    }
-                    print("After - collapsed sections: \(collapsedSections)")
-                }
-            }) {
-                HStack {
-                    Text(title)
-                    Spacer()
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.accentColor)
-                }
             }
         }
     }

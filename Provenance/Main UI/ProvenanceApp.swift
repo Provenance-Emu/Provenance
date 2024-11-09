@@ -24,7 +24,7 @@ struct ProvenanceApp: App {
                     appDelegate.appState = appState
 
             #if canImport(FreemiumKit)
-                #if targetEnvironment(simulator)
+                #if targetEnvironment(simulator) || DEBUG
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
                 #else
                     if !appDelegate.isAppStore {
