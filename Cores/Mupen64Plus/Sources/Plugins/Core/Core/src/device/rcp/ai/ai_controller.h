@@ -66,6 +66,11 @@ struct ai_controller
 
     void* aout;
     const struct audio_out_backend_interface* iaout;
+
+    // Resampling state
+    unsigned int source_frequency;
+    unsigned int target_frequency;
+    uint32_t step_ratio_fixed;
 };
 
 static osal_inline uint32_t ai_reg(uint32_t address)

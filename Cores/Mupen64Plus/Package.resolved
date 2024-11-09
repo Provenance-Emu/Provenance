@@ -1,5 +1,5 @@
 {
-  "originHash" : "7c1581a9baf1cc1e8179ec51020ac5dd44da9e79bc31db49a0cf62727b3b818d",
+  "originHash" : "7a9d5258a37dca528cf25ca278843ae9b99908c23cd387fafef25d0fcc15e47f",
   "pins" : [
     {
       "identity" : "checksum",
@@ -20,12 +20,12 @@
       }
     },
     {
-      "identity" : "swift-syntax",
+      "identity" : "swift-atomics",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "location" : "https://github.com/apple/swift-atomics.git",
       "state" : {
-        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
-        "version" : "509.1.1"
+        "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
+        "version" : "1.2.0"
       }
     },
     {
@@ -35,15 +35,6 @@
       "state" : {
         "branch" : "develop",
         "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
-      }
-    },
-    {
-      "identity" : "swiftmacros",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/SwiftMacros.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "c7430902f056432a07803f8580263b4acd7753f1"
       }
     }
   ],

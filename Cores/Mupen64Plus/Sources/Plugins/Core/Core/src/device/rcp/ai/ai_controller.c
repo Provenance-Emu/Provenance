@@ -22,6 +22,7 @@
 #include "ai_controller.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "backends/api/audio_out_backend.h"
 #include "device/memory/memory.h"
@@ -76,16 +77,11 @@ static void do_dma(struct ai_controller* ai, struct ai_dma* dma)
     /* lazy initialization of sample format */
     if (ai->samples_format_changed)
     {
-        unsigned int frequency = (ai->regs[AI_DACRATE_REG] == 0)
-            ? 44100 /* default sample rate */
-            : ai->vi->clock / (1 + ai->regs[AI_DACRATE_REG]);
+        /// Get native frequency from VI clock
+        unsigned int frequency = ai->vi->clock / (1 + ai->regs[AI_DACRATE_REG]);
 
-        unsigned int bits = (ai->regs[AI_BITRATE_REG] == 0)
-            ? 16 /* default bit rate */
-            : 1 + ai->regs[AI_BITRATE_REG];
-
-        ai->iaout->set_format(ai->aout, frequency, bits);
-
+        /// Pass through native frequency - resampling happens in bridge
+        ai->iaout->set_format(ai->aout, frequency, 16);
         ai->samples_format_changed = 0;
     }
 
@@ -249,17 +245,13 @@ void ai_init(struct ai_controller* ai)
     memset(ai->fifo, 0, 2 * sizeof(struct ai_dma));
 
     /// Calculate DAC rate for 44.1kHz
-    /// NTSC clock = 48681812 Hz, PAL clock = 49656530 Hz
-    /// Formula: Clock / (DAC rate + 1) = Sample rate
     uint32_t dacrate;
 
     if (ROM_PARAMS.systemtype == SYSTEM_PAL) {
         /// PAL: 49656530 / (x + 1) = 44100
-        /// x = (49656530 / 44100) - 1
         dacrate = 1126;  /// This gives us ~44.1kHz for PAL
     } else {
         /// NTSC: 48681812 / (x + 1) = 44100
-        /// x = (48681812 / 44100) - 1
         dacrate = 1103;  /// This gives us ~44.1kHz for NTSC
     }
 

@@ -45,8 +45,43 @@ void MupenAudioLenChanged()
     const int LenReg = *AudioInfo.AI_LEN_REG;
     uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
 
-    // Write directly to ring buffer at 44.1kHz
-    [[current ringBufferAtIndex:0] write:ptr size:LenReg];
+    // Get actual N64 frequency from VI clock and DAC rate
+    unsigned int source_frequency = current.isNTSC ? 48681812 : 49656530;
+    source_frequency /= (1 + *AudioInfo.AI_DACRATE_REG);
+
+    // Calculate number of samples (16-bit stereo)
+    const size_t num_input_samples = LenReg / 4;
+
+    // Calculate resampled size using actual source frequency
+    const size_t num_output_samples = (size_t)((num_input_samples * 44100ULL) / source_frequency);
+
+    // Temporary buffer for resampled audio
+    static int16_t resampled[65536];
+    if (num_output_samples * 4 > sizeof(resampled)) {
+        return;
+    }
+
+    // Do the resampling
+    const int16_t *src = (int16_t*)ptr;
+    uint32_t pos = 0;
+    size_t out_idx = 0;
+
+    while (out_idx < num_output_samples && (pos >> 16) < num_input_samples - 1) {
+        const size_t src_idx = pos >> 16;
+        const uint32_t frac = pos & 0xFFFF;
+
+        for (int ch = 0; ch < 2; ch++) {
+            const int32_t s1 = src[src_idx * 2 + ch];
+            const int32_t s2 = src[src_idx * 2 + 2 + ch];
+            resampled[out_idx * 2 + ch] = (int16_t)(s1 + (((s2 - s1) * frac) >> 16));
+        }
+
+        pos += ((uint64_t)33600 << 16) / 44100;
+        out_idx++;
+    }
+
+    // Write resampled audio to ring buffer
+    [[current ringBufferAtIndex:0] write:(uint8_t*)resampled size:out_idx * 4];
 }
 
 void SetIsNTSC()
