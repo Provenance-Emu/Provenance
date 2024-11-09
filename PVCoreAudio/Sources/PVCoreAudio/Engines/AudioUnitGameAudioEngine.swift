@@ -29,10 +29,26 @@ final class OEGameAudioContext {
     let converter: AVAudioConverter?
     let sourceBuffer: AVAudioPCMBuffer?
 
-    init(buffer: RingBufferProtocol?, channelCount: Int32, bytesPerSample: Int32, sampleRate: Double) {
+    /// Add these properties to track buffer status
+    var bufferUnderrunCount: Int = 0
+    var currentBufferFrames: UInt32 = 4096
+
+    /// Add reference to audio engine for adjusting converter
+    weak var audioEngine: AudioUnitGameAudioEngine?
+
+    /// Add performance tracking
+    private var performanceHistory: [Double] = []
+    private let maxHistorySize = 10
+
+    init(buffer: RingBufferProtocol?,
+         channelCount: Int32,
+         bytesPerSample: Int32,
+         sampleRate: Double,
+         audioEngine: AudioUnitGameAudioEngine) {
         self.buffer = buffer
         self.channelCount = channelCount
         self.bytesPerSample = bytesPerSample
+        self.audioEngine = audioEngine
 
         /// Create source format
         sourceFormat = AVAudioFormat(
@@ -59,6 +75,65 @@ final class OEGameAudioContext {
             frameCapacity: 4096
         )
     }
+
+    /// Move adjustBufferSize into context
+    func adjustBufferSize(forFrames frames: UInt32) {
+        guard let audioEngine = audioEngine,
+              let converterUnit = audioEngine.auMetaData.mConverterUnit else { return }
+
+        /// Only adjust if we have persistent underruns
+        if bufferUnderrunCount > 5 {
+            let optimalFrames = min(currentBufferFrames * 2, 8192)
+            if optimalFrames != currentBufferFrames {
+                var maxFrames = optimalFrames
+                let err = AudioUnitSetProperty(
+                    converterUnit,
+                    kAudioUnitProperty_MaximumFramesPerSlice,
+                    kAudioUnitScope_Global,
+                    0,
+                    &maxFrames,
+                    UInt32(MemoryLayout<UInt32>.size)
+                )
+                if err == noErr {
+                    currentBufferFrames = optimalFrames
+                    DLOG("Adjusted buffer size to \(optimalFrames) frames")
+                }
+            }
+            bufferUnderrunCount = 0
+        }
+    }
+
+    func updateBufferSize() {
+        guard let audioEngine = audioEngine,
+              let converterUnit = audioEngine.auMetaData.mConverterUnit else { return }
+
+        /// Track performance ratio
+        let performanceRatio = Double(bufferUnderrunCount) / 100.0
+        performanceHistory.append(performanceRatio)
+        if performanceHistory.count > maxHistorySize {
+            performanceHistory.removeFirst()
+        }
+
+        /// Calculate average performance
+        let avgPerformance = performanceHistory.reduce(0.0, +) / Double(performanceHistory.count)
+
+        /// Determine ideal frame size based on performance
+        let idealFrameSize: UInt32
+        switch avgPerformance {
+        case 0...0.1:  /// Excellent performance
+            idealFrameSize = 1024
+        case 0.1...0.3:  /// Good performance
+            idealFrameSize = 2048
+        case 0.3...0.5:  /// Fair performance
+            idealFrameSize = 4096
+        default:  /// Poor performance
+            idealFrameSize = 8192
+        }
+
+        if idealFrameSize != currentBufferFrames {
+            adjustBufferSize(forFrames: idealFrameSize)
+        }
+    }
 }
 
 func RenderCallback(inRefCon: UnsafeMutableRawPointer,
@@ -70,13 +145,16 @@ func RenderCallback(inRefCon: UnsafeMutableRawPointer,
 
     let context = Unmanaged<OEGameAudioContext>.fromOpaque(inRefCon).takeUnretainedValue()
 
-    guard let buffer = context.buffer else { return noErr }
+    guard let buffer = context.buffer,
+          let outputData = ioData?.pointee.mBuffers.mData else {
+        return noErr
+    }
 
-    /// Calculate source frames needed based on sample rate ratio
+    /// Calculate frames based on sample rates
     let ratio = context.sourceFormat.sampleRate / context.outputFormat.sampleRate
     let sourceFramesNeeded = UInt32(Double(inNumberFrames) * ratio)
 
-    /// Calculate bytes needed for source frames
+    /// Calculate bytes needed based on source format
     let bytesPerFrame = Int(context.bytesPerSample * context.channelCount)
     let bytesNeeded = Int(sourceFramesNeeded) * bytesPerFrame
 
@@ -84,34 +162,43 @@ func RenderCallback(inRefCon: UnsafeMutableRawPointer,
     let availableBytes = buffer.availableBytesForReading
     let bytesToRead = min(availableBytes, bytesNeeded)
 
-    guard bytesToRead > 0,
-          let outputData = ioData?.pointee.mBuffers.mData else {
-        return noErr
-    }
+    if bytesToRead > 0 {
+        /// Read data
+        let bytesRead = buffer.read(outputData, preferredSize: bytesToRead)
 
-    /// Read from ring buffer
-    let bytesRead = buffer.read(outputData, preferredSize: bytesToRead)
+        /// Calculate actual frames read
+        let framesRead = bytesRead / bytesPerFrame
 
-    /// Update buffer size
-    if bytesRead > 0 {
+        /// Update buffer size
         ioData?.pointee.mBuffers.mDataByteSize = UInt32(bytesRead)
 
-        /// Log if we didn't get all the bytes we needed
+        /// Handle underrun
         if bytesRead < bytesNeeded {
             DLOG("Buffer underrun: got \(bytesRead) of \(bytesNeeded) bytes needed")
+            context.bufferUnderrunCount += 1
+
+            /// Fill remaining space with silence
+            let remainingBytes = bytesNeeded - bytesRead
+            memset(outputData + bytesRead, 0, remainingBytes)
+            ioData?.pointee.mBuffers.mDataByteSize = UInt32(bytesNeeded)
+        } else {
+            context.bufferUnderrunCount = max(0, context.bufferUnderrunCount - 1)
         }
+
+        /// Use new dynamic buffer sizing
+        context.updateBufferSize()
+    } else {
+        /// No data available, output silence
+        memset(outputData, 0, bytesNeeded)
+        ioData?.pointee.mBuffers.mDataByteSize = UInt32(bytesNeeded)
+        context.bufferUnderrunCount += 1
     }
 
     return noErr
 }
 
-@MainActor var recordingFile: ExtAudioFileRef?
-
-import AudioToolbox
-
 @objc(OEGameAudioEngine)
 public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
-
 
     private var _contexts: [OEGameAudioContext] = [OEGameAudioContext]()
     private var _outputDeviceID: UInt32 = 0
@@ -128,6 +215,8 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
         var mMixerUnit: AudioUnit? = nil
         var mConverterNode: AUNode = 0
         var mConverterUnit: AudioUnit? = nil
+        var mFilterNode: AUNode = 0
+        var mFilterUnit: AudioUnit? = nil
 
         func uninitialize() {
             if let mGraph = mGraph  {
@@ -146,6 +235,7 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
 
         _outputDeviceID = 0
         volume = 1
+        setupAudioRouteChangeMonitoring()
     }
 
     internal var auMetaData: AUMetaData
@@ -192,11 +282,6 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
     }
 
     @objc public func stopAudio() {
-        Task { @MainActor in
-            if let recordingFile = recordingFile {
-                ExtAudioFileDispose(recordingFile)
-            }
-        }
         if let mGraph = auMetaData.mGraph {
             AUGraphStop(mGraph)
             AUGraphClose(mGraph)
@@ -291,6 +376,66 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
         err = AUGraphAddNode(mGraph, &convertercd, &auMetaData.mConverterNode)
         if err != noErr {
             ELOG("Error adding converter node: \(err)")
+            throw AudioEngineError.failedToCreateAudioEngine(err)
+        }
+
+        /// Setup low-pass filter node (add this before connecting nodes)
+        var filtercd = AudioComponentDescription(
+            componentType: kAudioUnitType_Effect,
+            componentSubType: kAudioUnitSubType_LowPassFilter,
+            componentManufacturer: kAudioUnitManufacturer_Apple,
+            componentFlags: 0,
+            componentFlagsMask: 0
+        )
+
+        /// Add filter node to graph
+        err = AUGraphAddNode(mGraph, &filtercd, &auMetaData.mFilterNode)
+        if err != noErr {
+            ELOG("Error adding filter node: \(err)")
+            throw AudioEngineError.failedToCreateAudioEngine(err)
+        }
+
+        err = AUGraphNodeInfo(mGraph, auMetaData.mFilterNode, nil, &auMetaData.mFilterUnit)
+        if err != noErr {
+            ELOG("Error getting filter unit: \(err)")
+            throw AudioEngineError.failedToCreateAudioEngine(err)
+        }
+
+        /// Configure filter parameters
+        if let filterUnit = auMetaData.mFilterUnit {
+            /// Set cutoff frequency based on bit depth
+            var cutoff: AudioUnitParameterValue = gameCore.audioBitDepth == 8 ? 8000.0 : 20000.0
+            AudioUnitSetParameter(filterUnit,
+                                kLowPassParam_CutoffFrequency,
+                                kAudioUnitScope_Global,
+                                0,
+                                cutoff,
+                                0)
+
+            /// Set resonance
+            var resonance: AudioUnitParameterValue = 0.7
+            AudioUnitSetParameter(filterUnit,
+                                kLowPassParam_Resonance,
+                                kAudioUnitScope_Global,
+                                0,
+                                resonance,
+                                0)
+        }
+
+        /// Modify connection chain to include filter
+        err = AUGraphConnectNodeInput(mGraph,
+                                    auMetaData.mConverterNode, 0,
+                                    auMetaData.mFilterNode, 0)
+        if err != noErr {
+            ELOG("Error connecting converter to filter: \(err)")
+            throw AudioEngineError.failedToCreateAudioEngine(err)
+        }
+
+        err = AUGraphConnectNodeInput(mGraph,
+                                    auMetaData.mFilterNode, 0,
+                                    auMetaData.mMixerNode, 0)
+        if err != noErr {
+            ELOG("Error connecting filter to mixer: \(err)")
             throw AudioEngineError.failedToCreateAudioEngine(err)
         }
 
@@ -447,7 +592,8 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
                     buffer: gameCore.ringBuffer(atIndex: 0),
                     channelCount: Int32(channelCount),
                     bytesPerSample: Int32(bytesPerSample),
-                    sampleRate: gameCore.audioSampleRate(forBuffer: 0)
+                    sampleRate: gameCore.audioSampleRate(forBuffer: 0),
+                    audioEngine: self  /// Pass self reference
                 )
             ).toOpaque()
         )
@@ -570,6 +716,18 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
      public func setVolume(_ volume: Float) {
         self.volume = volume
     }
+
+    public func setFilterEnabled(_ enabled: Bool) {
+        guard let filterUnit = auMetaData.mFilterUnit else { return }
+
+        var bypass: UInt32 = enabled ? 0 : 1
+        AudioUnitSetProperty(filterUnit,
+                           kAudioUnitProperty_BypassEffect,
+                           kAudioUnitScope_Global,
+                           0,
+                           &bypass,
+                           UInt32(MemoryLayout<UInt32>.size))
+    }
 }
 
 extension AudioUnitGameAudioEngine {
@@ -592,5 +750,67 @@ extension AudioUnitGameAudioEngine {
         }
 
         return status
+    }
+
+    private func handleAudioError(_ error: Error) {
+        ELOG("Audio error occurred: \(error.localizedDescription)")
+
+        /// Try to recover
+        do {
+            stopAudio()
+
+            /// Wait briefly before restart
+            Thread.sleep(forTimeInterval: 0.1)
+
+            /// Reinitialize audio session if needed
+            #if !os(macOS)
+            try setupAudioSession()
+            #endif
+
+            /// Try to restart
+            try startAudio()
+            DLOG("Successfully recovered from audio error")
+        } catch {
+            ELOG("Failed to recover from audio error: \(error.localizedDescription)")
+            /// Post notification about unrecoverable error
+            NotificationCenter.default.post(
+                name: NSNotification.Name("AudioEngineErrorNotification"),
+                object: self,
+                userInfo: ["error": error]
+            )
+        }
+    }
+
+    /// Add monitoring for audio route changes
+    private func setupAudioRouteChangeMonitoring() {
+        #if !os(macOS)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAudioRouteChange),
+            name: AVAudioSession.routeChangeNotification,
+            object: nil
+        )
+        #endif
+    }
+
+    @objc private func handleAudioRouteChange(notification: Notification) {
+        #if !os(macOS)
+        guard let userInfo = notification.userInfo,
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
+        else { return }
+
+        switch reason {
+        case .newDeviceAvailable, .oldDeviceUnavailable:
+            do {
+                try setupAudioSession()
+                try startAudio()
+            } catch {
+                handleAudioError(error)
+            }
+        default:
+            break
+        }
+        #endif
     }
 }
