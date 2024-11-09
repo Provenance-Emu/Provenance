@@ -310,6 +310,71 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
             throw AudioEngineError.failedToCreateAudioEngine(err)
         }
 
+        /// Get the output device's native format
+        var outputFormat = AudioStreamBasicDescription()
+        var propertySize = UInt32(MemoryLayout<AudioStreamBasicDescription>.size)
+        err = AudioUnitGetProperty(
+            auMetaData.mOutputUnit!,
+            kAudioUnitProperty_StreamFormat,
+            kAudioUnitScope_Output,
+            0,
+            &outputFormat,
+            &propertySize
+        )
+        if err != noErr {
+            ELOG("Error getting output format: \(err)")
+            throw AudioEngineError.failedToCreateAudioEngine(err)
+        }
+
+        /// If we got an invalid format, create a reasonable default
+        if outputFormat.mSampleRate == 0 {
+            outputFormat = AudioStreamBasicDescription(
+                mSampleRate: 44100.0,  /// Standard sample rate
+                mFormatID: kAudioFormatLinearPCM,
+                mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked,
+                mBytesPerPacket: 4,    /// 2 channels * 2 bytes
+                mFramesPerPacket: 1,
+                mBytesPerFrame: 4,     /// 2 channels * 2 bytes
+                mChannelsPerFrame: 2,   /// Stereo
+                mBitsPerChannel: 16,    /// 16-bit
+                mReserved: 0
+            )
+
+            DLOG("Created default output format due to invalid device format")
+        } else {
+            /// Ensure output format is compatible
+            outputFormat.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked
+            outputFormat.mFramesPerPacket = 1
+            outputFormat.mBytesPerFrame = 4     /// 2 channels * 2 bytes
+            outputFormat.mBytesPerPacket = 4    /// Same as bytes per frame
+            outputFormat.mBitsPerChannel = 16
+        }
+
+        DLOG("""
+            Modified Output Format:
+            - Sample Rate: \(outputFormat.mSampleRate)
+            - Channels: \(outputFormat.mChannelsPerFrame)
+            - Bits: \(outputFormat.mBitsPerChannel)
+            - Format: \(outputFormat.mFormatID)
+            - Bytes/Frame: \(outputFormat.mBytesPerFrame)
+            """)
+
+        /// Set converter's output format to match the output unit
+        err = AudioUnitSetProperty(
+            auMetaData.mConverterUnit!,
+            kAudioUnitProperty_StreamFormat,
+            kAudioUnitScope_Output,
+            0,
+            &outputFormat,
+            UInt32(MemoryLayout<AudioStreamBasicDescription>.size)
+        )
+        if err != noErr {
+            ELOG("Error setting converter output format: \(err)")
+            throw AudioEngineError.failedToCreateAudioEngine(err)
+        }
+
+        DLOG("Audio format conversion path: \(streamFormat.mSampleRate)Hz -> \(outputFormat.mSampleRate)Hz")
+
         /// Connect nodes
         err = AUGraphConnectNodeInput(mGraph,
                                     auMetaData.mConverterNode, 0,
