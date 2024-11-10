@@ -957,10 +957,6 @@
 		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B3D1C1312CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */; };
 		B3D1C1322CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B3D1C1342CB70D6000F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1332CB70D6000F1F46B /* PVCoremGBA-Dynamic */; };
-		B3D1C1352CB70D6000F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1332CB70D6000F1F46B /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B3D1C13A2CB70D7000F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1392CB70D7000F1F46B /* PVCoremGBA-Dynamic */; };
-		B3D1C13B2CB70D7000F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1392CB70D7000F1F46B /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3D5E2AE218EC1AE0015C690 /* RealmBindObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AA218EC1AB0015C690 /* RealmBindObserver.swift */; };
 		B3D5E2AF218EC1AE0015C690 /* RealmBindObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AA218EC1AB0015C690 /* RealmBindObserver.swift */; };
 		B3D5E2B0218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AB218EC1AC0015C690 /* Reactive+RxRealmDataSources.swift */; };
@@ -1729,7 +1725,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3D1C13B2CB70D7000F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */,
 				B39343972CC5B202008AA673 /* PVDolphin.framework in Embed Frameworks */,
 				B39CE2892C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 				B38436362C9FC2EC00E32EB1 /* snes9x.framework in Embed Frameworks */,
@@ -1787,7 +1782,6 @@
 				B33BD1C92C6A6261001E933A /* PVStella-Dynamic in Embed Frameworks */,
 				B386DE862C8974DA0021A7BA /* PVFreeDO-Dynamic in Embed Frameworks */,
 				B3E2AA422CB6369800E2636D /* PVFlycast.framework in Embed Frameworks */,
-				B3D1C1352CB70D6000F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */,
 				B3E2AA262CB6328100E2636D /* PVVecX.framework in Embed Frameworks */,
 				B3A186862CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */,
 				B318E28D2CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
@@ -3096,7 +3090,6 @@
 				B35EEFB22C6C6D1A00EBD1A8 /* RealmSwift in Frameworks */,
 				B37228CC2CCDC7D300E6F627 /* FreemiumKit in Frameworks */,
 				B35EEFB32C6C6D1A00EBD1A8 /* libc.tbd in Frameworks */,
-				B3D1C13A2CB70D7000F1F46B /* PVCoremGBA-Dynamic in Frameworks */,
 				B351E7D42CBE072D0000E087 /* libavutil.xcframework in Frameworks */,
 				B3C65E5E2CA53667000E37B0 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3C65E602CA53667000E37B0 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
@@ -3239,7 +3232,6 @@
 				B318E2802CAB4C6400D0E599 /* PVFCEU.framework in Frameworks */,
 				B318E28A2CAB512F00D0E599 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B394CD942BDEE53A006B63E8 /* SystemConfiguration.framework in Frameworks */,
-				B3D1C1342CB70D6000F1F46B /* PVCoremGBA-Dynamic in Frameworks */,
 				B33BD1C52C6A622A001E933A /* PVTGBDual-Dynamic in Frameworks */,
 				B3E2AA252CB6328100E2636D /* PVVecX.framework in Frameworks */,
 				B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */,
@@ -4794,7 +4786,6 @@
 				B3E1BC4A2C96DD0500EB4238 /* PVProSystem-Dynamic */,
 				B3E1BF932C96F21400EB4238 /* PVBliss-Dynamic */,
 				B3B6E7472CA4CF4500002BFD /* PVCoreMednafen */,
-				B3D1C1392CB70D7000F1F46B /* PVCoremGBA-Dynamic */,
 				B32D45BC2CB730AE006B76C2 /* PVGambatte */,
 				B3FC972F2CB8B6BA00C6DB31 /* PVVisualBoyAdvance-Dynamic */,
 				B33A763A2CC5168C00FC746F /* SiriusRating */,
@@ -4861,7 +4852,6 @@
 				B318E2942CAB571100D0E599 /* PVBliss-Dynamic */,
 				B318E29F2CAB5A2600D0E599 /* PVProSystem-Dynamic */,
 				B318E2A22CAB5A4B00D0E599 /* PVCoreMednafen */,
-				B3D1C1332CB70D6000F1F46B /* PVCoremGBA-Dynamic */,
 				B32D45C62CB7310C006B76C2 /* PVGambatte */,
 				B382362B2CC4623100DCE080 /* SiriusRating */,
 				B35573732CC4843600A4BA16 /* MoltenVK */,
@@ -12506,16 +12496,6 @@
 			productName = Introspect;
 		};
 		B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
-			productName = "PVCoremGBA-Dynamic";
-		};
-		B3D1C1332CB70D6000F1F46B /* PVCoremGBA-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
-			productName = "PVCoremGBA-Dynamic";
-		};
-		B3D1C1392CB70D7000F1F46B /* PVCoremGBA-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
 			productName = "PVCoremGBA-Dynamic";
