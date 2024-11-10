@@ -330,18 +330,27 @@ public final class GameImporter: GameImporting, ObservableObject {
     
     //MARK: Public Queue Management
     
+    // Inside your GameImporter class
+    private let importQueueLock = NSLock()
+    
     // Adds an ImportItem to the queue without starting processing
     public func addImport(_ item: ImportQueueItem) {
-        addImportItemToQueue(item)
+        importQueueLock.lock()
+        defer { importQueueLock.unlock() }
+        
+        self.addImportItemToQueue(item)
+        
         
 //        startProcessing()
     }
     
     public func addImports(forPaths paths: [URL]) {
-        paths.forEach({ (url) in
-            addImportItemToQueue(ImportQueueItem(url: url, fileType: .unknown))
-        })
+        importQueueLock.lock()
+        defer { importQueueLock.unlock() }
         
+        for path in paths {
+            self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
+        }
 //        startProcessing()
     }
 
@@ -703,6 +712,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 //check the child queue items for duplicates
                 return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: queueItem)
             }
+            DLOG("Duplicate Queue Item not detected for \(existing.url.lastPathComponent.lowercased()) - compared with \(queueItem.url.lastPathComponent.lowercased())")
             return false
         }
         

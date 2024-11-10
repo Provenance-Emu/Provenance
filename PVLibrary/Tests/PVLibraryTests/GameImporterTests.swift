@@ -68,5 +68,49 @@ class GameImporterTests: XCTestCase {
         
         XCTAssertTrue(gameImporter.importQueueContainsDuplicate(queue, ofItem: item2), "Duplicate should be detected in child queue items")
     }
+    
+    func testImportQueueContainsDuplicate_duplicateByUrlWithSpaces() {
+        let item1 = ImportQueueItem(url: URL(string: "file:///path/to/Star%20Control%20II%20(USA).bin")!)
+        let item2 = ImportQueueItem(url: URL(string: "file:///path/to/Star%20Control%20II%20(USA).bin")!)
+        
+        let queue = [item1]
+        
+        XCTAssertTrue(gameImporter.importQueueContainsDuplicate(queue, ofItem: item2), "Duplicate should be detected by URL")
+    }
+    
+    func testAddImportsThreadSafety() {
+        // Define paths to test
+        let paths = [
+            URL(string: "file:///path/to/file1.bin")!,
+            URL(string: "file:///path/to/file2.bin")!,
+            URL(string: "file:///path/to/file3.bin")!
+        ]
+        
+        // Create an expectation for each concurrent call
+        let expectation1 = expectation(description: "Thread 1")
+        let expectation2 = expectation(description: "Thread 2")
+        let expectation3 = expectation(description: "Thread 3")
+        
+        // Dispatch the calls concurrently
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.gameImporter.addImports(forPaths: paths)
+            expectation1.fulfill()
+        }
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.gameImporter.addImports(forPaths: paths)
+            expectation2.fulfill()
+        }
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.gameImporter.addImports(forPaths: paths)
+            expectation3.fulfill()
+        }
+        
+        // Wait for expectations
+        wait(for: [expectation1, expectation2, expectation3], timeout: 5.0)
+        
+        XCTAssertEqual(gameImporter.importQueue.count, 3, "Expected successful import of all 3 items")
+    }
 }
 
