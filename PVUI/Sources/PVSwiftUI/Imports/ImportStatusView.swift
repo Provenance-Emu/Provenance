@@ -58,19 +58,31 @@ struct ImportTaskRowView: View {
             VStack(alignment: .leading) {
                 Text(item.url.lastPathComponent)
                     .font(.headline)
-                Text(item.status.description)
-                    .font(.subheadline)
-                    .foregroundColor(item.status.color)
+                if let targetSystem = item.targetSystem() {
+                    Text(targetSystem.name)
+                        .font(.subheadline)
+                        .foregroundColor(item.status.color)
+                }
+                
             }
             
             Spacer()
             
-            if item.status == .processing {
-                ProgressView().progressViewStyle(.circular).frame(width: 40, height: 40, alignment: .center)
-            } else {
-                Image(systemName: iconNameForStatus(item.status))
-                    .foregroundColor(item.status.color)
+            VStack(alignment: .trailing) {
+                if item.status == .processing {
+                    ProgressView().progressViewStyle(.circular).frame(width: 40, height: 40, alignment: .center)
+                } else {
+                    Image(systemName: iconNameForStatus(item.status))
+                        .foregroundColor(item.status.color)
+                }
+                
+                if (item.childQueueItems.count > 0) {
+                    Text("\(item.childQueueItems.count) assoc. files")
+                        .font(.subheadline)
+                        .foregroundColor(item.status.color)
+                }
             }
+            
         }
         .padding()
         .background(Color.white)
