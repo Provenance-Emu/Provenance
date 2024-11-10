@@ -30,13 +30,15 @@ struct HomeContinueItemView: SwiftUI.View {
                        let image = UIImage(contentsOfFile: screenshot.url.path) {
                         Image(uiImage: image)
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
+                            .aspectRatio(contentMode: .fit)
                             .frame(height: height)
+                            .frame(maxWidth: .infinity)
                     } else {
                         Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game?.title ?? "Deleted", ratio: 1))
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
+                            .aspectRatio(contentMode: .fit)
                             .frame(height: height)
+                            .frame(maxWidth: .infinity)
                     }
                     VStack {
                         Spacer()
@@ -50,11 +52,16 @@ struct HomeContinueItemView: SwiftUI.View {
                                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                             }
                             Spacer()
-                            if !hideSystemLabel {
-                                VStack(alignment: .trailing) {
-                                    Text(continueState.game?.system?.isInvalidated == true ? "" : (continueState.game?.system?.name ?? ""))
+                            if !hideSystemLabel, let system = continueState.game?.system, !system.isInvalidated {
+                                HStack(spacing: 4) {
+                                    Text(system.name)
                                         .font(.system(size: 8))
                                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                                    if let core = continueState.core {
+                                        Text(core.projectName)
+                                            .font(.system(size: 8))
+                                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                                    }
                                 }
                             }
                         }

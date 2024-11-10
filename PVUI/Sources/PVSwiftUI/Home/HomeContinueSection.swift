@@ -15,6 +15,8 @@ import PVThemes
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueSection: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     @ObservedResults(
         PVSaveState.self,
@@ -22,8 +24,25 @@ struct HomeContinueSection: SwiftUI.View {
     ) var allSaveStates
 
     weak var rootDelegate: PVRootDelegate?
-    let height: CGFloat = 260
+    let defaultHeight: CGFloat = 260
     var consoleIdentifier: String?
+
+    var isLandscapePhone: Bool {
+        #if os(iOS)
+        return UIDevice.current.userInterfaceIdiom == .phone &&
+               verticalSizeClass == .compact
+        #else
+        return false
+        #endif
+    }
+
+    var adjustedHeight: CGFloat {
+        isLandscapePhone ? defaultHeight / 2 : defaultHeight
+    }
+
+    var columns: Int {
+        isLandscapePhone ? 2 : 1
+    }
 
     var filteredSaveStates: [PVSaveState] {
         let validSaveStates = allSaveStates.filter { !$0.isInvalidated }
@@ -38,15 +57,37 @@ struct HomeContinueSection: SwiftUI.View {
         }
     }
 
+    var gridColumns: [GridItem] {
+        if isLandscapePhone {
+            [GridItem(.flexible()), GridItem(.flexible())]
+        } else {
+            [GridItem(.flexible())]
+        }
+    }
+
     var body: some SwiftUI.View {
         TabView {
             if filteredSaveStates.count > 0 {
-                ForEach(filteredSaveStates, id: \.self) { state in
-                    HomeContinueItemView(continueState: state, height: height, hideSystemLabel: consoleIdentifier != nil) {
-                        Task.detached { @MainActor in
-                            await rootDelegate?.root_load(state.game, sender: self, core: state.core, saveState: state)
+                ForEach(0..<(filteredSaveStates.count + 1) / 2, id: \.self) { pageIndex in
+                    LazyVGrid(columns: gridColumns, spacing: 8) {
+                        ForEach(pageIndex * 2..<min(pageIndex * 2 + 2, filteredSaveStates.count), id: \.self) { index in
+                            HomeContinueItemView(
+                                continueState: filteredSaveStates[index],
+                                height: adjustedHeight,
+                                hideSystemLabel: consoleIdentifier != nil
+                            ) {
+                                Task.detached { @MainActor in
+                                    await rootDelegate?.root_load(
+                                        filteredSaveStates[index].game,
+                                        sender: self,
+                                        core: filteredSaveStates[index].core,
+                                        saveState: filteredSaveStates[index]
+                                    )
+                                }
+                            }
                         }
                     }
+                    .padding(.horizontal)
                 }
             } else {
                 Text("No Continues")
@@ -57,7 +98,7 @@ struct HomeContinueSection: SwiftUI.View {
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(filteredSaveStates.count)
-        .frame(height: height)
+        .frame(height: adjustedHeight)
     }
 }
 

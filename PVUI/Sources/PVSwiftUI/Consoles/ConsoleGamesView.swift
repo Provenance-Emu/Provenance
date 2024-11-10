@@ -76,10 +76,12 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @State private var systemMoveState: SystemMoveState?
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
-        horizontalSizeClass == .compact ? 150 : 75
+        let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
+        return verticalSizeClass == .compact ? baseHeight / 2 : baseHeight
     }
 
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {

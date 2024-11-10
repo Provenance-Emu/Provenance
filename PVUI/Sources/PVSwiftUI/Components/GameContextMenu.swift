@@ -24,60 +24,62 @@ struct GameContextMenu: SwiftUI.View {
 
     var body: some SwiftUI.View {
         Group {
-            if game.system.cores.count > 1 {
-                Button {
-                    Task { @MainActor in
-                        await rootDelegate?.root_presentCoreSelection(forGame: game, sender: self)
-                    }
-                } label: { Label("Open in...", systemImage: "gamecontroller") }
-            }
-            Button {
-                showMoreInfo(forGame: game)
-            } label: { Label("Game Info", systemImage: "info.circle") }
-            Button {
-                // Toggle isFavorite for the selected PVGame
-                let thawedGame = game.thaw()!
-                try! Realm().write {
-                    thawedGame.isFavorite = !thawedGame.isFavorite
+            if !game.isInvalidated {
+                if game.system.cores.count > 1 {
+                    Button {
+                        Task { @MainActor in
+                            await rootDelegate?.root_presentCoreSelection(forGame: game, sender: self)
+                        }
+                    } label: { Label("Open in...", systemImage: "gamecontroller") }
                 }
-            } label: { Label("Favorite", systemImage: "heart") }
-            Button {
-                contextMenuDelegate?.gameContextMenu(self, didRequestRenameFor: game)
-            } label: { Label("Rename", systemImage: "rectangle.and.pencil.and.ellipsis") }
-            Button {
-                promptUserMD5CopiedToClipboard(forGame: game)
-            } label: { Label("Copy MD5 URL", systemImage: "number.square") }
-#if !os(tvOS)
-            Button {
-                DLOG("GameContextMenu: Choose Cover button tapped")
-                contextMenuDelegate?.gameContextMenu(self, didRequestChooseCoverFor: game)
-            } label: { Label("Choose Cover", systemImage: "book.closed") }
-#endif
-            Button {
-                pasteArtwork(forGame: game)
-            } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
-            //            Button {
-            //                share(game: game)
-            //            } label: { Label("Share", systemImage: "square.and.arrow.up") }
-            // New menu item to clear custom artwork
-            if game.customArtworkURL != "" {
                 Button {
-                    clearCustomArtwork(forGame: game)
-                } label: { Label("Clear Custom Artwork", systemImage: "xmark.circle") }
-            }
-            Divider()
-            Button {
-                DLOG("GameContextMenu: Move to System button tapped")
-                contextMenuDelegate?.gameContextMenu(self, didRequestMoveToSystemFor: game)
-            } label: { Label("Move to System", systemImage: "folder.fill.badge.plus") }
-            if #available(iOS 15, tvOS 15, macOS 12, *) {
-                Button(role: .destructive) {
-                    rootDelegate?.attemptToDelete(game: game)
-                } label: { Label("Delete", systemImage: "trash") }
-            } else {
+                    showMoreInfo(forGame: game)
+                } label: { Label("Game Info", systemImage: "info.circle") }
                 Button {
-                    rootDelegate?.attemptToDelete(game: game)
-                } label: { Label("Delete", systemImage: "trash") }
+                    // Toggle isFavorite for the selected PVGame
+                    let thawedGame = game.thaw()!
+                    try! Realm().write {
+                        thawedGame.isFavorite = !thawedGame.isFavorite
+                    }
+                } label: { Label("Favorite", systemImage: "heart") }
+                Button {
+                    contextMenuDelegate?.gameContextMenu(self, didRequestRenameFor: game)
+                } label: { Label("Rename", systemImage: "rectangle.and.pencil.and.ellipsis") }
+                Button {
+                    promptUserMD5CopiedToClipboard(forGame: game)
+                } label: { Label("Copy MD5 URL", systemImage: "number.square") }
+    #if !os(tvOS)
+                Button {
+                    DLOG("GameContextMenu: Choose Cover button tapped")
+                    contextMenuDelegate?.gameContextMenu(self, didRequestChooseCoverFor: game)
+                } label: { Label("Choose Cover", systemImage: "book.closed") }
+    #endif
+                Button {
+                    pasteArtwork(forGame: game)
+                } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
+                //            Button {
+                //                share(game: game)
+                //            } label: { Label("Share", systemImage: "square.and.arrow.up") }
+                // New menu item to clear custom artwork
+                if game.customArtworkURL != "" {
+                    Button {
+                        clearCustomArtwork(forGame: game)
+                    } label: { Label("Clear Custom Artwork", systemImage: "xmark.circle") }
+                }
+                Divider()
+                Button {
+                    DLOG("GameContextMenu: Move to System button tapped")
+                    contextMenuDelegate?.gameContextMenu(self, didRequestMoveToSystemFor: game)
+                } label: { Label("Move to System", systemImage: "folder.fill.badge.plus") }
+                if #available(iOS 15, tvOS 15, macOS 12, *) {
+                    Button(role: .destructive) {
+                        rootDelegate?.attemptToDelete(game: game)
+                    } label: { Label("Delete", systemImage: "trash") }
+                } else {
+                    Button {
+                        rootDelegate?.attemptToDelete(game: game)
+                    } label: { Label("Delete", systemImage: "trash") }
+                }
             }
         }
     }
