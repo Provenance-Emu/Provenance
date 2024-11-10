@@ -13,7 +13,7 @@ public enum AudioEngines: Int, CaseIterable, CustomStringConvertible {
     case avAudioEngineGameAudioEngine
     case dspGameAudioEngine
     
-    static let `default`: Self = .avAudioEngineGameAudioEngine
+    static let `default`: Self = .audioUnitGameAudioEngine
     
     public var description: String {
         switch self {
