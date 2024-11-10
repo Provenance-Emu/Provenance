@@ -24,7 +24,7 @@ struct HomeContinueItemView: SwiftUI.View {
             Button {
                 action()
             } label: {
-                ZStack {
+                ZStack(alignment: .bottom) {
                     if let screenshot = continueState.image,
                        !screenshot.isInvalidated,
                        let image = UIImage(contentsOfFile: screenshot.url.path) {
@@ -40,35 +40,33 @@ struct HomeContinueItemView: SwiftUI.View {
                             .frame(height: height)
                             .frame(maxWidth: .infinity)
                     }
-                    VStack {
-                        Spacer()
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
+
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            if let core = continueState.core {
+                                Text("\(core.projectName): Continue...")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            } else {
                                 Text("Continue...")
                                     .font(.system(size: 10))
                                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                                Text(continueState.game?.isInvalidated == true ? "Deleted" : (continueState.game?.title ?? "Deleted"))
-                                    .font(.system(size: 13))
-                                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                             }
-                            Spacer()
-                            if !hideSystemLabel, let system = continueState.game?.system, !system.isInvalidated {
-                                HStack(spacing: 4) {
-                                    Text(system.name)
-                                        .font(.system(size: 8))
-                                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                                    if let core = continueState.core {
-                                        Text(core.projectName)
-                                            .font(.system(size: 8))
-                                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                                    }
-                                }
-                            }
+                            Text(continueState.game?.isInvalidated == true ? "Deleted" : (continueState.game?.title ?? "Deleted"))
+                                .font(.system(size: 13))
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         }
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 10)
-                        .background(.ultraThinMaterial)
+                        Spacer()
+                        if !hideSystemLabel, let system = continueState.game?.system, !system.isInvalidated {
+                            Text(system.name)
+                                .font(.system(size: 8))
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        }
                     }
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 10)
+                    .background(.ultraThinMaterial)
+                    .frame(maxWidth: .infinity)
                 }
             }
             .contextMenu {

@@ -68,20 +68,37 @@ struct HomeContinueSection: SwiftUI.View {
     var body: some SwiftUI.View {
         TabView {
             if filteredSaveStates.count > 0 {
-                ForEach(0..<(filteredSaveStates.count + 1) / 2, id: \.self) { pageIndex in
+                ForEach(0..<(isLandscapePhone ? (filteredSaveStates.count + 1) / 2 : filteredSaveStates.count), id: \.self) { pageIndex in
                     LazyVGrid(columns: gridColumns, spacing: 8) {
-                        ForEach(pageIndex * 2..<min(pageIndex * 2 + 2, filteredSaveStates.count), id: \.self) { index in
+                        if isLandscapePhone {
+                            ForEach(pageIndex * 2..<min(pageIndex * 2 + 2, filteredSaveStates.count), id: \.self) { index in
+                                HomeContinueItemView(
+                                    continueState: filteredSaveStates[index],
+                                    height: adjustedHeight,
+                                    hideSystemLabel: consoleIdentifier != nil
+                                ) {
+                                    Task.detached { @MainActor in
+                                        await rootDelegate?.root_load(
+                                            filteredSaveStates[index].game,
+                                            sender: self,
+                                            core: filteredSaveStates[index].core,
+                                            saveState: filteredSaveStates[index]
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
                             HomeContinueItemView(
-                                continueState: filteredSaveStates[index],
+                                continueState: filteredSaveStates[pageIndex],
                                 height: adjustedHeight,
                                 hideSystemLabel: consoleIdentifier != nil
                             ) {
                                 Task.detached { @MainActor in
                                     await rootDelegate?.root_load(
-                                        filteredSaveStates[index].game,
+                                        filteredSaveStates[pageIndex].game,
                                         sender: self,
-                                        core: filteredSaveStates[index].core,
-                                        saveState: filteredSaveStates[index]
+                                        core: filteredSaveStates[pageIndex].core,
+                                        saveState: filteredSaveStates[pageIndex]
                                     )
                                 }
                             }
