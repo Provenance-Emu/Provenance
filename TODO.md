@@ -3,12 +3,10 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [X] moveable button joystick and dpad move at the same time
 - [ ] RetroArch GLES cores are crashing?
-- [ ] Delete isn't deleting
+- [X] moveable button joystick and dpad move at the same time
+- [X] Delete isn't deleting
     - [X] throw an error on file manager error
-- [ ] Checking Import UI is hanging (removed for now)
-    - [ ] fix public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async
 - [X] audio is fucked
 - [X] 4X multisampling crashes Mupen on iPad, (iphone?)
 - [X] Refresh library and conflicts on new UI not working
@@ -35,10 +33,12 @@ _My personal TODO notes_
 
 ## Major bugs
 
-- [ ] Native scale on mupen shows in wrong area
+- [ ] Native scale on mupen shows in wrong area on ipad
 - [ ] Re-add and fix "Launch Web Server" from Swift UI settings
 - [ ] Share on old UI crashes app (realm threading issue)
 - [ ] iCloud sync removed
+- [ ] Checking Import UI is hanging (removed for now)
+    - [ ] fix public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async
 - [ ] look at the displaylink thing in retroarch
 - [ ] Flycast crashes with error `NSInvalidArgumentException', reason: '-[MetalView naturalDrawableSizeMVK]: unrecognized selector sent`
     - [ ] Try downgrading MoltenVK.xcframework to fix dolphin, flycast others
