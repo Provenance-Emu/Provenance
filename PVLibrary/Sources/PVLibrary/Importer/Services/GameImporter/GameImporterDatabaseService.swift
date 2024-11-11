@@ -195,7 +195,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         if game.originalArtworkFile == nil {
             game = await getArtwork(forGame: game)
         }
-        self.saveGame(game)
+        await self.saveGame(game)
     }
     
     @discardableResult
@@ -485,10 +485,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
    
     /// Saves a game to the database
-    func saveGame(_ game:PVGame) {
+    func saveGame(_ game:PVGame) async {
         do {
-            //TODO: this might crash if not on main thread - validate
             let database = RomDatabase.sharedInstance
+            let realm = try! await RomDatabase.sharedInstance.realm
+            
+            if let system = realm.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier) {
+                game.system = system
+            }
             try database.writeTransaction {
                 database.realm.create(PVGame.self, value:game, update:.modified)
             }
