@@ -21,11 +21,12 @@ import PVRealm
 import Perception
 import SwiftUI
 
-protocol GameImporterDatabaseServicing {
+public protocol GameImporterDatabaseServicing {
     func setOpenVGDB(_ vgdb: OpenVGDB)
     func setRomsPath(url:URL)
     func importGameIntoDatabase(queueItem: ImportQueueItem) async throws
     func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws
+    func getUpdatedGameInfo(for game: PVGame, forceRefresh: Bool) -> PVGame
     func getArtwork(forGame game: PVGame) async -> PVGame
 }
 
