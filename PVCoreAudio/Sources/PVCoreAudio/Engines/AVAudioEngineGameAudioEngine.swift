@@ -57,8 +57,52 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         }
     }
 
+    /// Delegate for audio sample rate changes
+    public weak var delegate: PVAudioDelegate?
+
     public init() {
         configureAudioSession()
+        #if !os(macOS)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAudioRouteChange),
+            name: AVAudioSession.routeChangeNotification,
+            object: nil
+        )
+        #endif
+    }
+
+    deinit {
+        stopAudio()
+        #if !os(macOS)
+        NotificationCenter.default.removeObserver(self)
+        #endif
+    }
+
+    @objc private func handleAudioRouteChange(notification: Notification) {
+        #if !os(macOS)
+        guard let userInfo = notification.userInfo,
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
+        else { return }
+
+        switch reason {
+        case .newDeviceAvailable, .oldDeviceUnavailable:
+            do {
+                stopAudio()
+                configureAudioSession()
+                startAudio()
+            } catch {
+                handleAudioError(error)
+            }
+        default:
+            break
+        }
+        #endif
+    }
+
+    private func notifySampleRateChange() {
+        delegate?.audioSampleRateDidChange()
     }
 
     public func setVolume(_ volume: Float) {
@@ -67,6 +111,8 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
 
     public func setupAudioGraph(for gameCore: EmulatorCoreAudioDataSource) throws {
         self.gameCore = gameCore
+        // Notify delegate when sample rate changes during setup
+        notifySampleRateChange()
     }
 
     /// Stream description computed property for audio format configuration
