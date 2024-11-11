@@ -103,12 +103,14 @@ extension PVRootViewController: PVMenuDelegate {
             documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: utis, asCopy: true)
             documentPicker.allowsMultipleSelection = true
             documentPicker.delegate = self
+            self.dismiss(animated: true)
             self.present(documentPicker, animated: true, completion: nil)
         }))
 #endif
 
         #if canImport(PVWebServer)
         let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { _ in
+            self.dismiss(animated: true)
             self.startWebServer()
         })
 
