@@ -1010,8 +1010,9 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                         self.hud.hide(animated:true, afterDelay: 1.0)
                         Task.detached(priority: .utility) {
                             do {
-                                //TODO: fix this
-                                //try await self.gameImporter.importFiles(atPaths: paths)
+                                //unclear if this would actually work...
+                                self.gameImporter.addImports(forPaths: paths)
+                                self.gameImporter.startProcessing()
                             } catch {
                                 ELOG("Error: \(error.localizedDescription)")
                             }
