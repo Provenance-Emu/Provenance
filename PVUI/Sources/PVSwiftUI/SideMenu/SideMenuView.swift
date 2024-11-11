@@ -109,22 +109,29 @@ SideMenuView: SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    MenuItemView(imageName: "prov_settings_gear", rowTitle: "Imports") {
-                        delegate.didTapImports()
-                    }
                     Divider()
+                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
                     MenuItemView(imageName: "prov_settings_gear", rowTitle: "Settings") {
                         delegate.didTapSettings()
                     }
                     Divider()
+                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
                     MenuItemView(imageName: "prov_home_icon", rowTitle: "Home") {
                         delegate.didTapHome()
                     }
                     Divider()
+                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
                     MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
                         delegate?.didTapAddGames()
                     }
+                    Divider()
+                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                    MenuItemView(imageName: "checklist", rowTitle: "Import Queue") {
+                        delegate.didTapImports()
+                    }
 #if canImport(FreemiumKit)
+                    Divider()
+                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
                     PaidStatusView(style: .plain)
                         .listRowBackground(Color.accentColor)
                         .padding(.vertical, 10)
