@@ -90,8 +90,6 @@ struct ImportTaskRowView: View {
         }
         .padding()
         .background(Color.white)
-        .cornerRadius(10)
-        .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 2)
         .onTapGesture {
                     if item.status == .conflict {
                         isNavigatingToSystemSelection = true
@@ -111,20 +109,23 @@ struct ImportStatusView: View {
     var gameImporter:GameImporter
     weak var delegate:ImportStatusDelegate!
     
+    private func deleteItems(at offsets: IndexSet) {
+        gameImporter.removeImports(at: offsets)
+    }
+    
     var body: some View {
             NavigationView {
-                ScrollView {
+                List {
                     if gameImporter.importQueue.isEmpty {
                         Text("No items in the import queue")
                             .foregroundColor(.gray)
                             .padding()
                     } else {
-                        LazyVStack(spacing: 10) {
-                            ForEach(gameImporter.importQueue) { item in
-                                ImportTaskRowView(item: item).id(item.id)
-                            }
-                        }
-                        .padding()
+                        ForEach(gameImporter.importQueue) { item in
+                            ImportTaskRowView(item: item).id(item.id)
+                        }.onDelete(
+                            perform: deleteItems
+                        )
                     }
                 }
                 .navigationTitle("Import Status")
