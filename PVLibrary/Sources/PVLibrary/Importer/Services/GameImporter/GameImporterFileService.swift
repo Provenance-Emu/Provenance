@@ -12,6 +12,7 @@ import RealmSwift
 protocol GameImporterFileServicing {
     func moveImportItem(toAppropriateSubfolder queueItem: ImportQueueItem) async throws
     func moveToConflictsFolder(_ queueItem: ImportQueueItem, conflictsPath: URL) async throws
+    func removeImportItemFile(_ importItem: ImportQueueItem) throws
 }
 
 class GameImporterFileService : GameImporterFileServicing {
@@ -136,6 +137,15 @@ class GameImporterFileService : GameImporterFileServicing {
         try FileManager.default.moveItem(at: file, to: destination)
         DLOG("Moved file to: \(destination.path)")
         return destination
+    }
+    
+    func removeImportItemFile(_ importItem: ImportQueueItem) throws {
+        let fileManager = FileManager.default
+        
+        // If file exists at destination, remove it first
+        if fileManager.fileExists(atPath: importItem.url.path) {
+            try fileManager.removeItem(at: importItem.url)
+        }
     }
     
     /// Moves a file and overwrites if it already exists at the destination
