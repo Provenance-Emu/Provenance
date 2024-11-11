@@ -113,6 +113,7 @@ public protocol GameImporting {
     
     func addImport(_ item: ImportQueueItem)
     func addImports(forPaths paths: [URL])
+    func removeImports(at offsets: IndexSet)
     func startProcessing()
     
     func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool
@@ -363,6 +364,24 @@ public final class GameImporter: GameImporting, ObservableObject {
             item.userChosenSystem = targetSystem
             self.addImportItemToQueue(item)
         }
+    }
+    
+    public func removeImports(at offsets: IndexSet) {
+        importQueueLock.lock()
+        defer { importQueueLock.unlock() }
+        
+        for index in offsets {
+            let item = importQueue[index]
+            
+            // Try to delete the associated file
+            do {
+                try gameImporterFileService.removeImportItemFile(item)
+            } catch {
+                ELOG("removeImports - Failed to delete file at \(item.url): \(error)")
+            }
+        }
+        
+        importQueue.remove(atOffsets: offsets)
     }
 
     // Public method to manually start processing if needed
