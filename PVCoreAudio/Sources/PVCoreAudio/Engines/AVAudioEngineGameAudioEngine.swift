@@ -7,9 +7,27 @@ import AudioToolbox
 import CoreAudio
 import PVSettings
 
+/// Audio context for managing buffer and performance metrics
+private final class AudioEngineContext {
+    var bufferUnderrunCount: Int = 0
+    var currentBufferFrames: UInt32 = 4096
+    private var performanceHistory: [Double] = []
+    private let maxHistorySize = 10
+
+    func trackPerformance(_ value: Double) {
+        performanceHistory.append(value)
+        if performanceHistory.count > maxHistorySize {
+            performanceHistory.removeFirst()
+        }
+    }
+
+    var averagePerformance: Double {
+        performanceHistory.reduce(0.0, +) / Double(performanceHistory.count)
+    }
+}
+
 @available(macOS 11.0, iOS 14.0, *)
 final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
-
     private lazy var engine: AVAudioEngine = {
         let engine = AVAudioEngine()
         return engine
@@ -18,10 +36,24 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
     private var src: AVAudioSourceNode?
     private weak var gameCore: EmulatorCoreAudioDataSource!
     private var isRunning = false
+    private let context = AudioEngineContext()
+
+    /// Audio processing properties
+    private let preferredBufferSize: UInt32 = 4096
+    private let maxBufferSize: UInt32 = 8192
+    private var lastProcessingTime: CFAbsoluteTime = 0
 
     public var volume: Float = 1.0 {
         didSet {
             engine.mainMixerNode.outputVolume = volume
+        }
+    }
+
+    /// Filter support
+    private let filterNode = AVAudioUnitEQ(numberOfBands: 1)
+    public var filterEnabled: Bool = false {
+        didSet {
+            filterNode.bypass = !filterEnabled
         }
     }
 
@@ -37,6 +69,7 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         self.gameCore = gameCore
     }
 
+    /// Stream description computed property for audio format configuration
     private var streamDescription: AudioStreamBasicDescription {
         let channelCount = UInt32(gameCore.channelCount(forBuffer: 0))
         let sampleRate = gameCore.audioSampleRate(forBuffer: 0)
@@ -84,11 +117,21 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             self.src = nil
         }
 
-        let read = readBlockForBuffer(gameCore.ringBuffer(atIndex: 0)!)
-        var sd = streamDescription
-        let bytesPerFrame = sd.mBytesPerFrame
+        guard let ringBuffer = gameCore.ringBuffer(atIndex: 0) else {
+            ELOG("Failed to get ring buffer")
+            return
+        }
 
-        guard let format = AVAudioFormat(streamDescription: &sd) else {
+        let read = readBlockForBuffer(ringBuffer)
+        var sd = streamDescription
+
+        /// Create format with explicit settings for iOS compatibility
+        guard let format = AVAudioFormat(
+            commonFormat: .pcmFormatInt16,
+            sampleRate: sd.mSampleRate,
+            channels: sd.mChannelsPerFrame,
+            interleaved: true
+        ) else {
             ELOG("Failed to create AVAudioFormat")
             return
         }
@@ -96,8 +139,21 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, inputData in
             guard let self = self else { return noErr }
 
+            let startTime = CFAbsoluteTimeGetCurrent()
+            let bytesPerFrame = sd.mBytesPerFrame
             let bytesRequested = Int(frameCount * bytesPerFrame)
+
             let bytesCopied = read(inputData.pointee.mBuffers.mData!, bytesRequested)
+
+            /// Track performance and adjust buffer size if needed
+            let processingTime = CFAbsoluteTimeGetCurrent() - startTime
+            self.context.trackPerformance(processingTime)
+            self.adjustBufferSizeIfNeeded(processingTime: processingTime)
+
+            if bytesCopied < bytesRequested {
+                self.context.bufferUnderrunCount += 1
+                DLOG("Buffer underrun detected: \(self.context.bufferUnderrunCount)")
+            }
 
             inputData.pointee.mBuffers.mDataByteSize = UInt32(bytesCopied)
             inputData.pointee.mBuffers.mNumberChannels = sd.mChannelsPerFrame
@@ -105,10 +161,35 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             return noErr
         }
 
-        if let src {
-            engine.attach(src)
-            engine.connect(src, to: engine.mainMixerNode, format: format)
+        guard let src = src else {
+            ELOG("Failed to create source node")
+            return
         }
+
+        engine.attach(src)
+        engine.connect(src, to: engine.mainMixerNode, format: format)
+        DLOG("Source node updated and connected successfully")
+    }
+
+    /// Adjusts buffer size based on performance metrics
+    private func adjustBufferSizeIfNeeded(processingTime: Double) {
+        if context.bufferUnderrunCount > 5 {
+            let optimalFrames = min(context.currentBufferFrames * 2, maxBufferSize)
+            if optimalFrames != context.currentBufferFrames {
+                context.currentBufferFrames = optimalFrames
+                DLOG("Adjusted buffer size to: \(optimalFrames) frames")
+            }
+        }
+    }
+
+    /// Logs detailed audio format information
+    private func logAudioFormat(_ format: AudioStreamBasicDescription, label: String) {
+        DLOG("\(label):")
+        DLOG("- Sample Rate: \(format.mSampleRate)")
+        DLOG("- Channels: \(format.mChannelsPerFrame)")
+        DLOG("- Bits: \(format.mBitsPerChannel)")
+        DLOG("- Bytes/Frame: \(format.mBytesPerFrame)")
+        DLOG("- Format ID: \(format.mFormatID)")
     }
 
     public func startAudio() {
@@ -148,11 +229,37 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
             try session.setCategory(.ambient,
                                   mode: .default,
                                   options: [.mixWithOthers])
-            try session.setPreferredIOBufferDuration(0.005)
+            /// Get user preferred latency from settings (in milliseconds)
+            let bufferDuration = Defaults[.audioLatency] / 1000.0
+            try session.setPreferredIOBufferDuration(bufferDuration)
             try session.setActive(true)
         } catch {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
         }
         #endif
+    }
+
+    /// Enhanced error handling
+    private func handleAudioError(_ error: Error) {
+        ELOG("Audio error occurred: \(error.localizedDescription)")
+
+        do {
+            stopAudio()
+            Thread.sleep(forTimeInterval: 0.1)
+
+            #if !os(macOS)
+            configureAudioSession()
+            #endif
+
+            try engine.start()
+            DLOG("Successfully recovered from audio error")
+        } catch {
+            ELOG("Failed to recover from audio error: \(error.localizedDescription)")
+            NotificationCenter.default.post(
+                name: NSNotification.Name("AudioEngineErrorNotification"),
+                object: self,
+                userInfo: ["error": error]
+            )
+        }
     }
 }
