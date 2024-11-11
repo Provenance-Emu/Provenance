@@ -339,9 +339,6 @@ public final class GameImporter: GameImporting, ObservableObject {
         defer { importQueueLock.unlock() }
         
         self.addImportItemToQueue(item)
-        
-        
-//        startProcessing()
     }
     
     public func addImports(forPaths paths: [URL]) {
@@ -351,7 +348,17 @@ public final class GameImporter: GameImporting, ObservableObject {
         for path in paths {
             self.addImportItemToQueue(ImportQueueItem(url: path, fileType: .unknown))
         }
-//        startProcessing()
+    }
+    
+    public func addImports(forPaths paths: [URL], targetSystem: PVSystem) {
+        importQueueLock.lock()
+        defer { importQueueLock.unlock() }
+        
+        for path in paths {
+            var item = ImportQueueItem(url: path, fileType: .unknown)
+            item.userChosenSystem = targetSystem
+            self.addImportItemToQueue(item)
+        }
     }
 
     // Public method to manually start processing if needed
