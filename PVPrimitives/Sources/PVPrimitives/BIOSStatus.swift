@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct BIOSStatus: Codable, Sendable {
-    public enum Mismatch: Codable, Sendable, CustomStringConvertible {
+public struct BIOSStatus: Codable, Sendable, Equatable {
+    public enum Mismatch: Codable, Sendable, CustomStringConvertible, Equatable {
         public enum CodingError: Error { case decoding(String) }
 
         enum CodableKeys: String, CodingKey { case md5, size, filename, expectedMD5, actualMD5, expectedSize, actualSize, expectedFilename, actualFilename }
@@ -69,7 +69,7 @@ public struct BIOSStatus: Codable, Sendable {
         }
     }
 
-    public enum State: Codable, Sendable{
+    public enum State: Codable, Sendable, Equatable {
         public enum CodingError: Error { case unknownRawValue(Int) }
 
         case missing
