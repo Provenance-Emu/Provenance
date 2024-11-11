@@ -389,6 +389,9 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             gameImporter.addImports(forPaths: otherFiles)
             DLOG("Finished importing other files")
         }
+        
+        //it seems reasonable to kick off the queue here
+        gameImporter.startProcessing()
     }
 
     private func setupBIOSObserver() {
