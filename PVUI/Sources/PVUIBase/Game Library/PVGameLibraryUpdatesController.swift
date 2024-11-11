@@ -274,12 +274,14 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
     }
 
+    /// auto scans ROM directories and adds to the import queue
     public func importROMDirectories() async {
         ILOG("PVGameLibrary: Starting Import")
         RomDatabase.reloadCache(force: true)
         RomDatabase.reloadFileSystemROMCache()
         let dbGames: [AnyHashable: PVGame] = await RomDatabase.gamesCache
         let dbSystems: [AnyHashable: PVSystem] = RomDatabase.systemCache
+        var queueGames = false
 
         for system in dbSystems.values {
             ILOG("PVGameLibrary: Importing \(system.identifier)")
@@ -288,20 +290,17 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 dbGames.index(forKey: (system.identifier as NSString).appendingPathComponent($0.lastPathComponent)) == nil
             }
             if !newGames.isEmpty {
-                ILOG("PVGameLibraryUpdatesController: Importing \(newGames)")
-                //TODO: I think we want to add items to the import queue here
-                //await gameImporter.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
-                #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-                await MainActor.run {
-                    Task {
-                        await self.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
-                    }
-                }
-                #endif
+                ILOG("PVGameLibraryUpdatesController: Adding \(newGames) to the queue")
+                gameImporter.addImports(forPaths: newGames, targetSystem:system)
+                queueGames = true
             }
-            ILOG("PVGameLibrary: Imported OK \(system.identifier)")
+            ILOG("PVGameLibrary: Added items for \(system.identifier) to queue")
         }
-        ILOG("PVGameLibrary: Import Complete")
+        if (queueGames) {
+            ILOG("PVGameLibrary: Queued new items, starting to process")
+            gameImporter.startProcessing()
+        }
+        ILOG("PVGameLibrary: importROMDirectories complete")
     }
 
     #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
