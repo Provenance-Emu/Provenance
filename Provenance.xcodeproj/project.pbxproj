@@ -990,8 +990,6 @@
 		B3E2AA222CB6306600E2636D /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA202CB6306600E2636D /* PVYabause.framework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA252CB6328100E2636D /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA242CB6328100E2636D /* PVVecX.framework */; };
 		B3E2AA262CB6328100E2636D /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA242CB6328100E2636D /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E2AA2C2CB6340F00E2636D /* PVPCSXRearmed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2B2CB6340F00E2636D /* PVPCSXRearmed.framework */; };
-		B3E2AA2D2CB6341000E2636D /* PVPCSXRearmed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2B2CB6340F00E2636D /* PVPCSXRearmed.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA302CB6346900E2636D /* PVOpera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2F2CB6346900E2636D /* PVOpera.framework */; };
 		B3E2AA312CB6346900E2636D /* PVOpera.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2F2CB6346900E2636D /* PVOpera.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA382CB635BB00E2636D /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA372CB635BB00E2636D /* PVGME.framework */; };
@@ -1784,7 +1782,6 @@
 				B3A186862CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */,
 				B318E28D2CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B38FB4AF2CBEF6B1006786C6 /* libswresample.xcframework in Embed Frameworks */,
-				B3E2AA2D2CB6341000E2636D /* PVPCSXRearmed.framework in Embed Frameworks */,
 				B33BD1C62C6A622A001E933A /* PVTGBDual-Dynamic in Embed Frameworks */,
 				B33BD1C02C6A6212001E933A /* PVPicoDrive-Dynamic in Embed Frameworks */,
 				B38FB4A22CBEF57C006786C6 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
@@ -3223,7 +3220,6 @@
 				B394CD7C2BDEE53A006B63E8 /* CoreServices.framework in Frameworks */,
 				B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */,
 				B394CD892BDEE53A006B63E8 /* CFNetwork.framework in Frameworks */,
-				B3E2AA2C2CB6340F00E2636D /* PVPCSXRearmed.framework in Frameworks */,
 				B394CD8E2BDEE53A006B63E8 /* Security.framework in Frameworks */,
 				B37228CA2CCDC7A700E6F627 /* FreemiumKit in Frameworks */,
 				B318E2802CAB4C6400D0E599 /* PVFCEU.framework in Frameworks */,
