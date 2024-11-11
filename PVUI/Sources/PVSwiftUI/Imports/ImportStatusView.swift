@@ -58,8 +58,17 @@ struct ImportTaskRowView: View {
             VStack(alignment: .leading) {
                 Text(item.url.lastPathComponent)
                     .font(.headline)
-                if let targetSystem = item.targetSystem() {
+                if item.fileType == .bios {
+                    Text("BIOS")
+                        .font(.subheadline)
+                        .foregroundColor(item.status.color)
+                }
+                else if let targetSystem = item.targetSystem() {
                     Text(targetSystem.name)
+                        .font(.subheadline)
+                        .foregroundColor(item.status.color)
+                } else if !item.systems.isEmpty {
+                    Text("\(item.systems.count) systems")
                         .font(.subheadline)
                         .foregroundColor(item.status.color)
                 }
@@ -77,7 +86,7 @@ struct ImportTaskRowView: View {
                 }
                 
                 if (item.childQueueItems.count > 0) {
-                    Text("\(item.childQueueItems.count) assoc. files")
+                    Text("+\(item.childQueueItems.count) files")
                         .font(.subheadline)
                         .foregroundColor(item.status.color)
                 }
