@@ -62,11 +62,6 @@ struct ImportTaskRowView: View {
                     Text("BIOS")
                         .font(.subheadline)
                         .foregroundColor(item.status.color)
-                }
-                else if let targetSystem = item.targetSystem() {
-                    Text(targetSystem.name)
-                        .font(.subheadline)
-                        .foregroundColor(item.status.color)
                 } else if !item.systems.isEmpty {
                     Text("\(item.systems.count) systems")
                         .font(.subheadline)
