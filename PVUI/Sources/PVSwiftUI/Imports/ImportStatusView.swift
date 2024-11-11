@@ -130,7 +130,7 @@ struct ImportStatusView: View {
                         )
                     }
                 }
-                .navigationTitle("Import Status")
+                .navigationTitle("Import Queue")
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarLeading,
                                      content: {

@@ -48,7 +48,7 @@ SideMenuView: SwiftUI.View {
     @ObservedObject var searchBar: SearchBar
 
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
 #if canImport(FreemiumKit)
     @State var showPaywall: Bool = false
     @EnvironmentObject var freemiumKit: FreemiumKit
@@ -111,22 +111,22 @@ SideMenuView: SwiftUI.View {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     Divider()
                         .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    MenuItemView(imageName: "prov_settings_gear", rowTitle: "Settings") {
+                    MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings") {
                         delegate.didTapSettings()
                     }
                     Divider()
                         .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    MenuItemView(imageName: "prov_home_icon", rowTitle: "Home") {
+                    MenuItemView(icon: .named("prov_home_icon"), rowTitle: "Home") {
                         delegate.didTapHome()
                     }
                     Divider()
                         .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
+                    MenuItemView(icon: .named("prov_add_games_icon"), rowTitle: "Add Games") {
                         delegate?.didTapAddGames()
                     }
                     Divider()
                         .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    MenuItemView(imageName: "checklist", rowTitle: "Import Queue") {
+                    MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Import Queue") {
                         delegate.didTapImports()
                     }
 #if canImport(FreemiumKit)
@@ -143,8 +143,8 @@ SideMenuView: SwiftUI.View {
                         }
                         ForEach(sortedConsoles(), id: \.self) { console in
                             Divider()
-                            let imageName = console.iconName
-                            MenuItemView(imageName: imageName, rowTitle: console.name) {
+                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                            MenuItemView(icon: .named(console.iconName), rowTitle: console.name) {
                                 delegate.didTapConsole(with: console.identifier)
                             }
                         }
@@ -156,14 +156,14 @@ SideMenuView: SwiftUI.View {
         }
 #if canImport(Introspect)
         .introspectNavigationController(customize: { navController in
-   
+
             if #available(iOS 17.0, tvOS 17.0, * ) {
                 let appearance = UINavigationBarAppearance()
                 appearance.configureWithOpaqueBackground()
                 appearance.backgroundColor = themeManager.currentPalette.menuHeaderBackground
                 appearance.titleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText]
                 appearance.largeTitleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText ]
-                
+
                 navController.navigationBar.standardAppearance = appearance
                 navController.navigationBar.scrollEdgeAppearance = appearance
                 navController.navigationBar.compactAppearance = appearance
@@ -174,7 +174,7 @@ SideMenuView: SwiftUI.View {
         .introspectViewController(customize: { vc in
             let image = UIImage(named: "provnavicon")
             let menuHeaderIconTint = themeManager.currentPalette.menuHeaderIconTint
-            
+
             if menuHeaderIconTint != .clear {
                     image?.applyTintEffectWithColor(menuHeaderIconTint)
             }

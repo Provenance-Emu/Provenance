@@ -19,7 +19,7 @@ import Introspect
 @available(iOS 14, tvOS 14, *)
 struct MenuItemView: SwiftUI.View {
 
-    var imageName: String
+    var icon: SettingsIcon
     var rowTitle: String
     var action: () -> Void
 
@@ -31,7 +31,7 @@ struct MenuItemView: SwiftUI.View {
         } label: {
             HStack(spacing: 0) {
                 /// Icon
-                Image(imageName, bundle: PVUIBase.BundleLoader.myBundle)
+                icon.image
                     .renderingMode(.template)
                     .resizable().scaledToFit().cornerRadius(4).padding(8)
                     .tint(themeManager.currentPalette.menuIconTint.swiftUIColor)
