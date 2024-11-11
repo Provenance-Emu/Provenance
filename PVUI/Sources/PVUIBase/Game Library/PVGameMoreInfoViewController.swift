@@ -707,7 +707,7 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
                                 Task { [weak self] in
                                     guard let self = self else { return }
                                     //TODO: fix this
-                                    //self.game = GameImporter.shared.lookupInfo(for: game, overwrite: false)
+                                    self.game = GameImporter.shared.databaseService.getUpdatedGameInfo(for: game, forceRefresh: false)
                                 }
                             }
                         }

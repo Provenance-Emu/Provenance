@@ -194,6 +194,10 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Path to the BIOS directory
     public var biosPath: URL { get { Paths.biosesPath }}
     
+    public var databaseService: GameImporterDatabaseServicing {
+        return gameImporterDatabaseService
+    }
+    
     /// Path to the conflicts directory
     public let conflictPath: URL = URL.documentsPath.appendingPathComponent("Conflicts/", isDirectory: true)
     
