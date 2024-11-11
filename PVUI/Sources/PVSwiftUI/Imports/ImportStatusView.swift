@@ -8,6 +8,7 @@
 
 import SwiftUI
 import PVLibrary
+import PVThemes
 
 public protocol ImportStatusDelegate : AnyObject {
     func dismissAction()
@@ -16,16 +17,16 @@ public protocol ImportStatusDelegate : AnyObject {
 }
 
 func iconNameForFileType(_ type: FileType) -> String {
-    
+
     switch type {
         case .bios:
             return "bios_filled"
         case .artwork:
-            return "prov_snes_icon"
+            return "image_icon_256"
         case .game:
-            return "prov_snes_icon"
+            return "file_icon_256"
         case .cdRom:
-            return "prov_ps1_icon"
+            return "cd_icon_256"
         case .unknown:
             return "questionMark"
     }
@@ -33,7 +34,7 @@ func iconNameForFileType(_ type: FileType) -> String {
 
 func iconNameForStatus(_ status: ImportStatus) -> String {
     switch status {
-        
+
     case .queued:
         return "xmark.circle.fill"
     case .processing:
@@ -41,7 +42,7 @@ func iconNameForStatus(_ status: ImportStatus) -> String {
     case .success:
         return "checkmark.circle.fill"
     case .failure:
-        return "exclamationmark.triangle.fill"
+        return "xmark.diamond.fill"
     case .conflict:
         return "exclamationmark.triangle.fill"
     }
@@ -51,7 +52,8 @@ func iconNameForStatus(_ status: ImportStatus) -> String {
 struct ImportTaskRowView: View {
     let item: ImportQueueItem
     @State private var isNavigatingToSystemSelection = false
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some View {
         HStack {
             //TODO: add icon for fileType
@@ -61,32 +63,32 @@ struct ImportTaskRowView: View {
                 if item.fileType == .bios {
                     Text("BIOS")
                         .font(.subheadline)
-                        .foregroundColor(item.status.color)
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 } else if !item.systems.isEmpty {
                     Text("\(item.systems.count) systems")
                         .font(.subheadline)
-                        .foregroundColor(item.status.color)
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 }
-                
+
             }
-            
+
             Spacer()
-            
+
             VStack(alignment: .trailing) {
                 if item.status == .processing {
                     ProgressView().progressViewStyle(.circular).frame(width: 40, height: 40, alignment: .center)
                 } else {
                     Image(systemName: iconNameForStatus(item.status))
-                        .foregroundColor(item.status.color)
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 }
-                
+
                 if (item.childQueueItems.count > 0) {
                     Text("+\(item.childQueueItems.count) files")
                         .font(.subheadline)
-                        .foregroundColor(item.status.color)
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 }
             }
-            
+
         }
         .padding()
         .background(Color.white)
@@ -108,11 +110,11 @@ struct ImportStatusView: View {
     @ObservedObject var updatesController: PVGameLibraryUpdatesController
     var gameImporter:GameImporter
     weak var delegate:ImportStatusDelegate!
-    
+
     private func deleteItems(at offsets: IndexSet) {
         gameImporter.removeImports(at: offsets)
     }
-    
+
     var body: some View {
             NavigationView {
                 List {
