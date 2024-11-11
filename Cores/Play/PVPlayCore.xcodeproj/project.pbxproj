@@ -51,7 +51,7 @@
 		939B194A29490A840024133A /* CGSH_MTLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939B194929490A820024133A /* CGSH_MTLViewController.swift */; };
 		93C68BEF298ADF5E0008E5A3 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93C68BEE298ADF5D0008E5A3 /* PVDebug.c */; };
 		93F5FBF42945D1B600493D4F /* PVPlayCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5FBF32945D1B600493D4F /* PVPlayCore.swift */; };
-		B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPlayCore.mm */; };
+		B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPlayCore.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
 		B3135B9C26E4CC290047F338 /* PVPlayCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVPlayCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135B9D26E4CC330047F338 /* PVPlayCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVPlayCore+Audio.h */; };
 		B3135B9E26E4CC330047F338 /* PVPlayCore+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVPlayCore+Video.h */; };
@@ -74,7 +74,7 @@
 		B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7DB293F2A8B0010B746 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3A33CB229475F010090F1F3 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CB129475F010090F1F3 /* libz.tbd */; };
 		B3A6208E2947895B00ED28E3 /* CGSH_VulkaniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A6208C2947895B00ED28E3 /* CGSH_VulkaniOS.h */; };
-		B3A6208F2947895B00ED28E3 /* CGSH_VulkaniOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A6208D2947895B00ED28E3 /* CGSH_VulkaniOS.mm */; };
+		B3A6208F2947895B00ED28E3 /* CGSH_VulkaniOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A6208D2947895B00ED28E3 /* CGSH_VulkaniOS.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
 		B3A6209129478A7600ED28E3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209029478A7600ED28E3 /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209229478A7F00ED28E3 /* CoreGraphics.framework */; };
 		B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209429478A9B00ED28E3 /* MetalKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };

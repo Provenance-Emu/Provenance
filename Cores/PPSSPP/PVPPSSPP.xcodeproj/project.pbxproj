@@ -128,7 +128,7 @@
 		93E741E9295B67C70028EB94 /* PVPPSSPPCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVPPSSPPCore+Controls.mm */; };
 		93E741EA295B67C70028EB94 /* PPSSPPVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E74126295B31460028EB94 /* PPSSPPVulkanViewController.swift */; };
 		93E741EB295B67C70028EB94 /* PVPPSSPPCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5FBF32945D1B600493D4F /* PVPPSSPPCore.swift */; };
-		93E741EC295B67C70028EB94 /* PVPPSSPPCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVPPSSPPCore+Video.mm */; };
+		93E741EC295B67C70028EB94 /* PVPPSSPPCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVPPSSPPCore+Video.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
 		93E741ED295B67C70028EB94 /* PPSSPPOGLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E74125295B31460028EB94 /* PPSSPPOGLViewController.swift */; };
 		93E741EE295B67C70028EB94 /* PVPPSSPPCore+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVPPSSPPCore+Saves.mm */; };
 		93E741F0295B67C70028EB94 /* PVPPSSPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVPPSSPP.mm */; };
