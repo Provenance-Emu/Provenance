@@ -2672,8 +2672,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
 					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
 					"-fno-operator-names",
 					"-fno-rtti",
 					"-ffast-math",
@@ -3038,8 +3036,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
 					"-fno-operator-names",
 					"-fno-rtti",
 					"-ffast-math",
