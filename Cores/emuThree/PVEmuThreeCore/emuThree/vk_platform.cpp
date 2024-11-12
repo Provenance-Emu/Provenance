@@ -26,7 +26,7 @@
 namespace Vulkan {
 
 vk::DynamicLoader& GetVulkanLoader() {
-    static vk::DynamicLoader dl("@executable_path/Frameworks/libMoltenVK_emuThree_iOS.dylib");
+    static vk::DynamicLoader dl("@executable_path/Frameworks/MoltenVK.framework/MoltenVK");
     return dl;
 }
 
