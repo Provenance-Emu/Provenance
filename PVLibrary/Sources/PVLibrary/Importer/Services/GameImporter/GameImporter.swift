@@ -116,6 +116,8 @@ public protocol GameImporting {
     func removeImports(at offsets: IndexSet)
     func startProcessing()
     
+    func sortImportQueueItems(_ importQueueItems: [ImportQueueItem]) -> [ImportQueueItem]
+    
     func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool
 }
 
@@ -398,6 +400,9 @@ public final class GameImporter: GameImporting, ObservableObject {
     //MARK: Processing functions
     
     private func preProcessQueue() async {
+        importQueueLock.lock()
+        defer { importQueueLock.unlock() }
+        
         //determine the type for all items in the queue
         for importItem in self.importQueue {
             //ideally this wouldn't be needed here
@@ -515,20 +520,34 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
     
     internal func cmpSpecialExt(obj1Extension: String, obj2Extension: String) -> Bool {
+        // Ensure .m3u files are sorted first
         if obj1Extension == "m3u" && obj2Extension != "m3u" {
-            return obj1Extension > obj2Extension
-        } else if obj1Extension == "m3u" {
+            return true
+        } else if obj2Extension == "m3u" && obj1Extension != "m3u" {
             return false
-        } else if obj2Extension == "m3u" {
+        }
+        
+        // Ensure .cue files are sorted second (after .m3u)
+        if obj1Extension == "cue" && obj2Extension != "m3u" && obj2Extension != "cue" {
+            return true
+        } else if obj2Extension == "cue" && obj1Extension != "m3u" && obj1Extension != "cue" {
+            return false
+        }
+
+        // Sort artwork extensions last
+        let isObj1Artwork = Extensions.artworkExtensions.contains(obj1Extension)
+        let isObj2Artwork = Extensions.artworkExtensions.contains(obj2Extension)
+        
+        if isObj1Artwork && !isObj2Artwork {
+            return false
+        } else if isObj2Artwork && !isObj1Artwork {
             return true
         }
-        if Extensions.artworkExtensions.contains(obj1Extension) {
-            return false
-        } else if Extensions.artworkExtensions.contains(obj2Extension) {
-            return true
-        }
+
+        // Default alphanumeric sorting for non-artwork and intra-artwork sorting
         return obj1Extension > obj2Extension
     }
+
 
     internal func cmp(obj1: ImportQueueItem, obj2: ImportQueueItem) -> Bool {
         let url1 = obj1.url
@@ -550,7 +569,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    internal func sortImportQueueItems(_ importQueueItems: [ImportQueueItem]) -> [ImportQueueItem] {
+    public func sortImportQueueItems(_ importQueueItems: [ImportQueueItem]) -> [ImportQueueItem] {
+        VLOG("sortImportQueueItems...begin")
+        VLOG(importQueueItems.map { $0.url.lastPathComponent }.joined(separator: ", "))
+        
         var ext:[String:[ImportQueueItem]] = [:]
         // separate array by file extension
         importQueueItems.forEach({ (queueItem) in
@@ -576,6 +598,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
         }
         VLOG(sorted.map { $0.url.lastPathComponent }.joined(separator: ", "))
+        VLOG("sortImportQueueItems...end")
         return sorted
     }
 
