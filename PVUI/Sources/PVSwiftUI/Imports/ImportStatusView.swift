@@ -79,7 +79,7 @@ struct ImportTaskRowView: View {
                     ProgressView().progressViewStyle(.circular).frame(width: 40, height: 40, alignment: .center)
                 } else {
                     Image(systemName: iconNameForStatus(item.status))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .foregroundColor(item.status.color)
                 }
 
                 if (item.childQueueItems.count > 0) {
