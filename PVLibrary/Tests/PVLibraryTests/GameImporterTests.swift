@@ -112,5 +112,92 @@ class GameImporterTests: XCTestCase {
         
         XCTAssertEqual(gameImporter.importQueue.count, 3, "Expected successful import of all 3 items")
     }
+    
+    // Sample URLs with different extensions for testing
+    let m3uFile1 = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file1.m3u"))
+    let txtFile1 = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file1.txt"))
+    let jpgFile1 = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/File1.jpg"))
+    let txtFile2 = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file2.txt"))
+    let pngFile1 = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file1.png"))
+    let m3uFile2 = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/File2.m3u"))
+    let cueFile1 = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/File2.cue"))
+
+    override func setUp() {
+        super.setUp()
+        // Set up any additional context or resources needed here.
+    }
+
+    func testSortWithM3UFirst() {
+        // Arrange: create an unsorted list of items
+        let items = [txtFile1, jpgFile1, txtFile2, m3uFile1, pngFile1]
+        
+        // Act: sort the items
+        let sortedItems = gameImporter.sortImportQueueItems(items)
+        
+        // Assert: m3u files should appear before other extensions
+        XCTAssertEqual(sortedItems.first?.url.pathExtension.lowercased(), "m3u")
+    }
+
+    func testSortArtworkExtensionsLast() {
+        // Arrange: add artwork file extensions to the list
+        let items = [txtFile1, txtFile2, m3uFile1, pngFile1]
+        
+        // Act
+        let sortedItems = gameImporter.sortImportQueueItems(items)
+        
+        // Assert: artwork-related extensions like jpg, png should be sorted last
+        XCTAssertEqual(sortedItems.last?.url.pathExtension.lowercased(), "png")
+    }
+
+    func testSortByFilenameIfSameExtension() {
+        // Arrange: items with the same extensions but different filenames
+        let items = [txtFile2, txtFile1]
+        
+        // Act
+        let sortedItems = gameImporter.sortImportQueueItems(items)
+        
+        // Assert: within the same extension, sorting should be by filename
+        XCTAssertEqual(sortedItems[0].url.lastPathComponent, "file1.txt")
+        XCTAssertEqual(sortedItems[1].url.lastPathComponent, "file2.txt")
+    }
+
+    func testSortMixedItems() {
+        // Arrange: items with mixed extensions and names
+        let items = [txtFile1, txtFile2, jpgFile1, m3uFile1, m3uFile2]
+        
+        // Act
+        let sortedItems = gameImporter.sortImportQueueItems(items)
+        
+        // Assert: m3u files first, followed by sorted txt, then artwork
+        XCTAssertEqual(sortedItems[0].url.pathExtension.lowercased(), "m3u")
+        XCTAssertEqual(sortedItems[1].url.pathExtension.lowercased(), "m3u")
+        XCTAssertEqual(sortedItems[2].url.pathExtension.lowercased(), "txt")
+        XCTAssertEqual(sortedItems.last?.url.pathExtension.lowercased(), "jpg")
+    }
+    
+    func testSortWithCuePriority() {
+        // Arrange: create a list including .m3u, .cue, and other file extensions
+        let items = [txtFile1, jpgFile1, pngFile1, cueFile1, m3uFile1, txtFile2]
+        
+        // Act: sort the items
+        let sortedItems = gameImporter.sortImportQueueItems(items)
+        
+        // Assert: check .m3u is first, .cue is next, followed by other files
+        XCTAssertEqual(sortedItems[0].url.pathExtension.lowercased(), "m3u", ".m3u files should be first")
+        XCTAssertEqual(sortedItems[1].url.pathExtension.lowercased(), "cue", ".cue files should be second")
+        
+        // Check that artwork files are at the end
+        let artworkStartIndex = sortedItems.firstIndex { item in
+            Extensions.artworkExtensions.contains(item.url.pathExtension.lowercased())
+        }
+        if let artworkIndex = artworkStartIndex {
+            for i in artworkIndex..<sortedItems.count {
+                XCTAssertTrue(Extensions.artworkExtensions.contains(sortedItems[i].url.pathExtension.lowercased()), "Artwork items should be at the end")
+            }
+        } else {
+            XCTFail("No artwork items found in sorted list")
+        }
+    }
+
 }
 
