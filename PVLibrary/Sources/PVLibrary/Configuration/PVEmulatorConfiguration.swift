@@ -53,6 +53,10 @@ public final class PVEmulatorConfiguration: NSObject {
     public static var biosEntries: Results<PVBIOS> {
         return PVBIOS.all
     }
+    
+    public static var biosArray: [PVBIOS] {
+        return Array(RomDatabase.sharedInstance.all(PVBIOS.self))
+    }
 
     public static func initICloud() {
         DispatchQueue.global(qos: .background).async {
