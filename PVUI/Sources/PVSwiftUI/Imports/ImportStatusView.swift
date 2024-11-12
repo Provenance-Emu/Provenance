@@ -142,7 +142,7 @@ struct ImportStatusView: View {
                         Button("Add Files") {
                             delegate?.addImportsAction()
                         }
-                        Button("Force") {
+                        Button("Begin") {
                             delegate?.forceImportsAction()
                         }
                     })
