@@ -43,7 +43,6 @@
 		9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57E294CB5E6000322B9 /* number_theory.c */; };
 		9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57F294CB5E6000322B9 /* memory_manager.c */; };
 		9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */; };
-		936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; platformFilters = (ios, maccatalyst, macos, xros, ); };
 		939AAF6E2A791EF0007709E5 /* libplay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libplay.a */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
@@ -51,7 +50,7 @@
 		93C68BEF298ADF5E0008E5A3 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93C68BEE298ADF5D0008E5A3 /* PVDebug.c */; };
 		93F5FBF42945D1B600493D4F /* PVPlayCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5FBF32945D1B600493D4F /* PVPlayCoreOptions.swift */; };
 		B30E991A2C6EF24000C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99192C6EF24000C1431E /* PVSupport */; };
-		B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPlayCore.mm */; };
+		B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPlayCore.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
 		B3135B9C26E4CC290047F338 /* PVPlayCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVPlayCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135B9D26E4CC330047F338 /* PVPlayCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVPlayCore+Audio.h */; };
 		B3135B9E26E4CC330047F338 /* PVPlayCore+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVPlayCore+Video.h */; };
@@ -70,9 +69,10 @@
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7DB293F2A8B0010B746 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B398591D2CE3C18B009C8B6E /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B398591C2CE3C18B009C8B6E /* MoltenVK.xcframework */; };
 		B3A33CB229475F010090F1F3 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CB129475F010090F1F3 /* libz.tbd */; };
 		B3A6208E2947895B00ED28E3 /* CGSH_VulkaniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A6208C2947895B00ED28E3 /* CGSH_VulkaniOS.h */; };
-		B3A6208F2947895B00ED28E3 /* CGSH_VulkaniOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A6208D2947895B00ED28E3 /* CGSH_VulkaniOS.mm */; };
+		B3A6208F2947895B00ED28E3 /* CGSH_VulkaniOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A6208D2947895B00ED28E3 /* CGSH_VulkaniOS.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
 		B3A6209129478A7600ED28E3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209029478A7600ED28E3 /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209229478A7F00ED28E3 /* CoreGraphics.framework */; };
 		B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209429478A9B00ED28E3 /* MetalKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
@@ -101,7 +101,6 @@
 		B3ABAF132BCCF93900D77B8C /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
 		B3AFCF602977A69F00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF5F2977A69F00A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, xros, ); };
-		B3CC2E212CBC243000D90EB1 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B3CC2E202CBC243000D90EB1 /* MoltenVK */; };
 		B3E2AA042CB61B9E00E2636D /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA032CB61B9E00E2636D /* PVCoreObjCBridge */; };
 		B3E2AA072CB61D1700E2636D /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA062CB61D1700E2636D /* PVPlists */; };
 		B3E2AA0A2CB61E4C00E2636D /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA092CB61E4C00E2636D /* PVEmulatorCore */; };
@@ -461,16 +460,6 @@
 			dstSubfolderSpec = 16;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B32987CA2B66175A00728996 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1707,6 +1696,7 @@
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B37CE7DB293F2A8B0010B746 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		B398591C2CE3C18B009C8B6E /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B3A33CB129475F010090F1F3 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3A33CBB294761170090F1F3 /* libzlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A6208C2947895B00ED28E3 /* CGSH_VulkaniOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSH_VulkaniOS.h; sourceTree = "<group>"; };
@@ -1769,6 +1759,7 @@
 				939AAF6E2A791EF0007709E5 /* libplay.a in Frameworks */,
 				93161E0C2A5A0AA6000C5362 /* libbz2.1.0.tbd in Frameworks */,
 				939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */,
+				B398591D2CE3C18B009C8B6E /* MoltenVK.xcframework in Frameworks */,
 				B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */,
 				9333C7E3298932970042CD99 /* Foundation.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
@@ -1782,7 +1773,6 @@
 				B30E991A2C6EF24000C1431E /* PVSupport in Frameworks */,
 				B3E2AA072CB61D1700E2636D /* PVPlists in Frameworks */,
 				B3E2AA682CB65D0C00E2636D /* PVCoreBridge in Frameworks */,
-				B3CC2E212CBC243000D90EB1 /* MoltenVK in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3E2AA102CB61EC500E2636D /* PVLogging in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
@@ -4035,6 +4025,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B398591C2CE3C18B009C8B6E /* MoltenVK.xcframework */,
 				934FA1BC2A79063F0019C951 /* libplay.a */,
 				93161E092A5A0A31000C5362 /* libbz2.1.0.tbd */,
 				93161E072A5A09F4000C5362 /* libbz2.1.0.8.tbd */,
@@ -4146,7 +4137,6 @@
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
-				B32987CA2B66175A00728996 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -4163,7 +4153,6 @@
 				B3E2AA0C2CB61E8500E2636D /* PVSettings */,
 				B3E2AA0F2CB61EC500E2636D /* PVLogging */,
 				B3E2AA672CB65D0C00E2636D /* PVCoreBridge */,
-				B3CC2E202CBC243000D90EB1 /* MoltenVK */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVPlay.framework */;
@@ -4211,7 +4200,6 @@
 				B3E2AA0B2CB61E8500E2636D /* XCLocalSwiftPackageReference "../../PVSettings" */,
 				B3E2AA0E2CB61EC500E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3E2AA662CB65D0C00E2636D /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
-				B3CC2E122CBC0F9300D90EB1 /* XCLocalSwiftPackageReference "../../MoltenVK" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -4399,7 +4387,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */,
 				B33350262078619C0036A448 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5173,10 +5160,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVSupport;
 		};
-		B3CC2E122CBC0F9300D90EB1 /* XCLocalSwiftPackageReference "../../MoltenVK" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../MoltenVK;
-		};
 		B3E2AA022CB61B9E00E2636D /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreObjCBridge;
@@ -5211,11 +5194,6 @@
 		B3AFCF5F2977A69F00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
-		};
-		B3CC2E202CBC243000D90EB1 /* MoltenVK */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3CC2E122CBC0F9300D90EB1 /* XCLocalSwiftPackageReference "../../MoltenVK" */;
-			productName = MoltenVK;
 		};
 		B3E2AA032CB61B9E00E2636D /* PVCoreObjCBridge */ = {
 			isa = XCSwiftPackageProductDependency;
