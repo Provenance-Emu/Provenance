@@ -37,7 +37,8 @@ void Swapchain::Create(u32 width_, u32 height_, vk::SurfaceKHR surface_) {
     surface = surface_;
     needs_recreation = false;
 
-    //Destroy();
+    // Store old swapchain to pass to create info @JoeMatt
+    vk::SwapchainKHR old_swapchain = swapchain;
 
     SetPresentMode();
     SetSurfaceProperties();
@@ -67,7 +68,7 @@ void Swapchain::Create(u32 width_, u32 height_, vk::SurfaceKHR surface_) {
         .compositeAlpha = composite_alpha,
         .presentMode = present_mode,
         .clipped = true,
-        .oldSwapchain = nullptr,
+        .oldSwapchain = old_swapchain, // Pass the old swapchain here @JoeMatt
     };
 
     try {
@@ -75,6 +76,11 @@ void Swapchain::Create(u32 width_, u32 height_, vk::SurfaceKHR surface_) {
     } catch (vk::SystemError& err) {
         LOG_CRITICAL(Render_Vulkan, "{}", err.what());
         UNREACHABLE();
+    }
+
+    // Destroy old swapchain after creating new one @JoeMatt
+    if (old_swapchain) {
+        instance.GetDevice().destroySwapchainKHR(old_swapchain);
     }
 
     SetupImages();
