@@ -93,15 +93,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
         
         // Get all BIOS entries that match this MD5
-        let matchingBIOSEntries = PVEmulatorConfiguration.biosEntries.filter { biosEntry in
+        let matchingBIOSEntries:[PVBIOS] = PVEmulatorConfiguration.biosArray.filter { biosEntry in
             let frozenBiosEntry = biosEntry.isFrozen ? biosEntry : biosEntry.freeze()
             return frozenBiosEntry.expectedMD5.uppercased() == md5
         }
         
         for biosEntry in matchingBIOSEntries {
             // Get the first matching system
-            if let firstBIOSEntry = matchingBIOSEntries.first {
-                let frozenBiosEntry = firstBIOSEntry.isFrozen ? firstBIOSEntry : firstBIOSEntry.freeze()
+                let frozenBiosEntry = biosEntry.isFrozen ? biosEntry : biosEntry.freeze()
                 
                 // Update BIOS entry in Realm
                 try await MainActor.run {
@@ -113,7 +112,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                         }
                     }
                 }
-            }
         }
         
         return
