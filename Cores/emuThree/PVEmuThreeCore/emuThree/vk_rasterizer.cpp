@@ -31,9 +31,9 @@ MICROPROFILE_DEFINE(Vulkan_Drawing, "Vulkan", "Drawing", MP_RGB(128, 128, 192));
 using TriangleTopology = Pica::PipelineRegs::TriangleTopology;
 using VideoCore::SurfaceType;
 
-constexpr u64 STREAM_BUFFER_SIZE = 64 * 1024 * 1024;
-constexpr u64 UNIFORM_BUFFER_SIZE = 4 * 1024 * 1024;
-constexpr u64 TEXTURE_BUFFER_SIZE = 2 * 1024 * 1024;
+constexpr u64 STREAM_BUFFER_SIZE = 128 * 1024 * 1024;
+constexpr u64 UNIFORM_BUFFER_SIZE = 8 * 1024 * 1024;
+constexpr u64 TEXTURE_BUFFER_SIZE = 4 * 1024 * 1024;
 
 constexpr vk::BufferUsageFlags BUFFER_USAGE =
     vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eIndexBuffer;
