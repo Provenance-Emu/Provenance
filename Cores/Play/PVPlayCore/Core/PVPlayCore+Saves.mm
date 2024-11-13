@@ -34,11 +34,26 @@ extern CPS2VM *_ps2VM;
     return YES;
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     const fs::path fsName(fileName.fileSystemRepresentation);
     auto success = _ps2VM->SaveState(fsName);
     success.wait();
-    block(success.get(), nil);
+    
+    if (success.get()) {
+        block(nil);
+    } else {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to save state.",
+                                   NSLocalizedFailureReasonErrorKey: @"Play! failed to create savestate data.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+                                   };
+
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                            userInfo:userInfo];
+        block(newError);
+    }
+    return success.get();
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
@@ -51,12 +66,27 @@ extern CPS2VM *_ps2VM;
     return NO;
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     if (_ps2VM) {
         const fs::path fsName(fileName.fileSystemRepresentation);
         auto success = _ps2VM->LoadState(fsName);
         success.wait();
-        block(success.get(), nil);
+        
+        if (success.get()) {
+            block(nil);
+        } else {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to load save state.",
+                                       NSLocalizedFailureReasonErrorKey: @"Play! failed to read savestate data.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+                                       };
+
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                userInfo:userInfo];
+            block(newError);
+        }
+        return success.get();
     }
 }
 
