@@ -20,13 +20,27 @@ NSString *autoLoadStatefileName;
 	return true;
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
 	bool success=false;
 	if( _isInitialized) {
         [CitraWrapper.sharedInstance requestSave:fileName];
 		success=true;
 	}
-	block(success, nil);
+    if (success) {
+        block(nil);
+    } else {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to save save state.",
+                                   NSLocalizedFailureReasonErrorKey: @"emuThree failed to save savestate data.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+                                   };
+
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                            userInfo:userInfo];
+        block(newError);
+    }
+    return success;
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
@@ -40,10 +54,25 @@ NSString *autoLoadStatefileName;
     return true;
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     [CitraWrapper.sharedInstance requestLoad:fileName];
 	bool success=true;
-	block(success, nil);
+    
+    if (success) {
+        block(nil);
+    } else {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load save state.",
+                                   NSLocalizedFailureReasonErrorKey: @"emuThree failed to read savestate data.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+                                   };
+
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                            userInfo:userInfo];
+        block(newError);
+    }
+    return success;
 }
 
 - (void)autoloadWaitThread
