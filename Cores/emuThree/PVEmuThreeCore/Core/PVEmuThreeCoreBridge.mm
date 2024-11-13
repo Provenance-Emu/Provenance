@@ -213,14 +213,15 @@ static bool _isOff = false;
         [rootController didMoveToParentViewController:self.touchViewController];
         [self.touchViewController.view sendSubviewToBack:m_view];
         [rootController.view setHidden:false];
-        if (IS_IPHONE())
+        if (IS_IPHONE()) {
             rootController.view.translatesAutoresizingMaskIntoConstraints = true;
-        else {
+        rootController.view.insetsLayoutMarginsFromSafeArea = true;
+        } else {
             rootController.view.translatesAutoresizingMaskIntoConstraints = false;
-            [[rootController.view.topAnchor constraintEqualToAnchor:self.touchViewController.view.topAnchor] setActive:YES];
-            [[rootController.view.bottomAnchor constraintEqualToAnchor:self.touchViewController.view.bottomAnchor] setActive:YES];
-            [[rootController.view.leadingAnchor constraintEqualToAnchor:self.touchViewController.view.leadingAnchor] setActive:YES];
-            [[rootController.view.trailingAnchor constraintEqualToAnchor:self.touchViewController.view.trailingAnchor] setActive:YES];
+            [[rootController.view.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:self.touchViewController.view.safeAreaLayoutGuide.topAnchor] setActive:YES];
+            [[rootController.view.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:self.touchViewController.view.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
+            [[rootController.view.safeAreaLayoutGuide.leadingAnchor constraintEqualToAnchor:self.touchViewController.view.safeAreaLayoutGuide.leadingAnchor] setActive:YES];
+            [[rootController.view.safeAreaLayoutGuide.trailingAnchor constraintEqualToAnchor:self.touchViewController.view.safeAreaLayoutGuide.trailingAnchor] setActive:YES];
         }
         self.touchViewController.view.autoresizesSubviews=true;
         self.touchViewController.view.userInteractionEnabled=true;
