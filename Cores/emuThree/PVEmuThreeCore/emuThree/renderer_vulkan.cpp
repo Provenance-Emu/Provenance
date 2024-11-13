@@ -2,7 +2,7 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
-// Local Changes: delay vmaDestroyImage 
+// Local Changes: delay vmaDestroyImage
 #define RAND_DELAY 3
 
 #include "common/assert.h"
@@ -311,6 +311,7 @@ void RendererVulkan::BuildLayouts() {
 
     const vk::Device device = instance.GetDevice();
     present_descriptor_layout = device.createDescriptorSetLayout(present_layout_info);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));  // Small delay for MoltenVK stability @JoeMatt
 
     const vk::DescriptorUpdateTemplateEntry update_template_entry = {
         .dstBinding = 0,
