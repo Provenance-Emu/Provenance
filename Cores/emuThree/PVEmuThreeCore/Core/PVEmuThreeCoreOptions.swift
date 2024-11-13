@@ -20,7 +20,7 @@ import PVCoreBridge
                         .init(title: "9X", description: "9X", value: 9),
                         .init(title: "10X", description: "10X", value: 10),
                      ],
-                     defaultValue: 2)
+                     defaultValue: 1)
     }
     
     static var enableHLEOption: CoreOption {
