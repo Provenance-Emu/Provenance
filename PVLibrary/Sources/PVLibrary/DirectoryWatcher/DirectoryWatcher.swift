@@ -33,6 +33,9 @@ public enum ExtractionStatus: Equatable {
     case started(path: URL)
     case updated(path: URL)
     case completed(paths: [URL])
+    case startedArchive(path: URL)
+    case updatedArchive(path: URL)
+    case completedArchive(paths: [URL])
 
     public static func == (lhs: ExtractionStatus, rhs: ExtractionStatus) -> Bool {
         switch (lhs, rhs) {
@@ -199,7 +202,7 @@ public final class DirectoryWatcher: ObservableObject {
         }
 
         do {
-            updateExtractionStatus(.started(path: filePath))
+            updateExtractionStatus(.startedArchive(path: filePath))
 
             let tempDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
             try FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
@@ -210,12 +213,12 @@ public final class DirectoryWatcher: ObservableObject {
                 self.extractionProgress = progress
             } {
                 extractedFiles.append(extractedFile)
-                updateExtractionStatus(.updated(path: extractedFile))
+                updateExtractionStatus(.updatedArchive(path: extractedFile))
                 ILOG("Extracted file: \(extractedFile.path)")
             }
 
             try await FileManager.default.removeItem(at: filePath)
-            updateExtractionStatus(.completed(paths: extractedFiles))
+            updateExtractionStatus(.completedArchive(paths: extractedFiles))
             ILOG("Archive extraction completed for file: \(filePath.path)")
 
             // Sort extracted files, prioritizing .m3u and .cue files
@@ -417,6 +420,10 @@ fileprivate extension DirectoryWatcher {
             var checkCount = 0
             while checkCount < 30 { // Check for up to 1 minute (30 * 2 seconds)
                 await try Task.sleep(for: .seconds(2))
+                if fileWatchers[path] == nil {
+                    ILOG("While Sleeping ... File watcher removed for: \(path.lastPathComponent)")
+                    break
+                }
                 ILOG("Repeating task fired for file: \(path.lastPathComponent)")
                 await MainActor.run {
                     self.checkFileStatus(at: path)
@@ -513,10 +520,14 @@ fileprivate extension DirectoryWatcher {
         }
     }
 
-    private func isWatchingFile(at path: URL) -> Bool {
+    public func isWatchingFile(at path: URL) -> Bool {
         let isWatching = fileWatchers[path] != nil && !fileWatchers[path]!.isCancelled
         ILOG("Checked if watching file: \(path.lastPathComponent), result: \(isWatching)")
         return isWatching
+    }
+    
+    public func isWatchingAnyFile() -> Bool {
+        return !fileWatchers.isEmpty
     }
 }
 
@@ -608,6 +619,12 @@ public extension DirectoryWatcher {
                     case .started, .idle:
                         ILOG("Extraction status changed to \(status)")
                         break
+                    case .startedArchive(path: let path):
+                        ILOG("Extraction status changed to \(status)")
+                    case .updatedArchive(path: let path):
+                        ILOG("Extraction updated, yielding path: \(path)")
+                    case .completedArchive(paths: let paths):
+                        ILOG("Extraction completed, yielding paths: \(paths)")
                     }
                 }
                 ILOG("Extraction status sequence finished")

@@ -257,7 +257,19 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             }
 
             for await extractedFiles in directoryWatcher.extractedFilesStream(at: importPath) {
-                gameImporter.addImports(forPaths: extractedFiles)
+                var readyURLs:[URL] = []
+                for url in extractedFiles {
+                    if (!directoryWatcher.isWatchingFile(at: url)) {
+                        readyURLs.append(url)
+                    }
+                }
+                if (!readyURLs.isEmpty) {
+                    gameImporter.addImports(forPaths: readyURLs)
+                }
+                
+                if (!directoryWatcher.isWatchingAnyFile()) {
+                    ILOG("I think all the imports are settled, might be ok to start the queue")
+                }
             }
         }
     }
@@ -391,7 +403,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
         
         //it seems reasonable to kick off the queue here
-        gameImporter.startProcessing()
+//        gameImporter.startProcessing()
     }
 
     private func setupBIOSObserver() {
@@ -420,11 +432,11 @@ extension PVGameLibraryUpdatesController {
     @MainActor
     private static func handleExtractionStatus(_ status: ExtractionStatus) -> HudState {
         switch status {
-        case .started(let path):
+        case .started(let path), .startedArchive(let path):
             return .titleAndProgress(title: labelMaker(path), progress: 0)
-        case .updated(let path):
+        case .updated(let path), .updatedArchive(let path):
             return .titleAndProgress(title: labelMaker(path), progress: 0.5)
-        case .completed(_):
+        case .completed(_), .completedArchive(_):
             return .titleAndProgress(title: "Extraction Complete!", progress: 1)
         case .idle:
             return .hidden
