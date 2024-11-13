@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/FlineDev/FreemiumKit.git",
         "state": {
           "branch": null,
-          "revision": "3c2fba45ac91008aa6a844af55eaac81ba66d127",
-          "version": "1.12.0"
+          "revision": "afdcaebebab117114809e9bb33008dcb0526fdf7",
+          "version": "1.12.1"
         }
       },
       {
@@ -312,7 +312,7 @@
         "repositoryURL": "https://github.com/ZipArchive/ZipArchive.git",
         "state": {
           "branch": "master",
-          "revision": "4ce93ff4ff60b21bf0bbb7ccc2b1900d0f4435ac",
+          "revision": "a0e8e082402e44515ee5f0bea650722d5575f968",
           "version": null
         }
       },
@@ -321,7 +321,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "51eb7daf39c8e8a7c338ba214a9d4e2a6a086826",
+          "revision": "45fdc5f9e408f41f10e671c207cd424b20ce58f3",
           "version": null
         }
       }
