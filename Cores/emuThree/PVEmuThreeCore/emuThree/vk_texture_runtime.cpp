@@ -21,6 +21,7 @@
 
 #include <future>
 #include <mutex>
+#include <arm_neon.h>
 
 MICROPROFILE_DEFINE(Vulkan_ImageAlloc, "Vulkan", "Texture Allocation", MP_RGB(192, 52, 235));
 
@@ -83,6 +84,20 @@ u32 UnpackDepthStencil(const VideoCore::StagingData& data, vk::Format dest) {
 
     switch (dest) {
     case vk::Format::eD24UnormS8Uint: {
+        // Process 4 pixels at a time with NEON
+        for (; stencil_offset + 4 <= data.size; stencil_offset += 4, depth_offset += 16) {
+            uint32x4_t d24s8 = vld1q_u32(reinterpret_cast<const uint32_t*>(mapped.data() + depth_offset));
+
+            // Extract stencil (lower 8 bits) and store
+            uint8x8_t stencil = vmovn_u16(vreinterpretq_u16_u32(d24s8));
+            vst1_u8(mapped.data() + stencil_offset, stencil);
+
+            // Extract depth (upper 24 bits) and store
+            uint32x4_t d24 = vshrq_n_u32(d24s8, 8);
+            vst1q_u32(reinterpret_cast<uint32_t*>(mapped.data() + depth_offset), d24);
+        }
+
+        // Handle remaining pixels
         for (; stencil_offset < data.size; depth_offset += 4) {
             u8* ptr = mapped.data() + depth_offset;
             const u32 d24s8 = VideoCore::MakeInt<u32>(ptr);
@@ -94,6 +109,25 @@ u32 UnpackDepthStencil(const VideoCore::StagingData& data, vk::Format dest) {
         break;
     }
     case vk::Format::eD32SfloatS8Uint: {
+        // Process 4 pixels at a time with NEON
+        const float32x4_t scale = vdupq_n_f32(1.0f / 16777215.0f);
+
+        for (; stencil_offset + 4 <= data.size; stencil_offset += 4, depth_offset += 16) {
+            uint32x4_t d24s8 = vld1q_u32(reinterpret_cast<const uint32_t*>(mapped.data() + depth_offset));
+
+            // Extract stencil and store
+            uint8x8_t stencil = vmovn_u16(vreinterpretq_u16_u32(d24s8));
+            vst1_u8(mapped.data() + stencil_offset, stencil);
+
+            // Convert depth to float
+            uint32x4_t d24 = vshrq_n_u32(d24s8, 8);
+            float32x4_t d32 = vcvtq_f32_u32(d24);
+            d32 = vmulq_f32(d32, scale);
+
+            vst1q_f32(reinterpret_cast<float*>(mapped.data() + depth_offset), d32);
+        }
+
+        // Handle remaining pixels
         for (; stencil_offset < data.size; depth_offset += 4) {
             u8* ptr = mapped.data() + depth_offset;
             const u32 d24s8 = VideoCore::MakeInt<u32>(ptr);
@@ -105,8 +139,7 @@ u32 UnpackDepthStencil(const VideoCore::StagingData& data, vk::Format dest) {
         break;
     }
     default:
-        LOG_ERROR(Render_Vulkan, "Unimplemented convertion for depth format {}",
-                  vk::to_string(dest));
+        LOG_ERROR(Render_Vulkan, "Unimplemented convertion for depth format {}", vk::to_string(dest));
         UNREACHABLE();
     }
 
