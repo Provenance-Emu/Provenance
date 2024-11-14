@@ -99,22 +99,34 @@ void RasterizerCache<T>::TickFrame() {
 
 template <class T>
 bool RasterizerCache<T>::AccelerateTextureCopy(const GPU::Regs::DisplayTransferConfig& config) {
-    // Texture copy size is aligned to 16 byte units
-    const u32 copy_size = Common::AlignDown(config.texture_copy.size, 16);
-    if (copy_size == 0) {
+    /// Align copy size to 16 byte units for better DMA performance on ARM
+    constexpr u32 ALIGNMENT = 16;
+    const u32 copy_size = Common::AlignDown(config.texture_copy.size, ALIGNMENT);
+    if (copy_size == 0) [[unlikely]] {
         return false;
     }
 
-    u32 input_gap = config.texture_copy.input_gap * 16;
-    u32 input_width = config.texture_copy.input_width * 16;
-    if (input_width == 0 && input_gap != 0) {
+    /// Cache aligned calculations for input/output
+    alignas(ALIGNMENT) struct AlignedParams {
+        u32 gap;
+        u32 width;
+    };
+
+    AlignedParams input = {
+        .gap = config.texture_copy.input_gap * ALIGNMENT,
+        .width = config.texture_copy.input_width * ALIGNMENT
+    };
+
+    if (input.width == 0 && input.gap != 0) [[unlikely]] {
         return false;
     }
-    if (input_gap == 0 || input_width >= copy_size) {
-        input_width = copy_size;
-        input_gap = 0;
+
+    if (input.gap == 0 || input.width >= copy_size) {
+        input.width = copy_size;
+        input.gap = 0;
     }
-    if (copy_size % input_width != 0) {
+
+    if (copy_size % input.width != 0) [[unlikely]] {
         return false;
     }
 
@@ -133,9 +145,9 @@ bool RasterizerCache<T>::AccelerateTextureCopy(const GPU::Regs::DisplayTransferC
 
     SurfaceParams src_params;
     src_params.addr = config.GetPhysicalInputAddress();
-    src_params.stride = input_width + input_gap; // stride in bytes
-    src_params.width = input_width;              // width in bytes
-    src_params.height = copy_size / input_width;
+    src_params.stride = input.width + input.gap; // stride in bytes
+    src_params.width = input.width;              // width in bytes
+    src_params.height = copy_size / input.width;
     src_params.size = ((src_params.height - 1) * src_params.stride) + src_params.width;
     src_params.end = src_params.addr + src_params.size;
 
@@ -715,7 +727,6 @@ void RasterizerCache<T>::InvalidateFramebuffer(const Framebuffer& framebuffer) {
         invalidate(render_targets.depth_id);
     }
 }
-
 template <class T>
 typename RasterizerCache<T>::SurfaceRect_Tuple RasterizerCache<T>::GetTexCopySurface(
     const SurfaceParams& params) {
