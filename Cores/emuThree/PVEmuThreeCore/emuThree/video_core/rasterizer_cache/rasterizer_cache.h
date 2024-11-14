@@ -750,17 +750,15 @@ template <typename Func>
 void RasterizerCache<T>::ForEachSurfaceInRegion(PAddr addr, size_t size, Func&& func) {
     using FuncReturn = typename std::invoke_result<Func, SurfaceId, Surface&>::type;
     static constexpr bool BOOL_BREAK = std::is_same_v<FuncReturn, bool>;
-
-    /// Pre-allocate vector to avoid heap allocations during iteration
-    /// Most cases only deal with a small number of surfaces
     boost::container::small_vector<SurfaceId, 8> surfaces;
-
-    /// Fast path for small regions - often used for texture updates
-    if (size <= 8) [[likely]] {
-        const u64 page = addr >> Memory::CITRA_PAGE_BITS;
+    ForEachPage(addr, size, [this, &surfaces, addr, size, func](u64 page) {
         const auto it = page_table.find(page);
         if (it == page_table.end()) {
-            return;
+            if constexpr (BOOL_BREAK) {
+                return false;
+            } else {
+                return;
+            }
         }
         for (const SurfaceId surface_id : it->second) {
             Surface& surface = slot_surfaces[surface_id];
@@ -770,47 +768,21 @@ void RasterizerCache<T>::ForEachSurfaceInRegion(PAddr addr, size_t size, Func&& 
             if (!surface.Overlaps(addr, size)) {
                 continue;
             }
+
             surface.flags |= SurfaceFlagBits::Picked;
             surfaces.push_back(surface_id);
             if constexpr (BOOL_BREAK) {
                 if (func(surface_id, surface)) {
-                    goto cleanup; // Break out to cleanup section
+                    return true;
                 }
             } else {
                 func(surface_id, surface);
             }
         }
-    } else {
-        /// Regular path for larger regions
-        ForEachPage(addr, size, [this, &surfaces, addr, size, &func](u64 page) -> void {
-            const auto it = page_table.find(page);
-            if (it == page_table.end()) {
-                return;
-            }
-            for (const SurfaceId surface_id : it->second) {
-                Surface& surface = slot_surfaces[surface_id];
-                if (True(surface.flags & SurfaceFlagBits::Picked)) {
-                    continue;
-                }
-                if (!surface.Overlaps(addr, size)) {
-                    continue;
-                }
-
-                surface.flags |= SurfaceFlagBits::Picked;
-                surfaces.push_back(surface_id);
-                if constexpr (BOOL_BREAK) {
-                    if (func(surface_id, surface)) {
-                        return;
-                    }
-                } else {
-                    func(surface_id, surface);
-                }
-            }
-        });
-    }
-
-cleanup:
-    /// Cleanup picked flags
+        if constexpr (BOOL_BREAK) {
+            return false;
+        }
+    });
     for (const SurfaceId surface_id : surfaces) {
         slot_surfaces[surface_id].flags &= ~SurfaceFlagBits::Picked;
     }
