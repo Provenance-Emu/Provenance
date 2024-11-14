@@ -11,6 +11,7 @@ import PVPrimitives
 // Enum to define the possible statuses of each import
 public enum ImportStatus: String {
     case queued
+    case partial //indicates the item is waiting for associated files before it could be processed
     case processing
     case success
     case failure
@@ -23,6 +24,7 @@ public enum ImportStatus: String {
             case .success: return "Completed"
             case .failure: return "Failed"
             case .conflict: return "Conflict"
+            case .partial: return "Partial"
         }
     }
         
@@ -33,6 +35,7 @@ public enum ImportStatus: String {
             case .success: return .green
             case .failure: return .red
             case .conflict: return .yellow
+            case .partial: return .yellow
         }
     }
 }
@@ -115,4 +118,22 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     }
 
     private var cache = Cache()
+    
+    public func getStatusForItem() -> ImportStatus {
+        guard self.childQueueItems.count > 0 else {
+            //if there's no children, just return the status for this item
+            return self.status
+        }
+        
+        var current:ImportStatus = .queued
+        
+        for child in self.childQueueItems {
+            current = child.getStatusForItem()
+            if current == .partial {
+                break
+            }
+        }
+        
+        return current
+    }
 }

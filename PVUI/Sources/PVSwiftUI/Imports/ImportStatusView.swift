@@ -36,7 +36,7 @@ func iconNameForStatus(_ status: ImportStatus) -> String {
     switch status {
 
     case .queued:
-        return "xmark.circle.fill"
+        return "line.3.horizontal.circle"
     case .processing:
         return "progress.indicator"
     case .success:
@@ -45,6 +45,8 @@ func iconNameForStatus(_ status: ImportStatus) -> String {
         return "xmark.diamond.fill"
     case .conflict:
         return "exclamationmark.triangle.fill"
+    case .partial:
+        return "display.trianglebadge.exclamationmark"
     }
 }
 

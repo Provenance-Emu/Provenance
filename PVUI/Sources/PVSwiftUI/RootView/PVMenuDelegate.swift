@@ -247,7 +247,7 @@ extension PVRootViewController: ImportStatusDelegate {
     public func forceImportsAction() {
         //reset the status of each item that conflict or failed so we can try again.
         GameImporter.shared.importQueue.forEach { item in
-            if (item.status == .failure || item.status == .conflict) {
+            if (item.status == .failure || item.status == .conflict || item.status == .partial) {
                 item.status = .queued
             }
         }
