@@ -77,10 +77,12 @@ let package = Package(
 //                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
-                .copy("Resources/Shaders/"),
-                .copy("Resources/PrivacyInfo.xcprivacy"),
+                .copy("Resources/Shaders/fsh"),
+                .copy("Resources/Shaders/GLES"),
+                .process("Resources/Shaders/Metal"),
                 .process("Resources/SystemIcons.xcassets"),
-                .process("Resources/Assets.xcassets")
+                .process("Resources/Assets.xcassets"),
+                .copy("Resources/PrivacyInfo.xcprivacy"),
             ],
             cSettings: [
                 .define("GL_SILENCE_DEPRECATION", to: "1"),
@@ -134,7 +136,6 @@ let package = Package(
 //                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
-                .copy("Resources/Shaders/"),
                 .copy("Resources/PrivacyInfo.xcprivacy")
             ],
             cSettings: [

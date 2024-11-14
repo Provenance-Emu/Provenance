@@ -49,6 +49,7 @@ public final class MetalShaderManager: NSObject, ShaderProvider {
             .init(type: .filter, name: "Simple CRT", function: "simpleCRT"),
             .init(type: .filter, name: "LCD", function: "lcdFilter")
         ]
+        ILOG("Registered shaders: \(shaders.map { $0.name })")
         return shaders
     }()
 
@@ -71,7 +72,7 @@ public final class MetalShaderManager: NSObject, ShaderProvider {
     public func filterShader(forName name: String) -> Shader? {
         return filterShaders.first(where: { $0.name == name })
     }
-    
+
     public func filterShader(forOption option: MetalFilterModeOption, screenType: ScreenTypeObjC) -> Shader? {
         switch option {
         case .none:

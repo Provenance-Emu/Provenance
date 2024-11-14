@@ -68,38 +68,47 @@ struct HomeContinueSection: SwiftUI.View {
     var body: some SwiftUI.View {
         TabView {
             if filteredSaveStates.count > 0 {
-                ForEach(0..<(isLandscapePhone ? (filteredSaveStates.count + 1) / 2 : filteredSaveStates.count), id: \.self) { pageIndex in
+                ForEach(0..<pageCount, id: \.self) { pageIndex in
                     LazyVGrid(columns: gridColumns, spacing: 8) {
                         if isLandscapePhone {
-                            ForEach(pageIndex * 2..<min(pageIndex * 2 + 2, filteredSaveStates.count), id: \.self) { index in
+                            let startIndex = pageIndex * 2
+                            let endIndex = min(startIndex + 2, filteredSaveStates.count)
+                            
+                            if startIndex < filteredSaveStates.count {
+                                ForEach(startIndex..<endIndex, id: \.self) { index in
+                                    if index < filteredSaveStates.count {  // Additional safety check
+                                        HomeContinueItemView(
+                                            continueState: filteredSaveStates[index],
+                                            height: adjustedHeight,
+                                            hideSystemLabel: consoleIdentifier != nil
+                                        ) {
+                                            Task.detached { @MainActor in
+                                                await rootDelegate?.root_load(
+                                                    filteredSaveStates[index].game,
+                                                    sender: self,
+                                                    core: filteredSaveStates[index].core,
+                                                    saveState: filteredSaveStates[index]
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            if pageIndex < filteredSaveStates.count {  // Safety check for portrait mode
                                 HomeContinueItemView(
-                                    continueState: filteredSaveStates[index],
+                                    continueState: filteredSaveStates[pageIndex],
                                     height: adjustedHeight,
                                     hideSystemLabel: consoleIdentifier != nil
                                 ) {
                                     Task.detached { @MainActor in
                                         await rootDelegate?.root_load(
-                                            filteredSaveStates[index].game,
+                                            filteredSaveStates[pageIndex].game,
                                             sender: self,
-                                            core: filteredSaveStates[index].core,
-                                            saveState: filteredSaveStates[index]
+                                            core: filteredSaveStates[pageIndex].core,
+                                            saveState: filteredSaveStates[pageIndex]
                                         )
                                     }
-                                }
-                            }
-                        } else {
-                            HomeContinueItemView(
-                                continueState: filteredSaveStates[pageIndex],
-                                height: adjustedHeight,
-                                hideSystemLabel: consoleIdentifier != nil
-                            ) {
-                                Task.detached { @MainActor in
-                                    await rootDelegate?.root_load(
-                                        filteredSaveStates[pageIndex].game,
-                                        sender: self,
-                                        core: filteredSaveStates[pageIndex].core,
-                                        saveState: filteredSaveStates[pageIndex]
-                                    )
                                 }
                             }
                         }
@@ -116,6 +125,15 @@ struct HomeContinueSection: SwiftUI.View {
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(filteredSaveStates.count)
         .frame(height: adjustedHeight)
+    }
+
+    // Computed property for page count
+    private var pageCount: Int {
+        if isLandscapePhone {
+            return (filteredSaveStates.count + 1) / 2
+        } else {
+            return filteredSaveStates.count
+        }
     }
 }
 

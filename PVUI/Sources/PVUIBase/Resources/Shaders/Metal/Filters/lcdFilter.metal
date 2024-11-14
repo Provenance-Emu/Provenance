@@ -71,7 +71,7 @@ float applyScanlines(float2 uv, float2 texelSize, float scanlineDepth) {
 
 /// Main fragment shader
 fragment float4
-lcdFilter(VertexOutput in [[stage_in]],
+lcdFilter(Outputs in [[stage_in]],
           texture2d<float> inputTexture [[texture(0)]],
           constant LCDFilterUniforms &uniforms [[buffer(0)]])
 {
@@ -79,15 +79,15 @@ lcdFilter(VertexOutput in [[stage_in]],
     float2 texelSize = uniforms.textureSize;
 
     // Apply subpixel layout
-    float3 color = applySubpixelLayout(in.tex, texelSize, inputTexture, textureSampler,
+    float3 color = applySubpixelLayout(in.fTexCoord, texelSize, inputTexture, textureSampler,
                                      uniforms.colorLow, uniforms.colorHigh);
 
     // Apply scanlines
-    float scanline = applyScanlines(in.tex, texelSize, uniforms.scanlineDepth);
+    float scanline = applyScanlines(in.fTexCoord, texelSize, uniforms.scanlineDepth);
     color *= scanline;
 
     // Apply bloom effect
-    float4 bloomColor = inputTexture.sample(textureSampler, in.tex);
+    float4 bloomColor = inputTexture.sample(textureSampler, in.fTexCoord);
     color = mix(color, bloomColor.rgb, uniforms.bloomAmount);
 
     // Apply contrast and saturation
@@ -98,7 +98,7 @@ lcdFilter(VertexOutput in [[stage_in]],
     // Apply ghosting effect
     if (uniforms.ghosting > 0.0) {
         float2 ghostOffset = float2(texelSize.x * 0.5, 0.0);
-        float3 ghostColor = inputTexture.sample(textureSampler, in.tex - ghostOffset).rgb;
+        float3 ghostColor = inputTexture.sample(textureSampler, in.fTexCoord - ghostOffset).rgb;
         color = mix(color, ghostColor, uniforms.ghosting * 0.3);
     }
 

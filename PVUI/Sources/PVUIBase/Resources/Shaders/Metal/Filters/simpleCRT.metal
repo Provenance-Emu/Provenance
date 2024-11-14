@@ -17,20 +17,20 @@ using namespace metal;
 
 #pragma pack(push,4)
 struct SimpleCrtUniforms {
-    float4 mame_screen_dst_rect;
-    float4 mame_screen_src_rect;
-    float curv_vert;    // 5.0 default  1.0, 10.0
-    float curv_horiz;   // 4.0 default 1.0, 10.0
-    float curv_strength;// 0.25 default 0.0, 1.0
-    float light_boost;  // 1.3 default 0.1, 3.0
-    float vign_strength;// 0.05 default 0.0, 1.0
-    float zoom_out;     // 1.1 default 0.01, 5.0
-    float brightness;   // 1.0 default 0.666, 1.333
+    float4 mame_screen_dst_rect [[aligned(16)]];
+    float4 mame_screen_src_rect [[aligned(16)]];
+    float curv_vert             [[aligned(4)]];     // 5.0 default  1.0, 10.0
+    float curv_horiz            [[aligned(4)]];     // 4.0 default 1.0, 10.0
+    float curv_strength         [[aligned(4)]];     // 0.25 default 0.0, 1.0
+    float light_boost           [[aligned(4)]];     // 1.3 default 0.1, 3.0
+    float vign_strength         [[aligned(4)]];     // 0.05 default 0.0, 1.0
+    float zoom_out              [[aligned(4)]];     // 1.1 default 0.01, 5.0
+    float brightness            [[aligned(4)]];     // 1.0 default 0.666, 1.333
 };
 #pragma pack(pop)
 
 fragment float4
-simpleCRT(VertexOutput v [[stage_in]],
+simpleCRT(Outputs in [[stage_in]],
                 texture2d<float> texture [[texture(0)]],
                 constant SimpleCrtUniforms &uniforms [[buffer(0)]])
 {
@@ -45,12 +45,12 @@ simpleCRT(VertexOutput v [[stage_in]],
     float zoom_out      = uniforms.zoom_out;
     float brightness    = uniforms.brightness;
 
-    float2 uv = ((v.tex - float2(0.5))*2.0)*zoom_out;  // add in simple curvature to uv's
+    float2 uv = ((in.fTexCoord - float2(0.5))*2.0)*zoom_out;  // add in simple curvature to uv's
     uv.x *= (1.0 + pow(abs(uv.y) / curv_vert, 2.0)); // tweak vertical curvature
     uv.y *= (1.0 + pow(abs(uv.x) / curv_horiz, 2.0)); // tweak horizontal curvature
     uv = (uv/float2(2.0))+float2(0.5); // correct curvature
-    uv = mix(v.tex, uv, curv_strength); // mix back curvature process to 25% of original strength
-    float evenLines = (1.0 - abs(fract(v.tex.y*(src_rect.w * ( (dst_rect.w / src_rect.w) / floor((dst_rect.w / src_rect.w)+0.5))))*2 - 1)); // generate very, very simple scanlines that respect both integer and default scaling
+    uv = mix(in.fTexCoord, uv, curv_strength); // mix back curvature process to 25% of original strength
+    float evenLines = (1.0 - abs(fract(in.fTexCoord.y*(src_rect.w * ( (dst_rect.w / src_rect.w) / floor((dst_rect.w / src_rect.w)+0.5))))*2 - 1)); // generate very, very simple scanlines that respect both integer and default scaling
     constexpr sampler crtTexSampler(address::clamp_to_zero, filter::linear); // set up custom Metal texture sampler using cheap linear filtering
     float4 col = texture.sample(crtTexSampler, uv); // sample texture with our modified curvature uv's
     float4 colmod = ((col*col)*evenLines)*light_boost; // simple gamma boost in linear to compensate for darkening due to scanlines
