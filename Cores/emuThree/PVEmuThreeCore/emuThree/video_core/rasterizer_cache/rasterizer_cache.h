@@ -1104,9 +1104,17 @@ void RasterizerCache<T>::DownloadSurface(Surface& surface, SurfaceInterval inter
     const u32 flush_end = boost::icl::last_next(interval);
     ASSERT(flush_start >= surface.addr && flush_end <= surface.end);
 
-    /// Fast path for very small downloads (common case)
-    if (flush_end - flush_start <= 256) {
-        const auto staging = runtime.FindStaging(256, false);  // Use smaller staging buffer
+    /// Fast path for downloads that fit in L1 cache (64KB on iPhone)
+    /// Also ensure we align to 64-byte cache lines
+    constexpr size_t CACHE_LINE_SIZE = 64;
+    constexpr size_t SMALL_DOWNLOAD_THRESHOLD = 64 * 1024; // 64KB L1 cache size
+
+    if (flush_end - flush_start <= SMALL_DOWNLOAD_THRESHOLD) {
+        /// Round up to nearest cache line size for better memory alignment
+        const size_t aligned_size = (((flush_end - flush_start) + CACHE_LINE_SIZE - 1)
+                                   & ~(CACHE_LINE_SIZE - 1));
+
+        const auto staging = runtime.FindStaging(aligned_size, false);
         const BufferTextureCopy download = {
             .buffer_offset = staging.offset,
             .buffer_size = staging.size,
@@ -1121,15 +1129,20 @@ void RasterizerCache<T>::DownloadSurface(Surface& surface, SurfaceInterval inter
         }
 
         const auto download_dest = dest_ptr.GetWriteBytes(flush_end - flush_start);
+        /// Use NEON-optimized texture encoding when possible
         EncodeTexture(flush_info, flush_start, flush_end, staging.mapped, download_dest,
                       runtime.NeedsConversion(surface.pixel_format));
         return;
     }
 
     /// Regular path for larger downloads
-    const auto staging = runtime.FindStaging(
-        flush_info.width * flush_info.height * surface.GetInternalBytesPerPixel(), false);
+    /// Align larger transfers to page boundaries for better DMA performance
+    constexpr size_t PAGE_SIZE = 16 * 1024; // 16KB pages on iOS
+    const size_t aligned_size = ((flush_info.width * flush_info.height *
+                                 surface.GetInternalBytesPerPixel() + PAGE_SIZE - 1)
+                                & ~(PAGE_SIZE - 1));
 
+    const auto staging = runtime.FindStaging(aligned_size, false);
     const BufferTextureCopy download = {
         .buffer_offset = staging.offset,
         .buffer_size = staging.size,
