@@ -150,7 +150,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                                                           GameImporterFileService(),
                                                           GameImporterDatabaseService(),
                                                           GameImporterSystemsService(),
-                                                          ArtworkImporter())
+                                                          ArtworkImporter(),
+                                                          DefaultCDFileHandler())
     
     /// Instance of OpenVGDB for database operations
     var openVGDB = OpenVGDB.init()
@@ -185,6 +186,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     internal var gameImporterDatabaseService:GameImporterDatabaseServicing
     internal var gameImporterSystemsService:GameImporterSystemsServicing
     internal var gameImporterArtworkImporter:ArtworkImporting
+    internal var cdRomFileHandler:CDFileHandling
     
     // MARK: - Paths
     
@@ -223,11 +225,13 @@ public final class GameImporter: GameImporting, ObservableObject {
                   _ fileService:GameImporterFileServicing,
                   _ databaseService:GameImporterDatabaseServicing,
                   _ systemsService:GameImporterSystemsServicing,
-                  _ artworkImporter:ArtworkImporting) {
+                  _ artworkImporter:ArtworkImporting,
+                  _ cdFileHandler:CDFileHandling) {
         gameImporterFileService = fileService
         gameImporterDatabaseService = databaseService
         gameImporterSystemsService = systemsService
         gameImporterArtworkImporter = artworkImporter
+        cdRomFileHandler = cdFileHandler
         
         //create defaults
         createDefaultDirectories(fm: fm)
@@ -431,10 +435,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             let baseFileName = m3uitem.url.deletingPathExtension().lastPathComponent
             
             do {
-                let contents = try String(contentsOf: m3uitem.url, encoding: .utf8)
-                let files = contents.components(separatedBy: .newlines)
-                    .map { $0.trimmingCharacters(in: .whitespaces) }
-                    .filter { !$0.isEmpty && !$0.hasPrefix("#") }
+                let files = try cdRomFileHandler.readM3UFileContents(from: m3uitem.url)
                 
                 // Move all referenced files
                 for filename in files {
@@ -442,13 +443,36 @@ public final class GameImporter: GameImporting, ObservableObject {
                         item.url.lastPathComponent == filename
                     }) {
                         // Remove the .bin item from the queue and add it as a child of the .cue item
-                        let cueItem = importQueue.remove(at: cueIndex)
+                        let cueItem = importQueue[cueIndex]
                         cueItem.fileType = .cdRom
-                        m3uitem.childQueueItems.append(cueItem)
+                        
+                        if (cueItem.status == .partial) {
+                            m3uitem.status = .partial
+                        } else {
+                            //cue item is ready, re-parent
+                            importQueue.remove(at: cueIndex)
+                            m3uitem.childQueueItems.append(cueItem)
+                        }
+                    } else if let _ = m3uitem.childQueueItems.firstIndex(where: { item in
+                        item.url.lastPathComponent == filename
+                    }) {
+                        //nothing to do, the target .cue is already a child of this m3u item
+                        ILOG("M3U File already has - \(baseFileName) as a child of this import item.")
+                    } else {
+                        WLOG("M3U File is missing 1 or more cue items, marking as partial - \(baseFileName)")
+                        m3uitem.status = .partial
                     }
+                }
+                
+                if (m3uitem.childQueueItems.count != files.count) {
+                    m3uitem.status = .partial
+                } else {
+                    m3uitem.status = .queued
+                    m3uitem.status = m3uitem.getStatusForItem()
                 }
             } catch {
                 ELOG("Caught an error looking for a corresponding .cues to \(baseFileName) - probably bad things happening")
+                m3uitem.status = .partial
             }
         }
     }
@@ -461,62 +485,46 @@ public final class GameImporter: GameImporting, ObservableObject {
             let baseFileName = cueItem.url.deletingPathExtension().lastPathComponent
 
             do {
-                let candidateBinUrls = try self.findAssociatedBinFiles(for: cueItem)
+                let candidateBinUrls = try cdRomFileHandler.findAssociatedBinFiles(for: cueItem)
                 if !candidateBinUrls.isEmpty {
                     for candidateBinUrl in candidateBinUrls {
                         // Find any .bin item in the queue that matches the .cue base file name
                         if let binIndex = importQueue.firstIndex(where: { item in
                             item.url == candidateBinUrl
                         }) {
-                            DLOG("Located corresponding .bin for cue \(baseFileName) - re-parenting queue item")
-                            // Remove the .bin item from the queue and add it as a child of the .cue item
-                            let binItem = importQueue.remove(at: binIndex)
-                            binItem.fileType = .cdRom
-                            cueItem.childQueueItems.append(binItem)
+                            let binItem = importQueue[binIndex]
+                            // Check if the .bin file exists and add to the array if it does
+                            if cdRomFileHandler.fileExistsAtPath(binItem.url) {
+                                DLOG("Located corresponding .bin for cue \(baseFileName) - re-parenting queue item")
+                                // Remove the .bin item from the queue and add it as a child of the .cue item
+                                let binItem = importQueue.remove(at: binIndex)
+                                binItem.fileType = .cdRom
+                                cueItem.childQueueItems.append(binItem)
+                            } else {
+                                WLOG("Located the corresponding bin item for \(baseFileName) - but corresponding bin file not detected.  Set status to .partial")
+                                cueItem.status = .partial
+                            }
                         } else {
                             WLOG("Located the corresponding bin[s] for \(baseFileName) - but no corresponding QueueItem detected.  Consider creating one here?")
+                            cueItem.status = .partial
                         }
+                    }
+                    
+                    if (candidateBinUrls.count != cueItem.childQueueItems.count) {
+                        WLOG("Cue File is missing 1 or more bin urls, marking as not ready - \(baseFileName)")
+                        cueItem.status = .partial
+                    } else {
+                        cueItem.status = .queued
                     }
                 } else {
                     //this is probably some kind of error...
                     ELOG("Found a .cue \(baseFileName) without a .bin - probably file system didn't settle yet")
+                    cueItem.status = .partial
                 }
             } catch {
                 ELOG("Caught an error looking for a corresponding .bin to \(baseFileName) - probably bad things happening - \(error.localizedDescription)")
             }
         }
-    }
-    
-    private func findAssociatedBinFiles(for cueFileItem: ImportQueueItem) throws -> [URL] {
-        // Read the contents of the .cue file
-        let cueContents = try String(contentsOf: cueFileItem.url, encoding: .utf8)
-        let lines = cueContents.components(separatedBy: .newlines)
-        
-        // Array to hold multiple .bin file URLs
-        var binFiles: [URL] = []
-        
-        // Look for each line with FILE "something.bin" BINARY
-        for line in lines {
-            let components = line.trimmingCharacters(in: .whitespaces)
-                .components(separatedBy: "\"")
-            
-            guard components.count >= 2,
-                  line.lowercased().contains("file") && line.lowercased().contains("binary") else {
-                continue
-            }
-            
-            // Extract the .bin file name
-            let binFileName = components[1]
-            let binPath = cueFileItem.url.deletingLastPathComponent().appendingPathComponent(binFileName)
-            
-            // Check if the .bin file exists and add to the array if it does
-            if FileManager.default.fileExists(atPath: binPath.path) {
-                binFiles.append(binPath)
-            }
-        }
-        
-        // Return all found .bin file URLs, or an empty array if none found
-        return binFiles
     }
     
     internal func cmpSpecialExt(obj1Extension: String, obj2Extension: String) -> Bool {
