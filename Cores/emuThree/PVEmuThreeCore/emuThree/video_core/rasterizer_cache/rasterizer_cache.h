@@ -107,7 +107,7 @@ bool RasterizerCache<T>::AccelerateTextureCopy(const GPU::Regs::DisplayTransferC
     }
 
     /// Cache aligned calculations for input/output
-    alignas(ALIGNMENT) struct AlignedParams {
+    struct alignas(ALIGNMENT) AlignedParams {
         u32 gap;
         u32 width;
     };
