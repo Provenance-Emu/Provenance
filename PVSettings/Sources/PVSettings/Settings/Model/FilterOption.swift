@@ -14,7 +14,7 @@ public enum OpenGLFilterModeOption: String, CustomStringConvertible, CaseIterabl
 
     public static var defaultValue: Self { .none }
 
-    public var description: String { rawValue }
+    public var description: String { rawValue.capitalized }
 }
 
 extension OpenGLFilterModeOption: Hashable {
@@ -105,6 +105,8 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
     case simpleCRT
     case complexCRT
     case lcd
+    
+    public static var defaultValue: Self { .none }
 
     public var description: String {
         switch self {

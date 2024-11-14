@@ -19,11 +19,30 @@ private struct MetalFilterSection: View {
     @Binding var metalFilterMode: MetalFilterModeOption
 
     // State for auto mode settings
-    @State private var selectedCRTFilter: MetalFilterSelectionOption = .simpleCRT
-    @State private var selectedLCDFilter: MetalFilterSelectionOption = .lcd
+    @State private var selectedCRTFilter: MetalFilterSelectionOption
+    @State private var selectedLCDFilter: MetalFilterSelectionOption
 
     // State for always mode setting
-    @State private var selectedAlwaysFilter: MetalFilterSelectionOption = .simpleCRT
+    @State private var selectedAlwaysFilter: MetalFilterSelectionOption
+
+    init(metalFilterMode: Binding<MetalFilterModeOption>) {
+        _metalFilterMode = metalFilterMode
+
+        switch metalFilterMode.wrappedValue {
+        case .auto(let crt, let lcd):
+            _selectedCRTFilter = State(initialValue: crt)
+            _selectedLCDFilter = State(initialValue: lcd)
+            _selectedAlwaysFilter = State(initialValue: .defaultValue)
+        case .always(let filter):
+            _selectedAlwaysFilter = State(initialValue: filter)
+            _selectedCRTFilter = State(initialValue: .defaultValue)
+            _selectedLCDFilter = State(initialValue: .defaultValue)
+        case .none:
+            _selectedCRTFilter = State(initialValue: .defaultValue)
+            _selectedLCDFilter = State(initialValue: .defaultValue)
+            _selectedAlwaysFilter = State(initialValue: .defaultValue)
+        }
+    }
 
     var body: some View {
         Section(header: Text("Metal Filters")) {
