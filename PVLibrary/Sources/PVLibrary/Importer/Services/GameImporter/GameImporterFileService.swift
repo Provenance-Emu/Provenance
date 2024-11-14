@@ -146,6 +146,11 @@ class GameImporterFileService : GameImporterFileServicing {
         if fileManager.fileExists(atPath: importItem.url.path) {
             try fileManager.removeItem(at: importItem.url)
         }
+        
+        //recursively call this on any children
+        for item in importItem.childQueueItems {
+            try removeImportItemFile(item)
+        }
     }
     
     /// Moves a file and overwrites if it already exists at the destination
