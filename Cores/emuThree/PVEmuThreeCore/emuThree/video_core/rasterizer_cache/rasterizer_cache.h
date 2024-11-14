@@ -1104,6 +1104,29 @@ void RasterizerCache<T>::DownloadSurface(Surface& surface, SurfaceInterval inter
     const u32 flush_end = boost::icl::last_next(interval);
     ASSERT(flush_start >= surface.addr && flush_end <= surface.end);
 
+    /// Fast path for very small downloads (common case)
+    if (flush_end - flush_start <= 256) {
+        const auto staging = runtime.FindStaging(256, false);  // Use smaller staging buffer
+        const BufferTextureCopy download = {
+            .buffer_offset = staging.offset,
+            .buffer_size = staging.size,
+            .texture_rect = surface.GetSubRect(flush_info),
+            .texture_level = surface.LevelOf(flush_start),
+        };
+        surface.Download(download, staging);
+
+        MemoryRef dest_ptr = memory.GetPhysicalRef(flush_start);
+        if (!dest_ptr) [[unlikely]] {
+            return;
+        }
+
+        const auto download_dest = dest_ptr.GetWriteBytes(flush_end - flush_start);
+        EncodeTexture(flush_info, flush_start, flush_end, staging.mapped, download_dest,
+                      runtime.NeedsConversion(surface.pixel_format));
+        return;
+    }
+
+    /// Regular path for larger downloads
     const auto staging = runtime.FindStaging(
         flush_info.width * flush_info.height * surface.GetInternalBytesPerPixel(), false);
 
