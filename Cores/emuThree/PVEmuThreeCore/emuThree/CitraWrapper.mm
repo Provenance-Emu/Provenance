@@ -73,12 +73,12 @@ static void InitializeLogging() {
 @implementation CitraWrapper
 +(CitraWrapper *) sharedInstance {
     static CitraWrapper *instance = nil;
-    
+
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         instance = [[CitraWrapper alloc] init];
     });
-    
+
     return instance;
 }
 
@@ -149,7 +149,7 @@ static void InitializeLogging() {
     Input::RegisterFactory<Input::ButtonDevice>("ios_gamepad", std::make_shared<ButtonFactory>());
     Input::RegisterFactory<Input::AnalogDevice>("ios_gamepad", std::make_shared<AnalogFactory>());
     Input::RegisterFactory<Input::MotionDevice>("motion_device", std::make_shared<MotionFactory>());
-    
+
 }
 
 -(void) setShaderOption {
@@ -170,17 +170,17 @@ static void InitializeLogging() {
     Settings::values.use_cpu_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"use_cpu_jit"]);
     Settings::values.cpu_clock_percentage.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"cpu_clock_percentage"]] unsignedIntValue]);
     Settings::values.is_new_3ds.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"is_new_3ds"]);
-    
+
     Settings::values.use_vsync_new.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"use_vsync_new"]);
     Settings::values.shaders_accurate_mul.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"shaders_accurate_mul"]);
     Settings::values.use_shader_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"use_shader_jit"]);
-    
+
     Settings::values.swap_screen.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"swap_screen"]);
     Settings::values.upright_screen.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"upright_screen"]);
-    
+
     Settings::values.render_3d.SetValue((Settings::StereoRenderOption)[[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"render_3d"]] unsignedIntValue]);
     Settings::values.factor_3d.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"factor_3d"]] unsignedIntValue]);
-    
+
     Settings::values.dump_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"dump_textures"]);
     Settings::values.custom_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"custom_textures"]);
     Settings::values.preload_textures.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"preload_textures"]);
@@ -349,7 +349,7 @@ static void InitializeLogging() {
     Settings::values.skip_buttons=false;
     Settings::values.skip_extra_buttons=false;
     Settings::values.skip_home_button = false;
-    
+
     CitraWrapper.sharedInstance.isRunning = false;
     Core::CleanState();
     finishedShutdown=true;
@@ -393,14 +393,31 @@ static void InitializeLogging() {
 -(void) handleTouchEvent:(NSArray*)touches {
     if (!CitraWrapper.sharedInstance.isRunning)
         return;
+
+    /// Get safe area insets from main window
+    UIEdgeInsets safeAreaInsets = UIApplication.sharedApplication.windows.firstObject.safeAreaInsets;
+
     for (int i = 0; i < touches.count; i++) {
-        UITouch      *touch = [touches objectAtIndex:i];
-        CGPoint       point = [touch locationInView:[touch view]];
-        bool touchReleased=(touch.phase == UITouchPhaseEnded || touch.phase == UITouchPhaseCancelled);
-        bool touchBegan=touch.phase == UITouchPhaseBegan;
-        bool touchMoved=touch.phase == UITouchPhaseMoved;
-        float heightRatio=emu_window->framebuffer_layout.height / ([touch view].window.bounds.size.height * [[UIScreen mainScreen] nativeScale]);
-        float widthRatio=emu_window->framebuffer_layout.width / ([touch view].window.bounds.size.width * [[UIScreen mainScreen] nativeScale]);
+        UITouch *touch = [touches objectAtIndex:i];
+        CGPoint point = [touch locationInView:[touch view]];
+        bool touchReleased = (touch.phase == UITouchPhaseEnded || touch.phase == UITouchPhaseCancelled);
+        bool touchBegan = touch.phase == UITouchPhaseBegan;
+        bool touchMoved = touch.phase == UITouchPhaseMoved;
+
+        /// Calculate available screen space (excluding safe area)
+        CGFloat availableHeight = [touch view].window.bounds.size.height - (safeAreaInsets.top + safeAreaInsets.bottom);
+        CGFloat availableWidth = [touch view].window.bounds.size.width - (safeAreaInsets.left + safeAreaInsets.right);
+
+        float heightRatio = emu_window->framebuffer_layout.height / (availableHeight * [[UIScreen mainScreen] nativeScale]);
+        float widthRatio = emu_window->framebuffer_layout.width / (availableWidth * [[UIScreen mainScreen] nativeScale]);
+
+        /// Adjust point relative to safe area
+        if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationPortrait) {
+            point.y -= safeAreaInsets.top;
+        } else {
+            point.x -= safeAreaInsets.left;
+        }
+
         if (touchBegan)
             emu_window->OnTouchEvent((point.x) * [[UIScreen mainScreen] nativeScale] * widthRatio, ((point.y) * [[UIScreen mainScreen] nativeScale] * heightRatio), true);
         if (touchMoved)
@@ -413,13 +430,45 @@ static void InitializeLogging() {
 -(void) touchesBegan:(CGPoint)point {
     if (!CitraWrapper.sharedInstance.isRunning)
         return;
-    emu_window->OnTouchEvent((point.x * [[UIScreen mainScreen] nativeScale]) + 0.5, (point.y * [[UIScreen mainScreen] nativeScale]) + 0.5, true);
+
+    /// Get safe area insets and calculate ratios
+    UIEdgeInsets safeAreaInsets = UIApplication.sharedApplication.windows.firstObject.safeAreaInsets;
+    CGFloat availableHeight = UIApplication.sharedApplication.windows.firstObject.bounds.size.height - (safeAreaInsets.top + safeAreaInsets.bottom);
+    CGFloat availableWidth = UIApplication.sharedApplication.windows.firstObject.bounds.size.width - (safeAreaInsets.left + safeAreaInsets.right);
+
+    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationPortrait) {
+        point.y -= safeAreaInsets.top;
+    } else {
+        point.x -= safeAreaInsets.left;
+    }
+
+    float scale = [[UIScreen mainScreen] nativeScale];
+    float heightRatio = emu_window->framebuffer_layout.height / (availableHeight * scale);
+    float widthRatio = emu_window->framebuffer_layout.width / (availableWidth * scale);
+
+    emu_window->OnTouchEvent((point.x * scale * widthRatio) + 0.5, (point.y * scale * heightRatio) + 0.5, true);
 }
 
 -(void) touchesMoved:(CGPoint)point {
     if (!CitraWrapper.sharedInstance.isRunning)
         return;
-    emu_window->OnTouchMoved((point.x * [[UIScreen mainScreen] nativeScale]) + 0.5, (point.y * [[UIScreen mainScreen] nativeScale]) + 0.5);
+
+    /// Get safe area insets and calculate ratios
+    UIEdgeInsets safeAreaInsets = UIApplication.sharedApplication.windows.firstObject.safeAreaInsets;
+    CGFloat availableHeight = UIApplication.sharedApplication.windows.firstObject.bounds.size.height - (safeAreaInsets.top + safeAreaInsets.bottom);
+    CGFloat availableWidth = UIApplication.sharedApplication.windows.firstObject.bounds.size.width - (safeAreaInsets.left + safeAreaInsets.right);
+
+    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationPortrait) {
+        point.y -= safeAreaInsets.top;
+    } else {
+        point.x -= safeAreaInsets.left;
+    }
+
+    float scale = [[UIScreen mainScreen] nativeScale];
+    float heightRatio = emu_window->framebuffer_layout.height / (availableHeight * scale);
+    float widthRatio = emu_window->framebuffer_layout.width / (availableWidth * scale);
+
+    emu_window->OnTouchMoved((point.x * scale * widthRatio) + 0.5, (point.y * scale * heightRatio) + 0.5);
 }
 
 -(void) touchesEnded {
@@ -435,13 +484,30 @@ static void InitializeLogging() {
 
 -(void) orientationChanged:(UIDeviceOrientation)orientation with:(CAMetalLayer *)surface {
     if (CitraWrapper.sharedInstance.isRunning) {
+        /// Get safe area insets from main window
+        UIEdgeInsets safeAreaInsets = UIApplication.sharedApplication.windows.firstObject.safeAreaInsets;
+
         if (orientation == UIDeviceOrientationPortrait) {
             NSInteger layoutOptionInteger = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"portrait_layout_option"]] unsignedIntValue];
             Settings::values.layout_option.SetValue(layoutOptionInteger == 0 ? Settings::LayoutOption::MobilePortrait : (Settings::LayoutOption)layoutOptionInteger);
+
+            /// Adjust surface frame for portrait safe area
+            CGRect bounds = surface.bounds;
+            bounds.origin.y += safeAreaInsets.top;
+            bounds.size.height -= (safeAreaInsets.top + safeAreaInsets.bottom);
+            surface.frame = bounds;
+
         } else {
             NSInteger layoutOptionInteger = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"landscape_layout_option"]] unsignedIntValue];
             Settings::values.layout_option.SetValue(layoutOptionInteger == 0 ? Settings::LayoutOption::MobilePortrait : (Settings::LayoutOption)layoutOptionInteger);
+
+            /// Adjust surface frame for landscape safe area
+            CGRect bounds = surface.bounds;
+            bounds.origin.x += safeAreaInsets.left;
+            bounds.size.width -= (safeAreaInsets.left + safeAreaInsets.right);
+            surface.frame = bounds;
         }
+
         emu_window->OrientationChanged(orientation == UIDeviceOrientationPortrait, (__bridge CA::MetalLayer*)surface);
     }
 }
