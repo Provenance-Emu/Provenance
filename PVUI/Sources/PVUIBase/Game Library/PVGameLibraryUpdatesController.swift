@@ -269,6 +269,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 
                 if (!directoryWatcher.isWatchingAnyFile()) {
                     ILOG("I think all the imports are settled, might be ok to start the queue")
+                    gameImporter.startProcessing()
                 }
             }
         }

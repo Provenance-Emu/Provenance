@@ -13,12 +13,17 @@ class GameImporterTests: XCTestCase {
     var gameImporter: GameImporting!
     
     class MockCDFileHandler: CDFileHandling {
-        var binFilesResult: [URL] = []
+        var binFilesResult: [String] = []
+        var binUrlsResult: [URL] = []
         var m3uFileContentsResult: [String] = []
         var binFileExistsResult: [URL:Bool] = [:]
         
-        func findAssociatedBinFiles(for cueFileItem: ImportQueueItem) throws -> [URL] {
+        func findAssociatedBinFileNames(for cueFileItem: ImportQueueItem) throws -> [String] {
             return binFilesResult
+        }
+        
+        func candidateBinUrls(for binFileNames: [String], in directories: [URL]) -> [URL] {
+            return binUrlsResult
         }
         
         func readM3UFileContents(from url: URL) throws -> [String] {
@@ -228,6 +233,7 @@ class GameImporterTests: XCTestCase {
                                         mockCDFileHandler)
         let cueFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file.cue"))
         mockCDFileHandler.binFilesResult = []  // Simulate missing .bin files
+        mockCDFileHandler.binUrlsResult = []  // Simulate missing .bin files
         
         // Act
         var importQueue = [cueFile]
@@ -249,6 +255,7 @@ class GameImporterTests: XCTestCase {
         let cueFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file.cue"))
         let binFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file.bin"))
         mockCDFileHandler.binFilesResult = []  // Simulate missing .bin files
+        mockCDFileHandler.binUrlsResult = []  // Simulate missing .bin files
         
         // Act
         var importQueue = [cueFile]
@@ -258,7 +265,8 @@ class GameImporterTests: XCTestCase {
         XCTAssertEqual(importQueue[0].status, .partial, "The .cue file should be marked as .partial when any referenced .bin file is missing.")
         
         importQueue.append(binFile)
-        mockCDFileHandler.binFilesResult = [binFile.url]
+        mockCDFileHandler.binFilesResult = [binFile.url.lastPathComponent]
+        mockCDFileHandler.binUrlsResult = [binFile.url, binFile.url.appending(path: "1")]  // Simulate missing .bin files
         mockCDFileHandler.binFileExistsResult[binFile.url] = true
         
         gameImporter.organizeCueAndBinFiles(in: &importQueue)
@@ -311,7 +319,8 @@ class GameImporterTests: XCTestCase {
         XCTAssertEqual(m3uFile.status, .partial, "The .m3u file should be marked as .partial if any referenced .cue file is missing or incomplete.")
         
         importQueue.append(binFile)
-        mockCDFileHandler.binFilesResult = [binFile.url]
+        mockCDFileHandler.binFilesResult = [binFile.url.lastPathComponent]
+        mockCDFileHandler.binUrlsResult = [binFile.url, binFile.url.appending(path: "1")]  // Simulate missing .bin files
         mockCDFileHandler.binFileExistsResult[binFile.url] = true
         
         gameImporter.organizeCueAndBinFiles(in: &importQueue)

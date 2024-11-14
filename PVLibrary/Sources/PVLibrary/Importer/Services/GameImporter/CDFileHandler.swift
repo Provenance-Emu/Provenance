@@ -8,19 +8,21 @@
 import Foundation
 
 protocol CDFileHandling {
-    func findAssociatedBinFiles(for cueFileItem: ImportQueueItem) throws -> [URL]
+    func findAssociatedBinFileNames(for cueFileItem: ImportQueueItem) throws -> [String]
+    func candidateBinUrls(for binFileNames:[String], in directories: [URL]) -> [URL]
     func readM3UFileContents(from url: URL) throws -> [String]
     func fileExistsAtPath(_ path: URL) -> Bool
 }
 
 class DefaultCDFileHandler: CDFileHandling {
-    func findAssociatedBinFiles(for cueFileItem: ImportQueueItem) throws -> [URL] {
+    
+    func findAssociatedBinFileNames(for cueFileItem: ImportQueueItem) throws -> [String] {
         // Read the contents of the .cue file
         let cueContents = try String(contentsOf: cueFileItem.url, encoding: .utf8)
         let lines = cueContents.components(separatedBy: .newlines)
         
-        // Array to hold multiple .bin file URLs
-        var binFiles: [URL] = []
+        // Array to hold .bin file names
+        var binFileNames: [String] = []
         
         // Look for each line with FILE "something.bin" BINARY
         for line in lines {
@@ -32,15 +34,29 @@ class DefaultCDFileHandler: CDFileHandling {
                 continue
             }
             
-            // Extract the .bin file name
+            // Extract and add the .bin file name
             let binFileName = components[1]
-            let binPath = cueFileItem.url.deletingLastPathComponent().appendingPathComponent(binFileName)
-            binFiles.append(binPath)
+            binFileNames.append(binFileName)
         }
         
-        // Return all found .bin file URLs, or an empty array if none found
+        // Return the .bin file names
+        return binFileNames
+    }
+    
+    func candidateBinUrls(for binFileNames:[String], in directories: [URL]) -> [URL] {
+        // Array to hold potential .bin file URLs
+        var binFiles: [URL] = []
+        
+        for binFileName in binFileNames {
+            for directory in directories {
+                binFiles.append(directory.appendingPathComponent(binFileName))
+            }
+        }
+        
+        // Return all possible .bin file URLs
         return binFiles
     }
+
     
     func readM3UFileContents(from url: URL) throws -> [String] {
         let contents = try String(contentsOf: url, encoding: .utf8)

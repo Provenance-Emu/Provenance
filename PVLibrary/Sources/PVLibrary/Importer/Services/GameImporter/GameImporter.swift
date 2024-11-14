@@ -485,8 +485,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             let baseFileName = cueItem.url.deletingPathExtension().lastPathComponent
 
             do {
-                let candidateBinUrls = try cdRomFileHandler.findAssociatedBinFiles(for: cueItem)
-                if !candidateBinUrls.isEmpty {
+                let candidateBinFileNames = try cdRomFileHandler.findAssociatedBinFileNames(for: cueItem)
+                if !candidateBinFileNames.isEmpty {
+                    let cueDirectory = cueItem.url.deletingLastPathComponent()
+                    let candidateBinUrls = cdRomFileHandler.candidateBinUrls(for: candidateBinFileNames, in: [cueDirectory, conflictPath])
                     for candidateBinUrl in candidateBinUrls {
                         // Find any .bin item in the queue that matches the .cue base file name
                         if let binIndex = importQueue.firstIndex(where: { item in
@@ -510,7 +512,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                         }
                     }
                     
-                    if (candidateBinUrls.count != cueItem.childQueueItems.count) {
+                    if (candidateBinFileNames.count != cueItem.childQueueItems.count) {
                         WLOG("Cue File is missing 1 or more bin urls, marking as not ready - \(baseFileName)")
                         cueItem.status = .partial
                     } else {
