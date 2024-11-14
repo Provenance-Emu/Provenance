@@ -750,7 +750,16 @@ template <typename Func>
 void RasterizerCache<T>::ForEachSurfaceInRegion(PAddr addr, size_t size, Func&& func) {
     using FuncReturn = typename std::invoke_result<Func, SurfaceId, Surface&>::type;
     static constexpr bool BOOL_BREAK = std::is_same_v<FuncReturn, bool>;
-    boost::container::small_vector<SurfaceId, 8> surfaces;
+
+    /// Pre-allocate vector with iOS-friendly alignment
+    alignas(16) boost::container::small_vector<SurfaceId, 8> surfaces;
+    surfaces.reserve(8); // Prevent reallocation in common case
+
+    /// Cache frequently accessed values
+    const PAddr end_addr = addr + size;
+    const u64 start_page = addr >> Memory::CITRA_PAGE_BITS;
+    const u64 end_page = (end_addr + Memory::CITRA_PAGE_SIZE - 1) >> Memory::CITRA_PAGE_BITS;
+
     ForEachPage(addr, size, [this, &surfaces, addr, size, func](u64 page) {
         const auto it = page_table.find(page);
         if (it == page_table.end()) {
@@ -760,6 +769,12 @@ void RasterizerCache<T>::ForEachSurfaceInRegion(PAddr addr, size_t size, Func&& 
                 return;
             }
         }
+
+        /// Prefetch next cache line on ARM
+        #if defined(__ARM_NEON)
+        __builtin_prefetch(&it->second[0], 0, 3); // Read access, high temporal locality
+        #endif
+
         for (const SurfaceId surface_id : it->second) {
             Surface& surface = slot_surfaces[surface_id];
             if (True(surface.flags & SurfaceFlagBits::Picked)) {
@@ -783,6 +798,8 @@ void RasterizerCache<T>::ForEachSurfaceInRegion(PAddr addr, size_t size, Func&& 
             return false;
         }
     });
+
+    /// Cleanup picked flags
     for (const SurfaceId surface_id : surfaces) {
         slot_surfaces[surface_id].flags &= ~SurfaceFlagBits::Picked;
     }
