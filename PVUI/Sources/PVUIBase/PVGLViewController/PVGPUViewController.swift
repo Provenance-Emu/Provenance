@@ -53,13 +53,13 @@ struct CRT_Data: Sendable {
 struct SimpleCrtUniforms: Sendable {
     var mame_screen_dst_rect: SIMD4<Float>
     var mame_screen_src_rect: SIMD4<Float>
-    var curv_vert: Float = 5.0   // 5.0 default  1.0, 10.0
-    var curv_horiz: Float = 4.0   // 4.0 default 1.0, 10.0
-    var curv_strength: Float = 0.25 // 0.25 default 0.0, 1.0
-    var light_boost: Float = 1.2  // 1.3 default 0.1, 3.0
-    var vign_strength: Float = 0.05 // 0.05 default 0.0, 1.0
-    var zoom_out: Float = 1.1     // 1.1 default 0.01, 5.0
-    var brightness: Float = 1.0  // 1.0 default 0.666, 1.333
+    var curv_vert: Float        = 5.0   // 5.0 default  1.0, 10.0
+    var curv_horiz: Float       = 4.0   // 4.0 default 1.0, 10.0
+    var curv_strength: Float    = 0.25 // 0.25 default 0.0, 1.0
+    var light_boost: Float      = 1.3  // 1.3 default 0.1, 3.0
+    var vign_strength: Float    = 0.05 // 0.05 default 0.0, 1.0
+    var zoom_out: Float         = 1.1     // 1.1 default 0.01, 5.0
+    var brightness: Float       = 1.0  // 1.0 default 0.666, 1.333
 }
 
 //#pragma pack(pop)

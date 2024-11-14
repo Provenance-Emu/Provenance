@@ -1200,17 +1200,17 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                            Float(self.inputTexture!.height))
 
             var uniforms = LCDFilterUniforms(
-                screenRect: displayRect,
-                textureSize: textureSize,
-                gridDensity: 1.2,     /// Adjust these values to taste
-                gridBrightness: 0.3,  /// Lower value = more subtle effect
-                contrast: 1.2,        /// Slight contrast boost
-                saturation: 1.1,      /// Slight saturation boost
-                ghosting: 0.2,         /// Subtle ghosting effect
-                scanlineDepth: 0.25,    // From MonoLCD
-                bloomAmount: 0.4,       // From MonoLCD
-                colorLow: 0.8,         // From LCD.fsh
-                colorHigh: 1.0         // From LCD.fsh
+                screenRect:     displayRect,
+                textureSize:    textureSize,
+                gridDensity:    1.15,    /// Adjust these values to taste
+                gridBrightness: 0.25,   /// Lower value = more subtle effect
+                contrast:       1.2,    /// Slight contrast boost
+                saturation:     1.1,    /// Slight saturation boost
+                ghosting:       0.15,   /// Subtle ghosting effect
+                scanlineDepth:  0.20,   /// From MonoLCD
+                bloomAmount:    0.2,    /// From MonoLCD
+                colorLow:       0.8,    /// From LCD.fsh
+                colorHigh:      1.1     /// From LCD.fsh
             )
 
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LCDFilterUniforms>.stride, index: 0)
