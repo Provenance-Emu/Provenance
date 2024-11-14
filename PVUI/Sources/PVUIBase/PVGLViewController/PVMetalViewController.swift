@@ -1435,13 +1435,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 pipelineState = self.effectFilterPipeline
             }
         } else {
-            ILOG("Using blit pipeline")
+//            DLOG("Using blit pipeline")
             pipelineState = self.blitPipeline
-            ILOG("Blit pipeline state: \(self.blitPipeline != nil)")
+//            DLOG("Blit pipeline state: \(self.blitPipeline != nil)")
         }
 
         if let pipelineState = pipelineState {
-            ILOG("Drawing with pipeline state")
+            // DLOG("Drawing with pipeline state")
             encoder.setRenderPipelineState(pipelineState)
 
             encoder.setFragmentTexture(self.inputTexture, index: 0)
