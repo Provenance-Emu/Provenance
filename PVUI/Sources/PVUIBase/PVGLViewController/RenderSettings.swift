@@ -8,8 +8,9 @@
 @frozen
 @usableFromInline
 struct RenderSettings: Sendable {
-    var crtFilterEnabled = false
-    var lcdFilterEnabled = false
+    var openGLFilterMode: OpenGLFilterModeOption = .none
+    var metalFilterMode: MetalFilterModeOption = .none
+
     var smoothingEnabled = false
     
     var videoBufferSize: CGSize = .zero

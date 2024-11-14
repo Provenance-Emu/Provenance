@@ -39,9 +39,6 @@ extension Defaults.Keys {
     static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
 #endif
     static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
-    static let crtFilterEnabled = Key<Bool>("crtFilterEnabled", default: false)
-    static let lcdFilterEnabled = Key<Bool>("lcdFilterEnabled", default: false)
-    static let metalFilter = Key<String>("metalFilter", default: "")
 
     static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
 
@@ -163,16 +160,6 @@ public final class PVSettingsWrapper: NSObject {
     public static var imageSmoothing: Bool {
         get { Defaults[.imageSmoothing] }
         set { Defaults[.imageSmoothing] = newValue }}
-
-    @objc
-    public static var crtFilterEnabled: Bool {
-        get { Defaults[.crtFilterEnabled] }
-        set { Defaults[.crtFilterEnabled] = newValue }}
-
-    @objc
-    public static var lcdFilterEnabled: Bool {
-        get { Defaults[.lcdFilterEnabled] }
-        set { Defaults[.lcdFilterEnabled] = newValue }}
 
     @objc
     public static var volume: Float {

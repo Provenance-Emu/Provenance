@@ -265,14 +265,6 @@ public final class PVSettingsViewController: QuickTableViewController {
                                 detailText: .subtitle("Lock scaling to integer values. Sharper but may result in blank space depending on the original aspect ratio."),
                                 key: .integerScaleEnabled,
                                 icon: .sfSymbol("lock.square")),
-            PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"),
-                                detailText: .subtitle("Apply a fast FX filter in the style of old CRT TV with curvature, bloom and scanlines."),
-                                key: .crtFilterEnabled,
-                                icon: .sfSymbol("sparkles.tv")),
-            PVSettingsSwitchRow(text: NSLocalizedString("LCD Filter", comment: "LCD Filter"),
-                                detailText: .subtitle("Use CRT filter on LCD (mobile) screens. LCD filter coming."),
-                                key: .lcdFilterEnabled,
-                                icon: .sfSymbol("square.grid.3x3")),
             PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"),
                                 detailText: .subtitle("Apply native iOS global image anti-aliasing smoothing filter to all emus."),
                                 key: .imageSmoothing,
@@ -282,13 +274,6 @@ public final class PVSettingsViewController: QuickTableViewController {
 
         let avSection = Section(title: NSLocalizedString("Video Options", comment: "Video Options"), rows: avRows)
 
-        // Metal Filters
-        var shaders: [String] = MetalShaderManager.shared.filterShaders.map { $0.name }
-        shaders.insert("Off", at: 0)
-        let metalSection = PVSettingsOptionRow(title: NSLocalizedString("Metal Filter", comment: "Metal Filter"),
-                                               footer: "Post processing filter when using Metal",
-                                               key: .metalFilter,
-                                               options: shaders)
 
         // MARK -- Section : Controller
 
@@ -771,7 +756,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         //                                   rows: debugRows)
 
         // Set table data
-        tableContents = [appSection, coreOptionsSection, savesSection, avSection, metalSection, controllerSection, librarySection, librarySection2, betaSection, socialLinksSection, documentationSection, buildSection, extraInfoSection]
+        tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, socialLinksSection, documentationSection, buildSection, extraInfoSection]
         //        #if os(iOS)
         //            tableContents.append(debugSection)
         //        #endif

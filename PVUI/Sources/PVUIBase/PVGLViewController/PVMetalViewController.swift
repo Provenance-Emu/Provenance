@@ -130,14 +130,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             emulatorCore.renderDelegate = self
         }
 
-        renderSettings.crtFilterEnabled = filterShaderEnabled()
-        renderSettings.lcdFilterEnabled = Defaults[.lcdFilterEnabled]
+        renderSettings.metalFilterMode = Defaults[.metalFilterMode]
+        renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
 
         Task {
-            for await value in Defaults.updates([.crtFilterEnabled, .lcdFilterEnabled, .imageSmoothing]) {
-                renderSettings.crtFilterEnabled = Defaults[.crtFilterEnabled]
-                renderSettings.lcdFilterEnabled = Defaults[.lcdFilterEnabled]
+            for await value in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
+                renderSettings.metalFilterMode = Defaults[.metalFilterMode]
+                renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                 renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
             }
         }
@@ -159,11 +159,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         if let backingIOSurface = backingIOSurface {
             IOSurfaceDecrementUseCount(backingIOSurface)
         }
-    }
-
-    func filterShaderEnabled() -> Bool {
-        let value = Defaults[.metalFilter].lowercased()
-        return !(value == "" || value == "off")
     }
 
     override func loadView() {
@@ -285,9 +280,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         setupTexture()
         setupBlitShader()
 
-        let metalFilter = Defaults[.metalFilter]
-        if let filterShader = MetalShaderManager.shared.filterShader(forName: metalFilter) {
-            setupEffectFilterShader(filterShader)
+        if let emulatorCore = emulatorCore {
+            if let filterShader = MetalShaderManager.shared.filterShader(forOption: renderSettings.metalFilterMode, screenType: emulatorCore.screenType) {
+                setupEffectFilterShader(filterShader)
+            }
         }
 
         alternateThreadFramebufferBack = 0
@@ -1042,6 +1038,7 @@ lazy var bestContext: EAGLContext? = {
         }
     }
 
+
     @inlinable
     @inline(__always)
     func _render(_ emulatorCore: PVEmulatorCore, in view: MTKView) {
@@ -1129,11 +1126,55 @@ lazy var bestContext: EAGLContext? = {
 
         var pipelineState: MTLRenderPipelineState?
 
-        if self.renderSettings.lcdFilterEnabled, emulatorCore.screenType.isLCD {
-            WLOG("LCD Filter not implemented yet")
-            pipelineState = self.blitPipeline
-        } else if self.renderSettings.crtFilterEnabled, emulatorCore.screenType.isCRT {
-            if self.effectFilterShader?.name == "CRT" {
+        let metalFilterOption: MetalFilterModeOption = self.renderSettings.metalFilterMode
+        let useLCD: Bool
+        let useCRT: Bool
+        switch metalFilterOption {
+        case .none:
+            useLCD = false
+            useCRT = false
+        case .always(let filter):
+            switch filter {
+            case .none:
+                useCRT = false
+                useLCD = false
+            case .complexCRT, .simpleCRT:
+                useLCD = false
+                useCRT = true
+            case .lcd:
+                useLCD = true
+                useCRT = false
+            }
+        case .auto(let crt, let lcd):
+            useLCD = emulatorCore.screenType.isLCD
+            useCRT = emulatorCore.screenType.isCRT
+        }
+        
+        
+        if useLCD {
+            let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
+                                           Float(screenRect.width), Float(screenRect.height))
+            let textureSize = SIMD2<Float>(Float(self.inputTexture!.width),
+                                           Float(self.inputTexture!.height))
+
+            var uniforms = LCDFilterUniforms(
+                screenRect: displayRect,
+                textureSize: textureSize,
+                gridDensity: 1.2,     /// Adjust these values to taste
+                gridBrightness: 0.3,  /// Lower value = more subtle effect
+                contrast: 1.2,        /// Slight contrast boost
+                saturation: 1.1,      /// Slight saturation boost
+                ghosting: 0.2,         /// Subtle ghosting effect
+                scanlineDepth: 0.25,    // From MonoLCD
+                bloomAmount: 0.4,       // From MonoLCD
+                colorLow: 0.8,         // From LCD.fsh
+                colorHigh: 1.0         // From LCD.fsh
+            )
+
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LCDFilterUniforms>.stride, index: 0)
+            pipelineState = self.effectFilterPipeline
+        } else if useCRT {
+            if self.effectFilterShader?.name == "Complex CRT" {
                 let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
                                                Float(screenRect.width), Float(screenRect.height))
                 let emulatedImageSize = SIMD2<Float>(Float(self.inputTexture!.width),

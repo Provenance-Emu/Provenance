@@ -65,11 +65,6 @@ public struct PVSettingsView: View {
                     VideoSection()
                 }
 
-                CollapsibleSection(title: "Metal") {
-                    MetalSection(viewModel: viewModel)
-                        .environmentObject(viewModel)
-                }
-
                 CollapsibleSection(title: "Controller") {
                     ControllerSection()
                 }
@@ -187,7 +182,7 @@ private struct AppSection: View {
             } lockedView: {
                 SettingsRow(title: "Theme",
                             subtitle: "Unlock to change theme.",
-                            icon: .sfSymbol("paintpalette"))
+                            icon: .sfSymbol("lock.fill"))
             }
 
             NavigationLink(destination: AppearanceView()) {
@@ -410,7 +405,7 @@ private struct AudioSection: View {
             } lockedView: {
                 SettingsRow(title: "Audio Engine",
                            subtitle: "Unlock to configure advanced audio settings.",
-                           icon: .sfSymbol("waveform.circle"))
+                           icon: .sfSymbol("lock.fill"))
             }
         }
     }
@@ -457,46 +452,11 @@ private struct VideoSection: View {
                             subtitle: "Show frames per second counter.",
                             icon: .sfSymbol("speedometer"))
             }
-            FiltersSection()
-        }
-    }
-}
-
-private struct FiltersSection: View {
-    @Default(.crtFilterEnabled) var crtFilter
-    @Default(.lcdFilterEnabled) var lcdFilter
-
-    var body: some View {
-        Section(header: Text("Filters")) {
-            ThemedToggle(isOn: $crtFilter) {
-                SettingsRow(title: "CRT Filter",
-                            subtitle: "Apply CRT screen effect to games.",
-                            icon: .sfSymbol("tv"))
+            NavigationLink(destination: FilterSettingsView()) {
+                SettingsRow(title: "Display Filters",
+                            subtitle: "Configure CRT and LCD filter effects.",
+                            icon: .sfSymbol("tv.fill"))
             }
-            // TODO: Implement LCD Filter
-//            ThemedToggle(isOn: $lcdFilter) {
-//                SettingsRow(title: "LCD Filter",
-//                            subtitle: "Apply LCD screen effect to games.",
-//                            icon: .sfSymbol("rectangle.on.rectangle"))
-//            }
-        }
-    }
-}
-
-private struct MetalSection: View {
-    @Default(.metalFilter) var metalFilter
-    @ObservedObject var viewModel: PVSettingsViewModel
-
-    var body: some View {
-        Section(header: Text("Metal")) {
-            Picker("Metal Filter", selection: $metalFilter) {
-                ForEach(viewModel.metalFilters, id: \.self) { filter in
-                    Text(filter).tag(filter)
-                }
-            }
-#if !os(tvOS)
-            .pickerStyle(.menu)
-#endif
         }
     }
 }
