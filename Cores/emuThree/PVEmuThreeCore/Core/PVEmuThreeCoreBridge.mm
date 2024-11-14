@@ -215,7 +215,7 @@ static bool _isOff = false;
         [rootController.view setHidden:false];
         if (IS_IPHONE()) {
             rootController.view.translatesAutoresizingMaskIntoConstraints = true;
-        rootController.view.insetsLayoutMarginsFromSafeArea = true;
+            rootController.view.insetsLayoutMarginsFromSafeArea = true;
         } else {
             rootController.view.translatesAutoresizingMaskIntoConstraints = false;
             [[rootController.view.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:self.touchViewController.view.safeAreaLayoutGuide.topAnchor] setActive:YES];
@@ -261,24 +261,24 @@ static bool _isOff = false;
             mtlView.autoresizesSubviews=true;
             mtlView.clipsToBounds=true;
             [mtlView addSubview:m_view];
-            [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:mtlView.widthAnchor].active=true;
-            [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:mtlView.heightAnchor constant: 0].active=true;
-            [m_view.topAnchor constraintEqualToAnchor:mtlView.topAnchor constant:0].active = true;
-            [m_view.leadingAnchor constraintEqualToAnchor:mtlView.leadingAnchor constant:0].active = true;
-            [m_view.trailingAnchor constraintEqualToAnchor:mtlView.trailingAnchor constant:0].active = true;
-            [m_view.bottomAnchor constraintEqualToAnchor:mtlView.bottomAnchor constant:0].active = true;
+            [m_view.safeAreaLayoutGuide.widthAnchor constraintGreaterThanOrEqualToAnchor:mtlView.safeAreaLayoutGuide.widthAnchor].active=true;
+            [m_view.safeAreaLayoutGuide.heightAnchor constraintGreaterThanOrEqualToAnchor:mtlView.safeAreaLayoutGuide.heightAnchor constant: 0].active=true;
+            [m_view.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:mtlView.safeAreaLayoutGuide.topAnchor constant:0].active = true;
+            [m_view.safeAreaLayoutGuide.leadingAnchor constraintEqualToAnchor:mtlView.safeAreaLayoutGuide.leadingAnchor constant:0].active = true;
+            [m_view.safeAreaLayoutGuide.trailingAnchor constraintEqualToAnchor:mtlView.safeAreaLayoutGuide.trailingAnchor constant:0].active = true;
+            [m_view.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:mtlView.safeAreaLayoutGuide.bottomAnchor constant:0].active = true;
         } else {
             UIView* glView = gl_view_controller.view;
             NSAssert(glView, @"glView was nil");
             glView.autoresizesSubviews=true;
             glView.clipsToBounds=true;
             [glView addSubview:m_view];
-            [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:glView.widthAnchor].active=true;
-            [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:glView.heightAnchor constant: 0].active=true;
-            [m_view.topAnchor constraintEqualToAnchor:glView.topAnchor constant:0].active = true;
-            [m_view.leadingAnchor constraintEqualToAnchor:glView.leadingAnchor constant:0].active = true;
-            [m_view.trailingAnchor constraintEqualToAnchor:glView.trailingAnchor constant:0].active = true;
-            [m_view.bottomAnchor constraintEqualToAnchor:glView.bottomAnchor constant:0].active = true;
+            [m_view.safeAreaLayoutGuide.widthAnchor constraintGreaterThanOrEqualToAnchor:glView.safeAreaLayoutGuide.widthAnchor].active=true;
+            [m_view.safeAreaLayoutGuide.heightAnchor constraintGreaterThanOrEqualToAnchor:glView.safeAreaLayoutGuide.heightAnchor constant: 0].active=true;
+            [m_view.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:glView.safeAreaLayoutGuide.topAnchor constant:0].active = true;
+            [m_view.safeAreaLayoutGuide.leadingAnchor constraintEqualToAnchor:glView.safeAreaLayoutGuide.leadingAnchor constant:0].active = true;
+            [m_view.safeAreaLayoutGuide.trailingAnchor constraintEqualToAnchor:glView.safeAreaLayoutGuide.trailingAnchor constant:0].active = true;
+            [m_view.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:glView.safeAreaLayoutGuide.bottomAnchor constant:0].active = true;
         }
     }
 }
