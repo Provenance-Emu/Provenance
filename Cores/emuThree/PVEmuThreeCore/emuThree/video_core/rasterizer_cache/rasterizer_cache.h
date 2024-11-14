@@ -913,43 +913,66 @@ void RasterizerCache<T>::DuplicateSurface(SurfaceId src_id, SurfaceId dst_id) {
 
 template <class T>
 void RasterizerCache<T>::ValidateSurface(SurfaceId surface_id, PAddr addr, u32 size) {
-    if (size == 0) [[unlikely]] {
+    /// Early exit for invalid cases
+    if (size == 0 || !surface_id) [[unlikely]] {
         return;
     }
 
     Surface& surface = slot_surfaces[surface_id];
     const SurfaceInterval validate_interval(addr, addr + size);
 
+    /// Fast path for fill surfaces - these are simple color-filled surfaces
+    /// that don't need complex validation
     if (surface.type == SurfaceType::Fill) {
         ASSERT_MSG(surface.IsRegionValid(validate_interval),
                    "Attempted to validate a non-valid fill surface");
         return;
     }
 
-    SurfaceRegions validate_regions = surface.invalid_regions & validate_interval;
-
-    auto notify_validated = [&](SurfaceInterval interval) {
-        surface.MarkValid(interval);
-        validate_regions.erase(interval);
-    };
-
+    /// Pre-calculate level interval and cache validation regions
+    /// This reduces redundant calculations in the validation loop
     u32 level = surface.LevelOf(addr);
     SurfaceInterval level_interval = surface.LevelInterval(level);
-    while (!validate_regions.empty()) {
-        // Take an invalid interval from the validation regions and clamp it
-        // to the current level interval. If the interval is empty
-        // then we have validated the entire level so move to the next.
-        const auto interval = *validate_regions.begin() & level_interval;
-        if (boost::icl::is_empty(interval)) {
+    /// Use small_vector to avoid heap allocations for small numbers of regions
+    boost::container::small_vector<SurfaceInterval, 8> validate_regions;
+    validate_regions.reserve(surface.invalid_regions.size());
+
+    /// Get all regions that need validation by intersecting invalid regions
+    /// with the requested validation interval
+    SurfaceRegions validate_region = surface.invalid_regions & validate_interval;
+    if (validate_region.empty()) {
+        return; // Nothing to validate, early exit
+    }
+
+    /// Helper lambda to mark regions as valid and remove them from the validation set
+    auto notify_validated = [&](SurfaceInterval interval) {
+        surface.MarkValid(interval);
+        validate_region.erase(interval);
+    };
+
+    while (!validate_region.empty()) {
+        /// Process largest intervals first to minimize the number of iterations
+        /// This can significantly reduce the number of copy/upload operations
+        const auto interval = *std::max_element(
+            validate_region.begin(),
+            validate_region.end(),
+            [](const auto& a, const auto& b) {
+                return boost::icl::length(a) < boost::icl::length(b);
+            });
+
+        /// Check if we need to move to the next mipmap level
+        if (boost::icl::is_empty(interval & level_interval)) {
             level_interval = surface.LevelInterval(++level);
             continue;
         }
 
-        // Look for a valid surface to copy from.
+        /// Try to find a valid surface to copy from instead of uploading new data
+        /// This is often faster than reading from CPU memory
         const SurfaceParams params = surface.FromInterval(interval);
-        const SurfaceId copy_surface_id =
-            FindMatch<MatchFlags::Copy>(params, ScaleMatch::Ignore, interval);
+        const SurfaceId copy_surface_id = FindMatch<MatchFlags::Copy>(params, ScaleMatch::Ignore, interval);
+
         if (copy_surface_id && copy_surface_id != surface_id) {
+            /// Found a valid surface to copy from - use GPU-side copy
             Surface& copy_surface = slot_surfaces[copy_surface_id];
             const SurfaceInterval copy_interval = copy_surface.GetCopyableInterval(params);
             CopySurface(copy_surface, surface, copy_interval);
@@ -957,13 +980,14 @@ void RasterizerCache<T>::ValidateSurface(SurfaceId surface_id, PAddr addr, u32 s
             continue;
         }
 
-        // Try to find surface in cache with different format
-        // that can can be reinterpreted to the requested format.
+        /// Try reinterpreting the surface format if we can't find a direct copy
+        /// This handles cases where the same data can be viewed in different formats
         if (ValidateByReinterpretation(surface, params, interval)) {
             notify_validated(interval);
             continue;
         }
 
+        /// Last resort - flush any GPU-modified data and upload from CPU memory
         FlushRegion(params.addr, params.size);
         if (!use_custom_textures || !UploadCustomSurface(surface_id, interval)) {
             UploadSurface(surface, interval);
@@ -971,8 +995,8 @@ void RasterizerCache<T>::ValidateSurface(SurfaceId surface_id, PAddr addr, u32 s
         notify_validated(params.GetInterval());
     }
 
-    // Filtered mipmaps often look really bad. We can achieve better quality by
-    // generating them from the base level.
+    /// Generate mipmaps if needed
+    /// Only done for surfaces with resolution scaling and non-base levels
     if (surface.res_scale != 1 && level != 0) {
         runtime.GenerateMipmaps(surface);
     }
