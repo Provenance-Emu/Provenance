@@ -47,7 +47,12 @@ public final class MetalShaderManager: NSObject, ShaderProvider {
             .init(type: .blitter, name: "Blitter", function: "blit_ps"),
             .init(type: .filter, name: "Complex CRT", function: "crt_filter_ps"),
             .init(type: .filter, name: "Simple CRT", function: "simpleCRT"),
-            .init(type: .filter, name: "LCD", function: "lcdFilter")
+            .init(type: .filter, name: "LCD", function: "lcdFilter"),
+            .init(type: .filter, name: "Line Tron", function: "lineTron"),
+            .init(type: .filter, name: "Mega Tron", function: "megaTron"),
+            .init(type: .filter, name: "ulTron", function: "ultron"),
+            .init(type: .filter, name: "Game Boy", function: "gameBoyFilter"),
+            .init(type: .filter, name: "VHS", function: "vhsFilter")
         ]
         ILOG("Registered shaders: \(shaders.map { $0.name })")
         return shaders
@@ -81,8 +86,10 @@ public final class MetalShaderManager: NSObject, ShaderProvider {
             return filterShaders.first(where: { $0.name == filter.description })
         case .auto(let crt, let lcd):
             switch screenType {
-            case .colorLCD, .monochromaticLCD, .dotMatrix:
+            case .colorLCD, .monochromaticLCD:
                 return filterShaders.first(where: { $0.name == lcd.description })
+            case .dotMatrix:
+                return filterShaders.first(where: { $0.name == "Game Boy" })
             case .crt:
                 return filterShaders.first(where: { $0.name == crt.description })
             case .modern, .unknown:

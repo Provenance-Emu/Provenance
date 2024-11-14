@@ -282,7 +282,7 @@ float3 ToSrgb(thread const float3& c)
 }
 
 fragment float4
-megaTron(VertexOutput v[[stage_in]],
+megaTron(Outputs in [[stage_in]],
        constant Push& params [[buffer(0)]],
        texture2d<float> texture [[texture(0)]],
        sampler SourceSmplr [[sampler(0)]])
@@ -296,7 +296,7 @@ megaTron(VertexOutput v[[stage_in]],
     float param_2 = 0.5 + (0.5 * params.SCANLINE_THINNESS);
     float param_3 = 1.0 - params.MASK_INTENSITY;
     float4 _767 = megaTronTone(param, param_1, param_2, param_3, params);
-    float2 ipos = v.tex * params.OutputSize.zw;
+    float2 ipos = in.fTexCoord * params.OutputSize.zw;
     float2 inputSizeDivOutputSize = params.SourceSize.zw / params.OutputSize.zw;
     float2 halfInputSize = params.SourceSize.zw * float2(0.5);
     float2 rcpInputSize = (1.0/params.SourceSize.zw);

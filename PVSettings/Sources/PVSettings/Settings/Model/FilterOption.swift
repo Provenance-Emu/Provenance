@@ -71,7 +71,9 @@ public enum MetalFilterModeOption: RawRepresentable, CustomStringConvertible, Ca
         .auto(crt: .none, lcd: .lcd),
         .always(filter: .simpleCRT),
         .always(filter: .complexCRT),
-        .always(filter: .lcd)]}
+        .always(filter: .lcd),
+        .always(filter: .gameBoy)
+    ]}
 
 
     public var rawValue: String {
@@ -105,7 +107,30 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
     case simpleCRT
     case complexCRT
     case lcd
-    
+    case lineTron
+    case megaTron
+    case ulTron
+    case gameBoy
+    case vhs
+    public enum ScreenType: String, CaseIterable {
+        case crt
+        case lcd
+    }
+
+    public var screenType: ScreenType {
+        switch self {
+        case .none: return .crt
+        case .simpleCRT: return .crt
+        case .complexCRT: return .crt
+        case .lcd: return .lcd
+        case .lineTron: return .crt
+        case .megaTron: return .crt
+        case .ulTron: return .crt
+        case .gameBoy: return .crt
+        case .vhs: return .crt
+        }
+    }
+
     public static var defaultValue: Self { .none }
 
     public var description: String {
@@ -114,6 +139,11 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
         case .simpleCRT: return "Simple CRT"
         case .complexCRT: return "Complex CRT"
         case .lcd: return "LCD"
+        case .lineTron: return "Line Tron"
+        case .megaTron: return "Mega Tron"
+        case .ulTron: return "ulTron"
+        case .gameBoy: return "Game Boy"
+        case .vhs: return "VHS"
         }
     }
 }

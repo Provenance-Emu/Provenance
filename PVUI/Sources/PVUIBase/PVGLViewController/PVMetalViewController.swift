@@ -1186,6 +1186,21 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             case .lcd:
                 useLCD = true
                 useCRT = false
+            case .lineTron:
+                useLCD = false
+                useCRT = true
+            case .megaTron:
+                useLCD = false
+                useCRT = true
+            case .ulTron:
+                useLCD = false
+                useCRT = true
+            case .gameBoy:
+                useLCD = true
+                useCRT = false
+            case .vhs:
+                useLCD = false
+                useCRT = true
             }
         case .auto(let crt, let lcd):
             useLCD = emulatorCore.screenType.isLCD
@@ -1194,27 +1209,61 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
 
         if useLCD {
-            let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
-                                           Float(screenRect.width), Float(screenRect.height))
-            let textureSize = SIMD2<Float>(Float(self.inputTexture!.width),
-                                           Float(self.inputTexture!.height))
-
-            var uniforms = LCDFilterUniforms(
-                screenRect:     displayRect,
-                textureSize:    textureSize,
-                gridDensity:    1.15,    /// Adjust these values to taste
-                gridBrightness: 0.25,   /// Lower value = more subtle effect
-                contrast:       1.2,    /// Slight contrast boost
-                saturation:     1.1,    /// Slight saturation boost
-                ghosting:       0.15,   /// Subtle ghosting effect
-                scanlineDepth:  0.20,   /// From MonoLCD
-                bloomAmount:    0.2,    /// From MonoLCD
-                colorLow:       0.8,    /// From LCD.fsh
-                colorHigh:      1.1     /// From LCD.fsh
+            let sourceSize = SIMD4<Float>(
+                Float(inputTexture!.width),
+                Float(inputTexture!.height),
+                1.0 / Float(inputTexture!.width),
+                1.0 / Float(inputTexture!.height)
+            )
+            let outputSize = SIMD4<Float>(
+                Float(view.drawableSize.width),
+                Float(view.drawableSize.height),
+                1.0 / Float(view.drawableSize.width),
+                1.0 / Float(view.drawableSize.height)
             )
 
-            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LCDFilterUniforms>.stride, index: 0)
-            pipelineState = self.effectFilterPipeline
+            /// Check which LCD filter to use
+            if self.effectFilterShader?.name == "Game Boy" {
+                /// Classic Game Boy green palette
+                let darkestGreen = SIMD4<Float>(0.0588, 0.2196, 0.0588, 1.0)  /// #0F380F
+                let darkGreen = SIMD4<Float>(0.1882, 0.3882, 0.1882, 1.0)     /// #306230
+                let lightGreen = SIMD4<Float>(0.5451, 0.6745, 0.0588, 1.0)    /// #8BAC0F
+                let lightestGreen = SIMD4<Float>(0.6078, 0.7373, 0.0588, 1.0) /// #9BBC0F
+
+                var uniforms = GameBoyUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    dotMatrix: 0.7,        /// Dot matrix effect intensity (0.0-1.0)
+                    contrast: 1.2,         /// Contrast adjustment
+                    palette: (darkestGreen, darkGreen, lightGreen, lightestGreen)
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GameBoyUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+            } else {
+                /// Default LCD filter
+                let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
+                                     Float(screenRect.width), Float(screenRect.height))
+                let textureSize = SIMD2<Float>(Float(self.inputTexture!.width),
+                                     Float(self.inputTexture!.height))
+
+                var uniforms = LCDFilterUniforms(
+                    screenRect:     displayRect,
+                    textureSize:    textureSize,
+                    gridDensity:    1.75,    /// Adjust these values to taste
+                    gridBrightness: 0.25,    /// Lower value = more subtle effect
+                    contrast:       1.2,     /// Slight contrast boost
+                    saturation:     1.1,     /// Slight saturation boost
+                    ghosting:       0.15,    /// Subtle ghosting effect
+                    scanlineDepth:  0.20,    /// From MonoLCD
+                    bloomAmount:    0.2,     /// From MonoLCD
+                    colorLow:       0.8,     /// From LCD.fsh
+                    colorHigh:      1.05     /// From LCD.fsh
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LCDFilterUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+            }
         } else if useCRT {
             if self.effectFilterShader?.name == "Complex CRT" {
                 let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
@@ -1250,6 +1299,140 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<SimpleCrtUniforms>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
                 ILOG("Effect filter pipeline state: \(self.effectFilterPipeline != nil)")
+            } else if self.effectFilterShader?.name == "Line Tron" {
+                let time = Float(CACurrentMediaTime())
+                var uniforms = LineTronUniforms(
+                    width_scale: 1.0,    /// Line width multiplier
+                    line_time: time,     /// Current time in seconds
+                    falloff: 2.0,        /// Line edge falloff
+                    strength: 1.0        /// Line brightness
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LineTronUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+
+            } else if self.effectFilterShader?.name == "Mega Tron" {
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
+                var uniforms = MegaTronUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    MASK: 2.0,              /// 0=none, 1=RGB, 2=RGB(2), 3=RGB(3)
+                    MASK_INTENSITY: 0.5,    /// Mask intensity (0.0-1.0)
+                    SCANLINE_THINNESS: 0.5, /// Scanline thickness
+                    SCAN_BLUR: 2.5,         /// Scanline blur
+                    CURVATURE: 0.02,        /// Screen curvature
+                    TRINITRON_CURVE: 0.0,   /// 0=normal curve, 1=trinitron style
+                    CORNER: 0.02,           /// Corner size
+                    CRT_GAMMA: 2.4          /// CRT gamma correction
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<MegaTronUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+
+            } else if self.effectFilterShader?.name == "ulTron" {
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
+                var uniforms = UlTronUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    hardScan: -8.0,        /// Scanline intensity
+                    hardPix: -3.0,         /// Pixel sharpness
+                    warpX: 0.031,          /// Horizontal curvature
+                    warpY: 0.041,          /// Vertical curvature
+                    maskDark: 0.5,         /// Dark color mask
+                    maskLight: 1.5,        /// Light color mask
+                    shadowMask: 3,         /// Mask type (0-4)
+                    brightBoost: 1.0,      /// Brightness boost
+                    hardBloomScan: -2.0,   /// Bloom scanline
+                    hardBloomPix: -1.5,    /// Bloom pixel
+                    bloomAmount: 0.15,     /// Bloom strength
+                    shape: 2.0            /// Curvature shape
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<UlTronUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+            } else if self.effectFilterShader?.name == "Game Boy" {
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
+                // Classic Game Boy green palette
+                let darkestGreen = SIMD4<Float>(0.0588, 0.2196, 0.0588, 1.0)  // #0F380F
+                let darkGreen = SIMD4<Float>(0.1882, 0.3882, 0.1882, 1.0)     // #306230
+                let lightGreen = SIMD4<Float>(0.5451, 0.6745, 0.0588, 1.0)    // #8BAC0F
+                let lightestGreen = SIMD4<Float>(0.6078, 0.7373, 0.0588, 1.0) // #9BBC0F
+
+                var uniforms = GameBoyUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    dotMatrix: 0.7,        /// Dot matrix effect intensity (0.0-1.0)
+                    contrast: 1.2,         /// Contrast adjustment
+                    palette: (darkestGreen, darkGreen, lightGreen, lightestGreen)
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GameBoyUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+            } else if self.effectFilterShader?.name == "VHS" {
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
+                var uniforms = VHSUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    time: Float(CACurrentMediaTime()),  /// Current time for animated effects
+                    noiseAmount: 0.05,                 /// Static noise intensity
+                    scanlineJitter: 0.003,             /// Horizontal line displacement
+                    colorBleed: 0.5,                   /// Vertical color bleeding
+                    trackingNoise: 0.1,                /// Vertical noise bands
+                    tapeWobble: 0.001,                /// Horizontal wobble amount
+                    ghosting: 0.1,                     /// Double-image effect
+                    vignette: 0.2                      /// Screen edge darkening
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<VHSUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
             }
         } else {
             ILOG("Using blit pipeline")

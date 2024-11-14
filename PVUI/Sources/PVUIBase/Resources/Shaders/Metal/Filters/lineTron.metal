@@ -37,14 +37,19 @@ __lineTron(VertexOutput v[[stage_in]], constant Push& params [[buffer(0)]])
 }
 
 fragment float4
-lineTron(VertexOutput v [[stage_in]], constant Push& params [[buffer(0)]])
+lineTron(Outputs in [[stage_in]],
+         constant Push& params [[buffer(0)]],
+         texture2d<float> texture [[texture(0)]],
+         sampler textureSampler [[sampler(0)]])
 {
     float t = params.line_time;
-    float4 color = v.color;
-    
+    float4 color = texture.sample(textureSampler, in.fTexCoord);
+
     // if t==0.0, just use color as is. else fade out color in time, and alpha edge
-    if (t != 0.0)
-        color = float4(color.rgb * exp(-pow(t * params.falloff, 2)) * params.strength, mix(1.0, 0.0, abs(v.tex.y)));
+    if (t != 0.0) {
+        color = float4(color.rgb * exp(-pow(t * params.falloff, 2)) * params.strength,
+                      mix(1.0, 0.0, abs(in.fTexCoord.y)));
+    }
 
     return color;
 }

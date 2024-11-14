@@ -449,12 +449,12 @@ float3 ToSrgb(thread const float3& c, constant Push& params)
 }
 
 fragment float4
-ultron(VertexOutput v[[stage_in]],
-                         constant Push& params [[buffer(0)]],
-                         texture2d<float> Source [[texture(0)]],
-                         sampler SourceSmplr [[sampler(0)]])
+ultron(Outputs in [[stage_in]],
+       constant Push& params [[buffer(0)]],
+       texture2d<float> Source [[texture(0)]],
+       sampler SourceSmplr [[sampler(0)]])
 {
-    float2 param = v.tex.xy;
+    float2 param = in.fTexCoord.xy;
     float2 _953 = Warp(param, params);
     float2 pos = _953;
     float2 param_1 = pos;
@@ -463,7 +463,7 @@ ultron(VertexOutput v[[stage_in]],
     outColor += (Bloom(param_2, params, Source, SourceSmplr) * params.bloomAmount);
     if (params.shadowMask > 0.0)
     {
-        float2 param_3 = (v.tex.xy / (1.0/params.OutputSize.zw)) * 1.0;
+        float2 param_3 = (in.fTexCoord.xy / (1.0/params.OutputSize.zw)) * 1.0;
         float3 _980 = Mask(param_3, params);
         outColor *= _980;
     }
