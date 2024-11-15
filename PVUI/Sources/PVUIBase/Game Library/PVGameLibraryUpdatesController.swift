@@ -259,7 +259,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             for await extractedFiles in directoryWatcher.extractedFilesStream(at: importPath) {
                 var readyURLs:[URL] = []
                 for url in extractedFiles {
-                    if (!directoryWatcher.isWatchingFile(at: url)) {
+                    if await (!directoryWatcher.isWatchingFile(at: url)) {
                         readyURLs.append(url)
                     }
                 }
@@ -267,7 +267,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                     gameImporter.addImports(forPaths: readyURLs)
                 }
                 
-                if (!directoryWatcher.isWatchingAnyFile()) {
+                if await (!directoryWatcher.isWatchingAnyFile()) {
                     ILOG("I think all the imports are settled, might be ok to start the queue")
                     gameImporter.startProcessing()
                 }
