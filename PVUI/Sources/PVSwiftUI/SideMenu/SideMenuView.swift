@@ -217,7 +217,7 @@ SideMenuView: SwiftUI.View {
                         Divider()
                             .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-                        MenuItemView(icon: .named("prov_home_icon"), rowTitle: "Home") {
+                        MenuItemView(icon: .named("prov_home_icon"), rowTitle: "Home", isFocused: focusedItem == "home") {
                             delegate.didTapHome()
                         }
                         .focusableIfAvailable()
@@ -226,7 +226,7 @@ SideMenuView: SwiftUI.View {
                         Divider()
                             .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-                        MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings") {
+                        MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings", isFocused: focusedItem == "settings") {
                             delegate.didTapSettings()
                         }
                         .focusableIfAvailable()
@@ -241,7 +241,7 @@ SideMenuView: SwiftUI.View {
                         Divider()
                             .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-                        MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Add Games") {
+                        MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Add Games", isFocused: focusedItem == "imports") {
                             delegate.didTapImports()
                         }
                         .focusableIfAvailable()
@@ -261,7 +261,7 @@ SideMenuView: SwiftUI.View {
                             ForEach(sortedConsoles(), id: \.self) { console in
                                 Divider()
                                     .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                                MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name) {
+                                MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name, isFocused: focusedItem == console.identifier) {
                                     delegate.didTapConsole(with: console.identifier)
                                 }
                                 .focusableIfAvailable()

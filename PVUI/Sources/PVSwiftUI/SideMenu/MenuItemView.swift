@@ -21,12 +21,14 @@ struct MenuItemView: SwiftUI.View {
 
     var icon: SettingsIcon
     var rowTitle: String
+    var isFocused: Bool
+
     var action: () -> Void
 
     @ObservedObject private var themeManager = ThemeManager.shared
-    @Environment(\.isFocused) private var isFocused: Bool
 
     var body: some SwiftUI.View {
+        let _ = print("MenuItemView '\(rowTitle)' isFocused: \(isFocused)")
         Button {
             action()
         } label: {
