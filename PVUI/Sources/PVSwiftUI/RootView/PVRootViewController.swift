@@ -179,6 +179,15 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             guard let self = self, pressed else { return }
             self.switchToNextConsole()
         }
+
+        controller.extendedGamepad?.buttonOptions?.valueChangedHandler = { [weak self] _, _, pressed in
+            guard let self = self, pressed else { return }
+            if self.sideNavigationController?.visibleSideViewController == self.sideNavigationController?.left?.viewController {
+                self.closeMenu()
+            } else {
+                self.showMenu()
+            }
+        }
     }
 
     private func switchToNextConsole() {
