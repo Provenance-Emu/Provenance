@@ -19,6 +19,13 @@ import PVSettings
 
 // TODO: might be able to reuse this view for collections
 
+public enum GameSection: Hashable {
+    case continues
+    case favorites
+    case recentlyPlayed
+    case games
+}
+
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
 
@@ -78,10 +85,27 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
+    @FocusState private var focusedSection: GameSection?
+    @FocusState private var focusedItemInSection: String?
+
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
         let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
         return verticalSizeClass == .compact ? baseHeight / 2 : baseHeight
+    }
+
+    private var focusedSectionBinding: Binding<GameSection?> {
+        Binding(
+            get: { focusedSection },
+            set: { focusedSection = $0 }
+        )
+    }
+
+    private var focusedItemBinding: Binding<String?> {
+        Binding(
+            get: { focusedItemInSection },
+            set: { focusedItemInSection = $0 }
+        )
     }
 
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
@@ -180,7 +204,12 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     private func continueSection() -> some View {
         Group {
             if showRecentSaveStates && hasRecentSaveStates {
-                HomeContinueSection(rootDelegate: rootDelegate, consoleIdentifier: console.identifier)
+                HomeContinueSection(
+                    rootDelegate: rootDelegate,
+                    consoleIdentifier: console.identifier,
+                    parentFocusedSection: focusedSectionBinding,
+                    parentFocusedItem: focusedItemBinding
+                )
                 HomeDividerView()
             }
         }

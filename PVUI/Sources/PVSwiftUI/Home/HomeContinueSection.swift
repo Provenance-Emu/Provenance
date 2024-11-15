@@ -27,6 +27,10 @@ struct HomeContinueSection: SwiftUI.View {
     let defaultHeight: CGFloat = 260
     var consoleIdentifier: String?
 
+    @FocusState private var focusedSaveState: String?
+    @Binding var parentFocusedSection: GameSection?
+    @Binding var parentFocusedItem: String?
+
     var isLandscapePhone: Bool {
         #if os(iOS)
         return UIDevice.current.userInterfaceIdiom == .phone &&
@@ -73,7 +77,7 @@ struct HomeContinueSection: SwiftUI.View {
                         if isLandscapePhone {
                             let startIndex = pageIndex * 2
                             let endIndex = min(startIndex + 2, filteredSaveStates.count)
-                            
+
                             if startIndex < filteredSaveStates.count {
                                 ForEach(startIndex..<endIndex, id: \.self) { index in
                                     if index < filteredSaveStates.count {  // Additional safety check
@@ -89,6 +93,14 @@ struct HomeContinueSection: SwiftUI.View {
                                                     core: filteredSaveStates[index].core,
                                                     saveState: filteredSaveStates[index]
                                                 )
+                                            }
+                                        }
+                                        .focusableIfAvailable()
+                                        .focused($focusedSaveState, equals: filteredSaveStates[index].id)
+                                        .onChange(of: focusedSaveState) { newValue in
+                                            if newValue != nil {
+                                                parentFocusedSection = .continues
+                                                parentFocusedItem = newValue
                                             }
                                         }
                                     }
@@ -108,6 +120,14 @@ struct HomeContinueSection: SwiftUI.View {
                                             core: filteredSaveStates[pageIndex].core,
                                             saveState: filteredSaveStates[pageIndex]
                                         )
+                                    }
+                                }
+                                .focusableIfAvailable()
+                                .focused($focusedSaveState, equals: filteredSaveStates[pageIndex].id)
+                                .onChange(of: focusedSaveState) { newValue in
+                                    if newValue != nil {
+                                        parentFocusedSection = .continues
+                                        parentFocusedItem = newValue
                                     }
                                 }
                             }

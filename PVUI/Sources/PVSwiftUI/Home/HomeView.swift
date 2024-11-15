@@ -53,7 +53,7 @@ struct HomeView: SwiftUI.View {
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
-    
+
     /// Sorted by systemIdentifier, then title
     @ObservedResults(
         PVGame.self,
@@ -61,7 +61,22 @@ struct HomeView: SwiftUI.View {
     ) var allGames
     // RomDatabase.sharedInstance.allGamesSortedBySystemThenTitle
 
+    @FocusState private var focusedSection: GameSection?
+    @FocusState private var focusedItemInSection: String?
 
+    private var focusedSectionBinding: Binding<GameSection?> {
+        Binding(
+            get: { focusedSection },
+            set: { focusedSection = $0 }
+        )
+    }
+
+    private var focusedItemBinding: Binding<String?> {
+        Binding(
+            get: { focusedItemInSection },
+            set: { focusedItemInSection = $0 }
+        )
+    }
 
     init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil, viewModel: PVRootViewModel) {
 //        self.gameLibrary = gameLibrary
@@ -76,7 +91,12 @@ struct HomeView: SwiftUI.View {
             ScrollView {
                 LazyVStack {
                     if showRecentSaveStates {
-                        HomeContinueSection(rootDelegate: rootDelegate)
+                        HomeContinueSection(
+                            rootDelegate: rootDelegate,
+                            consoleIdentifier: nil,
+                            parentFocusedSection: focusedSectionBinding,
+                            parentFocusedItem: focusedItemBinding
+                        )
                     }
 
                     if showRecentGames {
@@ -114,7 +134,7 @@ struct HomeView: SwiftUI.View {
                             .contextMenu { GameContextMenu(game: playedGame, rootDelegate: rootDelegate) }
                         }
                     }
-                    
+
                     HomeDividerView()
                     displayOptionsView()
                     showGamesGrid(allGames)
@@ -124,7 +144,7 @@ struct HomeView: SwiftUI.View {
         }
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
-    
+
     private func displayOptionsView() -> some View {
         GamesDisplayOptionsView(
             sortAscending: viewModel.sortGamesAscending,
@@ -148,7 +168,7 @@ struct HomeView: SwiftUI.View {
             }
         }
     }
-    
+
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         let gamesPerRow = min(8, games.count)
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: gamesPerRow)
