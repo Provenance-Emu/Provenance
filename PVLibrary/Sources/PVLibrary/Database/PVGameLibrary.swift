@@ -135,41 +135,44 @@ extension Array where Element == PVGameLibrary<RealmDatabaseDriver>.System {
     }
 }
 
-/// Handles migration of ROM files from old documents directory to new shared container directory
+/// Handles migration of ROM and BIOS files from old documents directory to new shared container directory
 public final class ROMLocationMigrator {
     private let fileManager = FileManager.default
 
-    /// Old path where ROMs were stored
-    private var oldROMsPath: URL {
+    /// Old paths that need migration
+    private var oldPaths: [(source: URL, destination: URL)] {
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        return URL(fileURLWithPath: documentsPath).appendingPathComponent("ROMs")
-    }
-
-    /// New path where ROMs should be stored
-    private var newROMsPath: URL {
-        fileManager.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!
+        let documentsURL = URL(fileURLWithPath: documentsPath)
+        let sharedContainer = fileManager.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!
             .appendingPathComponent("Documents")
-            .appendingPathComponent("ROMs")
+
+        return [
+            (documentsURL.appendingPathComponent("ROMs"),
+             sharedContainer.appendingPathComponent("ROMs")),
+            (documentsURL.appendingPathComponent("BIOS"),
+             sharedContainer.appendingPathComponent("BIOS"))
+        ]
     }
 
-    /// Migrates ROMs from old location to new location if necessary
+    /// Migrates files from old location to new location if necessary
     public func migrateIfNeeded() async throws {
-        ILOG("Checking if ROM migration is needed...")
+        ILOG("Checking if file migration is needed...")
 
-        // Check if old directory exists and has contents
-        guard fileManager.fileExists(atPath: oldROMsPath.path) else {
-            ILOG("No old ROMs directory found, skipping migration")
-            return
+        for (oldPath, newPath) in oldPaths {
+            if fileManager.fileExists(atPath: oldPath.path) {
+                ILOG("Found old directory to migrate: \(oldPath.lastPathComponent)")
+
+                if !fileManager.fileExists(atPath: newPath.path) {
+                    try fileManager.createDirectory(at: newPath,
+                                                 withIntermediateDirectories: true,
+                                                 attributes: nil)
+                }
+
+                try await migrateDirectory(from: oldPath, to: newPath)
+            } else {
+                ILOG("No old \(oldPath.lastPathComponent) directory found, skipping migration")
+            }
         }
-
-        if !fileManager.fileExists(atPath: newROMsPath.path) {
-            // Create new directory if it doesn't exist
-            try fileManager.createDirectory(at: newROMsPath,
-                                         withIntermediateDirectories: true,
-                                         attributes: nil)
-        }
-
-        try await migrateDirectory(from: oldROMsPath, to: newROMsPath)
     }
 
     /// Recursively migrates contents of a directory
@@ -223,21 +226,19 @@ public final class ROMLocationMigrator {
         }
 
         // Try to remove source directory if empty
-        if sourceDir == oldROMsPath {
-            do {
-                let remainingItems = try fileManager.contentsOfDirectory(
-                    at: sourceDir,
-                    includingPropertiesForKeys: nil,
-                    options: [.skipsHiddenFiles]
-                )
+        do {
+            let remainingItems = try fileManager.contentsOfDirectory(
+                at: sourceDir,
+                includingPropertiesForKeys: nil,
+                options: [.skipsHiddenFiles]
+            )
 
-                if remainingItems.isEmpty {
-                    try await fileManager.removeItem(at: sourceDir)
-                    ILOG("Removed empty old ROMs directory")
-                }
-            } catch {
-                ELOG("Error cleaning up old ROMs directory: \(error.localizedDescription)")
+            if remainingItems.isEmpty {
+                try await fileManager.removeItem(at: sourceDir)
+                ILOG("Removed empty directory: \(sourceDir.lastPathComponent)")
             }
+        } catch {
+            ELOG("Error cleaning up directory \(sourceDir.lastPathComponent): \(error.localizedDescription)")
         }
     }
 }
