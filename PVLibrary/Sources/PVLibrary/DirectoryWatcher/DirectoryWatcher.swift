@@ -69,7 +69,8 @@ import Perception
 @Perceptible
 #endif
 public final class DirectoryWatcher: ObservableObject {
-    
+
+    private let watcherManager: FileWatcherManager
     private let watchedDirectory: URL
 
     /// The dispatch source for the file system object
@@ -131,6 +132,7 @@ public final class DirectoryWatcher: ObservableObject {
     /// Initialize the directory watcher with a directory
     public init(directory: URL) {
         self.watchedDirectory = directory
+        self.watcherManager = FileWatcherManager(label: "org.provenance-emu.provenance.fileWatcherManager")
         ILOG("DirectoryWatcher initialized with directory: \(directory.path)")
         createDirectoryIfNeeded()
         processExistingArchives()
@@ -394,72 +396,84 @@ fileprivate extension DirectoryWatcher {
 
     /// Watch a file
     private func watchFile(at path: URL) {
-        ILOG("Starting to watch file: \(path.lastPathComponent)")
-        let fileDescriptor = open(path.path, O_EVTONLY)
-        guard fileDescriptor != -1 else {
-            ELOG("Error opening file for watching: \(path.path), error: \(String(cString: strerror(errno)))")
-            return
-        }
-
-        let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor,
-                                                               eventMask: [.write, .extend],
-                                                               queue: serialQueue)
-        source.setEventHandler { [weak self] in
-            self?.handleFileChange(at: path)
-        }
-        source.setCancelHandler {
-            ILOG("Closing file descriptor for file: \(path.lastPathComponent)")
-            close(fileDescriptor)
-        }
-        source.resume()
-        fileWatchers[path] = source
-
-        // Start a repeating task to check if the file has stopped changing
         Task {
-            ILOG("Starting repeating task for file: \(path.lastPathComponent)")
-            var checkCount = 0
-            while checkCount < 30 { // Check for up to 1 minute (30 * 2 seconds)
-                await try Task.sleep(for: .seconds(2))
-                if fileWatchers[path] == nil {
-                    ILOG("While Sleeping ... File watcher removed for: \(path.lastPathComponent)")
-                    break
+            ILOG("Starting to watch file: \(path.lastPathComponent)")
+            let fileDescriptor = open(path.path, O_EVTONLY)
+            guard fileDescriptor != -1 else {
+                ELOG("Error opening file for watching: \(path.path), error: \(String(cString: strerror(errno)))")
+                return
+            }
+
+            let source = await watcherManager.createFileSystemSource(
+                fileDescriptor: fileDescriptor,
+                eventMask: [.write, .extend],
+                eventHandler: { [weak self] in
+                    Task { @MainActor in
+                        await self?.handleFileChange(at: path)
+                    }
+                },
+                cancelHandler: {
+                    ILOG("Closing file descriptor for file: \(path.lastPathComponent)")
+                    close(fileDescriptor)
                 }
-                ILOG("Repeating task fired for file: \(path.lastPathComponent)")
-                await MainActor.run {
-                    self.checkFileStatus(at: path)
-                }
-                checkCount += 1
-                if fileWatchers[path] == nil {
+            )
+
+            source.resume()
+            await watcherManager.addWatcher(source, for: path)
+
+            // Start monitoring file changes
+            await monitorFileChanges(for: path)
+        }
+    }
+
+    private func monitorFileChanges(for path: URL) async {
+        ILOG("Starting file change monitoring for: \(path.lastPathComponent)")
+        var checkCount = 0
+
+        while checkCount < 30 { // Check for up to 1 minute (30 * 2 seconds)
+            do {
+                try await Task.sleep(for: .seconds(2))
+
+                // Check if we're still watching this file
+                guard await watcherManager.isWatching(path) else {
                     ILOG("File watcher removed for: \(path.lastPathComponent)")
                     break
                 }
+
+                await checkFileStatus(at: path)
+                checkCount += 1
+
+            } catch is CancellationError {
+                ILOG("File monitoring cancelled for: \(path.lastPathComponent)")
+                break
+            } catch {
+                ELOG("Error during file monitoring: \(error.localizedDescription)")
+                break
             }
-            ILOG("Repeating task ended for file: \(path.lastPathComponent)")
         }
 
-        ILOG("File watcher and repeating task set up for: \(path.lastPathComponent)")
+        ILOG("File change monitoring ended for: \(path.lastPathComponent)")
     }
 
-    private func handleFileChange(at path: URL) {
+    private func handleFileChange(at path: URL) async {
         ILOG("File change detected for: \(path.lastPathComponent)")
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
             let currentSize = attributes[.size] as? Int64 ?? 0
-            ILOG("Current size of changed file \(path.lastPathComponent): \(currentSize)")
+            let currentModificationDate = attributes[.modificationDate] as? Date ?? Date()
+
+            await watcherManager.updateFileStatus(for: path, size: currentSize, modificationDate: currentModificationDate)
+
+            // Schedule status check
+            await checkFileStatus(at: path)
+
         } catch {
-            ELOG("Error getting attributes for changed file: \(error)")
+            ELOG("Error handling file change: \(error.localizedDescription)")
+            await watcherManager.removeWatcher(for: path)
         }
-        // Reset the timer when the file changes
-        fileTimers[path]?.invalidate()
-        ILOG("Timer invalidated for file: \(path.lastPathComponent)")
-        fileTimers[path] = Timer.scheduledTimer(withTimeInterval: TIMER_DELAY_IN_SECONDS, repeats: true) { [weak self] _ in
-            ILOG("New timer fired for file: \(path.lastPathComponent)")
-            self?.checkFileStatus(at: path)
-        }
-        ILOG("New timer scheduled for file: \(path.lastPathComponent)")
     }
 
-    private func checkFileStatus(at path: URL) {
+    private func checkFileStatus(at path: URL) async {
         ILOG("Checking file status for: \(path)")
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
@@ -525,7 +539,7 @@ fileprivate extension DirectoryWatcher {
         ILOG("Checked if watching file: \(path.lastPathComponent), result: \(isWatching)")
         return isWatching
     }
-    
+
     public func isWatchingAnyFile() -> Bool {
         return !fileWatchers.isEmpty
     }
@@ -642,4 +656,67 @@ func delay(_ duration: TimeInterval, operation: @escaping () async throws -> Voi
     try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
     try await operation()
     ILOG("Delayed operation completed")
+}
+
+private actor FileWatcherManager {
+    private var fileWatchers: [URL: DispatchSourceFileSystemObject] = [:]
+    private var lastKnownSizes: [URL: Int64] = [:]
+    private var fileTimers: [URL: Timer] = [:]
+    private var lastKnownModificationDates: [URL: Date] = [:]
+    private let serialQueue: DispatchQueue
+
+    init(label: String) {
+        self.serialQueue = DispatchQueue(label: label)
+    }
+
+    func addWatcher(_ source: DispatchSourceFileSystemObject, for path: URL) {
+        fileWatchers[path] = source
+    }
+
+    func removeWatcher(for path: URL) {
+        fileWatchers[path]?.cancel()
+        fileWatchers[path] = nil
+        fileTimers[path]?.invalidate()
+        fileTimers[path] = nil
+        lastKnownSizes[path] = nil
+        lastKnownModificationDates[path] = nil
+    }
+
+    func updateFileStatus(for path: URL, size: Int64, modificationDate: Date) {
+        lastKnownSizes[path] = size
+        lastKnownModificationDates[path] = modificationDate
+    }
+
+    func getFileStatus(for path: URL) -> (size: Int64?, modificationDate: Date?) {
+        return (lastKnownSizes[path], lastKnownModificationDates[path])
+    }
+
+    func isWatching(_ path: URL) -> Bool {
+        return fileWatchers[path] != nil && !fileWatchers[path]!.isCancelled
+    }
+
+    func hasActiveWatchers() -> Bool {
+        return !fileWatchers.isEmpty
+    }
+
+    func updateTimer(for path: URL, timer: Timer?) {
+        fileTimers[path]?.invalidate()
+        fileTimers[path] = timer
+    }
+
+    func createFileSystemSource(fileDescriptor: Int32,
+                              eventMask: DispatchSource.FileSystemEvent,
+                              eventHandler: @escaping () -> Void,
+                              cancelHandler: @escaping () -> Void) -> DispatchSourceFileSystemObject {
+        let source = DispatchSource.makeFileSystemObjectSource(
+            fileDescriptor: fileDescriptor,
+            eventMask: eventMask,
+            queue: serialQueue
+        )
+
+        source.setEventHandler(handler: eventHandler)
+        source.setCancelHandler(handler: cancelHandler)
+
+        return source
+    }
 }
