@@ -494,7 +494,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         let docsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(fileName).path
         let fm = FileManager.default
         
-        let bundleShaderPath = Bundle.main.path(forResource: shaderResourceName,
+        let bundleShaderPath = Bundle.module.path(forResource: shaderResourceName,
                                                 ofType: "glsl")
         guard let bundleShaderPath = bundleShaderPath else {
             ELOG("bundleShaderPath is nil")
