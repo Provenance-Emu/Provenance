@@ -65,7 +65,7 @@ public extension ThemeManager {
         configureTabBar(palette)
         configureTableViews(palette)
         configureTextInputs(palette)
-        configureUISearchBar(palette)
+//        configureUISearchBar(palette)
         configureUIView(palette)
         configureUIWindow(palette)
 
@@ -184,8 +184,8 @@ public extension ThemeManager {
         UITextField.appearance().keyboardAppearance = palette.keyboardAppearance
         UISearchBar.appearance().keyboardAppearance = palette.keyboardAppearance
         
-        UITextField.appearance().backgroundColor = palette.gameLibraryBackground
-        UITextField.appearance().textColor = palette.gameLibraryText
+//        UITextField.appearance().backgroundColor = palette.gameLibraryBackground
+//        UITextField.appearance().textColor = palette.gameLibraryText
         
         DLOG("Text inputs - keyboardAppearance: \(palette.keyboardAppearance)")
     }

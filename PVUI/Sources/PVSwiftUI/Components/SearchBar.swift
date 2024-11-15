@@ -9,6 +9,7 @@
 
 import Foundation
 import SwiftUI
+import PVThemes
 
 class SearchBar: NSObject, ObservableObject {
 
@@ -29,7 +30,9 @@ class SearchBar: NSObject, ObservableObject {
     #else
     required init(searchResultsController: UIViewController? = nil) {
         searchController = UISearchController(searchResultsController: searchResultsController)
-
+        searchController.searchBar.searchTextField.textColor = ThemeManager.shared.currentPalette.menuHeaderText
+//        searchController.searchBar.searchTextField.defaultTextAttributes = [.foregroundColor: ThemeManager.shared.currentPalette.menuHeaderText]
+        
         super.init()
 
         self.searchController.obscuresBackgroundDuringPresentation = false
