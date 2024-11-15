@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVPrimitives
+import Perception
 
 // Enum to define the possible statuses of each import
 public enum ImportStatus: String {
@@ -52,7 +53,7 @@ public enum ProcessingState {
 }
 
 // ImportItem model to hold each file's metadata and progress
-@Observable
+@Perceptible
 public class ImportQueueItem: Identifiable, ObservableObject {
     public let id = UUID()
     public var url: URL

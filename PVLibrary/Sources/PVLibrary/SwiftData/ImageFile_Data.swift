@@ -12,7 +12,7 @@ import CoreGraphics
 import SwiftUI
 
 #warning("Make subclass of File_Data")
-@Model
+//@Model
 public class ImageFile_Data {// : File_Data {
     
     internal var partialPath: String = ""

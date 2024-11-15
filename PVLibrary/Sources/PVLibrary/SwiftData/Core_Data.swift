@@ -9,9 +9,9 @@
 import SwiftData
 import PVLogging
 
-@Model
+//@Model
 public class Core_Data {
-    @Attribute(.unique)
+//    @Attribute(.unique)
     public var identifier: String = ""
 
     public var principleClass: String = ""

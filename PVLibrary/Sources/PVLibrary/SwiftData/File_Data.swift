@@ -8,7 +8,7 @@
 #if canImport(SwiftData) && !os(tvOS)
 import SwiftData
 
-@Model
+//@Model
 public class File_Data {
     // Data
     internal var partialPath: String = ""

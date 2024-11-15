@@ -9,9 +9,11 @@
 import SwiftUI
 import PVLogging
 import PVUIBase
+import Perception
 
 struct MainView: View {
-    @EnvironmentObject private var appState: AppState
+    @EnvironmentObject
+    private var appState: AppState
     let appDelegate: PVAppDelegate
 
     init(appDelegate: PVAppDelegate) {
@@ -20,18 +22,20 @@ struct MainView: View {
     }
 
     var body: some View {
-        Group {
-            if appState.useUIKit {
-                UIKitHostedProvenanceMainView(appDelegate: appDelegate)
-                .edgesIgnoringSafeArea(.all)
-            } else {
-                SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
-                .edgesIgnoringSafeArea(.all)
+        WithPerceptionTracking {
+            Group {
+                if appState.useUIKit {
+                    UIKitHostedProvenanceMainView(appDelegate: appDelegate)
+                        .edgesIgnoringSafeArea(.all)
+                } else {
+                    SwiftUIHostedProvenanceMainView(appDelegate: appDelegate)
+                        .edgesIgnoringSafeArea(.all)
+                }
             }
+            .onAppear {
+                ILOG("MainView: Appeared")
+            }
+            .edgesIgnoringSafeArea(.all)
         }
-        .onAppear {
-            ILOG("MainView: Appeared")
-        }
-        .edgesIgnoringSafeArea(.all)
     }
 }

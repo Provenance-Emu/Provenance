@@ -43,12 +43,12 @@ import SteamController
 import FreemiumKit
 #endif
 
-#if os(tvOS)
+//#if os(tvOS)
 //@Perceptible
-#else
-@Observable
-#endif
-final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationDelegate {
+//#else
+//@Observable
+//#endif
+final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationDelegate, ObservableObject {
     /// This is set by the UIApplicationDelegateAdaptor
     internal var window: UIWindow? = nil
 

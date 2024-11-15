@@ -7,7 +7,7 @@ _My personal TODO notes_
 
 ## Major bugs
 
-- [ ] Test iOS 17.0 and then 16.X
+- [X] Test iOS 17.0 and then 16.X
 - [ ] Gamepad navigation in swiftUI
 - [ ] Remove or fix new shaders
 - [ ] Artwork ratios are wrong

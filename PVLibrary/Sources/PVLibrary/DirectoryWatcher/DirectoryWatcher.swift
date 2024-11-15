@@ -64,11 +64,7 @@ import Perception
 ///
 /// The DirectoryWatcher monitors a specified directory for new files and changes,
 /// handling archive extraction and file processing automatically.
-#if !os(tvOS)
-@Observable
-#else
 @Perceptible
-#endif
 public final class DirectoryWatcher: ObservableObject {
 
     private let watcherManager: FileWatcherManager
@@ -94,7 +90,7 @@ public final class DirectoryWatcher: ObservableObject {
     /// The current extraction status
     public var extractionStatus: ExtractionStatus = .idle
 //    #if !os(tvOS)
-    @ObservationIgnored
+//    @ObservationIgnored
 //    #endif
     private var statusContinuation: AsyncStream<ExtractionStatus>.Continuation?
 
@@ -108,12 +104,12 @@ public final class DirectoryWatcher: ObservableObject {
         }
     }
 
-    #if os(tvOS)
+//    #if os(tvOS)
+//    private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
+//    #else
+//    @ObservationIgnored
     private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
-    #else
-    @ObservationIgnored
-    private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
-    #endif
+//    #endif
 
     /// A sequence of completed files
     public var completedFilesSequence: AsyncStream<[URL]> {

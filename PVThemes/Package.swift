@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PVThemes",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v11),

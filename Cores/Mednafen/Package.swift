@@ -119,7 +119,7 @@ func mednafenTarget(name: String, dependencies: [String] = [], path: String, sou
 let package = Package(
     name: "PVCoreMednafen",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v11),

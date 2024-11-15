@@ -8,11 +8,11 @@
 #if canImport(SwiftData) && !os(tvOS)
 import SwiftData
 
-@Model
+//@Model
 public class SaveState_Data {
     
     // Data
-    @Attribute(.unique)
+//    @Attribute(.unique)
     public var id: String = UUID().uuidString
 
     public var date: Date = Date()

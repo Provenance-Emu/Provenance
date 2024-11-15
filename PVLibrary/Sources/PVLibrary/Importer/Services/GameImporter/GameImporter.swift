@@ -122,11 +122,11 @@ public protocol GameImporting {
 }
 
 
-#if !os(tvOS)
-@Observable
-#else
+//#if !os(tvOS)
+//@Observable
+//#else
 @Perceptible
-#endif
+//#endif
 public final class GameImporter: GameImporting, ObservableObject {
     /// Closure called when import starts
     public var importStartedHandler: GameImporterImportStartedHandler?

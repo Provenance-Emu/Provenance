@@ -677,6 +677,7 @@
 		B396209C2C66E1F30094F6F0 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B396209B2C66E1F30094F6F0 /* PVSupport */; };
 		B396209E2C66E1FC0094F6F0 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B396209D2C66E1FC0094F6F0 /* PVLogging */; };
 		B39620A02C66E20B0094F6F0 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B396209F2C66E20B0094F6F0 /* PVCoreBridge */; };
+		B39680492CE720E300E1AB6D /* Perception in Frameworks */ = {isa = PBXBuildFile; productRef = B39680482CE720E300E1AB6D /* Perception */; };
 		B39B53882C66E7A900C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53872C66E7A900C220C6 /* PVSettings */; };
 		B39B538A2C66E7BA00C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53892C66E7BA00C220C6 /* PVSettings */; };
 		B39CE2882C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B39CE2872C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic */; };
@@ -2896,6 +2897,7 @@
 				B392B3DE2CCC592600B1C760 /* PVFlycast.framework in Frameworks */,
 				B35EEFD52C6C6D1A00EBD1A8 /* Reachability in Frameworks */,
 				B35EEFD62C6C6D1A00EBD1A8 /* SteamController in Frameworks */,
+				B39680492CE720E300E1AB6D /* Perception in Frameworks */,
 				B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */,
 				B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */,
 				B39342162CC5784D008AA673 /* MoltenVK-Catalyst in Frameworks */,
@@ -4464,6 +4466,7 @@
 				B39342152CC5784D008AA673 /* MoltenVK-Catalyst */,
 				B392B3E12CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic */,
 				B37228CB2CCDC7D300E6F627 /* FreemiumKit */,
+				B39680482CE720E300E1AB6D /* Perception */,
 			);
 			productName = Provenance;
 			productReference = B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */;
@@ -4929,6 +4932,7 @@
 				B35B177D2CCCDFC7007059CA /* XCLocalSwiftPackageReference "PVAudio" */,
 				B37228C82CCDC7A700E6F627 /* XCRemoteSwiftPackageReference "FreemiumKit" */,
 				B38A68BA2CCEFB73001C57D0 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */,
+				B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -8378,8 +8382,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -8476,8 +8479,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -8575,8 +8577,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -9058,8 +9059,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -9156,8 +9156,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -9254,8 +9253,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -10022,7 +10020,7 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Lite-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10093,7 +10091,7 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Lite-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10165,7 +10163,7 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Lite-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11129,6 +11127,14 @@
 				minimumVersion = 5.0.2;
 			};
 		};
+		B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-perception.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
@@ -11810,6 +11816,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */;
 			productName = PVCoreBridge;
+		};
+		B39680482CE720E300E1AB6D /* Perception */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */;
+			productName = Perception;
 		};
 		B39B53872C66E7A900C220C6 /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;
