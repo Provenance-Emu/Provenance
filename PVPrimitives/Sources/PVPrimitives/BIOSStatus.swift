@@ -56,7 +56,7 @@ public struct BIOSStatus: Codable, Sendable, Equatable {
         case md5(expected: String, actual: String)
         case size(expected: UInt, actual: UInt)
         case filename(expected: String, actual: String)
-        
+
         public var description: String {
             switch self {
             case let .md5(expected, actual):
@@ -152,14 +152,17 @@ public extension BIOSStatus {
         available = bios.fileInfo != nil
         if available {
             let md5Match = bios.fileInfo?.md5?.uppercased() == bios.expectedMD5.uppercased()
-            let sizeMatch = bios.fileInfo?.size == UInt64(bios.expectedSize)
+
+            // If MD5 matches, assume size is correct
+            let sizeMatch = md5Match ? true : bios.fileInfo?.size == UInt64(bios.expectedSize)
             let filenameMatch = bios.fileInfo?.fileName == bios.expectedFilename
 
             var misses = [Mismatch]()
             if !md5Match {
                 misses.append(.md5(expected: bios.expectedMD5.uppercased(), actual: bios.fileInfo?.md5?.uppercased() ?? "0"))
             }
-            if !sizeMatch {
+            // Only check size if MD5 doesn't match
+            if !md5Match && !sizeMatch {
                 misses.append(.size(expected: UInt(bios.expectedSize), actual: UInt(bios.fileInfo?.size ?? 0)))
             }
             if !filenameMatch {

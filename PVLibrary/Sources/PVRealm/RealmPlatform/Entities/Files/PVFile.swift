@@ -30,6 +30,14 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     nonisolated(unsafe)
     internal dynamic var _relativeRoot: Int = RelativeRoot.documents.rawValue
 
+    /// Cache the file size to avoid frequent disk access
+    nonisolated(unsafe)
+    internal dynamic var sizeCache: Int = 0
+
+    /// Last time size was checked
+    nonisolated(unsafe)
+    internal dynamic var lastSizeCheck: Date?
+
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
@@ -40,6 +48,10 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
         self.init()
         self.relativeRoot = relativeRoot
         partialPath = relativeRoot.createRelativePath(fromURL: url)
+    }
+    
+    public override static func ignoredProperties() -> [String] {
+        return ["sizeCache", "lastSizeCheck"]
     }
 }
 
@@ -145,24 +157,43 @@ public extension PVFile {
     //        }
     //    }
 
-    var size: UInt64 { get {
-//        return await Task {
+    var size: UInt64 {
+        get {
+            // If we have a recent cache (within last minute), use it
+            if let lastCheck = lastSizeCheck,
+               Date().timeIntervalSince(lastCheck) < 60,
+               sizeCache > 0 {
+                return UInt64(sizeCache)
+            }
+
+            // Otherwise check the file system
             let path = url.path
             guard FileManager.default.fileExists(atPath: path) else {
                 ELOG("No file at path: \(path)")
                 return 0
             }
-            
+
             let fileSize: UInt64
             if let attr = try? FileManager.default.attributesOfItem(atPath: path) as NSDictionary {
                 fileSize = attr.fileSize()
+
+                // Update cache
+                do {
+                    try realm?.write {
+                        sizeCache = Int(fileSize)
+                        lastSizeCheck = Date()
+                    }
+                } catch {
+                    ELOG("Failed to update size cache: \(error)")
+                }
             } else {
                 ELOG("No attributesOfItem at path: \(path)")
                 fileSize = 0
             }
+
             return fileSize
-//        }.value
-    }}
+        }
+    }
 
     // TODO: Make this live update and observable
     var online: Bool { get {
