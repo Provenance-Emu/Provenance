@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import GameController
 
 #if canImport(SwiftUI)
 #if canImport(Combine)
@@ -65,6 +66,9 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
 
+    private var gameController: GCController?
+    private var controllerObserver: Any?
+
     public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary<RealmDatabaseDriver>, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
@@ -89,6 +93,17 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         view.addSubview(hud)
 
         setupHUDObserver(hud: hud)
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupGameController()
+    }
+
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(controllerObserver as Any)
+        gameController = nil
     }
 
     private var cancellables = Set<AnyCancellable>()
@@ -129,6 +144,61 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         // load new view
         self.addChildViewController(newVC, toContainerView: self.containerView)
         self.fillParentView(child: newVC.view, parent: self.containerView)
+    }
+
+    private func setupGameController() {
+        // Observe for new controllers
+        controllerObserver = NotificationCenter.default.addObserver(
+            forName: .GCControllerDidConnect,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.connectFirstController()
+        }
+
+        // Check for already connected controller
+        connectFirstController()
+    }
+
+    private func connectFirstController() {
+        guard gameController == nil else { return }
+
+        if let controller = GCController.current ?? GCController.controllers().first {
+            gameController = controller
+            setupControllerInputs(controller)
+        }
+    }
+
+    private func setupControllerInputs(_ controller: GCController) {
+        controller.extendedGamepad?.leftShoulder.valueChangedHandler = { [weak self] _, _, pressed in
+            guard let self = self, pressed else { return }
+            self.switchToPreviousConsole()
+        }
+
+        controller.extendedGamepad?.rightShoulder.valueChangedHandler = { [weak self] _, _, pressed in
+            guard let self = self, pressed else { return }
+            self.switchToNextConsole()
+        }
+    }
+
+    private func switchToNextConsole() {
+        let systems = gameLibrary.activeSystems
+        guard let currentSystem = systems.first(where: { $0.identifier == consolesWrapperViewDelegate.selectedTab }),
+              let currentIndex = systems.firstIndex(of: currentSystem),
+              currentIndex + 1 < systems.count else { return }
+
+        let nextSystem = systems[currentIndex + 1]
+        didTapConsole(with: nextSystem.identifier)
+    }
+
+    private func switchToPreviousConsole() {
+        let systems = gameLibrary.activeSystems
+        guard let currentSystem = systems.first(where: { $0.identifier == consolesWrapperViewDelegate.selectedTab }),
+              let currentIndex = systems.firstIndex(of: currentSystem),
+              currentIndex > 0 else { return }
+
+        let previousSystem = systems[currentIndex - 1]
+        didTapConsole(with: previousSystem.identifier)
     }
 }
 

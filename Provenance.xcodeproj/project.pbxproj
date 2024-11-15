@@ -2123,6 +2123,7 @@
 		B394CDDF2BDEE53A006B63E8 /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B394CDE22BDF0BCE006B63E8 /* Provenance-AppStore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-AppStore-Info.plist"; sourceTree = "<group>"; };
 		B394CDE32BDF22A2006B63E8 /* Provenance-AppStore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-AppStore.entitlements"; path = "../Provenance-AppStore.entitlements"; sourceTree = "<group>"; };
+		B396804A2CE74A9C00E1AB6D /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B397692C285A089200558958 /* PVDosBox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDosBox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3977533219AB53F00E16AD5 /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Provenance.entitlements; path = Provenance/Provenance.entitlements; sourceTree = SOURCE_ROOT; };
 		B3980D802923975500A82429 /* PVPCSXRearmed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPCSXRearmed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3265,6 +3266,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B396804A2CE74A9C00E1AB6D /* PVFlycast.framework */,
 				B3FC5AC62CE4376D00D378C9 /* PVEmuThree.framework */,
 				B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */,
 				B3A3CDAD2CCC873B00589F82 /* PVDuckStation.framework */,
