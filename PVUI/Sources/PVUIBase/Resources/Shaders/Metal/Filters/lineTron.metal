@@ -30,25 +30,22 @@ struct Push
 };
 
 fragment float4
-__lineTron(VertexOutput v[[stage_in]], constant Push& params [[buffer(0)]])
-{
-    float a = exp(-pow(v.tex.y * params.falloff, 2));
-    return float4((v.color.rgb*params.strength), a);
-}
-
-fragment float4
 lineTron(Outputs in [[stage_in]],
          constant Push& params [[buffer(0)]],
          texture2d<float> texture [[texture(0)]],
          sampler textureSampler [[sampler(0)]])
 {
-    float t = params.line_time;
     float4 color = texture.sample(textureSampler, in.fTexCoord);
+    float t = params.line_time;
 
-    // if t==0.0, just use color as is. else fade out color in time, and alpha edge
-    if (t != 0.0) {
-        color = float4(color.rgb * exp(-pow(t * params.falloff, 2)) * params.strength,
-                      mix(1.0, 0.0, abs(in.fTexCoord.y)));
+    // Simplified vector line effect
+    color.rgb *= params.strength;
+
+    // Apply falloff if time is non-zero
+    if (t > 0.0) {
+        float fade = exp(-pow(t * params.falloff, 2));
+        color.rgb *= fade;
+        color.a = mix(1.0, 0.0, abs(in.fTexCoord.y));
     }
 
     return color;
