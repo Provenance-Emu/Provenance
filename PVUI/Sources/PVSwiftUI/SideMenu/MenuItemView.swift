@@ -24,6 +24,7 @@ struct MenuItemView: SwiftUI.View {
     var action: () -> Void
 
     @ObservedObject private var themeManager = ThemeManager.shared
+    @Environment(\.isFocused) private var isFocused: Bool
 
     var body: some SwiftUI.View {
         Button {
@@ -34,11 +35,11 @@ struct MenuItemView: SwiftUI.View {
                 icon.image
                     .renderingMode(.template)
                     .resizable().scaledToFit().cornerRadius(4).padding(8)
-                    .tint(themeManager.currentPalette.menuIconTint.swiftUIColor)
-                    .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
+                    .tint(isFocused ? themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(0.8) : themeManager.currentPalette.menuIconTint.swiftUIColor)
+                    .foregroundStyle(isFocused ? themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(0.8) : themeManager.currentPalette.menuIconTint.swiftUIColor)
                 /// Text
                 Text(rowTitle)
-                    .foregroundColor(themeManager.currentPalette.menuText.swiftUIColor)
+                    .foregroundColor(isFocused ? themeManager.currentPalette.menuText.swiftUIColor.opacity(0.8) : themeManager.currentPalette.menuText.swiftUIColor)
                     .background(themeManager.currentPalette.menuBackground.swiftUIColor)
                 /// Space
                 Spacer()
@@ -46,7 +47,11 @@ struct MenuItemView: SwiftUI.View {
             /// Height
             .frame(height: 40.0)
             /// Background
-            .background(themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.3))
+            .background(
+                isFocused ?
+                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.5) :
+                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.3)
+            )
         }
         /// Mac Catalyst fix
         .buttonStyle(PlainButtonStyle())
