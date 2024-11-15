@@ -3,7 +3,7 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] Shared documents :        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
+- [X] Shared documents :        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
 
 ## Major bugs
 
