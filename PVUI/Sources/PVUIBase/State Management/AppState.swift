@@ -67,12 +67,12 @@ public class AppState: ObservableObject {
             }
         }
     }
-    
+
     public var isAppStore: Bool {
         guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
         return appType.lowercased().contains("appstore")
     }
-    
+
     public var isSimulator: Bool {
         #if targetEnvironment(simulator)
         return true
@@ -81,7 +81,7 @@ public class AppState: ObservableObject {
         #endif
     }
 
-    
+
     public var sendEventWasSwizzled = false
 
     private let disposeBag = DisposeBag()
@@ -175,12 +175,18 @@ public class AppState: ObservableObject {
         Task.detached { [weak self] in
             guard let self = self else { return }
             do {
-                try await withTimeout(seconds: 30) {
-                    await self.libraryUpdatesController?.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
+                /// Increased timeout and added progress logging
+                try await withTimeout(seconds: 120) { // Increased from 30 to 120 seconds
+                    await self.libraryUpdatesController?.addImportedGames(
+                        to: CSSearchableIndex.default(),
+                        database: RomDatabase.sharedInstance
+                    )
                 }
                 ILOG("AppState: Finished adding imported games to CSSearchableIndex")
             } catch let error as TimeoutError {
                 ELOG("AppState: Timeout while adding imported games to CSSearchableIndex: \(error)")
+                /// Continue app initialization despite timeout
+                ILOG("AppState: Continuing bootup despite Spotlight indexing timeout")
             } catch {
                 ELOG("AppState: Error adding imported games to CSSearchableIndex: \(error)")
             }

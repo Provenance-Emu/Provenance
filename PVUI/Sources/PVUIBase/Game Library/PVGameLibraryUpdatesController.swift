@@ -28,13 +28,13 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     public var conflicts: [ConflictsController.ConflictItem] = []
 
     public let gameImporter: GameImporter
-    
+
     private let directoryWatcher: DirectoryWatcher
     private let conflictsWatcher: ConflictsWatcher
     private let biosWatcher: BIOSWatcher
 
     private var statusCheckTimer: Timer?
-    
+
     private var hudCoordinator: HUDCoordinator {
         AppState.shared.hudCoordinator
     }
@@ -113,7 +113,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                         let hudState = Self.handleExtractionStatus(status)
                         await self.hudCoordinator.updateHUD(hudState)
                     }
-                    
+
                     hideTask?.cancel()
 
                     switch status {
@@ -266,7 +266,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 if (!readyURLs.isEmpty) {
                     gameImporter.addImports(forPaths: readyURLs)
                 }
-                
+
                 if await (!directoryWatcher.isWatchingAnyFile()) {
                     ILOG("I think all the imports are settled, might be ok to start the queue")
                     gameImporter.startProcessing()
@@ -320,11 +320,25 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     /// Spotlight indexing support
     @MainActor
     public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async {
-        // TODO: This is all wrong, we should register to listen to spotlightImportHandler,
-        // not overwrite it
         enum ImportEvent {
             case finished(md5: String, modified: Bool)
             case completed(encounteredConflicts: Bool)
+        }
+
+        /// Create a batch processor to handle multiple items at once
+        var pendingItems: [CSSearchableItem] = []
+        let batchSize = 50 /// Smaller batch size for more frequent updates
+
+        func processBatch() async {
+            guard !pendingItems.isEmpty else { return }
+
+            do {
+                try await spotlightIndex.indexSearchableItems(pendingItems)
+                DLOG("Indexed batch of \(pendingItems.count) items")
+                pendingItems.removeAll(keepingCapacity: true)
+            } catch {
+                ELOG("Error batch indexing games: \(error)")
+            }
         }
 
         let eventStream = AsyncStream<ImportEvent> { continuation in
@@ -340,42 +354,42 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         for await event in eventStream {
             switch event {
             case .finished(let md5, _):
-                addGameToSpotlight(md5: md5, spotlightIndex: spotlightIndex, database: database)
+                do {
+                    let realm = try await Realm()
+                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
+                        DLOG("No game found for MD5: \(md5)")
+                        continue
+                    }
+
+                    /// Create a detached copy of the game object
+                    let detachedGame = game.detached()
+
+                    let item = CSSearchableItem(
+                        uniqueIdentifier: detachedGame.spotlightUniqueIdentifier,
+                        domainIdentifier: "org.provenance-emu.game",
+                        attributeSet: detachedGame.spotlightContentSet
+                    )
+
+                    pendingItems.append(item)
+
+                    /// Process batch if we've reached the batch size
+                    if pendingItems.count >= batchSize {
+                        await processBatch()
+                    }
+
+                } catch {
+                    ELOG("Error accessing Realm or indexing game (MD5: \(md5)): \(error)")
+                }
             case .completed:
+                /// Process any remaining items
+                await processBatch()
                 break
             }
         }
 
-        // Clean up handlers
+        /// Clean up handlers
         GameImporter.shared.spotlightFinishedImportHandler = nil
         GameImporter.shared.spotlightCompletionHandler = nil
-    }
-
-    /// Assitant for Spotlight indexing
-    @MainActor
-    private func addGameToSpotlight(md5: String, spotlightIndex: CSSearchableIndex, database: RomDatabase) {
-        do {
-            let realm = try Realm()
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
-                DLOG("No game found for MD5: \(md5)")
-                return
-            }
-
-            // Create a detached copy of the game object
-            let detachedGame = game.detached()
-
-            let item = CSSearchableItem(uniqueIdentifier: detachedGame.spotlightUniqueIdentifier,
-                                        domainIdentifier: "org.provenance-emu.game",
-                                        attributeSet: detachedGame.spotlightContentSet)
-
-            spotlightIndex.indexSearchableItems([item]) { error in
-                if let error = error {
-                    ELOG("Error indexing game (MD5: \(md5)): \(error)")
-                }
-            }
-        } catch {
-            ELOG("Error accessing Realm or indexing game (MD5: \(md5)): \(error)")
-        }
     }
     #endif
 
@@ -402,7 +416,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             gameImporter.addImports(forPaths: otherFiles)
             DLOG("Finished importing other files")
         }
-        
+
         //it seems reasonable to kick off the queue here
 //        gameImporter.startProcessing()
     }
