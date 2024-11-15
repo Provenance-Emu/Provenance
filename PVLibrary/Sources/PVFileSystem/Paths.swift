@@ -9,20 +9,25 @@ import Foundation
 import PVPlists
 import PVLogging
 
+public let UbiquityIdentityTokenKey = (Bundle.main.bundleIdentifier ?? "org.provenance-emu.provenance")  + ".UbiquityIdentityToken"
+public let PVAppGroupId = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String ?? "group.org.provenance-emu.provenance"
+
     // MARK: - Filesystem Helpers
 public extension URL {
     static let documentsPath: URL = {
 #if os(tvOS)
         return cachesPath
 #else
-        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+//        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+//        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!.appending(component: "/Documents/")
 #endif
     }()
     
     static let cachesPath: URL = {
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!.appending(component: "/Caches/")
+//        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+//        return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
 }
 

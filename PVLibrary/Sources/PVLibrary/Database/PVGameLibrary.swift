@@ -16,7 +16,7 @@ import PVRealm
 @_exported public import PVSettings
 
 public class PVGameLibrary<T> where T: DatabaseDriver {
-    
+
     public struct System {
         public let identifier: String
         public let manufacturer: String
@@ -25,14 +25,25 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
         public let unsupported: Bool
         public let sortedGames: [T.GameType]
     }
-    
+
     internal let database: RomDatabase
     internal let databaseDriver: T
+    private let romMigrator: ROMLocationMigrator
 
     public init(database: RomDatabase) {
         self.database = database
-
         self.databaseDriver = .init(database: database)
+        self.romMigrator = ROMLocationMigrator()
+
+        // Kick off ROM migration
+        Task {
+            do {
+                try await romMigrator.migrateIfNeeded()
+                ILOG("ROM migration completed successfully")
+            } catch {
+                ELOG("ROM migration failed: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
@@ -120,6 +131,113 @@ extension Array where Element == PVGameLibrary<RealmDatabaseDriver>.System {
                     return titleSort(s1, s2)
                 }
             })
+        }
+    }
+}
+
+/// Handles migration of ROM files from old documents directory to new shared container directory
+public final class ROMLocationMigrator {
+    private let fileManager = FileManager.default
+
+    /// Old path where ROMs were stored
+    private var oldROMsPath: URL {
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        return URL(fileURLWithPath: documentsPath).appendingPathComponent("ROMs")
+    }
+
+    /// New path where ROMs should be stored
+    private var newROMsPath: URL {
+        fileManager.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!
+            .appendingPathComponent("Documents")
+            .appendingPathComponent("ROMs")
+    }
+
+    /// Migrates ROMs from old location to new location if necessary
+    public func migrateIfNeeded() async throws {
+        ILOG("Checking if ROM migration is needed...")
+
+        // Check if old directory exists and has contents
+        guard fileManager.fileExists(atPath: oldROMsPath.path) else {
+            ILOG("No old ROMs directory found, skipping migration")
+            return
+        }
+
+        if !fileManager.fileExists(atPath: newROMsPath.path) {
+            // Create new directory if it doesn't exist
+            try fileManager.createDirectory(at: newROMsPath,
+                                         withIntermediateDirectories: true,
+                                         attributes: nil)
+        }
+
+        try await migrateDirectory(from: oldROMsPath, to: newROMsPath)
+    }
+
+    /// Recursively migrates contents of a directory
+    private func migrateDirectory(from sourceDir: URL, to destDir: URL) async throws {
+        ILOG("Migrating directory: \(sourceDir.lastPathComponent)")
+
+        // Get all items in source directory
+        let contents = try fileManager.contentsOfDirectory(
+            at: sourceDir,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        )
+
+        ILOG("Found \(contents.count) items to process in \(sourceDir.lastPathComponent)")
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for itemURL in contents {
+                group.addTask {
+                    let isDirectory = try itemURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory ?? false
+                    let relativePath = itemURL.lastPathComponent
+                    let destinationURL = destDir.appendingPathComponent(relativePath)
+
+                    if isDirectory {
+                        // Create destination directory if it doesn't exist
+                        if !self.fileManager.fileExists(atPath: destinationURL.path) {
+                            try self.fileManager.createDirectory(at: destinationURL,
+                                                              withIntermediateDirectories: true,
+                                                              attributes: nil)
+                        }
+                        // Recursively migrate contents of subdirectory
+                        try await self.migrateDirectory(from: itemURL, to: destinationURL)
+
+                        // Try to remove empty source directory
+                        if try self.fileManager.contentsOfDirectory(atPath: itemURL.path).isEmpty {
+                            try await self.fileManager.removeItem(at: itemURL)
+                            ILOG("Removed empty directory: \(itemURL.lastPathComponent)")
+                        }
+                    } else {
+                        // Handle file migration
+                        if self.fileManager.fileExists(atPath: destinationURL.path) {
+                            ILOG("Skipping \(relativePath) as it already exists in destination")
+                        } else {
+                            try self.fileManager.moveItem(at: itemURL, to: destinationURL)
+                            ILOG("Successfully migrated: \(relativePath)")
+                        }
+                    }
+                }
+            }
+
+            try await group.waitForAll()
+        }
+
+        // Try to remove source directory if empty
+        if sourceDir == oldROMsPath {
+            do {
+                let remainingItems = try fileManager.contentsOfDirectory(
+                    at: sourceDir,
+                    includingPropertiesForKeys: nil,
+                    options: [.skipsHiddenFiles]
+                )
+
+                if remainingItems.isEmpty {
+                    try await fileManager.removeItem(at: sourceDir)
+                    ILOG("Removed empty old ROMs directory")
+                }
+            } catch {
+                ELOG("Error cleaning up old ROMs directory: \(error.localizedDescription)")
+            }
         }
     }
 }
