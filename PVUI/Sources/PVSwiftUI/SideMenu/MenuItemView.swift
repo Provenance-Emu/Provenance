@@ -35,26 +35,28 @@ struct MenuItemView: SwiftUI.View {
                 icon.image
                     .renderingMode(.template)
                     .resizable().scaledToFit().cornerRadius(4).padding(8)
-                    .tint(isFocused ? themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(0.8) : themeManager.currentPalette.menuIconTint.swiftUIColor)
-                    .foregroundStyle(isFocused ? themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(0.8) : themeManager.currentPalette.menuIconTint.swiftUIColor)
+                    .tint(isFocused ? themeManager.currentPalette.menuIconTint.swiftUIColor : themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(0.6))
                 /// Text
                 Text(rowTitle)
-                    .foregroundColor(isFocused ? themeManager.currentPalette.menuText.swiftUIColor.opacity(0.8) : themeManager.currentPalette.menuText.swiftUIColor)
-                    .background(themeManager.currentPalette.menuBackground.swiftUIColor)
+                    .foregroundColor(isFocused ? themeManager.currentPalette.menuText.swiftUIColor : themeManager.currentPalette.menuText.swiftUIColor.opacity(0.6))
                 /// Space
                 Spacer()
             }
             /// Height
             .frame(height: 40.0)
-            /// Background
+            /// Background and focus state
             .background(
                 isFocused ?
-                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.5) :
+                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.8) :
                 themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.3)
             )
+            .overlay(
+                Rectangle()
+                    .stroke(isFocused ? themeManager.currentPalette.menuIconTint.swiftUIColor : .clear, lineWidth: 2)
+            )
         }
-        /// Mac Catalyst fix
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
+        .focusableIfAvailable()
     }
 }
 #endif

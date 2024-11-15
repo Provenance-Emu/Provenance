@@ -21,6 +21,18 @@ import Introspect
 import FreemiumKit
 #endif
 
+// Add at the top of the file, after imports
+extension View {
+    @ViewBuilder
+    func focusableIfAvailable() -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            self.focusable(true)
+        } else {
+            self
+        }
+    }
+}
+
 // generate a preview
 
 extension PVSystem {
@@ -54,6 +66,14 @@ SideMenuView: SwiftUI.View {
     @EnvironmentObject var freemiumKit: FreemiumKit
 #endif
 
+    @State private var gamepadHandler: Any?
+
+    @FocusState private var focusedItem: String?
+
+    @Namespace private var menuNamespace
+
+    @State private var lastFocusedItem: String?
+
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.viewModel = viewModel
@@ -75,6 +95,8 @@ SideMenuView: SwiftUI.View {
         // Set the filter for consoles based on showEmptySystems
         let filter = showEmptySystems ? nil : NSPredicate(format: "games.@count > 0")
         _consoles = ObservedResults(PVSystem.self, filter: filter)
+
+        setupGamepadHandling()
     }
 
     public static func instantiate(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
@@ -105,58 +127,150 @@ SideMenuView: SwiftUI.View {
         return self.gameLibrary.searchResults(for: self.searchBar.text)
     }
 
+    private func setupGamepadHandling() {
+        NotificationCenter.default.addObserver(
+            forName: .GCControllerDidConnect,
+            object: nil,
+            queue: .main
+        ) { _ in
+            self.connectGamepad()
+        }
+
+        // Check for already connected controller
+        connectGamepad()
+    }
+
+    private func connectGamepad() {
+        guard let controller = GCController.current ?? GCController.controllers().first else {
+            print("No gamepad connected")
+            return
+        }
+
+        print("Gamepad connected and setting up handlers")
+
+        // Remove any existing handlers
+        controller.extendedGamepad?.buttonA.valueChangedHandler = nil
+        controller.extendedGamepad?.dpad.valueChangedHandler = nil
+
+        // Set up new handlers
+        controller.extendedGamepad?.buttonA.valueChangedHandler = { _, _, pressed in
+            guard pressed else { return }
+
+            print("Button A pressed, current focusedItem: \(String(describing: self.focusedItem))")
+
+            DispatchQueue.main.async {
+                if let focusedId = self.focusedItem {
+                    print("Executing action for focusedId: \(focusedId)")
+                    switch focusedId {
+                    case "home":
+                        self.delegate.didTapHome()
+                    case "settings":
+                        self.delegate.didTapSettings()
+                    case "imports":
+                        self.delegate.didTapImports()
+                    default:
+                        print("Console selection: \(focusedId)")
+                        self.delegate.didTapConsole(with: focusedId)
+                    }
+                }
+            }
+        }
+
+        // Add dpad logging
+        controller.extendedGamepad?.dpad.valueChangedHandler = { _, xValue, yValue in
+            print("D-pad input - X: \(xValue), Y: \(yValue)")
+            print("Current focusedItem before: \(String(describing: self.focusedItem))")
+
+            // Only process when the d-pad is pressed (not released)
+            guard abs(yValue) == 1.0 else { return }
+
+            DispatchQueue.main.async {
+                // Get all menu items in order
+                var menuItems = ["home", "settings", "imports"]
+                menuItems.append(contentsOf: self.sortedConsoles().map { $0.identifier })
+
+                // Find current index
+                guard let currentIndex = menuItems.firstIndex(where: { $0 == self.focusedItem }) else {
+                    self.focusedItem = menuItems.first
+                    return
+                }
+
+                // Calculate new index based on d-pad direction
+                let newIndex: Int
+                if yValue == 1.0 { // Up
+                    newIndex = max(0, currentIndex - 1)
+                } else { // Down
+                    newIndex = min(menuItems.count - 1, currentIndex + 1)
+                }
+
+                print("Moving focus from index \(currentIndex) to \(newIndex)")
+                self.focusedItem = menuItems[newIndex]
+            }
+        }
+    }
+
     public var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 0) {
-                    Divider()
-                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    
-                    MenuItemView(icon: .named("prov_home_icon"), rowTitle: "Home") {
-                        delegate.didTapHome()
-                    }
-                    
-                    Divider()
-                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    
-                    MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings") {
-                        delegate.didTapSettings()
-                    }
-                    
-//                    Divider()
-//                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-//                    
-//                    MenuItemView(icon: .named("prov_add_games_icon"), rowTitle: "Add Games") {
-//                        delegate?.didTapAddGames()
-//                    }
-                    Divider()
-                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    
-                    MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Add Games") {
-                        delegate.didTapImports()
-                    }
-#if canImport(FreemiumKit)
-                    Divider()
-                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    PaidStatusView(style: .plain)
-                        .listRowBackground(Color.accentColor)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 10)
-#endif
-                    if consoles.count > 0 {
-                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
-                            viewModel.sortConsolesAscending.toggle()
+                VStack {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        Divider()
+                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+
+                        MenuItemView(icon: .named("prov_home_icon"), rowTitle: "Home") {
+                            delegate.didTapHome()
                         }
-                        ForEach(sortedConsoles(), id: \.self) { console in
-                            Divider()
-                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                            MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name) {
-                                delegate.didTapConsole(with: console.identifier)
+                        .focusableIfAvailable()
+                        .focused($focusedItem, equals: "home")
+
+                        Divider()
+                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+
+                        MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings") {
+                            delegate.didTapSettings()
+                        }
+                        .focusableIfAvailable()
+                        .focused($focusedItem, equals: "settings")
+
+    //                    Divider()
+    //                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+    //
+    //                    MenuItemView(icon: .named("prov_add_games_icon"), rowTitle: "Add Games") {
+    //                        delegate?.didTapAddGames()
+    //                    }
+                        Divider()
+                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+
+                        MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Add Games") {
+                            delegate.didTapImports()
+                        }
+                        .focusableIfAvailable()
+                        .focused($focusedItem, equals: "imports")
+    #if canImport(FreemiumKit)
+                        Divider()
+                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                        PaidStatusView(style: .plain)
+                            .listRowBackground(Color.accentColor)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 10)
+    #endif
+                        if consoles.count > 0 {
+                            MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
+                                viewModel.sortConsolesAscending.toggle()
+                            }
+                            ForEach(sortedConsoles(), id: \.self) { console in
+                                Divider()
+                                    .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                                MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name) {
+                                    delegate.didTapConsole(with: console.identifier)
+                                }
+                                .focusableIfAvailable()
+                                .focused($focusedItem, equals: console.identifier)
                             }
                         }
+                        MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
+                        Spacer()
                     }
-                    MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
-                    Spacer()
                 }
             }
         }
@@ -217,6 +331,22 @@ SideMenuView: SwiftUI.View {
                     }
                 }
             )
+        }
+        .onAppear {
+            setupGamepadHandling()
+        }
+        .onDisappear {
+            if let handler = gamepadHandler {
+                NotificationCenter.default.removeObserver(handler)
+            }
+        }
+        .task {
+            // Set initial focus to home when menu appears
+            focusedItem = "home"
+        }
+        .onChange(of: focusedItem) { newValue in
+            print("Focus changed from \(String(describing: lastFocusedItem)) to \(String(describing: newValue))")
+            lastFocusedItem = newValue
         }
     }
 }
