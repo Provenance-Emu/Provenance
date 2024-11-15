@@ -3,33 +3,7 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [X] RetroArch GLES cores are crashing?
-- [X] moveable button joystick and dpad move at the same time
-- [X] Delete isn't deleting
-    - [X] throw an error on file manager error
-- [X] audio is fucked
-- [X] 4X multisampling crashes Mupen on iPad, (iphone?)
-- [X] Refresh library and conflicts on new UI not working
-- [X] UI is unresponsive after closing emulator
-- [X] wrap advanced settings in freemiumview
-- [X] fix launching webserver from swiftui menu
-- [X] iCloud sync isn't working, remove or fix
-- [X] Swift UI long press on roms menu missing actions {rename, ~~share~~}
-- [X] Progress hud on unzips isn't hiding
-- [X] Themes setting doesn't work
-- [X] Conflicts folder is weird
-- [X] SwiftUI not seeing conflicts
-- [X] Copy the framework loader from old branch, fix it too!
-- [X] emuThreeDS and other metal based cores have wrong layout contraints
-- [X] Possible race condition in importer
-- [X] Gambatte swift module not done
-- [X] PVmGBA swift module is not done
-- [X] Fix Repo submodules
-- [X] Audio broken
-- [X] Loading save states crashes realm
-- [X] Creating save states crashes realm
-- [X] SwiftUI not importing roms correctly
-- [X] compiling with Mupen+Rumble.swift breaks device release builds
+- [ ] Shared documents :        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
 
 ## Major bugs
 
@@ -90,6 +64,7 @@ _My personal TODO notes_
     - [ ] Game text not themed
     - [ ] New import indicator not themed
 - [ ] Make GameMoreInfoVC and it's equivlant PageViewController into native swifttUI with editing of properties
+- [ ] App Group containers in Catalyst "public class var appGroupContainer"
 
 ## Cores to translate
 
