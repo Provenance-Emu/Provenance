@@ -111,22 +111,28 @@ SideMenuView: SwiftUI.View {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     Divider()
                         .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings") {
-                        delegate.didTapSettings()
-                    }
-                    Divider()
-                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                    
                     MenuItemView(icon: .named("prov_home_icon"), rowTitle: "Home") {
                         delegate.didTapHome()
                     }
+                    
                     Divider()
                         .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    MenuItemView(icon: .named("prov_add_games_icon"), rowTitle: "Add Games") {
-                        delegate?.didTapAddGames()
+                    
+                    MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings") {
+                        delegate.didTapSettings()
                     }
+                    
+//                    Divider()
+//                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+//                    
+//                    MenuItemView(icon: .named("prov_add_games_icon"), rowTitle: "Add Games") {
+//                        delegate?.didTapAddGames()
+//                    }
                     Divider()
                         .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Import Queue") {
+                    
+                    MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Add Games") {
                         delegate.didTapImports()
                     }
 #if canImport(FreemiumKit)
@@ -144,7 +150,7 @@ SideMenuView: SwiftUI.View {
                         ForEach(sortedConsoles(), id: \.self) { console in
                             Divider()
                                 .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                            MenuItemView(icon: .named(console.iconName), rowTitle: console.name) {
+                            MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name) {
                                 delegate.didTapConsole(with: console.identifier)
                             }
                         }
