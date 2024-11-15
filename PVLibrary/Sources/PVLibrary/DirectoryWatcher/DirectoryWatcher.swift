@@ -58,10 +58,7 @@ public extension NSNotification.Name {
     static let PVArchiveInflationFailed = NSNotification.Name("PVArchiveInflationFailedNotification")
 }
 
-let TIMER_DELAY_IN_SECONDS = 2.0
 import Perception
-
-
 
 /// A class that watches a directory for changes and handles file operations
 ///
@@ -655,7 +652,6 @@ private actor FileWatcherManager {
         var watcher: DispatchSourceFileSystemObject
         var size: Int64
         var modificationDate: Date
-        var timer: Timer?
 
         mutating func update(size: Int64? = nil,
                            modificationDate: Date? = nil,
@@ -665,10 +661,6 @@ private actor FileWatcherManager {
             }
             if let modificationDate = modificationDate {
                 self.modificationDate = modificationDate
-            }
-            if let timer = timer {
-                self.timer?.invalidate()
-                self.timer = timer
             }
         }
     }
@@ -687,8 +679,7 @@ private actor FileWatcherManager {
         let status = FileStatus(
             watcher: source,
             size: initialSize,
-            modificationDate: modificationDate,
-            timer: nil
+            modificationDate: modificationDate
         )
         fileStatuses[path] = status
     }
@@ -696,7 +687,6 @@ private actor FileWatcherManager {
     func removeWatcher(for path: URL) {
         if let status = fileStatuses[path] {
             status.watcher.cancel()
-            status.timer?.invalidate()
         }
         fileStatuses[path] = nil
     }
