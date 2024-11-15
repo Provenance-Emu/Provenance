@@ -486,13 +486,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
     
     func documentsPath() -> String? {
-#if os(tvOS)
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-#else
-        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-#endif
-        let documentsDirectoryPath: String = paths[0]
-        return documentsDirectoryPath
+//#if os(tvOS)
+//        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+//#else
+//        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+//#endif
+//        let documentsDirectoryPath: String = paths[0]
+//        return documentsDirectoryPath
+        URL.documentsPath.path()
     }
     
 #if os(iOS) && !targetEnvironment(macCatalyst)
