@@ -17,6 +17,7 @@ public enum GamepadEvent {
 public class GamepadManager: ObservableObject {
     public static let shared = GamepadManager()
 
+    @Published public private(set) var isControllerConnected: Bool = false
     private var observers: [NSObjectProtocol] = []
     private let eventSubject = PassthroughSubject<GamepadEvent, Never>()
 
@@ -26,6 +27,7 @@ public class GamepadManager: ObservableObject {
 
     private init() {
         setupNotifications()
+        isControllerConnected = GCController.controllers().isEmpty == false
     }
 
     private func setupNotifications() {
@@ -35,6 +37,7 @@ public class GamepadManager: ObservableObject {
             queue: .main
         ) { [weak self] _ in
             self?.connectGamepad()
+            self?.isControllerConnected = true
         }
 
         let disconnectObserver = NotificationCenter.default.addObserver(
@@ -43,6 +46,7 @@ public class GamepadManager: ObservableObject {
             queue: .main
         ) { [weak self] _ in
             print("Gamepad disconnected")
+            self?.isControllerConnected = false
         }
 
         observers.append(connectObserver)
