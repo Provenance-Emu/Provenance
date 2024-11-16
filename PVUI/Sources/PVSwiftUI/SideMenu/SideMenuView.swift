@@ -169,9 +169,12 @@ SideMenuView: SwiftUI.View {
 
         if let currentItem = focusedItem,
            let currentIndex = items.firstIndex(of: currentItem) {
-            let newIndex = value > 0 ?
-                max(0, currentIndex - 1) :
-                min(items.count - 1, currentIndex + 1)
+            let newIndex: Int
+            if value > 0 { // Going up
+                newIndex = currentIndex == 0 ? items.count - 1 : currentIndex - 1
+            } else { // Going down
+                newIndex = currentIndex == items.count - 1 ? 0 : currentIndex + 1
+            }
             focusedItem = items[newIndex]
         } else {
             focusedItem = items.first
