@@ -6,7 +6,7 @@ import Combine
 public enum GamepadEvent {
     case buttonPress
     case buttonB
-    case verticalNavigation(Float)
+    case verticalNavigation(Float, Bool)
     case horizontalNavigation(Float)
     case menuToggle
     case shoulderLeft
@@ -75,10 +75,10 @@ public class GamepadManager: ObservableObject {
             }
         }
 
-        controller.extendedGamepad?.dpad.valueChangedHandler = { [weak self] _, xValue, yValue in
+        controller.extendedGamepad?.dpad.valueChangedHandler = { [weak self] dpad, xValue, yValue in
             DispatchQueue.main.async {
                 if abs(yValue) == 1.0 {
-                    self?.eventSubject.send(.verticalNavigation(yValue))
+                    self?.eventSubject.send(.verticalNavigation(yValue, dpad.up.isPressed || dpad.down.isPressed))
                 } else if abs(xValue) == 1.0 {
                     self?.eventSubject.send(.horizontalNavigation(xValue))
                 }

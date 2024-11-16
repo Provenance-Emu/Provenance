@@ -94,6 +94,10 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     @State private var gamepadCancellable: AnyCancellable?
 
+    @State private var navigationTimer: Timer?
+    @State private var initialDelay: TimeInterval = 0.5
+    @State private var repeatDelay: TimeInterval = 0.15
+
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
         let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
@@ -525,8 +529,22 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 switch event {
                 case .buttonPress:
                     handleButtonPress()
-                case .verticalNavigation(let value):
+                case .verticalNavigation(let value, let isPressed):
+                    // Cancel existing timer if any
+                    navigationTimer?.invalidate()
+                    navigationTimer = nil
+
+                    // Perform initial navigation
                     handleVerticalNavigation(value)
+
+                    // Only setup continuous navigation if button is pressed
+                    if isPressed {
+                        navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
+                            navigationTimer = Timer.scheduledTimer(withTimeInterval: repeatDelay, repeats: true) { [self] _ in
+                                handleVerticalNavigation(value)
+                            }
+                        }
+                    }
                 case .horizontalNavigation(let value):
                     handleHorizontalNavigation(value)
                 case .start:

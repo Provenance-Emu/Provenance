@@ -67,6 +67,10 @@ struct HomeView: SwiftUI.View {
     @FocusState private var focusedSection: GameSection?
     @FocusState private var focusedItemInSection: String?
 
+    @State private var navigationTimer: Timer?
+    @State private var initialDelay: TimeInterval = 0.5
+    @State private var repeatDelay: TimeInterval = 0.15
+
     init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil, viewModel: PVRootViewModel) {
 //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
@@ -142,6 +146,7 @@ struct HomeView: SwiftUI.View {
             setupGamepadHandling()
         }
         .onDisappear {
+            navigationTimer?.invalidate()
             gamepadCancellable?.cancel()
         }
     }
@@ -153,12 +158,25 @@ struct HomeView: SwiftUI.View {
                 switch event {
                 case .buttonPress:
                     handleButtonPress()
-                case .verticalNavigation(let value):
+                case .verticalNavigation(let value, let isPressed):
+                    // Cancel existing timer if any
+                    navigationTimer?.invalidate()
+                    navigationTimer = nil
+
+                    // Perform initial navigation
                     handleVerticalNavigation(value)
+
+                    // Only setup continuous navigation if button is pressed
+                    if isPressed {
+                        navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
+                            navigationTimer = Timer.scheduledTimer(withTimeInterval: repeatDelay, repeats: true) { [self] _ in
+                                handleVerticalNavigation(value)
+                            }
+                        }
+                    }
                 case .horizontalNavigation(let value):
                     handleHorizontalNavigation(value)
                 case .start:
-                    // Show game options menu if an item is focused
                     if let focusedItem = focusedItemInSection {
                         showOptionsMenu(for: focusedItem)
                     }

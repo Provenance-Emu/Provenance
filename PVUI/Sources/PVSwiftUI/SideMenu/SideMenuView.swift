@@ -77,6 +77,10 @@ SideMenuView: SwiftUI.View {
 
     @State private var gamepadCancellable: AnyCancellable?
 
+    @State private var navigationTimer: Timer?
+    @State private var initialDelay: TimeInterval = 0.5
+    @State private var repeatDelay: TimeInterval = 0.15
+
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.viewModel = viewModel
@@ -139,9 +143,26 @@ SideMenuView: SwiftUI.View {
                     handleButtonPress()
                 case .buttonB:
                     delegate.closeMenu()
-                case .verticalNavigation(let value):
+                case .verticalNavigation(let value, let isPressed):
+                    // Cancel existing timer if any
+                    navigationTimer?.invalidate()
+                    navigationTimer = nil
+
+                    // Perform initial navigation
                     handleVerticalNavigation(value)
+
+                    // Only setup continuous navigation if button is pressed
+                    if isPressed {
+                        navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
+                            navigationTimer = Timer.scheduledTimer(withTimeInterval: repeatDelay, repeats: true) { [self] _ in
+                                handleVerticalNavigation(value)
+                            }
+                        }
+                    }
                 default:
+                    // Cancel timer when no vertical input
+                    navigationTimer?.invalidate()
+                    navigationTimer = nil
                     break
                 }
             }
@@ -179,8 +200,6 @@ SideMenuView: SwiftUI.View {
         } else {
             focusedItem = items.first
         }
-
-        print("Vertical navigation - New item: \(String(describing: focusedItem))")
     }
 
     public var body: some SwiftUI.View {
