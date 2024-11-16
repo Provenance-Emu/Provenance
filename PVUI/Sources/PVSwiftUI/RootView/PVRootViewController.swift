@@ -161,35 +161,45 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                         self.showMenu()
                     }
                 case .shoulderLeft:
-                    if let currentConsole = self.viewModel.selectedConsole {
-                        self.navigateToPreviousConsole(from: currentConsole)
+                    let allConsoles = gameLibrary.activeSystems
+                    if consolesWrapperViewDelegate.selectedTab.isEmpty || consolesWrapperViewDelegate.selectedTab == "home" {
+                        // We're in home, wrap to last console
+                        if let lastConsole = allConsoles.last {
+                            didTapConsole(with: lastConsole.identifier)
+                        }
+                    } else {
+                        // Find current console and go to previous or home
+                        if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == self.consolesWrapperViewDelegate.selectedTab }) {
+                            if currentIndex == 0 {
+                                didTapHome()
+                            } else {
+                                let previousConsole = allConsoles[currentIndex - 1]
+                                didTapConsole(with: previousConsole.identifier)
+                            }
+                        }
                     }
                 case .shoulderRight:
-                    if let currentConsole = self.viewModel.selectedConsole {
-                        self.navigateToNextConsole(from: currentConsole)
+                    let allConsoles = gameLibrary.activeSystems
+                    if consolesWrapperViewDelegate.selectedTab.isEmpty || self.consolesWrapperViewDelegate.selectedTab == "home" {
+                        // We're in home, go to first console
+                        if let firstConsole = allConsoles.first {
+                            didTapConsole(with: firstConsole.identifier)
+                        }
+                    } else {
+                        // Find current console and go to next or wrap to home
+                        if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == self.consolesWrapperViewDelegate.selectedTab }) {
+                            if currentIndex == allConsoles.count - 1 {
+                                didTapHome()
+                            } else {
+                                let nextConsole = allConsoles[currentIndex + 1]
+                                didTapConsole(with: nextConsole.identifier)
+                            }
+                        }
                     }
                 default:
                     break
                 }
             }
-    }
-
-    private func navigateToPreviousConsole(from currentConsole: PVSystem) {
-        if let allConsoles = try? Realm().objects(PVSystem.self).sorted(byKeyPath: "name"),
-           let currentIndex = allConsoles.firstIndex(of: currentConsole) {
-            let previousIndex = (currentIndex - 1 + allConsoles.count) % allConsoles.count
-            let previousConsole = allConsoles[previousIndex]
-            self.didTapConsole(with: previousConsole.identifier)
-        }
-    }
-
-    private func navigateToNextConsole(from currentConsole: PVSystem) {
-        if let allConsoles = try? Realm().objects(PVSystem.self).sorted(byKeyPath: "name"),
-           let currentIndex = allConsoles.firstIndex(of: currentConsole) {
-            let nextIndex = (currentIndex + 1) % allConsoles.count
-            let nextConsole = allConsoles[nextIndex]
-            self.didTapConsole(with: nextConsole.identifier)
-        }
     }
 }
 

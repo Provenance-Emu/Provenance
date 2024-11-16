@@ -34,7 +34,6 @@ struct ConsolesWrapperView: SwiftUI.View {
     @State private var showEmptySystems: Bool
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var gamepadCancellable: AnyCancellable?
 
     // MARK: - Initializer
 
@@ -74,9 +73,6 @@ struct ConsolesWrapperView: SwiftUI.View {
         .tint(themeManager.currentPalette.defaultTintColor?.swiftUIColor)
         .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-        .onAppear {
-            setupGamepadHandling()
-        }
     }
 
     // MARK: - Helper Methods
@@ -101,27 +97,6 @@ struct ConsolesWrapperView: SwiftUI.View {
                 }
                 .tag(console.identifier)
         }
-    }
-
-    private func setupGamepadHandling() {
-        gamepadCancellable = GamepadManager.shared.eventPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { event in
-                switch event {
-                case .shoulderLeft:
-                    if let currentIndex = sortedConsoles().firstIndex(where: { $0.identifier == delegate.selectedTab }) {
-                        let previousIndex = (currentIndex - 1 + sortedConsoles().count) % sortedConsoles().count
-                        delegate.selectedTab = sortedConsoles()[previousIndex].identifier
-                    }
-                case .shoulderRight:
-                    if let currentIndex = sortedConsoles().firstIndex(where: { $0.identifier == delegate.selectedTab }) {
-                        let nextIndex = (currentIndex + 1) % sortedConsoles().count
-                        delegate.selectedTab = sortedConsoles()[nextIndex].identifier
-                    }
-                default:
-                    break
-                }
-            }
     }
 }
 
