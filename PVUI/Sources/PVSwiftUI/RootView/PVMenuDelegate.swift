@@ -44,7 +44,6 @@ public protocol PVMenuDelegate: AnyObject {
     func didTapCollection(with collection: Int)
     func closeMenu()
 }
-
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate {
 
@@ -76,12 +75,6 @@ extension PVRootViewController: PVMenuDelegate {
 
         self.closeMenu()
         self.present(navigationController, animated: true)
-    }
-
-    public func didTapHome() {
-        self.closeMenu()
-        let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self, viewModel: self.viewModel)
-        self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
     }
 
     public func didTapAddGames() {
@@ -130,34 +123,6 @@ extension PVRootViewController: PVMenuDelegate {
             present(actionSheet, animated: true, completion: nil)
         }
         #endif
-    }
-
-    public func didTapConsole(with consoleId: String) {
-        self.closeMenu()
-
-        guard let console = gameLibrary.system(identifier: consoleId) else { return }
-        let consoles = gameLibrary.activeSystems
-
-        consolesWrapperViewDelegate.selectedTab = console.identifier
-        self.consoleIdentifiersAndNamesMap.removeAll()
-        for console in consoles {
-            self.consoleIdentifiersAndNamesMap[console.identifier] = console.name
-        }
-        selectedTabCancellable?.cancel()
-        selectedTabCancellable = consolesWrapperViewDelegate.$selectedTab.sink { [weak self] tab in
-            guard let self = self else { return }
-            if let cachedTitle = self.consoleIdentifiersAndNamesMap[tab] {
-                self.navigationItem.title = cachedTitle
-            } else if let console = self.gameLibrary.system(identifier: tab) {
-                self.consoleIdentifiersAndNamesMap[console.identifier] = console.name
-                self.navigationItem.title = self.consoleIdentifiersAndNamesMap[tab]
-            } else {
-                self.navigationItem.title = tab
-            }
-        }
-
-        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
-        self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
     public func didTapCollection(with collection: Int) {

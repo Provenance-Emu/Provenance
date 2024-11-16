@@ -58,7 +58,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     var viewModel: PVRootViewModel!
 
     var updatesController: PVGameLibraryUpdatesController!
-    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
+    public var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
     var gameImporter: GameImporter!
 
     var selectedTabCancellable: AnyCancellable?
@@ -120,12 +120,23 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         self.sideNavigationController?.closeSide()
     }
 
-    func determineInitialView() {
+    public func determineInitialView() {
+        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
+        loadIntoContainer(.home, newVC: UIHostingController(rootView: consolesView))
+
         if let console = gameLibrary.activeSystems.first {
-            didTapConsole(with: console.identifier)
+            consolesWrapperViewDelegate.selectedTab = console.identifier
         } else {
-            didTapHome()
+            consolesWrapperViewDelegate.selectedTab = "home"
         }
+    }
+
+    public func didTapHome() {
+        consolesWrapperViewDelegate.selectedTab = "home"
+    }
+
+    public func didTapConsole(with identifier: String) {
+        consolesWrapperViewDelegate.selectedTab = identifier
     }
 
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
@@ -161,45 +172,53 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                         self.showMenu()
                     }
                 case .shoulderLeft:
-                    let allConsoles = gameLibrary.activeSystems
-                    if consolesWrapperViewDelegate.selectedTab.isEmpty || consolesWrapperViewDelegate.selectedTab == "home" {
-                        // We're in home, wrap to last console
-                        if let lastConsole = allConsoles.last {
-                            didTapConsole(with: lastConsole.identifier)
-                        }
-                    } else {
-                        // Find current console and go to previous or home
-                        if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == self.consolesWrapperViewDelegate.selectedTab }) {
-                            if currentIndex == 0 {
-                                didTapHome()
-                            } else {
-                                let previousConsole = allConsoles[currentIndex - 1]
-                                didTapConsole(with: previousConsole.identifier)
-                            }
-                        }
-                    }
+                    navigateToPrevious()
                 case .shoulderRight:
-                    let allConsoles = gameLibrary.activeSystems
-                    if consolesWrapperViewDelegate.selectedTab.isEmpty || self.consolesWrapperViewDelegate.selectedTab == "home" {
-                        // We're in home, go to first console
-                        if let firstConsole = allConsoles.first {
-                            didTapConsole(with: firstConsole.identifier)
-                        }
-                    } else {
-                        // Find current console and go to next or wrap to home
-                        if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == self.consolesWrapperViewDelegate.selectedTab }) {
-                            if currentIndex == allConsoles.count - 1 {
-                                didTapHome()
-                            } else {
-                                let nextConsole = allConsoles[currentIndex + 1]
-                                didTapConsole(with: nextConsole.identifier)
-                            }
-                        }
-                    }
+                    navigateToNext()
                 default:
                     break
                 }
             }
+    }
+
+    private func navigateToPrevious() {
+        let allConsoles = gameLibrary.activeSystems
+        let currentTab = consolesWrapperViewDelegate.selectedTab
+
+        if currentTab == "home" {
+            // From home, wrap to last console
+            if let lastConsole = allConsoles.last {
+                consolesWrapperViewDelegate.selectedTab = lastConsole.identifier
+            }
+        } else if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == currentTab }) {
+            if currentIndex == 0 {
+                // From first console, go to home
+                consolesWrapperViewDelegate.selectedTab = "home"
+            } else {
+                // Go to previous console
+                consolesWrapperViewDelegate.selectedTab = allConsoles[currentIndex - 1].identifier
+            }
+        }
+    }
+
+    private func navigateToNext() {
+        let allConsoles = gameLibrary.activeSystems
+        let currentTab = consolesWrapperViewDelegate.selectedTab
+
+        if currentTab == "home" {
+            // From home, go to first console
+            if let firstConsole = allConsoles.first {
+                consolesWrapperViewDelegate.selectedTab = firstConsole.identifier
+            }
+        } else if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == currentTab }) {
+            if currentIndex == allConsoles.count - 1 {
+                // From last console, wrap to home
+                consolesWrapperViewDelegate.selectedTab = "home"
+            } else {
+                // Go to next console
+                consolesWrapperViewDelegate.selectedTab = allConsoles[currentIndex + 1].identifier
+            }
+        }
     }
 }
 

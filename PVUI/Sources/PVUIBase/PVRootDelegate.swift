@@ -23,6 +23,8 @@ public protocol PVRootDelegate: AnyObject {
     func root_updateRecentGames(_ game: PVGame)
     func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
     func showMessage(_ message: String, title: String)
+
+    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>! { get }
 }
 
 extension PVRootDelegate {

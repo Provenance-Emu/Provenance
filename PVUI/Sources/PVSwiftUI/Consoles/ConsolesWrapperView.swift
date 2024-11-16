@@ -29,7 +29,7 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     @ObservedObject var delegate: ConsolesWrapperViewDelegate
     @ObservedObject var viewModel: PVRootViewModel
-    weak var rootDelegate: PVRootDelegate!
+    weak var rootDelegate: (PVRootDelegate & PVMenuDelegate)!
 
     @State private var showEmptySystems: Bool
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
@@ -40,7 +40,7 @@ struct ConsolesWrapperView: SwiftUI.View {
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
         viewModel: PVRootViewModel,
-        rootDelegate: PVRootDelegate
+        rootDelegate: PVRootDelegate & PVMenuDelegate
     ) {
         self.delegate = consolesWrapperViewDelegate
         self.viewModel = viewModel
@@ -61,10 +61,18 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         TabView(selection: $delegate.selectedTab) {
-            if consoles.isEmpty {
-                showNoConsolesView()
-            } else {
-                showConsoles()
+            HomeView(gameLibrary: rootDelegate.gameLibrary!, delegate: rootDelegate, viewModel: viewModel)
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
+                .tag("home")
+
+            ForEach(sortedConsoles(), id: \.self) { console in
+                ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
+                    .tabItem {
+                        Label(console.name, systemImage: console.iconName)
+                    }
+                    .tag(console.identifier)
             }
         }
         .tabViewStyle(.page)
