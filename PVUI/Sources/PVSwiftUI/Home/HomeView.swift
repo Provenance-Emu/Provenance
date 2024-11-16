@@ -21,7 +21,7 @@ enum PVHomeSection: Int, CaseIterable, Sendable {
 }
 
 @available(iOS 14, tvOS 14, *)
-struct HomeView: SwiftUI.View {
+struct HomeView: SwiftUI.View, GamepadNavigationDelegate {
 
 //    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
 
@@ -61,8 +61,8 @@ struct HomeView: SwiftUI.View {
     ) var allGames
     // RomDatabase.sharedInstance.allGamesSortedBySystemThenTitle
 
-    @FocusState private var focusedSection: GameSection?
-    @FocusState private var focusedItemInSection: String?
+    @FocusState internal var focusedSection: GameSection?
+    @FocusState internal var focusedItemInSection: String?
 
     private var focusedSectionBinding: Binding<GameSection?> {
         Binding(
@@ -77,6 +77,8 @@ struct HomeView: SwiftUI.View {
             set: { focusedItemInSection = $0 }
         )
     }
+
+    @State private var lastFocusedSection: GameSection?
 
     init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil, viewModel: PVRootViewModel) {
 //        self.gameLibrary = gameLibrary
@@ -143,6 +145,9 @@ struct HomeView: SwiftUI.View {
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
         }
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+        .onAppear {
+            GamepadManager.shared.setDelegate(self)
+        }
     }
 
     private func displayOptionsView() -> some View {
@@ -183,6 +188,115 @@ struct HomeView: SwiftUI.View {
             }
         }
         .padding(.horizontal, 10)
+    }
+
+    // MARK: - GamepadNavigationDelegate
+
+    func handleButtonPress() {
+        guard let section = focusedSection, let itemId = focusedItemInSection else {
+            print("No focused section or item")
+            return
+        }
+
+        print("Handling button press for section: \(section), item: \(itemId)")
+
+        switch section {
+        case .continues:
+            if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(
+                        saveState.game,
+                        sender: self,
+                        core: saveState.core,
+                        saveState: saveState
+                    )
+                }
+            }
+        case .recentlyPlayed:
+            if let recentGame = recentlyPlayedGames.first(where: { $0.game?.id == itemId })?.game {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(recentGame, sender: self, core: nil, saveState: nil)
+                }
+            }
+        case .favorites:
+            if let game = favorites.first(where: { $0.id == itemId }) {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                }
+            }
+        case .games:
+            if let game = allGames.first(where: { $0.id == itemId }) {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                }
+            }
+        }
+    }
+
+    func handleVerticalNavigation(_ yValue: Float) {
+        let sections: [GameSection] = [
+            showRecentSaveStates && !recentSaveStates.isEmpty ? .continues : nil,
+            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayed : nil,
+            showFavorites && !favorites.isEmpty ? .favorites : nil,
+            !allGames.isEmpty ? .games : nil
+        ].compactMap { $0 }
+
+        guard !sections.isEmpty else { return }
+
+        if let currentSection = focusedSection,
+           let currentIndex = sections.firstIndex(of: currentSection) {
+            let newIndex = yValue > 0 ?
+                max(0, currentIndex - 1) :
+                min(sections.count - 1, currentIndex + 1)
+            focusedSection = sections[newIndex]
+            focusedItemInSection = getFirstItemInSection(sections[newIndex])
+        } else {
+            focusedSection = sections.first
+            focusedItemInSection = getFirstItemInSection(sections.first!)
+        }
+
+        print("Vertical navigation - New section: \(String(describing: focusedSection))")
+    }
+
+    func handleHorizontalNavigation(_ xValue: Float) {
+        guard let section = focusedSection else { return }
+
+        let items: [String]
+        switch section {
+        case .continues:
+            items = recentSaveStates.map { $0.id }
+        case .recentlyPlayed:
+            items = recentlyPlayedGames.compactMap { $0.game?.id }
+        case .favorites:
+            items = favorites.map { $0.id }
+        case .games:
+            items = allGames.map { $0.id }
+        }
+
+        if let currentItem = focusedItemInSection,
+           let currentIndex = items.firstIndex(of: currentItem) {
+            let newIndex = xValue < 0 ?
+                max(0, currentIndex - 1) :
+                min(items.count - 1, currentIndex + 1)
+            focusedItemInSection = items[newIndex]
+        } else {
+            focusedItemInSection = items.first
+        }
+
+        print("Horizontal navigation - New item: \(String(describing: focusedItemInSection))")
+    }
+
+    private func getFirstItemInSection(_ section: GameSection) -> String? {
+        switch section {
+        case .continues:
+            return recentSaveStates.first?.id
+        case .recentlyPlayed:
+            return recentlyPlayedGames.first?.game?.id
+        case .favorites:
+            return favorites.first?.id
+        case .games:
+            return allGames.first?.id
+        }
     }
 }
 
