@@ -7,7 +7,7 @@ public enum GamepadEvent {
     case buttonPress
     case buttonB
     case verticalNavigation(Float, Bool)
-    case horizontalNavigation(Float)
+    case horizontalNavigation(Float, Bool)
     case menuToggle
     case shoulderLeft
     case shoulderRight
@@ -80,7 +80,7 @@ public class GamepadManager: ObservableObject {
                 if abs(yValue) == 1.0 {
                     self?.eventSubject.send(.verticalNavigation(yValue, dpad.up.isPressed || dpad.down.isPressed))
                 } else if abs(xValue) == 1.0 {
-                    self?.eventSubject.send(.horizontalNavigation(xValue))
+                    self?.eventSubject.send(.horizontalNavigation(xValue, dpad.left.isPressed || dpad.right.isPressed))
                 }
             }
         }

@@ -174,7 +174,7 @@ struct HomeView: SwiftUI.View {
                             }
                         }
                     }
-                case .horizontalNavigation(let value):
+                case .horizontalNavigation(let value, _):
                     handleHorizontalNavigation(value)
                 case .start:
                     if let focusedItem = focusedItemInSection {

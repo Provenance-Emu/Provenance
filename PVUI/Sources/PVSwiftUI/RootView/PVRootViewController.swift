@@ -69,6 +69,10 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     private var gameController: GCController?
     private var controllerObserver: Any?
 
+    private var navigationTimer: Timer?
+    private let initialDelay: TimeInterval = 0.5
+    private let repeatDelay: TimeInterval = 0.15
+
     public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary<RealmDatabaseDriver>, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
@@ -103,6 +107,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(controllerObserver as Any)
+        navigationTimer?.invalidate()
         gameController = nil
     }
 
@@ -184,10 +189,37 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                         self.showMenu()
                     }
                 case .shoulderLeft:
+                    // Cancel existing timer
+                    navigationTimer?.invalidate()
+                    navigationTimer = nil
+
+                    // Initial navigation
                     navigateToPrevious()
+
+                    // Setup continuous navigation
+                    navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
+                        self.navigationTimer = Timer.scheduledTimer(withTimeInterval: self.repeatDelay, repeats: true) { [self] _ in
+                            self.navigateToPrevious()
+                        }
+                    }
                 case .shoulderRight:
+                    // Cancel existing timer
+                    navigationTimer?.invalidate()
+                    navigationTimer = nil
+
+                    // Initial navigation
                     navigateToNext()
+
+                    // Setup continuous navigation
+                    navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
+                        self.navigationTimer = Timer.scheduledTimer(withTimeInterval: self.repeatDelay, repeats: true) { [self] _ in
+                            self.navigateToNext()
+                        }
+                    }
                 default:
+                    // Cancel any existing timer when other buttons are pressed
+                    navigationTimer?.invalidate()
+                    navigationTimer = nil
                     break
                 }
             }
