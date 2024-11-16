@@ -26,6 +26,11 @@ struct MenuItemView: SwiftUI.View {
     var action: () -> Void
 
     @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var gamepadManager = GamepadManager.shared
+
+    private var shouldShowFocus: Bool {
+        isFocused && gamepadManager.isControllerConnected
+    }
 
     var body: some SwiftUI.View {
         let _ = print("MenuItemView '\(rowTitle)' isFocused: \(isFocused)")
@@ -37,10 +42,10 @@ struct MenuItemView: SwiftUI.View {
                 icon.image
                     .renderingMode(.template)
                     .resizable().scaledToFit().cornerRadius(4).padding(8)
-                    .tint(isFocused ? themeManager.currentPalette.menuIconTint.swiftUIColor : themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(0.6))
+                    .tint(shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(0.6))
                 /// Text
                 Text(rowTitle)
-                    .foregroundColor(isFocused ? themeManager.currentPalette.menuText.swiftUIColor : themeManager.currentPalette.menuText.swiftUIColor.opacity(0.6))
+                    .foregroundColor(shouldShowFocus ? themeManager.currentPalette.menuText.swiftUIColor : themeManager.currentPalette.menuText.swiftUIColor.opacity(0.6))
                 /// Space
                 Spacer()
             }
@@ -48,13 +53,13 @@ struct MenuItemView: SwiftUI.View {
             .frame(height: 40.0)
             /// Background and focus state
             .background(
-                isFocused ?
+                shouldShowFocus ?
                 themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.8) :
                 themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.3)
             )
             .overlay(
                 Rectangle()
-                    .stroke(isFocused ? themeManager.currentPalette.menuIconTint.swiftUIColor : .clear, lineWidth: 2)
+                    .stroke(shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : .clear, lineWidth: 2)
             )
         }
         .buttonStyle(.plain)
