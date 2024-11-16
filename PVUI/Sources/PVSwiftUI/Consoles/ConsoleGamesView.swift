@@ -16,6 +16,7 @@ import PVThemes
 import PVUIBase
 import PVRealm
 import PVSettings
+import Combine
 
 // TODO: might be able to reuse this view for collections
 
@@ -90,6 +91,8 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     @State private var gamepadHandler: Any?
     @State private var lastFocusedSection: GameSection?
+
+    @State private var gamepadCancellable: AnyCancellable?
 
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
@@ -516,60 +519,29 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     }
 
     private func setupGamepadHandling() {
-        print("Setting up gamepad handling")
-
-        // Remove any existing handler
-        if let handler = gamepadHandler {
-            NotificationCenter.default.removeObserver(handler)
-        }
-
-        // Set up new handler
-        gamepadHandler = NotificationCenter.default.addObserver(
-            forName: .GCControllerDidConnect,
-            object: nil,
-            queue: .main
-        ) { _ in
-            self.connectGamepad()
-        }
-
-        // Connect to any already-connected gamepad
-        connectGamepad()
-    }
-
-    private func connectGamepad() {
-        guard let controller = GCController.current ?? GCController.controllers().first else {
-            print("No gamepad connected")
-            return
-        }
-
-        print("Gamepad connected and setting up handlers")
-
-        controller.extendedGamepad?.buttonA.valueChangedHandler = { _, _, pressed in
-            guard pressed else { return }
-
-            print("Button A pressed, current section: \(String(describing: self.focusedSection))")
-            print("Current focused item: \(String(describing: self.focusedItemInSection))")
-
-            // Handle button press based on focused section
-            DispatchQueue.main.async {
-                self.handleButtonPress()
-            }
-        }
-
-        controller.extendedGamepad?.dpad.valueChangedHandler = { _, xValue, yValue in
-
-            print("D-pad input - X: \(xValue), Y: \(yValue)")
-
-            DispatchQueue.main.async {
-                if abs(yValue) == 1.0 {
-                    // Vertical navigation between sections
-                    self.handleVerticalNavigation(yValue)
-                } else if abs(xValue) == 1.0 {
-                    // Horizontal navigation within sections
-                    self.handleHorizontalNavigation(xValue)
+        gamepadCancellable = GamepadManager.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { event in
+                switch event {
+                case .buttonPress:
+                    handleButtonPress()
+                case .verticalNavigation(let value):
+                    handleVerticalNavigation(value)
+                case .horizontalNavigation(let value):
+                    handleHorizontalNavigation(value)
+                case .start:
+                    if let focusedItem = focusedItemInSection {
+                        showOptionsMenu(for: focusedItem)
+                    }
+                default:
+                    break
                 }
             }
-        }
+    }
+
+    private func showOptionsMenu(for gameId: String) {
+        // Implement context menu showing logic here
+        // This would show the same menu as the long-press context menu
     }
 
     private func handleButtonPress() {

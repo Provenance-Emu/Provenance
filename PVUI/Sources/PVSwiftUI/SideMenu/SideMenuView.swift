@@ -12,6 +12,7 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVThemes
+import Combine
 @_exported import PVUIBase
 
 #if canImport(Introspect)
@@ -74,6 +75,8 @@ SideMenuView: SwiftUI.View {
 
     @State private var lastFocusedItem: String?
 
+    @State private var gamepadCancellable: AnyCancellable?
+
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.viewModel = viewModel
@@ -128,84 +131,49 @@ SideMenuView: SwiftUI.View {
     }
 
     private func setupGamepadHandling() {
-        NotificationCenter.default.addObserver(
-            forName: .GCControllerDidConnect,
-            object: nil,
-            queue: .main
-        ) { _ in
-            self.connectGamepad()
-        }
-
-        // Check for already connected controller
-        connectGamepad()
+        gamepadCancellable = GamepadManager.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { event in
+                switch event {
+                case .buttonPress:
+                    handleButtonPress()
+                case .buttonB:
+                    delegate.closeMenu()
+                case .verticalNavigation(let value):
+                    handleVerticalNavigation(value)
+                default:
+                    break
+                }
+            }
     }
 
-    private func connectGamepad() {
-        guard let controller = GCController.current ?? GCController.controllers().first else {
-            print("No gamepad connected")
-            return
+    private func handleButtonPress() {
+        guard let focusedItem = focusedItem else { return }
+
+        switch focusedItem {
+        case "home":
+            delegate.didTapHome()
+        case "settings":
+            delegate.didTapSettings()
+        case "imports":
+            delegate.didTapImports()
+        default:
+            // Handle console selection
+            delegate.didTapConsole(with: focusedItem)
         }
+    }
 
-        print("Gamepad connected and setting up handlers")
+    private func handleVerticalNavigation(_ value: Float) {
+        let items = ["home", "settings", "imports"] + consoles.map(\.identifier)
 
-        // Remove any existing handlers
-        controller.extendedGamepad?.buttonA.valueChangedHandler = nil
-        controller.extendedGamepad?.dpad.valueChangedHandler = nil
-
-        // Set up new handlers
-        controller.extendedGamepad?.buttonA.valueChangedHandler = { _, _, pressed in
-            guard pressed else { return }
-
-            print("Button A pressed, current focusedItem: \(String(describing: self.focusedItem))")
-
-            DispatchQueue.main.async {
-                if let focusedId = self.focusedItem {
-                    print("Executing action for focusedId: \(focusedId)")
-                    switch focusedId {
-                    case "home":
-                        self.delegate.didTapHome()
-                    case "settings":
-                        self.delegate.didTapSettings()
-                    case "imports":
-                        self.delegate.didTapImports()
-                    default:
-                        print("Console selection: \(focusedId)")
-                        self.delegate.didTapConsole(with: focusedId)
-                    }
-                }
-            }
-        }
-
-        // Add dpad logging
-        controller.extendedGamepad?.dpad.valueChangedHandler = { _, xValue, yValue in
-            print("D-pad input - X: \(xValue), Y: \(yValue)")
-            print("Current focusedItem before: \(String(describing: self.focusedItem))")
-
-            // Only process when the d-pad is pressed (not released)
-            guard abs(yValue) == 1.0 else { return }
-
-            DispatchQueue.main.async {
-                // Get all menu items in order
-                var menuItems = ["home", "settings", "imports"]
-                menuItems.append(contentsOf: self.sortedConsoles().map { $0.identifier })
-
-                // Find current index
-                guard let currentIndex = menuItems.firstIndex(where: { $0 == self.focusedItem }) else {
-                    self.focusedItem = menuItems.first
-                    return
-                }
-
-                // Calculate new index based on d-pad direction
-                let newIndex: Int
-                if yValue == 1.0 { // Up
-                    newIndex = max(0, currentIndex - 1)
-                } else { // Down
-                    newIndex = min(menuItems.count - 1, currentIndex + 1)
-                }
-
-                print("Moving focus from index \(currentIndex) to \(newIndex)")
-                self.focusedItem = menuItems[newIndex]
-            }
+        if let currentItem = focusedItem,
+           let currentIndex = items.firstIndex(of: currentItem) {
+            let newIndex = value > 0 ?
+                max(0, currentIndex - 1) :
+                min(items.count - 1, currentIndex + 1)
+            focusedItem = items[newIndex]
+        } else {
+            focusedItem = items.first
         }
     }
 

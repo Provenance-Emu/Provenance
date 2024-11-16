@@ -112,11 +112,11 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         selectedTabCancellable?.cancel()
     }
 
-    func showMenu() {
+    public func showMenu() {
         self.sideNavigationController?.showLeftSide()
     }
 
-    func closeMenu() {
+    public func closeMenu() {
         self.sideNavigationController?.closeSide()
     }
 
@@ -146,68 +146,50 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         self.fillParentView(child: newVC.view, parent: self.containerView)
     }
 
+    private var gamepadCancellable: AnyCancellable?
+
     private func setupGameController() {
-        // Observe for new controllers
-        controllerObserver = NotificationCenter.default.addObserver(
-            forName: .GCControllerDidConnect,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.connectFirstController()
-        }
-
-        // Check for already connected controller
-        connectFirstController()
-    }
-
-    private func connectFirstController() {
-        guard gameController == nil else { return }
-
-        if let controller = GCController.current ?? GCController.controllers().first {
-            gameController = controller
-            setupControllerInputs(controller)
-        }
-    }
-
-    private func setupControllerInputs(_ controller: GCController) {
-        controller.extendedGamepad?.leftShoulder.valueChangedHandler = { [weak self] _, _, pressed in
-            guard let self = self, pressed else { return }
-            self.switchToPreviousConsole()
-        }
-
-        controller.extendedGamepad?.rightShoulder.valueChangedHandler = { [weak self] _, _, pressed in
-            guard let self = self, pressed else { return }
-            self.switchToNextConsole()
-        }
-
-        controller.extendedGamepad?.buttonOptions?.valueChangedHandler = { [weak self] _, _, pressed in
-            guard let self = self, pressed else { return }
-            if self.sideNavigationController?.visibleSideViewController == self.sideNavigationController?.left?.viewController {
-                self.closeMenu()
-            } else {
-                self.showMenu()
+        gamepadCancellable = GamepadManager.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                guard let self = self else { return }
+                switch event {
+                case .menuToggle:
+                    if self.sideNavigationController?.visibleSideViewController == self.sideNavigationController?.left?.viewController {
+                        self.closeMenu()
+                    } else {
+                        self.showMenu()
+                    }
+                case .shoulderLeft:
+                    if let currentConsole = self.viewModel.selectedConsole {
+                        self.navigateToPreviousConsole(from: currentConsole)
+                    }
+                case .shoulderRight:
+                    if let currentConsole = self.viewModel.selectedConsole {
+                        self.navigateToNextConsole(from: currentConsole)
+                    }
+                default:
+                    break
+                }
             }
+    }
+
+    private func navigateToPreviousConsole(from currentConsole: PVSystem) {
+        if let allConsoles = try? Realm().objects(PVSystem.self).sorted(byKeyPath: "name"),
+           let currentIndex = allConsoles.firstIndex(of: currentConsole) {
+            let previousIndex = (currentIndex - 1 + allConsoles.count) % allConsoles.count
+            let previousConsole = allConsoles[previousIndex]
+            self.didTapConsole(with: previousConsole.identifier)
         }
     }
 
-    private func switchToNextConsole() {
-        let systems = gameLibrary.activeSystems
-        guard let currentSystem = systems.first(where: { $0.identifier == consolesWrapperViewDelegate.selectedTab }),
-              let currentIndex = systems.firstIndex(of: currentSystem),
-              currentIndex + 1 < systems.count else { return }
-
-        let nextSystem = systems[currentIndex + 1]
-        didTapConsole(with: nextSystem.identifier)
-    }
-
-    private func switchToPreviousConsole() {
-        let systems = gameLibrary.activeSystems
-        guard let currentSystem = systems.first(where: { $0.identifier == consolesWrapperViewDelegate.selectedTab }),
-              let currentIndex = systems.firstIndex(of: currentSystem),
-              currentIndex > 0 else { return }
-
-        let previousSystem = systems[currentIndex - 1]
-        didTapConsole(with: previousSystem.identifier)
+    private func navigateToNextConsole(from currentConsole: PVSystem) {
+        if let allConsoles = try? Realm().objects(PVSystem.self).sorted(byKeyPath: "name"),
+           let currentIndex = allConsoles.firstIndex(of: currentConsole) {
+            let nextIndex = (currentIndex + 1) % allConsoles.count
+            let nextConsole = allConsoles[nextIndex]
+            self.didTapConsole(with: nextConsole.identifier)
+        }
     }
 }
 

@@ -42,21 +42,22 @@ public protocol PVMenuDelegate: AnyObject {
     func didTapAddGames()
     func didTapConsole(with consoleId: String)
     func didTapCollection(with collection: Int)
+    func closeMenu()
 }
 
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate {
-    
+
     public func didTapImports() {
         let settingsView = ImportStatusView(updatesController:updatesController, gameImporter: GameImporter.shared, delegate: self)
-        
+
         let hostingController = UIHostingController(rootView: settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
 
         self.closeMenu()
         self.present(navigationController, animated: true)
     }
-    
+
     public func didTapSettings() {
         let settingsView = PVSettingsView(
             conflictsController: updatesController,
@@ -85,11 +86,11 @@ extension PVRootViewController: PVMenuDelegate {
 
     public func didTapAddGames() {
         self.closeMenu()
-        
+
 
         self.showImportOptionsAlert()
     }
-    
+
     public func showImportOptionsAlert() {
 #if os(iOS) || os(tvOS)
         /// from PVGameLibraryViewController#getMoreROMs
@@ -239,11 +240,11 @@ extension PVRootViewController: ImportStatusDelegate {
     public func dismissAction() {
         self.dismiss(animated: true)
     }
-    
+
     public func addImportsAction() {
         self.showImportOptionsAlert()
     }
-    
+
     public func forceImportsAction() {
         //reset the status of each item that conflict or failed so we can try again.
         GameImporter.shared.importQueue.forEach { item in
@@ -251,7 +252,7 @@ extension PVRootViewController: ImportStatusDelegate {
                 item.status = .queued
             }
         }
-        
+
         GameImporter.shared.startProcessing()
     }
 }

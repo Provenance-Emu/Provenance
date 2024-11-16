@@ -12,6 +12,7 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVThemes
+import Combine
 
 enum PVHomeSection: Int, CaseIterable, Sendable {
     case recentSaveStates
@@ -21,7 +22,7 @@ enum PVHomeSection: Int, CaseIterable, Sendable {
 }
 
 @available(iOS 14, tvOS 14, *)
-struct HomeView: SwiftUI.View, GamepadNavigationDelegate {
+struct HomeView: SwiftUI.View {
 
 //    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
 
@@ -61,24 +62,10 @@ struct HomeView: SwiftUI.View, GamepadNavigationDelegate {
     ) var allGames
     // RomDatabase.sharedInstance.allGamesSortedBySystemThenTitle
 
-    @FocusState internal var focusedSection: GameSection?
-    @FocusState internal var focusedItemInSection: String?
+    @State private var gamepadCancellable: AnyCancellable?
 
-    private var focusedSectionBinding: Binding<GameSection?> {
-        Binding(
-            get: { focusedSection },
-            set: { focusedSection = $0 }
-        )
-    }
-
-    private var focusedItemBinding: Binding<String?> {
-        Binding(
-            get: { focusedItemInSection },
-            set: { focusedItemInSection = $0 }
-        )
-    }
-
-    @State private var lastFocusedSection: GameSection?
+    @FocusState private var focusedSection: GameSection?
+    @FocusState private var focusedItemInSection: String?
 
     init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil, viewModel: PVRootViewModel) {
 //        self.gameLibrary = gameLibrary
@@ -96,8 +83,14 @@ struct HomeView: SwiftUI.View, GamepadNavigationDelegate {
                         HomeContinueSection(
                             rootDelegate: rootDelegate,
                             consoleIdentifier: nil,
-                            parentFocusedSection: focusedSectionBinding,
-                            parentFocusedItem: focusedItemBinding
+                            parentFocusedSection: Binding(
+                                get: { self.focusedSection },
+                                set: { self.focusedSection = $0 }
+                            ),
+                            parentFocusedItem: Binding(
+                                get: { self.focusedItemInSection },
+                                set: { self.focusedItemInSection = $0 }
+                            )
                         )
                     }
 
@@ -146,8 +139,38 @@ struct HomeView: SwiftUI.View, GamepadNavigationDelegate {
         }
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
         .onAppear {
-            GamepadManager.shared.setDelegate(self)
+            setupGamepadHandling()
         }
+        .onDisappear {
+            gamepadCancellable?.cancel()
+        }
+    }
+
+    private func setupGamepadHandling() {
+        gamepadCancellable = GamepadManager.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { event in
+                switch event {
+                case .buttonPress:
+                    handleButtonPress()
+                case .verticalNavigation(let value):
+                    handleVerticalNavigation(value)
+                case .horizontalNavigation(let value):
+                    handleHorizontalNavigation(value)
+                case .start:
+                    // Show game options menu if an item is focused
+                    if let focusedItem = focusedItemInSection {
+                        showOptionsMenu(for: focusedItem)
+                    }
+                default:
+                    break
+                }
+            }
+    }
+
+    private func handleMenuToggle() {
+        // Implement menu toggle logic here
+        print("Menu toggle requested")
     }
 
     private func displayOptionsView() -> some View {
@@ -297,6 +320,11 @@ struct HomeView: SwiftUI.View, GamepadNavigationDelegate {
         case .games:
             return allGames.first?.id
         }
+    }
+
+    private func showOptionsMenu(for gameId: String) {
+        // Similar to ConsoleGamesView implementation
+        // Show context menu for the focused game
     }
 }
 

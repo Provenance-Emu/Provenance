@@ -1,29 +1,31 @@
 import Foundation
 import GameController
 import SwiftUI
+import Combine
 
-public protocol GamepadNavigationDelegate {
-    var focusedSection: GameSection? { get }
-    var focusedItemInSection: String? { get }
-
-    func handleButtonPress()
-    func handleVerticalNavigation(_ yValue: Float)
-    func handleHorizontalNavigation(_ xValue: Float)
+public enum GamepadEvent {
+    case buttonPress
+    case buttonB
+    case verticalNavigation(Float)
+    case horizontalNavigation(Float)
+    case menuToggle
+    case shoulderLeft
+    case shoulderRight
+    case start
 }
 
-public class GamepadManager {
+public class GamepadManager: ObservableObject {
     public static let shared = GamepadManager()
 
     private var observers: [NSObjectProtocol] = []
-    private var navigationDelegate: (any GamepadNavigationDelegate)?
+    private let eventSubject = PassthroughSubject<GamepadEvent, Never>()
+
+    public var eventPublisher: AnyPublisher<GamepadEvent, Never> {
+        eventSubject.eraseToAnyPublisher()
+    }
 
     private init() {
         setupNotifications()
-    }
-
-    public func setDelegate(_ delegate: (any GamepadNavigationDelegate)) {
-        navigationDelegate = delegate
-        connectGamepad()
     }
 
     private func setupNotifications() {
@@ -35,7 +37,19 @@ public class GamepadManager {
             self?.connectGamepad()
         }
 
+        let disconnectObserver = NotificationCenter.default.addObserver(
+            forName: .GCControllerDidDisconnect,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            print("Gamepad disconnected")
+        }
+
         observers.append(connectObserver)
+        observers.append(disconnectObserver)
+
+        // Connect to any already-connected gamepad
+        connectGamepad()
     }
 
     private func connectGamepad() {
@@ -45,27 +59,72 @@ public class GamepadManager {
         }
 
         print("Gamepad connected and setting up handlers")
+        setupBasicControls(controller)
+        setupMenuToggleHandlers(controller)
+    }
 
+    private func setupBasicControls(_ controller: GCController) {
         controller.extendedGamepad?.buttonA.valueChangedHandler = { [weak self] _, _, pressed in
             guard pressed else { return }
-
             DispatchQueue.main.async {
-                self?.navigationDelegate?.handleButtonPress()
+                self?.eventSubject.send(.buttonPress)
             }
         }
 
         controller.extendedGamepad?.dpad.valueChangedHandler = { [weak self] _, xValue, yValue in
             DispatchQueue.main.async {
                 if abs(yValue) == 1.0 {
-                    self?.navigationDelegate?.handleVerticalNavigation(yValue)
+                    self?.eventSubject.send(.verticalNavigation(yValue))
                 } else if abs(xValue) == 1.0 {
-                    self?.navigationDelegate?.handleHorizontalNavigation(xValue)
+                    self?.eventSubject.send(.horizontalNavigation(xValue))
                 }
+            }
+        }
+
+        controller.extendedGamepad?.buttonB.valueChangedHandler = { [weak self] _, _, pressed in
+            guard pressed else { return }
+            DispatchQueue.main.async {
+                self?.eventSubject.send(.buttonB)
+            }
+        }
+
+        controller.extendedGamepad?.leftShoulder.valueChangedHandler = { [weak self] _, _, pressed in
+            guard pressed else { return }
+            DispatchQueue.main.async {
+                self?.eventSubject.send(.shoulderLeft)
+            }
+        }
+
+        controller.extendedGamepad?.rightShoulder.valueChangedHandler = { [weak self] _, _, pressed in
+            guard pressed else { return }
+            DispatchQueue.main.async {
+                self?.eventSubject.send(.shoulderRight)
+            }
+        }
+
+        controller.extendedGamepad?.buttonMenu.valueChangedHandler = { [weak self] _, _, pressed in
+            guard pressed else { return }
+            DispatchQueue.main.async {
+                self?.eventSubject.send(.start)
             }
         }
     }
 
-    deinit {
-        observers.forEach { NotificationCenter.default.removeObserver($0) }
+    private func setupMenuToggleHandlers(_ controller: GCController) {
+        controller.extendedGamepad?.leftTrigger.valueChangedHandler = { [weak self] _, _, pressed in
+            guard pressed else { return }
+            DispatchQueue.main.async {
+                self?.eventSubject.send(.menuToggle)
+            }
+        }
+
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            controller.extendedGamepad?.buttonOptions?.valueChangedHandler = { [weak self] _, _, pressed in
+                guard pressed else { return }
+                DispatchQueue.main.async {
+                    self?.eventSubject.send(.menuToggle)
+                }
+            }
+        }
     }
 }
