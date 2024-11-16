@@ -182,65 +182,80 @@ SideMenuView: SwiftUI.View {
 
     public var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
-            ScrollView {
-                VStack {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        Divider()
-                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack {
+                        LazyVStack(alignment: .leading, spacing: 0) {
+                            Divider()
+                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-                        MenuItemView(icon: .named("prov_home_icon"), rowTitle: "Home", isFocused: focusedItem == "home") {
-                            delegate.didTapHome()
-                        }
-                        .focusableIfAvailable()
-                        .focused($focusedItem, equals: "home")
+                            MenuItemView(icon: .named("prov_home_icon"), rowTitle: "Home", isFocused: focusedItem == "home") {
+                                delegate.didTapHome()
+                            }
+                            .focusableIfAvailable()
+                            .focused($focusedItem, equals: "home")
+                            .id("home")
 
-                        Divider()
-                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                            Divider()
+                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-                        MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings", isFocused: focusedItem == "settings") {
-                            delegate.didTapSettings()
-                        }
-                        .focusableIfAvailable()
-                        .focused($focusedItem, equals: "settings")
+                            MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings", isFocused: focusedItem == "settings") {
+                                delegate.didTapSettings()
+                            }
+                            .focusableIfAvailable()
+                            .focused($focusedItem, equals: "settings")
 
-    //                    Divider()
-    //                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+    //                        Divider()
+    //                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
     //
-    //                    MenuItemView(icon: .named("prov_add_games_icon"), rowTitle: "Add Games") {
-    //                        delegate?.didTapAddGames()
-    //                    }
-                        Divider()
-                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+    //                        MenuItemView(icon: .named("prov_add_games_icon"), rowTitle: "Add Games") {
+    //                            delegate?.didTapAddGames()
+    //                        }
+                            Divider()
+                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-                        MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Add Games", isFocused: focusedItem == "imports") {
-                            delegate.didTapImports()
-                        }
-                        .focusableIfAvailable()
-                        .focused($focusedItem, equals: "imports")
+                            MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Add Games", isFocused: focusedItem == "imports") {
+                                delegate.didTapImports()
+                            }
+                            .focusableIfAvailable()
+                            .focused($focusedItem, equals: "imports")
     #if canImport(FreemiumKit)
-                        Divider()
-                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                        PaidStatusView(style: .plain)
-                            .listRowBackground(Color.accentColor)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 10)
+                            Divider()
+                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                            PaidStatusView(style: .plain)
+                                .listRowBackground(Color.accentColor)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 10)
     #endif
-                        if consoles.count > 0 {
-                            MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
-                                viewModel.sortConsolesAscending.toggle()
-                            }
-                            ForEach(sortedConsoles(), id: \.self) { console in
-                                Divider()
-                                    .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                                MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name, isFocused: focusedItem == console.identifier) {
-                                    delegate.didTapConsole(with: console.identifier)
+                            if consoles.count > 0 {
+                                MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
+                                    viewModel.sortConsolesAscending.toggle()
                                 }
-                                .focusableIfAvailable()
-                                .focused($focusedItem, equals: console.identifier)
+                                ForEach(sortedConsoles(), id: \.self) { console in
+                                    Divider()
+                                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                                    MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name, isFocused: focusedItem == console.identifier) {
+                                        delegate.didTapConsole(with: console.identifier)
+                                    }
+                                    .focusableIfAvailable()
+                                    .focused($focusedItem, equals: console.identifier)
+                                    .id(console.identifier)
+                                }
+                            }
+                            MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
+                            Spacer()
+                        }
+                    }
+                    .onChange(of: focusedItem) { newValue in
+                        print("Focus changed from \(String(describing: lastFocusedItem)) to \(String(describing: newValue))")
+                        lastFocusedItem = newValue
+
+                        // Scroll to the focused item with animation
+                        if let focused = newValue {
+                            withAnimation {
+                                proxy.scrollTo(focused, anchor: .center)
                             }
                         }
-                        MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
-                        Spacer()
                     }
                 }
             }
@@ -314,10 +329,6 @@ SideMenuView: SwiftUI.View {
         .task {
             // Set initial focus to home when menu appears
             focusedItem = "home"
-        }
-        .onChange(of: focusedItem) { newValue in
-            print("Focus changed from \(String(describing: lastFocusedItem)) to \(String(describing: newValue))")
-            lastFocusedItem = newValue
         }
     }
 }
