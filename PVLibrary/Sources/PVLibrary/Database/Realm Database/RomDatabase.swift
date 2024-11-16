@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import Systems
 import PVMediaCache
 
-let schemaVersion: UInt64 = 11
+let schemaVersion: UInt64 = 12
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -144,6 +144,11 @@ public final class RealmConfiguration {
             if oldSchemaVersion < 11 {
                 migration.enumerateObjects(ofType: PVSystem.className()) { oldObject, newObject in
                     newObject!["supported"] = true
+                }
+            }
+            if oldSchemaVersion < 12 {
+                migration.enumerateObjects(ofType: PVRecentGame.className()) { oldObject, newObject in
+                    newObject!["id"] = NSUUID().uuidString
                 }
             }
         }
