@@ -149,6 +149,7 @@ SideMenuView: SwiftUI.View {
 
     private func handleButtonPress() {
         guard let focusedItem = focusedItem else { return }
+        print("Handling button press for item: \(focusedItem)")
 
         switch focusedItem {
         case "home":
@@ -164,7 +165,7 @@ SideMenuView: SwiftUI.View {
     }
 
     private func handleVerticalNavigation(_ value: Float) {
-        let items = ["home", "settings", "imports"] + consoles.map(\.identifier)
+        let items = ["home", "settings", "imports"] + sortedConsoles().map(\.identifier)
 
         if let currentItem = focusedItem,
            let currentIndex = items.firstIndex(of: currentItem) {
@@ -175,6 +176,8 @@ SideMenuView: SwiftUI.View {
         } else {
             focusedItem = items.first
         }
+
+        print("Vertical navigation - New item: \(String(describing: focusedItem))")
     }
 
     public var body: some SwiftUI.View {

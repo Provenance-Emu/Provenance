@@ -111,19 +111,18 @@ public class GamepadManager: ObservableObject {
     }
 
     private func setupMenuToggleHandlers(_ controller: GCController) {
-        controller.extendedGamepad?.leftTrigger.valueChangedHandler = { [weak self] _, _, pressed in
-            guard pressed else { return }
+        /// Handle L2 button using isPressed for digital behavior
+        controller.extendedGamepad?.leftTrigger.valueChangedHandler = { [weak self] button, _, _ in
+            guard button.isPressed else { return }
             DispatchQueue.main.async {
                 self?.eventSubject.send(.menuToggle)
             }
         }
 
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            controller.extendedGamepad?.buttonOptions?.valueChangedHandler = { [weak self] _, _, pressed in
-                guard pressed else { return }
-                DispatchQueue.main.async {
-                    self?.eventSubject.send(.menuToggle)
-                }
+        controller.extendedGamepad?.buttonOptions?.valueChangedHandler = { [weak self] button, _, _ in
+            guard button.isPressed else { return }
+            DispatchQueue.main.async {
+                self?.eventSubject.send(.menuToggle)
             }
         }
     }
