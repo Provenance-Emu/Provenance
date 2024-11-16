@@ -124,6 +124,18 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
         loadIntoContainer(.home, newVC: UIHostingController(rootView: consolesView))
 
+        // Add observer for title updates
+        selectedTabCancellable = consolesWrapperViewDelegate.$selectedTab
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] selectedTab in
+                guard let self = self else { return }
+                if selectedTab == "home" {
+                    self.navigationItem.title = "Home"
+                } else if let console = self.gameLibrary.system(identifier: selectedTab) {
+                    self.navigationItem.title = console.name
+                }
+            }
+
         if let console = gameLibrary.activeSystems.first {
             consolesWrapperViewDelegate.selectedTab = console.identifier
         } else {
