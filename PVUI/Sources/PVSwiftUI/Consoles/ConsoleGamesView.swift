@@ -88,6 +88,9 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @FocusState private var focusedSection: GameSection?
     @FocusState private var focusedItemInSection: String?
 
+    @State private var gamepadHandler: Any?
+    @State private var lastFocusedSection: GameSection?
+
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
         let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
@@ -160,6 +163,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             #endif
             .onAppear {
                 adjustZoomLevel(for: gameLibraryScale)
+                setupGamepadHandling()
             }
         }
         .sheet(isPresented: $showImagePicker) {
@@ -509,6 +513,173 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         DLOG("ConsoleGamesView: Received request to move game to system")
         let frozenGame = game.isFrozen ? game : game.freeze()
         systemMoveState = SystemMoveState(game: frozenGame)
+    }
+
+    private func setupGamepadHandling() {
+        print("Setting up gamepad handling")
+
+        // Remove any existing handler
+        if let handler = gamepadHandler {
+            NotificationCenter.default.removeObserver(handler)
+        }
+
+        // Set up new handler
+        gamepadHandler = NotificationCenter.default.addObserver(
+            forName: .GCControllerDidConnect,
+            object: nil,
+            queue: .main
+        ) { _ in
+            self.connectGamepad()
+        }
+
+        // Connect to any already-connected gamepad
+        connectGamepad()
+    }
+
+    private func connectGamepad() {
+        guard let controller = GCController.current ?? GCController.controllers().first else {
+            print("No gamepad connected")
+            return
+        }
+
+        print("Gamepad connected and setting up handlers")
+
+        controller.extendedGamepad?.buttonA.valueChangedHandler = { _, _, pressed in
+            guard pressed else { return }
+
+            print("Button A pressed, current section: \(String(describing: self.focusedSection))")
+            print("Current focused item: \(String(describing: self.focusedItemInSection))")
+
+            // Handle button press based on focused section
+            DispatchQueue.main.async {
+                self.handleButtonPress()
+            }
+        }
+
+        controller.extendedGamepad?.dpad.valueChangedHandler = { _, xValue, yValue in
+
+            print("D-pad input - X: \(xValue), Y: \(yValue)")
+
+            DispatchQueue.main.async {
+                if abs(yValue) == 1.0 {
+                    // Vertical navigation between sections
+                    self.handleVerticalNavigation(yValue)
+                } else if abs(xValue) == 1.0 {
+                    // Horizontal navigation within sections
+                    self.handleHorizontalNavigation(xValue)
+                }
+            }
+        }
+    }
+
+    private func handleButtonPress() {
+        guard let section = focusedSection, let itemId = focusedItemInSection else {
+            print("No focused section or item")
+            return
+        }
+
+        print("Handling button press for section: \(section), item: \(itemId)")
+
+        switch section {
+        case .continues:
+            if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(
+                        saveState.game,
+                        sender: self,
+                        core: saveState.core,
+                        saveState: saveState
+                    )
+                }
+            }
+        case .favorites:
+            if let game = favorites.first(where: { $0.id == itemId }) {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                }
+            }
+        case .recentlyPlayed:
+            if let recentGame = recentlyPlayedGames.first(where: { $0.id == itemId })?.game {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(recentGame, sender: self, core: nil, saveState: nil)
+                }
+            }
+        case .games:
+            if let game = games.first(where: { $0.id == itemId }) {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                }
+            }
+        }
+    }
+
+    private func handleVerticalNavigation(_ yValue: Float) {
+        let sections: [GameSection] = [
+            showRecentSaveStates && !recentSaveStates.isEmpty ? .continues : nil,
+            showFavorites && !favorites.isEmpty ? .favorites : nil,
+            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayed : nil,
+            !games.isEmpty ? .games : nil
+        ].compactMap { $0 }
+
+        guard !sections.isEmpty else { return }
+
+        if let currentSection = focusedSection,
+           let currentIndex = sections.firstIndex(of: currentSection) {
+            let newIndex = yValue > 0 ?
+                max(0, currentIndex - 1) :
+                min(sections.count - 1, currentIndex + 1)
+            focusedSection = sections[newIndex]
+
+            // Reset focused item when changing sections
+            focusedItemInSection = getFirstItemInSection(sections[newIndex])
+        } else {
+            // No section focused, start at first section
+            focusedSection = sections.first
+            focusedItemInSection = getFirstItemInSection(sections.first!)
+        }
+
+        print("Vertical navigation - New section: \(String(describing: focusedSection))")
+    }
+
+    private func handleHorizontalNavigation(_ xValue: Float) {
+        guard let section = focusedSection else { return }
+
+        let items: [String]
+        switch section {
+        case .continues:
+            items = recentSaveStates.map { $0.id }
+        case .favorites:
+            items = favorites.map { $0.id }
+        case .recentlyPlayed:
+            items = recentlyPlayedGames.map { $0.id }
+        case .games:
+            items = games.map { $0.id }
+        }
+
+        if let currentItem = focusedItemInSection,
+           let currentIndex = items.firstIndex(of: currentItem) {
+            let newIndex = xValue < 0 ?
+                max(0, currentIndex - 1) :
+                min(items.count - 1, currentIndex + 1)
+            focusedItemInSection = items[newIndex]
+        } else {
+            focusedItemInSection = items.first
+        }
+
+        print("Horizontal navigation - New item: \(String(describing: focusedItemInSection))")
+    }
+
+    private func getFirstItemInSection(_ section: GameSection) -> String? {
+        switch section {
+        case .continues:
+            return recentSaveStates.first?.id
+        case .favorites:
+            return favorites.first?.id
+        case .recentlyPlayed:
+            return recentlyPlayedGames.first?.id
+        case .games:
+            return games.first?.id
+        }
     }
 }
 
