@@ -43,7 +43,9 @@ class MovableButtonView: UIView, Moveable {
     private var moveStartTime: TimeInterval?
     private var startMoveFrame: CGRect?
     private var panGestureRecognizer: UIPanGestureRecognizer?
+    #if !os(tvOS)
     private var pinchGestureRecognizer: UIPinchGestureRecognizer?
+    #endif
     private var initialBounds: CGRect?
 
     public private(set) var currentScale: CGFloat = 1.0 {
@@ -64,10 +66,14 @@ class MovableButtonView: UIView, Moveable {
             DLOG("Move mode changed: \(oldValue) -> \(inMoveMode)")
             if inMoveMode {
                 setupPanGesture()
+                #if !os(tvOS)
                 setupPinchGesture()
+                #endif
             } else {
                 removePanGesture()
+#if !os(tvOS)
                 removePinchGesture()
+#endif
             }
         }
     }
@@ -127,6 +133,7 @@ class MovableButtonView: UIView, Moveable {
         gesture.setTranslation(.zero, in: superview)
     }
 
+#if !os(tvOS)
     private func setupPinchGesture() {
         DLOG("Setting up pinch gesture")
         removePinchGesture()
@@ -174,6 +181,7 @@ class MovableButtonView: UIView, Moveable {
             break
         }
     }
+#endif
 
     private func saveScale() {
         guard !positionKey.isEmpty else { return }

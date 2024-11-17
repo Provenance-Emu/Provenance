@@ -195,6 +195,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         )
 
         /// Add trait collection observer to update width when orientation changes
+        #if !os(tvOS)
         NotificationCenter.default.addObserver(forName: UIApplication.didChangeStatusBarOrientationNotification, object: nil, queue: .main) { _ in
             let newWidth: CGFloat = {
                 switch (isIpad, UITraitCollection.current.horizontalSizeClass) {
@@ -208,7 +209,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
             }()
             sideNav.updateSideMenuWidth(percent: newWidth)
         }
-
+        #endif
         return sideNav
     }
 

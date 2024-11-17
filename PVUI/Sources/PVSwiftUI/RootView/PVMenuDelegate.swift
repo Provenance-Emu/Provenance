@@ -214,6 +214,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
         ILOG("Document picker was cancelled")
     }
 }
+#endif
 
 extension PVRootViewController: ImportStatusDelegate {
     public func dismissAction() {
@@ -235,4 +236,3 @@ extension PVRootViewController: ImportStatusDelegate {
         GameImporter.shared.startProcessing()
     }
 }
-#endif

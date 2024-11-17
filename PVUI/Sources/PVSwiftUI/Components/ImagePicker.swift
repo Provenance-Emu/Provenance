@@ -67,7 +67,7 @@ struct ImagePicker: UIViewControllerRepresentable {
 }
 #endif
 
-#if DEBUG
+#if DEBUG && !os(tvOS)
 extension ImagePicker {
     static func printDebugInfo() {
         DLOG("ImagePicker Debug Information:")

@@ -195,10 +195,12 @@ public extension ThemeManager {
         UISearchBar.appearance().backgroundColor = palette.menuBackground
         UISearchBar.appearance().tintColor = palette.menuText
         UISearchBar.appearance().barTintColor = palette.menuBackground
+        #if !os(tvOS)
         UISearchBar.appearance().searchTextField.textColor = palette.menuText
         UISearchTextField.appearance().tokenBackgroundColor = palette.menuHeaderBackground
         UISearchTextField.appearance().tintColor = palette.menuIconTint
         UISearchTextField.appearance().textColor = palette.menuText
+        #endif
         
         DLOG("UISearchBar - backgroundColor: \(palette.settingsCellBackground?.debugDescription ?? "nil"), tintColor: \(palette.gameLibraryText.debugDescription)")
     }
