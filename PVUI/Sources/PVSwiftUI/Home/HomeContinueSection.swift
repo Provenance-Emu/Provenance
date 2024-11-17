@@ -165,6 +165,9 @@ struct HomeContinueSection: SwiftUI.View {
         .onChange(of: filteredSaveStates) { newValue in
             viewModel.updateSaveStates(newValue, isLandscape: isLandscapePhone)
         }
+        .onChange(of: viewModel.currentPage) { newPage in
+            handlePageChange(newPage)
+        }
     }
 
     // Computed property for page count
@@ -216,11 +219,79 @@ struct HomeContinueSection: SwiftUI.View {
     private func handleHorizontalNavigation(_ value: Float) {
         guard parentFocusedSection == .recentSaveStates else { return }
 
-        if let (nextItemId, nextPage) = viewModel.handleHorizontalNavigation(value) {
-            parentFocusedItem = nextItemId
-            withAnimation {
-                viewModel.currentPage = nextPage
+        let items = filteredSaveStates.map { $0.id }
+        DLOG("HomeContinueSection: Navigation - Total items: \(items.count)")
+
+        guard !items.isEmpty else {
+            DLOG("HomeContinueSection: No items available")
+            return
+        }
+
+        // Get current index
+        let currentIndex: Int
+        if let currentItem = parentFocusedItem,
+           let index = items.firstIndex(of: currentItem) {
+            currentIndex = index
+            DLOG("HomeContinueSection: Current index: \(currentIndex)")
+        } else {
+            currentIndex = 0
+            DLOG("HomeContinueSection: No current selection, starting at 0")
+        }
+
+        // Calculate next index
+        let nextIndex: Int
+        if value < 0 {
+            nextIndex = currentIndex > 0 ? currentIndex - 1 : items.count - 1
+            DLOG("HomeContinueSection: Moving left to index: \(nextIndex)")
+        } else {
+            nextIndex = currentIndex < items.count - 1 ? currentIndex + 1 : 0
+            DLOG("HomeContinueSection: Moving right to index: \(nextIndex)")
+        }
+
+        // Update selection
+        parentFocusedItem = items[nextIndex]
+
+        // Calculate and update page based on items per page
+        let itemsPerPage = isLandscapePhone ? 2 : 1
+        let newPage = nextIndex / itemsPerPage
+
+        DLOG("HomeContinueSection: Items per page: \(itemsPerPage), New page: \(newPage)")
+
+        // Ensure TabView updates with animation
+        withAnimation {
+            viewModel.currentPage = newPage
+        }
+
+        DLOG("HomeContinueSection: Final state - Page: \(newPage), Item: \(items[nextIndex]), Items per page: \(itemsPerPage)")
+    }
+
+    private func handlePageChange(_ newPage: Int) {
+        let itemsPerPage = isLandscapePhone ? 2 : 1
+        let items = filteredSaveStates.map { $0.id }
+
+        DLOG("HomeContinueSection: Page changed to \(newPage)")
+
+        // Calculate the first item index for this page
+        let firstItemIndex = newPage * itemsPerPage
+        guard firstItemIndex < items.count else {
+            DLOG("HomeContinueSection: Invalid page index")
+            return
+        }
+
+        // If we're not already focused on an item on this page, update focus
+        if let currentItem = parentFocusedItem,
+           let currentIndex = items.firstIndex(of: currentItem) {
+            let currentPage = currentIndex / itemsPerPage
+            if currentPage != newPage {
+                DLOG("HomeContinueSection: Updating focus to match new page")
+                parentFocusedSection = .recentSaveStates
+                parentFocusedItem = items[firstItemIndex]
             }
+        } else {
+            // No current focus, set it to first item on page
+            DLOG("HomeContinueSection: No current focus, setting to first item on page")
+            parentFocusedSection = .recentSaveStates
+            parentFocusedItem = items[firstItemIndex]
         }
     }
 }
@@ -322,6 +393,8 @@ private struct PortraitGridContent: View {
 }
 
 private struct ContinueItemWrapper: View {
+    @ObservedObject private var gamepadManager = GamepadManager.shared
+
     let saveState: PVSaveState
     let height: CGFloat
     let hideSystemLabel: Bool
@@ -347,9 +420,10 @@ private struct ContinueItemWrapper: View {
                 }
             },
             isFocused: {
-                let isFocused = parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id
-                DLOG("ContinueItemWrapper: Checking focus for \(saveState.id) - Section: \(String(describing: parentFocusedSection)), Item: \(String(describing: parentFocusedItem)) = \(isFocused)")
-                return isFocused
+                let shouldShowFocus = gamepadManager.isControllerConnected
+                let isFocused = parentFocusedSection == .recentSaveStates &&
+                               parentFocusedItem == saveState.id
+                return shouldShowFocus && isFocused
             }()
         )
         .focusableIfAvailable()
