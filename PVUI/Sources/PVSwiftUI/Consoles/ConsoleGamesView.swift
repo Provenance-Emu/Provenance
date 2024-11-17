@@ -172,17 +172,22 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                         ScrollViewReader { proxy in
                             LazyVStack(spacing: 20) {
                                 continueSection()
+                                    .id("section_continues")
                                 favoritesSection()
+                                    .id("section_favorites")
                                 recentlyPlayedSection()
+                                    .id("section_recent")
                                 gamesSection()
+                                    .id("section_allgames")
                                 BiosesView(console: console)
                             }
                             .padding(.horizontal, 10)
                             .padding(.bottom, 44)
-                            .onChange(of: focusedItemInSection) { newValue in
-                                if let itemId = newValue {
+                            .onChange(of: focusedSection) { newSection in
+                                if let section = newSection {
                                     withAnimation {
-                                        proxy.scrollTo(itemId, anchor: .center)
+                                        let sectionId = sectionToId(section)
+                                        proxy.scrollTo(sectionId, anchor: .top)
                                     }
                                 }
                             }
@@ -260,7 +265,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func continueSection() -> some View {
         Group {
-            if showRecentSaveStates && hasRecentSaveStates {
+            if showRecentSaveStates && !gamesViewModel.recentSaveStates.isEmpty {
                 HomeContinueSection(
                     rootDelegate: rootDelegate,
                     consoleIdentifier: console.identifier,
@@ -274,10 +279,10 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func favoritesSection() -> some View {
         Group {
-            if showFavorites && hasFavorites {
+            if showFavorites && !gamesViewModel.favorites.isEmpty {
                 HomeSection(title: "Favorites") {
-                    ForEach(favoritesArray, id: \.self) { favorite in
-                        gameItem(favorite)
+                    ForEach(gamesViewModel.favorites, id: \.self) { game in
+                        gameItem(game)
                     }
                 }
                 .frame(height: sectionHeight)
@@ -288,10 +293,12 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func recentlyPlayedSection() -> some View {
         Group {
-            if showRecentGames && hasRecentlyPlayedGames {
+            if showRecentGames && !gamesViewModel.recentlyPlayedGames.isEmpty {
                 HomeSection(title: "Recently Played") {
-                    ForEach(recentlyPlayedGamesArray, id: \.self) { game in
-                        gameItem(game)
+                    ForEach(gamesViewModel.recentlyPlayedGames, id: \.self) { recentGame in
+                        if let game = recentGame.game {
+                            gameItem(game)
+                        }
                     }
                 }
                 .frame(height: sectionHeight)
@@ -430,6 +437,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 }
                 .id(game.id)
                 .focusableIfAvailable()
+                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
             }
         }
         .padding(.horizontal, 10)
@@ -472,6 +480,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 {
                     loadGame(game)
                 }
+                .focusableIfAvailable()
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
             }
         }
@@ -812,8 +821,15 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             game: game,
             constrainHeight: true,
             isFocused: Binding(
-                get: { focusedItemInSection == game.id },
-                set: { if $0 { focusedItemInSection = game.id } }
+                get: {
+                    focusedSection == currentSectionForGame(game) && focusedItemInSection == game.id
+                },
+                set: {
+                    if $0 {
+                        focusedSection = currentSectionForGame(game)
+                        focusedItemInSection = game.id
+                    }
+                }
             )
         ) {
             Task.detached { @MainActor in
@@ -822,6 +838,32 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         }
         .id(game.id)
         .focusableIfAvailable()
+        .contextMenu {
+            GameContextMenu(
+                game: game,
+                rootDelegate: rootDelegate,
+                contextMenuDelegate: self
+            )
+        }
+    }
+
+    private func currentSectionForGame(_ game: PVGame) -> HomeSectionType {
+        // If we're in favorites section, ONLY return favorites if the game is actually in favorites
+        if focusedSection == .favorites {
+            return gamesViewModel.favorites.contains(where: { $0.id == game.id }) ? .favorites : .allGames
+        }
+        // If we're in recently played, ONLY return recently played if the game is actually in recently played
+        else if focusedSection == .recentlyPlayedGames {
+            return gamesViewModel.recentlyPlayedGames.contains(where: { $0.game?.id == game.id }) ? .recentlyPlayedGames : .allGames
+        }
+        // If we're in most played, ONLY return most played if the game is actually in most played
+        else if focusedSection == .mostPlayed {
+            return gamesViewModel.mostPlayed.contains(where: { $0.id == game.id }) ? .mostPlayed : .allGames
+        }
+        // Default to all games
+        else {
+            return .allGames
+        }
     }
 
     private func saveStateItem(_ saveState: PVSaveState) -> some View {
@@ -840,6 +882,21 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         }
         .id(saveState.id)
         .focusableIfAvailable()
+    }
+
+    private func sectionToId(_ section: HomeSectionType) -> String {
+        switch section {
+        case .recentSaveStates:
+            return "section_continues"
+        case .favorites:
+            return "section_favorites"
+        case .recentlyPlayedGames:
+            return "section_recent"
+        case .allGames:
+            return "section_allgames"
+        case .mostPlayed:
+            return "section_mostplayed"
+        }
     }
 }
 
