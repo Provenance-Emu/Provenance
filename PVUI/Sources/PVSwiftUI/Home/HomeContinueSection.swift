@@ -13,6 +13,56 @@ import PVLibrary
 import PVThemes
 import Combine
 
+class ContinuesSectionViewModel: ObservableObject {
+    @Published var currentPage: Int = 0
+    @Published var selectedItemId: String?
+    @Published var hasFocus: Bool = false
+
+    /// Filtered save states from parent
+    private var saveStates: [PVSaveState] = []
+    private var isLandscapePhone: Bool = false
+
+    var itemsPerPage: Int {
+        isLandscapePhone ? 2 : 1
+    }
+
+    func updateSaveStates(_ states: [PVSaveState], isLandscape: Bool) {
+        saveStates = states
+        isLandscapePhone = isLandscape
+    }
+
+    func handleHorizontalNavigation(_ value: Float) -> (nextItemId: String?, nextPage: Int)? {
+        guard !saveStates.isEmpty else {
+            DLOG("ContinuesSectionViewModel: No items available")
+            return nil
+        }
+
+        let items = saveStates.map { $0.id }
+
+        // Get current index
+        let currentIndex: Int
+        if let selectedId = selectedItemId,
+           let index = items.firstIndex(of: selectedId) {
+            currentIndex = index
+        } else {
+            currentIndex = 0
+        }
+
+        // Calculate next index
+        let nextIndex: Int
+        if value < 0 {
+            nextIndex = currentIndex > 0 ? currentIndex - 1 : items.count - 1
+        } else {
+            nextIndex = currentIndex < items.count - 1 ? currentIndex + 1 : 0
+        }
+
+        guard nextIndex >= 0 && nextIndex < items.count else { return nil }
+
+        let nextPage = nextIndex / itemsPerPage
+        return (items[nextIndex], nextPage)
+    }
+}
+
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueSection: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -30,6 +80,8 @@ struct HomeContinueSection: SwiftUI.View {
 
     @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
+
+    @StateObject private var viewModel = ContinuesSectionViewModel()
 
     var isLandscapePhone: Bool {
         #if os(iOS)
@@ -76,7 +128,7 @@ struct HomeContinueSection: SwiftUI.View {
     @State private var selectedPage = 0
 
     var body: some SwiftUI.View {
-        TabView(selection: $selectedPage) {
+        TabView(selection: $viewModel.currentPage) {
             if filteredSaveStates.count > 0 {
                 ForEach(0..<pageCount, id: \.self) { pageIndex in
                     SaveStatesGridView(
@@ -88,7 +140,8 @@ struct HomeContinueSection: SwiftUI.View {
                         hideSystemLabel: consoleIdentifier != nil,
                         rootDelegate: rootDelegate,
                         parentFocusedSection: $parentFocusedSection,
-                        parentFocusedItem: $parentFocusedItem
+                        parentFocusedItem: $parentFocusedItem,
+                        viewModel: viewModel
                     )
                     .padding(.horizontal)
                     .tag(pageIndex)
@@ -108,6 +161,9 @@ struct HomeContinueSection: SwiftUI.View {
             gamepadCancellable?.cancel()
             delayTask?.cancel()
             continuousNavigationTask?.cancel()
+        }
+        .onChange(of: filteredSaveStates) { newValue in
+            viewModel.updateSaveStates(newValue, isLandscape: isLandscapePhone)
         }
     }
 
@@ -158,55 +214,14 @@ struct HomeContinueSection: SwiftUI.View {
     }
 
     private func handleHorizontalNavigation(_ value: Float) {
-        guard parentFocusedSection == .recentSaveStates else {
-            DLOG("HomeContinueSection: Ignoring navigation, don't have focus")
-            return
-        }
+        guard parentFocusedSection == .recentSaveStates else { return }
 
-        let items = filteredSaveStates.map { $0.id }
-        DLOG("HomeContinueSection: Navigation - Total items: \(items.count)")
-
-        guard !items.isEmpty else {
-            DLOG("HomeContinueSection: No items available")
-            return
-        }
-
-        let nextIndex: Int
-        if let currentItem = parentFocusedItem,
-           let currentIndex = items.firstIndex(of: currentItem) {
-            DLOG("HomeContinueSection: Current index: \(currentIndex)")
-
-            if value < 0 {
-                // Moving left
-                nextIndex = currentIndex == 0 ? items.count - 1 : currentIndex - 1
-                DLOG("HomeContinueSection: Moving left to index: \(nextIndex)")
-            } else {
-                // Moving right
-                nextIndex = currentIndex == items.count - 1 ? 0 : currentIndex + 1
-                DLOG("HomeContinueSection: Moving right to index: \(nextIndex)")
+        if let (nextItemId, nextPage) = viewModel.handleHorizontalNavigation(value) {
+            parentFocusedItem = nextItemId
+            withAnimation {
+                viewModel.currentPage = nextPage
             }
-        } else {
-            // No current selection, start at beginning
-            nextIndex = 0
-            DLOG("HomeContinueSection: No current selection, starting at 0")
         }
-
-        // Update selection
-        parentFocusedSection = .recentSaveStates
-        parentFocusedItem = items[nextIndex]
-
-        // Calculate new page
-        let itemsPerPage = isLandscapePhone ? 2 : 1
-        let newPage = nextIndex / itemsPerPage
-        DLOG("HomeContinueSection: Items per page: \(itemsPerPage)")
-        DLOG("HomeContinueSection: Setting page to: \(newPage)")
-
-        // Update page with animation
-        withAnimation {
-            selectedPage = newPage
-        }
-
-        DLOG("HomeContinueSection: Final state - Page: \(newPage), Item: \(items[nextIndex])")
     }
 }
 
@@ -222,6 +237,8 @@ private struct SaveStatesGridView: View {
 
     @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
+
+    @ObservedObject var viewModel: ContinuesSectionViewModel
 
     var body: some View {
         LazyVGrid(columns: gridColumns, spacing: 8) {
