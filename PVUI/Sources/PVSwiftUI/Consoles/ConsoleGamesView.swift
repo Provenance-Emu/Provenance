@@ -621,7 +621,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 else { return }
 
                 DLOG("Gamepad event: \(event)")
-                DLOG("Selected console: \(String(describing: viewModel.selectedConsole))")
+                // DLOG("Selected console: \(String(describing: viewModel.selectedConsole))")
                 DLOG("Current console: \(console.identifier)")
 
                 switch event {
@@ -650,11 +650,11 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func handleButtonPress() {
         guard let section = focusedSection, let itemId = focusedItemInSection else {
-            print("No focused section or item")
+            DLOG("No focused section or item")
             return
         }
 
-        print("Handling button press for section: \(section), item: \(itemId)")
+        DLOG("Handling button press for section: \(section), item: \(itemId)")
 
         switch section {
         case .recentSaveStates:
