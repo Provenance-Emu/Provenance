@@ -168,6 +168,9 @@ struct HomeContinueSection: SwiftUI.View {
                 (currentIndex == 0 ? items.count - 1 : currentIndex - 1) :
                 (currentIndex == items.count - 1 ? 0 : currentIndex + 1)
             DLOG("HomeContinueSection: Moving from index \(currentIndex) to \(newIndex)")
+
+            // Set section first to ensure proper highlight state
+            parentFocusedSection = .recentSaveStates
             parentFocusedItem = items[newIndex]
 
             // Update the selected page based on the new index
@@ -177,6 +180,7 @@ struct HomeContinueSection: SwiftUI.View {
             DLOG("HomeContinueSection: New page: \(selectedPage)")
         } else {
             DLOG("HomeContinueSection: No current item, selecting first item")
+            parentFocusedSection = .recentSaveStates
             parentFocusedItem = items.first
             selectedPage = 0
             DLOG("HomeContinueSection: Selected first item: \(String(describing: items.first))")
