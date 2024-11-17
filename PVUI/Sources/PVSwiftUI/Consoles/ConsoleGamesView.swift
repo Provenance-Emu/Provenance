@@ -822,7 +822,14 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             constrainHeight: true,
             isFocused: Binding(
                 get: {
-                    focusedSection == currentSectionForGame(game) && focusedItemInSection == game.id
+                    // Only show focus if:
+                    // 1. We're in the current section
+                    // 2. This item is focused
+                    // 3. This view of the game belongs to the current section
+                    let currentSection = currentSectionForGame(game)
+                    return focusedSection == currentSection &&
+                           focusedItemInSection == game.id &&
+                           focusedSection == currentSection
                 },
                 set: {
                     if $0 {
