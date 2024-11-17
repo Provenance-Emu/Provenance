@@ -33,27 +33,73 @@ private struct SystemMoveState: Identifiable {
     var isPresenting: Bool = true
 }
 
+class ConsoleGamesViewModel: ObservableObject {
+    let console: PVSystem
+
+    @ObservedResults(
+        PVGame.self,
+        filter: NSPredicate(format: "systemIdentifier == %@"),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+    ) var games
+
+    @ObservedResults(
+        PVSaveState.self,
+        filter: NSPredicate(format: "game.systemIdentifier == %@"),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+    ) var recentSaveStates
+
+    @ObservedResults(
+        PVRecentGame.self,
+        filter: NSPredicate(format: "game.systemIdentifier == %@")
+    ) var recentlyPlayedGames
+
+    @ObservedResults(
+        PVGame.self,
+        filter: NSPredicate(format: "isFavorite == true AND systemIdentifier == %@")
+    ) var favorites
+
+    @ObservedResults(
+        PVGame.self,
+        filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0"),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
+    ) var mostPlayed
+
+    init(console: PVSystem) {
+        self.console = console
+        _games = ObservedResults(
+            PVGame.self,
+            filter: NSPredicate(format: "systemIdentifier == %@", console.identifier),
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+        )
+        _recentSaveStates = ObservedResults(
+            PVSaveState.self,
+            filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier),
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+        )
+        _recentlyPlayedGames = ObservedResults(
+            PVRecentGame.self,
+            filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier)
+        )
+        _favorites = ObservedResults(
+            PVGame.self,
+            filter: NSPredicate(format: "isFavorite == true AND systemIdentifier == %@", console.identifier)
+        )
+        _mostPlayed = ObservedResults(
+            PVGame.self,
+            filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0", console.identifier),
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
+        )
+    }
+}
+
 struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
+    @StateObject private var gamesViewModel: ConsoleGamesViewModel
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedRealmObject var console: PVSystem
     weak var rootDelegate: PVRootDelegate?
 
     let gamesForSystemPredicate: NSPredicate
-
-    @ObservedResults(
-        PVGame.self,
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
-    ) var games
-
-    @ObservedResults(PVRecentGame.self) var recentlyPlayedGames
-    @ObservedResults(PVGame.self) var favorites
-    @ObservedResults(PVGame.self) var mostPlayed
-
-    @ObservedResults(
-        PVSaveState.self,
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
-    ) var recentSaveStates
 
     @ObservedObject private var themeManager = ThemeManager.shared
 
@@ -77,8 +123,8 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
-    @FocusState private var focusedSection: HomeSectionType?
-    @FocusState private var focusedItemInSection: String?
+    @State private var focusedSection: HomeSectionType?
+    @State private var focusedItemInSection: String?
 
     @State private var gamepadHandler: Any?
     @State private var lastFocusedSection: HomeSectionType?
@@ -110,28 +156,11 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     }
 
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
+        _gamesViewModel = StateObject(wrappedValue: ConsoleGamesViewModel(console: console))
         self.console = console
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
         self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
-
-        let recentlyPlayedPredicate = NSPredicate(format: "game.systemIdentifier == %@", argumentArray: [console.identifier])
-        let favoritesPredicate = NSPredicate(format: "\(#keyPath(PVGame.isFavorite)) == %@ AND systemIdentifier == %@", NSNumber(value: true), console.identifier)
-        let mostPlayedPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
-        let saveStatesPredicate = NSPredicate(format: "game.systemIdentifier == %@", argumentArray: [console.identifier])
-
-        _recentlyPlayedGames = ObservedResults(PVRecentGame.self,
-                                               filter: recentlyPlayedPredicate,
-                                               sortDescriptor: SortDescriptor(keyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false))
-        _favorites = ObservedResults(PVGame.self,
-                                     filter: favoritesPredicate,
-                                     sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false))
-        _mostPlayed = ObservedResults(PVGame.self,
-                                      filter: mostPlayedPredicate,
-                                      sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false))
-        _recentSaveStates = ObservedResults(PVSaveState.self,
-                                            filter: saveStatesPredicate,
-                                            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false))
     }
 
     var body: some SwiftUI.View {
@@ -140,15 +169,24 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 displayOptionsView()
                 ZStack(alignment: .bottom) {
                     ScrollView {
-                        LazyVStack(spacing: 20) {
-                            continueSection()
-                            favoritesSection()
-                            recentlyPlayedSection()
-                            gamesSection()
-                            BiosesView(console: console)
+                        ScrollViewReader { proxy in
+                            LazyVStack(spacing: 20) {
+                                continueSection()
+                                favoritesSection()
+                                recentlyPlayedSection()
+                                gamesSection()
+                                BiosesView(console: console)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.bottom, 44)
+                            .onChange(of: focusedItemInSection) { newValue in
+                                if let itemId = newValue {
+                                    withAnimation {
+                                        proxy.scrollTo(itemId, anchor: .center)
+                                    }
+                                }
+                            }
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.bottom, 44)
                     }.refreshable {
                         ILOG("Refreshing game library")
                         await AppState.shared.libraryUpdatesController?.importROMDirectories()
@@ -165,10 +203,10 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
                 // Set initial focus
                 let sections: [HomeSectionType] = [
-                    showRecentSaveStates && !recentSaveStates.isEmpty ? .recentSaveStates : nil,
-                    showFavorites && !favorites.isEmpty ? .favorites : nil,
-                    showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
-                    !games.isEmpty ? .allGames : nil
+                    showRecentSaveStates && !gamesViewModel.recentSaveStates.isEmpty ? .recentSaveStates : nil,
+                    showFavorites && !gamesViewModel.favorites.isEmpty ? .favorites : nil,
+                    showRecentGames && !gamesViewModel.recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
+                    !gamesViewModel.games.isEmpty ? .allGames : nil
                 ].compactMap { $0 }
 
                 if let firstSection = sections.first {
@@ -176,6 +214,9 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                     focusedItemInSection = getFirstItemInSection(firstSection)
                     DLOG("Set initial focus - Section: \(firstSection), Item: \(String(describing: focusedItemInSection))")
                 }
+            }
+            .onDisappear {
+                gamepadCancellable?.cancel()
             }
         }
         .sheet(isPresented: $showImagePicker) {
@@ -261,7 +302,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func gamesSection() -> some View {
         Group {
-            if games.filter{!$0.isInvalidated}.isEmpty && AppState.shared.isSimulator {
+            if gamesViewModel.games.filter{!$0.isInvalidated}.isEmpty && AppState.shared.isSimulator {
                 let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
                 if viewModel.viewGamesAsGrid {
                     showGamesGrid(fakeGames)
@@ -269,10 +310,16 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                     showGamesList(fakeGames)
                 }
             } else {
-                if viewModel.viewGamesAsGrid {
-                    showGamesGrid(filteredAndSortedGames())
-                } else {
-                    showGamesList(filteredAndSortedGames())
+                VStack(alignment: .leading) {
+                    Text("\(console.name) Games")
+                        .font(.title2)
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+
+                    if viewModel.viewGamesAsGrid {
+                        showGamesGrid(gamesViewModel.games)
+                    } else {
+                        showGamesList(gamesViewModel.games)
+                    }
                 }
             }
         }
@@ -303,33 +350,24 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     }
 
     // MARK: - Helper Methods
-
-    func filteredAndSortedGames() -> Results<PVGame> {
-        return games
-            .filter(gamesForSystemPredicate)
-            .sorted(by: [
-                SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)
-            ])
-    }
-
     private var hasRecentSaveStates: Bool {
-        !recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
+        !gamesViewModel.recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
     }
 
     private var hasFavorites: Bool {
-        !favorites.filter("systemIdentifier == %@", console.identifier).isEmpty
+        !gamesViewModel.favorites.filter("systemIdentifier == %@", console.identifier).isEmpty
     }
 
     private var favoritesArray: [PVGame] {
-        Array(favorites.filter("systemIdentifier == %@", console.identifier))
+        Array(gamesViewModel.favorites.filter("systemIdentifier == %@", console.identifier))
     }
 
     private var hasRecentlyPlayedGames: Bool {
-        !recentlyPlayedGames.isEmpty
+        !gamesViewModel.recentlyPlayedGames.isEmpty
     }
 
     private var recentlyPlayedGamesArray: [PVGame] {
-        recentlyPlayedGames.compactMap { $0.game }
+        gamesViewModel.recentlyPlayedGames.compactMap { $0.game }
     }
 
     private func loadGame(_ game: PVGame) {
@@ -346,7 +384,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         if AppState.shared.isSimulator {
             count = max(0,roundedScale )
         } else {
-            count = min(max(0, roundedScale), games.count)
+            count = min(max(0, roundedScale), gamesViewModel.games.count)
         }
         return count
     }
@@ -562,6 +600,9 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     }
 
     private func setupGamepadHandling() {
+        // Cancel existing handler if it exists
+        gamepadCancellable?.cancel()
+
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { event in
@@ -608,7 +649,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
         switch section {
         case .recentSaveStates:
-            if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
+            if let saveState = gamesViewModel.recentSaveStates.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(
                         saveState.game,
@@ -619,25 +660,25 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                 }
             }
         case .favorites:
-            if let game = favorites.first(where: { $0.id == itemId }) {
+            if let game = gamesViewModel.favorites.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
             }
         case .recentlyPlayedGames:
-            if let recentGame = recentlyPlayedGames.first(where: { $0.id == itemId })?.game {
+            if let recentGame = gamesViewModel.recentlyPlayedGames.first(where: { $0.id == itemId })?.game {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(recentGame, sender: self, core: nil, saveState: nil)
                 }
             }
         case .allGames:
-            if let game = games.first(where: { $0.id == itemId }) {
+            if let game = gamesViewModel.games.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
             }
         case .mostPlayed:
-            if let game = mostPlayed.first(where: { $0.id == itemId }) {
+            if let game = gamesViewModel.mostPlayed.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
@@ -647,38 +688,64 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
     private func handleVerticalNavigation(_ yValue: Float) {
         let sections: [HomeSectionType] = [
-            showRecentSaveStates && !recentSaveStates.isEmpty ? .recentSaveStates : nil,
-            showFavorites && !favorites.isEmpty ? .favorites : nil,
-            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
-            !games.isEmpty ? .allGames : nil
+            showRecentSaveStates && !gamesViewModel.recentSaveStates.isEmpty ? .recentSaveStates : nil,
+            showFavorites && !gamesViewModel.favorites.isEmpty ? .favorites : nil,
+            showRecentGames && !gamesViewModel.recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
+            !gamesViewModel.games.isEmpty ? .allGames : nil
         ].compactMap { $0 }
 
-        DLOG("Available sections: \(sections)")
-        DLOG("Recent save states: \(recentSaveStates.count)")
-        DLOG("Favorites: \(favorites.count)")
-        DLOG("Recent games: \(recentlyPlayedGames.count)")
-        DLOG("All games: \(games.count)")
+        guard !sections.isEmpty else { return }
 
-        guard !sections.isEmpty else {
-            DLOG("No sections available")
+        // For single section (grid) navigation
+        if sections.count == 1 && sections[0] == .allGames {
+            let games = Array(gamesViewModel.games)
+            guard !games.isEmpty else { return }
+
+            // Calculate total rows
+            let totalRows = Int(ceil(Double(games.count) / Double(itemsPerRow)))
+
+            // Handle edge case of only 1 row
+            guard totalRows > 1 else { return }
+
+            // If no item is focused, start with first item
+            if focusedItemInSection == nil {
+                focusedSection = .allGames
+                focusedItemInSection = games.first?.id
+                return
+            }
+
+            // Find current position in grid
+            if let currentIndex = games.firstIndex(where: { $0.id == focusedItemInSection }) {
+                let currentRow = currentIndex / itemsPerRow
+                let columnPosition = currentIndex % itemsPerRow
+
+                var newRow: Int
+                if yValue > 0 {
+                    // Move up
+                    newRow = currentRow > 0 ? currentRow - 1 : totalRows - 1
+                } else {
+                    // Move down
+                    newRow = currentRow < totalRows - 1 ? currentRow + 1 : 0
+                }
+
+                // Calculate new index maintaining column position
+                let newIndex = min(games.count - 1, (newRow * itemsPerRow) + columnPosition)
+                focusedItemInSection = games[newIndex].id
+            }
             return
         }
 
+        // Handle multi-section navigation as before
         if let currentSection = focusedSection,
            let currentIndex = sections.firstIndex(of: currentSection) {
             let newIndex = yValue > 0 ?
                 max(0, currentIndex - 1) :
                 min(sections.count - 1, currentIndex + 1)
             focusedSection = sections[newIndex]
-
-            // Reset focused item when changing sections
             focusedItemInSection = getFirstItemInSection(sections[newIndex])
-            DLOG("Changed to section: \(sections[newIndex])")
         } else {
-            // No section focused, start at first section
             focusedSection = sections.first
             focusedItemInSection = getFirstItemInSection(sections.first!)
-            DLOG("Set initial section: \(String(describing: sections.first))")
         }
     }
 
@@ -688,42 +755,55 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         let items: [String]
         switch section {
         case .recentSaveStates:
-            items = recentSaveStates.map { $0.id }
+            items = gamesViewModel.recentSaveStates.map { $0.id }
         case .favorites:
-            items = favorites.map { $0.id }
+            items = gamesViewModel.favorites.map { $0.id }
         case .recentlyPlayedGames:
-            items = recentlyPlayedGames.map { $0.id }
+            items = gamesViewModel.recentlyPlayedGames.map { $0.id }
         case .allGames:
-            items = games.map { $0.id }
+            items = gamesViewModel.games.map { $0.id }
         case .mostPlayed:
-            items = games.map { $0.id }
+            items = gamesViewModel.games.map { $0.id }
         }
+
+        // Handle edge case of only 1 item
+        guard items.count > 1 else { return }
 
         if let currentItem = focusedItemInSection,
            let currentIndex = items.firstIndex(of: currentItem) {
-            let newIndex = xValue < 0 ?
-                max(0, currentIndex - 1) :
-                min(items.count - 1, currentIndex + 1)
+            let newIndex: Int
+            if xValue < 0 {
+                // Moving left
+                newIndex = currentIndex > 0 ? currentIndex - 1 : items.count - 1
+            } else {
+                // Moving right
+                newIndex = currentIndex < items.count - 1 ? currentIndex + 1 : 0
+            }
             focusedItemInSection = items[newIndex]
         } else {
             focusedItemInSection = items.first
         }
-
-        print("Horizontal navigation - New item: \(String(describing: focusedItemInSection))")
     }
 
     private func getFirstItemInSection(_ section: HomeSectionType) -> String? {
         switch section {
         case .recentSaveStates:
-            return recentSaveStates.first?.id
-        case .favorites:
-            return favorites.first?.id
+            return gamesViewModel.recentSaveStates.first?.id
         case .recentlyPlayedGames:
-            return recentlyPlayedGames.first?.id as? String
-        case .allGames:
-            return games.first?.id
+            return gamesViewModel.recentlyPlayedGames.first?.game?.id
+        case .favorites:
+            return gamesViewModel.favorites.first?.id
         case .mostPlayed:
-            return mostPlayed.first?.id
+            return gamesViewModel.mostPlayed.first?.id
+        case .allGames:
+            DLOG("Getting first game from allGames section")
+            DLOG("Games count: \(gamesViewModel.games.count)")
+            if let firstGame = gamesViewModel.games.first {
+                DLOG("First game: \(firstGame.title)")
+                DLOG("First game ID: \(firstGame.id)")
+                return firstGame.id
+            }
+            return nil
         }
     }
 
