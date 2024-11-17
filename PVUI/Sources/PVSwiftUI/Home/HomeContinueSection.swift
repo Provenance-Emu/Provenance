@@ -28,7 +28,6 @@ struct HomeContinueSection: SwiftUI.View {
     let defaultHeight: CGFloat = 260
     var consoleIdentifier: String?
 
-    @FocusState private var focusedSaveState: String?
     @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
 
@@ -74,9 +73,10 @@ struct HomeContinueSection: SwiftUI.View {
     @State private var continuousNavigationTask: Task<Void, Never>?
     @State private var delayTask: Task<Void, Never>?
     @State private var gamepadCancellable: AnyCancellable?
+    @State private var selectedPage = 0
 
     var body: some SwiftUI.View {
-        TabView {
+        TabView(selection: $selectedPage) {
             if filteredSaveStates.count > 0 {
                 ForEach(0..<pageCount, id: \.self) { pageIndex in
                     SaveStatesGridView(
@@ -87,11 +87,11 @@ struct HomeContinueSection: SwiftUI.View {
                         adjustedHeight: adjustedHeight,
                         hideSystemLabel: consoleIdentifier != nil,
                         rootDelegate: rootDelegate,
-                        focusedSaveState: $focusedSaveState,
                         parentFocusedSection: $parentFocusedSection,
                         parentFocusedItem: $parentFocusedItem
                     )
                     .padding(.horizontal)
+                    .tag(pageIndex)
                 }
             } else {
                 EmptyContinuesView()
@@ -101,6 +101,14 @@ struct HomeContinueSection: SwiftUI.View {
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(filteredSaveStates.count)
         .frame(height: adjustedHeight)
+        .onAppear {
+            setupGamepadHandling()
+        }
+        .onDisappear {
+            gamepadCancellable?.cancel()
+            delayTask?.cancel()
+            continuousNavigationTask?.cancel()
+        }
     }
 
     // Computed property for page count
@@ -113,16 +121,20 @@ struct HomeContinueSection: SwiftUI.View {
     }
 
     private func setupGamepadHandling() {
+        DLOG("HomeContinueSection: Setting up gamepad handling")
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { [self] event in
+                DLOG("HomeContinueSection: Received gamepad event: \(event)")
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {
+                        DLOG("HomeContinueSection: Button pressed")
                         handleButtonPress()
                     }
                 case .horizontalNavigation(let value, let isPressed):
                     if isPressed {
+                        DLOG("HomeContinueSection: Horizontal navigation: \(value)")
                         handleHorizontalNavigation(value)
                     }
                 default:
@@ -132,7 +144,7 @@ struct HomeContinueSection: SwiftUI.View {
     }
 
     private func handleButtonPress() {
-        if let focused = focusedSaveState,
+        if let focused = parentFocusedItem,
            let saveState = filteredSaveStates.first(where: { $0.id == focused }) {
             Task.detached { @MainActor in
                 await self.rootDelegate?.root_load(
@@ -147,15 +159,27 @@ struct HomeContinueSection: SwiftUI.View {
 
     private func handleHorizontalNavigation(_ value: Float) {
         let items = filteredSaveStates.map { $0.id }
+        DLOG("HomeContinueSection: Available items: \(items)")
+        DLOG("HomeContinueSection: Current focused item: \(String(describing: parentFocusedItem))")
 
-        if let currentItem = focusedSaveState,
+        if let currentItem = parentFocusedItem,
            let currentIndex = items.firstIndex(of: currentItem) {
             let newIndex = value < 0 ?
                 (currentIndex == 0 ? items.count - 1 : currentIndex - 1) :
                 (currentIndex == items.count - 1 ? 0 : currentIndex + 1)
-            focusedSaveState = items[newIndex]
+            DLOG("HomeContinueSection: Moving from index \(currentIndex) to \(newIndex)")
+            parentFocusedItem = items[newIndex]
+
+            // Update the selected page based on the new index
+            selectedPage = newIndex / (isLandscapePhone ? 2 : 1)
+
+            DLOG("HomeContinueSection: New focused item: \(items[newIndex])")
+            DLOG("HomeContinueSection: New page: \(selectedPage)")
         } else {
-            focusedSaveState = items.first
+            DLOG("HomeContinueSection: No current item, selecting first item")
+            parentFocusedItem = items.first
+            selectedPage = 0
+            DLOG("HomeContinueSection: Selected first item: \(String(describing: items.first))")
         }
     }
 }
@@ -170,7 +194,6 @@ private struct SaveStatesGridView: View {
     let hideSystemLabel: Bool
     weak var rootDelegate: PVRootDelegate?
 
-    @FocusState.Binding var focusedSaveState: String?
     @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
 
@@ -183,7 +206,6 @@ private struct SaveStatesGridView: View {
                     adjustedHeight: adjustedHeight,
                     hideSystemLabel: hideSystemLabel,
                     rootDelegate: rootDelegate,
-                    focusedSaveState: $focusedSaveState,
                     parentFocusedSection: $parentFocusedSection,
                     parentFocusedItem: $parentFocusedItem
                 )
@@ -194,7 +216,6 @@ private struct SaveStatesGridView: View {
                     adjustedHeight: adjustedHeight,
                     hideSystemLabel: hideSystemLabel,
                     rootDelegate: rootDelegate,
-                    focusedSaveState: $focusedSaveState,
                     parentFocusedSection: $parentFocusedSection,
                     parentFocusedItem: $parentFocusedItem
                 )
@@ -211,7 +232,6 @@ private struct LandscapeGridContent: View {
     let hideSystemLabel: Bool
     weak var rootDelegate: PVRootDelegate?
 
-    @FocusState.Binding var focusedSaveState: String?
     @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
 
@@ -226,7 +246,6 @@ private struct LandscapeGridContent: View {
                     height: adjustedHeight,
                     hideSystemLabel: hideSystemLabel,
                     rootDelegate: rootDelegate,
-                    focusedSaveState: $focusedSaveState,
                     parentFocusedSection: $parentFocusedSection,
                     parentFocusedItem: $parentFocusedItem
                 )
@@ -242,7 +261,6 @@ private struct PortraitGridContent: View {
     let hideSystemLabel: Bool
     weak var rootDelegate: PVRootDelegate?
 
-    @FocusState.Binding var focusedSaveState: String?
     @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
 
@@ -253,7 +271,6 @@ private struct PortraitGridContent: View {
                 height: adjustedHeight,
                 hideSystemLabel: hideSystemLabel,
                 rootDelegate: rootDelegate,
-                focusedSaveState: $focusedSaveState,
                 parentFocusedSection: $parentFocusedSection,
                 parentFocusedItem: $parentFocusedItem
             )
@@ -267,7 +284,6 @@ private struct ContinueItemWrapper: View {
     let hideSystemLabel: Bool
     weak var rootDelegate: PVRootDelegate?
 
-    @FocusState.Binding var focusedSaveState: String?
     @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
 
@@ -277,6 +293,7 @@ private struct ContinueItemWrapper: View {
             height: height,
             hideSystemLabel: hideSystemLabel,
             action: {
+                DLOG("ContinueItemWrapper: Action triggered for save state: \(saveState.id)")
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(
                         saveState.game,
@@ -286,14 +303,18 @@ private struct ContinueItemWrapper: View {
                     )
                 }
             },
-            isFocused: focusedSaveState == saveState.id
+            isFocused: {
+                let isFocused = parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id
+                DLOG("ContinueItemWrapper: Checking focus for \(saveState.id) - Section: \(String(describing: parentFocusedSection)), Item: \(String(describing: parentFocusedItem)) = \(isFocused)")
+                return isFocused
+            }()
         )
         .focusableIfAvailable()
-        .focused($focusedSaveState, equals: saveState.id)
-        .onChange(of: focusedSaveState) { newValue in
-            if newValue != nil {
+        .onChange(of: parentFocusedItem) { newValue in
+            DLOG("ContinueItemWrapper: Parent focused item changed to: \(String(describing: newValue))")
+            if newValue == saveState.id {
+                DLOG("ContinueItemWrapper: Setting section to recentSaveStates")
                 parentFocusedSection = .recentSaveStates
-                parentFocusedItem = newValue
             }
         }
     }
