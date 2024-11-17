@@ -80,57 +80,58 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
             }
         }
         
+        var matchingSystems:[PVSystem] = []
+        
         // Try to find system by MD5 using OpenVGDB
         if let results = try openVGDB?.searchDatabase(usingKey: "romHashMD5", value: md5),
            let _ = results.first{
             
             // Get all matching systems
-            let matchingSystems = results.compactMap { result -> PVSystem? in
+            matchingSystems = results.compactMap { result -> PVSystem? in
                 guard let sysID = (result["systemID"] as? NSNumber) else { return nil }
                 return PVEmulatorConfiguration.system(forDatabaseID: sysID.intValue)
             }
             
-            //temporarily removing this logic - if we have multiple valid systems, we'll reconcile later.
-            
-//            if !matchingSystems.isEmpty {
-//                // Sort by release year and take the oldest
-//                //TODO: consider whether this is a good idea?
-//                if let oldestSystem = matchingSystems.sorted(by: { $0.releaseYear < $1.releaseYear }).first {
-//                    //TODO: is this the right move, i'm not sure - might be better to consider a conflict here
-//                    DLOG("System determined by MD5 match (oldest): \(oldestSystem.name) (\(oldestSystem.releaseYear))")
-//                    return [oldestSystem]
-//                }
-//            }
-            
-//            // Fallback to original single system match if sorting fails
-//            if let system = PVEmulatorConfiguration.system(forIdentifier: String(systemID.intValue)) {
-//                DLOG("System determined by MD5 match (fallback): \(system.name)")
-//                return [system]
-//            }
-            return matchingSystems
+            //if we found an exact match, finish up.  otherwise, we can keep searching using methods below
+            if (matchingSystems.count == 1) {
+                ILOG("Found an exact match using MD5 - \(matchingSystems.first?.name ?? "empty name?")")
+                return matchingSystems
+            }
         }
         
-        DLOG("MD5 lookup failed, trying filename matching")
+        DLOG("MD5 lookup didn't result in a match, trying filename matching")
         
         // Try filename matching next
         let fileName = queueItem.url.lastPathComponent
         
-        let matchedSystems = await matchSystemByFileName(fileName)
-        if !matchedSystems.isEmpty {
-            return matchedSystems
+        let matchedSystemsByFileName = await matchSystemByFileName(fileName)
+        if !matchedSystemsByFileName.isEmpty && matchedSystemsByFileName.count == 1 {
+            //exact match, return the systems since it's only 1
+            ILOG("Found an exact match using file name - \(matchedSystemsByFileName.first?.name ?? "empty name?")")
+            return matchedSystemsByFileName
         }
+        
+        matchingSystems = Array(Set(matchingSystems + matchedSystemsByFileName))
             
-        // If MD5 lookup fails, try to determine the system based on file extension
-        if let systems = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) {
-            if systems.count == 1 {
-                return systems
-            } else if systems.count > 1 {
-                return try determineSystemsFromContent(for: queueItem, possibleSystems: systems)
+        // If here, try to determine the systems based on file extension
+        if let systemsByExtension = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) {
+            if systemsByExtension.count == 1 {
+                ILOG("Found an exact match using file extension - \(systemsByExtension.first?.name ?? "empty name?")")
+                return systemsByExtension
+            } else if systemsByExtension.count > 1 {
+                //i actually don't know if this is necessary...
+                let candidateSystems = try determineSystemsFromContent(for: queueItem, possibleSystems: systemsByExtension)
+                matchingSystems = Array(Set(matchingSystems + candidateSystems))
             }
         }
         
-        ELOG("No System matched for this rom: \(fileName)")
-        throw GameImporterError.noSystemMatched
+        //hopefully we've accumulated at least 1 matchingSystem up til now
+        guard !matchingSystems.isEmpty else {
+            ELOG("No System matched for this rom: \(fileName)")
+            throw GameImporterError.noSystemMatched
+        }
+        
+        return matchingSystems
     }
     
     /// Determines the system for a given candidate file
