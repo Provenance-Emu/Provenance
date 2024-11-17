@@ -36,35 +36,34 @@ import AppKit
  Logic how the importer should work:
  
  1. Detect if special file (BIOS, Artwork)
- 1. Detect if the file is artwork
- 2. Detect if file is a BIOS
- 1. if single match, move to BIOS for system
- 2. if multiple matches, move to all matching systems
+    1. Detect if the file is artwork
+    2. Detect if file is a BIOS
+        1. if single match, move to BIOS for system
+        2. if multiple matches, move to all matching systems
  2. Detect if the file is a CD-ROM (bin/cue) or m3u
  3. Detect if the file is m3u
- 1. Match by filename of m3u or md5 of
- 1. If m3u matches, move all files in m3u to the system that's matched
+    1. Match by filename of m3u or md5 of
+    1. If m3u matches, move all files in m3u to the system that's matched
  4. Detect if the file is a CD-ROM (bin/cue)
- 1. match cue by md5
- 1. if single match, move to system
- 2. if multiple matches, move to conflicts
- 2. match by exact filename
- 1. if single match, move to system
- 2. if multiple matches, move to conflicts
- 3. Detect if single file ROM
- 1. match by md5
- 1. if single match, move to system
- 2. if multiple matches, move to conflicts
- 2. match by exact filename
- 1. if single match, move to system
- 2. if multiple matches, move to conflicts
- 3. Match by extension
- 1. if single match, move to system
- 2. if multiple matches, move to conflicts
- 4. Match by partial filename contains system identifier
- 1. if single match, move to system
- 2. if multiple matches, move to conflicts
- 
+    1. match cue by md5
+        1. if single match, move to system
+        2. if multiple matches, move to conflicts
+    2. match by exact filename
+        1. if single match, move to system
+        2. if multiple matches, move to conflicts
+        3. Detect if single file ROM
+            1. match by md5
+                1. if single match, move to system
+                2. if multiple matches, move to conflicts
+            2. match by exact filename
+                 1. if single match, move to system
+                 2. if multiple matches, move to conflicts
+                 3. Match by extension
+                    1. if single match, move to system
+                    2. if multiple matches, move to conflicts
+                4. Match by partial filename contains system identifier
+                    1. if single match, move to system
+                    2. if multiple matches, move to conflicts
  */
 
 /// Import Coodinator
