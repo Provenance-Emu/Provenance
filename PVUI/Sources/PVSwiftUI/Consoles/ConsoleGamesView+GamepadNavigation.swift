@@ -96,59 +96,24 @@ extension ConsoleGamesView {
     internal func handleHorizontalNavigation(_ xValue: Float) {
         guard let section = focusedSection else { return }
 
-        let items: [String]
-        switch section {
-        case .recentSaveStates:
-            items = gamesViewModel.recentSaveStates.map { $0.id }
-        case .favorites:
-            items = gamesViewModel.favorites.map { $0.id }
-        case .recentlyPlayedGames:
-            items = gamesViewModel.recentlyPlayedGames.map { $0.id }
-        case .allGames:
-            items = gamesViewModel.games.map { $0.id }
-        case .mostPlayed:
-            items = gamesViewModel.games.map { $0.id }
-        }
-
-        // Handle edge case of only 1 item
-        guard items.count > 1 else { return }
-
-        if let currentItem = focusedItemInSection,
-           let currentIndex = items.firstIndex(of: currentItem) {
-            let newIndex: Int
-            if xValue < 0 {
-                // Moving left
-                newIndex = currentIndex > 0 ? currentIndex - 1 : items.count - 1
-            } else {
-                // Moving right
-                newIndex = currentIndex < items.count - 1 ? currentIndex + 1 : 0
-            }
-            focusedItemInSection = items[newIndex]
+        if xValue < 0 && isOnFirstItemInSection(section) {
+            // At start of section, try to move to previous section
+            _ = moveBetweenSections(section, direction: 1.0)
+        } else if xValue > 0 && isOnLastItemInSection(section) {
+            // At end of section, try to move to next section
+            _ = moveBetweenSections(section, direction: -1.0)
         } else {
-            focusedItemInSection = items.first
+            // Normal within-section navigation
+            _ = moveWithinSection(section, direction: xValue)
         }
     }
 
     internal func getFirstItemInSection(_ section: HomeSectionType) -> String? {
-        switch section {
-        case .recentSaveStates:
-            return gamesViewModel.recentSaveStates.first?.id
-        case .recentlyPlayedGames:
-            return gamesViewModel.recentlyPlayedGames.first?.game?.id
-        case .favorites:
-            return gamesViewModel.favorites.first?.id
-        case .mostPlayed:
-            return gamesViewModel.mostPlayed.first?.id
-        case .allGames:
-            DLOG("Getting first game from allGames section")
-            DLOG("Games count: \(gamesViewModel.games.count)")
-            if let firstGame = gamesViewModel.games.first {
-                DLOG("First game: \(firstGame.title)")
-                DLOG("First game ID: \(firstGame.id)")
-                return firstGame.id
-            }
-            return nil
-        }
+        return getItemsForSection(section).first
+    }
+
+    internal func getLastItemInSection(_ section: HomeSectionType) -> String? {
+        return getItemsForSection(section).last
     }
 
     internal func currentSectionForGame(_ game: PVGame) -> HomeSectionType {
@@ -188,23 +153,32 @@ extension ConsoleGamesView {
     // Helper functions for section navigation
     private func isMovingToNewSection(currentSection: HomeSectionType, direction: Float) -> Bool {
         let sections = availableSections
-        guard let currentIndex = sections.firstIndex(of: currentSection) else { return false }
+        guard !sections.isEmpty,
+              let currentIndex = sections.firstIndex(of: currentSection) else { return false }
 
         if direction > 0 {  // Moving up
-            return currentIndex > 0
+            // Check if there's any section above us and it's within bounds
+            return currentIndex > 0 &&
+                   currentIndex - 1 >= 0 &&
+                   sections[currentIndex - 1] != currentSection
         } else {  // Moving down
-            return currentIndex < sections.count - 1
+            // Check if there's any section below us and it's within bounds
+            return currentIndex < sections.count - 1 &&
+                   currentIndex + 1 < sections.count &&
+                   sections[currentIndex + 1] != currentSection
         }
     }
 
     private func getNextSection(from currentSection: HomeSectionType, direction: Float) -> HomeSectionType? {
         let sections = availableSections
-        guard let currentIndex = sections.firstIndex(of: currentSection) else { return nil }
+        guard !sections.isEmpty,
+              let currentIndex = sections.firstIndex(of: currentSection) else { return nil }
 
         let newIndex = direction > 0 ?
             max(0, currentIndex - 1) :
             min(sections.count - 1, currentIndex + 1)
 
+        guard newIndex >= 0 && newIndex < sections.count else { return nil }
         return sections[newIndex]
     }
 
@@ -301,6 +275,75 @@ extension ConsoleGamesView {
                     min(mostPlayed.count - 1, currentIndex + 1)
                 focusedItemInSection = mostPlayed[newIndex].id
             }
+        }
+    }
+
+    private func moveWithinSection(_ section: HomeSectionType, direction: Float) -> Bool {
+        let items: [String]
+        switch section {
+        case .recentSaveStates:
+            items = gamesViewModel.recentSaveStates.map { $0.id }
+        case .favorites:
+            items = gamesViewModel.favorites.map { $0.id }
+        case .recentlyPlayedGames:
+            items = gamesViewModel.recentlyPlayedGames.map { $0.id }
+        case .allGames:
+            items = gamesViewModel.games.map { $0.id }
+        case .mostPlayed:
+            items = gamesViewModel.mostPlayed.map { $0.id }
+        }
+
+        guard let currentItem = focusedItemInSection,
+              let currentIndex = items.firstIndex(of: currentItem) else { return false }
+
+        let newIndex = direction < 0 ?
+            max(0, currentIndex - 1) :
+            min(items.count - 1, currentIndex + 1)
+
+        focusedSection = section
+        focusedItemInSection = items[newIndex]
+        DLOG("Moving within section \(section) to item \(items[newIndex])")
+        return true
+    }
+
+    private func moveBetweenSections(_ currentSection: HomeSectionType, direction: Float) -> Bool {
+        if let nextSection = getNextSection(from: currentSection, direction: direction) {
+            focusedSection = nextSection
+            focusedItemInSection = direction < 0 ?
+                getFirstItemInSection(nextSection) :
+                getLastItemInSection(nextSection)
+            DLOG("Moving to section: \(nextSection)")
+            return true
+        }
+        return false
+    }
+
+    private func isOnFirstItemInSection(_ section: HomeSectionType) -> Bool {
+        let items = getItemsForSection(section)
+        guard let currentItem = focusedItemInSection,
+              let currentIndex = items.firstIndex(of: currentItem) else { return false }
+        return currentIndex == 0
+    }
+
+    private func isOnLastItemInSection(_ section: HomeSectionType) -> Bool {
+        let items = getItemsForSection(section)
+        guard let currentItem = focusedItemInSection,
+              let currentIndex = items.firstIndex(of: currentItem) else { return false }
+        return currentIndex == items.count - 1
+    }
+
+    private func getItemsForSection(_ section: HomeSectionType) -> [String] {
+        switch section {
+        case .recentSaveStates:
+            return gamesViewModel.recentSaveStates.map { $0.id }
+        case .favorites:
+            return gamesViewModel.favorites.map { $0.id }
+        case .recentlyPlayedGames:
+            return gamesViewModel.recentlyPlayedGames.map { $0.id }
+        case .allGames:
+            return gamesViewModel.games.map { $0.id }
+        case .mostPlayed:
+            return gamesViewModel.mostPlayed.map { $0.id }
         }
     }
 }
