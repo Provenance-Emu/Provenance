@@ -4,14 +4,14 @@ import SwiftUI
 import Combine
 
 public enum GamepadEvent {
-    case buttonPress
-    case buttonB
+    case buttonPress(Bool)
+    case buttonB(Bool)
     case verticalNavigation(Float, Bool)
     case horizontalNavigation(Float, Bool)
-    case menuToggle
-    case shoulderLeft
-    case shoulderRight
-    case start
+    case menuToggle(Bool)
+    case shoulderLeft(Bool)
+    case shoulderRight(Bool)
+    case start(Bool)
 }
 
 public class GamepadManager: ObservableObject {
@@ -69,9 +69,8 @@ public class GamepadManager: ObservableObject {
 
     private func setupBasicControls(_ controller: GCController) {
         controller.extendedGamepad?.buttonA.valueChangedHandler = { [weak self] _, _, pressed in
-            guard pressed else { return }
             DispatchQueue.main.async {
-                self?.eventSubject.send(.buttonPress)
+                self?.eventSubject.send(.buttonPress(pressed))
             }
         }
 
@@ -86,47 +85,40 @@ public class GamepadManager: ObservableObject {
         }
 
         controller.extendedGamepad?.buttonB.valueChangedHandler = { [weak self] _, _, pressed in
-            guard pressed else { return }
             DispatchQueue.main.async {
-                self?.eventSubject.send(.buttonB)
+                self?.eventSubject.send(.buttonB(pressed))
             }
         }
 
         controller.extendedGamepad?.leftShoulder.valueChangedHandler = { [weak self] _, _, pressed in
-            guard pressed else { return }
             DispatchQueue.main.async {
-                self?.eventSubject.send(.shoulderLeft)
+                self?.eventSubject.send(.shoulderLeft(pressed))
             }
         }
 
         controller.extendedGamepad?.rightShoulder.valueChangedHandler = { [weak self] _, _, pressed in
-            guard pressed else { return }
             DispatchQueue.main.async {
-                self?.eventSubject.send(.shoulderRight)
+                self?.eventSubject.send(.shoulderRight(pressed))
             }
         }
 
         controller.extendedGamepad?.buttonMenu.valueChangedHandler = { [weak self] _, _, pressed in
-            guard pressed else { return }
             DispatchQueue.main.async {
-                self?.eventSubject.send(.start)
+                self?.eventSubject.send(.start(pressed))
             }
         }
     }
 
     private func setupMenuToggleHandlers(_ controller: GCController) {
-        /// Handle L2 button using isPressed for digital behavior
         controller.extendedGamepad?.leftTrigger.valueChangedHandler = { [weak self] button, _, _ in
-            guard button.isPressed else { return }
             DispatchQueue.main.async {
-                self?.eventSubject.send(.menuToggle)
+                self?.eventSubject.send(.menuToggle(button.isPressed))
             }
         }
 
-        controller.extendedGamepad?.buttonOptions?.valueChangedHandler = { [weak self] button, _, _ in
-            guard button.isPressed else { return }
+        controller.extendedGamepad?.buttonOptions?.valueChangedHandler = { [weak self] _, _, pressed in
             DispatchQueue.main.async {
-                self?.eventSubject.send(.menuToggle)
+                self?.eventSubject.send(.menuToggle(pressed))
             }
         }
     }

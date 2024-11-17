@@ -527,8 +527,10 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             .receive(on: DispatchQueue.main)
             .sink { event in
                 switch event {
-                case .buttonPress:
-                    handleButtonPress()
+                case .buttonPress(let isPressed):
+                    if isPressed {
+                        handleButtonPress()
+                    }
                 case .verticalNavigation(let value, let isPressed):
                     // Cancel existing timer if any
                     navigationTimer?.invalidate()
@@ -545,13 +547,29 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                             }
                         }
                     }
-                case .horizontalNavigation(let value, _):
+                case .horizontalNavigation(let value, let isPressed):
+                    // Cancel existing timer if any
+                    navigationTimer?.invalidate()
+                    navigationTimer = nil
+
+                    // Perform initial navigation
                     handleHorizontalNavigation(value)
-                case .start:
-                    if let focusedItem = focusedItemInSection {
+
+                    // Only setup continuous navigation if button is pressed
+                    if isPressed {
+                        navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
+                            navigationTimer = Timer.scheduledTimer(withTimeInterval: repeatDelay, repeats: true) { [self] _ in
+                                handleHorizontalNavigation(value)
+                            }
+                        }
+                    }
+                case .start(let isPressed):
+                    if isPressed, let focusedItem = focusedItemInSection {
                         showOptionsMenu(for: focusedItem)
                     }
                 default:
+                    navigationTimer?.invalidate()
+                    navigationTimer = nil
                     break
                 }
             }

@@ -77,9 +77,11 @@ SideMenuView: SwiftUI.View {
 
     @State private var gamepadCancellable: AnyCancellable?
 
-    @State private var navigationTimer: Timer?
-    @State private var initialDelay: TimeInterval = 0.5
-    @State private var repeatDelay: TimeInterval = 0.15
+    @State private var continuousNavigationTask: Task<Void, Never>?
+
+    @ObservedObject private var gamepadManager = GamepadManager.shared
+
+    @State private var delayTask: Task<Void, Never>?
 
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
@@ -134,36 +136,44 @@ SideMenuView: SwiftUI.View {
         return self.gameLibrary.searchResults(for: self.searchBar.text)
     }
 
-    private func setupGamepadHandling() {
+    private func setupGamepadHandling(proxy: ScrollViewProxy? = nil) {
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { event in
                 switch event {
-                case .buttonPress:
-                    handleButtonPress()
-                case .buttonB:
-                    delegate.closeMenu()
-                case .verticalNavigation(let value, let isPressed):
-                    // Cancel existing timer if any
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
-
-                    // Perform initial navigation
-                    handleVerticalNavigation(value)
-
-                    // Only setup continuous navigation if button is pressed
+                case .buttonPress(let isPressed):
                     if isPressed {
-                        navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
-                            navigationTimer = Timer.scheduledTimer(withTimeInterval: repeatDelay, repeats: true) { [self] _ in
-                                handleVerticalNavigation(value)
+                        handleButtonPress()
+                    }
+                case .buttonB(let isPressed):
+                    if isPressed {
+                        delegate.closeMenu()
+                    }
+                case .verticalNavigation(let value, let isPressed):
+                    if isPressed {
+                        // Cancel any existing tasks
+                        delayTask?.cancel()
+                        continuousNavigationTask?.cancel()
+
+                        // For single press, just do the navigation once
+                        handleVerticalNavigation(value, proxy: proxy)
+
+                        // Only start continuous navigation if the button is held
+                        delayTask = Task { [self] in
+                            try? await Task.sleep(for: .milliseconds(500)) // Wait to see if it's a hold
+                            if !Task.isCancelled && isPressed { // Only start continuous if still pressed
+                                startContinuousNavigation(value: value, proxy: proxy)
                             }
                         }
+                    } else {
+                        delayTask?.cancel()
+                        continuousNavigationTask?.cancel()
+                        delayTask = nil
+                        continuousNavigationTask = nil
                     }
                 default:
-                    // Cancel timer when no vertical input
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
-                    break
+                    continuousNavigationTask?.cancel()
+                    continuousNavigationTask = nil
                 }
             }
     }
@@ -185,11 +195,10 @@ SideMenuView: SwiftUI.View {
         }
     }
 
-    private func handleVerticalNavigation(_ value: Float) {
+    private func handleVerticalNavigation(_ value: Float, proxy: ScrollViewProxy? = nil) {
         let items = ["home", "settings", "imports"] + sortedConsoles().map(\.identifier)
 
-        if let currentItem = focusedItem,
-           let currentIndex = items.firstIndex(of: currentItem) {
+        if let currentIndex = items.firstIndex(of: focusedItem ?? "") {
             let newIndex: Int
             if value > 0 { // Going up
                 newIndex = currentIndex == 0 ? items.count - 1 : currentIndex - 1
@@ -197,8 +206,31 @@ SideMenuView: SwiftUI.View {
                 newIndex = currentIndex == items.count - 1 ? 0 : currentIndex + 1
             }
             focusedItem = items[newIndex]
+
+            // Force scroll to top for the first few items
+            if newIndex <= 2 { // home, settings, imports
+                withAnimation {
+                    proxy?.scrollTo(menuNamespace, anchor: .top)
+                }
+            }
         } else {
             focusedItem = items.first
+        }
+    }
+
+    private func startContinuousNavigation(value: Float, proxy: ScrollViewProxy? = nil) {
+        continuousNavigationTask?.cancel()
+
+        // Perform initial navigation
+        handleVerticalNavigation(value, proxy: proxy)
+
+        // Start continuous navigation
+        continuousNavigationTask = Task { [self] in
+            try? await Task.sleep(for: .milliseconds(500)) // Initial delay
+            while !Task.isCancelled {
+                self.handleVerticalNavigation(value, proxy: proxy)
+                try? await Task.sleep(for: .milliseconds(150)) // Repeat delay
+            }
         }
     }
 
@@ -280,6 +312,9 @@ SideMenuView: SwiftUI.View {
                         }
                     }
                 }
+                .onAppear {
+                    setupGamepadHandling(proxy: proxy)
+                }
             }
         }
 #if canImport(Introspect)
@@ -340,17 +375,19 @@ SideMenuView: SwiftUI.View {
                 }
             )
         }
-        .onAppear {
-            setupGamepadHandling()
-        }
         .onDisappear {
-            if let handler = gamepadHandler {
-                NotificationCenter.default.removeObserver(handler)
-            }
+            delayTask?.cancel()
+            continuousNavigationTask?.cancel()
+            gamepadCancellable?.cancel()
         }
         .task {
             // Set initial focus to home when menu appears
             focusedItem = "home"
+        }
+        .onChange(of: gamepadManager.isControllerConnected) { isConnected in
+            if isConnected {
+                focusedItem = "home"
+            }
         }
     }
 }

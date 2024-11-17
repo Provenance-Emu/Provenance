@@ -31,7 +31,6 @@ import MBProgressHUD
 #endif
 
 // PVRootViewController serves as a UIKit parent for child SwiftUI menu views.
-
 // The goal one day may be to move entirely to a SwiftUI app life cycle, but under
 // current circumstances (iOS 11 deployment target, some critical logic being coupled
 // to UIViewControllers, etc.) it will be more easier to integrate by starting here
@@ -69,9 +68,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     private var gameController: GCController?
     private var controllerObserver: Any?
 
-    private var navigationTimer: Timer?
-    private let initialDelay: TimeInterval = 0.5
-    private let repeatDelay: TimeInterval = 0.15
+    private var continuousNavigationTask: Task<Void, Never>?
 
     public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary<RealmDatabaseDriver>, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
@@ -107,7 +104,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(controllerObserver as Any)
-        navigationTimer?.invalidate()
+        continuousNavigationTask?.cancel()
         gameController = nil
     }
 
@@ -182,47 +179,58 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             .sink { [weak self] event in
                 guard let self = self else { return }
                 switch event {
-                case .menuToggle:
-                    if self.sideNavigationController?.visibleSideViewController == self.sideNavigationController?.left?.viewController {
-                        self.closeMenu()
+                case .menuToggle(let isPressed):
+                    if isPressed {
+                        if self.sideNavigationController?.visibleSideViewController == self.sideNavigationController?.left?.viewController {
+                            self.closeMenu()
+                        } else {
+                            self.showMenu()
+                        }
+                    }
+                case .shoulderLeft(let isPressed):
+                    if isPressed {
+                        startContinuousNavigation(isNext: false)
                     } else {
-                        self.showMenu()
+                        continuousNavigationTask?.cancel()
+                        continuousNavigationTask = nil
                     }
-                case .shoulderLeft:
-                    // Cancel existing timer
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
-
-                    // Initial navigation
-                    navigateToPrevious()
-
-                    // Setup continuous navigation
-                    navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
-                        self.navigationTimer = Timer.scheduledTimer(withTimeInterval: self.repeatDelay, repeats: true) { [self] _ in
-                            self.navigateToPrevious()
-                        }
-                    }
-                case .shoulderRight:
-                    // Cancel existing timer
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
-
-                    // Initial navigation
-                    navigateToNext()
-
-                    // Setup continuous navigation
-                    navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
-                        self.navigationTimer = Timer.scheduledTimer(withTimeInterval: self.repeatDelay, repeats: true) { [self] _ in
-                            self.navigateToNext()
-                        }
+                case .shoulderRight(let isPressed):
+                    if isPressed {
+                        startContinuousNavigation(isNext: true)
+                    } else {
+                        continuousNavigationTask?.cancel()
+                        continuousNavigationTask = nil
                     }
                 default:
-                    // Cancel any existing timer when other buttons are pressed
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
-                    break
+                    continuousNavigationTask?.cancel()
+                    continuousNavigationTask = nil
                 }
             }
+    }
+
+    private func startContinuousNavigation(isNext: Bool) {
+        continuousNavigationTask?.cancel()
+
+        // Perform initial navigation
+        if isNext {
+            navigateToNext()
+        } else {
+            navigateToPrevious()
+        }
+
+        // Start continuous navigation
+        continuousNavigationTask = Task { [weak self] in
+            guard let self = self else { return }
+            try? await Task.sleep(for: .milliseconds(500)) // Initial delay
+            while !Task.isCancelled {
+                if isNext {
+                    self.navigateToNext()
+                } else {
+                    self.navigateToPrevious()
+                }
+                try? await Task.sleep(for: .milliseconds(150)) // Repeat delay
+            }
+        }
     }
 
     private func navigateToPrevious() {
