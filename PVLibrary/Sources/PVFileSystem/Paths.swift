@@ -29,6 +29,11 @@ public extension URL {
 //        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
 //        return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
+    
+    static let documentsPathLocal: URL = {
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+    }()
 }
 
 @objc public extension NSURL {
@@ -56,7 +61,7 @@ public struct Paths {
     }
 
     public static var romsImportPath: URL {
-        return URL.documentsPath.appendingPathComponent("Imports", isDirectory: true)
+        return URL.documentsPathLocal.appendingPathComponent("Imports", isDirectory: true)
     }
 
     /// Should be called on BG Thread, iCloud blocks
