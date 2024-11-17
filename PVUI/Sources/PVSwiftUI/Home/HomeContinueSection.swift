@@ -158,33 +158,55 @@ struct HomeContinueSection: SwiftUI.View {
     }
 
     private func handleHorizontalNavigation(_ value: Float) {
-        let items = filteredSaveStates.map { $0.id }
-        DLOG("HomeContinueSection: Available items: \(items)")
-        DLOG("HomeContinueSection: Current focused item: \(String(describing: parentFocusedItem))")
+        guard parentFocusedSection == .recentSaveStates else {
+            DLOG("HomeContinueSection: Ignoring navigation, don't have focus")
+            return
+        }
 
+        let items = filteredSaveStates.map { $0.id }
+        DLOG("HomeContinueSection: Navigation - Total items: \(items.count)")
+
+        guard !items.isEmpty else {
+            DLOG("HomeContinueSection: No items available")
+            return
+        }
+
+        let nextIndex: Int
         if let currentItem = parentFocusedItem,
            let currentIndex = items.firstIndex(of: currentItem) {
-            let newIndex = value < 0 ?
-                (currentIndex == 0 ? items.count - 1 : currentIndex - 1) :
-                (currentIndex == items.count - 1 ? 0 : currentIndex + 1)
-            DLOG("HomeContinueSection: Moving from index \(currentIndex) to \(newIndex)")
+            DLOG("HomeContinueSection: Current index: \(currentIndex)")
 
-            // Set section first to ensure proper highlight state
-            parentFocusedSection = .recentSaveStates
-            parentFocusedItem = items[newIndex]
-
-            // Update the selected page based on the new index
-            selectedPage = newIndex / (isLandscapePhone ? 2 : 1)
-
-            DLOG("HomeContinueSection: New focused item: \(items[newIndex])")
-            DLOG("HomeContinueSection: New page: \(selectedPage)")
+            if value < 0 {
+                // Moving left
+                nextIndex = currentIndex == 0 ? items.count - 1 : currentIndex - 1
+                DLOG("HomeContinueSection: Moving left to index: \(nextIndex)")
+            } else {
+                // Moving right
+                nextIndex = currentIndex == items.count - 1 ? 0 : currentIndex + 1
+                DLOG("HomeContinueSection: Moving right to index: \(nextIndex)")
+            }
         } else {
-            DLOG("HomeContinueSection: No current item, selecting first item")
-            parentFocusedSection = .recentSaveStates
-            parentFocusedItem = items.first
-            selectedPage = 0
-            DLOG("HomeContinueSection: Selected first item: \(String(describing: items.first))")
+            // No current selection, start at beginning
+            nextIndex = 0
+            DLOG("HomeContinueSection: No current selection, starting at 0")
         }
+
+        // Update selection
+        parentFocusedSection = .recentSaveStates
+        parentFocusedItem = items[nextIndex]
+
+        // Calculate new page
+        let itemsPerPage = isLandscapePhone ? 2 : 1
+        let newPage = nextIndex / itemsPerPage
+        DLOG("HomeContinueSection: Items per page: \(itemsPerPage)")
+        DLOG("HomeContinueSection: Setting page to: \(newPage)")
+
+        // Update page with animation
+        withAnimation {
+            selectedPage = newPage
+        }
+
+        DLOG("HomeContinueSection: Final state - Page: \(newPage), Item: \(items[nextIndex])")
     }
 }
 

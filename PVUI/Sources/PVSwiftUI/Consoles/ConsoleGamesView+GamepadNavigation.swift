@@ -264,12 +264,14 @@ extension ConsoleGamesView {
 
     private func moveBetweenSections(_ currentSection: HomeSectionType, direction: Float) -> Bool {
         if let nextSection = getNextSection(from: currentSection, direction: direction) {
+            DLOG("ConsoleGamesView: Moving from section \(currentSection) to \(nextSection)")
             let newItem = direction < 0 ?
                 getFirstItemInSection(nextSection) :
                 getLastItemInSection(nextSection)
 
+            DLOG("ConsoleGamesView: Current focus - Section: \(String(describing: gamesViewModel.focusedSection)), Item: \(String(describing: gamesViewModel.focusedItemInSection))")
             gamesViewModel.updateFocus(section: nextSection, item: newItem)
-            DLOG("Moving to section: \(nextSection)")
+            DLOG("ConsoleGamesView: New focus - Section: \(nextSection), Item: \(String(describing: newItem))")
             return true
         }
         return false
