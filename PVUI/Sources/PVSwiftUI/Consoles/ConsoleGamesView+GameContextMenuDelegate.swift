@@ -14,7 +14,7 @@ internal struct SystemMoveState: Identifiable {
 }
 
 extension ConsoleGamesView: GameContextMenuDelegate {
-    
+
 #if !os(tvOS)
     internal func imagePickerView() -> some View {
         ImagePicker(sourceType: .photoLibrary) { image in
@@ -45,7 +45,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         newGameTitle = game.title
         showingRenameAlert = true
     }
-    
+
     private func submitRename() {
         if !newGameTitle.isEmpty, let frozenGame = gameToRename, newGameTitle != frozenGame.title {
             do {
@@ -64,26 +64,26 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         showingRenameAlert = false
         gameToRename = nil
     }
-    
+
     // MARK: - Image Picker Methods
-    
+
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
         gameToUpdateCover = game
         showImagePicker = true
     }
-    
+
     private func saveArtwork(image: UIImage, forGame game: PVGame) {
         DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
-        
+
         let uniqueID = UUID().uuidString
         let key = "artwork_\(game.md5)_\(uniqueID)"
         DLOG("Generated key for image: \(key)")
-        
+
         do {
             DLOG("Attempting to write image to disk")
             try PVMediaCache.writeImage(toDisk: image, withKey: key)
             DLOG("Image successfully written to disk")
-            
+
             DLOG("Attempting to update game's customArtworkURL")
             try RomDatabase.sharedInstance.writeTransaction {
                 let thawedGame = game.thaw()
@@ -93,7 +93,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
             }
             DLOG("Database transaction completed successfully")
             rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
-            
+
             DLOG("Attempting to verify image retrieval")
             PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
                 if let retrievedImage = retrievedImage {
@@ -109,7 +109,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
             rootDelegate?.showMessage("Failed to set custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
         }
     }
-    
+
     func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to move game to system")
         let frozenGame = game.isFrozen ? game : game.freeze()

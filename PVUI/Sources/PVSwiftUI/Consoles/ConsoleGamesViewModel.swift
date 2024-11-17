@@ -45,6 +45,9 @@ class ConsoleGamesViewModel: ObservableObject {
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
 
+    @Published var focusedSection: HomeSectionType?
+    @Published var focusedItemInSection: String?
+
     init(console: PVSystem) {
         self.console = console
         _games = ObservedResults(
@@ -70,5 +73,19 @@ class ConsoleGamesViewModel: ObservableObject {
             filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0", console.identifier),
             sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
         )
+    }
+
+    // Navigation state helpers
+    func updateFocus(section: HomeSectionType?, item: String?) {
+        focusedSection = section
+        focusedItemInSection = item
+    }
+
+    func getCurrentSection() -> HomeSectionType? {
+        return focusedSection
+    }
+
+    func getCurrentItem() -> String? {
+        return focusedItemInSection
     }
 }
