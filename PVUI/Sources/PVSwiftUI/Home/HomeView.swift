@@ -14,11 +14,12 @@ import PVLibrary
 import PVThemes
 import Combine
 
-enum PVHomeSection: Int, CaseIterable, Sendable {
+enum HomeSectionType: Int, CaseIterable, Sendable {
     case recentSaveStates
     case recentlyPlayedGames
     case favorites
     case mostPlayed
+    case allGames
 }
 
 @available(iOS 14, tvOS 14, *)
@@ -64,12 +65,13 @@ struct HomeView: SwiftUI.View {
 
     @State private var gamepadCancellable: AnyCancellable?
 
-    @FocusState private var focusedSection: GameSection?
+    @FocusState private var focusedSection: HomeSectionType?
     @FocusState private var focusedItemInSection: String?
 
-    @State private var navigationTimer: Timer?
-    @State private var initialDelay: TimeInterval = 0.5
-    @State private var repeatDelay: TimeInterval = 0.15
+    @State private var continuousNavigationTask: Task<Void, Never>?
+    @State private var delayTask: Task<Void, Never>?
+
+    @State private var isControllerConnected: Bool = false
 
     init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil, viewModel: PVRootViewModel) {
 //        self.gameLibrary = gameLibrary
@@ -82,61 +84,22 @@ struct HomeView: SwiftUI.View {
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
-                LazyVStack {
-                    if showRecentSaveStates {
-                        HomeContinueSection(
-                            rootDelegate: rootDelegate,
-                            consoleIdentifier: nil,
-                            parentFocusedSection: Binding(
-                                get: { self.focusedSection },
-                                set: { self.focusedSection = $0 }
-                            ),
-                            parentFocusedItem: Binding(
-                                get: { self.focusedItemInSection },
-                                set: { self.focusedItemInSection = $0 }
-                            )
-                        )
+                ScrollViewReader { proxy in
+                    LazyVStack {
+                        continuesSection()
+                        recentlyPlayedSection()
+                        favoritesSection()
+                        mostPlayedSection()
+                        displayOptionsView()
+                        showGamesGrid(allGames)
                     }
-
-                    if showRecentGames {
-                        HomeSection(title: "Recently Played") {
-                            ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
-                                GameItemView(game: game, constrainHeight: true) {
-                                    Task.detached { @MainActor in
-                                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)}
-                                }
-                                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                    .onChange(of: focusedItemInSection) { newValue in
+                        if let id = newValue {
+                            withAnimation {
+                                proxy.scrollTo(id, anchor: .center)
                             }
                         }
-                        HomeDividerView()
                     }
-
-                    if showFavorites {
-                        HomeSection(title: "Favorites") {
-                            ForEach(favorites, id: \.self) { favorite in
-                                GameItemView(game: favorite, constrainHeight: true) {
-                                    Task.detached { @MainActor in
-                                        await rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)}
-                                }
-                                .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate) }
-                            }
-                        }
-                        HomeDividerView()
-                    }
-
-                    HomeSection(title: "Most Played") {
-                        ForEach(mostPlayed, id: \.self) { playedGame in
-                            GameItemView(game: playedGame, constrainHeight: true) {
-                                Task.detached { @MainActor in
-                                    await rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)}
-                            }
-                            .contextMenu { GameContextMenu(game: playedGame, rootDelegate: rootDelegate) }
-                        }
-                    }
-
-                    HomeDividerView()
-                    displayOptionsView()
-                    showGamesGrid(allGames)
                 }
             }
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
@@ -144,10 +107,42 @@ struct HomeView: SwiftUI.View {
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
         .onAppear {
             setupGamepadHandling()
+
+            // Check initial controller connection state
+            isControllerConnected = GamepadManager.shared.isControllerConnected
+
+            if isControllerConnected {
+                setInitialFocus()
+            }
+        }
+        .onChange(of: GamepadManager.shared.isControllerConnected) { isConnected in
+            isControllerConnected = isConnected
+            if isConnected {
+                setInitialFocus()
+            }
+        }
+        .task {
+            // Set initial focus
+            if let firstSection = [
+                showRecentSaveStates && !recentSaveStates.isEmpty ? HomeSectionType.recentSaveStates : nil,
+                showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
+                showFavorites && !favorites.isEmpty ? .favorites : nil,
+                !allGames.isEmpty ? .allGames : nil
+            ].compactMap({ $0 }).first {
+                focusedSection = firstSection
+                focusedItemInSection = getFirstItemInSection(firstSection)
+            }
         }
         .onDisappear {
-            navigationTimer?.invalidate()
+            delayTask?.cancel()
+            continuousNavigationTask?.cancel()
             gamepadCancellable?.cancel()
+        }
+        .onChange(of: focusedSection) { newValue in
+            print("Focus changed to section: \(String(describing: newValue))")
+        }
+        .onChange(of: focusedItemInSection) { newValue in
+            print("Focus changed to item: \(String(describing: newValue))")
         }
     }
 
@@ -161,44 +156,18 @@ struct HomeView: SwiftUI.View {
                         handleButtonPress()
                     }
                 case .verticalNavigation(let value, let isPressed):
-                    // Cancel existing timer if any
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
-
-                    // Perform initial navigation
-                    handleVerticalNavigation(value)
-
-                    // Only setup continuous navigation if button is pressed
                     if isPressed {
-                        navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
-                            navigationTimer = Timer.scheduledTimer(withTimeInterval: repeatDelay, repeats: true) { [self] _ in
-                                handleVerticalNavigation(value)
-                            }
-                        }
+                        handleVerticalNavigation(value)
                     }
                 case .horizontalNavigation(let value, let isPressed):
-                    // Cancel existing timer if any
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
-
-                    // Perform initial navigation
-                    handleHorizontalNavigation(value)
-
-                    // Only setup continuous navigation if button is pressed
                     if isPressed {
-                        navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
-                            navigationTimer = Timer.scheduledTimer(withTimeInterval: repeatDelay, repeats: true) { [self] _ in
-                                handleHorizontalNavigation(value)
-                            }
-                        }
+                        handleHorizontalNavigation(value)
                     }
                 case .start(let isPressed):
                     if isPressed, let focusedItem = focusedItemInSection {
                         showOptionsMenu(for: focusedItem)
                     }
                 default:
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
                     break
                 }
             }
@@ -243,6 +212,13 @@ struct HomeView: SwiftUI.View {
                         await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                     }
                 }
+                .focusableIfAvailable()
+                .focused($focusedItemInSection, equals: game.id)
+                .onChange(of: focusedItemInSection) { newValue in
+                    if newValue == game.id {
+                        focusedSection = .allGames
+                    }
+                }
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
             }
         }
@@ -260,7 +236,7 @@ struct HomeView: SwiftUI.View {
         print("Handling button press for section: \(section), item: \(itemId)")
 
         switch section {
-        case .continues:
+        case .recentSaveStates:
             if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(
@@ -271,7 +247,7 @@ struct HomeView: SwiftUI.View {
                     )
                 }
             }
-        case .recentlyPlayed:
+        case .recentlyPlayedGames:
             if let recentGame = recentlyPlayedGames.first(where: { $0.game?.id == itemId })?.game {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(recentGame, sender: self, core: nil, saveState: nil)
@@ -283,7 +259,13 @@ struct HomeView: SwiftUI.View {
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
             }
-        case .games:
+        case .mostPlayed:
+            if let game = mostPlayed.first(where: { $0.id == itemId }) {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                }
+            }
+        case .allGames:
             if let game = allGames.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
@@ -292,12 +274,13 @@ struct HomeView: SwiftUI.View {
         }
     }
 
-    func handleVerticalNavigation(_ yValue: Float) {
-        let sections: [GameSection] = [
-            showRecentSaveStates && !recentSaveStates.isEmpty ? .continues : nil,
-            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayed : nil,
+    private func handleVerticalNavigation(_ yValue: Float) {
+        let sections: [HomeSectionType] = [
+            showRecentSaveStates && !recentSaveStates.isEmpty ? .recentSaveStates : nil,
+            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
             showFavorites && !favorites.isEmpty ? .favorites : nil,
-            !allGames.isEmpty ? .games : nil
+            !mostPlayed.isEmpty ? .mostPlayed : nil,
+            !allGames.isEmpty ? .allGames : nil
         ].compactMap { $0 }
 
         guard !sections.isEmpty else { return }
@@ -309,51 +292,56 @@ struct HomeView: SwiftUI.View {
                 min(sections.count - 1, currentIndex + 1)
             focusedSection = sections[newIndex]
             focusedItemInSection = getFirstItemInSection(sections[newIndex])
+
+            print("Vertical navigation - New section: \(sections[newIndex])")
         } else {
             focusedSection = sections.first
             focusedItemInSection = getFirstItemInSection(sections.first!)
+            print("Initial focus set to: \(String(describing: sections.first))")
         }
-
-        print("Vertical navigation - New section: \(String(describing: focusedSection))")
     }
 
-    func handleHorizontalNavigation(_ xValue: Float) {
+    private func handleHorizontalNavigation(_ xValue: Float) {
         guard let section = focusedSection else { return }
 
         let items: [String]
         switch section {
-        case .continues:
+        case .recentSaveStates:
             items = recentSaveStates.map { $0.id }
-        case .recentlyPlayed:
+        case .recentlyPlayedGames:
             items = recentlyPlayedGames.compactMap { $0.game?.id }
         case .favorites:
             items = favorites.map { $0.id }
-        case .games:
+        case .mostPlayed:
+            items = mostPlayed.map { $0.id }
+        case .allGames:
             items = allGames.map { $0.id }
         }
+
+        guard !items.isEmpty else { return }
 
         if let currentItem = focusedItemInSection,
            let currentIndex = items.firstIndex(of: currentItem) {
             let newIndex = xValue < 0 ?
-                max(0, currentIndex - 1) :
-                min(items.count - 1, currentIndex + 1)
+                (currentIndex > 0 ? currentIndex - 1 : items.count - 1) :
+                (currentIndex < items.count - 1 ? currentIndex + 1 : 0)
             focusedItemInSection = items[newIndex]
         } else {
             focusedItemInSection = items.first
         }
-
-        print("Horizontal navigation - New item: \(String(describing: focusedItemInSection))")
     }
 
-    private func getFirstItemInSection(_ section: GameSection) -> String? {
+    private func getFirstItemInSection(_ section: HomeSectionType) -> String? {
         switch section {
-        case .continues:
+        case .recentSaveStates:
             return recentSaveStates.first?.id
-        case .recentlyPlayed:
+        case .recentlyPlayedGames:
             return recentlyPlayedGames.first?.game?.id
         case .favorites:
             return favorites.first?.id
-        case .games:
+        case .mostPlayed:
+            return mostPlayed.first?.id
+        case .allGames:
             return allGames.first?.id
         }
     }
@@ -361,6 +349,106 @@ struct HomeView: SwiftUI.View {
     private func showOptionsMenu(for gameId: String) {
         // Similar to ConsoleGamesView implementation
         // Show context menu for the focused game
+    }
+
+    @ViewBuilder
+    private func continuesSection() -> some View {
+        if showRecentSaveStates {
+            HomeContinueSection(
+                rootDelegate: rootDelegate,
+                consoleIdentifier: nil,
+                parentFocusedSection: Binding(
+                    get: { self.focusedSection },
+                    set: { self.focusedSection = $0 }
+                ),
+                parentFocusedItem: Binding(
+                    get: { self.focusedItemInSection },
+                    set: { self.focusedItemInSection = $0 }
+                )
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func recentlyPlayedSection() -> some View {
+        if showRecentGames {
+            HomeSection(title: "Recently Played") {
+                ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
+                    GameItemView(game: game, constrainHeight: true) {
+                        Task.detached { @MainActor in
+                            await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                        }
+                    }
+                    .focusableIfAvailable()
+                    .focused($focusedItemInSection, equals: game.id)
+                    .onChange(of: focusedItemInSection) { newValue in
+                        if newValue == game.id {
+                            focusedSection = .recentlyPlayedGames
+                        }
+                    }
+                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                }
+            }
+            HomeDividerView()
+        }
+    }
+
+    @ViewBuilder
+    private func favoritesSection() -> some View {
+        if showFavorites {
+            HomeSection(title: "Favorites") {
+                ForEach(favorites, id: \.self) { favorite in
+                    GameItemView(game: favorite, constrainHeight: true) {
+                        Task.detached { @MainActor in
+                            await rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
+                        }
+                    }
+                    .focusableIfAvailable()
+                    .focused($focusedItemInSection, equals: favorite.id)
+                    .onChange(of: focusedItemInSection) { newValue in
+                        if newValue == favorite.id {
+                            focusedSection = .favorites
+                        }
+                    }
+                    .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate) }
+                }
+            }
+            HomeDividerView()
+        }
+    }
+
+    @ViewBuilder
+    private func mostPlayedSection() -> some View {
+        HomeSection(title: "Most Played") {
+            ForEach(mostPlayed, id: \.self) { playedGame in
+                GameItemView(game: playedGame, constrainHeight: true) {
+                    Task.detached { @MainActor in
+                        await rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
+                    }
+                }
+                .focusableIfAvailable()
+                .focused($focusedItemInSection, equals: playedGame.id)
+                .onChange(of: focusedItemInSection) { newValue in
+                    if newValue == playedGame.id {
+                        focusedSection = .mostPlayed
+                    }
+                }
+                .contextMenu { GameContextMenu(game: playedGame, rootDelegate: rootDelegate) }
+            }
+        }
+        HomeDividerView()
+    }
+
+    private func setInitialFocus() {
+        if let firstSection = [
+            showRecentSaveStates && !recentSaveStates.isEmpty ? HomeSectionType.recentSaveStates : nil,
+            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
+            showFavorites && !favorites.isEmpty ? .favorites : nil,
+            !allGames.isEmpty ? .allGames : nil
+        ].compactMap({ $0 }).first {
+            focusedSection = firstSection
+            focusedItemInSection = getFirstItemInSection(firstSection)
+        }
     }
 }
 

@@ -11,6 +11,7 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVThemes
+import Combine
 
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueSection: SwiftUI.View {
@@ -28,7 +29,7 @@ struct HomeContinueSection: SwiftUI.View {
     var consoleIdentifier: String?
 
     @FocusState private var focusedSaveState: String?
-    @Binding var parentFocusedSection: GameSection?
+    @Binding var parentFocusedSection: HomeSectionType?
     @Binding var parentFocusedItem: String?
 
     var isLandscapePhone: Bool {
@@ -69,76 +70,31 @@ struct HomeContinueSection: SwiftUI.View {
         }
     }
 
+    // Add properties for navigation
+    @State private var continuousNavigationTask: Task<Void, Never>?
+    @State private var delayTask: Task<Void, Never>?
+    @State private var gamepadCancellable: AnyCancellable?
+
     var body: some SwiftUI.View {
         TabView {
             if filteredSaveStates.count > 0 {
                 ForEach(0..<pageCount, id: \.self) { pageIndex in
-                    LazyVGrid(columns: gridColumns, spacing: 8) {
-                        if isLandscapePhone {
-                            let startIndex = pageIndex * 2
-                            let endIndex = min(startIndex + 2, filteredSaveStates.count)
-
-                            if startIndex < filteredSaveStates.count {
-                                ForEach(startIndex..<endIndex, id: \.self) { index in
-                                    if index < filteredSaveStates.count {  // Additional safety check
-                                        HomeContinueItemView(
-                                            continueState: filteredSaveStates[index],
-                                            height: adjustedHeight,
-                                            hideSystemLabel: consoleIdentifier != nil
-                                        ) {
-                                            Task.detached { @MainActor in
-                                                await rootDelegate?.root_load(
-                                                    filteredSaveStates[index].game,
-                                                    sender: self,
-                                                    core: filteredSaveStates[index].core,
-                                                    saveState: filteredSaveStates[index]
-                                                )
-                                            }
-                                        }
-                                        .focusableIfAvailable()
-                                        .focused($focusedSaveState, equals: filteredSaveStates[index].id)
-                                        .onChange(of: focusedSaveState) { newValue in
-                                            if newValue != nil {
-                                                parentFocusedSection = .continues
-                                                parentFocusedItem = newValue
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            if pageIndex < filteredSaveStates.count {  // Safety check for portrait mode
-                                HomeContinueItemView(
-                                    continueState: filteredSaveStates[pageIndex],
-                                    height: adjustedHeight,
-                                    hideSystemLabel: consoleIdentifier != nil
-                                ) {
-                                    Task.detached { @MainActor in
-                                        await rootDelegate?.root_load(
-                                            filteredSaveStates[pageIndex].game,
-                                            sender: self,
-                                            core: filteredSaveStates[pageIndex].core,
-                                            saveState: filteredSaveStates[pageIndex]
-                                        )
-                                    }
-                                }
-                                .focusableIfAvailable()
-                                .focused($focusedSaveState, equals: filteredSaveStates[pageIndex].id)
-                                .onChange(of: focusedSaveState) { newValue in
-                                    if newValue != nil {
-                                        parentFocusedSection = .continues
-                                        parentFocusedItem = newValue
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    SaveStatesGridView(
+                        pageIndex: pageIndex,
+                        filteredSaveStates: filteredSaveStates,
+                        isLandscapePhone: isLandscapePhone,
+                        gridColumns: gridColumns,
+                        adjustedHeight: adjustedHeight,
+                        hideSystemLabel: consoleIdentifier != nil,
+                        rootDelegate: rootDelegate,
+                        focusedSaveState: $focusedSaveState,
+                        parentFocusedSection: $parentFocusedSection,
+                        parentFocusedItem: $parentFocusedItem
+                    )
                     .padding(.horizontal)
                 }
             } else {
-                Text("No Continues")
-                    .tag("no continues")
-                    .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                EmptyContinuesView()
             }
         }
         .tabViewStyle(.page)
@@ -154,6 +110,202 @@ struct HomeContinueSection: SwiftUI.View {
         } else {
             return filteredSaveStates.count
         }
+    }
+
+    private func setupGamepadHandling() {
+        gamepadCancellable = GamepadManager.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [self] event in
+                switch event {
+                case .buttonPress(let isPressed):
+                    if isPressed {
+                        handleButtonPress()
+                    }
+                case .horizontalNavigation(let value, let isPressed):
+                    if isPressed {
+                        handleHorizontalNavigation(value)
+                    }
+                default:
+                    break
+                }
+            }
+    }
+
+    private func handleButtonPress() {
+        if let focused = focusedSaveState,
+           let saveState = filteredSaveStates.first(where: { $0.id == focused }) {
+            Task.detached { @MainActor in
+                await self.rootDelegate?.root_load(
+                    saveState.game,
+                    sender: self,
+                    core: saveState.core,
+                    saveState: saveState
+                )
+            }
+        }
+    }
+
+    private func handleHorizontalNavigation(_ value: Float) {
+        let items = filteredSaveStates.map { $0.id }
+
+        if let currentItem = focusedSaveState,
+           let currentIndex = items.firstIndex(of: currentItem) {
+            let newIndex = value < 0 ?
+                (currentIndex == 0 ? items.count - 1 : currentIndex - 1) :
+                (currentIndex == items.count - 1 ? 0 : currentIndex + 1)
+            focusedSaveState = items[newIndex]
+        } else {
+            focusedSaveState = items.first
+        }
+    }
+}
+
+// Create a new struct for the grid view
+private struct SaveStatesGridView: View {
+    let pageIndex: Int
+    let filteredSaveStates: [PVSaveState]
+    let isLandscapePhone: Bool
+    let gridColumns: [GridItem]
+    let adjustedHeight: CGFloat
+    let hideSystemLabel: Bool
+    weak var rootDelegate: PVRootDelegate?
+
+    @FocusState.Binding var focusedSaveState: String?
+    @Binding var parentFocusedSection: HomeSectionType?
+    @Binding var parentFocusedItem: String?
+
+    var body: some View {
+        LazyVGrid(columns: gridColumns, spacing: 8) {
+            if isLandscapePhone {
+                LandscapeGridContent(
+                    pageIndex: pageIndex,
+                    filteredSaveStates: filteredSaveStates,
+                    adjustedHeight: adjustedHeight,
+                    hideSystemLabel: hideSystemLabel,
+                    rootDelegate: rootDelegate,
+                    focusedSaveState: $focusedSaveState,
+                    parentFocusedSection: $parentFocusedSection,
+                    parentFocusedItem: $parentFocusedItem
+                )
+            } else {
+                PortraitGridContent(
+                    pageIndex: pageIndex,
+                    filteredSaveStates: filteredSaveStates,
+                    adjustedHeight: adjustedHeight,
+                    hideSystemLabel: hideSystemLabel,
+                    rootDelegate: rootDelegate,
+                    focusedSaveState: $focusedSaveState,
+                    parentFocusedSection: $parentFocusedSection,
+                    parentFocusedItem: $parentFocusedItem
+                )
+            }
+        }
+    }
+}
+
+// Create separate views for landscape and portrait content
+private struct LandscapeGridContent: View {
+    let pageIndex: Int
+    let filteredSaveStates: [PVSaveState]
+    let adjustedHeight: CGFloat
+    let hideSystemLabel: Bool
+    weak var rootDelegate: PVRootDelegate?
+
+    @FocusState.Binding var focusedSaveState: String?
+    @Binding var parentFocusedSection: HomeSectionType?
+    @Binding var parentFocusedItem: String?
+
+    var body: some View {
+        let startIndex = pageIndex * 2
+        let endIndex = min(startIndex + 2, filteredSaveStates.count)
+
+        ForEach(startIndex..<endIndex, id: \.self) { index in
+            if index < filteredSaveStates.count {
+                ContinueItemWrapper(
+                    saveState: filteredSaveStates[index],
+                    height: adjustedHeight,
+                    hideSystemLabel: hideSystemLabel,
+                    rootDelegate: rootDelegate,
+                    focusedSaveState: $focusedSaveState,
+                    parentFocusedSection: $parentFocusedSection,
+                    parentFocusedItem: $parentFocusedItem
+                )
+            }
+        }
+    }
+}
+
+private struct PortraitGridContent: View {
+    let pageIndex: Int
+    let filteredSaveStates: [PVSaveState]
+    let adjustedHeight: CGFloat
+    let hideSystemLabel: Bool
+    weak var rootDelegate: PVRootDelegate?
+
+    @FocusState.Binding var focusedSaveState: String?
+    @Binding var parentFocusedSection: HomeSectionType?
+    @Binding var parentFocusedItem: String?
+
+    var body: some View {
+        if pageIndex < filteredSaveStates.count {
+            ContinueItemWrapper(
+                saveState: filteredSaveStates[pageIndex],
+                height: adjustedHeight,
+                hideSystemLabel: hideSystemLabel,
+                rootDelegate: rootDelegate,
+                focusedSaveState: $focusedSaveState,
+                parentFocusedSection: $parentFocusedSection,
+                parentFocusedItem: $parentFocusedItem
+            )
+        }
+    }
+}
+
+private struct ContinueItemWrapper: View {
+    let saveState: PVSaveState
+    let height: CGFloat
+    let hideSystemLabel: Bool
+    weak var rootDelegate: PVRootDelegate?
+
+    @FocusState.Binding var focusedSaveState: String?
+    @Binding var parentFocusedSection: HomeSectionType?
+    @Binding var parentFocusedItem: String?
+
+    var body: some View {
+        HomeContinueItemView(
+            continueState: saveState,
+            height: height,
+            hideSystemLabel: hideSystemLabel,
+            action: {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(
+                        saveState.game,
+                        sender: self,
+                        core: saveState.core,
+                        saveState: saveState
+                    )
+                }
+            },
+            isFocused: focusedSaveState == saveState.id
+        )
+        .focusableIfAvailable()
+        .focused($focusedSaveState, equals: saveState.id)
+        .onChange(of: focusedSaveState) { newValue in
+            if newValue != nil {
+                parentFocusedSection = .recentSaveStates
+                parentFocusedItem = newValue
+            }
+        }
+    }
+}
+
+private struct EmptyContinuesView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    var body: some View {
+        Text("No Continues")
+            .tag("no continues")
+            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
     }
 }
 

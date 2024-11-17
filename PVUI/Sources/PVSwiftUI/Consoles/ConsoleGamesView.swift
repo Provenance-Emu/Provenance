@@ -18,15 +18,6 @@ import PVRealm
 import PVSettings
 import Combine
 
-// TODO: might be able to reuse this view for collections
-
-public enum GameSection: Hashable {
-    case continues
-    case favorites
-    case recentlyPlayed
-    case games
-}
-
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
 
@@ -86,11 +77,11 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
-    @FocusState private var focusedSection: GameSection?
+    @FocusState private var focusedSection: HomeSectionType?
     @FocusState private var focusedItemInSection: String?
 
     @State private var gamepadHandler: Any?
-    @State private var lastFocusedSection: GameSection?
+    @State private var lastFocusedSection: HomeSectionType?
 
     @State private var gamepadCancellable: AnyCancellable?
 
@@ -104,7 +95,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         return verticalSizeClass == .compact ? baseHeight / 2 : baseHeight
     }
 
-    private var focusedSectionBinding: Binding<GameSection?> {
+    private var focusedSectionBinding: Binding<HomeSectionType?> {
         Binding(
             get: { focusedSection },
             set: { focusedSection = $0 }
@@ -589,7 +580,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         print("Handling button press for section: \(section), item: \(itemId)")
 
         switch section {
-        case .continues:
+        case .recentSaveStates:
             if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(
@@ -606,14 +597,20 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
             }
-        case .recentlyPlayed:
+        case .recentlyPlayedGames:
             if let recentGame = recentlyPlayedGames.first(where: { $0.id == itemId })?.game {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(recentGame, sender: self, core: nil, saveState: nil)
                 }
             }
-        case .games:
+        case .allGames:
             if let game = games.first(where: { $0.id == itemId }) {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                }
+            }
+        case .mostPlayed:
+            if let game = mostPlayed.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
@@ -622,11 +619,11 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     }
 
     private func handleVerticalNavigation(_ yValue: Float) {
-        let sections: [GameSection] = [
-            showRecentSaveStates && !recentSaveStates.isEmpty ? .continues : nil,
+        let sections: [HomeSectionType] = [
+            showRecentSaveStates && !recentSaveStates.isEmpty ? .recentSaveStates : nil,
             showFavorites && !favorites.isEmpty ? .favorites : nil,
-            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayed : nil,
-            !games.isEmpty ? .games : nil
+            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
+            !games.isEmpty ? .allGames : nil
         ].compactMap { $0 }
 
         guard !sections.isEmpty else { return }
@@ -654,13 +651,16 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
         let items: [String]
         switch section {
-        case .continues:
+        case .recentSaveStates:
             items = recentSaveStates.map { $0.id }
         case .favorites:
             items = favorites.map { $0.id }
-        case .recentlyPlayed:
+        case .recentlyPlayedGames:
             items = recentlyPlayedGames.map { $0.id }
-        case .games:
+        case .allGames:
+            items = games.map { $0.id }
+        case .mostPlayed:
+            // TODO: Only show the first X items
             items = games.map { $0.id }
         }
 
@@ -677,16 +677,18 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         print("Horizontal navigation - New item: \(String(describing: focusedItemInSection))")
     }
 
-    private func getFirstItemInSection(_ section: GameSection) -> String? {
+    private func getFirstItemInSection(_ section: HomeSectionType) -> String? {
         switch section {
-        case .continues:
+        case .recentSaveStates:
             return recentSaveStates.first?.id
         case .favorites:
             return favorites.first?.id
-        case .recentlyPlayed:
-            return recentlyPlayedGames.first?.id
-        case .games:
+        case .recentlyPlayedGames:
+            return recentlyPlayedGames.first?.id as? String
+        case .allGames:
             return games.first?.id
+        case .mostPlayed:
+            return mostPlayed.first?.id
         }
     }
 }

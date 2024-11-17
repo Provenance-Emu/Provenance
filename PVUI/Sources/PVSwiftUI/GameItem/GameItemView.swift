@@ -19,6 +19,7 @@ struct GameItemView: SwiftUI.View {
 
     @State private var artwork: SwiftImage?
     var action: () -> Void
+    @Environment(\.isFocused) private var isFocused: Bool
 
     var body: some SwiftUI.View {
         Button {
@@ -34,15 +35,15 @@ struct GameItemView: SwiftUI.View {
         .onAppear {
             updateArtwork()
         }
-//        #if os(tvOS)
-        .onChange(of: game.trueArtworkURL) { newValue in
+        .onChange(of: game.trueArtworkURL) { _ in
             updateArtwork()
         }
-//        #else
-//        .onChange(of: game.trueArtworkURL) { _, newValue in
-//            updateArtwork()
-//        }
-//        #endif
+        .scaleEffect(isFocused ? 1.05 : 1.0)
+        .brightness(isFocused ? 0.1 : 0)
+#if os(tvOS)
+.shadow(color: isFocused ? .white.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
+#endif
+        .animation(.easeInOut(duration: 0.15), value: isFocused)
     }
 
     private func updateArtwork() {
