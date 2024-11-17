@@ -7,7 +7,7 @@
 
 /// Gamepad navigation
 extension ConsoleGamesView {
-    
+
     internal var availableSections: [HomeSectionType] {
         [
             (showRecentSaveStates && !gamesViewModel.recentSaveStates.isEmpty) ? .recentSaveStates : nil,
@@ -16,7 +16,7 @@ extension ConsoleGamesView {
             !gamesViewModel.games.isEmpty ? .allGames : nil
         ].compactMap { $0 }
     }
-    
+
     internal func handleButtonPress() {
         guard let section = focusedSection, let itemId = focusedItemInSection else {
             DLOG("No focused section or item")
@@ -63,61 +63,33 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     internal func handleVerticalNavigation(_ yValue: Float) {
-        let sections = availableSections
-        guard !sections.isEmpty else { return }
-
-        // For single section (grid) navigation
-        if sections.count == 1 && sections[0] == .allGames {
-            let games = Array(gamesViewModel.games)
-            guard !games.isEmpty else { return }
-
-            // Calculate total rows
-            let totalRows = Int(ceil(Double(games.count) / Double(itemsPerRow)))
-
-            // Handle edge case of only 1 row
-            guard totalRows > 1 else { return }
-
-            // If no item is focused, start with first item
-            if focusedItemInSection == nil {
-                focusedSection = .allGames
-                focusedItemInSection = games.first?.id
-                return
-            }
-
-            // Find current position in grid
-            if let currentIndex = games.firstIndex(where: { $0.id == focusedItemInSection }) {
-                let currentRow = currentIndex / itemsPerRow
-                let columnPosition = currentIndex % itemsPerRow
-
-                var newRow: Int
-                if yValue > 0 {
-                    // Move up
-                    newRow = currentRow > 0 ? currentRow - 1 : totalRows - 1
-                } else {
-                    // Move down
-                    newRow = currentRow < totalRows - 1 ? currentRow + 1 : 0
-                }
-
-                // Calculate new index maintaining column position
-                let newIndex = min(games.count - 1, (newRow * itemsPerRow) + columnPosition)
-                focusedItemInSection = games[newIndex].id
-            }
+        guard let currentSection = focusedSection else {
+            // No section focused, select first section and item
+            focusedSection = availableSections.first
+            focusedItemInSection = getFirstItemInSection(availableSections.first!)
             return
         }
 
-        // Handle multi-section navigation as before
-        if let currentSection = focusedSection,
-           let currentIndex = sections.firstIndex(of: currentSection) {
-            let newIndex = yValue > 0 ?
-                max(0, currentIndex - 1) :
-                min(sections.count - 1, currentIndex + 1)
-            focusedSection = sections[newIndex]
-            focusedItemInSection = getFirstItemInSection(sections[newIndex])
+        if isMovingToNewSection(currentSection: currentSection, direction: yValue) {
+            // Moving to a new section
+            if let nextSection = getNextSection(from: currentSection, direction: yValue) {
+                DLOG("Moving from section \(currentSection) to \(nextSection)")
+                focusedSection = nextSection
+
+                // Set appropriate item in new section
+                if yValue > 0 && nextSection == .recentSaveStates {
+                    // Moving up to continues section - select last item
+                    focusedItemInSection = gamesViewModel.recentSaveStates.last?.id
+                } else {
+                    // Any other section transition - select first item
+                    focusedItemInSection = getFirstItemInSection(nextSection)
+                }
+            }
         } else {
-            focusedSection = sections.first
-            focusedItemInSection = getFirstItemInSection(sections.first!)
+            // Moving within current section
+            handleVerticalNavigationWithinSection(currentSection, direction: yValue)
         }
     }
 
@@ -156,7 +128,7 @@ extension ConsoleGamesView {
             focusedItemInSection = items.first
         }
     }
-    
+
     internal func getFirstItemInSection(_ section: HomeSectionType) -> String? {
         switch section {
         case .recentSaveStates:
@@ -178,7 +150,7 @@ extension ConsoleGamesView {
             return nil
         }
     }
-    
+
     internal func currentSectionForGame(_ game: PVGame) -> HomeSectionType {
         // If we're in favorites section, ONLY return favorites if the game is actually in favorites
         if focusedSection == .favorites {
@@ -197,7 +169,7 @@ extension ConsoleGamesView {
             return .allGames
         }
     }
-    
+
     internal func sectionToId(_ section: HomeSectionType) -> String {
         switch section {
         case .recentSaveStates:
@@ -210,6 +182,96 @@ extension ConsoleGamesView {
             return "section_allgames"
         case .mostPlayed:
             return "section_mostplayed"
+        }
+    }
+
+    // Helper functions for section navigation
+    private func isMovingToNewSection(currentSection: HomeSectionType, direction: Float) -> Bool {
+        let sections = availableSections
+        guard let currentIndex = sections.firstIndex(of: currentSection) else { return false }
+
+        if direction > 0 {  // Moving up
+            return currentIndex > 0
+        } else {  // Moving down
+            return currentIndex < sections.count - 1
+        }
+    }
+
+    private func getNextSection(from currentSection: HomeSectionType, direction: Float) -> HomeSectionType? {
+        let sections = availableSections
+        guard let currentIndex = sections.firstIndex(of: currentSection) else { return nil }
+
+        let newIndex = direction > 0 ?
+            max(0, currentIndex - 1) :
+            min(sections.count - 1, currentIndex + 1)
+
+        return sections[newIndex]
+    }
+
+    private func handleVerticalNavigationWithinSection(_ section: HomeSectionType, direction: Float) {
+        switch section {
+        case .recentSaveStates:
+            // Handle continues section navigation
+            let saveStates = gamesViewModel.recentSaveStates
+            if let currentItem = focusedItemInSection,
+               let currentIndex = saveStates.firstIndex(where: { $0.id == currentItem }) {
+                let newIndex = direction > 0 ?
+                    max(0, currentIndex - 1) :
+                    min(saveStates.count - 1, currentIndex + 1)
+                focusedItemInSection = saveStates[newIndex].id
+            }
+
+        case .allGames:
+            // Handle grid navigation
+            let games = Array(gamesViewModel.games)
+            if let currentIndex = games.firstIndex(where: { $0.id == focusedItemInSection }) {
+                if direction > 0 {
+                    // Moving up
+                    let newIndex = currentIndex - Int(gameLibraryScale)
+                    if newIndex >= 0 {
+                        focusedItemInSection = games[newIndex].id
+                    }
+                } else {
+                    // Moving down
+                    let newIndex = currentIndex + Int(gameLibraryScale)
+                    if newIndex < games.count {
+                        focusedItemInSection = games[newIndex].id
+                    }
+                }
+            }
+
+        case .favorites:
+            // Handle favorites section navigation
+            let favorites = gamesViewModel.favorites
+            if let currentItem = focusedItemInSection,
+               let currentIndex = favorites.firstIndex(where: { $0.id == currentItem }) {
+                let newIndex = direction > 0 ?
+                    max(0, currentIndex - 1) :
+                    min(favorites.count - 1, currentIndex + 1)
+                focusedItemInSection = favorites[newIndex].id
+            }
+
+        case .recentlyPlayedGames:
+            // Handle recently played section navigation
+            let recentGames = gamesViewModel.recentlyPlayedGames
+            if let currentItem = focusedItemInSection,
+               let currentIndex = recentGames.firstIndex(where: { $0.game?.id == currentItem }) {
+                let newIndex = direction > 0 ?
+                    max(0, currentIndex - 1) :
+                    min(recentGames.count - 1, currentIndex + 1)
+                focusedItemInSection = recentGames[newIndex].game?.id
+            }
+
+        case .mostPlayed:
+            // Handle most played section navigation
+            let mostPlayed = gamesViewModel.mostPlayed
+            if let currentItem = focusedItemInSection,
+               let currentIndex = mostPlayed.firstIndex(where: { $0.id == currentItem }) {
+                let newIndex = direction > 0 ?
+                    max(0, currentIndex - 1) :
+                    min(mostPlayed.count - 1, currentIndex + 1)
+                focusedItemInSection = mostPlayed[newIndex].id
+            }
         }
     }
 }

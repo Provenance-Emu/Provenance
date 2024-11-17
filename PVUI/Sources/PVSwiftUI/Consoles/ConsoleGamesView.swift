@@ -38,8 +38,8 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    @State private var gameLibraryItemsPerRow: Int = 4
-    @Default(.gameLibraryScale) private var gameLibraryScale
+    @State internal var gameLibraryItemsPerRow: Int = 4
+    @Default(.gameLibraryScale) internal var gameLibraryScale
 
     @State internal var showImagePicker = false
     @State internal var selectedImage: UIImage?
