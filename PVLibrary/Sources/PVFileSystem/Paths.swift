@@ -61,7 +61,7 @@ public struct Paths {
     }
 
     public static var romsImportPath: URL {
-        return URL.documentsPathLocal.appendingPathComponent("Imports", isDirectory: true)
+        return URL.documentsPath.appendingPathComponent("Imports", isDirectory: true)
     }
 
     /// Should be called on BG Thread, iCloud blocks
