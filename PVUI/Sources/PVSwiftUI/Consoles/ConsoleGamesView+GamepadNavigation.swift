@@ -236,6 +236,19 @@ extension ConsoleGamesView {
                     let newIndex = currentIndex + Int(gameLibraryScale)
                     if newIndex < games.count {
                         focusedItemInSection = games[newIndex].id
+                    } else {
+                        // We're at the last row
+                        if let currentSection = focusedSection,
+                           let nextSection = getNextSection(from: currentSection, direction: direction) {
+                            if nextSection == .allGames {
+                                // If next section is the same section, wrap to top
+                                focusedItemInSection = games[currentIndex % Int(gameLibraryScale)].id
+                            } else {
+                                // Move to next section
+                                focusedSection = nextSection
+                                focusedItemInSection = getFirstItemInSection(nextSection)
+                            }
+                        }
                     }
                 }
             }
