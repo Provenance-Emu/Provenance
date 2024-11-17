@@ -209,6 +209,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 GameItemView(
                     game: game,
                     constrainHeight: false,
+                    sectionContext: .allGames,
                     isFocused: Binding(
                         get: { gamesViewModel.focusedItemInSection == game.id },
                         set: { if $0 { gamesViewModel.focusedItemInSection = game.id } }
@@ -233,9 +234,19 @@ struct ConsoleGamesView: SwiftUI.View {
                     GameItemView(
                         game: game,
                         constrainHeight: false,
+                        viewType: .cell,
+                        sectionContext: .allGames,
                         isFocused: Binding(
-                            get: { gamesViewModel.focusedItemInSection == game.id },
-                            set: { if $0 { gamesViewModel.focusedItemInSection = game.id } }
+                            get: {
+                                gamesViewModel.focusedSection == .allGames &&
+                                gamesViewModel.focusedItemInSection == game.id
+                            },
+                            set: {
+                                if $0 {
+                                    gamesViewModel.focusedSection = .allGames
+                                    gamesViewModel.focusedItemInSection = game.id
+                                }
+                            }
                         )
                     ) {
                         Task.detached { @MainActor in
@@ -244,15 +255,12 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                     .id(game.id)
                     .focusableIfAvailable()
-                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
-                }
-            }
-            .padding(.horizontal, 10)
-            .onChange(of: gamesViewModel.focusedItemInSection) { newValue in
-                if let itemId = newValue {
-                    DLOG("Scrolling to focused item: \(itemId)")
-                    withAnimation {
-                        proxy.scrollTo(itemId, anchor: .center)
+                    .contextMenu {
+                        GameContextMenu(
+                            game: game,
+                            rootDelegate: rootDelegate,
+                            contextMenuDelegate: self
+                        )
                     }
                 }
             }
@@ -266,6 +274,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     game: game,
                     constrainHeight: true,
                     viewType: .row,
+                    sectionContext: .allGames,
                     isFocused: Binding(
                         get: { gamesViewModel.focusedItemInSection == game.id },
                         set: { if $0 { gamesViewModel.focusedItemInSection = game.id } }
@@ -289,6 +298,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     game: game,
                     constrainHeight: false,
                     viewType: .row,
+                    sectionContext: .allGames,
                     isFocused: Binding(
                         get: { gamesViewModel.focusedItemInSection == game.id },
                         set: { if $0 { gamesViewModel.focusedItemInSection = game.id } }
@@ -431,7 +441,7 @@ extension ConsoleGamesView {
             if showFavorites && !gamesViewModel.favorites.isEmpty {
                 HomeSection(title: "Favorites") {
                     ForEach(gamesViewModel.favorites, id: \.self) { game in
-                        gameItem(game)
+                        gameItem(game, section: .favorites)
                     }
                 }
                 .frame(height: sectionHeight)
@@ -447,7 +457,7 @@ extension ConsoleGamesView {
                 HomeSection(title: "Recently Played") {
                     ForEach(gamesViewModel.recentlyPlayedGames, id: \.self) { recentGame in
                         if let game = recentGame.game {
-                            gameItem(game)
+                            gameItem(game, section: .recentlyPlayedGames)
                         }
                     }
                 }
@@ -484,24 +494,20 @@ extension ConsoleGamesView {
     }
 
     @ViewBuilder
-    private func gameItem(_ game: PVGame) -> some View {
+    private func gameItem(_ game: PVGame, section: HomeSectionType) -> some View {
         GameItemView(
             game: game,
             constrainHeight: true,
+            viewType: .cell,
+            sectionContext: section,
             isFocused: Binding(
                 get: {
-                    // Only show focus if:
-                    // 1. We're in the current section
-                    // 2. This item is focused
-                    // 3. This view of the game belongs to the current section
-                    let currentSection = currentSectionForGame(game)
-                    return gamesViewModel.focusedSection == currentSection &&
-                    gamesViewModel.focusedItemInSection == game.id &&
-                    gamesViewModel.focusedSection == currentSection
+                    gamesViewModel.focusedSection == section &&
+                    gamesViewModel.focusedItemInSection == game.id
                 },
                 set: {
                     if $0 {
-                        gamesViewModel.focusedSection = currentSectionForGame(game)
+                        gamesViewModel.focusedSection = section
                         gamesViewModel.focusedItemInSection = game.id
                     }
                 }
@@ -528,9 +534,19 @@ extension ConsoleGamesView {
             game: saveState.game,
             saveState: saveState,
             constrainHeight: true,
+            viewType: .cell,
+            sectionContext: .recentSaveStates,
             isFocused: Binding(
-                get: { gamesViewModel.focusedItemInSection == saveState.id },
-                set: { if $0 { gamesViewModel.focusedItemInSection = saveState.id } }
+                get: {
+                    gamesViewModel.focusedSection == .recentSaveStates &&
+                    gamesViewModel.focusedItemInSection == saveState.id
+                },
+                set: {
+                    if $0 {
+                        gamesViewModel.focusedSection = .recentSaveStates
+                        gamesViewModel.focusedItemInSection = saveState.id
+                    }
+                }
             )
         ) {
             Task.detached { @MainActor in

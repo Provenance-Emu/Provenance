@@ -18,7 +18,10 @@ struct GameItemView: SwiftUI.View {
     var saveState: PVSaveState?
     var constrainHeight: Bool = false
     var viewType: GameItemViewType = .cell
-    var isFocused: Binding<Bool>
+    /// The section context this GameItemView is being rendered in
+    let sectionContext: HomeSectionType
+
+    @Binding var isFocused: Bool
 
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var gamepadManager = GamepadManager.shared
@@ -26,7 +29,7 @@ struct GameItemView: SwiftUI.View {
     var action: () -> Void
 
     private var shouldShowFocus: Bool {
-        isFocused.wrappedValue && gamepadManager.isControllerConnected
+        gamepadManager.isControllerConnected && isFocused
     }
 
     var body: some SwiftUI.View {

@@ -198,12 +198,27 @@ struct HomeView: SwiftUI.View {
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false, viewType: .cell, isFocused: Binding(
-                    get: { focusedItemInSection == game.id },
-                    set: { if $0 { focusedItemInSection = game.id } }
-                )) {
+                GameItemView(
+                    game: game,
+                    constrainHeight: false,
+                    viewType: .cell,
+                    sectionContext: .allGames,
+                    isFocused: Binding(
+                        get: {
+                            focusedSection == .allGames &&
+                            focusedItemInSection == game.id
+                        },
+                        set: {
+                            if $0 {
+                                focusedSection = .allGames
+                                focusedItemInSection = game.id
+                            }
+                        }
+                    )
+                ) {
                     Task.detached { @MainActor in
-                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)}
+                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    }
                 }
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
             }
@@ -211,32 +226,48 @@ struct HomeView: SwiftUI.View {
     }
 
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
-        let gamesPerRow = min(8, games.count)
-        let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: gamesPerRow)
+        var gameLibraryItemsPerRow: Int {
+            let gamesPerRow = min(8, games.count)
+            return gamesPerRow.isMultiple(of: 2) ? gamesPerRow : gamesPerRow + 1
+        }
+
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: gameLibraryItemsPerRow)
+
         return LazyVGrid(columns: columns, spacing: 10) {
             ForEach(games, id: \.self) { game in
-                GameItemView(
-                    game: game,
-                    constrainHeight: false,
-                    isFocused: Binding(
-                    get: { focusedItemInSection == game.id },
-                    set: { if $0 { focusedItemInSection = game.id } }
-                )) {
-                    Task.detached { @MainActor in
-                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
-                    }
-                }
-                .focusableIfAvailable()
-                .focused($focusedItemInSection, equals: game.id)
-                .onChange(of: focusedItemInSection) { newValue in
-                    if newValue == game.id {
-                        focusedSection = .allGames
-                    }
-                }
-                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                gameGridItem(game)
             }
         }
         .padding(.horizontal, 10)
+    }
+
+    /// Creates a grid item view for a game with focus and context menu
+    @ViewBuilder
+    private func gameGridItem(_ game: PVGame) -> some View {
+        GameItemView(
+            game: game,
+            constrainHeight: true,
+            viewType: .cell,
+            sectionContext: .allGames,
+            isFocused: Binding(
+                get: {
+                    focusedSection == .allGames &&
+                    focusedItemInSection == game.id
+                },
+                set: {
+                    if $0 {
+                        focusedSection = .allGames
+                        focusedItemInSection = game.id
+                    }
+                }
+            )
+        ) {
+            Task.detached { @MainActor in
+                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+            }
+        }
+        .focusableIfAvailable()
+        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
     }
 
     // MARK: - GamepadNavigationDelegate
@@ -388,21 +419,29 @@ struct HomeView: SwiftUI.View {
         if showRecentGames {
             HomeSection(title: "Recently Played") {
                 ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
-                    GameItemView(game: game, constrainHeight: true, isFocused: Binding(
-                        get: { focusedItemInSection == game.id },
-                        set: { if $0 { focusedItemInSection = game.id } }
-                    )) {
+                    GameItemView(
+                        game: game,
+                        constrainHeight: true,
+                        viewType: .cell,
+                        sectionContext: .recentlyPlayedGames,
+                        isFocused: Binding(
+                            get: {
+                                focusedSection == .recentlyPlayedGames &&
+                                focusedItemInSection == game.id
+                            },
+                            set: {
+                                if $0 {
+                                    focusedSection = .recentlyPlayedGames
+                                    focusedItemInSection = game.id
+                                }
+                            }
+                        )
+                    ) {
                         Task.detached { @MainActor in
                             await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                         }
                     }
                     .focusableIfAvailable()
-                    .focused($focusedItemInSection, equals: game.id)
-                    .onChange(of: focusedItemInSection) { newValue in
-                        if newValue == game.id {
-                            focusedSection = .recentlyPlayedGames
-                        }
-                    }
                     .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                 }
             }
@@ -415,22 +454,29 @@ struct HomeView: SwiftUI.View {
         if showFavorites {
             HomeSection(title: "Favorites") {
                 ForEach(favorites, id: \.self) { favorite in
-                    GameItemView(game: favorite, constrainHeight: true,
-                                 isFocused: Binding(
-                        get: { focusedItemInSection == favorite.id },
-                        set: { if $0 { focusedItemInSection = favorite.id } }
-                    )) {
+                    GameItemView(
+                        game: favorite,
+                        constrainHeight: true,
+                        viewType: .cell,
+                        sectionContext: .favorites,
+                        isFocused: Binding(
+                            get: {
+                                focusedSection == .favorites &&
+                                focusedItemInSection == favorite.id
+                            },
+                            set: {
+                                if $0 {
+                                    focusedSection = .favorites
+                                    focusedItemInSection = favorite.id
+                                }
+                            }
+                        )
+                    ) {
                         Task.detached { @MainActor in
                             await rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
                         }
                     }
                     .focusableIfAvailable()
-                    .focused($focusedItemInSection, equals: favorite.id)
-                    .onChange(of: focusedItemInSection) { newValue in
-                        if newValue == favorite.id {
-                            focusedSection = .favorites
-                        }
-                    }
                     .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate) }
                 }
             }
@@ -442,21 +488,29 @@ struct HomeView: SwiftUI.View {
     private func mostPlayedSection() -> some View {
         HomeSection(title: "Most Played") {
             ForEach(mostPlayed, id: \.self) { playedGame in
-                GameItemView(game: playedGame, constrainHeight: true, isFocused: Binding(
-                    get: { focusedItemInSection == playedGame.id },
-                    set: { if $0 { focusedItemInSection = playedGame.id } }
-                )) {
+                GameItemView(
+                    game: playedGame,
+                    constrainHeight: true,
+                    viewType: .cell,
+                    sectionContext: .mostPlayed,
+                    isFocused: Binding(
+                        get: {
+                            focusedSection == .mostPlayed &&
+                            focusedItemInSection == playedGame.id
+                        },
+                        set: {
+                            if $0 {
+                                focusedSection = .mostPlayed
+                                focusedItemInSection = playedGame.id
+                            }
+                        }
+                    )
+                ) {
                     Task.detached { @MainActor in
                         await rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
                     }
                 }
                 .focusableIfAvailable()
-                .focused($focusedItemInSection, equals: playedGame.id)
-                .onChange(of: focusedItemInSection) { newValue in
-                    if newValue == playedGame.id {
-                        focusedSection = .mostPlayed
-                    }
-                }
                 .contextMenu { GameContextMenu(game: playedGame, rootDelegate: rootDelegate) }
             }
         }

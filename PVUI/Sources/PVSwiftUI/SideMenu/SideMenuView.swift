@@ -348,7 +348,7 @@ SideMenuView: SwiftUI.View {
                             VStack {
                                 LazyVStack {
                                     ForEach(filteredSearchResults(), id: \.self) { game in
-                                        GameItemView(game: game, viewType: .row, isFocused: .constant(false)) {
+                                        GameItemView(game: game, viewType: .row, sectionContext: .allGames, isFocused: .constant(false)) {
                                             Task.detached { @MainActor in
                                                 await rootDelegate.root_load(game, sender: self, core: nil, saveState: nil)
                                             }
