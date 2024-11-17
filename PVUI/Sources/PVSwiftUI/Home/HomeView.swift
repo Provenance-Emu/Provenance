@@ -65,8 +65,8 @@ struct HomeView: SwiftUI.View {
 
     @State private var gamepadCancellable: AnyCancellable?
 
-    @FocusState private var focusedSection: HomeSectionType?
-    @FocusState private var focusedItemInSection: String?
+    @State private var focusedSection: HomeSectionType?
+    @State private var focusedItemInSection: String?
 
     @State private var continuousNavigationTask: Task<Void, Never>?
     @State private var delayTask: Task<Void, Never>?
@@ -80,6 +80,16 @@ struct HomeView: SwiftUI.View {
     }
 
     @ObservedObject private var themeManager = ThemeManager.shared
+
+    private var availableSections: [HomeSectionType] {
+        [
+            (showRecentSaveStates && !recentSaveStates.isEmpty) ? .recentSaveStates : nil,
+            (showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
+            (showFavorites && !favorites.isEmpty) ? .favorites : nil,
+            !mostPlayed.isEmpty ? .mostPlayed : nil,
+            !allGames.isEmpty ? .allGames : nil
+        ].compactMap { $0 }
+    }
 
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
@@ -95,7 +105,7 @@ struct HomeView: SwiftUI.View {
                     }
                     .onChange(of: focusedItemInSection) { newValue in
                         if let id = newValue {
-                            withAnimation {
+                            withAnimation(.easeInOut(duration: 0.3)) {
                                 proxy.scrollTo(id, anchor: .center)
                             }
                         }
@@ -139,10 +149,10 @@ struct HomeView: SwiftUI.View {
             gamepadCancellable?.cancel()
         }
         .onChange(of: focusedSection) { newValue in
-            print("Focus changed to section: \(String(describing: newValue))")
+            DLOG("Focus changed to section: \(String(describing: newValue))")
         }
         .onChange(of: focusedItemInSection) { newValue in
-            print("Focus changed to item: \(String(describing: newValue))")
+            DLOG("Focus changed to item: \(String(describing: newValue))")
         }
     }
 
@@ -150,28 +160,26 @@ struct HomeView: SwiftUI.View {
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { event in
-                // Only handle events if we're on the home screen
-                guard !viewModel.isMenuVisible,
-                      viewModel.selectedConsole == nil
-                else { return }
+                guard !viewModel.isMenuVisible else {
+                    print("🎮 HomeView: Ignoring input - menu visible")
+                    return
+                }
+
+                print("🎮 HomeView: Received event: \(event)")
 
                 switch event {
-                case .buttonPress(let isPressed):
-                    if isPressed {
-                        handleButtonPress()
-                    }
-                case .verticalNavigation(let value, let isPressed):
-                    if isPressed {
-                        handleVerticalNavigation(value)
-                    }
-                case .horizontalNavigation(let value, let isPressed):
-                    if isPressed {
-                        handleHorizontalNavigation(value)
-                    }
-                case .start(let isPressed):
-                    if isPressed, let focusedItem = focusedItemInSection {
-                        showOptionsMenu(for: focusedItem)
-                    }
+                case .buttonPress(true):
+                    print("🎮 HomeView: Button press detected")
+                    handleButtonPress()
+                case .verticalNavigation(let value, true):
+                    print("🎮 HomeView: Vertical navigation: \(value)")
+                    print("🎮 HomeView: Current section: \(String(describing: focusedSection))")
+                    print("🎮 HomeView: Current item: \(String(describing: focusedItemInSection))")
+                    print("🎮 HomeView: Available sections: \(availableSections)")
+                    handleVerticalNavigation(value)
+                case .horizontalNavigation(let value, true):
+                    print("🎮 HomeView: Horizontal navigation: \(value)")
+                    handleHorizontalNavigation(value)
                 default:
                     break
                 }
@@ -180,7 +188,7 @@ struct HomeView: SwiftUI.View {
 
     private func handleMenuToggle() {
         // Implement menu toggle logic here
-        print("Menu toggle requested")
+        DLOG("Menu toggle requested")
     }
 
     private func displayOptionsView() -> some View {
@@ -273,44 +281,23 @@ struct HomeView: SwiftUI.View {
     // MARK: - GamepadNavigationDelegate
 
     func handleButtonPress() {
-        guard let section = focusedSection, let itemId = focusedItemInSection else {
-            print("No focused section or item")
-            return
-        }
-
-        print("Handling button press for section: \(section), item: \(itemId)")
+        guard let section = focusedSection,
+              let itemId = focusedItemInSection else { return }
 
         switch section {
         case .recentSaveStates:
             if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(
-                        saveState.game,
-                        sender: self,
-                        core: saveState.core,
-                        saveState: saveState
-                    )
+                    await rootDelegate?.root_load(saveState.game, sender: self, core: saveState.core, saveState: saveState)
                 }
             }
         case .recentlyPlayedGames:
-            if let recentGame = recentlyPlayedGames.first(where: { $0.game?.id == itemId })?.game {
-                Task.detached { @MainActor in
-                    await rootDelegate?.root_load(recentGame, sender: self, core: nil, saveState: nil)
-                }
-            }
-        case .favorites:
-            if let game = favorites.first(where: { $0.id == itemId }) {
+            if let game = recentlyPlayedGames.first(where: { $0.game?.id == itemId })?.game {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
             }
-        case .mostPlayed:
-            if let game = mostPlayed.first(where: { $0.id == itemId }) {
-                Task.detached { @MainActor in
-                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
-                }
-            }
-        case .allGames:
+        case .favorites, .mostPlayed, .allGames:
             if let game = allGames.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
@@ -320,59 +307,159 @@ struct HomeView: SwiftUI.View {
     }
 
     private func handleVerticalNavigation(_ yValue: Float) {
-        let sections: [HomeSectionType] = [
-            showRecentSaveStates && !recentSaveStates.isEmpty ? .recentSaveStates : nil,
-            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
-            showFavorites && !favorites.isEmpty ? .favorites : nil,
-            !mostPlayed.isEmpty ? .mostPlayed : nil,
-            !allGames.isEmpty ? .allGames : nil
-        ].compactMap { $0 }
+        DLOG("🎮 HomeView: Starting vertical navigation")
+        DLOG("🎮 HomeView: Direction value: \(yValue)")
+        DLOG("🎮 HomeView: Current section: \(String(describing: focusedSection))")
+        DLOG("🎮 HomeView: Current item: \(String(describing: focusedItemInSection))")
 
-        guard !sections.isEmpty else { return }
+        guard let currentSection = focusedSection else {
+            DLOG("🎮 HomeView: No section focused, setting initial focus")
+            setInitialFocus()
+            return
+        }
 
-        if let currentSection = focusedSection,
-           let currentIndex = sections.firstIndex(of: currentSection) {
-            let newIndex = yValue > 0 ?
-                max(0, currentIndex - 1) :
-                min(sections.count - 1, currentIndex + 1)
-            focusedSection = sections[newIndex]
-            focusedItemInSection = getFirstItemInSection(sections[newIndex])
+        let sections = availableSections
+        DLOG("🎮 HomeView: Available sections: \(sections)")
 
-            print("Vertical navigation - New section: \(sections[newIndex])")
-        } else {
-            focusedSection = sections.first
-            focusedItemInSection = getFirstItemInSection(sections.first!)
-            print("Initial focus set to: \(String(describing: sections.first))")
+        guard let currentIndex = sections.firstIndex(of: currentSection) else {
+            DLOG("🎮 HomeView: Current section not found in available sections")
+            return
+        }
+
+        DLOG("🎮 HomeView: Current section index: \(currentIndex)")
+
+        if yValue < 0 { // Moving down
+            if currentIndex < sections.count - 1 {
+                let nextSection = sections[currentIndex + 1]
+                DLOG("🎮 HomeView: Moving down to section: \(nextSection)")
+                focusedSection = nextSection
+                focusedItemInSection = getFirstItemInSection(nextSection)
+                DLOG("🎮 HomeView: New focused item: \(String(describing: focusedItemInSection))")
+            } else {
+                DLOG("🎮 HomeView: Already at bottom section")
+            }
+        } else { // Moving up
+            if currentIndex > 0 {
+                let prevSection = sections[currentIndex - 1]
+                DLOG("🎮 HomeView: Moving up to section: \(prevSection)")
+                focusedSection = prevSection
+                focusedItemInSection = getLastItemInSection(prevSection)
+                DLOG("🎮 HomeView: New focused item: \(String(describing: focusedItemInSection))")
+            } else {
+                DLOG("🎮 HomeView: Already at top section")
+            }
         }
     }
 
     private func handleHorizontalNavigation(_ xValue: Float) {
         guard let section = focusedSection else { return }
 
-        let items: [String]
-        switch section {
-        case .recentSaveStates:
-            items = recentSaveStates.map { $0.id }
-        case .recentlyPlayedGames:
-            items = recentlyPlayedGames.compactMap { $0.game?.id }
-        case .favorites:
-            items = favorites.map { $0.id }
-        case .mostPlayed:
-            items = mostPlayed.map { $0.id }
-        case .allGames:
-            items = allGames.map { $0.id }
+        let items = getItemsForSection(section)
+        guard let currentItem = focusedItemInSection,
+              let currentIndex = items.firstIndex(of: currentItem) else { return }
+
+        let newIndex = xValue < 0 ?
+            max(0, currentIndex - 1) :
+            min(items.count - 1, currentIndex + 1)
+
+        focusedItemInSection = items[newIndex]
+    }
+
+    private func isMovingToNewSection(currentSection: HomeSectionType, direction: Float) -> Bool {
+        let sections = availableSections
+        guard let currentIndex = sections.firstIndex(of: currentSection) else {
+            DLOG("Current section not found in available sections")
+            return false
         }
 
-        guard !items.isEmpty else { return }
+        if direction > 0 && currentIndex > 0 { // Moving up
+            return true
+        } else if direction < 0 && currentIndex < sections.count - 1 { // Moving down
+            return true
+        }
 
-        if let currentItem = focusedItemInSection,
-           let currentIndex = items.firstIndex(of: currentItem) {
-            let newIndex = xValue < 0 ?
-                (currentIndex > 0 ? currentIndex - 1 : items.count - 1) :
-                (currentIndex < items.count - 1 ? currentIndex + 1 : 0)
-            focusedItemInSection = items[newIndex]
-        } else {
-            focusedItemInSection = items.first
+        return false
+    }
+
+    private func getNextSection(from currentSection: HomeSectionType, direction: Float) -> HomeSectionType? {
+        let sections = availableSections
+        guard let currentIndex = sections.firstIndex(of: currentSection) else { return nil }
+
+        let newIndex = direction > 0 ?
+            currentIndex - 1 : // Moving up
+            currentIndex + 1   // Moving down
+
+        guard newIndex >= 0 && newIndex < sections.count else { return nil }
+        return sections[newIndex]
+    }
+
+    private func moveWithinSection(_ section: HomeSectionType, direction: Float) -> Bool {
+        let items = getItemsForSection(section)
+        guard let currentItem = focusedItemInSection,
+              let currentIndex = items.firstIndex(of: currentItem) else { return false }
+
+        let newIndex = direction < 0 ?
+            max(0, currentIndex - 1) :
+            min(items.count - 1, currentIndex + 1)
+
+        focusedItemInSection = items[newIndex]
+        return true
+    }
+
+    private func moveBetweenSections(_ currentSection: HomeSectionType, direction: Float) -> Bool {
+        if let nextSection = getNextSection(from: currentSection, direction: direction) {
+            let newItem = direction < 0 ?
+                getFirstItemInSection(nextSection) :
+                getLastItemInSection(nextSection)
+
+            focusedSection = nextSection
+            focusedItemInSection = newItem
+            return true
+        }
+        return false
+    }
+
+    private func isOnFirstItemInSection(_ section: HomeSectionType) -> Bool {
+        let items = getItemsForSection(section)
+        guard let currentItem = focusedItemInSection,
+              let currentIndex = items.firstIndex(of: currentItem) else { return false }
+        return currentIndex == 0
+    }
+
+    private func isOnLastItemInSection(_ section: HomeSectionType) -> Bool {
+        let items = getItemsForSection(section)
+        guard let currentItem = focusedItemInSection,
+              let currentIndex = items.firstIndex(of: currentItem) else { return false }
+        return currentIndex == items.count - 1
+    }
+
+    private func getLastItemInSection(_ section: HomeSectionType) -> String? {
+        switch section {
+        case .recentSaveStates:
+            return recentSaveStates.last?.id
+        case .recentlyPlayedGames:
+            return recentlyPlayedGames.last?.game?.id
+        case .favorites:
+            return favorites.last?.id
+        case .mostPlayed:
+            return mostPlayed.last?.id
+        case .allGames:
+            return allGames.last?.id
+        }
+    }
+
+    private func getItemsForSection(_ section: HomeSectionType) -> [String] {
+        switch section {
+        case .recentSaveStates:
+            return recentSaveStates.map { $0.id }
+        case .recentlyPlayedGames:
+            return recentlyPlayedGames.compactMap { $0.game?.id }
+        case .favorites:
+            return favorites.map { $0.id }
+        case .mostPlayed:
+            return mostPlayed.map { $0.id }
+        case .allGames:
+            return allGames.map { $0.id }
         }
     }
 
@@ -528,6 +615,81 @@ struct HomeView: SwiftUI.View {
             focusedItemInSection = getFirstItemInSection(firstSection)
         }
     }
-}
 
+    private func handleVerticalNavigationWithinSection(_ section: HomeSectionType, direction: Float) {
+        DLOG("Handling vertical navigation within section: \(section)")
+
+        switch section {
+        case .allGames:
+            let games = Array(allGames)
+            if let currentItem = focusedItemInSection,
+               let currentIndex = games.firstIndex(where: { $0.id == currentItem }) {
+
+                // Calculate items per row based on screen width or use default
+                let itemsPerRow = 4 // We can make this dynamic later if needed
+
+                if direction > 0 { // Moving up
+                    let newIndex = currentIndex - itemsPerRow
+                    if newIndex >= 0 {
+                        focusedItemInSection = games[newIndex].id
+                        DLOG("Moving up in grid to index: \(newIndex)")
+                    } else {
+                        // At top of grid, try to move to previous section
+                        if let prevSection = getNextSection(from: section, direction: direction) {
+                            focusedSection = prevSection
+                            focusedItemInSection = getLastItemInSection(prevSection)
+                            DLOG("Moving to previous section: \(prevSection)")
+                        }
+                    }
+                } else { // Moving down
+                    let newIndex = currentIndex + itemsPerRow
+                    if newIndex < games.count {
+                        focusedItemInSection = games[newIndex].id
+                        DLOG("Moving down in grid to index: \(newIndex)")
+                    } else {
+                        // At bottom of grid, try to move to next section
+                        if let nextSection = getNextSection(from: section, direction: direction) {
+                            focusedSection = nextSection
+                            focusedItemInSection = getFirstItemInSection(nextSection)
+                            DLOG("Moving to next section: \(nextSection)")
+                        }
+                    }
+                }
+            }
+
+        default:
+            // For non-grid sections, handle linear navigation
+            let items = getItemsForSection(section)
+            if let currentItem = focusedItemInSection,
+               let currentIndex = items.firstIndex(of: currentItem) {
+
+                if direction > 0 { // Moving up
+                    if currentIndex > 0 {
+                        focusedItemInSection = items[currentIndex - 1]
+                        DLOG("Moving up in section to index: \(currentIndex - 1)")
+                    } else {
+                        // At top of section, try to move to previous section
+                        if let prevSection = getNextSection(from: section, direction: direction) {
+                            focusedSection = prevSection
+                            focusedItemInSection = getLastItemInSection(prevSection)
+                            DLOG("Moving to previous section: \(prevSection)")
+                        }
+                    }
+                } else { // Moving down
+                    if currentIndex < items.count - 1 {
+                        focusedItemInSection = items[currentIndex + 1]
+                        DLOG("Moving down in section to index: \(currentIndex + 1)")
+                    } else {
+                        // At bottom of section, try to move to next section
+                        if let nextSection = getNextSection(from: section, direction: direction) {
+                            focusedSection = nextSection
+                            focusedItemInSection = getFirstItemInSection(nextSection)
+                            DLOG("Moving to next section: \(nextSection)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 #endif
