@@ -115,7 +115,9 @@ public extension ThemeManager {
         if #available(iOS 17.0, tvOS 17.0, *) {
             UINavigationBar.appearance().standardAppearance = appearance
             UINavigationBar.appearance().compactAppearance = appearance
+#if !os(tvOS)
             UINavigationBar.appearance().scrollEdgeAppearance = appearance
+#endif
             if #available(iOS 15.0, *) {
                 UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
             }

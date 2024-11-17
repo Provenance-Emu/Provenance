@@ -61,7 +61,11 @@ NSUInteger webDavPort = 81;
 
 - (instancetype)init {
     if ((self = [super init])) {
+#if TARGET_OS_TV
+        NSString* importsFolder = self.documentsDirectory;
+#else
         NSString* importsFolder = self.appGroupDocumentsDirectory ?: self.documentsDirectory;
+#endif
         self.webServer = [[GCDWebUploader alloc] initWithUploadDirectory:importsFolder ];
         self.webServer.delegate = self;
         self.webServer.allowHiddenItems = NO;

@@ -20,14 +20,17 @@ public extension URL {
 #else
 //        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
 //        return URL(fileURLWithPath: paths.first!, isDirectory: true)
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!.appending(component: "/Documents/")
+        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!.appending(component: "Documents/")
 #endif
     }()
     
     static let cachesPath: URL = {
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!.appending(component: "/Caches/")
-//        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-//        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+        #if os(tvOS)
+        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+        #else
+        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!.appending(component: "Caches/")
+        #endif
     }()
     
     static let documentsPathLocal: URL = {

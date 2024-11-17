@@ -309,7 +309,7 @@ SideMenuView: SwiftUI.View {
         }
 #if canImport(Introspect)
         .introspectNavigationController(customize: { navController in
-
+#if !os(tvOS)
             if #available(iOS 17.0, tvOS 17.0, * ) {
                 let appearance = UINavigationBarAppearance()
                 appearance.configureWithOpaqueBackground()
@@ -321,6 +321,7 @@ SideMenuView: SwiftUI.View {
                 navController.navigationBar.scrollEdgeAppearance = appearance
                 navController.navigationBar.compactAppearance = appearance
             }
+#endif
 
             navController.navigationBar.tintColor = themeManager.currentPalette.menuHeaderIconTint
         })
