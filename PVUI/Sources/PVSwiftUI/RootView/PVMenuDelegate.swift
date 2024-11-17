@@ -194,6 +194,20 @@ extension PVRootViewController: PVMenuDelegate {
 extension PVRootViewController: UIDocumentPickerDelegate {
     public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         updatesController.handlePickedDocuments(urls)
+
+        // Re-present the ImportStatusView
+        if !urls.isEmpty {
+            DispatchQueue.main.async {
+                let settingsView = ImportStatusView(
+                    updatesController: self.updatesController,
+                    gameImporter: GameImporter.shared,
+                    delegate: self
+                )
+                let hostingController = UIHostingController(rootView: settingsView)
+                let navigationController = UINavigationController(rootViewController: hostingController)
+                self.present(navigationController, animated: true)
+            }
+        }
     }
 
     public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
