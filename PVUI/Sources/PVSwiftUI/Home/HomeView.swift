@@ -307,48 +307,61 @@ struct HomeView: SwiftUI.View {
     }
 
     private func handleVerticalNavigation(_ yValue: Float) {
-        DLOG("🎮 HomeView: Starting vertical navigation")
-        DLOG("🎮 HomeView: Direction value: \(yValue)")
-        DLOG("🎮 HomeView: Current section: \(String(describing: focusedSection))")
-        DLOG("🎮 HomeView: Current item: \(String(describing: focusedItemInSection))")
+        print("🎮 HomeView: Vertical navigation: \(yValue)")
 
         guard let currentSection = focusedSection else {
-            DLOG("🎮 HomeView: No section focused, setting initial focus")
+            print("🎮 HomeView: No section focused, setting initial focus")
             setInitialFocus()
             return
         }
 
+        // Handle navigation within current section first
+        let items = getItemsForSection(currentSection)
+        if let currentItem = focusedItemInSection,
+           let currentIndex = items.firstIndex(of: currentItem) {
+
+            if currentSection == .allGames {
+                // Grid navigation
+                let itemsPerRow = 4
+                if yValue > 0 { // Moving up
+                    let newIndex = currentIndex - itemsPerRow
+                    if newIndex >= 0 {
+                        focusedItemInSection = items[newIndex]
+                        print("🎮 HomeView: Moving up in grid to index: \(newIndex)")
+                        return
+                    }
+                    // If we can't move up in the grid, try moving to previous section
+                    if let prevSection = getPreviousSection(from: currentSection) {
+                        focusedSection = prevSection
+                        focusedItemInSection = getLastItemInSection(prevSection)
+                        print("🎮 HomeView: Moving to previous section: \(prevSection)")
+                    }
+                } else { // Moving down
+                    let newIndex = currentIndex + itemsPerRow
+                    if newIndex < items.count {
+                        focusedItemInSection = items[newIndex]
+                        print("🎮 HomeView: Moving down in grid to index: \(newIndex)")
+                    }
+                }
+            } else {
+                // Linear navigation for non-grid sections
+                handleVerticalNavigationWithinSection(currentSection, direction: yValue)
+            }
+        }
+    }
+
+    private func getPreviousSection(from currentSection: HomeSectionType) -> HomeSectionType? {
         let sections = availableSections
-        DLOG("🎮 HomeView: Available sections: \(sections)")
+        guard let currentIndex = sections.firstIndex(of: currentSection),
+              currentIndex > 0 else { return nil }
+        return sections[currentIndex - 1]
+    }
 
-        guard let currentIndex = sections.firstIndex(of: currentSection) else {
-            DLOG("🎮 HomeView: Current section not found in available sections")
-            return
-        }
-
-        DLOG("🎮 HomeView: Current section index: \(currentIndex)")
-
-        if yValue < 0 { // Moving down
-            if currentIndex < sections.count - 1 {
-                let nextSection = sections[currentIndex + 1]
-                DLOG("🎮 HomeView: Moving down to section: \(nextSection)")
-                focusedSection = nextSection
-                focusedItemInSection = getFirstItemInSection(nextSection)
-                DLOG("🎮 HomeView: New focused item: \(String(describing: focusedItemInSection))")
-            } else {
-                DLOG("🎮 HomeView: Already at bottom section")
-            }
-        } else { // Moving up
-            if currentIndex > 0 {
-                let prevSection = sections[currentIndex - 1]
-                DLOG("🎮 HomeView: Moving up to section: \(prevSection)")
-                focusedSection = prevSection
-                focusedItemInSection = getLastItemInSection(prevSection)
-                DLOG("🎮 HomeView: New focused item: \(String(describing: focusedItemInSection))")
-            } else {
-                DLOG("🎮 HomeView: Already at top section")
-            }
-        }
+    private func getNextSection(from currentSection: HomeSectionType) -> HomeSectionType? {
+        let sections = availableSections
+        guard let currentIndex = sections.firstIndex(of: currentSection),
+              currentIndex < sections.count - 1 else { return nil }
+        return sections[currentIndex + 1]
     }
 
     private func handleHorizontalNavigation(_ xValue: Float) {
