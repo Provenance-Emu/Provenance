@@ -162,6 +162,20 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             .onAppear {
                 adjustZoomLevel(for: gameLibraryScale)
                 setupGamepadHandling()
+
+                // Set initial focus
+                let sections: [HomeSectionType] = [
+                    showRecentSaveStates && !recentSaveStates.isEmpty ? .recentSaveStates : nil,
+                    showFavorites && !favorites.isEmpty ? .favorites : nil,
+                    showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
+                    !games.isEmpty ? .allGames : nil
+                ].compactMap { $0 }
+
+                if let firstSection = sections.first {
+                    focusedSection = firstSection
+                    focusedItemInSection = getFirstItemInSection(firstSection)
+                    DLOG("Set initial focus - Section: \(firstSection), Item: \(String(describing: focusedItemInSection))")
+                }
             }
         }
         .sheet(isPresented: $showImagePicker) {
@@ -222,10 +236,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             if showFavorites && hasFavorites {
                 HomeSection(title: "Favorites") {
                     ForEach(favoritesArray, id: \.self) { favorite in
-                        GameItemView(game: favorite, constrainHeight: true) {
-                            loadGame(favorite)
-                        }
-                        .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                        gameItem(favorite)
                     }
                 }
                 .frame(height: sectionHeight)
@@ -239,10 +250,7 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             if showRecentGames && hasRecentlyPlayedGames {
                 HomeSection(title: "Recently Played") {
                     ForEach(recentlyPlayedGamesArray, id: \.self) { game in
-                        GameItemView(game: game, constrainHeight: true) {
-                            loadGame(game)
-                        }
-                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                        gameItem(game)
                     }
                 }
                 .frame(height: sectionHeight)
@@ -347,10 +355,20 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return LazyVGrid(columns: columns, spacing: 10) {
             ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false) {
-                    loadGame(game)
+                GameItemView(
+                    game: game,
+                    constrainHeight: false,
+                    isFocused: Binding(
+                        get: { focusedItemInSection == game.id },
+                        set: { if $0 { focusedItemInSection = game.id } }
+                    )
+                ) {
+                    Task.detached { @MainActor in
+                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    }
                 }
-                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                .id(game.id)
+                .focusableIfAvailable()
             }
         }
         .padding(.horizontal, 10)
@@ -360,22 +378,44 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return LazyVGrid(columns: columns, spacing: 10) {
             ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false) {
-                    loadGame(game)
+                GameItemView(
+                    game: game,
+                    constrainHeight: false,
+                    isFocused: Binding(
+                        get: { focusedItemInSection == game.id },
+                        set: { if $0 { focusedItemInSection = game.id } }
+                    )
+                ) {
+                    Task.detached { @MainActor in
+                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    }
                 }
-                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                .id(game.id)
+                .focusableIfAvailable()
             }
         }
         .padding(.horizontal, 10)
     }
 
     private func showGamesList(_ games: [PVGame]) -> some View {
-        LazyVStack(spacing: 8) {
-            ForEach(games, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false, viewType: .row) {
-                    loadGame(game)
+        LazyVStack(spacing: 0) {
+            ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
+                GameItemView(
+                    game: game,
+                    constrainHeight: true,
+                    viewType: .row,
+                    isFocused: Binding(
+                        get: { focusedItemInSection == game.id },
+                        set: { if $0 { focusedItemInSection = game.id } }
+                    )
+                ) {
+                    Task.detached { @MainActor in
+                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    }
                 }
-                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
+                .id(game.id)
+                .focusableIfAvailable()
+                GamesDividerView()
             }
         }
     }
@@ -383,7 +423,15 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false, viewType: .row) {
+                GameItemView(
+                    game: game,
+                    constrainHeight: false,
+                    viewType: .row,
+                    isFocused: Binding(
+                                 get: { focusedItemInSection == game.id },
+                                 set: { if $0 { focusedItemInSection = game.id } }
+                             ))
+                {
                     loadGame(game)
                 }
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
@@ -517,50 +565,29 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { event in
+                // Only handle events if this console view is currently selected
+                guard !viewModel.isMenuVisible,
+                      viewModel.selectedConsole?.identifier == console.identifier
+                else { return }
+
+                DLOG("Gamepad event: \(event)")
+                DLOG("Selected console: \(String(describing: viewModel.selectedConsole))")
+                DLOG("Current console: \(console.identifier)")
+
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {
                         handleButtonPress()
                     }
                 case .verticalNavigation(let value, let isPressed):
-                    // Cancel existing timer if any
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
-
-                    // Perform initial navigation
-                    handleVerticalNavigation(value)
-
-                    // Only setup continuous navigation if button is pressed
                     if isPressed {
-                        navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
-                            navigationTimer = Timer.scheduledTimer(withTimeInterval: repeatDelay, repeats: true) { [self] _ in
-                                handleVerticalNavigation(value)
-                            }
-                        }
+                        handleVerticalNavigation(value)
                     }
                 case .horizontalNavigation(let value, let isPressed):
-                    // Cancel existing timer if any
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
-
-                    // Perform initial navigation
-                    handleHorizontalNavigation(value)
-
-                    // Only setup continuous navigation if button is pressed
                     if isPressed {
-                        navigationTimer = Timer.scheduledTimer(withTimeInterval: initialDelay, repeats: false) { [self] _ in
-                            navigationTimer = Timer.scheduledTimer(withTimeInterval: repeatDelay, repeats: true) { [self] _ in
-                                handleHorizontalNavigation(value)
-                            }
-                        }
-                    }
-                case .start(let isPressed):
-                    if isPressed, let focusedItem = focusedItemInSection {
-                        showOptionsMenu(for: focusedItem)
+                        handleHorizontalNavigation(value)
                     }
                 default:
-                    navigationTimer?.invalidate()
-                    navigationTimer = nil
                     break
                 }
             }
@@ -626,7 +653,16 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
             !games.isEmpty ? .allGames : nil
         ].compactMap { $0 }
 
-        guard !sections.isEmpty else { return }
+        DLOG("Available sections: \(sections)")
+        DLOG("Recent save states: \(recentSaveStates.count)")
+        DLOG("Favorites: \(favorites.count)")
+        DLOG("Recent games: \(recentlyPlayedGames.count)")
+        DLOG("All games: \(games.count)")
+
+        guard !sections.isEmpty else {
+            DLOG("No sections available")
+            return
+        }
 
         if let currentSection = focusedSection,
            let currentIndex = sections.firstIndex(of: currentSection) {
@@ -637,13 +673,13 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
 
             // Reset focused item when changing sections
             focusedItemInSection = getFirstItemInSection(sections[newIndex])
+            DLOG("Changed to section: \(sections[newIndex])")
         } else {
             // No section focused, start at first section
             focusedSection = sections.first
             focusedItemInSection = getFirstItemInSection(sections.first!)
+            DLOG("Set initial section: \(String(describing: sections.first))")
         }
-
-        print("Vertical navigation - New section: \(String(describing: focusedSection))")
     }
 
     private func handleHorizontalNavigation(_ xValue: Float) {
@@ -660,7 +696,6 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         case .allGames:
             items = games.map { $0.id }
         case .mostPlayed:
-            // TODO: Only show the first X items
             items = games.map { $0.id }
         }
 
@@ -690,6 +725,41 @@ struct ConsoleGamesView: SwiftUI.View, GameContextMenuDelegate {
         case .mostPlayed:
             return mostPlayed.first?.id
         }
+    }
+
+    private func gameItem(_ game: PVGame) -> some View {
+        GameItemView(
+            game: game,
+            constrainHeight: true,
+            isFocused: Binding(
+                get: { focusedItemInSection == game.id },
+                set: { if $0 { focusedItemInSection = game.id } }
+            )
+        ) {
+            Task.detached { @MainActor in
+                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+            }
+        }
+        .id(game.id)
+        .focusableIfAvailable()
+    }
+
+    private func saveStateItem(_ saveState: PVSaveState) -> some View {
+        GameItemView(
+            game: saveState.game,
+            saveState: saveState,
+            constrainHeight: true,
+            isFocused: Binding(
+                get: { focusedItemInSection == saveState.id },
+                set: { if $0 { focusedItemInSection = saveState.id } }
+            )
+        ) {
+            Task.detached { @MainActor in
+                await rootDelegate?.root_load(saveState.game, sender: self, core: saveState.core, saveState: saveState)
+            }
+        }
+        .id(saveState.id)
+        .focusableIfAvailable()
     }
 }
 

@@ -150,6 +150,11 @@ struct HomeView: SwiftUI.View {
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { event in
+                // Only handle events if we're on the home screen
+                guard !viewModel.isMenuVisible,
+                      viewModel.selectedConsole == nil
+                else { return }
+
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {
@@ -193,7 +198,10 @@ struct HomeView: SwiftUI.View {
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false, viewType: .cell) {
+                GameItemView(game: game, constrainHeight: false, viewType: .cell, isFocused: Binding(
+                    get: { focusedItemInSection == game.id },
+                    set: { if $0 { focusedItemInSection = game.id } }
+                )) {
                     Task.detached { @MainActor in
                         await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)}
                 }
@@ -207,7 +215,13 @@ struct HomeView: SwiftUI.View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: gamesPerRow)
         return LazyVGrid(columns: columns, spacing: 10) {
             ForEach(games, id: \.self) { game in
-                GameItemView(game: game, constrainHeight: false) {
+                GameItemView(
+                    game: game,
+                    constrainHeight: false,
+                    isFocused: Binding(
+                    get: { focusedItemInSection == game.id },
+                    set: { if $0 { focusedItemInSection = game.id } }
+                )) {
                     Task.detached { @MainActor in
                         await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                     }
@@ -374,7 +388,10 @@ struct HomeView: SwiftUI.View {
         if showRecentGames {
             HomeSection(title: "Recently Played") {
                 ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
-                    GameItemView(game: game, constrainHeight: true) {
+                    GameItemView(game: game, constrainHeight: true, isFocused: Binding(
+                        get: { focusedItemInSection == game.id },
+                        set: { if $0 { focusedItemInSection = game.id } }
+                    )) {
                         Task.detached { @MainActor in
                             await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                         }
@@ -398,7 +415,11 @@ struct HomeView: SwiftUI.View {
         if showFavorites {
             HomeSection(title: "Favorites") {
                 ForEach(favorites, id: \.self) { favorite in
-                    GameItemView(game: favorite, constrainHeight: true) {
+                    GameItemView(game: favorite, constrainHeight: true,
+                                 isFocused: Binding(
+                        get: { focusedItemInSection == favorite.id },
+                        set: { if $0 { focusedItemInSection = favorite.id } }
+                    )) {
                         Task.detached { @MainActor in
                             await rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
                         }
@@ -421,7 +442,10 @@ struct HomeView: SwiftUI.View {
     private func mostPlayedSection() -> some View {
         HomeSection(title: "Most Played") {
             ForEach(mostPlayed, id: \.self) { playedGame in
-                GameItemView(game: playedGame, constrainHeight: true) {
+                GameItemView(game: playedGame, constrainHeight: true, isFocused: Binding(
+                    get: { focusedItemInSection == playedGame.id },
+                    set: { if $0 { focusedItemInSection = playedGame.id } }
+                )) {
                     Task.detached { @MainActor in
                         await rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
                     }

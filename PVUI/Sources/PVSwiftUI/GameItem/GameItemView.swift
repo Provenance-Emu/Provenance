@@ -1,5 +1,5 @@
 //
-//  GameItemView 2.swift
+//  GameItemView.swift
 //  PVUI
 //
 //  Created by Joseph Mattiello on 8/11/24.
@@ -9,17 +9,25 @@ import SwiftUI
 import PVRealm
 import PVMediaCache
 import RealmSwift
+import PVThemes
 
 @available(iOS 16, tvOS 16, *)
 struct GameItemView: SwiftUI.View {
 
     @ObservedRealmObject var game: PVGame
+    var saveState: PVSaveState?
     var constrainHeight: Bool = false
     var viewType: GameItemViewType = .cell
+    var isFocused: Binding<Bool>
 
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var gamepadManager = GamepadManager.shared
     @State private var artwork: SwiftImage?
     var action: () -> Void
-    @Environment(\.isFocused) private var isFocused: Bool
+
+    private var shouldShowFocus: Bool {
+        isFocused.wrappedValue && gamepadManager.isControllerConnected
+    }
 
     var body: some SwiftUI.View {
         Button {
@@ -38,12 +46,16 @@ struct GameItemView: SwiftUI.View {
         .onChange(of: game.trueArtworkURL) { _ in
             updateArtwork()
         }
-        .scaleEffect(isFocused ? 1.05 : 1.0)
-        .brightness(isFocused ? 0.1 : 0)
+        .scaleEffect(shouldShowFocus ? 1.05 : 1.0)
+        .brightness(shouldShowFocus ? 0.1 : 0)
 #if os(tvOS)
-.shadow(color: isFocused ? .white.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
+        .shadow(color: shouldShowFocus ? .white.opacity(0.5) : .clear, radius: shouldShowFocus ? 10 : 0)
 #endif
-        .animation(.easeInOut(duration: 0.15), value: isFocused)
+        .overlay(
+            Rectangle()
+                .stroke(shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : .clear, lineWidth: 2)
+        )
+        .animation(.easeInOut(duration: 0.15), value: shouldShowFocus)
     }
 
     private func updateArtwork() {

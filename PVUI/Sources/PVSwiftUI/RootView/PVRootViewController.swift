@@ -140,10 +140,13 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                 }
             }
 
+        // Set initial console and tab
         if let console = gameLibrary.activeSystems.first {
             consolesWrapperViewDelegate.selectedTab = console.identifier
+            viewModel.selectedConsole = console
         } else {
             consolesWrapperViewDelegate.selectedTab = "home"
+            viewModel.selectedConsole = nil
         }
     }
 
@@ -243,6 +246,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             // From home, wrap to last console
             if let lastConsole = allConsoles.last {
                 consolesWrapperViewDelegate.selectedTab = lastConsole.identifier
+                self.viewModel.selectedConsole = lastConsole
             }
         } else if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == currentTab }) {
             if currentIndex == 0 {
@@ -251,6 +255,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             } else {
                 // Go to previous console
                 consolesWrapperViewDelegate.selectedTab = allConsoles[currentIndex - 1].identifier
+                self.viewModel.selectedConsole = allConsoles[currentIndex - 1]
             }
         }
     }
@@ -263,14 +268,17 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             // From home, go to first console
             if let firstConsole = allConsoles.first {
                 consolesWrapperViewDelegate.selectedTab = firstConsole.identifier
+                self.viewModel.selectedConsole = firstConsole
             }
         } else if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == currentTab }) {
             if currentIndex == allConsoles.count - 1 {
                 // From last console, wrap to home
                 consolesWrapperViewDelegate.selectedTab = "home"
+                self.viewModel.selectedConsole = nil
             } else {
                 // Go to next console
                 consolesWrapperViewDelegate.selectedTab = allConsoles[currentIndex + 1].identifier
+                self.viewModel.selectedConsole = allConsoles[currentIndex + 1]
             }
         }
     }
