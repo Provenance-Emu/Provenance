@@ -115,10 +115,12 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     }
 
     public func showMenu() {
+        viewModel.isMenuVisible = true
         self.sideNavigationController?.showLeftSide()
     }
 
     public func closeMenu() {
+        viewModel.isMenuVisible = false
         self.sideNavigationController?.closeSide()
     }
 

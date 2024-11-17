@@ -137,8 +137,15 @@ SideMenuView: SwiftUI.View {
     }
 
     private func setupGamepadHandling(proxy: ScrollViewProxy? = nil) {
+        // Cancel any existing subscriptions first
+        gamepadCancellable?.cancel()
+
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
+            .filter { _ in
+                print("viewModel.isMenuVisible: \(viewModel.isMenuVisible)")
+                return viewModel.isMenuVisible
+            }
             .sink { event in
                 switch event {
                 case .buttonPress(let isPressed):
@@ -151,29 +158,12 @@ SideMenuView: SwiftUI.View {
                     }
                 case .verticalNavigation(let value, let isPressed):
                     if isPressed {
-                        // Cancel any existing tasks
-                        delayTask?.cancel()
-                        continuousNavigationTask?.cancel()
-
-                        // For single press, just do the navigation once
                         handleVerticalNavigation(value, proxy: proxy)
-
-                        // Only start continuous navigation if the button is held
-                        delayTask = Task { [self] in
-                            try? await Task.sleep(for: .milliseconds(500)) // Wait to see if it's a hold
-                            if !Task.isCancelled && isPressed { // Only start continuous if still pressed
-                                startContinuousNavigation(value: value, proxy: proxy)
-                            }
-                        }
                     } else {
-                        delayTask?.cancel()
                         continuousNavigationTask?.cancel()
-                        delayTask = nil
-                        continuousNavigationTask = nil
                     }
                 default:
-                    continuousNavigationTask?.cancel()
-                    continuousNavigationTask = nil
+                    break
                 }
             }
     }

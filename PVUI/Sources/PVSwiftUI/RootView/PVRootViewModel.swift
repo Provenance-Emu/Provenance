@@ -26,5 +26,7 @@ public class PVRootViewModel: ObservableObject {
     /// Currently selected console
     @Published public var selectedConsole: PVSystem?
 
+    @Published public var isMenuVisible: Bool = false
+
     public init() {}
 }
