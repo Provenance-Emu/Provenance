@@ -783,7 +783,9 @@ void RasterizerCache<T>::ForEachSurfaceInRegion(PAddr addr, size_t size, Func&& 
 
         /// Prefetch next cache line on ARM
         #if defined(__ARM_NEON)
-        __builtin_prefetch(&it->second[0], 0, 3); // Read access, high temporal locality
+        if (!it->second.empty()) {
+            __builtin_prefetch(&it->second[0], 0, 3); // Read access, high temporal locality
+        }
         #endif
 
         for (const SurfaceId surface_id : it->second) {
