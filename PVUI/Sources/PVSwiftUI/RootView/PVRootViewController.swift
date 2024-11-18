@@ -152,10 +152,12 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
     public func didTapHome() {
         consolesWrapperViewDelegate.selectedTab = "home"
+        closeMenu()
     }
 
     public func didTapConsole(with identifier: String) {
         consolesWrapperViewDelegate.selectedTab = identifier
+        closeMenu()
     }
 
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
@@ -174,6 +176,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         // load new view
         self.addChildViewController(newVC, toContainerView: self.containerView)
         self.fillParentView(child: newVC.view, parent: self.containerView)
+        closeMenu()
     }
 
     private var gamepadCancellable: AnyCancellable?
