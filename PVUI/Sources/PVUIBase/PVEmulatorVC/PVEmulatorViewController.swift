@@ -267,7 +267,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         super.viewDidLoad()
 
         // Add game view
-        addChild(gpuViewController)
+        //addChild(gpuViewController)
         view.addSubview(gpuViewController.view)
         gpuViewController.view.frame = view.bounds
         gpuViewController.didMove(toParent: self)
