@@ -149,124 +149,112 @@ extern retro_environment_t environ_cb;
 
 -(void)didPushDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player {
     /// Handle special cases first
-    if (button == PVDSButtonScreenSwap) {
-        [self screenSwap];
-        return;
-    } else if (button == PVDSButtonRotate) {
-        [self screenRotate];
+    if (button == PVDSButtonScreenSwap || button == PVDSButtonRotate) {
+        if (button == PVDSButtonRotate) {
+            [self screenRotate];
+        } else {
+            [self screenSwap];
+        }
         return;
     }
 
-    /// Map PVDSButton to NDS button states
-    bool R = false, L = false, D = false, U = false, T = false;
-    bool S = false, B = false, A = false, Y = false, X = false;
-    bool W = false, E = false, G = false, F = false;
-
+    /// Map PVDSButton to RETRO_DEVICE_ID_JOYPAD values
+    unsigned retro_id;
     switch(button) {
         case PVDSButtonUp:
-            U = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_UP;
             break;
         case PVDSButtonDown:
-            D = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_DOWN;
             break;
         case PVDSButtonLeft:
-            L = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_LEFT;
             break;
         case PVDSButtonRight:
-            R = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_RIGHT;
             break;
         case PVDSButtonA:
-            A = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_A;
             break;
         case PVDSButtonB:
-            B = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_B;
             break;
         case PVDSButtonX:
-            X = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_X;
             break;
         case PVDSButtonY:
-            Y = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_Y;
             break;
         case PVDSButtonL:
-            W = true; /// Left shoulder is W in desmume
+            retro_id = RETRO_DEVICE_ID_JOYPAD_L;
             break;
         case PVDSButtonR:
-            E = true; /// Right shoulder is E in desmume
+            retro_id = RETRO_DEVICE_ID_JOYPAD_R;
             break;
         case PVDSButtonStart:
-            S = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_START;
             break;
         case PVDSButtonSelect:
-            T = true;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_SELECT;
             break;
         default:
-            break;
+            return;
     }
 
-    /// Set the button states in desmume
-    NDS_setPad(R, L, D, U, T, S, B, A, Y, X, W, E, G, F);
+    /// Update the pad state directly
+    _pad[player][retro_id] = 1;
 }
 
 -(void)didReleaseDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player {
-    /// Handle special cases first
+    /// Handle special cases
     if (button == PVDSButtonScreenSwap || button == PVDSButtonRotate) {
         return;
     }
 
-    /// Get current button states from desmume
-    const UserInput& currentInput = NDS_getRawUserInput();
-    const UserButtons& buttons = currentInput.buttons;
-
-    /// Map current states, but set the released button to false
-    bool R = buttons.R, L = buttons.L, D = buttons.D, U = buttons.U;
-    bool T = buttons.T, S = buttons.S, B = buttons.B, A = buttons.A;
-    bool Y = buttons.Y, X = buttons.X, W = buttons.W, E = buttons.E;
-    bool G = buttons.G, F = buttons.F;
-
-    /// Update the released button's state
+    /// Map and update pad state
+    unsigned retro_id;
     switch(button) {
         case PVDSButtonUp:
-            U = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_UP;
             break;
         case PVDSButtonDown:
-            D = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_DOWN;
             break;
         case PVDSButtonLeft:
-            L = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_LEFT;
             break;
         case PVDSButtonRight:
-            R = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_RIGHT;
             break;
         case PVDSButtonA:
-            A = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_A;
             break;
         case PVDSButtonB:
-            B = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_B;
             break;
         case PVDSButtonX:
-            X = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_X;
             break;
         case PVDSButtonY:
-            Y = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_Y;
             break;
         case PVDSButtonL:
-            W = false; /// Left shoulder is W in desmume
+            retro_id = RETRO_DEVICE_ID_JOYPAD_L;
             break;
         case PVDSButtonR:
-            E = false; /// Right shoulder is E in desmume
+            retro_id = RETRO_DEVICE_ID_JOYPAD_R;
             break;
         case PVDSButtonStart:
-            S = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_START;
             break;
         case PVDSButtonSelect:
-            T = false;
+            retro_id = RETRO_DEVICE_ID_JOYPAD_SELECT;
             break;
         default:
-            break;
+            return;
     }
 
-    /// Update button states in desmume
-    NDS_setPad(R, L, D, U, T, S, B, A, Y, X, W, E, G, F);
+    _pad[player][retro_id] = 0;
 }
 
 - (void)didMoveDSJoystickDirection:(enum PVDSButton)button
