@@ -1186,15 +1186,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             case .lcd:
                 useLCD = true
                 useCRT = false
-            case .lineTron:
-                useLCD = false
-                useCRT = true
+//            case .lineTron:
+//                useLCD = false
+//                useCRT = true
             case .megaTron:
                 useLCD = false
                 useCRT = true
-            case .ulTron:
-                useLCD = false
-                useCRT = true
+//            case .ulTron:
+//                useLCD = false
+//                useCRT = true
             case .gameBoy:
                 useLCD = true
                 useCRT = false
@@ -1301,7 +1301,22 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 ILOG("Effect filter pipeline state: \(self.effectFilterPipeline != nil)")
             } else if self.effectFilterShader?.name == "Line Tron" {
                 let time = Float(CACurrentMediaTime())
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
                 var uniforms = LineTronUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
                     width_scale: 1.0,    /// Line width multiplier
                     line_time: time,     /// Current time in seconds
                     falloff: 2.0,        /// Line edge falloff
@@ -1328,12 +1343,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 var uniforms = MegaTronUniforms(
                     SourceSize: sourceSize,
                     OutputSize: outputSize,
-                    MASK: 2.0,              /// 0=none, 1=RGB, 2=RGB(2), 3=RGB(3)
-                    MASK_INTENSITY: 0.5,    /// Mask intensity (0.0-1.0)
+                    MASK: 3.0,              /// 0=none, 1=RGB, 2=RGB(2), 3=RGB(3)
+                    MASK_INTENSITY: 0.25,    /// Mask intensity (0.0-1.0)
                     SCANLINE_THINNESS: 0.5, /// Scanline thickness
                     SCAN_BLUR: 2.5,         /// Scanline blur
                     CURVATURE: 0.02,        /// Screen curvature
-                    TRINITRON_CURVE: 0.0,   /// 0=normal curve, 1=trinitron style
+                    TRINITRON_CURVE: 1.0,   /// 0=normal curve, 1=trinitron style
                     CORNER: 0.02,           /// Corner size
                     CRT_GAMMA: 2.4          /// CRT gamma correction
                 )

@@ -12,41 +12,38 @@
 
 using namespace metal;
 
-// test Shader to draw the VECTOR lines
-//
-// width_scale must always be the first uniform, it is the amount the line width is expanded by.
-//
-// color.a is itterated from 1.0 on center line to 0.25 on the line edge.
-//
-// texture x is itterated along the length of the line 0 ... length (the length is in model cordinates)
-// texture y is itterated along the width of the line, -1 .. +1, with 0 being the center line
-//
-struct Push
-{
-    float   width_scale;
-    float   line_time;  // time (in seconds) of the line: 0.0 = now, +1.0 = 1sec in the past
-    float   falloff;
-    float   strength;
+struct LineTronUniforms {
+    float4 SourceSize;      /// x,y = size, z,w = 1/size
+    float4 OutputSize;      /// x,y = size, z,w = 1/size
+    float width_scale;      /// Line width multiplier
+    float line_time;        /// Time in seconds (0 = now, 1 = 1sec ago)
+    float falloff;          /// Line edge falloff
+    float strength;         /// Line brightness
 };
 
 fragment float4
 lineTron(Outputs in [[stage_in]],
-         constant Push& params [[buffer(0)]],
+         constant LineTronUniforms& uniforms [[buffer(0)]],
          texture2d<float> texture [[texture(0)]],
          sampler textureSampler [[sampler(0)]])
 {
-    float4 color = texture.sample(textureSampler, in.fTexCoord);
-    float t = params.line_time;
+    float2 uv = in.fTexCoord;
+    float4 color = texture.sample(textureSampler, uv);
 
-    // Simplified vector line effect
-    color.rgb *= params.strength;
+    // Calculate line effect
+    float2 pos = uv * uniforms.SourceSize.xy;
+    float lineWidth = uniforms.width_scale / uniforms.SourceSize.y;
+    float line = fmod(pos.y, 1.0);
+    line = smoothstep(0.5 - lineWidth, 0.5 + lineWidth, line);
 
-    // Apply falloff if time is non-zero
-    if (t > 0.0) {
-        float fade = exp(-pow(t * params.falloff, 2));
-        color.rgb *= fade;
-        color.a = mix(1.0, 0.0, abs(in.fTexCoord.y));
+    // Apply time-based fade
+    float fade = 1.0;
+    if (uniforms.line_time > 0.0) {
+        fade = exp(-uniforms.line_time * uniforms.falloff);
     }
+
+    // Combine effects
+    color.rgb *= mix(1.0, line * fade, uniforms.strength);
 
     return color;
 }

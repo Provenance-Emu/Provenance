@@ -27,26 +27,25 @@
 
 using namespace metal;
 
-struct Push
-{
-    float4 SourceSize;
-    float4 OutputSize;
-    float hardScan;
-    float hardPix;
-    float warpX;
-    float warpY;
-    float maskDark;
-    float maskLight;
-    float shadowMask;
-    float brightBoost;
-    float hardBloomScan;
-    float hardBloomPix;
-    float bloomAmount;
-    float shape;
+struct UlTronUniforms {
+    float4 SourceSize;      /// x,y = size, z,w = 1/size
+    float4 OutputSize;      /// x,y = size, z,w = 1/size
+    float hardScan;         /// Scanline intensity
+    float hardPix;          /// Pixel sharpness
+    float warpX;           /// Horizontal curvature
+    float warpY;           /// Vertical curvature
+    float maskDark;        /// Dark color mask
+    float maskLight;       /// Light color mask
+    float shadowMask;      /// Mask type (0-4)
+    float brightBoost;     /// Brightness boost
+    float hardBloomScan;   /// Bloom scanline
+    float hardBloomPix;    /// Bloom pixel
+    float bloomAmount;     /// Bloom strength
+    float shape;           /// Curvature shape
 };
 
 static INLINE
-float2 Warp(thread float2& pos, constant Push& params)
+float2 Warp(thread float2& pos, constant UlTronUniforms& params)
 {
     pos = (pos * 2.0) - float2(1.0);
     pos *= float2(1.0 + ((pos.y * pos.y) * params.warpX), 1.0 + ((pos.x * pos.x) * params.warpY));
@@ -54,7 +53,7 @@ float2 Warp(thread float2& pos, constant Push& params)
 }
 
 static INLINE
-float ToLinear1(thread const float& c, constant Push& params)
+float ToLinear1(thread const float& c, constant UlTronUniforms& params)
 {
 
     float _93;
@@ -70,7 +69,7 @@ float ToLinear1(thread const float& c, constant Push& params)
 }
 
 static INLINE
-float3 ToLinear(thread const float3& c, constant Push& params)
+float3 ToLinear(thread const float3& c, constant UlTronUniforms& params)
 {
 
     float param = c.x;
@@ -81,7 +80,7 @@ float3 ToLinear(thread const float3& c, constant Push& params)
 
 
 static INLINE
-float3 Fetch(thread float2& pos, thread const float2& off, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
+float3 Fetch(thread float2& pos, thread const float2& off, constant UlTronUniforms& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     pos = (floor((pos * params.SourceSize.zw) + off) + float2(0.5)) / params.SourceSize.zw;
     float3 param = Source.sample(SourceSmplr, pos).xyz * params.brightBoost;
@@ -89,20 +88,20 @@ float3 Fetch(thread float2& pos, thread const float2& off, constant Push& params
 }
 
 static INLINE
-float2 Dist(thread float2& pos, constant Push& params)
+float2 Dist(thread float2& pos, constant UlTronUniforms& params)
 {
     pos *= params.SourceSize.zw;
     return -((pos - floor(pos)) - float2(0.5));
 }
 
 static INLINE
-float Gaus(thread const float& pos, thread const float& scale, constant Push& params)
+float Gaus(thread const float& pos, thread const float& scale, constant UlTronUniforms& params)
 {
     return exp2(scale * pow(abs(pos), params.shape));
 }
 
 static INLINE
-float3 Horz3(thread const float2& pos, thread const float& off, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
+float3 Horz3(thread const float2& pos, thread const float& off, constant UlTronUniforms& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
     float2 param_1 = float2(-1.0, off);
@@ -133,7 +132,7 @@ float3 Horz3(thread const float2& pos, thread const float& off, constant Push& p
 }
 
 static INLINE
-float3 Horz5(thread const float2& pos, thread const float& off, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
+float3 Horz5(thread const float2& pos, thread const float& off, constant UlTronUniforms& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
     float2 param_1 = float2(-2.0, off);
@@ -178,7 +177,7 @@ float3 Horz5(thread const float2& pos, thread const float& off, constant Push& p
 }
 
 static INLINE
-float Scan(thread const float2& pos, thread const float& off, constant Push& params)
+float Scan(thread const float2& pos, thread const float& off, constant UlTronUniforms& params)
 {
     float2 param = pos;
     float2 _583 = Dist(param, params);
@@ -189,7 +188,7 @@ float Scan(thread const float2& pos, thread const float& off, constant Push& par
 }
 
 static INLINE
-float3 Tri(thread const float2& pos, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
+float3 Tri(thread const float2& pos, constant UlTronUniforms& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
     float param_1 = -1.0;
@@ -213,7 +212,7 @@ float3 Tri(thread const float2& pos, constant Push& params, thread texture2d<flo
 }
 
 static INLINE
-float3 Horz7(thread const float2& pos, thread const float& off, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
+float3 Horz7(thread const float2& pos, thread const float& off, constant UlTronUniforms& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
     float2 param_1 = float2(-3.0, off);
@@ -272,7 +271,7 @@ float3 Horz7(thread const float2& pos, thread const float& off, constant Push& p
 }
 
 static INLINE
-float BloomScan(thread const float2& pos, thread const float& off, constant Push& params)
+float BloomScan(thread const float2& pos, thread const float& off, constant UlTronUniforms& params)
 {
     float2 param = pos;
     float2 _599 = Dist(param, params);
@@ -283,7 +282,7 @@ float BloomScan(thread const float2& pos, thread const float& off, constant Push
 }
 
 static INLINE
-float3 Bloom(thread const float2& pos, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
+float3 Bloom(thread const float2& pos, constant UlTronUniforms& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
     float param_1 = -2.0;
@@ -319,7 +318,7 @@ float3 Bloom(thread const float2& pos, constant Push& params, thread texture2d<f
 }
 
 static INLINE
-float3 Mask(thread float2& pos, constant Push& params)
+float3 Mask(thread float2& pos, constant UlTronUniforms& params)
 {
     float3 mask = float3(params.maskDark, params.maskDark, params.maskDark);
     if (params.shadowMask == 1.0)
@@ -425,7 +424,7 @@ float3 Mask(thread float2& pos, constant Push& params)
 }
 
 static INLINE
-float ToSrgb1(thread const float& c, constant Push& params)
+float ToSrgb1(thread const float& c, constant UlTronUniforms& params)
 {
     float _146;
     if (c < 0.0031308)
@@ -440,7 +439,7 @@ float ToSrgb1(thread const float& c, constant Push& params)
 }
 
 static INLINE
-float3 ToSrgb(thread const float3& c, constant Push& params)
+float3 ToSrgb(thread const float3& c, constant UlTronUniforms& params)
 {
     float param = c.x;
     float param_1 = c.y;
@@ -450,7 +449,7 @@ float3 ToSrgb(thread const float3& c, constant Push& params)
 
 fragment float4
 ultron(Outputs in [[stage_in]],
-       constant Push& params [[buffer(0)]],
+       constant UlTronUniforms& params [[buffer(0)]],
        texture2d<float> Source [[texture(0)]],
        sampler SourceSmplr [[sampler(0)]])
 {

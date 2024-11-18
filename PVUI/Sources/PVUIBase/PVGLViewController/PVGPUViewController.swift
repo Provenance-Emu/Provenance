@@ -96,6 +96,8 @@ public class PVGPUViewController: BaseViewController {
 
 @usableFromInline
 struct LineTronUniforms: Sendable {
+    var SourceSize: SIMD4<Float>      /// x,y = size, z,w = 1/size
+    var OutputSize: SIMD4<Float>      /// x,y = size, z,w = 1/size
     var width_scale: Float     /// Line width multiplier
     var line_time: Float       /// Time in seconds (0 = now, 1 = 1sec ago)
     var falloff: Float         /// Line edge falloff
