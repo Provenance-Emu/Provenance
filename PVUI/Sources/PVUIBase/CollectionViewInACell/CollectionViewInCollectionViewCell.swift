@@ -13,6 +13,10 @@ import RxSwift
 import PVRealm
 import PVLogging
 
+#if os(tvOS)
+import PVUI_TV
+#endif
+
 public let PageIndicatorHeight: CGFloat = 2.5
 
 protocol SubCellItem {
@@ -258,7 +262,7 @@ private extension PVGameLibraryCollectionViewCell {
         #if os(iOS)
         collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: BundleLoader.bundle), forCellWithReuseIdentifier: identifier)
         #else
-        collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: BundleLoader.bundle), forCellWithReuseIdentifier: identifier)
+        collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: PVUI_TV.BundleLoader.bundle), forCellWithReuseIdentifier: identifier)
         #endif
     }
 }

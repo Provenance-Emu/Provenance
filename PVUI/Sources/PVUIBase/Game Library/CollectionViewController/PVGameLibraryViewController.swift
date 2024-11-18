@@ -42,6 +42,10 @@ import PVSettings
 import PVWebServer
 #endif
 
+#if os(tvOS)
+import PVUI_TV
+#endif
+
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
 
@@ -524,7 +528,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 #if os(iOS)
         collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: BundleLoader.module), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 #else
-        collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: BundleLoader.module), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: PVUI_TV.BundleLoader.bundle), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 #endif
         // Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas
