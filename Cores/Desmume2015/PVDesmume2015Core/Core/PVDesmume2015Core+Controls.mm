@@ -10,55 +10,13 @@
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
+#import "NDSSystem.h"
 
-#define DC_BTN_C        (1<<0)
-#define DC_BTN_B        (1<<1)
-#define DC_BTN_A        (1<<2)
-#define DC_BTN_START    (1<<3)
-#define DC_DPAD_UP      (1<<4)
-#define DC_DPAD_DOWN    (1<<5)
-#define DC_DPAD_LEFT    (1<<6)
-#define DC_DPAD_RIGHT   (1<<7)
-#define DC_BTN_Z        (1<<8)
-#define DC_BTN_Y        (1<<9)
-#define DC_BTN_X        (1<<10)
-#define DC_BTN_D        (1<<11)
-#define DC_DPAD2_UP     (1<<12)
-#define DC_DPAD2_DOWN   (1<<13)
-#define DC_DPAD2_LEFT   (1<<14)
-#define DC_DPAD2_RIGHT  (1<<15)
-
-#define DC_AXIS_LT       (0X10000)
-#define DC_AXIS_RT       (0X10001)
-#define DC_AXIS_X        (0X20000)
-#define DC_AXIS_Y        (0X20001)
-
-static const int DSMap[]  = {
-    DC_DPAD_UP, DC_DPAD_DOWN, DC_DPAD_LEFT, DC_DPAD_RIGHT,
-    DC_BTN_A, DC_BTN_B, DC_BTN_X, DC_BTN_Y,
-    DC_AXIS_LT, DC_AXIS_RT,
-    DC_BTN_START
-};
-
-typedef unsigned char  u8;
-typedef signed char    s8;
-typedef unsigned short u16;
-typedef unsigned int   u32;
-
-    // Desmume2015 controller data
-//u16 kcode[4];
-//u8 rt[4];
-//u8 lt[4];
-//u32 vks[4];
-//s8 joyx[4], joyy[4];
+#include "libretro.h"
+extern retro_log_printf_t log_cb;
+extern retro_environment_t environ_cb;
 
 @implementation PVDesmume2015CoreBridge (Controls)
-
-- (void)initControllBuffers {
-//    memset(&kcode, 0xFFFF, sizeof(kcode));
-//    bzero(&rt, sizeof(rt));
-//    bzero(&lt, sizeof(lt));
-}
 
 #pragma mark - Control
 //
@@ -145,17 +103,15 @@ typedef unsigned int   u32;
 }
 
 - (void)screenRotate {
-/*
-    #define LAYOUT_TOP_BOTTOM                 0
-    #define LAYOUT_BOTTOM_TOP                 1
-    #define LAYOUT_LEFT_RIGHT                 2
-    #define LAYOUT_RIGHT_LEFT                 3
-    #define LAYOUT_TOP_ONLY                   4
-    #define LAYOUT_BOTTOM_ONLY                5
-    #define LAYOUT_HYBRID_TOP_ONLY            6
-    #define LAYOUT_HYBRID_BOTTOM_ONLY         7
- */
-    
+    /// Current layout state stored as static to persist between calls
+    static int currentLayout = LAYOUT_TOP_BOTTOM;
+
+    /// Cycle through the layouts in a logical order
+    currentLayout = (currentLayout + 1) % 8;
+
+    /// Update the global layout variable used by desmume
+    extern int current_layout;
+    current_layout = currentLayout;
 }
 
 -(void)didPushDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player {
@@ -164,37 +120,16 @@ typedef unsigned int   u32;
     } else if (button == PVDSButtonRotate) {
         [self screenRotate];
     }
-//    if (button == PVDSButtonL) {
-//        lt[player] |= 0xff * true;
-//    } else if (button == PVDSButtonR) {
-//        rt[player] |= 0xff * true;
-//    } else {
-//        int mapped = DSMap[button];
-//        kcode[player] &= ~(mapped);
-//    }
 }
 
 -(void)didReleaseDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player {
-//    if (button == PVDSButtonL) {
-//        lt[player] |= 0xff * false;
-//    } else if (button == PVDSButtonR) {
-//        rt[player] |= 0xff * false;
-//    } else {
-//        int mapped = DSMap[button];
-//        kcode[player] |= (mapped);
-//    }
+
 }
 
-- (void)didMoveDSJoystickDirection:(enum PVDSButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    /*
-     float xvalue = gamepad.leftThumbstick.xAxis.value;
-     s8 x=(s8)(xvalue*127);
-     joyx[0] = x;
+- (void)didMoveDSJoystickDirection:(enum PVDSButton)button
+                            withValue:(CGFloat)value
+                            forPlayer:(NSInteger)player {
 
-     float yvalue = gamepad.leftThumbstick.yAxis.value;
-     s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
-     joyy[0] = y;
-     */
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
