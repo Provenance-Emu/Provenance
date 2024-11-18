@@ -140,7 +140,30 @@ typedef unsigned int   u32;
 //    }
 //}
 
+- (void)screenSwap {
+    // TODO
+}
+
+- (void)screenRotate {
+/*
+    #define LAYOUT_TOP_BOTTOM                 0
+    #define LAYOUT_BOTTOM_TOP                 1
+    #define LAYOUT_LEFT_RIGHT                 2
+    #define LAYOUT_RIGHT_LEFT                 3
+    #define LAYOUT_TOP_ONLY                   4
+    #define LAYOUT_BOTTOM_ONLY                5
+    #define LAYOUT_HYBRID_TOP_ONLY            6
+    #define LAYOUT_HYBRID_BOTTOM_ONLY         7
+ */
+    
+}
+
 -(void)didPushDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player {
+    if (button == PVDSButtonScreenSwap) {
+        [self screenSwap];
+    } else if (button == PVDSButtonRotate) {
+        [self screenRotate];
+    }
 //    if (button == PVDSButtonL) {
 //        lt[player] |= 0xff * true;
 //    } else if (button == PVDSButtonR) {
