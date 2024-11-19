@@ -15,6 +15,9 @@
 extern retro_environment_t environ_cb;
 extern unsigned GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
 extern unsigned GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
+extern int current_layout;
+extern int hybrid_layout_scale;
+extern unsigned scale;
 
 #if !__has_include(<OpenGL/OpenGL.h>)
 #import <OpenGLES/ES3/glext.h>
@@ -52,63 +55,75 @@ extern unsigned GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
 # pragma mark - Properties
 
 - (CGRect)screenRect {
-    struct retro_variable var = { "desmume_screens_layout", NULL };
-    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
-
-    unsigned width = GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
-    unsigned height = GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
-
-    if (var.value) {
-        if (strstr(var.value, "hybrid")) {
-            return CGRectMake(0, 0, width + (width/3), height);
-        } else if (strstr(var.value, "top only") || strstr(var.value, "bottom only")) {
-            return CGRectMake(0, 0, width, height);
-        } else if (strstr(var.value, "top/bottom") || strstr(var.value, "bottom/top")) {
-            return CGRectMake(0, 0, width, height * 2);
-        }
-    }
-
-    return CGRectMake(0, 0, width, height);
+    return CGRectMake(0, 0, self.bufferSize.width, self.bufferSize.height);
 }
 
 - (CGSize)bufferSize {
-    struct retro_variable var = { "desmume_screens_layout", NULL };
-    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
+    /// Get current resolution
+    struct retro_variable res = { "desmume_internal_resolution", NULL };
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &res);
+
+    /// Get current layout
+    struct retro_variable layout = { "desmume_screens_layout", NULL };
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &layout);
 
     /// Base dimensions for a single DS screen
     unsigned width = GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
     unsigned height = GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
 
-    if (var.value) {
-        if (strstr(var.value, "hybrid")) {
+    CGSize size;
+    /// Adjust dimensions based on layout
+    if (layout.value) {
+        if (strstr(layout.value, "hybrid")) {
             /// Hybrid layout needs extra width for the small screen
-            return CGSizeMake(width + (width/3), height);
-        } else if (strstr(var.value, "top only") || strstr(var.value, "bottom only")) {
+            int awidth = width/3;
+            size = CGSizeMake(width + awidth, height);
+        } else if (strstr(layout.value, "left/right") || strstr(layout.value, "right/left")) {
+            /// Side by side layout - double width
+            size = CGSizeMake(width * 2, height);
+        } else if (strstr(layout.value, "top/bottom") || strstr(layout.value, "bottom/top")) {
+            /// Vertical layout - double height
+            size = CGSizeMake(width, height * 2);
+        } else {
             /// Single screen layout
-            return CGSizeMake(width, height);
-        } else if (strstr(var.value, "top/bottom") || strstr(var.value, "bottom/top")) {
-            /// Vertical layout
-            return CGSizeMake(width, height * 2);
+            size = CGSizeMake(width, height);
         }
+    } else {
+        size = CGSizeMake(width, height);
     }
 
-    /// Default to single screen size
-    return CGSizeMake(width, height);
+    ILOG(@"Buffer size calculation:");
+    ILOG(@"Layout: %s", layout.value ? layout.value : "default");
+    ILOG(@"Resolution: %ux%u", width, height);
+    ILOG(@"Final size: %.0fx%.0f", size.width, size.height);
+
+    return size;
 }
 
 - (CGSize)aspectSize {
     struct retro_variable var = { "desmume_screens_layout", NULL };
     environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
 
+    CGSize aspect;
     if (var.value) {
-        if (strstr(var.value, "top only") || strstr(var.value, "bottom only")) {
-            return CGSizeMake(1, 1);  /// Square aspect for single screen
-        } else if (strstr(var.value, "left/right") || strstr(var.value, "right/left")) {
-            return CGSizeMake(2, 1);  /// 2:1 aspect for horizontal layout
+        if (strstr(var.value, "left/right") || strstr(var.value, "right/left")) {
+            aspect = CGSizeMake(2, 1);  /// 2:1 aspect for horizontal layout
+        } else if (strstr(var.value, "top/bottom") || strstr(var.value, "bottom/top")) {
+            aspect = CGSizeMake(1, 2);  /// 1:2 aspect for vertical layout
+        } else if (strstr(var.value, "hybrid")) {
+            aspect = CGSizeMake(4, 3);  /// 4:3 aspect for hybrid layout
+        } else {
+            aspect = CGSizeMake(1, 1);  /// Square aspect for single screen
         }
+    } else {
+        aspect = CGSizeMake(1, 1);
     }
 
-    return CGSizeMake(1, 2);  /// Default 1:2 aspect for vertical layout
+    ILOG(@"Aspect size calculation:");
+    ILOG(@"Layout: %s", var.value ? var.value : "default");
+    ILOG(@"Aspect: %.0f:%.0f", aspect.width, aspect.height);
+
+    return aspect;
 }
 
 #define USE_565 0
