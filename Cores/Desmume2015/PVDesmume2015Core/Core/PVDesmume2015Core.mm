@@ -64,9 +64,9 @@
 //static void *dlopen_myself()
 //{
 //    Dl_info info;
-//    
+//
 //    dladdr(dlopen_myself, &info);
-//    
+//
 //    return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
 //}
 
@@ -98,6 +98,18 @@
 //
 //		_callbackQueue = dispatch_queue_create("org.openemu.Desmume2015.CallbackHandlerQueue", queueAttributes);
 //		_callbackHandlers = [[NSMutableDictionary alloc] init];
+        _variables = [NSMutableDictionary dictionary];
+
+        /// Set default values based on libretro.cpp options
+        _variables[@"desmume_screens_layout"] = @"top/bottom";
+        _variables[@"desmume_internal_resolution"] = @"256x192";
+        _variables[@"desmume_num_cores"] = @"1";
+        _variables[@"desmume_cpu_mode"] = @"interpreter";
+        _variables[@"desmume_hybrid_layout_scale"] = @"1";
+        _variables[@"desmume_pointer_colour"] = @"white";
+        _variables[@"desmume_hybrid_showbothscreens"] = @"enabled";
+        _variables[@"desmume_hybrid_cursor_always_smallscreen"] = @"enabled";
+
         _current = self;
 	}
 	return self;
@@ -392,63 +404,31 @@
 
 #pragma mark - Options
 - (void *)getVariable:(const char *)variable {
-    ILOG(@"%s", variable);
+    NSString *varKey = [NSString stringWithUTF8String:variable];
+    NSString *value = _variables[varKey];
 
-
-    #define V(x) strcmp(variable, x) == 0
-
-    if (V("desmume_cpu_mode")) {
-            // interpreter|jit
-        char * value = strdup("interpreter");
-        return value;
-    } else if (V("desmume_internal_resolution")) {
-        // 256x192|512x384|768x576|1024x768|1280x960|1536x1152|1792x1344|2048x1536|2304x1728|2560x1920
-        char * value = strdup("1024x768");
-        return value;
-    } else if (V("desmume_num_cores")) {
-            // CPU cores; 1|2|3|4
-        char * value = strdup("4");
-        return value;
-    } else if (V("desmume_pointer_type")) {
-            // mouse|touch
-            char * value = strdup("touch");
-            return value;
-    } else if (V("desmume_load_to_memory")) {
-            // disabled|enabled
-            char * value = strdup("enabled");
-            return value;
-    } else if (V("desmume_gfx_txthack")) {
-            // disabled|enabled
-            char * value = strdup("disabled");
-            return value;
-    } else if (V("desmume_mic_mode")) {
-            // internal|sample|random|physical
-            char * value = strdup("physical");
-            return value;
-    } else if (V("desmume_pointer_colour")) {
-            // white|black|red|blue|yellow
-            char * value = strdup("blue");
-            return value;
-    } else if (V("desmume_screens_layout")) {
-            // top/bottom|bottom/top|left/right|right/left|top only|bottom only|quick switch|hybrid/top|hybrid/bottom
-            char * value = strdup("top/bottom");
-            return value;
-    } else if (V("desmume_hybrid_showboth_screens")) {
-            // Hybrid layout show both screens; enabled|disabled
-            char * value = strdup("enabled");
-            return value;
-    } else if (V("desmume_hybrid_layout_scale")) {
-            // 1|3
-            char * value = strdup("1");
-            return value;
-    } else {
-        ELOG(@"Unprocessed var: %s", variable);
-        return NULL;
+    if (!value) {
+        // Fallback to defaults if not set
+        if (strcmp(variable, "desmume_screens_layout") == 0) {
+            value = @"top/bottom";
+        } else if (strcmp(variable, "desmume_internal_resolution") == 0) {
+            value = @"256x192";
+        } else if (strcmp(variable, "desmume_num_cores") == 0) {
+            value = @"1";
+        } else if (strcmp(variable, "desmume_cpu_mode") == 0) {
+            value = @"interpreter";
+        } else if (strcmp(variable, "desmume_hybrid_layout_scale") == 0) {
+            value = @"1";
+        } else if (strcmp(variable, "desmume_pointer_colour") == 0) {
+            value = @"white";
+        } else if (strcmp(variable, "desmume_hybrid_showbothscreens") == 0) {
+            value = @"enabled";
+        } else if (strcmp(variable, "desmume_hybrid_cursor_always_smallscreen") == 0) {
+            value = @"enabled";
+        }
     }
 
-#undef V
-    return NULL;
+    return value ? strdup(value.UTF8String) : NULL;
 }
 
 @end
-

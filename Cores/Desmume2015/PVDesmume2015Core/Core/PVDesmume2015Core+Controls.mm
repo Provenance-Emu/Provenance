@@ -25,14 +25,46 @@ extern retro_environment_t environ_cb;
 #pragma mark - Control
 
 - (void)updateScreenLayout:(const char *)layoutValue {
+    /// Update our variables dictionary
+    _variables[@"desmume_screens_layout"] = [NSString stringWithUTF8String:layoutValue];
+
     /// Set new layout through environment callback
     struct retro_variable var = { "desmume_screens_layout", NULL };
     var.value = layoutValue;
     environ_cb(RETRO_ENVIRONMENT_SET_VARIABLE, &var);
 
-    /// Force a check of variables on next frame
-    bool updated = true;
+    /// Update current_layout directly for immediate effect
+    extern int current_layout;
+    if (strstr(layoutValue, "top/bottom"))
+        current_layout = LAYOUT_TOP_BOTTOM;
+    else if (strstr(layoutValue, "bottom/top"))
+        current_layout = LAYOUT_BOTTOM_TOP;
+    else if (strstr(layoutValue, "left/right"))
+        current_layout = LAYOUT_LEFT_RIGHT;
+    else if (strstr(layoutValue, "right/left"))
+        current_layout = LAYOUT_RIGHT_LEFT;
+    else if (strstr(layoutValue, "top only"))
+        current_layout = LAYOUT_TOP_ONLY;
+    else if (strstr(layoutValue, "bottom only"))
+        current_layout = LAYOUT_BOTTOM_ONLY;
+    else if (strstr(layoutValue, "hybrid/top"))
+        current_layout = LAYOUT_HYBRID_TOP_ONLY;
+    else if (strstr(layoutValue, "hybrid/bottom"))
+        current_layout = LAYOUT_HYBRID_BOTTOM_ONLY;
+
+    /// Force layout update
+    bool updated = false;
     environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated);
+
+    /// Log the layout change
+    if (log_cb) {
+        log_cb(RETRO_LOG_INFO, "Layout changed to: %s\n", layoutValue);
+    } else {
+        NSLog(@"Layout changed to: %s\n", layoutValue);
+    }
+
+    UIViewController* viewController = (UIViewController* )self.renderDelegate;
+    [viewController viewDidLayoutSubviews];
 }
 
 - (void)screenSwap {

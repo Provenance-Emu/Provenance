@@ -55,10 +55,28 @@ extern unsigned scale;
 # pragma mark - Properties
 
 - (CGRect)screenRect {
-    return CGRectMake(0, 0, self.bufferSize.width, self.bufferSize.height);
+    static NSString *lastLayout = nil;
+    struct retro_variable layout = { "desmume_screens_layout", NULL };
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &layout);
+
+    CGRect rect = CGRectMake(0, 0, self.bufferSize.width, self.bufferSize.height);
+
+    if (layout.value) {
+        NSString *currentLayout = [NSString stringWithUTF8String:layout.value];
+        if (!lastLayout || ![currentLayout isEqualToString:lastLayout]) {
+            NSLog(@"Screen rect changed:");
+            NSLog(@"Layout: %s", layout.value);
+            NSLog(@"Rect: %@", NSStringFromCGRect(rect));
+            lastLayout = currentLayout;
+        }
+    }
+
+    return rect;
 }
 
 - (CGSize)bufferSize {
+    static NSString *lastLayout = nil;
+
     /// Get current resolution
     struct retro_variable res = { "desmume_internal_resolution", NULL };
     environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &res);
@@ -74,6 +92,8 @@ extern unsigned scale;
     CGSize size;
     /// Adjust dimensions based on layout
     if (layout.value) {
+        NSString *currentLayout = [NSString stringWithUTF8String:layout.value];
+
         if (strstr(layout.value, "hybrid")) {
             /// Hybrid layout needs extra width for the small screen
             int awidth = width/3;
@@ -88,40 +108,51 @@ extern unsigned scale;
             /// Single screen layout
             size = CGSizeMake(width, height);
         }
+
+        /// Only log if layout changed
+        if (!lastLayout || ![currentLayout isEqualToString:lastLayout]) {
+            NSLog(@"Layout changed:");
+            NSLog(@"Layout: %s", layout.value);
+            NSLog(@"Resolution: %ux%u", width, height);
+            NSLog(@"Final size: %.0fx%.0f", size.width, size.height);
+            lastLayout = currentLayout;
+        }
     } else {
         size = CGSizeMake(width, height);
     }
-
-    ILOG(@"Buffer size calculation:");
-    ILOG(@"Layout: %s", layout.value ? layout.value : "default");
-    ILOG(@"Resolution: %ux%u", width, height);
-    ILOG(@"Final size: %.0fx%.0f", size.width, size.height);
 
     return size;
 }
 
 - (CGSize)aspectSize {
-    struct retro_variable var = { "desmume_screens_layout", NULL };
-    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
+    static NSString *lastLayout = nil;
+    struct retro_variable layout = { "desmume_screens_layout", NULL };
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &layout);
 
     CGSize aspect;
-    if (var.value) {
-        if (strstr(var.value, "left/right") || strstr(var.value, "right/left")) {
+    if (layout.value) {
+        NSString *currentLayout = [NSString stringWithUTF8String:layout.value];
+
+        if (strstr(layout.value, "left/right") || strstr(layout.value, "right/left")) {
             aspect = CGSizeMake(2, 1);  /// 2:1 aspect for horizontal layout
-        } else if (strstr(var.value, "top/bottom") || strstr(var.value, "bottom/top")) {
+        } else if (strstr(layout.value, "top/bottom") || strstr(layout.value, "bottom/top")) {
             aspect = CGSizeMake(1, 2);  /// 1:2 aspect for vertical layout
-        } else if (strstr(var.value, "hybrid")) {
+        } else if (strstr(layout.value, "hybrid")) {
             aspect = CGSizeMake(4, 3);  /// 4:3 aspect for hybrid layout
         } else {
             aspect = CGSizeMake(1, 1);  /// Square aspect for single screen
         }
+
+        /// Only log if layout changed
+        if (!lastLayout || ![currentLayout isEqualToString:lastLayout]) {
+            NSLog(@"Aspect changed:");
+            NSLog(@"Layout: %s", layout.value);
+            NSLog(@"Aspect: %.0f:%.0f", aspect.width, aspect.height);
+            lastLayout = currentLayout;
+        }
     } else {
         aspect = CGSizeMake(1, 1);
     }
-
-    ILOG(@"Aspect size calculation:");
-    ILOG(@"Layout: %s", var.value ? var.value : "default");
-    ILOG(@"Aspect: %.0f:%.0f", aspect.width, aspect.height);
 
     return aspect;
 }
