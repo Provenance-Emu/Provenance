@@ -1694,7 +1694,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1720,7 +1720,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1794,7 +1794,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1820,7 +1820,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1892,7 +1892,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1918,7 +1918,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1964,7 +1964,7 @@
 					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
 					"\"$(SRCROOT)/duckstation/dep/xbyak\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/lib",
 					"$(inherited)",
@@ -1984,7 +1984,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -2027,7 +2027,7 @@
 					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
 					"\"$(SRCROOT)/duckstation/dep/xbyak\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/lib",
 					"$(inherited)",
@@ -2047,7 +2047,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -2091,7 +2091,7 @@
 					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
 					"\"$(SRCROOT)/duckstation/dep/xbyak\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/lib",
 					"$(inherited)",
@@ -2111,7 +2111,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Archive;
