@@ -7,18 +7,16 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [ ] Opening roms from md5/siri search doesn't work (Claude had good sample code)
 - [X] Test iOS 17.0 and then 16.X
-- [ ] Gamepad navigation in swiftUI
-- [ ] Remove or fix new shaders
+- [X] Remove or fix new shaders
 - [ ] Artwork ratios are wrong
-- [ ] Add more artwork lookups
 - [ ] BIOS screens show mismatch when there isn't
 - [ ] Fix or remove Flycast retroarch for Dreamcast
 - [ ] Fix layout, layout button and touch controls of Desmume2015 or remove
-- [ ] Opening roms from md5/siri search doesn't work (Claude had good sample code)
+    - Partially done WIP
 - [ ] Native scale on mupen shows in wrong area on ipad
 - [ ] Share on old UI crashes app (realm threading issue)
-- [ ] iCloud sync removed
 - [X] Checking Import UI is hanging (removed for now)
     - [ ] fix public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async
 - [ ] look at the displaylink thing in retroarch
@@ -66,7 +64,21 @@ _My personal TODO notes_
 - [ ] Make GameMoreInfoVC and it's equivlant PageViewController into native swifttUI with editing of properties
 - [ ] App Group containers in Catalyst "public class var appGroupContainer"
 
-## Cores to translate
+## Features to Add
+
+###  Really want
+
+- [ ] Add more artwork lookups
+- [ ] Gamepad navigation in swiftUI
+    - Partially implimented
+- [ ] iCloud sync
+
+### Kind of want
+
+- [ ] New save states management page
+    - [ ] (New design)[https://discord.com/channels/@me/1034683216059179069/1307885448030326877]
+
+### Cores to translate
 
 - [ ] PVFreeIntV
 - [ ] PVfMSX
