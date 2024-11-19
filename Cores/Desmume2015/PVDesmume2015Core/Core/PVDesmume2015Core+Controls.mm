@@ -8,6 +8,8 @@
 
 #import <PVDesmume2015/PVDesmume2015.h>
 #import <Foundation/Foundation.h>
+#import "PVDesmume2015Core+Controls.h"
+
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
 
@@ -271,9 +273,38 @@ extern retro_environment_t environ_cb;
     [self didReleaseDSButton:(PVDSButton)button forPlayer:player];
 }
 
-// Touch Screen controls
--(void)sendEvent:(UIEvent * _Nullable)event {
-    [super sendEvent:event];
+/// Mouse support properties
+- (BOOL)gameSupportsMouse {
+    return YES;
 }
+
+- (BOOL)requiresMouse {
+    return YES;
+}
+
+/// Mouse movement handling
+//- (void)mouseMoved:(CGPoint)point {
+//    extern bool mouse_enable;
+//    extern double mouse_x_delta;
+//    extern double mouse_y_delta;
+//
+//    mouse_enable = YES;
+//    mouse_x_delta = point.x;
+//    mouse_y_delta = point.y;
+//
+//    NSLog(@"Mouse moved - x: %.2f, y: %.2f", point.x, point.y);
+//}
+//
+///// Mouse button handling
+//- (void)leftMouseDown:(CGPoint)point {
+//    extern bool touchEnabled;
+//    touchEnabled = YES;
+//    [self mouseMoved:point];
+//}
+//
+//- (void)leftMouseUp {
+//    extern bool touchEnabled;
+//    touchEnabled = NO;
+//}
 
 @end

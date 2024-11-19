@@ -41,13 +41,13 @@ __attribute__((weak_import))
 #pragma clang diagnostic pop
 @public
     unsigned short pitch_shift;
-    
+
     uint32_t *videoBuffer;
     uint32_t *videoBufferA;
     uint32_t *videoBufferB;
-    
+
     int16_t _pad[2][12];
-    
+
     retro_core_t* core;
 
     // MARK: - Retro Structs
@@ -56,6 +56,10 @@ __attribute__((weak_import))
     bool                     core_has_set_input_descriptors;
     struct retro_system_av_info av_info;
     enum retro_pixel_format pix_fmt;
+
+    CGPoint currentTouchPoint;
+    BOOL touchActive;
+    BOOL mouseEnabled;
 }
 - (instancetype _Nonnull )init;
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
@@ -66,6 +70,14 @@ __attribute__((weak_import))
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;
 @property (nonatomic, retain, nullable) NSString * romPath;
+
+@end
+
+@protocol MouseResponder;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
+@interface PVLibRetroCoreBridge (MouseResponder) <MouseResponder>
+#pragma clang diagnostic pop
 
 @end
 
