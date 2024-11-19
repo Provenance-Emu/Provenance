@@ -24,31 +24,48 @@ extern retro_environment_t environ_cb;
 
 #pragma mark - Control
 
-- (void)screenSwap {
-    /// Get current layout through environment callback
-    struct retro_variable var = { "desmume_screens_layout", NULL };
-    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
-
-    /// Determine current layout from variable value
-    const char *new_layout;
-    if (strstr(var.value, "top only"))
-        new_layout = "bottom only";
-    else if (strstr(var.value, "bottom only"))
-        new_layout = "top only";
-    else if (strstr(var.value, "hybrid/top"))
-        new_layout = "hybrid/bottom";
-    else if (strstr(var.value, "hybrid/bottom"))
-        new_layout = "hybrid/top";
-    else
-        new_layout = "top only";  // Default fallback
-
+- (void)updateScreenLayout:(const char *)layoutValue {
     /// Set new layout through environment callback
-    var.value = new_layout;
+    struct retro_variable var = { "desmume_screens_layout", NULL };
+    var.value = layoutValue;
     environ_cb(RETRO_ENVIRONMENT_SET_VARIABLE, &var);
 
     /// Force a check of variables on next frame
     bool updated = true;
     environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated);
+}
+
+- (void)screenSwap {
+    /// Get current layout through environment callback
+    struct retro_variable var = { "desmume_screens_layout", NULL };
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
+
+    /// Determine new layout based on current layout
+    const char *layoutValue;
+    if (var.value) {
+        if (strstr(var.value, "top/bottom"))
+            layoutValue = "bottom/top";
+        else if (strstr(var.value, "bottom/top"))
+            layoutValue = "top/bottom";
+        else if (strstr(var.value, "left/right"))
+            layoutValue = "right/left";
+        else if (strstr(var.value, "right/left"))
+            layoutValue = "left/right";
+        else if (strstr(var.value, "top only"))
+            layoutValue = "bottom only";
+        else if (strstr(var.value, "bottom only"))
+            layoutValue = "top only";
+        else if (strstr(var.value, "hybrid/top"))
+            layoutValue = "hybrid/bottom";
+        else if (strstr(var.value, "hybrid/bottom"))
+            layoutValue = "hybrid/top";
+        else
+            layoutValue = "top/bottom";  /// Default fallback
+    } else {
+        layoutValue = "top/bottom";  /// Default fallback
+    }
+
+    [self updateScreenLayout:layoutValue];
 }
 
 - (void)screenRotate {
@@ -87,13 +104,11 @@ extern retro_environment_t environ_cb;
             break;
     }
 
-    /// Override the getVariable response for screen layout
+    /// Update current_layout for core
     extern int current_layout;
     current_layout = currentLayout;
 
-    /// Force a check of variables on next frame
-    bool updated = true;
-    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated);
+    [self updateScreenLayout:layoutValue];
 }
 
 -(void)didPushDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player {
