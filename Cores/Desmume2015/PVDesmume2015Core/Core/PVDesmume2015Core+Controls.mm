@@ -10,96 +10,45 @@
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
-#import "NDSSystem.h"
 
+// Desmume 2015
+#include "NDSSystem.h"
+// Retroarch
 #include "libretro.h"
+
+// Retro arch globals
 extern retro_log_printf_t log_cb;
 extern retro_environment_t environ_cb;
 
 @implementation PVDesmume2015CoreBridge (Controls)
 
 #pragma mark - Control
-//
-//- (void)pollControllers {
-//    for (NSInteger playerIndex = 0; playerIndex < 4; playerIndex++)
-//    {
-//        GCController *controller = nil;
-//
-//        if (self.controller1 && playerIndex == 0)
-//        {
-//            controller = self.controller1;
-//        }
-//        else if (self.controller2 && playerIndex == 1)
-//        {
-//            controller = self.controller2;
-//        }
-//        else if (self.controller3 && playerIndex == 3)
-//        {
-//            controller = self.controller3;
-//        }
-//        else if (self.controller4 && playerIndex == 4)
-//        {
-//            controller = self.controller4;
-//        }
-//
-//        if ([controller extendedGamepad])
-//        {
-//            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
-//            GCControllerDirectionPad *dpad = [gamepad dpad];
-//
-//            dpad.up.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_UP) : kcode[playerIndex] |= (DC_DPAD_UP);
-//            dpad.down.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_DOWN) : kcode[playerIndex] |= (DC_DPAD_DOWN);
-//            dpad.left.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_LEFT) : kcode[playerIndex] |= (DC_DPAD_LEFT);
-//            dpad.right.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_RIGHT) : kcode[playerIndex] |= (DC_DPAD_RIGHT);
-//
-//            gamepad.buttonA.isPressed ? kcode[playerIndex] &= ~(DC_BTN_A) : kcode[playerIndex] |= (DC_BTN_A);
-//            gamepad.buttonB.isPressed ? kcode[playerIndex] &= ~(DC_BTN_B) : kcode[playerIndex] |= (DC_BTN_B);
-//            gamepad.buttonX.isPressed ? kcode[playerIndex] &= ~(DC_BTN_X) : kcode[playerIndex] |= (DC_BTN_X);
-//            gamepad.buttonY.isPressed ? kcode[playerIndex] &= ~(DC_BTN_Y) : kcode[playerIndex] |= (DC_BTN_Y);
-//
-//            gamepad.leftShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_LT) : kcode[playerIndex] |= (DC_AXIS_LT);
-//            gamepad.rightShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_RT) : kcode[playerIndex] |= (DC_AXIS_RT);
-//
-//            gamepad.leftTrigger.isPressed ? kcode[playerIndex] &= ~(DC_BTN_Z) : kcode[playerIndex] |= (DC_BTN_Z);
-//            gamepad.rightTrigger.isPressed ? kcode[playerIndex] &= ~(DC_BTN_START) : kcode[playerIndex] |= (DC_BTN_START);
-//
-//
-//            float xvalue = gamepad.leftThumbstick.xAxis.value;
-//            s8 x=(s8)(xvalue*127);
-//            joyx[0] = x;
-//
-//            float yvalue = gamepad.leftThumbstick.yAxis.value;
-//            s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
-//            joyy[0] = y;
-//
-//        } else if ([controller gamepad]) {
-//            GCGamepad *gamepad = [controller gamepad];
-//            GCControllerDirectionPad *dpad = [gamepad dpad];
-//
-//            dpad.up.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_UP) : kcode[playerIndex] |= (DC_DPAD_UP);
-//            dpad.down.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_DOWN) : kcode[playerIndex] |= (DC_DPAD_DOWN);
-//            dpad.left.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_LEFT) : kcode[playerIndex] |= (DC_DPAD_LEFT);
-//            dpad.right.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_RIGHT) : kcode[playerIndex] |= (DC_DPAD_RIGHT);
-//
-//            gamepad.buttonA.isPressed ? kcode[playerIndex] &= ~(DC_BTN_A) : kcode[playerIndex] |= (DC_BTN_A);
-//            gamepad.buttonB.isPressed ? kcode[playerIndex] &= ~(DC_BTN_B) : kcode[playerIndex] |= (DC_BTN_B);
-//            gamepad.buttonX.isPressed ? kcode[playerIndex] &= ~(DC_BTN_X) : kcode[playerIndex] |= (DC_BTN_X);
-//            gamepad.buttonY.isPressed ? kcode[playerIndex] &= ~(DC_BTN_Y) : kcode[playerIndex] |= (DC_BTN_Y);
-//
-//            gamepad.leftShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_LT) : kcode[playerIndex] |= (DC_AXIS_LT);
-//            gamepad.rightShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_RT) : kcode[playerIndex] |= (DC_AXIS_RT);
-//        }
-//#if TARGET_OS_TV
-//        else if ([controller microGamepad]) {
-//            GCMicroGamepad *gamepad = [controller microGamepad];
-//            GCControllerDirectionPad *dpad = [gamepad dpad];
-//        }
-//#endif
-//    }
-//}
 
 - (void)screenSwap {
-    // TODO
+    /// Get current layout through environment callback
+    struct retro_variable var = { "desmume_screens_layout", NULL };
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
+
+    /// Determine current layout from variable value
+    const char *new_layout;
+    if (strstr(var.value, "top only"))
+        new_layout = "bottom only";
+    else if (strstr(var.value, "bottom only"))
+        new_layout = "top only";
+    else if (strstr(var.value, "hybrid/top"))
+        new_layout = "hybrid/bottom";
+    else if (strstr(var.value, "hybrid/bottom"))
+        new_layout = "hybrid/top";
+    else
+        new_layout = "top only";  // Default fallback
+
+    /// Set new layout through environment callback
+    var.value = new_layout;
+    environ_cb(RETRO_ENVIRONMENT_SET_VARIABLE, &var);
+
+    /// Force a check of variables on next frame
+    bool updated = true;
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated);
 }
 
 - (void)screenRotate {
@@ -273,6 +222,11 @@ extern retro_environment_t environ_cb;
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
     [self didReleaseDSButton:(PVDSButton)button forPlayer:player];
+}
+
+// Touch Screen controls
+-(void)sendEvent:(UIEvent * _Nullable)event {
+    [super sendEvent:event];
 }
 
 @end

@@ -10,6 +10,11 @@
 #import "PVDesmume2015Core.h"
 
 #import <PVLogging/PVLoggingObjC.h>
+#include "libretro.h"
+
+extern retro_environment_t environ_cb;
+extern unsigned GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
+extern unsigned GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
 
 #if !__has_include(<OpenGL/OpenGL.h>)
 #import <OpenGLES/ES3/glext.h>
@@ -19,6 +24,7 @@
 #import <OpenGL/OpenGL.h>
 #import <GLUT/GLUT.h>
 #endif
+
 @implementation PVDesmume2015CoreBridge (Video)
 
 # pragma mark - Methods
@@ -45,61 +51,65 @@
 
 # pragma mark - Properties
 
-//- (CGSize)bufferSize {
-//    CGSize size = CGSizeMake(av_info.geometry.max_width, av_info.geometry.max_height);
-//    DLOG(@"<%i, %i>", size.width, size.height);
-//    return size;
-//}
-//- (CGRect)screenRect {
-//    CGRect rect = CGRectMake(0, 0, av_info.geometry.base_width, av_info.geometry.base_height);
-//    DLOG(@"<%i, %i>", rect.size.width, rect.size.height * 2);
-//    return rect;
-//}
+- (CGRect)screenRect {
+    struct retro_variable var = { "desmume_screens_layout", NULL };
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
 
-//- (CGSize)aspectSize {
-//    CGSize size = CGSizeMake(1, av_info.geometry.aspect_ratio);
-//    DLOG(@"<%i, %i>", size.width, size.height);
-//    return size;
-//}
-//
+    unsigned width = GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
+    unsigned height = GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
+
+    if (var.value) {
+        if (strstr(var.value, "hybrid")) {
+            return CGRectMake(0, 0, width + (width/3), height);
+        } else if (strstr(var.value, "top only") || strstr(var.value, "bottom only")) {
+            return CGRectMake(0, 0, width, height);
+        } else if (strstr(var.value, "top/bottom") || strstr(var.value, "bottom/top")) {
+            return CGRectMake(0, 0, width, height * 2);
+        }
+    }
+
+    return CGRectMake(0, 0, width, height);
+}
+
 - (CGSize)bufferSize {
-    return CGSizeMake(2048, 2048);
-}
-////
-/// 1024 / 1536
-//- (CGRect)screenRect {
-//    return CGRectMake(0, 0, 256, 512);
-//}
-////
-- (CGSize)aspectSize {
-    return CGSizeMake(1, 2);
-}
-//
-//- (BOOL)rendersToOpenGL {
-//    return YES;
-//}
-//
-//- (void)swapBuffers
-//{
-//    if (bitmap.data == (uint8_t*)videoBufferA)
-//    {
-//        videoBuffer = videoBufferA;
-//        bitmap.data = (uint8_t*)videoBufferB;
-//    }
-//    else
-//    {
-//        videoBuffer = videoBufferB;
-//        bitmap.data = (uint8_t*)videoBufferA;
-//    }
-//}
-//
-//-(BOOL)isDoubleBuffered {
-//    return YES;
-//}
+    struct retro_variable var = { "desmume_screens_layout", NULL };
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
 
-//- (const void *)videoBuffer {
-//    return videoBuffer;
-//}
+    /// Base dimensions for a single DS screen
+    unsigned width = GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
+    unsigned height = GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
+
+    if (var.value) {
+        if (strstr(var.value, "hybrid")) {
+            /// Hybrid layout needs extra width for the small screen
+            return CGSizeMake(width + (width/3), height);
+        } else if (strstr(var.value, "top only") || strstr(var.value, "bottom only")) {
+            /// Single screen layout
+            return CGSizeMake(width, height);
+        } else if (strstr(var.value, "top/bottom") || strstr(var.value, "bottom/top")) {
+            /// Vertical layout
+            return CGSizeMake(width, height * 2);
+        }
+    }
+
+    /// Default to single screen size
+    return CGSizeMake(width, height);
+}
+
+- (CGSize)aspectSize {
+    struct retro_variable var = { "desmume_screens_layout", NULL };
+    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
+
+    if (var.value) {
+        if (strstr(var.value, "top only") || strstr(var.value, "bottom only")) {
+            return CGSizeMake(1, 1);  /// Square aspect for single screen
+        } else if (strstr(var.value, "left/right") || strstr(var.value, "right/left")) {
+            return CGSizeMake(2, 1);  /// 2:1 aspect for horizontal layout
+        }
+    }
+
+    return CGSizeMake(1, 2);  /// Default 1:2 aspect for vertical layout
+}
 
 #define USE_565 0
 
@@ -163,8 +173,4 @@
 #endif
 }
 
-//- (GLenum)depthFormat {
-//        // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
-//    return GL_DEPTH_COMPONENT24;
-//}
 @end
