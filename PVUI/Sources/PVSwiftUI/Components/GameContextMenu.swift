@@ -3,7 +3,7 @@
 //  Provenance
 //
 //  Created by Ian Clawson on 1/28/22.
-//  Copyright © 2022 Provenance Emu. All rights reserved.
+//  Copyright 2022 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -48,6 +48,12 @@ struct GameContextMenu: SwiftUI.View {
                 Button {
                     promptUserMD5CopiedToClipboard(forGame: game)
                 } label: { Label("Copy MD5 URL", systemImage: "number.square") }
+                
+                if game.userPreferredCoreID != nil || game.system.userPreferredCoreID != nil {
+                    Button {
+                        resetCorePreferences(forGame: game)
+                    } label: { Label("Reset Core Preferences", systemImage: "arrow.counterclockwise") }
+                }
     #if !os(tvOS)
                 Button {
                     DLOG("GameContextMenu: Choose Cover button tapped")
@@ -210,5 +216,45 @@ extension GameContextMenu {
             rootDelegate?.showMessage("Failed to clear custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
         }
     }
+    
+    private func resetCorePreferences(forGame game: PVGame) {
+        let hasGamePreference = game.userPreferredCoreID != nil
+        let hasSystemPreference = game.system.userPreferredCoreID != nil
+        
+        let alert = UIAlertController(title: "Reset Core Preferences", 
+                                    message: "Which core preference would you like to reset?", 
+                                    preferredStyle: .alert)
+        
+        if hasGamePreference {
+            alert.addAction(UIAlertAction(title: "Game Preference", style: .default) { _ in
+                try! Realm().write {
+                    game.thaw()?.userPreferredCoreID = nil
+                }
+            })
+        }
+        
+        if hasSystemPreference {
+            alert.addAction(UIAlertAction(title: "System Preference", style: .default) { _ in
+                try! Realm().write {
+                    game.system.thaw()?.userPreferredCoreID = nil
+                }
+            })
+        }
+        
+        if hasGamePreference && hasSystemPreference {
+            alert.addAction(UIAlertAction(title: "Both", style: .default) { _ in
+                try! Realm().write {
+                    game.thaw()?.userPreferredCoreID = nil
+                    game.system.thaw()?.userPreferredCoreID = nil
+                }
+            })
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let viewController = windowScene.windows.first?.rootViewController {
+            viewController.present(alert, animated: true)
+        }
+    }
 }
-
