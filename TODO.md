@@ -11,7 +11,7 @@ _My personal TODO notes_
 - [X] Test iOS 17.0 and then 16.X
 - [X] Remove or fix new shaders
 - [ ] Artwork ratios are wrong
-- [ ] BIOS screens show mismatch when there isn't
+- [X] BIOS screens show mismatch when there isn't
 - [ ] Fix or remove Flycast retroarch for Dreamcast
 - [ ] Fix layout, layout button and touch controls of Desmume2015 or remove
     - Partially done WIP
