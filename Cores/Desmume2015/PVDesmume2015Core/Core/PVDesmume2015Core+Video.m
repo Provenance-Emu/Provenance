@@ -56,19 +56,15 @@ extern unsigned scale;
 
 - (CGRect)screenRect {
     static NSString *lastLayout = nil;
-    struct retro_variable layout = { "desmume_screens_layout", NULL };
-    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &layout);
+    NSString *layoutValue = _variables[@"desmume_screens_layout"];
 
     CGRect rect = CGRectMake(0, 0, self.bufferSize.width, self.bufferSize.height);
 
-    if (layout.value) {
-        NSString *currentLayout = [NSString stringWithUTF8String:layout.value];
-        if (!lastLayout || ![currentLayout isEqualToString:lastLayout]) {
-            NSLog(@"Screen rect changed:");
-            NSLog(@"Layout: %s", layout.value);
-            NSLog(@"Rect: %@", NSStringFromCGRect(rect));
-            lastLayout = currentLayout;
-        }
+    if (layoutValue && (!lastLayout || ![layoutValue isEqualToString:lastLayout])) {
+        ILOG(@"Screen rect changed:");
+        ILOG(@"Layout: %@", layoutValue);
+        ILOG(@"Rect: %@", NSStringFromCGRect(rect));
+        lastLayout = layoutValue;
     }
 
     return rect;
@@ -77,31 +73,24 @@ extern unsigned scale;
 - (CGSize)bufferSize {
     static NSString *lastLayout = nil;
 
-    /// Get current resolution
-    struct retro_variable res = { "desmume_internal_resolution", NULL };
-    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &res);
-
-    /// Get current layout
-    struct retro_variable layout = { "desmume_screens_layout", NULL };
-    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &layout);
+    /// Get current resolution and layout from our dictionary
+    NSString *resolution = _variables[@"desmume_internal_resolution"];
+    NSString *layoutValue = _variables[@"desmume_screens_layout"];
 
     /// Base dimensions for a single DS screen
     unsigned width = GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
     unsigned height = GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
 
     CGSize size;
-    /// Adjust dimensions based on layout
-    if (layout.value) {
-        NSString *currentLayout = [NSString stringWithUTF8String:layout.value];
-
-        if (strstr(layout.value, "hybrid")) {
+    if (layoutValue) {
+        if ([layoutValue containsString:@"hybrid"]) {
             /// Hybrid layout needs extra width for the small screen
             int awidth = width/3;
             size = CGSizeMake(width + awidth, height);
-        } else if (strstr(layout.value, "left/right") || strstr(layout.value, "right/left")) {
+        } else if ([layoutValue containsString:@"left/right"] || [layoutValue containsString:@"right/left"]) {
             /// Side by side layout - double width
             size = CGSizeMake(width * 2, height);
-        } else if (strstr(layout.value, "top/bottom") || strstr(layout.value, "bottom/top")) {
+        } else if ([layoutValue containsString:@"top/bottom"] || [layoutValue containsString:@"bottom/top"]) {
             /// Vertical layout - double height
             size = CGSizeMake(width, height * 2);
         } else {
@@ -110,12 +99,12 @@ extern unsigned scale;
         }
 
         /// Only log if layout changed
-        if (!lastLayout || ![currentLayout isEqualToString:lastLayout]) {
-            NSLog(@"Layout changed:");
-            NSLog(@"Layout: %s", layout.value);
-            NSLog(@"Resolution: %ux%u", width, height);
-            NSLog(@"Final size: %.0fx%.0f", size.width, size.height);
-            lastLayout = currentLayout;
+        if (!lastLayout || ![layoutValue isEqualToString:lastLayout]) {
+            ILOG(@"Layout changed:");
+            ILOG(@"Layout: %@", layoutValue);
+            ILOG(@"Resolution: %ux%u", width, height);
+            ILOG(@"Final size: %.0fx%.0f", size.width, size.height);
+            lastLayout = layoutValue;
         }
     } else {
         size = CGSizeMake(width, height);
@@ -126,29 +115,26 @@ extern unsigned scale;
 
 - (CGSize)aspectSize {
     static NSString *lastLayout = nil;
-    struct retro_variable layout = { "desmume_screens_layout", NULL };
-    environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &layout);
+    NSString *layoutValue = _variables[@"desmume_screens_layout"];
 
     CGSize aspect;
-    if (layout.value) {
-        NSString *currentLayout = [NSString stringWithUTF8String:layout.value];
-
-        if (strstr(layout.value, "left/right") || strstr(layout.value, "right/left")) {
+    if (layoutValue) {
+        if ([layoutValue containsString:@"left/right"] || [layoutValue containsString:@"right/left"]) {
             aspect = CGSizeMake(2, 1);  /// 2:1 aspect for horizontal layout
-        } else if (strstr(layout.value, "top/bottom") || strstr(layout.value, "bottom/top")) {
+        } else if ([layoutValue containsString:@"top/bottom"] || [layoutValue containsString:@"bottom/top"]) {
             aspect = CGSizeMake(1, 2);  /// 1:2 aspect for vertical layout
-        } else if (strstr(layout.value, "hybrid")) {
+        } else if ([layoutValue containsString:@"hybrid"]) {
             aspect = CGSizeMake(4, 3);  /// 4:3 aspect for hybrid layout
         } else {
             aspect = CGSizeMake(1, 1);  /// Square aspect for single screen
         }
 
         /// Only log if layout changed
-        if (!lastLayout || ![currentLayout isEqualToString:lastLayout]) {
-            NSLog(@"Aspect changed:");
-            NSLog(@"Layout: %s", layout.value);
-            NSLog(@"Aspect: %.0f:%.0f", aspect.width, aspect.height);
-            lastLayout = currentLayout;
+        if (!lastLayout || ![layoutValue isEqualToString:lastLayout]) {
+            ILOG(@"Aspect changed:");
+            ILOG(@"Layout: %@", layoutValue);
+            ILOG(@"Aspect: %.0f:%.0f", aspect.width, aspect.height);
+            lastLayout = layoutValue;
         }
     } else {
         aspect = CGSizeMake(1, 1);
