@@ -246,7 +246,7 @@
 	<true/>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.org.provenance-emu.provenance</key>
+		<key>$(ICLOUD_CONTAINER_IDENTIFIER)</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
