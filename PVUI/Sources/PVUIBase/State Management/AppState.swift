@@ -56,6 +56,10 @@ public class AppState: ObservableObject {
     public var libraryUpdatesController: PVGameLibraryUpdatesController?
 
     public let hudCoordinator = HUDCoordinator()
+    
+    public var appIsLite: Bool {
+        Bundle.main.bundleIdentifier?.lowercased().hasSuffix("lite") ?? false
+    }
 
     /// Whether the app has been initialized
     @Published
