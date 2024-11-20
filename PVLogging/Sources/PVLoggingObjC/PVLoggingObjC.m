@@ -6,27 +6,34 @@
 OBJC_EXPORT
 void PVLog(NSUInteger level, NSUInteger flag, const char *file,
            const char *function, int line, NSString *_Nonnull format, ...) {
-    BOOL async = YES;
-    if (flag == PVLogFlagError) {
-        async = NO;
-    }
+
     va_list args;
     va_start(args, format);
-    // TODO: Call our swift code instead
-    PVLogEntry* logEntry = [[PVLogEntry alloc] initWithMessage:@""];
-    //     let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
-    [PVLogging.sharedInstance add:logEntry];
+    
+    NSString *logMessage = [[NSString alloc] initWithFormat:format arguments:args];
+    NSString *fileString = [NSString stringWithCString:file];
+    NSString *functionString = [NSString stringWithCString:function];
 
-//    [DDLog log:async
-//         level:level
-//          flag:flag
-//       context:0
-//          file:file
-//      function:function
-//          line:line
-//           tag:nil
-//        format:(format)
-//          args:args];
+    switch (level) {
+        case PVLogFlagVerbose:
+            [PVLogWrapper objclog:logMessage level:OS_LOG_TYPE_DEFAULT file:fileString function:functionString line:line];
+            break;
+        case PVLogFlagDebug:
+            [PVLogWrapper objclog:logMessage level:OS_LOG_TYPE_DEBUG file:fileString function:functionString line:line];
+            break;
+        case PVLogFlagInfo:
+            [PVLogWrapper objclog:logMessage level:OS_LOG_TYPE_INFO file:fileString function:functionString line:line];
+            break;
+        case PVLogFlagWarning:
+            [PVLogWrapper objclog:logMessage level:OS_LOG_TYPE_INFO file:fileString function:functionString line:line];
+            break;
+        case PVLogFlagError:
+            [PVLogWrapper objclog:logMessage level:OS_LOG_TYPE_ERROR file:fileString function:functionString line:line];
+            break;
+        default:
+            [PVLogWrapper objclog:logMessage level:OS_LOG_TYPE_DEFAULT file:fileString function:functionString line:line];
+            break;
+    }
     
     va_end(args);
 }

@@ -7,6 +7,18 @@
 
 import OSLog
 
+@objc
+public class PVLogWrapper: NSObject {
+    @objc
+    static public func objclog(_ message: String,
+                        level: OSLogType,
+                        file: String = #file,
+                        function: String = #function,
+                        line: Int = #line) {
+        log(message, level: level, file: file, function: function, line: line)
+    }
+}
+
 extension os.Logger: Sendable {
     /// Using your bundle identifier is a great way to ensure a unique identifier.
     private static let subsystem: String = Bundle.main.bundleIdentifier ?? ""
