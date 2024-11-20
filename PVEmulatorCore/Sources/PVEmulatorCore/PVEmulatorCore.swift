@@ -229,10 +229,11 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 }
 
 #if !os(macOS) && !os(watchOS)
+/// This method is for forwarding touch events to cores that have TouchScreen cotrols,
+/// PSP, 3DS, DS etc
 @objc
 extension PVEmulatorCore : ResponderClient {
     open func sendEvent(_ event: UIEvent?) {
-        #warning("This is empty in the ObjC version too, but why does this exist? @JoeMatt")
         bridge.sendEvent(event)
     }
 }
