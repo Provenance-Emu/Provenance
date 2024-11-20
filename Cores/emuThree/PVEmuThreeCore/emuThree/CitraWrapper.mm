@@ -455,22 +455,14 @@ static void InitializeLogging() {
     if (!CitraWrapper.sharedInstance.isRunning)
         return;
 
-    /// Get window bounds and safe area
+    /// Get window bounds
     UIWindow *mainWindow = UIApplication.sharedApplication.windows.firstObject;
-    UIEdgeInsets safeAreaInsets = mainWindow.safeAreaInsets;
     CGRect windowBounds = mainWindow.bounds;
     
-    /// Calculate available space within safe area
-    CGFloat availableHeight = windowBounds.size.height - (safeAreaInsets.top + safeAreaInsets.bottom);
-    CGFloat availableWidth = windowBounds.size.width - (safeAreaInsets.left + safeAreaInsets.right);
-    
-    /// Adjust point relative to safe area
-    point.x -= safeAreaInsets.left;
-    point.y -= safeAreaInsets.top;
-    
+    /// Use full window dimensions for touch calculations
     float scale = [[UIScreen mainScreen] nativeScale];
-    float heightRatio = emu_window->framebuffer_layout.height / (availableHeight * scale);
-    float widthRatio = emu_window->framebuffer_layout.width / (availableWidth * scale);
+    float heightRatio = emu_window->framebuffer_layout.height / (windowBounds.size.height * scale);
+    float widthRatio = emu_window->framebuffer_layout.width / (windowBounds.size.width * scale);
 
     /// Scale to emulator coordinates
     float scaledX = (point.x * scale * widthRatio) + 0.5;
