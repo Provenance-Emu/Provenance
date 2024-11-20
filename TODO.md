@@ -13,13 +13,12 @@ _My personal TODO notes_
 - [ ] Artwork ratios are wrong
 - [X] BIOS screens show mismatch when there isn't
 - [ ] Fix or remove Flycast retroarch for Dreamcast
-- [ ] Fix layout, layout button and touch controls of Desmume2015 or remove
-    - Partially done WIP
-- [ ] Native scale on mupen shows in wrong area on ipad
 - [ ] Share on old UI crashes app (realm threading issue)
 - [X] Checking Import UI is hanging (removed for now)
     - [ ] fix public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async
-- [ ] look at the displaylink thing in retroarch
+- [ ] Fix layout, layout button and touch controls of Desmume2015 or remove
+    - Partially done WIP
+- [ ] Native scale on mupen shows in wrong area on ipad
 - [ ] Flycast crashes with error `NSInvalidArgumentException', reason: '-[MetalView naturalDrawableSizeMVK]: unrecognized selector sent`
     - [X] Try downgrading MoltenVK.xcframework to fix dolphin, flycast others
 - [ ] (Lite) Intellivision (PVBliss) audio crashes on button press
@@ -63,6 +62,7 @@ _My personal TODO notes_
     - [ ] New import indicator not themed
 - [ ] Make GameMoreInfoVC and it's equivlant PageViewController into native swifttUI with editing of properties
 - [ ] App Group containers in Catalyst "public class var appGroupContainer"
+- [ ] look at the displaylink thing in retroarch
 
 ## Features to Add
 
