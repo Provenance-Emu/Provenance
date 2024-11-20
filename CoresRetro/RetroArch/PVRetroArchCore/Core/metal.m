@@ -723,6 +723,12 @@ font_renderer_t metal_raster_font = {
 
 @implementation MetalView (MoltenVK)
 
+-(void)setPixelFormat:(MTLPixelFormat)pixelFormat {
+    NSLog(@"setPixelFormat: %i", pixelFormat);
+    ((CAMetalLayer*)self.layer).pixelFormat = pixelFormat;
+    
+}
+
 -(CGSize) naturalDrawableSizeMVK {
     CGSize drawSize = self.bounds.size;
     CGFloat scaleFactor = self.layer.contentsScale;
