@@ -8,31 +8,47 @@
 
 // MARK: Screenshot
 
+import UIKit
+import Metal
+import MetalKit
+import GLKit
+
+
 extension PVEmulatorViewController {
     
     func captureScreenshot() -> UIImage? {
         fpsLabel.alpha = 0.0
-        if (core.skipLayout && core.touchViewController != nil) {
-            let width: CGFloat = UIScreen.main.bounds.size.width ?? 0.0
-            let height: CGFloat = UIScreen.main.bounds.size.height ?? 0.0
-            /// square size becuase we don't really know the size often
-            /// TODO: Find a better way to do this
-            let squareSize = min(width, height)
-            let size = CGSize(width: squareSize, height: squareSize)
-            UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-            let rec = CGRect(x: 0, y: 0, width: squareSize, height: squareSize)
-            core.touchViewController?.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+        defer { fpsLabel.alpha = 1.0 }
+        
+        if core.skipLayout && core.touchViewController != nil {
+            // For RetroArch cores, find the actual rendering view
+            if let metalView = gpuViewController.view.subviews.first(where: { $0 is MTKView }) {
+                let size = metalView.frame.size
+                UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
+                let rec = CGRect(origin: .zero, size: size)
+                metalView.drawHierarchy(in: rec, afterScreenUpdates: true)
+            } else if let glView = gpuViewController.view.subviews.first(where: { $0 is GLKView }) {
+                let size = glView.frame.size
+                UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
+                let rec = CGRect(origin: .zero, size: size)
+                glView.drawHierarchy(in: rec, afterScreenUpdates: true)
+            } else {
+                // Fallback to capturing the GPU view directly
+                let size = gpuViewController.view.frame.size
+                UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
+                let rec = CGRect(origin: .zero, size: size)
+                gpuViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+            }
         } else {
-            let width: CGFloat? = gpuViewController.view.frame.size.width > 0 ? gpuViewController.view.frame.size.width : UIScreen.main.bounds.width
-            let height: CGFloat? = gpuViewController.view.frame.size.height > 0 ? gpuViewController.view.frame.size.height : UIScreen.main.bounds.height
-            let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
+            // Standard cores
+            let size = gpuViewController.view.frame.size
             UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-            let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
+            let rec = CGRect(origin: .zero, size: size)
             gpuViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
         }
-        let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        fpsLabel.alpha = 1.0
         return image
     }
     
