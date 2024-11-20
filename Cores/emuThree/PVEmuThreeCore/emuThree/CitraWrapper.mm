@@ -520,16 +520,21 @@ static void InitializeLogging() {
 }
 
 -(void) SaveState:(NSString *) savePath {
-    std::string path=std::string([savePath UTF8String]);
-    Core::SaveState(path, _title_id);
+    Settings::values.isReloading.SetValue(true);
+    Core::SaveState(std::string([savePath UTF8String]), _title_id);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
+        Settings::values.isReloading.SetValue(false);
+    });
 }
 
 -(void) LoadState:(NSString *) savePath {
     Settings::values.isReloading.SetValue(true);
     std::string path=std::string([savePath UTF8String]);
     Core::LoadState(path);
-
-    [CitraWrapper.sharedInstance resetController];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
+        Settings::values.isReloading.SetValue(false);
+        [CitraWrapper.sharedInstance resetController];
+    });
 }
 
 -(void) addCheat:(NSString *)code {
