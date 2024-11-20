@@ -6,7 +6,7 @@
 //  Copyright © 2018 Provenance. All rights reserved.
 //
 
-#import <PVFlycast/PVFlycast.h>
+#import <PVFlycast/PVFlycastCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
