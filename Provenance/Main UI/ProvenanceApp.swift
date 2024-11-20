@@ -27,7 +27,7 @@ struct ProvenanceApp: App {
                 #if targetEnvironment(simulator) || DEBUG
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
                 #else
-                    if !appDelegate.isAppStore {
+                    if !appDelegate.isAppStore || appState.appIsLite {
                         FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
                     }
                 #endif
