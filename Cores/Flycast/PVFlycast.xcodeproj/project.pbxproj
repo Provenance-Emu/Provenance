@@ -19,9 +19,10 @@
 		B38215E42CED705900111AEB /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B38215D82CED705800111AEB /* libxxhash.a */; platformFilters = (ios, maccatalyst, ); };
 		B38215E52CED705900111AEB /* libzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B38215DA2CED705800111AEB /* libzip.a */; platformFilters = (ios, maccatalyst, ); };
 		B38217582CED773100111AEB /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B38217572CED773100111AEB /* PVCoreBridge */; };
+		B38262542CED7AB100111AEB /* libflycast_core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B38797252CED6B2E00A86990 /* libflycast_core.a */; };
+		B38262572CED7AC000111AEB /* libflycast-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B382624A2CED7A9E00111AEB /* libflycast-libretro.a */; };
 		B38796E82CED663E00A86990 /* PVFlycastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVFlycastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B38797202CED6B1300A86990 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B387971F2CED6B1300A86990 /* PVEmulatorCore */; };
-		B387972F2CED6B5300A86990 /* libflycast_core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B38797252CED6B2E00A86990 /* libflycast_core.a */; };
 		B38797322CED6CB800A86990 /* PVFlycast.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVFlycast.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B38797332CED6D1600A86990 /* PVFlycastCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVFlycastCore+Audio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B38797342CED6D3600A86990 /* PVFlycastCore+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVFlycastCore+Saves.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -118,16 +119,32 @@
 			remoteGlobalIDString = 6AE67AC4732B485784C1DCD3;
 			remoteInfo = zip;
 		};
-		B38797302CED6B5300A86990 /* PBXContainerItemProxy */ = {
+		B38262552CED7AB100111AEB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B38797242CED6B2E00A86990;
-			remoteInfo = libflycast;
+			remoteInfo = flycast_core;
+		};
+		B38262582CED7AC000111AEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B38262492CED7A9E00111AEB;
+			remoteInfo = "flycast-libretro";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		B38262482CED7A9E00111AEB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B38797232CED6B2E00A86990 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -183,6 +200,33 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B38225082CED7A5A00111AEB /* CompilerIdC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CompilerIdC.xcodeproj; sourceTree = "<group>"; };
+		B38225372CED7A5A00111AEB /* CompilerIdCXX.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CompilerIdCXX.xcodeproj; sourceTree = "<group>"; };
+		B38225812CED7A5A00111AEB /* CompilerIdSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = CompilerIdSwift.xcodeproj; sourceTree = "<group>"; };
+		B38225B02CED7A5A00111AEB /* glm.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = glm.xcodeproj; sourceTree = "<group>"; };
+		B38225DA2CED7A5A00111AEB /* libzstd.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libzstd.xcodeproj; sourceTree = "<group>"; };
+		B38225DD2CED7A5A00111AEB /* zstd.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = zstd.xcodeproj; sourceTree = "<group>"; };
+		B38225ED2CED7A5A00111AEB /* chdr.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = chdr.xcodeproj; sourceTree = "<group>"; };
+		B38225FA2CED7A5A00111AEB /* libelf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libelf.xcodeproj; sourceTree = "<group>"; };
+		B38226132CED7A5A00111AEB /* libzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libzip.xcodeproj; sourceTree = "<group>"; };
+		B38226232CED7A5A00111AEB /* miniupnpc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = miniupnpc.xcodeproj; sourceTree = "<group>"; };
+		B38226302CED7A5A00111AEB /* nowide.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = nowide.xcodeproj; sourceTree = "<group>"; };
+		B382263C2CED7A5A00111AEB /* xxHash.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = xxHash.xcodeproj; sourceTree = "<group>"; };
+		B3822E8A2CED7A5A00111AEB /* AltKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = AltKit.xcodeproj; sourceTree = "<group>"; };
+		B3822F592CED7A5A00111AEB /* flycast.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = flycast.xcodeproj; sourceTree = "<group>"; };
+		B3822FB72CED7A5A00111AEB /* Breakpad.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Breakpad.xcodeproj; sourceTree = "<group>"; };
+		B382301D2CED7A5A00111AEB /* minidump_test.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = minidump_test.xcodeproj; sourceTree = "<group>"; };
+		B382305F2CED7A5A00111AEB /* Breakpad.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Breakpad.xcodeproj; sourceTree = "<group>"; };
+		B38233362CED7A5A00111AEB /* crash_report.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = crash_report.xcodeproj; sourceTree = "<group>"; };
+		B382333A2CED7A5A00111AEB /* dump_syms.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = dump_syms.xcodeproj; sourceTree = "<group>"; };
+		B382333F2CED7A5A00111AEB /* symupload.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = symupload.xcodeproj; sourceTree = "<group>"; };
+		B38246F72CED7A5A00111AEB /* libzip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libzip.xcodeproj; sourceTree = "<group>"; };
+		B3824B282CED7A5A00111AEB /* WidgetFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = WidgetFramework.xcodeproj; sourceTree = "<group>"; };
+		B3824B2E2CED7A5A00111AEB /* gtest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = gtest.xcodeproj; sourceTree = "<group>"; };
+		B3825A352CED7A5A00111AEB /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = SDL.xcodeproj; sourceTree = "<group>"; };
+		B3825A382CED7A5A00111AEB /* SDLTest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = SDLTest.xcodeproj; sourceTree = "<group>"; };
+		B3825A572CED7A5A00111AEB /* Demos.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Demos.xcodeproj; sourceTree = "<group>"; };
+		B382624A2CED7A9E00111AEB /* libflycast-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libflycast-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38796E92CED6ACB00A86990 /* flycast.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = flycast.xcodeproj; path = flycast/build/flycast.xcodeproj; sourceTree = "<group>"; };
 		B38797252CED6B2E00A86990 /* libflycast_core.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libflycast_core.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3CC5A2CCC782D00589F82 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -198,8 +242,281 @@
 		B3C76223207833DE009950E4 /* PVFlycastCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFlycastCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVFlycastCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVFlycastCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
-		B3F9F3A9295F4D7800DF8B8A /* PVFlycastCore+Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "PVFlycastCore+Options.swift"; path = "PVFlycastCore/Core/PVFlycastCore+Options.swift"; sourceTree = "<group>"; };
+		B3F9F3A9295F4D7800DF8B8A /* PVFlycastCore+Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVFlycastCore+Options.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B382628D2CED7CDD00111AEB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				core/archive/7zArchive.cpp,
+				core/archive/archive.cpp,
+				core/archive/rzip.cpp,
+				core/archive/ZipArchive.cpp,
+				core/cfg/cfg.cpp,
+				core/cfg/cl.cpp,
+				core/cfg/ini.cpp,
+				core/cfg/option.cpp,
+				core/cheats.cpp,
+				core/deps/chdpsr/cdipsr.cpp,
+				core/deps/ggpo/lib/ggpo/backends/p2p.cpp,
+				core/deps/ggpo/lib/ggpo/backends/spectator.cpp,
+				core/deps/ggpo/lib/ggpo/backends/synctest.cpp,
+				core/deps/ggpo/lib/ggpo/bitvector.cpp,
+				core/deps/ggpo/lib/ggpo/game_input.cpp,
+				core/deps/ggpo/lib/ggpo/input_queue.cpp,
+				core/deps/ggpo/lib/ggpo/main.cpp,
+				core/deps/ggpo/lib/ggpo/network/udp_proto.cpp,
+				core/deps/ggpo/lib/ggpo/network/udp.cpp,
+				core/deps/ggpo/lib/ggpo/platform_linux.cpp,
+				core/deps/ggpo/lib/ggpo/platform_windows.cpp,
+				core/deps/ggpo/lib/ggpo/poll.cpp,
+				core/deps/ggpo/lib/ggpo/sync.cpp,
+				core/deps/ggpo/lib/ggpo/timesync.cpp,
+				core/deps/imgui/backends/imgui_impl_opengl3.cpp,
+				core/deps/imgui/imgui_demo.cpp,
+				core/deps/imgui/imgui_draw.cpp,
+				core/deps/imgui/imgui_tables.cpp,
+				core/deps/imgui/imgui_widgets.cpp,
+				core/deps/imgui/imgui.cpp,
+				core/deps/lzma/7zArcIn.c,
+				core/deps/lzma/7zBuf.c,
+				core/deps/lzma/7zCrc.c,
+				core/deps/lzma/7zCrcOpt.c,
+				core/deps/lzma/7zDec.c,
+				core/deps/lzma/7zFile.c,
+				core/deps/lzma/7zStream.c,
+				core/deps/lzma/Alloc.c,
+				core/deps/lzma/Bcj2.c,
+				core/deps/lzma/Bra.c,
+				core/deps/lzma/Bra86.c,
+				core/deps/lzma/BraIA64.c,
+				core/deps/lzma/CpuArch.c,
+				core/deps/lzma/Delta.c,
+				core/deps/lzma/LzFind.c,
+				core/deps/lzma/Lzma2Dec.c,
+				core/deps/lzma/Lzma86Dec.c,
+				core/deps/lzma/Lzma86Enc.c,
+				core/deps/lzma/LzmaDec.c,
+				core/deps/lzma/LzmaEnc.c,
+				core/deps/lzma/LzmaLib.c,
+				core/deps/lzma/Sort.c,
+				core/deps/md5/md5.cpp,
+				core/deps/picotcp/modules/pico_arp.c,
+				core/deps/picotcp/modules/pico_dev_ppp.c,
+				core/deps/picotcp/modules/pico_dhcp_common.c,
+				core/deps/picotcp/modules/pico_dhcp_server.c,
+				core/deps/picotcp/modules/pico_dns_client.c,
+				core/deps/picotcp/modules/pico_dns_common.c,
+				core/deps/picotcp/modules/pico_ethernet.c,
+				core/deps/picotcp/modules/pico_fragments.c,
+				core/deps/picotcp/modules/pico_icmp4.c,
+				core/deps/picotcp/modules/pico_ipv4.c,
+				core/deps/picotcp/modules/pico_socket_tcp.c,
+				core/deps/picotcp/modules/pico_socket_udp.c,
+				core/deps/picotcp/modules/pico_strings.c,
+				core/deps/picotcp/modules/pico_tcp.c,
+				core/deps/picotcp/modules/pico_udp.c,
+				core/deps/picotcp/stack/pico_device.c,
+				core/deps/picotcp/stack/pico_frame.c,
+				core/deps/picotcp/stack/pico_md5.c,
+				core/deps/picotcp/stack/pico_protocol.c,
+				core/deps/picotcp/stack/pico_socket_multicast.c,
+				core/deps/picotcp/stack/pico_socket.c,
+				core/deps/picotcp/stack/pico_stack.c,
+				core/deps/picotcp/stack/pico_tree.c,
+				"core/deps/vixl/aarch64/assembler-aarch64.cc",
+				"core/deps/vixl/aarch64/cpu-aarch64.cc",
+				"core/deps/vixl/aarch64/cpu-features-auditor-aarch64.cc",
+				"core/deps/vixl/aarch64/decoder-aarch64.cc",
+				"core/deps/vixl/aarch64/disasm-aarch64.cc",
+				"core/deps/vixl/aarch64/instructions-aarch64.cc",
+				"core/deps/vixl/aarch64/instrument-aarch64.cc",
+				"core/deps/vixl/aarch64/logic-aarch64.cc",
+				"core/deps/vixl/aarch64/macro-assembler-aarch64.cc",
+				"core/deps/vixl/aarch64/operands-aarch64.cc",
+				"core/deps/vixl/aarch64/pointer-auth-aarch64.cc",
+				"core/deps/vixl/aarch64/simulator-aarch64.cc",
+				"core/deps/vixl/code-buffer-vixl.cc",
+				"core/deps/vixl/compiler-intrinsics-vixl.cc",
+				"core/deps/vixl/cpu-features.cc",
+				"core/deps/vixl/utils-vixl.cc",
+				core/deps/xbrz/xbrz.cpp,
+				core/emulator.cpp,
+				core/hw/aica/aica_if.cpp,
+				core/hw/aica/aica_mem.cpp,
+				core/hw/aica/aica.cpp,
+				core/hw/aica/dsp_arm32.cpp,
+				core/hw/aica/dsp_arm64.cpp,
+				core/hw/aica/dsp_interp.cpp,
+				core/hw/aica/dsp_x64.cpp,
+				core/hw/aica/dsp_x86.cpp,
+				core/hw/aica/dsp.cpp,
+				core/hw/aica/sgc_if.cpp,
+				core/hw/arm7/arm_mem.cpp,
+				core/hw/arm7/arm7_rec_arm32.cpp,
+				core/hw/arm7/arm7_rec_arm64.cpp,
+				core/hw/arm7/arm7_rec_x64.cpp,
+				core/hw/arm7/arm7_rec.cpp,
+				core/hw/arm7/arm7.cpp,
+				core/hw/bba/bba.cpp,
+				core/hw/bba/rtl8139c.cpp,
+				core/hw/flashrom/flashrom.cpp,
+				core/hw/flashrom/nvmem.cpp,
+				core/hw/gdrom/gdrom_response.cpp,
+				core/hw/gdrom/gdromv3.cpp,
+				core/hw/holly/holly_intc.cpp,
+				core/hw/holly/sb_mem.cpp,
+				core/hw/holly/sb.cpp,
+				core/hw/maple/maple_cfg.cpp,
+				core/hw/maple/maple_devs.cpp,
+				core/hw/maple/maple_helper.cpp,
+				core/hw/maple/maple_if.cpp,
+				core/hw/maple/maple_jvs.cpp,
+				core/hw/mem/addrspace.cpp,
+				core/hw/mem/mem_watch.cpp,
+				core/hw/modem/modem.cpp,
+				core/hw/naomi/awcartridge.cpp,
+				core/hw/naomi/card_reader.cpp,
+				core/hw/naomi/decrypt.cpp,
+				core/hw/naomi/gdcartridge.cpp,
+				core/hw/naomi/m1cartridge.cpp,
+				core/hw/naomi/m4cartridge.cpp,
+				core/hw/naomi/multiboard.cpp,
+				core/hw/naomi/naomi_cart.cpp,
+				core/hw/naomi/naomi_flashrom.cpp,
+				core/hw/naomi/naomi_m3comm.cpp,
+				core/hw/naomi/naomi_roms.cpp,
+				core/hw/naomi/naomi.cpp,
+				core/hw/naomi/netdimm.cpp,
+				core/hw/naomi/printer.cpp,
+				core/hw/naomi/touchscreen.cpp,
+				core/hw/pvr/elan.cpp,
+				core/hw/pvr/pvr_mem.cpp,
+				core/hw/pvr/pvr_regs.cpp,
+				core/hw/pvr/pvr_sb_regs.cpp,
+				core/hw/pvr/pvr.cpp,
+				core/hw/pvr/Renderer_if.cpp,
+				core/hw/pvr/spg.cpp,
+				core/hw/pvr/ta_ctx.cpp,
+				core/hw/pvr/ta_util.cpp,
+				core/hw/pvr/ta_vtx.cpp,
+				core/hw/pvr/ta.cpp,
+				core/hw/sh4/dyna/blockmanager.cpp,
+				core/hw/sh4/dyna/decoder.cpp,
+				core/hw/sh4/dyna/driver.cpp,
+				core/hw/sh4/dyna/shil.cpp,
+				core/hw/sh4/dyna/ssa.cpp,
+				core/hw/sh4/interpr/sh4_fpu.cpp,
+				core/hw/sh4/interpr/sh4_interpreter.cpp,
+				core/hw/sh4/interpr/sh4_opcodes.cpp,
+				core/hw/sh4/modules/bsc.cpp,
+				core/hw/sh4/modules/ccn.cpp,
+				core/hw/sh4/modules/cpg.cpp,
+				core/hw/sh4/modules/dmac.cpp,
+				core/hw/sh4/modules/fastmmu.cpp,
+				core/hw/sh4/modules/intc.cpp,
+				core/hw/sh4/modules/mmu.cpp,
+				core/hw/sh4/modules/rtc.cpp,
+				core/hw/sh4/modules/serial.cpp,
+				core/hw/sh4/modules/tmu.cpp,
+				core/hw/sh4/modules/ubc.cpp,
+				core/hw/sh4/sh4_core_regs.cpp,
+				core/hw/sh4/sh4_cycles.cpp,
+				core/hw/sh4/sh4_interrupts.cpp,
+				core/hw/sh4/sh4_mem.cpp,
+				core/hw/sh4/sh4_mmr.cpp,
+				core/hw/sh4/sh4_opcode_list.cpp,
+				core/hw/sh4/sh4_rom.cpp,
+				core/hw/sh4/sh4_sched.cpp,
+				core/hw/sh4/storeq.cpp,
+				core/imgread/cdi.cpp,
+				core/imgread/chd.cpp,
+				core/imgread/common.cpp,
+				core/imgread/cue.cpp,
+				core/imgread/gdi.cpp,
+				core/imgread/ImgReader.cpp,
+				core/imgread/ioctl.cpp,
+				core/imgread/isofs.cpp,
+				core/input/gamepad_device.cpp,
+				core/input/mapping.cpp,
+				core/input/mouse.cpp,
+				"core/linux-dist/dispmanx.cpp",
+				"core/linux-dist/evdev.cpp",
+				"core/linux-dist/x11.cpp",
+				core/linux/common.cpp,
+				core/linux/context.cpp,
+				core/linux/posix_vmem.cpp,
+				core/linux/unwind_info.cpp,
+				core/log/ConsoleListenerDroid.cpp,
+				core/log/ConsoleListenerNix.cpp,
+				core/log/ConsoleListenerWin.cpp,
+				core/log/LogManager.cpp,
+				core/lua/lua.cpp,
+				core/network/alienfnt_modem.cpp,
+				core/network/dns.cpp,
+				core/network/ggpo.cpp,
+				core/network/miniupnp.cpp,
+				core/network/naomi_network.cpp,
+				core/network/net_handshake.cpp,
+				core/network/output.cpp,
+				core/network/picoppp.cpp,
+				core/nullDC.cpp,
+				core/oslib/audiobackend_alsa.cpp,
+				core/oslib/audiobackend_coreaudio.cpp,
+				core/oslib/audiobackend_directsound.cpp,
+				core/oslib/audiobackend_libao.cpp,
+				core/oslib/audiobackend_null.cpp,
+				core/oslib/audiobackend_oboe.cpp,
+				core/oslib/audiobackend_omx.cpp,
+				core/oslib/audiobackend_oss.cpp,
+				core/oslib/audiobackend_pulseaudio.cpp,
+				core/oslib/audiobackend_sdl2.cpp,
+				core/oslib/audiostream.cpp,
+				core/oslib/oslib.cpp,
+				core/oslib/storage.cpp,
+				"core/rec-ARM64/rec_arm64.cpp",
+				core/reios/descrambl.cpp,
+				core/reios/gdrom_hle.cpp,
+				core/reios/reios_elf.cpp,
+				core/reios/reios.cpp,
+				core/rend/boxart/boxart.cpp,
+				core/rend/boxart/gamesdb.cpp,
+				core/rend/boxart/http_client.cpp,
+				core/rend/boxart/scraper.cpp,
+				core/rend/CustomTexture.cpp,
+				core/rend/gles/gldraw.cpp,
+				core/rend/gles/gles.cpp,
+				core/rend/gles/gltex.cpp,
+				core/rend/gles/naomi2.cpp,
+				core/rend/gles/opengl_driver.cpp,
+				core/rend/gles/postprocess.cpp,
+				core/rend/gles/quad.cpp,
+				core/rend/gui_android.cpp,
+				core/rend/gui_cheats.cpp,
+				core/rend/gui_util.cpp,
+				core/rend/gui.cpp,
+				core/rend/mainui.cpp,
+				core/rend/norend/norend.cpp,
+				core/rend/osd.cpp,
+				core/rend/sorter.cpp,
+				core/rend/TexCache.cpp,
+				core/serialize.cpp,
+				core/stdclass.cpp,
+				core/wsi/egl.cpp,
+				core/wsi/gl_context.cpp,
+				core/wsi/gl4funcs.cpp,
+				core/wsi/libretro.cpp,
+				core/wsi/osx.cpp,
+				core/wsi/sdl.cpp,
+				core/wsi/switcher.cpp,
+				core/wsi/wgl.cpp,
+				core/wsi/xgl.cpp,
+				shell/libretro/libretro.cpp,
+			);
+			target = B38262492CED7A9E00111AEB /* flycast-libretro */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 		B387972B2CED6B2E00A86990 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
@@ -212,10 +529,20 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		B3825FFE2CED7A5A00111AEB /* flycast */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B382628D2CED7CDD00111AEB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = flycast; sourceTree = "<group>"; };
+		B382624B2CED7A9E00111AEB /* flycast-libretro */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "flycast-libretro"; sourceTree = "<group>"; };
 		B38797262CED6B2E00A86990 /* libflycast */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B387972B2CED6B2E00A86990 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libflycast; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B38262472CED7A9E00111AEB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B38262542CED7AB100111AEB /* libflycast_core.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B38797222CED6B2E00A86990 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -238,10 +565,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B387973F2CED6EEE00A86990 /* PVCoreObjCBridge in Frameworks */,
+				B38262572CED7AC000111AEB /* libflycast-libretro.a in Frameworks */,
 				B38797202CED6B1300A86990 /* PVEmulatorCore in Frameworks */,
 				B38217582CED773100111AEB /* PVCoreBridge in Frameworks */,
 				B38797392CED6E7500A86990 /* PVPlists in Frameworks */,
-				B387972F2CED6B5300A86990 /* libflycast_core.a in Frameworks */,
 				B3A3CC5B2CCC782D00589F82 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B387973C2CED6EB100A86990 /* PVLogging in Frameworks */,
 			);
@@ -287,6 +614,7 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B3F9F3A9295F4D7800DF8B8A /* PVFlycastCore+Options.swift */,
 				B3A3CC722CCC789100589F82 /* PVFlycastEmuCore.swift */,
 				B3A3CC732CCC789100589F82 /* CorePlist.swift */,
 				B3A3CC742CCC789100589F82 /* CorePlist-Generated.swift */,
@@ -303,6 +631,188 @@
 				B3447E97218B809300557ACE /* PVFlycastCore+Controls.mm */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		B3825FFF2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260012CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260032CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260052CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260072CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260092CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B382600B2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B382600D2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B382600F2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260112CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260132CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260152CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260172CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260192CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B382601B2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B382601D2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B382601F2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260212CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260232CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260252CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260272CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260292CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B382602B2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B382602D2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B382602F2CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B38260312CED7A5B00111AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		B38796EA2CED6ACB00A86990 /* Products */ = {
@@ -327,11 +837,12 @@
 			children = (
 				934BE792296E6A8800FB9933 /* cmake */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				B3F9F3A9295F4D7800DF8B8A /* PVFlycastCore+Options.swift */,
+				B3825FFE2CED7A5A00111AEB /* flycast */,
 				B38796E92CED6ACB00A86990 /* flycast.xcodeproj */,
 				B3C762202078327B009950E4 /* PVFlycastCore */,
 				B3C7621220783162009950E4 /* PVFlycast */,
 				B38797262CED6B2E00A86990 /* libflycast */,
+				B382624B2CED7A9E00111AEB /* flycast-libretro */,
 				B3C7621120783162009950E4 /* Products */,
 				B3C7621B20783242009950E4 /* Frameworks */,
 			);
@@ -342,6 +853,7 @@
 			children = (
 				B3C7621020783162009950E4 /* PVFlycast.framework */,
 				B38797252CED6B2E00A86990 /* libflycast_core.a */,
+				B382624A2CED7A9E00111AEB /* libflycast-libretro.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -405,6 +917,29 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		B38262492CED7A9E00111AEB /* flycast-libretro */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B38262512CED7A9E00111AEB /* Build configuration list for PBXNativeTarget "flycast-libretro" */;
+			buildPhases = (
+				B38262462CED7A9E00111AEB /* Sources */,
+				B38262472CED7A9E00111AEB /* Frameworks */,
+				B38262482CED7A9E00111AEB /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B38262562CED7AB100111AEB /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B382624B2CED7A9E00111AEB /* flycast-libretro */,
+			);
+			name = "flycast-libretro";
+			packageProductDependencies = (
+			);
+			productName = "flycast-libretro";
+			productReference = B382624A2CED7A9E00111AEB /* libflycast-libretro.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B38797242CED6B2E00A86990 /* flycast_core */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B387972C2CED6B2E00A86990 /* Build configuration list for PBXNativeTarget "flycast_core" */;
@@ -440,7 +975,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B38797312CED6B5300A86990 /* PBXTargetDependency */,
+				B38262592CED7AC000111AEB /* PBXTargetDependency */,
 			);
 			name = PVFlycast;
 			packageProductDependencies = (
@@ -465,6 +1000,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					B38262492CED7A9E00111AEB = {
+						CreatedOnToolsVersion = 16.1;
+					};
 					B38797242CED6B2E00A86990 = {
 						CreatedOnToolsVersion = 16.1;
 					};
@@ -508,13 +1046,118 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = B382602D2CED7A5B00111AEB /* Products */;
+					ProjectRef = B3822E8A2CED7A5A00111AEB /* AltKit.xcodeproj */;
+				},
+				{
+					ProductGroup = B382601D2CED7A5B00111AEB /* Products */;
+					ProjectRef = B382305F2CED7A5A00111AEB /* Breakpad.xcodeproj */;
+				},
+				{
+					ProductGroup = B382602B2CED7A5B00111AEB /* Products */;
+					ProjectRef = B3822FB72CED7A5A00111AEB /* Breakpad.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260312CED7A5B00111AEB /* Products */;
+					ProjectRef = B38225ED2CED7A5A00111AEB /* chdr.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260212CED7A5B00111AEB /* Products */;
+					ProjectRef = B38225082CED7A5A00111AEB /* CompilerIdC.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260152CED7A5B00111AEB /* Products */;
+					ProjectRef = B38225372CED7A5A00111AEB /* CompilerIdCXX.xcodeproj */;
+				},
+				{
+					ProductGroup = B382600D2CED7A5B00111AEB /* Products */;
+					ProjectRef = B38225812CED7A5A00111AEB /* CompilerIdSwift.xcodeproj */;
+				},
+				{
+					ProductGroup = B382600B2CED7A5B00111AEB /* Products */;
+					ProjectRef = B38233362CED7A5A00111AEB /* crash_report.xcodeproj */;
+				},
+				{
+					ProductGroup = B382601B2CED7A5B00111AEB /* Products */;
+					ProjectRef = B3825A572CED7A5A00111AEB /* Demos.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260192CED7A5B00111AEB /* Products */;
+					ProjectRef = B382333A2CED7A5A00111AEB /* dump_syms.xcodeproj */;
+				},
+				{
 					ProductGroup = B38796EA2CED6ACB00A86990 /* Products */;
 					ProjectRef = B38796E92CED6ACB00A86990 /* flycast.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260172CED7A5B00111AEB /* Products */;
+					ProjectRef = B3822F592CED7A5A00111AEB /* flycast.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260072CED7A5B00111AEB /* Products */;
+					ProjectRef = B38225B02CED7A5A00111AEB /* glm.xcodeproj */;
+				},
+				{
+					ProductGroup = B3825FFF2CED7A5B00111AEB /* Products */;
+					ProjectRef = B3824B2E2CED7A5A00111AEB /* gtest.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260092CED7A5B00111AEB /* Products */;
+					ProjectRef = B38225FA2CED7A5A00111AEB /* libelf.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260012CED7A5B00111AEB /* Products */;
+					ProjectRef = B38246F72CED7A5A00111AEB /* libzip.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260132CED7A5B00111AEB /* Products */;
+					ProjectRef = B38226132CED7A5A00111AEB /* libzip.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260112CED7A5B00111AEB /* Products */;
+					ProjectRef = B38225DA2CED7A5A00111AEB /* libzstd.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260252CED7A5B00111AEB /* Products */;
+					ProjectRef = B382301D2CED7A5A00111AEB /* minidump_test.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260232CED7A5B00111AEB /* Products */;
+					ProjectRef = B38226232CED7A5A00111AEB /* miniupnpc.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260032CED7A5B00111AEB /* Products */;
+					ProjectRef = B38226302CED7A5A00111AEB /* nowide.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260052CED7A5B00111AEB /* Products */;
+					ProjectRef = B3825A352CED7A5A00111AEB /* SDL.xcodeproj */;
+				},
+				{
+					ProductGroup = B382602F2CED7A5B00111AEB /* Products */;
+					ProjectRef = B3825A382CED7A5A00111AEB /* SDLTest.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260292CED7A5B00111AEB /* Products */;
+					ProjectRef = B382333F2CED7A5A00111AEB /* symupload.xcodeproj */;
+				},
+				{
+					ProductGroup = B38260272CED7A5B00111AEB /* Products */;
+					ProjectRef = B3824B282CED7A5A00111AEB /* WidgetFramework.xcodeproj */;
+				},
+				{
+					ProductGroup = B382600F2CED7A5B00111AEB /* Products */;
+					ProjectRef = B382263C2CED7A5A00111AEB /* xxHash.xcodeproj */;
+				},
+				{
+					ProductGroup = B382601F2CED7A5B00111AEB /* Products */;
+					ProjectRef = B38225DD2CED7A5A00111AEB /* zstd.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVFlycast */,
+				B38262492CED7A9E00111AEB /* flycast-libretro */,
 				B38797242CED6B2E00A86990 /* flycast_core */,
 			);
 		};
@@ -606,6 +1249,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B38262462CED7A9E00111AEB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B38797212CED6B2E00A86990 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -635,14 +1285,112 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B38797312CED6B5300A86990 /* PBXTargetDependency */ = {
+		B38262562CED7AB100111AEB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B38797242CED6B2E00A86990 /* flycast_core */;
-			targetProxy = B38797302CED6B5300A86990 /* PBXContainerItemProxy */;
+			targetProxy = B38262552CED7AB100111AEB /* PBXContainerItemProxy */;
+		};
+		B38262592CED7AC000111AEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B38262492CED7A9E00111AEB /* flycast-libretro */;
+			targetProxy = B38262582CED7AC000111AEB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		B38262522CED7A9E00111AEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				HEADER_SEARCH_PATHS = (
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/stb,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/khronos,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/json,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libzip/lib,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/picotcp/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/picotcp/modules,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/vixl,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/ggpo/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/ggpo/lib/ggpo,
+					"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/build/shell/apple/emulator-ios/AltKit/Debug",
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/..,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/glm/glm/..,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/nowide/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/build/core/deps/libzip,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/build/_cmrc/include,
+					"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/build/shell/apple/emulator-ios/AltKit",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B38262532CED7A9E00111AEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/stb,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/khronos,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/json,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libzip/lib,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/picotcp/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/picotcp/modules,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/vixl,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/ggpo/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/ggpo/lib/ggpo,
+					"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/build/shell/apple/emulator-ios/AltKit/Debug",
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/..,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/glm/glm/..,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/nowide/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/build/core/deps/libzip,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/include,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/build/_cmrc/include,
+					"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/build/shell/apple/emulator-ios/AltKit",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		B387972D2CED6B2E00A86990 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -993,6 +1741,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B38262512CED7A9E00111AEB /* Build configuration list for PBXNativeTarget "flycast-libretro" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B38262522CED7A9E00111AEB /* Release */,
+				B38262532CED7A9E00111AEB /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B387972C2CED6B2E00A86990 /* Build configuration list for PBXNativeTarget "flycast_core" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
