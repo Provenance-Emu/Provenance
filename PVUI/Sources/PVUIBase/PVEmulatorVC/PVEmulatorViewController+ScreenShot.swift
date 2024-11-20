@@ -34,7 +34,7 @@ extension PVEmulatorViewController {
                 glView.drawHierarchy(in: rec, afterScreenUpdates: true)
             } else {
                 // Fallback to capturing the GPU view directly
-                let size = gpuViewController.view.frame.size
+                let size = core.bufferSize
                 UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
                 let rec = CGRect(origin: .zero, size: size)
                 gpuViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
