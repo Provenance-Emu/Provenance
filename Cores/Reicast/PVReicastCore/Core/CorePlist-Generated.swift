@@ -16,10 +16,10 @@ import Foundation
 // swiftlint:disable identifier_name line_length number_separator type_body_length
 public enum CorePlist {
   public static let pvCoreIdentifier: String = "com.provenance.core.reicast"
-  public static let pvPrincipleClass: String = "PVFlycast.PVReicastEmuCore"
+  public static let pvPrincipleClass: String = "PVReicast.PVReicastEmuCore"
   public static let pvProjectName: String = "Reicast"
-  public static let pvProjectURL: String = ""
-  public static let pvProjectVersion: String = ""
+  public static let pvProjectURL: String = "https://github.com/reicast/reicast-emulator"
+  public static let pvProjectVersion: String = "18.04"
   public static let pvSupportedSystems: [String] = ["com.provenance.dreamcast"]
 
   #if canImport(PVCoreBridge)
