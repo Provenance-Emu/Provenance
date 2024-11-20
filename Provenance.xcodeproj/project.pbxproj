@@ -557,6 +557,8 @@
 		B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF82C6C6D1A00EBD1A8 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
+		B361FDCD2CEE87770015AF65 /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B361FDCC2CEE87770015AF65 /* PVReicast.framework */; };
+		B361FDCE2CEE87770015AF65 /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B361FDCC2CEE87770015AF65 /* PVReicast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36A8D442CCD5480002357DD /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D432CCD5480002357DD /* Defaults */; };
 		B36A8D462CCD548E002357DD /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D452CCD548E002357DD /* MBProgressHUD */; };
 		B36A8D4A2CCD54C7002357DD /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D492CCD54C7002357DD /* PVUI */; };
@@ -1538,6 +1540,7 @@
 				B351E7D32CBE072D0000E087 /* libavcodec.xcframework in Embed Frameworks */,
 				B3C65E5B2CA53666000E37B0 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3FE6DB32C93E60900792419 /* PVO2EM.framework in Embed Frameworks */,
+				B361FDCE2CEE87770015AF65 /* PVReicast.framework in Embed Frameworks */,
 				B3E1C0482C96F86000EB4238 /* PVProSystem-Dynamic in Embed Frameworks */,
 				B37321A52C900A9F00CF59EF /* PVCrabEmu-Dynamic in Embed Frameworks */,
 				B3A3CDAF2CCC873B00589F82 /* PVDuckStation.framework in Embed Frameworks */,
@@ -2068,6 +2071,7 @@
 		B3607B7D2892388900509A68 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3607B80289238ED00509A68 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
+		B361FDCC2CEE87770015AF65 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36455EB278E919500B6E87A /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36A8D422CCD53DB002357DD /* Provenance-Lite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-Lite-Info.plist"; sourceTree = "<group>"; };
 		B36B84D429598F6600FDEA29 /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2843,6 +2847,7 @@
 				B3C65E602CA53667000E37B0 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B35EEFB42C6C6D1A00EBD1A8 /* libc++.tbd in Frameworks */,
 				B35EEFB52C6C6D1A00EBD1A8 /* libxml2.tbd in Frameworks */,
+				B361FDCD2CEE87770015AF65 /* PVReicast.framework in Frameworks */,
 				B35EEFB62C6C6D1A00EBD1A8 /* RxDataSources in Frameworks */,
 				B3E1BC4B2C96DD0500EB4238 /* PVProSystem-Dynamic in Frameworks */,
 				B3F8E0202CB379E500017D1B /* PVGME.framework in Frameworks */,
@@ -3266,6 +3271,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B361FDCC2CEE87770015AF65 /* PVReicast.framework */,
 				B396804A2CE74A9C00E1AB6D /* PVFlycast.framework */,
 				B3FC5AC62CE4376D00D378C9 /* PVEmuThree.framework */,
 				B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */,
