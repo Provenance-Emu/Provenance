@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVReicastCore (Controls) <PVDreamcastSystemResponderClient>
+@interface PVReicastCoreBridge (Controls) <PVDreamcastSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;

@@ -6,11 +6,11 @@
 //  Copyright © 2018 Provenance. All rights reserved.
 //
 
-#import <PVReicast/PVReicast.h>
+#import <PVReicast/PVReicastCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVReicastCore (Audio)
+@interface PVReicastCoreBridge (Audio)
 
 @end
 

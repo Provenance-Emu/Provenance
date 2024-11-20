@@ -11,6 +11,7 @@
 #import "PVReicast+AudioTypes.h"
 
 @import PVCoreBridge;
+@import PVLoggingObjC;
 
 #include "oslib/audiobackend_coreaudio.h"
 
@@ -145,7 +146,7 @@ coreaudio_push1(void* frame, u32 samples, bool wait) {
 
         // Results: Too slow
     while (rb.availableBytes == 0 && wait) { }
-    [rb write:(const unsigned char *)frame maxLength:samples * 4];
+    [rb write:(const unsigned char *)frame size:samples * 4];
 
     return 1;
 }
@@ -162,7 +163,7 @@ coreaudio_push2(void* frame, u32 samples, bool wait) {
         // Use a sample counter instead of filling the buffer
     while (samples_ptr > rb.bytesWritten && wait) { }
     if(samples_ptr <= rb.bytesWritten) {
-        [rb write:(const unsigned char *)frame maxLength:samples * 4];
+        [rb write:(const unsigned char *)frame size:samples * 4];
         samples_ptr += samples * 4;
     }
 
@@ -183,7 +184,7 @@ coreaudio_push3(void* frame, u32 samples, bool wait) {
 
         // Use a sample counter instead of filling the buffer
     while (samples_ptr != 0 && samples_ptr != rb.bytesRead && rb.bytesRead != 0 && wait) { }
-    [rb write:(const unsigned char *)frame maxLength:samples * 4];
+    [rb write:(const unsigned char *)frame size:samples * 4];
     samples_ptr += samples * 4;
 
     return 1;
@@ -201,7 +202,7 @@ coreaudio_push4(void* frame, u32 samples, bool wait) {
 
     while (samples_ptr >= rb.bytesWritten && wait) { }
     if (samples_ptr >= rb.bytesWritten)
-        [rb write:(const unsigned char *)frame maxLength:samples * 4];
+        [rb write:(const unsigned char *)frame size:samples * 4];
     samples_ptr += samples * 4;
 
     return 1;
@@ -218,7 +219,7 @@ coreaudio_push5(void* frame, u32 samples, bool wait) {
     }
 
     if (samples_ptr <= rb.bytesWritten)
-        [rb write:(const unsigned char *)frame maxLength:samples * 4];
+        [rb write:(const unsigned char *)frame size:samples * 4];
 
     samples_ptr += samples * 4;
 
@@ -240,17 +241,17 @@ coreaudio_push6(void* frame, u32 samples, bool wait) {
     }
 
     NSUInteger maxFillSize = clearedCounter > 4 ? samples * 8 : -1;
-    CALOG("used bytes: %lu", (unsigned long)rb.usedBytes);
+//    CALOG("used bytes: %lu", (unsigned long)rb.usedBytes);
 #define notfull [rb write:(const unsigned char *)frame maxLength:samples * 4]
 
     while ([rb availableBytes] > maxFillSize && wait) {    }
 
-    [rb write:(const unsigned char *)frame maxLength:samples * 4];
+    [rb write:(const unsigned char *)frame size:samples * 4];
 
         //    dispatch_async(current->_callbackQueue, ^{
         //        [rb write:(const unsigned char *)frame maxLength:samples * 4];
         //    });
-    if (rb.usedBytes == 0) {
+    if (rb.bytesWritten == 0) {
         clearedCounter++;
     }
 
@@ -368,9 +369,9 @@ coreaudio_push7(void* frame, u32 samples, bool wait) {
 
         // copy from our buffer to ring buffer
     if (! inputProcErr) {
-        inputProcErr = player.ringBuffer->Store(player.inputBuffer,
-                                                inNumberFrames,
-                                                timeStamp.mSampleTime);
+//        inputProcErr = player.ringBuffer->Store(player.inputBuffer,
+//                                                inNumberFrames,
+//                                                timeStamp.mSampleTime);
         CALOG("Stored: %i", inputProcErr);
     }
 
@@ -416,7 +417,7 @@ coreaudio_push8(void* frame, u32 samples, bool wait) {
 
     int currentAvailable = rb.availableBytes;
 
-    [rb write:(const unsigned char *)frame maxLength:samples * 4];
+    [rb write:(const unsigned char *)frame size:samples * 4];
 
     if (wait) {
         while ( rb.availableBytes < (currentAvailable + (previousSampleCount * 4))) {
@@ -449,7 +450,7 @@ coreaudio_push8(void* frame, u32 samples, bool wait) {
 //        dispatch_async(serialQueue, ^{
 //            // Note, is the frame pointer too volitile if we return early?
 //            // should we do a max wait instead of 1 or 2 frames?
-            [rb write:(const unsigned char *)frame maxLength:samples * 4];
+            [rb write:(const unsigned char *)frame size:samples * 4];
 //            dispatch_group_leave(group);
 //        });
 //    } else {

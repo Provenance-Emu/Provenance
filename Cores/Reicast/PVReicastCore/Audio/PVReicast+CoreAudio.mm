@@ -11,6 +11,8 @@
 #import "PVReicast+AudioTypes.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
+@import Foundation;
+@import PVLoggingObjC;
 
 #pragma mark - Core Audio Setup -
 
@@ -68,10 +70,10 @@ InitAUPlayer(ReicastAUGraphPlayer *player) {
     }
 
         //Alloc ring buffer that will hold data between the two audio devices
-    player->ringBuffer = new CARingBuffer();
-    player->ringBuffer->Allocate(player->streamFormat.mChannelsPerFrame,
-                                 player->streamFormat.mBytesPerFrame,
-                                 bufferLengthInFrames * 4000);
+    player->ringBuffer = [[OERingBuffer alloc] initWithLength:4096];
+//    player->ringBuffer->Allocate(player->streamFormat.mChannelsPerFrame,
+//                                 player->streamFormat.mBytesPerFrame,
+//                                 bufferLengthInFrames * 4000);
 
     player->firstInputSampleTime = -1;
     player->firstOutputSampleTime = -1;

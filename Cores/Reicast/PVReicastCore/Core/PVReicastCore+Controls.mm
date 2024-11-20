@@ -9,6 +9,7 @@
 #import <PVReicast/PVReicast.h>
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
+@import PVEmulatorCore;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
@@ -51,7 +52,7 @@ u8 lt[4];
 u32 vks[4];
 s8 joyx[4], joyy[4];
 
-@implementation PVReicastCore (Controls)
+@implementation PVReicastCoreBridge (Controls)
 
 - (void)initControllBuffers {
     memset(&kcode, 0xFFFF, sizeof(kcode));

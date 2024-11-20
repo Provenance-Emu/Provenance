@@ -11,8 +11,8 @@
 #import <AudioUnit/AudioUnit.h>
 #import <AVFoundation/AVFoundation.h>
 @import PVCoreBridge;
-#import <PVSupport/CARingBuffer.h>
-#import <PVSupport/OEGameAudio.h>
+@import PVAudio;
+@import PVCoreAudio;
 
 typedef struct ReicastAUGraphPlayer {
     AudioStreamBasicDescription streamFormat;
@@ -22,7 +22,7 @@ typedef struct ReicastAUGraphPlayer {
     AudioUnit converterUnit;
 
     AudioBufferList *inputBuffer;
-    CARingBuffer *ringBuffer;
+    OERingBuffer *ringBuffer;
     Float64 firstInputSampleTime;
     Float64 firstOutputSampleTime;
     Float64 inToOutSampleTimeOffset;

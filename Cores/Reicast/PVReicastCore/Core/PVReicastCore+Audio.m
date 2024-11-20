@@ -8,7 +8,7 @@
 
 #import "PVReicastCore+Audio.h"
 
-@implementation PVReicastCore (Audio)
+@implementation PVReicastCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
     return isNTSC ? 60 : 50;

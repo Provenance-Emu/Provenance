@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVReicastCore (Saves)
+@interface PVReicastCoreBridge (Saves)
 
 @end
 

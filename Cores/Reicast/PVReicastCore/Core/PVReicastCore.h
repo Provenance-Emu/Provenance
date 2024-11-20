@@ -7,18 +7,24 @@
 //
 
 #import <Foundation/Foundation.h>
-@import PVCoreBridge;
-#import <PVSupport/PVEmulatorCore.h>
+//#import <PVCoreBridgeRetro/PVCoreBridgeRetro.h>
+@import PVCoreObjCBridge;
 
-
+@protocol ObjCBridgedCoreBridge;
+@protocol PVPSXSystemResponderClient;
+typedef enum PVDreamcastButton: NSInteger PVDreamcastButton;
 
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
-PVCORE_DIRECT_MEMBERS
-@interface PVReicastCore : PVEmulatorCore <PVDreamcastSystemResponderClient>
+@protocol PVDreamcastSystemResponderClient;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
+@interface PVReicastCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVDreamcastSystemResponderClient>
+#pragma clang diagnostic pop
 {
-	uint8_t padData[4][PVDreamcastButtonCount];
+    uint8_t padData[4][16]; //[PVDreamcastButtonCount];
 	int8_t xAxis[4];
 	int8_t yAxis[4];
 	//    int videoWidth;
@@ -39,4 +45,4 @@ PVCORE_DIRECT_MEMBERS
 
 @end
 
-extern __weak PVReicastCore *_current;
+extern __weak PVReicastCoreBridge *_current;

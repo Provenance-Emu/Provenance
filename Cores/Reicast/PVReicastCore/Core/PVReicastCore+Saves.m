@@ -9,7 +9,7 @@
 #import "PVReicastCore+Saves.h"
 #import "PVReicastCore.h"
 
-@implementation PVReicastCore (Saves)
+@implementation PVReicastCoreBridge (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {

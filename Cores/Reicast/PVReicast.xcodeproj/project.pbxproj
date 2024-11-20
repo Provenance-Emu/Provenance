@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -180,20 +180,6 @@
 		B333502820786BEB0036A448 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B339438720783CC0008DBAB4 /* Shader.fsh */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447E9C218B826F00557ACE /* PVReicast+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E9A218B826F00557ACE /* PVReicast+Audio.h */; };
-		B3447E9D218B826F00557ACE /* PVReicast+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E9B218B826F00557ACE /* PVReicast+Audio.mm */; };
-		B3447E9E218B857A00557ACE /* PVReicastCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVReicastCore+Controls.mm */; };
-		B3447E9F218B858100557ACE /* PVReicastCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVReicastCore+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3447EA1218B881000557ACE /* PVReicast.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVReicast.mm */; };
-		B3447EA3218BBFBC00557ACE /* PVReicast+AudioTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA2218BBFB700557ACE /* PVReicast+AudioTypes.h */; };
-		B3447EA5218BC36B00557ACE /* PVReicast+CoreAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA4218BC36B00557ACE /* PVReicast+CoreAudio.mm */; };
-		B3447EA7218BC3A600557ACE /* PVReicast+CoreAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA6218BC3A600557ACE /* PVReicast+CoreAudio.h */; };
-		B3447EAB218BC59D00557ACE /* PVReicastCore+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVReicastCore+Saves.h */; };
-		B3447EAC218BC59D00557ACE /* PVReicastCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVReicastCore+Saves.m */; };
-		B3447EAF218BC5C500557ACE /* PVReicastCore+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVReicastCore+Video.h */; };
-		B3447EB0218BC5C500557ACE /* PVReicastCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVReicastCore+Video.m */; };
-		B3447EB3218BC69700557ACE /* PVReicastCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVReicastCore+Audio.h */; };
-		B3447EB4218BC69700557ACE /* PVReicastCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVReicastCore+Audio.m */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
@@ -201,11 +187,12 @@
 		B3C7621520783162009950E4 /* PVReicast.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVReicast.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, xros, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C76225207833DE009950E4 /* PVReicastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVReicastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C76226207833DE009950E4 /* PVReicastCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVReicastCore.mm */; };
 		B3E2AA192CB623DA00E2636D /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA182CB623DA00E2636D /* PVLogging */; };
 		B3E2AA1C2CB6242600E2636D /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA1B2CB6242600E2636D /* PVSettings */; };
 		B3E2AA1F2CB6246300E2636D /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA1E2CB6246300E2636D /* PVCoreObjCBridge */; };
+		B3E7527B2CEE8C1A00A5CC6F /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3E7527A2CEE8C1A00A5CC6F /* PVPlists */; };
+		B3E7527E2CEE8D4E00A5CC6F /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B3E7527D2CEE8D4E00A5CC6F /* PVAudio */; };
+		B3E752812CEE8D8800A5CC6F /* PVCoreAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B3E752802CEE8D8800A5CC6F /* PVCoreAudio */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1191,20 +1178,6 @@
 		B33945C120783CC2008DBAB4 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		B3447E96218B809200557ACE /* PVReicastCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVReicastCore+Controls.h"; sourceTree = "<group>"; };
-		B3447E97218B809300557ACE /* PVReicastCore+Controls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVReicastCore+Controls.mm"; sourceTree = "<group>"; };
-		B3447E9A218B826F00557ACE /* PVReicast+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVReicast+Audio.h"; sourceTree = "<group>"; };
-		B3447E9B218B826F00557ACE /* PVReicast+Audio.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVReicast+Audio.mm"; sourceTree = "<group>"; };
-		B3447EA0218B881000557ACE /* PVReicast.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVReicast.mm; sourceTree = "<group>"; };
-		B3447EA2218BBFB700557ACE /* PVReicast+AudioTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVReicast+AudioTypes.h"; sourceTree = "<group>"; };
-		B3447EA4218BC36B00557ACE /* PVReicast+CoreAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVReicast+CoreAudio.mm"; sourceTree = "<group>"; };
-		B3447EA6218BC3A600557ACE /* PVReicast+CoreAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVReicast+CoreAudio.h"; sourceTree = "<group>"; };
-		B3447EA9218BC59D00557ACE /* PVReicastCore+Saves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVReicastCore+Saves.h"; sourceTree = "<group>"; };
-		B3447EAA218BC59D00557ACE /* PVReicastCore+Saves.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVReicastCore+Saves.m"; sourceTree = "<group>"; };
-		B3447EAD218BC5C500557ACE /* PVReicastCore+Video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVReicastCore+Video.h"; sourceTree = "<group>"; };
-		B3447EAE218BC5C500557ACE /* PVReicastCore+Video.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVReicastCore+Video.m"; sourceTree = "<group>"; };
-		B3447EB1218BC69700557ACE /* PVReicastCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVReicastCore+Audio.h"; sourceTree = "<group>"; };
-		B3447EB2218BC69700557ACE /* PVReicastCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVReicastCore+Audio.m"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -1218,10 +1191,31 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C76223207833DE009950E4 /* PVReicastCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVReicastCore.h; sourceTree = "<group>"; };
-		B3C76224207833DE009950E4 /* PVReicastCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVReicastCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B361FDC92CEE82C00015AF65 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Audio/PVReicast+Audio.h",
+				"Audio/PVReicast+AudioTypes.h",
+				"Audio/PVReicast+CoreAudio.h",
+			);
+			publicHeaders = (
+				Core/PVReicastCore.h,
+				"Core/PVReicastCore+Audio.h",
+				"Core/PVReicastCore+Controls.h",
+				"Core/PVReicastCore+Saves.h",
+				"Core/PVReicastCore+Video.h",
+			);
+			target = B3C7620F20783162009950E4 /* PVReicast */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B361FDB52CEE82B80015AF65 /* PVReicastCore */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B361FDC92CEE82C00015AF65 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = PVReicastCore; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B30178D0207C901D0051B93D /* Frameworks */ = {
@@ -1244,13 +1238,16 @@
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libreicast.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
+				B3E7527E2CEE8D4E00A5CC6F /* PVAudio in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3E2AA1F2CB6246300E2636D /* PVCoreObjCBridge in Frameworks */,
 				B3E2AA1C2CB6242600E2636D /* PVSettings in Frameworks */,
 				B30E9AE12C6FB27900C1431E /* PVCoreBridge in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B3E7527B2CEE8C1A00A5CC6F /* PVPlists in Frameworks */,
 				B30E99242C6EF28900C1431E /* PVSupport in Frameworks */,
+				B3E752812CEE8D8800A5CC6F /* PVCoreAudio in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3530,40 +3527,11 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		B3447EA8218BC51300557ACE /* Audio */ = {
-			isa = PBXGroup;
-			children = (
-				B3447EA2218BBFB700557ACE /* PVReicast+AudioTypes.h */,
-				B3447E9A218B826F00557ACE /* PVReicast+Audio.h */,
-				B3447E9B218B826F00557ACE /* PVReicast+Audio.mm */,
-				B3447EA6218BC3A600557ACE /* PVReicast+CoreAudio.h */,
-				B3447EA4218BC36B00557ACE /* PVReicast+CoreAudio.mm */,
-			);
-			path = Audio;
-			sourceTree = "<group>";
-		};
-		B3447EB5218BCE2000557ACE /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				B3C76223207833DE009950E4 /* PVReicastCore.h */,
-				B3C76224207833DE009950E4 /* PVReicastCore.mm */,
-				B3447EB1218BC69700557ACE /* PVReicastCore+Audio.h */,
-				B3447EB2218BC69700557ACE /* PVReicastCore+Audio.m */,
-				B3447EAD218BC5C500557ACE /* PVReicastCore+Video.h */,
-				B3447EAE218BC5C500557ACE /* PVReicastCore+Video.m */,
-				B3447EA9218BC59D00557ACE /* PVReicastCore+Saves.h */,
-				B3447EAA218BC59D00557ACE /* PVReicastCore+Saves.m */,
-				B3447E96218B809200557ACE /* PVReicastCore+Controls.h */,
-				B3447E97218B809300557ACE /* PVReicastCore+Controls.mm */,
-			);
-			path = Core;
-			sourceTree = "<group>";
-		};
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				B3C762202078327B009950E4 /* PVReicastCore */,
+				B361FDB52CEE82B80015AF65 /* PVReicastCore */,
 				B339411E20783CBB008DBAB4 /* reicast-emulator */,
 				B3C7621220783162009950E4 /* PVReicast */,
 				B3C7621120783162009950E4 /* Products */,
@@ -3611,16 +3579,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B3C762202078327B009950E4 /* PVReicastCore */ = {
-			isa = PBXGroup;
-			children = (
-				B3447EB5218BCE2000557ACE /* Core */,
-				B3447EA8218BC51300557ACE /* Audio */,
-				B3447EA0218B881000557ACE /* PVReicast.mm */,
-			);
-			path = PVReicastCore;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -3629,14 +3587,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C7621520783162009950E4 /* PVReicast.h in Headers */,
-				B3C76225207833DE009950E4 /* PVReicastCore.h in Headers */,
-				B3447E9C218B826F00557ACE /* PVReicast+Audio.h in Headers */,
-				B3447EB3218BC69700557ACE /* PVReicastCore+Audio.h in Headers */,
-				B3447EAB218BC59D00557ACE /* PVReicastCore+Saves.h in Headers */,
-				B3447EA3218BBFBC00557ACE /* PVReicast+AudioTypes.h in Headers */,
-				B3447EA7218BC3A600557ACE /* PVReicast+CoreAudio.h in Headers */,
-				B3447E9F218B858100557ACE /* PVReicastCore+Controls.h in Headers */,
-				B3447EAF218BC5C500557ACE /* PVReicastCore+Video.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3674,6 +3624,9 @@
 			dependencies = (
 				B383226826EDAB130029D12F /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				B361FDB52CEE82B80015AF65 /* PVReicastCore */,
+			);
 			name = PVReicast;
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVReicast.framework */;
@@ -3696,6 +3649,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1610;
 					};
 				};
 			};
@@ -3716,6 +3670,9 @@
 				B3E2AA172CB623DA00E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3E2AA1A2CB6242600E2636D /* XCLocalSwiftPackageReference "../../PVSettings" */,
 				B3E2AA1D2CB6246300E2636D /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3E752792CEE8C1A00A5CC6F /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3E7527C2CEE8D4E00A5CC6F /* XCLocalSwiftPackageReference "../../PVAudio" */,
+				B3E7527F2CEE8D8800A5CC6F /* XCLocalSwiftPackageReference "../../PVCoreAudio" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -3915,14 +3872,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3447E9D218B826F00557ACE /* PVReicast+Audio.mm in Sources */,
-				B3447E9E218B857A00557ACE /* PVReicastCore+Controls.mm in Sources */,
-				B3C76226207833DE009950E4 /* PVReicastCore.mm in Sources */,
-				B3447EAC218BC59D00557ACE /* PVReicastCore+Saves.m in Sources */,
-				B3447EA1218B881000557ACE /* PVReicast.mm in Sources */,
-				B3447EB0218BC5C500557ACE /* PVReicastCore+Video.m in Sources */,
-				B3447EA5218BC36B00557ACE /* PVReicast+CoreAudio.mm in Sources */,
-				B3447EB4218BC69700557ACE /* PVReicastCore+Audio.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4103,6 +4052,7 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -4131,6 +4081,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
@@ -4228,7 +4179,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
+				OTHER_CFLAGS = (
+					"-DTARGET_NO_NIXPROF",
+					"$(inherited)",
+				);
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -4333,6 +4287,7 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -4361,6 +4316,8 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
@@ -4369,6 +4326,7 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -4397,6 +4355,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
@@ -4462,6 +4421,18 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreObjCBridge;
 		};
+		B3E752792CEE8C1A00A5CC6F /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B3E7527C2CEE8D4E00A5CC6F /* XCLocalSwiftPackageReference "../../PVAudio" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVAudio;
+		};
+		B3E7527F2CEE8D8800A5CC6F /* XCLocalSwiftPackageReference "../../PVCoreAudio" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreAudio;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -4488,6 +4459,18 @@
 		B3E2AA1E2CB6246300E2636D /* PVCoreObjCBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreObjCBridge;
+		};
+		B3E7527A2CEE8C1A00A5CC6F /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B3E7527D2CEE8D4E00A5CC6F /* PVAudio */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVAudio;
+		};
+		B3E752802CEE8D8800A5CC6F /* PVCoreAudio */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreAudio;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

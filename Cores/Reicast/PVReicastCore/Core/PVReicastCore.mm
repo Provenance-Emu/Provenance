@@ -15,6 +15,7 @@
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
+@import PVLoggingObjC;
 
 // Reicast imports
 #include "types.h"
@@ -26,9 +27,9 @@
 #include "hw/maple/maple_if.h"
 #include "hw/maple/maple_cfg.h"
 
-__weak PVReicastCore *_current = 0;
+__weak PVReicastCoreBridge *_current = 0;
 
-@interface PVReicastCore() {
+@interface PVReicastCoreBridge() {
 
 }
 
@@ -54,7 +55,7 @@ volatile bool has_init = false;
 
 #pragma mark - PVReicastCore Begin
 
-@implementation PVReicastCore {
+@implementation PVReicastCoreBridge {
 	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
 	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
     dispatch_semaphore_t coreWaitForExitSemaphore;
@@ -231,15 +232,15 @@ LIST_OF_VARIABLES
         CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
 
         while (!has_init) {}
-        while ( !shouldStop )
+        while ( !self.shouldStop )
         {
             [self.frontBufferCondition lock];
-            while (!shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
+            while (!self.shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
             [self.frontBufferCondition unlock];
 
             CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
             CFTimeInterval deltaTime = now - lastTime;
-            while ( !shouldStop && !rend_single_frame() ) {}
+            while ( !self.shouldStop && !rend_single_frame() ) {}
             [self swapBuffers];
             lastTime = now;
         }
@@ -356,7 +357,7 @@ int reicast_main(int argc, wchar* argv[]) {
 
 	// TODO: Call reicast stop command here
 	dc_term();
-    self->shouldStop = YES;
+    self.shouldStop = YES;
 	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 	[self.frontBufferCondition lock];

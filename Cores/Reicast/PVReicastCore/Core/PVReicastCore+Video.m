@@ -9,6 +9,7 @@
 #import "PVReicastCore+Video.h"
 #import "PVReicastCore.h"
 
+@import PVEmulatorCore;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -22,7 +23,7 @@
 #endif
 
 
-@implementation PVReicastCore (Video)
+@implementation PVReicastCoreBridge (Video)
 
 # pragma mark - Methods
 

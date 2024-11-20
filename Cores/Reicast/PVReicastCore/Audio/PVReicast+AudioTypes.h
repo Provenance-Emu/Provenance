@@ -10,7 +10,8 @@
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
-#import <PVSupport/CARingBuffer.h>
+@import PVAudio;
+@import PVCoreAudio;
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
 #import <AVFoundation/AVFoundation.h>
