@@ -648,6 +648,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 WLOG("GameImportQueue - processing item in queue: \(item.url) restuled in conflict.")
             default:
                 item.status = .failure
+                item.errorValue = error.errorString()
                 updateImporterStatus("Failed \(item.url.lastPathComponent) with error: \(error.localizedDescription)")
                 ELOG("GameImportQueue - processing item in queue: \(item.url) restuled in error: \(error.localizedDescription)")
             }
