@@ -437,7 +437,7 @@ static void InitializeLogging() {
     UIEdgeInsets safeAreaInsets = UIApplication.sharedApplication.windows.firstObject.safeAreaInsets;
     CGFloat availableHeight = UIApplication.sharedApplication.windows.firstObject.bounds.size.height - (safeAreaInsets.top + safeAreaInsets.bottom);
     CGFloat availableWidth = UIApplication.sharedApplication.windows.firstObject.bounds.size.width - (safeAreaInsets.left + safeAreaInsets.right);
-
+    
     if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationPortrait) {
         point.y -= safeAreaInsets.top;
     } else {
@@ -455,22 +455,32 @@ static void InitializeLogging() {
     if (!CitraWrapper.sharedInstance.isRunning)
         return;
 
-    /// Get safe area insets and calculate ratios
-    UIEdgeInsets safeAreaInsets = UIApplication.sharedApplication.windows.firstObject.safeAreaInsets;
-    CGFloat availableHeight = UIApplication.sharedApplication.windows.firstObject.bounds.size.height - (safeAreaInsets.top + safeAreaInsets.bottom);
-    CGFloat availableWidth = UIApplication.sharedApplication.windows.firstObject.bounds.size.width - (safeAreaInsets.left + safeAreaInsets.right);
-
-    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationPortrait) {
-        point.y -= safeAreaInsets.top;
-    } else {
-        point.x -= safeAreaInsets.left;
-    }
-
+    /// Get window bounds and safe area
+    UIWindow *mainWindow = UIApplication.sharedApplication.windows.firstObject;
+    UIEdgeInsets safeAreaInsets = mainWindow.safeAreaInsets;
+    CGRect windowBounds = mainWindow.bounds;
+    
+    /// Calculate available space within safe area
+    CGFloat availableHeight = windowBounds.size.height - (safeAreaInsets.top + safeAreaInsets.bottom);
+    CGFloat availableWidth = windowBounds.size.width - (safeAreaInsets.left + safeAreaInsets.right);
+    
+    /// Adjust point relative to safe area
+    point.x -= safeAreaInsets.left;
+    point.y -= safeAreaInsets.top;
+    
     float scale = [[UIScreen mainScreen] nativeScale];
     float heightRatio = emu_window->framebuffer_layout.height / (availableHeight * scale);
     float widthRatio = emu_window->framebuffer_layout.width / (availableWidth * scale);
 
-    emu_window->OnTouchMoved((point.x * scale * widthRatio) + 0.5, (point.y * scale * heightRatio) + 0.5);
+    /// Scale to emulator coordinates
+    float scaledX = (point.x * scale * widthRatio) + 0.5;
+    float scaledY = (point.y * scale * heightRatio) + 0.5;
+    
+    /// Ensure coordinates are within bounds
+    scaledX = std::max(0.0f, std::min(scaledX, (float)emu_window->framebuffer_layout.width));
+    scaledY = std::max(0.0f, std::min(scaledY, (float)emu_window->framebuffer_layout.height));
+    
+    emu_window->OnTouchMoved(scaledX, scaledY);
 }
 
 -(void) touchesEnded {
@@ -486,28 +496,31 @@ static void InitializeLogging() {
 
 -(void) orientationChanged:(UIDeviceOrientation)orientation with:(CAMetalLayer *)surface {
     if (CitraWrapper.sharedInstance.isRunning) {
-        /// Get safe area insets from main window
-        UIEdgeInsets safeAreaInsets = UIApplication.sharedApplication.windows.firstObject.safeAreaInsets;
+        /// Get safe area insets and window bounds from main window
+        UIWindow *mainWindow = UIApplication.sharedApplication.windows.firstObject;
+        UIEdgeInsets safeAreaInsets = mainWindow.safeAreaInsets;
+        CGRect windowBounds = mainWindow.bounds;
 
+        /// Calculate available space within safe area
+        CGFloat availableHeight = windowBounds.size.height - (safeAreaInsets.top + safeAreaInsets.bottom);
+        CGFloat availableWidth = windowBounds.size.width - (safeAreaInsets.left + safeAreaInsets.right);
+        
         if (orientation == UIDeviceOrientationPortrait) {
             NSInteger layoutOptionInteger = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"portrait_layout_option"]] unsignedIntValue];
             Settings::values.layout_option.SetValue(layoutOptionInteger == 0 ? Settings::LayoutOption::MobilePortrait : (Settings::LayoutOption)layoutOptionInteger);
-
-            /// Adjust surface frame for portrait safe area
-            CGRect bounds = surface.bounds;
-            bounds.origin.y += safeAreaInsets.top;
-            bounds.size.height -= (safeAreaInsets.top + safeAreaInsets.bottom);
-            surface.frame = bounds;
-
         } else {
             NSInteger layoutOptionInteger = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"landscape_layout_option"]] unsignedIntValue];
             Settings::values.layout_option.SetValue(layoutOptionInteger == 0 ? Settings::LayoutOption::MobilePortrait : (Settings::LayoutOption)layoutOptionInteger);
+        }
 
-            /// Adjust surface frame for landscape safe area
-            CGRect bounds = surface.bounds;
-            bounds.origin.x += safeAreaInsets.left;
-            bounds.size.width -= (safeAreaInsets.left + safeAreaInsets.right);
-            surface.frame = bounds;
+        /// Only update frame if it's actually different to avoid refresh loops
+        CGRect newFrame = CGRectMake(safeAreaInsets.left,
+                                   safeAreaInsets.top,
+                                   availableWidth,
+                                   availableHeight);
+        
+        if (!CGRectEqualToRect(surface.frame, newFrame)) {
+            surface.frame = newFrame;
         }
 
         emu_window->OrientationChanged(orientation == UIDeviceOrientationPortrait, (__bridge CA::MetalLayer*)surface);
