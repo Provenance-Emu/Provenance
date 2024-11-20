@@ -16,7 +16,7 @@ import PVCoreBridgeRetro
 @objcMembers
 open class PVFlycastEmuCore: PVEmulatorCore {
 
-    let _bridge: PVFlycastEmuCoreBridge = .init()
+    let _bridge: PVFlycastCoreBridge = .init()
     
     public required init() {
         super.init()
@@ -25,6 +25,14 @@ open class PVFlycastEmuCore: PVEmulatorCore {
 }
 
 extension PVFlycastEmuCore: PVDreamcastSystemResponderClient {
+    public func didMoveJoystick(_ button: PVCoreBridge.PVDreamcastButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVDreamcastSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+    }
+    
+    public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVDreamcastSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+    }
+    
     public func didPush(_ button: PVCoreBridge.PVDreamcastButton, forPlayer player: Int) {
         (_bridge as! PVDreamcastSystemResponderClient).didPush(button, forPlayer: player)
     }
@@ -36,12 +44,12 @@ extension PVFlycastEmuCore: PVDreamcastSystemResponderClient {
     public var requiresKeyboard: Bool { false }
 #if canImport(GameController)
 //    @objc optional var keyChangedHandler: GCKeyboardValueChangedHandler? { _bridge.keyChangedHandler }
-    public func keyDown(_ key: GCKeyCode) {
-        (_bridge as! PVDreamcastSystemResponderClient).keyDown(key)
-    }
-    public func keyUp(_ key: GCKeyCode) {
-        (_bridge as! PVDreamcastSystemResponderClient).keyUp(key)
-    }
+//    public func keyDown(_ key: GCKeyCode) {
+//        (_bridge as! PVDreamcastSystemResponderClient).keyDown(key)
+//    }
+//    public func keyUp(_ key: GCKeyCode) {
+//        (_bridge as! PVDreamcastSystemResponderClient).keyUp(key)
+//    }
 #endif
 }
 

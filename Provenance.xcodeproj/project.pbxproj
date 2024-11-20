@@ -620,6 +620,8 @@
 		B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38FB4B22CBEF961006786C6 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B392B3DE2CCC592600B1C760 /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B392B3DD2CCC592600B1C760 /* PVFlycast.framework */; platformFilters = (ios, maccatalyst, ); };
+		B392B3DF2CCC592600B1C760 /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B392B3DD2CCC592600B1C760 /* PVFlycast.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B392B3E22CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B392B3E12CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic */; };
 		B39342142CC57837008AA673 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B39342132CC57837008AA673 /* MoltenVK */; };
 		B39343992CC5C432008AA673 /* MoltenVK-Catalyst in Frameworks */ = {isa = PBXBuildFile; platformFilter = maccatalyst; productRef = B39343982CC5C432008AA673 /* MoltenVK-Catalyst */; };
