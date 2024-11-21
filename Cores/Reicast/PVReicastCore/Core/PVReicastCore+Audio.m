@@ -22,4 +22,15 @@
     return sampleRate;
 }
 
+// In PVReicast implementation
+- (NSUInteger)audioBufferSize
+{
+    // Use a larger buffer in interpreter mode to handle timing variations
+    #ifdef TARGET_NO_REC
+    return 4096; // Larger buffer for interpreter mode
+    #else
+    return 2048; // Normal buffer size for JIT mode
+    #endif
+}
+
 @end

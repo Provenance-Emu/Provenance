@@ -12,6 +12,8 @@
 
 @import PVCoreBridge;
 @import PVLoggingObjC;
+@import PVCoreAudio;
+@import PVAudio;
 
 #include "oslib/audiobackend_coreaudio.h"
 
@@ -77,59 +79,32 @@ static void coreaudio_term()
 
 static u32 coreaudio_push(void* frame, u32 samples, bool wait)
 {
-#if CALLBACK_VERSION == 0
-    return 1;
-#endif
-
     GET_CURRENT_OR_RETURN(1);
-
-    OERingBuffer *rb = [current ringBufferAtIndex:0];
-
-    if (rb == nil) {
-            //        ELOG(@"Ring buffer was nil!");
-        return 1;
-    }
-
+    
     if (current.isEmulationPaused) {
-        CALOG("Paused, clearing ring buffer.");
-        TPCircularBufferClear(&rb->buffer);
         return 1;
     }
-
-#if USE_DIRECTSOUND_THING
-    u16* f=(u16*)frame;
-
-    bool w= false;
-
-    for (u32 i = 0; i < samples*2; i++) {
-        if (f[i]) {
-            w = true;
-            break;
-        }
+    
+    // Get the ring buffer
+    id<RingBufferProtocol> rb = [current ringBufferAtIndex:0];
+    if (!rb) {
+        return 1;
     }
-
-    wait &= w;
-#endif
-
-        // Fill the buffer and wait for it to empty
-#if CALLBACK_VERSION == 1
-    return coreaudio_push1(frame, samples, wait);
-#elif CALLBACK_VERSION == 2
-    return coreaudio_push2(frame, samples, wait);
-#elif CALLBACK_VERSION == 3
-        // Faster, stutters
-    return coreaudio_push3(frame, samples, wait);
-#elif CALLBACK_VERSION == 4
-    return coreaudio_push4(frame, samples, wait);
-#elif CALLBACK_VERSION == 5
-    return coreaudio_push5(frame, samples, wait);
-#elif CALLBACK_VERSION == 6
-    return coreaudio_push6(frame, samples, wait);
-#elif CALLBACK_VERSION == 7
-    return coreaudio_push7(frame, samples, wait);
-#elif CALLBACK_VERSION == 8
-    return coreaudio_push8(frame, samples, wait);
-#endif
+    
+    // Calculate how many samples we should actually write based on available space
+    NSInteger availSpace = rb.availableBytesForWriting;
+    u32 sampleSize = sizeof(s16) * 2; // 16-bit stereo
+    u32 maxSamples = availSpace / sampleSize;
+    
+    // If we don't have enough space, only write what we can
+    u32 samplesToWrite = MIN(samples, maxSamples);
+    
+    if (samplesToWrite > 0) {
+        // Write the samples to the ring buffer
+        [rb write:frame size:samplesToWrite * sampleSize];
+    }
+    
+    return 1;
 }
 
 #pragma mark - Callback Variations
