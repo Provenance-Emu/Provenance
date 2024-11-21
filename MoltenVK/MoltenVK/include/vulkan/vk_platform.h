@@ -12,8 +12,8 @@
 #define VK_PLATFORM_H_
 
 #ifdef __cplusplus
-extern "C"
-{
+//extern "C"
+//{
 #endif // __cplusplus
 
 /*
@@ -78,7 +78,7 @@ extern "C"
 #endif // !defined(VK_NO_STDINT_H)
 
 #ifdef __cplusplus
-} // extern "C"
+//} // extern "C"
 #endif // __cplusplus
 
 #endif
