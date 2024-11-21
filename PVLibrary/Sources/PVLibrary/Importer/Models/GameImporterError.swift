@@ -32,10 +32,10 @@ public enum GameImporterError: Error, Sendable {
             return "Unsupported System"
         case .systemNotDetermined:
             return "Failed to determine system"
-        case .failedToMoveCDROM(_):
-            return "Failed to move CDROM files"
-        case .failedToMoveROM(_):
-            return "Failed to move ROM files"
+        case .failedToMoveCDROM(let error):
+            return "Failed to move CDROM files: \(error.localizedDescription)"
+        case .failedToMoveROM(let error):
+            return "Failed to move ROM files: \(error.localizedDescription)"
         case .unsupportedFile:
             return "Unsupported File type"
         case .noBIOSMatchForBIOSFileType:
