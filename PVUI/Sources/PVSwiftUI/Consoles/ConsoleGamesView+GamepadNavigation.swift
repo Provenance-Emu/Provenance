@@ -124,6 +124,7 @@ extension ConsoleGamesView {
     }
 
     internal func currentSectionForGame(_ game: PVGame) -> HomeSectionType {
+        guard !game.isInvalidated else { return .allGames }
         // If we're in favorites section, ONLY return favorites if the game is actually in favorites
         if gamesViewModel.focusedSection == .favorites {
             return gamesViewModel.favorites.contains(where: { $0.id == game.id }) ? .favorites : .allGames

@@ -8,7 +8,10 @@
 import SwiftUI
 
 internal struct SystemMoveState: Identifiable {
-    var id: String { game.id }
+    var id: String {
+        guard !game.isInvalidated else { return "" }
+        return game.id
+    }
     let game: PVGame
     var isPresenting: Bool = true
 }

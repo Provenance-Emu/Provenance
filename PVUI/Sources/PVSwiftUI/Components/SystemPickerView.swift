@@ -19,29 +19,34 @@ struct SystemPickerView: View {
     @Binding var isPresented: Bool
 
     private var availableSystems: [PVSystem] {
-        PVEmulatorConfiguration.systems.filter { $0.identifier != game.systemIdentifier }
+        PVEmulatorConfiguration.systems.filter {
+            $0.identifier != game.systemIdentifier &&
+            !(AppState.shared.isAppStore && $0.appStoreDisabled)
+        }
     }
 
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(availableSystems) { system in
-                    Button {
-                        moveGame(to: system)
-                        isPresented = false
-                    } label: {
-                        SystemRowView(system: system)
+        if !availableSystems.isEmpty {
+            NavigationView {
+                List {
+                    ForEach(availableSystems) { system in
+                        Button {
+                            moveGame(to: system)
+                            isPresented = false
+                        } label: {
+                            SystemRowView(system: system)
+                        }
                     }
                 }
+                .navigationTitle("Select System")
+                .navigationBarItems(trailing: Button("Cancel") {
+                    isPresented = false
+                })
+            }.onAppear {
+                DLOG("Loading systems for game: \(game.title)")
+                let systemsList = PVEmulatorConfiguration.systems.map{ $0.identifier }.joined(separator: ", ")
+                ILOG("Systemslist: \(systemsList)")
             }
-            .navigationTitle("Select System")
-            .navigationBarItems(trailing: Button("Cancel") {
-                isPresented = false
-            })
-        }.onAppear {
-            DLOG("Loading systems for game: \(game.title)")
-            let systemsList = PVEmulatorConfiguration.systems.map{ $0.identifier }.joined(separator: ", ")
-            ILOG("Systemslist: \(systemsList)")
         }
     }
 

@@ -420,6 +420,7 @@ private struct ContinueItemWrapper: View {
                 }
             },
             isFocused: {
+                guard !saveState.isInvalidated else { return false }
                 let shouldShowFocus = gamepadManager.isControllerConnected
                 let isFocused = parentFocusedSection == .recentSaveStates &&
                                parentFocusedItem == saveState.id

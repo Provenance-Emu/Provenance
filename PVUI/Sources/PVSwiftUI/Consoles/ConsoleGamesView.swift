@@ -171,16 +171,8 @@ struct ConsoleGamesView: SwiftUI.View {
         !gamesViewModel.favorites.filter("systemIdentifier == %@", console.identifier).isEmpty
     }
 
-    private var favoritesArray: [PVGame] {
-        Array(gamesViewModel.favorites.filter("systemIdentifier == %@", console.identifier))
-    }
-
     private var hasRecentlyPlayedGames: Bool {
         !gamesViewModel.recentlyPlayedGames.isEmpty
-    }
-
-    private var recentlyPlayedGamesArray: [PVGame] {
-        gamesViewModel.recentlyPlayedGames.compactMap { $0.game }
     }
 
     private func loadGame(_ game: PVGame) {
@@ -211,8 +203,10 @@ struct ConsoleGamesView: SwiftUI.View {
                     constrainHeight: false,
                     sectionContext: .allGames,
                     isFocused: Binding(
-                        get: { gamesViewModel.focusedItemInSection == game.id },
-                        set: { if $0 { gamesViewModel.focusedItemInSection = game.id } }
+                        get: { !game.isInvalidated &&
+                            gamesViewModel.focusedSection == .allGames &&
+                            gamesViewModel.focusedItemInSection == game.id },
+                        set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
                     )
                 ) {
                     Task.detached { @MainActor in
@@ -238,11 +232,12 @@ struct ConsoleGamesView: SwiftUI.View {
                         sectionContext: .allGames,
                         isFocused: Binding(
                             get: {
+                                !game.isInvalidated &&
                                 gamesViewModel.focusedSection == .allGames &&
                                 gamesViewModel.focusedItemInSection == game.id
                             },
                             set: {
-                                if $0 {
+                                if $0 && !game.isInvalidated {
                                     gamesViewModel.focusedSection = .allGames
                                     gamesViewModel.focusedItemInSection = game.id
                                 }
@@ -276,8 +271,12 @@ struct ConsoleGamesView: SwiftUI.View {
                     viewType: .row,
                     sectionContext: .allGames,
                     isFocused: Binding(
-                        get: { gamesViewModel.focusedItemInSection == game.id },
-                        set: { if $0 { gamesViewModel.focusedItemInSection = game.id } }
+                        get: {
+                            !game.isInvalidated &&
+                            gamesViewModel.focusedSection == .allGames &&
+                            gamesViewModel.focusedItemInSection == game.id
+                        },
+                        set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
                     )
                 ) {
                     Task.detached { @MainActor in
@@ -300,8 +299,11 @@ struct ConsoleGamesView: SwiftUI.View {
                     viewType: .row,
                     sectionContext: .allGames,
                     isFocused: Binding(
-                        get: { gamesViewModel.focusedItemInSection == game.id },
-                        set: { if $0 { gamesViewModel.focusedItemInSection = game.id } }
+                        get: {
+                            !game.isInvalidated &&
+                            gamesViewModel.focusedSection == .allGames &&
+                            gamesViewModel.focusedItemInSection == game.id },
+                        set: { if $0 && !game.isInvalidated { gamesViewModel.focusedItemInSection = game.id} }
                     ))
                 {
                     loadGame(game)
@@ -495,66 +497,74 @@ extension ConsoleGamesView {
 
     @ViewBuilder
     private func gameItem(_ game: PVGame, section: HomeSectionType) -> some View {
-        GameItemView(
-            game: game,
-            constrainHeight: true,
-            viewType: .cell,
-            sectionContext: section,
-            isFocused: Binding(
-                get: {
-                    gamesViewModel.focusedSection == section &&
-                    gamesViewModel.focusedItemInSection == game.id
-                },
-                set: {
-                    if $0 {
-                        gamesViewModel.focusedSection = section
-                        gamesViewModel.focusedItemInSection = game.id
-                    }
-                }
-            )
-        ) {
-            Task.detached { @MainActor in
-                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
-            }
-        }
-        .id(game.id)
-        .focusableIfAvailable()
-        .contextMenu {
-            GameContextMenu(
+        if !game.isInvalidated {
+            
+            GameItemView(
                 game: game,
-                rootDelegate: rootDelegate,
-                contextMenuDelegate: self
-            )
+                constrainHeight: true,
+                viewType: .cell,
+                sectionContext: section,
+                isFocused: Binding(
+                    get: {
+                        !game.isInvalidated &&
+                        gamesViewModel.focusedSection == section &&
+                        gamesViewModel.focusedItemInSection == game.id
+                    },
+                    set: {
+                        if $0 && !game.isInvalidated {
+                            gamesViewModel.focusedSection = section
+                            gamesViewModel.focusedItemInSection = game.id
+                        }
+                    }
+                )
+            ) {
+                Task.detached { @MainActor in
+                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                }
+            }
+            .id(game.id)
+            .focusableIfAvailable()
+            .contextMenu {
+                GameContextMenu(
+                    game: game,
+                    rootDelegate: rootDelegate,
+                    contextMenuDelegate: self
+                )
+            }
         }
     }
 
     @ViewBuilder
     private func saveStateItem(_ saveState: PVSaveState) -> some View {
-        GameItemView(
-            game: saveState.game,
-            saveState: saveState,
-            constrainHeight: true,
-            viewType: .cell,
-            sectionContext: .recentSaveStates,
-            isFocused: Binding(
-                get: {
-                    gamesViewModel.focusedSection == .recentSaveStates &&
-                    gamesViewModel.focusedItemInSection == saveState.id
-                },
-                set: {
-                    if $0 {
-                        gamesViewModel.focusedSection = .recentSaveStates
-                        gamesViewModel.focusedItemInSection = saveState.id
+        if !saveState.isInvalidated && !saveState.game.isInvalidated {
+            GameItemView(
+                game: saveState.game,
+                saveState: saveState,
+                constrainHeight: true,
+                viewType: .cell,
+                sectionContext: .recentSaveStates,
+                isFocused: Binding(
+                    get: {
+                        !saveState.isInvalidated &&
+                        gamesViewModel.focusedSection == .recentSaveStates &&
+                        gamesViewModel.focusedItemInSection == saveState.id
+                    },
+                    set: {
+                        if $0 && !saveState.isInvalidated {
+                            gamesViewModel.focusedSection = .recentSaveStates
+                            gamesViewModel.focusedItemInSection = saveState.id
+                        }
                     }
+                )
+            ) {
+                Task.detached { @MainActor in
+                    guard !saveState.isInvalidated, !saveState.game.isInvalidated else { return }
+                    await rootDelegate?.root_load(saveState.game, sender: self, core: saveState.core, saveState: saveState)
                 }
-            )
-        ) {
-            Task.detached { @MainActor in
-                await rootDelegate?.root_load(saveState.game, sender: self, core: saveState.core, saveState: saveState)
             }
+            .id(saveState.id)
+            .focusableIfAvailable()
         }
-        .id(saveState.id)
-        .focusableIfAvailable()
     }
 }
 

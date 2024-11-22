@@ -31,6 +31,10 @@ public extension PVGame {
 
 #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
     var spotlightContentSet: CSSearchableItemAttributeSet {
+        guard !isInvalidated else {
+            return CSSearchableItemAttributeSet()
+        }
+        
             let systemName = self.systemName
 
             var description = "\(systemName ?? "")"
@@ -90,11 +94,13 @@ public extension PVGame {
         }
 
     var spotlightUniqueIdentifier: String {
+            guard !self.isInvalidated else { return "invalid" }
             return "org.provenance-emu.game.\(md5Hash)"
         }
     #endif
 
     var spotlightActivity: NSUserActivity {
+        guard !self.isInvalidated else { return NSUserActivity() }
         let activity = NSUserActivity(activityType: "org.provenance-emu.game.play")
         activity.title = title
         activity.userInfo = ["md5": md5Hash]

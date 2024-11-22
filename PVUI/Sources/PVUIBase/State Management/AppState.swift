@@ -251,6 +251,10 @@ struct TimeoutError: Error {
 @available(iOS 9.0, macOS 11.0, macCatalyst 11.0, *)
 extension PVGame {
     func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
+        guard !isInvalidated else {
+            return UIApplicationShortcutItem(type: "kInvalidatedShortcut", localizedTitle: "Invalidated", localizedSubtitle: "Game is no longer valid", icon: .init(type: .play), userInfo: [:])
+        }
+
         let icon: UIApplicationShortcutIcon = isFavorite ? .init(type: .favorite) : .init(type: .play)
         return UIApplicationShortcutItem(type: "kRecentGameShortcut",
                                          localizedTitle: title,

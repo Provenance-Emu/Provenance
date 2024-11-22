@@ -206,29 +206,32 @@ struct HomeView: SwiftUI.View {
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
-                GameItemView(
-                    game: game,
-                    constrainHeight: false,
-                    viewType: .cell,
-                    sectionContext: .allGames,
-                    isFocused: Binding(
-                        get: {
-                            focusedSection == .allGames &&
-                            focusedItemInSection == game.id
-                        },
-                        set: {
-                            if $0 {
-                                focusedSection = .allGames
-                                focusedItemInSection = game.id
+                if !game.isInvalidated {
+                    GameItemView(
+                        game: game,
+                        constrainHeight: false,
+                        viewType: .cell,
+                        sectionContext: .allGames,
+                        isFocused: Binding(
+                            get: {
+                                !game.isInvalidated &&
+                                focusedSection == .allGames &&
+                                focusedItemInSection == game.id
+                            },
+                            set: {
+                                if $0 {
+                                    focusedSection = .allGames
+                                    focusedItemInSection = game.id
+                                }
                             }
+                        )
+                    ) {
+                        Task.detached { @MainActor in
+                            await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                         }
-                    )
-                ) {
-                    Task.detached { @MainActor in
-                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                     }
+                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                 }
-                .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
             }
         }
     }
@@ -259,6 +262,7 @@ struct HomeView: SwiftUI.View {
             sectionContext: .allGames,
             isFocused: Binding(
                 get: {
+                    !game.isInvalidated &&
                     focusedSection == .allGames &&
                     focusedItemInSection == game.id
                 },
@@ -526,6 +530,7 @@ struct HomeView: SwiftUI.View {
                         sectionContext: .recentlyPlayedGames,
                         isFocused: Binding(
                             get: {
+                                !game.isInvalidated &&
                                 focusedSection == .recentlyPlayedGames &&
                                 focusedItemInSection == game.id
                             },
@@ -561,6 +566,7 @@ struct HomeView: SwiftUI.View {
                         sectionContext: .favorites,
                         isFocused: Binding(
                             get: {
+                                !favorite.isInvalidated &&
                                 focusedSection == .favorites &&
                                 focusedItemInSection == favorite.id
                             },
@@ -595,6 +601,7 @@ struct HomeView: SwiftUI.View {
                     sectionContext: .mostPlayed,
                     isFocused: Binding(
                         get: {
+                            !playedGame.isInvalidated &&
                             focusedSection == .mostPlayed &&
                             focusedItemInSection == playedGame.id
                         },

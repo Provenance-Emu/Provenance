@@ -79,11 +79,15 @@ struct GameContextMenu: SwiftUI.View {
                 } label: { Label("Move to System", systemImage: "folder.fill.badge.plus") }
                 if #available(iOS 15, tvOS 15, macOS 12, *) {
                     Button(role: .destructive) {
-                        rootDelegate?.attemptToDelete(game: game)
+                        Task.detached { @MainActor in
+                            rootDelegate?.attemptToDelete(game: game)
+                        }
                     } label: { Label("Delete", systemImage: "trash") }
                 } else {
                     Button {
-                        rootDelegate?.attemptToDelete(game: game)
+                        Task.detached { @MainActor in
+                            rootDelegate?.attemptToDelete(game: game)
+                        }
                     } label: { Label("Delete", systemImage: "trash") }
                 }
             }
@@ -94,6 +98,7 @@ struct GameContextMenu: SwiftUI.View {
 extension GameContextMenu {
 
     func showMoreInfo(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
         let moreInfoCollectionVC = GameMoreInfoViewController(game: game)
         if let rootDelegate = rootDelegate as? UIViewController {
 
@@ -108,6 +113,7 @@ extension GameContextMenu {
     }
 
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
         // Get the MD5 of the game
         let md5 = game.md5
         // Copy to pasteboard
@@ -119,6 +125,7 @@ extension GameContextMenu {
     }
 
     func pasteArtwork(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
         #if !os(tvOS)
         DLOG("Attempting to paste artwork for game: \(game.title)")
         let pasteboard = UIPasteboard.general
@@ -157,8 +164,15 @@ extension GameContextMenu {
     }
 
     func share(game: PVGame) {
+        guard !game.isInvalidated else { return }
+        #if !os(tvOS)
+        DLOG("Attempting to share game: \(game.title)")
         #warning("TODO: Share button action")
         self.rootDelegate?.showUnderConstructionAlert()
+        #else
+        DLOG("Sharing not supported on this platform")
+        rootDelegate?.showMessage("Sharing is not supported on this platform.", title: "Not Supported")
+        #endif
     }
 
     private func saveArtwork(image: UIImage, forGame game: PVGame) {
@@ -201,6 +215,7 @@ extension GameContextMenu {
     }
 
     private func clearCustomArtwork(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
         DLOG("GameContextMenu: Attempting to clear custom artwork for game: \(game.title)")
         do {
             try RomDatabase.sharedInstance.writeTransaction {
@@ -218,6 +233,7 @@ extension GameContextMenu {
     }
     
     private func resetCorePreferences(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
         let hasGamePreference = game.userPreferredCoreID != nil
         let hasSystemPreference = game.system.userPreferredCoreID != nil
         
