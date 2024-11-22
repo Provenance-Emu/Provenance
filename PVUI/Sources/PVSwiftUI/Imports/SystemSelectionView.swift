@@ -13,7 +13,9 @@ struct SystemSelectionView: View {
     
     var body: some View {
         List {
-            ForEach(item.systems, id: \.self) { system in
+            ForEach(item.systems.sorted(by: { a, b in
+                return a.name <= b.name
+            }), id: \.self) { system in
                 Button(action: {
                     // Set the chosen system and update the status
                     item.userChosenSystem = system
