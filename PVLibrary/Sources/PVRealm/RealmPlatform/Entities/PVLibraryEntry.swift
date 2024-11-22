@@ -75,7 +75,7 @@ public protocol PVGameLibraryEntry: PVLibraryEntry {
        dynamic var referenceURL: String? { get }
        dynamic var releaseID: String? { get  }
        dynamic var regionName: String? { get }
-       var regionID: RealmProperty<Int?> { get }
+       var regionID: Int? { get }
        dynamic var systemShortName: String? { get }
        dynamic var language: String? { get }
 

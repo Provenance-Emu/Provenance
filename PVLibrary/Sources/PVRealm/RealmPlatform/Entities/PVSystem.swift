@@ -34,27 +34,27 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     
     public typealias BIOSInfoProviderType = PVBIOS
 
-    public dynamic var name: String = ""
-    public dynamic var shortName: String = ""
-    public dynamic var shortNameAlt: String?
-    public dynamic var manufacturer: String = ""
-    public dynamic var releaseYear: Int = 0
-    public dynamic var bit: Int = 0
+    @Persisted(indexed: true) public var name: String = ""
+    @Persisted public var shortName: String = ""
+    @Persisted public var shortNameAlt: String?
+    @Persisted public var manufacturer: String = ""
+    @Persisted public var releaseYear: Int = 0
+    @Persisted public var bit: Int = 0
     public var bits: SystemBits {
         return SystemBits(rawValue: bit) ?? .unknown
     }
 
-    public dynamic var headerByteSize: Int = 0
-    public dynamic var openvgDatabaseID: Int = 0
-    public dynamic var requiresBIOS: Bool = false
-    public dynamic var usesCDs: Bool = false
-    public dynamic var portableSystem: Bool = false
+    @Persisted public var headerByteSize: Int = 0
+    @Persisted public var openvgDatabaseID: Int = 0
+    @Persisted public var requiresBIOS: Bool = false
+    @Persisted public var usesCDs: Bool = false
+    @Persisted public var portableSystem: Bool = false
 
-    public dynamic var supportsRumble: Bool = false
-    public dynamic var supported: Bool = true
-    public dynamic var appStoreDisabled: Bool = false
+    @Persisted public var supportsRumble: Bool = false
+    @Persisted public var supported: Bool = true
+    @Persisted public var appStoreDisabled: Bool = false
 
-    public dynamic var _screenType: String = ScreenType.unknown.rawValue
+    @Persisted public var _screenType: String = ScreenType.unknown.rawValue
 
     public var options: SystemOptions {
         var systemOptions = [SystemOptions]()
@@ -65,7 +65,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
         return SystemOptions(systemOptions)
     }
 
-    public private(set) var supportedExtensions = List<String>()
+    @Persisted public private(set) var supportedExtensions: List<String>
 
     public var BIOSes: [PVBIOS]? {
         return Array(bioses)
@@ -76,9 +76,9 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     }
 
     // Reverse Links
-    public private(set) var bioses = LinkingObjects(fromType: PVBIOS.self, property: "system")
-    public private(set) var games = LinkingObjects(fromType: PVGame.self, property: "system")
-    public private(set) var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
+    @Persisted(originProperty: "system") public private(set) var bioses: LinkingObjects<PVBIOS>
+    @Persisted(originProperty: "system") public private(set) var games: LinkingObjects<PVGame>
+    @Persisted(originProperty: "supportedSystems") public private(set) var cores: LinkingObjects<PVCore>
 
     public lazy var gameStructs: () -> [Game] = { [self] in
         games.map( { Game(withGame: $0) } )
@@ -98,18 +98,14 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
         return Core(with: preferredCore)
     }
 
-    public dynamic var userPreferredCoreID: String?
+    @Persisted public var userPreferredCoreID: String?
 
-    public dynamic var identifier: String = ""
-
-    public override static func primaryKey() -> String? {
-        return "identifier"
-    }
+    @Persisted(primaryKey: true) public var identifier: String = ""
 
     // Hack to store controller layout because I don't want to make
     // all the complex objects it would require. Just store the plist dictionary data
 
-    internal dynamic var controlLayoutData: Data?
+    @Persisted internal dynamic var controlLayoutData: Data?
     public var controllerLayout: [ControlLayoutEntry]? {
         get {
             guard let controlLayoutData = controlLayoutData else {

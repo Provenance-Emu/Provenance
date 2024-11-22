@@ -283,8 +283,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             game.regionName = regionName
         }
         
-        if let regionID = gameDBRecordInfo["regionID"] as? Int, forceRefresh || game.regionID.value == nil {
-            game.regionID.value = regionID
+        if let regionID = gameDBRecordInfo["regionID"] as? Int, forceRefresh || game.regionID == nil {
+            game.regionID = regionID
         }
         
         if let gameDescription = gameDBRecordInfo["gameDescription"] as? String, !gameDescription.isEmpty, forceRefresh || game.gameDescription == nil {

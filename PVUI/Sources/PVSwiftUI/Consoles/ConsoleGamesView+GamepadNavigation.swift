@@ -10,10 +10,10 @@ extension ConsoleGamesView {
 
     internal var availableSections: [HomeSectionType] {
         [
-            (showRecentSaveStates && !gamesViewModel.recentSaveStates.isEmpty) ? .recentSaveStates : nil,
-            (showFavorites && !gamesViewModel.favorites.isEmpty) ? .favorites : nil,
-            (showRecentGames && !gamesViewModel.recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
-            !gamesViewModel.games.isEmpty ? .allGames : nil
+            (showRecentSaveStates && !recentSaveStates.isEmpty) ? .recentSaveStates : nil,
+            (showFavorites && !favorites.isEmpty) ? .favorites : nil,
+            (showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
+            !games.isEmpty ? .allGames : nil
         ].compactMap { $0 }
     }
 
@@ -28,7 +28,7 @@ extension ConsoleGamesView {
 
         switch section {
         case .recentSaveStates:
-            if let saveState = gamesViewModel.recentSaveStates.first(where: { $0.id == itemId }) {
+            if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(
                         saveState.game,
@@ -39,25 +39,25 @@ extension ConsoleGamesView {
                 }
             }
         case .favorites:
-            if let game = gamesViewModel.favorites.first(where: { $0.id == itemId }) {
+            if let game = favorites.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
             }
         case .recentlyPlayedGames:
-            if let recentGame = gamesViewModel.recentlyPlayedGames.first(where: { $0.id == itemId })?.game {
+            if let recentGame = recentlyPlayedGames.first(where: { $0.id == itemId })?.game {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(recentGame, sender: self, core: nil, saveState: nil)
                 }
             }
         case .allGames:
-            if let game = gamesViewModel.games.first(where: { $0.id == itemId }) {
+            if let game = games.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
             }
         case .mostPlayed:
-            if let game = gamesViewModel.mostPlayed.first(where: { $0.id == itemId }) {
+            if let game = mostPlayed.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                 }
@@ -84,7 +84,7 @@ extension ConsoleGamesView {
                     // Moving up to continues section - select last item
                     gamesViewModel.updateFocus(
                         section: nextSection,
-                        item: gamesViewModel.recentSaveStates.last?.id
+                        item: recentSaveStates.last?.id
                     )
                 } else {
                     // Any other section transition - select first item
@@ -127,15 +127,15 @@ extension ConsoleGamesView {
         guard !game.isInvalidated else { return .allGames }
         // If we're in favorites section, ONLY return favorites if the game is actually in favorites
         if gamesViewModel.focusedSection == .favorites {
-            return gamesViewModel.favorites.contains(where: { $0.id == game.id }) ? .favorites : .allGames
+            return favorites.contains(where: { $0.id == game.id }) ? .favorites : .allGames
         }
         // If we're in recently played, ONLY return recently played if the game is actually in recently played
         else if gamesViewModel.focusedSection == .recentlyPlayedGames {
-            return gamesViewModel.recentlyPlayedGames.contains(where: { $0.game?.id == game.id }) ? .recentlyPlayedGames : .allGames
+            return recentlyPlayedGames.contains(where: { $0.game?.id == game.id }) ? .recentlyPlayedGames : .allGames
         }
         // If we're in most played, ONLY return most played if the game is actually in most played
         else if gamesViewModel.focusedSection == .mostPlayed {
-            return gamesViewModel.mostPlayed.contains(where: { $0.id == game.id }) ? .mostPlayed : .allGames
+            return mostPlayed.contains(where: { $0.id == game.id }) ? .mostPlayed : .allGames
         }
         // Default to all games
         else {
@@ -193,7 +193,6 @@ extension ConsoleGamesView {
     private func handleVerticalNavigationWithinSection(_ section: HomeSectionType, direction: Float) {
         switch section {
         case .allGames:
-            let games = Array(gamesViewModel.games)
             if let currentIndex = games.firstIndex(where: { $0.id == gamesViewModel.focusedItemInSection }) {
                 if direction > 0 {
                     // Moving up
@@ -295,15 +294,15 @@ extension ConsoleGamesView {
     private func getItemsForSection(_ section: HomeSectionType) -> [String] {
         switch section {
         case .recentSaveStates:
-            return gamesViewModel.recentSaveStates.map { $0.id }
+            return recentSaveStates.map { $0.id }
         case .favorites:
-            return gamesViewModel.favorites.map { $0.id }
+            return favorites.map { $0.id }
         case .recentlyPlayedGames:
-            return gamesViewModel.recentlyPlayedGames.map { $0.id }
+            return recentlyPlayedGames.map { $0.id }
         case .allGames:
-            return gamesViewModel.games.map { $0.id }
+            return games.map { $0.id }
         case .mostPlayed:
-            return gamesViewModel.mostPlayed.map { $0.id }
+            return mostPlayed.map { $0.id }
         }
     }
 }

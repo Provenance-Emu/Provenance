@@ -15,7 +15,6 @@ import PVThemes
 struct GameItemView: SwiftUI.View {
 
     @ObservedRealmObject var game: PVGame
-    var saveState: PVSaveState?
     var constrainHeight: Bool = false
     var viewType: GameItemViewType = .cell
     /// The section context this GameItemView is being rendered in

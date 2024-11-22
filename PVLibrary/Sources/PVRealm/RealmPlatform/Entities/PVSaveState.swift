@@ -14,16 +14,16 @@ import PVPrimitives
 
 @objcMembers
 public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFileProvider {
-    public dynamic var id = UUID().uuidString
-    public dynamic var game: PVGame!
-    public dynamic var core: PVCore!
-    public dynamic var file: PVFile!
-    public dynamic var date: Date = Date()
-    public dynamic var lastOpened: Date?
-    public dynamic var image: PVImageFile?
-    public dynamic var isAutosave: Bool = false
+    @Persisted(wrappedValue: UUID().uuidString, primaryKey: true) public var id: String
+    @Persisted public var game: PVGame!
+    @Persisted public var core: PVCore!
+    @Persisted public var file: PVFile!
+    @Persisted public var date: Date = Date()
+    @Persisted public var lastOpened: Date?
+    @Persisted public var image: PVImageFile?
+    @Persisted public var isAutosave: Bool = false
 
-    public dynamic var createdWithCoreVersion: String!
+    @Persisted public var createdWithCoreVersion: String!
 
     public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, image: PVImageFile? = nil, isAutosave: Bool = false) {
         self.init()
@@ -37,9 +37,5 @@ public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFil
 
     public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
         return lhs.file.url == rhs.file.url
-    }
-
-    public override static func primaryKey() -> String? {
-        return "id"
     }
 }

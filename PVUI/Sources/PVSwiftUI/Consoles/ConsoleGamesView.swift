@@ -66,6 +66,35 @@ struct ConsoleGamesView: SwiftUI.View {
     @State private var navigationTimer: Timer?
     @State private var initialDelay: TimeInterval = 0.5
     @State private var repeatDelay: TimeInterval = 0.15
+    
+    /// Note: these CANNOT be in a @StateObject
+    @ObservedResults(
+        PVGame.self,
+        filter: NSPredicate(format: "systemIdentifier == %@"),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+    ) var games
+
+    @ObservedResults(
+        PVSaveState.self,
+        filter: NSPredicate(format: "game.systemIdentifier == %@"),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+    ) var recentSaveStates
+
+    @ObservedResults(
+        PVRecentGame.self,
+        filter: NSPredicate(format: "game.systemIdentifier == %@")
+    ) var recentlyPlayedGames
+
+    @ObservedResults(
+        PVGame.self,
+        filter: NSPredicate(format: "isFavorite == true AND systemIdentifier == %@")
+    ) var favorites
+
+    @ObservedResults(
+        PVGame.self,
+        filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0"),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
+    ) var mostPlayed
 
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
@@ -79,6 +108,30 @@ struct ConsoleGamesView: SwiftUI.View {
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
         self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
+        
+        _games = ObservedResults(
+            PVGame.self,
+            filter: NSPredicate(format: "systemIdentifier == %@", console.identifier),
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+        )
+        _recentSaveStates = ObservedResults(
+            PVSaveState.self,
+            filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier),
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+        )
+        _recentlyPlayedGames = ObservedResults(
+            PVRecentGame.self,
+            filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier)
+        )
+        _favorites = ObservedResults(
+            PVGame.self,
+            filter: NSPredicate(format: "isFavorite == true AND systemIdentifier == %@", console.identifier)
+        )
+        _mostPlayed = ObservedResults(
+            PVGame.self,
+            filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0", console.identifier),
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
+        )
     }
 
     var body: some SwiftUI.View {
@@ -164,15 +217,15 @@ struct ConsoleGamesView: SwiftUI.View {
 
     // MARK: - Helper Methods
     private var hasRecentSaveStates: Bool {
-        !gamesViewModel.recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
+        !recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
     }
 
     private var hasFavorites: Bool {
-        !gamesViewModel.favorites.filter("systemIdentifier == %@", console.identifier).isEmpty
+        !favorites.filter("systemIdentifier == %@", console.identifier).isEmpty
     }
 
     private var hasRecentlyPlayedGames: Bool {
-        !gamesViewModel.recentlyPlayedGames.isEmpty
+        !recentlyPlayedGames.isEmpty
     }
 
     private func loadGame(_ game: PVGame) {
@@ -189,7 +242,7 @@ struct ConsoleGamesView: SwiftUI.View {
         if AppState.shared.isSimulator {
             count = max(0,roundedScale )
         } else {
-            count = min(max(0, roundedScale), gamesViewModel.games.count)
+            count = min(max(0, roundedScale), games.count)
         }
         return count
     }
@@ -419,7 +472,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func continueSection() -> some View {
         Group {
-            if showRecentSaveStates && !gamesViewModel.recentSaveStates.isEmpty {
+            if showRecentSaveStates && !recentSaveStates.isEmpty {
                 HomeContinueSection(
                     rootDelegate: rootDelegate,
                     consoleIdentifier: console.identifier,
@@ -440,9 +493,9 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func favoritesSection() -> some View {
         Group {
-            if showFavorites && !gamesViewModel.favorites.isEmpty {
+            if showFavorites && !favorites.isEmpty {
                 HomeSection(title: "Favorites") {
-                    ForEach(gamesViewModel.favorites, id: \.self) { game in
+                    ForEach(favorites, id: \.self) { game in
                         gameItem(game, section: .favorites)
                     }
                 }
@@ -455,9 +508,9 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func recentlyPlayedSection() -> some View {
         Group {
-            if showRecentGames && !gamesViewModel.recentlyPlayedGames.isEmpty {
+            if showRecentGames && !recentlyPlayedGames.isEmpty {
                 HomeSection(title: "Recently Played") {
-                    ForEach(gamesViewModel.recentlyPlayedGames, id: \.self) { recentGame in
+                    ForEach(recentlyPlayedGames, id: \.self) { recentGame in
                         if let game = recentGame.game {
                             gameItem(game, section: .recentlyPlayedGames)
                         }
@@ -472,7 +525,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func gamesSection() -> some View {
         Group {
-            if gamesViewModel.games.filter{!$0.isInvalidated}.isEmpty && AppState.shared.isSimulator {
+            if games.filter{!$0.isInvalidated}.isEmpty && AppState.shared.isSimulator {
                 let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
                 if viewModel.viewGamesAsGrid {
                     showGamesGrid(fakeGames)
@@ -486,9 +539,9 @@ extension ConsoleGamesView {
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
                     if viewModel.viewGamesAsGrid {
-                        showGamesGrid(gamesViewModel.games)
+                        showGamesGrid(games)
                     } else {
-                        showGamesList(gamesViewModel.games)
+                        showGamesList(games)
                     }
                 }
             }
@@ -539,7 +592,6 @@ extension ConsoleGamesView {
         if !saveState.isInvalidated && !saveState.game.isInvalidated {
             GameItemView(
                 game: saveState.game,
-                saveState: saveState,
                 constrainHeight: true,
                 viewType: .cell,
                 sectionContext: .recentSaveStates,

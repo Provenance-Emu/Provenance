@@ -13,15 +13,15 @@ import PVPrimitives
 
 @objcMembers
 public final class PVCore: RealmSwift.Object, Identifiable {
-    public dynamic var identifier: String = ""
-    public dynamic var principleClass: String = ""
-    public var supportedSystems = List<PVSystem>()
+    @Persisted(primaryKey: true) public var identifier: String = ""
+    @Persisted public var principleClass: String = ""
+    @Persisted public var supportedSystems: List<PVSystem>
 
-    public dynamic var projectName = ""
-    public dynamic var projectURL = ""
-    public dynamic var projectVersion = ""
-    public dynamic var disabled = false
-    public dynamic var appStoreDisabled = false
+    @Persisted public var projectName = ""
+    @Persisted public var projectURL = ""
+    @Persisted public var projectVersion = ""
+    @Persisted public var disabled = false
+    @Persisted public var appStoreDisabled = false
 
     public var hasCoreClass: Bool {
         let _class: AnyClass? = NSClassFromString(principleClass)
@@ -30,7 +30,7 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     }
 
     // Reverse links
-    public var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")
+    @Persisted(originProperty: "core") public var saveStates: LinkingObjects<PVSaveState>
 
     public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false, appStoreDisabled: Bool = false) {
         self.init()
@@ -43,10 +43,6 @@ public final class PVCore: RealmSwift.Object, Identifiable {
         projectVersion = version
         self.disabled = disabled
         self.appStoreDisabled = appStoreDisabled
-    }
-
-    public override static func primaryKey() -> String? {
-        return "identifier"
     }
 
     public override class func ignoredProperties() -> [String] {

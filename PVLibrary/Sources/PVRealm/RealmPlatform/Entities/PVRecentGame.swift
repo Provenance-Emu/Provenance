@@ -11,14 +11,10 @@ import RealmSwift
 
 @objcMembers public final class PVRecentGame: Object, Identifiable, PVRecentGameLibraryEntry {
     
-    public dynamic var id :String = NSUUID().uuidString
-    public dynamic var game: PVGame!
-    public dynamic var lastPlayedDate: Date = Date()
-    public dynamic var core: PVCore?
-
-    public override static func indexedProperties() -> [String] {
-        return ["lastPlayedDate"]
-    }
+    @Persisted(wrappedValue: UUID().uuidString) public var id: String
+    @Persisted public var game: PVGame!
+    @Persisted(wrappedValue: Date(), indexed: true) public var lastPlayedDate: Date
+    @Persisted public var core: PVCore?
 
     public convenience init(withGame game: PVGame, core: PVCore? = nil) {
         self.init()
