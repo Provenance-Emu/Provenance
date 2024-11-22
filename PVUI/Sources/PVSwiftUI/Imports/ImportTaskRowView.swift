@@ -54,6 +54,12 @@ struct ImportTaskRowView: View {
                             .font(.subheadline)
                             .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     }
+                    
+                    if item.status == .failure, let errorText = item.errorValue {
+                        Text("Error Detail: \(errorText)")
+                            .font(.subheadline)
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    }
 
                 }
 

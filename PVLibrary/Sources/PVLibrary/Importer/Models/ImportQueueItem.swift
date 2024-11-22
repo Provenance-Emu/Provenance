@@ -61,6 +61,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public var systems: [PVSystem]  // Can be set to the specific system type
     public var userChosenSystem: PVSystem?
     public var destinationUrl: URL?
+    public var errorValue: String?
     
     //this is used when a single import has child items - e.g., m3u, cue, directory
     public var childQueueItems:[ImportQueueItem]
