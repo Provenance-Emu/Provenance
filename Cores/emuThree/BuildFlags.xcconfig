@@ -3,7 +3,28 @@
 
 // All
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
-OTHER_CFLAGS = $(inherited) -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fpermissive -fsingle-precision-constant -DTARGET_NO_NIXPROF
+OTHER_CFLAGS = $(inherited) -DTARGET_NO_NIXPROF
+OTHER_CFLAGS = $(inherited) -ffast-math
+OTHER_CFLAGS = $(inherited) -fno-strict-aliasing
+OTHER_CFLAGS = $(inherited) -fpermissive
+OTHER_CFLAGS = $(inherited) -frename-registers
+OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
+OTHER_CFLAGS = $(inherited) -ftree-vectorize
+
+// Experimental
+OTHER_CFLAGS = $(inherited) -Wl,--gc-sections
+//OTHER_CFLAGS = $(inherited) -fdata-sections
+//OTHER_CFLAGS = $(inherited) -ffunction-sections
+//OTHER_CFLAGS = $(inherited) -finline-functions
+//OTHER_CFLAGS = $(inherited) -finline-limit=1000
+//OTHER_CFLAGS = $(inherited) -flto=thin
+OTHER_CFLAGS = $(inherited) -fomit-frame-pointer
+//OTHER_CFLAGS = $(inherited) -fstrict-aliasing
+OTHER_CFLAGS = $(inherited) -funsafe-math-optimizations
+OTHER_CFLAGS = $(inherited) -fvectorize
+OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
+OTHER_CFLAGS = $(inherited) -mcpu=apple-a15
+
 //OTHER_CPPFLAGS = $(inherited) -fmodules -fcxx-modules
 OTHER_LDFLAGS = $(inherited) -ObjC -DIPHONEOS
 
