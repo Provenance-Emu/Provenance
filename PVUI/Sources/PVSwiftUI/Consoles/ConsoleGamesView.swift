@@ -112,12 +112,12 @@ struct ConsoleGamesView: SwiftUI.View {
         _games = ObservedResults(
             PVGame.self,
             filter: NSPredicate(format: "systemIdentifier == %@", console.identifier),
-            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)
         )
         _recentSaveStates = ObservedResults(
             PVSaveState.self,
             filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier),
-            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: viewModel.sortGamesAscending)
         )
         _recentlyPlayedGames = ObservedResults(
             PVRecentGame.self,
@@ -130,7 +130,7 @@ struct ConsoleGamesView: SwiftUI.View {
         _mostPlayed = ObservedResults(
             PVGame.self,
             filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0", console.identifier),
-            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: viewModel.sortGamesAscending)
         )
     }
 
