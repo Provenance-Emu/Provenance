@@ -83,6 +83,19 @@ _My personal TODO notes_
 - [ ] PVFreeIntV
 - [ ] PVfMSX
 
+### Retroarch cores to add
+
+- holani
+    >>> Holani is a cycle-stepped Atari Lynx video game system emulator that can be used as a libretro core. Holani's primary goal is to get closer to the Lynx hardware and provide a better emulation experience.
+    https://docs.libretro.com/library/holani/#background
+- puae & puea 2021
+    Amiga
+    https://docs.libretro.com/library/puae/
+- bsnes-hd-beta
+- neocd
+    https://docs.libretro.com/library/neocd/
+- melondsds
+
 --------------------------------------
 
 ## AppStore Review
