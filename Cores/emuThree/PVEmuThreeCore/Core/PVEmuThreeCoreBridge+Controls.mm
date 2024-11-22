@@ -1,7 +1,7 @@
 //  PVEmuThreeCore+Controls.m
 //  Copyright © 2023 Provenance. All rights reserved.
 
-#import <PVEmuThree/PVEmuThreeCoreBridge.h>
+#import "PVEmuThreeCoreBridge+Controls.h"
 #import <Foundation/Foundation.h>
 
 #import "../emuThree/InputBridge.h"

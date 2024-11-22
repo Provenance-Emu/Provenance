@@ -2,7 +2,6 @@
 //  Copyright © 2023 Provenance. All rights reserved.
 
 #import "PVEmuThreeCoreBridge+Video.h"
-#import "PVEmuThreeCoreBridge.h"
 
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>

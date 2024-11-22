@@ -2,7 +2,6 @@
 //  Copyright © 2023 Provenance. All rights reserved.
 
 #import "PVEmuThreeCoreBridge+Saves.h"
-#import "PVEmuThreeCoreBridge.h"
 #import "../emuThree/CitraWrapper.h"
 
 extern bool _isInitialized;
