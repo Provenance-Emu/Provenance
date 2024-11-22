@@ -33,35 +33,40 @@ struct GameItemView: SwiftUI.View {
     }
 
     var body: some SwiftUI.View {
-        Button {
-            action()
-        } label: {
-            switch viewType {
-            case .cell:
-                GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
-            case .row:
-                GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
+        if !game.isInvalidated {
+            Button {
+                action()
+            } label: {
+                switch viewType {
+                case .cell:
+                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
+                case .row:
+                    GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
+                }
             }
+            .onAppear {
+                updateArtwork()
+            }
+            .onChange(of: game.trueArtworkURL) { _ in
+                updateArtwork()
+            }
+            .scaleEffect(shouldShowFocus ? 1.05 : 1.0)
+            .brightness(shouldShowFocus ? 0.1 : 0)
+    #if os(tvOS)
+            .shadow(color: shouldShowFocus ? .white.opacity(0.5) : .clear, radius: shouldShowFocus ? 10 : 0)
+    #endif
+            .overlay(
+                Rectangle()
+                    .stroke(shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : .clear, lineWidth: 2)
+            )
+            .animation(.easeInOut(duration: 0.15), value: shouldShowFocus)
         }
-        .onAppear {
-            updateArtwork()
-        }
-        .onChange(of: game.trueArtworkURL) { _ in
-            updateArtwork()
-        }
-        .scaleEffect(shouldShowFocus ? 1.05 : 1.0)
-        .brightness(shouldShowFocus ? 0.1 : 0)
-#if os(tvOS)
-        .shadow(color: shouldShowFocus ? .white.opacity(0.5) : .clear, radius: shouldShowFocus ? 10 : 0)
-#endif
-        .overlay(
-            Rectangle()
-                .stroke(shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : .clear, lineWidth: 2)
-        )
-        .animation(.easeInOut(duration: 0.15), value: shouldShowFocus)
     }
 
     private func updateArtwork() {
+        guard !game.isInvalidated else {
+            return
+        }
         PVMediaCache.shareInstance().image(forKey: game.trueArtworkURL, completion: { _, image in
             Task { @MainActor in
                 self.artwork = image
