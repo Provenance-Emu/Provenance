@@ -7,13 +7,28 @@
 //
 
 // All
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) REICAST_VERSION=15.0 TARGET_NO_WEBUI=1 TARGET_NO_REC=1 GLES=1 NO_ASM=1
-OTHER_CFLAGS = $(inherited) -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant -fmodules -fcxx-modules
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) REICAST_VERSION=15.0 TARGET_NO_WEBUI=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) TARGET_NO_REC=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) TARGET_NO_AREC=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) TARGET_NO_JIT=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) NO_ASM=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HOST_CPU=0x20000002 // CPU_ARM
+
+OTHER_CFLAGS = $(inherited) -fno-operator-names
+OTHER_CFLAGS = $(inherited) -fno-rtti
+OTHER_CFLAGS = $(inherited) -ffast-math
+OTHER_CFLAGS = $(inherited) -ftree-vectorize
+OTHER_CFLAGS = $(inherited) -fno-strict-aliasing
+OTHER_CFLAGS = $(inherited) -frename-registers
+OTHER_CFLAGS = $(inherited) -fno-rtti
+OTHER_CFLAGS = $(inherited) -fpermissive
+OTHER_CFLAGS = $(inherited) -fno-operator-names
+OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
+OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules
 
 // MacOS Catalyst
 GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) TARGET_OSX=1
 OTHER_CFLAGS[sdk=macosx*] = $(inherited)
-
 
     // Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1 GLES=1
