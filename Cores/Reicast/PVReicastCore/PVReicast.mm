@@ -3,7 +3,7 @@
 //  PVReicast
 //
 //  Created by Joseph Mattiello on 11/1/18.
-//  Copyright © 2018 Provenance. All rights reserved.
+//  Copyright 2018 Provenance. All rights reserved.
 //
 
 #import "PVReicastCore.h"
@@ -41,6 +41,9 @@
 #include "hw/sh4/dyna/blockmanager.h"
 #include <unistd.h>
 
+@import OpenGLES;
+@import PVLoggingObjC;
+
 void move_pthread_to_realtime_scheduling_class(pthread_t pthread)
 {
     mach_timebase_info_data_t timebase_info;
@@ -67,6 +70,7 @@ void move_pthread_to_realtime_scheduling_class(pthread_t pthread)
 
 void MakeCurrentThreadRealTime()
 {
+    ILOG(@"[Reicast] MakeCurrentThreadRealTime");
     move_pthread_to_realtime_scheduling_class(pthread_self());
 }
 
@@ -82,7 +86,7 @@ int msgboxf(const wchar* text,unsigned int type,...)
     va_end(args);
 
         //printf(NULL,temp,VER_SHORTNAME,type | MB_TASKMODAL);
-    NSLog(@"%s", temp);
+    ILOG(@"[Reicast] %s", temp);
     return 0;
 }
 
@@ -94,13 +98,19 @@ int darw_printf(const wchar* text,...) {
     vsprintf(temp, text, args);
     va_end(args);
 
-    NSLog(@"%s", temp);
+    ILOG(@"[Reicast] %s", temp);
 
     return 0;
 }
 
 #pragma mark C Lifecycle calls
 void os_DoEvents() {
+#if DEBUG
+    static int eventNumber = 0;
+    ILOG(@"[Reicast] os_DoEvents %i", eventNumber);
+    eventNumber++;
+#endif
+    
     GET_CURRENT_OR_RETURN();
     [current videoInterrupt];
         ////
@@ -115,15 +125,17 @@ void os_DoEvents() {
 }
 
 u32  os_Push(void*, u32, bool) {
+    ILOG(@"[Reicast] os_Push:");
+
     return 1;
 }
 
 void os_SetWindowText(const char* t) {
-    NSLog(@"WindowText: %s", t);
+    ILOG(@"[Reicast] WindowText: %s", t);
 }
 
 void os_CreateWindow() {
-
+    ILOG(@"[Reicast] os_CreateWindow");
 }
 
 void os_SetupInput() {
@@ -136,31 +148,41 @@ void UpdateInputState(u32 port) {
 }
 
 void UpdateVibration(u32 port, u32 value) {
-
+    ILOG(@"[Reicast] UpdateVibration %i %i", port, value);
 }
 
 int get_mic_data(unsigned char* ) {
     return 0;
 }
 
+bool gles_init() {
+    ILOG(@"[Reicast] GLES init");
+    // Skip buffer clearing since we're using Metal
+    return true;
+}
+
 void* libPvr_GetRenderTarget() {
+    ILOG(@"[Reicast] Getting render target");
     return 0;
 }
 
 void* libPvr_GetRenderSurface() {
+    ILOG(@"[Reicast] Getting render surface");
     return 0;
-
 }
 
 bool gl_init(void*, void*) {
+    ILOG(@"[Reicast] gl_init");
     return true;
 }
 
 void gl_term() {
-
+    ILOG(@"[Reicast] gl_term");
 }
 
 void gl_swap() {
+    ILOG(@"[Reicast] gl_swap");
+
     GET_CURRENT_OR_RETURN();
     [current swapBuffers];
 }
