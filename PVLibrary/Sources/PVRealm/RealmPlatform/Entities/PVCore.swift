@@ -21,7 +21,8 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     public dynamic var projectURL = ""
     public dynamic var projectVersion = ""
     public dynamic var disabled = false
-    
+    public dynamic var appStoreDisabled = false
+
     public var hasCoreClass: Bool {
         let _class: AnyClass? = NSClassFromString(principleClass)
         DLOG("Class: \(String(describing: _class)) for \(principleClass)")
@@ -31,7 +32,7 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     // Reverse links
     public var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")
 
-    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false) {
+    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false, appStoreDisabled: Bool = false) {
         self.init()
         self.identifier = identifier
         self.principleClass = principleClass
@@ -41,6 +42,7 @@ public final class PVCore: RealmSwift.Object, Identifiable {
         projectURL = url
         projectVersion = version
         self.disabled = disabled
+        self.appStoreDisabled = appStoreDisabled
     }
 
     public override static func primaryKey() -> String? {

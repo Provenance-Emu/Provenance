@@ -1560,6 +1560,8 @@
 		<false/>
 		<key>PVRequiresBIOS</key>
 		<true/>
+		<key>PVAppStoreDisabled</key>
+		<true/>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
@@ -5858,6 +5860,8 @@
 		<key>PVDatabaseID</key>
 		<string>-1</string>
 		<key>PVRequiresBIOS</key>
+		<true/>
+		<key>PVAppStoreDisabled</key>
 		<true/>
 		<key>PVBIOSNames</key>
 		<array>

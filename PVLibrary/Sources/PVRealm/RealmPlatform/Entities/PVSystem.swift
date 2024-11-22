@@ -52,6 +52,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
 
     public dynamic var supportsRumble: Bool = false
     public dynamic var supported: Bool = true
+    public dynamic var appStoreDisabled: Bool = false
 
     public dynamic var _screenType: String = ScreenType.unknown.rawValue
 

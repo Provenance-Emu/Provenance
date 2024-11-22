@@ -13,13 +13,14 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
     public let PVProjectURL: String
     public let PVProjectVersion: String
     public let PVDisabled: Bool?
+    public let PVAppStoreDisabled: Bool?
     public let PVCores: [CorePlistEntry]? // SubCoreEntry
 }
 
 public extension CorePlistEntry {
     init(_ plist: EmulatorCoreInfoPlist) {
         let subCores = plist.subCores?.map { CorePlistEntry($0) }
-        self.init(PVCoreIdentifier: plist.identifier, PVPrincipleClass: plist.principleClass, PVSupportedSystems: plist.supportedSystems, PVProjectName: plist.projectName, PVProjectURL: plist.projectURL, PVProjectVersion: plist.projectVersion, PVDisabled: plist.disabled, PVCores: subCores)
+        self.init(PVCoreIdentifier: plist.identifier, PVPrincipleClass: plist.principleClass, PVSupportedSystems: plist.supportedSystems, PVProjectName: plist.projectName, PVProjectURL: plist.projectURL, PVProjectVersion: plist.projectVersion, PVDisabled: plist.disabled, PVAppStoreDisabled: plist.appStoreDisabled, PVCores: subCores)
     }
 }
 

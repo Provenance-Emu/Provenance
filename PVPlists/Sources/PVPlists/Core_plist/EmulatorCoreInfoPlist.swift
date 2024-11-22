@@ -20,9 +20,10 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     public let projectURL: String
     public let projectVersion: String
     public let disabled: Bool
+    public let appStoreDisabled: Bool
     public let subCores:  [EmulatorCoreInfoPlist]?
 
-    public init(identifier: String, principleClass: String, supportedSystems: [String], projectName: String, projectURL: String, projectVersion: String, disabled: Bool = false, subCores: [EmulatorCoreInfoPlist]? = nil) {
+    public init(identifier: String, principleClass: String, supportedSystems: [String], projectName: String, projectURL: String, projectVersion: String, disabled: Bool = false, appStoreDisabled: Bool = false, subCores: [EmulatorCoreInfoPlist]? = nil) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.supportedSystems = supportedSystems
@@ -30,6 +31,7 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.projectURL = projectURL
         self.projectVersion = projectVersion
         self.disabled = disabled
+        self.appStoreDisabled = appStoreDisabled
         self.subCores = subCores
     }
 
@@ -71,8 +73,10 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.projectVersion = projectVersion
 
         /// Disabled
-        /// Project Version
         self.disabled = dict["PVDisabled"] as? Bool ?? false
+
+        /// AppStore Disabled
+        self.appStoreDisabled = dict["PVAppStoreDisabled"] as? Bool ?? false
 
         /// Subcores
         if let subCores = dict["PVCores"] as? [[String:Any]] {
@@ -103,19 +107,20 @@ public extension EmulatorCoreInfoPlist {
     convenience init(_ corePlistEntry: CorePlistEntry) {
         let e = corePlistEntry
         let subCores = corePlistEntry.PVCores?.map { EmulatorCoreInfoPlist($0) }
-        self.init(identifier: e.PVCoreIdentifier, principleClass: e.PVPrincipleClass, supportedSystems: e.PVSupportedSystems, projectName: e.PVProjectName, projectURL: e.PVProjectURL, projectVersion: e.PVProjectVersion, disabled: e.PVDisabled ?? false, subCores: subCores)
+        self.init(identifier: e.PVCoreIdentifier, principleClass: e.PVPrincipleClass, supportedSystems: e.PVSupportedSystems, projectName: e.PVProjectName, projectURL: e.PVProjectURL, projectVersion: e.PVProjectVersion, disabled: e.PVDisabled ?? false, appStoreDisabled: e.PVAppStoreDisabled ?? false, subCores: subCores)
     }
 }
 
 func ==(lhs: EmulatorCoreInfoPlist, rhs: CorePlistEntry) -> Bool {
     let subCores: [EmulatorCoreInfoPlist]? = rhs.PVCores?.map { EmulatorCoreInfoPlist($0) }
 
-    return lhs.identifier == rhs.PVCoreIdentifier &&
-    lhs.principleClass == rhs.PVPrincipleClass &&
-    lhs.supportedSystems == rhs.PVSupportedSystems &&
-    lhs.projectName == rhs.PVProjectName &&
-    lhs.projectURL == rhs.PVProjectURL &&
-    lhs.projectVersion == rhs.PVProjectVersion &&
-    lhs.disabled == rhs.PVDisabled
+    return lhs.identifier == rhs.PVCoreIdentifier
+    && lhs.principleClass == rhs.PVPrincipleClass
+    && lhs.supportedSystems == rhs.PVSupportedSystems
+    && lhs.projectName == rhs.PVProjectName
+    && lhs.projectURL == rhs.PVProjectURL
+    && lhs.projectVersion == rhs.PVProjectVersion
+    && lhs.disabled == rhs.PVDisabled
+    && lhs.appStoreDisabled == rhs.PVAppStoreDisabled
     && lhs.subCores == subCores
 }

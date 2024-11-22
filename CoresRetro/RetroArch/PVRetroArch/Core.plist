@@ -129,6 +129,8 @@
 			<string>https://www.gryphel.com/c/minivmac/</string>
 			<key>PVProjectVersion</key>
 			<string>36.04</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -398,6 +400,8 @@
 			<string>https://docs.libretro.com/development/cores/core-specific/mame/</string>
 			<key>PVProjectVersion</key>
 			<string>v0.258</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>

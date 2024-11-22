@@ -23,7 +23,8 @@ public struct SystemDictionaryKeys {
     public static let SupportsRumble = "PVSupportsRumble"
     public static let ScreenType = "PVScreenType"
     public static let Portable = "PVPortable"
-
+    public static let AppStoreDisabled = "PVAppStoreDisabled"
+    
     public struct ControllerLayoutKeys {
         public static let Button = "PVButton"
         public static let ButtonGroup = "PVButtonGroup"
