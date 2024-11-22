@@ -263,11 +263,13 @@ static void InitializeLogging() {
 }
 
 -(void) resetController {
-    auto hid = Service::HID::GetModule(core.GetInstance());
-    Settings::values.isReloading.SetValue(false);
-    if (core.GetInstance().IsPoweredOn() && hid) {
-        hid->ReloadInputDevices();
-    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01* NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
+        auto hid = Service::HID::GetModule(core.GetInstance());
+        Settings::values.isReloading.SetValue(false);
+        if (core.GetInstance().IsPoweredOn() && hid) {
+            hid->ReloadInputDevices();
+        }
+    });
 }
 
 -(void) rotate:(BOOL)rotate {
