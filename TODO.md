@@ -87,6 +87,11 @@ _My personal TODO notes_
 
 ## AppStore Review
 
+- [ ] Update screenshots without copyright material
+- [ ] Remove apple referecnces from app description
+- [ ] Custom build without certain cores
+    - Anything apple
+
 - [X] Screenshots
 - [X] Remove "beta" text
 
