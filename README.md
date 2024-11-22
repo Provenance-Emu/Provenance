@@ -535,7 +535,7 @@ Provenance would not be possible without the great work of those who came before
         <a href="https://github.com/rf2222222">
             <img src="https://avatars.githubusercontent.com/u/6903427?v=4" width="100;" alt="rf2222222"/>
             <br />
-            <sub><b>Richard</b></sub>
+            <sub><b>Richard</b></sub> 
         </a>
     </td></tr>
 </table>

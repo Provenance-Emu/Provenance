@@ -1273,6 +1273,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 93E74212295B67C70028EB94 /* Build configuration list for PBXNativeTarget "PVPPSSPP" */;
 			buildPhases = (
+				9383100B2CEF6C7200DF2BBC /* ShellScript */,
 				93E741E7295B67C70028EB94 /* Sources */,
 				93E741F3295B67C70028EB94 /* Frameworks */,
 				93E74206295B67C70028EB94 /* Headers */,
@@ -1722,6 +1723,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#Use 1.3.250.1 libMoltenVK in ${SRCROOT}/lib instead\ncp \"${SRCROOT}/lib/libMoltenVK_1.3.250.1.dylib\" \"${SRCROOT}/lib/libMoltenVK_PPSSPP.dylib\"\n#cp \"${SRCROOT}/libretro_ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib\" \"${SRCROOT}/lib/libMoltenVK_PPSSPP.dylib\"\n";
+		};
+		9383100B2CEF6C7200DF2BBC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${SRCROOT}\"\ncd libretro_ppsspp\ntar -xvf ../update.tar\n\n";
 		};
 		93CD1E252A59AEC500DE2A5C /* Copy Libretro PPSSPP */ = {
 			isa = PBXShellScriptBuildPhase;

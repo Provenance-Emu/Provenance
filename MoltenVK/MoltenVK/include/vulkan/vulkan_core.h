@@ -14,7 +14,7 @@
 
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 
@@ -17205,7 +17205,7 @@ VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksIndirectCountEXT(
 #endif
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif
