@@ -216,7 +216,7 @@
 		B318E28C2CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2852CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework */; };
 		B318E28D2CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2852CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E28F2CAB51EE00D0E599 /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E28E2CAB51EE00D0E599 /* PVEmuThree.framework */; };
-		B318E2902CAB51EE00D0E599 /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E28E2CAB51EE00D0E599 /* PVEmuThree.framework */; platformFilters = (maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B318E2902CAB51EE00D0E599 /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E28E2CAB51EE00D0E599 /* PVEmuThree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E2952CAB571100D0E599 /* PVBliss-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B318E2942CAB571100D0E599 /* PVBliss-Dynamic */; };
 		B318E2962CAB571100D0E599 /* PVBliss-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B318E2942CAB571100D0E599 /* PVBliss-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B318E29A2CAB586800D0E599 /* snes9x.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2992CAB586800D0E599 /* snes9x.framework */; };
@@ -5479,12 +5479,13 @@
 			);
 			name = "Script: Get retroarch modules";
 			outputFileListPaths = (
+				"$(SRCROOT)/CoresRetro/RetroArch/scripts/output_modules_appstore_tv.xcfilelist",
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\" -appstore\n";
 		};
 		B35B17932CCCE42A007059CA /* Script: Generate Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5632,13 +5633,13 @@
 			);
 			name = "Script: Get RetroArch Modules";
 			outputFileListPaths = (
-				"$(SRCROOT)/CoresRetro/RetroArch/scripts/output_modules.xcfilelist",
+				"$(SRCROOT)/CoresRetro/RetroArch/scripts/output_modules_appstore_ios.xcfilelist",
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\" -appstore\n";
 		};
 		B3E31E2A21562154005FF394 /* Fastlane setup code signing */ = {
 			isa = PBXShellScriptBuildPhase;
