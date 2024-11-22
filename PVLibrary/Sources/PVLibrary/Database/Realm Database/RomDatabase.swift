@@ -655,9 +655,9 @@ public extension RomDatabase {
         } catch {
             // Delete the DB entry anyway if any of the above files couldn't be removed
             do { try game.delete() } catch {
-                NSLog("\(error.localizedDescription)")
+                ELOG("\(error.localizedDescription)")
             }
-            NSLog("\(error.localizedDescription)")
+            ELOG("\(error.localizedDescription)")
         }
     }
 
