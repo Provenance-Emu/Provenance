@@ -17,7 +17,7 @@ OTHER_CFLAGS = $(inherited) -Wl,--gc-sections
 //OTHER_CFLAGS = $(inherited) -ffunction-sections
 //OTHER_CFLAGS = $(inherited) -finline-functions
 //OTHER_CFLAGS = $(inherited) -finline-limit=1000
-//OTHER_CFLAGS = $(inherited) -flto=thin
+OTHER_CFLAGS = $(inherited) -flto=thin
 OTHER_CFLAGS = $(inherited) -fomit-frame-pointer
 //OTHER_CFLAGS = $(inherited) -fstrict-aliasing
 OTHER_CFLAGS = $(inherited) -funsafe-math-optimizations
