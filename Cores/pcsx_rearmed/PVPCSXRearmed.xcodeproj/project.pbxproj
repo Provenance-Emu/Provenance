@@ -12,9 +12,6 @@
 		B30E99D22C6F044100C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99D12C6F044100C1431E /* PVCoreBridge */; };
 		B30E99D42C6F044600C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99D32C6F044600C1431E /* PVCoreBridge */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
-		B3136452296FF27800C34FED /* linkage_arm64.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1892872967500EAEB37 /* linkage_arm64.S */; };
-		B3136453296FF2BE00C34FED /* new_dynarec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1922872967500EAEB37 /* new_dynarec.c */; };
-		B3136454296FF67D00C34FED /* pcsxmem.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA18F2872967500EAEB37 /* pcsxmem.c */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
@@ -36,7 +33,6 @@
 		B38E0EF228928A1D004720DA /* file_stream_transforms.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2572872967600EAEB37 /* file_stream_transforms.c */; };
 		B38E0EFE28928AB3004720DA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA13E2872967500EAEB37 /* main.c */; };
 		B38E0F0328928AD8004720DA /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1522872967500EAEB37 /* plugin.c */; };
-		B38E0F1328929345004720DA /* emu_if.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA18E2872967500EAEB37 /* emu_if.c */; };
 		B3918FE82873EF6B000838F6 /* gte.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19E2872967500EAEB37 /* gte.c */; };
 		B3918FE92873EF6B000838F6 /* ppf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1AA2872967500EAEB37 /* ppf.c */; };
 		B3918FEA2873EF6B000838F6 /* cdriso.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1682872967500EAEB37 /* cdriso.c */; };
@@ -95,6 +91,7 @@
 		B3AFCF882977A75000A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF872977A75000A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3DF7A472CF15999006B9777 /* emu_if.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA18E2872967500EAEB37 /* emu_if.c */; };
 		B3F8E0E22CB3B48800017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0E12CB3B48800017D1B /* PVCoreObjCBridge */; };
 		B3F8E0E52CB3B51500017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0E42CB3B51500017D1B /* PVPlists */; };
 		B3F8E0E82CB3B66100017D1B /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0E72CB3B66100017D1B /* PVCoreBridgeRetro.framework */; };
@@ -2481,9 +2478,9 @@
 				B391903B2873F0AF000838F6 /* dma.c in Sources */,
 				B39190012873EF6B000838F6 /* mdec.c in Sources */,
 				B3918FED2873EF6B000838F6 /* gte_divider.c in Sources */,
-				B3136452296FF27800C34FED /* linkage_arm64.S in Sources */,
 				B39190532873F1A7000838F6 /* Alloc.c in Sources */,
 				B3918FEA2873EF6B000838F6 /* cdriso.c in Sources */,
+				B3DF7A472CF15999006B9777 /* emu_if.c in Sources */,
 				B391903A2873F0AF000838F6 /* reverb.c in Sources */,
 				B3918FF72873EF6B000838F6 /* misc.c in Sources */,
 				B3918FFF2873EF6B000838F6 /* spu.c in Sources */,
@@ -2494,13 +2491,11 @@
 				B391903E2873F0AF000838F6 /* spu.c in Sources */,
 				B38E0EFE28928AB3004720DA /* main.c in Sources */,
 				B39190672873F1C0000838F6 /* libchdr_bitstream.c in Sources */,
-				B38E0F1328929345004720DA /* emu_if.c in Sources */,
 				B3918FFA2873EF6B000838F6 /* psxinterpreter.c in Sources */,
 				B39190522873F1A7000838F6 /* Lzma86Dec.c in Sources */,
 				B391903D2873F0AF000838F6 /* xa.c in Sources */,
 				B3918FF22873EF6B000838F6 /* plugins.c in Sources */,
 				B3918FF82873EF6B000838F6 /* psxhle.c in Sources */,
-				B3136454296FF67D00C34FED /* pcsxmem.c in Sources */,
 				B39190422873F0AF000838F6 /* freeze.c in Sources */,
 				B3918FF62873EF6B000838F6 /* psxcommon.c in Sources */,
 				B391905A2873F1A7000838F6 /* Sort.c in Sources */,
@@ -2511,7 +2506,6 @@
 				B3918FEF2873EF6B000838F6 /* psxmem.c in Sources */,
 				B39190582873F1A7000838F6 /* LzmaDec.c in Sources */,
 				B3918FEB2873EF6B000838F6 /* sio.c in Sources */,
-				B3136453296FF2BE00C34FED /* new_dynarec.c in Sources */,
 				B3918FF52873EF6B000838F6 /* cheat.c in Sources */,
 				B39190022873EF6B000838F6 /* r3000a.c in Sources */,
 				B3918FE92873EF6B000838F6 /* ppf.c in Sources */,
