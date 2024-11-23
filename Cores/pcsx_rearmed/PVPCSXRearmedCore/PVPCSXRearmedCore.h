@@ -18,7 +18,11 @@
 @protocol PVPSXSystemResponderClient;
 
 __attribute__((visibility("default")))
+#if GPU_NEON // Neon GPU Plugin
 @interface PVPCSXRearmedCoreBridge : PVLibRetroGLESCoreBridge <PVPSXSystemResponderClient> {
+#else // GLES GPU Plugin
+@interface PVPCSXRearmedCoreBridge : PVLibRetroGLESCoreBridge <PVPSXSystemResponderClient> {
+#endif
 //	uint8_t padData[4][PVDOSButtonCount];
 //	int8_t xAxis[4];
 //	int8_t yAxis[4];
