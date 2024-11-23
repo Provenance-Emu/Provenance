@@ -95,7 +95,6 @@
 		B3DABBE22CF1763300147D06 /* gpulib_if.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2222872967600EAEB37 /* gpulib_if.cpp */; };
 		B3DABBF62CF17A0500147D06 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3DABBF52CF17A0500147D06 /* PVCoreObjCBridge */; };
 		B3DABBFC2CF17F6E00147D06 /* gpulib_if.m in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1BA2872967500EAEB37 /* gpulib_if.m */; };
-		B3DABBFD2CF180CF00147D06 /* libgpulib-unai.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DABBED2CF1763300147D06 /* libgpulib-unai.a */; };
 		B3DABBFE2CF1820B00147D06 /* libgpulib-gles.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DABBAD2CF16F2D00147D06 /* libgpulib-gles.a */; };
 		B3DF7A472CF15999006B9777 /* emu_if.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA18E2872967500EAEB37 /* emu_if.c */; };
 		B3DF7A492CF15DE8006B9777 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DF7A482CF15DE8006B9777 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
@@ -992,7 +991,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3DABBFD2CF180CF00147D06 /* libgpulib-unai.a in Frameworks */,
 				B3DABBF62CF17A0500147D06 /* PVCoreObjCBridge in Frameworks */,
 				B3DABBA72CF16F2D00147D06 /* OpenGLES.framework in Frameworks */,
 			);

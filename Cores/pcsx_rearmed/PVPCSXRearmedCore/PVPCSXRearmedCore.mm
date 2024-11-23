@@ -137,33 +137,34 @@
 //    return CGSizeMake(1440, 1080);
 //}
 
-//- (GLenum)pixelFormat {
-//    return GL_BGRA;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_RGB565 ;// GL_UNSIGNED_SHORT_5_6_5;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    return GL_RGBA;
-//}
-
 - (GLenum)pixelFormat {
-    return GL_RGB565;
+    return GL_BGRA;
 }
 
 - (GLenum)pixelType {
-    return GL_UNSIGNED_SHORT_5_6_5;
+//    return GL_RGB565 ;
+     GL_UNSIGNED_SHORT_5_6_5;
 }
 
 - (GLenum)internalPixelFormat {
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-    return GL_RGB565;
-#else
-    return GL_UNSIGNED_SHORT_5_6_5;
-#endif
+    return GL_RGBA;
 }
+
+//- (GLenum)pixelFormat {
+//    return GL_RGB565;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_SHORT_5_6_5;
+//}
+//
+//- (GLenum)internalPixelFormat {
+//#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
+//    return GL_RGB565;
+//#else
+//    return GL_UNSIGNED_SHORT_5_6_5;
+//#endif
+//}
 
 
 #if GPU_NEON
@@ -171,6 +172,8 @@
 #else
 - (BOOL)rendersToOpenGL { return YES; }
 #endif
+
+- (BOOL)isDoubleBuffered { return YES; }
 
 # pragma mark - Audio
 
