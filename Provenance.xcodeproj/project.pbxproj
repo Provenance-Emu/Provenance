@@ -987,8 +987,8 @@
 		B3F8E0372CB38D1400017D1B /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0352CB38D1400017D1B /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F8E0C82CB3996100017D1B /* PVPotator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0C72CB3996100017D1B /* PVPotator.framework */; };
 		B3F8E0C92CB3996200017D1B /* PVPotator.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0C72CB3996100017D1B /* PVPotator.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F8E0F62CB3BA8500017D1B /* PVPCSXRearmed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0F52CB3BA8500017D1B /* PVPCSXRearmed.framework */; platformFilter = maccatalyst; };
-		B3F8E0F72CB3BA8500017D1B /* PVPCSXRearmed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0F52CB3BA8500017D1B /* PVPCSXRearmed.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F8E0F62CB3BA8500017D1B /* PVPCSXRearmed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0F52CB3BA8500017D1B /* PVPCSXRearmed.framework */; };
+		B3F8E0F72CB3BA8500017D1B /* PVPCSXRearmed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0F52CB3BA8500017D1B /* PVPCSXRearmed.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F8E11A2CB3CE4600017D1B /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E1192CB3CE4600017D1B /* PVMelonDS.framework */; };
 		B3F8E11B2CB3CE4600017D1B /* PVMelonDS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E1192CB3CE4600017D1B /* PVMelonDS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F9049E2C1FE9D8002283B3 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F9049D2C1FE9D8002283B3 /* libbz2.tbd */; };
