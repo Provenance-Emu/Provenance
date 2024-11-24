@@ -7,3 +7,6 @@
 - [ ] Add a search bar?
 - [ ] finish the multiple section, add a delete icon
 - [ ] Get rid of the default init for saves, use the view model in previews
+- [ ] Add a sticky header https://github.com/exyte/ScalingHeaderScrollView
+- [ ] Add a toast popup preview, https://github.com/exyte/PopupView
+- [ ] Use daterange picker, https://github.com/MrAsterisco/DateRangePicker
