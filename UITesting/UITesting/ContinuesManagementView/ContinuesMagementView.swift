@@ -215,7 +215,6 @@ public class ContinuesMagementViewModel: ObservableObject {
             .sink { [weak self] states in
                 guard let self = self else { return }
                 self.saveStates = states.map { saveState in
-                    var saveState = saveState
                     saveState.onDelete = { [weak self] in
                         self?.deleteSaveState(saveState)
                     }
@@ -273,7 +272,6 @@ public struct ContinuesMagementView: View {
                 .numberOfSimultaneousColors(2)
                 .setAnimation(.bouncy(duration: 10))
                 .gradientPoints(start: .topTrailing, end: .bottomLeading)
-                .padding(.bottom, 10)
                 .opacity(0.25)
                 ContinuesManagementContentView(viewModel: viewModel)
             }
