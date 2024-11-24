@@ -18,9 +18,12 @@ public extension URL {
 #if os(tvOS)
         return cachesPath
 #else
-//        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-//        return URL(fileURLWithPath: paths.first!, isDirectory: true)
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!.appending(component: "Documents/")
+        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) {
+            return groupURL.appendingPathComponent("Documents/")
+        } else {
+            let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+            return URL(fileURLWithPath: paths.first!, isDirectory: true)
+        }
 #endif
     }()
     
