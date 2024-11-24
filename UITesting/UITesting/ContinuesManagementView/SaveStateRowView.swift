@@ -11,7 +11,7 @@ import PVSwiftUI
 import SwipeCellSUI
 
 /// View model for individual save state rows
-public class SaveStateRowViewModel: ObservableObject, Identifiable {
+public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
     public let id: String
     public let gameID: String
     public let gameTitle: String
@@ -31,6 +31,19 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable {
     
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
+    
+    public static func == (lhs: SaveStateRowViewModel, rhs: SaveStateRowViewModel) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.gameID == rhs.gameID &&
+        lhs.gameTitle == rhs.gameTitle &&
+        lhs.saveDate == rhs.saveDate &&
+        lhs.description == rhs.description &&
+        lhs.isAutoSave == rhs.isAutoSave &&
+        lhs.isPinned == rhs.isPinned &&
+        lhs.isFavorite == rhs.isFavorite &&
+        lhs.isEditing == rhs.isEditing &&
+        lhs.isSelected == rhs.isSelected
+    }
     
     public init(
         id: String = UUID().uuidString,

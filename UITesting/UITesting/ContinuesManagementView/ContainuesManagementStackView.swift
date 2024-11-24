@@ -26,8 +26,13 @@ public struct ContainuesManagementStackView: View {
                             saveState.isEditing = isEditing
                         }
                     }
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .move(edge: .top)),
+                        removal: .opacity.combined(with: .move(edge: .leading))
+                    ))
                 }
             }
+            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewModel.filteredAndSortedSaveStates)
         }
     }
 }
