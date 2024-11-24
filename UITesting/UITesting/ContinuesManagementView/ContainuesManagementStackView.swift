@@ -17,7 +17,7 @@ public struct ContainuesManagementStackView: View {
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(viewModel.saveStates) { saveState in
+                ForEach(viewModel.filteredAndSortedSaveStates) { saveState in
                     SaveStateRowView(
                         viewModel: saveState,
                         currentUserInteractionCellID: $currentUserInteractionCellID

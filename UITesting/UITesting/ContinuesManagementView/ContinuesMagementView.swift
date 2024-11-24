@@ -11,6 +11,7 @@ import PopupView
 import ScalingHeaderScrollView
 import AnimatedGradient
 import PVThemes
+import Combine
 
 
 /// View model for the main continues management view
@@ -24,6 +25,9 @@ public class ContinuesMagementViewModel: ObservableObject {
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
 
+    /// Setup publishers to trigger updates when filters change
+    private var cancellables = Set<AnyCancellable>()
+
     public init(gameTitle: String, systemTitle: String, numberOfSaves: Int, gameSize: Int, gameImage: Image) {
         self.headerViewModel = ContinuesManagementHeaderViewModel(
             gameTitle: gameTitle,
@@ -34,6 +38,51 @@ public class ContinuesMagementViewModel: ObservableObject {
         )
         self.controlsViewModel = ContinuesManagementListControlsViewModel()
         self.saveStates = []
+
+        /// Observe changes to control settings
+        Publishers.CombineLatest3(
+            controlsViewModel.$filterFavoritesOnly,
+            controlsViewModel.$sortAscending,
+            controlsViewModel.$dateRange
+        )
+        .sink { [weak self] _, _, _ in
+            self?.objectWillChange.send()
+        }
+        .store(in: &cancellables)
+    }
+
+    /// Computed property that returns filtered and sorted save states
+    var filteredAndSortedSaveStates: [SaveStateRowViewModel] {
+        var result = saveStates
+
+        /// Apply date range filter if set
+        if let dateRange = controlsViewModel.dateRange {
+            result = result.filter { saveState in
+                let date = saveState.saveDate
+                let isAfterStart = date >= dateRange.start
+                let isBeforeEnd = dateRange.end.map { date <= $0 } ?? true
+                return isAfterStart && isBeforeEnd
+            }
+        }
+
+        /// Apply favorites filter if enabled
+        if controlsViewModel.filterFavoritesOnly {
+            result = result.filter { $0.isFavorite }
+        }
+
+        /// Sort the results
+        result.sort { first, second in
+            /// If both items are pinned or unpinned, sort by date
+            if first.isPinned == second.isPinned {
+                return controlsViewModel.sortAscending ?
+                    first.saveDate < second.saveDate :
+                    first.saveDate > second.saveDate
+            }
+            /// Otherwise, pinned items always come first
+            return first.isPinned
+        }
+
+        return result
     }
 }
 
