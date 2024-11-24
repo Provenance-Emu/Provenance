@@ -232,11 +232,31 @@ public struct ContinuesMagementView: View {
     /// Main view model
     @StateObject private var viewModel: ContinuesMagementViewModel
     @State var showingPopup = false
+    @State private var scrollOffset: CGFloat = 0 {
+        didSet {
+            print("Main View - Scroll offset changed to: \(scrollOffset)")
+        }
+    }
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
 
     public init(viewModel: ContinuesMagementViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    private var headerProgress: CGFloat {
+        let maxOffset: CGFloat = 90 // Point at which header is fully collapsed
+        let progress = min(max(scrollOffset / maxOffset, 0), 1)
+        print("Header progress: \(progress), scroll offset: \(scrollOffset)")
+        return progress
+    }
+
+    private var headerHeight: CGFloat {
+        let minHeight: CGFloat = 70
+        let maxHeight: CGFloat = 160
+        let height = max(minHeight, maxHeight - (maxHeight - minHeight) * headerProgress)
+        print("Header height: \(height)")
+        return height
     }
 
     public var body: some View {
@@ -255,9 +275,10 @@ public struct ContinuesMagementView: View {
                     .padding(.bottom, 10)
                     .opacity(0.25)
 
-                    ContinuesManagementHeaderView(viewModel: viewModel.headerViewModel)
+                    ContinuesManagementHeaderView(viewModel: viewModel.headerViewModel, isCompact: headerProgress > 0.5)
                 }
-                .frame(height: 160)
+                .frame(height: headerHeight)
+                .animation(.interpolatingSpring(stiffness: 100, damping: 15), value: headerHeight)
                 .shadow(radius: 5)
             }
             .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
@@ -273,14 +294,12 @@ public struct ContinuesMagementView: View {
                 .setAnimation(.bouncy(duration: 10))
                 .gradientPoints(start: .topTrailing, end: .bottomLeading)
                 .opacity(0.25)
-                ContinuesManagementContentView(viewModel: viewModel)
+                ContinuesManagementContentView(viewModel: viewModel, scrollOffset: $scrollOffset)
             }
             .background(currentPalette.settingsCellBackground!.swiftUIColor)
             .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
-
         }
         .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
-//        .background(currentPalette.settingsCellBackground!.swiftUIColor)
         .padding()
         .onAppear {
             viewModel.subscribeToDriverPublisher()

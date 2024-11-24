@@ -16,6 +16,10 @@ public class ContinuesManagementHeaderViewModel: ObservableObject {
     @Published var numberOfSaves: Int
     let gameSize: Int
     let gameImage: Image
+    var currentArtwork: Image? { gameImage }
+    var currentGameTitle: String { gameTitle }
+    var lastPlayedDate: String = ""
+    var saveCount: Int { numberOfSaves }
 
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
@@ -32,73 +36,91 @@ public class ContinuesManagementHeaderViewModel: ObservableObject {
 public struct ContinuesManagementHeaderView: View {
     /// View model containing the header data
     @ObservedObject var viewModel: ContinuesManagementHeaderViewModel
+    var isCompact: Bool
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .top, spacing: 20) {
-                viewModel.gameImage
+        HStack(alignment: .center, spacing: 16) {
+            if let artwork = viewModel.currentArtwork {
+                artwork
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100)
-                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                    .frame(width: isCompact ? 40 : 80, height: isCompact ? 40 : 80)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            } else {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: isCompact ? 40 : 80, height: isCompact ? 40 : 80)
+            }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(viewModel.gameTitle)
-                        .font(.title)
-                        .fontWeight(.bold)
+            VStack(alignment: .leading, spacing: isCompact ? 2 : 4) {
+                Text(viewModel.currentGameTitle)
+                    .font(.system(size: isCompact ? 16 : 20, weight: .bold))
+                    .lineLimit(1)
 
-                    Text(viewModel.systemTitle)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                if !isCompact {
+                    Text("Last played: \(viewModel.lastPlayedDate)")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
 
-                    Text("\(viewModel.numberOfSaves) Save States - \(viewModel.gameSize) MB")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    Text("\(viewModel.saveCount) saves")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
+            .animation(.easeInOut(duration: 0.2), value: isCompact)
 
-            Divider()
-                .padding(.top, 20)
+            Spacer()
         }
-        .frame(height: 160) /// Fixed height for the header
+        .padding(.horizontal)
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isCompact)
     }
 }
 
 // MARK: - Previews
 
-#Preview("Normal, Edit, and Auto-save States") {
+#Preview("Normal and Compact States") {
     VStack(spacing: 20) {
         /// Normal mode
         let normalViewModel = ContinuesManagementHeaderViewModel(gameTitle: "Game 1", systemTitle: "System 1", numberOfSaves: 5, gameSize: 100, gameImage: Image("game1"))
-        ContinuesManagementHeaderView(viewModel: normalViewModel)
+        ContinuesManagementHeaderView(viewModel: normalViewModel, isCompact: false)
+            .frame(height: 160)
 
-        /// Edit mode
-        let editViewModel = ContinuesManagementHeaderViewModel(gameTitle: "Game 2", systemTitle: "System 2", numberOfSaves: 10, gameSize: 150, gameImage: Image("game2"))
-        ContinuesManagementHeaderView(viewModel: editViewModel)
-            .onAppear {
-                editViewModel.numberOfSaves = 10
-            }
-
-        /// Auto-saves enabled
-        let autoSaveViewModel = ContinuesManagementHeaderViewModel(gameTitle: "Game 3", systemTitle: "System 3", numberOfSaves: 15, gameSize: 200, gameImage: Image("game3"))
-        ContinuesManagementHeaderView(viewModel: autoSaveViewModel)
-            .onAppear {
-                autoSaveViewModel.numberOfSaves = 15
-            }
+        /// Compact mode
+        ContinuesManagementHeaderView(viewModel: normalViewModel, isCompact: true)
+            .frame(height: 70)
     }
     .padding()
+    .background(Color.gray.opacity(0.2))
 }
 
 #Preview("Dark Mode", traits: .defaultLayout) {
-    ContinuesManagementHeaderView(viewModel: ContinuesManagementHeaderViewModel(gameTitle: "Game 4", systemTitle: "System 4", numberOfSaves: 20, gameSize: 250, gameImage: Image("game4")))
-        .frame(width: 375)
-        .padding()
+    ContinuesManagementHeaderView(
+        viewModel: ContinuesManagementHeaderViewModel(
+            gameTitle: "Game 4",
+            systemTitle: "System 4",
+            numberOfSaves: 20,
+            gameSize: 250,
+            gameImage: Image("game4")
+        ),
+        isCompact: false
+    )
+    .frame(width: 375)
+    .padding()
 }
 
 #Preview("iPad Layout") {
-    ContinuesManagementHeaderView(viewModel: ContinuesManagementHeaderViewModel(gameTitle: "Game 5", systemTitle: "System 5", numberOfSaves: 25, gameSize: 300, gameImage: Image("game5")))
-        .frame(width: 744)
-        .padding()
+    ContinuesManagementHeaderView(
+        viewModel: ContinuesManagementHeaderViewModel(
+            gameTitle: "Game 5",
+            systemTitle: "System 5",
+            numberOfSaves: 25,
+            gameSize: 300,
+            gameImage: Image("game5")
+        ),
+        isCompact: false
+    )
+    .frame(width: 744)
+    .padding()
 }
