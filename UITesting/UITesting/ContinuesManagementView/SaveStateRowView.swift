@@ -68,8 +68,7 @@ public struct SaveStateRowView: View {
             /// Selection button when in edit mode
             if viewModel.isEditing {
                 Toggle("", isOn: $viewModel.isSelected)
-                    .toggleStyle(.button)
-                    .buttonStyle(SelectionButtonStyle())
+                    .toggleStyle(SelectionToggleStyle())
                     .padding(.horizontal)
             }
             
@@ -270,13 +269,17 @@ public struct SaveStateRowView: View {
     }
 }
 
-/// Custom button style for selection toggle
-private struct SelectionButtonStyle: ButtonStyle {
+/// Custom toggle style for selection
+private struct SelectionToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
-        Image(systemName: configuration.isPressed ? "checkmark.circle.fill" : "circle")
-            .font(.system(size: 22))
-            .foregroundColor(configuration.isPressed ? .accentColor : .secondary)
-            .animation(.easeInOut, value: configuration.isPressed)
+        Button(action: {
+            configuration.isOn.toggle()
+        }) {
+            Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
+                .font(.system(size: 22))
+                .foregroundColor(configuration.isOn ? .accentColor : .secondary)
+                .animation(.easeInOut, value: configuration.isOn)
+        }
     }
 }
 
