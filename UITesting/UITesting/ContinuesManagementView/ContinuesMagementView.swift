@@ -209,7 +209,11 @@ struct RoundedCorners: Shape {
 
     sampleSaveStates[2].isFavorite = true  // Third save is favorited
 
+    sampleSaveStates[3].isAutoSave = true  // Fourth save is autosave
+
     sampleSaveStates[4].isPinned = true    // Fifth save is pinned
+    
+    sampleSaveStates[5].isAutoSave = true    // Sixth save is autosave
 
     /// Create view model with sample data
     let sampleViewModel = ContinuesMagementViewModel(

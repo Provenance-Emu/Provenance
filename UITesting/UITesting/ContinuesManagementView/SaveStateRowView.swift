@@ -20,6 +20,8 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable {
     @Published var isEditing: Bool = false
     @Published var isSelected: Bool = false
     @Published var isFavorite: Bool = false
+    @Published var isAutoSave: Bool = false
+
     /// New property for pin state
     @Published var isPinned: Bool = false
 
@@ -77,15 +79,24 @@ public struct SaveStateRowView: View {
                             .multilineTextAlignment(.leading)
                     }
 
-                    Text(viewModel.saveDate.formatted(date: .abbreviated, time: .shortened))
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    HStack(spacing: 4) {
+                        Text(viewModel.saveDate.formatted(date: .abbreviated, time: .shortened))
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        /// Auto-save indicator
+                        if viewModel.isAutoSave {
+                            Image(systemName: "clock.badge.checkmark")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
 
                 Spacer()
 
                 /// Right-side icons
-                HStack(spacing: 16) {
+                HStack(spacing: 16.0) {
                     /// Pin indicator
                     Button {
                         withAnimation(.spring(response: 0.3)) {
@@ -359,9 +370,12 @@ extension View {
     sampleSaveStates[0].isFavorite = true  // First save is favorited
     sampleSaveStates[0].isPinned = true    // and pinned
 
+    sampleSaveStates[1].isAutoSave = true    // Autosave
+
     sampleSaveStates[2].isFavorite = true  // Third save is favorited
 
     sampleSaveStates[4].isPinned = true    // Fifth save is pinned
+    sampleSaveStates[4].isAutoSave = true    // and Autosave
 
     return ScrollView {
         VStack(spacing: 0) {
