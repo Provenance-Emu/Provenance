@@ -8,6 +8,8 @@
 import PVSwiftUI
 import SwiftUI
 import PVThemes
+import DateRangePicker
+import OpenDateInterval
 
 /// View model for the list controls
 public class ContinuesManagementListControlsViewModel: ObservableObject {
@@ -17,12 +19,22 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
     @Published var isEditing: Bool = false
     /// Controls the sort order of the list
     @Published var sortAscending: Bool = true
+    /// Current visible month in the date picker
+    @Published var currentMonth: Int = Calendar.current.component(.month, from: .now)
+    /// Current visible year: Int = Calendar.current.component(.year, from: .now)
+    @Published var currentYear: Int = Calendar.current.component(.year, from: .now)
     /// Date range for filtering
-    @Published var dateRange: ClosedRange<Date>? = nil
+    @Published var dateRange: OpenDateInterval?
+    /// Minimum selectable date
+    @Published var minimumDate: Date?
+    /// Maximum selectable date
+    @Published var maximumDate: Date?
 
-    @ObservedObject private var themeManager = ThemeManager.shared
-    var currentPalette: any UXThemePalette { themeManager.currentPalette }
-
+    /// Shadow color for the controls view
+    var shadowColor: Color {
+        currentPalette.defaultTintColor?.swiftUIColor.opacity(0.1) ?? Color.accentColor.opacity(0.1)
+    }
+    
     var editButtonsBorderColor: Color? {
         currentPalette.defaultTintColor?.swiftUIColor
     }
@@ -33,6 +45,7 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
         currentPalette.switchON?.swiftUIColor.opacity(0.75)
     }
 
+    /// Computed property for edit button title
     var editButtonTitle: String {
         isEditing ? "Done" : "Edit"
     }
@@ -41,12 +54,21 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
         currentPalette.settingsCellBackground?.swiftUIColor ?? Color(uiColor: .systemBackground)
     }
 
-    /// Computed shadow color that can be overridden later
-    var shadowColor: Color {
-        currentPalette.defaultTintColor?.swiftUIColor ?? Color.accentColor.opacity(0.1)
-    }
+    @ObservedObject private var themeManager = ThemeManager.shared
+    var currentPalette: any UXThemePalette { themeManager.currentPalette }
 
-    public init() { }
+    /// Update date bounds based on save states
+    func updateDateBounds(from saveStates: [SaveStateRowViewModel]) {
+        minimumDate = saveStates.map({ $0.saveDate }).min()
+        maximumDate = saveStates.map({ $0.saveDate }).max()
+
+        /// Optionally set initial date range to full range
+        dateRange = minimumDate.flatMap { min in
+            maximumDate.map { max in
+                OpenDateInterval(start: min, end: max)
+            }
+        }
+    }
 }
 
 public struct ContinuesManagementListControlsView: View {
@@ -87,7 +109,7 @@ public struct ContinuesManagementListControlsView: View {
                             /// Will be implemented later
                         }
                         .padding(.horizontal, 12)
-                        
+
                         Divider()
                             .frame(width: 1, height: 24)
                             .padding(.vertical, 4)
@@ -148,12 +170,23 @@ public struct ContinuesManagementListControlsView: View {
             }
         }
         .sheet(isPresented: $showingDatePicker) {
-            /// Date range picker sheet
             NavigationView {
-                DateRangePickerView(dateRange: Binding(
-                    get: { viewModel.dateRange ?? (Date.now...Date.now) },
-                    set: { viewModel.dateRange = $0 }
-                ))
+                DateRangePicker(
+                    month: $viewModel.currentMonth,
+                    year: $viewModel.currentYear,
+                    selection: $viewModel.dateRange,
+                    minimumDate: viewModel.minimumDate,
+                    maximumDate: viewModel.maximumDate
+                )
+                .navigationTitle("Select Date Range")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            showingDatePicker = false
+                        }
+                    }
+                }
             }
         }
     }

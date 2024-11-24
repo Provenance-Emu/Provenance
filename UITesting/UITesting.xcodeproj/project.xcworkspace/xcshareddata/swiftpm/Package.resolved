@@ -47,6 +47,15 @@
       }
     },
     {
+      "identity" : "daterangepicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MrAsterisco/DateRangePicker",
+      "state" : {
+        "revision" : "9fd27bed5a951e7a48e2211465fdfc7e9bf2cbe7",
+        "version" : "1.0.2"
+      }
+    },
+    {
       "identity" : "defaults",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults.git",
@@ -98,6 +107,15 @@
       "state" : {
         "revision" : "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
         "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "opendateinterval",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MrAsterisco/OpenDateInterval",
+      "state" : {
+        "revision" : "acf88f98adae4ef2f7040d3fcc23685b094b219b",
+        "version" : "1.0.0"
       }
     },
     {

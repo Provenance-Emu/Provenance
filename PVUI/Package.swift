@@ -203,7 +203,8 @@ let package = Package(
                 "FloatingButton",
                 "ActivityIndicatorView",
                 "ScalingHeaderScrollView",
-                "SwipeCellSUI"
+                "SwipeCellSUI",
+                "DateRangePicker"
             ]
         ),
         
