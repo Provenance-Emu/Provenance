@@ -65,7 +65,11 @@ let package = Package(
         .package(url: "https://github.com/exyte/PopupView.git", from: "3.1.4"),
         
         /// https://github.com/DominikButz/SwipeCellSUI.git
-        .package(url: "https://github.com/DominikButz/SwipeCellSUI.git", from: "2.1.4")
+        .package(url: "https://github.com/DominikButz/SwipeCellSUI.git", from: "2.1.4"),
+        
+        /// https://github.com/MrAsterisco/DateRangePicker
+        .package(url: "https://github.com/MrAsterisco/DateRangePicker", from: "1.0.2")
+
         
         /// https://swiftpackageindex.com/SvenTiigi/WhatsNewKit
 //        .package(url: "https://github.com/SvenTiigi/WhatsNewKit.git", from: "2.2.1")
