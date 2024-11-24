@@ -229,12 +229,12 @@ public struct ContinuesManagementListControlsView: View {
         }
         .padding()
 //        .background(viewModel.backgroundColor)
-//        .shadow(
-//            color: viewModel.shadowColor,
-//            radius: 8,
-//            x: 0,
-//            y: 4
-//        )
+        .shadow(
+            color: viewModel.shadowColor,
+            radius: 8,
+            x: 0,
+            y: 4
+        )
         .mask {
             /// This mask will clip the shadow on the top
             VStack(spacing: 0) {
@@ -244,7 +244,7 @@ public struct ContinuesManagementListControlsView: View {
 
                 /// Gradient fade for the bottom shadow
                 LinearGradient(
-                    colors: [.black, .clear],
+                    colors: [viewModel.shadowColor, .clear],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -268,36 +268,6 @@ public struct ContinuesManagementListControlsView: View {
                             showingDatePicker = false
                         }
                     }
-                }
-            }
-        }
-    }
-}
-
-/// Helper view for date range selection
-private struct DateRangePickerView: View {
-    @Environment(\.dismiss) private var dismiss
-    @Binding var dateRange: ClosedRange<Date>
-
-    var body: some View {
-        VStack {
-            DatePicker("Start Date", selection: .init(
-                get: { dateRange.lowerBound },
-                set: { dateRange = $0...dateRange.upperBound }
-            ), displayedComponents: .date)
-
-            DatePicker("End Date", selection: .init(
-                get: { dateRange.upperBound },
-                set: { dateRange = dateRange.lowerBound...$0 }
-            ), displayedComponents: .date)
-        }
-        .padding()
-        .navigationTitle("Select Date Range")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Done") {
-                    dismiss()
                 }
             }
         }

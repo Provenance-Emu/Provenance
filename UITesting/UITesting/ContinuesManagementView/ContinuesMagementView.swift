@@ -23,6 +23,11 @@ public class ContinuesMagementViewModel: ObservableObject {
     @Published var controlsViewModel: ContinuesManagementListControlsViewModel
     @Published private(set) var saveStates: [SaveStateRowViewModel] = []
 
+    @ObservedObject private var themeManager = ThemeManager.shared
+    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+
+    var scrollViewScrollIndicatorColor: Color { currentPalette.settingsCellText!.swiftUIColor }
+    
     private let driver: SaveStateDriver
     private var cancellables = Set<AnyCancellable>()
 

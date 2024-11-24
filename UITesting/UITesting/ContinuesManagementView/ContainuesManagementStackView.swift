@@ -34,6 +34,7 @@ public struct ContainuesManagementStackView: View {
             }
             .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewModel.filteredAndSortedSaveStates)
         }
+        .foregroundStyle(viewModel.scrollViewScrollIndicatorColor)
     }
 }
 
