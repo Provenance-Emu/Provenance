@@ -29,12 +29,16 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
     @Published var minimumDate: Date?
     /// Maximum selectable date
     @Published var maximumDate: Date?
+    /// Controls whether to show only favorite items
+    @Published var filterFavoritesOnly: Bool = false
+    /// Optional delete action
+    var onDeleteSelected: (() -> Void)?
 
     /// Shadow color for the controls view
     var shadowColor: Color {
         currentPalette.defaultTintColor?.swiftUIColor.opacity(0.1) ?? Color.accentColor.opacity(0.1)
     }
-    
+
     var editButtonsBorderColor: Color? {
         currentPalette.defaultTintColor?.swiftUIColor
     }
@@ -49,7 +53,7 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
     var editButtonTitle: String {
         isEditing ? "Done" : "Edit"
     }
-    
+
     var backgroundColor: Color {
         currentPalette.settingsCellBackground?.swiftUIColor ?? Color(uiColor: .systemBackground)
     }
@@ -69,6 +73,10 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
             }
         }
     }
+
+    public init(onDeleteSelected: (() -> Void)? = nil) {
+        self.onDeleteSelected = onDeleteSelected
+    }
 }
 
 public struct ContinuesManagementListControlsView: View {
@@ -79,25 +87,70 @@ public struct ContinuesManagementListControlsView: View {
 
     public var body: some View {
         VStack(spacing: 12) {
-            /// Top row with Edit button and Auto-saves toggle
-            HStack() {
-                Button(action: {
-                    viewModel.isEditing.toggle()
-                }) {
-                    Text(viewModel.editButtonTitle)
+            /// Top row with Edit/Done and Delete buttons
+            HStack {
+                HStack(spacing: 16) {
+                    Button(action: {
+                        viewModel.isEditing.toggle()
+                    }) {
+                        Text(viewModel.editButtonTitle)
+                    }
+
+                    if viewModel.isEditing {
+                        Button(action: {
+                            viewModel.onDeleteSelected?()
+                        }) {
+                            Image(systemName: "trash")
+                                .foregroundStyle(.red)
+                        }
+                    }
                 }
 
                 Spacer()
 
-                /// Toggle with attached label
-                Toggle(isOn: $viewModel.isAutoSavesEnabled) {
-                    Text("Auto Saves")
-                        .fontWeight(.thin)
-                        .foregroundColor(viewModel.autoSaveLabelColor)
-                        .multilineTextAlignment(.trailing)
-                        .lineLimit(1)
+                /// Filter buttons (always visible)
+                HStack(spacing: 16) {
+                    /// Favorites filter button
+                    Button {
+                        viewModel.filterFavoritesOnly.toggle()
+                    } label: {
+                        Image(systemName: viewModel.filterFavoritesOnly ? "heart.fill" : "heart")
+                            .foregroundStyle(
+                                viewModel.filterFavoritesOnly ?
+                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
+                                .secondary.opacity(0.5)
+                            )
+                    }
+
+                    /// Auto-saves toggle button
+                    Button {
+                        viewModel.isAutoSavesEnabled.toggle()
+                    } label: {
+                        Image(systemName: "clock.badge.checkmark")
+                            .foregroundStyle(
+                                viewModel.isAutoSavesEnabled ?
+                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
+                                .secondary.opacity(0.5)
+                            )
+                    }
+
+                    /// Date range picker button
+                    Button {
+                        showingDatePicker.toggle()
+                    } label: {
+                        Image(systemName: "calendar")
+                    }
+
+                    Divider()
+                        .frame(height: 16)
+                        .padding(.horizontal, -4)
+
+                    Button {
+                        viewModel.sortAscending.toggle()
+                    } label: {
+                        Image(systemName: viewModel.sortAscending ? "arrow.up" : "arrow.down")
+                    }
                 }
-                .fixedSize()
             }
 
             /// Bottom row with selection and filter controls
@@ -128,22 +181,27 @@ public struct ContinuesManagementListControlsView: View {
 
                 Spacer()
 
-                /// Filter buttons (always visible)
-                HStack(spacing: 16) {
-                    Button {
-                        showingDatePicker.toggle()
-                    } label: {
-                        Image(systemName: "calendar")
-                    }
+                /// Date range display
+                if let dateRange = viewModel.dateRange {
+                    HStack(spacing: 8) {
+                        /// Clear button
+                        Button {
+                            withAnimation {
+                                viewModel.dateRange = nil
+                            }
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
 
-                    Button {
-                        viewModel.sortAscending.toggle()
-                    } label: {
-                        Image(systemName: viewModel.sortAscending ? "arrow.up" : "arrow.down")
+                        /// Date range text
+                        Text("\(dateRange.start.formatted(date: .abbreviated, time: .omitted)) - \(dateRange.end?.formatted(date: .abbreviated, time: .omitted) ?? "Present")")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
-            .frame(height: 4.0)
+            .frame(height: viewModel.isEditing ? nil : 4.0)  /// Maintain original height when not editing
         }
         .padding()
 //        .background(viewModel.backgroundColor)

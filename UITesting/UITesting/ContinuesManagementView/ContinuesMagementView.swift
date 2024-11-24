@@ -142,7 +142,7 @@ struct RoundedCorners: Shape {
 
     ContinuesMagementView(viewModel: sampleViewModel)
         .onAppear {
-            let theme =  CGAThemes.magenta
+            let theme =  CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
         }
 }
