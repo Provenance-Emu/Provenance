@@ -20,6 +20,18 @@ public protocol SaveStateDriver {
 
     /// Publisher for save state changes
     var saveStatesPublisher: AnyPublisher<[SaveStateRowViewModel], Never> { get }
+
+    /// Update save state description
+    func updateDescription(saveStateId: String, description: String?)
+
+    /// Set pin state
+    func setPin(saveStateId: String, isPinned: Bool)
+
+    /// Set favorite state
+    func setFavorite(saveStateId: String, isFavorite: Bool)
+
+    /// Share save state
+    func share(saveStateId: String) -> URL?
 }
 
 /// Mock driver for testing
@@ -27,11 +39,26 @@ public class MockSaveStateDriver: SaveStateDriver {
     private var saveStates: [SaveStateRowViewModel] = []
     private let saveStatesSubject = CurrentValueSubject<[SaveStateRowViewModel], Never>([])
 
+    /// Game metadata
+    public let gameTitle: String
+    public let systemTitle: String
+    public let gameSize: Int
+    public let gameImage: Image
+
     public var saveStatesPublisher: AnyPublisher<[SaveStateRowViewModel], Never> {
         saveStatesSubject.eraseToAnyPublisher()
     }
 
-    public init(mockData: Bool = true) {
+    public init(mockData: Bool = true,
+                gameTitle: String = "Bomber Man",
+                systemTitle: String = "Game Boy",
+                gameSize: Int = 2048,
+                gameImage: Image = Image(systemName: "gamecontroller")) {
+        self.gameTitle = gameTitle
+        self.systemTitle = systemTitle
+        self.gameSize = gameSize
+        self.gameImage = gameImage
+
         if mockData {
             saveStates = createMockSaveStates()
             saveStatesSubject.send(saveStates)
@@ -81,5 +108,22 @@ public class MockSaveStateDriver: SaveStateDriver {
 
             return saveState
         }
+    }
+
+    public func updateDescription(saveStateId: String, description: String?) {
+        // Implementation for updating save state description
+    }
+
+    public func setPin(saveStateId: String, isPinned: Bool) {
+        // Implementation for setting pin state
+    }
+
+    public func setFavorite(saveStateId: String, isFavorite: Bool) {
+        // Implementation for setting favorite state
+    }
+
+    public func share(saveStateId: String) -> URL? {
+        // Implementation for sharing save state
+        return nil
     }
 }

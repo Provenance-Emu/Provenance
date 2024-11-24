@@ -21,7 +21,14 @@ public class ContinuesMagementViewModel: ObservableObject {
     @Published var headerViewModel: ContinuesManagementHeaderViewModel
     /// Controls view model
     @Published var controlsViewModel: ContinuesManagementListControlsViewModel
-    @Published var saveStates: [SaveStateRowViewModel]
+    @Published var saveStates: [SaveStateRowViewModel] {
+        didSet {
+            // Remove old observers
+            cancellables.removeAll()
+            // Setup new observers
+            observeSaveStates()
+        }
+    }
 
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
@@ -29,7 +36,18 @@ public class ContinuesMagementViewModel: ObservableObject {
     /// Setup publishers to trigger updates when filters change
     private var cancellables = Set<AnyCancellable>()
 
-    public init(gameTitle: String, systemTitle: String, numberOfSaves: Int, gameSize: Int, gameImage: Image) {
+    /// Add driver
+    private let driver: SaveStateDriver
+
+    public init(
+        driver: SaveStateDriver,
+        gameTitle: String,
+        systemTitle: String,
+        numberOfSaves: Int,
+        gameSize: Int,
+        gameImage: Image
+    ) {
+        self.driver = driver
         self.headerViewModel = ContinuesManagementHeaderViewModel(
             gameTitle: gameTitle,
             systemTitle: systemTitle,
@@ -91,6 +109,35 @@ public class ContinuesMagementViewModel: ObservableObject {
 
         return result
     }
+
+    /// Add new observation method
+    private func observeSaveStates() {
+        for saveState in saveStates {
+            // Observe description changes
+            saveState.$description
+                .dropFirst()
+                .sink { [weak self] newDescription in
+                    self?.driver.updateDescription(saveStateId: saveState.id, description: newDescription)
+                }
+                .store(in: &cancellables)
+
+            // Observe pin state changes
+            saveState.$isPinned
+                .dropFirst()
+                .sink { [weak self] isPinned in
+                    self?.driver.setPin(saveStateId: saveState.id, isPinned: isPinned)
+                }
+                .store(in: &cancellables)
+
+            // Observe favorite state changes
+            saveState.$isFavorite
+                .dropFirst()
+                .sink { [weak self] isFavorite in
+                    self?.driver.setFavorite(saveStateId: saveState.id, isFavorite: isFavorite)
+                }
+                .store(in: &cancellables)
+        }
+    }
 }
 
 public struct ContinuesMagementView: View {
@@ -100,13 +147,7 @@ public struct ContinuesMagementView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
 
-    public init(viewModel: ContinuesMagementViewModel = ContinuesMagementViewModel(
-        gameTitle: "Game Title",
-        systemTitle: "System Title",
-        numberOfSaves: 5,
-        gameSize: 100,
-        gameImage: Image(systemName: "gamecontroller"))
-    ) {
+    public init(viewModel: ContinuesMagementViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
@@ -177,78 +218,26 @@ struct RoundedCorners: Shape {
 #if DEBUG
 
 #Preview("Continues Management") {
-    /// Create sample save states with different states and dates
-    let sampleSaveStates = [
-        SaveStateRowViewModel(
-            gameID: "1",
-            gameTitle: "Bomber Man",
-            saveDate: Date().addingTimeInterval(-5 * 24 * 3600), // 5 days ago
-            thumbnailImage: Image(systemName: "gamecontroller"),
-            description: "Final Boss Battle"
-        ),
-        SaveStateRowViewModel(
-            gameID: "1",
-            gameTitle: "Bomber Man",
-            saveDate: Date().addingTimeInterval(-4 * 24 * 3600), // 4 days ago
-            thumbnailImage: Image(systemName: "gamecontroller")
-        ),
-        SaveStateRowViewModel(
-            gameID: "1",
-            gameTitle: "Bomber Man",
-            saveDate: Date().addingTimeInterval(-3 * 24 * 3600), // 3 days ago
-            thumbnailImage: Image(systemName: "gamecontroller"),
-            description: "Secret Area Found"
-        ),
-        SaveStateRowViewModel(
-            gameID: "1",
-            gameTitle: "Bomber Man",
-            saveDate: Date().addingTimeInterval(-2 * 24 * 3600), // 2 days ago
-            thumbnailImage: Image(systemName: "gamecontroller")
-        ),
-        SaveStateRowViewModel(
-            gameID: "1",
-            gameTitle: "Bomber Man",
-            saveDate: Date().addingTimeInterval(-24 * 3600), // Yesterday
-            thumbnailImage: Image(systemName: "gamecontroller"),
-            description: "Power-Up Location"
-        ),
-        SaveStateRowViewModel(
-            gameID: "1",
-            gameTitle: "Bomber Man",
-            saveDate: Date(), // Today
-            thumbnailImage: Image(systemName: "gamecontroller")
-        )
-    ]
+    /// Create mock driver with sample data
+    let mockDriver = MockSaveStateDriver(mockData: true)
 
-    /// Set different states for the save states
-    sampleSaveStates[0].isFavorite = true  // First save is favorited
-    sampleSaveStates[0].isPinned = true    // and pinned
-    sampleSaveStates[0].isAutoSave = true    // Sixth save is autosave
-
-    sampleSaveStates[2].isFavorite = true  // Third save is favorited
-
-    sampleSaveStates[3].isAutoSave = true  // Fourth save is autosave
-
-    sampleSaveStates[4].isPinned = true    // Fifth save is pinned
-
-    sampleSaveStates[5].isAutoSave = true    // Sixth save is autosave
-
-    /// Create view model with sample data
-    let sampleViewModel = ContinuesMagementViewModel(
-        gameTitle: "Bomber Man",
-        systemTitle: "Game Boy",
-        numberOfSaves: sampleSaveStates.count,
-        gameSize: 15,
-        gameImage: Image(systemName: "gamecontroller")
+    /// Create view model with mock driver
+    let viewModel = ContinuesMagementViewModel(
+        driver: mockDriver,
+        gameTitle: mockDriver.gameTitle,
+        systemTitle: mockDriver.systemTitle,
+        numberOfSaves: mockDriver.getAllSaveStates().count,
+        gameSize: mockDriver.gameSize,
+        gameImage: mockDriver.gameImage
     )
 
-    /// Set the sample save states
-    sampleViewModel.saveStates = sampleSaveStates
-
-    return ContinuesMagementView(viewModel: sampleViewModel)
+    ContinuesMagementView(viewModel: viewModel)
         .onAppear {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
+
+            /// Set the save states from the mock driver
+            viewModel.saveStates = mockDriver.getAllSaveStates()
         }
 }
 
@@ -262,6 +251,7 @@ struct RoundedCorners: Shape {
 
     /// Create view model with game data
     let viewModel = ContinuesMagementViewModel(
+        driver: driver,
         gameTitle: game.title,
         systemTitle: "Game Boy",
         numberOfSaves: game.saveStates.count,
@@ -273,9 +263,33 @@ struct RoundedCorners: Shape {
         .onAppear {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
-            
+
             /// Set the save states from the driver
             viewModel.saveStates = driver.getSaveStates(forGameId: game.id)
+        }
+}
+
+#Preview("Continues Management with Mock Driver") {
+    /// Create mock driver with sample data
+    let mockDriver = MockSaveStateDriver(mockData: true)
+
+    /// Create view model using mock driver's metadata
+    let viewModel = ContinuesMagementViewModel(
+        driver: mockDriver,
+        gameTitle: mockDriver.gameTitle,
+        systemTitle: mockDriver.systemTitle,
+        numberOfSaves: mockDriver.getAllSaveStates().count,
+        gameSize: mockDriver.gameSize,
+        gameImage: mockDriver.gameImage
+    )
+
+    ContinuesMagementView(viewModel: viewModel)
+        .onAppear {
+            let theme = CGAThemes.purple
+            ThemeManager.shared.setCurrentPalette(theme.palette)
+
+            /// Set the save states from the mock driver
+            viewModel.saveStates = mockDriver.getAllSaveStates()
         }
 }
 

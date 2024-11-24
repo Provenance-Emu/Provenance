@@ -47,37 +47,20 @@ public struct ContinuesManagementContentView: View {
 // MARK: - Previews
 
 #Preview("Content View States") {
+    /// Create mock driver with sample data
+    let mockDriver = MockSaveStateDriver(mockData: true)
+
     let viewModel = ContinuesMagementViewModel(
-        gameTitle: "Bomber Man",
-        systemTitle: "Game Boy",
-        numberOfSaves: 34,
-        gameSize: 15,
-        gameImage: Image(systemName: "gamecontroller")
+        driver: mockDriver,
+        gameTitle: mockDriver.gameTitle,
+        systemTitle: mockDriver.systemTitle,
+        numberOfSaves: mockDriver.getAllSaveStates().count,
+        gameSize: mockDriver.gameSize,
+        gameImage: mockDriver.gameImage
     )
 
-    /// Add some sample save states
-    viewModel.saveStates = [
-        SaveStateRowViewModel(
-            gameID: "1",
-            gameTitle: "Bomber Man",
-            saveDate: Date(),
-            thumbnailImage: Image(systemName: "gamecontroller"),
-            description: "Final Boss"
-        ),
-        SaveStateRowViewModel(
-            gameID: "1",
-            gameTitle: "Bomber Man",
-            saveDate: Date().addingTimeInterval(-3600),
-            thumbnailImage: Image(systemName: "gamecontroller")
-        ),
-        SaveStateRowViewModel(
-            gameID: "1",
-            gameTitle: "Bomber Man",
-            saveDate: Date().addingTimeInterval(-7200),
-            thumbnailImage: Image(systemName: "gamecontroller"),
-            description: "Power Up Location"
-        )
-    ]
+    /// Set the save states from the mock driver
+    viewModel.saveStates = mockDriver.getAllSaveStates()
 
     return VStack {
         /// Normal state
@@ -95,13 +78,20 @@ public struct ContinuesManagementContentView: View {
 }
 
 #Preview("Dark Mode", traits: .defaultLayout) {
+    /// Create mock driver with sample data
+    let mockDriver = MockSaveStateDriver(mockData: true)
+
     let viewModel = ContinuesMagementViewModel(
-        gameTitle: "Bomber Man",
-        systemTitle: "Game Boy",
-        numberOfSaves: 34,
-        gameSize: 15,
-        gameImage: Image(systemName: "gamecontroller")
+        driver: mockDriver,
+        gameTitle: mockDriver.gameTitle,
+        systemTitle: mockDriver.systemTitle,
+        numberOfSaves: mockDriver.getAllSaveStates().count,
+        gameSize: mockDriver.gameSize,
+        gameImage: mockDriver.gameImage
     )
+
+    /// Set the save states from the mock driver
+    viewModel.saveStates = mockDriver.getAllSaveStates()
 
     return ContinuesManagementContentView(viewModel: viewModel)
         .frame(height: 400)
