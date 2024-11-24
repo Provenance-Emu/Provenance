@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVSwiftUI
+import PVThemes
 
 @main
 struct UITestingApp: App {
@@ -46,6 +47,8 @@ struct UITestingApp: App {
                 .onAppear {
                     /// Load initial states through the publisher
                     mockDriver.loadSaveStates(forGameId: "1")
+                    
+                    ThemeManager.shared.setCurrentPalette(CGAThemes.purple.palette)
                 }
         }
     }
