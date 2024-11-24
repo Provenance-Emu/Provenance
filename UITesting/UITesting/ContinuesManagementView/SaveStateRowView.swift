@@ -82,17 +82,40 @@ public struct SaveStateRowView: View {
                         .foregroundColor(.secondary)
                 }
 
-                /// Favorite heart icon
-                Button {
-                    withAnimation(.spring(response: 0.3)) {
-                        viewModel.isFavorite.toggle()
+                Spacer()
+
+                /// Right-side icons
+                HStack(spacing: 16) {
+                    /// Pin indicator
+                    Button {
+                        withAnimation(.spring(response: 0.3)) {
+                            viewModel.isPinned.toggle()
+                        }
+                    } label: {
+                        Image(systemName: "pin.fill")
+                            .rotationEffect(.degrees(45))
+                            .font(.system(size: 16))
+                            .foregroundStyle(
+                                viewModel.isPinned ?
+                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
+                                .clear
+                            )
+                            .opacity(viewModel.isPinned ? 1 : 0)
+                            .symbolEffect(.bounce, value: viewModel.isPinned)
                     }
-                } label: {
-                    Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
-                        .resizable()
-                        .frame(width: 24, height: 22)
-                        .foregroundColor(viewModel.isFavorite ? .red : .secondary)
-                        .symbolEffect(.bounce, value: viewModel.isFavorite)
+
+                    /// Favorite heart icon
+                    Button {
+                        withAnimation(.spring(response: 0.3)) {
+                            viewModel.isFavorite.toggle()
+                        }
+                    } label: {
+                        Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
+                            .resizable()
+                            .frame(width: 24, height: 22)
+                            .foregroundColor(viewModel.isFavorite ? .red : .secondary)
+                            .symbolEffect(.bounce, value: viewModel.isFavorite)
+                    }
                 }
                 .padding(.trailing)
             }
@@ -295,47 +318,61 @@ extension View {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
 
-    return VStack(spacing: 20) {
-        /// Normal mode
-        SaveStateRowView(
-            viewModel: SaveStateRowViewModel(
-                gameTitle: "Bomber Man",
-                saveDate: Date(),
-                thumbnailImage: Image(systemName: "gamecontroller"),
-                description: "Boss Fight - World 3"
-            ),
-            currentUserInteractionCellID: $currentUserInteractionCellID
-        )
-
-        /// With favorite
-        let favoriteViewModel = SaveStateRowViewModel(
+    /// Create sample save states with different states and dates
+    let sampleSaveStates = [
+        SaveStateRowViewModel(
             gameTitle: "Bomber Man",
-            saveDate: Date(),
+            saveDate: Date().addingTimeInterval(-5 * 24 * 3600), // 5 days ago
+            thumbnailImage: Image(systemName: "gamecontroller"),
+            description: "Final Boss Battle"
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date().addingTimeInterval(-4 * 24 * 3600), // 4 days ago
+            thumbnailImage: Image(systemName: "gamecontroller")
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date().addingTimeInterval(-3 * 24 * 3600), // 3 days ago
+            thumbnailImage: Image(systemName: "gamecontroller"),
+            description: "Secret Area Found"
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date().addingTimeInterval(-2 * 24 * 3600), // 2 days ago
+            thumbnailImage: Image(systemName: "gamecontroller")
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date().addingTimeInterval(-24 * 3600), // Yesterday
+            thumbnailImage: Image(systemName: "gamecontroller"),
+            description: "Power-Up Location"
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date(), // Today
             thumbnailImage: Image(systemName: "gamecontroller")
         )
-        SaveStateRowView(
-            viewModel: favoriteViewModel,
-            currentUserInteractionCellID: $currentUserInteractionCellID
-        )
-            .onAppear {
-                favoriteViewModel.isFavorite = true
-            }
+    ]
 
-        /// Edit mode with favorite
-        let editViewModel = SaveStateRowViewModel(
-            gameTitle: "Bomber Man",
-            saveDate: Date(),
-            thumbnailImage: Image(systemName: "gamecontroller")
-        )
-        SaveStateRowView(
-            viewModel: editViewModel,
-            currentUserInteractionCellID: $currentUserInteractionCellID
-        )
-            .onAppear {
-                editViewModel.isEditing = true
-                editViewModel.isSelected = true
-                editViewModel.isFavorite = true
+    /// Set different states for the save states
+    sampleSaveStates[0].isFavorite = true  // First save is favorited
+    sampleSaveStates[0].isPinned = true    // and pinned
+
+    sampleSaveStates[2].isFavorite = true  // Third save is favorited
+
+    sampleSaveStates[4].isPinned = true    // Fifth save is pinned
+
+    return ScrollView {
+        VStack(spacing: 0) {
+            ForEach(sampleSaveStates) { saveState in
+                SaveStateRowView(
+                    viewModel: saveState,
+                    currentUserInteractionCellID: $currentUserInteractionCellID
+                )
+                Divider()
             }
+        }
     }
     .padding()
 }

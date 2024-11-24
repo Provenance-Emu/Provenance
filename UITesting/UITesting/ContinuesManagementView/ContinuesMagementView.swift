@@ -33,21 +33,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             gameImage: gameImage
         )
         self.controlsViewModel = ContinuesManagementListControlsViewModel()
-
-        /// Initialize with sample data
-        self.saveStates = [
-            SaveStateRowViewModel(
-                gameTitle: gameTitle,
-                saveDate: Date(),
-                thumbnailImage: gameImage,
-                description: "Latest Save"
-            ),
-            SaveStateRowViewModel(
-                gameTitle: gameTitle,
-                saveDate: Date().addingTimeInterval(-3600),
-                thumbnailImage: gameImage
-            )
-        ]
+        self.saveStates = []
     }
 }
 
@@ -131,18 +117,66 @@ struct RoundedCorners: Shape {
 }
 
 #Preview("Continues Management") {
-    /// Sample view model for preview
+    /// Create sample save states with different states and dates
+    let sampleSaveStates = [
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date().addingTimeInterval(-5 * 24 * 3600), // 5 days ago
+            thumbnailImage: Image(systemName: "gamecontroller"),
+            description: "Final Boss Battle"
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date().addingTimeInterval(-4 * 24 * 3600), // 4 days ago
+            thumbnailImage: Image(systemName: "gamecontroller")
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date().addingTimeInterval(-3 * 24 * 3600), // 3 days ago
+            thumbnailImage: Image(systemName: "gamecontroller"),
+            description: "Secret Area Found"
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date().addingTimeInterval(-2 * 24 * 3600), // 2 days ago
+            thumbnailImage: Image(systemName: "gamecontroller")
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date().addingTimeInterval(-24 * 3600), // Yesterday
+            thumbnailImage: Image(systemName: "gamecontroller"),
+            description: "Power-Up Location"
+        ),
+        SaveStateRowViewModel(
+            gameTitle: "Bomber Man",
+            saveDate: Date(), // Today
+            thumbnailImage: Image(systemName: "gamecontroller")
+        )
+    ]
+
+    /// Set different states for the save states
+    sampleSaveStates[0].isFavorite = true  // First save is favorited
+    sampleSaveStates[0].isPinned = true    // and pinned
+
+    sampleSaveStates[2].isFavorite = true  // Third save is favorited
+
+    sampleSaveStates[4].isPinned = true    // Fifth save is pinned
+
+    /// Create view model with sample data
     let sampleViewModel = ContinuesMagementViewModel(
         gameTitle: "Bomber Man",
         systemTitle: "Game Boy",
-        numberOfSaves: 34,
+        numberOfSaves: sampleSaveStates.count,
         gameSize: 15,
-        gameImage: Image(systemName: "gamecontroller") /// Using SF Symbol as placeholder
+        gameImage: Image(systemName: "gamecontroller")
     )
 
-    ContinuesMagementView(viewModel: sampleViewModel)
+    /// Set the sample save states
+    sampleViewModel.saveStates = sampleSaveStates
+
+    return ContinuesMagementView(viewModel: sampleViewModel)
         .onAppear {
-            let theme =  CGAThemes.purple
+            let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
         }
 }
