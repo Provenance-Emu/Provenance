@@ -95,50 +95,38 @@ public class ContinuesMagementViewModel: ObservableObject {
             }
     }
 
-    public func setSaveStates(_ states: [SaveStateRowViewModel]) {
-        saveStates = states
-        setupStateObservers(for: states)
+    private func observeRowViewModel(_ viewModel: SaveStateRowViewModel) {
+        /// Observe pin changes
+        viewModel.$isPinned
+            .dropFirst()
+            .sink { [weak self] isPinned in
+                self?.driver.setPin(saveStateId: viewModel.id, isPinned: isPinned)
+                self?.refilterStates()
+            }
+            .store(in: &cancellables)
+
+        /// Observe favorite changes
+        viewModel.$isFavorite
+            .dropFirst()
+            .sink { [weak self] isFavorite in
+                self?.driver.setFavorite(saveStateId: viewModel.id, isFavorite: isFavorite)
+                self?.refilterStates()
+            }
+            .store(in: &cancellables)
+
+        /// Observe description changes
+        viewModel.$description
+            .dropFirst()
+            .sink { [weak self] description in
+                self?.driver.updateDescription(saveStateId: viewModel.id, description: description)
+            }
+            .store(in: &cancellables)
     }
 
-    private func setupStateObservers(for states: [SaveStateRowViewModel]) {
-        /// Clear existing observers
-        cancellables.removeAll()
-
-        /// Setup new observers
-        states.forEach { state in
-            /// Observe pin changes
-            state.$isPinned
-                .dropFirst()
-                .sink { [weak self] isPinned in
-                    self?.driver.setPin(saveStateId: state.id, isPinned: isPinned)
-                    self?.updateFilters()
-                }
-                .store(in: &cancellables)
-
-            /// Observe favorite changes
-            state.$isFavorite
-                .dropFirst()
-                .sink { [weak self] isFavorite in
-                    self?.driver.setFavorite(saveStateId: state.id, isFavorite: isFavorite)
-                    self?.updateFilters()
-                }
-                .store(in: &cancellables)
-
-            /// Observe description changes
-            state.$description
-                .dropFirst()
-                .sink { [weak self] description in
-                    self?.driver.updateDescription(saveStateId: state.id, description: description)
-                }
-                .store(in: &cancellables)
-        }
-
-        /// Setup filter observers
-        setupObservers()
-    }
-
-    private func updateFilters() {
+    private func refilterStates() {
         objectWillChange.send()
+        let states = saveStates
+        saveStates = states // Trigger filter update
     }
 
     public init(
@@ -166,6 +154,8 @@ public class ContinuesMagementViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] states in
                 self?.saveStates = states
+                /// Setup observers for each row view model
+                states.forEach { self?.observeRowViewModel($0) }
             }
             .store(in: &cancellables)
     }
