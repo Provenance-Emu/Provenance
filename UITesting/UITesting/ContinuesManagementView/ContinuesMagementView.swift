@@ -40,12 +40,13 @@ public class ContinuesMagementViewModel: ObservableObject {
         self.saveStates = []
 
         /// Observe changes to control settings
-        Publishers.CombineLatest3(
+        Publishers.CombineLatest4(
             controlsViewModel.$filterFavoritesOnly,
             controlsViewModel.$sortAscending,
-            controlsViewModel.$dateRange
+            controlsViewModel.$dateRange,
+            controlsViewModel.$isAutoSavesEnabled
         )
-        .sink { [weak self] _, _, _ in
+        .sink { [weak self] _, _, _, _ in
             self?.objectWillChange.send()
         }
         .store(in: &cancellables)
@@ -68,6 +69,11 @@ public class ContinuesMagementViewModel: ObservableObject {
         /// Apply favorites filter if enabled
         if controlsViewModel.filterFavoritesOnly {
             result = result.filter { $0.isFavorite }
+        }
+
+        /// Apply auto-save filter if enabled
+        if !controlsViewModel.isAutoSavesEnabled {
+            result = result.filter { !$0.isAutoSave }
         }
 
         /// Sort the results
@@ -206,13 +212,14 @@ struct RoundedCorners: Shape {
     /// Set different states for the save states
     sampleSaveStates[0].isFavorite = true  // First save is favorited
     sampleSaveStates[0].isPinned = true    // and pinned
+    sampleSaveStates[0].isAutoSave = true    // Sixth save is autosave
 
     sampleSaveStates[2].isFavorite = true  // Third save is favorited
 
     sampleSaveStates[3].isAutoSave = true  // Fourth save is autosave
 
     sampleSaveStates[4].isPinned = true    // Fifth save is pinned
-    
+
     sampleSaveStates[5].isAutoSave = true    // Sixth save is autosave
 
     /// Create view model with sample data

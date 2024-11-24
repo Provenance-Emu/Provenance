@@ -14,11 +14,11 @@ import OpenDateInterval
 /// View model for the list controls
 public class ContinuesManagementListControlsViewModel: ObservableObject {
     /// Controls whether auto-saves are enabled
-    @Published var isAutoSavesEnabled: Bool = false
+    @Published var isAutoSavesEnabled: Bool = true
     /// Controls whether the view is in edit mode
     @Published var isEditing: Bool = false
     /// Controls the sort order of the list
-    @Published var sortAscending: Bool = true
+    @Published var sortAscending: Bool = false
     /// Current visible month in the date picker
     @Published var currentMonth: Int = Calendar.current.component(.month, from: .now)
     /// Current visible year: Int = Calendar.current.component(.year, from: .now)
