@@ -139,6 +139,11 @@ public struct ContinuesManagementListControlsView: View {
                         showingDatePicker.toggle()
                     } label: {
                         Image(systemName: "calendar")
+                            .foregroundStyle(
+                                viewModel.dateRange != nil ?
+                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
+                                .secondary.opacity(0.5)
+                            )
                     }
 
                     Divider()
