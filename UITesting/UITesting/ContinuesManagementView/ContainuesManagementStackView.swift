@@ -11,13 +11,12 @@ import PVThemes
 
 public struct ContainuesManagementStackView: View {
     @ObservedObject var viewModel: ContinuesMagementViewModel
-    /// Add state for tracking current swipe interaction
     @State private var currentUserInteractionCellID: String? = nil
 
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(viewModel.filteredAndSortedSaveStates) { saveState in
+                ForEach(viewModel.filteredAndSortedSaveStates, id: \.id) { saveState in
                     SaveStateRowView(
                         viewModel: saveState,
                         currentUserInteractionCellID: $currentUserInteractionCellID
@@ -59,18 +58,19 @@ public struct ContinuesManagementContentView: View {
         gameImage: mockDriver.gameImage
     )
 
-    /// Set the save states from the mock driver
-    viewModel.saveStates = mockDriver.getAllSaveStates()
-
     return VStack {
         /// Normal state
         ContinuesManagementContentView(viewModel: viewModel)
             .frame(height: 400)
+            .onAppear {
+                mockDriver.loadSaveStates(forGameId: "1")
+            }
 
         /// Edit mode
         ContinuesManagementContentView(viewModel: viewModel)
             .frame(height: 400)
             .onAppear {
+                mockDriver.loadSaveStates(forGameId: "1")
                 viewModel.controlsViewModel.isEditing = true
             }
     }
@@ -90,10 +90,10 @@ public struct ContinuesManagementContentView: View {
         gameImage: mockDriver.gameImage
     )
 
-    /// Set the save states from the mock driver
-    viewModel.saveStates = mockDriver.getAllSaveStates()
-
     return ContinuesManagementContentView(viewModel: viewModel)
         .frame(height: 400)
         .padding()
+        .onAppear {
+            mockDriver.loadSaveStates(forGameId: "1")
+        }
 }

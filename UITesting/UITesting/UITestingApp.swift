@@ -27,8 +27,8 @@ struct UITestingApp: App {
 
             ContinuesMagementView(viewModel: viewModel)
                 .onAppear {
-                    /// Set the save states from the mock driver
-                    viewModel.saveStates = mockDriver.getAllSaveStates()
+                    /// Load initial states through the publisher
+                    mockDriver.loadSaveStates(forGameId: "1")
                 }
         }
     }

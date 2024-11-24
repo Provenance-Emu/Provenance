@@ -6,7 +6,7 @@ import SwiftUI
 
 public class RealmSaveStateDriver: SaveStateDriver {
     private let realm: Realm
-    private let saveStatesSubject = CurrentValueSubject<[SaveStateRowViewModel], Never>([])
+    public let saveStatesSubject = CurrentValueSubject<[SaveStateRowViewModel], Never>([])
     private var notificationToken: NotificationToken?
 
     public var saveStatesPublisher: AnyPublisher<[SaveStateRowViewModel], Never> {
@@ -82,6 +82,11 @@ public class RealmSaveStateDriver: SaveStateDriver {
         try? realm.write {
             realm.delete(realmSaveStates)
         }
+    }
+
+    public func loadSaveStates(forGameId gameID: String) {
+        let states = getSaveStates(forGameId: gameID)
+        saveStatesSubject.send(states)
     }
 
     private func handleRealmChanges(_ changes: RealmCollectionChange<Results<PVSaveState>>) {

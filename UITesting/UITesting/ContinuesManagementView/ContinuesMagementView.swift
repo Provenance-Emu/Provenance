@@ -13,7 +13,7 @@ import AnimatedGradient
 import PVThemes
 import Combine
 import RealmSwift
-
+import OpenDateInterval
 
 /// View model for the main continues management view
 public class ContinuesMagementViewModel: ObservableObject {
@@ -21,23 +21,125 @@ public class ContinuesMagementViewModel: ObservableObject {
     @Published var headerViewModel: ContinuesManagementHeaderViewModel
     /// Controls view model
     @Published var controlsViewModel: ContinuesManagementListControlsViewModel
-    @Published var saveStates: [SaveStateRowViewModel] {
+    @Published private(set) var saveStates: [SaveStateRowViewModel] = []
+
+    private let driver: SaveStateDriver
+    private var cancellables = Set<AnyCancellable>()
+
+    /// Computed property for filtered and sorted states
+    @Published private(set) var filteredAndSortedSaveStates: [SaveStateRowViewModel] = [] {
         didSet {
-            // Remove old observers
-            cancellables.removeAll()
-            // Setup new observers
-            observeSaveStates()
+            headerViewModel.numberOfSaves = filteredAndSortedSaveStates.count
         }
     }
 
-    @ObservedObject private var themeManager = ThemeManager.shared
-    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+    private func setupObservers() {
+        /// Create a publisher that combines all filter criteria
+        let filterPublisher = Publishers.CombineLatest4(
+            controlsViewModel.$filterFavoritesOnly,
+            controlsViewModel.$isAutoSavesEnabled,
+            controlsViewModel.$dateRange,
+            controlsViewModel.$sortAscending
+        )
 
-    /// Setup publishers to trigger updates when filters change
-    private var cancellables = Set<AnyCancellable>()
+        /// Combine save states with filter criteria
+        Publishers.CombineLatest(
+            $saveStates,
+            filterPublisher
+        )
+        .map { [weak self] states, filterCriteria in
+            let (favoritesOnly, autoSavesEnabled, dateRange, sortAscending) = filterCriteria
+            return self?.applyFilters(
+                to: states,
+                favoritesOnly: favoritesOnly,
+                autoSavesEnabled: autoSavesEnabled,
+                dateRange: dateRange,
+                sortAscending: sortAscending
+            ) ?? []
+        }
+        .receive(on: DispatchQueue.main)
+        .assign(to: &$filteredAndSortedSaveStates)
+    }
 
-    /// Add driver
-    private let driver: SaveStateDriver
+    private func applyFilters(
+        to states: [SaveStateRowViewModel],
+        favoritesOnly: Bool,
+        autoSavesEnabled: Bool,
+        dateRange: OpenDateInterval?,
+        sortAscending: Bool
+    ) -> [SaveStateRowViewModel] {
+        states
+            .filter { state in
+                /// Apply date range filter
+                if let dateRange = dateRange {
+                    let isAfterStart = state.saveDate >= dateRange.start
+                    let isBeforeEnd = dateRange.end.map { state.saveDate <= $0 } ?? true
+                    if !isAfterStart || !isBeforeEnd { return false }
+                }
+
+                /// Apply favorites filter
+                if favoritesOnly && !state.isFavorite { return false }
+
+                /// Apply auto-save filter
+                if !autoSavesEnabled && state.isAutoSave { return false }
+
+                return true
+            }
+            .sorted { first, second in
+                /// Sort by pin status first
+                if first.isPinned != second.isPinned {
+                    return first.isPinned
+                }
+                /// Then by date
+                return sortAscending ? first.saveDate < second.saveDate : first.saveDate > second.saveDate
+            }
+    }
+
+    public func setSaveStates(_ states: [SaveStateRowViewModel]) {
+        saveStates = states
+        setupStateObservers(for: states)
+    }
+
+    private func setupStateObservers(for states: [SaveStateRowViewModel]) {
+        /// Clear existing observers
+        cancellables.removeAll()
+
+        /// Setup new observers
+        states.forEach { state in
+            /// Observe pin changes
+            state.$isPinned
+                .dropFirst()
+                .sink { [weak self] isPinned in
+                    self?.driver.setPin(saveStateId: state.id, isPinned: isPinned)
+                    self?.updateFilters()
+                }
+                .store(in: &cancellables)
+
+            /// Observe favorite changes
+            state.$isFavorite
+                .dropFirst()
+                .sink { [weak self] isFavorite in
+                    self?.driver.setFavorite(saveStateId: state.id, isFavorite: isFavorite)
+                    self?.updateFilters()
+                }
+                .store(in: &cancellables)
+
+            /// Observe description changes
+            state.$description
+                .dropFirst()
+                .sink { [weak self] description in
+                    self?.driver.updateDescription(saveStateId: state.id, description: description)
+                }
+                .store(in: &cancellables)
+        }
+
+        /// Setup filter observers
+        setupObservers()
+    }
+
+    private func updateFilters() {
+        objectWillChange.send()
+    }
 
     public init(
         driver: SaveStateDriver,
@@ -56,88 +158,18 @@ public class ContinuesMagementViewModel: ObservableObject {
             gameImage: gameImage
         )
         self.controlsViewModel = ContinuesManagementListControlsViewModel()
-        self.saveStates = []
 
-        /// Observe changes to control settings
-        Publishers.CombineLatest4(
-            controlsViewModel.$filterFavoritesOnly,
-            controlsViewModel.$sortAscending,
-            controlsViewModel.$dateRange,
-            controlsViewModel.$isAutoSavesEnabled
-        )
-        .sink { [weak self] _, _, _, _ in
-            self?.objectWillChange.send()
-        }
-        .store(in: &cancellables)
-    }
+        setupObservers()
 
-    /// Computed property that returns filtered and sorted save states
-    var filteredAndSortedSaveStates: [SaveStateRowViewModel] {
-        var result = saveStates
-
-        /// Apply date range filter if set
-        if let dateRange = controlsViewModel.dateRange {
-            result = result.filter { saveState in
-                let date = saveState.saveDate
-                let isAfterStart = date >= dateRange.start
-                let isBeforeEnd = dateRange.end.map { date <= $0 } ?? true
-                return isAfterStart && isBeforeEnd
+        /// Subscribe to driver's save states publisher
+        driver.saveStatesPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] states in
+                self?.saveStates = states
             }
-        }
-
-        /// Apply favorites filter if enabled
-        if controlsViewModel.filterFavoritesOnly {
-            result = result.filter { $0.isFavorite }
-        }
-
-        /// Apply auto-save filter if enabled
-        if !controlsViewModel.isAutoSavesEnabled {
-            result = result.filter { !$0.isAutoSave }
-        }
-
-        /// Sort the results
-        result.sort { first, second in
-            /// If both items are pinned or unpinned, sort by date
-            if first.isPinned == second.isPinned {
-                return controlsViewModel.sortAscending ?
-                    first.saveDate < second.saveDate :
-                    first.saveDate > second.saveDate
-            }
-            /// Otherwise, pinned items always come first
-            return first.isPinned
-        }
-
-        return result
+            .store(in: &cancellables)
     }
 
-    /// Add new observation method
-    private func observeSaveStates() {
-        for saveState in saveStates {
-            // Observe description changes
-            saveState.$description
-                .dropFirst()
-                .sink { [weak self] newDescription in
-                    self?.driver.updateDescription(saveStateId: saveState.id, description: newDescription)
-                }
-                .store(in: &cancellables)
-
-            // Observe pin state changes
-            saveState.$isPinned
-                .dropFirst()
-                .sink { [weak self] isPinned in
-                    self?.driver.setPin(saveStateId: saveState.id, isPinned: isPinned)
-                }
-                .store(in: &cancellables)
-
-            // Observe favorite state changes
-            saveState.$isFavorite
-                .dropFirst()
-                .sink { [weak self] isFavorite in
-                    self?.driver.setFavorite(saveStateId: saveState.id, isFavorite: isFavorite)
-                }
-                .store(in: &cancellables)
-        }
-    }
 }
 
 public struct ContinuesMagementView: View {
@@ -236,8 +268,8 @@ struct RoundedCorners: Shape {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
 
-            /// Set the save states from the mock driver
-            viewModel.saveStates = mockDriver.getAllSaveStates()
+            /// Initial states will be set through the publisher
+            mockDriver.saveStatesSubject.send(mockDriver.getAllSaveStates())
         }
 }
 
@@ -264,8 +296,8 @@ struct RoundedCorners: Shape {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
 
-            /// Set the save states from the driver
-            viewModel.saveStates = driver.getSaveStates(forGameId: game.id)
+            /// Load states through the publisher
+            driver.loadSaveStates(forGameId: game.id)
         }
 }
 
@@ -289,7 +321,7 @@ struct RoundedCorners: Shape {
             ThemeManager.shared.setCurrentPalette(theme.palette)
 
             /// Set the save states from the mock driver
-            viewModel.saveStates = mockDriver.getAllSaveStates()
+            mockDriver.saveStatesSubject.send(mockDriver.getAllSaveStates())
         }
 }
 

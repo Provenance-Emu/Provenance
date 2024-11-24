@@ -6,7 +6,11 @@ import SwiftUI
 
 /// Protocol defining the requirements for a save state driver
 public protocol SaveStateDriver {
-    /// Get all save states
+    /// Publisher for save state changes
+    var saveStatesSubject: CurrentValueSubject<[SaveStateRowViewModel], Never> { get }
+    var saveStatesPublisher: AnyPublisher<[SaveStateRowViewModel], Never> { get }
+
+    /// Get initial save states (for setup)
     func getAllSaveStates() -> [SaveStateRowViewModel]
 
     /// Get save states filtered by game ID
@@ -17,9 +21,6 @@ public protocol SaveStateDriver {
 
     /// Delete save states
     func delete(saveStates: [SaveStateRowViewModel])
-
-    /// Publisher for save state changes
-    var saveStatesPublisher: AnyPublisher<[SaveStateRowViewModel], Never> { get }
 
     /// Update save state description
     func updateDescription(saveStateId: String, description: String?)
@@ -32,22 +33,24 @@ public protocol SaveStateDriver {
 
     /// Share save state
     func share(saveStateId: String) -> URL?
+
+    /// Load save states for a specific game
+    func loadSaveStates(forGameId gameID: String)
 }
 
 /// Mock driver for testing
 public class MockSaveStateDriver: SaveStateDriver {
     private var saveStates: [SaveStateRowViewModel] = []
-    private let saveStatesSubject = CurrentValueSubject<[SaveStateRowViewModel], Never>([])
+    public let saveStatesSubject = CurrentValueSubject<[SaveStateRowViewModel], Never>([])
+    public var saveStatesPublisher: AnyPublisher<[SaveStateRowViewModel], Never> {
+        saveStatesSubject.eraseToAnyPublisher()
+    }
 
     /// Game metadata
     public let gameTitle: String
     public let systemTitle: String
     public let gameSize: Int
     public let gameImage: Image
-
-    public var saveStatesPublisher: AnyPublisher<[SaveStateRowViewModel], Never> {
-        saveStatesSubject.eraseToAnyPublisher()
-    }
 
     public init(mockData: Bool = true,
                 gameTitle: String = "Bomber Man",
@@ -111,19 +114,33 @@ public class MockSaveStateDriver: SaveStateDriver {
     }
 
     public func updateDescription(saveStateId: String, description: String?) {
-        // Implementation for updating save state description
+        if let index = saveStates.firstIndex(where: { $0.id == saveStateId }) {
+            saveStates[index].description = description
+            saveStatesSubject.send(saveStates)
+        }
     }
 
     public func setPin(saveStateId: String, isPinned: Bool) {
-        // Implementation for setting pin state
+        if let index = saveStates.firstIndex(where: { $0.id == saveStateId }) {
+            saveStates[index].isPinned = isPinned
+            saveStatesSubject.send(saveStates)
+        }
     }
 
     public func setFavorite(saveStateId: String, isFavorite: Bool) {
-        // Implementation for setting favorite state
+        if let index = saveStates.firstIndex(where: { $0.id == saveStateId }) {
+            saveStates[index].isFavorite = isFavorite
+            saveStatesSubject.send(saveStates)
+        }
     }
 
     public func share(saveStateId: String) -> URL? {
         // Implementation for sharing save state
         return nil
+    }
+
+    public func loadSaveStates(forGameId gameID: String) {
+        let states = getAllSaveStates()
+        saveStatesSubject.send(states)
     }
 }

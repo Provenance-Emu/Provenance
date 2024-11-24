@@ -26,7 +26,7 @@ struct ContentView: View {
         return ContinuesMagementView(viewModel: viewModel)
             .onAppear {
                 /// Set the save states from the mock driver
-                viewModel.saveStates = mockDriver.getAllSaveStates()
+                mockDriver.saveStatesSubject.send(mockDriver.getAllSaveStates())
             }
     }
 }
