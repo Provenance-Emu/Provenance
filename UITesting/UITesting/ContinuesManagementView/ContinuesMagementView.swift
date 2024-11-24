@@ -187,9 +187,15 @@ public class ContinuesMagementViewModel: ObservableObject {
         }
     }
 
+    /// Delete a single save state
+    private func deleteSaveState(_ saveState: SaveStateRowViewModel) {
+        driver.delete(saveStates: [saveState])
+    }
+
     /// Delete selected save states
     private func deleteSelectedSaveStates() {
-        // Implement delete functionality
+        let selectedStates = saveStates.filter { $0.isSelected }
+        driver.delete(saveStates: selectedStates)
     }
 
     /// Subscribe to driver's save states publisher
@@ -197,9 +203,14 @@ public class ContinuesMagementViewModel: ObservableObject {
         driver.saveStatesPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] states in
-                self?.saveStates = states
-                /// Setup observers for each row view model
-                states.forEach { self?.observeRowViewModel($0) }
+                guard let self = self else { return }
+                self.saveStates = states.map { saveState in
+                    var saveState = saveState
+                    saveState.onDelete = { [weak self] in
+                        self?.deleteSaveState(saveState)
+                    }
+                    return saveState
+                }
             }
             .store(in: &cancellables)
     }

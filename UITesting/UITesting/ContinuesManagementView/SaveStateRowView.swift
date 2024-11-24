@@ -26,6 +26,9 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable {
     @Published public var isPinned: Bool
     @Published public var isFavorite: Bool
     
+    /// Callback for delete action
+    var onDelete: (() -> Void)?
+    
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
     
@@ -38,7 +41,8 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable {
         description: String? = nil,
         isAutoSave: Bool = false,
         isPinned: Bool = false,
-        isFavorite: Bool = false
+        isFavorite: Bool = false,
+        onDelete: (() -> Void)? = nil
     ) {
         self.id = id
         self.gameID = gameID
@@ -49,6 +53,7 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable {
         self.isAutoSave = isAutoSave
         self.isPinned = isPinned
         self.isFavorite = isFavorite
+        self.onDelete = onDelete
     }
 }
 
@@ -211,8 +216,7 @@ public struct SaveStateRowView: View {
                 swipeOutHapticFeedbackType: .warning,
                 swipeOutIsDestructive: true
             ) {
-                // Delete action
-                print("Delete tapped")
+                viewModel.onDelete?()
             }
         ]
     }
