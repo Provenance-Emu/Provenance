@@ -12,33 +12,58 @@ import PVThemes
 public struct ContinuesManagementStackView: View {
     @ObservedObject var viewModel: ContinuesMagementViewModel
     @State private var currentUserInteractionCellID: String? = nil
-
+    @State private var lastScrollPosition: CGFloat = 0
+    @State private var showSearchBar = true
+    
+    private let searchBarHeight: CGFloat = 52 // Height of search bar + padding
+    
     public var body: some View {
-        VStack(spacing: 8) {
-            SearchBar(text: $viewModel.searchText)
-                .padding(.horizontal)
-            
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(viewModel.filteredAndSortedSaveStates, id: \.id) { saveState in
-                        SaveStateRowView(
-                            viewModel: saveState,
-                            currentUserInteractionCellID: $currentUserInteractionCellID
-                        )
-                        .onReceive(viewModel.controlsViewModel.$isEditing) { isEditing in
-                            withAnimation {
-                                saveState.isEditing = isEditing
+        ScrollViewReader { proxy in
+            VStack(spacing: 0) {
+                SearchBar(text: $viewModel.searchText)
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                    .opacity(showSearchBar ? 1 : 0)
+                    .frame(height: showSearchBar ? searchBarHeight : 0, alignment: .top)
+                    .clipped()
+                    .animation(.easeInOut(duration: 0.2), value: showSearchBar)
+                
+                ScrollView {
+                    GeometryReader { geometry in
+                        Color.clear.onChange(of: geometry.frame(in: .named("scroll")).minY) { position in
+                            let scrollDelta = position - lastScrollPosition
+                            if abs(scrollDelta) > 5 {  // Add threshold to prevent tiny movements
+                                withAnimation {
+                                    showSearchBar = scrollDelta > 0 || position > -5
+                                }
                             }
+                            lastScrollPosition = position
                         }
-                        .transition(.asymmetric(
-                            insertion: .opacity.combined(with: .move(edge: .top)),
-                            removal: .opacity.combined(with: .move(edge: .leading))
-                        ))
                     }
+                    .frame(height: 0)
+                    
+                    LazyVStack(spacing: 0) {
+                        ForEach(viewModel.filteredAndSortedSaveStates, id: \.id) { saveState in
+                            SaveStateRowView(
+                                viewModel: saveState,
+                                currentUserInteractionCellID: $currentUserInteractionCellID
+                            )
+                            .onReceive(viewModel.controlsViewModel.$isEditing) { isEditing in
+                                withAnimation {
+                                    saveState.isEditing = isEditing
+                                }
+                            }
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .move(edge: .top)),
+                                removal: .opacity.combined(with: .move(edge: .leading))
+                            ))
+                        }
+                    }
+                    .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewModel.filteredAndSortedSaveStates)
                 }
-                .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewModel.filteredAndSortedSaveStates)
+                .coordinateSpace(name: "scroll")
+                .foregroundStyle(viewModel.scrollViewScrollIndicatorColor)
             }
-            .foregroundStyle(viewModel.scrollViewScrollIndicatorColor)
         }
     }
 }
