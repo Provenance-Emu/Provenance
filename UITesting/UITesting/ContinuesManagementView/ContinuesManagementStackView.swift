@@ -14,27 +14,32 @@ public struct ContinuesManagementStackView: View {
     @State private var currentUserInteractionCellID: String? = nil
 
     public var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                ForEach(viewModel.filteredAndSortedSaveStates, id: \.id) { saveState in
-                    SaveStateRowView(
-                        viewModel: saveState,
-                        currentUserInteractionCellID: $currentUserInteractionCellID
-                    )
-                    .onReceive(viewModel.controlsViewModel.$isEditing) { isEditing in
-                        withAnimation {
-                            saveState.isEditing = isEditing
+        VStack(spacing: 8) {
+            SearchBar(text: $viewModel.searchText)
+                .padding(.horizontal)
+            
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(viewModel.filteredAndSortedSaveStates, id: \.id) { saveState in
+                        SaveStateRowView(
+                            viewModel: saveState,
+                            currentUserInteractionCellID: $currentUserInteractionCellID
+                        )
+                        .onReceive(viewModel.controlsViewModel.$isEditing) { isEditing in
+                            withAnimation {
+                                saveState.isEditing = isEditing
+                            }
                         }
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .move(edge: .top)),
+                            removal: .opacity.combined(with: .move(edge: .leading))
+                        ))
                     }
-                    .transition(.asymmetric(
-                        insertion: .opacity.combined(with: .move(edge: .top)),
-                        removal: .opacity.combined(with: .move(edge: .leading))
-                    ))
                 }
+                .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewModel.filteredAndSortedSaveStates)
             }
-            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewModel.filteredAndSortedSaveStates)
+            .foregroundStyle(viewModel.scrollViewScrollIndicatorColor)
         }
-        .foregroundStyle(viewModel.scrollViewScrollIndicatorColor)
     }
 }
 

@@ -31,6 +31,9 @@ public class ContinuesMagementViewModel: ObservableObject {
     private let driver: SaveStateDriver
     private var cancellables = Set<AnyCancellable>()
 
+    /// Search text for filtering saves
+    @Published var searchText: String = ""
+
     /// Computed property for filtered and sorted states
     @Published private(set) var filteredAndSortedSaveStates: [SaveStateRowViewModel] = [] {
         didSet {
@@ -74,6 +77,28 @@ public class ContinuesMagementViewModel: ObservableObject {
         }
         .receive(on: DispatchQueue.main)
         .assign(to: &$filteredAndSortedSaveStates)
+
+        /// Observe search text changes
+        $searchText
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateFilteredAndSortedStates()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func updateFilteredAndSortedStates() {
+        var filtered = saveStates
+        
+        // Apply search filter if search text is not empty
+        if !searchText.isEmpty {
+            filtered = filtered.filter {
+                guard let description = $0.description else { return false }
+                return description.localizedCaseInsensitiveContains(searchText) }
+        }
+        
+        // Apply any existing sorting logic here
+        filteredAndSortedSaveStates = filtered
     }
 
     private func applyFilters(
