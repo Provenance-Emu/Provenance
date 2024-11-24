@@ -34,6 +34,16 @@ public class ContinuesMagementViewModel: ObservableObject {
     }
 
     private func setupObservers() {
+        /// Observe editing state changes
+        controlsViewModel.$isEditing
+            .sink { [weak self] isEditing in
+                self?.saveStates.forEach { $0.isEditing = isEditing }
+                if !isEditing {
+                    self?.clearAllSelections()
+                }
+            }
+            .store(in: &cancellables)
+
         /// Create a publisher that combines all filter criteria
         let filterPublisher = Publishers.CombineLatest4(
             controlsViewModel.$filterFavoritesOnly,
@@ -209,8 +219,11 @@ public class ContinuesMagementViewModel: ObservableObject {
                     saveState.onDelete = { [weak self] in
                         self?.deleteSaveState(saveState)
                     }
+                    saveState.isEditing = self.controlsViewModel.isEditing
                     return saveState
                 }
+                /// Setup observers for each row view model
+                states.forEach { self.observeRowViewModel($0) }
             }
             .store(in: &cancellables)
     }
