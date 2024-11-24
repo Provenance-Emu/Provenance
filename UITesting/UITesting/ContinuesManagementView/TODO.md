@@ -1,12 +1,12 @@
 #  Continues View TODO
 
-- [ ] Change Autosave toggle to icon (use the same as settings)
-- [ ] Move auto saves toggle to a seperator next to the sort
-- [ ] Add a favorites filter toggle
-- [ ] put filter toggles and sort in a hstack with a seperator
+- [X] Change Autosave toggle to icon (use the same as settings)
+- [X] Move auto saves toggle to a seperator next to the sort
+- [x] Add a favorites filter toggle
+- [X] put filter toggles and sort in a hstack with a seperator
 - [ ] Add a search bar?
-- [ ] finish the multiple section, add a delete icon
-- [ ] Get rid of the default init for saves, use the view model in previews
+- [X] finish the multiple section, add a delete icon
+- [X] Get rid of the default init for saves, use the view model in previews
 - [ ] Add a sticky header https://github.com/exyte/ScalingHeaderScrollView
 - [ ] Add a toast popup preview, https://github.com/exyte/PopupView
-- [ ] Use daterange picker, https://github.com/MrAsterisco/DateRangePicker
+- [X] Use daterange picker, https://github.com/MrAsterisco/DateRangePicker

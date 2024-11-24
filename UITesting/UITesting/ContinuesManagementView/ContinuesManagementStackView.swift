@@ -1,5 +1,5 @@
 //
-//  ContainuesManagementStackView.swift
+//  ContinuesManagementStackView.swift
 //  UITesting
 //
 //  Created by Joseph Mattiello on 11/23/24.
@@ -9,7 +9,7 @@ import SwiftUI
 import PVSwiftUI
 import PVThemes
 
-public struct ContainuesManagementStackView: View {
+public struct ContinuesManagementStackView: View {
     @ObservedObject var viewModel: ContinuesMagementViewModel
     @State private var currentUserInteractionCellID: String? = nil
 
@@ -44,7 +44,7 @@ public struct ContinuesManagementContentView: View {
     public var body: some View {
         VStack {
             ContinuesManagementListControlsView(viewModel: viewModel.controlsViewModel)
-            ContainuesManagementStackView(viewModel: viewModel)
+            ContinuesManagementStackView(viewModel: viewModel)
         }
     }
 }
