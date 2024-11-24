@@ -12,6 +12,7 @@ import ScalingHeaderScrollView
 import AnimatedGradient
 import PVThemes
 import Combine
+import RealmSwift
 
 
 /// View model for the main continues management view
@@ -171,38 +172,48 @@ struct RoundedCorners: Shape {
     }
 }
 
+// MARK: - Swift UI Previews
+
+#if DEBUG
+
 #Preview("Continues Management") {
     /// Create sample save states with different states and dates
     let sampleSaveStates = [
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-5 * 24 * 3600), // 5 days ago
             thumbnailImage: Image(systemName: "gamecontroller"),
             description: "Final Boss Battle"
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-4 * 24 * 3600), // 4 days ago
             thumbnailImage: Image(systemName: "gamecontroller")
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-3 * 24 * 3600), // 3 days ago
             thumbnailImage: Image(systemName: "gamecontroller"),
             description: "Secret Area Found"
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-2 * 24 * 3600), // 2 days ago
             thumbnailImage: Image(systemName: "gamecontroller")
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-24 * 3600), // Yesterday
             thumbnailImage: Image(systemName: "gamecontroller"),
             description: "Power-Up Location"
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date(), // Today
             thumbnailImage: Image(systemName: "gamecontroller")
@@ -240,3 +251,32 @@ struct RoundedCorners: Shape {
             ThemeManager.shared.setCurrentPalette(theme.palette)
         }
 }
+
+#Preview("Continues Management with Realm") {
+    /// Create in-memory test realm and driver
+    let testRealm = try! RealmSaveStateTestFactory.createInMemoryRealm()
+    let driver = try! RealmSaveStateDriver(realm: testRealm)
+
+    /// Get the first game from realm for the view model
+    let game = testRealm.objects(PVGame.self).first!
+
+    /// Create view model with game data
+    let viewModel = ContinuesMagementViewModel(
+        gameTitle: game.title,
+        systemTitle: "Game Boy",
+        numberOfSaves: game.saveStates.count,
+        gameSize: Int(game.file.size / 1024), // Convert to KB
+        gameImage: Image(systemName: "gamecontroller")
+    )
+
+    ContinuesMagementView(viewModel: viewModel)
+        .onAppear {
+            let theme = CGAThemes.purple
+            ThemeManager.shared.setCurrentPalette(theme.palette)
+            
+            /// Set the save states from the driver
+            viewModel.saveStates = driver.getSaveStates(forGameId: game.id)
+        }
+}
+
+#endif

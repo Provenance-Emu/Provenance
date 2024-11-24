@@ -13,6 +13,7 @@ import SwipeCellSUI
 /// View model for individual save state rows
 public class SaveStateRowViewModel: ObservableObject, Identifiable {
     public let id: UUID = UUID()
+    let gameID: String
     let gameTitle: String
     let saveDate: Date
     let thumbnailImage: Image
@@ -28,7 +29,8 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable {
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
 
-    public init(gameTitle: String, saveDate: Date, thumbnailImage: Image, description: String? = nil) {
+    public init(gameID: String, gameTitle: String, saveDate: Date, thumbnailImage: Image, description: String? = nil) {
+        self.gameID = gameID
         self.gameTitle = gameTitle
         self.saveDate = saveDate
         self.thumbnailImage = thumbnailImage
@@ -280,6 +282,7 @@ extension View {
     VStack(spacing: 20) {
         /// Normal mode
         SaveStateRowView(viewModel: SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date(),
             thumbnailImage: Image(systemName: "gamecontroller"),
@@ -288,6 +291,7 @@ extension View {
 
         /// Normal mode without description
         SaveStateRowView(viewModel: SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date(),
             thumbnailImage: Image(systemName: "gamecontroller")
@@ -295,6 +299,7 @@ extension View {
 
         /// Edit mode
         let editViewModel = SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date(),
             thumbnailImage: Image(systemName: "gamecontroller")
@@ -314,6 +319,7 @@ extension View {
     @State var currentUserInteractionCellID: String? = nil
 
     SaveStateRowView(viewModel: SaveStateRowViewModel(
+        gameID: "1",
         gameTitle: "Bomber Man",
         saveDate: Date(),
         thumbnailImage: Image(systemName: "gamecontroller"),
@@ -332,34 +338,40 @@ extension View {
     /// Create sample save states with different states and dates
     let sampleSaveStates = [
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-5 * 24 * 3600), // 5 days ago
             thumbnailImage: Image(systemName: "gamecontroller"),
             description: "Final Boss Battle"
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-4 * 24 * 3600), // 4 days ago
             thumbnailImage: Image(systemName: "gamecontroller")
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-3 * 24 * 3600), // 3 days ago
             thumbnailImage: Image(systemName: "gamecontroller"),
             description: "Secret Area Found"
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-2 * 24 * 3600), // 2 days ago
             thumbnailImage: Image(systemName: "gamecontroller")
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-24 * 3600), // Yesterday
             thumbnailImage: Image(systemName: "gamecontroller"),
             description: "Power-Up Location"
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date(), // Today
             thumbnailImage: Image(systemName: "gamecontroller")
@@ -397,6 +409,7 @@ extension View {
 
     return SaveStateRowView(
         viewModel: SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date(),
             thumbnailImage: Image(systemName: "gamecontroller"),

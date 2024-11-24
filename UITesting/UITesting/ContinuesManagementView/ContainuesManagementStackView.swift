@@ -58,17 +58,20 @@ public struct ContinuesManagementContentView: View {
     /// Add some sample save states
     viewModel.saveStates = [
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date(),
             thumbnailImage: Image(systemName: "gamecontroller"),
             description: "Final Boss"
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-3600),
             thumbnailImage: Image(systemName: "gamecontroller")
         ),
         SaveStateRowViewModel(
+            gameID: "1",
             gameTitle: "Bomber Man",
             saveDate: Date().addingTimeInterval(-7200),
             thumbnailImage: Image(systemName: "gamecontroller"),
