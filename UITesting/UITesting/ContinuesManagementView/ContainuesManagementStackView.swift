@@ -58,7 +58,7 @@ public struct ContinuesManagementContentView: View {
         gameImage: mockDriver.gameImage
     )
 
-    return VStack {
+    VStack {
         /// Normal state
         ContinuesManagementContentView(viewModel: viewModel)
             .frame(height: 400)
@@ -90,7 +90,7 @@ public struct ContinuesManagementContentView: View {
         gameImage: mockDriver.gameImage
     )
 
-    return ContinuesManagementContentView(viewModel: viewModel)
+    ContinuesManagementContentView(viewModel: viewModel)
         .frame(height: 400)
         .padding()
         .onAppear {

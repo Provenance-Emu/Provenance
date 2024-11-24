@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  ContinuesMagementView.swift
 //  UITesting
 //
 //  Created by Joseph Mattiello on 11/22/24.
@@ -147,9 +147,53 @@ public class ContinuesMagementViewModel: ObservableObject {
         )
         self.controlsViewModel = ContinuesManagementListControlsViewModel()
 
+        
+        self.controlsViewModel = ContinuesManagementListControlsViewModel(
+            onDeleteSelected: { [weak self] in
+                self?.deleteSelectedSaveStates()
+            },
+            onSelectAll: { [weak self] in
+                self?.selectAllSaveStates()
+            },
+            onClearAll: { [weak self] in
+                self?.clearAllSelections()
+            }
+        )
+        
         setupObservers()
+    }
 
-        /// Subscribe to driver's save states publisher
+    /// Select all save states
+    private func selectAllSaveStates() {
+        saveStates.forEach { $0.isSelected = true }
+    }
+
+    /// Clear all selections
+    private func clearAllSelections() {
+        saveStates.forEach { $0.isSelected = false }
+    }
+
+    /// Select a save state
+    private func selectSaveState(id: String) {
+        if let index = saveStates.firstIndex(where: { $0.id == id }) {
+            saveStates[index].isSelected = true
+        }
+    }
+
+    /// Deselect a save state
+    private func deselectSaveState(id: String) {
+        if let index = saveStates.firstIndex(where: { $0.id == id }) {
+            saveStates[index].isSelected = false
+        }
+    }
+
+    /// Delete selected save states
+    private func deleteSelectedSaveStates() {
+        // Implement delete functionality
+    }
+
+    /// Subscribe to driver's save states publisher
+    func subscribeToDriverPublisher() {
         driver.saveStatesPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] states in
@@ -159,7 +203,6 @@ public class ContinuesMagementViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-
 }
 
 public struct ContinuesMagementView: View {
@@ -217,6 +260,9 @@ public struct ContinuesMagementView: View {
         .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
 //        .background(currentPalette.settingsCellBackground!.swiftUIColor)
         .padding()
+        .onAppear {
+            viewModel.subscribeToDriverPublisher()
+        }
     }
 }
 

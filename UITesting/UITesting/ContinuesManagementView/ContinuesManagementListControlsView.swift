@@ -33,6 +33,9 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
     @Published var filterFavoritesOnly: Bool = false
     /// Optional delete action
     var onDeleteSelected: (() -> Void)?
+    /// Actions for selection management
+    var onSelectAll: (() -> Void)?
+    var onClearAll: (() -> Void)?
 
     /// Shadow color for the controls view
     var shadowColor: Color {
@@ -74,8 +77,24 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
         }
     }
 
-    public init(onDeleteSelected: (() -> Void)? = nil) {
+    public init(
+        onDeleteSelected: (() -> Void)? = nil,
+        onSelectAll: (() -> Void)? = nil,
+        onClearAll: (() -> Void)? = nil
+    ) {
         self.onDeleteSelected = onDeleteSelected
+        self.onSelectAll = onSelectAll
+        self.onClearAll = onClearAll
+    }
+
+    /// Select all save states
+    func selectAll() {
+        onSelectAll?()
+    }
+
+    /// Clear all selections
+    func clearAll() {
+        onClearAll?()
     }
 }
 
@@ -164,7 +183,7 @@ public struct ContinuesManagementListControlsView: View {
                 if viewModel.isEditing {
                     HStack(alignment: .center, spacing: 0) {
                         Button("Select All") {
-                            /// Will be implemented later
+                            viewModel.selectAll()
                         }
                         .padding(.horizontal, 12)
 
@@ -174,7 +193,7 @@ public struct ContinuesManagementListControlsView: View {
                             .background(viewModel.editButtonsBorderColor ?? .white)
 
                         Button("Clear All") {
-                            /// Will be implemented later
+                            viewModel.clearAll()
                         }
                         .padding(.horizontal, 12)
                     }
