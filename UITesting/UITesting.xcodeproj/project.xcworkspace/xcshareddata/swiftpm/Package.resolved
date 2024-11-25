@@ -61,7 +61,7 @@
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
         "branch" : "main",
-        "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
+        "revision" : "ef1b2318fb549002bb533bec3a8ad98ae09f2cb6"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/FlineDev/FreemiumKit.git",
       "state" : {
-        "revision" : "b12a5f899de2101458119bfe03cd8a9b99aa665b",
-        "version" : "1.13.1"
+        "revision" : "68a3c35053afe0c564585da4f16315e1bbcda441",
+        "version" : "1.14.0"
       }
     },
     {
@@ -137,15 +137,6 @@
       }
     },
     {
-      "identity" : "popupview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/exyte/PopupView.git",
-      "state" : {
-        "revision" : "d619317dbb98fe071d11be36c2525d3c213ad8e4",
-        "version" : "3.1.4"
-      }
-    },
-    {
       "identity" : "reachability.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ashleymills/Reachability.swift.git",
@@ -197,15 +188,6 @@
       "state" : {
         "revision" : "c7c7d2cf50a3211fe2843f76869c698e4e417930",
         "version" : "6.8.0"
-      }
-    },
-    {
-      "identity" : "scalingheaderscrollview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/exyte/ScalingHeaderScrollView.git",
-      "state" : {
-        "revision" : "87cc269444490be1ba231038718267aceca1f895",
-        "version" : "1.1.5"
       }
     },
     {
@@ -287,15 +269,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "cb30be65a3f121d756c98d442194c41eb24e9f09"
-      }
-    },
-    {
-      "identity" : "swiftui-introspect",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/siteline/swiftui-introspect",
-      "state" : {
-        "revision" : "807f73ce09a9b9723f12385e592b4e0aaebd3336",
-        "version" : "1.3.0"
       }
     },
     {

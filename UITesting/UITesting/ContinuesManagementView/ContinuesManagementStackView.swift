@@ -20,7 +20,7 @@ public struct ContinuesManagementStackView: View {
     public var body: some View {
         ScrollViewReader { proxy in
             VStack(spacing: 0) {
-                SearchBar(text: $viewModel.searchText)
+                ContinuesSearchBar(text: $viewModel.searchText)
                     .padding(.horizontal)
                     .padding(.vertical, 8)
                     .opacity(showSearchBar && !viewModel.controlsViewModel.isEditing ? 1 : 0)
@@ -122,7 +122,7 @@ public struct ContinuesManagementContentView: View {
     .padding()
 }
 
-#Preview("Dark Mode", traits: .defaultLayout) {
+#Preview("Dark Mode") {
     /// Create mock driver with sample data
     let mockDriver = MockSaveStateDriver(mockData: true)
 

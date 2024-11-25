@@ -216,45 +216,45 @@ struct ConsoleGamesView: SwiftUI.View {
                 )
             )
         }
-        .sheet(item: $continuesManagementState) { state in
-            let game = state.game
-            /// Create the Realm driver
-            let driver = try! RealmSaveStateDriver(realm: RomDatabase.sharedInstance.realm)
-            
-            // TODO: Better way to in viewmodel
-//            let image: UIImage? = await game.fetchArtworkFromCache()
-//            let swiftImage: Image
-//            if let image = image {
-//                swiftImage = Image(uiImage: image)
+//        .sheet(item: $continuesManagementState) { state in
+//            let game = state.game
+//            /// Create the Realm driver
+//            let driver = try! RealmSaveStateDriver(realm: RomDatabase.sharedInstance.realm)
+//            
+//            // TODO: Better way to in viewmodel
+////            let image: UIImage? = await game.fetchArtworkFromCache()
+////            let swiftImage: Image
+////            if let image = image {
+////                swiftImage = Image(uiImage: image)
+////            } else {
+////                swiftImage = Image(systemName: "photo.artframe")
+////            }
+//            
+//            /// Create view model
+//            let viewModel = ContinuesMagementViewModel(
+//                driver: driver,
+//                gameTitle: game.title,
+//                systemTitle: game.system.name,
+//                numberOfSaves: game.saveStates.count,
+//                // TODO: Fix file.size from crashing
+//                gameSize: 0, //Int(game.file.size / 1024), /// Convert to KB
+//                gameImage: Image(systemName: "photo.artframe") //swiftImage
+//            )
+//            
+//            /// Create and configure the view
+//            if #available(iOS 16.4, *) {
+//                ContinuesMagementView(viewModel: viewModel)
+//                    .onAppear {
+//                        driver.loadSaveStates(forGameId: game.id)
+//                    }
+//                    .presentationBackground(content: {Color.clear})
 //            } else {
-//                swiftImage = Image(systemName: "photo.artframe")
+//                ContinuesMagementView(viewModel: viewModel)
+//                    .onAppear {
+//                        driver.loadSaveStates(forGameId: game.id)
+//                    }
 //            }
-            
-            /// Create view model
-            let viewModel = ContinuesMagementViewModel(
-                driver: driver,
-                gameTitle: game.title,
-                systemTitle: game.system.name,
-                numberOfSaves: game.saveStates.count,
-                // TODO: Fix file.size from crashing
-                gameSize: 0, //Int(game.file.size / 1024), /// Convert to KB
-                gameImage: Image(systemName: "photo.artframe") //swiftImage
-            )
-            
-            /// Create and configure the view
-            if #available(iOS 16.4, *) {
-                ContinuesMagementView(viewModel: viewModel)
-                    .onAppear {
-                        driver.loadSaveStates(forGameId: game.id)
-                    }
-                    .presentationBackground(content: {Color.clear})
-            } else {
-                ContinuesMagementView(viewModel: viewModel)
-                    .onAppear {
-                        driver.loadSaveStates(forGameId: game.id)
-                    }
-            }
-        }
+//        }
     }
 
     // MARK: - Helper Methods

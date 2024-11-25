@@ -8,7 +8,6 @@
 import SwiftUI
 import PVSwiftUI
 import PopupView
-import ScalingHeaderScrollView
 import AnimatedGradient
 import PVThemes
 import Combine
@@ -301,7 +300,6 @@ public struct ContinuesMagementView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
     
-    
     private struct EmptyStateView: View {
         var body: some View {
             VStack(spacing: 16) {
@@ -340,8 +338,8 @@ public struct ContinuesMagementView: View {
                     .numberOfSimultaneousColors(2)
                     .setAnimation(.bouncy(duration: 10))
                     .gradientPoints(start: .bottomLeading, end: .topTrailing)
-                    .padding(.bottom, 10)
-                    .opacity(0.25)
+//                    .padding(.bottom, 10)
+//                    .opacity(0.25)
 
                     ContinuesManagementHeaderView(viewModel: viewModel.headerViewModel)
                 }

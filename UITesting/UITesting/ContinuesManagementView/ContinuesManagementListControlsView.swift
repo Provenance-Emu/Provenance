@@ -274,9 +274,10 @@ public struct ContinuesManagementListControlsView: View {
     }
 }
 
+#if DEBUG
 // MARK: - Previews
-
-#Preview("List Controls", traits: .sizeThatFitsLayout) {
+@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
+#Preview("List Controls") {
     VStack(spacing: 20) {
         /// Normal mode
         let normalViewModel = ContinuesManagementListControlsViewModel()
@@ -300,6 +301,7 @@ public struct ContinuesManagementListControlsView: View {
     .padding()
 }
 
+@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
 #Preview("Edit Mode", traits: .sizeThatFitsLayout) {
     VStack(spacing: 20) {
         /// Edit mode
@@ -320,6 +322,7 @@ public struct ContinuesManagementListControlsView: View {
     .padding()
 }
 
+@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
 #Preview("Dark Mode") {
     VStack(spacing: 20) {
         let viewModel = ContinuesManagementListControlsViewModel()
@@ -333,6 +336,7 @@ public struct ContinuesManagementListControlsView: View {
     .preferredColorScheme(.dark)
 }
 
+@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
 #Preview("Themes", traits: .sizeThatFitsLayout) {
     Group {
         /// Light theme
@@ -344,3 +348,4 @@ public struct ContinuesManagementListControlsView: View {
     }
     .padding()
 }
+#endif

@@ -136,16 +136,28 @@ public struct SaveStateRowView: View {
                             viewModel.isPinned.toggle()
                         }
                     } label: {
-                        Image(systemName: "pin.fill")
-                            .rotationEffect(.degrees(45))
-                            .font(.system(size: 16))
-                            .foregroundStyle(
-                                viewModel.isPinned ?
-                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
-                                        .clear
-                            )
-                            .opacity(viewModel.isPinned ? 1 : 0)
-                            .symbolEffect(.bounce, value: viewModel.isPinned)
+                        if #available(iOS 17.0, *) {
+                            Image(systemName: "pin.fill")
+                                .rotationEffect(.degrees(45))
+                                .font(.system(size: 16))
+                                .foregroundStyle(
+                                    viewModel.isPinned ?
+                                    viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
+                                            .clear
+                                )
+                                .opacity(viewModel.isPinned ? 1 : 0)
+                                .symbolEffect(.bounce, value: viewModel.isPinned)
+                        } else {
+                            Image(systemName: "pin.fill")
+                                .rotationEffect(.degrees(45))
+                                .font(.system(size: 16))
+                                .foregroundStyle(
+                                    viewModel.isPinned ?
+                                    viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
+                                            .clear
+                                )
+                                .opacity(viewModel.isPinned ? 1 : 0)
+                        }
                     }
                     
                     /// Favorite heart icon
@@ -154,11 +166,19 @@ public struct SaveStateRowView: View {
                             viewModel.isFavorite.toggle()
                         }
                     } label: {
-                        Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
-                            .resizable()
-                            .frame(width: 24, height: 22)
-                            .foregroundColor(viewModel.isFavorite ? .red : .secondary)
-                            .symbolEffect(.bounce, value: viewModel.isFavorite)
+                        if #available(iOS 17.0, *) {
+                            Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
+                                .resizable()
+                                .frame(width: 24, height: 22)
+                                .foregroundColor(viewModel.isFavorite ? .red : .secondary)
+                                .symbolEffect(.bounce, value: viewModel.isFavorite)
+                        } else {
+                            // Fallback on earlier versions
+                            Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
+                                .resizable()
+                                .frame(width: 24, height: 22)
+                                .foregroundColor(viewModel.isFavorite ? .red : .secondary)
+                        }
                     }
                 }
                 .padding(.trailing)
@@ -309,7 +329,10 @@ extension View {
 
 // MARK: - Previews
 
-#Preview("Save State Row", traits: .sizeThatFitsLayout) {
+#if DEBUG
+
+@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
+#Preview("Save State Row") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
     
@@ -348,7 +371,8 @@ extension View {
 }
 
 /// Dark mode preview
-#Preview("Dark Mode", traits: .sizeThatFitsLayout) {
+@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
+#Preview("Dark Mode") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
     
@@ -365,6 +389,7 @@ extension View {
 }
 
 /// Updated preview
+@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
 #Preview("Save State Row States") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
@@ -437,6 +462,7 @@ extension View {
     .padding()
 }
 
+@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
 #Preview("Dark Mode") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
@@ -454,3 +480,4 @@ extension View {
     .padding()
     .preferredColorScheme(.dark)
 }
+#endif

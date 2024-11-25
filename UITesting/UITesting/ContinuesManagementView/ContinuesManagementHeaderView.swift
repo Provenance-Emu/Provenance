@@ -59,8 +59,8 @@ public struct ContinuesManagementHeaderView: View {
             .padding(.horizontal, 20)
             .padding(.top, 20)
 
-            Divider()
-                .padding(.top, 20)
+//            Divider()
+//                .padding(.top, 20)
         }
         .frame(height: 160) /// Fixed height for the header
     }
@@ -91,7 +91,8 @@ public struct ContinuesManagementHeaderView: View {
     .padding()
 }
 
-#Preview("Dark Mode", traits: .defaultLayout) {
+#if DEBUG
+#Preview("Dark Mode") {
     ContinuesManagementHeaderView(viewModel: ContinuesManagementHeaderViewModel(gameTitle: "Game 4", systemTitle: "System 4", numberOfSaves: 20, gameSize: 250, gameImage: Image("game4")))
         .frame(width: 375)
         .padding()
@@ -102,3 +103,4 @@ public struct ContinuesManagementHeaderView: View {
         .frame(width: 744)
         .padding()
 }
+#endif
