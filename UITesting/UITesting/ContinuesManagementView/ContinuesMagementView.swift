@@ -300,6 +300,28 @@ public struct ContinuesMagementView: View {
     @State var showingPopup = false
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
+    
+    
+    private struct EmptyStateView: View {
+        var body: some View {
+            VStack(spacing: 16) {
+                Image(systemName: "tray.fill")
+                    .font(.system(size: 48))
+                    .foregroundColor(.secondary)
+                
+                Text("No Save States")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Text("Save states for this game will appear here")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
 
     public init(viewModel: ContinuesMagementViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -339,7 +361,12 @@ public struct ContinuesMagementView: View {
                 .setAnimation(.bouncy(duration: 10))
                 .gradientPoints(start: .topTrailing, end: .bottomLeading)
                 .opacity(0.25)
-                ContinuesManagementContentView(viewModel: viewModel)
+                
+                if viewModel.saveStates.isEmpty {
+                    EmptyStateView()
+                } else {
+                    ContinuesManagementContentView(viewModel: viewModel)
+                }
             }
             .background(currentPalette.settingsCellBackground!.swiftUIColor)
             .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
