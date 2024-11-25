@@ -36,6 +36,12 @@ struct GameContextMenu: SwiftUI.View {
                     showMoreInfo(forGame: game)
                 } label: { Label("Game Info", systemImage: "info.circle") }
                 Button {
+                    showSaveStatesManager(forGame: game)
+                } label: {
+                    Label("Manage Save States", systemImage: "clock.arrow.circlepath")
+                }
+                .disabled(game.saveStates.isEmpty)
+                Button {
                     // Toggle isFavorite for the selected PVGame
                     let thawedGame = game.thaw()!
                     try! Realm().write {
@@ -48,7 +54,7 @@ struct GameContextMenu: SwiftUI.View {
                 Button {
                     promptUserMD5CopiedToClipboard(forGame: game)
                 } label: { Label("Copy MD5 URL", systemImage: "number.square") }
-                
+
                 if game.userPreferredCoreID != nil || game.system.userPreferredCoreID != nil {
                     Button {
                         resetCorePreferences(forGame: game)
@@ -231,16 +237,16 @@ extension GameContextMenu {
             rootDelegate?.showMessage("Failed to clear custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
         }
     }
-    
+
     private func resetCorePreferences(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
         let hasGamePreference = game.userPreferredCoreID != nil
         let hasSystemPreference = game.system.userPreferredCoreID != nil
-        
-        let alert = UIAlertController(title: "Reset Core Preferences", 
-                                    message: "Which core preference would you like to reset?", 
+
+        let alert = UIAlertController(title: "Reset Core Preferences",
+                                    message: "Which core preference would you like to reset?",
                                     preferredStyle: .alert)
-        
+
         if hasGamePreference {
             alert.addAction(UIAlertAction(title: "Game Preference", style: .default) { _ in
                 try! Realm().write {
@@ -248,7 +254,7 @@ extension GameContextMenu {
                 }
             })
         }
-        
+
         if hasSystemPreference {
             alert.addAction(UIAlertAction(title: "System Preference", style: .default) { _ in
                 try! Realm().write {
@@ -256,7 +262,7 @@ extension GameContextMenu {
                 }
             })
         }
-        
+
         if hasGamePreference && hasSystemPreference {
             alert.addAction(UIAlertAction(title: "Both", style: .default) { _ in
                 try! Realm().write {
@@ -265,12 +271,55 @@ extension GameContextMenu {
                 }
             })
         }
-        
+
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        
+
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let viewController = windowScene.windows.first?.rootViewController {
             viewController.present(alert, animated: true)
+        }
+    }
+
+    private func showSaveStatesManager(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
+
+        if let rootDelegate = rootDelegate as? UIViewController {
+            // Create the Realm driver
+            guard let driver = try? RealmSaveStateDriver(realm: RomDatabase.sharedInstance.realm) else { return }
+
+            // TODO: Make PVMediaCache async and not use this dumb completion handler
+            PVMediaCache.shareInstance().image(forKey: game.trueArtworkURL, completion: { _, image in
+                Task { @MainActor in
+                    
+                    let swiftImage: Image
+                    if let image = image {
+                        swiftImage = Image(uiImage: image)
+                    } else {
+                        swiftImage = Image(systemName: "photo.artframe")
+                    }
+                    
+                    // Create view model
+                    let viewModel = ContinuesMagementViewModel(
+                        driver: driver,
+                        gameTitle: game.title,
+                        systemTitle: game.system.name,
+                        numberOfSaves: game.saveStates.count,
+                        gameSize: Int(game.file.size / 1024), // Convert to KB
+                        gameImage: swiftImage
+                    )
+
+                    // Create and configure the view
+                    let saveStatesView = ContinuesMagementView(viewModel: viewModel)
+                        .onAppear {
+                            // Load states through the publisher
+                            driver.loadSaveStates(forGameId: game.id)
+                        }
+
+                    // Create and present hosting controller
+                    let hostingController = UIHostingController(rootView: saveStatesView)
+                    rootDelegate.present(hostingController, animated: true)
+                }
+            })
         }
     }
 }

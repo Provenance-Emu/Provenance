@@ -50,7 +50,7 @@ let package = Package(
         .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", from: "0.2.3"),
         
         /// https://github.com/exyte/ScalingHeaderScrollView
-        .package(url:"https://github.com/exyte/ScalingHeaderScrollView.git", from: "1.1.5"),
+//        .package(url:"https://github.com/exyte/ScalingHeaderScrollView.git", from: "1.1.5"),
         
         /// https://github.com/exyte/AnimatedGradient
         .package(url: "https://github.com/exyte/AnimatedGradient.git", from: "1.0.0"),
@@ -62,7 +62,7 @@ let package = Package(
         .package(url: "https://github.com/exyte/ActivityIndicatorView.git", from: "1.1.1"),
 
         /// https://github.com/exyte/PopupView
-        .package(url: "https://github.com/exyte/PopupView.git", from: "3.1.4"),
+//        .package(url: "https://github.com/exyte/PopupView.git", from: "3.1.4"),
         
         /// https://github.com/DominikButz/SwipeCellSUI.git
         .package(url: "https://github.com/DominikButz/SwipeCellSUI.git", from: "2.1.4"),
@@ -198,11 +198,9 @@ let package = Package(
                 "PVThemes",
                 "MBProgressHUD",
                 "FreemiumKit",
-                "PopupView",
                 "AnimatedGradient",
                 "FloatingButton",
                 "ActivityIndicatorView",
-                "ScalingHeaderScrollView",
                 "SwipeCellSUI",
                 "DateRangePicker"
             ]

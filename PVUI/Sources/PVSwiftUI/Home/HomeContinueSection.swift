@@ -105,11 +105,12 @@ struct HomeContinueSection: SwiftUI.View {
 
         if let consoleIdentifier = consoleIdentifier {
             return validSaveStates.filter {
+                $0.game != nil && 
                 !$0.game.isInvalidated &&
                 $0.game.systemIdentifier == consoleIdentifier
             }
         } else {
-            return validSaveStates.filter { !$0.game.isInvalidated }
+            return validSaveStates.filter { $0.game != nil && !$0.game.isInvalidated }
         }
     }
 

@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import Systems
 import PVMediaCache
 
-let schemaVersion: UInt64 = 13
+let schemaVersion: UInt64 = 14
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -157,6 +157,12 @@ public final class RealmConfiguration {
                 }
                 migration.enumerateObjects(ofType: PVSystem.className()) { oldObject, newObject in
                     newObject!["appStoreDisabled"] = false
+                }
+            }
+            if oldSchemaVersion < 14 {
+                migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
+                    newObject!["isPinned"] = false
+                    newObject!["isFavorite"] = false
                 }
             }
         }
