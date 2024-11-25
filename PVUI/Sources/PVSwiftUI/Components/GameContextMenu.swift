@@ -303,8 +303,12 @@ extension GameContextMenu {
                         driver: driver,
                         gameTitle: game.title,
                         systemTitle: game.system.name,
+                        // TODO: Fix me, make saveStates.count an observable from the driver
+                        // so it updates on delete
                         numberOfSaves: game.saveStates.count,
-                        gameSize: Int(game.file.size / 1024), // Convert to KB
+                        // TODO: Fix me, make size something read in the driver async
+                        gameSize: 0,
+//                        gameSize: Int(game.file.size / 1024), // Convert to KB
                         gameImage: swiftImage
                     )
 
