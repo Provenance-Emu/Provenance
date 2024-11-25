@@ -15,6 +15,49 @@ import Combine
 import RealmSwift
 import OpenDateInterval
 
+extension Publishers {
+    struct CombineLatest5Data<A: Publisher, B: Publisher, C: Publisher, D: Publisher, E: Publisher>: Publisher 
+    where A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure, D.Failure == E.Failure {
+        typealias Output = (A.Output, B.Output, C.Output, D.Output, E.Output)
+        typealias Failure = A.Failure
+
+        private let a: A
+        private let b: B
+        private let c: C
+        private let d: D
+        private let e: E
+
+        init(_ a: A, _ b: B, _ c: C, _ d: D, _ e: E) {
+            self.a = a
+            self.b = b
+            self.c = c
+            self.d = d
+            self.e = e
+        }
+
+        func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
+            Publishers.CombineLatest(
+                Publishers.CombineLatest4(a, b, c, d),
+                e
+            )
+            .map { ($0.0, $0.1, $0.2, $0.3, $1) }
+            .receive(subscriber: subscriber)
+        }
+    }
+}
+
+extension Publishers {
+    static func CombineLatest5<A: Publisher, B: Publisher, C: Publisher, D: Publisher, E: Publisher>(
+        _ a: A,
+        _ b: B,
+        _ c: C,
+        _ d: D,
+        _ e: E
+    ) -> Publishers.CombineLatest5Data<A, B, C, D, E> where A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure, D.Failure == E.Failure {
+        return Publishers.CombineLatest5Data(a, b, c, d, e)
+    }
+}
+
 /// View model for the main continues management view
 public class ContinuesMagementViewModel: ObservableObject {
     /// Header view model
@@ -27,7 +70,7 @@ public class ContinuesMagementViewModel: ObservableObject {
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
 
     var scrollViewScrollIndicatorColor: Color { currentPalette.settingsCellText!.swiftUIColor }
-    
+
     private let driver: SaveStateDriver
     private var cancellables = Set<AnyCancellable>()
 
@@ -53,11 +96,12 @@ public class ContinuesMagementViewModel: ObservableObject {
             .store(in: &cancellables)
 
         /// Create a publisher that combines all filter criteria
-        let filterPublisher = Publishers.CombineLatest4(
+        let filterPublisher = Publishers.CombineLatest5(
             controlsViewModel.$filterFavoritesOnly,
             controlsViewModel.$isAutoSavesEnabled,
             controlsViewModel.$dateRange,
-            controlsViewModel.$sortAscending
+            controlsViewModel.$sortAscending,
+            $searchText
         )
 
         /// Combine save states with filter criteria
@@ -66,9 +110,20 @@ public class ContinuesMagementViewModel: ObservableObject {
             filterPublisher
         )
         .map { [weak self] states, filterCriteria in
-            let (favoritesOnly, autoSavesEnabled, dateRange, sortAscending) = filterCriteria
+            let (favoritesOnly, autoSavesEnabled, dateRange, sortAscending, searchText) = filterCriteria
+            var filtered = states
+            
+            // Apply search filter
+            if !searchText.isEmpty {
+                filtered = filtered.filter {
+                    guard let description = $0.description else { return false }
+                    return description.localizedCaseInsensitiveContains(searchText)
+                }
+            }
+            
+            // Apply other filters
             return self?.applyFilters(
-                to: states,
+                to: filtered,
                 favoritesOnly: favoritesOnly,
                 autoSavesEnabled: autoSavesEnabled,
                 dateRange: dateRange,
@@ -79,26 +134,7 @@ public class ContinuesMagementViewModel: ObservableObject {
         .assign(to: &$filteredAndSortedSaveStates)
 
         /// Observe search text changes
-        $searchText
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.updateFilteredAndSortedStates()
-            }
-            .store(in: &cancellables)
-    }
-
-    private func updateFilteredAndSortedStates() {
-        var filtered = saveStates
-        
-        // Apply search filter if search text is not empty
-        if !searchText.isEmpty {
-            filtered = filtered.filter {
-                guard let description = $0.description else { return false }
-                return description.localizedCaseInsensitiveContains(searchText) }
-        }
-        
-        // Apply any existing sorting logic here
-        filteredAndSortedSaveStates = filtered
+        // Removed the separate search text observer since it's now part of the main filter chain
     }
 
     private func applyFilters(
@@ -187,7 +223,7 @@ public class ContinuesMagementViewModel: ObservableObject {
         )
         self.controlsViewModel = ContinuesManagementListControlsViewModel()
 
-        
+
         self.controlsViewModel = ContinuesManagementListControlsViewModel(
             onDeleteSelected: { [weak self] in
                 self?.deleteSelectedSaveStates()
@@ -199,7 +235,7 @@ public class ContinuesMagementViewModel: ObservableObject {
                 self?.clearAllSelections()
             }
         )
-        
+
         setupObservers()
     }
 

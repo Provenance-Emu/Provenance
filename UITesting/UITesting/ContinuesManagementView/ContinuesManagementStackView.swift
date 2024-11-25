@@ -88,6 +88,7 @@ public struct ContinuesManagementContentView: View {
 }
 
 // MARK: - Previews
+#if DEBUG
 
 #Preview("Content View States") {
     /// Create mock driver with sample data
@@ -141,3 +142,5 @@ public struct ContinuesManagementContentView: View {
             mockDriver.loadSaveStates(forGameId: "1")
         }
 }
+
+#endif
