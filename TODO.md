@@ -3,7 +3,7 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] Games pausing not working
+- [X] Games pausing not working
 - [ ] New save state mangager
     - [ ] Hide share or impliment
     - [ ] Fix main game artwork async, or missing artwork view
