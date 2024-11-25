@@ -16,6 +16,15 @@ internal struct SystemMoveState: Identifiable {
     var isPresenting: Bool = true
 }
 
+internal struct ContinuesManagementState: Identifiable {
+    var id: String {
+        guard !game.isInvalidated else { return "" }
+        return game.id
+    }
+    let game: PVGame
+    var isPresenting: Bool = true
+}
+
 extension ConsoleGamesView: GameContextMenuDelegate {
 
 #if !os(tvOS)
@@ -117,5 +126,10 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         DLOG("ConsoleGamesView: Received request to move game to system")
         let frozenGame = game.isFrozen ? game : game.freeze()
         systemMoveState = SystemMoveState(game: frozenGame)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
+        DLOG("ConsoleGamesView: Received request to show save states for game")
+        continuesManagementState = ContinuesManagementState(game: game)
     }
 }

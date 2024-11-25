@@ -282,48 +282,6 @@ extension GameContextMenu {
 
     private func showSaveStatesManager(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
-
-        if let rootDelegate = rootDelegate as? UIViewController {
-            // Create the Realm driver
-            guard let driver = try? RealmSaveStateDriver(realm: RomDatabase.sharedInstance.realm) else { return }
-
-            // TODO: Make PVMediaCache async and not use this dumb completion handler
-            PVMediaCache.shareInstance().image(forKey: game.trueArtworkURL, completion: { _, image in
-                Task { @MainActor in
-                    
-                    let swiftImage: Image
-                    if let image = image {
-                        swiftImage = Image(uiImage: image)
-                    } else {
-                        swiftImage = Image(systemName: "photo.artframe")
-                    }
-                    
-                    // Create view model
-                    let viewModel = ContinuesMagementViewModel(
-                        driver: driver,
-                        gameTitle: game.title,
-                        systemTitle: game.system.name,
-                        // TODO: Fix me, make saveStates.count an observable from the driver
-                        // so it updates on delete
-                        numberOfSaves: game.saveStates.count,
-                        // TODO: Fix me, make size something read in the driver async
-                        gameSize: 0,
-//                        gameSize: Int(game.file.size / 1024), // Convert to KB
-                        gameImage: swiftImage
-                    )
-
-                    // Create and configure the view
-                    let saveStatesView = ContinuesMagementView(viewModel: viewModel)
-                        .onAppear {
-                            // Load states through the publisher
-                            driver.loadSaveStates(forGameId: game.id)
-                        }
-
-                    // Create and present hosting controller
-                    let hostingController = UIHostingController(rootView: saveStatesView)
-                    rootDelegate.present(hostingController, animated: true)
-                }
-            })
-        }
+        contextMenuDelegate?.gameContextMenu(self, didRequestShowSaveStatesFor: game)
     }
 }

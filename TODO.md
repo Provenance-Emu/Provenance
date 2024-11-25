@@ -9,8 +9,8 @@ _My personal TODO notes_
     - [ ] Fix main game artwork async, or missing artwork view
     - [ ] Number of save states count updates on delete
     - [ ] Save state images
-    - [ ] Transparent background on the wrapper view controller,
-    - [ ] Glitchy search bar hiding
+    - [X] Transparent background on the wrapper view controller,
+    - [X] Glitchy search bar hiding
     - [ ] top to play, with confirmation
 - [ ] test,fix,finish PVImageFile pathOfCachedImage
 

@@ -54,6 +54,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showRecentGames) internal var showRecentGames
 
     @State internal var systemMoveState: SystemMoveState?
+    @State internal var continuesManagementState: ContinuesManagementState?
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -66,7 +67,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @State private var navigationTimer: Timer?
     @State private var initialDelay: TimeInterval = 0.5
     @State private var repeatDelay: TimeInterval = 0.15
-    
+
     /// Note: these CANNOT be in a @StateObject
     @ObservedResults(
         PVGame.self,
@@ -96,6 +97,8 @@ struct ConsoleGamesView: SwiftUI.View {
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
 
+    @State var isShowingSaveStates = false
+
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
         let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
@@ -108,7 +111,7 @@ struct ConsoleGamesView: SwiftUI.View {
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
         self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
-        
+
         _games = ObservedResults(
             PVGame.self,
             filter: NSPredicate(format: "systemIdentifier == %@", console.identifier),
@@ -212,6 +215,38 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 )
             )
+        }
+        .sheet(item: $continuesManagementState) { state in
+            let game = state.game
+            /// Create the Realm driver
+            let driver = try! RealmSaveStateDriver(realm: RomDatabase.sharedInstance.realm)
+            
+            // TODO: Better way to in viewmodel
+//            let image: UIImage? = await game.fetchArtworkFromCache()
+//            let swiftImage: Image
+//            if let image = image {
+//                swiftImage = Image(uiImage: image)
+//            } else {
+//                swiftImage = Image(systemName: "photo.artframe")
+//            }
+            
+            /// Create view model
+            let viewModel = ContinuesMagementViewModel(
+                driver: driver,
+                gameTitle: game.title,
+                systemTitle: game.system.name,
+                numberOfSaves: game.saveStates.count,
+                // TODO: Fix file.size from crashing
+                gameSize: 0, //Int(game.file.size / 1024), /// Convert to KB
+                gameImage: Image(systemName: "photo.artframe") //swiftImage
+            )
+            
+            /// Create and configure the view
+            ContinuesMagementView(viewModel: viewModel)
+                .onAppear {
+                    driver.loadSaveStates(forGameId: game.id)
+                }
+                .background(.clear)
         }
     }
 
@@ -551,7 +586,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func gameItem(_ game: PVGame, section: HomeSectionType) -> some View {
         if !game.isInvalidated {
-            
+
             GameItemView(
                 game: game,
                 constrainHeight: true,
