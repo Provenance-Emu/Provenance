@@ -92,3 +92,15 @@ public final class PVImageFile: PVFile {
     }
 #endif
 }
+
+import PVMediaCache
+public extension PVImageFile {
+    var pathOfCachedImage: URL? {
+        let artworkKey = url.lastPathComponent
+        if !PVMediaCache.fileExists(forKey: artworkKey) {
+            return nil
+        }
+        let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
+        return artworkURL
+    }
+}
