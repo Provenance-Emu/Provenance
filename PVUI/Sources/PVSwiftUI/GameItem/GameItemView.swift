@@ -66,10 +66,11 @@ struct GameItemView: SwiftUI.View {
         guard !game.isInvalidated else {
             return
         }
-        PVMediaCache.shareInstance().image(forKey: game.trueArtworkURL, completion: { _, image in
-            Task { @MainActor in
-                self.artwork = image
+        Task {
+            let artwork = await game.fetchArtworkFromCache()
+            await MainActor.run {
+                self.artwork = artwork
             }
-        })
+        }
     }
 }
