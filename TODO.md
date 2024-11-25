@@ -3,6 +3,17 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [ ] Games pausing not working
+- [ ] New save state mangager
+    - [ ] Hide share or impliment
+    - [ ] Fix main game artwork async, or missing artwork view
+    - [ ] Number of save states count updates on delete
+    - [ ] Save state images
+    - [ ] Transparent background on the wrapper view controller,
+    - [ ] Glitchy search bar hiding
+    - [ ] top to play, with confirmation
+- [ ] test,fix,finish PVImageFile pathOfCachedImage
+
 - [X] Shared documents :        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
 
 ## Major bugs
