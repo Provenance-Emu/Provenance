@@ -338,8 +338,8 @@ public struct ContinuesMagementView: View {
                     .numberOfSimultaneousColors(2)
                     .setAnimation(.bouncy(duration: 10))
                     .gradientPoints(start: .bottomLeading, end: .topTrailing)
-                    .padding(.bottom, 10)
-                    .opacity(0.25)
+//                    .padding(.bottom, 10)
+//                    .opacity(0.25)
 
                     ContinuesManagementHeaderView(viewModel: viewModel.headerViewModel)
                 }

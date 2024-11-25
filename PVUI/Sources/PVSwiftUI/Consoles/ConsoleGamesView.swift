@@ -242,11 +242,18 @@ struct ConsoleGamesView: SwiftUI.View {
             )
             
             /// Create and configure the view
-            ContinuesMagementView(viewModel: viewModel)
-                .onAppear {
-                    driver.loadSaveStates(forGameId: game.id)
-                }
-                .background(.clear)
+            if #available(iOS 16.4, *) {
+                ContinuesMagementView(viewModel: viewModel)
+                    .onAppear {
+                        driver.loadSaveStates(forGameId: game.id)
+                    }
+                    .presentationBackground(content: {Color.clear})
+            } else {
+                ContinuesMagementView(viewModel: viewModel)
+                    .onAppear {
+                        driver.loadSaveStates(forGameId: game.id)
+                    }
+            }
         }
     }
 

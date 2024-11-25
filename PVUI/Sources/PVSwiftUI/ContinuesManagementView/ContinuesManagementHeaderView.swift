@@ -59,8 +59,8 @@ public struct ContinuesManagementHeaderView: View {
             .padding(.horizontal, 20)
             .padding(.top, 20)
 
-            Divider()
-                .padding(.top, 20)
+//            Divider()
+//                .padding(.top, 20)
         }
         .frame(height: 160) /// Fixed height for the header
     }
