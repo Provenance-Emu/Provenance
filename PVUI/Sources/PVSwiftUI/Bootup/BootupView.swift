@@ -26,19 +26,19 @@ public struct BootupView: View {
 
     public var body: some View {
         ZStack {
-            AnimatedLinearGradient(colors: [
-                .Provenance.blue,
-                currentPalette.settingsCellBackground!.swiftUIColor,
-                currentPalette.gameLibraryBackground.swiftUIColor,
-                currentPalette.settingsCellBackground!.swiftUIColor])
-            .numberOfSimultaneousColors(3)
-            .setAnimation(.bouncy(duration: 5))
-            .gradientPoints(start: .topTrailing, end: .bottomLeading)
-            .ignoresSafeArea()
-
+            if #available(iOS 18.0, *) {
+                ProvenanceAnimatedBackgroundView()
+            } else {
+                PVAnimatedGradient()
+            }
+            
             VStack {
                 Text("Initializing...")
-                    .foregroundColor(currentPalette.gameLibraryText.swiftUIColor)
+                    .font(.system(size: 16, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white)
+                    .backgroundStyle(.secondary)
+                    .tag("Initializing")
+                    .blendMode(.difference)
                 
                 ActivityIndicatorView(
                     isVisible: .constant(true),

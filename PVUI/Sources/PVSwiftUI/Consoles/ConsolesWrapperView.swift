@@ -60,6 +60,28 @@ struct ConsolesWrapperView: SwiftUI.View {
     // MARK: - Body
 
     var body: some SwiftUI.View {
+        if consoles.isEmpty {
+            showNoConsolesView()
+        } else {
+            showConsoles()
+        }
+    }
+
+    // MARK: - Helper Methods
+
+    private func sortedConsoles() -> [PVSystem] {
+        viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
+    }
+
+    private func showNoConsolesView() -> some View {
+        NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
+            .tabItem {
+                Label("No Consoles", systemImage: "xmark.circle")
+            }
+            .tag("noConsoles")
+    }
+
+    private func showConsoles() -> some View {
         TabView(selection: $delegate.selectedTab) {
             HomeView(gameLibrary: rootDelegate.gameLibrary!, delegate: rootDelegate, viewModel: viewModel)
                 .tabItem {
@@ -81,30 +103,6 @@ struct ConsolesWrapperView: SwiftUI.View {
         .tint(themeManager.currentPalette.defaultTintColor?.swiftUIColor)
         .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-    }
-
-    // MARK: - Helper Methods
-
-    private func sortedConsoles() -> [PVSystem] {
-        viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
-    }
-
-    private func showNoConsolesView() -> some View {
-        NoConsolesView(delegate: rootDelegate as! PVMenuDelegate)
-            .tabItem {
-                Label("No Consoles", systemImage: "xmark.circle")
-            }
-            .tag("noConsoles")
-    }
-
-    private func showConsoles() -> some View {
-        ForEach(sortedConsoles(), id: \.self) { console in
-            ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
-                .tabItem {
-                    Label(console.name, systemImage: console.iconName)
-                }
-                .tag(console.identifier)
-        }
     }
 }
 
