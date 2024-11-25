@@ -13,7 +13,7 @@ public struct ContinuesManagementStackView: View {
     @ObservedObject var viewModel: ContinuesMagementViewModel
     @State private var currentUserInteractionCellID: String? = nil
     @State private var lastScrollPosition: CGFloat = 0
-    @State private var showSearchBar = true
+    @State private var showSearchBar = false
     
     private let searchBarHeight: CGFloat = 52 // Height of search bar + padding
     
@@ -23,18 +23,26 @@ public struct ContinuesManagementStackView: View {
                 SearchBar(text: $viewModel.searchText)
                     .padding(.horizontal)
                     .padding(.vertical, 8)
-                    .opacity(showSearchBar ? 1 : 0)
-                    .frame(height: showSearchBar ? searchBarHeight : 0, alignment: .top)
+                    .opacity(showSearchBar && !viewModel.controlsViewModel.isEditing ? 1 : 0)
+                    .frame(height: showSearchBar && !viewModel.controlsViewModel.isEditing ? searchBarHeight : 0, alignment: .top)
                     .clipped()
-                    .animation(.easeInOut(duration: 0.2), value: showSearchBar)
+                    .animation(.interpolatingSpring(stiffness: 300, damping: 30), value: showSearchBar)
+                    .onChange(of: viewModel.controlsViewModel.isEditing) { isEditing in
+                        if isEditing {
+                            withAnimation {
+                                showSearchBar = false
+                                viewModel.searchText = ""
+                            }
+                        }
+                    }
                 
                 ScrollView {
                     GeometryReader { geometry in
                         Color.clear.onChange(of: geometry.frame(in: .named("scroll")).minY) { position in
                             let scrollDelta = position - lastScrollPosition
-                            if abs(scrollDelta) > 5 {  // Add threshold to prevent tiny movements
+                            if abs(scrollDelta) > 3 {  
                                 withAnimation {
-                                    showSearchBar = scrollDelta > 0 || position > -5
+                                    showSearchBar = scrollDelta > 0 || position > -3
                                 }
                             }
                             lastScrollPosition = position
