@@ -19,6 +19,16 @@ public class RealmSaveStateDriver: SaveStateDriver {
         saveStatesSubject.map { $0.count }.eraseToAnyPublisher()
     }
 
+    public var savesSizePublisher: AnyPublisher<UInt64, Never> {
+        saveStatesSubject.map { saveStates in
+            self.realm.objects(PVSaveState.self)
+                .filter { saveState in
+                    saveStates.contains { $0.id == saveState.id }
+                }
+                .reduce(0) { $0 + $1.size }
+        }.eraseToAnyPublisher()
+    }
+
     public init(realm: Realm? = nil) throws {
         self.realm = try realm ?? Realm()
 

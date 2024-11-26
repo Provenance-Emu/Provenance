@@ -19,7 +19,6 @@ struct ContentView: View {
             gameTitle: mockDriver.gameTitle,
             systemTitle: mockDriver.systemTitle,
             numberOfSaves: mockDriver.getAllSaveStates().count,
-            gameSize: mockDriver.gameSize,
             gameImage: mockDriver.gameImage
         )
 

@@ -13,6 +13,9 @@ public protocol SaveStateDriver: ObservableObject {
     /// Publisher for number of saves
     var numberOfSavesPublisher: AnyPublisher<Int, Never> { get }
 
+    /// Publisher for total size of all save states in bytes
+    var savesSizePublisher: AnyPublisher<UInt64, Never> { get }
+
     /// Get initial save states (for setup)
     func getAllSaveStates() -> [SaveStateRowViewModel]
 

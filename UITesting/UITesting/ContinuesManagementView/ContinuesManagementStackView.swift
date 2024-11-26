@@ -108,7 +108,6 @@ public struct ContinuesManagementContentView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameSize: mockDriver.gameSize,
         gameImage: mockDriver.gameImage
     )
 
@@ -140,7 +139,6 @@ public struct ContinuesManagementContentView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameSize: mockDriver.gameSize,
         gameImage: mockDriver.gameImage
     )
 

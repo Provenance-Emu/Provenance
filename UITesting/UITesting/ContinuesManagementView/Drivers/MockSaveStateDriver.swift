@@ -23,24 +23,48 @@ public class MockSaveStateDriver: SaveStateDriver {
         saveStatesSubject.map { $0.count }.eraseToAnyPublisher()
     }
 
+    private var mockSaveSizes: [String: UInt64] = [:]
+
+    public var savesSizePublisher: AnyPublisher<UInt64, Never> {
+        saveStatesSubject.map { saveStates in
+            saveStates.reduce(0) { $0 + (self.mockSaveSizes[$1.id] ?? 0) }
+        }.eraseToAnyPublisher()
+    }
+
     /// Game metadata
     public let gameTitle: String
     public let systemTitle: String
-    public let gameSize: Int
+    public let savesTotalSize: Int
     public let gameImage: Image
 
     public init(mockData: Bool = true,
                 gameTitle: String = "Bomber Man",
                 systemTitle: String = "Game Boy",
-                gameSize: Int = 2048,
+                savesTotalSize: Int = 2048,
                 gameImage: Image = Image(systemName: "gamecontroller")) {
         self.gameTitle = gameTitle
         self.systemTitle = systemTitle
-        self.gameSize = gameSize
+        self.savesTotalSize = savesTotalSize
         self.gameImage = gameImage
 
         if mockData {
-            saveStates = createMockSaveStates()
+            let mockStates = (0..<10).map { index -> SaveStateRowViewModel in
+                let id = UUID().uuidString
+                // Generate random size between 1MB and 10MB
+                mockSaveSizes[id] = UInt64.random(in: 1_000_000...10_000_000)
+                return SaveStateRowViewModel(
+                    id: id,
+                    gameID: "1",
+                    gameTitle: "Pokemon Red",
+                    saveDate: Date().addingTimeInterval(-Double(index * 86400)),
+                    thumbnailImage: Image(systemName: "gamecontroller"),
+                    description: "Save State \(index + 1)",
+                    isAutoSave: index % 3 == 0,
+                    isPinned: index < 2,
+                    isFavorite: index % 2 == 0
+                )
+            }
+            saveStates = mockStates
             saveStatesSubject.send(saveStates)
         }
     }

@@ -134,6 +134,13 @@ public class ContinuesMagementViewModel: ObservableObject {
 
         /// Observe search text changes
         // Removed the separate search text observer since it's now part of the main filter chain
+
+        // Observe save states size
+        driver.savesSizePublisher
+            .map { Int($0 / 1024) } // Convert to KB
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.savesTotalSize, on: headerViewModel)
+            .store(in: &cancellables)
     }
 
     private func applyFilters(
@@ -209,7 +216,6 @@ public class ContinuesMagementViewModel: ObservableObject {
         gameTitle: String,
         systemTitle: String,
         numberOfSaves: Int,
-        gameSize: Int,
         gameImage: Image
     ) {
         self.driver = driver
@@ -219,7 +225,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             gameTitle: gameTitle,
             systemTitle: systemTitle,
             numberOfSaves: numberOfSaves,
-            gameSize: gameSize,
+            savesTotalSize: 0, // Will be updated by publisher
             gameImage: gameImage
         )
 
@@ -417,7 +423,6 @@ private struct EmptyStateView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameSize: mockDriver.gameSize,
         gameImage: mockDriver.gameImage
     )
 
@@ -445,7 +450,6 @@ private struct EmptyStateView: View {
         gameTitle: game.title,
         systemTitle: "Game Boy",
         numberOfSaves: game.saveStates.count,
-        gameSize: Int(game.file.size / 1024), // Convert to KB
         gameImage: Image(systemName: "gamecontroller")
     )
 
@@ -469,7 +473,6 @@ private struct EmptyStateView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameSize: mockDriver.gameSize,
         gameImage: mockDriver.gameImage
     )
 

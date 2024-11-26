@@ -47,3 +47,9 @@ public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFil
         return lhs.file.url == rhs.file.url
     }
 }
+
+public extension PVSaveState {
+    var size: UInt64 {
+        file.size + (image?.size ?? 0)
+    }
+}

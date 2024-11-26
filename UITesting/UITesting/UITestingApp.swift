@@ -47,7 +47,7 @@ struct MainView: View {
                 gameTitle: mockDriver.gameTitle,
                 systemTitle: mockDriver.systemTitle,
                 numberOfSaves: mockDriver.getAllSaveStates().count,
-                gameSize: mockDriver.gameSize,
+                savesTotalSize: mockDriver.savesTotalSize,
                 gameImage: mockDriver.gameImage
             )
             #else
@@ -63,7 +63,6 @@ struct MainView: View {
                 gameTitle: game.title,
                 systemTitle: "Game Boy",
                 numberOfSaves: game.saveStates.count,
-                gameSize: Int(game.file.size / 1024), // Convert to KB
                 gameImage: Image(systemName: "gamecontroller")
             )
             #endif
