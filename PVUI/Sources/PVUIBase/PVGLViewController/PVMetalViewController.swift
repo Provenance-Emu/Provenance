@@ -1560,6 +1560,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     func didRenderFrameOnAlternateThread() {
+        guard backingMTLTexture != nil else {
+            ELOG("backingMTLTexture was nil")
+            return
+        }
         glFlush()
 
         emulatorCore?.frontBufferLock.lock()
