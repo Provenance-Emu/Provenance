@@ -23,19 +23,33 @@ public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFil
     @Persisted public var image: PVImageFile?
     @Persisted public var isAutosave: Bool = false
 
+    @Persisted public var isPinned: Bool = false
+    @Persisted public var isFavorite: Bool = false
+    
+    @Persisted public var userDescription: String? = nil
+
     @Persisted public var createdWithCoreVersion: String!
 
-    public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, image: PVImageFile? = nil, isAutosave: Bool = false) {
+    public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, image: PVImageFile? = nil, isAutosave: Bool = false, isPinned: Bool = false, isFavorite: Bool = false, userDescription: String? = nil) {
         self.init()
         self.game = game
         self.file = file
         self.image = image
         self.isAutosave = isAutosave
+        self.isPinned = isPinned
+        self.isFavorite = isFavorite
+        self.userDescription = userDescription
         self.core = core
         createdWithCoreVersion = core.projectVersion
     }
 
     public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
         return lhs.file.url == rhs.file.url
+    }
+}
+
+public extension PVSaveState {
+    var size: UInt64 {
+        file.size + (image?.size ?? 0)
     }
 }

@@ -2,6 +2,24 @@
   "object": {
     "pins": [
       {
+        "package": "ActivityIndicatorView",
+        "repositoryURL": "https://github.com/exyte/ActivityIndicatorView.git",
+        "state": {
+          "branch": null,
+          "revision": "9970fd0bb7a05dad0b6566ae1f56937716686b24",
+          "version": "1.1.1"
+        }
+      },
+      {
+        "package": "AnimatedGradient",
+        "repositoryURL": "https://github.com/exyte/AnimatedGradient.git",
+        "state": {
+          "branch": null,
+          "revision": "70f5d34bc553483936e86eca3984b6e12302ead2",
+          "version": "1.0.0"
+        }
+      },
+      {
         "package": "AppCenter",
         "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
         "state": {
@@ -38,12 +56,30 @@
         }
       },
       {
+        "package": "DateRangePicker",
+        "repositoryURL": "https://github.com/MrAsterisco/DateRangePicker",
+        "state": {
+          "branch": null,
+          "revision": "9fd27bed5a951e7a48e2211465fdfc7e9bf2cbe7",
+          "version": "1.0.2"
+        }
+      },
+      {
         "package": "Defaults",
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
           "branch": "main",
-          "revision": "a89f799930c92a85aa04b72131849d46c0833ab3",
+          "revision": "ef1b2318fb549002bb533bec3a8ad98ae09f2cb6",
           "version": null
+        }
+      },
+      {
+        "package": "FloatingButton",
+        "repositoryURL": "https://github.com/exyte/FloatingButton.git",
+        "state": {
+          "branch": null,
+          "revision": "cf77c2f124df1423d90a9a1985e9b9ccfa4b9b3e",
+          "version": "1.3.0"
         }
       },
       {
@@ -51,8 +87,8 @@
         "repositoryURL": "https://github.com/FlineDev/FreemiumKit.git",
         "state": {
           "branch": null,
-          "revision": "3e8f78f8fd45d7b1ec1a0f91c2f29407b0af484a",
-          "version": "1.13.0"
+          "revision": "b12a5f899de2101458119bfe03cd8a9b99aa665b",
+          "version": "1.13.1"
         }
       },
       {
@@ -80,6 +116,15 @@
           "branch": null,
           "revision": "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
           "version": "1.2.0"
+        }
+      },
+      {
+        "package": "OpenDateInterval",
+        "repositoryURL": "https://github.com/MrAsterisco/OpenDateInterval",
+        "state": {
+          "branch": null,
+          "revision": "acf88f98adae4ef2f7040d3fcc23685b094b219b",
+          "version": "1.0.0"
         }
       },
       {
@@ -281,6 +326,15 @@
         }
       },
       {
+        "package": "SwipeCellSUI",
+        "repositoryURL": "https://github.com/DominikButz/SwipeCellSUI.git",
+        "state": {
+          "branch": null,
+          "revision": "d1b121a9b30789b603d7fa7559889925f20fe47e",
+          "version": "2.1.4"
+        }
+      },
+      {
         "package": "Turbo-Base64.swift",
         "repositoryURL": "https://github.com/JoeMatt/Turbo-Base64.swift.git",
         "state": {
@@ -303,8 +357,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "770f990d3e4eececb57ac04a6076e22f8c97daeb",
-          "version": "1.4.2"
+          "revision": "a3f634d1a409c7979cabc0a71b3f26ffa9fc8af1",
+          "version": "1.4.3"
         }
       },
       {
@@ -312,7 +366,7 @@
         "repositoryURL": "https://github.com/ZipArchive/ZipArchive.git",
         "state": {
           "branch": "master",
-          "revision": "a0e8e082402e44515ee5f0bea650722d5575f968",
+          "revision": "168f9e2f19df89f7f1f479aa867960128a94bcf7",
           "version": null
         }
       },
@@ -321,7 +375,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "45fdc5f9e408f41f10e671c207cd424b20ce58f3",
+          "revision": "1958fff050350cfe4829ed1a04c2553e76ee9b58",
           "version": null
         }
       }

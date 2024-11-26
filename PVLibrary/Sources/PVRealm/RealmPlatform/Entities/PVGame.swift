@@ -25,7 +25,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     // fully qualified path, but if we add network / cloud storage that may or may not change that.
     @Persisted public var romPath: String = ""
     @Persisted public var file: PVFile!
-    @Persisted public private(set) var relatedFiles = List<PVFile>()
+    @Persisted public private(set) var relatedFiles: List<PVFile>
 
     @Persisted public var customArtworkURL: String = ""
     @Persisted public var originalArtworkURL: String = ""
@@ -56,10 +56,10 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     @Persisted public var userPreferredCoreID: String?
 
     /* Links to other objects */
-    @Persisted(originProperty: "game") public private(set) var saveStates: LinkingObjects<PVSaveState>
-    @Persisted(originProperty: "game") public private(set) var cheats: LinkingObjects<PVCheats>
-    @Persisted(originProperty: "game") public private(set) var recentPlays: LinkingObjects<PVRecentGame>
-    @Persisted public private(set) var screenShots = List<PVImageFile>()
+    @Persisted(originProperty: "game") public var saveStates: LinkingObjects<PVSaveState>
+    @Persisted(originProperty: "game") public var cheats: LinkingObjects<PVCheats>
+    @Persisted(originProperty: "game") public var recentPlays: LinkingObjects<PVRecentGame>
+    @Persisted public private(set) var screenShots: List<PVImageFile>
 
     @Persisted(originProperty: "games") public private(set) var libraries: LinkingObjects<PVLibrary>
 
@@ -117,6 +117,10 @@ public extension PVGame {
 }
 
 public extension PVGame {
+    
+    var genresArray: [String] {
+        genres?.components(separatedBy: ",") ?? []
+    }
     var isCD: Bool {
         let ext = (romPath as NSString).pathExtension
         let exts = Extensions.discImageExtensions.union(Extensions.playlistExtensions)

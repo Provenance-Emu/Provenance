@@ -3,6 +3,20 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [X] Games pausing not working
+- [ ] New save state mangager
+    - [X] doesn't load from homeview
+    - [X] Hide share or impliment
+    - [X] Save state images
+    - [ ] swipe sucks
+    - [X] top to play, with confirmation
+    - [X] Fix main game artwork async, or missing artwork view
+    - [X] Number of save states count updates on delete
+    - [X] Save state images
+    - [X] Transparent background on the wrapper view controller,
+    - [X] Glitchy search bar hiding
+- [X] test,fix,finish PVImageFile pathOfCachedImage
+
 - [X] Shared documents :        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
 
 ## Major bugs
@@ -72,6 +86,7 @@ _My personal TODO notes_
 - [ ] Gamepad navigation in swiftUI
     - Partially implimented
 - [ ] iCloud sync
+- [ ] Save state share in savestate manager swift ui view
 
 ### Kind of want
 
@@ -101,8 +116,8 @@ _My personal TODO notes_
 ## AppStore Review
 
 - [ ] Update screenshots without copyright material
-- [ ] Remove apple referecnces from app description
-- [ ] Custom build without certain cores
+- [X] Remove apple referecnces from app description
+- [X] Custom build without certain cores
     - Anything apple
 
 - [X] Screenshots

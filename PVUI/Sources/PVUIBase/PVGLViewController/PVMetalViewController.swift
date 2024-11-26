@@ -1560,6 +1560,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     func didRenderFrameOnAlternateThread() {
+        guard backingMTLTexture != nil else {
+            ELOG("backingMTLTexture was nil")
+            return
+        }
         glFlush()
 
         emulatorCore?.frontBufferLock.lock()
@@ -1662,5 +1666,24 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         ILOG("Size: \(cachedViewportWidth)x\(cachedViewportHeight)")
         ILOG("Position: \(cachedViewportX),\(cachedViewportY)")
 #endif
+    }
+
+    override var isPaused: Bool {
+        didSet {
+            guard oldValue != isPaused else { return }
+
+            #if !os(visionOS)
+            mtlView?.isPaused = isPaused
+            #endif
+
+            if isPaused {
+                // Ensure we finish any pending renders
+                previousCommandBuffer?.waitUntilCompleted()
+            } else {
+                // Force a new frame when unpausing
+                frameCount = 0
+                draw(in: mtlView)
+            }
+        }
     }
 }

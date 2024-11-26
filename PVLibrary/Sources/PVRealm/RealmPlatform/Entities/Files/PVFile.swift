@@ -38,16 +38,26 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     nonisolated(unsafe)
     internal dynamic var lastSizeCheck: Date?
 
-    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault, size: Int = 0, md5: String? = nil) {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = partialPath
+        self.md5Cache = md5
+        if size > 0 {
+            self.sizeCache = size
+            self.lastSizeCheck = Date()
+        }
     }
 
-    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault, size: Int = 0, md5: String? = nil) {
         self.init()
         self.relativeRoot = relativeRoot
         partialPath = relativeRoot.createRelativePath(fromURL: url)
+        self.md5Cache = md5
+        if size > 0 {
+            self.sizeCache = size
+            self.lastSizeCheck = Date()
+        }
     }
     
     public override static func ignoredProperties() -> [String] {
@@ -179,9 +189,9 @@ public extension PVFile {
 
                 // Update cache
                 do {
-                    try realm?.write {
-                        sizeCache = Int(fileSize)
-                        lastSizeCheck = Date()
+                    try realm?.writeAsync {
+                        self.sizeCache = Int(fileSize)
+                        self.lastSizeCheck = Date()
                     }
                 } catch {
                     ELOG("Failed to update size cache: \(error)")

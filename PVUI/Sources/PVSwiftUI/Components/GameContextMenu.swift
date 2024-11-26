@@ -36,6 +36,12 @@ struct GameContextMenu: SwiftUI.View {
                     showMoreInfo(forGame: game)
                 } label: { Label("Game Info", systemImage: "info.circle") }
                 Button {
+                    showSaveStatesManager(forGame: game)
+                } label: {
+                    Label("Manage Save States", systemImage: "clock.arrow.circlepath")
+                }
+                .disabled(game.saveStates.isEmpty)
+                Button {
                     // Toggle isFavorite for the selected PVGame
                     let thawedGame = game.thaw()!
                     try! Realm().write {
@@ -48,7 +54,7 @@ struct GameContextMenu: SwiftUI.View {
                 Button {
                     promptUserMD5CopiedToClipboard(forGame: game)
                 } label: { Label("Copy MD5 URL", systemImage: "number.square") }
-                
+
                 if game.userPreferredCoreID != nil || game.system.userPreferredCoreID != nil {
                     Button {
                         resetCorePreferences(forGame: game)
@@ -231,16 +237,16 @@ extension GameContextMenu {
             rootDelegate?.showMessage("Failed to clear custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
         }
     }
-    
+
     private func resetCorePreferences(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
         let hasGamePreference = game.userPreferredCoreID != nil
         let hasSystemPreference = game.system.userPreferredCoreID != nil
-        
-        let alert = UIAlertController(title: "Reset Core Preferences", 
-                                    message: "Which core preference would you like to reset?", 
+
+        let alert = UIAlertController(title: "Reset Core Preferences",
+                                    message: "Which core preference would you like to reset?",
                                     preferredStyle: .alert)
-        
+
         if hasGamePreference {
             alert.addAction(UIAlertAction(title: "Game Preference", style: .default) { _ in
                 try! Realm().write {
@@ -248,7 +254,7 @@ extension GameContextMenu {
                 }
             })
         }
-        
+
         if hasSystemPreference {
             alert.addAction(UIAlertAction(title: "System Preference", style: .default) { _ in
                 try! Realm().write {
@@ -256,7 +262,7 @@ extension GameContextMenu {
                 }
             })
         }
-        
+
         if hasGamePreference && hasSystemPreference {
             alert.addAction(UIAlertAction(title: "Both", style: .default) { _ in
                 try! Realm().write {
@@ -265,12 +271,17 @@ extension GameContextMenu {
                 }
             })
         }
-        
+
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        
+
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let viewController = windowScene.windows.first?.rootViewController {
             viewController.present(alert, animated: true)
         }
+    }
+
+    private func showSaveStatesManager(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
+        contextMenuDelegate?.gameContextMenu(self, didRequestShowSaveStatesFor: game)
     }
 }

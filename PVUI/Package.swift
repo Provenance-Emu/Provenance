@@ -47,7 +47,29 @@ let package = Package(
         .package(url: "https://github.com/danielsaidi/SwiftUIKit.git", from: "5.0.0"),
         /// SwiftUIX
         /// https://github.com/SwiftUIX/SwiftUIX/wiki
-        .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", from: "0.2.3")
+        .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", from: "0.2.3"),
+        
+        /// https://github.com/exyte/ScalingHeaderScrollView
+//        .package(url:"https://github.com/exyte/ScalingHeaderScrollView.git", from: "1.1.5"),
+        
+        /// https://github.com/exyte/AnimatedGradient
+        .package(url: "https://github.com/exyte/AnimatedGradient.git", from: "1.0.0"),
+
+        /// https://github.com/exyte/FloatingButton
+        .package(url: "https://github.com/exyte/FloatingButton.git", from: "1.3.0"),
+        
+        /// https://github.com/exyte/ActivityIndicatorView
+        .package(url: "https://github.com/exyte/ActivityIndicatorView.git", from: "1.1.1"),
+
+        /// https://github.com/exyte/PopupView
+//        .package(url: "https://github.com/exyte/PopupView.git", from: "3.1.4"),
+        
+        /// https://github.com/DominikButz/SwipeCellSUI.git
+        .package(url: "https://github.com/DominikButz/SwipeCellSUI.git", from: "2.1.4"),
+        
+        /// https://github.com/MrAsterisco/DateRangePicker
+        .package(url: "https://github.com/MrAsterisco/DateRangePicker", from: "1.0.2")
+
         
         /// https://swiftpackageindex.com/SvenTiigi/WhatsNewKit
 //        .package(url: "https://github.com/SvenTiigi/WhatsNewKit.git", from: "2.2.1")
@@ -175,7 +197,12 @@ let package = Package(
                 "PVLibrary",
                 "PVThemes",
                 "MBProgressHUD",
-                "FreemiumKit"
+                "FreemiumKit",
+                "AnimatedGradient",
+                "FloatingButton",
+                "ActivityIndicatorView",
+                "SwipeCellSUI",
+                "DateRangePicker"
             ]
         ),
         
