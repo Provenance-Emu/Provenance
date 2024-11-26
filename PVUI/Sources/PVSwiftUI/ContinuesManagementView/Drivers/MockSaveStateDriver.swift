@@ -11,6 +11,7 @@ import SwiftUI
 import UIKit
 
 /// Mock driver for testing
+@available(iOS 17.0, tvOS 17.0, watchOS 7.0, *)
 @Observable
 public class MockSaveStateDriver: SaveStateDriver {
 

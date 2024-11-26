@@ -338,8 +338,8 @@ public struct ContinuesMagementView: View {
                     .setAnimation(.bouncy(duration: 10))
                     .gradientPoints(start: .bottomLeading, end: .topTrailing)
                     .ignoresSafeArea(.all)
-                    .padding(.bottom, 10)
-                    .opacity(0.25)
+//                    .padding(.bottom, 10)
+//                    .opacity(0.25)
 //                    ProvenanceAnimatedBackgroundView()
 //                    .ignoresSafeArea(.all)
 //                    .padding(.bottom, 10)
@@ -423,7 +423,7 @@ private struct EmptyStateView: View {
 // MARK: - Swift UI Previews
 
 #if DEBUG
-
+@available(iOS 17.0, tvOS 17.0, watchOS 7.0, *)
 #Preview("Continues Management") {
     /// Create mock driver with sample data
     let mockDriver = MockSaveStateDriver(mockData: true)
@@ -474,6 +474,7 @@ private struct EmptyStateView: View {
         }
 }
 
+@available(iOS 17.0, tvOS 17.0, watchOS 7.0, *)
 #Preview("Continues Management with Mock Driver") {
     /// Create mock driver with sample data
     let mockDriver = MockSaveStateDriver(mockData: true)

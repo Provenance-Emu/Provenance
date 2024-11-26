@@ -98,7 +98,7 @@ public struct ContinuesManagementContentView: View {
 
 // MARK: - Previews
 #if DEBUG
-
+@available(iOS 17.0, tvOS 17.0, watchOS 7.0, *)
 #Preview("Content View States") {
     /// Create mock driver with sample data
     let mockDriver = MockSaveStateDriver(mockData: true)
@@ -130,6 +130,7 @@ public struct ContinuesManagementContentView: View {
     .padding()
 }
 
+@available(iOS 17.0, tvOS 17.0, watchOS 7.0, *)
 #Preview("Dark Mode") {
     /// Create mock driver with sample data
     let mockDriver = MockSaveStateDriver(mockData: true)
