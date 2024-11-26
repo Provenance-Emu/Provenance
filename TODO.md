@@ -5,7 +5,7 @@ _My personal TODO notes_
 
 - [X] Games pausing not working
 - [ ] New save state mangager
-    - [ ] Hide share or impliment
+    - [X] Hide share or impliment
     - [ ] Save state images
     - [ ] swipe sucks
     - [ ] top to play, with confirmation
@@ -85,6 +85,7 @@ _My personal TODO notes_
 - [ ] Gamepad navigation in swiftUI
     - Partially implimented
 - [ ] iCloud sync
+- [ ] Save state share in savestate manager swift ui view
 
 ### Kind of want
 
@@ -114,8 +115,8 @@ _My personal TODO notes_
 ## AppStore Review
 
 - [ ] Update screenshots without copyright material
-- [ ] Remove apple referecnces from app description
-- [ ] Custom build without certain cores
+- [X] Remove apple referecnces from app description
+- [X] Custom build without certain cores
     - Anything apple
 
 - [X] Screenshots
