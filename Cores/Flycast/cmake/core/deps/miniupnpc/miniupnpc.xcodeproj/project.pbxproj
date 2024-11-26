@@ -46,23 +46,23 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		073A23A73C00441492A76854 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniupnpc.c */ = {isa = PBXBuildFile; fileRef = D111BF4C5C4C493CACA8216D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniupnpc.c */; };
-		219152457F3C49C7B1C705B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/receivedata.c */ = {isa = PBXBuildFile; fileRef = 7699E9F64ECF4764B35817D8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/receivedata.c */; };
-		2B535D6992A04A8595044D89 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniwget.c */ = {isa = PBXBuildFile; fileRef = C82A7D643BD34D49B06F902E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniwget.c */; };
-		3162D9D690534AA2AB380FC0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnperrors.c */ = {isa = PBXBuildFile; fileRef = 2DDA9C619952483494178FB5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnperrors.c */; };
-		321493F620624B3C8F8AD2F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/connecthostport.c */ = {isa = PBXBuildFile; fileRef = 9196615ED3094B94807ED281 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/connecthostport.c */; };
-		6BBC3B583CA8493A9763386A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minixml.c */ = {isa = PBXBuildFile; fileRef = 844BE9445F9E490E85D9E0F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minixml.c */; };
-		8B96732BD7984203BBBD6C4D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 9DF06C6E0198441C85A1DE09 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/CMakeLists.txt */; };
-		90178E5C0A9F468683C1104D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/miniupnpcstrings.h */ = {isa = PBXBuildFile; fileRef = 126726ECF36648598E48A670 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/miniupnpcstrings.h */; };
-		92552A88B3E84F55AE7E3900 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/addr_is_reserved.c */ = {isa = PBXBuildFile; fileRef = 45010D702BDF4B5D892B0AE2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/addr_is_reserved.c */; };
-		954B7896F5EE41949949F03F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/portlistingparse.c */ = {isa = PBXBuildFile; fileRef = 6A6FEA8FF9BD4517A971DCBF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/portlistingparse.c */; };
-		C708F1407C5C4A9DB7E5FE2E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpreplyparse.c */ = {isa = PBXBuildFile; fileRef = 8110FBD05A54412D9B2D6F3D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpreplyparse.c */; };
-		C87672C5F8B84E59870AC0A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minissdpc.c */ = {isa = PBXBuildFile; fileRef = B65A65FA8FA5435B8CECA67F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minissdpc.c */; };
-		C94965420C4E4EAC8D2E3743 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpcommands.c */ = {isa = PBXBuildFile; fileRef = EEDA0D1343424CD8A71C537B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpcommands.c */; };
-		CE3B587E7F1C4A2B94DAC46A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minisoap.c */ = {isa = PBXBuildFile; fileRef = 598E1054065A4BBF964561CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minisoap.c */; };
-		E6B5BEF319264F91A3EEAD6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/igd_desc_parse.c */ = {isa = PBXBuildFile; fileRef = 27DBEA4C190C49B1A8B59133 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/igd_desc_parse.c */; };
-		E8DE0A201D8A4D7AA2246B06 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpdev.c */ = {isa = PBXBuildFile; fileRef = D6FC9E9E27E84B608305E63F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpdev.c */; };
-		EEB042C531FB4CD2B14B6B17 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = AA2882E2BD494289B86090A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */; };
+		073A23A73C00441492A76854 /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */ = {isa = PBXBuildFile; fileRef = D111BF4C5C4C493CACA8216D /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */; };
+		219152457F3C49C7B1C705B9 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */ = {isa = PBXBuildFile; fileRef = 7699E9F64ECF4764B35817D8 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */; };
+		2B535D6992A04A8595044D89 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */ = {isa = PBXBuildFile; fileRef = C82A7D643BD34D49B06F902E /* ../flycast/core/deps/miniupnpc/src/miniwget.c */; };
+		3162D9D690534AA2AB380FC0 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */ = {isa = PBXBuildFile; fileRef = 2DDA9C619952483494178FB5 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */; };
+		321493F620624B3C8F8AD2F3 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */ = {isa = PBXBuildFile; fileRef = 9196615ED3094B94807ED281 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */; };
+		6BBC3B583CA8493A9763386A /* ../flycast/core/deps/miniupnpc/src/minixml.c */ = {isa = PBXBuildFile; fileRef = 844BE9445F9E490E85D9E0F7 /* ../flycast/core/deps/miniupnpc/src/minixml.c */; };
+		8B96732BD7984203BBBD6C4D /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 9DF06C6E0198441C85A1DE09 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */; };
+		90178E5C0A9F468683C1104D /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */ = {isa = PBXBuildFile; fileRef = 126726ECF36648598E48A670 /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */; };
+		92552A88B3E84F55AE7E3900 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */ = {isa = PBXBuildFile; fileRef = 45010D702BDF4B5D892B0AE2 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */; };
+		954B7896F5EE41949949F03F /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */ = {isa = PBXBuildFile; fileRef = 6A6FEA8FF9BD4517A971DCBF /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */; };
+		C708F1407C5C4A9DB7E5FE2E /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */ = {isa = PBXBuildFile; fileRef = 8110FBD05A54412D9B2D6F3D /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */; };
+		C87672C5F8B84E59870AC0A0 /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */ = {isa = PBXBuildFile; fileRef = B65A65FA8FA5435B8CECA67F /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */; };
+		C94965420C4E4EAC8D2E3743 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */ = {isa = PBXBuildFile; fileRef = EEDA0D1343424CD8A71C537B /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */; };
+		CE3B587E7F1C4A2B94DAC46A /* ../flycast/core/deps/miniupnpc/src/minisoap.c */ = {isa = PBXBuildFile; fileRef = 598E1054065A4BBF964561CF /* ../flycast/core/deps/miniupnpc/src/minisoap.c */; };
+		E6B5BEF319264F91A3EEAD6F /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */ = {isa = PBXBuildFile; fileRef = 27DBEA4C190C49B1A8B59133 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */; };
+		E8DE0A201D8A4D7AA2246B06 /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */ = {isa = PBXBuildFile; fileRef = D6FC9E9E27E84B608305E63F /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */; };
+		EEB042C531FB4CD2B14B6B17 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = AA2882E2BD494289B86090A0 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -128,25 +128,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		126726ECF36648598E48A670 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/miniupnpcstrings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = miniupnpcstrings.h; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/miniupnpcstrings.h; sourceTree = "<absolute>"; };
-		27DBEA4C190C49B1A8B59133 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/igd_desc_parse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = igd_desc_parse.c; path = src/igd_desc_parse.c; sourceTree = SOURCE_ROOT; };
-		2DDA9C619952483494178FB5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnperrors.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnperrors.c; path = src/upnperrors.c; sourceTree = SOURCE_ROOT; };
-		36FF52385D68423E879E0D5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		45010D702BDF4B5D892B0AE2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/addr_is_reserved.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = addr_is_reserved.c; path = src/addr_is_reserved.c; sourceTree = SOURCE_ROOT; };
-		598E1054065A4BBF964561CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minisoap.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minisoap.c; path = src/minisoap.c; sourceTree = SOURCE_ROOT; };
-		6A6FEA8FF9BD4517A971DCBF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/portlistingparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = portlistingparse.c; path = src/portlistingparse.c; sourceTree = SOURCE_ROOT; };
-		7699E9F64ECF4764B35817D8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/receivedata.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = receivedata.c; path = src/receivedata.c; sourceTree = SOURCE_ROOT; };
-		8110FBD05A54412D9B2D6F3D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpreplyparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpreplyparse.c; path = src/upnpreplyparse.c; sourceTree = SOURCE_ROOT; };
-		844BE9445F9E490E85D9E0F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minixml.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minixml.c; path = src/minixml.c; sourceTree = SOURCE_ROOT; };
-		9196615ED3094B94807ED281 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/connecthostport.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = connecthostport.c; path = src/connecthostport.c; sourceTree = SOURCE_ROOT; };
-		9DF06C6E0198441C85A1DE09 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		AA2882E2BD494289B86090A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist"; sourceTree = "<absolute>"; };
-		B65A65FA8FA5435B8CECA67F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minissdpc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minissdpc.c; path = src/minissdpc.c; sourceTree = SOURCE_ROOT; };
-		C82A7D643BD34D49B06F902E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniwget.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = miniwget.c; path = src/miniwget.c; sourceTree = SOURCE_ROOT; };
-		D111BF4C5C4C493CACA8216D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniupnpc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = miniupnpc.c; path = src/miniupnpc.c; sourceTree = SOURCE_ROOT; };
+		126726ECF36648598E48A670 /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = miniupnpcstrings.h; path = ../cmake/core/deps/miniupnpc/miniupnpcstrings.h; sourceTree = "<absolute>"; };
+		27DBEA4C190C49B1A8B59133 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = igd_desc_parse.c; path = src/igd_desc_parse.c; sourceTree = SOURCE_ROOT; };
+		2DDA9C619952483494178FB5 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnperrors.c; path = src/upnperrors.c; sourceTree = SOURCE_ROOT; };
+		36FF52385D68423E879E0D5E /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		45010D702BDF4B5D892B0AE2 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = addr_is_reserved.c; path = src/addr_is_reserved.c; sourceTree = SOURCE_ROOT; };
+		598E1054065A4BBF964561CF /* ../flycast/core/deps/miniupnpc/src/minisoap.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minisoap.c; path = src/minisoap.c; sourceTree = SOURCE_ROOT; };
+		6A6FEA8FF9BD4517A971DCBF /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = portlistingparse.c; path = src/portlistingparse.c; sourceTree = SOURCE_ROOT; };
+		7699E9F64ECF4764B35817D8 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = receivedata.c; path = src/receivedata.c; sourceTree = SOURCE_ROOT; };
+		8110FBD05A54412D9B2D6F3D /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpreplyparse.c; path = src/upnpreplyparse.c; sourceTree = SOURCE_ROOT; };
+		844BE9445F9E490E85D9E0F7 /* ../flycast/core/deps/miniupnpc/src/minixml.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minixml.c; path = src/minixml.c; sourceTree = SOURCE_ROOT; };
+		9196615ED3094B94807ED281 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = connecthostport.c; path = src/connecthostport.c; sourceTree = SOURCE_ROOT; };
+		9DF06C6E0198441C85A1DE09 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		AA2882E2BD494289B86090A0 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist"; sourceTree = "<absolute>"; };
+		B65A65FA8FA5435B8CECA67F /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minissdpc.c; path = src/minissdpc.c; sourceTree = SOURCE_ROOT; };
+		C82A7D643BD34D49B06F902E /* ../flycast/core/deps/miniupnpc/src/miniwget.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = miniwget.c; path = src/miniwget.c; sourceTree = SOURCE_ROOT; };
+		D111BF4C5C4C493CACA8216D /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = miniupnpc.c; path = src/miniupnpc.c; sourceTree = SOURCE_ROOT; };
 		D4D4CCF4CA964D31A312BFD3 /* libminiupnpc-static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libminiupnpc.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		D6FC9E9E27E84B608305E63F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpdev.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpdev.c; path = src/upnpdev.c; sourceTree = SOURCE_ROOT; };
-		EEDA0D1343424CD8A71C537B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpcommands.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpcommands.c; path = src/upnpcommands.c; sourceTree = SOURCE_ROOT; };
+		D6FC9E9E27E84B608305E63F /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpdev.c; path = src/upnpdev.c; sourceTree = SOURCE_ROOT; };
+		EEDA0D1343424CD8A71C537B /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpcommands.c; path = src/upnpcommands.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,7 +163,7 @@
 		0A597CFC2F6444169F5D3121 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				126726ECF36648598E48A670 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/miniupnpcstrings.h */,
+				126726ECF36648598E48A670 /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -197,7 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				2B3A996964D94AA7923C25DC /* CMake Rules */,
-				36FF52385D68423E879E0D5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/CMakeLists.txt */,
+				36FF52385D68423E879E0D5E /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -215,7 +215,7 @@
 				C5A5CCF763CC42A3AF77D968 /* Source Files */,
 				0A597CFC2F6444169F5D3121 /* Header Files */,
 				A3CED32F132244C9AD64FCC5 /* Resources */,
-				9DF06C6E0198441C85A1DE09 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/CMakeLists.txt */,
+				9DF06C6E0198441C85A1DE09 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */,
 			);
 			name = "libminiupnpc-static";
 			sourceTree = "<group>";
@@ -223,7 +223,7 @@
 		A3CED32F132244C9AD64FCC5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				AA2882E2BD494289B86090A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */,
+				AA2882E2BD494289B86090A0 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -239,20 +239,20 @@
 		C5A5CCF763CC42A3AF77D968 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				45010D702BDF4B5D892B0AE2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/addr_is_reserved.c */,
-				9196615ED3094B94807ED281 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/connecthostport.c */,
-				27DBEA4C190C49B1A8B59133 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/igd_desc_parse.c */,
-				598E1054065A4BBF964561CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minisoap.c */,
-				B65A65FA8FA5435B8CECA67F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minissdpc.c */,
-				D111BF4C5C4C493CACA8216D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniupnpc.c */,
-				C82A7D643BD34D49B06F902E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniwget.c */,
-				844BE9445F9E490E85D9E0F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minixml.c */,
-				6A6FEA8FF9BD4517A971DCBF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/portlistingparse.c */,
-				7699E9F64ECF4764B35817D8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/receivedata.c */,
-				EEDA0D1343424CD8A71C537B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpcommands.c */,
-				D6FC9E9E27E84B608305E63F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpdev.c */,
-				2DDA9C619952483494178FB5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnperrors.c */,
-				8110FBD05A54412D9B2D6F3D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpreplyparse.c */,
+				45010D702BDF4B5D892B0AE2 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */,
+				9196615ED3094B94807ED281 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */,
+				27DBEA4C190C49B1A8B59133 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */,
+				598E1054065A4BBF964561CF /* ../flycast/core/deps/miniupnpc/src/minisoap.c */,
+				B65A65FA8FA5435B8CECA67F /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */,
+				D111BF4C5C4C493CACA8216D /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */,
+				C82A7D643BD34D49B06F902E /* ../flycast/core/deps/miniupnpc/src/miniwget.c */,
+				844BE9445F9E490E85D9E0F7 /* ../flycast/core/deps/miniupnpc/src/minixml.c */,
+				6A6FEA8FF9BD4517A971DCBF /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */,
+				7699E9F64ECF4764B35817D8 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */,
+				EEDA0D1343424CD8A71C537B /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */,
+				D6FC9E9E27E84B608305E63F /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */,
+				2DDA9C619952483494178FB5 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */,
+				8110FBD05A54412D9B2D6F3D /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -298,7 +298,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = 345475A00AC84576811AA5E0;
-			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc;
+			projectDirPath = ../flycast/core/deps/miniupnpc;
 			projectRoot = "";
 			targets = (
 				6DB80BBE8DA7D6D87A8D27FD /* ALL_BUILD */,
@@ -353,19 +353,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
+  cd ../cmake/core/deps/miniupnpc
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
+  cd ../cmake/core/deps/miniupnpc
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
+  cd ../cmake/core/deps/miniupnpc
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
+  cd ../cmake/core/deps/miniupnpc
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -396,25 +396,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeFiles/ZERO_CHECK			);
+../cmake/core/deps/miniupnpc/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/miniupnpc
+  make -f ../cmake/core/deps/miniupnpc/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/miniupnpc
+  make -f ../cmake/core/deps/miniupnpc/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/miniupnpc
+  make -f ../cmake/core/deps/miniupnpc/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/miniupnpc
+  make -f ../cmake/core/deps/miniupnpc/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -429,24 +429,24 @@ fi
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc/CMakeFiles/ALL_BUILD			);
+../cmake/core/deps/miniupnpc/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
+  cd ../cmake/core/deps/miniupnpc
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
+  cd ../cmake/core/deps/miniupnpc
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
+  cd ../cmake/core/deps/miniupnpc
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
+  cd ../cmake/core/deps/miniupnpc
   echo Build\\ all\\ projects
 fi
 ";
@@ -459,20 +459,20 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92552A88B3E84F55AE7E3900 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/addr_is_reserved.c */,
-				321493F620624B3C8F8AD2F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/connecthostport.c */,
-				E6B5BEF319264F91A3EEAD6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/igd_desc_parse.c */,
-				CE3B587E7F1C4A2B94DAC46A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minisoap.c */,
-				C87672C5F8B84E59870AC0A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minissdpc.c */,
-				073A23A73C00441492A76854 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniupnpc.c */,
-				2B535D6992A04A8595044D89 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/miniwget.c */,
-				6BBC3B583CA8493A9763386A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/minixml.c */,
-				954B7896F5EE41949949F03F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/portlistingparse.c */,
-				219152457F3C49C7B1C705B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/receivedata.c */,
-				C94965420C4E4EAC8D2E3743 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpcommands.c */,
-				E8DE0A201D8A4D7AA2246B06 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpdev.c */,
-				3162D9D690534AA2AB380FC0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnperrors.c */,
-				C708F1407C5C4A9DB7E5FE2E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/src/upnpreplyparse.c */,
+				92552A88B3E84F55AE7E3900 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */,
+				321493F620624B3C8F8AD2F3 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */,
+				E6B5BEF319264F91A3EEAD6F /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */,
+				CE3B587E7F1C4A2B94DAC46A /* ../flycast/core/deps/miniupnpc/src/minisoap.c */,
+				C87672C5F8B84E59870AC0A0 /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */,
+				073A23A73C00441492A76854 /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */,
+				2B535D6992A04A8595044D89 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */,
+				6BBC3B583CA8493A9763386A /* ../flycast/core/deps/miniupnpc/src/minixml.c */,
+				954B7896F5EE41949949F03F /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */,
+				219152457F3C49C7B1C705B9 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */,
+				C94965420C4E4EAC8D2E3743 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */,
+				E8DE0A201D8A4D7AA2246B06 /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */,
+				3162D9D690534AA2AB380FC0 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */,
+				C708F1407C5C4A9DB7E5FE2E /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,7 +516,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",MINIUPNP_STATICLIB,MINIUPNPC_SET_SOCKET_TIMEOUT,_BSD_SOURCE,_DEFAULT_SOURCE,_DARWIN_C_SOURCE,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/miniupnpc/include,../cmake/core/deps/miniupnpc,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -626,7 +626,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",MINIUPNP_STATICLIB,MINIUPNPC_SET_SOCKET_TIMEOUT,_BSD_SOURCE,_DEFAULT_SOURCE,_DARWIN_C_SOURCE,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/miniupnpc/include,../cmake/core/deps/miniupnpc,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -655,7 +655,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",MINIUPNP_STATICLIB,MINIUPNPC_SET_SOCKET_TIMEOUT,_BSD_SOURCE,_DEFAULT_SOURCE,_DARWIN_C_SOURCE,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/miniupnpc/include,../cmake/core/deps/miniupnpc,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -758,7 +758,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",MINIUPNP_STATICLIB,MINIUPNPC_SET_SOCKET_TIMEOUT,_BSD_SOURCE,_DEFAULT_SOURCE,_DARWIN_C_SOURCE,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/miniupnpc/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/miniupnpc/include,../cmake/core/deps/miniupnpc,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;

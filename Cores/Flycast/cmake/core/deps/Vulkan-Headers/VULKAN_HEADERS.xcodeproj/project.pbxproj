@@ -93,7 +93,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		223CF63F8E414AA5ABD0F494 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/Vulkan-Headers/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		223CF63F8E414AA5ABD0F494 /* ../flycast/core/deps/Vulkan-Headers/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -125,7 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				85D9085BD8F644F68092C0C6 /* CMake Rules */,
-				223CF63F8E414AA5ABD0F494 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/Vulkan-Headers/CMakeLists.txt */,
+				223CF63F8E414AA5ABD0F494 /* ../flycast/core/deps/Vulkan-Headers/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -201,24 +201,24 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers/CMakeFiles/ALL_BUILD"			);
+"../cmake/core/deps/Vulkan-Headers/CMakeFiles/ALL_BUILD"			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
+  cd ../cmake/core/deps/Vulkan-Headers
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
+  cd ../cmake/core/deps/Vulkan-Headers
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
+  cd ../cmake/core/deps/Vulkan-Headers
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
+  cd ../cmake/core/deps/Vulkan-Headers
   echo Build\\ all\\ projects
 fi
 ";
@@ -252,19 +252,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
+  cd ../cmake/core/deps/Vulkan-Headers
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
+  cd ../cmake/core/deps/Vulkan-Headers
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
+  cd ../cmake/core/deps/Vulkan-Headers
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
+  cd ../cmake/core/deps/Vulkan-Headers
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -295,25 +295,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers/CMakeFiles/ZERO_CHECK"			);
+"../cmake/core/deps/Vulkan-Headers/CMakeFiles/ZERO_CHECK"			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/Vulkan-Headers
+  make -f ../cmake/core/deps/Vulkan-Headers/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/Vulkan-Headers
+  make -f ../cmake/core/deps/Vulkan-Headers/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/Vulkan-Headers
+  make -f ../cmake/core/deps/Vulkan-Headers/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/Vulkan-Headers
+  make -f ../cmake/core/deps/Vulkan-Headers/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;

@@ -46,9 +46,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		7E54AEF5EE7940B4B8888FA2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 3D26AB6F729E49FF88120D06 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist */; };
-		A2C6D8D1D45840F08743F12F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = DD4F0835B3734A2B98C0378D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */; };
-		E6D2BD127FD64D72A9E9D50A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/xxhash.c */ = {isa = PBXBuildFile; fileRef = 7BBDB82F91DB4465A4363E3E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/xxhash.c */; };
+		7E54AEF5EE7940B4B8888FA2 /* ../cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 3D26AB6F729E49FF88120D06 /* ../cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist */; };
+		A2C6D8D1D45840F08743F12F /* ../flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = DD4F0835B3734A2B98C0378D /* ../flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */; };
+		E6D2BD127FD64D72A9E9D50A /* ../flycast/core/deps/xxHash/xxhash.c */ = {isa = PBXBuildFile; fileRef = 7BBDB82F91DB4465A4363E3E /* ../flycast/core/deps/xxHash/xxhash.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -114,11 +114,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3D26AB6F729E49FF88120D06 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist; sourceTree = "<absolute>"; };
-		7BBDB82F91DB4465A4363E3E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/xxhash.c; sourceTree = "<absolute>"; };
+		3D26AB6F729E49FF88120D06 /* ../cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist; sourceTree = "<absolute>"; };
+		7BBDB82F91DB4465A4363E3E /* ../flycast/core/deps/xxHash/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = ../flycast/core/deps/xxHash/xxhash.c; sourceTree = "<absolute>"; };
 		83953745E57E4A07A10C85D2 /* xxhash */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libxxhash.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		9E5D80A549EC4C358D085C0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		DD4F0835B3734A2B98C0378D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		9E5D80A549EC4C358D085C0A /* ../flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		DD4F0835B3734A2B98C0378D /* ../flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,7 +135,7 @@
 		12D9687E1FF241E9881EC613 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3D26AB6F729E49FF88120D06 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist */,
+				3D26AB6F729E49FF88120D06 /* ../cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/xxhash.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -152,7 +152,7 @@
 			children = (
 				E993B93B21F24DEDA4B20E00 /* Source Files */,
 				12D9687E1FF241E9881EC613 /* Resources */,
-				DD4F0835B3734A2B98C0378D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */,
+				DD4F0835B3734A2B98C0378D /* ../flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */,
 			);
 			name = xxhash;
 			sourceTree = "<group>";
@@ -168,7 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				62DEB84F9B784544ACA812A2 /* CMake Rules */,
-				9E5D80A549EC4C358D085C0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */,
+				9E5D80A549EC4C358D085C0A /* ../flycast/core/deps/xxHash/cmake_unofficial/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -191,7 +191,7 @@
 		E993B93B21F24DEDA4B20E00 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				7BBDB82F91DB4465A4363E3E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/xxhash.c */,
+				7BBDB82F91DB4465A4363E3E /* ../flycast/core/deps/xxHash/xxhash.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -248,7 +248,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = FEEEBCE743F04ED0A1ECC1C7;
-			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial;
+			projectDirPath = ../flycast/core/deps/xxHash/cmake_unofficial;
 			projectRoot = "";
 			targets = (
 				6DB80BBE8DA7D6D87A8D27FD /* ALL_BUILD */,
@@ -303,19 +303,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -346,24 +346,24 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/ALL_BUILD			);
+../cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
   echo Build\\ all\\ projects
 fi
 ";
@@ -379,25 +379,25 @@ fi
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/ZERO_CHECK			);
+../cmake/core/deps/xxHash/cmake_unofficial/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
+  make -f ../cmake/core/deps/xxHash/cmake_unofficial/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
+  make -f ../cmake/core/deps/xxHash/cmake_unofficial/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
+  make -f ../cmake/core/deps/xxHash/cmake_unofficial/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/xxHash/cmake_unofficial
+  make -f ../cmake/core/deps/xxHash/cmake_unofficial/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -409,7 +409,7 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E6D2BD127FD64D72A9E9D50A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/xxhash.c */,
+				E6D2BD127FD64D72A9E9D50A /* ../flycast/core/deps/xxHash/xxhash.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,7 +640,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/..,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/xxHash/cmake_unofficial/..,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -709,7 +709,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/..,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/xxHash/cmake_unofficial/..,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -772,7 +772,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/..,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/xxHash/cmake_unofficial/..,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -821,7 +821,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial/..,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/xxHash/cmake_unofficial/..,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;

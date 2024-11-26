@@ -46,30 +46,30 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		079E4AB6A10C4F32953CA926 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */ = {isa = PBXBuildFile; fileRef = 60CF341E0A9F4E7480EF1F36 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */; };
-		13BCE4EA1DDC40F597D4560E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */ = {isa = PBXBuildFile; fileRef = C7B9377456764B0894B38566 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */; };
-		2CDE2668679D414288653008 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */ = {isa = PBXBuildFile; fileRef = 0F1845B1661342719EC60315 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */; };
-		2D62D85E4D6243308F6BCB5D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */ = {isa = PBXBuildFile; fileRef = 2148DDB2B03A452E97125145 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */; };
-		440F3EA88BAD4B62ACA7BEFC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */ = {isa = PBXBuildFile; fileRef = 2E44A655B4F44FA9B641DE1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */; };
-		4C2C0417E1DB426DA58498F6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */ = {isa = PBXBuildFile; fileRef = BEE172D348B247A5BA372FB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */; };
-		4DF33D12FBD446EEA8C99D26 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 512E671462EE49C8939B6AAB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */; };
-		51B465A7CE624E6CA5A90AAA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */ = {isa = PBXBuildFile; fileRef = 5956D9F2C5434011AB3A04D7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */; };
-		6ECB7BE65DDD43EDAD41E991 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */ = {isa = PBXBuildFile; fileRef = BEAA6F52B3744FBF9CBDCFF9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */; };
-		7B8AD90A72CB47AD952ACB0F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */ = {isa = PBXBuildFile; fileRef = 2E7D0158D7F24011B9968E8F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */; };
-		8349F193FF3242F9B18438DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */ = {isa = PBXBuildFile; fileRef = 4747CA14F60440B7B7269FAA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */; };
-		8A375A1B82F44BFCBB1219EF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = E60195C448C141A5A3FF493A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */; };
-		91EF7659D7494564AAC9DDE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */ = {isa = PBXBuildFile; fileRef = 157B3C78C514441EA13F9CC1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */; };
-		9755BA70CA4742D0A840D74D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */ = {isa = PBXBuildFile; fileRef = 3049E2D1695C42E1A3AC38D6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */; };
-		9D11358591524E5FB088F886 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */ = {isa = PBXBuildFile; fileRef = C1FEEACF71CA42238014108A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */; };
-		A092DD8ADF0E476CB828733E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */ = {isa = PBXBuildFile; fileRef = 0A3311EE9F9F4EF3BE025EDA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */; };
-		A0EE4D121BB2423DAC31D940 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */ = {isa = PBXBuildFile; fileRef = F3C4F9D885134E6996857B72 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */; };
-		A579A2B4FA1344B3A575D3AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */ = {isa = PBXBuildFile; fileRef = 28FB20A84115400192E4959A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */; };
-		AA001274FED04AE4975CEFB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */ = {isa = PBXBuildFile; fileRef = D4694167AF5C4F11A4FFE627 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */; };
-		AC972590BDFC4E3DB0ADF3BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */ = {isa = PBXBuildFile; fileRef = A5C077FCC99947BFA83DF1A3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */; };
-		CFF397AD404849FCB9CB2AA4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */ = {isa = PBXBuildFile; fileRef = 2A7A00D05C8444AC93918AF3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */; };
-		F105BA0086DA46B9953F42E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */ = {isa = PBXBuildFile; fileRef = BB9D81A194844478B3D0F1D2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */; };
-		F2295361BABA4B988B6410AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */ = {isa = PBXBuildFile; fileRef = F968D613D098430B8841ACAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */; };
-		FED3D42704A24583BDF61D4D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */ = {isa = PBXBuildFile; fileRef = 49217015608F4822BEC8EDD0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */; };
+		079E4AB6A10C4F32953CA926 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */ = {isa = PBXBuildFile; fileRef = 60CF341E0A9F4E7480EF1F36 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */; };
+		13BCE4EA1DDC40F597D4560E /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */ = {isa = PBXBuildFile; fileRef = C7B9377456764B0894B38566 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */; };
+		2CDE2668679D414288653008 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */ = {isa = PBXBuildFile; fileRef = 0F1845B1661342719EC60315 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */; };
+		2D62D85E4D6243308F6BCB5D /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */ = {isa = PBXBuildFile; fileRef = 2148DDB2B03A452E97125145 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */; };
+		440F3EA88BAD4B62ACA7BEFC /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */ = {isa = PBXBuildFile; fileRef = 2E44A655B4F44FA9B641DE1A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */; };
+		4C2C0417E1DB426DA58498F6 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */ = {isa = PBXBuildFile; fileRef = BEE172D348B247A5BA372FB0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */; };
+		4DF33D12FBD446EEA8C99D26 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 512E671462EE49C8939B6AAB /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */; };
+		51B465A7CE624E6CA5A90AAA /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */ = {isa = PBXBuildFile; fileRef = 5956D9F2C5434011AB3A04D7 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */; };
+		6ECB7BE65DDD43EDAD41E991 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */ = {isa = PBXBuildFile; fileRef = BEAA6F52B3744FBF9CBDCFF9 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */; };
+		7B8AD90A72CB47AD952ACB0F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */ = {isa = PBXBuildFile; fileRef = 2E7D0158D7F24011B9968E8F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */; };
+		8349F193FF3242F9B18438DF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */ = {isa = PBXBuildFile; fileRef = 4747CA14F60440B7B7269FAA /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */; };
+		8A375A1B82F44BFCBB1219EF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = E60195C448C141A5A3FF493A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */; };
+		91EF7659D7494564AAC9DDE5 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */ = {isa = PBXBuildFile; fileRef = 157B3C78C514441EA13F9CC1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */; };
+		9755BA70CA4742D0A840D74D /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */ = {isa = PBXBuildFile; fileRef = 3049E2D1695C42E1A3AC38D6 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */; };
+		9D11358591524E5FB088F886 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */ = {isa = PBXBuildFile; fileRef = C1FEEACF71CA42238014108A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */; };
+		A092DD8ADF0E476CB828733E /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */ = {isa = PBXBuildFile; fileRef = 0A3311EE9F9F4EF3BE025EDA /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */; };
+		A0EE4D121BB2423DAC31D940 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */ = {isa = PBXBuildFile; fileRef = F3C4F9D885134E6996857B72 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */; };
+		A579A2B4FA1344B3A575D3AB /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */ = {isa = PBXBuildFile; fileRef = 28FB20A84115400192E4959A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */; };
+		AA001274FED04AE4975CEFB9 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */ = {isa = PBXBuildFile; fileRef = D4694167AF5C4F11A4FFE627 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */; };
+		AC972590BDFC4E3DB0ADF3BB /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */ = {isa = PBXBuildFile; fileRef = A5C077FCC99947BFA83DF1A3 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */; };
+		CFF397AD404849FCB9CB2AA4 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */ = {isa = PBXBuildFile; fileRef = 2A7A00D05C8444AC93918AF3 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */; };
+		F105BA0086DA46B9953F42E5 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */ = {isa = PBXBuildFile; fileRef = BB9D81A194844478B3D0F1D2 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */; };
+		F2295361BABA4B988B6410AB /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */ = {isa = PBXBuildFile; fileRef = F968D613D098430B8841ACAF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */; };
+		FED3D42704A24583BDF61D4D /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */ = {isa = PBXBuildFile; fileRef = 49217015608F4822BEC8EDD0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -135,32 +135,32 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0A3311EE9F9F4EF3BE025EDA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inffast.c; path = inffast.c; sourceTree = SOURCE_ROOT; };
-		0F1845B1661342719EC60315 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = infback.c; path = infback.c; sourceTree = SOURCE_ROOT; };
-		157B3C78C514441EA13F9CC1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zutil.c; path = zutil.c; sourceTree = SOURCE_ROOT; };
-		2148DDB2B03A452E97125145 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = trees.c; path = trees.c; sourceTree = SOURCE_ROOT; };
-		28FB20A84115400192E4959A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inftrees.c; path = inftrees.c; sourceTree = SOURCE_ROOT; };
-		2A7A00D05C8444AC93918AF3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zlib.h; path = zlib.h; sourceTree = SOURCE_ROOT; };
-		2E44A655B4F44FA9B641DE1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inftrees.h; path = inftrees.h; sourceTree = SOURCE_ROOT; };
-		2E7D0158D7F24011B9968E8F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc32.c; path = crc32.c; sourceTree = SOURCE_ROOT; };
-		3049E2D1695C42E1A3AC38D6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = deflate.h; path = deflate.h; sourceTree = SOURCE_ROOT; };
-		4747CA14F60440B7B7269FAA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = deflate.c; path = deflate.c; sourceTree = SOURCE_ROOT; };
-		49217015608F4822BEC8EDD0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inflate.h; path = inflate.h; sourceTree = SOURCE_ROOT; };
-		512E671462EE49C8939B6AAB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist"; sourceTree = "<absolute>"; };
-		5956D9F2C5434011AB3A04D7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gzguts.h; path = gzguts.h; sourceTree = SOURCE_ROOT; };
-		60CF341E0A9F4E7480EF1F36 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zutil.h; path = zutil.h; sourceTree = SOURCE_ROOT; };
-		A5C077FCC99947BFA83DF1A3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffixed.h; path = inffixed.h; sourceTree = SOURCE_ROOT; };
-		B0D8A52F32E141F4A7C1305D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		0A3311EE9F9F4EF3BE025EDA /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inffast.c; path = inffast.c; sourceTree = SOURCE_ROOT; };
+		0F1845B1661342719EC60315 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = infback.c; path = infback.c; sourceTree = SOURCE_ROOT; };
+		157B3C78C514441EA13F9CC1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zutil.c; path = zutil.c; sourceTree = SOURCE_ROOT; };
+		2148DDB2B03A452E97125145 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = trees.c; path = trees.c; sourceTree = SOURCE_ROOT; };
+		28FB20A84115400192E4959A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inftrees.c; path = inftrees.c; sourceTree = SOURCE_ROOT; };
+		2A7A00D05C8444AC93918AF3 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zlib.h; path = zlib.h; sourceTree = SOURCE_ROOT; };
+		2E44A655B4F44FA9B641DE1A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inftrees.h; path = inftrees.h; sourceTree = SOURCE_ROOT; };
+		2E7D0158D7F24011B9968E8F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc32.c; path = crc32.c; sourceTree = SOURCE_ROOT; };
+		3049E2D1695C42E1A3AC38D6 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = deflate.h; path = deflate.h; sourceTree = SOURCE_ROOT; };
+		4747CA14F60440B7B7269FAA /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = deflate.c; path = deflate.c; sourceTree = SOURCE_ROOT; };
+		49217015608F4822BEC8EDD0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inflate.h; path = inflate.h; sourceTree = SOURCE_ROOT; };
+		512E671462EE49C8939B6AAB /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist"; sourceTree = "<absolute>"; };
+		5956D9F2C5434011AB3A04D7 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gzguts.h; path = gzguts.h; sourceTree = SOURCE_ROOT; };
+		60CF341E0A9F4E7480EF1F36 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zutil.h; path = zutil.h; sourceTree = SOURCE_ROOT; };
+		A5C077FCC99947BFA83DF1A3 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffixed.h; path = inffixed.h; sourceTree = SOURCE_ROOT; };
+		B0D8A52F32E141F4A7C1305D /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		B0E071FD10F54FF88F6B287E /* zlib */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libz.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		BB9D81A194844478B3D0F1D2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inflate.c; path = inflate.c; sourceTree = SOURCE_ROOT; };
-		BEAA6F52B3744FBF9CBDCFF9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffast.h; path = inffast.h; sourceTree = SOURCE_ROOT; };
-		BEE172D348B247A5BA372FB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc32.h; path = crc32.h; sourceTree = SOURCE_ROOT; };
-		C1FEEACF71CA42238014108A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uncompr.c; path = uncompr.c; sourceTree = SOURCE_ROOT; };
-		C7B9377456764B0894B38566 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = compress.c; path = compress.c; sourceTree = SOURCE_ROOT; };
-		D4694167AF5C4F11A4FFE627 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zconf.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h"; sourceTree = "<absolute>"; };
-		E60195C448C141A5A3FF493A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		F3C4F9D885134E6996857B72 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = adler32.c; path = adler32.c; sourceTree = SOURCE_ROOT; };
-		F968D613D098430B8841ACAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = trees.h; path = trees.h; sourceTree = SOURCE_ROOT; };
+		BB9D81A194844478B3D0F1D2 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inflate.c; path = inflate.c; sourceTree = SOURCE_ROOT; };
+		BEAA6F52B3744FBF9CBDCFF9 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffast.h; path = inffast.h; sourceTree = SOURCE_ROOT; };
+		BEE172D348B247A5BA372FB0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc32.h; path = crc32.h; sourceTree = SOURCE_ROOT; };
+		C1FEEACF71CA42238014108A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uncompr.c; path = uncompr.c; sourceTree = SOURCE_ROOT; };
+		C7B9377456764B0894B38566 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = compress.c; path = compress.c; sourceTree = SOURCE_ROOT; };
+		D4694167AF5C4F11A4FFE627 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zconf.h; path = "../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h"; sourceTree = "<absolute>"; };
+		E60195C448C141A5A3FF493A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F3C4F9D885134E6996857B72 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = adler32.c; path = adler32.c; sourceTree = SOURCE_ROOT; };
+		F968D613D098430B8841ACAF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = trees.h; path = trees.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,17 +177,17 @@
 		0306BA3A580E42F3AC80545F /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				D4694167AF5C4F11A4FFE627 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */,
-				BEE172D348B247A5BA372FB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */,
-				3049E2D1695C42E1A3AC38D6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */,
-				5956D9F2C5434011AB3A04D7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */,
-				BEAA6F52B3744FBF9CBDCFF9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */,
-				A5C077FCC99947BFA83DF1A3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */,
-				49217015608F4822BEC8EDD0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */,
-				2E44A655B4F44FA9B641DE1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */,
-				F968D613D098430B8841ACAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */,
-				2A7A00D05C8444AC93918AF3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */,
-				60CF341E0A9F4E7480EF1F36 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */,
+				D4694167AF5C4F11A4FFE627 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */,
+				BEE172D348B247A5BA372FB0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */,
+				3049E2D1695C42E1A3AC38D6 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */,
+				5956D9F2C5434011AB3A04D7 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */,
+				BEAA6F52B3744FBF9CBDCFF9 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */,
+				A5C077FCC99947BFA83DF1A3 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */,
+				49217015608F4822BEC8EDD0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */,
+				2E44A655B4F44FA9B641DE1A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */,
+				F968D613D098430B8841ACAF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */,
+				2A7A00D05C8444AC93918AF3 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */,
+				60CF341E0A9F4E7480EF1F36 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -195,7 +195,7 @@
 		3B78895539534762BB6351D7 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				512E671462EE49C8939B6AAB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */,
+				512E671462EE49C8939B6AAB /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -203,17 +203,17 @@
 		3F1740B473A04E5DBC3BE147 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				F3C4F9D885134E6996857B72 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */,
-				C7B9377456764B0894B38566 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */,
-				2E7D0158D7F24011B9968E8F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */,
-				4747CA14F60440B7B7269FAA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */,
-				0F1845B1661342719EC60315 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */,
-				0A3311EE9F9F4EF3BE025EDA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */,
-				BB9D81A194844478B3D0F1D2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */,
-				28FB20A84115400192E4959A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */,
-				2148DDB2B03A452E97125145 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */,
-				C1FEEACF71CA42238014108A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */,
-				157B3C78C514441EA13F9CC1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */,
+				F3C4F9D885134E6996857B72 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */,
+				C7B9377456764B0894B38566 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */,
+				2E7D0158D7F24011B9968E8F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */,
+				4747CA14F60440B7B7269FAA /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */,
+				0F1845B1661342719EC60315 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */,
+				0A3311EE9F9F4EF3BE025EDA /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */,
+				BB9D81A194844478B3D0F1D2 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */,
+				28FB20A84115400192E4959A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */,
+				2148DDB2B03A452E97125145 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */,
+				C1FEEACF71CA42238014108A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */,
+				157B3C78C514441EA13F9CC1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -224,7 +224,7 @@
 				3F1740B473A04E5DBC3BE147 /* Source Files */,
 				0306BA3A580E42F3AC80545F /* Header Files */,
 				3B78895539534762BB6351D7 /* Resources */,
-				E60195C448C141A5A3FF493A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */,
+				E60195C448C141A5A3FF493A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */,
 			);
 			name = zlib;
 			sourceTree = "<group>";
@@ -273,7 +273,7 @@
 			isa = PBXGroup;
 			children = (
 				96A77D3842F44DA88D31A887 /* CMake Rules */,
-				B0D8A52F32E141F4A7C1305D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */,
+				B0D8A52F32E141F4A7C1305D /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -341,24 +341,24 @@
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/ALL_BUILD"			);
+"../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/ALL_BUILD"			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
   echo Build\\ all\\ projects
 fi
 ";
@@ -374,25 +374,25 @@ fi
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/ZERO_CHECK"			);
+"../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/ZERO_CHECK"			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
+  make -f ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
+  make -f ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
+  make -f ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
+  make -f ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -440,19 +440,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
+  cd ../cmake/core/deps/libchdr/deps/zlib-1.2.12
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -480,17 +480,17 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0EE4D121BB2423DAC31D940 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */,
-				13BCE4EA1DDC40F597D4560E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */,
-				7B8AD90A72CB47AD952ACB0F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */,
-				8349F193FF3242F9B18438DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */,
-				2CDE2668679D414288653008 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */,
-				A092DD8ADF0E476CB828733E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */,
-				F105BA0086DA46B9953F42E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */,
-				A579A2B4FA1344B3A575D3AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */,
-				2D62D85E4D6243308F6BCB5D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */,
-				9D11358591524E5FB088F886 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */,
-				91EF7659D7494564AAC9DDE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */,
+				A0EE4D121BB2423DAC31D940 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */,
+				13BCE4EA1DDC40F597D4560E /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */,
+				7B8AD90A72CB47AD952ACB0F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */,
+				8349F193FF3242F9B18438DF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */,
+				2CDE2668679D414288653008 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */,
+				A092DD8ADF0E476CB828733E /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */,
+				F105BA0086DA46B9953F42E5 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */,
+				A579A2B4FA1344B3A575D3AB /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */,
+				2D62D85E4D6243308F6BCB5D /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */,
+				9D11358591524E5FB088F886 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */,
+				91EF7659D7494564AAC9DDE5 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -568,7 +568,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("../cmake/core/deps/libchdr/deps/zlib-1.2.12",../flycast,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -691,7 +691,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("../cmake/core/deps/libchdr/deps/zlib-1.2.12",../flycast,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -760,7 +760,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("../cmake/core/deps/libchdr/deps/zlib-1.2.12",../flycast,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -789,7 +789,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("../cmake/core/deps/libchdr/deps/zlib-1.2.12",../flycast,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;

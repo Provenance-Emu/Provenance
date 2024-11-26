@@ -45,11 +45,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		123F4CAECCFB4BE18C61A3CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 542E640B94574C5D9DB9C840 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist */; };
-		4EFEDEE867DA47FF855C7098 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf32.c */ = {isa = PBXBuildFile; fileRef = 9EB0CBB4BDB64E269E1B7C14 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf32.c */; };
-		A68EF0A09227465C9D4E493C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf64.c */ = {isa = PBXBuildFile; fileRef = 6639BBB107B04AB1A94D3B47 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf64.c */; };
-		B13EDBCAD6894933AA50279C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 85D7F9CF4FA94A4B9DD27DDE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/CMakeLists.txt */; };
-		C8FD5ECBF9384F01B0434297 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf.c */ = {isa = PBXBuildFile; fileRef = 513BA46DEFFB4AE2B932B9BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf.c */; };
+		123F4CAECCFB4BE18C61A3CD /* ../cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 542E640B94574C5D9DB9C840 /* ../cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist */; };
+		4EFEDEE867DA47FF855C7098 /* ../flycast/core/deps/libelf/src/elf32.c */ = {isa = PBXBuildFile; fileRef = 9EB0CBB4BDB64E269E1B7C14 /* ../flycast/core/deps/libelf/src/elf32.c */; };
+		A68EF0A09227465C9D4E493C /* ../flycast/core/deps/libelf/src/elf64.c */ = {isa = PBXBuildFile; fileRef = 6639BBB107B04AB1A94D3B47 /* ../flycast/core/deps/libelf/src/elf64.c */; };
+		B13EDBCAD6894933AA50279C /* ../flycast/core/deps/libelf/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 85D7F9CF4FA94A4B9DD27DDE /* ../flycast/core/deps/libelf/CMakeLists.txt */; };
+		C8FD5ECBF9384F01B0434297 /* ../flycast/core/deps/libelf/src/elf.c */ = {isa = PBXBuildFile; fileRef = 513BA46DEFFB4AE2B932B9BA /* ../flycast/core/deps/libelf/src/elf.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -108,13 +108,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1DB4EF96F9C8487CAB675FC7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		513BA46DEFFB4AE2B932B9BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = elf.c; path = src/elf.c; sourceTree = SOURCE_ROOT; };
-		542E640B94574C5D9DB9C840 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist; sourceTree = "<absolute>"; };
-		6639BBB107B04AB1A94D3B47 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf64.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = elf64.c; path = src/elf64.c; sourceTree = SOURCE_ROOT; };
-		85D7F9CF4FA94A4B9DD27DDE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		1DB4EF96F9C8487CAB675FC7 /* ../flycast/core/deps/libelf/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		513BA46DEFFB4AE2B932B9BA /* ../flycast/core/deps/libelf/src/elf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = elf.c; path = src/elf.c; sourceTree = SOURCE_ROOT; };
+		542E640B94574C5D9DB9C840 /* ../cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist; sourceTree = "<absolute>"; };
+		6639BBB107B04AB1A94D3B47 /* ../flycast/core/deps/libelf/src/elf64.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = elf64.c; path = src/elf64.c; sourceTree = SOURCE_ROOT; };
+		85D7F9CF4FA94A4B9DD27DDE /* ../flycast/core/deps/libelf/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		8EF860456DF949FC938C2778 /* elf */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libelf.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		9EB0CBB4BDB64E269E1B7C14 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = elf32.c; path = src/elf32.c; sourceTree = SOURCE_ROOT; };
+		9EB0CBB4BDB64E269E1B7C14 /* ../flycast/core/deps/libelf/src/elf32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = elf32.c; path = src/elf32.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,7 +133,7 @@
 			children = (
 				6D3E84F0548844E0BEFF50C7 /* Source Files */,
 				8C2DAB0C0FDE420D9706F62F /* Resources */,
-				85D7F9CF4FA94A4B9DD27DDE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/CMakeLists.txt */,
+				85D7F9CF4FA94A4B9DD27DDE /* ../flycast/core/deps/libelf/CMakeLists.txt */,
 			);
 			name = elf;
 			sourceTree = "<group>";
@@ -156,9 +156,9 @@
 		6D3E84F0548844E0BEFF50C7 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				513BA46DEFFB4AE2B932B9BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf.c */,
-				9EB0CBB4BDB64E269E1B7C14 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf32.c */,
-				6639BBB107B04AB1A94D3B47 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf64.c */,
+				513BA46DEFFB4AE2B932B9BA /* ../flycast/core/deps/libelf/src/elf.c */,
+				9EB0CBB4BDB64E269E1B7C14 /* ../flycast/core/deps/libelf/src/elf32.c */,
+				6639BBB107B04AB1A94D3B47 /* ../flycast/core/deps/libelf/src/elf64.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -173,7 +173,7 @@
 		8C2DAB0C0FDE420D9706F62F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				542E640B94574C5D9DB9C840 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist */,
+				542E640B94574C5D9DB9C840 /* ../cmake/core/deps/libelf/CMakeFiles/elf.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -182,7 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				1CB59D0D61664C18B13D46EE /* CMake Rules */,
-				1DB4EF96F9C8487CAB675FC7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/CMakeLists.txt */,
+				1DB4EF96F9C8487CAB675FC7 /* ../flycast/core/deps/libelf/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -246,7 +246,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = E4C941C635B844B5902D4518;
-			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf;
+			projectDirPath = ../flycast/core/deps/libelf;
 			projectRoot = "";
 			targets = (
 				6DB80BBE8DA7D6D87A8D27FD /* ALL_BUILD */,
@@ -268,25 +268,25 @@
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeFiles/ZERO_CHECK			);
+../cmake/core/deps/libelf/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/libelf
+  make -f ../cmake/core/deps/libelf/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/libelf
+  make -f ../cmake/core/deps/libelf/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/libelf
+  make -f ../cmake/core/deps/libelf/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeScripts/ReRunCMake.make
+  cd ../cmake/core/deps/libelf
+  make -f ../cmake/core/deps/libelf/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -316,24 +316,24 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf/CMakeFiles/ALL_BUILD			);
+../cmake/core/deps/libelf/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
+  cd ../cmake/core/deps/libelf
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
+  cd ../cmake/core/deps/libelf
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
+  cd ../cmake/core/deps/libelf
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
+  cd ../cmake/core/deps/libelf
   echo Build\\ all\\ projects
 fi
 ";
@@ -367,19 +367,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
+  cd ../cmake/core/deps/libelf
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
+  cd ../cmake/core/deps/libelf
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
+  cd ../cmake/core/deps/libelf
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libelf
+  cd ../cmake/core/deps/libelf
   /opt/homebrew/Cellar/cmake/3.30.5/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -407,9 +407,9 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C8FD5ECBF9384F01B0434297 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf.c */,
-				4EFEDEE867DA47FF855C7098 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf32.c */,
-				A68EF0A09227465C9D4E493C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/src/elf64.c */,
+				C8FD5ECBF9384F01B0434297 /* ../flycast/core/deps/libelf/src/elf.c */,
+				4EFEDEE867DA47FF855C7098 /* ../flycast/core/deps/libelf/src/elf32.c */,
+				A68EF0A09227465C9D4E493C /* ../flycast/core/deps/libelf/src/elf64.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,7 +448,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libelf/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -491,7 +491,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libelf/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -687,7 +687,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libelf/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -790,7 +790,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libelf/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libelf/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
