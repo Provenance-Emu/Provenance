@@ -17,21 +17,23 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
     public let gameTitle: String
     public let saveDate: Date
     public let thumbnailImage: Image
-    
+
     @Published var isEditing: Bool = false
     @Published var isSelected: Bool = false
-    
+
     @Published public var description: String?
     @Published public var isAutoSave: Bool
     @Published public var isPinned: Bool
     @Published public var isFavorite: Bool
-    
+
     /// Callback for delete action
     var onDelete: (() -> Void)?
-    
+    /// Callback for load action
+    var onLoad: (() -> Void)?
+
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
-    
+
     public static func == (lhs: SaveStateRowViewModel, rhs: SaveStateRowViewModel) -> Bool {
         lhs.id == rhs.id &&
         lhs.gameID == rhs.gameID &&
@@ -44,7 +46,7 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
         lhs.isEditing == rhs.isEditing &&
         lhs.isSelected == rhs.isSelected
     }
-    
+
     public init(
         id: String = UUID().uuidString,
         gameID: String,
@@ -55,7 +57,8 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
         isAutoSave: Bool = false,
         isPinned: Bool = false,
         isFavorite: Bool = false,
-        onDelete: (() -> Void)? = nil
+        onDelete: (() -> Void)? = nil,
+        onLoad: (() -> Void)? = nil
     ) {
         self.id = id
         self.gameID = gameID
@@ -67,20 +70,22 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
         self.isPinned = isPinned
         self.isFavorite = isFavorite
         self.onDelete = onDelete
+        self.onLoad = onLoad
     }
 }
 
 public struct SaveStateRowView: View {
     @ObservedObject var viewModel: SaveStateRowViewModel
     @State private var showingEditDialog = false
+    @State private var showingLoadAlert = false
     @State private var editText: String = ""
     @Binding var currentUserInteractionCellID: String?
-    
+
     /// Computed property for display title
     private var displayTitle: String {
         viewModel.description?.isEmpty == false ? viewModel.description! : viewModel.gameTitle
     }
-    
+
     public var body: some View {
         HStack(spacing: 0) {
             /// Selection button when in edit mode
@@ -89,7 +94,7 @@ public struct SaveStateRowView: View {
                     .toggleStyle(SelectionToggleStyle())
                     .padding(.horizontal)
             }
-            
+
             /// Main row content
             HStack(spacing: 20) {
                 /// Thumbnail image
@@ -97,9 +102,11 @@ public struct SaveStateRowView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 60, height: 60)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .padding(20)
-                
+                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                    .onTapGesture {
+                        showingLoadAlert = true
+                    }
+
                 /// Labels
                 VStack(alignment: .leading, spacing: 4) {
                     Button {
@@ -111,12 +118,12 @@ public struct SaveStateRowView: View {
                             .foregroundColor(.primary)
                             .multilineTextAlignment(.leading)
                     }
-                    
+
                     HStack(spacing: 4) {
                         Text(viewModel.saveDate.formatted(date: .abbreviated, time: .shortened))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                        
+
                         /// Auto-save indicator
                         if viewModel.isAutoSave {
                             Image(systemName: "clock.badge.checkmark")
@@ -125,9 +132,9 @@ public struct SaveStateRowView: View {
                         }
                     }
                 }
-                
+
                 Spacer()
-                
+
                 /// Right-side icons
                 HStack(spacing: 16.0) {
                     /// Pin indicator
@@ -159,7 +166,7 @@ public struct SaveStateRowView: View {
                                 .opacity(viewModel.isPinned ? 1 : 0)
                         }
                     }
-                    
+
                     /// Favorite heart icon
                     Button {
                         withAnimation(.spring(response: 0.3)) {
@@ -192,6 +199,14 @@ public struct SaveStateRowView: View {
             trailingSideGroup: trailingSwipeActions(),
             currentUserInteractionCellID: $currentUserInteractionCellID
         )
+        .alert("Load Save State", isPresented: $showingLoadAlert) {
+            Button("Yes") {
+                viewModel.onLoad?()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Do you want to load this save state?")
+        }
         .alert("Edit Description", isPresented: $showingEditDialog) {
             TextField("Description", text: $editText)
             Button("Cancel", role: .cancel) { }
@@ -202,7 +217,7 @@ public struct SaveStateRowView: View {
             Text("Enter a custom description for this save state")
         }
     }
-    
+
     /// Leading (left) swipe actions
     private func leadingSwipeActions() -> [SwipeCellActionItem] {
         [
@@ -222,7 +237,7 @@ public struct SaveStateRowView: View {
             }
         ]
     }
-    
+
     /// Trailing (right) swipe actions
     private func trailingSwipeActions() -> [SwipeCellActionItem] {
         [
@@ -253,7 +268,7 @@ public struct SaveStateRowView: View {
             }
         ]
     }
-    
+
     /// Pin button view
     private func pinView(swipeOut: Bool) -> AnyView {
         Group {
@@ -275,7 +290,7 @@ public struct SaveStateRowView: View {
         .animation(.default, value: viewModel.isPinned)
         .eraseToAnyView()
     }
-    
+
     /// Share button view
     private func shareView() -> AnyView {
         VStack(spacing: 2) {
@@ -289,7 +304,7 @@ public struct SaveStateRowView: View {
         .frame(maxHeight: 80)
         .eraseToAnyView()
     }
-    
+
     /// Delete button view
     private func deleteView(swipeOut: Bool) -> AnyView {
         VStack(spacing: 2) {
@@ -335,7 +350,7 @@ extension View {
 #Preview("Save State Row") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
-    
+
     VStack(spacing: 20) {
         /// Normal mode
         SaveStateRowView(viewModel: SaveStateRowViewModel(
@@ -345,7 +360,7 @@ extension View {
             thumbnailImage: Image(systemName: "gamecontroller"),
             description: "Boss Fight - World 3"
         ), currentUserInteractionCellID: $currentUserInteractionCellID)
-        
+
         /// Normal mode without description
         SaveStateRowView(viewModel: SaveStateRowViewModel(
             gameID: "1",
@@ -353,7 +368,7 @@ extension View {
             saveDate: Date(),
             thumbnailImage: Image(systemName: "gamecontroller")
         ), currentUserInteractionCellID: $currentUserInteractionCellID)
-        
+
         /// Edit mode
         let editViewModel = SaveStateRowViewModel(
             gameID: "1",
@@ -375,7 +390,7 @@ extension View {
 #Preview("Dark Mode") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
-    
+
     SaveStateRowView(viewModel: SaveStateRowViewModel(
         gameID: "1",
         gameTitle: "Bomber Man",
@@ -393,7 +408,7 @@ extension View {
 #Preview("Save State Row States") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
-    
+
     /// Create sample save states with different states and dates
     let sampleSaveStates = [
         SaveStateRowViewModel(
@@ -436,18 +451,18 @@ extension View {
             thumbnailImage: Image(systemName: "gamecontroller")
         )
     ]
-    
+
     /// Set different states for the save states
     sampleSaveStates[0].isFavorite = true  // First save is favorited
     sampleSaveStates[0].isPinned = true    // and pinned
-    
+
     sampleSaveStates[1].isAutoSave = true    // Autosave
-    
+
     sampleSaveStates[2].isFavorite = true  // Third save is favorited
-    
+
     sampleSaveStates[4].isPinned = true    // Fifth save is pinned
     sampleSaveStates[4].isAutoSave = true    // and Autosave
-    
+
     return ScrollView {
         VStack(spacing: 0) {
             ForEach(sampleSaveStates) { saveState in
@@ -466,7 +481,7 @@ extension View {
 #Preview("Dark Mode") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
-    
+
     return SaveStateRowView(
         viewModel: SaveStateRowViewModel(
             gameID: "1",

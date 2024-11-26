@@ -304,33 +304,12 @@ public class ContinuesMagementViewModel: ObservableObject {
 public struct ContinuesMagementView: View {
     /// Main view model
     @StateObject private var viewModel: ContinuesMagementViewModel
-    @State var showingPopup = false
-    @ObservedObject private var themeManager = ThemeManager.shared
-    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+    /// Optional callback when a save state is selected to be loaded
+    var onLoadSave: ((String) -> Void)?
 
-    private struct EmptyStateView: View {
-        var body: some View {
-            VStack(spacing: 16) {
-                Image(systemName: "tray.fill")
-                    .font(.system(size: 48))
-                    .foregroundColor(.secondary)
-
-                Text("No Save States")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-
-                Text("Save states for this game will appear here")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-            .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-    }
-
-    public init(viewModel: ContinuesMagementViewModel) {
+    public init(viewModel: ContinuesMagementViewModel, onLoadSave: ((String) -> Void)? = nil) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        self.onLoadSave = onLoadSave
     }
 
     public var body: some View {
@@ -340,9 +319,9 @@ public struct ContinuesMagementView: View {
                 ZStack {
                     AnimatedLinearGradient(colors: [
                         .Provenance.blue,
-                        currentPalette.settingsCellBackground!.swiftUIColor,
-                        currentPalette.gameLibraryBackground.swiftUIColor,
-                        currentPalette.settingsCellBackground!.swiftUIColor])
+                        viewModel.currentPalette.settingsCellBackground!.swiftUIColor,
+                        viewModel.currentPalette.gameLibraryBackground.swiftUIColor,
+                        viewModel.currentPalette.settingsCellBackground!.swiftUIColor])
                     .numberOfSimultaneousColors(2)
                     .setAnimation(.bouncy(duration: 10))
                     .gradientPoints(start: .bottomLeading, end: .topTrailing)
@@ -360,9 +339,9 @@ public struct ContinuesMagementView: View {
             ZStack {
                 AnimatedLinearGradient(colors: [
                     .Provenance.blue,
-                    currentPalette.settingsCellBackground!.swiftUIColor,
-                    currentPalette.gameLibraryBackground.swiftUIColor,
-                    currentPalette.settingsCellBackground!.swiftUIColor])
+                    viewModel.currentPalette.settingsCellBackground!.swiftUIColor,
+                    viewModel.currentPalette.gameLibraryBackground.swiftUIColor,
+                    viewModel.currentPalette.settingsCellBackground!.swiftUIColor])
                 .numberOfSimultaneousColors(2)
                 .setAnimation(.bouncy(duration: 10))
                 .gradientPoints(start: .topTrailing, end: .bottomLeading)
@@ -374,12 +353,12 @@ public struct ContinuesMagementView: View {
                     ContinuesManagementContentView(viewModel: viewModel)
                 }
             }
-            .background(currentPalette.settingsCellBackground!.swiftUIColor)
+            .background(viewModel.currentPalette.settingsCellBackground!.swiftUIColor)
             .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
 
         }
         .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
-//        .background(currentPalette.settingsCellBackground!.swiftUIColor)
+//        .background(viewModel.currentPalette.settingsCellBackground!.swiftUIColor)
         .padding()
         .onAppear {
             viewModel.subscribeToDriverPublisher()
@@ -399,6 +378,27 @@ struct RoundedCorners: Shape {
             cornerRadii: CGSize(width: radius, height: radius)
         )
         return Path(path.cgPath)
+    }
+}
+
+private struct EmptyStateView: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "tray.fill")
+                .font(.system(size: 48))
+                .foregroundColor(.secondary)
+
+            Text("No Save States")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            Text("Save states for this game will appear here")
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

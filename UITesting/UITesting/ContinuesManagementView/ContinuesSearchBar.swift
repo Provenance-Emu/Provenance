@@ -35,3 +35,11 @@ struct ContinuesSearchBar: View {
         )
     }
 }
+
+#Preview("focused") {
+    ContinuesSearchBar(text: .constant("Test"))
+}
+
+#Preview("not focused") {
+    ContinuesSearchBar(text: .constant(""))
+}
