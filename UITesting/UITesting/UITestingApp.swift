@@ -13,19 +13,20 @@ import PVThemes
 struct UITestingApp: App {
     var body: some Scene {
         WindowGroup {
+            #if true
             /// Create mock driver with sample data
-//            let mockDriver = MockSaveStateDriver(mockData: true)
+            let mockDriver = MockSaveStateDriver(mockData: true)
             
             /// Create view model with mock driver
-//            let viewModel = ContinuesMagementViewModel(
-//                driver: mockDriver,
-//                gameTitle: mockDriver.gameTitle,
-//                systemTitle: mockDriver.systemTitle,
-//                numberOfSaves: mockDriver.getAllSaveStates().count,
-//                gameSize: mockDriver.gameSize,
-//                gameImage: mockDriver.gameImage
-//            )
-
+            let viewModel = ContinuesMagementViewModel(
+                driver: mockDriver,
+                gameTitle: mockDriver.gameTitle,
+                systemTitle: mockDriver.systemTitle,
+                numberOfSaves: mockDriver.getAllSaveStates().count,
+                gameSize: mockDriver.gameSize,
+                gameImage: mockDriver.gameImage
+            )
+            #else
             let testRealm = try! RealmSaveStateTestFactory.createInMemoryRealm()
             let mockDriver = try! RealmSaveStateDriver(realm: testRealm)
             
@@ -41,6 +42,7 @@ struct UITestingApp: App {
                 gameSize: Int(game.file.size / 1024), // Convert to KB
                 gameImage: Image(systemName: "gamecontroller")
             )
+            #endif
 
 
             ContinuesMagementView(viewModel: viewModel)
@@ -48,7 +50,7 @@ struct UITestingApp: App {
                     /// Load initial states through the publisher
                     mockDriver.loadSaveStates(forGameId: "1")
                     
-                    ThemeManager.shared.setCurrentPalette(CGAThemes.purple.palette)
+                    ThemeManager.shared.setCurrentPalette(ProvenanceThemes.default.palette)
                 }
         }
     }
