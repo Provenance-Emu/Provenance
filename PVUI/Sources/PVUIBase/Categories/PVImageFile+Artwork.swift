@@ -10,7 +10,7 @@ import PVMediaCache
 
 public extension PVImageFile {
     public func fetchArtworkFromCache() async -> UIImage?  {
-        await PVMediaCache.shareInstance().image(forKey: url.lastPathComponent)
+        await PVMediaCache.shareInstance().image(forKey: url.path())
     }
     
     var pathOfCachedImage: URL? {
