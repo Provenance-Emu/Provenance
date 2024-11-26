@@ -235,6 +235,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     ContinuesMagementView(viewModel: viewModel)
                         .onAppear {
                             driver.loadSaveStates(forGameId: game.id)
+                            let game = game.freeze()
                             Task { @MainActor in
                                 let image: UIImage? = await game.fetchArtworkFromCache()
                                 viewModel.gameUIImage = image
@@ -245,6 +246,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     ContinuesMagementView(viewModel: viewModel)
                         .onAppear {
                             driver.loadSaveStates(forGameId: game.id)
+                            let game = game.freeze()
                             Task { @MainActor in
                                 let image: UIImage? = await game.fetchArtworkFromCache()
                                 viewModel.gameUIImage = image

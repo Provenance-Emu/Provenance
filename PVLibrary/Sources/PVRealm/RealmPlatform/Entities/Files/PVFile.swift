@@ -189,9 +189,9 @@ public extension PVFile {
 
                 // Update cache
                 do {
-                    try realm?.write {
-                        sizeCache = Int(fileSize)
-                        lastSizeCheck = Date()
+                    try realm?.writeAsync {
+                        self.sizeCache = Int(fileSize)
+                        self.lastSizeCheck = Date()
                     }
                 } catch {
                     ELOG("Failed to update size cache: \(error)")

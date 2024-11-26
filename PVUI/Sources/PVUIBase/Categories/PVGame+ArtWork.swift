@@ -7,6 +7,7 @@ public extension PVGame {
     }
     
     public func fetchArtworkFromCache() async -> UIImage?  {
-        await PVMediaCache.shareInstance().image(forKey: self.trueArtworkURL)
+        let trueArtworkURL = self.trueArtworkURL
+        return await PVMediaCache.shareInstance().image(forKey: trueArtworkURL)
     }
 }
