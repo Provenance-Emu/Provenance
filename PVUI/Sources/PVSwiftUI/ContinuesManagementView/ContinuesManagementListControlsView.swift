@@ -135,9 +135,7 @@ public struct ContinuesManagementListControlsView: View {
                     } label: {
                         Image(systemName: viewModel.filterFavoritesOnly ? "heart.fill" : "heart")
                             .foregroundStyle(
-                                viewModel.filterFavoritesOnly ?
-                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
-                                .secondary.opacity(0.5)
+                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor
                             )
                     }
 
@@ -145,11 +143,9 @@ public struct ContinuesManagementListControlsView: View {
                     Button {
                         viewModel.isAutoSavesEnabled.toggle()
                     } label: {
-                        Image(systemName: "clock.badge.checkmark")
+                        Image(systemName: viewModel.isAutoSavesEnabled ? "clock.badge.fill" : "clock.badge.checkmark")
                             .foregroundStyle(
-                                viewModel.isAutoSavesEnabled ?
-                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
-                                .secondary.opacity(0.5)
+                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor
                             )
                     }
 
@@ -157,11 +153,9 @@ public struct ContinuesManagementListControlsView: View {
                     Button {
                         showingDatePicker.toggle()
                     } label: {
-                        Image(systemName: "calendar")
+                        Image(systemName: viewModel.dateRange != nil ? "calendar.badge.checkmark" : "calendar")
                             .foregroundStyle(
-                                viewModel.dateRange != nil ?
-                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
-                                .secondary.opacity(0.5)
+                                viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor
                             )
                     }
 
