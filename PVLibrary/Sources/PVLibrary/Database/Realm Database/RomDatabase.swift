@@ -473,6 +473,35 @@ public extension RomDatabase {
     func allGamesSortedBySystemThenTitle() -> Results<PVGame> {
         return realm.objects(PVGame.self).sorted(byKeyPath: "systemIdentifier").sorted(byKeyPath: "title")
     }
+    
+    // MARK: Save States
+    
+    func allSaveStates() -> Results<PVSaveState> {
+        return all(PVSaveState.self)
+    }
+    
+    func allSaveStates(forGameWithID gameID: String) -> Results<PVSaveState> {
+        let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID)
+        return realm.objects(PVSaveState.self).filter("game == %@", game)
+    }
+    
+    func savetate(forID saveStateID: String) -> PVSaveState? {
+        if let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID) {
+            return saveState
+        } else {
+            return nil
+        }
+    }
+}
+
+public extension Object {
+    public static func all() -> Results<PersistedType> {
+        try! Realm().objects(Self.PersistedType)
+    }
+    
+    public static func forPrimaryKey(_ primaryKey: String) -> PersistedType? {
+        try! Realm().object(ofType: Self.PersistedType.self, forPrimaryKey: primaryKey)
+    }
 }
 
 // MARK: - Update
