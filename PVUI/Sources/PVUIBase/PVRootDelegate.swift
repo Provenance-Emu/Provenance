@@ -29,11 +29,11 @@ public protocol PVRootDelegate: AnyObject {
 
 public extension PVRootDelegate {
     public func root_openSaveState(_ saveStateId: String) async {
-        guard let saveState: PVSaveState = RomDatabase.sharedInstance.realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else {
+        guard let saveState: PVSaveState = RomDatabase.sharedInstance.realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId)?.freeze() else {
             showMessage("Failed to load Save State with id: \(saveStateId)", title: "Fail to Load Save State")
             return
         }
-        await root_openSaveState(saveState)
+        await root_load(saveState.game, sender: nil, core: nil, saveState: saveState)
     }
 }
 

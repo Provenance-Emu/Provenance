@@ -217,7 +217,7 @@ struct ConsoleGamesView: SwiftUI.View {
             )
         }
         .sheet(item: $continuesManagementState) { state in
-            let game = state.game.isFrozen ? state.game.thaw()! : state.game
+            let game = state.game.warmUp()
             let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
             /// Create the Realm driver
             if let driver = try? RealmSaveStateDriver(realm: realm) {
@@ -229,8 +229,11 @@ struct ConsoleGamesView: SwiftUI.View {
                     systemTitle: game.system.name,
                     numberOfSaves: game.saveStates.count,
                     onLoadSave: { saveID in
-                        Task { @MainActor in
-                            await rootDelegate?.root_openSaveState(saveID)
+                        continuesManagementState = nil
+                        Task.detached {
+                            Task { @MainActor in
+                                await rootDelegate?.root_openSaveState(saveID)
+                            }
                         }
                     })
                 
