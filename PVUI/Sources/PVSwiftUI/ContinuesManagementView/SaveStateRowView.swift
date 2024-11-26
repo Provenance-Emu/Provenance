@@ -80,8 +80,6 @@ public struct SaveStateRowView: View {
     @State private var showingLoadAlert = false
     @State private var editText: String = ""
     @Binding var currentUserInteractionCellID: String?
-
-    var onLoadSaveState: ((String) -> Void)?
     
     /// Computed property for display title
     private var displayTitle: String {

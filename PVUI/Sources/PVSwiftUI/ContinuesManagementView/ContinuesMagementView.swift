@@ -99,6 +99,32 @@ public class ContinuesMagementViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+        // Set up the driver's save states publisher
+        driver.saveStatesPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] states in
+                guard let self = self else { return }
+                // Update each state with the load and delete callbacks before storing
+                let updatedStates = states.map { state -> SaveStateRowViewModel in
+                    // Set the onLoad callback directly to the parent's onLoadSave
+                    state.onLoad = { [weak self] in
+                        self?.onLoadSave?(state.id)
+                    }
+                    // Set the onDelete callback
+                    state.onDelete = { [weak self] in
+                        self?.deleteSaveState(state)
+                    }
+                    // Set editing state
+                    state.isEditing = self.controlsViewModel.isEditing
+                    return state
+                }
+                self.saveStates = updatedStates
+                // Setup observers for each row view model
+                updatedStates.forEach { self.observeRowViewModel($0) }
+                self.refilterStates()
+            }
+            .store(in: &cancellables)
+
         /// Create a publisher that combines all filter criteria
         let filterPublisher = Publishers.CombineLatest5(
             controlsViewModel.$filterFavoritesOnly,
@@ -137,14 +163,17 @@ public class ContinuesMagementViewModel: ObservableObject {
         .receive(on: DispatchQueue.main)
         .assign(to: &$filteredAndSortedSaveStates)
 
-        /// Observe search text changes
-        // Removed the separate search text observer since it's now part of the main filter chain
-
         // Observe save states size
         driver.savesSizePublisher
-            .map { Int($0 / 1024 / 1024 ) } // Convert to KB
+            .map { Int($0 / 1024 / 1024) } // Convert to MB
             .receive(on: DispatchQueue.main)
             .assign(to: \.savesTotalSize, on: headerViewModel)
+            .store(in: &cancellables)
+
+        // Observe number of saves
+        driver.numberOfSavesPublisher
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.numberOfSaves, on: headerViewModel)
             .store(in: &cancellables)
     }
 
@@ -300,24 +329,8 @@ public class ContinuesMagementViewModel: ObservableObject {
 
     /// Subscribe to driver's save states publisher
     func subscribeToDriverPublisher() {
-        driver.saveStatesPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] states in
-                guard let self = self else { return }
-                self.saveStates = states.map { saveState in
-                    saveState.onDelete = { [weak self] in
-                        self?.deleteSaveState(saveState)
-                    }
-                    self.onLoadSave = { [weak self] id in
-                        self?.onLoadSave?(id)
-                    }
-                    saveState.isEditing = self.controlsViewModel.isEditing
-                    return saveState
-                }
-                /// Setup observers for each row view model
-                states.forEach { self.observeRowViewModel($0) }
-            }
-            .store(in: &cancellables)
+        // This method is now deprecated as its functionality has been moved to setupObservers
+        // to avoid duplicate subscriptions and potential stack overflow
     }
 }
 
