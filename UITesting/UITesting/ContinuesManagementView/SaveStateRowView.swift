@@ -199,14 +199,20 @@ public struct SaveStateRowView: View {
             trailingSideGroup: trailingSwipeActions(),
             currentUserInteractionCellID: $currentUserInteractionCellID
         )
-        .alert("Load Save State", isPresented: $showingLoadAlert) {
-            Button("Yes") {
+        .uiKitAlert("Load Save State",
+                    message: "",
+                    isPresented: $showingLoadAlert,
+                    buttons: {
+            UIAlertAction(title: "Yes", style: .default, handler: {
+                _ in
                 viewModel.onLoad?()
-            }
-            Button("Cancel", role: .cancel) { }
-        } message: {
-            Text("Do you want to load this save state?")
-        }
+                showingLoadAlert = false
+            })
+            UIAlertAction(title: "No", style: .destructive, handler: {
+                _ in
+                showingLoadAlert = false
+            })
+        })
         .alert("Edit Description", isPresented: $showingEditDialog) {
             TextField("Description", text: $editText)
             Button("Cancel", role: .cancel) { }
