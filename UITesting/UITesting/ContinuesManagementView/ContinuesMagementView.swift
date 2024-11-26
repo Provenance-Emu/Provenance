@@ -347,6 +347,7 @@ public struct ContinuesMagementView: View {
                 .shadow(radius: 5)
             }
             .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
+            .padding(.bottom, 10)
 
             /// List view
             ZStack {
