@@ -60,15 +60,20 @@ extension Publishers {
 /// View model for the main continues management view
 public class ContinuesMagementViewModel: ObservableObject {
     /// Header view model
-    @Published public private(set) var headerViewModel: ContinuesManagementHeaderViewModel
+    @Published var headerViewModel: ContinuesManagementHeaderViewModel
     /// Controls view model
     @Published var controlsViewModel: ContinuesManagementListControlsViewModel
     @Published private(set) var saveStates: [SaveStateRowViewModel] = []
 
+    /// Game image that can be updated
+    @Published var gameUIImage: UIImage? {
+        didSet {
+            headerViewModel.gameUIImage = gameUIImage
+        }
+    }
+
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
-
-    var scrollViewScrollIndicatorColor: Color { currentPalette.settingsCellText!.swiftUIColor }
 
     private let driver: any SaveStateDriver
     private var cancellables = Set<AnyCancellable>()
@@ -216,9 +221,10 @@ public class ContinuesMagementViewModel: ObservableObject {
         gameTitle: String,
         systemTitle: String,
         numberOfSaves: Int,
-        gameImage: Image
+        gameUIImage: UIImage? = nil
     ) {
         self.driver = driver
+        self.gameUIImage = gameUIImage
 
         // Initialize header with initial values
         self.headerViewModel = ContinuesManagementHeaderViewModel(
@@ -226,7 +232,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             systemTitle: systemTitle,
             numberOfSaves: numberOfSaves,
             savesTotalSize: 0, // Will be updated by publisher
-            gameImage: gameImage
+            gameUIImage: gameUIImage
         )
 
         self.controlsViewModel = ContinuesManagementListControlsViewModel()
@@ -423,7 +429,7 @@ private struct EmptyStateView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameImage: mockDriver.gameImage
+        gameUIImage: mockDriver.gameUIImage
     )
 
     ContinuesMagementView(viewModel: viewModel)
@@ -450,7 +456,7 @@ private struct EmptyStateView: View {
         gameTitle: game.title,
         systemTitle: "Game Boy",
         numberOfSaves: game.saveStates.count,
-        gameImage: Image(systemName: "gamecontroller")
+        gameUIImage: UIImage(systemName: "gamecontroller")
     )
 
     ContinuesMagementView(viewModel: viewModel)
@@ -473,7 +479,7 @@ private struct EmptyStateView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameImage: mockDriver.gameImage
+        gameUIImage: mockDriver.gameUIImage
     )
 
     ContinuesMagementView(viewModel: viewModel)

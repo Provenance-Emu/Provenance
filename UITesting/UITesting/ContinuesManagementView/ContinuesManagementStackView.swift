@@ -108,7 +108,7 @@ public struct ContinuesManagementContentView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameImage: mockDriver.gameImage
+        gameUIImage: mockDriver.gameUIImage
     )
 
     VStack {
@@ -139,7 +139,7 @@ public struct ContinuesManagementContentView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameImage: mockDriver.gameImage
+        gameUIImage: mockDriver.gameUIImage
     )
 
     ContinuesManagementContentView(viewModel: viewModel)

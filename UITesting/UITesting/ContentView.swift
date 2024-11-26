@@ -19,7 +19,7 @@ struct ContentView: View {
             gameTitle: mockDriver.gameTitle,
             systemTitle: mockDriver.systemTitle,
             numberOfSaves: mockDriver.getAllSaveStates().count,
-            gameImage: mockDriver.gameImage
+            gameUIImage: mockDriver.gameUIImage
         )
 
         return ContinuesMagementView(viewModel: viewModel)

@@ -8,6 +8,8 @@
 import SwiftUI
 import PVSwiftUI
 import PVThemes
+import SwiftUI
+import UIKit
 
 @main
 struct UITestingApp: App {
@@ -43,8 +45,7 @@ struct UITestingApp: App {
                     driver: mockDriver,
                     gameTitle: game.title,
                     systemTitle: "Game Boy",
-                    numberOfSaves: game.saveStates.count,
-                    gameImage: Image(systemName: "gamecontroller")
+                    numberOfSaves: game.saveStates.count
                 )
 
                 ContinuesMagementView(viewModel: viewModel)
@@ -67,7 +68,7 @@ struct UITestingApp: App {
                     gameTitle: mockDriver.gameTitle,
                     systemTitle: mockDriver.systemTitle,
                     numberOfSaves: mockDriver.getAllSaveStates().count,
-                    gameImage: mockDriver.gameImage
+                    gameUIImage: mockDriver.gameUIImage
                 )
 
                 ContinuesMagementView(viewModel: viewModel)

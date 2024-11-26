@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import UIKit
 
 /// Mock driver for testing
 @Observable
@@ -35,17 +36,17 @@ public class MockSaveStateDriver: SaveStateDriver {
     public let gameTitle: String
     public let systemTitle: String
     public let savesTotalSize: Int
-    public let gameImage: Image
+    public let gameUIImage: UIImage?
 
     public init(mockData: Bool = true,
                 gameTitle: String = "Bomber Man",
                 systemTitle: String = "Game Boy",
                 savesTotalSize: Int = 2048,
-                gameImage: Image = Image(systemName: "gamecontroller")) {
+                gameUIImage: UIImage? = nil) {
         self.gameTitle = gameTitle
         self.systemTitle = systemTitle
         self.savesTotalSize = savesTotalSize
-        self.gameImage = gameImage
+        self.gameUIImage = gameUIImage
 
         if mockData {
             let mockStates = (0..<10).map { index -> SaveStateRowViewModel in
