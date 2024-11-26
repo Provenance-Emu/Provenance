@@ -122,7 +122,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
                 $0.game != nil
             }
             .map { realmSaveState in
-
+                
                 // TODO: Fix loading artwork from image cache
                 let thumbnailImage: SwiftUI.Image
                 if let imagePath = realmSaveState.image?.pathOfCachedImage,
@@ -133,19 +133,20 @@ public class RealmSaveStateDriver: SaveStateDriver {
                     thumbnailImage = Image("missingArtwork")
 //                    thumbnailImage = .missingArtwork(gameTitle: realmSaveState.game.title, ratio: 1.0)
                 }
-
+                
                 let viewModel = SaveStateRowViewModel(
-                id: realmSaveState.id,
-                gameID: realmSaveState.game.id,
-                gameTitle: realmSaveState.game.title,
-                saveDate: realmSaveState.date,
-                thumbnailImage: thumbnailImage,
-                description: realmSaveState.userDescription,
-                isAutoSave: realmSaveState.isAutosave,
-                isPinned: realmSaveState.isPinned,
-                isFavorite: realmSaveState.isFavorite
-            )
-            return viewModel
+                    id: realmSaveState.id,
+                    gameID: realmSaveState.game.id,
+                    gameTitle: realmSaveState.game.title,
+                    saveDate: realmSaveState.date,
+                    thumbnailImage: thumbnailImage,
+                    description: realmSaveState.userDescription,
+                    isAutoSave: realmSaveState.isAutosave,
+                    isPinned: realmSaveState.isPinned,
+                    isFavorite: realmSaveState.isFavorite
+                )
+                
+                return viewModel
         }
     }
 }

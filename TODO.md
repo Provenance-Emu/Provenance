@@ -7,8 +7,8 @@ _My personal TODO notes_
 - [ ] New save state mangager
     - [ ] Hide share or impliment
     - [ ] Fix main game artwork async, or missing artwork view
-    - [ ] Number of save states count updates on delete
-    - [ ] Save state images
+    - [X] Number of save states count updates on delete
+    - [X] Save state images
     - [X] Transparent background on the wrapper view controller,
     - [X] Glitchy search bar hiding
     - [ ] top to play, with confirmation
