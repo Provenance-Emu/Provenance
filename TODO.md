@@ -5,16 +5,17 @@ _My personal TODO notes_
 
 - [X] Games pausing not working
 - [ ] New save state mangager
+    - [X] doesn't load from homeview
     - [X] Hide share or impliment
-    - [ ] Save state images
+    - [X] Save state images
     - [ ] swipe sucks
-    - [ ] top to play, with confirmation
+    - [X] top to play, with confirmation
     - [X] Fix main game artwork async, or missing artwork view
     - [X] Number of save states count updates on delete
     - [X] Save state images
     - [X] Transparent background on the wrapper view controller,
     - [X] Glitchy search bar hiding
-- [ ] test,fix,finish PVImageFile pathOfCachedImage
+- [X] test,fix,finish PVImageFile pathOfCachedImage
 
 - [X] Shared documents :        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
 
