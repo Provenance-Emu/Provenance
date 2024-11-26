@@ -15,7 +15,7 @@ import RealmSwift
 import OpenDateInterval
 
 extension Publishers {
-    struct CombineLatest5Data<A: Publisher, B: Publisher, C: Publisher, D: Publisher, E: Publisher>: Publisher 
+    struct CombineLatest5Data<A: Publisher, B: Publisher, C: Publisher, D: Publisher, E: Publisher>: Publisher
     where A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure, D.Failure == E.Failure {
         typealias Output = (A.Output, B.Output, C.Output, D.Output, E.Output)
         typealias Failure = A.Failure
@@ -60,7 +60,7 @@ extension Publishers {
 /// View model for the main continues management view
 public class ContinuesMagementViewModel: ObservableObject {
     /// Header view model
-    @Published var headerViewModel: ContinuesManagementHeaderViewModel
+    @Published public private(set) var headerViewModel: ContinuesManagementHeaderViewModel
     /// Controls view model
     @Published var controlsViewModel: ContinuesManagementListControlsViewModel
     @Published private(set) var saveStates: [SaveStateRowViewModel] = []
@@ -70,7 +70,7 @@ public class ContinuesMagementViewModel: ObservableObject {
 
     var scrollViewScrollIndicatorColor: Color { currentPalette.settingsCellText!.swiftUIColor }
 
-    private let driver: SaveStateDriver
+    private let driver: any SaveStateDriver
     private var cancellables = Set<AnyCancellable>()
 
     /// Search text for filtering saves
@@ -111,7 +111,7 @@ public class ContinuesMagementViewModel: ObservableObject {
         .map { [weak self] states, filterCriteria in
             let (favoritesOnly, autoSavesEnabled, dateRange, sortAscending, searchText) = filterCriteria
             var filtered = states
-            
+
             // Apply search filter
             if !searchText.isEmpty {
                 filtered = filtered.filter {
@@ -119,7 +119,7 @@ public class ContinuesMagementViewModel: ObservableObject {
                     return description.localizedCaseInsensitiveContains(searchText)
                 }
             }
-            
+
             // Apply other filters
             return self?.applyFilters(
                 to: filtered,
@@ -205,7 +205,7 @@ public class ContinuesMagementViewModel: ObservableObject {
     }
 
     public init(
-        driver: SaveStateDriver,
+        driver: any SaveStateDriver,
         gameTitle: String,
         systemTitle: String,
         numberOfSaves: Int,
@@ -213,6 +213,8 @@ public class ContinuesMagementViewModel: ObservableObject {
         gameImage: Image
     ) {
         self.driver = driver
+
+        // Initialize header with initial values
         self.headerViewModel = ContinuesManagementHeaderViewModel(
             gameTitle: gameTitle,
             systemTitle: systemTitle,
@@ -220,6 +222,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             gameSize: gameSize,
             gameImage: gameImage
         )
+
         self.controlsViewModel = ContinuesManagementListControlsViewModel()
 
 
@@ -236,6 +239,11 @@ public class ContinuesMagementViewModel: ObservableObject {
         )
 
         setupObservers()
+
+        // Subscribe to numberOfSaves changes
+        driver.numberOfSavesPublisher
+            .assign(to: \.numberOfSaves, on: headerViewModel)
+            .store(in: &cancellables)
     }
 
     /// Select all save states
@@ -299,18 +307,18 @@ public struct ContinuesMagementView: View {
     @State var showingPopup = false
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
-    
+
     private struct EmptyStateView: View {
         var body: some View {
             VStack(spacing: 16) {
                 Image(systemName: "tray.fill")
                     .font(.system(size: 48))
                     .foregroundColor(.secondary)
-                
+
                 Text("No Save States")
                     .font(.title2)
                     .fontWeight(.semibold)
-                
+
                 Text("Save states for this game will appear here")
                     .font(.body)
                     .foregroundColor(.secondary)
@@ -359,7 +367,7 @@ public struct ContinuesMagementView: View {
                 .setAnimation(.bouncy(duration: 10))
                 .gradientPoints(start: .topTrailing, end: .bottomLeading)
                 .opacity(0.25)
-                
+
                 if viewModel.saveStates.isEmpty {
                     EmptyStateView()
                 } else {
