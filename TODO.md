@@ -115,7 +115,7 @@ _My personal TODO notes_
 
 ## AppStore Review
 
-- [ ] Update screenshots without copyright material
+- [\] Update screenshots without copyright material
 - [X] Remove apple referecnces from app description
 - [X] Custom build without certain cores
     - Anything apple
