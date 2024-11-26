@@ -27,6 +27,16 @@ public protocol PVRootDelegate: AnyObject {
     var gameLibrary: PVGameLibrary<RealmDatabaseDriver>! { get }
 }
 
+public extension PVRootDelegate {
+    public func root_openSaveState(_ saveStateId: String) async {
+        guard let saveState: PVSaveState = RomDatabase.sharedInstance.realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else {
+            showMessage("Failed to load Save State with id: \(saveStateId)", title: "Fail to Load Save State")
+            return
+        }
+        await root_openSaveState(saveState)
+    }
+}
+
 extension PVRootDelegate {
     private func renameGame(_ game: PVGame, toTitle newTitle: String) {
         do {

@@ -216,15 +216,20 @@ public class ContinuesMagementViewModel: ObservableObject {
         saveStates = states // Trigger filter update
     }
 
+    /// Optional callback when a save state is selected to be loaded
+    var onLoadSave: ((String) -> Void)?
+
     public init(
         driver: any SaveStateDriver,
         gameTitle: String,
         systemTitle: String,
         numberOfSaves: Int,
-        gameUIImage: UIImage? = nil
+        gameUIImage: UIImage? = nil,
+        onLoadSave: ((String) -> Void)?
     ) {
         self.driver = driver
         self.gameUIImage = gameUIImage
+        self.onLoadSave = onLoadSave
 
         // Initialize header with initial values
         self.headerViewModel = ContinuesManagementHeaderViewModel(
@@ -303,6 +308,9 @@ public class ContinuesMagementViewModel: ObservableObject {
                     saveState.onDelete = { [weak self] in
                         self?.deleteSaveState(saveState)
                     }
+                    self.onLoadSave = { [weak self] id in
+                        self?.onLoadSave?(id)
+                    }
                     saveState.isEditing = self.controlsViewModel.isEditing
                     return saveState
                 }
@@ -316,12 +324,9 @@ public class ContinuesMagementViewModel: ObservableObject {
 public struct ContinuesMagementView: View {
     /// Main view model
     @StateObject private var viewModel: ContinuesMagementViewModel
-    /// Optional callback when a save state is selected to be loaded
-    var onLoadSave: ((String) -> Void)?
 
-    public init(viewModel: ContinuesMagementViewModel, onLoadSave: ((String) -> Void)? = nil) {
+    public init(viewModel: ContinuesMagementViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
-        self.onLoadSave = onLoadSave
     }
 
     public var body: some View {
@@ -434,7 +439,10 @@ private struct EmptyStateView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameUIImage: mockDriver.gameUIImage
+        gameUIImage: mockDriver.gameUIImage,
+        onLoadSave: { id in
+            print("load save \(id)")
+        }
     )
 
     ContinuesMagementView(viewModel: viewModel)
@@ -461,7 +469,10 @@ private struct EmptyStateView: View {
         gameTitle: game.title,
         systemTitle: "Game Boy",
         numberOfSaves: game.saveStates.count,
-        gameUIImage: UIImage(systemName: "gamecontroller")
+        gameUIImage: UIImage(systemName: "gamecontroller"),
+        onLoadSave: { id in
+            print("load save \(id)")
+        }
     )
 
     ContinuesMagementView(viewModel: viewModel)
@@ -485,7 +496,10 @@ private struct EmptyStateView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameUIImage: mockDriver.gameUIImage
+        gameUIImage: mockDriver.gameUIImage,
+        onLoadSave: { id in
+            print("load save \(id)")
+        }
     )
 
     ContinuesMagementView(viewModel: viewModel)

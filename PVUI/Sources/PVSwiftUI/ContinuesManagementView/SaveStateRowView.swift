@@ -81,6 +81,8 @@ public struct SaveStateRowView: View {
     @State private var editText: String = ""
     @Binding var currentUserInteractionCellID: String?
 
+    var onLoadSaveState: ((String) -> Void)?
+    
     /// Computed property for display title
     private var displayTitle: String {
         viewModel.description?.isEmpty == false ? viewModel.description! : viewModel.gameTitle
@@ -115,20 +117,20 @@ public struct SaveStateRowView: View {
                     } label: {
                         Text(displayTitle)
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                             .multilineTextAlignment(.leading)
                     }
 
                     HStack(spacing: 4) {
                         Text(viewModel.saveDate.formatted(date: .abbreviated, time: .shortened))
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.grey.middleGrey)
 
                         /// Auto-save indicator
                         if viewModel.isAutoSave {
                             Image(systemName: "clock.badge.checkmark")
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.grey.middleGrey)
                         }
                     }
                 }
@@ -144,26 +146,26 @@ public struct SaveStateRowView: View {
                         }
                     } label: {
                         if #available(iOS 17.0, *) {
-                            Image(systemName: "pin.fill")
-                                .rotationEffect(.degrees(45))
+                            Image(systemName: viewModel.isPinned ? "pin.fill" : "pin")
+                                .rotationEffect(viewModel.isPinned ? .degrees(0.0) : .degrees(45))
                                 .font(.system(size: 16))
                                 .foregroundStyle(
                                     viewModel.isPinned ?
                                     viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
-                                            .clear
+                                            .accentColor
                                 )
-                                .opacity(viewModel.isPinned ? 1 : 0)
+                                .opacity(viewModel.isPinned ? 1 : 0.7)
                                 .symbolEffect(.bounce, value: viewModel.isPinned)
                         } else {
-                            Image(systemName: "pin.fill")
-                                .rotationEffect(.degrees(45))
+                            Image(systemName: viewModel.isPinned ? "pin.fill" : "pin")
+                                .rotationEffect(viewModel.isPinned ? .degrees(0.0) : .degrees(45))
                                 .font(.system(size: 16))
                                 .foregroundStyle(
                                     viewModel.isPinned ?
                                     viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor :
-                                            .clear
+                                            .accentColor
                                 )
-                                .opacity(viewModel.isPinned ? 1 : 0)
+                                .opacity(viewModel.isPinned ? 1 : 0.7)
                         }
                     }
 
@@ -177,14 +179,14 @@ public struct SaveStateRowView: View {
                             Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
                                 .resizable()
                                 .frame(width: 24, height: 22)
-                                .foregroundColor(viewModel.isFavorite ? .red : .secondary)
+                                .foregroundColor(viewModel.isFavorite ? .red : .accentColor)
                                 .symbolEffect(.bounce, value: viewModel.isFavorite)
                         } else {
                             // Fallback on earlier versions
                             Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
                                 .resizable()
                                 .frame(width: 24, height: 22)
-                                .foregroundColor(viewModel.isFavorite ? .red : .secondary)
+                                .foregroundColor(viewModel.isFavorite ? .red : .accentColor)
                         }
                     }
                 }
@@ -247,16 +249,16 @@ public struct SaveStateRowView: View {
     /// Trailing (right) swipe actions
     private func trailingSwipeActions() -> [SwipeCellActionItem] {
         [
-            SwipeCellActionItem(
-                buttonView: {
-                    shareView()
-                },
-                buttonWidth: 80,
-                backgroundColor: .blue
-            ) {
-                // Share action
-                print("Share tapped")
-            },
+//            SwipeCellActionItem(
+//                buttonView: {
+//                    shareView()
+//                },
+//                buttonWidth: 80,
+//                backgroundColor: .blue
+//            ) {
+//                // Share action
+//                print("Share tapped")
+//            },
             SwipeCellActionItem(
                 buttonView: {
                     deleteView(swipeOut: false)
@@ -335,7 +337,7 @@ private struct SelectionToggleStyle: ToggleStyle {
         }) {
             Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: 22))
-                .foregroundColor(configuration.isOn ? .accentColor : .secondary)
+                .foregroundColor(configuration.isOn ? .accentColor : .accentColor)
                 .animation(.easeInOut, value: configuration.isOn)
         }
     }

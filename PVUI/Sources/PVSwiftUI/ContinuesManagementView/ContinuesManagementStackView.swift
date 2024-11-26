@@ -29,7 +29,9 @@ public struct ContinuesManagementStackView: View {
 
                     LazyVStack(spacing: 1) {
                         ForEach(viewModel.filteredAndSortedSaveStates) { saveState in
-                            SaveStateRowView(viewModel: saveState, currentUserInteractionCellID: $currentUserInteractionCellID)
+                            SaveStateRowView(
+                                viewModel: saveState,
+                                currentUserInteractionCellID: $currentUserInteractionCellID)
                                 .id(saveState.id)
                         }
                     }
@@ -108,7 +110,10 @@ public struct ContinuesManagementContentView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameUIImage: mockDriver.gameUIImage
+        gameUIImage: mockDriver.gameUIImage,
+        onLoadSave: { id in
+            print("load save \(id)")
+        }
     )
 
     VStack {
@@ -140,8 +145,10 @@ public struct ContinuesManagementContentView: View {
         gameTitle: mockDriver.gameTitle,
         systemTitle: mockDriver.systemTitle,
         numberOfSaves: mockDriver.getAllSaveStates().count,
-        gameUIImage: mockDriver.gameUIImage
-    )
+        gameUIImage: mockDriver.gameUIImage,
+        onLoadSave: { id in
+            print("load save \(id)")
+        })
 
     ContinuesManagementContentView(viewModel: viewModel)
         .frame(height: 400)

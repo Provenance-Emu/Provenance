@@ -58,11 +58,11 @@ public struct ContinuesManagementHeaderView: View {
 
                     Text(viewModel.systemTitle)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.white)
 
                     Text("\(viewModel.numberOfSaves) Save States - \(viewModel.savesTotalSize) MB")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.grey.gEEE)
                 }
             }
             .padding(.horizontal, 20)

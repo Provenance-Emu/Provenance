@@ -227,8 +227,11 @@ struct ConsoleGamesView: SwiftUI.View {
                     driver: driver,
                     gameTitle: game.title,
                     systemTitle: game.system.name,
-                    numberOfSaves: game.saveStates.count
-                )
+                    numberOfSaves: game.saveStates.count) { saveID in
+                        Task { @MainActor in
+                            await rootDelegate?.root_openSaveState(saveID)
+                        }
+                    }
                 
                 /// Create and configure the view
                 if #available(iOS 16.4, *) {
