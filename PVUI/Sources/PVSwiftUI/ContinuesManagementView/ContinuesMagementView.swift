@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PVSwiftUI
-import PopupView
 import AnimatedGradient
 import PVThemes
 import Combine
