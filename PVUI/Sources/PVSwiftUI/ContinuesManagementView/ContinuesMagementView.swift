@@ -142,7 +142,7 @@ public class ContinuesMagementViewModel: ObservableObject {
 
         // Observe save states size
         driver.savesSizePublisher
-            .map { Int($0 / 1024) } // Convert to KB
+            .map { Int($0 / 1024 / 1024 ) } // Convert to KB
             .receive(on: DispatchQueue.main)
             .assign(to: \.savesTotalSize, on: headerViewModel)
             .store(in: &cancellables)
