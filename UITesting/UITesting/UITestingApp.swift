@@ -11,77 +11,88 @@ import PVThemes
 
 @main
 struct UITestingApp: App {
-    @State private var showingContinuesSheet = true
+    @State private var showingRealmSheet = true
+    @State private var showingMockSheet = false
 
     var body: some Scene {
         WindowGroup {
-            MainView(showingContinuesSheet: $showingContinuesSheet)
-        }
-    }
-}
+            ZStack {
+                Color.black.ignoresSafeArea()
 
-struct MainView: View {
-    @Binding var showingContinuesSheet: Bool
-    @ObservedObject private var themeManager = ThemeManager.shared
-    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+                VStack(spacing: 20) {
+                    Button("Show Realm Driver") {
+                        showingRealmSheet = true
+                    }
+                    .buttonStyle(.borderedProminent)
 
-    var body: some View {
-        ZStack {
-            currentPalette.gameLibraryBackground.swiftUIColor.ignoresSafeArea()
-
-            VStack {
-                Button("Show Continues Management") {
-                    showingContinuesSheet = true
+                    Button("Show Mock Driver") {
+                        showingMockSheet = true
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
-                .buttonStyle(.borderedProminent)
             }
-        }
-        .sheet(isPresented: $showingContinuesSheet) {
-            #if false
-            /// Create mock driver with sample data
-            let mockDriver = MockSaveStateDriver(mockData: true)
+            .sheet(isPresented: $showingRealmSheet) {
+                let testRealm = try! RealmSaveStateTestFactory.createInMemoryRealm()
+                let mockDriver = try! RealmSaveStateDriver(realm: testRealm)
 
-            /// Create view model with mock driver
-            let viewModel = ContinuesMagementViewModel(
-                driver: mockDriver,
-                gameTitle: mockDriver.gameTitle,
-                systemTitle: mockDriver.systemTitle,
-                numberOfSaves: mockDriver.getAllSaveStates().count,
-                savesTotalSize: mockDriver.savesTotalSize,
-                gameImage: mockDriver.gameImage
-            )
-            #else
-            let testRealm = try! RealmSaveStateTestFactory.createInMemoryRealm()
-            let mockDriver = try! RealmSaveStateDriver(realm: testRealm)
+                /// Get the first game from realm for the view model
+                let game = testRealm.objects(PVGame.self).first!
 
-            /// Get the first game from realm for the view model
-            let game = testRealm.objects(PVGame.self).first!
+                /// Create view model with game data
+                let viewModel = ContinuesMagementViewModel(
+                    driver: mockDriver,
+                    gameTitle: game.title,
+                    systemTitle: "Game Boy",
+                    numberOfSaves: game.saveStates.count,
+                    gameImage: Image(systemName: "gamecontroller")
+                )
 
-            /// Create view model with game data
-            let viewModel = ContinuesMagementViewModel(
-                driver: mockDriver,
-                gameTitle: game.title,
-                systemTitle: "Game Boy",
-                numberOfSaves: game.saveStates.count,
-                gameImage: Image(systemName: "gamecontroller")
-            )
-            #endif
+                ContinuesMagementView(viewModel: viewModel)
+                    .onAppear {
+                        /// Load initial states through the publisher
+                        mockDriver.loadSaveStates(forGameId: "1")
 
-            ContinuesMagementView(viewModel: viewModel)
-                .onAppear {
-                    /// Load initial states through the publisher
-                    mockDriver.loadSaveStates(forGameId: "1")
+                        let theme = CGAThemes.purple
+                        ThemeManager.shared.setCurrentPalette(theme.palette)
+                    }
+                    .presentationBackground(.clear)
+            }
+            .sheet(isPresented: $showingMockSheet) {
+                /// Create mock driver with sample data
+                let mockDriver = MockSaveStateDriver(mockData: true)
 
-                    let theme = CGAThemes.purple
-                    ThemeManager.shared.setCurrentPalette(theme.palette)
-                }
-                .presentationBackground(.clear)
+                /// Create view model with mock driver
+                let viewModel = ContinuesMagementViewModel(
+                    driver: mockDriver,
+                    gameTitle: mockDriver.gameTitle,
+                    systemTitle: mockDriver.systemTitle,
+                    numberOfSaves: mockDriver.getAllSaveStates().count,
+                    gameImage: mockDriver.gameImage
+                )
+
+                ContinuesMagementView(viewModel: viewModel)
+                    .onAppear {
+                        let theme = CGAThemes.purple
+                        ThemeManager.shared.setCurrentPalette(theme.palette)
+                    }
+                    .presentationBackground(.clear)
+            }
         }
     }
 }
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView(showingContinuesSheet: .constant(false))
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 20) {
+                Button("Show Realm Driver") { }
+                    .buttonStyle(.borderedProminent)
+
+                Button("Show Mock Driver") { }
+                    .buttonStyle(.borderedProminent)
+            }
+        }
     }
 }
