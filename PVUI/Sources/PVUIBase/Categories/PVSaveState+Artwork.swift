@@ -9,7 +9,8 @@ import PVLibrary
 import UIKit
 
 public extension PVSaveState {
-    public func fetchArtworkFromCache() async -> UIImage?  {
-        await image?.fetchArtworkFromCache()
+    public func fetchUIImage() -> UIImage?  {
+        guard let path: String = image?.url.standardizedFileURL.path else { return nil }
+        return  UIImage(contentsOfFile: path)
     }
 }

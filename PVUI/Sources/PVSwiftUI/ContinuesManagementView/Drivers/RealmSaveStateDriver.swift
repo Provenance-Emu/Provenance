@@ -123,15 +123,11 @@ public class RealmSaveStateDriver: SaveStateDriver {
             }
             .map { realmSaveState in
                 
-                // TODO: Fix loading artwork from image cache
                 let thumbnailImage: SwiftUI.Image
-                if let imagePath = realmSaveState.image?.pathOfCachedImage,
-                   FileManager.default.fileExists(atPath: imagePath.path()),
-                   let image = UIImage(contentsOfFile: imagePath.path()) {
-                    thumbnailImage = .init(uiImage: image)
+                if let uiImage = realmSaveState.fetchUIImage() {
+                    thumbnailImage = .init(uiImage: uiImage)
                 } else {
-                    thumbnailImage = Image("missingArtwork")
-//                    thumbnailImage = .missingArtwork(gameTitle: realmSaveState.game.title, ratio: 1.0)
+                    thumbnailImage = .init(uiImage: UIImage.missingArtworkImage(gameTitle: realmSaveState.game?.title ?? "Deleted", ratio: 1))
                 }
                 
                 let viewModel = SaveStateRowViewModel(
