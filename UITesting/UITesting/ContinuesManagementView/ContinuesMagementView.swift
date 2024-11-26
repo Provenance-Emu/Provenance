@@ -338,6 +338,10 @@ public struct ContinuesMagementView: View {
                     .setAnimation(.bouncy(duration: 10))
                     .gradientPoints(start: .bottomLeading, end: .topTrailing)
                     .ignoresSafeArea(.all)
+                    .padding(.bottom, 10)
+                    .opacity(0.25)
+//                    ProvenanceAnimatedBackgroundView()
+//                    .ignoresSafeArea(.all)
 //                    .padding(.bottom, 10)
 //                    .opacity(0.25)
 
