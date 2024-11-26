@@ -41,6 +41,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @State internal var gameLibraryItemsPerRow: Int = 4
     @Default(.gameLibraryScale) internal var gameLibraryScale
     
+    /// GameContextMenuDelegate
     @State internal var showImagePicker = false
     @State internal var selectedImage: UIImage?
     @State internal var gameToUpdateCover: PVGame?
@@ -48,13 +49,13 @@ struct ConsoleGamesView: SwiftUI.View {
     @State internal var gameToRename: PVGame?
     @State internal var newGameTitle = ""
     @FocusState internal var renameTitleFieldIsFocused: Bool
-    
+    @State internal var systemMoveState: SystemMoveState?
+    @State internal var continuesManagementState: ContinuesManagementState?
+
     @Default(.showRecentSaveStates) internal var showRecentSaveStates
     @Default(.showFavorites) internal var showFavorites
     @Default(.showRecentGames) internal var showRecentGames
     
-    @State internal var systemMoveState: SystemMoveState?
-    @State internal var continuesManagementState: ContinuesManagementState?
     
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
