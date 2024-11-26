@@ -325,6 +325,7 @@ public struct ContinuesMagementView: View {
                     .numberOfSimultaneousColors(2)
                     .setAnimation(.bouncy(duration: 10))
                     .gradientPoints(start: .bottomLeading, end: .topTrailing)
+                    .ignoresSafeArea(.all)
 //                    .padding(.bottom, 10)
 //                    .opacity(0.25)
 
@@ -345,7 +346,8 @@ public struct ContinuesMagementView: View {
                 .numberOfSimultaneousColors(2)
                 .setAnimation(.bouncy(duration: 10))
                 .gradientPoints(start: .topTrailing, end: .bottomLeading)
-                .opacity(0.25)
+                .ignoresSafeArea(.all)
+                .opacity(0.5)
 
                 if viewModel.saveStates.isEmpty {
                     EmptyStateView()
@@ -355,11 +357,10 @@ public struct ContinuesMagementView: View {
             }
             .background(viewModel.currentPalette.settingsCellBackground!.swiftUIColor)
             .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
-
+            .ignoresSafeArea(.all)
         }
         .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
 //        .background(viewModel.currentPalette.settingsCellBackground!.swiftUIColor)
-        .padding()
         .onAppear {
             viewModel.subscribeToDriverPublisher()
         }
