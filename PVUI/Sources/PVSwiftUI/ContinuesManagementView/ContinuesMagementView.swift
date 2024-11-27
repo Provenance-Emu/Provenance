@@ -253,7 +253,7 @@ public class ContinuesMagementViewModel: ObservableObject {
         systemTitle: String,
         numberOfSaves: Int,
         gameUIImage: UIImage? = nil,
-        onLoadSave: ((String) -> Void)?
+        onLoadSave: ((String) -> Void)? = nil
     ) {
         self.driver = driver
         self.gameUIImage = gameUIImage

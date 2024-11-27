@@ -80,7 +80,7 @@ public struct SaveStateRowView: View {
     @State private var showingLoadAlert = false
     @State private var editText: String = ""
     @Binding var currentUserInteractionCellID: String?
-    
+
     /// Computed property for display title
     private var displayTitle: String {
         viewModel.description?.isEmpty == false ? viewModel.description! : viewModel.gameTitle
@@ -103,6 +103,7 @@ public struct SaveStateRowView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 60, height: 60)
                     .clipShape(RoundedRectangle(cornerRadius: 9))
+                    .padding(.leading, 9)
                     .onTapGesture {
                         showingLoadAlert = true
                     }
