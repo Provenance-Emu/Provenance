@@ -13,6 +13,7 @@ import PVUIKit
 import RxRealm
 import RxSwift
 import RealmSwift
+import Perception
 
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -109,8 +110,14 @@ public struct PVSettingsView: View {
         }
         .onAppear {
             viewModel.setupConflictsObserver()
-            Task { @MainActor in
-                await AppState.shared.libraryUpdatesController?.updateConflicts()
+            withPerceptionTracking {
+                Task { @MainActor in
+                    await AppState.shared.libraryUpdatesController?.updateConflicts()
+                }
+            } onChange: {
+                Task { @MainActor in
+                    viewModel.numberOfConflicts = AppState.shared.libraryUpdatesController?.conflicts.count ?? 0
+                }
             }
         }
     }
@@ -155,6 +162,7 @@ struct SettingsRow: View {
 private struct AppSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var iconManager = IconManager.shared
 
     var body: some View {
         Section(header: Text("App")) {
@@ -185,10 +193,38 @@ private struct AppSection: View {
                             icon: .sfSymbol("lock.fill"))
             }
 
-            NavigationLink(destination: AppearanceView()) {
-                SettingsRow(title: "Appearance",
-                            subtitle: "Visual options for Game Library",
-                            icon: .sfSymbol("eye"))
+
+            /// App icon selection section
+            PaidFeatureView {
+                NavigationLink(destination: AppIconSelectorView()) {
+                    HStack {
+                        Image(systemName: "app")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 22, height: 22)
+                        .foregroundColor(.accentColor)
+                        Text("Change App Icon")
+                        Spacer()
+                        IconImage(
+                            iconName: iconManager.currentIconName ?? "AppIcon",
+                            size: 24
+                        )
+                    }
+                }
+            } lockedView: {
+                HStack {
+                    Image(systemName: "lock.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 22, height: 22)
+                    .foregroundColor(.accentColor)
+                    Text("Change App Icon")
+                    Spacer()
+                    IconImage(
+                        iconName: iconManager.currentIconName ?? "AppIcon",
+                        size: 24
+                    )
+                }
             }
         }
     }
@@ -399,13 +435,13 @@ private struct AudioSection: View {
             PaidFeatureView {
                 NavigationLink(destination: AudioEngineSettingsView()) {
                     SettingsRow(title: "Audio Engine",
-                               subtitle: "Configure audio engine, buffer and latency settings.",
-                               icon: .sfSymbol("waveform.circle"))
+                                subtitle: "Configure audio engine, buffer and latency settings.",
+                                icon: .sfSymbol("waveform.circle"))
                 }
             } lockedView: {
                 SettingsRow(title: "Audio Engine",
-                           subtitle: "Unlock to configure advanced audio settings.",
-                           icon: .sfSymbol("lock.fill"))
+                            subtitle: "Unlock to configure advanced audio settings.",
+                            icon: .sfSymbol("lock.fill"))
             }
         }
     }
@@ -554,13 +590,18 @@ private struct LibrarySection: View {
 
     var body: some View {
         Section(header: Text("Library")) {
-//#if canImport(PVWebServer)
-//            Button(action: viewModel.launchWebServer) {
-//                SettingsRow(title: "Launch Web Server",
-//                            subtitle: "Transfer ROMs and saves over WiFi.",
-//                            icon: .sfSymbol("xserve"))
-//            }
-//#endif
+            //#if canImport(PVWebServer)
+            //            Button(action: viewModel.launchWebServer) {
+            //                SettingsRow(title: "Launch Web Server",
+            //                            subtitle: "Transfer ROMs and saves over WiFi.",
+            //                            icon: .sfSymbol("xserve"))
+            //            }
+            //#endif
+            NavigationLink(destination: AppearanceView()) {
+                SettingsRow(title: "Appearance",
+                            subtitle: "Visual options for Game Library",
+                            icon: .sfSymbol("eye"))
+            }
 
             NavigationLink(destination: ConflictsView().environmentObject(viewModel)) {
                 SettingsRow(title: "Manage Conflicts",

@@ -141,10 +141,14 @@ public final class ROMLocationMigrator {
 
     /// Old paths that need migration
     private var oldPaths: [(source: URL, destination: URL)] {
+        guard let sharedContainer = fileManager.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)?
+            .appendingPathComponent("Documents") else {
+            ELOG("Could not load appgroup \(PVAppGroupId)")
+            return []
+        }
+
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         let documentsURL = URL(fileURLWithPath: documentsPath)
-        let sharedContainer = fileManager.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)!
-            .appendingPathComponent("Documents")
 
         return [
             (documentsURL.appendingPathComponent("ROMs"),

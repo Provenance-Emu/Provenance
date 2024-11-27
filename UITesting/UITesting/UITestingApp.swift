@@ -10,11 +10,15 @@ import PVSwiftUI
 import PVThemes
 import SwiftUI
 import UIKit
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 @main
 struct UITestingApp: App {
     @State private var showingRealmSheet = true
     @State private var showingMockSheet = false
+    @State private var showingSettings = false
 
     var body: some Scene {
         WindowGroup {
@@ -29,6 +33,12 @@ struct UITestingApp: App {
 
                     Button("Show Mock Driver") {
                         showingMockSheet = true
+                    }
+                    .buttonStyle(.borderedProminent)
+                    
+                    
+                    Button("Show Settings") {
+                        showingSettings = true
                     }
                     .buttonStyle(.borderedProminent)
                 }
@@ -61,7 +71,6 @@ struct UITestingApp: App {
             .sheet(isPresented: $showingMockSheet) {
                 /// Create mock driver with sample data
                 let mockDriver = MockSaveStateDriver(mockData: true)
-
                 /// Create view model with mock driver
                 let viewModel = ContinuesMagementViewModel(
                     driver: mockDriver,
@@ -78,11 +87,62 @@ struct UITestingApp: App {
                     }
                     .presentationBackground(.clear)
             }
+            .sheet(isPresented: $showingSettings) {
+                let gameImporter = GameImporter.shared
+                let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
+                let menuDelegate = MockPVMenuDelegate()
+
+                PVSettingsView(
+                    conflictsController: pvgamelibraryUpdatesController,
+                    menuDelegate: menuDelegate) {
+                        
+                    }
+            }
+            .onAppear {
+                #if canImport(FreemiumKit)
+                    FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
+                #endif
+            }
         }
+#if canImport(FreemiumKit)
+    .environmentObject(FreemiumKit.shared)
+#endif
+    }
+}
+
+class MockPVMenuDelegate: PVMenuDelegate {
+    func didTapImports() {
+            
+    }
+    
+    func didTapSettings() {
+        
+    }
+    
+    func didTapHome() {
+        
+    }
+    
+    func didTapAddGames() {
+        
+    }
+    
+    func didTapConsole(with consoleId: String) {
+        
+    }
+    
+    func didTapCollection(with collection: Int) {
+        
+    }
+    
+    func closeMenu() {
+        
     }
 }
 
 struct MainView_Previews: PreviewProvider {
+    @State private var showingSettings = false
+
     static var previews: some View {
         ZStack {
             Color.black.ignoresSafeArea()
@@ -93,7 +153,26 @@ struct MainView_Previews: PreviewProvider {
 
                 Button("Show Mock Driver") { }
                     .buttonStyle(.borderedProminent)
+                
+                Button("Show Settings") { }
+                    .buttonStyle(.borderedProminent)
             }
+        }
+        .sheet(isPresented: .constant(false)) {
+            let gameImporter = GameImporter.shared
+            let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
+            let menuDelegate = MockPVMenuDelegate()
+
+            PVSettingsView(
+                conflictsController: pvgamelibraryUpdatesController,
+                menuDelegate: menuDelegate) {
+                    
+                }
+        }
+        .onAppear {
+            #if canImport(FreemiumKit)
+                FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
+            #endif
         }
     }
 }

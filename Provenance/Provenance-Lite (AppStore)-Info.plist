@@ -79,8 +79,6 @@
 	</array>
 	<key>CFBundleIconName</key>
 	<string>6.0</string>
-	<key>CFBundleIcons~ipad</key>
-	<dict/>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleLocalizations</key>
@@ -287,6 +285,8 @@
 		<key>UIImageName</key>
 		<string>LaunchImage.png</string>
 	</dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen.storyboard</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
