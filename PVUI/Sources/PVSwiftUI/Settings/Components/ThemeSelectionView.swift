@@ -21,26 +21,6 @@ struct ThemeSelectionView: View {
 
     var body: some View {
         List {
-            /// App icon selection section
-            Section(header: Text("App Icon")) {
-                NavigationLink(destination: AppIconSelectorView()) {
-                    HStack {
-                        Text("Change App Icon")
-                        Spacer()
-                        if let iconName = UIApplication.shared.alternateIconName {
-                            Image("\(iconName)-Preview", bundle: .main)
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .cornerRadius(6)
-                        } else {
-                            Image("AppIcon-Preview", bundle: .main)
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .cornerRadius(6)
-                        }
-                    }
-                }
-            }
 
             /// Standard theme options section
             Section(header: Text("Standard Themes")) {

@@ -192,10 +192,52 @@ private struct AppSection: View {
                             icon: .sfSymbol("lock.fill"))
             }
             
-            NavigationLink(destination: AppearanceView()) {
-                SettingsRow(title: "Appearance",
-                            subtitle: "Visual options for Game Library",
-                            icon: .sfSymbol("eye"))
+            
+            /// App icon selection section
+            PaidFeatureView {
+                NavigationLink(destination: AppIconSelectorView()) {
+                    HStack {
+                        Image(systemName: "app")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 22, height: 22)
+                        .foregroundColor(.accentColor)
+                        Text("Change App Icon")
+                        Spacer()
+                        if let iconName = UIApplication.shared.alternateIconName {
+                            Image("\(iconName)-Preview", bundle: .main)
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .cornerRadius(6)
+                        } else {
+                            Image("AppIcon-Preview", bundle: .main)
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .cornerRadius(6)
+                        }
+                    }
+                }
+            } lockedView: {
+                HStack {
+                    Image(systemName: "lock.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 22, height: 22)
+                    .foregroundColor(.accentColor)
+                    Text("Change App Icon")
+                    Spacer()
+                    if let iconName = UIApplication.shared.alternateIconName {
+                        Image("\(iconName)-Preview", bundle: .main)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .cornerRadius(6)
+                    } else {
+                        Image("AppIcon-Preview", bundle: .main)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .cornerRadius(6)
+                    }
+                }
             }
         }
     }
@@ -568,6 +610,11 @@ private struct LibrarySection: View {
             //                            icon: .sfSymbol("xserve"))
             //            }
             //#endif
+            NavigationLink(destination: AppearanceView()) {
+                SettingsRow(title: "Appearance",
+                            subtitle: "Visual options for Game Library",
+                            icon: .sfSymbol("eye"))
+            }
             
             NavigationLink(destination: ConflictsView().environmentObject(viewModel)) {
                 SettingsRow(title: "Manage Conflicts",
