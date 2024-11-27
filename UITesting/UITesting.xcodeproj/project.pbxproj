@@ -400,8 +400,10 @@
 		B36DFC342CF196D800BAE9BE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "\"AppIcon-8bit1 AppIcon-8bit2 AppIcon-8bit3 AppIcon-8bit4 AppIcon-8bit5 AppIcon-Blue-Negative AppIcon-Blue AppIcon-Cyan AppIcon-Gem AppIcon-Gold AppIcon-Paint1 AppIcon-Paint2 AppIcon-Purple AppIcon-Seafoam AppIcon-Yellow\"";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"UITesting/Preview Content\"";
@@ -429,8 +431,10 @@
 		B36DFC352CF196D800BAE9BE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "\"AppIcon-8bit1 AppIcon-8bit2 AppIcon-8bit3 AppIcon-8bit4 AppIcon-8bit5 AppIcon-Blue-Negative AppIcon-Blue AppIcon-Cyan AppIcon-Gem AppIcon-Gold AppIcon-Paint1 AppIcon-Paint2 AppIcon-Purple AppIcon-Seafoam AppIcon-Yellow\"";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"UITesting/Preview Content\"";
