@@ -122,7 +122,7 @@ struct IconImage: View {
 }
 
 struct AppIconSelectorView: View {
-    @State private var currentIcon: String? = nil
+    @StateObject private var iconManager = IconManager.shared
 
     /// Smaller grid items for better layout
     private let columns = [
@@ -140,7 +140,7 @@ struct AppIconSelectorView: View {
                     /// Current icon with neumorphic style
                     NeumorphismView {
                         IconImage(
-                            iconName: currentIcon ?? "AppIcon",
+                            iconName: iconManager.currentIconName ?? "AppIcon",
                             size: 180
                         )
                         .padding(8)
@@ -176,8 +176,6 @@ struct AppIconSelectorView: View {
             }
         }
         .onAppear {
-            currentIcon = UIApplication.shared.alternateIconName
-
             // Debug: Print available images
             AppIconOption.allCases.forEach { option in
                 if UIImage(named: option.rawValue, in: .main, with: nil) != nil {
@@ -196,7 +194,7 @@ struct AppIconSelectorView: View {
             if let error = error {
                 print("Error changing app icon: \(error.localizedDescription)")
             } else {
-                currentIcon = iconName
+                iconManager.currentIconName = iconName
             }
         }
     }

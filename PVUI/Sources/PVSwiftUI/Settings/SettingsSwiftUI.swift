@@ -27,21 +27,21 @@ import PVWebServer
 
 // MARK: - PVSettingsView
 public struct PVSettingsView: View {
-    
+
     @StateObject private var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
     var dismissAction: () -> Void  // Add this
     weak var menuDelegate: PVMenuDelegate!
-    
+
     @ObservedObject var conflictsController: PVGameLibraryUpdatesController
-    
+
     // Update initializer to take dismissAction
     public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, dismissAction: @escaping () -> Void) {
         self.conflictsController = conflictsController
         self.dismissAction = dismissAction
         _viewModel = StateObject(wrappedValue: PVSettingsViewModel(menuDelegate: menuDelegate, conflictsController: conflictsController))
     }
-    
+
     public var body: some View {
         NavigationView {
             List {
@@ -49,11 +49,11 @@ public struct PVSettingsView: View {
                     AppSection(viewModel: viewModel)
                         .environmentObject(viewModel)
                 }
-                
+
                 CollapsibleSection(title: "Core Options") {
                     CoreOptionsSection()
                 }
-                
+
                 CollapsibleSection(title: "Saves") {
                     SavesSection()
                 }
@@ -65,38 +65,38 @@ public struct PVSettingsView: View {
                 CollapsibleSection(title: "Video") {
                     VideoSection()
                 }
-                
+
                 CollapsibleSection(title: "Controller") {
                     ControllerSection()
                 }
-                
+
                 CollapsibleSection(title: "Library") {
                     LibrarySection(viewModel: viewModel)
                         .environmentObject(viewModel)
                 }
-                
+
                 CollapsibleSection(title: "Library Management") {
                     LibrarySection2(viewModel: viewModel)
                         .environmentObject(viewModel)
                 }
-                
+
                 CollapsibleSection(title: "Advanced") {
                     AdvancedSection()
                 }
-                
+
                 CollapsibleSection(title: "Social Links") {
                     SocialLinksSection()
                 }
-                
+
                 CollapsibleSection(title: "Documentation") {
                     DocumentationSection()
                 }
-                
+
                 CollapsibleSection(title: "Build") {
                     BuildSection(viewModel: viewModel)
                         .environmentObject(viewModel)
                 }
-                
+
                 CollapsibleSection(title: "Extra Info") {
                     ExtraInfoSection()
                 }
@@ -129,7 +129,7 @@ struct SettingsRow: View {
     var subtitle: String? = nil
     var value: String? = nil
     var icon: SettingsIcon? = nil
-    
+
     var body: some View {
         HStack {
             if let icon = icon {
@@ -139,7 +139,7 @@ struct SettingsRow: View {
                     .frame(width: 22, height: 22)
                     .foregroundColor(.accentColor)
             }
-            
+
             VStack(alignment: .leading) {
                 Text(title)
                 if let subtitle = subtitle {
@@ -148,7 +148,7 @@ struct SettingsRow: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             if let value = value {
                 Spacer()
                 Text(value)
@@ -162,24 +162,25 @@ struct SettingsRow: View {
 private struct AppSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+    @ObservedObject private var iconManager = IconManager.shared
+
     var body: some View {
         Section(header: Text("App")) {
-            
+
             /// Information about PVSystems
             NavigationLink(destination: SystemSettingsView()) {
                 SettingsRow(title: "Systems",
                             subtitle: "Information on system cores, their bioses, links and stats.",
                             icon: .sfSymbol("square.stack.3d.down.forward"))
             }
-            
+
             /// Links to projects
             NavigationLink(destination: CoreProjectsView()) {
                 SettingsRow(title: "Cores",
                             subtitle: "Emulator cores provided by these projects.",
                             icon: .sfSymbol("square.3.layers.3d.middle.filled"))
             }
-            
+
             PaidFeatureView {
                 NavigationLink(destination: ThemeSelectionView()) {
                     SettingsRow(title: "Theme",
@@ -191,8 +192,8 @@ private struct AppSection: View {
                             subtitle: "Unlock to change theme.",
                             icon: .sfSymbol("lock.fill"))
             }
-            
-            
+
+
             /// App icon selection section
             PaidFeatureView {
                 NavigationLink(destination: AppIconSelectorView()) {
@@ -204,17 +205,10 @@ private struct AppSection: View {
                         .foregroundColor(.accentColor)
                         Text("Change App Icon")
                         Spacer()
-                        if let iconName = UIApplication.shared.alternateIconName {
-                            Image("\(iconName)-Preview", bundle: .main)
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .cornerRadius(6)
-                        } else {
-                            Image("AppIcon-Preview", bundle: .main)
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .cornerRadius(6)
-                        }
+                        IconImage(
+                            iconName: iconManager.currentIconName ?? "AppIcon",
+                            size: 24
+                        )
                     }
                 }
             } lockedView: {
@@ -226,17 +220,10 @@ private struct AppSection: View {
                     .foregroundColor(.accentColor)
                     Text("Change App Icon")
                     Spacer()
-                    if let iconName = UIApplication.shared.alternateIconName {
-                        Image("\(iconName)-Preview", bundle: .main)
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                            .cornerRadius(6)
-                    } else {
-                        Image("AppIcon-Preview", bundle: .main)
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                            .cornerRadius(6)
-                    }
+                    IconImage(
+                        iconName: iconManager.currentIconName ?? "AppIcon",
+                        size: 24
+                    )
                 }
             }
         }
@@ -256,17 +243,17 @@ private struct CoreOptionsSection: View {
 }
 
 private struct SavesSection: View {
-    
+
     @Default(.autoSave) var autoSave
     @Default(.timedAutoSaves) var timedAutoSaves
     @Default(.autoLoadSaves) var autoLoadSaves
     @Default(.askToAutoLoad) var askToAutoLoad
     @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
-    
+
     var timedAutosaveLabelText: String {
         "\(timedAutoSaveInterval/60.0) minutes between timed auto saves."
     }
-    
+
     var body: some View {
         Section(header: Text("Saves")) {
             ThemedToggle(isOn: $autoSave) {
@@ -366,7 +353,7 @@ private struct DocumentationSection: View {
 
 private struct BuildSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
-    
+
     var body: some View {
         Section(header: Text("Build Information")) {
             SettingsRow(title: "Version",
@@ -422,7 +409,7 @@ private struct ExtraInfoSection: View {
 private struct AudioSection: View {
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
-    
+
     var body: some View {
         Section(header: Text("Audio")) {
             ThemedToggle(isOn: $volumeHUD) {
@@ -443,7 +430,7 @@ private struct AudioSection: View {
             Text("System-wide volume level for games.")
                 .font(.caption)
                 .foregroundColor(.secondary)
-            
+
             // Add the new navigation link wrapped in PaidFeatureView
             PaidFeatureView {
                 NavigationLink(destination: AudioEngineSettingsView()) {
@@ -468,7 +455,7 @@ private struct VideoSection: View {
     @Default(.showFPSCount) var showFPSCount
     @Default(.nativeScaleEnabled) var nativeScaleEnabled
     @Default(.integerScaleEnabled) var integerScaleEnabled
-    
+
     var body: some View {
         Section(header: Text("Video")) {
             ThemedToggle(isOn: $multiThreadedGL) {
@@ -512,7 +499,7 @@ private struct VideoSection: View {
 
 private struct ControllerSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
-    
+
     var body: some View {
         Group {
             Section(header: Text("Controllers")) {
@@ -548,7 +535,7 @@ private struct OnScreenControllerSection: View {
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
-    
+
     var body: some View {
         Section(header: Text("On-Screen Controller")) {
             HStack {
@@ -581,7 +568,7 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Always show buttons not present on original hardware.",
                             icon: .sfSymbol("l.rectangle.roundedbottom"))
             }
-            
+
             ThemedToggle(isOn: $onscreenJoypad) {
                 SettingsRow(title: "On-Screen Joystick",
                             subtitle: "Show a touch Joystick pad on supported systems.",
@@ -592,7 +579,7 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
                             icon: .sfSymbol("keyboard.badge.eye"))
             }
-            
+
         }
     }
 }
@@ -600,7 +587,7 @@ private struct OnScreenControllerSection: View {
 
 private struct LibrarySection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
-    
+
     var body: some View {
         Section(header: Text("Library")) {
             //#if canImport(PVWebServer)
@@ -615,7 +602,7 @@ private struct LibrarySection: View {
                             subtitle: "Visual options for Game Library",
                             icon: .sfSymbol("eye"))
             }
-            
+
             NavigationLink(destination: ConflictsView().environmentObject(viewModel)) {
                 SettingsRow(title: "Manage Conflicts",
                             subtitle: "Resolve conflicting save states and files.",
@@ -629,7 +616,7 @@ private struct LibrarySection: View {
 
 private struct LibrarySection2: View {
     @ObservedObject var viewModel: PVSettingsViewModel
-    
+
     var body: some View {
         Section(header: Text("Library")) {
             Button(action: viewModel.reimportROMs) {
@@ -677,7 +664,7 @@ private struct AppearanceSection: View {
     @Default(.showRecentSaveStates) var showRecentSaveStates
     @Default(.showGameBadges) var showGameBadges
     @Default(.showFavorites) var showFavorites
-    
+
     var body: some View {
         Section(header: Text("Appearance")) {
             ThemedToggle(isOn: $showGameTitles) {
