@@ -33,16 +33,25 @@ func iconNameForFileType(_ type: FileType) -> String {
     }
 }
 
-struct ImportStatusView: View {
-    @ObservedObject var updatesController: PVGameLibraryUpdatesController
-    var gameImporter:GameImporter
-    weak var delegate:ImportStatusDelegate!
+public struct ImportStatusView: View {
+    @ObservedObject
+    public var updatesController: PVGameLibraryUpdatesController
+    public var gameImporter:GameImporter
+    public weak var delegate:ImportStatusDelegate!
+    public var dismissAction: (() -> Void)? = nil
+    
+    public init(updatesController: PVGameLibraryUpdatesController, gameImporter:GameImporter, delegate:ImportStatusDelegate, dismissAction: (() -> Void)? = nil) {
+        self.updatesController = updatesController
+        self.gameImporter = gameImporter
+        self.delegate = delegate
+        self.dismissAction = dismissAction
+    }
     
     private func deleteItems(at offsets: IndexSet) {
         gameImporter.removeImports(at: offsets)
     }
     
-    var body: some View {
+    public var body: some View {
         WithPerceptionTracking {
             NavigationView {
                 List {
@@ -83,5 +92,12 @@ struct ImportStatusView: View {
 }
 
 //#Preview {
-//    
+//    let gameImporter = AppState.shared.gameImporter ?? GameImporter.shared
+//    let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
+//    let importDelegate = MockImportStatusDelegate()
+//
+//    ImportStatusView(
+//        updatesController: pvgamelibraryUpdatesController,
+//        gameImporter: gameImporter,
+//        delegate: importDelegate)
 //}
