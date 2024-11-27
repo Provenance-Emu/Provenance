@@ -90,8 +90,8 @@ _My personal TODO notes_
 
 ### Kind of want
 
-- [ ] New save states management page
-    - [ ] (New design)[https://discord.com/channels/@me/1034683216059179069/1307885448030326877]
+- [X] New save states management page
+    - [X] (New design)[https://discord.com/channels/@me/1034683216059179069/1307885448030326877]
 
 ### Cores to translate
 
