@@ -130,22 +130,22 @@ _My personal TODO notes_
 - [X] Privacy policy / EULA in settings!
 - [X] Add in-app purchase and screen
 - [ ] Add app rating with SiruisRating
-- [ ] Add alternative icons
-    - [ ] AppIcon-8bit1
-    - [ ] AppIcon-8bit2
-    - [ ] AppIcon-8bit3
-    - [ ] AppIcon-8bit4
-    - [ ] AppIcon-8bit5
-    - [ ] AppIcon-Blue-Negative
-    - [ ] AppIcon-Blue
-    - [ ] AppIcon-Cyan
-    - [ ] AppIcon-Gem
-    - [ ] AppIcon-Gold
-    - [ ] AppIcon-Paint1
-    - [ ] AppIcon-Paint2
-    - [ ] AppIcon-Purple
-    - [ ] AppIcon-Seafoam
-    - [ ] AppIcon-Yellow
+- [X] Add alternative icons
+    - [X] AppIcon-8bit1
+    - [X] AppIcon-8bit2
+    - [X] AppIcon-8bit3
+    - [X] AppIcon-8bit4
+    - [X] AppIcon-8bit5
+    - [X] AppIcon-Blue-Negative
+    - [X] AppIcon-Blue
+    - [X] AppIcon-Cyan
+    - [X] AppIcon-Gem
+    - [X] AppIcon-Gold
+    - [X] AppIcon-Paint1
+    - [X] AppIcon-Paint2
+    - [X] AppIcon-Purple
+    - [X] AppIcon-Seafoam
+    - [X] AppIcon-Yellow
 
 ### Low Priority
 - [ ] Finish themes
