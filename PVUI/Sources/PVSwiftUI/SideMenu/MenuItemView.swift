@@ -29,7 +29,15 @@ struct MenuItemView: SwiftUI.View {
     @ObservedObject private var gamepadManager = GamepadManager.shared
 
     private var shouldShowFocus: Bool {
-        isFocused && gamepadManager.isControllerConnected
+        isFocused && controllerConnected
+    }
+    
+    private var controllerConnected: Bool {
+        gamepadManager.isControllerConnected
+    }
+    
+    private var tint: Color {
+        shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(controllerConnected ? 0.6 : 1.0)
     }
 
     var body: some SwiftUI.View {
@@ -42,10 +50,10 @@ struct MenuItemView: SwiftUI.View {
                 icon.image
                     .renderingMode(.template)
                     .resizable().scaledToFit().cornerRadius(4).padding(8)
-                    .tint(shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(0.6))
+                    .tint(tint)
                 /// Text
                 Text(rowTitle)
-                    .foregroundColor(shouldShowFocus ? themeManager.currentPalette.menuText.swiftUIColor : themeManager.currentPalette.menuText.swiftUIColor.opacity(0.6))
+                    .foregroundColor(tint)
                 /// Space
                 Spacer()
             }
@@ -55,7 +63,7 @@ struct MenuItemView: SwiftUI.View {
             .background(
                 shouldShowFocus ?
                 themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.8) :
-                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.3)
+                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(controllerConnected ? 0.3 : 1.0)
             )
             .overlay(
                 Rectangle()

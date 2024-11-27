@@ -140,131 +140,141 @@ struct ConsoleGamesView: SwiftUI.View {
     
     var body: some SwiftUI.View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
-                displayOptionsView()
-                ZStack(alignment: .bottom) {
-                    ScrollView {
-                        ScrollViewReader { proxy in
-                            LazyVStack(spacing: 20) {
-                                continueSection()
-                                    .id("section_continues")
-                                favoritesSection()
-                                    .id("section_favorites")
-                                recentlyPlayedSection()
-                                    .id("section_recent")
-                                gamesSection()
-                                    .id("section_allgames")
-                                BiosesView(console: console)
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.bottom, 44)
-                            .onChange(of: gamesViewModel.focusedSection) { newSection in
-                                if let section = newSection {
-                                    withAnimation {
-                                        let sectionId = sectionToId(section)
-                                        proxy.scrollTo(sectionId, anchor: .top)
+            ZStack {
+                if #available(iOS 18.0, *) {
+                    ProvenanceAnimatedBackgroundView()
+                        .ignoresSafeArea(.all)
+                } else {
+                    PVAnimatedGradient()
+                        .ignoresSafeArea(.all)
+                }
+                VStack(spacing: 0) {
+                    displayOptionsView()
+                    ZStack(alignment: .bottom) {
+                        ScrollView {
+                            ScrollViewReader { proxy in
+                                LazyVStack(spacing: 20) {
+                                    continueSection()
+                                        .id("section_continues")
+                                    favoritesSection()
+                                        .id("section_favorites")
+                                    recentlyPlayedSection()
+                                        .id("section_recent")
+                                    gamesSection()
+                                        .id("section_allgames")
+                                    BiosesView(console: console)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.bottom, 44)
+                                .onChange(of: gamesViewModel.focusedSection) { newSection in
+                                    if let section = newSection {
+                                        withAnimation {
+                                            let sectionId = sectionToId(section)
+                                            proxy.scrollTo(sectionId, anchor: .top)
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }.refreshable {
-                        ILOG("Refreshing game library")
-                        await AppState.shared.libraryUpdatesController?.importROMDirectories()
-                    }
-                }
-            }
-            .edgesIgnoringSafeArea(.bottom)
-#if !os(tvOS)
-            .gesture(magnificationGesture())
-#endif
-            .onAppear {
-                adjustZoomLevel(for: gameLibraryScale)
-                setupGamepadHandling()
-                
-                // Set initial focus
-                let sections: [HomeSectionType] = availableSections
-                
-                if let firstSection = sections.first {
-                    gamesViewModel.focusedSection = firstSection
-                    gamesViewModel.focusedItemInSection = getFirstItemInSection(firstSection)
-                    DLOG("Set initial focus - Section: \(firstSection), Item: \(String(describing: gamesViewModel.focusedItemInSection))")
-                }
-            }
-            .onDisappear {
-                gamepadCancellable?.cancel()
-            }
-        }
-        .sheet(isPresented: $showImagePicker) {
-#if !os(tvOS)
-            imagePickerView()
-#endif
-        }
-        .alert("Rename Game", isPresented: $showingRenameAlert) {
-            renameAlertView()
-        } message: {
-            Text("Enter a new name for \(gameToRename?.title ?? "")")
-        }
-        .sheet(item: $systemMoveState) { state in
-            SystemPickerView(
-                game: state.game,
-                isPresented: Binding(
-                    get: { state.isPresenting },
-                    set: { newValue in
-                        if !newValue {
-                            systemMoveState = nil
+                        }.refreshable {
+                            ILOG("Refreshing game library")
+                            await AppState.shared.libraryUpdatesController?.importROMDirectories()
                         }
                     }
+                }
+                .edgesIgnoringSafeArea(.bottom)
+#if !os(tvOS)
+                .gesture(magnificationGesture())
+#endif
+                .onAppear {
+                    adjustZoomLevel(for: gameLibraryScale)
+                    setupGamepadHandling()
+                    
+                    // Set initial focus
+                    let sections: [HomeSectionType] = availableSections
+                    
+                    if let firstSection = sections.first {
+                        gamesViewModel.focusedSection = firstSection
+                        gamesViewModel.focusedItemInSection = getFirstItemInSection(firstSection)
+                        DLOG("Set initial focus - Section: \(firstSection), Item: \(String(describing: gamesViewModel.focusedItemInSection))")
+                    }
+                }
+                .onDisappear {
+                    gamepadCancellable?.cancel()
+                }
+            }
+            .sheet(isPresented: $showImagePicker) {
+#if !os(tvOS)
+                imagePickerView()
+#endif
+            }
+            .alert("Rename Game", isPresented: $showingRenameAlert) {
+                renameAlertView()
+            } message: {
+                Text("Enter a new name for \(gameToRename?.title ?? "")")
+            }
+            .sheet(item: $systemMoveState) { state in
+                SystemPickerView(
+                    game: state.game,
+                    isPresented: Binding(
+                        get: { state.isPresenting },
+                        set: { newValue in
+                            if !newValue {
+                                systemMoveState = nil
+                            }
+                        }
+                    )
                 )
-            )
-        }
-        .sheet(item: $continuesManagementState) { state in
-            let game = state.game.warmUp()
-            let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
-            /// Create the Realm driver
-            if let driver = try? RealmSaveStateDriver(realm: realm) {
-                
-                /// Create view model
-                let viewModel = ContinuesMagementViewModel(
-                    driver: driver,
-                    gameTitle: game.title,
-                    systemTitle: game.system.name,
-                    numberOfSaves: game.saveStates.count,
-                    onLoadSave: { saveID in
-                        continuesManagementState = nil
-                        Task.detached {
-                            Task { @MainActor in
-                                await rootDelegate?.root_openSaveState(saveID)
+            }
+            .sheet(item: $continuesManagementState) { state in
+                let game = state.game.warmUp()
+                let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
+                /// Create the Realm driver
+                if let driver = try? RealmSaveStateDriver(realm: realm) {
+                    
+                    /// Create view model
+                    let viewModel = ContinuesMagementViewModel(
+                        driver: driver,
+                        gameTitle: game.title,
+                        systemTitle: game.system.name,
+                        numberOfSaves: game.saveStates.count,
+                        onLoadSave: { saveID in
+                            continuesManagementState = nil
+                            Task.detached {
+                                Task { @MainActor in
+                                    await rootDelegate?.root_openSaveState(saveID)
+                                }
                             }
-                        }
-                    })
-                
-                /// Create and configure the view
-                if #available(iOS 16.4, *) {
-                    ContinuesMagementView(viewModel: viewModel)
-                        .onAppear {
-                            driver.loadSaveStates(forGameId: game.id)
-                            let game = game.freeze()
-                            Task { @MainActor in
-                                let image: UIImage? = await game.fetchArtworkFromCache()
-                                viewModel.gameUIImage = image
+                        })
+                    
+                    /// Create and configure the view
+                    if #available(iOS 16.4, *) {
+                        ContinuesMagementView(viewModel: viewModel)
+                            .onAppear {
+                                driver.loadSaveStates(forGameId: game.id)
+                                let game = game.freeze()
+                                Task { @MainActor in
+                                    let image: UIImage? = await game.fetchArtworkFromCache()
+                                    viewModel.gameUIImage = image
+                                }
                             }
-                        }
-                        .presentationBackground(content: {Color.clear})
+                            .presentationBackground(content: {Color.clear})
+                    } else {
+                        ContinuesMagementView(viewModel: viewModel)
+                            .onAppear {
+                                driver.loadSaveStates(forGameId: game.id)
+                                let game = game.freeze()
+                                Task { @MainActor in
+                                    let image: UIImage? = await game.fetchArtworkFromCache()
+                                    viewModel.gameUIImage = image
+                                }
+                            }
+                    }
                 } else {
-                    ContinuesMagementView(viewModel: viewModel)
-                        .onAppear {
-                            driver.loadSaveStates(forGameId: game.id)
-                            let game = game.freeze()
-                            Task { @MainActor in
-                                let image: UIImage? = await game.fetchArtworkFromCache()
-                                viewModel.gameUIImage = image
-                            }
-                        }
+                    Text("Error: Could not load save states")
                 }
-            } else {
-                Text("Error: Could not load save states")
             }
         }
+        .ignoresSafeArea(.all)
     }
     
     // MARK: - Helper Methods

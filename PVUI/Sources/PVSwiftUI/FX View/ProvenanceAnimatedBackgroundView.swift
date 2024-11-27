@@ -26,6 +26,7 @@ public struct ProvenanceAnimatedBackgroundView: View {
 //                .opacity(0.2)
         }
         .edgesIgnoringSafeArea(.bottom)
+        .colorInvert()
     }
 }
 

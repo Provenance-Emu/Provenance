@@ -88,6 +88,7 @@ struct ConsolesWrapperView: SwiftUI.View {
                     Label("Home", systemImage: "house")
                 }
                 .tag("home")
+                .ignoresSafeArea(.all, edges: .bottom)
 
             ForEach(sortedConsoles(), id: \.self) { console in
                 ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
@@ -95,6 +96,7 @@ struct ConsolesWrapperView: SwiftUI.View {
                         Label(console.name, systemImage: console.iconName)
                     }
                     .tag(console.identifier)
+                    .ignoresSafeArea(.all, edges: .bottom)
             }
         }
         .tabViewStyle(.page)
