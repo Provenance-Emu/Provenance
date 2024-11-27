@@ -141,14 +141,7 @@ struct ConsoleGamesView: SwiftUI.View {
     var body: some SwiftUI.View {
         GeometryReader { geometry in
             ZStack {
-                if #available(iOS 18.0, *) {
-                    ProvenanceAnimatedBackgroundView()
-                        .ignoresSafeArea(.all)
-                } else {
-                    PVAnimatedGradient()
-                        .ignoresSafeArea(.all)
-                }
-                VStack(spacing: 0) {
+                 VStack(spacing: 0) {
                     displayOptionsView()
                     ZStack(alignment: .bottom) {
                         ScrollView {
