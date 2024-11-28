@@ -36,11 +36,11 @@ func iconNameForFileType(_ type: FileType) -> String {
 public struct ImportStatusView: View {
     @ObservedObject
     public var updatesController: PVGameLibraryUpdatesController
-    public var gameImporter:GameImporter
+    public var gameImporter:any GameImporting
     public weak var delegate:ImportStatusDelegate!
     public var dismissAction: (() -> Void)? = nil
     
-    public init(updatesController: PVGameLibraryUpdatesController, gameImporter:GameImporter, delegate:ImportStatusDelegate, dismissAction: (() -> Void)? = nil) {
+    public init(updatesController: PVGameLibraryUpdatesController, gameImporter: any GameImporting, delegate: ImportStatusDelegate, dismissAction: (() -> Void)? = nil) {
         self.updatesController = updatesController
         self.gameImporter = gameImporter
         self.delegate = delegate
