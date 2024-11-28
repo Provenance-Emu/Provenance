@@ -104,7 +104,13 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
             .flatMap { _ in
                 Future<Void, Never> { promise in
                     RomDatabase.refresh()
-                    self.gameLibraryViewController?.checkROMs(false)
+                    if let _ = self.gameLibraryViewController {
+                        self.gameLibraryViewController?.checkROMs(false)
+                    } else {
+                        if let updates = await self.appState?.libraryUpdatesController {
+                            await updates.importROMDirectories()
+                        }
+                    }
                     promise(.success(()))
                 }
             }
@@ -117,7 +123,13 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                 Future<Void, Error> { promise in
                     do {
                         try RomDatabase.sharedInstance.deleteAllGames()
-                        self.gameLibraryViewController?.checkROMs(false)
+                        if let _ = self.gameLibraryViewController {
+                            self.gameLibraryViewController?.checkROMs(false)
+                        } else {
+                            if let updates = await self.appState?.libraryUpdatesController {
+                                await updates.importROMDirectories()
+                            }
+                        }
                         promise(.success(()))
                     } catch {
                         ELOG("Failed to refresh all objects. \(error.localizedDescription)")
@@ -137,7 +149,13 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                         try RomDatabase.sharedInstance.deleteAllData()
                         Task {
                             await GameImporter.shared.initSystems()
-                            self.gameLibraryViewController?.checkROMs(false)
+                            if let _ = self.gameLibraryViewController {
+                                self.gameLibraryViewController?.checkROMs(false)
+                            } else {
+                                if let updates = await self.appState?.libraryUpdatesController {
+                                    await updates.importROMDirectories()
+                                }
+                            }
                             promise(.success(()))
                         }
                     } catch {
@@ -520,6 +538,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                                           viewModel: viewModel,
                                           rootViewController: rootViewController)
 
+        _initLibraryNotificationHandlers()
         return sideNav
     }
 
