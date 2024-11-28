@@ -115,7 +115,7 @@ public protocol GameImporting {
 
     func addImport(_ item: ImportQueueItem)
     func addImports(forPaths paths: [URL])
-    func addImports(forPaths paths: [URL], targetSystem: ImportQueueItemType.System)
+    func addImports(forPaths paths: [URL], targetSystem: AnySystem)
     
     func removeImports(at offsets: IndexSet)
     func startProcessing()
@@ -379,13 +379,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    public func addImports(forPaths paths: [URL], targetSystem: ImportQueueItem.System) {
+    public func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
 
         for path in paths {
             var item = ImportQueueItem(url: path, fileType: .unknown)
-            item.userChosenSystem = targetSystem
+            item.userChosenSystem?.identifier = targetSystem.identifier
             self.addImportItemToQueue(item)
         }
     }

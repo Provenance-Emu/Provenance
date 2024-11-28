@@ -180,7 +180,7 @@ struct MainView_Previews: PreviewProvider {
             }
         }
         .sheet(isPresented: $showingSettings) {
-            let gameImporter = GameImporter.shared
+            let gameImporter = MockGameImporter()
             let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
             let menuDelegate = MockPVMenuDelegate()
             

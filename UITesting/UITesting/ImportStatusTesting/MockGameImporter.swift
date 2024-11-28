@@ -27,7 +27,7 @@ class MockGameImporter: GameImporting, ObservableObject {
         }
     }
     
-    func addImports(forPaths paths: [URL], targetSystem: any SystemProtocol) {
+    func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
         
     }
 
