@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import PVUIBase
 import PVLibrary
 import PVThemes
 import Perception
@@ -60,7 +61,7 @@ public struct ImportStatusView: View {
                 List {
                     if gameImporter.importQueue.isEmpty {
                         Text("No items in the import queue")
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                             .padding()
                     } else {
                         ForEach(gameImporter.importQueue) { item in
@@ -92,20 +93,30 @@ public struct ImportStatusView: View {
                         .tint(currentPalette.defaultTintColor?.swiftUIColor)
                     })
                 }
+                .background(currentPalette.gameLibraryBackground.swiftUIColor)
             }
+            .background(currentPalette.gameLibraryBackground.swiftUIColor)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
     }
 }
 
-//#Preview {
-//    let gameImporter = AppState.shared.gameImporter ?? GameImporter.shared
-//    let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
-//    let importDelegate = MockImportStatusDelegate()
-//
-//    ImportStatusView(
-//        updatesController: pvgamelibraryUpdatesController,
-//        gameImporter: gameImporter,
-//        delegate: importDelegate)
-//}
+#if DEBUG
+#Preview {
+    @ObservedObject var themeManager = ThemeManager.shared
+    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+
+    let mockImportStatusDriverData = MockImportStatusDriverData()
+    
+    ImportStatusView(
+        updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
+        gameImporter: mockImportStatusDriverData.gameImporter,
+        delegate: mockImportStatusDriverData) {
+            print("Import Status View Closed")
+        }
+        .onAppear {
+            themeManager.setCurrentPalette(CGAThemes.green.palette)
+        }
+}
+#endif

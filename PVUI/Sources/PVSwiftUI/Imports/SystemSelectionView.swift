@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PVLibrary
 
 struct SystemSelectionView: View {
     @ObservedObject var item: ImportQueueItem
@@ -33,6 +34,37 @@ struct SystemSelectionView: View {
     }
 }
 
+#if DEBUG
+import PVPrimitives
 #Preview {
     
+    
+    let item: ImportQueueItem = {
+        let systems: [PVSystem] = [
+            .init(
+                identifier: "com.provenance.jaguar",
+                name: "Jaguar",
+                shortName: "Jag",
+                manufacturer: "Atari",
+                screenType: .crt
+            ),
+            .init(
+                identifier: "com.provenance.jaguarcd",
+                name: "Jaguar CD",
+                shortName: "Jag CD",
+                manufacturer: "Atari",
+                screenType: .crt
+            )
+        ]
+
+        let item = ImportQueueItem(url: .init(fileURLWithPath: "Test.bin"),
+                        fileType: .game)
+        item.systems = systems
+        return item
+    }()
+    
+    List {
+        SystemSelectionView(item: item)
+    }
 }
+#endif
