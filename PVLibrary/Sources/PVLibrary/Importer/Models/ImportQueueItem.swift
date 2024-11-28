@@ -10,7 +10,7 @@ import PVPrimitives
 import Perception
 
 // Enum to define the possible statuses of each import
-public enum ImportStatus: Int, CustomStringConvertible {
+public enum ImportStatus: Int, CustomStringConvertible, CaseIterable {
     case conflict  // Indicates additional action needed by user after successful import
 
     case partial //indicates the item is waiting for associated files before it could be processed
