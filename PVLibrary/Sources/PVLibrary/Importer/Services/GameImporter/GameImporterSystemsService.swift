@@ -22,13 +22,21 @@ import Perception
 import SwiftUI
 
 protocol GameImporterSystemsServicing {
+    // TODO: Make me more generic
+    //    associatedtype GameType: PVGameLibraryEntry
+    typealias GameType = PVGame // PVGameLibraryEntry
+    typealias SystemType = PVSystem //AnySystem
+    
     func setOpenVGDB(_ vgdb: OpenVGDB)
     func setExtensionsToSystemMapping(_ mapping: [String: [String]])
-    func determineSystems(for queueItem: ImportQueueItem) async throws -> [PVSystem]
-    func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem]?, romFilename: String) -> [PVGame]?
+    func determineSystems(for queueItem: ImportQueueItem) async throws -> [SystemType]
+    func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [AnySystem]?, romFilename: String) -> [GameType]?
 }
 
-class GameImporterSystemsService : GameImporterSystemsServicing {
+class GameImporterSystemsService: GameImporterSystemsServicing {
+    typealias GameType = PVGame
+    
+    
     var openVGDB: OpenVGDB?
     /// Map of ROM extensions to their corresponding system identifiers
     var romExtensionToSystemsMap = [String: [String]]()
@@ -46,7 +54,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
     }
     
     /// Determines the system for a given candidate file
-    public func determineSystems(for queueItem: ImportQueueItem) async throws -> [PVSystem] {
+    public func determineSystems(for queueItem: ImportQueueItem) async throws -> [SystemType] {
         guard let md5 = queueItem.md5?.uppercased() else {
             throw GameImporterError.couldNotCalculateMD5
         }
@@ -80,7 +88,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
             }
         }
         
-        var matchingSystems:[PVSystem] = []
+        var matchingSystems:[SystemType] = []
         
         // Try to find system by MD5 using OpenVGDB
         if let results = try openVGDB?.searchDatabase(usingKey: "romHashMD5", value: md5),
@@ -135,13 +143,13 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
     }
     
     /// Determines the system for a given candidate file
-    private func determineSystemsFromContent(for queueItem: ImportQueueItem, possibleSystems: [PVSystem]) throws -> [PVSystem] {
+    private func determineSystemsFromContent(for queueItem: ImportQueueItem, possibleSystems: [SystemType]) throws -> [SystemType] {
         // Implement logic to determine system based on file content or metadata
         // This could involve checking file headers, parsing content, or using a database of known games
         
         let fileName = queueItem.url.deletingPathExtension().lastPathComponent
         
-        var matchedSystems:[PVSystem] = []
+        var matchedSystems:[SystemType] = []
         for system in possibleSystems {
             do {
                 if let results = try openVGDB?.searchDatabase(usingFilename: fileName, systemID: system.openvgDatabaseID),
@@ -234,7 +242,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
     }
     
     //TODO: is this called?
-    internal func determineSystemByMD5(_ queueItem: ImportQueueItem) async throws -> PVSystem? {
+    internal func determineSystemByMD5(_ queueItem: ImportQueueItem) async throws -> SystemType? {
         guard let md5 = queueItem.md5?.uppercased() else {
             throw GameImporterError.couldNotCalculateMD5
         }
@@ -256,7 +264,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
     
     //TODO: is this called?
     /// Determines the systems for a given path
-    internal func determineSystems(for path: URL, chosenSystem: System?) throws -> [PVSystem] {
+    internal func determineSystems(for path: URL, chosenSystem: SystemType?) throws -> [SystemType] {
         if let chosenSystem = chosenSystem {
             if let system = RomDatabase.systemCache[chosenSystem.identifier] {
                 return [system]
@@ -268,7 +276,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
     }
     
     /// Finds any current game that could belong to any of the given systems
-    func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem]?, romFilename: String) -> [PVGame]? {
+    func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [AnySystem]?, romFilename: String) -> [GameType]? {
         // Check if existing ROM
         
         let allGames = RomDatabase.gamesCache.values.filter ({
@@ -475,7 +483,7 @@ class GameImporterSystemsService : GameImporterSystemsServicing {
     
     
     /// Checks if a file content matches a given system
-    private func doesFileContentMatch(_ queueItem: ImportQueueItem, forSystem system: PVSystem) -> Bool {
+    private func doesFileContentMatch(_ queueItem: ImportQueueItem, forSystem system: AnySystem) -> Bool {
         // Implement system-specific file content matching logic here
         // This could involve checking file headers, file structure, or other system-specific traits
         // For now, we'll return false as a placeholder

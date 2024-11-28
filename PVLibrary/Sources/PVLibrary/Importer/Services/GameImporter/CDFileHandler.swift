@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVPrimitives
 
 protocol CDFileHandling {
     func findAssociatedBinFileNames(for cueFileItem: ImportQueueItem) throws -> [String]

@@ -102,22 +102,41 @@ public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, 
 public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
 public protocol GameImporting {
+    
+    typealias ImportQueueItemType = ImportQueueItem
+    
     func initSystems() async
 
     var importStatus: String { get }
 
-    var importQueue: [ImportQueueItem] { get }
+    var importQueue: [ImportQueueItemType] { get }
 
     var processingState: ProcessingState { get }
 
     func addImport(_ item: ImportQueueItem)
     func addImports(forPaths paths: [URL])
+    func addImports(forPaths paths: [URL], targetSystem: ImportQueueItemType.System)
+    
     func removeImports(at offsets: IndexSet)
     func startProcessing()
 
-    func sortImportQueueItems(_ importQueueItems: [ImportQueueItem]) -> [ImportQueueItem]
+    func sortImportQueueItems(_ importQueueItems: [ImportQueueItemType]) -> [ImportQueueItemType]
 
-    func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool
+    func importQueueContainsDuplicate(_ queue: [ImportQueueItemType], ofItem queueItem: ImportQueueItemType) -> Bool
+    
+    var importStartedHandler: GameImporterImportStartedHandler? { get set }
+    /// Closure called when import completes
+    var completionHandler: GameImporterCompletionHandler? { get set }
+    /// Closure called when a game finishes importing
+    var finishedImportHandler: GameImporterFinishedImportingGameHandler? { get set }
+    /// Closure called when artwork finishes downloading
+    var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? { get set }
+    
+    /// Spotlight Handerls
+    /// Closure called when spotlight completes
+    var spotlightCompletionHandler: GameImporterCompletionHandler? { get set }
+    /// Closure called when a game finishes importing
+    var spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? { get set }
 }
 
 
@@ -182,9 +201,9 @@ public final class GameImporter: GameImporting, ObservableObject {
     public var processingState: ProcessingState = .idle  // Observable state for processing status
 
     internal var gameImporterFileService:GameImporterFileServicing
-    internal var gameImporterDatabaseService:GameImporterDatabaseServicing
-    internal var gameImporterSystemsService:GameImporterSystemsServicing
-    internal var gameImporterArtworkImporter:ArtworkImporting
+    internal var gameImporterDatabaseService:any GameImporterDatabaseServicing
+    internal var gameImporterSystemsService:any GameImporterSystemsServicing
+    internal var gameImporterArtworkImporter:any ArtworkImporting
     internal var cdRomFileHandler:CDFileHandling
 
     // MARK: - Paths
@@ -198,7 +217,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Path to the BIOS directory
     public var biosPath: URL { get { Paths.biosesPath }}
 
-    public var databaseService: GameImporterDatabaseServicing {
+    public var databaseService: any GameImporterDatabaseServicing {
         return gameImporterDatabaseService
     }
 
@@ -360,7 +379,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    public func addImports(forPaths paths: [URL], targetSystem: PVSystem) {
+    public func addImports(forPaths paths: [URL], targetSystem: ImportQueueItem.System) {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
 

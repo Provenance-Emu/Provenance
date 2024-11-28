@@ -10,13 +10,17 @@ import PVPrimitives
 import Perception
 
 // Enum to define the possible statuses of each import
-public enum ImportStatus: String {
-    case queued
+public enum ImportStatus: Int, CustomStringConvertible {
+    case conflict  // Indicates additional action needed by user after successful import
+
     case partial //indicates the item is waiting for associated files before it could be processed
     case processing
-    case success
+
+    case queued
+
     case failure
-    case conflict  // Indicates additional action needed by user after successful import
+
+    case success
     
     public var description: String {
         switch self {
@@ -55,16 +59,20 @@ public enum ProcessingState {
 // ImportItem model to hold each file's metadata and progress
 @Perceptible
 public class ImportQueueItem: Identifiable, ObservableObject {
+    
+    // TODO: Make this more generic with AnySystem, some System?
+    public typealias System = PVSystem //AnySystem
+    
     public let id = UUID()
     public var url: URL
     public var fileType: FileType
-    public var systems: [PVSystem]  // Can be set to the specific system type
-    public var userChosenSystem: PVSystem?
+    public var systems: [System]  // Can be set to the specific system type
+    public var userChosenSystem: (System)?
     public var destinationUrl: URL?
     public var errorValue: String?
     
     //this is used when a single import has child items - e.g., m3u, cue, directory
-    public var childQueueItems:[ImportQueueItem]
+    public var childQueueItems: [ImportQueueItem]
     
     // Observable status for individual imports
     public var status: ImportStatus = .queued
@@ -94,7 +102,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         var md5: String?
     }
     
-    public func targetSystem() -> PVSystem? {
+    public func targetSystem() -> (any SystemProtocol)? {
         guard !systems.isEmpty else {
             return nil
         }
@@ -105,7 +113,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         
         if let chosenSystem = userChosenSystem {
             
-            var target:PVSystem? = nil
+            var target:(any SystemProtocol)? = nil
             
             for system in systems {
                 if (chosenSystem.identifier == system.identifier) {
@@ -137,5 +145,17 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         }
         
         return current
+    }
+}
+
+extension ImportQueueItem: Equatable {
+    public static func == (lhs: ImportQueueItem, rhs: ImportQueueItem) -> Bool {
+        return lhs.url == rhs.url
+    }
+}
+
+extension ImportQueueItem: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
     }
 }
