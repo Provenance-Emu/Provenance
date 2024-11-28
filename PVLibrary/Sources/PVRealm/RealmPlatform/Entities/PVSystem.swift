@@ -140,6 +140,23 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     }
 }
 
+/// Mock testing
+public extension PVSystem {
+    public convenience init(
+        identifier: String,
+        name: String,
+        shortName: String,
+        manufacturer: String,
+        screenType: ScreenType = .crt
+    ) {
+        self.init()
+        self.identifier = id
+        self.name = name
+        self.shortName = shortName
+        self.manufacturer = manufacturer
+    }
+}
+
 public extension PVSystem {
     var screenType: ScreenType {
         get {

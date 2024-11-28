@@ -398,6 +398,8 @@ public struct ContinuesMagementView: View {
         .onAppear {
             viewModel.subscribeToDriverPublisher()
         }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
     }
 }
 

@@ -8,7 +8,10 @@
 
 import Foundation
 
-public protocol SystemProtocol {
+public typealias _SystemProtocol = SystemProtocol & Identifiable & ObservableObject & Hashable
+public typealias AnySystem = any _SystemProtocol
+
+public protocol SystemProtocol : Hashable {
     associatedtype BIOSInfoProviderType: BIOSInfoProvider
 
     var name: String { get }
@@ -43,6 +46,15 @@ public protocol SystemProtocol {
 }
 
 // MARK: Default Implimentations
+public extension Identifiable where Self: SystemProtocol {
+    public var id: String { identifier }
+}
+
+public extension Hashable where Self: SystemProtocol {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
+    }
+}
 
 public extension SystemProtocol {
     var options: SystemOptions {

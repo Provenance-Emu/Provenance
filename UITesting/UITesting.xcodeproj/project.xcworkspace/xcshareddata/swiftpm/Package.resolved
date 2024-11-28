@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/FlineDev/FreemiumKit.git",
       "state" : {
-        "revision" : "68a3c35053afe0c564585da4f16315e1bbcda441",
-        "version" : "1.14.0"
+        "revision" : "ff45d8e3fc7af5255f97e059cc95524dfa320196",
+        "version" : "1.15.0"
       }
     },
     {
@@ -241,7 +241,7 @@
       "location" : "https://github.com/pointfreeco/swift-perception.git",
       "state" : {
         "branch" : "main",
-        "revision" : "dccdf5aed1db969afa11d6fbd36b96a4932ebe8c"
+        "revision" : "8d52279b9809ef27eabe7d5420f03734528f19da"
       }
     },
     {

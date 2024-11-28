@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import PVUIBase
 import PVLibrary
 import PVThemes
 import Perception
@@ -33,22 +34,34 @@ func iconNameForFileType(_ type: FileType) -> String {
     }
 }
 
-struct ImportStatusView: View {
-    @ObservedObject var updatesController: PVGameLibraryUpdatesController
-    var gameImporter:GameImporter
-    weak var delegate:ImportStatusDelegate!
+public struct ImportStatusView: View {
+    @ObservedObject
+    public var updatesController: PVGameLibraryUpdatesController
+    public var gameImporter:any GameImporting
+    public weak var delegate:ImportStatusDelegate!
+    public var dismissAction: (() -> Void)? = nil
+    
+    @ObservedObject private var themeManager = ThemeManager.shared
+    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+
+    public init(updatesController: PVGameLibraryUpdatesController, gameImporter: any GameImporting, delegate: ImportStatusDelegate, dismissAction: (() -> Void)? = nil) {
+        self.updatesController = updatesController
+        self.gameImporter = gameImporter
+        self.delegate = delegate
+        self.dismissAction = dismissAction
+    }
     
     private func deleteItems(at offsets: IndexSet) {
         gameImporter.removeImports(at: offsets)
     }
     
-    var body: some View {
+    public var body: some View {
         WithPerceptionTracking {
             NavigationView {
                 List {
                     if gameImporter.importQueue.isEmpty {
                         Text("No items in the import queue")
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                             .padding()
                     } else {
                         ForEach(gameImporter.importQueue) { item in
@@ -62,7 +75,10 @@ struct ImportStatusView: View {
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarLeading,
                                      content: {
-                        Button("Done") { delegate.dismissAction()
+                        if dismissAction != nil {
+                            Button("Done") { delegate.dismissAction()
+                            }
+                            .tint(currentPalette.defaultTintColor?.swiftUIColor)
                         }
                     })
                     ToolbarItemGroup(placement: .topBarTrailing,
@@ -70,18 +86,37 @@ struct ImportStatusView: View {
                         Button("Add Files") {
                             delegate?.addImportsAction()
                         }
+                        .tint(currentPalette.defaultTintColor?.swiftUIColor)
                         Button("Begin") {
                             delegate?.forceImportsAction()
                         }
+                        .tint(currentPalette.defaultTintColor?.swiftUIColor)
                     })
                 }
+                .background(currentPalette.gameLibraryBackground.swiftUIColor)
             }
+            .background(currentPalette.gameLibraryBackground.swiftUIColor)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
     }
 }
 
-//#Preview {
-//    
-//}
+#if DEBUG
+#Preview {
+    @ObservedObject var themeManager = ThemeManager.shared
+    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+
+    let mockImportStatusDriverData = MockImportStatusDriverData()
+    
+    ImportStatusView(
+        updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
+        gameImporter: mockImportStatusDriverData.gameImporter,
+        delegate: mockImportStatusDriverData) {
+            print("Import Status View Closed")
+        }
+        .onAppear {
+            themeManager.setCurrentPalette(CGAThemes.green.palette)
+        }
+}
+#endif

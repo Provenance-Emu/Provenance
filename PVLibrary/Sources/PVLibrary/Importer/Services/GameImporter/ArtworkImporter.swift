@@ -5,24 +5,30 @@
 //  Created by David Proskin on 11/3/24.
 //
 
+import PVPrimitives
+
 protocol ArtworkImporting {
-    func setSystemsService(_ systemsService:GameImporterSystemsServicing)
-    func importArtworkItem(_ queueItem: ImportQueueItem) async -> PVGame?
+    // TODO: Make me more generic
+//    associatedtype MyGameImporterSystemsService: GameImporterSystemsServicing
+    typealias MyGameImporterSystemsService = GameImporterSystemsServicing
+
+    func setSystemsService(_ systemsService: MyGameImporterSystemsService)
+    func importArtworkItem(_ queueItem: ImportQueueItem) async -> MyGameImporterSystemsService.GameType?
 }
 
 class ArtworkImporter : ArtworkImporting {
-    
-    private var gameImporterSystemsService:GameImporterSystemsServicing?
+            
+    private var gameImporterSystemsService: (any GameImporterSystemsServicing)?
     
     init() {
         
     }
     
-    func setSystemsService(_ systemsService:GameImporterSystemsServicing) {
+    func setSystemsService(_ systemsService: MyGameImporterSystemsService) {
         gameImporterSystemsService = systemsService
     }
     
-    func importArtworkItem(_ queueItem: ImportQueueItem) async -> PVGame? {
+    func importArtworkItem(_ queueItem: ImportQueueItem) async -> MyGameImporterSystemsService.GameType? {
         guard queueItem.fileType == .artwork else {
             return nil
         }
@@ -108,7 +114,7 @@ class ArtworkImporter : ArtworkImporting {
                 } catch {
                     ELOG("Couldn't update game \(onlyMatch.title) with new artwork URL")
                 }
-                return onlyMatch
+                return onlyMatch as? PVGame
             } else {
                 ELOG("We got to the unlikely scenario where an extension is possibly a CD binary file, or belongs to a system, and had multiple games that matched the filename under more than one core.")
                 return nil

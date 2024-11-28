@@ -30,7 +30,7 @@ public struct PVSettingsView: View {
 
     @StateObject private var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
-    var dismissAction: () -> Void  // Add this
+    var dismissAction: () -> Void
     weak var menuDelegate: PVMenuDelegate!
 
     @ObservedObject var conflictsController: PVGameLibraryUpdatesController

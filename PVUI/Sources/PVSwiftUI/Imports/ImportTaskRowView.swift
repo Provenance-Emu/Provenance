@@ -33,41 +33,54 @@ struct ImportTaskRowView: View {
     let item: ImportQueueItem
     @State private var isNavigatingToSystemSelection = false
     @ObservedObject private var themeManager = ThemeManager.shared
-
+    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+    
     var bgColor: Color {
         themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? themeManager.currentPalette.menuBackground.swiftUIColor
+    }
+    
+    var fgColor: Color {
+        themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.menuText.swiftUIColor
+    }
+    
+    var secondaryFgColor: Color {
+        themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? .secondary
     }
 
     var body: some View {
         WithPerceptionTracking {
             HStack {
-                //TODO: add icon for fileType
+//                // TODO: add icon for fileType
                 VStack(alignment: .leading) {
                     Text(item.url.lastPathComponent)
                         .font(.headline)
+                        .foregroundColor(fgColor)
+
                     if item.fileType == .bios {
                         Text("BIOS")
                             .font(.subheadline)
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            .foregroundColor(fgColor)
                     } else if !item.systems.isEmpty {
                         Text("\(item.systems.count) systems")
                             .font(.subheadline)
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            .foregroundColor(secondaryFgColor)
                     }
                     
                     if item.status == .failure, let errorText = item.errorValue {
                         Text("Error Detail: \(errorText)")
                             .font(.subheadline)
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            .foregroundColor(secondaryFgColor)
                     }
-
                 }
 
                 Spacer()
 
                 VStack(alignment: .trailing) {
                     if item.status == .processing {
-                        ProgressView().progressViewStyle(.circular).frame(width: 40, height: 40, alignment: .center)
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .frame(width: 40, height: 40, alignment: .center)
+//                            .tint(themeManager.currentPalette.defaultTintColor!)
                     } else {
                         Image(systemName: iconNameForStatus(item.status))
                             .foregroundColor(item.status.color)
@@ -76,7 +89,7 @@ struct ImportTaskRowView: View {
                     if (item.childQueueItems.count > 0) {
                         Text("+\(item.childQueueItems.count) files")
                             .font(.subheadline)
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            .foregroundColor(fgColor)
                     }
                 }
 
@@ -87,6 +100,7 @@ struct ImportTaskRowView: View {
                     .fill(bgColor)
                     .shadow(radius: 2)
             )
+            //.background(currentPalette.gameLibraryBackground.swiftUIColor)
             .onTapGesture {
                 if item.status == .conflict {
                     isNavigatingToSystemSelection = true
@@ -101,3 +115,18 @@ struct ImportTaskRowView: View {
         }
     }
 }
+#if DEBUG
+import PVThemes
+#Preview {
+    List {
+        ImportTaskRowView(item: .init(url: .init(fileURLWithPath: "Test.jpg"), fileType: .artwork))
+        ImportTaskRowView(item: .init(url: .init(fileURLWithPath: "Test.bin"), fileType: .bios))
+        ImportTaskRowView(item: .init(url: .init(fileURLWithPath: "Test.iso"), fileType: .cdRom))
+        ImportTaskRowView(item: .init(url: .init(fileURLWithPath: "Test.jag"), fileType: .game))
+        ImportTaskRowView(item: .init(url: .init(fileURLWithPath: "Test.zip"), fileType: .unknown))
+    }
+    .onAppear {
+        ThemeManager.shared.setCurrentPalette(CGAThemes.green.palette)
+    }
+}
+#endif

@@ -21,6 +21,7 @@ public protocol PVRecentGameLibraryEntry: PVLibraryEntry {
     dynamic var core: PVCore? { get }
 }
 
+public typealias AnyPVGameLibraryEntry = any PVGameLibraryEntry
 public protocol PVGameLibraryEntry: PVLibraryEntry {
     
        dynamic var title: String { get }
@@ -30,7 +31,7 @@ public protocol PVGameLibraryEntry: PVLibraryEntry {
        dynamic var file: PVFile! { get }
        var relatedFiles: List<PVFile> { get }
 
-       dynamic var customArtworkURL: String { get }
+       dynamic var customArtworkURL: String { get set }
        dynamic var originalArtworkURL: String { get }
        dynamic var originalArtworkFile: PVImageFile? { get }
 

@@ -22,20 +22,31 @@ import Perception
 import SwiftUI
 
 public protocol GameImporterDatabaseServicing {
+    // TODO: Make me more generic
+//    associatedtype GameType: PVGameLibraryEntry
+    typealias GameType = PVGame // PVGameLibraryEntry
+
     func setOpenVGDB(_ vgdb: OpenVGDB)
     func setRomsPath(url:URL)
     func importGameIntoDatabase(queueItem: ImportQueueItem) async throws
     func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws
-    func getUpdatedGameInfo(for game: PVGame, forceRefresh: Bool) -> PVGame
-    func getArtwork(forGame game: PVGame) async -> PVGame
+    func getUpdatedGameInfo(for game: GameType, forceRefresh: Bool) -> GameType
+    func getArtwork(forGame game: GameType) async -> GameType
 }
 
+extension CharacterSet {
+    var GameImporterDatabaseServiceCharset: CharacterSet {
+        GameImporterDatabaseServiceCharset
+    }
+}
+fileprivate let GameImporterDatabaseServiceCharset: CharacterSet = {
+    var c = CharacterSet.punctuationCharacters
+    c.remove(charactersIn: ",-+&.'")
+    return c
+}()
+
 class GameImporterDatabaseService : GameImporterDatabaseServicing {
-    static var charset: CharacterSet = {
-        var c = CharacterSet.punctuationCharacters
-        c.remove(charactersIn: ",-+&.'")
-        return c
-    }()
+
     
     var romsPath:URL?
     var openVGDB: OpenVGDB?
@@ -81,7 +92,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
         } else {
             DLOG("No existing game found, starting import to database")
-            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem, relatedFiles: nil)
+            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem as! AnySystem, relatedFiles: nil)
         }
     }
     
@@ -118,7 +129,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
     
     /// Imports a ROM to the database
-    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: PVSystem, relatedFiles: [URL]?) async throws {
+    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: AnySystem, relatedFiles: [URL]?) async throws {
         
         guard let _ = queueItem.destinationUrl else {
             //how did we get here, throw?
@@ -133,6 +144,10 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         let partialPath: String = (system.identifier as NSString).appendingPathComponent(filename)
         
         DLOG("Creating game object with title: \(title), partialPath: \(partialPath)")
+        
+        guard let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.identifier) else {
+            throw GameImporterError.noSystemMatched
+        }
         
         let file = PVFile(withURL: queueItem.destinationUrl!)
         let game = PVGame(withFile: file, system: system)
@@ -371,7 +386,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         if resultsMaybe == nil || resultsMaybe!.isEmpty { //PVEmulatorConfiguration.supportedROMFileExtensions.contains(game.file.url.pathExtension.lowercased()) {
             let fileName: String = game.file.url.lastPathComponent
             // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
-            let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: GameImporterDatabaseService.charset)
+            let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: GameImporterDatabaseServiceCharset)
             var gameTitleLen: Int
             if nonCharRange.length > 0, nonCharRange.location > 1 {
                 gameTitleLen = nonCharRange.location - 1
