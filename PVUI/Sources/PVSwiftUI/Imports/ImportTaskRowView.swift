@@ -33,7 +33,8 @@ struct ImportTaskRowView: View {
     let item: ImportQueueItem
     @State private var isNavigatingToSystemSelection = false
     @ObservedObject private var themeManager = ThemeManager.shared
-
+    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+    
     var bgColor: Color {
         themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? themeManager.currentPalette.menuBackground.swiftUIColor
     }
@@ -87,17 +88,22 @@ struct ImportTaskRowView: View {
                     .fill(bgColor)
                     .shadow(radius: 2)
             )
+            //.background(currentPalette.gameLibraryBackground.swiftUIColor)
             .onTapGesture {
                 if item.status == .conflict {
                     isNavigatingToSystemSelection = true
                 }
             }
-            .background(
-                NavigationLink(destination: SystemSelectionView(item: item), isActive: $isNavigatingToSystemSelection) {
-                    EmptyView()
-                }
-                    .hidden()
-            )
+//            .background(
+//                NavigationLink(destination: SystemSelectionView(item: item), isActive: $isNavigatingToSystemSelection) {
+//                    EmptyView()
+//                }
+//                    .hidden()
+//            )
         }
     }
+}
+
+#Preview {
+    ImportTaskRowView(item: .init(url: .init(fileURLWithPath: "Test.jpg"), fileType: .artwork))
 }

@@ -40,6 +40,9 @@ public struct ImportStatusView: View {
     public weak var delegate:ImportStatusDelegate!
     public var dismissAction: (() -> Void)? = nil
     
+    @ObservedObject private var themeManager = ThemeManager.shared
+    var currentPalette: any UXThemePalette { themeManager.currentPalette }
+
     public init(updatesController: PVGameLibraryUpdatesController, gameImporter: any GameImporting, delegate: ImportStatusDelegate, dismissAction: (() -> Void)? = nil) {
         self.updatesController = updatesController
         self.gameImporter = gameImporter
@@ -71,7 +74,10 @@ public struct ImportStatusView: View {
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarLeading,
                                      content: {
-                        Button("Done") { delegate.dismissAction()
+                        if dismissAction != nil {
+                            Button("Done") { delegate.dismissAction()
+                            }
+                            .tint(currentPalette.defaultTintColor?.swiftUIColor)
                         }
                     })
                     ToolbarItemGroup(placement: .topBarTrailing,
@@ -79,9 +85,11 @@ public struct ImportStatusView: View {
                         Button("Add Files") {
                             delegate?.addImportsAction()
                         }
+                        .tint(currentPalette.defaultTintColor?.swiftUIColor)
                         Button("Begin") {
                             delegate?.forceImportsAction()
                         }
+                        .tint(currentPalette.defaultTintColor?.swiftUIColor)
                     })
                 }
             }
