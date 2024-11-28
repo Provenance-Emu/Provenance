@@ -7,26 +7,26 @@
 
 import PVSwiftUI
 
-class MockImportStatusDriverData: ObservableObject {
+public class MockImportStatusDriverData: ObservableObject {
     @MainActor
-    let gameImporter = MockGameImporter() //AppState.shared.gameImporter ?? GameImporter.shared
+    public let gameImporter = MockGameImporter() //AppState.shared.gameImporter ?? GameImporter.shared
     @MainActor
-    let pvgamelibraryUpdatesController: PVGameLibraryUpdatesController
+    public let pvgamelibraryUpdatesController: PVGameLibraryUpdatesController
 
-    var isPresent: Bool = false
+    public var isPresent: Bool = false
     
     @MainActor
-    init() {
+    public init() {
         pvgamelibraryUpdatesController = .init(gameImporter: gameImporter)
     }
 }
 
 extension MockImportStatusDriverData: ImportStatusDelegate {
-    func dismissAction() {
+    public func dismissAction() {
         
     }
     
-    func addImportsAction() {
+    public func addImportsAction() {
         let importItems: [ImportQueueItem] = [
             .init(url: .init(string: "test.jag")!, fileType: .unknown)
         ]
@@ -35,7 +35,7 @@ extension MockImportStatusDriverData: ImportStatusDelegate {
         }
     }
     
-    func forceImportsAction() {
+    public func forceImportsAction() {
         gameImporter.startProcessing()
     }
 }

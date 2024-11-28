@@ -10,37 +10,53 @@ import SwiftUI
 import Combine
 import PVPrimitives
 
+public
 class MockGameImporter: GameImporting, ObservableObject {
-    @Published private(set) var importStatus: String = "Ready"
-    @Published var importQueue: [ImportQueueItem] = [
-        {
-            let item = ImportQueueItem(url: .init(fileURLWithPath: "test.bin"), fileType: .unknown)
-            item.systems = [
-                PVSystem(identifier: "com.provenance.jaguar", name: "Jaguar", shortName: "Jag", manufacturer: "Atari", screenType: .crt),
-                PVSystem(identifier: "com.provenance.jaguarcd", name: "Jaguar CD", shortName: "JagCD", manufacturer: "Atari", screenType: .crt)
-            ]
-            return item
-        }(),
-        ImportQueueItem(url: .init(fileURLWithPath: "test.jpg"), fileType: .artwork),
-        ImportQueueItem(url: .init(fileURLWithPath: "bios.bin"), fileType: .bios),
-        ImportQueueItem(url: .init(fileURLWithPath: "test.cue"), fileType: .cdRom),
-        ImportQueueItem(url: .init(fileURLWithPath: "test.jag"), fileType: .game)
-    ]
-    @Published private(set) var processingState: ProcessingState = .idle
+    @Published private(set) public var importStatus: String = "Ready"
+    @Published public var importQueue: [ImportQueueItem] = []
+    @Published private(set) public var processingState: ProcessingState = .idle
 
-    func initSystems() async {
+    public init(importStatus: String = "", importQueue: [ImportQueueItem] = [], processingState: ProcessingState = .idle, importStartedHandler: GameImporterImportStartedHandler? = nil, completionHandler: GameImporterCompletionHandler? = nil, finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil, finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil, spotlightCompletionHandler: GameImporterCompletionHandler? = nil, spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil) {
+        self.importStatus = importStatus
+        self.importQueue = importQueue
+        self.processingState = processingState
+        self.importStartedHandler = importStartedHandler
+        self.completionHandler = completionHandler
+        self.finishedImportHandler = finishedImportHandler
+        self.finishedArtworkHandler = finishedArtworkHandler
+        self.spotlightCompletionHandler = spotlightCompletionHandler
+        self.spotlightFinishedImportHandler = spotlightFinishedImportHandler
+        
+        if self.importQueue.isEmpty {
+            self.importQueue = [{
+                let item = ImportQueueItem(url: .init(fileURLWithPath: "test.bin"), fileType: .unknown)
+                item.systems = [
+                    PVSystem(identifier: "com.provenance.jaguar", name: "Jaguar", shortName: "Jag", manufacturer: "Atari", screenType: .crt),
+                    PVSystem(identifier: "com.provenance.jaguarcd", name: "Jaguar CD", shortName: "Jag", manufacturer: "Atari", screenType: .crt)
+                ]
+                return item
+            }(),
+            ImportQueueItem(url: .init(fileURLWithPath: "test.jpg"), fileType: .artwork),
+            ImportQueueItem(url: .init(fileURLWithPath: "bios.bin"), fileType: .bios),
+            ImportQueueItem(url: .init(fileURLWithPath: "test.cue"), fileType: .cdRom),
+            ImportQueueItem(url: .init(fileURLWithPath: "test.jag"), fileType: .game)
+            ]
+        }
+    }
+    
+    public func initSystems() async {
         // Mock implementation - no real systems to initialize
         importStatus = "Systems initialized"
     }
 
-    func addImport(_ item: ImportQueueItem) {
+    public func addImport(_ item: ImportQueueItem) {
         if !importQueueContainsDuplicate(importQueue, ofItem: item) {
             importQueue.append(item)
             importStatus = "Added \(item.url.lastPathComponent) to queue"
         }
     }
     
-    func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
+    public func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
         for path in paths {
             let item = ImportQueueItem(url: path, fileType: .unknown)
             item.userChosenSystem = targetSystem as? PVSystem // TODO: change when generic system types supported
@@ -50,7 +66,7 @@ class MockGameImporter: GameImporting, ObservableObject {
     }
 
 
-    func addImports(forPaths paths: [URL]) {
+    public func addImports(forPaths paths: [URL]) {
         for path in paths {
             let item = ImportQueueItem(url: path, fileType: .unknown)
             addImport(item)
@@ -58,12 +74,12 @@ class MockGameImporter: GameImporting, ObservableObject {
         importStatus = "Added \(paths.count) items to queue"
     }
     
-    func removeImports(at offsets: IndexSet) {
+    public func removeImports(at offsets: IndexSet) {
         importQueue.remove(atOffsets: offsets)
         importStatus = "Removed \(offsets.count) items from queue"
     }
 
-    func startProcessing() {
+    public func startProcessing() {
         guard !importQueue.isEmpty else {
             importStatus = "No items in queue"
             return
@@ -87,26 +103,26 @@ class MockGameImporter: GameImporting, ObservableObject {
         }
     }
 
-    func sortImportQueueItems(_ importQueueItems: [ImportQueueItem]) -> [ImportQueueItem] {
+    public func sortImportQueueItems(_ importQueueItems: [ImportQueueItem]) -> [ImportQueueItem] {
         importQueueItems.sorted(by: { $0.url.lastPathComponent < $1.url.lastPathComponent })
     }
 
-    func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
+    public func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
         queue.contains(where: { $0.url == queueItem.url })
     }
     
-    var importStartedHandler: GameImporterImportStartedHandler? = nil
+    public var importStartedHandler: GameImporterImportStartedHandler? = nil
     /// Closure called when import completes
-    var completionHandler: GameImporterCompletionHandler? = nil
+    public var completionHandler: GameImporterCompletionHandler? = nil
     /// Closure called when a game finishes importing
-    var finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
+    public var finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
     /// Closure called when artwork finishes downloading
-    var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil
+    public var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil
     
     /// Spotlight Handerls
     /// Closure called when spotlight completes
-    var spotlightCompletionHandler: GameImporterCompletionHandler? = nil
+    public var spotlightCompletionHandler: GameImporterCompletionHandler? = nil
     /// Closure called when a game finishes importing
-    var spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
+    public var spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
     
 }
