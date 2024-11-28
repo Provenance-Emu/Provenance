@@ -7,32 +7,66 @@
 
 import PVSwiftUI
 import SwiftUI
+import Combine
+import PVPrimitives
 
-class MockGameImporter: GameImporting {
+class MockGameImporter: GameImporting, ObservableObject {
+    @Published private(set) var importStatus: String = "Ready"
+    @Published var importQueue: [ImportQueueItem] = []
+    @Published private(set) var processingState: ProcessingState = .idle
+
     func initSystems() async {
-        
+        // Mock implementation - no real systems to initialize
+        importStatus = "Systems initialized"
     }
-
-    var importStatus: String {
-        ""
-    }
-
-    var importQueue: [ImportQueueItem] = []
-
-    var processingState: ProcessingState = .idle
 
     func addImport(_ item: ImportQueueItem) {
+        if !importQueueContainsDuplicate(importQueue, ofItem: item) {
+            importQueue.append(item)
+            importStatus = "Added \(item.url.lastPathComponent) to queue"
+        }
+    }
+    
+    func addImports(forPaths paths: [URL], targetSystem: any SystemProtocol) {
         
     }
+
+
     func addImports(forPaths paths: [URL]) {
-        
+        for path in paths {
+            let item = ImportQueueItem(url: path, fileType: .unknown)
+            addImport(item)
+        }
+        importStatus = "Added \(paths.count) items to queue"
     }
     
     func removeImports(at offsets: IndexSet) {
-        
+        importQueue.remove(atOffsets: offsets)
+        importStatus = "Removed \(offsets.count) items from queue"
     }
+
     func startProcessing() {
+        guard !importQueue.isEmpty else {
+            importStatus = "No items in queue"
+            return
+        }
         
+        processingState = .processing
+        
+        // Simulate processing by marking all items as successful after a delay
+        Task {
+            importStatus = "Processing \(importQueue.count) items..."
+            
+            // Simulate some processing time
+            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+            
+            for index in importQueue.indices {
+                importQueue[index].status = .success
+            }
+            
+            processingState = .idle
+            importStatus = "Completed processing \(importQueue.count) items"
+        }
     }
 
     func sortImportQueueItems(_ importQueueItems: [ImportQueueItem]) -> [ImportQueueItem] {
@@ -42,4 +76,19 @@ class MockGameImporter: GameImporting {
     func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
         queue.contains(where: { $0.url == queueItem.url })
     }
+    
+    var importStartedHandler: GameImporterImportStartedHandler? = nil
+    /// Closure called when import completes
+    var completionHandler: GameImporterCompletionHandler? = nil
+    /// Closure called when a game finishes importing
+    var finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
+    /// Closure called when artwork finishes downloading
+    var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil
+    
+    /// Spotlight Handerls
+    /// Closure called when spotlight completes
+    var spotlightCompletionHandler: GameImporterCompletionHandler? = nil
+    /// Closure called when a game finishes importing
+    var spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
+    
 }

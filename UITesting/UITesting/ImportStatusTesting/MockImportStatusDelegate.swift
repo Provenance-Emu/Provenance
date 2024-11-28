@@ -9,7 +9,7 @@ import PVSwiftUI
 
 class MockImportStatusDriverData: ObservableObject {
     @MainActor
-    let gameImporter = AppState.shared.gameImporter ?? GameImporter.shared
+    let gameImporter = MockGameImporter() //AppState.shared.gameImporter ?? GameImporter.shared
     @MainActor
     let pvgamelibraryUpdatesController: PVGameLibraryUpdatesController
 
