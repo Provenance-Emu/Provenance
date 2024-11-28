@@ -13,7 +13,14 @@ import PVPrimitives
 class MockGameImporter: GameImporting, ObservableObject {
     @Published private(set) var importStatus: String = "Ready"
     @Published var importQueue: [ImportQueueItem] = [
-        ImportQueueItem(url: .init(fileURLWithPath: "test.bin"), fileType: .unknown),
+        {
+            let item = ImportQueueItem(url: .init(fileURLWithPath: "test.bin"), fileType: .unknown)
+            item.systems = [
+                PVSystem(identifier: "com.provenance.jaguar", name: "Jaguar", shortName: "Jag", manufacturer: "Atari", screenType: .crt),
+                PVSystem(identifier: "com.provenance.jaguarcd", name: "Jaguar CD", shortName: "JagCD", manufacturer: "Atari", screenType: .crt)
+            ]
+            return item
+        }(),
         ImportQueueItem(url: .init(fileURLWithPath: "test.jpg"), fileType: .artwork),
         ImportQueueItem(url: .init(fileURLWithPath: "bios.bin"), fileType: .bios),
         ImportQueueItem(url: .init(fileURLWithPath: "test.cue"), fileType: .cdRom),
