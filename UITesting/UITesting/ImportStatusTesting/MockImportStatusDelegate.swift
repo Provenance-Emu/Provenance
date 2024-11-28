@@ -27,10 +27,15 @@ extension MockImportStatusDriverData: ImportStatusDelegate {
     }
     
     func addImportsAction() {
-        
+        let importItems: [ImportQueueItem] = [
+            .init(url: .init(string: "test.jag")!, fileType: .unknown)
+        ]
+        importItems.forEach {
+            gameImporter.addImport($0)
+        }
     }
     
     func forceImportsAction() {
-        
+        gameImporter.startProcessing()
     }
 }

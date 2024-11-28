@@ -12,7 +12,13 @@ import PVPrimitives
 
 class MockGameImporter: GameImporting, ObservableObject {
     @Published private(set) var importStatus: String = "Ready"
-    @Published var importQueue: [ImportQueueItem] = []
+    @Published var importQueue: [ImportQueueItem] = [
+        ImportQueueItem(url: .init(fileURLWithPath: "test.bin"), fileType: .unknown),
+        ImportQueueItem(url: .init(fileURLWithPath: "test.jpg"), fileType: .artwork),
+        ImportQueueItem(url: .init(fileURLWithPath: "bios.bin"), fileType: .bios),
+        ImportQueueItem(url: .init(fileURLWithPath: "test.cue"), fileType: .cdRom),
+        ImportQueueItem(url: .init(fileURLWithPath: "test.jag"), fileType: .game)
+    ]
     @Published private(set) var processingState: ProcessingState = .idle
 
     func initSystems() async {
@@ -28,7 +34,12 @@ class MockGameImporter: GameImporting, ObservableObject {
     }
     
     func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
-        
+        for path in paths {
+            let item = ImportQueueItem(url: path, fileType: .unknown)
+            item.userChosenSystem = targetSystem as? PVSystem // TODO: change when generic system types supported
+            addImport(item)
+        }
+        importStatus = "Added \(paths.count) items to queue"
     }
 
 
@@ -61,7 +72,7 @@ class MockGameImporter: GameImporting, ObservableObject {
             try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
             
             for index in importQueue.indices {
-                importQueue[index].status = .success
+                importQueue[index].status = ImportStatus(rawValue: index % ImportStatus.allCases.count)!
             }
             
             processingState = .idle
