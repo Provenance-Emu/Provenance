@@ -27,7 +27,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     @Published
     public var conflicts: [ConflictsController.ConflictItem] = []
 
-    public let gameImporter: GameImporter
+    public var gameImporter: any GameImporting
 
     private let directoryWatcher: DirectoryWatcher
     private let conflictsWatcher: ConflictsWatcher
@@ -39,7 +39,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         AppState.shared.hudCoordinator
     }
 
-    public init(gameImporter: GameImporter, importPath: URL? = nil) {
+    public init(gameImporter: any GameImporting, importPath: URL? = nil) {
         let importPath = importPath ?? Paths.romsImportPath
 
         self.gameImporter = gameImporter
@@ -90,11 +90,13 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
     }
 
+    var statusExtractionSateObserver: Task<Void, Never>?
     private func setupExtractionStatusObserver() {
         let taskID = UUID()
         DLOG("Starting extraction status observer task: \(taskID)")
+        statusExtractionSateObserver?.cancel()
 
-        Task {
+        statusExtractionSateObserver = Task {
             defer { DLOG("Ending extraction status observer task: \(taskID)") }
 
             var hideTask: Task<Void, Never>?
@@ -123,7 +125,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                             isHidingHUD = false
                         }
                     case .idle:
-                        Task {
+                        hideTask = Task {
                             let hudState: HudState = .hidden
                             await self.hudCoordinator.updateHUD(hudState)
                         }
