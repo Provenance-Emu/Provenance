@@ -437,15 +437,15 @@ void extract_bundles();
         [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
         processing_init=false;
     }
-	NSError *error;
-    [[AVAudioSession sharedInstance]
-     setCategory:AVAudioSessionCategoryAmbient
-     mode:AVAudioSessionModeDefault
-     options:AVAudioSessionCategoryOptionAllowBluetooth |
-     AVAudioSessionCategoryOptionAllowAirPlay |
-     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
-     AVAudioSessionCategoryOptionMixWithOthers
-     error:&error];
+//	NSError *error;
+//    [[AVAudioSession sharedInstance]
+//     setCategory:AVAudioSessionCategoryAmbient
+//     mode:AVAudioSessionModeDefault
+//     options:AVAudioSessionCategoryOptionAllowBluetooth |
+//     AVAudioSessionCategoryOptionAllowAirPlay |
+//     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+//     AVAudioSessionCategoryOptionMixWithOthers
+//     error:&error];
 	[self refreshSystemConfig];
 	[self showGameView];
 	rarch_main(argc, argv, NULL);
