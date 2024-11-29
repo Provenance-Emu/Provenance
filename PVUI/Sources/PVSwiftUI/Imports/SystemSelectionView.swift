@@ -7,12 +7,14 @@
 
 import SwiftUI
 import PVLibrary
+import Perception
 
 struct SystemSelectionView: View {
     @ObservedObject var item: ImportQueueItem
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
+        WithPerceptionTracking {
         List {
             ForEach(item.systems.sorted(by: { a, b in
                 return a.name <= b.name
@@ -31,6 +33,7 @@ struct SystemSelectionView: View {
             }
         }
         .navigationTitle("Select System")
+        }
     }
 }
 
