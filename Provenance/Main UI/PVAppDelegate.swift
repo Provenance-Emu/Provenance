@@ -102,13 +102,16 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         /// Reimport the library
         NotificationCenter.default.publisher(for: .PVReimportLibrary)
             .flatMap { _ in
+                  
                 Future<Void, Never> { promise in
-                    RomDatabase.refresh()
-                    if let _ = self.gameLibraryViewController {
-                        self.gameLibraryViewController?.checkROMs(false)
-                    } else {
-                        if let updates = await self.appState?.libraryUpdatesController {
-                            await updates.importROMDirectories()
+                    Task.detached { @MainActor in
+                        RomDatabase.refresh()
+                        if let _ = self.gameLibraryViewController {
+                            self.gameLibraryViewController?.checkROMs(false)
+                        } else {
+                            if let updates = await self.appState?.libraryUpdatesController {
+                                await updates.importROMDirectories()
+                            }
                         }
                     }
                     promise(.success(()))
@@ -121,19 +124,21 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         NotificationCenter.default.publisher(for: .PVRefreshLibrary)
             .flatMap { _ in
                 Future<Void, Error> { promise in
-                    do {
-                        try RomDatabase.sharedInstance.deleteAllGames()
-                        if let _ = self.gameLibraryViewController {
-                            self.gameLibraryViewController?.checkROMs(false)
-                        } else {
-                            if let updates = await self.appState?.libraryUpdatesController {
-                                await updates.importROMDirectories()
+                    Task { @MainActor in
+                        do {
+                            try RomDatabase.sharedInstance.deleteAllGames()
+                            if let _ = self.gameLibraryViewController {
+                                self.gameLibraryViewController?.checkROMs(false)
+                            } else {
+                                if let updates = await self.appState?.libraryUpdatesController {
+                                    await updates.importROMDirectories()
+                                }
                             }
+                            promise(.success(()))
+                        } catch {
+                            ELOG("Failed to refresh all objects. \(error.localizedDescription)")
+                            promise(.failure(error))
                         }
-                        promise(.success(()))
-                    } catch {
-                        ELOG("Failed to refresh all objects. \(error.localizedDescription)")
-                        promise(.failure(error))
                     }
                 }
             }
