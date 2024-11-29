@@ -259,6 +259,9 @@ void extract_bundles();
                    error:nil];
 }
 - (bool)shouldUpdateAssets {
+#if DEBUG
+    return true;
+#else
     // If assets were updated, refresh config
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString *file=[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/flatui/png/arrow.png", self.batterySavesPath];
@@ -269,6 +272,7 @@ void extract_bundles();
         }
     }
     return true;
+#endif
 }
 #pragma mark - Running
 
