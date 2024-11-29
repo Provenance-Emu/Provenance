@@ -101,8 +101,11 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
             var hideTask: Task<Void, Never>?
             var isHidingHUD = false
+            var lastStatus: ExtractionStatus = .idle
 
             for await status in extractionStatusStream() {
+                guard lastStatus != status else { continue }
+                lastStatus = status
                 await MainActor.run {
                     DLOG("[\(taskID)] Received status: \(status)")
 
