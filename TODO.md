@@ -3,6 +3,12 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [ ] Gearcoloco bottom buttons are wrong values
+- [ ] PCFX retroarch controls fucked, right is held down, actions don't do shit
+- [X] retroarch non gl cores are blank
+- [ ] importer doesn't auto start on import or selection of conflicts
+- [ ] ugly retroarch ui in app, a bit unresponsive
+- [X] app groups, get rid?
 - [X] Games pausing not working
 - [ ] New save state mangager
     - [X] doesn't load from homeview
