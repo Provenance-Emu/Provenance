@@ -125,4 +125,12 @@ class MockGameImporter: GameImporting, ObservableObject {
     /// Closure called when a game finishes importing
     public var spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil
     
+    public func clearCompleted() {
+        self.importQueue = self.importQueue.filter({
+            switch $0.status {
+            case .success: return false
+            default: return true
+            }
+        })
+    }
 }

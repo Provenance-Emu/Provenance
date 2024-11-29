@@ -91,11 +91,14 @@ extension PVRootViewController: SFSafariViewControllerDelegate {
                         WLOG("Nil PVRootViewController or updates controller, can't present ImportStatusView")
                         return
                     }
+                    let gameImporter = AppState.shared.gameImporter ?? GameImporter.shared
                     let settingsView = ImportStatusView(
                         updatesController: self.updatesController,
-                        gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
+                        gameImporter: gameImporter,
                         delegate: self
-                    )
+                    ) {
+                        gameImporter.clearCompleted()
+                    }
                     let hostingController = UIHostingController(rootView: settingsView)
                     let navigationController = UINavigationController(rootViewController: hostingController)
                     self.present(navigationController, animated: true)

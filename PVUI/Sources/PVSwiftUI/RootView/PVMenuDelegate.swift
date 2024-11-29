@@ -48,7 +48,17 @@ public protocol PVMenuDelegate: AnyObject {
 extension PVRootViewController: PVMenuDelegate {
 
     public func didTapImports() {
-        let settingsView = ImportStatusView(updatesController:updatesController, gameImporter: GameImporter.shared, delegate: self)
+        guard let gameImporter = AppState.shared.gameImporter else {
+            ELOG("No game importer")
+            presentError("Importer could not be loaded", source: self.view)
+            return
+        }
+        
+        NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
+
+        let settingsView = ImportStatusView(updatesController:updatesController, gameImporter: gameImporter, delegate: self) {
+            gameImporter.clearCompleted()
+        }
 
         let hostingController = UIHostingController(rootView: settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
@@ -194,15 +204,17 @@ extension PVRootViewController: PVMenuDelegate {
 extension PVRootViewController: UIDocumentPickerDelegate {
     public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         updatesController.handlePickedDocuments(urls)
-
+        let gameImporter = AppState.shared.gameImporter ?? GameImporter.shared
         // Re-present the ImportStatusView
         if !urls.isEmpty {
             DispatchQueue.main.async {
                 let settingsView = ImportStatusView(
                     updatesController: self.updatesController,
-                    gameImporter: GameImporter.shared,
+                    gameImporter: gameImporter,
                     delegate: self
-                )
+                ) {
+                    gameImporter.clearCompleted()
+                }
                 let hostingController = UIHostingController(rootView: settingsView)
                 let navigationController = UINavigationController(rootViewController: hostingController)
                 self.present(navigationController, animated: true)
@@ -218,6 +230,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
 
 extension PVRootViewController: ImportStatusDelegate {
     public func dismissAction() {
+        AppState.shared.gameImporter?.clearCompleted()
         self.dismiss(animated: true)
     }
 
