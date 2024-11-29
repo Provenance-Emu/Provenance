@@ -250,7 +250,7 @@ const struct retro_variable vars[] = {
 //              "GameMaster2|"
 //              "FMPAC"
 //        },
-            char *value = strdup("FMPAC");
+            char *value = strdup("Guess");
             return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);
