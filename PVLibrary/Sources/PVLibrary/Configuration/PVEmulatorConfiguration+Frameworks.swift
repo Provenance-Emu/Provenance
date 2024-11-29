@@ -128,7 +128,7 @@ public extension PVEmulatorConfiguration {
     private static func updateOrCreateSystem(_ system: SystemPlistEntry) async {
         let database = RomDatabase.sharedInstance
 
-        if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
+        if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier), !existingSystem.isInvalidated {
             await updateExistingSystem(existingSystem, with: system, using: database)
         } else {
             await createNewSystem(from: system, using: database)
@@ -180,6 +180,7 @@ public extension PVEmulatorConfiguration {
     }
 
     class func setPropertiesTo(pvSystem: PVSystem, fromSystemPlistEntry system: SystemPlistEntry) {
+        guard !pvSystem.isInvalidated else { return }
         pvSystem.openvgDatabaseID = Int(system.PVDatabaseID) ?? -1
         pvSystem.requiresBIOS = system.PVRequiresBIOS ?? false
         pvSystem.manufacturer = system.PVManufacturer
