@@ -198,7 +198,8 @@ void extract_bundles();
 	NSFileManager *fm = [[NSFileManager alloc] init];
 	NSString *fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/retroarch.cfg",
 						  self.batterySavesPath];
-    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.2.22.cfg",
+    // TODO: Get the version # from core.plist
+    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.27.1.cfg",
                          self.batterySavesPath];
 	if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"retroarch.cfg" ofType:nil];
