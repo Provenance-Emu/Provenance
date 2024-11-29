@@ -12,7 +12,7 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVColecoVisionButton {
         get {
-            return PVColecoVisionButton(rawValue: tag)!
+            return PVColecoVisionButton(rawValue: tag) ?? .count
         }
         set {
             tag = newValue.rawValue
