@@ -79,6 +79,9 @@ extern int g_gs_preference;
         [CocoaView get];
         
         [self setupEmulation];
+        
+        xAxis = yAxis = ltXAxis = ltYAxis = rtXAxis = rtYAxis = 0.0;
+        axisMult = 1.0;
 	}
 	_current=self;
 	return self;

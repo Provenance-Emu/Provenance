@@ -73,6 +73,8 @@
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Flycast (RetroArch)</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dreamcast</string>
@@ -97,6 +99,8 @@
 			<string>https://github.com/libretro/mupen64plus-libretro-nx</string>
 			<key>PVProjectVersion</key>
 			<string>2022.12.12</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>

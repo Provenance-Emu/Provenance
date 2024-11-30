@@ -3,6 +3,18 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [ ] ugly retroarch ui in app, a bit unresponsive
+- [ ] Gearcoloco bottom buttons are wrong values
+- [ ] Pokemini audio fucked up
+- [ ] import queue, clicking an item should import it
+- [ ] Atari 2600 not using our controller for retroarch
+- [ ] Hud still looping
+- [ ] importer doesn't auto start on import or selection of conflicts
+- [X] PCFX retroarch controls fucked, right is held down, actions don't do shit (using bultin controls)
+- [X] N64 retroarch don't load (no disabled)
+- [X] retroarch non gl cores are blank
+- [X] EP128 crashes, fix or remove. (removed)
+- [X] app groups, get rid?
 - [X] Games pausing not working
 - [ ] New save state mangager
     - [X] doesn't load from homeview
@@ -45,6 +57,7 @@ _My personal TODO notes_
 ## Minor bugs
 
 - [ ] Spotlight no worky, crashes
+- [ ] archive extraction HUD doens't show % progress updates
 - [ ] Screensots for retroarch cores is the wrong space (3ds too)
 - [ ] BIOS importer should work when multiple systems match the same bios
 - [ ] Dark mode toggle doens't refresh all views if theme set to auto

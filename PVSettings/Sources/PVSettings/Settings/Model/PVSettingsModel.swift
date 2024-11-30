@@ -84,6 +84,11 @@ extension Defaults.Keys {
 #endif
 }
 
+// MARK: File syste
+public extension Defaults.Keys {
+    static let useAppGroups = Key<Bool>("useAppGroups", default: false)
+}
+
 // MARK: Audio Options
 public extension Defaults.Keys {
     

@@ -57,7 +57,7 @@ class BaseExtractor: ArchiveExtractor {
 }
 
 class ZipExtractor: BaseExtractor {
-    #if true
+#if true
     override func extract(at path: URL, to destination: URL, progress: @escaping (Double) -> Void) -> AsyncThrowingStream<URL, Error> {
         AsyncThrowingStream { continuation in
             Task {
@@ -68,21 +68,21 @@ class ZipExtractor: BaseExtractor {
                                                overwrite: true,
                                                password: nil,
                                                progressHandler: { entry, fileInfo, entryNumber, total in
-                                                   if !entry.isEmpty {
-                                                       let url = destination.appendingPathComponent(entry)
-                                                       continuation.yield(url)
-                                                   }
-                                                   progress(Double(entryNumber) / Double(total))
-                                               },
+                            if !entry.isEmpty {
+                                let url = destination.appendingPathComponent(entry)
+                                continuation.yield(url)
+                            }
+                            progress(Double(entryNumber) / Double(total))
+                        },
                                                completionHandler: { _, succeeded, error in
-                                                   if succeeded {
-                                                       innerContinuation.resume()
-                                                   } else if let error = error {
-                                                       innerContinuation.resume(throwing: error)
-                                                   } else {
-                                                       innerContinuation.resume(throwing: ArchiveError.extractionFailed("Unknown error during ZIP extraction"))
-                                                   }
-                                               })
+                            if succeeded {
+                                innerContinuation.resume()
+                            } else if let error = error {
+                                innerContinuation.resume(throwing: error)
+                            } else {
+                                innerContinuation.resume(throwing: ArchiveError.extractionFailed("Unknown error during ZIP extraction"))
+                            }
+                        })
                     }
                     continuation.finish()
                 } catch {
@@ -91,7 +91,7 @@ class ZipExtractor: BaseExtractor {
             }
         }
     }
-    #else
+#else
     override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
         let container = try Data(contentsOf: path)
         let entries = try ZipContainer.open(container: container)
@@ -105,7 +105,7 @@ class ZipExtractor: BaseExtractor {
             progress(Double(index + 1) / Double(entries.count))
         }
     }
-    #endif
+#endif
 }
 
 class SevenZipExtractor: BaseExtractor {
@@ -114,12 +114,16 @@ class SevenZipExtractor: BaseExtractor {
         let entries = try SevenZipContainer.open(container: container)
         
         for (index, item) in entries.enumerated() where item.info.type != .directory {
-            let fullPath = destination.appendingPathComponent(item.info.name)
-            if let data = item.data {
-                try await data.write(to: fullPath, options: [.atomic, .noFileProtection])
+            try autoreleasepool {
+                let fullPath = destination.appendingPathComponent(item.info.name)
+                Task {
+                    if let data = item.data {
+                        try await data.write(to: fullPath, options: [.atomic, .noFileProtection])
+                    }
+                }
                 yieldPath(fullPath)
+                progress(Double(index + 1) / Double(entries.count))
             }
-            progress(Double(index + 1) / Double(entries.count))
         }
     }
 }
@@ -146,12 +150,16 @@ class TarExtractor: BaseExtractor {
         let entries = try TarContainer.open(container: container)
         
         for (index, item) in entries.enumerated() where item.info.type != .directory {
-            let fullPath = destination.appendingPathComponent(item.info.name)
-            if let data = item.data {
-                try await data.write(to: fullPath, options: [.atomic, .noFileProtection])
+            try autoreleasepool {
+                let fullPath = destination.appendingPathComponent(item.info.name)
+                Task {
+                    if let data = item.data {
+                        try await data.write(to: fullPath, options: [.atomic, .noFileProtection])
+                    }
+                }
                 yieldPath(fullPath)
+                progress(Double(index + 1) / Double(entries.count))
             }
-            progress(Double(index + 1) / Double(entries.count))
         }
     }
 }
@@ -159,12 +167,16 @@ class TarExtractor: BaseExtractor {
 private func extractCompressedData(_ data: Data, at path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
     if let entries = try? TarContainer.open(container: data) {
         for (index, item) in entries.enumerated() where item.info.type != .directory {
-            let fullPath = destination.appendingPathComponent(item.info.name)
-            if let itemData = item.data {
-                try await itemData.write(to: fullPath, options: [.atomic, .noFileProtection])
+            try autoreleasepool {
+                let fullPath = destination.appendingPathComponent(item.info.name)
+                Task {
+                    if let itemData = item.data {
+                        try await itemData.write(to: fullPath, options: [.atomic, .noFileProtection])
+                    }
+                }
                 yieldPath(fullPath)
+                progress(Double(index + 1) / Double(entries.count))
             }
-            progress(Double(index + 1) / Double(entries.count))
         }
     } else {
         let fileName = path.deletingPathExtension().lastPathComponent

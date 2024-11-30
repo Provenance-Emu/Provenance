@@ -47,60 +47,58 @@ extern GCController *touch_controller;
     [self handlePCEButton:button forPlayer:player pressed:(value != 0) value:value];
 }
 - (void)handlePCEButton:(PVPCEButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
-    static float xAxis=0;
-    static float yAxis=0;
-    static float ltXAxis=0;
-    static float ltYAxis=0;
-    static float rtXAxis=0;
-    static float rtYAxis=0;
-    static float axisMult = 1.0;
+
     switch (button) {
         case(PVPCEButtonUp):
-            yAxis=pressed?(!xAxis?1.0:0.5):0;
+            yAxis = pressed ? 1.0 :0;
+            DLOG(@"Pressed %@ : %@", @"up", pressed ? @"Yes" : @"No");
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCEButtonDown):
-            yAxis=pressed?(!xAxis?-1.0:-0.5):0;
+            yAxis = pressed ? -1.0 :0;
+            DLOG(@"Pressed %@ : %@", @"down", pressed ? @"Yes" : @"No");
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCEButtonLeft):
-            xAxis=pressed?(!yAxis?-1.0:-0.5):0;
+            xAxis = pressed ? -1.0 :0;
+            DLOG(@"Pressed %@ : %@", @"left", pressed ? @"Yes" : @"No");
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCEButtonRight):
-            xAxis=pressed?(!yAxis?1.0:0.5):0;
+            xAxis = pressed ? 1.0 :0;
+            DLOG(@"Pressed %@ : %@", @"right", pressed ? @"Yes" : @"No");
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCEButtonButton1):
-            [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.buttonB setValue:pressed ? 1 : 0];
             break;
         case(PVPCEButtonButton2):
-            [touch_controller.extendedGamepad.buttonA setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.buttonA setValue:pressed ? 1 : 0];
             break;
         case(PVPCEButtonButton3):
-            [touch_controller.extendedGamepad.buttonX setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.buttonX setValue:pressed ? 1 : 0];
             break;
         case(PVPCEButtonButton4):
-            [touch_controller.extendedGamepad.buttonY setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.buttonY setValue:pressed ? 1 : 0];
             break;
         case(PVPCEButtonButton5):
-            [touch_controller.extendedGamepad.leftShoulder setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.leftShoulder setValue:pressed ? 1 : 0];
             break;
         case(PVPCEButtonButton6):
-            [touch_controller.extendedGamepad.rightShoulder setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.rightShoulder setValue:pressed ? 1 : 0];
             break;
         case(PVPCEButtonMode):
-            [touch_controller.extendedGamepad.leftTrigger setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.leftTrigger setValue:pressed ? 1 : 0];
             break;
         case(PVPCEButtonCount):
             [touch_controller.extendedGamepad.leftThumbstickButton setValue:pressed?1:0];
             break;
         case(PVPCEButtonSelect):
-            [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
-            [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.buttonOptions setValue:pressed ? 1 : 0];
+            [touch_controller.extendedGamepad.buttonHome setValue:pressed ? 1 : 0];
             break;
         case(PVPCEButtonRun):
-            [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.buttonMenu setValue:pressed ? 1 : 0];
             break;
     }
 }

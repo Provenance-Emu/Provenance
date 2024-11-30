@@ -150,12 +150,37 @@ public final class ROMLocationMigrator {
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         let documentsURL = URL(fileURLWithPath: documentsPath)
 
-        return [
-            (documentsURL.appendingPathComponent("ROMs"),
-             sharedContainer.appendingPathComponent("ROMs")),
-            (documentsURL.appendingPathComponent("BIOS"),
-             sharedContainer.appendingPathComponent("BIOS"))
-        ]
+        if Defaults[.useAppGroups] {
+            return [
+                (documentsURL.appendingPathComponent("ROMs"),
+                 sharedContainer.appendingPathComponent("ROMs")),
+                (documentsURL.appendingPathComponent("BIOS"),
+                 sharedContainer.appendingPathComponent("BIOS")),
+                (documentsURL.appendingPathComponent("Battery Saves"),
+                 sharedContainer.appendingPathComponent("Battery Saves")),
+                (documentsURL.appendingPathComponent("Save States"),
+                 sharedContainer.appendingPathComponent("Save States")),
+                (documentsURL.appendingPathComponent("RetroArch"),
+                 sharedContainer.appendingPathComponent("RetroArch")),
+                (documentsURL.appendingPathComponent("Conflicts"),
+                 sharedContainer.appendingPathComponent("Conflicts"))
+            ]
+        } else {
+            return [
+                (sharedContainer.appendingPathComponent("ROMs"),
+                 documentsURL.appendingPathComponent("ROMs")),
+                (sharedContainer.appendingPathComponent("BIOS"),
+                 documentsURL.appendingPathComponent("BIOS")),
+                (sharedContainer.appendingPathComponent("Battery Saves"),
+                 documentsURL.appendingPathComponent("Battery Saves")),
+                (sharedContainer.appendingPathComponent("Save States"),
+                 documentsURL.appendingPathComponent("Save States")),
+                (sharedContainer.appendingPathComponent("RetroArch"),
+                 documentsURL.appendingPathComponent("RetroArch")),
+                (sharedContainer.appendingPathComponent("Conflicts"),
+                 documentsURL.appendingPathComponent("Conflicts"))
+            ]
+        }
     }
 
     /// Migrates files from old location to new location if necessary

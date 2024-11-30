@@ -119,6 +119,8 @@ public protocol GameImporting {
     
     func removeImports(at offsets: IndexSet)
     func startProcessing()
+    
+    func clearCompleted()
 
     func sortImportQueueItems(_ importQueueItems: [ImportQueueItemType]) -> [ImportQueueItemType]
 
@@ -196,7 +198,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     public var importStatus: String = ""
 
-    public var importQueue: [ImportQueueItem] = []
+    var importAutoStartDelayTask: Task<Void, Never>?
+    public var importQueue: [ImportQueueItem] = [] {
+        didSet {
+            importAutoStartDelayTask?.cancel()
+            importAutoStartDelayTask = Task {
+                await try? Task.sleep(for: .seconds(1))
+                self.startProcessing()
+            }
+        }
+    }
 
     public var processingState: ProcessingState = .idle  // Observable state for processing status
 
@@ -445,6 +456,15 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         //lastly, move and cue (and child bin) files under the parent m3u (if they exist)
         organizeM3UFiles(in: &importQueue)
+    }
+    
+    public func clearCompleted() {
+        self.importQueue = self.importQueue.filter({
+            switch $0.status {
+            case .success: return false
+            default: return true
+            }
+        })
     }
 
     internal func organizeM3UFiles(in importQueue: inout [ImportQueueItem]) {

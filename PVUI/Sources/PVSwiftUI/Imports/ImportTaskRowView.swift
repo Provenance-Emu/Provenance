@@ -14,7 +14,7 @@ func iconNameForStatus(_ status: ImportStatus) -> String {
     switch status {
 
     case .queued:
-        return "line.3.horizontal.circle"
+        return "play"
     case .processing:
         return "progress.indicator"
     case .success:
@@ -102,8 +102,11 @@ struct ImportTaskRowView: View {
             )
             //.background(currentPalette.gameLibraryBackground.swiftUIColor)
             .onTapGesture {
-                if item.status == .conflict {
+                switch item.status {
+                case .conflict, .failure:
                     isNavigatingToSystemSelection = true
+                default:
+                    break
                 }
             }
             .background(

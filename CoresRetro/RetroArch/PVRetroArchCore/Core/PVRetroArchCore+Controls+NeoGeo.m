@@ -55,8 +55,6 @@ extern GCController *touch_controller;
 }
 
 - (void)handleNeoGeoButton:(PVNeoGeoButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
-    static float xAxis=0;
-    static float yAxis=0;
     switch (button) {
         case(PVNeoGeoButtonUp):
             yAxis=pressed?1.0:0;

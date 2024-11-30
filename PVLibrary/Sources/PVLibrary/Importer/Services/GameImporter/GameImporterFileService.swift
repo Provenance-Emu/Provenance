@@ -126,9 +126,15 @@ class GameImporterFileService : GameImporterFileServicing {
     private func moveFile(_ file: URL, to destinationDirectory: URL) async throws -> URL {
         try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
         let destPath = destinationDirectory.appendingPathComponent(file.lastPathComponent)
-        try FileManager.default.moveItem(at: file, to: destPath)
-        DLOG("Moved file to: \(destPath.path)")
-        return destPath
+
+        if file.standardizedFileURL == destPath.standardizedFileURL {
+            // We don't need to move the file, probably a re-import
+            return destPath
+        } else {
+            try FileManager.default.moveItem(at: file, to: destPath)
+            DLOG("Moved file to: \(destPath.path)")
+            return destPath
+        }
     }
     
     /// Move a `URL` to a destination, creating the destination directory if needed

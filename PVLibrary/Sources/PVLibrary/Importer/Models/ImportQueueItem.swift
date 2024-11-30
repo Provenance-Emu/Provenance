@@ -75,7 +75,13 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public var childQueueItems: [ImportQueueItem]
     
     // Observable status for individual imports
-    public var status: ImportStatus = .queued
+    public var status: ImportStatus = .queued {
+        didSet {
+            if status == .failure {
+                systems = RomDatabase.sharedInstance.all(PVSystem.self).map { $0.freeze() }
+            }
+        }
+    }
     
     public init(url: URL, fileType: FileType = .unknown) {
         self.url = url
