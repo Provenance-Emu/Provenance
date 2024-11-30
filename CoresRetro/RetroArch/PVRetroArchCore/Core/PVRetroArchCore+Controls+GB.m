@@ -44,9 +44,6 @@ extern GCController *touch_controller;
 }
 
 - (void)handleGBButton:(PVGBButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed {
-    static float xAxis=0;
-    static float yAxis=0;
-
     switch (button) {
         case(PVGBButtonUp):
             yAxis=pressed?(!xAxis?1.0:0.5):0;
