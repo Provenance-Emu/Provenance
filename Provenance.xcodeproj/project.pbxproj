@@ -822,8 +822,6 @@
 		B3E2AA392CB635BB00E2636D /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA372CB635BB00E2636D /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA3E2CB6362C00E2636D /* PVGearcoleco.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA3D2CB6362C00E2636D /* PVGearcoleco.framework */; };
 		B3E2AA3F2CB6362D00E2636D /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA3D2CB6362C00E2636D /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E2AA482CB6381400E2636D /* PVEP128Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA472CB6381400E2636D /* PVEP128Emu.framework */; };
-		B3E2AA492CB6381500E2636D /* PVEP128Emu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA472CB6381400E2636D /* PVEP128Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA4E2CB638F400E2636D /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA4D2CB638F400E2636D /* PVDesmume2015.framework */; };
 		B3E2AA4F2CB638F400E2636D /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA4D2CB638F400E2636D /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA512CB63A6200E2636D /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA502CB63A6200E2636D /* PVBeetlePSX.framework */; };
@@ -1565,7 +1563,6 @@
 				B3E2AA522CB63A6200E2636D /* PVBeetlePSX.framework in Embed Frameworks */,
 				B3E2AA312CB6346900E2636D /* PVOpera.framework in Embed Frameworks */,
 				B318E29B2CAB586800D0E599 /* snes9x.framework in Embed Frameworks */,
-				B3E2AA492CB6381500E2636D /* PVEP128Emu.framework in Embed Frameworks */,
 				B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */,
 				B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 				B38FB4AB2CBEF6B0006786C6 /* libavformat.xcframework in Embed Frameworks */,
@@ -2978,7 +2975,6 @@
 				B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */,
 				B394CD9A2BDEE53A006B63E8 /* AudioToolbox.framework in Frameworks */,
 				B318E29D2CAB58A300D0E599 /* PVRSPCXD4.framework in Frameworks */,
-				B3E2AA482CB6381400E2636D /* PVEP128Emu.framework in Frameworks */,
 				B318E2772CAB4B3F00D0E599 /* PVGenesis.framework in Frameworks */,
 				B39B53882C66E7A900C220C6 /* PVSettings in Frameworks */,
 				B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */,
