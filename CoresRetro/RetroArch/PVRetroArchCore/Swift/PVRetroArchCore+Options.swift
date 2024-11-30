@@ -2,6 +2,7 @@ import Foundation
 import PVSupport
 import PVEmulatorCore
 import PVCoreBridge
+import PVLogging
 
 extension PVRetroArchCoreCore: CoreOptional {
     public static var options: [PVCoreBridge.CoreOption] {
@@ -233,7 +234,7 @@ extension PVRetroArchCore: CoreOptional {
         if (UIScreen.screens.count > 1 && UIDevice.current.userInterfaceIdiom == .pad) {
             self.hasSecondScreen = secondScreen;
         }
-        if let systemIdentifier = self.systemIdentifier {
+        if let systemIdentifier = self.systemIdentifier?.lowercased() {
             if (systemIdentifier.contains("psp")) {
                 self.gsPreference = 2; // Use Vulkan PSP
             }
@@ -242,14 +243,16 @@ extension PVRetroArchCore: CoreOptional {
                 systemIdentifier.contains("dreamcast")  ||
                 systemIdentifier.contains("genesis")  ||
                 systemIdentifier.contains("saturn")  ||
-                systemIdentifier.contains("3DO")  ||
+                systemIdentifier.contains("3do")  ||
                 systemIdentifier.contains("gb")  ||
                 systemIdentifier.contains("segacd")  ||
                 systemIdentifier.contains("gba")  ||
                 systemIdentifier.contains("psx")  ||
                 systemIdentifier.contains("neogeo")  ||
                 systemIdentifier.contains("mame")  ||
-                systemIdentifier.contains("pce") ||
+//                systemIdentifier.contains("pce") ||
+//                systemIdentifier.contains("pcecd") ||
+//                systemIdentifier.contains("sgfx") ||
                 systemIdentifier.contains("ds") ||
                 systemIdentifier.contains("psp") ||
                 systemIdentifier.contains("n64")) {
@@ -369,11 +372,11 @@ extension PVRetroArchCore: CoreOptional {
 extension PVRetroArchCoreCore: GameWithCheat {
 	@objc public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
 		do {
-			NSLog("Calling setCheat \(code) \(type) \(codeType)")
+			ILOG("Calling setCheat \(code) \(type) \(codeType)")
             try self._bridge.setCheat(code, setType: type, setCodeType: codeType, setIndex: cheatIndex, setEnabled: enabled)
 			return true
 		} catch let error {
-            NSLog("Error setCheat \(error)")
+            ILOG("Error setCheat \(error)")
 			return false
 		}
 	}
