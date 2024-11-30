@@ -496,7 +496,11 @@ extension PVGameLibraryUpdatesController: ConflictsController {
 //                self.conflicts = []
 //                return
 //            }
-            let filesInConflictsFolder = conflictsWatcher.conflictFiles
+            withPerceptionTracking {
+                let filesInConflictsFolder = conflictsWatcher.conflictFiles
+            } onChange: {
+                self.conflictsWatcher.objectWillChange.send()
+            }
 
             //TODO: fix alongside conflicts
 //            let sortedFiles = PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
