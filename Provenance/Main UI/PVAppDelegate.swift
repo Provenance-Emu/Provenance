@@ -113,7 +113,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                                 await updates.importROMDirectories()
                             }
                         }
-//                        RomDatabase.sharedInstance.recoverSaveStates()
+                        RomDatabase.sharedInstance.recoverAllSaveStates()
                     }
                     promise(.success(()))
                 }
@@ -128,7 +128,6 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                     Task { @MainActor in
                         do {
                             try RomDatabase.sharedInstance.deleteAllGames()
-//                            RomDatabase.sharedInstance.updateSaveStates()
                             if let _ = self.gameLibraryViewController {
                                 self.gameLibraryViewController?.checkROMs(false)
                             } else {
@@ -136,6 +135,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                                     await updates.importROMDirectories()
                                 }
                             }
+                            RomDatabase.sharedInstance.recoverAllSaveStates()
                             promise(.success(()))
                         } catch {
                             ELOG("Failed to refresh all objects. \(error.localizedDescription)")

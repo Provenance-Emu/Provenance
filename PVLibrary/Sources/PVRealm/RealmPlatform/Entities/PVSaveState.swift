@@ -30,17 +30,18 @@ public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFil
 
     @Persisted public var createdWithCoreVersion: String!
 
-    public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, image: PVImageFile? = nil, isAutosave: Bool = false, isPinned: Bool = false, isFavorite: Bool = false, userDescription: String? = nil) {
+    public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, date: Date = Date(), image: PVImageFile? = nil, isAutosave: Bool = false, isPinned: Bool = false, isFavorite: Bool = false, userDescription: String? = nil, createdWithCoreVersion: String? = nil) {
         self.init()
         self.game = game
         self.file = file
         self.image = image
+        self.date = date
         self.isAutosave = isAutosave
         self.isPinned = isPinned
         self.isFavorite = isFavorite
         self.userDescription = userDescription
         self.core = core
-        createdWithCoreVersion = core.projectVersion
+        self.createdWithCoreVersion = createdWithCoreVersion ?? core.projectVersion
     }
 
     public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {

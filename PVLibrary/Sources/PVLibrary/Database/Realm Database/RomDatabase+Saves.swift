@@ -6,9 +6,101 @@
 //
 
 import PVCoreBridge
+import PVFileSystem
 
 /// Save state purging and recoovery
 public extension RomDatabase {
+
+    public func recoverAllSaveStates() {
+        // Get the base directory for saves
+        let saveStatesDirectory: URL = Paths.saveSavesPath
+        // iterate sub-dirs calling recoverSaveStates(forPath: path)
+        let fm = FileManager.default
+        let subdirectories = try! fm.contentsOfDirectory(at: saveStatesDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+        for subdirectory in subdirectories {
+            recoverSaveStates(forPath: subdirectory)
+        }
+    }
+
+    public func recoverSaveStates(forPath path: URL) {
+        let fileManager = FileManager.default
+
+        // Get all .svs.json files in the directory
+        guard let jsonFiles = try? fileManager.contentsOfDirectory(at: path, includingPropertiesForKeys: nil)
+            .filter({ $0.pathExtension == "json" && $0.lastPathComponent.contains(".svs.") }) else {
+            ELOG("Failed to read directory contents at \(path)")
+            return
+        }
+
+        for jsonURL in jsonFiles {
+            do {
+                // 1. Read and decode the JSON file
+                let jsonData = try Data(contentsOf: jsonURL)
+                let decoder = JSONDecoder()
+                let saveStateMetadata = try decoder.decode(SaveStateMetadata.self, from: jsonData)
+
+                // 2. Check if this save state already exists in the database
+                if let existingSave = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateMetadata.id) {
+                    DLOG("Save state already exists: \(existingSave.id)")
+                    continue
+                }
+
+                // 3. Find the matching game using MD5
+                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: saveStateMetadata.game.md5) else {
+                    WLOG("No matching game found for save state: \(saveStateMetadata.id)")
+                    continue
+                }
+
+                // 4. Find the matching core
+                guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: saveStateMetadata.core.identifier) else {
+                    WLOG("No matching core found for save state: \(saveStateMetadata.id)")
+                    continue
+                }
+
+                // 5. Create PVFile for the save state
+                let saveFileURL = jsonURL.deletingPathExtension() // Remove .json extension
+                guard fileManager.fileExists(atPath: saveFileURL.path) else {
+                    WLOG("Save state file not found: \(saveFileURL.path)")
+                    continue
+                }
+                let saveFile = PVFile(withURL: saveFileURL)
+
+                // 6. Create PVImageFile for the screenshot if it exists
+                var imageFile: PVImageFile?
+                if let imageURLString = saveStateMetadata.image?.url,
+                   let imageURL = URL(string: imageURLString),
+                   fileManager.fileExists(atPath: imageURL.path) {
+                    imageFile = PVImageFile(withURL: imageURL)
+                }
+
+                // 7. Create and save the new PVSaveState
+                try realm.write {
+                    let newSaveState = PVSaveState(
+                        withGame: game,
+                        core: core,
+                        file: saveFile,
+                        date: Date(timeIntervalSince1970: saveStateMetadata.date) ?? Date(),
+                        image: imageFile,
+                        isAutosave: saveStateMetadata.isAutosave,
+                        isPinned: saveStateMetadata.isPinned ?? false,
+                        isFavorite: saveStateMetadata.isFavorite ?? false,
+                        userDescription: saveStateMetadata.userDescription,
+                        createdWithCoreVersion: saveStateMetadata.core.project.version
+                    )
+
+                    // Set additional properties from metadata
+                    newSaveState.id = saveStateMetadata.id
+                    newSaveState.date = Date(timeIntervalSinceReferenceDate: saveStateMetadata.date)
+
+                    realm.add(newSaveState)
+                    ILOG("Recovered save state: \(newSaveState.id)")
+                }
+
+            } catch {
+                ELOG("Failed to recover save state from \(jsonURL): \(error)")
+            }
+        }
+    }
 
     /// Recover save states from the save state directory
     public func recoverSaveStates(forGame game: PVGame, core: EmulatorCoreIOInterface) throws {
@@ -172,3 +264,43 @@ public extension RomDatabase {
 ```
 
  */
+
+// MARK: - Save State Metadata Structs
+private struct SaveStateMetadata: Codable {
+    let id: String
+    let isAutosave: Bool
+    let date: TimeInterval
+    let game: GameMetadata
+    let core: CoreMetadata
+    let file: FileMetadata
+    let image: ImageMetadata?
+    let isPinned: Bool?
+    let isFavorite: Bool?
+    let userDescription: String?
+}
+
+private struct GameMetadata: Codable {
+    let md5: String
+    let systemIdentifier: String
+    let title: String
+}
+
+private struct CoreMetadata: Codable {
+    let identifier: String
+    let project: ProjectMetadata
+}
+
+private struct ProjectMetadata: Codable {
+    let version: String
+    let name: String
+}
+
+private struct FileMetadata: Codable {
+    let md5: String
+    let fileName: String
+    let size: UInt64
+}
+
+private struct ImageMetadata: Codable {
+    let url: String
+}
