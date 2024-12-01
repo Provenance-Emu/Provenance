@@ -198,6 +198,9 @@ public final class ROMLocationMigrator {
                 }
 
                 try await migrateDirectory(from: oldPath, to: newPath)
+
+                // Clean up empty directories after migration is complete
+                try await cleanupSourceDirectory(oldPath)
             } else {
                 ILOG("No old \(oldPath.lastPathComponent) directory found, skipping migration")
             }
@@ -241,9 +244,6 @@ public final class ROMLocationMigrator {
         if !itemsToProcess.isEmpty {
             try await processChunk(itemsToProcess, sourceDir: sourceDir, destDir: destDir)
         }
-
-        // Cleanup empty source directory at the end
-        try await cleanupSourceDirectory(sourceDir)
     }
 
     private func processChunk(_ urls: [URL], sourceDir: URL, destDir: URL) async throws {
@@ -286,13 +286,36 @@ public final class ROMLocationMigrator {
         do {
             let contents = try FileManager.default.contentsOfDirectory(
                 at: sourceDir,
-                includingPropertiesForKeys: nil,
+                includingPropertiesForKeys: [.isDirectoryKey],
                 options: [.skipsHiddenFiles]
             )
 
-            if contents.isEmpty {
-                try await FileManager.default.removeItem(at: sourceDir)
-                ILOG("Removed empty directory: \(sourceDir.lastPathComponent)")
+            // First check if there are any files (non-directories)
+            let hasFiles = contents.contains { url in
+                let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+                return !isDirectory
+            }
+
+            if !hasFiles {
+                // Process subdirectories recursively
+                for url in contents {
+                    let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+                    if isDirectory {
+                        try await cleanupSourceDirectory(url)
+                    }
+                }
+
+                // Check again after processing subdirectories
+                let remainingContents = try FileManager.default.contentsOfDirectory(
+                    at: sourceDir,
+                    includingPropertiesForKeys: nil,
+                    options: [.skipsHiddenFiles]
+                )
+
+                if remainingContents.isEmpty {
+                    try await FileManager.default.removeItem(at: sourceDir)
+                    ILOG("Removed empty directory: \(sourceDir.lastPathComponent)")
+                }
             }
         } catch {
             ELOG("Error cleaning up \(sourceDir.lastPathComponent): \(error.localizedDescription)")
