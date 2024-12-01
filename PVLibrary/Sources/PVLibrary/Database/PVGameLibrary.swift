@@ -217,44 +217,46 @@ public final class ROMLocationMigrator {
 
         ILOG("Found \(contents.count) items to process in \(sourceDir.lastPathComponent)")
 
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            for itemURL in contents {
-                group.addTask {
-                    let isDirectory = try itemURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory ?? false
-                    let relativePath = itemURL.lastPathComponent
-                    let destinationURL = destDir.appendingPathComponent(relativePath)
+        // Process in smaller batches to reduce UI impact
+        let batchSize = 10
+        for batch in contents.chunked(into: batchSize) {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                for itemURL in batch {
+                    group.addTask {
+                        let isDirectory = try itemURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory ?? false
+                        let relativePath = itemURL.lastPathComponent
+                        let destinationURL = destDir.appendingPathComponent(relativePath)
 
-                    if isDirectory {
-                        // Create destination directory if it doesn't exist
-                        if !self.fileManager.fileExists(atPath: destinationURL.path) {
-                            try self.fileManager.createDirectory(at: destinationURL,
-                                                              withIntermediateDirectories: true,
-                                                              attributes: nil)
-                        }
-                        // Recursively migrate contents of subdirectory
-                        try await self.migrateDirectory(from: itemURL, to: destinationURL)
+                        if isDirectory {
+                            if !self.fileManager.fileExists(atPath: destinationURL.path) {
+                                try self.fileManager.createDirectory(at: destinationURL,
+                                                                  withIntermediateDirectories: true,
+                                                                  attributes: nil)
+                            }
+                            try await self.migrateDirectory(from: itemURL, to: destinationURL)
 
-                        // Try to remove empty source directory
-                        if try self.fileManager.contentsOfDirectory(atPath: itemURL.path).isEmpty {
-                            try await self.fileManager.removeItem(at: itemURL)
-                            ILOG("Removed empty directory: \(itemURL.lastPathComponent)")
-                        }
-                    } else {
-                        // Handle file migration
-                        if self.fileManager.fileExists(atPath: destinationURL.path) {
-                            ILOG("Skipping \(relativePath) as it already exists in destination")
+                            if try self.fileManager.contentsOfDirectory(atPath: itemURL.path).isEmpty {
+                                try? await self.fileManager.removeItem(at: itemURL)
+                                ILOG("Removed empty directory: \(itemURL.lastPathComponent)")
+                            }
                         } else {
-                            try self.fileManager.moveItem(at: itemURL, to: destinationURL)
-                            ILOG("Successfully migrated: \(relativePath)")
+                            if self.fileManager.fileExists(atPath: destinationURL.path) {
+                                ILOG("Skipping \(relativePath) as it already exists in destination")
+                            } else {
+                                try self.fileManager.moveItem(at: itemURL, to: destinationURL)
+                                ILOG("Successfully migrated: \(relativePath)")
+                            }
                         }
                     }
                 }
+                try await group.waitForAll()
             }
 
-            try await group.waitForAll()
+            // Add a small delay between batches to let UI breathe
+            try await Task.sleep(nanoseconds: 10_000_000) // 10ms delay
         }
 
-        // Try to remove source directory if empty
+        // Cleanup empty source directory
         do {
             let remainingItems = try fileManager.contentsOfDirectory(
                 at: sourceDir,
@@ -268,6 +270,15 @@ public final class ROMLocationMigrator {
             }
         } catch {
             ELOG("Error cleaning up directory \(sourceDir.lastPathComponent): \(error.localizedDescription)")
+        }
+    }
+}
+
+// Add this extension to support chunking
+private extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
         }
     }
 }
