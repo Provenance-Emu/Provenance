@@ -7,6 +7,7 @@
 
 import PVCoreBridge
 import PVFileSystem
+import PVLogging
 
 /// Save state purging and recoovery
 public extension RomDatabase {
@@ -31,6 +32,9 @@ public extension RomDatabase {
             ELOG("Failed to read directory contents at \(path)")
             return
         }
+
+        // Collect save states to be added
+        var saveStatesToAdd: [PVSaveState] = []
 
         for jsonURL in jsonFiles {
             do {
@@ -73,32 +77,43 @@ public extension RomDatabase {
                     imageFile = PVImageFile(withURL: imageURL)
                 }
 
-                // 7. Create and save the new PVSaveState
-                try realm.write {
-                    let newSaveState = PVSaveState(
-                        withGame: game,
-                        core: core,
-                        file: saveFile,
-                        date: Date(timeIntervalSince1970: saveStateMetadata.date) ?? Date(),
-                        image: imageFile,
-                        isAutosave: saveStateMetadata.isAutosave,
-                        isPinned: saveStateMetadata.isPinned ?? false,
-                        isFavorite: saveStateMetadata.isFavorite ?? false,
-                        userDescription: saveStateMetadata.userDescription,
-                        createdWithCoreVersion: saveStateMetadata.core.project.version
-                    )
+                // 7. Create new PVSaveState
+                let newSaveState = PVSaveState(
+                    withGame: game,
+                    core: core,
+                    file: saveFile,
+                    date: Date(timeIntervalSinceReferenceDate: saveStateMetadata.date),
+                    image: imageFile,
+                    isAutosave: saveStateMetadata.isAutosave,
+                    isPinned: false,
+                    isFavorite: false,
+                    userDescription: nil,
+                    createdWithCoreVersion: saveStateMetadata.core.project.version
+                )
 
-                    // Set additional properties from metadata
-                    newSaveState.id = saveStateMetadata.id
-                    newSaveState.date = Date(timeIntervalSinceReferenceDate: saveStateMetadata.date)
+                // Set the original ID
+                newSaveState.id = saveStateMetadata.id
 
-                    realm.add(newSaveState)
-                    ILOG("Recovered save state: \(newSaveState.id)")
-                }
+                saveStatesToAdd.append(newSaveState)
+                ILOG("Prepared save state for recovery: \(newSaveState.id)")
 
             } catch {
-                ELOG("Failed to recover save state from \(jsonURL): \(error)")
+                ELOG("Failed to prepare save state from \(jsonURL): \(error)")
             }
+        }
+
+        // Batch write all save states to Realm
+        if !saveStatesToAdd.isEmpty {
+            do {
+                try realm.write {
+                    realm.add(saveStatesToAdd)
+                    ILOG("Successfully recovered \(saveStatesToAdd.count) save states")
+                }
+            } catch {
+                ELOG("Failed to batch write save states to Realm: \(error)")
+            }
+        } else {
+            DLOG("No save states to recover in \(path)")
         }
     }
 
@@ -274,9 +289,6 @@ private struct SaveStateMetadata: Codable {
     let core: CoreMetadata
     let file: FileMetadata
     let image: ImageMetadata?
-    let isPinned: Bool?
-    let isFavorite: Bool?
-    let userDescription: String?
 }
 
 private struct GameMetadata: Codable {
