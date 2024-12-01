@@ -85,9 +85,9 @@ public extension RomDatabase {
                     date: Date(timeIntervalSinceReferenceDate: saveStateMetadata.date),
                     image: imageFile,
                     isAutosave: saveStateMetadata.isAutosave,
-                    isPinned: false,
-                    isFavorite: false,
-                    userDescription: nil,
+                    isPinned: saveStateMetadata.isPinned ?? false,
+                    isFavorite: saveStateMetadata.isFavorite ?? false,
+                    userDescription: saveStateMetadata.userDescription,
                     createdWithCoreVersion: saveStateMetadata.core.project.version
                 )
 
