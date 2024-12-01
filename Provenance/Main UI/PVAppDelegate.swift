@@ -113,6 +113,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                                 await updates.importROMDirectories()
                             }
                         }
+//                        RomDatabase.sharedInstance.recoverSaveStates()
                     }
                     promise(.success(()))
                 }
@@ -127,6 +128,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                     Task { @MainActor in
                         do {
                             try RomDatabase.sharedInstance.deleteAllGames()
+//                            RomDatabase.sharedInstance.updateSaveStates()
                             if let _ = self.gameLibraryViewController {
                                 self.gameLibraryViewController?.checkROMs(false)
                             } else {

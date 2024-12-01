@@ -18,28 +18,6 @@ import PVSettings
 import UIKit
 #endif
 
-public enum SaveStateError: Error {
-    case coreSaveError(Error?)
-    case coreLoadError(Error?)
-    case saveStatesUnsupportedByCore
-    case ineligibleError
-    case noCoreFound(String)
-    case realmWriteError(Error)
-    case realmDeletionError(Error)
-
-    var localizedDescription: String {
-        switch self {
-        case let .coreSaveError(coreError): return "Core failed to save: \(coreError?.localizedDescription ?? "No reason given.")"
-        case let .coreLoadError(coreError): return "Core failed to load: \(coreError?.localizedDescription ?? "No reason given.")"
-        case .saveStatesUnsupportedByCore: return "This core does not support save states."
-        case .ineligibleError: return "Save states are currently ineligible."
-        case let .noCoreFound(id): return "No core found to match id: \(id)"
-        case let .realmWriteError(realmError): return "Unable to write save state to realm: \(realmError.localizedDescription)"
-        case let .realmDeletionError(realmError): return "Unable to delete old auto-save from database: \(realmError.localizedDescription)"
-        }
-    }
-}
-
 public extension PVEmulatorViewController {
     var saveStatePath: URL { get { PVEmulatorConfiguration.saveStatePath(forGame: game) } }
 
@@ -278,8 +256,8 @@ public extension PVEmulatorViewController {
     @objc func showSaveStateMenu() {
         Task.detached { [weak self] in
             guard let self = self else { return }
-            await updateSaveStates()
-            await recoverSaveStates()
+            await try RomDatabase.sharedInstance.updateSaveStates(forGame: game)
+            await try RomDatabase.sharedInstance.recoverSaveStates(forGame: game, core: core)
         }
         guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
             return
@@ -361,68 +339,6 @@ public extension PVEmulatorViewController {
                     presentError("Unable to convert autosave to new format: \(error.localizedDescription)", source: self.view)
                 }
             }
-        }
-    }
-    
-    func recoverSaveStates() {
-        do {
-            let fileManager = FileManager.default
-            let directoryContents = try fileManager.contentsOfDirectory(
-                at: saveStatePath,
-                includingPropertiesForKeys:[.contentModificationDateKey]
-            ).filter { $0.lastPathComponent.hasSuffix(".svs") }
-                .sorted(by: {
-                    let date0 = try $0.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
-                    let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
-                    return date0.compare(date1) == .orderedAscending
-                })
-            let realm = RomDatabase.sharedInstance.realm
-            var saves:[String:Int]=[:]
-            for saveState in game.saveStates {
-                saves[saveState.file.url.lastPathComponent.lowercased()] = 1;
-            }
-            for url in directoryContents {
-                let file = url.lastPathComponent.lowercased()
-                if (fileManager.fileExists(atPath: url.path) &&
-                    file.contains("svs") &&
-                    !file.contains("json") &&
-                    !file.contains("jpg") &&
-                    saves.index(forKey: file) == nil) {
-                    do {
-                        guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
-                            presentError("No core in database with id \(self.core.coreIdentifier ?? "null")", source: self.view)
-                            return
-                        }
-                        let imgFile = PVImageFile(withURL:  URL(fileURLWithPath: url.path.replacingOccurrences(of: "svs", with: "jpg")))
-                        let saveFile = PVFile(withURL: url)
-                        let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: imgFile, isAutosave: false)
-                        try realm.write {
-                            realm.add(newState)
-                        }
-                    } catch {
-                        ELOG(error.localizedDescription)
-                    }
-                }
-            }
-        } catch {
-            ELOG("\(error.localizedDescription)")
-        }
-    }
-    
-    func updateSaveStates() {
-        do {
-            for save in game.saveStates {
-                if !FileManager.default.fileExists(atPath: save.file.url.path) {
-                    try PVSaveState.delete(save)
-                }
-            }
-            for save in game.autoSaves {
-                if !FileManager.default.fileExists(atPath: save.file.url.path) {
-                    try PVSaveState.delete(save)
-                }
-            }
-        } catch {
-            ELOG("\(error.localizedDescription)")
         }
     }
 }
