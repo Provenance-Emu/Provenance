@@ -519,9 +519,14 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
         loaded = current->core->retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size);
     } else {
 //        if(load_info->content != nil && load_info->content->elems != nil) {
-//            core->retro_load_game(*load_info->content->elems[0].data);
+//            const struct string_list *content = load_info->content;
+//            char *data = content->elems[0].data;
+//            struct retro_game_info *gameInfo = malloc(sizeof(struct retro_game_info));
+//            gameInfo->data = data;
+//            gameInfo->path = load_info->info->path;
+//            current->core->retro_load_game(gameInfo);
 //        } else {
-        loaded = current->core->retro_load_game(load_info->info);
+            loaded = current->core->retro_load_game(load_info->info);
 //        }
     }
     
