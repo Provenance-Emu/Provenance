@@ -114,6 +114,11 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                             }
                         }
                         RomDatabase.sharedInstance.recoverAllSaveStates()
+                        do {
+                            try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()
+                        } catch {
+                            ELOG("Error: \(error.localizedDescription)")
+                        }
                     }
                     promise(.success(()))
                 }
@@ -136,6 +141,11 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                                 }
                             }
                             RomDatabase.sharedInstance.recoverAllSaveStates()
+                            do {
+                                try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()
+                            } catch {
+                                ELOG("Error: \(error.localizedDescription)")
+                            }
                             promise(.success(()))
                         } catch {
                             ELOG("Failed to refresh all objects. \(error.localizedDescription)")
