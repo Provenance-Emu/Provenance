@@ -26,8 +26,8 @@
 #include "../../Gearcoleco/src/definitions.h"
 #include "../../Gearcoleco/src/video.h"
 
-#define SAMPLERATE 48000
-#define SIZESOUNDBUFFER 48000 / 60 * 4
+#define SAMPLERATE GC_AUDIO_SAMPLE_RATE
+#define SIZESOUNDBUFFER GC_AUDIO_BUFFER_SIZE
 #define OpenEmu 1
 
 #define GC_RESOLUTION_WIDTH 256
@@ -50,7 +50,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-        // pitch_shift = 1; // Override pitch shift for this core
+//         pitch_shift = 1; // Override pitch shift for this core
 	}
 
 	_current = self;
@@ -78,6 +78,7 @@
 }
 
 - (GLenum)pixelFormat {
+//     return GL_RGB;
     return GL_RGB565;
 }
 
@@ -92,7 +93,7 @@
 # pragma mark - Audio
 
 - (double)audioSampleRate {
-    return 48000;
+    return GC_AUDIO_SAMPLE_RATE;
 }
 
 #if 0
