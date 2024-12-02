@@ -23,7 +23,7 @@ let GCC_PREPROCESSOR_DEFINITIONS: [CSetting] = [
     .define("WANT_GBA_EMU"),
     .define("WANT_LYNX_EMU"),
     .define("WANT_NES_EMU"),
-    
+
 //    .define("WANT_NES_NEW_EMU"), // experimental, alternate new(ish) NES emulation
     .define("WANT_NGP_EMU"),
     .define("WANT_PCE_EMU"),
@@ -58,7 +58,7 @@ let GCC_PREPROCESSOR_DEFINITIONS: [CSetting] = [
 
 let OTHER_CFLAGS: [CSetting] = [
     .unsafeFlags([
-//        "-funroll-loops",
+        "-funroll-loops",
 //        "-fPIC",
 //        "-fno-printf-return-value",
         "-fstrict-aliasing",
@@ -72,7 +72,7 @@ let OTHER_CFLAGS: [CSetting] = [
         "-Wno-unused-variable",
         "-Wno-unused-function",
         "-Wno-uninitialized",
-//        "-Wno-strict-aliasing",
+        "-Wno-strict-aliasing",
         "-Wshadow",
         "-Wempty-body",
         "-Wignored-qualifiers",
@@ -80,8 +80,9 @@ let OTHER_CFLAGS: [CSetting] = [
         "-Wvariadic-macros",
         "-Wdisabled-optimization",
         "-fmodules",
-        "-fvisibility=default"
-//        "-fvisibility-inlines-hidden"
+        "-fvisibility=default",
+//        "-fvisibility-inlines-hidden",
+//        "-fvisibility=hidden"
     ])]
 
 let CSETTINGS: [CSetting] = [
@@ -92,7 +93,7 @@ let CSETTINGS: [CSetting] = [
     .define("MDFN_PSS_STYLE", to: "1"),
     .define("HAVE_CONFIG_H", to: "1"),
     .define("HAVE_FORK", to: "1", .when(platforms: [.iOS, .macOS, .watchOS, .macCatalyst, .visionOS])),
-    
+
 //    .define("MDFN_ENABLE_DEV_BUILD", .when(configuration: .debug)),
     .define("DEBUG", to: "1", .when(configuration: .debug)),
     .define("NDEBUG", to: "1", .when(configuration: .release)),
