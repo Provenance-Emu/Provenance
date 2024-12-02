@@ -32,6 +32,18 @@ public extension RomDatabase {
             ELOG("Failed to read directory contents at \(path)")
             return
         }
+        
+#if DEBUG
+//        // For testing, remove all PVSaveState imges
+//        let allSaves = RomDatabase.sharedInstance.all(PVSaveState.self)
+//        if !allSaves.isEmpty {
+//            for save in allSaves {
+//                try? realm.write {
+//                    save.image = nil
+//                }
+//            }
+//        }
+#endif
 
         // Collect save states to be added
         var saveStatesToAdd: [PVSaveState] = []
@@ -48,18 +60,19 @@ public extension RomDatabase {
                     DLOG("Save state already exists: \(existingSave.id)")
 
                     // Check if the existing save state's image needs to be updated
-                    if let existingImage = existingSave.image,
-                       !fileManager.fileExists(atPath: existingImage.url.path) {
+                    if existingSave.image == nil || !fileManager.fileExists(atPath: existingSave.image!.url.path) {
 
                         // Look for the image in the same directory as the save state
                         let localImageURL = jsonURL.deletingPathExtension().deletingPathExtension()
                             .appendingPathExtension("jpg")
 
                         if fileManager.fileExists(atPath: localImageURL.path) {
+                            let imgFile = PVImageFile(withURL:  localImageURL.standardizedFileURL)
+
                             DLOG("Found image file at alternate location for existing save: \(localImageURL.path)")
                             try? realm.write {
-                                existingSave.image = PVImageFile(withURL: localImageURL)
-                                ILOG("Updated image path for existing save state: \(existingSave.id)")
+                                existingSave.image = imgFile
+                                ILOG("Updated image path for existing save state: \(existingSave.id) to \(imgFile.url.path(percentEncoded: false))")
                             }
                         } else {
                             WLOG("No valid image found for existing save state: \(existingSave.id)")
