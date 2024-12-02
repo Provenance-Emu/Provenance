@@ -116,6 +116,8 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                         RomDatabase.sharedInstance.recoverAllSaveStates()
                         do {
                             try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()
+                            try await AppState.shared.gameLibrary?.romMigrator.fixPartialPaths()
+
                         } catch {
                             ELOG("Error: \(error.localizedDescription)")
                         }
@@ -143,6 +145,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                             RomDatabase.sharedInstance.recoverAllSaveStates()
                             do {
                                 try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()
+                                try await AppState.shared.gameLibrary?.romMigrator.fixPartialPaths()
                             } catch {
                                 ELOG("Error: \(error.localizedDescription)")
                             }

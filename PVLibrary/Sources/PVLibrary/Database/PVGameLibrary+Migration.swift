@@ -230,73 +230,172 @@ public final class ROMLocationMigrator {
         }
     }
 
-    /// Fixes files that were incorrectly placed in the root ROMs directory instead of their system-specific subdirectories
+    /// Fixes files that were incorrectly placed in the root ROMs directory by matching them to existing games
     public func fixOrphanedFiles() async throws {
+        DLOG("Starting fixOrphanedFiles")
+        // Get the root ROMs directory
+        let romsRootDir = Paths.romsPath
+        let fileManager = FileManager.default
+
+        DLOG("Scanning root ROMs directory: \(romsRootDir.path)")
+        // Get list of files in root ROMs dir
+        let rootFiles = try fileManager.contentsOfDirectory(at: romsRootDir, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+            .filter { !$0.hasDirectoryPath } // Only look at files, not directories
+
+        DLOG("Found \(rootFiles.count) files in root directory")
+
         // Get all games from the database
         let realm = RomDatabase.sharedInstance.realm
         let games = realm.objects(PVGame.self)
+        DLOG("Found \(games.count) games in database")
 
-        // Get the root ROMs directory
-        let romsRootDir = Paths.romsPath
-
-        // Get list of files in root ROMs dir
-        let fileManager = FileManager.default
-        let rootFiles = try fileManager.contentsOfDirectory(at: romsRootDir, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
-
-        // Keep track of files we've moved
-        var movedFiles = Set<String>()
-
-        // For each game, check if its file is in the root directory and move it if needed
+        // Create lookup of filename -> [PVGame] for quick matching
+        var gamesByFilename: [String: [PVGame]] = [:]
         for game in games {
-            // Get the game's file URL
-            guard let gameFile = game.file else { continue }
-            let gameURL = gameFile.url
-
-            // Skip if file is already in correct location
-            if gameURL.deletingLastPathComponent().lastPathComponent == game.systemIdentifier {
-                continue
-            }
-
-            // Check if file exists in root directory
-            let filename = gameURL.lastPathComponent
-            let rootFileURL = romsRootDir.appendingPathComponent(filename)
-
-            if fileManager.fileExists(atPath: rootFileURL.path) && !movedFiles.contains(filename) {
-                // Create system subdirectory if needed
-                let systemDir = romsRootDir.appendingPathComponent(game.systemIdentifier)
-                try fileManager.createDirectory(at: systemDir, withIntermediateDirectories: true, attributes: nil)
-
-                // Move file to correct system directory
-                let newURL = systemDir.appendingPathComponent(filename)
-                try fileManager.moveItem(at: rootFileURL, to: newURL)
-
-                // Update database with new path
-//                try realm.write {
-//                    game.file?.url = newURL
-//                }
-
-                movedFiles.insert(filename)
+            let filename = game.file?.url.lastPathComponent ?? ""
+            if !filename.isEmpty {
+                gamesByFilename[filename, default: []].append(game)
             }
         }
+        DLOG("Created filename lookup with \(gamesByFilename.count) unique filenames")
 
-        // Clean up any remaining files in root that aren't associated with games
+        // Process each file in the root directory
         for rootFile in rootFiles {
             let filename = rootFile.lastPathComponent
-            if !movedFiles.contains(filename) {
-                // Check file extension against all system supported extensions
+            DLOG("Processing root file: \(filename)")
+
+            // If we find matching games by filename
+            if let matchingGames = gamesByFilename[filename] {
+                DLOG("Found \(matchingGames.count) matching games for \(filename)")
+
+                for game in matchingGames {
+                    DLOG("Checking game: \(game.title) (System: \(game.systemIdentifier))")
+                    guard let gameFile = game.file else {
+                        DLOG("Game has no file record, skipping")
+                        continue
+                    }
+
+                    // First check if the file exists at its expected location
+                    DLOG("Checking if file exists at expected location: \(gameFile.url.path)")
+                    if fileManager.fileExists(atPath: gameFile.url.path) {
+                        DLOG("File already exists at expected location, skipping")
+                        continue
+                    }
+
+                    // Get the correct system directory for this game
+                    let systemDir = romsRootDir.appendingPathComponent(game.systemIdentifier)
+                    let newURL = systemDir.appendingPathComponent(filename)
+                    DLOG("Will try to move file to: \(newURL.path)")
+
+                    do {
+                        // Create system directory if needed
+                        if !fileManager.fileExists(atPath: systemDir.path) {
+                            DLOG("Creating system directory: \(systemDir.path)")
+                            try fileManager.createDirectory(at: systemDir, withIntermediateDirectories: true, attributes: nil)
+                        }
+
+                        // Move the file
+                        if !fileManager.fileExists(atPath: newURL.path) {
+                            DLOG("Moving file from \(rootFile.path) to \(newURL.path)")
+                            try fileManager.moveItem(at: rootFile, to: newURL)
+
+                            // Update the game's file in the database with new relative path
+                            let partialPath = "ROMs/\(game.systemIdentifier)/\(filename)"
+                            DLOG("Updating database with new partial path: \(partialPath)")
+                            try realm.write {
+                                let newFile = PVFile(withPartialPath: partialPath)
+                                game.file = newFile
+                            }
+
+                            ILOG("Successfully moved orphaned file \(filename) to system directory \(game.systemIdentifier)")
+                            break // Stop after first matching game
+                        } else {
+                            DLOG("File already exists at destination: \(newURL.path)")
+                        }
+                    } catch {
+                        ELOG("Error processing file \(filename): \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                DLOG("No matching games found for \(filename), trying extension matching")
+                // No matching game found - try to determine system by file extension
                 let ext = rootFile.pathExtension.lowercased()
-                for (systemId, system) in RomDatabase.systemCache {
-                    if system.supportedExtensions.contains(ext) {
-                        // Move to appropriate system directory
-                        let systemDir = romsRootDir.appendingPathComponent(systemId)
-                        try fileManager.createDirectory(at: systemDir, withIntermediateDirectories: true, attributes: nil)
-                        let newURL = systemDir.appendingPathComponent(filename)
-                        try fileManager.moveItem(at: rootFile, to: newURL)
-                        break
+                DLOG("Checking extension '\(ext)' against system extensions")
+
+                for (systemId, system) in RomDatabase.systemCache where system.supportedExtensions.contains(ext) {
+                    DLOG("Found matching system \(systemId) for extension \(ext)")
+                    // Found a matching system for this file extension
+                    let systemDir = romsRootDir.appendingPathComponent(systemId)
+                    let newURL = systemDir.appendingPathComponent(filename)
+
+                    do {
+                        if !fileManager.fileExists(atPath: newURL.path) {
+                            DLOG("Moving unmatched file to \(newURL.path)")
+                            try fileManager.createDirectory(at: systemDir, withIntermediateDirectories: true, attributes: nil)
+                            try fileManager.moveItem(at: rootFile, to: newURL)
+                            ILOG("Successfully moved unmatched file \(filename) to system directory \(systemId) based on extension")
+                            break
+                        } else {
+                            DLOG("File already exists at destination: \(newURL.path)")
+                        }
+                    } catch {
+                        ELOG("Error moving unmatched file \(filename): \(error.localizedDescription)")
                     }
                 }
             }
         }
+        DLOG("Completed fixOrphanedFiles")
+    }
+
+    /// Fixes PVFile partial paths that are missing the ROMs/ prefix
+    public func fixPartialPaths() async throws {
+        DLOG("Starting fixPartialPaths")
+
+        let realm = RomDatabase.sharedInstance.realm
+        let games = realm.objects(PVGame.self)
+        DLOG("Found \(games.count) games to check")
+
+        var fixCount = 0
+        for game in games {
+            guard let file = game.file else {
+                DLOG("Game \(game.title) has no file, skipping")
+                continue
+            }
+
+            let currentPath = file.relativePath
+            DLOG("Checking path for game \(game.title): \(currentPath)")
+
+            // Check if path needs fixing
+            if !currentPath.hasPrefix("ROMs/") {
+                // If it starts with the system ID, add ROMs/ prefix
+                if currentPath.hasPrefix(game.systemIdentifier + "/") {
+                    let newPath = "ROMs/" + currentPath
+                    DLOG("Fixing path: \(currentPath) -> \(newPath)")
+
+                    try realm.write {
+                        let newFile = PVFile(withPartialPath: newPath)
+                        game.file = newFile
+                    }
+                    fixCount += 1
+                    ILOG("Fixed partial path for \(game.title)")
+                } else {
+                    // If it's just a filename, add full path
+                    let newPath = "ROMs/\(game.systemIdentifier)/\(currentPath)"
+                    DLOG("Fixing path: \(currentPath) -> \(newPath)")
+
+                    try realm.write {
+                        let newFile = PVFile(withPartialPath: newPath)
+                        game.file = newFile
+                    }
+                    fixCount += 1
+                    ILOG("Fixed partial path for \(game.title)")
+                }
+            } else {
+                DLOG("Path already correct for \(game.title)")
+            }
+        }
+
+        DLOG("Completed fixPartialPaths - fixed \(fixCount) paths")
     }
 }
 
