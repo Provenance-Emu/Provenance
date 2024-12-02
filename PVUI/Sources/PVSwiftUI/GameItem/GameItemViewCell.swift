@@ -19,21 +19,23 @@ struct GameItemViewCell: SwiftUI.View {
     @State private var textMaxWidth: CGFloat = PVRowHeight
 
     var body: some SwiftUI.View {
-        VStack(alignment: .leading, spacing: 3) {
-            GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
-            if showGameTitles {
-                VStack(alignment: .leading, spacing: 0) {
-                    GameItemTitle(text: game.title, viewType: viewType)
-                    GameItemSubtitle(text: game.publishDate, viewType: viewType)
+        if !game.isInvalidated {
+            VStack(alignment: .leading, spacing: 3) {
+                GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
+                if showGameTitles {
+                    VStack(alignment: .leading, spacing: 0) {
+                        GameItemTitle(text: game.title, viewType: viewType)
+                        GameItemSubtitle(text: game.publishDate, viewType: viewType)
+                    }
+                    .frame(width: textMaxWidth)
                 }
-                .frame(width: textMaxWidth)
             }
-        }
-        .if(constrainHeight) { view in
-            view.frame(height: PVRowHeight)
-        }
-        .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
-            textMaxWidth = $0
+            .if(constrainHeight) { view in
+                view.frame(height: PVRowHeight)
+            }
+            .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
+                textMaxWidth = $0
+            }
         }
     }
 }

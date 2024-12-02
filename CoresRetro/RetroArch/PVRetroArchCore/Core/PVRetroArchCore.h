@@ -35,6 +35,8 @@
     bool coreOptionOverwrite;
     NSString* coreOptionConfigPath;
     NSString* coreOptionConfig;
+    // Controls
+    float xAxis, yAxis, ltXAxis, ltYAxis, rtXAxis, rtYAxis, axisMult;
 @public
     dispatch_queue_t _callbackQueue;
 }

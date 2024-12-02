@@ -27,18 +27,19 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     @Published
     public var conflicts: [ConflictsController.ConflictItem] = []
 
-    private let gameImporter: GameImporter
+    public var gameImporter: any GameImporting
+
     private let directoryWatcher: DirectoryWatcher
     private let conflictsWatcher: ConflictsWatcher
     private let biosWatcher: BIOSWatcher
 
     private var statusCheckTimer: Timer?
-    
+
     private var hudCoordinator: HUDCoordinator {
         AppState.shared.hudCoordinator
     }
 
-    public init(gameImporter: GameImporter, importPath: URL? = nil) {
+    public init(gameImporter: any GameImporting, importPath: URL? = nil) {
         let importPath = importPath ?? Paths.romsImportPath
 
         self.gameImporter = gameImporter
@@ -89,17 +90,22 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
     }
 
+    var statusExtractionSateObserver: Task<Void, Never>?
     private func setupExtractionStatusObserver() {
         let taskID = UUID()
         DLOG("Starting extraction status observer task: \(taskID)")
+        statusExtractionSateObserver?.cancel()
 
-        Task {
+        statusExtractionSateObserver = Task {
             defer { DLOG("Ending extraction status observer task: \(taskID)") }
 
             var hideTask: Task<Void, Never>?
             var isHidingHUD = false
+            var lastStatus: ExtractionStatus = .idle
 
             for await status in extractionStatusStream() {
+                guard lastStatus != status else { continue }
+                lastStatus = status
                 await MainActor.run {
                     DLOG("[\(taskID)] Received status: \(status)")
 
@@ -112,7 +118,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                         let hudState = Self.handleExtractionStatus(status)
                         await self.hudCoordinator.updateHUD(hudState)
                     }
-                    
+
                     hideTask?.cancel()
 
                     switch status {
@@ -122,7 +128,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                             isHidingHUD = false
                         }
                     case .idle:
-                        Task {
+                        hideTask = Task {
                             let hudState: HudState = .hidden
                             await self.hudCoordinator.updateHUD(hudState)
                         }
@@ -252,11 +258,24 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         Task {
             let initialScan = await scanInitialFiles(at: importPath)
             if !initialScan.isEmpty {
-                await gameImporter.startImport(forPaths: initialScan)
+                gameImporter.addImports(forPaths: initialScan)
             }
 
             for await extractedFiles in directoryWatcher.extractedFilesStream(at: importPath) {
-                await gameImporter.startImport(forPaths: extractedFiles)
+                var readyURLs:[URL] = []
+                for url in extractedFiles {
+                    if await (!directoryWatcher.isWatchingFile(at: url)) {
+                        readyURLs.append(url)
+                    }
+                }
+                if (!readyURLs.isEmpty) {
+                    gameImporter.addImports(forPaths: readyURLs)
+                }
+
+                if await (!directoryWatcher.isWatchingAnyFile()) {
+                    ILOG("I think all the imports are settled, might be ok to start the queue")
+                    gameImporter.startProcessing()
+                }
             }
         }
     }
@@ -265,19 +284,22 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         do {
             return try await FileManager.default.contentsOfDirectory(at: path,
                                                                      includingPropertiesForKeys: nil,
-                                                                     options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])
+                                                                     options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants,
+                                                                               .skipsHiddenFiles])
         } catch {
             ELOG("Error scanning initial files: \(error)")
             return []
         }
     }
 
+    /// auto scans ROM directories and adds to the import queue
     public func importROMDirectories() async {
         ILOG("PVGameLibrary: Starting Import")
         RomDatabase.reloadCache(force: true)
         RomDatabase.reloadFileSystemROMCache()
         let dbGames: [AnyHashable: PVGame] = await RomDatabase.gamesCache
         let dbSystems: [AnyHashable: PVSystem] = RomDatabase.systemCache
+        var queueGames = false
 
         for system in dbSystems.values {
             ILOG("PVGameLibrary: Importing \(system.identifier)")
@@ -286,30 +308,42 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 dbGames.index(forKey: (system.identifier as NSString).appendingPathComponent($0.lastPathComponent)) == nil
             }
             if !newGames.isEmpty {
-                ILOG("PVGameLibraryUpdatesController: Importing \(newGames)")
-                await gameImporter.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
-                #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-                await MainActor.run {
-                    Task {
-                        await self.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance)
-                    }
-                }
-                #endif
+                ILOG("PVGameLibraryUpdatesController: Adding \(newGames) to the queue")
+                gameImporter.addImports(forPaths: newGames, targetSystem:system)
+                queueGames = true
             }
-            ILOG("PVGameLibrary: Imported OK \(system.identifier)")
+            ILOG("PVGameLibrary: Added items for \(system.identifier) to queue")
         }
-        ILOG("PVGameLibrary: Import Complete")
+        if (queueGames) {
+            ILOG("PVGameLibrary: Queued new items, starting to process")
+            gameImporter.startProcessing()
+        }
+        ILOG("PVGameLibrary: importROMDirectories complete")
     }
 
     #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
     /// Spotlight indexing support
     @MainActor
     public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async {
-        // TODO: This is all wrong, we should register to listen to spotlightImportHandler,
-        // not overwrite it
         enum ImportEvent {
             case finished(md5: String, modified: Bool)
             case completed(encounteredConflicts: Bool)
+        }
+
+        /// Create a batch processor to handle multiple items at once
+        var pendingItems: [CSSearchableItem] = []
+        let batchSize = 50 /// Smaller batch size for more frequent updates
+
+        func processBatch() async {
+            guard !pendingItems.isEmpty else { return }
+
+            do {
+                try await spotlightIndex.indexSearchableItems(pendingItems)
+                DLOG("Indexed batch of \(pendingItems.count) items")
+                pendingItems.removeAll(keepingCapacity: true)
+            } catch {
+                ELOG("Error batch indexing games: \(error)")
+            }
         }
 
         let eventStream = AsyncStream<ImportEvent> { continuation in
@@ -325,42 +359,42 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         for await event in eventStream {
             switch event {
             case .finished(let md5, _):
-                addGameToSpotlight(md5: md5, spotlightIndex: spotlightIndex, database: database)
+                do {
+                    let realm = try await Realm()
+                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
+                        DLOG("No game found for MD5: \(md5)")
+                        continue
+                    }
+
+                    /// Create a detached copy of the game object
+                    let detachedGame = game.detached()
+
+                    let item = CSSearchableItem(
+                        uniqueIdentifier: detachedGame.spotlightUniqueIdentifier,
+                        domainIdentifier: "org.provenance-emu.game",
+                        attributeSet: detachedGame.spotlightContentSet
+                    )
+
+                    pendingItems.append(item)
+
+                    /// Process batch if we've reached the batch size
+                    if pendingItems.count >= batchSize {
+                        await processBatch()
+                    }
+
+                } catch {
+                    ELOG("Error accessing Realm or indexing game (MD5: \(md5)): \(error)")
+                }
             case .completed:
+                /// Process any remaining items
+                await processBatch()
                 break
             }
         }
 
-        // Clean up handlers
+        /// Clean up handlers
         GameImporter.shared.spotlightFinishedImportHandler = nil
         GameImporter.shared.spotlightCompletionHandler = nil
-    }
-
-    /// Assitant for Spotlight indexing
-    @MainActor
-    private func addGameToSpotlight(md5: String, spotlightIndex: CSSearchableIndex, database: RomDatabase) {
-        do {
-            let realm = try Realm()
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
-                DLOG("No game found for MD5: \(md5)")
-                return
-            }
-
-            // Create a detached copy of the game object
-            let detachedGame = game.detached()
-
-            let item = CSSearchableItem(uniqueIdentifier: detachedGame.spotlightUniqueIdentifier,
-                                        domainIdentifier: "org.provenance-emu.game",
-                                        attributeSet: detachedGame.spotlightContentSet)
-
-            spotlightIndex.indexSearchableItems([item]) { error in
-                if let error = error {
-                    ELOG("Error indexing game (MD5: \(md5)): \(error)")
-                }
-            }
-        } catch {
-            ELOG("Error accessing Realm or indexing game (MD5: \(md5)): \(error)")
-        }
     }
     #endif
 
@@ -377,16 +411,19 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         // Process priority files first
         if !priorityFiles.isEmpty {
             DLOG("Starting import for priority files")
-            await gameImporter.startImport(forPaths: priorityFiles)
+            gameImporter.addImports(forPaths: priorityFiles)
             DLOG("Finished importing priority files")
         }
 
         // Then process other files
         if !otherFiles.isEmpty {
             DLOG("Starting import for other files")
-            await gameImporter.startImport(forPaths: otherFiles)
+            gameImporter.addImports(forPaths: otherFiles)
             DLOG("Finished importing other files")
         }
+
+        //it seems reasonable to kick off the queue here
+//        gameImporter.startProcessing()
     }
 
     private func setupBIOSObserver() {
@@ -415,11 +452,11 @@ extension PVGameLibraryUpdatesController {
     @MainActor
     private static func handleExtractionStatus(_ status: ExtractionStatus) -> HudState {
         switch status {
-        case .started(let path):
+        case .started(let path), .startedArchive(let path):
             return .titleAndProgress(title: labelMaker(path), progress: 0)
-        case .updated(let path):
+        case .updated(let path), .updatedArchive(let path):
             return .titleAndProgress(title: labelMaker(path), progress: 0.5)
-        case .completed(_):
+        case .completed(_), .completedArchive(_):
             return .titleAndProgress(title: "Extraction Complete!", progress: 1)
         case .idle:
             return .hidden
@@ -438,7 +475,8 @@ extension PVGameLibraryUpdatesController {
 
 extension PVGameLibraryUpdatesController: ConflictsController {
     public func resolveConflicts(withSolutions solutions: [URL : System]) async {
-        await gameImporter.resolveConflicts(withSolutions: solutions)
+        //TODO: fix this
+//        await gameImporter.resolveConflicts(withSolutions: solutions)
         await updateConflicts()
     }
 
@@ -458,17 +496,22 @@ extension PVGameLibraryUpdatesController: ConflictsController {
 //                self.conflicts = []
 //                return
 //            }
-            let filesInConflictsFolder = conflictsWatcher.conflictFiles
-
-            let sortedFiles = PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
-
-            self.conflicts = sortedFiles.compactMap { file -> (path: URL, candidates: [System])? in
-                let candidates = RomDatabase.systemCache.values
-                    .filter { $0.supportedExtensions.contains(file.pathExtension.lowercased()) }
-                    .map { $0.asDomain() }
-
-                return candidates.isEmpty ? nil : .init((path: file, candidates: candidates))
+            withPerceptionTracking {
+                let filesInConflictsFolder = conflictsWatcher.conflictFiles
+            } onChange: {
+                self.conflictsWatcher.objectWillChange.send()
             }
+
+            //TODO: fix alongside conflicts
+//            let sortedFiles = PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
+//
+//            self.conflicts = sortedFiles.compactMap { file -> (path: URL, candidates: [System])? in
+//                let candidates = RomDatabase.systemCache.values
+//                    .filter { $0.supportedExtensions.contains(file.pathExtension.lowercased()) }
+//                    .map { $0.asDomain() }
+//
+//                return candidates.isEmpty ? nil : .init((path: file, candidates: candidates))
+//            }
         }
     }
 }

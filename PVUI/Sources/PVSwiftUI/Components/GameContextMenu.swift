@@ -3,7 +3,7 @@
 //  Provenance
 //
 //  Created by Ian Clawson on 1/28/22.
-//  Copyright © 2022 Provenance Emu. All rights reserved.
+//  Copyright 2022 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -36,6 +36,12 @@ struct GameContextMenu: SwiftUI.View {
                     showMoreInfo(forGame: game)
                 } label: { Label("Game Info", systemImage: "info.circle") }
                 Button {
+                    showSaveStatesManager(forGame: game)
+                } label: {
+                    Label("Manage Save States", systemImage: "clock.arrow.circlepath")
+                }
+                .disabled(game.saveStates.isEmpty)
+                Button {
                     // Toggle isFavorite for the selected PVGame
                     let thawedGame = game.thaw()!
                     try! Realm().write {
@@ -48,6 +54,12 @@ struct GameContextMenu: SwiftUI.View {
                 Button {
                     promptUserMD5CopiedToClipboard(forGame: game)
                 } label: { Label("Copy MD5 URL", systemImage: "number.square") }
+
+                if game.userPreferredCoreID != nil || game.system.userPreferredCoreID != nil {
+                    Button {
+                        resetCorePreferences(forGame: game)
+                    } label: { Label("Reset Core Preferences", systemImage: "arrow.counterclockwise") }
+                }
     #if !os(tvOS)
                 Button {
                     DLOG("GameContextMenu: Choose Cover button tapped")
@@ -73,11 +85,15 @@ struct GameContextMenu: SwiftUI.View {
                 } label: { Label("Move to System", systemImage: "folder.fill.badge.plus") }
                 if #available(iOS 15, tvOS 15, macOS 12, *) {
                     Button(role: .destructive) {
-                        rootDelegate?.attemptToDelete(game: game)
+                        Task.detached { @MainActor in
+                            rootDelegate?.attemptToDelete(game: game)
+                        }
                     } label: { Label("Delete", systemImage: "trash") }
                 } else {
                     Button {
-                        rootDelegate?.attemptToDelete(game: game)
+                        Task.detached { @MainActor in
+                            rootDelegate?.attemptToDelete(game: game)
+                        }
                     } label: { Label("Delete", systemImage: "trash") }
                 }
             }
@@ -88,6 +104,7 @@ struct GameContextMenu: SwiftUI.View {
 extension GameContextMenu {
 
     func showMoreInfo(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
         let moreInfoCollectionVC = GameMoreInfoViewController(game: game)
         if let rootDelegate = rootDelegate as? UIViewController {
 
@@ -102,6 +119,7 @@ extension GameContextMenu {
     }
 
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
         // Get the MD5 of the game
         let md5 = game.md5
         // Copy to pasteboard
@@ -113,6 +131,7 @@ extension GameContextMenu {
     }
 
     func pasteArtwork(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
         #if !os(tvOS)
         DLOG("Attempting to paste artwork for game: \(game.title)")
         let pasteboard = UIPasteboard.general
@@ -151,8 +170,15 @@ extension GameContextMenu {
     }
 
     func share(game: PVGame) {
+        guard !game.isInvalidated else { return }
+        #if !os(tvOS)
+        DLOG("Attempting to share game: \(game.title)")
         #warning("TODO: Share button action")
         self.rootDelegate?.showUnderConstructionAlert()
+        #else
+        DLOG("Sharing not supported on this platform")
+        rootDelegate?.showMessage("Sharing is not supported on this platform.", title: "Not Supported")
+        #endif
     }
 
     private func saveArtwork(image: UIImage, forGame game: PVGame) {
@@ -195,6 +221,7 @@ extension GameContextMenu {
     }
 
     private func clearCustomArtwork(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
         DLOG("GameContextMenu: Attempting to clear custom artwork for game: \(game.title)")
         do {
             try RomDatabase.sharedInstance.writeTransaction {
@@ -210,5 +237,51 @@ extension GameContextMenu {
             rootDelegate?.showMessage("Failed to clear custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
         }
     }
-}
 
+    private func resetCorePreferences(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let hasGamePreference = game.userPreferredCoreID != nil
+        let hasSystemPreference = game.system.userPreferredCoreID != nil
+
+        let alert = UIAlertController(title: "Reset Core Preferences",
+                                    message: "Which core preference would you like to reset?",
+                                    preferredStyle: .alert)
+
+        if hasGamePreference {
+            alert.addAction(UIAlertAction(title: "Game Preference", style: .default) { _ in
+                try! Realm().write {
+                    game.thaw()?.userPreferredCoreID = nil
+                }
+            })
+        }
+
+        if hasSystemPreference {
+            alert.addAction(UIAlertAction(title: "System Preference", style: .default) { _ in
+                try! Realm().write {
+                    game.system.thaw()?.userPreferredCoreID = nil
+                }
+            })
+        }
+
+        if hasGamePreference && hasSystemPreference {
+            alert.addAction(UIAlertAction(title: "Both", style: .default) { _ in
+                try! Realm().write {
+                    game.thaw()?.userPreferredCoreID = nil
+                    game.system.thaw()?.userPreferredCoreID = nil
+                }
+            })
+        }
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let viewController = windowScene.windows.first?.rootViewController {
+            viewController.present(alert, animated: true)
+        }
+    }
+
+    private func showSaveStatesManager(forGame game: PVGame) {
+        guard !game.isInvalidated else { return }
+        contextMenuDelegate?.gameContextMenu(self, didRequestShowSaveStatesFor: game)
+    }
+}

@@ -42,6 +42,10 @@ import PVSettings
 import PVWebServer
 #endif
 
+#if os(tvOS)
+import PVUI_TV
+#endif
+
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
 
@@ -524,7 +528,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 #if os(iOS)
         collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: BundleLoader.module), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 #else
-        collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: BundleLoader.module), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: PVUI_TV.BundleLoader.bundle), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 #endif
         // Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas
@@ -561,9 +565,11 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         becomeFirstResponder()
 
                 // Extend edges under top bars
-        if #available(iOS 17.0, tvOS 17.0, *) {
+        #if !os(tvOS)
+        if #available(iOS 17.0, *) {
             navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
         }
+        #endif
         extendedLayoutIncludesOpaqueBars = true
         edgesForExtendedLayout = .all
 
@@ -1010,7 +1016,9 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                         self.hud.hide(animated:true, afterDelay: 1.0)
                         Task.detached(priority: .utility) {
                             do {
-                                try await self.gameImporter.importFiles(atPaths: paths)
+                                //unclear if this would actually work...
+                                self.gameImporter.addImports(forPaths: paths)
+                                self.gameImporter.startProcessing()
                             } catch {
                                 ELOG("Error: \(error.localizedDescription)")
                             }

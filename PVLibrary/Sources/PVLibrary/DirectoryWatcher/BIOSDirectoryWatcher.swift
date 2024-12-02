@@ -13,18 +13,14 @@ import PVLogging
 import Perception
 import PVFileSystem
 
-#if !os(tvOS)
-@Observable
-#else
 @Perceptible
-#endif
 public final class BIOSWatcher: ObservableObject {
     public static let shared = BIOSWatcher()
 
     private let biosPath: URL
     private var directoryWatcher: DirectoryWatcher?
 
-    @ObservationIgnored
+    //@ObservationIgnored
     private var newBIOSFilesContinuation: AsyncStream<[URL]>.Continuation?
 
     public var newBIOSFilesSequence: AsyncStream<[URL]> {

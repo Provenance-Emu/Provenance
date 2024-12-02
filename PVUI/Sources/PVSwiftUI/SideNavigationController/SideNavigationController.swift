@@ -72,7 +72,7 @@ open class SideNavigationController: UIViewController {
         // swiftlint:enable inert_defer
     }
 
-    fileprivate var visibleSideViewController: UIViewController? {
+    public fileprivate(set) var visibleSideViewController: UIViewController? {
         willSet(newValue) {
             if self.visibleSideViewController != newValue {
                 self.visibleSideViewController?.view.isHidden = true

@@ -80,7 +80,32 @@ extension PVRootViewController: WebServerActivatorController {
 
 #if canImport(SafariServices)
 extension PVRootViewController: SFSafariViewControllerDelegate {
-
+    public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+        controller.dismiss(animated: true) { [weak self] in
+            // Check if there are any imports in the queue
+            DLOG("safariViewControllerDidFinish, checking if should present ImportStatusView")
+            if GameImporter.shared.importQueue.count > 0 {
+                DLOG("safariViewControllerDidFinish, there are imports in the queue, presenting ImportStatusView")
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self, let updatesController = self.updatesController else {
+                        WLOG("Nil PVRootViewController or updates controller, can't present ImportStatusView")
+                        return
+                    }
+                    let gameImporter = AppState.shared.gameImporter ?? GameImporter.shared
+                    let settingsView = ImportStatusView(
+                        updatesController: self.updatesController,
+                        gameImporter: gameImporter,
+                        delegate: self
+                    ) {
+                        gameImporter.clearCompleted()
+                    }
+                    let hostingController = UIHostingController(rootView: settingsView)
+                    let navigationController = UINavigationController(rootViewController: hostingController)
+                    self.present(navigationController, animated: true)
+                }
+            }
+        }
+    }
 }
 #endif
 

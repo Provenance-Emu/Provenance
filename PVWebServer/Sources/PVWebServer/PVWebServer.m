@@ -43,7 +43,7 @@ NSUInteger webDavPort = 81;
 @end
 
 @implementation PVWebServer
-@dynamic documentsDirectory, IPAddress, URLString, WebDavURLString, URL;
+@dynamic documentsDirectory, IPAddress, URLString, WebDavURLString, URL, appGroupDocumentsDirectory;
 + (PVWebServer *)sharedInstance
 {
     static PVWebServer *_sharedInstance;
@@ -61,7 +61,11 @@ NSUInteger webDavPort = 81;
 
 - (instancetype)init {
     if ((self = [super init])) {
+#if TARGET_OS_TV
         NSString* importsFolder = self.documentsDirectory;
+#else
+        NSString* importsFolder = /*self.appGroupDocumentsDirectory ?:*/ self.documentsDirectory;
+#endif
         self.webServer = [[GCDWebUploader alloc] initWithUploadDirectory:importsFolder ];
         self.webServer.delegate = self;
         self.webServer.allowHiddenItems = NO;
@@ -74,8 +78,21 @@ NSUInteger webDavPort = 81;
     return self;
 }
 
-- (NSString*)documentsDirectory
-{
+- (NSString*) PVAppGroupId {
+    return [[NSBundle mainBundle] infoDictionary][@"APP_GROUP_IDENTIFIER"] ?: @"group.org.provenance-emu.provenance";
+}
+
+- (NSString*)appGroupDocumentsDirectory {
+    static NSString* documentPath;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        documentPath = [[[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:self.PVAppGroupId] URLByAppendingPathComponent:@"Documents"].path;
+    });
+    
+    return documentPath;
+}
+
+- (NSString*)documentsDirectory {
     static NSString* documentPath;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

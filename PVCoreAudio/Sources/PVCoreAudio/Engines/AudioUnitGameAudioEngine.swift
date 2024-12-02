@@ -318,7 +318,7 @@ public final class AudioUnitGameAudioEngine: NSObject, AudioEngineProtocol {
         }
 
         /// Setup output node
-        #if os(iOS)
+        #if os(iOS) || os(tvOS)
         let componentSubType = kAudioUnitSubType_RemoteIO
         #else
         let componentSubType = kAudioUnitSubType_DefaultOutput

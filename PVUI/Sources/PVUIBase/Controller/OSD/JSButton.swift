@@ -12,6 +12,7 @@ import PVSupport
 import UIKit
 #endif
 import PVSettings
+import PVThemes
 
 protocol JSButtonDelegate: AnyObject {
     func buttonPressed(_ button: JSButton)
@@ -71,7 +72,7 @@ final class JSButton: MovableButtonView {
             if Defaults[.buttonTints] {
                 backgroundImageView?.tintColor = tintColor
             } else {
-                backgroundImageView?.tintColor = UIColor.white
+                backgroundImageView?.tintColor = ThemeManager.shared.currentPalette.defaultTintColor ?? UIColor.white
             }
         }
     }

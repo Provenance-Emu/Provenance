@@ -14,32 +14,43 @@ import PVPrimitives
 
 @objcMembers
 public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFileProvider {
-    public dynamic var id = UUID().uuidString
-    public dynamic var game: PVGame!
-    public dynamic var core: PVCore!
-    public dynamic var file: PVFile!
-    public dynamic var date: Date = Date()
-    public dynamic var lastOpened: Date?
-    public dynamic var image: PVImageFile?
-    public dynamic var isAutosave: Bool = false
+    @Persisted(wrappedValue: UUID().uuidString, primaryKey: true) public var id: String
+    @Persisted public var game: PVGame!
+    @Persisted public var core: PVCore!
+    @Persisted public var file: PVFile!
+    @Persisted public var date: Date = Date()
+    @Persisted public var lastOpened: Date?
+    @Persisted public var image: PVImageFile?
+    @Persisted public var isAutosave: Bool = false
 
-    public dynamic var createdWithCoreVersion: String!
+    @Persisted public var isPinned: Bool = false
+    @Persisted public var isFavorite: Bool = false
+    
+    @Persisted public var userDescription: String? = nil
 
-    public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, image: PVImageFile? = nil, isAutosave: Bool = false) {
+    @Persisted public var createdWithCoreVersion: String!
+
+    public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, date: Date = Date(), image: PVImageFile? = nil, isAutosave: Bool = false, isPinned: Bool = false, isFavorite: Bool = false, userDescription: String? = nil, createdWithCoreVersion: String? = nil) {
         self.init()
         self.game = game
         self.file = file
         self.image = image
+        self.date = date
         self.isAutosave = isAutosave
+        self.isPinned = isPinned
+        self.isFavorite = isFavorite
+        self.userDescription = userDescription
         self.core = core
-        createdWithCoreVersion = core.projectVersion
+        self.createdWithCoreVersion = createdWithCoreVersion ?? core.projectVersion
     }
 
     public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
         return lhs.file.url == rhs.file.url
     }
+}
 
-    public override static func primaryKey() -> String? {
-        return "id"
+public extension PVSaveState {
+    var size: UInt64 {
+        file.size + (image?.size ?? 0)
     }
 }

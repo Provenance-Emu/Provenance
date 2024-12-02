@@ -11,6 +11,57 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVThemes
+import Combine
+
+class ContinuesSectionViewModel: ObservableObject {
+    @Published var currentPage: Int = 0
+    @Published var selectedItemId: String?
+    @Published var hasFocus: Bool = false
+
+    /// Filtered save states from parent
+    private var saveStates: [PVSaveState] = []
+    private var isLandscapePhone: Bool = false
+
+    var itemsPerPage: Int {
+        isLandscapePhone ? 2 : 1
+    }
+
+    func updateSaveStates(_ states: [PVSaveState], isLandscape: Bool) {
+        saveStates = states
+        isLandscapePhone = isLandscape
+    }
+
+    func handleHorizontalNavigation(_ value: Float) -> (nextItemId: String?, nextPage: Int)? {
+        guard !saveStates.isEmpty else {
+            DLOG("ContinuesSectionViewModel: No items available")
+            return nil
+        }
+
+        let items = saveStates.map { $0.id }
+
+        // Get current index
+        let currentIndex: Int
+        if let selectedId = selectedItemId,
+           let index = items.firstIndex(of: selectedId) {
+            currentIndex = index
+        } else {
+            currentIndex = 0
+        }
+
+        // Calculate next index
+        let nextIndex: Int
+        if value < 0 {
+            nextIndex = currentIndex > 0 ? currentIndex - 1 : items.count - 1
+        } else {
+            nextIndex = currentIndex < items.count - 1 ? currentIndex + 1 : 0
+        }
+
+        guard nextIndex >= 0 && nextIndex < items.count else { return nil }
+
+        let nextPage = nextIndex / itemsPerPage
+        return (items[nextIndex], nextPage)
+    }
+}
 
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueSection: SwiftUI.View {
@@ -18,14 +69,45 @@ struct HomeContinueSection: SwiftUI.View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
+    /// Filtered save states based on console identifier
     @ObservedResults(
         PVSaveState.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
-    ) var allSaveStates
+    ) private var filteredSaveStates
 
     weak var rootDelegate: PVRootDelegate?
     let defaultHeight: CGFloat = 260
     var consoleIdentifier: String?
+
+    @Binding var parentFocusedSection: HomeSectionType?
+    @Binding var parentFocusedItem: String?
+
+    @StateObject private var viewModel = ContinuesSectionViewModel()
+
+    init(rootDelegate: PVRootDelegate?, consoleIdentifier: String?, parentFocusedSection: Binding<HomeSectionType?>, parentFocusedItem: Binding<String?>) {
+        self.rootDelegate = rootDelegate
+        self.consoleIdentifier = consoleIdentifier
+        self._parentFocusedSection = parentFocusedSection
+        self._parentFocusedItem = parentFocusedItem
+
+        // Create the filter predicate based on console identifier
+        let baseFilter = NSPredicate(format: "game != nil")
+        if let consoleId = consoleIdentifier {
+            let consoleFilter = NSPredicate(format: "game.systemIdentifier == %@", consoleId)
+            let combinedFilter = NSCompoundPredicate(andPredicateWithSubpredicates: [baseFilter, consoleFilter])
+            _filteredSaveStates = ObservedResults(
+                PVSaveState.self,
+                filter: combinedFilter,
+                sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+            )
+        } else {
+            _filteredSaveStates = ObservedResults(
+                PVSaveState.self,
+                filter: baseFilter,
+                sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+            )
+        }
+    }
 
     var isLandscapePhone: Bool {
         #if os(iOS)
@@ -44,78 +126,240 @@ struct HomeContinueSection: SwiftUI.View {
         isLandscapePhone ? 2 : 1
     }
 
-    var filteredSaveStates: [PVSaveState] {
-        let validSaveStates = allSaveStates.filter { !$0.isInvalidated }
-
-        if let consoleIdentifier = consoleIdentifier {
-            return validSaveStates.filter {
-                !$0.game.isInvalidated &&
-                $0.game.systemIdentifier == consoleIdentifier
-            }
-        } else {
-            return validSaveStates.filter { !$0.game.isInvalidated }
-        }
+    /// Number of pages based on number of save states and items per page
+    private var pageCount: Int {
+        let itemsPerPage = viewModel.itemsPerPage
+        return max(1, Int(ceil(Double(filteredSaveStates.count) / Double(itemsPerPage))))
     }
 
-    var gridColumns: [GridItem] {
-        if isLandscapePhone {
-            [GridItem(.flexible()), GridItem(.flexible())]
-        } else {
-            [GridItem(.flexible())]
-        }
+    /// Grid columns configuration
+    private var gridColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 16), count: columns)
     }
+
+    // Add properties for navigation
+    @State private var continuousNavigationTask: Task<Void, Never>?
+    @State private var delayTask: Task<Void, Never>?
+    @State private var gamepadCancellable: AnyCancellable?
+    @State private var selectedPage = 0
 
     var body: some SwiftUI.View {
-        TabView {
-            if filteredSaveStates.count > 0 {
-                ForEach(0..<(isLandscapePhone ? (filteredSaveStates.count + 1) / 2 : filteredSaveStates.count), id: \.self) { pageIndex in
-                    LazyVGrid(columns: gridColumns, spacing: 8) {
-                        if isLandscapePhone {
-                            ForEach(pageIndex * 2..<min(pageIndex * 2 + 2, filteredSaveStates.count), id: \.self) { index in
-                                HomeContinueItemView(
-                                    continueState: filteredSaveStates[index],
-                                    height: adjustedHeight,
-                                    hideSystemLabel: consoleIdentifier != nil
-                                ) {
-                                    Task.detached { @MainActor in
-                                        await rootDelegate?.root_load(
-                                            filteredSaveStates[index].game,
-                                            sender: self,
-                                            core: filteredSaveStates[index].core,
-                                            saveState: filteredSaveStates[index]
-                                        )
-                                    }
-                                }
-                            }
-                        } else {
-                            HomeContinueItemView(
-                                continueState: filteredSaveStates[pageIndex],
-                                height: adjustedHeight,
-                                hideSystemLabel: consoleIdentifier != nil
-                            ) {
-                                Task.detached { @MainActor in
-                                    await rootDelegate?.root_load(
-                                        filteredSaveStates[pageIndex].game,
-                                        sender: self,
-                                        core: filteredSaveStates[pageIndex].core,
-                                        saveState: filteredSaveStates[pageIndex]
-                                    )
-                                }
-                            }
-                        }
-                    }
+        TabView(selection: $viewModel.currentPage) {
+            if !filteredSaveStates.isEmpty {
+                ForEach(0..<pageCount, id: \.self) { pageIndex in
+                    SaveStatesGridView(
+                        pageIndex: pageIndex,
+                        filteredSaveStates: filteredSaveStates,
+                        isLandscapePhone: isLandscapePhone,
+                        gridColumns: gridColumns,
+                        adjustedHeight: adjustedHeight,
+                        hideSystemLabel: consoleIdentifier != nil,
+                        rootDelegate: rootDelegate,
+                        parentFocusedSection: $parentFocusedSection,
+                        parentFocusedItem: $parentFocusedItem,
+                        viewModel: viewModel
+                    )
                     .padding(.horizontal)
+                    .tag(pageIndex)
                 }
             } else {
-                Text("No Continues")
-                    .tag("no continues")
-                    .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                EmptyContinuesView()
             }
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(filteredSaveStates.count)
         .frame(height: adjustedHeight)
+        .onAppear {
+            setupGamepadHandling()
+        }
+        .onDisappear {
+            gamepadCancellable?.cancel()
+            delayTask?.cancel()
+            continuousNavigationTask?.cancel()
+        }
+        .onChange(of: filteredSaveStates) { newValue in
+            viewModel.updateSaveStates(Array(newValue), isLandscape: isLandscapePhone)
+        }
+        .onChange(of: viewModel.currentPage) { newPage in
+            handlePageChange(newPage)
+        }
+    }
+
+    private func setupGamepadHandling() {
+        DLOG("HomeContinueSection: Setting up gamepad handling")
+        gamepadCancellable = GamepadManager.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [self] event in
+                DLOG("HomeContinueSection: Received gamepad event: \(event)")
+                switch event {
+                case .buttonPress(let isPressed):
+                    if isPressed {
+                        DLOG("HomeContinueSection: Button pressed")
+                        handleButtonPress()
+                    }
+                case .horizontalNavigation(let value, let isPressed):
+                    if isPressed {
+                        DLOG("HomeContinueSection: Horizontal navigation: \(value)")
+                        handleHorizontalNavigation(value)
+                    }
+                default:
+                    break
+                }
+            }
+    }
+
+    private func handleButtonPress() {
+        if let focused = parentFocusedItem,
+           let saveState = filteredSaveStates.first(where: { $0.id == focused }) {
+            Task.detached { @MainActor in
+                await self.rootDelegate?.root_load(
+                    saveState.game,
+                    sender: self,
+                    core: saveState.core,
+                    saveState: saveState
+                )
+            }
+        }
+    }
+
+    private func handleHorizontalNavigation(_ value: Float) {
+        guard parentFocusedSection == .recentSaveStates else { return }
+
+        let items = filteredSaveStates.map { $0.id }
+        DLOG("HomeContinueSection: Navigation - Total items: \(items.count)")
+
+        guard !items.isEmpty else {
+            DLOG("HomeContinueSection: No items available")
+            return
+        }
+
+        // Get current index
+        let currentIndex: Int
+        if let currentItem = parentFocusedItem,
+           let index = items.firstIndex(of: currentItem) {
+            currentIndex = index
+            DLOG("HomeContinueSection: Current index: \(currentIndex)")
+        } else {
+            currentIndex = 0
+            DLOG("HomeContinueSection: No current selection, starting at 0")
+        }
+
+        // Calculate next index
+        let nextIndex: Int
+        if value < 0 {
+            nextIndex = currentIndex > 0 ? currentIndex - 1 : items.count - 1
+            DLOG("HomeContinueSection: Moving left to index: \(nextIndex)")
+        } else {
+            nextIndex = currentIndex < items.count - 1 ? currentIndex + 1 : 0
+            DLOG("HomeContinueSection: Moving right to index: \(nextIndex)")
+        }
+
+        // Update selection
+        parentFocusedItem = items[nextIndex]
+
+        // Calculate and update page based on items per page
+        let itemsPerPage = isLandscapePhone ? 2 : 1
+        let newPage = nextIndex / itemsPerPage
+
+        DLOG("HomeContinueSection: Items per page: \(itemsPerPage), New page: \(newPage)")
+
+        // Ensure TabView updates with animation
+        withAnimation {
+            viewModel.currentPage = newPage
+        }
+
+        DLOG("HomeContinueSection: Final state - Page: \(newPage), Item: \(items[nextIndex]), Items per page: \(itemsPerPage)")
+    }
+
+    private func handlePageChange(_ newPage: Int) {
+        let itemsPerPage = isLandscapePhone ? 2 : 1
+        let items = filteredSaveStates.map { $0.id }
+
+        DLOG("HomeContinueSection: Page changed to \(newPage)")
+
+        // Calculate the first item index for this page
+        let firstItemIndex = newPage * itemsPerPage
+        guard firstItemIndex < items.count else {
+            DLOG("HomeContinueSection: Invalid page index")
+            return
+        }
+
+        // If we're not already focused on an item on this page, update focus
+        if let currentItem = parentFocusedItem,
+           let currentIndex = items.firstIndex(of: currentItem) {
+            let currentPage = currentIndex / itemsPerPage
+            if currentPage != newPage {
+                DLOG("HomeContinueSection: Updating focus to match new page")
+                parentFocusedSection = .recentSaveStates
+                parentFocusedItem = items[firstItemIndex]
+            }
+        } else {
+            // No current focus, set it to first item on page
+            DLOG("HomeContinueSection: No current focus, setting to first item on page")
+            parentFocusedSection = .recentSaveStates
+            parentFocusedItem = items[firstItemIndex]
+        }
+    }
+}
+
+// Create a new struct for the grid view
+private struct SaveStatesGridView: View {
+    let pageIndex: Int
+    let filteredSaveStates: Results<PVSaveState>
+    let isLandscapePhone: Bool
+    let gridColumns: [GridItem]
+    let adjustedHeight: CGFloat
+    let hideSystemLabel: Bool
+    weak var rootDelegate: PVRootDelegate?
+
+    @Binding var parentFocusedSection: HomeSectionType?
+    @Binding var parentFocusedItem: String?
+    @ObservedObject var viewModel: ContinuesSectionViewModel
+
+    private var saveStatesForPage: [PVSaveState] {
+        let startIndex = pageIndex * viewModel.itemsPerPage
+        let endIndex = min(startIndex + viewModel.itemsPerPage, filteredSaveStates.count)
+        return Array(filteredSaveStates[startIndex..<endIndex])
+    }
+
+    var body: some View {
+        LazyVGrid(columns: gridColumns, spacing: 16) {
+            ForEach(saveStatesForPage, id: \.id) { saveState in
+                HomeContinueItemView(
+                    continueState: saveState,
+                    height: adjustedHeight,
+                    hideSystemLabel: hideSystemLabel,
+                    action: {
+                        Task.detached { @MainActor in
+                            await rootDelegate?.root_load(
+                                saveState.game,
+                                sender: self,
+                                core: saveState.core,
+                                saveState: saveState
+                            )
+                        }
+                    },
+                    isFocused: parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id
+                )
+                .focusableIfAvailable()
+                .onChange(of: parentFocusedItem) { newValue in
+                    if newValue == saveState.id {
+                        parentFocusedSection = .recentSaveStates
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct EmptyContinuesView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    var body: some View {
+        Text("No Continues")
+            .tag("no continues")
+            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
     }
 }
 

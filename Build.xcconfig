@@ -2,7 +2,7 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 
 MARKETING_VERSION = 3.0.0
-CURRENT_PROJECT_VERSION = 2817
+CURRENT_PROJECT_VERSION = 2819
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1  NONJAILBROKEN=1
 
@@ -26,6 +26,9 @@ PRODUCT_BUNDLE_IDENTIFIER_LITE = $(ORG_PREFIX).$(PROJECT_NAME:lower).lite
 APP_GROUP_IDENTIFIER        = group.$(ORG_PREFIX).$(PROJECT_NAME:lower)
 ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_PREFIX).$(PROJECT_NAME:lower)
 
+// ICONS
+ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = AppIcon-8bit1 AppIcon-8bit2 AppIcon-8bit3 AppIcon-8bit4 AppIcon-8bit5 AppIcon-Blue-Negative AppIcon-Blue AppIcon-Cyan AppIcon-Gem AppIcon-Gold AppIcon-Paint1 AppIcon-Paint2 AppIcon-Purple AppIcon-Seafoam AppIcon-Yellow
+ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = ProvenanceBlue
 
 // -- Entitlements based off of CodeSigning settings
 IOS_CODE_SIGN_ENTITLEMENTS_YES = Provenance/Provenance.entitlements

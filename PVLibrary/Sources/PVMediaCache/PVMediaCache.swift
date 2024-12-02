@@ -268,40 +268,56 @@ public final class PVMediaCache: NSObject, Sendable {
     #else
     public typealias ImageFetchCompletion = @Sendable (_ key: String, _ image: UIImage?) -> Void
 
-    @discardableResult
-    public func image(forKey key: String, completion: ImageFetchCompletion? = nil) -> BlockOperation? {
-        DLOG("Attempting to fetch image for key: \(key)")
+    /// Async version of image fetching
+    public func image(forKey key: String) async -> UIImage? {
         guard !key.isEmpty else {
             DLOG("Error: Key was empty")
-            DispatchQueue.main.async {
-                completion?(key, nil)
-            }
             return nil
         }
 
+        DLOG("Attempting to fetch image for key: \(key)")
+        let keyHash = key.md5Hash
+        let cacheDir = PVMediaCache.cachePath
+        let cachePath = cacheDir.appendingPathComponent(keyHash, isDirectory: false).path
+        DLOG("Cache path for key: \(cachePath)")
+
+        // Check memory cache first
+        if let cachedImage = await MainActor.run(body: {
+            PVMediaCache.memCache.object(forKey: keyHash as NSString)
+        }) {
+            DLOG("Image found in memory cache")
+            return cachedImage
+        }
+
+        // Check disk cache
+        guard FileManager.default.fileExists(atPath: cachePath) else {
+            DLOG("Image not found on disk")
+            return nil
+        }
+
+        DLOG("Attempting to load image from disk")
+        guard let image = UIImage(contentsOfFile: cachePath) else {
+            DLOG("Failed to load image from disk")
+            return nil
+        }
+
+        // Store in memory cache
+        await MainActor.run {
+            PVMediaCache.memCache.setObject(image, forKey: keyHash as NSString)
+            DLOG("Image added to memory cache")
+        }
+
+        return image
+    }
+
+    /// Legacy completion handler version that internally uses the async version
+    @discardableResult
+    public func image(forKey key: String, completion: ImageFetchCompletion? = nil) -> BlockOperation? {
         let operation = BlockOperation { [weak self] in
             guard let self = self else { return }
-            let cacheDir = PVMediaCache.cachePath
-            let keyHash = key.md5Hash
-            let cachePath = cacheDir.appendingPathComponent(keyHash, isDirectory: false).path
-            DLOG("Cache path for key: \(cachePath)")
 
-            Task { @MainActor in
-                var image: UIImage?
-                image = PVMediaCache.memCache.object(forKey: keyHash as NSString)
-                DLOG("Image found in memory cache: \(image != nil)")
-
-                if image == nil, FileManager.default.fileExists(atPath: cachePath) {
-                    DLOG("Attempting to load image from disk")
-                    image = UIImage(contentsOfFile: cachePath)
-                    DLOG("Image loaded from disk: \(image != nil)")
-
-                    if let image = image {
-                        PVMediaCache.memCache.setObject(image, forKey: keyHash as NSString)
-                        DLOG("Image added to memory cache")
-                    }
-                }
-
+            Task {
+                let image = await self.image(forKey: key)
                 DispatchQueue.main.async {
                     completion?(key, image)
                 }

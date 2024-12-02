@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import PVSettings
+import PVPrimitives
 
 @objc
 public enum ShaderType: UInt, Codable {
@@ -43,9 +45,16 @@ public final class MetalShaderManager: NSObject, ShaderProvider {
         let shaders: [Shader] = [
             .init(type: .vertex, name: "Fullscreen", function: "fullscreen_vs"),
             .init(type: .blitter, name: "Blitter", function: "blit_ps"),
-            .init(type: .filter, name: "CRT", function: "crt_filter_ps"),
-            .init(type: .filter, name: "Simple CRT", function: "simpleCRT")
+            .init(type: .filter, name: "Complex CRT", function: "crt_filter_ps"),
+            .init(type: .filter, name: "Simple CRT", function: "simpleCRT"),
+            .init(type: .filter, name: "LCD", function: "lcdFilter"),
+            .init(type: .filter, name: "Line Tron", function: "lineTron"),
+            .init(type: .filter, name: "Mega Tron", function: "megaTron"),
+            .init(type: .filter, name: "ulTron", function: "ultron"),
+            .init(type: .filter, name: "Game Boy", function: "gameBoyFilter"),
+            .init(type: .filter, name: "VHS", function: "vhsFilter")
         ]
+        ILOG("Registered shaders: \(shaders.map { $0.name })")
         return shaders
     }()
 
@@ -67,6 +76,26 @@ public final class MetalShaderManager: NSObject, ShaderProvider {
     @objc
     public func filterShader(forName name: String) -> Shader? {
         return filterShaders.first(where: { $0.name == name })
+    }
+
+    public func filterShader(forOption option: MetalFilterModeOption, screenType: ScreenTypeObjC) -> Shader? {
+        switch option {
+        case .none:
+            return nil
+        case .always(let filter):
+            return filterShaders.first(where: { $0.name == filter.description })
+        case .auto(let crt, let lcd):
+            switch screenType {
+            case .colorLCD, .monochromaticLCD:
+                return filterShaders.first(where: { $0.name == lcd.description })
+            case .dotMatrix:
+                return filterShaders.first(where: { $0.name == "Game Boy" })
+            case .crt:
+                return filterShaders.first(where: { $0.name == crt.description })
+            case .modern, .unknown:
+                return nil
+            }
+        }
     }
 
     private

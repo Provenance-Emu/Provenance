@@ -16,12 +16,17 @@ public class PVRootViewModel: ObservableObject {
 
     /// Whether to sort consoles in ascending order
     @Published public var sortConsolesAscending: Bool = true
-    
+
     /// Whether to sort games in ascending order
     @Published public var sortGamesAscending: Bool = true
-    
+
     /// Whether to show games in a grid or list
     @Published public var viewGamesAsGrid: Bool = true
-    
+
+    /// Currently selected console
+    @Published public var selectedConsole: PVSystem?
+
+    @Published public var isMenuVisible: Bool = false
+
     public init() {}
 }

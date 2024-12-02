@@ -198,7 +198,8 @@ void extract_bundles();
 	NSFileManager *fm = [[NSFileManager alloc] init];
 	NSString *fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/retroarch.cfg",
 						  self.batterySavesPath];
-    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.2.22.cfg",
+    // TODO: Get the version # from core.plist
+    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.27.1.cfg",
                          self.batterySavesPath];
 	if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"retroarch.cfg" ofType:nil];
@@ -258,6 +259,9 @@ void extract_bundles();
                    error:nil];
 }
 - (bool)shouldUpdateAssets {
+#if DEBUG
+    return true;
+#else
     // If assets were updated, refresh config
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString *file=[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/flatui/png/arrow.png", self.batterySavesPath];
@@ -268,6 +272,7 @@ void extract_bundles();
         }
     }
     return true;
+#endif
 }
 #pragma mark - Running
 
@@ -437,15 +442,15 @@ void extract_bundles();
         [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
         processing_init=false;
     }
-	NSError *error;
-    [[AVAudioSession sharedInstance]
-     setCategory:AVAudioSessionCategoryAmbient
-     mode:AVAudioSessionModeDefault
-     options:AVAudioSessionCategoryOptionAllowBluetooth |
-     AVAudioSessionCategoryOptionAllowAirPlay |
-     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
-     AVAudioSessionCategoryOptionMixWithOthers
-     error:&error];
+//	NSError *error;
+//    [[AVAudioSession sharedInstance]
+//     setCategory:AVAudioSessionCategoryAmbient
+//     mode:AVAudioSessionModeDefault
+//     options:AVAudioSessionCategoryOptionAllowBluetooth |
+//     AVAudioSessionCategoryOptionAllowAirPlay |
+//     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+//     AVAudioSessionCategoryOptionMixWithOthers
+//     error:&error];
 	[self refreshSystemConfig];
 	[self showGameView];
 	rarch_main(argc, argv, NULL);

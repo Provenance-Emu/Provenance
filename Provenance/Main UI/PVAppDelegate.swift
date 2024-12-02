@@ -43,12 +43,12 @@ import SteamController
 import FreemiumKit
 #endif
 
-#if os(tvOS)
+//#if os(tvOS)
 //@Perceptible
-#else
-@Observable
-#endif
-final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationDelegate {
+//#else
+//@Observable
+//#endif
+final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationDelegate, ObservableObject {
     /// This is set by the UIApplicationDelegateAdaptor
     internal var window: UIWindow? = nil
 
@@ -102,9 +102,19 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         /// Reimport the library
         NotificationCenter.default.publisher(for: .PVReimportLibrary)
             .flatMap { _ in
+                  
                 Future<Void, Never> { promise in
-                    RomDatabase.refresh()
-                    self.gameLibraryViewController?.checkROMs(false)
+                    Task.detached { @MainActor in
+                        RomDatabase.refresh()
+                        if let _ = self.gameLibraryViewController {
+                            self.gameLibraryViewController?.checkROMs(false)
+                        } else {
+                            if let updates = await self.appState?.libraryUpdatesController {
+                                await updates.importROMDirectories()
+                            }
+                        }
+                        RomDatabase.sharedInstance.recoverAllSaveStates()
+                    }
                     promise(.success(()))
                 }
             }
@@ -115,13 +125,22 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         NotificationCenter.default.publisher(for: .PVRefreshLibrary)
             .flatMap { _ in
                 Future<Void, Error> { promise in
-                    do {
-                        try RomDatabase.sharedInstance.deleteAllGames()
-                        self.gameLibraryViewController?.checkROMs(false)
-                        promise(.success(()))
-                    } catch {
-                        ELOG("Failed to refresh all objects. \(error.localizedDescription)")
-                        promise(.failure(error))
+                    Task { @MainActor in
+                        do {
+                            try RomDatabase.sharedInstance.deleteAllGames()
+                            if let _ = self.gameLibraryViewController {
+                                self.gameLibraryViewController?.checkROMs(false)
+                            } else {
+                                if let updates = await self.appState?.libraryUpdatesController {
+                                    await updates.importROMDirectories()
+                                }
+                            }
+                            RomDatabase.sharedInstance.recoverAllSaveStates()
+                            promise(.success(()))
+                        } catch {
+                            ELOG("Failed to refresh all objects. \(error.localizedDescription)")
+                            promise(.failure(error))
+                        }
                     }
                 }
             }
@@ -137,7 +156,13 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                         try RomDatabase.sharedInstance.deleteAllData()
                         Task {
                             await GameImporter.shared.initSystems()
-                            self.gameLibraryViewController?.checkROMs(false)
+                            if let _ = self.gameLibraryViewController {
+                                self.gameLibraryViewController?.checkROMs(false)
+                            } else {
+                                if let updates = await self.appState?.libraryUpdatesController {
+                                    await updates.importROMDirectories()
+                                }
+                            }
                             promise(.success(()))
                         }
                     } catch {
@@ -195,6 +220,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
         )
 
         /// Add trait collection observer to update width when orientation changes
+        #if !os(tvOS)
         NotificationCenter.default.addObserver(forName: UIApplication.didChangeStatusBarOrientationNotification, object: nil, queue: .main) { _ in
             let newWidth: CGFloat = {
                 switch (isIpad, UITraitCollection.current.horizontalSizeClass) {
@@ -208,7 +234,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
             }()
             sideNav.updateSideMenuWidth(percent: newWidth)
         }
-
+        #endif
         return sideNav
     }
 
@@ -519,6 +545,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                                           viewModel: viewModel,
                                           rootViewController: rootViewController)
 
+        _initLibraryNotificationHandlers()
         return sideNav
     }
 

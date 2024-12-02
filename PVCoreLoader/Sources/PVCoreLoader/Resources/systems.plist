@@ -6368,35 +6368,6 @@
 		<array>
 			<dict>
 				<key>PVControlType</key>
-				<string>PVButtonGroup</string>
-				<key>PVControlSize</key>
-				<string>{200,180}</string>
-				<key>PVGroupedButtons</key>
-				<array>
-					<dict>
-						<key>PVControlType</key>
-						<string>PVButton</string>
-						<key>PVControlTitle</key>
-						<string>L</string>
-						<key>PVControlFrame</key>
-						<string>{{8,24},{60,60}}</string>
-						<key>PVControlTint</key>
-						<string>#f96763</string>
-					</dict>
-					<dict>
-						<key>PVControlType</key>
-						<string>PVButton</string>
-						<key>PVControlTitle</key>
-						<string>R</string>
-						<key>PVControlFrame</key>
-						<string>{{76,16},{60,60}}</string>
-						<key>PVControlTint</key>
-						<string>#f96763</string>
-					</dict>
-				</array>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
 				<string>Pause</string>

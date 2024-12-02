@@ -23,7 +23,7 @@ let linkerSettings: [LinkerSetting] = [
 let package = Package(
     name: "PVLibrary",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v14),

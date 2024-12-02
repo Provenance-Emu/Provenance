@@ -8,11 +8,11 @@
 #if canImport(SwiftData) && !os(tvOS)
 import SwiftData
 
-@Model
+//@Model
 public class Library_Data {
 
     // Data
-    @Attribute(.unique)
+//    @Attribute(.unique)
     public var uuid: String = ""
     public var name: String = ""
     

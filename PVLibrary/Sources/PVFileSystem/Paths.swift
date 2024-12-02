@@ -8,20 +8,65 @@
 import Foundation
 import PVPlists
 import PVLogging
+import PVSettings
+
+public let UbiquityIdentityTokenKey = (Bundle.main.bundleIdentifier ?? "org.provenance-emu.provenance")  + ".UbiquityIdentityToken"
+public let PVAppGroupId = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String ?? "group.org.provenance-emu.provenance"
 
     // MARK: - Filesystem Helpers
 public extension URL {
+    static var USE_APP_GROUPS: Bool {
+        return Defaults[.useAppGroups]
+    }
+    
     static let documentsPath: URL = {
 #if os(tvOS)
         return cachesPath
 #else
-        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+        if USE_APP_GROUPS {
+            return documentsPathAppGroup ?? documentsPathLocal
+        } else {
+            return documentsPathLocal
+        }
 #endif
     }()
     
     static let cachesPath: URL = {
+        #if os(tvOS)
+        return cachesPathLocal
+        #else
+        if USE_APP_GROUPS {
+            return cachesPathAppGroup ?? cachesPathLocal
+        } else {
+            return cachesPathLocal
+        }
+        #endif
+    }()
+    
+    static let cachesPathLocal: URL = {
         let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        
+        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+    }()
+    
+    static let cachesPathAppGroup: URL? = {
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) else {
+            return nil
+        }
+        
+        return groupURL.appendingPathComponent("Caches/")
+    }()
+    
+    static let documentsPathAppGroup: URL? = {
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) else {
+            return nil
+        }
+                
+        return groupURL.appendingPathComponent("Documents/")
+    }()
+    
+    static let documentsPathLocal: URL = {
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
 }

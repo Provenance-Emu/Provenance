@@ -52,24 +52,26 @@ public final class PVRootViewNavigationController: UINavigationController {
         appearance.titleTextAttributes = [.foregroundColor: palette.gameLibraryHeaderText]
         appearance.largeTitleTextAttributes = [.foregroundColor: palette.gameLibraryHeaderText ]
         
+#if !os(tvOS)
         if #available (iOS 17.0, tvOS 17.0, *) {
             navigationBar.standardAppearance = appearance
             navigationBar.scrollEdgeAppearance = appearance
             navigationBar.compactAppearance = appearance
         }
-        
+#endif
         navigationBar.tintColor = palette.defaultTintColor // This affects the color of the back button and other bar button items
     }
     
     private func resetToDefaultTheme() {
         let defaultAppearance = UINavigationBarAppearance()
         defaultAppearance.configureWithDefaultBackground()
-        
+#if !os(tvOS)
         if #available (iOS 17.0, tvOS 17.0, *) {
             navigationBar.standardAppearance = defaultAppearance
             navigationBar.scrollEdgeAppearance = defaultAppearance
             navigationBar.compactAppearance = defaultAppearance
         }
+#endif
         
         navigationBar.tintColor = nil // Reset to default tint color
     }

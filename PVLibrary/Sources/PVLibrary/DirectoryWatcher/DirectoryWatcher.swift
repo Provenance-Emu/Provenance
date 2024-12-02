@@ -33,6 +33,9 @@ public enum ExtractionStatus: Equatable {
     case started(path: URL)
     case updated(path: URL)
     case completed(paths: [URL])
+    case startedArchive(path: URL)
+    case updatedArchive(path: URL)
+    case completedArchive(paths: [URL])
 
     public static func == (lhs: ExtractionStatus, rhs: ExtractionStatus) -> Bool {
         switch (lhs, rhs) {
@@ -55,29 +58,22 @@ public extension NSNotification.Name {
     static let PVArchiveInflationFailed = NSNotification.Name("PVArchiveInflationFailedNotification")
 }
 
-let TIMER_DELAY_IN_SECONDS = 2.0
-
-/// The directory watcher class
 import Perception
 
-#if !os(tvOS)
-@Observable
-#else
+/// A class that watches a directory for changes and handles file operations
+///
+/// The DirectoryWatcher monitors a specified directory for new files and changes,
+/// handling archive extraction and file processing automatically.
 @Perceptible
-#endif
 public final class DirectoryWatcher: ObservableObject {
-    
+
+    private let watcherManager: FileWatcherManager
     private let watchedDirectory: URL
 
     /// The dispatch source for the file system object
     private var dispatchSource: DispatchSourceFileSystemObject?
     /// The serial queue for the extractor
     private let serialQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
-    /// The file watchers for the files being watched
-    private var fileWatchers: [URL: DispatchSourceFileSystemObject] = [:]
-    private var lastKnownSizes: [URL: Int64] = [:]
-    private var fileTimers: [URL: Timer] = [:]
-    private var lastKnownModificationDates: [URL: Date] = [:]
 
     /// The extractors for the supported archive types
     private let extractors: [ArchiveType: ArchiveExtractor] = [
@@ -94,7 +90,7 @@ public final class DirectoryWatcher: ObservableObject {
     /// The current extraction status
     public var extractionStatus: ExtractionStatus = .idle
 //    #if !os(tvOS)
-    @ObservationIgnored
+//    @ObservationIgnored
 //    #endif
     private var statusContinuation: AsyncStream<ExtractionStatus>.Continuation?
 
@@ -108,12 +104,12 @@ public final class DirectoryWatcher: ObservableObject {
         }
     }
 
-    #if os(tvOS)
+//    #if os(tvOS)
+//    private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
+//    #else
+//    @ObservationIgnored
     private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
-    #else
-    @ObservationIgnored
-    private var completedFilesContinuation: AsyncStream<[URL]>.Continuation?
-    #endif
+//    #endif
 
     /// A sequence of completed files
     public var completedFilesSequence: AsyncStream<[URL]> {
@@ -128,6 +124,7 @@ public final class DirectoryWatcher: ObservableObject {
     /// Initialize the directory watcher with a directory
     public init(directory: URL) {
         self.watchedDirectory = directory
+        self.watcherManager = FileWatcherManager(label: "org.provenance-emu.provenance.fileWatcherManager")
         ILOG("DirectoryWatcher initialized with directory: \(directory.path)")
         createDirectoryIfNeeded()
         processExistingArchives()
@@ -145,7 +142,9 @@ public final class DirectoryWatcher: ObservableObject {
 
         dispatchSource = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: .write, queue: serialQueue)
         dispatchSource?.setEventHandler { [weak self] in
-            self?.handleFileSystemEvent()
+            Task {
+                await self?.handleFileSystemEvent()
+            }
         }
         dispatchSource?.setCancelHandler {
             ILOG("Closing file descriptor for directory: \(self.watchedDirectory.path)")
@@ -161,7 +160,10 @@ public final class DirectoryWatcher: ObservableObject {
         dispatchSource?.cancel()
         dispatchSource = nil
         if includingFileWatchers {
-            fileWatchers.keys.forEach { stopWatchingFile(at: $0) }
+            Task {
+                let paths = await watcherManager.getWatchedPaths()
+                paths.forEach { stopWatchingFile(at: $0) }
+            }
         }
         ILOG("Monitoring stopped for directory: \(watchedDirectory.path)")
     }
@@ -199,7 +201,7 @@ public final class DirectoryWatcher: ObservableObject {
         }
 
         do {
-            updateExtractionStatus(.started(path: filePath))
+            updateExtractionStatus(.startedArchive(path: filePath))
 
             let tempDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
             try FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
@@ -210,12 +212,12 @@ public final class DirectoryWatcher: ObservableObject {
                 self.extractionProgress = progress
             } {
                 extractedFiles.append(extractedFile)
-                updateExtractionStatus(.updated(path: extractedFile))
+                updateExtractionStatus(.updatedArchive(path: extractedFile))
                 ILOG("Extracted file: \(extractedFile.path)")
             }
 
             try await FileManager.default.removeItem(at: filePath)
-            updateExtractionStatus(.completed(paths: extractedFiles))
+            updateExtractionStatus(.completedArchive(paths: extractedFiles))
             ILOG("Archive extraction completed for file: \(filePath.path)")
 
             // Sort extracted files, prioritizing .m3u and .cue files
@@ -281,23 +283,22 @@ public final class DirectoryWatcher: ObservableObject {
     /// Stop watching a file
     private func stopWatchingFile(at path: URL) {
         ILOG("Stopping watch for file: \(path.lastPathComponent)")
-        fileWatchers[path]?.cancel()
-        fileWatchers[path] = nil
-        fileTimers[path]?.invalidate()
-        ILOG("Timer invalidated for file: \(path.lastPathComponent)")
-        fileTimers[path] = nil
-        lastKnownSizes[path] = nil
-        lastKnownModificationDates[path] = nil
-        ILOG("File watcher, timer, last known size, and last known modification date removed for: \(path.lastPathComponent)")
+        Task {
+            await watcherManager.removeWatcher(for: path)
+            ILOG("File watcher removed for: \(path.lastPathComponent)")
+        }
     }
 
     /// Cleanup nonexistent file watchers
     private func cleanupNonexistentFileWatchers() {
         ILOG("Starting cleanup of nonexistent file watchers")
-        for path in fileWatchers.keys {
-            if !FileManager.default.fileExists(atPath: path.path) {
-                stopWatchingFile(at: path)
-                ILOG("Removed watcher for nonexistent file: \(path.lastPathComponent)")
+        Task {
+            let paths = await watcherManager.getWatchedPaths()
+            for path in paths {
+                if !FileManager.default.fileExists(atPath: path.path) {
+                    stopWatchingFile(at: path)
+                    ILOG("Removed watcher for nonexistent file: \(path.lastPathComponent)")
+                }
             }
         }
         ILOG("Finished cleanup of nonexistent file watchers")
@@ -352,15 +353,15 @@ fileprivate extension DirectoryWatcher {
     }
 
     /// Handle a file system event
-    private func handleFileSystemEvent() {
+    private func handleFileSystemEvent() async {
         ILOG("Handling file system event for directory: \(watchedDirectory.path)")
         do {
             let contents = try FileManager.default.contentsOfDirectory(at: watchedDirectory,
                                                                        includingPropertiesForKeys: nil,
                                                                        options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
             ILOG("Found \(contents.count) items in directory after file system event")
-            contents.filter(isValidFile).forEach { file in
-                if !isWatchingFile(at: file) {
+            await contents.filter(isValidFile).asyncForEach { file in
+                if await !isWatchingFile(at: file) {
                     ILOG("Starting to watch new file: \(file.lastPathComponent)")
                     watchFile(at: file)
                 }
@@ -391,111 +392,116 @@ fileprivate extension DirectoryWatcher {
 
     /// Watch a file
     private func watchFile(at path: URL) {
-        ILOG("Starting to watch file: \(path.lastPathComponent)")
-        let fileDescriptor = open(path.path, O_EVTONLY)
-        guard fileDescriptor != -1 else {
-            ELOG("Error opening file for watching: \(path.path), error: \(String(cString: strerror(errno)))")
-            return
-        }
-
-        let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor,
-                                                               eventMask: [.write, .extend],
-                                                               queue: serialQueue)
-        source.setEventHandler { [weak self] in
-            self?.handleFileChange(at: path)
-        }
-        source.setCancelHandler {
-            ILOG("Closing file descriptor for file: \(path.lastPathComponent)")
-            close(fileDescriptor)
-        }
-        source.resume()
-        fileWatchers[path] = source
-
-        // Start a repeating task to check if the file has stopped changing
         Task {
-            ILOG("Starting repeating task for file: \(path.lastPathComponent)")
-            var checkCount = 0
-            while checkCount < 30 { // Check for up to 1 minute (30 * 2 seconds)
-                await try Task.sleep(for: .seconds(2))
-                ILOG("Repeating task fired for file: \(path.lastPathComponent)")
-                await MainActor.run {
-                    self.checkFileStatus(at: path)
+            ILOG("Starting to watch file: \(path.lastPathComponent)")
+
+            // Get initial file attributes
+            guard let attributes = try? FileManager.default.attributesOfItem(atPath: path.path),
+                  let initialSize = attributes[.size] as? Int64,
+                  let initialModDate = attributes[.modificationDate] as? Date else {
+                ELOG("Failed to get initial file attributes for: \(path.lastPathComponent)")
+                return
+            }
+
+            let fileDescriptor = open(path.path, O_EVTONLY)
+            guard fileDescriptor != -1 else {
+                ELOG("Error opening file for watching: \(path.path), error: \(String(cString: strerror(errno)))")
+                return
+            }
+
+            let source = await watcherManager.createFileSystemSource(
+                fileDescriptor: fileDescriptor,
+                eventMask: [DispatchSource.FileSystemEvent.write, DispatchSource.FileSystemEvent.extend],
+                eventHandler: { [weak self] in
+                    Task { @MainActor in
+                        await self?.handleFileChange(at: path)
+                    }
+                },
+                cancelHandler: {
+                    ILOG("Closing file descriptor for file: \(path.lastPathComponent)")
+                    close(fileDescriptor)
                 }
-                checkCount += 1
-                if fileWatchers[path] == nil {
+            )
+
+            source.resume()
+            await watcherManager.addWatcher(source,
+                                          for: path,
+                                          initialSize: initialSize,
+                                          modificationDate: initialModDate)
+
+            // Start monitoring file changes
+            await monitorFileChanges(for: path)
+        }
+    }
+
+    private func monitorFileChanges(for path: URL) async {
+        ILOG("Starting file change monitoring for: \(path.lastPathComponent)")
+        var checkCount = 0
+
+        while checkCount < 30 { // Check for up to 1 minute (30 * 2 seconds)
+            do {
+                try await Task.sleep(for: .seconds(2))
+
+                // Check if we're still watching this file
+                guard await watcherManager.isWatching(path) else {
                     ILOG("File watcher removed for: \(path.lastPathComponent)")
                     break
                 }
+
+                await checkFileStatus(at: path)
+                checkCount += 1
+
+            } catch is CancellationError {
+                ILOG("File monitoring cancelled for: \(path.lastPathComponent)")
+                break
+            } catch {
+                ELOG("Error during file monitoring: \(error.localizedDescription)")
+                break
             }
-            ILOG("Repeating task ended for file: \(path.lastPathComponent)")
         }
 
-        ILOG("File watcher and repeating task set up for: \(path.lastPathComponent)")
+        ILOG("File change monitoring ended for: \(path.lastPathComponent)")
     }
 
-    private func handleFileChange(at path: URL) {
+    private func handleFileChange(at path: URL) async {
         ILOG("File change detected for: \(path.lastPathComponent)")
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
             let currentSize = attributes[.size] as? Int64 ?? 0
-            ILOG("Current size of changed file \(path.lastPathComponent): \(currentSize)")
+            let currentModificationDate = attributes[.modificationDate] as? Date ?? Date()
+
+            await watcherManager.updateFileStatus(
+                for: path,
+                size: currentSize,
+                modificationDate: currentModificationDate
+            )
+
+            await checkFileStatus(at: path)
         } catch {
-            ELOG("Error getting attributes for changed file: \(error)")
+            ELOG("Error handling file change: \(error.localizedDescription)")
+            await watcherManager.removeWatcher(for: path)
         }
-        // Reset the timer when the file changes
-        fileTimers[path]?.invalidate()
-        ILOG("Timer invalidated for file: \(path.lastPathComponent)")
-        fileTimers[path] = Timer.scheduledTimer(withTimeInterval: TIMER_DELAY_IN_SECONDS, repeats: true) { [weak self] _ in
-            ILOG("New timer fired for file: \(path.lastPathComponent)")
-            self?.checkFileStatus(at: path)
-        }
-        ILOG("New timer scheduled for file: \(path.lastPathComponent)")
     }
 
-    private func checkFileStatus(at path: URL) {
-        ILOG("Checking file status for: \(path)")
-        do {
-            let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
-            let currentSize = attributes[.size] as? Int64 ?? 0
-            let currentModificationDate = attributes[.modificationDate] as? Date
+    private func checkFileStatus(at path: URL) async {
+        guard let status = await watcherManager.getFileStatus(for: path) else {
+            ELOG("No status found for file: \(path.lastPathComponent)")
+            return
+        }
 
-            ILOG("Current size of file \(path.lastPathComponent): \(currentSize)")
-            ILOG("Current modification date of file \(path.lastPathComponent): \(String(describing: currentModificationDate))")
+        let attributes = try? FileManager.default.attributesOfItem(atPath: path.path)
+        let currentSize = attributes?[.size] as? Int64 ?? 0
 
-            if let lastSize = lastKnownSizes[path] {
-                ILOG("Last known size of file \(path.lastPathComponent): \(lastSize)")
+        // If file size hasn't changed for a while, process it
+        if currentSize > 0 && currentSize == status.size {
+            if isArchive(path) {
+                ILOG("Archive file appears complete, starting extraction: \(path.lastPathComponent)")
+                try? await extractArchive(at: path)
             } else {
-                ILOG("No last known size for file \(path.lastPathComponent)")
+                ILOG("Non-archive file appears complete: \(path.lastPathComponent)")
+                completedFilesContinuation?.yield([path])
             }
-
-            if let lastModDate = lastKnownModificationDates[path] {
-                ILOG("Last known modification date of file \(path.lastPathComponent): \(lastModDate)")
-            } else {
-                ILOG("No last known modification date for file \(path.lastPathComponent)")
-            }
-
-            // If the file size and modification date haven't changed in 2 seconds, consider it done
-            if let lastSize = lastKnownSizes[path],
-               let lastModDate = lastKnownModificationDates[path],
-               lastSize == currentSize,
-               lastModDate == currentModificationDate {
-                ILOG("File upload completed: \(path.lastPathComponent)")
-                stopWatchingFile(at: path)
-                handleCompletedFile(at: path)
-            } else {
-                if lastKnownSizes[path] != currentSize {
-                    ILOG("File size changed for \(path.lastPathComponent)")
-                }
-                if lastKnownModificationDates[path] != currentModificationDate {
-                    ILOG("File modification date changed for \(path.lastPathComponent)")
-                }
-                lastKnownSizes[path] = currentSize
-                lastKnownModificationDates[path] = currentModificationDate
-                VLOG("File still uploading: \(path.lastPathComponent), current size: \(currentSize)")
-            }
-        } catch {
-            ELOG("Error checking file status: \(error)")
-            stopWatchingFile(at: path)
+            await watcherManager.removeWatcher(for: path)
         }
     }
 
@@ -513,10 +519,14 @@ fileprivate extension DirectoryWatcher {
         }
     }
 
-    private func isWatchingFile(at path: URL) -> Bool {
-        let isWatching = fileWatchers[path] != nil && !fileWatchers[path]!.isCancelled
+    public func isWatchingFile(at path: URL) async -> Bool {
+        let isWatching = await watcherManager.isWatching(path)
         ILOG("Checked if watching file: \(path.lastPathComponent), result: \(isWatching)")
         return isWatching
+    }
+
+    public func isWatchingAnyFile() async -> Bool {
+        return await !watcherManager.hasActiveWatchers()
     }
 }
 
@@ -547,7 +557,7 @@ extension DirectoryWatcher {
                 Task {
                     // Delay starting the extraction to allow the file system to settle
                     ILOG("Scheduling delayed extraction for file: \(destinationURL.lastPathComponent)")
-                    try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+                    try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 second delay
                     try await self.extractArchive(at: destinationURL)
                 }
             } catch {
@@ -608,6 +618,12 @@ public extension DirectoryWatcher {
                     case .started, .idle:
                         ILOG("Extraction status changed to \(status)")
                         break
+                    case .startedArchive(path: let path):
+                        ILOG("Extraction status changed to \(status)")
+                    case .updatedArchive(path: let path):
+                        ILOG("Extraction updated, yielding path: \(path)")
+                    case .completedArchive(paths: let paths):
+                        ILOG("Extraction completed, yielding paths: \(paths)")
                     }
                 }
                 ILOG("Extraction status sequence finished")
@@ -625,4 +641,89 @@ func delay(_ duration: TimeInterval, operation: @escaping () async throws -> Voi
     try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
     try await operation()
     ILOG("Delayed operation completed")
+}
+
+private actor FileWatcherManager {
+    private struct FileStatus {
+        var watcher: DispatchSourceFileSystemObject
+        var size: Int64
+        var modificationDate: Date
+
+        mutating func update(size: Int64? = nil,
+                           modificationDate: Date? = nil,
+                           timer: Timer? = nil) {
+            if let size = size {
+                self.size = size
+            }
+            if let modificationDate = modificationDate {
+                self.modificationDate = modificationDate
+            }
+        }
+    }
+
+    private var fileStatuses: [URL: FileStatus] = [:]
+    private let serialQueue: DispatchQueue
+
+    init(label: String) {
+        self.serialQueue = DispatchQueue(label: label)
+    }
+
+    func addWatcher(_ source: DispatchSourceFileSystemObject,
+                   for path: URL,
+                   initialSize: Int64,
+                   modificationDate: Date) {
+        let status = FileStatus(
+            watcher: source,
+            size: initialSize,
+            modificationDate: modificationDate
+        )
+        fileStatuses[path] = status
+    }
+
+    func removeWatcher(for path: URL) {
+        if let status = fileStatuses[path] {
+            status.watcher.cancel()
+        }
+        fileStatuses[path] = nil
+    }
+
+    func updateFileStatus(for path: URL, size: Int64? = nil, modificationDate: Date? = nil, timer: Timer? = nil) {
+        fileStatuses[path]?.update(size: size, modificationDate: modificationDate, timer: timer)
+    }
+
+    func getFileStatus(for path: URL) -> (size: Int64, modificationDate: Date)? {
+        guard let status = fileStatuses[path] else { return nil }
+        return (status.size, status.modificationDate)
+    }
+
+    func isWatching(_ path: URL) -> Bool {
+        guard let status = fileStatuses[path] else { return false }
+        return !status.watcher.isCancelled
+    }
+
+    func hasActiveWatchers() -> Bool {
+        return !fileStatuses.isEmpty
+    }
+
+    func getWatchedPaths() -> [URL] {
+        Array(fileStatuses.keys)
+    }
+
+    func createFileSystemSource(
+        fileDescriptor: Int32,
+        eventMask: DispatchSource.FileSystemEvent,
+        eventHandler: @escaping () -> Void,
+        cancelHandler: @escaping () -> Void
+    ) -> DispatchSourceFileSystemObject {
+        let source = DispatchSource.makeFileSystemObjectSource(
+            fileDescriptor: fileDescriptor,
+            eventMask: eventMask,
+            queue: serialQueue
+        )
+
+        source.setEventHandler(handler: eventHandler)
+        source.setCancelHandler(handler: cancelHandler)
+
+        return source
+    }
 }

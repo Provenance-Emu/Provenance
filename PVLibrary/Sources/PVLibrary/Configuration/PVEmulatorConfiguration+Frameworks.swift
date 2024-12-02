@@ -53,7 +53,8 @@ public extension PVEmulatorConfiguration {
                                         name: subCore.projectName,
                                         url: subCore.projectURL,
                                         version: subCore.projectVersion,
-                                        disabled: subCore.disabled)
+                                        disabled: subCore.disabled,
+                                        appStoreDisabled: subCore.appStoreDisabled)
 //                database.refresh()
                 try newSubCore.add(update: true)
             } catch let error as DecodingError {
@@ -127,7 +128,7 @@ public extension PVEmulatorConfiguration {
     private static func updateOrCreateSystem(_ system: SystemPlistEntry) async {
         let database = RomDatabase.sharedInstance
 
-        if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
+        if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier), !existingSystem.isInvalidated {
             await updateExistingSystem(existingSystem, with: system, using: database)
         } else {
             await createNewSystem(from: system, using: database)
@@ -179,6 +180,7 @@ public extension PVEmulatorConfiguration {
     }
 
     class func setPropertiesTo(pvSystem: PVSystem, fromSystemPlistEntry system: SystemPlistEntry) {
+        guard !pvSystem.isInvalidated else { return }
         pvSystem.openvgDatabaseID = Int(system.PVDatabaseID) ?? -1
         pvSystem.requiresBIOS = system.PVRequiresBIOS ?? false
         pvSystem.manufacturer = system.PVManufacturer
@@ -196,6 +198,7 @@ public extension PVEmulatorConfiguration {
         pvSystem.usesCDs = system.PVUsesCDs ?? false
         pvSystem.supportsRumble = system.PVSupportsRumble ?? false
         pvSystem.headerByteSize = system.PVHeaderByteSize ?? 0
+        pvSystem.appStoreDisabled = system.PVAppStoreDisabled ?? false
 
         if let screenType = system.PVScreenType {
             pvSystem.screenType = ScreenType(rawValue: screenType) ?? .unknown

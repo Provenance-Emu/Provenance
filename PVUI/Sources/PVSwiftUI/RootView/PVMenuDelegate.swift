@@ -21,6 +21,7 @@ import PVRealm
 import PVPrimitives
 import PVLogging
 import UniformTypeIdentifiers
+
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -35,15 +36,37 @@ import SafariServices
 // MARK: - Menu Delegate
 
 public protocol PVMenuDelegate: AnyObject {
+    func didTapImports()
     func didTapSettings()
     func didTapHome()
     func didTapAddGames()
     func didTapConsole(with consoleId: String)
     func didTapCollection(with collection: Int)
+    func closeMenu()
 }
-
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate {
+
+    public func didTapImports() {
+        guard let gameImporter = AppState.shared.gameImporter else {
+            ELOG("No game importer")
+            presentError("Importer could not be loaded", source: self.view)
+            return
+        }
+        
+        NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
+
+        let settingsView = ImportStatusView(updatesController:updatesController, gameImporter: gameImporter, delegate: self) {
+            gameImporter.clearCompleted()
+        }
+
+        let hostingController = UIHostingController(rootView: settingsView)
+        let navigationController = UINavigationController(rootViewController: hostingController)
+
+        self.closeMenu()
+        self.present(navigationController, animated: true)
+    }
+
     public func didTapSettings() {
         let settingsView = PVSettingsView(
             conflictsController: updatesController,
@@ -64,16 +87,15 @@ extension PVRootViewController: PVMenuDelegate {
         self.present(navigationController, animated: true)
     }
 
-    public func didTapHome() {
-        self.closeMenu()
-        let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self, viewModel: self.viewModel)
-        self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
-    }
-
     public func didTapAddGames() {
         self.closeMenu()
-        #if os(iOS) || os(tvOS)
 
+
+        self.showImportOptionsAlert()
+    }
+
+    public func showImportOptionsAlert() {
+#if os(iOS) || os(tvOS)
         /// from PVGameLibraryViewController#getMoreROMs
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
 #if !os(tvOS)
@@ -85,12 +107,14 @@ extension PVRootViewController: PVMenuDelegate {
             documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: utis, asCopy: true)
             documentPicker.allowsMultipleSelection = true
             documentPicker.delegate = self
+            self.dismiss(animated: true)
             self.present(documentPicker, animated: true, completion: nil)
         }))
 #endif
 
         #if canImport(PVWebServer)
         let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { _ in
+            self.dismiss(animated: true)
             self.startWebServer()
         })
 
@@ -109,34 +133,6 @@ extension PVRootViewController: PVMenuDelegate {
             present(actionSheet, animated: true, completion: nil)
         }
         #endif
-    }
-
-    public func didTapConsole(with consoleId: String) {
-        self.closeMenu()
-
-        guard let console = gameLibrary.system(identifier: consoleId) else { return }
-        let consoles = gameLibrary.activeSystems
-
-        consolesWrapperViewDelegate.selectedTab = console.identifier
-        self.consoleIdentifiersAndNamesMap.removeAll()
-        for console in consoles {
-            self.consoleIdentifiersAndNamesMap[console.identifier] = console.name
-        }
-        selectedTabCancellable?.cancel()
-        selectedTabCancellable = consolesWrapperViewDelegate.$selectedTab.sink { [weak self] tab in
-            guard let self = self else { return }
-            if let cachedTitle = self.consoleIdentifiersAndNamesMap[tab] {
-                self.navigationItem.title = cachedTitle
-            } else if let console = self.gameLibrary.system(identifier: tab) {
-                self.consoleIdentifiersAndNamesMap[console.identifier] = console.name
-                self.navigationItem.title = self.consoleIdentifiersAndNamesMap[tab]
-            } else {
-                self.navigationItem.title = tab
-            }
-        }
-
-        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
-        self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
     public func didTapCollection(with collection: Int) {
@@ -208,6 +204,22 @@ extension PVRootViewController: PVMenuDelegate {
 extension PVRootViewController: UIDocumentPickerDelegate {
     public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         updatesController.handlePickedDocuments(urls)
+        let gameImporter = AppState.shared.gameImporter ?? GameImporter.shared
+        // Re-present the ImportStatusView
+        if !urls.isEmpty {
+            DispatchQueue.main.async {
+                let settingsView = ImportStatusView(
+                    updatesController: self.updatesController,
+                    gameImporter: gameImporter,
+                    delegate: self
+                ) {
+                    gameImporter.clearCompleted()
+                }
+                let hostingController = UIHostingController(rootView: settingsView)
+                let navigationController = UINavigationController(rootViewController: hostingController)
+                self.present(navigationController, animated: true)
+            }
+        }
     }
 
     public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
@@ -215,3 +227,25 @@ extension PVRootViewController: UIDocumentPickerDelegate {
     }
 }
 #endif
+
+extension PVRootViewController: ImportStatusDelegate {
+    public func dismissAction() {
+        AppState.shared.gameImporter?.clearCompleted()
+        self.dismiss(animated: true)
+    }
+
+    public func addImportsAction() {
+        self.showImportOptionsAlert()
+    }
+
+    public func forceImportsAction() {
+        //reset the status of each item that conflict or failed so we can try again.
+        GameImporter.shared.importQueue.forEach { item in
+            if (item.status == .failure || item.status == .conflict || item.status == .partial) {
+                item.status = .queued
+            }
+        }
+
+        GameImporter.shared.startProcessing()
+    }
+}

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import GameController
 
 #if canImport(SwiftUI)
 #if canImport(Combine)
@@ -30,7 +31,6 @@ import MBProgressHUD
 #endif
 
 // PVRootViewController serves as a UIKit parent for child SwiftUI menu views.
-
 // The goal one day may be to move entirely to a SwiftUI app life cycle, but under
 // current circumstances (iOS 11 deployment target, some critical logic being coupled
 // to UIViewControllers, etc.) it will be more easier to integrate by starting here
@@ -57,13 +57,18 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     var viewModel: PVRootViewModel!
 
     var updatesController: PVGameLibraryUpdatesController!
-    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
+    public var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
     var gameImporter: GameImporter!
 
     var selectedTabCancellable: AnyCancellable?
 
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
+
+    private var gameController: GCController?
+    private var controllerObserver: Any?
+
+    private var continuousNavigationTask: Task<Void, Never>?
 
     public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary<RealmDatabaseDriver>, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
@@ -91,26 +96,68 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         setupHUDObserver(hud: hud)
     }
 
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupGameController()
+    }
+
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(controllerObserver as Any)
+        continuousNavigationTask?.cancel()
+        gameController = nil
+    }
+
     private var cancellables = Set<AnyCancellable>()
 
     deinit {
         selectedTabCancellable?.cancel()
     }
 
-    func showMenu() {
+    public func showMenu() {
+        viewModel.isMenuVisible = true
         self.sideNavigationController?.showLeftSide()
     }
 
-    func closeMenu() {
+    public func closeMenu() {
+        viewModel.isMenuVisible = false
         self.sideNavigationController?.closeSide()
     }
 
-    func determineInitialView() {
+    public func determineInitialView() {
+        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
+        loadIntoContainer(.home, newVC: UIHostingController(rootView: consolesView))
+
+        // Add observer for title updates
+        selectedTabCancellable = consolesWrapperViewDelegate.$selectedTab
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] selectedTab in
+                guard let self = self else { return }
+                if selectedTab == "home" {
+                    self.navigationItem.title = "Home"
+                } else if let console = self.gameLibrary.system(identifier: selectedTab) {
+                    self.navigationItem.title = console.name
+                }
+            }
+
+        // Set initial console and tab
         if let console = gameLibrary.activeSystems.first {
-            didTapConsole(with: console.identifier)
+            consolesWrapperViewDelegate.selectedTab = console.identifier
+            viewModel.selectedConsole = console
         } else {
-            didTapHome()
+            consolesWrapperViewDelegate.selectedTab = "home"
+            viewModel.selectedConsole = nil
         }
+    }
+
+    public func didTapHome() {
+        consolesWrapperViewDelegate.selectedTab = "home"
+        closeMenu()
+    }
+
+    public func didTapConsole(with identifier: String) {
+        consolesWrapperViewDelegate.selectedTab = identifier
+        closeMenu()
     }
 
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
@@ -129,6 +176,114 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         // load new view
         self.addChildViewController(newVC, toContainerView: self.containerView)
         self.fillParentView(child: newVC.view, parent: self.containerView)
+        closeMenu()
+    }
+
+    private var gamepadCancellable: AnyCancellable?
+
+    private func setupGameController() {
+        gamepadCancellable = GamepadManager.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                guard let self = self else { return }
+                switch event {
+                case .menuToggle(let isPressed):
+                    if isPressed {
+                        if self.sideNavigationController?.visibleSideViewController == self.sideNavigationController?.left?.viewController {
+                            self.closeMenu()
+                        } else {
+                            self.showMenu()
+                        }
+                    }
+                case .shoulderLeft(let isPressed):
+                    if isPressed {
+                        startContinuousNavigation(isNext: false)
+                    } else {
+                        continuousNavigationTask?.cancel()
+                        continuousNavigationTask = nil
+                    }
+                case .shoulderRight(let isPressed):
+                    if isPressed {
+                        startContinuousNavigation(isNext: true)
+                    } else {
+                        continuousNavigationTask?.cancel()
+                        continuousNavigationTask = nil
+                    }
+                default:
+                    continuousNavigationTask?.cancel()
+                    continuousNavigationTask = nil
+                }
+            }
+    }
+
+    private func startContinuousNavigation(isNext: Bool) {
+        continuousNavigationTask?.cancel()
+
+        // Perform initial navigation
+        if isNext {
+            navigateToNext()
+        } else {
+            navigateToPrevious()
+        }
+
+        // Start continuous navigation
+        continuousNavigationTask = Task { [weak self] in
+            guard let self = self else { return }
+            try? await Task.sleep(for: .milliseconds(500)) // Initial delay
+            while !Task.isCancelled {
+                if isNext {
+                    self.navigateToNext()
+                } else {
+                    self.navigateToPrevious()
+                }
+                try? await Task.sleep(for: .milliseconds(150)) // Repeat delay
+            }
+        }
+    }
+
+    private func navigateToPrevious() {
+        let allConsoles = gameLibrary.activeSystems
+        let currentTab = consolesWrapperViewDelegate.selectedTab
+
+        if currentTab == "home" {
+            // From home, wrap to last console
+            if let lastConsole = allConsoles.last {
+                consolesWrapperViewDelegate.selectedTab = lastConsole.identifier
+                self.viewModel.selectedConsole = lastConsole
+            }
+        } else if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == currentTab }) {
+            if currentIndex == 0 {
+                // From first console, go to home
+                consolesWrapperViewDelegate.selectedTab = "home"
+            } else {
+                // Go to previous console
+                consolesWrapperViewDelegate.selectedTab = allConsoles[currentIndex - 1].identifier
+                self.viewModel.selectedConsole = allConsoles[currentIndex - 1]
+            }
+        }
+    }
+
+    private func navigateToNext() {
+        let allConsoles = gameLibrary.activeSystems
+        let currentTab = consolesWrapperViewDelegate.selectedTab
+
+        if currentTab == "home" {
+            // From home, go to first console
+            if let firstConsole = allConsoles.first {
+                consolesWrapperViewDelegate.selectedTab = firstConsole.identifier
+                self.viewModel.selectedConsole = firstConsole
+            }
+        } else if let currentIndex = allConsoles.firstIndex(where: { $0.identifier == currentTab }) {
+            if currentIndex == allConsoles.count - 1 {
+                // From last console, wrap to home
+                consolesWrapperViewDelegate.selectedTab = "home"
+                self.viewModel.selectedConsole = nil
+            } else {
+                // Go to next console
+                consolesWrapperViewDelegate.selectedTab = allConsoles[currentIndex + 1].identifier
+                self.viewModel.selectedConsole = allConsoles[currentIndex + 1]
+            }
+        }
     }
 }
 

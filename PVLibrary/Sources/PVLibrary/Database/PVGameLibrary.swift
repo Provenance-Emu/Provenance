@@ -16,7 +16,7 @@ import PVRealm
 @_exported public import PVSettings
 
 public class PVGameLibrary<T> where T: DatabaseDriver {
-    
+
     public struct System {
         public let identifier: String
         public let manufacturer: String
@@ -25,14 +25,25 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
         public let unsupported: Bool
         public let sortedGames: [T.GameType]
     }
-    
+
     internal let database: RomDatabase
     internal let databaseDriver: T
+    private let romMigrator: ROMLocationMigrator
 
     public init(database: RomDatabase) {
         self.database = database
-
         self.databaseDriver = .init(database: database)
+        self.romMigrator = ROMLocationMigrator()
+
+        // Kick off ROM migration
+        Task {
+            do {
+                try await romMigrator.migrateIfNeeded()
+                ILOG("ROM migration completed successfully")
+            } catch {
+                ELOG("ROM migration failed: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
@@ -120,6 +131,225 @@ extension Array where Element == PVGameLibrary<RealmDatabaseDriver>.System {
                     return titleSort(s1, s2)
                 }
             })
+        }
+    }
+}
+
+/// Handles migration of ROM and BIOS files from old documents directory to new shared container directory
+public final class ROMLocationMigrator {
+    private let fileManager = FileManager.default
+
+    /// Old paths that need migration
+    private var oldPaths: [(source: URL, destination: URL)] {
+        guard let sharedContainer = fileManager.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)?
+            .appendingPathComponent("Documents") else {
+            ELOG("Could not load appgroup \(PVAppGroupId)")
+            return []
+        }
+
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        let documentsURL = URL(fileURLWithPath: documentsPath)
+
+        if Defaults[.useAppGroups] {
+            return [
+                (documentsURL.appendingPathComponent("ROMs"),
+                 sharedContainer.appendingPathComponent("ROMs")),
+                (documentsURL.appendingPathComponent("BIOS"),
+                 sharedContainer.appendingPathComponent("BIOS")),
+                (documentsURL.appendingPathComponent("Battery Saves"),
+                 sharedContainer.appendingPathComponent("Battery Saves")),
+                (documentsURL.appendingPathComponent("Save States"),
+                 sharedContainer.appendingPathComponent("Save States")),
+                (documentsURL.appendingPathComponent("RetroArch"),
+                 sharedContainer.appendingPathComponent("RetroArch")),
+                (documentsURL.appendingPathComponent("Conflicts"),
+                 sharedContainer.appendingPathComponent("Conflicts"))
+            ]
+        } else {
+            return [
+                (sharedContainer.appendingPathComponent("ROMs"),
+                 documentsURL.appendingPathComponent("ROMs")),
+                (sharedContainer.appendingPathComponent("BIOS"),
+                 documentsURL.appendingPathComponent("BIOS")),
+                (sharedContainer.appendingPathComponent("Battery Saves"),
+                 documentsURL.appendingPathComponent("Battery Saves")),
+                (sharedContainer.appendingPathComponent("Save States"),
+                 documentsURL.appendingPathComponent("Save States")),
+                (sharedContainer.appendingPathComponent("RetroArch"),
+                 documentsURL.appendingPathComponent("RetroArch")),
+                (sharedContainer.appendingPathComponent("Conflicts"),
+                 documentsURL.appendingPathComponent("Conflicts"))
+            ]
+        }
+    }
+    
+    public func printFolderContents() async {
+        for (oldPath, newPath) in oldPaths {
+            try? await printFolderContents(oldPath)
+            try? await printFolderContents(newPath)
+        }
+    }
+    
+    /// Debug print contents of folder and it's subfolders
+    public func printFolderContents(_ folder: URL) async throws {
+        let contents = try await fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil, options: [])
+        let paths = contents.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }).sorted(by: { $0.path < $1.path }).map { $0.relativePath }
+        DLOG("Contents of path: \(folder.standardizedFileURL): \(paths.joined(separator: ", "))")
+    }
+
+    /// Migrates files from old location to new location if necessary
+    public func migrateIfNeeded() async throws {
+        ILOG("Checking if file migration is needed...")
+        #if DEBUG
+        await try? printFolderContents()
+        #endif
+
+        for (oldPath, newPath) in oldPaths {
+            if fileManager.fileExists(atPath: oldPath.path) {
+                ILOG("Found old directory to migrate: \(oldPath.lastPathComponent)")
+                // Contents of old directory
+                #if DEBUG
+                let contents = try await fileManager.contentsOfDirectory(at: oldPath, includingPropertiesForKeys: nil, options: [])
+                let paths = contents.map { $0.relativePath }.joined(separator: ", ")
+                DLOG("PATHS: \(paths)")
+                #endif
+                if !fileManager.fileExists(atPath: newPath.path) {
+                    try fileManager.createDirectory(at: newPath,
+                                                 withIntermediateDirectories: true,
+                                                 attributes: nil)
+                }
+
+                try await migrateDirectory(from: oldPath, to: newPath)
+
+                // Clean up empty directories after migration is complete
+                try await cleanupSourceDirectory(oldPath)
+            } else {
+                ILOG("No old \(oldPath.lastPathComponent) directory found, skipping migration")
+            }
+        }
+    }
+
+    /// Recursively migrates contents of a directory
+    private func migrateDirectory(from sourceDir: URL, to destDir: URL) async throws {
+        ILOG("Migrating directory: \(sourceDir.lastPathComponent)")
+
+        // Get all items in source directory with minimal property loading
+        let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey]
+        let enumerator = FileManager.default.enumerator(
+            at: sourceDir,
+            includingPropertiesForKeys: Array(resourceKeys),
+            options: [.skipsHiddenFiles]
+        )
+
+        guard let enumerator = enumerator else {
+            ELOG("Failed to create enumerator for \(sourceDir.path)")
+            return
+        }
+
+        // Process items in chunks to avoid memory pressure
+        let chunkSize = 20
+        var itemsToProcess: [URL] = []
+
+        while let url = enumerator.nextObject() as? URL {
+            itemsToProcess.append(url)
+
+            if itemsToProcess.count >= chunkSize {
+                try await processChunk(itemsToProcess, sourceDir: sourceDir, destDir: destDir)
+                itemsToProcess.removeAll(keepingCapacity: true)
+
+                // Brief pause between chunks to let the system breathe
+                try await Task.sleep(nanoseconds: 50_000_000) // 50ms
+            }
+        }
+
+        // Process remaining items
+        if !itemsToProcess.isEmpty {
+            try await processChunk(itemsToProcess, sourceDir: sourceDir, destDir: destDir)
+        }
+    }
+
+    private func processChunk(_ urls: [URL], sourceDir: URL, destDir: URL) async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for itemURL in urls {
+                group.addTask {
+                    let relativePath = itemURL.lastPathComponent
+                    let destinationURL = destDir.appendingPathComponent(relativePath)
+
+                    // Quick check for existing files first
+                    if FileManager.default.fileExists(atPath: destinationURL.path) {
+                        ILOG("Skipping \(relativePath) as it already exists")
+                        return
+                    }
+
+                    let resourceValues = try itemURL.resourceValues(forKeys: [.isDirectoryKey])
+
+                    if resourceValues.isDirectory ?? false {
+                        // Handle directory
+                        if !FileManager.default.fileExists(atPath: destinationURL.path) {
+                            try FileManager.default.createDirectory(
+                                at: destinationURL,
+                                withIntermediateDirectories: true,
+                                attributes: nil
+                            )
+                        }
+                        try await self.migrateDirectory(from: itemURL, to: destinationURL)
+                    } else {
+                        // Handle file
+                        try FileManager.default.moveItem(at: itemURL, to: destinationURL)
+                        ILOG("Migrated: \(relativePath)")
+                    }
+                }
+            }
+            try await group.waitForAll()
+        }
+    }
+
+    private func cleanupSourceDirectory(_ sourceDir: URL) async throws {
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(
+                at: sourceDir,
+                includingPropertiesForKeys: [.isDirectoryKey],
+                options: [.skipsHiddenFiles]
+            )
+
+            // First check if there are any files (non-directories)
+            let hasFiles = contents.contains { url in
+                let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+                return !isDirectory
+            }
+
+            if !hasFiles {
+                // Process subdirectories recursively
+                for url in contents {
+                    let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+                    if isDirectory {
+                        try await cleanupSourceDirectory(url)
+                    }
+                }
+
+                // Check again after processing subdirectories
+                let remainingContents = try FileManager.default.contentsOfDirectory(
+                    at: sourceDir,
+                    includingPropertiesForKeys: nil,
+                    options: [.skipsHiddenFiles]
+                )
+
+                if remainingContents.isEmpty {
+                    try await FileManager.default.removeItem(at: sourceDir)
+                    ILOG("Removed empty directory: \(sourceDir.lastPathComponent)")
+                }
+            }
+        } catch {
+            ELOG("Error cleaning up \(sourceDir.lastPathComponent): \(error.localizedDescription)")
+        }
+    }
+}
+
+// Add this extension to support chunking
+private extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
         }
     }
 }

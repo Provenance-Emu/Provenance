@@ -20,7 +20,7 @@ import Systems
 import TVServices
 #endif
 
-@Model
+//@Model
 public class System_Data {
     public typealias BIOSInfoProviderType = BIOS_Data
 

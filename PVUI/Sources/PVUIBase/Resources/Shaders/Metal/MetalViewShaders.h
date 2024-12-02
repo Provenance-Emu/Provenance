@@ -9,6 +9,13 @@
 
 #define INLINE inline __attribute__((always_inline))
 
+#pragma pack(push,4)
+struct Outputs {
+    vector_float4 outPos [[position]];
+    vector_float2 fTexCoord [[user(TEXCOORD0)]];
+};
+#pragma pack(pop)
+
 // input 2D vertex
 typedef struct {
     vector_float2 position;
@@ -28,5 +35,3 @@ struct VertexOutput {
 typedef struct {
     matrix_float4x4 matrix;   // matrix to map into NDC
 } VertexUniforms;
-
-

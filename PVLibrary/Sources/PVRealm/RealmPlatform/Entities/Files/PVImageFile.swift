@@ -21,11 +21,11 @@ import PVFileSystem
 
 @objcMembers
 public final class PVImageFile: PVFile {
-    public internal(set) dynamic var _cgsize: String!
-    public dynamic var ratio: Float = 0.0
-    public dynamic var width: Int = 0
-    public dynamic var height: Int = 0
-    public dynamic var layout: String = ""
+    @Persisted public internal(set) dynamic var _cgsize: String!
+    @Persisted public var ratio: Float = 0.0
+    @Persisted public var width: Int = 0
+    @Persisted public var height: Int = 0
+    @Persisted public var layout: String = ""
 
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()

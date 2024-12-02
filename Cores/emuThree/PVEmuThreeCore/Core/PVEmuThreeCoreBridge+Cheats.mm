@@ -1,4 +1,4 @@
-#import <PVEmuThree/PVEmuThree.h>
+#import "PVEmuThreeCoreBridge.h"
 #import <Foundation/Foundation.h>
 
 #import "../emuThree/CitraWrapper.h"

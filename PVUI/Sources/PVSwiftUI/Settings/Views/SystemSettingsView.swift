@@ -15,18 +15,21 @@ struct SystemSettingsView: View {
     @ObservedResults(PVSystem.self) private var systems
 //    private let systems: [PVSystem] = PVEmulatorConfiguration.systems
     @State private var searchText = ""
-
+    var isAppStore: Bool = {
+        AppState.shared.isAppStore
+    }()
     
     var filteredSystems: [PVSystem] {
         if searchText.isEmpty {
             return systems
                 .filter { system in
-                    !system.cores.isEmpty
+                    !system.cores.isEmpty && !(isAppStore && system.appStoreDisabled)
                 }
                 .sorted(by: { $0.identifier < $1.identifier })
         }
         return systems.filter { system in
             !system.cores.isEmpty &&
+            !(isAppStore && system.appStoreDisabled) &&
             system.name.localizedCaseInsensitiveContains(searchText) ||
             system.manufacturer.localizedCaseInsensitiveContains(searchText) ||
             system.cores.contains { core in

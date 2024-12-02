@@ -38,10 +38,22 @@ extension GLenum {
         case GLenum(GL_RGB): return "GL_RGB"
         case GLenum(GL_RGB8): return "GL_RGB8"
         case GLenum(0x8367): return "GL_UNSIGNED_INT_8_8_8_8_REV"
-        // Add more cases as needed
+            // Add more cases as needed
         default: return String(format: "0x%04X", self)
         }
     }
+}
+
+enum EffectFilterShaderError: Error {
+    case emulatorCoreIsNil
+    case deviceIsNIl
+    case failedToCreateDefaultLibrary(Error)
+    case noFillScreenShaderFound
+    case errorCreatingVertexShader(Error)
+    case errorCreatingFragmentShader(Error)
+    case errorCreatingPipelineState(Error)
+    case noBlitterShaderFound
+    case noCurrentDrawableAvailable
 }
 
 final
@@ -50,14 +62,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     weak var emulatorCore: PVEmulatorCore? = nil
 
-    #if !os(visionOS)
+#if !os(visionOS)
     var mtlView: MTKView!
-    #endif
+#endif
 
 #if os(macOS) || targetEnvironment(macCatalyst)
-//    var isPaused: Bool = false
-//    var timeSinceLastDraw: TimeInterval = 0
-//    var framesPerSecond: Double = 0
+    //    var isPaused: Bool = false
+    //    var timeSinceLastDraw: TimeInterval = 0
+    //    var framesPerSecond: Double = 0
 #endif
 
 
@@ -130,14 +142,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             emulatorCore.renderDelegate = self
         }
 
-        renderSettings.crtFilterEnabled = filterShaderEnabled()
-        renderSettings.lcdFilterEnabled = Defaults[.lcdFilterEnabled]
+        renderSettings.metalFilterMode = Defaults[.metalFilterMode]
+        renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
 
         Task {
-            for await value in Defaults.updates([.crtFilterEnabled, .lcdFilterEnabled, .imageSmoothing]) {
-                renderSettings.crtFilterEnabled = Defaults[.crtFilterEnabled]
-                renderSettings.lcdFilterEnabled = Defaults[.lcdFilterEnabled]
+            for await value in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
+                renderSettings.metalFilterMode = Defaults[.metalFilterMode]
+                renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                 renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
             }
         }
@@ -161,11 +173,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
     }
 
-    func filterShaderEnabled() -> Bool {
-        let value = Defaults[.metalFilter].lowercased()
-        return !(value == "" || value == "off")
-    }
-
     override func loadView() {
         /// Create MTKView with initial frame from screen bounds
         let screenBounds = UIScreen.main.bounds
@@ -174,9 +181,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         self.view = metalView
         self.mtlView = metalView
 
-        #if DEBUG
+#if DEBUG
         ILOG("Initial MTKView frame: \(metalView.frame)")
-        #endif
+#endif
     }
 
     override func viewDidLoad() {
@@ -188,31 +195,31 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         /// Setup OpenGL context if core renders to OpenGL
         if emulatorCore?.rendersToOpenGL ?? false {
-            #if os(macOS) || targetEnvironment(macCatalyst)
+#if os(macOS) || targetEnvironment(macCatalyst)
             if let context = createMacOpenGLContext() {
                 glContext = context
                 alternateThreadGLContext = createMacOpenGLContext()
                 alternateThreadBufferCopyGLContext = createMacOpenGLContext()
 
-                #if DEBUG
+#if DEBUG
                 ILOG("Created macOS/Catalyst OpenGL contexts for core that renders to OpenGL")
-                #endif
+#endif
             } else {
                 ELOG("Failed to create macOS/Catalyst OpenGL context")
             }
-            #else
+#else
             if let context = bestContext {
                 glContext = context
                 alternateThreadGLContext = EAGLContext(api: context.api)
                 alternateThreadBufferCopyGLContext = EAGLContext(api: context.api)
 
-                #if DEBUG
+#if DEBUG
                 ILOG("Created iOS OpenGL contexts for core that renders to OpenGL")
-                #endif
+#endif
             } else {
                 ELOG("Failed to create iOS OpenGL context")
             }
-            #endif
+#endif
         }
 
         metalView.device = device
@@ -230,9 +237,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         view.layer.isOpaque = true
         view.isUserInteractionEnabled = false
 
-        #if DEBUG
+#if DEBUG
         ILOG("MTKView frame after setup: \(metalView.frame)")
-        #endif
+#endif
 
         frameCount = 0
         device = MTLCreateSystemDefaultDevice()
@@ -283,11 +290,24 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 
         setupTexture()
-        setupBlitShader()
-
-        let metalFilter = Defaults[.metalFilter]
-        if let filterShader = MetalShaderManager.shared.filterShader(forName: metalFilter) {
-            setupEffectFilterShader(filterShader)
+        do {
+            try setupBlitShader()
+        } catch {
+            ELOG("Setup blit shader creation error: \(error.localizedDescription)")
+        }
+        if let emulatorCore = emulatorCore {
+            ILOG("Setting up shader for screen type: \(emulatorCore.screenType)")
+            if let filterShader = MetalShaderManager.shared.filterShader(forOption: renderSettings.metalFilterMode,
+                                                                       screenType: emulatorCore.screenType) {
+                ILOG("Selected filter shader: \(filterShader.name)")
+                do {
+                    try setupEffectFilterShader(filterShader)
+                } catch {
+                    ELOG("Failed to setup effect filter shader: \(error)")
+                }
+            } else {
+                ILOG("No filter shader selected for mode: \(renderSettings.metalFilterMode)")
+            }
         }
 
         alternateThreadFramebufferBack = 0
@@ -296,39 +316,39 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
 #if os(macOS) || targetEnvironment(macCatalyst)
-/// Create OpenGL context for macOS/Catalyst
-private func createMacOpenGLContext() -> NSOpenGLContext? {
-    let attributes: [NSOpenGLPixelFormatAttribute] = [
-        NSOpenGLPixelFormatAttribute(NSOpenGLPFADoubleBuffer),
-        NSOpenGLPixelFormatAttribute(NSOpenGLPFAColorSize), 24,
-        NSOpenGLPixelFormatAttribute(NSOpenGLPFAAlphaSize), 8,
-        NSOpenGLPixelFormatAttribute(NSOpenGLPFADepthSize), 16,
-        NSOpenGLPixelFormatAttribute(0)
-    ]
+    /// Create OpenGL context for macOS/Catalyst
+    private func createMacOpenGLContext() -> NSOpenGLContext? {
+        let attributes: [NSOpenGLPixelFormatAttribute] = [
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFADoubleBuffer),
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFAColorSize), 24,
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFAAlphaSize), 8,
+            NSOpenGLPixelFormatAttribute(NSOpenGLPFADepthSize), 16,
+            NSOpenGLPixelFormatAttribute(0)
+        ]
 
-    guard let pixelFormat = NSOpenGLPixelFormat(attributes: attributes) else {
-        ELOG("Failed to create NSOpenGLPixelFormat")
-        return nil
+        guard let pixelFormat = NSOpenGLPixelFormat(attributes: attributes) else {
+            ELOG("Failed to create NSOpenGLPixelFormat")
+            return nil
+        }
+
+        return NSOpenGLContext(format: pixelFormat, share: nil)
     }
-
-    return NSOpenGLContext(format: pixelFormat, share: nil)
-}
 #else
-/// iOS OpenGL context getter
-lazy var bestContext: EAGLContext? = {
-    if let context = EAGLContext(api: .openGLES3) {
-        glesVersion = .version3
-        return context
-    } else if let context = EAGLContext(api: .openGLES2) {
-        glesVersion = .version2
-        return context
-    } else if let context = EAGLContext(api: .openGLES1) {
-        glesVersion = .version1
-        return context
-    } else {
-        return nil
-    }
-}()
+    /// iOS OpenGL context getter
+    lazy var bestContext: EAGLContext? = {
+        if let context = EAGLContext(api: .openGLES3) {
+            glesVersion = .version3
+            return context
+        } else if let context = EAGLContext(api: .openGLES2) {
+            glesVersion = .version2
+            return context
+        } else if let context = EAGLContext(api: .openGLES1) {
+            glesVersion = .version1
+            return context
+        } else {
+            return nil
+        }
+    }()
 #endif
 
     func updatePreferredFPS() {
@@ -360,9 +380,9 @@ lazy var bestContext: EAGLContext? = {
             return
         }
 
-        #if DEBUG
+#if DEBUG
         ILOG("Before layout - MTKView frame: \(mtlView.frame)")
-        #endif
+#endif
 
         if emulatorCore.skipLayout {
             return
@@ -385,9 +405,9 @@ lazy var bestContext: EAGLContext? = {
                 parentSize = window.bounds.size
             }
 
-            #if DEBUG
+#if DEBUG
             ILOG("Parent size for calculations: \(parentSize)")
-            #endif
+#endif
 
             var height: CGFloat = 0
             var width: CGFloat = 0
@@ -420,15 +440,15 @@ lazy var bestContext: EAGLContext? = {
             /// Calculate center position
             let x = (parentSize.width - width) / 2
             let y = traitCollection.userInterfaceIdiom == .phone && parentSize.height > parentSize.width ?
-                parentSafeAreaInsets.top + 40 : // below menu button
-                (parentSize.height - height) / 2 // centered
+            parentSafeAreaInsets.top + 40 : // below menu button
+            (parentSize.height - height) / 2 // centered
 
             /// Create frame with calculated position and size
             let frame = CGRect(x: x, y: y, width: width, height: height)
 
-            #if DEBUG
+#if DEBUG
             ILOG("Calculated frame: \(frame)")
-            #endif
+#endif
 
             if Defaults[.nativeScaleEnabled] {
                 let scale = UIScreen.main.scale
@@ -440,25 +460,25 @@ lazy var bestContext: EAGLContext? = {
                 mtlView.frame = CGRect(x: x, y: y, width: width, height: height)
                 mtlView.contentScaleFactor = scale
 
-                #if DEBUG
+#if DEBUG
                 ILOG("Applied scale factor: \(scale)")
                 ILOG("Final MTKView frame: \(mtlView.frame)")
-                #endif
+#endif
             } else {
                 view.frame = frame
                 mtlView.frame = frame
                 mtlView.contentScaleFactor = 1.0
 
-                #if DEBUG
+#if DEBUG
                 ILOG("Final MTKView frame (no scale): \(mtlView.frame)")
-                #endif
+#endif
             }
         }
 
         updatePreferredFPS()
     }
 
-    #if DEBUG
+#if DEBUG
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -477,7 +497,7 @@ lazy var bestContext: EAGLContext? = {
             currentView = view.superview
         }
     }
-    #endif
+#endif
 
     func updateInputTexture() {
         guard let emulatorCore = emulatorCore else {
@@ -487,15 +507,15 @@ lazy var bestContext: EAGLContext? = {
 
         let screenRect = emulatorCore.screenRect
         let pixelFormat = getMTLPixelFormat(from: emulatorCore.pixelFormat,
-                                               type: emulatorCore.pixelType)
+                                            type: emulatorCore.pixelType)
 
-//        VLOG("Updating input texture with screenRect: \(screenRect), pixelFormat: \(pixelFormat)")
+        //        VLOG("Updating input texture with screenRect: \(screenRect), pixelFormat: \(pixelFormat)")
 
-        #if targetEnvironment(simulator)
+#if targetEnvironment(simulator)
         var mtlPixelFormat: MTLPixelFormat = .astc_6x5_srgb
-        #else
+#else
         var mtlPixelFormat: MTLPixelFormat = pixelFormat
-        #endif
+#endif
         if emulatorCore.rendersToOpenGL {
             mtlPixelFormat = .rgba8Unorm
         }
@@ -604,11 +624,11 @@ lazy var bestContext: EAGLContext? = {
             default:
                 return 4 * typeWidth
             }
-        //    #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+            //    #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
         case GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, GL_RGB:
-        //    #else
-        //          case GL_UNSIGNED_SHORT_5_6_5, GL_RGB:
-        //    #endif
+            //    #else
+            //          case GL_UNSIGNED_SHORT_5_6_5, GL_RGB:
+            //    #endif
             switch pixelType {
             case GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT_4_4_4_4, GL_UNSIGNED_SHORT_5_5_5_1, GL_UNSIGNED_SHORT_5_6_5:
                 return typeWidth
@@ -647,8 +667,8 @@ lazy var bestContext: EAGLContext? = {
         // Handle special cases first
         switch (pixelFormat, pixelType) {
         case (_, GL_UNSIGNED_SHORT_5_6_5),
-             (_, GL_UNSIGNED_SHORT_4_4_4_4),
-             (_, GL_UNSIGNED_SHORT_5_5_5_1):
+            (_, GL_UNSIGNED_SHORT_4_4_4_4),
+            (_, GL_UNSIGNED_SHORT_5_5_5_1):
             return 2
         case (GL_RGBA8, _):
             return 4
@@ -690,20 +710,20 @@ lazy var bestContext: EAGLContext? = {
     }
 
     func getMTLPixelFormatNeo(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
-//        VLOG("Getting MTLPixelFormat for pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString)")
+        //        VLOG("Getting MTLPixelFormat for pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString)")
         switch (pixelFormat, pixelType) {
         case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_BYTE)),
-             (GLenum(GL_BGRA), GLenum(0x8367)): // GL_UNSIGNED_INT_8_8_8_8_REV
+            (GLenum(GL_BGRA), GLenum(0x8367)): // GL_UNSIGNED_INT_8_8_8_8_REV
             return .bgra8Unorm
         case (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_INT)):
             return .bgra8Unorm
         case (GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE)),
-             (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_BYTE)):
+            (GLenum(GL_RGBA8), GLenum(GL_UNSIGNED_BYTE)):
             return .rgba8Unorm
         case (GLenum(GL_RGBA), GLenum(GL_BYTE)):
             return .rgba8Snorm
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_BYTE)),
-             (GLenum(GL_RGB8), GLenum(GL_UNSIGNED_BYTE)):
+            (GLenum(GL_RGB8), GLenum(GL_UNSIGNED_BYTE)):
             // Note: Metal doesn't have a direct RGB8 format, using RGBA8 and ignoring alpha
             return .rgba8Unorm
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT)):
@@ -727,14 +747,14 @@ lazy var bestContext: EAGLContext? = {
             return .r8Unorm
         case (GLenum(GL_RG8), _):
             return .rg8Unorm
-        #if !targetEnvironment(macCatalyst) && !os(macOS)
+#if !targetEnvironment(macCatalyst) && !os(macOS)
         case (GLenum(GL_RGB565), _):
             return .b5g6r5Unorm
-        #else
+#else
         case (GLenum(GL_UNSIGNED_SHORT_5_6_5), _):
             return .b5g6r5Unorm
-        #endif
-        // Add more cases as needed for your specific use cases
+#endif
+            // Add more cases as needed for your specific use cases
         default:
             WLOG("Unknown GL pixelFormat: \(pixelFormat.toString), pixelType: \(pixelType.toString). Defaulting to .rgba8Unorm")
             return .rgba8Unorm
@@ -748,7 +768,7 @@ lazy var bestContext: EAGLContext? = {
             return .bgra8Unorm
         }
         else if pixelFormat == GLenum(GL_BGRA),
-                    pixelType == GLenum(GL_UNSIGNED_BYTE) {
+                pixelType == GLenum(GL_UNSIGNED_BYTE) {
             return .bgra8Unorm
         }
         else if pixelFormat == GLenum(GL_BGRA),
@@ -756,31 +776,31 @@ lazy var bestContext: EAGLContext? = {
             return .bgra8Unorm_srgb
         }
         else if pixelFormat == GLenum(GL_BGRA),
-                  pixelType == GLenum(GL_FLOAT_32_UNSIGNED_INT_24_8_REV) {
+                pixelType == GLenum(GL_FLOAT_32_UNSIGNED_INT_24_8_REV) {
             return .bgra8Unorm_srgb
         }
         else if pixelFormat == GLenum(GL_RGBA),
-                    pixelType == GLenum(GL_UNSIGNED_BYTE) {
+                pixelType == GLenum(GL_UNSIGNED_BYTE) {
             return .rgba8Unorm
         }
         else if pixelFormat == GLenum(GL_RGBA),
-                    pixelType == GLenum(GL_BYTE) {
+                pixelType == GLenum(GL_BYTE) {
             return .rgba8Snorm
         }
         else if pixelFormat == GLenum(GL_RGB),
-                    pixelType == GLenum(GL_UNSIGNED_BYTE) {
+                pixelType == GLenum(GL_UNSIGNED_BYTE) {
             return .rgba8Unorm
         }
         else if pixelFormat == GLenum(GL_RGB),
-                    pixelType == GLenum(GL_UNSIGNED_SHORT) {
+                pixelType == GLenum(GL_UNSIGNED_SHORT) {
             return .rgba16Uint
         }
         else if pixelFormat == GLenum(GL_RGB),
-                    pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
+                pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
             return .b5g6r5Unorm
         }
         else if pixelFormat == GLenum(GL_RGB),
-                    pixelType == GLenum(GL_UNSIGNED_INT) {
+                pixelType == GLenum(GL_UNSIGNED_INT) {
             return .rgba16Unorm
         }
         else if pixelType == GLenum(GL_UNSIGNED_SHORT_8_8_APPLE) {
@@ -816,41 +836,45 @@ lazy var bestContext: EAGLContext? = {
     }
 
     // TODO: Make this throw
-    func setupBlitShader() {
+    func setupBlitShader() throws {
         guard let emulatorCore = emulatorCore else {
             ELOG("emulatorCore is nil in setupBlitShader()")
-            return
+            throw EffectFilterShaderError.emulatorCoreIsNil
         }
 
         guard let device = device else {
             ELOG("device is nil in setupBlitShader()")
-            return
+            throw EffectFilterShaderError.deviceIsNIl
         }
 
         let constants = MTLFunctionConstantValues()
         var flipY = emulatorCore.rendersToOpenGL
         constants.setConstantValue(&flipY, type: .bool, withName: "FlipY")
 
-        guard let lib = device.makeDefaultLibrary() else {
+        let lib: MTLLibrary
+        do {
+            lib = try device.makeDefaultLibrary(bundle: Bundle.module)
+        } catch {
             ELOG("Failed to create default library")
-            return
+            throw EffectFilterShaderError.failedToCreateDefaultLibrary(error)
         }
 
         let desc = MTLRenderPipelineDescriptor()
         guard let fillScreenShader = MetalShaderManager.shared.vertexShaders.first else {
             ELOG("No fill screen shader found")
-            return
+            throw EffectFilterShaderError.noFillScreenShaderFound
         }
 
         do {
             desc.vertexFunction = try lib.makeFunction(name: fillScreenShader.function, constantValues: constants)
         } catch let error {
             ELOG("Error creating vertex function: \(error)")
+            throw EffectFilterShaderError.errorCreatingVertexShader(error)
         }
 
         guard let blitterShader = MetalShaderManager.shared.blitterShaders.first else {
             ELOG("No blitter shader found")
-            return
+            throw EffectFilterShaderError.noBlitterShaderFound
         }
 
         desc.fragmentFunction = lib.makeFunction(name: blitterShader.function)
@@ -859,6 +883,7 @@ lazy var bestContext: EAGLContext? = {
             desc.colorAttachments[0].pixelFormat = currentDrawable.texture.pixelFormat
         } else {
             ELOG("No current drawable available")
+            throw EffectFilterShaderError.noCurrentDrawableAvailable
         }
 
         do {
@@ -866,19 +891,21 @@ lazy var bestContext: EAGLContext? = {
             ILOG("Successfully created blit pipeline state")
         } catch let error {
             ELOG("Error creating render pipeline state: \(error)")
+            throw EffectFilterShaderError.errorCreatingPipelineState(error)
         }
     }
 
-    // TODO: Make this throw
-    func setupEffectFilterShader(_ filterShader: Shader) {
+    func setupEffectFilterShader(_ filterShader: Shader) throws {
+        ILOG("Setting up effect filter shader: \(filterShader.name)")
+
         guard let emulatorCore = emulatorCore else {
             ELOG("emulatorCore is nil")
-            return
+            throw EffectFilterShaderError.emulatorCoreIsNil
         }
 
         guard let device = device else {
             ELOG("device is nil")
-            return
+            throw EffectFilterShaderError.deviceIsNIl
         }
 
         effectFilterShader = filterShader
@@ -886,36 +913,48 @@ lazy var bestContext: EAGLContext? = {
         let constants = MTLFunctionConstantValues()
         var flipY = emulatorCore.rendersToOpenGL
         constants.setConstantValue(&flipY, type: .bool, withName: "FlipY")
+        ILOG("FlipY value: \(flipY)")
 
-        guard let lib = device.makeDefaultLibrary() else {
+        let lib: MTLLibrary
+        do {
+            lib = try device.makeDefaultLibrary(bundle: Bundle.module)
+        } catch {
             ELOG("Failed to create default library")
-            return
+            throw EffectFilterShaderError.failedToCreateDefaultLibrary(error)
         }
 
-        // Fill screen shader
         let desc = MTLRenderPipelineDescriptor()
         guard let fillScreenShader = MetalShaderManager.shared.vertexShaders.first else {
             ELOG("No fill screen shader found")
-            return
+            throw EffectFilterShaderError.noFillScreenShaderFound
         }
 
+        ILOG("Creating vertex function: \(fillScreenShader.function)")
         do {
             desc.vertexFunction = try lib.makeFunction(name: fillScreenShader.function, constantValues: constants)
         } catch let error {
             ELOG("Error creating vertex function: \(error)")
+            throw EffectFilterShaderError.errorCreatingVertexShader(error)
         }
 
-        // Filter shader
+        ILOG("Creating fragment function: \(filterShader.function)")
         desc.fragmentFunction = lib.makeFunction(name: filterShader.function)
 
         if let currentDrawable = mtlView.currentDrawable {
-            desc.colorAttachments[0].pixelFormat = currentDrawable.layer.pixelFormat
+            desc.colorAttachments[0].pixelFormat = currentDrawable.texture.pixelFormat
+            ILOG("Set pixel format: \(currentDrawable.texture.pixelFormat.rawValue)")
+        } else {
+            ELOG("No current drawable available")
+            throw EffectFilterShaderError.noCurrentDrawableAvailable
         }
 
         do {
+            ILOG("Creating pipeline state...")
             effectFilterPipeline = try device.makeRenderPipelineState(descriptor: desc)
+            ILOG("Successfully created effect filter pipeline state")
         } catch let error {
             ELOG("Error creating render pipeline state: \(error)")
+            throw EffectFilterShaderError.errorCreatingPipelineState(error)
         }
     }
 
@@ -1010,9 +1049,9 @@ lazy var bestContext: EAGLContext? = {
                 if isFrontBufferReady {
                     calculateViewportIfNeeded()
                     glViewport(GLint(cachedViewportX),
-                             GLint(cachedViewportY),
-                             GLsizei(cachedViewportWidth),
-                             GLsizei(cachedViewportHeight))
+                               GLint(cachedViewportY),
+                               GLsizei(cachedViewportWidth),
+                               GLsizei(cachedViewportHeight))
 
                     self._render(emulatorCore, in: view)
                     emulatorCore.frontBufferCondition.lock()
@@ -1053,7 +1092,7 @@ lazy var bestContext: EAGLContext? = {
             emulatorCore.frontBufferLock.lock()
         }
 
-//        VLOG("Drawing frame with pixelFormat: \(emulatorCore.pixelFormat.toString), pixelType: \(emulatorCore.pixelType.toString), internalPixelFormat: \(emulatorCore.internalPixelFormat.toString)")
+        //        VLOG("Drawing frame with pixelFormat: \(emulatorCore.pixelFormat.toString), pixelType: \(emulatorCore.pixelType.toString), internalPixelFormat: \(emulatorCore.internalPixelFormat.toString)")
 
         guard let commandBuffer = self.commandQueue?.makeCommandBuffer() else {
             ELOG("Failed to create command buffer")
@@ -1129,46 +1168,295 @@ lazy var bestContext: EAGLContext? = {
 
         var pipelineState: MTLRenderPipelineState?
 
-        if self.renderSettings.lcdFilterEnabled, emulatorCore.screenType.isLCD {
-            WLOG("LCD Filter not implemented yet")
-            pipelineState = self.blitPipeline
-        } else if self.renderSettings.crtFilterEnabled, emulatorCore.screenType.isCRT {
-            if self.effectFilterShader?.name == "CRT" {
+        let metalFilterOption: MetalFilterModeOption = self.renderSettings.metalFilterMode
+        let useLCD: Bool
+        let useCRT: Bool
+        switch metalFilterOption {
+        case .none:
+            useLCD = false
+            useCRT = false
+        case .always(let filter):
+            switch filter {
+            case .none:
+                useCRT = false
+                useLCD = false
+            case .complexCRT, .simpleCRT:
+                useLCD = false
+                useCRT = true
+            case .lcd:
+                useLCD = true
+                useCRT = false
+//            case .lineTron:
+//                useLCD = false
+//                useCRT = true
+            case .megaTron:
+                useLCD = false
+                useCRT = true
+//            case .ulTron:
+//                useLCD = false
+//                useCRT = true
+            case .gameBoy:
+                useLCD = true
+                useCRT = false
+            case .vhs:
+                useLCD = false
+                useCRT = true
+            }
+        case .auto(let crt, let lcd):
+            useLCD = emulatorCore.screenType.isLCD
+            useCRT = emulatorCore.screenType.isCRT
+        }
+
+
+        if useLCD {
+            let sourceSize = SIMD4<Float>(
+                Float(inputTexture!.width),
+                Float(inputTexture!.height),
+                1.0 / Float(inputTexture!.width),
+                1.0 / Float(inputTexture!.height)
+            )
+            let outputSize = SIMD4<Float>(
+                Float(view.drawableSize.width),
+                Float(view.drawableSize.height),
+                1.0 / Float(view.drawableSize.width),
+                1.0 / Float(view.drawableSize.height)
+            )
+
+            /// Check which LCD filter to use
+            if self.effectFilterShader?.name == "Game Boy" {
+                /// Classic Game Boy green palette
+                let darkestGreen = SIMD4<Float>(0.0588, 0.2196, 0.0588, 1.0)  /// #0F380F
+                let darkGreen = SIMD4<Float>(0.1882, 0.3882, 0.1882, 1.0)     /// #306230
+                let lightGreen = SIMD4<Float>(0.5451, 0.6745, 0.0588, 1.0)    /// #8BAC0F
+                let lightestGreen = SIMD4<Float>(0.6078, 0.7373, 0.0588, 1.0) /// #9BBC0F
+
+                var uniforms = GameBoyUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    dotMatrix: 0.7,        /// Dot matrix effect intensity (0.0-1.0)
+                    contrast: 1.2,         /// Contrast adjustment
+                    palette: (darkestGreen, darkGreen, lightGreen, lightestGreen)
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GameBoyUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+            } else {
+                /// Default LCD filter
+                let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
+                                     Float(screenRect.width), Float(screenRect.height))
+                let textureSize = SIMD2<Float>(Float(self.inputTexture!.width),
+                                     Float(self.inputTexture!.height))
+
+                var uniforms = LCDFilterUniforms(
+                    screenRect:     displayRect,
+                    textureSize:    textureSize,
+                    gridDensity:    1.75,    /// Adjust these values to taste
+                    gridBrightness: 0.25,    /// Lower value = more subtle effect
+                    contrast:       1.2,     /// Slight contrast boost
+                    saturation:     1.1,     /// Slight saturation boost
+                    ghosting:       0.15,    /// Subtle ghosting effect
+                    scanlineDepth:  0.20,    /// From MonoLCD
+                    bloomAmount:    0.2,     /// From MonoLCD
+                    colorLow:       0.8,     /// From LCD.fsh
+                    colorHigh:      1.05     /// From LCD.fsh
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LCDFilterUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+            }
+        } else if useCRT {
+            if self.effectFilterShader?.name == "Complex CRT" {
                 let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
                                                Float(screenRect.width), Float(screenRect.height))
                 let emulatedImageSize = SIMD2<Float>(Float(self.inputTexture!.width),
                                                      Float(self.inputTexture!.height))
                 let finalRes = SIMD2<Float>(Float(view.drawableSize.width),
                                             Float(view.drawableSize.height))
-                var cbData = CRT_Data(DisplayRect: displayRect, EmulatedImageSize: emulatedImageSize, FinalRes: finalRes)
+                var cbData = CRT_Data(
+                    DisplayRect: displayRect,
+                    EmulatedImageSize: emulatedImageSize,
+                    FinalRes: finalRes)
 
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<CRT_Data>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
             } else if self.effectFilterShader?.name == "Simple CRT" {
+                ILOG("Setting up Simple CRT pipeline")
                 let mameScreenSrcRect: SIMD4<Float> = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
                 let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture!.width), Float(inputTexture!.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
 
                 var cbData = SimpleCrtUniforms(
-                    mameScreenDstRect: mameScreenSrcRect,
-                    mameScreenSrcRect: mameScreenDstRect
+                    mame_screen_dst_rect: mameScreenDstRect,
+                    mame_screen_src_rect: mameScreenSrcRect,
+                    curv_vert: 5.0,
+                    curv_horiz: 4.0,
+                    curv_strength: 0.25,
+                    light_boost: 1.3,
+                    vign_strength: 0.05,
+                    zoom_out: 1.1,
+                    brightness: 1.0
                 )
-
-                cbData.curvVert = 5.0
-                cbData.curvHoriz = 4.0
-                cbData.curvStrength = 0.25
-                cbData.lightBoost = 1.3
-                cbData.vignStrength = 0.05
-                cbData.zoomOut = 1.1
-                cbData.brightness = 1.0
 
                 encoder.setFragmentBytes(&cbData, length: MemoryLayout<SimpleCrtUniforms>.stride, index: 0)
                 pipelineState = self.effectFilterPipeline
+                ILOG("Effect filter pipeline state: \(self.effectFilterPipeline != nil)")
+            } else if self.effectFilterShader?.name == "Line Tron" {
+                let time = Float(CACurrentMediaTime())
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
+                var uniforms = LineTronUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    width_scale: 1.0,    /// Line width multiplier
+                    line_time: time,     /// Current time in seconds
+                    falloff: 2.0,        /// Line edge falloff
+                    strength: 1.0        /// Line brightness
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LineTronUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+
+            } else if self.effectFilterShader?.name == "Mega Tron" {
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
+                var uniforms = MegaTronUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    MASK: 3.0,              /// 0=none, 1=RGB, 2=RGB(2), 3=RGB(3)
+                    MASK_INTENSITY: 0.25,    /// Mask intensity (0.0-1.0)
+                    SCANLINE_THINNESS: 0.5, /// Scanline thickness
+                    SCAN_BLUR: 2.5,         /// Scanline blur
+                    CURVATURE: 0.02,        /// Screen curvature
+                    TRINITRON_CURVE: 1.0,   /// 0=normal curve, 1=trinitron style
+                    CORNER: 0.02,           /// Corner size
+                    CRT_GAMMA: 2.4          /// CRT gamma correction
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<MegaTronUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+
+            } else if self.effectFilterShader?.name == "ulTron" {
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
+                var uniforms = UlTronUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    hardScan: -8.0,        /// Scanline intensity
+                    hardPix: -3.0,         /// Pixel sharpness
+                    warpX: 0.031,          /// Horizontal curvature
+                    warpY: 0.041,          /// Vertical curvature
+                    maskDark: 0.5,         /// Dark color mask
+                    maskLight: 1.5,        /// Light color mask
+                    shadowMask: 3,         /// Mask type (0-4)
+                    brightBoost: 1.0,      /// Brightness boost
+                    hardBloomScan: -2.0,   /// Bloom scanline
+                    hardBloomPix: -1.5,    /// Bloom pixel
+                    bloomAmount: 0.15,     /// Bloom strength
+                    shape: 2.0            /// Curvature shape
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<UlTronUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+            } else if self.effectFilterShader?.name == "Game Boy" {
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
+                // Classic Game Boy green palette
+                let darkestGreen = SIMD4<Float>(0.0588, 0.2196, 0.0588, 1.0)  // #0F380F
+                let darkGreen = SIMD4<Float>(0.1882, 0.3882, 0.1882, 1.0)     // #306230
+                let lightGreen = SIMD4<Float>(0.5451, 0.6745, 0.0588, 1.0)    // #8BAC0F
+                let lightestGreen = SIMD4<Float>(0.6078, 0.7373, 0.0588, 1.0) // #9BBC0F
+
+                var uniforms = GameBoyUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    dotMatrix: 0.7,        /// Dot matrix effect intensity (0.0-1.0)
+                    contrast: 1.2,         /// Contrast adjustment
+                    palette: (darkestGreen, darkGreen, lightGreen, lightestGreen)
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GameBoyUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
+            } else if self.effectFilterShader?.name == "VHS" {
+                let sourceSize = SIMD4<Float>(
+                    Float(inputTexture!.width),
+                    Float(inputTexture!.height),
+                    1.0 / Float(inputTexture!.width),
+                    1.0 / Float(inputTexture!.height)
+                )
+                let outputSize = SIMD4<Float>(
+                    Float(view.drawableSize.width),
+                    Float(view.drawableSize.height),
+                    1.0 / Float(view.drawableSize.width),
+                    1.0 / Float(view.drawableSize.height)
+                )
+
+                var uniforms = VHSUniforms(
+                    SourceSize: sourceSize,
+                    OutputSize: outputSize,
+                    time: Float(CACurrentMediaTime()),  /// Current time for animated effects
+                    noiseAmount: 0.05,                 /// Static noise intensity
+                    scanlineJitter: 0.003,             /// Horizontal line displacement
+                    colorBleed: 0.5,                   /// Vertical color bleeding
+                    trackingNoise: 0.1,                /// Vertical noise bands
+                    tapeWobble: 0.001,                /// Horizontal wobble amount
+                    ghosting: 0.1,                     /// Double-image effect
+                    vignette: 0.2                      /// Screen edge darkening
+                )
+
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<VHSUniforms>.stride, index: 0)
+                pipelineState = self.effectFilterPipeline
             }
         } else {
+//            DLOG("Using blit pipeline")
             pipelineState = self.blitPipeline
+//            DLOG("Blit pipeline state: \(self.blitPipeline != nil)")
         }
 
         if let pipelineState = pipelineState {
+            // DLOG("Drawing with pipeline state")
             encoder.setRenderPipelineState(pipelineState)
 
             encoder.setFragmentTexture(self.inputTexture, index: 0)
@@ -1272,6 +1560,10 @@ lazy var bestContext: EAGLContext? = {
     }
 
     func didRenderFrameOnAlternateThread() {
+        guard backingMTLTexture != nil else {
+            ELOG("backingMTLTexture was nil")
+            return
+        }
         glFlush()
 
         emulatorCore?.frontBufferLock.lock()
@@ -1323,21 +1615,21 @@ lazy var bestContext: EAGLContext? = {
     private func calculateViewportIfNeeded() {
         guard let emulatorCore = emulatorCore else { return }
 
-        #if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS)
         let screenBounds = UIScreen.main.bounds
         let screenScale = UIScreen.main.scale
         let useNativeScale = Defaults[.nativeScaleEnabled]
-        #else
+#else
         let screenBounds = view.bounds
         let screenScale = view.window?.screen?.backingScaleFactor ?? 1.0
         let useNativeScale = true
-        #endif
+#endif
 
         // Check if we need to recalculate
         let bufferSize = emulatorCore.bufferSize
         if bufferSize == lastBufferSize &&
-           screenBounds == lastScreenBounds &&
-           useNativeScale == lastNativeScaleEnabled {
+            screenBounds == lastScreenBounds &&
+            useNativeScale == lastNativeScaleEnabled {
             return
         }
 
@@ -1346,14 +1638,14 @@ lazy var bestContext: EAGLContext? = {
         lastScreenBounds = screenBounds
         lastNativeScaleEnabled = useNativeScale
 
-        #if DEBUG
+#if DEBUG
         ILOG("Recalculating viewport values:")
         ILOG("EmulatorCore sizes:")
         ILOG("- bufferSize: \(bufferSize)")
         ILOG("Screen bounds: \(screenBounds)")
         ILOG("Screen scale: \(screenScale)")
         ILOG("Native scale enabled: \(useNativeScale)")
-        #endif
+#endif
 
         /// Calculate viewport size based on native scale setting
         if useNativeScale {
@@ -1369,10 +1661,29 @@ lazy var bestContext: EAGLContext? = {
         cachedViewportX = ((screenBounds.width * scaleFactor) - cachedViewportWidth) / scaleFactor
         cachedViewportY = ((screenBounds.height * scaleFactor) - cachedViewportHeight) / scaleFactor
 
-        #if DEBUG
+#if DEBUG
         ILOG("Cached viewport values:")
         ILOG("Size: \(cachedViewportWidth)x\(cachedViewportHeight)")
         ILOG("Position: \(cachedViewportX),\(cachedViewportY)")
-        #endif
+#endif
+    }
+
+    override var isPaused: Bool {
+        didSet {
+            guard oldValue != isPaused else { return }
+
+            #if !os(visionOS)
+            mtlView?.isPaused = isPaused
+            #endif
+
+            if isPaused {
+                // Ensure we finish any pending renders
+                previousCommandBuffer?.waitUntilCompleted()
+            } else {
+                // Force a new frame when unpausing
+                frameCount = 0
+                draw(in: mtlView)
+            }
+        }
     }
 }

@@ -4,11 +4,7 @@ import Combine
 import PVLogging
 import Perception
 
-#if !os(tvOS)
-@Observable
-#else
 @Perceptible
-#endif
 public final class ConflictsWatcher: ObservableObject {
     public static let shared = ConflictsWatcher()
 

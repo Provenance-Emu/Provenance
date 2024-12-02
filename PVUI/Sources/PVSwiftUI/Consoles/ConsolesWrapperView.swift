@@ -15,6 +15,7 @@ import PVLibrary
 import PVUIBase
 import PVRealm
 import PVThemes
+import Combine
 
 @available(iOS 14, tvOS 14, *)
 class ConsolesWrapperViewDelegate: ObservableObject {
@@ -28,7 +29,7 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     @ObservedObject var delegate: ConsolesWrapperViewDelegate
     @ObservedObject var viewModel: PVRootViewModel
-    weak var rootDelegate: PVRootDelegate!
+    weak var rootDelegate: (PVRootDelegate & PVMenuDelegate)!
 
     @State private var showEmptySystems: Bool
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
@@ -39,7 +40,7 @@ struct ConsolesWrapperView: SwiftUI.View {
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
         viewModel: PVRootViewModel,
-        rootDelegate: PVRootDelegate
+        rootDelegate: PVRootDelegate & PVMenuDelegate
     ) {
         self.delegate = consolesWrapperViewDelegate
         self.viewModel = viewModel
@@ -59,19 +60,11 @@ struct ConsolesWrapperView: SwiftUI.View {
     // MARK: - Body
 
     var body: some SwiftUI.View {
-        TabView(selection: $delegate.selectedTab) {
-            if consoles.isEmpty {
-                showNoConsolesView()
-            } else {
-                showConsoles()
-            }
+        if consoles.isEmpty {
+            showNoConsolesView()
+        } else {
+            showConsoles()
         }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
-        .id(consoles.count)
-        .tint(themeManager.currentPalette.defaultTintColor?.swiftUIColor)
-        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
 
     // MARK: - Helper Methods
@@ -89,13 +82,29 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     private func showConsoles() -> some View {
-        ForEach(sortedConsoles(), id: \.self) { console in
-            ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
+        TabView(selection: $delegate.selectedTab) {
+            HomeView(gameLibrary: rootDelegate.gameLibrary!, delegate: rootDelegate, viewModel: viewModel)
                 .tabItem {
-                    Label(console.name, systemImage: console.iconName)
+                    Label("Home", systemImage: "house")
                 }
-                .tag(console.identifier)
+                .tag("home")
+                .ignoresSafeArea(.all, edges: .bottom)
+
+            ForEach(sortedConsoles(), id: \.self) { console in
+                ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
+                    .tabItem {
+                        Label(console.name, systemImage: console.iconName)
+                    }
+                    .tag(console.identifier)
+                    .ignoresSafeArea(.all, edges: .bottom)
+            }
         }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
+        .id(consoles.count)
+        .tint(themeManager.currentPalette.defaultTintColor?.swiftUIColor)
+        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
 }
 

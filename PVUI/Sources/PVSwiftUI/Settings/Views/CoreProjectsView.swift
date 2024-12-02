@@ -13,9 +13,12 @@ struct CoreProjectsView: View {
     let cores: [PVCore]
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var searchText = ""
-
+    
     init() {
         cores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName)).toArray()
+            .filter({ core in
+                !(AppState.shared.isAppStore && core.appStoreDisabled)
+            })
     }
 
     var filteredCores: [PVCore] {

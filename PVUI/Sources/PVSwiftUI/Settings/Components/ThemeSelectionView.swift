@@ -21,6 +21,7 @@ struct ThemeSelectionView: View {
 
     var body: some View {
         List {
+
             /// Standard theme options section
             Section(header: Text("Standard Themes")) {
                 ForEach(ThemeOptionsStandard.allCases, id: \.self) { option in

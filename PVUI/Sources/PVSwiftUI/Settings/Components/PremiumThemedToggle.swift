@@ -7,7 +7,9 @@
 
 import SwiftUI
 import UIKit
+#if canImport(FreemiumKit)
 import FreemiumKit
+#endif
 import PVThemes
 
 struct PremiumThemedToggle<Label: View>: View {

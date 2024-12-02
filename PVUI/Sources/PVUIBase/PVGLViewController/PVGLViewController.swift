@@ -134,14 +134,14 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             emulatorCore.renderDelegate = self
         }
         
-        renderSettings.crtFilterEnabled = Defaults[.crtFilterEnabled]
-        renderSettings.lcdFilterEnabled = Defaults[.lcdFilterEnabled]
+        renderSettings.metalFilterMode = Defaults[.metalFilterMode]
+        renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
         
         Task {
-            for await value in Defaults.updates([.crtFilterEnabled, .lcdFilterEnabled, .imageSmoothing]) {
-                renderSettings.crtFilterEnabled = Defaults[.crtFilterEnabled]
-                renderSettings.lcdFilterEnabled = Defaults[.lcdFilterEnabled]
+            for await value in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
+                renderSettings.metalFilterMode = Defaults[.metalFilterMode]
+                renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                 renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
             }
         }
@@ -494,7 +494,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         let docsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(fileName).path
         let fm = FileManager.default
         
-        let bundleShaderPath = Bundle.main.path(forResource: shaderResourceName,
+        let bundleShaderPath = Bundle.module.path(forResource: shaderResourceName,
                                                 ofType: "glsl")
         guard let bundleShaderPath = bundleShaderPath else {
             ELOG("bundleShaderPath is nil")
@@ -986,8 +986,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             let rendersToOpenGL = emulatorCore.rendersToOpenGL
             
             #warning("TODO: Get system type and check if CRT or LCD")
-            let crtEnabled = self.renderSettings.crtFilterEnabled //&& emulatorCore.screenType.isCRT
-            let lcdEnabled = self.renderSettings.lcdFilterEnabled //&& emulatorCore.screenType.isLCD
+            let crtEnabled = self.renderSettings.openGLFilterMode == .CRT
             
             var frontBufferTex: GLuint = 0
             
@@ -1024,18 +1023,6 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             }
             
             if crtEnabled {
-                glUseProgram(self.crtShaderProgram)
-                glUniform4f(self.crtUniform_DisplayRect,
-                            GLfloat(screenRect.origin.x), GLfloat(screenRect.origin.y),
-                            GLfloat(screenRect.size.width), GLfloat(screenRect.size.height))
-                glUniform1i(self.crtUniform_EmulatedImage, 0)
-                glUniform2f(self.crtUniform_EmulatedImageSize,
-                            GLfloat(videoBufferSize.width), GLfloat(videoBufferSize.height))
-                
-                let finalResWidth = GLfloat(view.drawableWidth)
-                let finalResHeight = GLfloat(view.drawableHeight)
-                glUniform2f(self.crtUniform_FinalRes, finalResWidth, finalResHeight)
-            } else if lcdEnabled {
                 glUseProgram(self.crtShaderProgram)
                 glUniform4f(self.crtUniform_DisplayRect,
                             GLfloat(screenRect.origin.x), GLfloat(screenRect.origin.y),

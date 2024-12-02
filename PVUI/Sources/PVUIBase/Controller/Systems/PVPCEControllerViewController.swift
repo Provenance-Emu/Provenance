@@ -116,6 +116,7 @@ final class PVPCEControllerViewController: PVControllerViewController<PVPCESyste
 
     override func pressStart(forPlayer player: Int) {
         emulatorCore.didPush(.mode, forPlayer: player)
+        vibrate()
     }
 
     override func releaseStart(forPlayer player: Int) {
@@ -124,6 +125,7 @@ final class PVPCEControllerViewController: PVControllerViewController<PVPCESyste
 
     override func pressSelect(forPlayer player: Int) {
         emulatorCore.didPush(.select, forPlayer: player)
+        vibrate()
     }
 
     override func releaseSelect(forPlayer player: Int) {

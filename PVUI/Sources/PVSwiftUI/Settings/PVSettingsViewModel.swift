@@ -212,7 +212,7 @@ class PVSettingsViewModel: ObservableObject {
             title: "Re-Scan all ROM Directories?",
             message: """
                 Attempt scan all ROM Directories,
-                import all new ROMs found, and update existing ROMs
+                import all new ROMs found, and update existing ROMs, and recover save states.
                 """,
             preferredStyle: .alert
         )
@@ -307,28 +307,6 @@ class PVSettingsViewModel: ObservableObject {
         menuDelegate?.didTapAddGames()
     }
 
-    // Add these computed properties
-    var crtFilterEnabled: Bool {
-        get { Defaults[.crtFilterEnabled] }
-        set {
-            Defaults[.crtFilterEnabled]  = newValue
-            if newValue {
-                // Turn off LCD filter if CRT is enabled
-                Defaults[.lcdFilterEnabled]  = false
-            }
-        }
-    }
-
-    var lcdFilterEnabled: Bool {
-        get { Defaults[.lcdFilterEnabled]  }
-        set {
-            Defaults[.lcdFilterEnabled]  = newValue
-            if newValue {
-                // Turn off CRT filter if LCD is enabled
-                Defaults[.crtFilterEnabled]  = false
-            }
-        }
-    }
 }
 
 extension PVSettingsViewModel {

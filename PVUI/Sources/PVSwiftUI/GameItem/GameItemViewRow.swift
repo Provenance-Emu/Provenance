@@ -22,13 +22,15 @@ struct GameItemViewRow: SwiftUI.View {
     var viewType: GameItemViewType
 
     var body: some SwiftUI.View {
-        HStack(alignment: .center, spacing: 10) {
-            GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
-            VStack(alignment: .leading, spacing: 0) {
-                GameItemTitle(text: game.title, viewType: viewType)
-                GameItemSubtitle(text: game.publishDate, viewType: viewType)
+        if !game.isInvalidated {
+            HStack(alignment: .center, spacing: 10) {
+                GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
+                VStack(alignment: .leading, spacing: 0) {
+                    GameItemTitle(text: game.title, viewType: viewType)
+                    GameItemSubtitle(text: game.publishDate, viewType: viewType)
+                }
             }
+            .frame(height: 50.0)
         }
-        .frame(height: 50.0)
     }
 }

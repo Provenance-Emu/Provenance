@@ -15,12 +15,25 @@ import PVLogging
     @objc open func setPauseEmulation(_ flag: Bool) {
         if flag {
             stopHaptic()
+            // Pause emulation loop
+            skipEmulationLoop = true
+            // Wait for current frame to complete
+            frontBufferLock.lock()
+            frontBufferLock.unlock()
+
             isRunning = false
         } else {
             startHaptic()
+            // Resume emulation loop
+            skipEmulationLoop = false
+            shouldResyncTime = true
+//                // Signal render delegate to resume
+//                renderDelegate?.isPaused = false
+
             isRunning = true
         }
     }
+    
 
     @objc open var isEmulationPaused: Bool { return !isRunning }
 

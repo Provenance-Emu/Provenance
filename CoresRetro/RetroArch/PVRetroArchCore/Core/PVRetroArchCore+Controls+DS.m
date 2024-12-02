@@ -47,13 +47,7 @@ extern GCController *touch_controller;
     [self handleDSButton:button forPlayer:player pressed:(value != 0) value:value];
 }
 - (void)handleDSButton:(PVDSButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
-    static float xAxis=0;
-    static float yAxis=0;
-    static float ltXAxis=0;
-    static float ltYAxis=0;
-    static float rtXAxis=0;
-    static float rtYAxis=0;
-    static float axisMult = 1.0;
+
     switch (button) {
         case(PVDSButtonUp):
             yAxis=pressed?(!xAxis?1.0:0.5):0;

@@ -16,6 +16,7 @@ struct HomeContinueItemView: SwiftUI.View {
     let height: CGFloat
     let hideSystemLabel: Bool
     var action: () -> Void
+    let isFocused: Bool
 
     @State private var showDeleteAlert = false
 
@@ -68,6 +69,13 @@ struct HomeContinueItemView: SwiftUI.View {
                     .background(.ultraThinMaterial)
                     .frame(maxWidth: .infinity)
                 }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(themeManager.currentPalette.gameLibraryText.swiftUIColor, lineWidth: isFocused ? 4 : 0)
+                )
+                .scaleEffect(isFocused ? 1.05 : 1.0)
+                .brightness(isFocused ? 0.1 : 0)
+                .animation(.easeInOut(duration: 0.15), value: isFocused)
             }
             .contextMenu {
                 Button(role: .destructive) {

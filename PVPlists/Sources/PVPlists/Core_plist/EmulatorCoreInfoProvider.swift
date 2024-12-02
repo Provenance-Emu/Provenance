@@ -18,6 +18,7 @@ public protocol EmulatorCoreInfoProvider {
     var projectURL: String { get }
     var projectVersion: String { get }
     var disabled: Bool { get }
+    var appStoreDisabled: Bool { get }
     var subCores: [Self]? { get }
 }
 
@@ -32,5 +33,6 @@ extension CorePlistEntry: EmulatorCoreInfoProvider {
     public var projectURL: String { PVProjectURL }
     public var projectVersion: String { PVProjectVersion }
     public var disabled: Bool { PVDisabled ?? false }
+    public var appStoreDisabled: Bool { PVAppStoreDisabled ?? false }
     public var subCores: [CorePlistEntry]? { subCores }
 }

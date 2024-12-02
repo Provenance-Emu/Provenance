@@ -14,7 +14,7 @@ let VIDEO_UPSCALE = "1"
 let package = Package(
     name: "PVCorePokeMini",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v11),

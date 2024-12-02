@@ -8,14 +8,14 @@
 #if canImport(SwiftData) && !os(tvOS)
 import SwiftData
 
-#if !os(tvOS)
-@Model
-#endif
+//#if !os(tvOS)
+//@Model
+//#endif
 public class User_Data {
     // Data
-#if !os(tvOS)
-    @Attribute(.unique)
-#endif
+//#if !os(tvOS)
+//    @Attribute(.unique)
+//#endif
     public var uuid: String = UUID().uuidString
     
     public var name: String = ""

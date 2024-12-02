@@ -3,76 +3,66 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] RetroArch GLES cores are crashing?
-- [X] moveable button joystick and dpad move at the same time
-- [X] Delete isn't deleting
-    - [X] throw an error on file manager error
-- [X] audio is fucked
-- [X] 4X multisampling crashes Mupen on iPad, (iphone?)
-- [X] Refresh library and conflicts on new UI not working
-- [X] UI is unresponsive after closing emulator
-- [X] wrap advanced settings in freemiumview
-- [X] fix launching webserver from swiftui menu
-- [X] iCloud sync isn't working, remove or fix
-- [X] Swift UI long press on roms menu missing actions {rename, ~~share~~}
-- [X] Progress hud on unzips isn't hiding
-- [X] Themes setting doesn't work
-- [X] Conflicts folder is weird
-- [X] SwiftUI not seeing conflicts
-- [X] Copy the framework loader from old branch, fix it too!
-- [X] emuThreeDS and other metal based cores have wrong layout contraints
-- [X] Possible race condition in importer
-- [X] Gambatte swift module not done
-- [X] PVmGBA swift module is not done
-- [X] Fix Repo submodules
-- [X] Audio broken
-- [X] Loading save states crashes realm
-- [X] Creating save states crashes realm
-- [X] SwiftUI not importing roms correctly
-- [X] compiling with Mupen+Rumble.swift breaks device release builds
+- [ ] Recover of games with bad paths
+- [ ] Recover of save states not loading images
+- [ ] ugly retroarch ui in app, a bit unresponsive
+- [ ] Gearcoloco bottom buttons are wrong values
+- [ ] Pokemini audio fucked up
+- [ ] import queue, clicking an item should import it
+- [ ] Atari 2600 not using our controller for retroarch
+- [ ] Hud still looping
+- [ ] vectrex crashes due to missing screen rect
+- [ ] save state manager is showing saves for all roms
+- [ ] importer doesn't auto start on import or selection of conflicts
+- [X] PCFX retroarch controls fucked, right is held down, actions don't do shit (using bultin controls)
+- [X] N64 retroarch don't load (no disabled)
+- [X] retroarch non gl cores are blank
+- [X] EP128 crashes, fix or remove. (removed)
+- [X] app groups, get rid?
+- [X] Games pausing not working
+- [ ] New save state mangager
+    - [X] doesn't load from homeview
+    - [X] Hide share or impliment
+    - [X] Save state images
+    - [ ] swipe sucks
+    - [X] top to play, with confirmation
+    - [X] Fix main game artwork async, or missing artwork view
+    - [X] Number of save states count updates on delete
+    - [X] Save state images
+    - [X] Transparent background on the wrapper view controller,
+    - [X] Glitchy search bar hiding
+- [X] test,fix,finish PVImageFile pathOfCachedImage
+
+- [X] Shared documents :        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
 
 ## Major bugs
 
-- [ ] Native scale on mupen shows in wrong area on ipad
-- [ ] Re-add and fix "Launch Web Server" from Swift UI settings
+- [ ] Opening roms from md5/siri search doesn't work (Claude had good sample code)
+- [X] Test iOS 17.0 and then 16.X
+- [X] Remove or fix new shaders
+- [ ] Artwork ratios are wrong
+- [X] BIOS screens show mismatch when there isn't
+- [ ] Fix or remove Flycast retroarch for Dreamcast
 - [ ] Share on old UI crashes app (realm threading issue)
-- [ ] iCloud sync removed
-- [ ] Checking Import UI is hanging (removed for now)
+- [X] Checking Import UI is hanging (removed for now)
     - [ ] fix public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async
-- [ ] look at the displaylink thing in retroarch
+- [ ] Fix layout, layout button and touch controls of Desmume2015 or remove
+    - Partially done WIP
+- [ ] Native scale on mupen shows in wrong area on ipad
 - [ ] Flycast crashes with error `NSInvalidArgumentException', reason: '-[MetalView naturalDrawableSizeMVK]: unrecognized selector sent`
-    - [ ] Try downgrading MoltenVK.xcframework to fix dolphin, flycast others
+    - [X] Try downgrading MoltenVK.xcframework to fix dolphin, flycast others
 - [ ] (Lite) Intellivision (PVBliss) audio crashes on button press
 - [ ] (Lite) Intellivision video is glitched
 - [ ] (Lite) Odyssey2 needs a way to enter game number 1,2 (3,4)?
 - [ ] (Lite) SuperVision video dimensions wrong
 - [ ] (Lite) Turbo GFX 16 no video for some roms
 - [ ] (Lite) Sega CD is borked
-- [X] The notch is in retroarch view
-- [X] manually copying a bios into bios's works, but database isn't updated with instance reference
-- [X] Mupen video crashes with update metal code
-- [X] CrabEMU (Genesis) no buttons work
-- [X] Mednafen GB crashing
-- [X] Vectrex needs PVVecXCore:LibRetroCore (or rollback to older code?)
-- [X] ZX Spectrum needs PVLibRetroCore (or rollback to older code?)
-- [X] Zip files cause conflicts, not always handled correctly
-- [X] Jaguar not working in Metal mode (dimensions off slightly?)
-- [X] Stella Metal is right but GLES is blank
-- [X] Stella no buttons work
-- [X] Game gear dimensions wrong
-- [X] Colicovision roms are blank screen
-- [X] iPad swiftui opening web server doesn't have a cgrect
-- [X] Stella pixel types are wrong - video is distorted
-- [X] Loading the app is very slow now (release mode not that bad)
-- [X] Mednafen controller input broken
-- [X] Test intellivisoin and check proper bios
-- [X] Pokemini crashes on load
-- [X] PokeMini butons don't work
-- [X] Intellivision doesn't load
 
 ## Minor bugs
 
 - [ ] Spotlight no worky, crashes
+- [ ] archive extraction HUD doens't show % progress updates
+- [ ] Screensots for retroarch cores is the wrong space (3ds too)
 - [ ] BIOS importer should work when multiple systems match the same bios
 - [ ] Dark mode toggle doens't refresh all views if theme set to auto
 - [ ] Box art is clipped in swift ui -- need better aspect ratios
@@ -81,7 +71,6 @@ _My personal TODO notes_
 - [ ] N64 onscreen controls are kind of high
 - [ ] Add a way to delete a bios
 - [ ] Add core option for mGBA low pass filter
-- [ ] Opening roms from md5/siri search doesn't work (Claude had good sample code)
 - [ ] See if psx mednafen has more options
 - [ ] Should add loading screen for starting emulator
 - [ ] Spotlignt/extensions can't build with spm modules (this is working now? was an xcode bug?)
@@ -90,7 +79,7 @@ _My personal TODO notes_
     - [ ] Share
     - [ ] Hide
     - [ ] Choose disc
-- [ ] Make an LCD Filter then add it back to settings
+- [ ] Microphone input for cores that support it
 - [ ] Swift UI should open on home and be scrollable to systems
 - [ ] When switching from SwiftUI to old UI, the game lib is zoomed way too much, need to change how it uses Scaling Factor Defaults[.gameLibraryScale]
 - [ ] should store last page view for next open
@@ -103,32 +92,50 @@ _My personal TODO notes_
     - [ ] Game text not themed
     - [ ] New import indicator not themed
 - [ ] Make GameMoreInfoVC and it's equivlant PageViewController into native swifttUI with editing of properties
-- [X] Fix button 9 repeat on Intellivision controls
-- [X] Importer should overwrite or delete on duplicate imports
-- [X] Swift UI Settings should use the themed alerts via the delegate or something
-- [X] purple and rainbow themes not selectable
-- [X] Themes page indicator not right
-- [X] add tap for bios to clipboard in swiftui on missing
-- [X] Swift UI console view, games could use some improvments
-    - [X] side padding minimums
-    - [X] even spacing
-    - [X] game title text sometimes overflows the width
-- [X] Add Show recent saves on console itself
-- [X] Dolphin won't build due to stdint.h in extern C
-- [X] Nes fix button layout
-- [X] Test/fix CrabEMU save states
-- [X] Legacy UI removed collapsing systems
-- [X] 3D0 crashes on load
-- [X] 7Zip support not working
+- [ ] App Group containers in Catalyst "public class var appGroupContainer"
+- [ ] look at the displaylink thing in retroarch
 
-## Cores to translate
+## Features to Add
+
+###  Really want
+
+- [ ] Add more artwork lookups
+- [ ] Gamepad navigation in swiftUI
+    - Partially implimented
+- [ ] iCloud sync
+- [ ] Save state share in savestate manager swift ui view
+
+### Kind of want
+
+- [X] New save states management page
+    - [X] (New design)[https://discord.com/channels/@me/1034683216059179069/1307885448030326877]
+
+### Cores to translate
 
 - [ ] PVFreeIntV
 - [ ] PVfMSX
 
+### Retroarch cores to add
+
+- holani
+    >>> Holani is a cycle-stepped Atari Lynx video game system emulator that can be used as a libretro core. Holani's primary goal is to get closer to the Lynx hardware and provide a better emulation experience.
+    https://docs.libretro.com/library/holani/#background
+- puae & puea 2021
+    Amiga
+    https://docs.libretro.com/library/puae/
+- bsnes-hd-beta
+- neocd
+    https://docs.libretro.com/library/neocd/
+- melondsds
+
 --------------------------------------
 
 ## AppStore Review
+
+- [\] Update screenshots without copyright material
+- [X] Remove apple referecnces from app description
+- [X] Custom build without certain cores
+    - Anything apple
 
 - [X] Screenshots
 - [X] Remove "beta" text
@@ -140,10 +147,25 @@ _My personal TODO notes_
 - [X] Privacy policy / EULA in settings!
 - [X] Add in-app purchase and screen
 - [ ] Add app rating with SiruisRating
+- [X] Add alternative icons
+    - [X] AppIcon-8bit1
+    - [X] AppIcon-8bit2
+    - [X] AppIcon-8bit3
+    - [X] AppIcon-8bit4
+    - [X] AppIcon-8bit5
+    - [X] AppIcon-Blue-Negative
+    - [X] AppIcon-Blue
+    - [X] AppIcon-Cyan
+    - [X] AppIcon-Gem
+    - [X] AppIcon-Gold
+    - [X] AppIcon-Paint1
+    - [X] AppIcon-Paint2
+    - [X] AppIcon-Purple
+    - [X] AppIcon-Seafoam
+    - [X] AppIcon-Yellow
 
 ### Low Priority
 - [ ] Finish themes
-- [ ] Add new logo
 - [ ] Add Shiragame
 - [X] Hide some features behind is plus in app store builds
     - [X] Advanced settings

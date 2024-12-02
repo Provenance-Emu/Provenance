@@ -40,6 +40,7 @@ public struct System: Codable, SystemProtocol, Sendable {
     public let supportsRumble: Bool
     public let screenType: ScreenType
     public let supported: Bool
+    public let appStoreDisabled: Bool
 
     public init(
         name: String,
@@ -60,7 +61,9 @@ public struct System: Codable, SystemProtocol, Sendable {
         portableSystem: Bool = false,
         supportsRumble: Bool = false,
         screenType: ScreenType = .crt,
-        supported: Bool = true) {
+        supported: Bool = true,
+        appStoreDisabled: Bool = false
+    ) {
         self.name = name
         self.identifier = identifier
         self.shortName = shortName
@@ -80,6 +83,7 @@ public struct System: Codable, SystemProtocol, Sendable {
         self.supportsRumble = supportsRumble
         self.screenType = screenType
         self.supported = supported
+        self.appStoreDisabled = appStoreDisabled
     }
 }
 
@@ -147,6 +151,7 @@ public extension System {
         let supportsRumble = system.supportsRumble
         let screenType = system.screenType
         let supported = system.supported
+        let appStoreDisabled = system.appStoreDisabled
         self.init(name: name,
                   identifier: identifier,
                   shortName: shortName,
@@ -165,6 +170,8 @@ public extension System {
                   portableSystem: portableSystem,
                   supportsRumble: supportsRumble,
                   screenType: screenType,
-                  supported: supported)
+                  supported: supported,
+                  appStoreDisabled: appStoreDisabled
+        )
     }
 }

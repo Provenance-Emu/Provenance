@@ -84,8 +84,10 @@ struct BiosRowView: SwiftUI.View {
         }
         .frame(height: 40)
         .task { @MainActor in
-            let biosState  = (bios as BIOSStatusProvider).status
-            self.biosState = biosState.state
+            if biosState == nil {
+                let biosStatus = (bios as BIOSStatusProvider).status
+                self.biosState = biosStatus.state
+            }
         }
         #if !os(tvOS)
         .onTapGesture {

@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PVJIT",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v16),
         .tvOS(.v16),
         .visionOS(.v1)
     ],

@@ -9,18 +9,18 @@
 import SwiftData
 import PVPrimitives
 
-#if !os(tvOS)
-@Model
-#endif
+//#if !os(tvOS)
+//@Model
+//#endif
 public class BIOS_Data {
     // Attributes
-#if !os(tvOS)
-    @Attribute(.unique)
-#endif
+//#if !os(tvOS)
+//    @Attribute(.unique)
+//#endif
     public var expectedFilename: String = ""
-#if !os(tvOS)
-    @Attribute(.unique)
-#endif
+//#if !os(tvOS)
+//    @Attribute(.unique)
+//#endif
     public var expectedMD5: String = ""
     public var expectedSize: Int = 0
     public var optional: Bool = false

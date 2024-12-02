@@ -65,6 +65,7 @@ public extension ThemeManager {
         configureTabBar(palette)
         configureTableViews(palette)
         configureTextInputs(palette)
+//        configureUISearchBar(palette)
         configureUIView(palette)
         configureUIWindow(palette)
 
@@ -114,7 +115,9 @@ public extension ThemeManager {
         if #available(iOS 17.0, tvOS 17.0, *) {
             UINavigationBar.appearance().standardAppearance = appearance
             UINavigationBar.appearance().compactAppearance = appearance
+#if !os(tvOS)
             UINavigationBar.appearance().scrollEdgeAppearance = appearance
+#endif
             if #available(iOS 15.0, *) {
                 UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
             }
@@ -182,8 +185,28 @@ public extension ThemeManager {
     private class func configureTextInputs(_ palette: any UXThemePalette) {
         UITextField.appearance().keyboardAppearance = palette.keyboardAppearance
         UISearchBar.appearance().keyboardAppearance = palette.keyboardAppearance
+        
+//        UITextField.appearance().backgroundColor = palette.gameLibraryBackground
+//        UITextField.appearance().textColor = palette.gameLibraryText
+        
         DLOG("Text inputs - keyboardAppearance: \(palette.keyboardAppearance)")
     }
+    
+    @MainActor
+    private class func configureUISearchBar(_ palette: any UXThemePalette) {
+        UISearchBar.appearance().backgroundColor = palette.menuBackground
+        UISearchBar.appearance().tintColor = palette.menuText
+        UISearchBar.appearance().barTintColor = palette.menuBackground
+        #if !os(tvOS)
+        UISearchBar.appearance().searchTextField.textColor = palette.menuText
+        UISearchTextField.appearance().tokenBackgroundColor = palette.menuHeaderBackground
+        UISearchTextField.appearance().tintColor = palette.menuIconTint
+        UISearchTextField.appearance().textColor = palette.menuText
+        #endif
+        
+        DLOG("UISearchBar - backgroundColor: \(palette.settingsCellBackground?.debugDescription ?? "nil"), tintColor: \(palette.gameLibraryText.debugDescription)")
+    }
+
 
     @MainActor
     private class func configureActionSheets(_ palette: any UXThemePalette) {

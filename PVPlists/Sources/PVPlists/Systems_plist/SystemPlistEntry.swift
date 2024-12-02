@@ -23,4 +23,5 @@ public struct SystemPlistEntry: Codable, Equatable, Hashable {
     public private(set) var PVPortable: Bool?
     public private(set) var PVScreenType: String?
     public private(set) var PVSupportsRumble: Bool?
+    public private(set) var PVAppStoreDisabled: Bool?
 }

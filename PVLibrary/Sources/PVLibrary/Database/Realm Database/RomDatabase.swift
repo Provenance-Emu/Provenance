@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import Systems
 import PVMediaCache
 
-let schemaVersion: UInt64 = 11
+let schemaVersion: UInt64 = 14
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -144,6 +144,25 @@ public final class RealmConfiguration {
             if oldSchemaVersion < 11 {
                 migration.enumerateObjects(ofType: PVSystem.className()) { oldObject, newObject in
                     newObject!["supported"] = true
+                }
+            }
+            if oldSchemaVersion < 12 {
+                migration.enumerateObjects(ofType: PVRecentGame.className()) { oldObject, newObject in
+                    newObject!["id"] = NSUUID().uuidString
+                }
+            }
+            if oldSchemaVersion < 13 {
+                migration.enumerateObjects(ofType: PVCore.className()) { oldObject, newObject in
+                    newObject!["appStoreDisabled"] = false
+                }
+                migration.enumerateObjects(ofType: PVSystem.className()) { oldObject, newObject in
+                    newObject!["appStoreDisabled"] = false
+                }
+            }
+            if oldSchemaVersion < 14 {
+                migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
+                    newObject!["isPinned"] = false
+                    newObject!["isFavorite"] = false
                 }
             }
         }
@@ -355,7 +374,9 @@ public final class RomDatabase {
     // and RomDatabase would just exist to provide context instances and init the initial database - jm
     public static var sharedInstance: RomDatabase {
         // Make sure real shared is inited first
-        let shared = RomDatabase._sharedInstance!
+        guard let shared = RomDatabase._sharedInstance else {
+            return try! RomDatabase()
+        }
 
         if Thread.isMainThread {
             return shared
@@ -453,6 +474,35 @@ public extension RomDatabase {
 
     func allGamesSortedBySystemThenTitle() -> Results<PVGame> {
         return realm.objects(PVGame.self).sorted(byKeyPath: "systemIdentifier").sorted(byKeyPath: "title")
+    }
+    
+    // MARK: Save States
+    
+    func allSaveStates() -> Results<PVSaveState> {
+        return all(PVSaveState.self)
+    }
+    
+    func allSaveStates(forGameWithID gameID: String) -> Results<PVSaveState> {
+        let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID)
+        return realm.objects(PVSaveState.self).filter("game == %@", game)
+    }
+    
+    func savetate(forID saveStateID: String) -> PVSaveState? {
+        if let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID) {
+            return saveState
+        } else {
+            return nil
+        }
+    }
+}
+
+public extension Object {
+    public static func all() -> Results<PersistedType> {
+        try! Realm().objects(Self.PersistedType)
+    }
+    
+    public static func forPrimaryKey(_ primaryKey: String) -> PersistedType? {
+        try! Realm().object(ofType: Self.PersistedType.self, forPrimaryKey: primaryKey)
     }
 }
 
@@ -572,7 +622,8 @@ public extension RomDatabase {
                     game.title = title
                         if game.releaseID == nil || game.releaseID!.isEmpty {
                             ILOG("Game isn't already matched, going to try to re-match after a rename")
-                            GameImporter.shared.lookupInfo(for: game, overwrite: false)
+                            //TODO: figure out when this happens and fix
+                            //GameImporter.shared.lookupInfo(for: game, overwrite: false)
                         }
                 }
             } catch {
@@ -641,9 +692,9 @@ public extension RomDatabase {
         } catch {
             // Delete the DB entry anyway if any of the above files couldn't be removed
             do { try game.delete() } catch {
-                NSLog("\(error.localizedDescription)")
+                ELOG("\(error.localizedDescription)")
             }
-            NSLog("\(error.localizedDescription)")
+            ELOG("\(error.localizedDescription)")
         }
     }
 

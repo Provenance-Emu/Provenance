@@ -238,6 +238,19 @@ static void cocoa_gl_gfx_ctx_get_video_size(void *data,
 }
 #endif
 
+static float cocoa_gl_gfx_ctx_get_refresh_rate(void *data)
+{
+#ifdef OSX
+    CGDirectDisplayID mainDisplayID = CGMainDisplayID();
+    CGDisplayModeRef currentMode = CGDisplayCopyDisplayMode(mainDisplayID);
+    float currentRate = CGDisplayModeGetRefreshRate(currentMode);
+    CFRelease(currentMode);
+    return currentRate;
+#else
+    return [UIScreen mainScreen].maximumFramesPerSecond;
+#endif
+}
+
 static gfx_ctx_proc_t cocoa_gl_gfx_ctx_get_proc_address(const char *symbol_name)
 {
    return (gfx_ctx_proc_t)CFBundleGetFunctionPointerForName(
@@ -479,15 +492,16 @@ static bool cocoa_gl_gfx_ctx_set_video_mode(void *data,
    cocoa_ctx_data_t *cocoa_ctx = (cocoa_ctx_data_t*)data;
 
    if (cocoa_ctx->flags & COCOA_CTX_FLAG_USE_HW_CTX)
-      g_hw_ctx      = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-   g_ctx            = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-   glk_view.context = g_ctx;
+      g_hw_ctx      = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+   g_ctx            = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
 
 #ifdef OSX
    [g_ctx makeCurrentContext];
 #else
    [EAGLContext setCurrentContext:g_ctx];
 #endif
+    
+    glk_view.context = g_ctx;
 
    /* TODO: Maybe iOS users should be able to 
     * show/hide the status bar here? */
@@ -543,7 +557,7 @@ const gfx_ctx_driver_t gfx_ctx_cocoagl = {
 #else
    cocoa_gl_gfx_ctx_get_video_size,
 #endif
-   NULL, /* get_refresh_rate */
+   cocoa_gl_gfx_ctx_get_refresh_rate, /* get_refresh_rate */
    NULL, /* get_video_output_size */
    NULL, /* get_video_output_prev */
    NULL, /* get_video_output_next */

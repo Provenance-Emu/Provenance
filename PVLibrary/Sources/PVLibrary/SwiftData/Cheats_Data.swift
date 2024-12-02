@@ -8,9 +8,9 @@
 #if canImport(SwiftData) && !os(tvOS)
 import SwiftData
 
-@Model
+//@Model
 public class Cheats_Data {
-    @Attribute(.unique)
+//    @Attribute(.unique)
     public var id = UUID().uuidString
 
     // Data

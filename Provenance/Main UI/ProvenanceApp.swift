@@ -34,7 +34,7 @@ struct ProvenanceApp: App {
             #endif
                 }
         }
-        .onChange(of: scenePhase) { oldPhase, newPhase in
+        .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 appState.startBootupSequence()
                 

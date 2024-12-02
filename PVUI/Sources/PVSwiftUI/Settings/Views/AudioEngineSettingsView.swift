@@ -55,7 +55,7 @@ struct AudioEngineSettingsView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-
+            #if !os(tvOS)
             Section(header: Text("Latency")) {
                 HStack {
                     Text("Audio Latency")
@@ -71,7 +71,7 @@ struct AudioEngineSettingsView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-
+            #endif
             #if DEBUG
             Section(header: Text("Debug Options")) {
                 ThemedToggle(isOn: $monoAudio) {

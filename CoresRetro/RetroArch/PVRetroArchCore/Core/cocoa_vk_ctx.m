@@ -294,7 +294,7 @@ static bool cocoa_vk_gfx_ctx_set_video_mode(void *data,
    if (!vulkan_surface_create(&cocoa_ctx->vk,
                               VULKAN_WSI_MVK_IOS,
                               NULL,
-                              (BRIDGE void *)g_view,
+                              (BRIDGE void *)((MetalView*)g_view).layer,
                               cocoa_ctx->width,
                               cocoa_ctx->height,
                               cocoa_ctx->swap_interval))

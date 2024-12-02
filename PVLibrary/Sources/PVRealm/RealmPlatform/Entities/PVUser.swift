@@ -11,14 +11,14 @@ import RealmSwift
 
 @objcMembers
 public final class PVUser: Object {
-    public dynamic var uuid: String = ""
-    public dynamic var name: String = ""
+    @Persisted public var uuid: String = ""
+    @Persisted public var name: String = ""
 
     // Remote info
-    public dynamic var isPatron: Bool = false
-    public dynamic var savesAccess: Bool = false
+    @Persisted public var isPatron: Bool = false
+    @Persisted public var savesAccess: Bool = false
 
-    public dynamic var lastSeen: Date = Date()
+    @Persisted public var lastSeen: Date = Date()
 }
 
 // PVLibrary - Network

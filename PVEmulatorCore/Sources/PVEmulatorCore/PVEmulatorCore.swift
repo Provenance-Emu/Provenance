@@ -21,23 +21,23 @@ public typealias OptionalCore = PVEmulatorCore & CoreOptional
 @objc
 @objcMembers
 open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
-    
+
     open var bridge: (any ObjCBridgedCoreBridge)!
-    
+
     @MainActor
     @objc public static var coreClassName: String = ""
-    
+
     @MainActor
     @objc public static var systemName: String = ""
-    
+
     @objc dynamic open var resourceBundle: Bundle { Bundle.module }
-    
+
     @MainActor
     @available(*, deprecated, message: "Why does this need to exist? Only used for macII in PVRetroCore")
     public static var status: [String: Any] = .init()
-    
+
     // MARK: EmulatorCoreAudioDataSource
-    
+
 #if canImport(GameController)
     @objc
     public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
@@ -57,7 +57,7 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
             startHaptic()
         }
     }
-    
+
     @objc dynamic open var controller2: GCController? {
         get { bridge.controller2 }
         set { bridge.controller2 = newValue } }
@@ -67,7 +67,7 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     @objc dynamic open var controller4: GCController? {
         get { bridge.controller4 }
         set { bridge.controller4 = newValue } }
-    
+
     @objc dynamic open var controller5: GCController? {
         get { bridge.controller5 }
         set { bridge.controller5 = newValue } }
@@ -81,39 +81,39 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
         get { bridge.controller8 }
         set { bridge.controller8 = newValue } }
 #endif
-    
+
 #if !os(macOS) && !os(watchOS)
     @objc open var touchViewController: UIViewController?
     { didSet { bridge.touchViewController = touchViewController} }
 //    { get{ bridge.touchViewController } set { bridge.touchViewController = newValue } }
 #endif
-    
+
 //    // MARK: EmulatorCoreRumbleDataSource
 //    var supportsRumble: Bool { bridge.supportsRumble }
-    
+
     // MARK: EmulatorCoreSavesDataSource
-    
+
     @objc dynamic open var batterySavesPath: String? = nil {
         didSet { bridge.batterySavesPath = batterySavesPath }
     }
     @objc dynamic open var saveStatesPath: String? = nil {
         didSet { bridge.saveStatesPath = saveStatesPath }
     }
-    
+
     @objc dynamic open var supportsSaveStates: Bool { return bridge.supportsSaveStates ?? false }
-    
+
     // MARK: EmulatorCoreVideoDelegate
-    
+
 #if canImport(OpenGL) || canImport(OpenGLES)
     @objc dynamic open var glesVersion: GLESVersion = .version3
 #endif
-    
+
     // PVRenderDelegate
     @objc open weak var renderDelegate: (any PVCoreBridge.PVRenderDelegate)?
     { get{ bridge.renderDelegate } set { bridge.renderDelegate = newValue } }
-    
+
     // MARK: EmulatorCoreRunLoop
-    
+
     /// Should stop
     @objc dynamic open var shouldStop: Bool
     { get { bridge.shouldStop } set { bridge.shouldStop = newValue } }
@@ -125,16 +125,16 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     { get { bridge.skipEmulationLoop } set { bridge.skipEmulationLoop = newValue } }
     @objc dynamic open var skipLayout: Bool
     { get { bridge.skipLayout } set { bridge.skipLayout = newValue } }
-    
+
     @available(*, deprecated, message: "What is this even used for?")
     @objc dynamic open var isOn: Bool = false
-    
+
     @objc dynamic open var isFrontBufferReady: Bool
     { get { bridge.isFrontBufferReady } set { bridge.isFrontBufferReady = newValue } }
 
     @objc dynamic open var gameSpeed: PVCoreBridge.GameSpeed = .normal
     { didSet { bridge.gameSpeed = gameSpeed }}
-    
+
     @objc dynamic open var emulationLoopThreadLock: NSLock
     { get { bridge.emulationLoopThreadLock } set { bridge.emulationLoopThreadLock = newValue } }
 
@@ -144,7 +144,7 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     @objc dynamic open var frontBufferLock: NSLock
     { get { bridge.frontBufferLock } set { bridge.frontBufferLock = newValue } }
 
-    
+
     // MARK: EmulatorCoreIOInterface
     @objc dynamic open var romName: String?
     { get { bridge.romName } set { bridge.romName = newValue } }
@@ -165,30 +165,30 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     { get { bridge.romSerial } set { bridge.romMD5 = romSerial } }
 
     @objc dynamic open var discCount: UInt { bridge.discCount }
-    
+
     @objc dynamic open var screenType: ScreenTypeObjC = .crt
-    
+
     @objc dynamic open var extractArchive: Bool
     { get { bridge.extractArchive } set { bridge.extractArchive = newValue } }
 
-    
+
     // MARK: Audio
     @objc dynamic open var audioDelegate: (any PVAudioDelegate)?
     { get { bridge.audioDelegate } set { bridge.audioDelegate = newValue } }
-    
+
     // MARK: Class
-    
+
     @objc open func initialize() {
 //        buildRingBuffers()
         /// Fixes a race condition
         bridge.touchViewController = touchViewController
         bridge.initialize()
-        
+
         frontBufferLock = .init()
         frontBufferCondition = .init()
         emulationLoopThreadLock = .init()
     }
-    
+
     //    @nonobjc
     //    open func loadFile(atPath path: String) throws -> Bool {
     //        var error: NSError?
@@ -200,7 +200,7 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     //        }
     //        return success
     //    }
-    
+
     @objc(loadFileAtPath:error:)
     open func loadFile(atPath path: String) throws {
         //        if let bridge = self as? ObjCCoreBridge {
@@ -209,12 +209,12 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
         //        }
         throw EmulationError.coreDoesNotImplimentLoadFile
     }
-    
+
     @objc
     required public override init() {
         super.init()
     }
-    
+
 //    private func buildRingBuffers() {
 //        let audioBufferCount = Int(audioBufferCount)
 //        ringBuffers = (0..<audioBufferCount).compactMap {
@@ -222,17 +222,18 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 //            return RingBuffer.init(withLength: length)
 //        }
 //    }
-    
+
     // EmulatorCoreAudioDataSource
     @objc dynamic open var ringBuffers: [RingBufferProtocol]?
     { get { bridge.ringBuffers } set { bridge.ringBuffers = newValue }}
 }
 
 #if !os(macOS) && !os(watchOS)
+/// This method is for forwarding touch events to cores that have TouchScreen cotrols,
+/// PSP, 3DS, DS etc
 @objc
 extension PVEmulatorCore : ResponderClient {
     open func sendEvent(_ event: UIEvent?) {
-        #warning("This is empty in the ObjC version too, but why does this exist? @JoeMatt")
         bridge.sendEvent(event)
     }
 }

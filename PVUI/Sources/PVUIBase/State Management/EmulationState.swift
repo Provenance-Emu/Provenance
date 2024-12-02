@@ -9,9 +9,11 @@ import PVEmulatorCore
 import PVCoreBridge
 import SwiftUI
 import PVLogging
+import Perception
 
 @MainActor
-@Observable
+//@Observable
+@Perceptible
 public final class EmulationState: ObservableObject {
     public var core: PVEmulatorCore? {
         didSet {

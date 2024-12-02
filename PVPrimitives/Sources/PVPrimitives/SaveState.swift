@@ -17,6 +17,9 @@ public protocol SaveStateInfoProvider {
     var lastOpened: Date? { get }
     var image: LocalFile? { get }
     var isAutosave: Bool { get }
+    var isPinned: Bool { get }
+    var isFavorite: Bool { get }
+    var userDescription: String? { get }
 }
 
 public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable {
@@ -28,8 +31,11 @@ public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable 
     public let lastOpened: Date?
     public let image: LocalFile?
     public let isAutosave: Bool
-    
-    public init(id: String, game: Game, core: Core, file: FileInfo, date: Date, lastOpened: Date?, image: LocalFile?, isAutosave: Bool) {
+    public let isPinned: Bool
+    public let isFavorite: Bool
+    public let userDescription: String?
+
+    public init(id: String, game: Game, core: Core, file: FileInfo, date: Date, lastOpened: Date?, image: LocalFile?, isAutosave: Bool, isPinned: Bool = false, isFavorite: Bool = false, userDescription: String? = nil) {
         self.id = id
         self.game = game
         self.core = core
@@ -38,6 +44,9 @@ public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable 
         self.lastOpened = lastOpened
         self.image = image
         self.isAutosave = isAutosave
+        self.isPinned = isPinned
+        self.isFavorite = isFavorite
+        self.userDescription = userDescription
     }
     
     public init(from decoder: any Decoder) throws {
@@ -50,6 +59,10 @@ public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable 
         self.lastOpened = try container.decodeIfPresent(Date.self, forKey: .lastOpened)
         self.image = try container.decodeIfPresent(LocalFile.self, forKey: .image)
         self.isAutosave = try container.decode(Bool.self, forKey: .isAutosave)
+        self.isPinned = try container.decode(Bool.self, forKey: .isPinned)
+        self.isFavorite = try container.decode(Bool.self, forKey: .isFavorite)
+        self.userDescription = try container.decodeIfPresent(String.self, forKey: .userDescription)
+
     }
 }
 

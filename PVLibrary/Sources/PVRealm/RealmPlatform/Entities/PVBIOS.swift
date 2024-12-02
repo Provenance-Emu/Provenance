@@ -15,23 +15,19 @@ public final class PVBIOS: Object, Identifiable, BIOSFileProvider {
 //    public var status: BIOSStatus
     public var id: String { expectedMD5 }
     
-    public dynamic var system: PVSystem!
+    @Persisted public var system: PVSystem!
 
-    public dynamic var descriptionText: String = ""
+    @Persisted public var descriptionText: String = ""
     public var regions: RegionOptions = .unknown
-    public dynamic var version: String = ""
-    public dynamic var optional: Bool = false
+    @Persisted public var version: String = ""
+    @Persisted public var optional: Bool = false
 
-    public dynamic var expectedMD5: String = ""
-    public dynamic var expectedSize: Int = 0
-    public dynamic var expectedFilename: String = ""
+    @Persisted(indexed: true) public var expectedMD5: String = ""
+    @Persisted public var expectedSize: Int = 0
+    @Persisted(primaryKey: true) public var expectedFilename: String = ""
 
-    public dynamic var file: PVFile?
+    @Persisted public var file: PVFile?
     public var fileInfo: PVFile? { return file }
-
-    public override static func primaryKey() -> String? {
-        return "expectedFilename"
-    }
 }
 
 public extension PVBIOS {

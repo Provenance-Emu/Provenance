@@ -8,7 +8,7 @@
 #if canImport(SwiftData) && !os(tvOS)
 import SwiftData
 
-@Model
+//@Model
 public class RecentGame_Data {
     public var game: Game_Data
     public var lastPlayedDate: Date = Date()
@@ -22,12 +22,12 @@ public class RecentGame_Data {
 }
 
 
-@Model
+//@Model
 public class Game_Data {
-    @Attribute(.spotlight)
+//    @Attribute(.spotlight)
     public var title: String = ""
     
-    @Attribute(.unique)
+//    @Attribute(.unique)
     public var id :String = NSUUID().uuidString
     
     // TODO: This is a 'partial path' meaing it's something like {system id}.filename
@@ -54,9 +54,9 @@ public class Game_Data {
     public var systemIdentifier: String = ""
     public var system: System_Data!
 
-    @Attribute(.unique)
+//    @Attribute(.unique)
     public var md5Hash: String = ""
-    @Attribute(.unique)
+//    @Attribute(.unique)
     public var crc: String = ""
 
     // If the user has set 'always use' for a specfic core
@@ -87,15 +87,15 @@ public class Game_Data {
     }
 
     /* Extra metadata from OpenBG */
-    @Attribute(.spotlight)
+//    @Attribute(.spotlight)
     public var gameDescription: String?
     public var boxBackArtworkURL: String?
-    @Attribute(.spotlight)
+//    @Attribute(.spotlight)
     public var developer: String?
-    @Attribute(.spotlight)
+//    @Attribute(.spotlight)
     public var publisher: String?
     public var publishDate: String?
-    @Attribute(.spotlight)
+//    @Attribute(.spotlight)
     public var genres: String? // Is a comma seperated list or single entry
     public var referenceURL: String?
     public var releaseID: String?

@@ -14,8 +14,8 @@ import PVFileSystem
 
 @objcMembers
 public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
-    public dynamic var title: String = ""
-    public dynamic var id :String = NSUUID().uuidString
+    @Persisted public var title: String = ""
+    @Persisted(wrappedValue: NSUUID().uuidString) public var id :String
 
     // TODO: This is a 'partial path' meaing it's something like {system id}.filename
     // We should make this an absolute path but would need a Realm translater and modifying
@@ -23,44 +23,51 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     // and then we just need to change that method but I haven't check that every method uses that
     // The other option is to only use the filename and then path(forGame:) would determine the
     // fully qualified path, but if we add network / cloud storage that may or may not change that.
-    public dynamic var romPath: String = ""
-    public dynamic var file: PVFile!
-    public private(set) var relatedFiles = List<PVFile>()
+    @Persisted public var romPath: String = ""
+    @Persisted public var file: PVFile!
+    @Persisted public private(set) var relatedFiles: List<PVFile>
 
-    public dynamic var customArtworkURL: String = ""
-    public dynamic var originalArtworkURL: String = ""
-    public dynamic var originalArtworkFile: PVImageFile?
+    @Persisted public var customArtworkURL: String = ""
+    @Persisted public var originalArtworkURL: String = ""
+    @Persisted public var originalArtworkFile: PVImageFile?
 
-    public dynamic var requiresSync: Bool = true
-    public dynamic var isFavorite: Bool = false
+    @Persisted public var requiresSync: Bool = true
+    @Persisted(indexed: true) public var isFavorite: Bool = false
 
-    public dynamic var romSerial: String?
-    public dynamic var romHeader: String?
-    public private(set) dynamic var importDate: Date = Date()
+    @Persisted public var romSerial: String?
+    @Persisted public var romHeader: String?
+    @Persisted public private(set) var importDate: Date = Date()
 
-    public dynamic var systemIdentifier: String = ""
-    public dynamic var system: PVSystem!
+    @Persisted(indexed: true) public var systemIdentifier: String = ""
+    @Persisted public var system: PVSystem!
 
-    public dynamic var md5Hash: String = ""
-    public dynamic var crc: String = ""
+    /*
+     Primary key must be set at import time and can't be changed after.
+     I had to change the import flow to calculate the MD5 before import.
+     Seems sane enough since it's on the serial queue. Could always use
+     an async dispatch if it's an issue. - jm
+     */
+ 
+    @Persisted(primaryKey: true) public var md5Hash: String = ""
+    @Persisted public var crc: String = ""
 
     // If the user has set 'always use' for a specfic core
     // We don't use PVCore incase cores are removed / deleted
-    public dynamic var userPreferredCoreID: String?
+    @Persisted public var userPreferredCoreID: String?
 
     /* Links to other objects */
-    public private(set) var saveStates = LinkingObjects<PVSaveState>(fromType: PVSaveState.self, property: "game")
-    public private(set) var cheats = LinkingObjects<PVCheats>(fromType: PVCheats.self, property: "game")
-    public private(set) var recentPlays = LinkingObjects(fromType: PVRecentGame.self, property: "game")
-    public private(set) var screenShots = List<PVImageFile>()
+    @Persisted(originProperty: "game") public var saveStates: LinkingObjects<PVSaveState>
+    @Persisted(originProperty: "game") public var cheats: LinkingObjects<PVCheats>
+    @Persisted(originProperty: "game") public var recentPlays: LinkingObjects<PVRecentGame>
+    @Persisted public private(set) var screenShots: List<PVImageFile>
 
-    public private(set) var libraries = LinkingObjects<PVLibrary>(fromType: PVLibrary.self, property: "games")
+    @Persisted(originProperty: "games") public private(set) var libraries: LinkingObjects<PVLibrary>
 
     /* Tracking data */
-    public dynamic var lastPlayed: Date?
-    public dynamic var playCount: Int = 0
-    public dynamic var timeSpentInGame: Int = 0
-    public dynamic var rating: Int = -1 {
+    @Persisted public var lastPlayed: Date?
+    @Persisted public var playCount: Int = 0
+    @Persisted public var timeSpentInGame: Int = 0
+    @Persisted public var rating: Int = -1 {
         willSet {
             assert(-1 ... 5 ~= newValue, "Setting rating out of range -1 to 5")
         }
@@ -72,34 +79,20 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     }
 
     /* Extra metadata from OpenBG */
-    public dynamic var gameDescription: String?
-    public dynamic var boxBackArtworkURL: String?
-    public dynamic var developer: String?
-    public dynamic var publisher: String?
-    public dynamic var publishDate: String?
-    public dynamic var genres: String? // Is a comma seperated list or single entry
-    public dynamic var referenceURL: String?
-    public dynamic var releaseID: String?
-    public dynamic var regionName: String?
-    public var regionID = RealmProperty<Int?>()
-    public dynamic var systemShortName: String?
-    public dynamic var language: String?
+    @Persisted public var gameDescription: String?
+    @Persisted public var boxBackArtworkURL: String?
+    @Persisted public var developer: String?
+    @Persisted public var publisher: String?
+    @Persisted public var publishDate: String?
+    @Persisted public var genres: String? // Is a comma seperated list or single entry
+    @Persisted public var referenceURL: String?
+    @Persisted public var releaseID: String?
+    @Persisted public var regionName: String?
+    @Persisted public var regionID: Int?
+    @Persisted public var systemShortName: String?
+    @Persisted public var language: String?
 
     public var validatedGame: PVGame? { return self.isInvalidated ? nil : self }
-
-    /*
-     Primary key must be set at import time and can't be changed after.
-     I had to change the import flow to calculate the MD5 before import.
-     Seems sane enough since it's on the serial queue. Could always use
-     an async dispatch if it's an issue. - jm
-     */
-    public override static func primaryKey() -> String? {
-        return "md5Hash"
-    }
-
-    public override static func indexedProperties() -> [String] {
-        return ["systemIdentifier"]
-    }
 
     public static func mockGenerate(systemID: String? = nil, count: Int = 10) -> [PVGame] {
         let systemIdentifier = systemID ?? "mock.system"
@@ -124,6 +117,10 @@ public extension PVGame {
 }
 
 public extension PVGame {
+    
+    var genresArray: [String] {
+        genres?.components(separatedBy: ",") ?? []
+    }
     var isCD: Bool {
         let ext = (romPath as NSString).pathExtension
         let exts = Extensions.discImageExtensions.union(Extensions.playlistExtensions)
@@ -186,7 +183,7 @@ public extension Game {
         let genres = game.genres
         let referenceURL = game.referenceURL
         let releaseID = game.releaseID
-        let regionID = game.regionID.value
+        let regionID = game.regionID
         let regionName = game.regionName
         let systemShortName = game.systemShortName
         let language = game.language
@@ -265,7 +262,7 @@ extension Game: RealmRepresentable {
             object.referenceURL = referenceURL
             object.releaseID = releaseID
             object.regionName = regionName
-            object.regionID.value = regionID
+            object.regionID = regionID
             object.systemShortName = systemShortName
             object.language = language
             object.file =  PVFile(withPartialPath: file.fileName)
