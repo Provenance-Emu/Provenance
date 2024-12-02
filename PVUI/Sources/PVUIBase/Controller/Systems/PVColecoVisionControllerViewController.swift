@@ -30,10 +30,31 @@ final class PVColecoVisionControllerViewController: PVControllerViewController<P
                 button.buttonTag = .leftAction
             } else if title == "R" {
                 button.buttonTag = .rightAction
+            } else if button.titleLabel?.text == "1" {
+                button.buttonTag = .button1
+            } else if (button.titleLabel?.text == "2") {
+                button.buttonTag = .button2
+            } else if (button.titleLabel?.text == "3") {
+                button.buttonTag = .button3
+            } else if button.titleLabel?.text == "4" {
+                button.buttonTag = .button4
+            } else if (button.titleLabel?.text == "5") {
+                button.buttonTag = .button5
+            } else if (button.titleLabel?.text == "6") {
+                button.buttonTag = .button6
+            } else if button.titleLabel?.text == "7" {
+                button.buttonTag = .button7
+            } else if (button.titleLabel?.text == "8") {
+                button.buttonTag = .button8
+            } else if (button.titleLabel?.text == "9") {
+                button.buttonTag = .button9
+            } else if (button.titleLabel?.text == "0") {
+                button.buttonTag = .button0
+            } else if (button.titleLabel?.text == "#") {
+                button.buttonTag = .pound
+            } else if (button.titleLabel?.text == "*") {
+                button.buttonTag = .asterisk
             }
-//            } else if title == "Reset" {
-//                button.buttonTag = .reset
-//            }
         }
 
 //        startButton?.buttonTag = .reset
