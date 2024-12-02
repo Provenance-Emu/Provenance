@@ -1,6 +1,6 @@
 //
-//  PVEP128EmuCore.swift
-//  PVEP128EmuCore
+//  PVGearcolecoCore.swift
+//  PVGearcolecoCore
 //
 //  Created by Joseph Mattiello on 10/06/24.
 //  Copyright © 2024 Provenance Emu. All rights reserved.
