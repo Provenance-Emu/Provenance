@@ -63,6 +63,7 @@
 {
     BOOL loaded;
 }
+@property (nonatomic, strong) NSData *currentRomData;
 @end
 
 video_driver_t video_gl;
@@ -124,9 +125,9 @@ NSString *privateFrameworkPath(void) {
     NSBundle *bundle = [NSBundle bundleForClass:[_current class]];
     //    const char* path = [bundle.executablePath fileSystemRepresentation];
     NSString *executableName = bundle.infoDictionary[@"CFBundleExecutable"];
-    
+
     NSString *frameworkPath = [NSString stringWithFormat:@"%@/%@", bundle.bundlePath, executableName];
-    
+
     NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:frameworkPath error:nil];
     for (NSString *fileName in fileNames) {
         ILOG(@"%@", fileName);
@@ -166,8 +167,8 @@ const char *config_get_active_path(void)
     //
     //   if (!string_is_empty(global->path.config))
     //	  return global->path.config;
-    
-    
+
+
     return NULL;
 }
 
@@ -225,7 +226,7 @@ static int16_t core_input_state_poll(unsigned port,
     {
         if (!current->core_input_polled)
             input_poll();
-        
+
         current->core_input_polled = true;
     }
     return input_state(port, device, idx, id);
@@ -255,7 +256,7 @@ int16_t input_state(unsigned port, unsigned device,
 {
     int16_t res                     = 0;
     //   settings_t *settings            = config_get_ptr();
-    
+
     //
     //   device &= RETRO_DEVICE_MASK;
     //
@@ -314,7 +315,7 @@ int16_t input_state(unsigned port, unsigned device,
     //
     //   if (bsv_movie_ctl(BSV_MOVIE_CTL_PLAYBACK_OFF, NULL))
     //      bsv_movie_ctl(BSV_MOVIE_CTL_SET_INPUT, &res);
-    
+
     return res;
 }
 
@@ -334,25 +335,25 @@ static bool core_init_libretro_cbs(void *data)
 #ifdef HAVE_NETPLAY
     global_t            *global = global_get_ptr();
 #endif
-    
+
     if (!cbs)
         return false;
-    
+
     current->core->retro_set_video_refresh(video_driver_frame);
     //   core->retro_set_audio_sample(audio_driver_sample);
     //   core->retro_set_audio_sample_batch(audio_driver_sample_batch);
     current->core->retro_set_input_state(core_input_state_poll);
     current->core->retro_set_input_poll(core_input_state_poll_maybe);
-    
+
     core_set_default_callbacks(cbs);
-    
+
 #ifdef HAVE_NETPLAY
     if (!netplay_driver_ctl(RARCH_NETPLAY_CTL_IS_DATA_INITED, NULL))
         return true;
-    
+
     /* Force normal poll type for netplay. */
     core_poll_type = POLL_TYPE_NORMAL;
-    
+
     if (global->netplay.is_spectate)
     {
         core->retro_set_input_state(
@@ -368,7 +369,7 @@ static bool core_init_libretro_cbs(void *data)
         core->retro_set_input_state(input_state_net);
     }
 #endif
-    
+
     return true;
 }
 
@@ -381,32 +382,32 @@ static bool core_init_libretro_cbs(void *data)
 bool core_set_default_callbacks(void *data)
 {
     struct retro_callbacks *cbs = (struct retro_callbacks*)data;
-    
+
     if (!cbs)
         return false;
-    
+
     cbs->frame_cb        = video_driver_frame;
     //	cbs->sample_cb       = audio_callback;
     //	cbs->sample_batch_cb = audio_batch_callback;
     cbs->state_cb        = core_input_state_poll;
     cbs->poll_cb         = input_poll;
-    
+
     return true;
 }
 
 bool core_deinit(void *data)
 {
     struct retro_callbacks *cbs = (struct retro_callbacks*)data;
-    
+
     if (!cbs)
         return false;
-    
+
     cbs->frame_cb        = NULL;
     cbs->sample_cb       = NULL;
     cbs->sample_batch_cb = NULL;
     cbs->state_cb        = NULL;
     cbs->poll_cb         = NULL;
-    
+
     return true;
 }
 
@@ -513,7 +514,7 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
 
     if (!load_info)
         return false;
-    
+
     BOOL loaded = false;
     if (load_info->special != nil) {
         loaded = current->core->retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size);
@@ -529,12 +530,12 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
             loaded = current->core->retro_load_game(load_info->info);
 //        }
     }
-    
+
     if (!loaded) {
         ELOG(@"Core failed to load game.");
         return false;
     }
-    
+
     struct retro_system_timing timing = {
         60.0f, 10000.0f
     };
@@ -554,8 +555,8 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
     //      0,
     //      NULL
     //    };
-    
-    
+
+
     current->core->retro_get_system_av_info(&av);
     ILOG(@"Video: %ix%i\n", av.geometry.base_width, av.geometry.base_height);
     current->av_info = av;
@@ -602,7 +603,7 @@ bool core_frame(retro_ctx_frame_info_t *info) {
     GET_CURRENT_OR_RETURN(false);
     if (!info || !retro_ctx.frame_cb)
         return false;
-    
+
     retro_ctx.frame_cb(
                        info->data, info->width, info->height, info->pitch);
     return true;
@@ -676,22 +677,22 @@ bool core_load(void) {
 
     settings_t *settings = config_get_ptr();
     current->core_poll_type = settings->input.poll_type_behavior;
-    
+
     if (!core_verify_api_version())
         return false;
     if (!core_init_libretro_cbs(&retro_ctx))
         return false;
-    
+
     core_get_system_av_info(video_viewport_get_system_av_info());
     runloop_ctl(RUNLOOP_CTL_SET_FRAME_LIMIT, NULL);
-    
+
     return true;
 }
 
 struct retro_system_av_info *video_viewport_get_system_av_info(void)
 {
     static struct retro_system_av_info av_info;
-    
+
     return &av_info;
 }
 
@@ -779,9 +780,9 @@ void uninit_libretro_sym(struct retro_core_t *current_core)
         dylib_close(lib_handle);
     lib_handle = NULL;
 #endif
-    
+
     memset(current_core, 0, sizeof(struct retro_core_t));
-    
+
     runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_DEINIT, NULL);
     runloop_ctl(RUNLOOP_CTL_SYSTEM_INFO_FREE, NULL);
     runloop_ctl(RUNLOOP_CTL_FRAME_TIME_FREE, NULL);
@@ -814,14 +815,14 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
             //          return shader_dir_init(&runloop_shader_dir);
         case RUNLOOP_CTL_SYSTEM_INFO_INIT:
             core_get_system_info(&runloop_system.info);
-            
+
             //          if (!runloop_system.info.library_name)
             //             runloop_system.info.library_name = msg_hash_to_str(MSG_UNKNOWN);
             if (!runloop_system.info.library_version)
                 runloop_system.info.library_version = "v0";
-            
+
             //          video_driver_set_title_buf();
-            
+
             strlcpy(runloop_system.valid_extensions,
                     runloop_system.info.valid_extensions ?
                     runloop_system.info.valid_extensions : DEFAULT_EXT,
@@ -854,26 +855,26 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
         }
             break;
         case RUNLOOP_CTL_SYSTEM_INFO_FREE:
-            
+
             /* No longer valid. */
             if (runloop_system.subsystem.data)
                 free(runloop_system.subsystem.data);
             runloop_system.subsystem.data = NULL;
             runloop_system.subsystem.size = 0;
-            
+
             if (runloop_system.ports.data)
                 free(runloop_system.ports.data);
             runloop_system.ports.data = NULL;
             runloop_system.ports.size = 0;
-            
+
             if (runloop_system.mmaps.descriptors)
                 free((void *)runloop_system.mmaps.descriptors);
             runloop_system.mmaps.descriptors     = NULL;
             runloop_system.mmaps.num_descriptors = 0;
-            
+
             runloop_key_event          = NULL;
             runloop_frontend_key_event = NULL;
-            
+
             audio_driver_unset_callback();
             memset(&runloop_system, 0, sizeof(rarch_system_info_t));
             break;
@@ -942,7 +943,7 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
             (const struct retro_frame_time_callback*)data;
 #ifdef HAVE_NETPLAY
             global_t *global = global_get_ptr();
-            
+
             /* retro_run() will be called in very strange and
              * mysterious ways, have to disable it. */
             if (global->netplay.enable)
@@ -1036,13 +1037,13 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
             //             command_event(CMD_EVENT_SUBSYSTEM_FULLPATHS_DEINIT, NULL);
             //             command_event(CMD_EVENT_RECORD_DEINIT, NULL);
             //             command_event(CMD_EVENT_LOG_FILE_DEINIT, NULL);
-            
+
             //             rarch_ctl(RARCH_CTL_UNSET_BLOCK_CONFIG_READ, NULL);
             runloop_ctl(RUNLOOP_CTL_CLEAR_CONTENT_PATH,  NULL);
             runloop_overrides_active   = false;
-            
+
             core_unset_input_descriptors();
-            
+
             //             global = global_get_ptr();
             memset(global, 0, sizeof(struct global));
             //             retroarch_override_setting_free_state();
@@ -1128,7 +1129,7 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
             runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_DEINIT, NULL);
             //          runloop_msg_queue = msg_queue_new(8);
             //          retro_assert(runloop_msg_queue);
-            
+
 #ifdef HAVE_THREADS
             _runloop_msg_queue_lock = slock_new();
             retro_assert(_runloop_msg_queue_lock);
@@ -1220,7 +1221,7 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
             //             const char *options_path          = settings->path.core_options;
             //             const struct retro_variable *vars =
             //                (const struct retro_variable*)data;
-            
+
             //             if (string_is_empty(options_path)
             //                   && !string_is_empty(global->path.config))
             //             {
@@ -1246,7 +1247,7 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
             //                runloop_core_options =
             //                   core_option_manager_new(options_path, vars);
             //             }
-            
+
         }
             break;
             //       case RUNLOOP_CTL_CORE_OPTIONS_FREE:
@@ -1309,7 +1310,7 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
         default:
             break;
     }
-    
+
     return true;
 }
 
@@ -1406,7 +1407,7 @@ void init_libretro_sym(enum rarch_core_type type, struct retro_core_t *current_c
     /* Guarantee that we can do "dirty" casting.
      * Every OS that this program supports should pass this. */
     retro_assert(sizeof(void*) == sizeof(void (*)(void)));
-    
+
     load_symbols(type, current_core);
 }
 
@@ -1428,14 +1429,14 @@ static void core_log(enum retro_log_level level, const char * fmt, ...) {
         "err"
     };
     va_list va;
-    
+
     va_start(va, fmt);
     vsnprintf(buffer, sizeof(buffer), fmt, va);
     va_end(va);
-    
+
     if (level == 0)
         return;
-    
+
     switch (level) {
         case 0:
             DLOG(@"%s", buffer);
@@ -1452,10 +1453,10 @@ static void core_log(enum retro_log_level level, const char * fmt, ...) {
         default:
             break;
     }
-    
+
     fprintf(stderr, "[%s] %s", levelstr[level], buffer);
     fflush(stderr);
-    
+
     if (level == RETRO_LOG_ERROR) {
         exit(EXIT_FAILURE);
     }
@@ -1537,7 +1538,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             if ([strongCurrent conformsToProtocol:@protocol(TouchPadResponder)]) {
                 features  |= 1 << RETRO_DEVICE_POINTER;
             }
-            
+
             *(uint64_t *)data = features;
             return true;
         }
@@ -1598,7 +1599,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             CFStringRef cfString = (CFStringRef)CFBridgingRetain(BIOSPath);
 
             *(const char **)data = CFStringGetCStringPtr(cfString, kCFStringEncodingUTF8); //[BIOSPath UTF8String];
-            
+
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", BIOSPath);
             return true;
         }
@@ -1616,14 +1617,14 @@ static bool environment_callback(unsigned cmd, void *data) {
 ////        }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent saveStatesPath];
-            
+
             *(const char **)data = [appSupportPath UTF8String];
             DLOG(@"Environ SAVE_DIRECTORY: \"%@\".\n", appSupportPath);
             return true;
         }
         case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY : {
             NSString *batterySavesPath = [strongCurrent batterySavesPath];
-            
+
             *(const char **)data = [batterySavesPath UTF8String];
             DLOG(@"Environ CONTENT_DIRECTORY: \"%@\".\n", batterySavesPath);
             return true;
@@ -1671,17 +1672,17 @@ static bool environment_callback(unsigned cmd, void *data) {
         {
             const struct retro_game_info_ext **game_info_ext =
                     (const struct retro_game_info_ext **)data;
-            
+
             if (!game_info_ext) {
                 ELOG(@"`game_info_ext` is nil.")
                 return false;
             }
-            
+
             ////            struct retro_game_info_ext *game_info = (struct retro_game_info_ext*)data;
             //            // TODO: Is there a way to pass `retro_game_info_ext` before callbacks?
             struct retro_game_info_ext *game_info = malloc(sizeof(struct retro_game_info_ext));
             game_info->persistent_data = true;
-            
+
             //            void *buffer = malloc(romData.length);
             //            [romData getBytes:buffer length:romData.length];
             //
@@ -1690,16 +1691,16 @@ static bool environment_callback(unsigned cmd, void *data) {
             CFDataRef cfData = (CFDataRef)CFBridgingRetain(romData);
             game_info->data = CFDataGetBytePtr(cfData);
             game_info->size = romData.length;
-            
+
             const char *c_full_path = [strongCurrent.romPath cStringUsingEncoding:NSUTF8StringEncoding];
             game_info->full_path = c_full_path;
-            
+
             const char *c_dir = [[strongCurrent.romPath stringByDeletingLastPathComponent] cStringUsingEncoding:NSUTF8StringEncoding];
             game_info->dir = c_dir;
-            
+
             const char *c_rom_name = [[strongCurrent.romPath.lastPathComponent stringByDeletingPathExtension] cStringUsingEncoding:NSUTF8StringEncoding];
             game_info->name = c_rom_name;
-            
+
             const char *c_extension = [[strongCurrent.romPath.lastPathComponent pathExtension] cStringUsingEncoding:NSUTF8StringEncoding];
             game_info->ext = c_extension;
 
@@ -1781,9 +1782,9 @@ static bool environment_callback(unsigned cmd, void *data) {
             return false;
         }
     }
-    
+
     strongCurrent = nil;
-    
+
     return true;
 }
 
@@ -1796,9 +1797,9 @@ static void load_dynamic_core(void)
     ILOG(@"Loading dynamic libretro core from: \"%s\"\n",
          corepath);
     lib_handle = dylib_load(corepath);
-    
+
     //    function_t sym       = dylib_proc(lib_handle, "retro_init");
-    
+
     //    if (sym)
     //    {
     //        /* Try to verify that -lretro was not linked in from other modules
@@ -1847,7 +1848,7 @@ static void load_dynamic_core(void)
  **/
 static void load_symbols(enum rarch_core_type type, struct retro_core_t *current_core)
 {
-    
+
     switch (type)
     {
         case CORE_TYPE_PLAIN:
@@ -1855,36 +1856,36 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
             load_dynamic_core();
 #endif
             ILOG(@"type:%x, current_core: %x, lib_handle: %x", type, current_core, lib_handle);
-            
+
             SYMBOL(retro_init);
             SYMBOL(retro_deinit);
-            
+
             SYMBOL(retro_api_version);
             SYMBOL(retro_get_system_info);
             SYMBOL(retro_get_system_av_info);
-            
+
             SYMBOL(retro_set_environment);
             SYMBOL(retro_set_video_refresh);
             SYMBOL(retro_set_audio_sample);
             SYMBOL(retro_set_audio_sample_batch);
             SYMBOL(retro_set_input_poll);
             SYMBOL(retro_set_input_state);
-            
+
             SYMBOL(retro_set_controller_port_device);
-            
+
             SYMBOL(retro_reset);
             SYMBOL(retro_run);
-            
+
             SYMBOL(retro_serialize_size);
             SYMBOL(retro_serialize);
             SYMBOL(retro_unserialize);
-            
+
             SYMBOL(retro_cheat_reset);
             SYMBOL(retro_cheat_set);
-            
+
             SYMBOL(retro_load_game);
             SYMBOL(retro_load_game_special);
-            
+
             SYMBOL(retro_unload_game);
             SYMBOL(retro_get_region);
             SYMBOL(retro_get_memory_data);
@@ -1893,33 +1894,33 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
         case CORE_TYPE_DUMMY:
             SYMBOL_DUMMY(retro_init);
             SYMBOL_DUMMY(retro_deinit);
-            
+
             SYMBOL_DUMMY(retro_api_version);
             SYMBOL_DUMMY(retro_get_system_info);
             SYMBOL_DUMMY(retro_get_system_av_info);
-            
+
             SYMBOL_DUMMY(retro_set_environment);
             SYMBOL_DUMMY(retro_set_video_refresh);
             SYMBOL_DUMMY(retro_set_audio_sample);
             SYMBOL_DUMMY(retro_set_audio_sample_batch);
             SYMBOL_DUMMY(retro_set_input_poll);
             SYMBOL_DUMMY(retro_set_input_state);
-            
+
             SYMBOL_DUMMY(retro_set_controller_port_device);
-            
+
             SYMBOL_DUMMY(retro_reset);
             SYMBOL_DUMMY(retro_run);
-            
+
             SYMBOL_DUMMY(retro_serialize_size);
             SYMBOL_DUMMY(retro_serialize);
             SYMBOL_DUMMY(retro_unserialize);
-            
+
             SYMBOL_DUMMY(retro_cheat_reset);
             SYMBOL_DUMMY(retro_cheat_set);
-            
+
             SYMBOL_DUMMY(retro_load_game);
             SYMBOL_DUMMY(retro_load_game_special);
-            
+
             SYMBOL_DUMMY(retro_unload_game);
             SYMBOL_DUMMY(retro_get_region);
             SYMBOL_DUMMY(retro_get_memory_data);
@@ -1929,33 +1930,33 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
 #ifdef HAVE_FFMPEG
             SYMBOL_FFMPEG(retro_init);
             SYMBOL_FFMPEG(retro_deinit);
-            
+
             SYMBOL_FFMPEG(retro_api_version);
             SYMBOL_FFMPEG(retro_get_system_info);
             SYMBOL_FFMPEG(retro_get_system_av_info);
-            
+
             SYMBOL_FFMPEG(retro_set_environment);
             SYMBOL_FFMPEG(retro_set_video_refresh);
             SYMBOL_FFMPEG(retro_set_audio_sample);
             SYMBOL_FFMPEG(retro_set_audio_sample_batch);
             SYMBOL_FFMPEG(retro_set_input_poll);
             SYMBOL_FFMPEG(retro_set_input_state);
-            
+
             SYMBOL_FFMPEG(retro_set_controller_port_device);
-            
+
             SYMBOL_FFMPEG(retro_reset);
             SYMBOL_FFMPEG(retro_run);
-            
+
             SYMBOL_FFMPEG(retro_serialize_size);
             SYMBOL_FFMPEG(retro_serialize);
             SYMBOL_FFMPEG(retro_unserialize);
-            
+
             SYMBOL_FFMPEG(retro_cheat_reset);
             SYMBOL_FFMPEG(retro_cheat_set);
-            
+
             SYMBOL_FFMPEG(retro_load_game);
             SYMBOL_FFMPEG(retro_load_game_special);
-            
+
             SYMBOL_FFMPEG(retro_unload_game);
             SYMBOL_FFMPEG(retro_get_region);
             SYMBOL_FFMPEG(retro_get_memory_data);
@@ -1966,33 +1967,33 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
 #ifdef HAVE_IMAGEVIEWER
             SYMBOL_IMAGEVIEWER(retro_init);
             SYMBOL_IMAGEVIEWER(retro_deinit);
-            
+
             SYMBOL_IMAGEVIEWER(retro_api_version);
             SYMBOL_IMAGEVIEWER(retro_get_system_info);
             SYMBOL_IMAGEVIEWER(retro_get_system_av_info);
-            
+
             SYMBOL_IMAGEVIEWER(retro_set_environment);
             SYMBOL_IMAGEVIEWER(retro_set_video_refresh);
             SYMBOL_IMAGEVIEWER(retro_set_audio_sample);
             SYMBOL_IMAGEVIEWER(retro_set_audio_sample_batch);
             SYMBOL_IMAGEVIEWER(retro_set_input_poll);
             SYMBOL_IMAGEVIEWER(retro_set_input_state);
-            
+
             SYMBOL_IMAGEVIEWER(retro_set_controller_port_device);
-            
+
             SYMBOL_IMAGEVIEWER(retro_reset);
             SYMBOL_IMAGEVIEWER(retro_run);
-            
+
             SYMBOL_IMAGEVIEWER(retro_serialize_size);
             SYMBOL_IMAGEVIEWER(retro_serialize);
             SYMBOL_IMAGEVIEWER(retro_unserialize);
-            
+
             SYMBOL_IMAGEVIEWER(retro_cheat_reset);
             SYMBOL_IMAGEVIEWER(retro_cheat_set);
-            
+
             SYMBOL_IMAGEVIEWER(retro_load_game);
             SYMBOL_IMAGEVIEWER(retro_load_game_special);
-            
+
             SYMBOL_IMAGEVIEWER(retro_unload_game);
             SYMBOL_IMAGEVIEWER(retro_get_region);
             SYMBOL_IMAGEVIEWER(retro_get_memory_data);
@@ -2003,33 +2004,33 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
 #if defined(HAVE_NETWORKGAMEPAD) && defined(HAVE_NETPLAY)
             SYMBOL_NETRETROPAD(retro_init);
             SYMBOL_NETRETROPAD(retro_deinit);
-            
+
             SYMBOL_NETRETROPAD(retro_api_version);
             SYMBOL_NETRETROPAD(retro_get_system_info);
             SYMBOL_NETRETROPAD(retro_get_system_av_info);
-            
+
             SYMBOL_NETRETROPAD(retro_set_environment);
             SYMBOL_NETRETROPAD(retro_set_video_refresh);
             SYMBOL_NETRETROPAD(retro_set_audio_sample);
             SYMBOL_NETRETROPAD(retro_set_audio_sample_batch);
             SYMBOL_NETRETROPAD(retro_set_input_poll);
             SYMBOL_NETRETROPAD(retro_set_input_state);
-            
+
             SYMBOL_NETRETROPAD(retro_set_controller_port_device);
-            
+
             SYMBOL_NETRETROPAD(retro_reset);
             SYMBOL_NETRETROPAD(retro_run);
-            
+
             SYMBOL_NETRETROPAD(retro_serialize_size);
             SYMBOL_NETRETROPAD(retro_serialize);
             SYMBOL_NETRETROPAD(retro_unserialize);
-            
+
             SYMBOL_NETRETROPAD(retro_cheat_reset);
             SYMBOL_NETRETROPAD(retro_cheat_set);
-            
+
             SYMBOL_NETRETROPAD(retro_load_game);
             SYMBOL_NETRETROPAD(retro_load_game_special);
-            
+
             SYMBOL_NETRETROPAD(retro_unload_game);
             SYMBOL_NETRETROPAD(retro_get_region);
             SYMBOL_NETRETROPAD(retro_get_memory_data);
@@ -2040,33 +2041,33 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
 #if defined(HAVE_VIDEO_PROCESSOR)
             SYMBOL_VIDEOPROCESSOR(retro_init);
             SYMBOL_VIDEOPROCESSOR(retro_deinit);
-            
+
             SYMBOL_VIDEOPROCESSOR(retro_api_version);
             SYMBOL_VIDEOPROCESSOR(retro_get_system_info);
             SYMBOL_VIDEOPROCESSOR(retro_get_system_av_info);
-            
+
             SYMBOL_VIDEOPROCESSOR(retro_set_environment);
             SYMBOL_VIDEOPROCESSOR(retro_set_video_refresh);
             SYMBOL_VIDEOPROCESSOR(retro_set_audio_sample);
             SYMBOL_VIDEOPROCESSOR(retro_set_audio_sample_batch);
             SYMBOL_VIDEOPROCESSOR(retro_set_input_poll);
             SYMBOL_VIDEOPROCESSOR(retro_set_input_state);
-            
+
             SYMBOL_VIDEOPROCESSOR(retro_set_controller_port_device);
-            
+
             SYMBOL_VIDEOPROCESSOR(retro_reset);
             SYMBOL_VIDEOPROCESSOR(retro_run);
-            
+
             SYMBOL_VIDEOPROCESSOR(retro_serialize_size);
             SYMBOL_VIDEOPROCESSOR(retro_serialize);
             SYMBOL_VIDEOPROCESSOR(retro_unserialize);
-            
+
             SYMBOL_VIDEOPROCESSOR(retro_cheat_reset);
             SYMBOL_VIDEOPROCESSOR(retro_cheat_set);
-            
+
             SYMBOL_VIDEOPROCESSOR(retro_load_game);
             SYMBOL_VIDEOPROCESSOR(retro_load_game_special);
-            
+
             SYMBOL_VIDEOPROCESSOR(retro_unload_game);
             SYMBOL_VIDEOPROCESSOR(retro_get_region);
             SYMBOL_VIDEOPROCESSOR(retro_get_memory_data);
@@ -2081,21 +2082,21 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
 static void RETRO_CALLCONV audio_callback(int16_t left, int16_t right)
 {
     __strong PVLibRetroCoreBridge *strongCurrent = _current;
-    
+
     [[strongCurrent ringBufferAtIndex:0] write:&left size:2];
     [[strongCurrent ringBufferAtIndex:0] write:&right size:2];
-    
+
     strongCurrent = nil;
 }
 
 static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t frames)
 {
     __strong PVLibRetroCoreBridge *strongCurrent = _current;
-    
+
     [[strongCurrent ringBufferAtIndex:0] write:data size:frames << 2];
-    
+
     strongCurrent = nil;
-    
+
     return frames;
 }
 
@@ -2103,15 +2104,15 @@ static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsi
 {
 //    if (!video_driver_is_active())
 //       return;
-    
+
     __strong PVLibRetroCoreBridge *strongCurrent = _current;
-    
+
     static dispatch_queue_t serialQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
         serialQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
-        
+
         DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
     });
     // 512
@@ -2121,10 +2122,10 @@ static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsi
         size_t offset = y * shifted_pitch;
         const uint32_t *src = (uint16_t*)data + offset;
         uint32_t *dst = strongCurrent->videoBuffer + y * width;
-        
+
         memcpy(dst, src, sizeof(uint32_t)*width);
     });
-    
+
     strongCurrent = nil;
 }
 
@@ -2138,17 +2139,17 @@ static void RETRO_CALLCONV input_poll_callback(void)
 static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
     //DLOG(@"polled input: port: %d device: %d id: %d", port, device, id);
-    
+
     __strong PVLibRetroCoreBridge *strongCurrent = _current;
     int16_t value = 0;
-    
+
     if (port == 0 & device == RETRO_DEVICE_JOYPAD)
     {
         if (strongCurrent.controller1)
         {
             value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
         }
-        
+
         if (value == 0)
         {
             value = strongCurrent->_pad[0][_id];
@@ -2160,15 +2161,15 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         {
             value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
         }
-        
+
         if (value == 0)
         {
             value = strongCurrent->_pad[1][_id];
         }
     }
-    
+
     strongCurrent = nil;
-    
+
     return value;
 }
 
@@ -2184,7 +2185,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         core = malloc(sizeof(retro_core_t));
         init_libretro_sym(CORE_TYPE_PLAIN, core);
         retro_set_environment(environment_callback);
-        
+
         memset(_pad, 0, sizeof(int16_t) * 24);
 
 //        core_get_info(&info);
@@ -2192,11 +2193,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 //        std::cout << "Core needs fullpath " << info.need_fullpath << std::endl;
 //        std::cout << "Running for " << maxframes << " frames with frame timeout of ";
 //        std::cout << frametimeout << " seconds" << std::endl;
-        
+
 //        struct retro_system_info info;
 //        bool load_no_info;
 //        libretro_get_system_info("", &info, &load_no_info);
-        
+
         videoBufferA = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBufferB = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBuffer = videoBufferA;
@@ -2235,26 +2236,44 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     }
 
     [self coreInit];
-    
-    struct retro_game_info info;
-    info.data = [NSData dataWithContentsOfFile:path].bytes;
-    info.path = [path fileSystemRepresentation];
-    // TODO:: retro_load_game
-//    BOOL loaded = core->retro_load_game(&info); // retro_load_game(&info);
-    
-    struct retro_ctx_load_content_info info2;
-    info2.info = &info;
-    info2.content = nil;
-    info2.special = nil;
 
-    BOOL loaded = core_load_game(&info2);
-   
+    // Load ROM data and retain it
+    NSData *romData = [NSData dataWithContentsOfFile:path];
+    if (!romData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                         code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                   userInfo:@{NSLocalizedDescriptionKey: @"Could not load ROM data"}];
+        }
+        return NO;
+    }
+
+    // Keep a strong reference to prevent deallocation
+    self.currentRomData = romData;
+
+    struct retro_game_info info;
+    info.path = [path fileSystemRepresentation];
+    info.data = romData.bytes;
+    info.size = romData.length;
+    info.meta = NULL;
+
+    BOOL loaded = core->retro_load_game(&info);
+
+    if (!loaded) {
+        struct retro_ctx_load_content_info info2;
+        info2.info = &info;
+        info2.content = nil;
+        info2.special = nil;
+
+        loaded = core_load_game(&info2);
+    }
+
     if(loaded) {
         core->retro_reset();
     }
-    
+
     self->loaded = loaded;
-    
+
     if(!loaded) {
         NSString *coreName = [self coreIdentifier];
         NSString *errorMessage = FORMAT(@"%@ failed to load ROM for unknown reasons.", coreName);
@@ -2264,10 +2283,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
                                    NSLocalizedRecoverySuggestionErrorKey: @"Try a different ROM and check required BIOSes."
                                    };
 
-        NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotSaveState
-                                            userInfo:userInfo];
-        *error = newError;
+        if (error) {
+            *error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+                                         code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                   userInfo:userInfo];
+        }
     }
 
     return loaded;
@@ -2301,7 +2321,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     //        soundBuffer[i] = (soundBuffer[i] << 16) | (soundBuffer[i] & 0xffff);
     //
     //    [[self ringBufferAtIndex:0] write:soundBuffer maxLength:soundSize << 2];
-    
+
 }
 
 - (void)resetEmulation {
@@ -2312,7 +2332,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     [super stopEmulation];
 
     core->retro_unload_game();
-    
+
 //    if (self->loaded) {
 //        core->retro_reset();
 //    }
@@ -2358,7 +2378,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
 //    unsigned height = _videoHeight;
 //    unsigned width = _videoWidth;
-    
+
     return CGRectMake(0, 0, width, height);
 }
 
@@ -2390,7 +2410,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     core->retro_get_system_av_info(&av_info);
     unsigned height = av_info.geometry.max_height;
     unsigned width = av_info.geometry.max_width;
-    
+
     return CGSizeMake(width, height);
 }
 
@@ -2469,7 +2489,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     // TODO: This should warn or something if not in subclass
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
         GCController *controller = nil;
-        
+
         if (self.controller1 && playerIndex == 0) {
             controller = self.controller1;
         }
@@ -2477,13 +2497,13 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         {
             controller = self.controller2;
         }
-        
+
         if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            
+
             /* TODO: To support paddles we would need to circumvent libRetro's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
-            
+
             // D-Pad
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
@@ -2505,13 +2525,13 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed || gamepad.rightTrigger.isPressed;
             // Booster
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed || gamepad.leftTrigger.isPressed;
-            
+
             // Reset
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
-            
+
             // Select
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
-   
+
             /*
              #define RETRO_DEVICE_ID_JOYPAD_B        0 == JoystickZeroFire1
              #define RETRO_DEVICE_ID_JOYPAD_Y        1 == Unmapped
@@ -2533,32 +2553,32 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            
+
             // D-Pad
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
-            
+
             // Fire
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
             // Trigger
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed;
             // Booster
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed;
-            
+
             // Reset
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
-            
+
             // Select
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
-            
+
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad]) {
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            
+
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.value > 0.5;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.value > 0.5;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.value > 0.5;
@@ -2745,11 +2765,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
                     NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
                     NSLocalizedRecoverySuggestionErrorKey: @""
                 };
-                
+
                 NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                                         code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                                     userInfo:userInfo];
-                
+
                 *error = newError;
             }
         }
