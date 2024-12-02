@@ -11,6 +11,7 @@ _My personal TODO notes_
 - [ ] import queue, clicking an item should import it
 - [ ] Atari 2600 not using our controller for retroarch
 - [ ] Hud still looping
+- [ ] vectrex crashes due to missing screen rect
 - [ ] save state manager is showing saves for all roms
 - [ ] importer doesn't auto start on import or selection of conflicts
 - [X] PCFX retroarch controls fucked, right is held down, actions don't do shit (using bultin controls)
