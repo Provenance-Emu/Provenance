@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B30E988C2C6EEE3A00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E988B2C6EEE3A00C1431E /* PVSupport */; };
 		B30E99EC2C6F056300C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99EB2C6F056300C1431E /* PVCoreBridge */; };
+		B30ED0DD2CFD587400AFCFCE /* PVGearcolecoCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30ED0DC2CFD587400AFCFCE /* PVGearcolecoCoreOptions.swift */; };
 		B30F141F289673D6004D40BF /* libGearcoleco.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libGearcoleco.a */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
@@ -73,6 +74,7 @@
 
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libGearcoleco.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGearcoleco.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30ED0DC2CFD587400AFCFCE /* PVGearcolecoCoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGearcolecoCoreOptions.swift; sourceTree = "<group>"; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3344BC32859E088006E6B3A /* libGearcoleco-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libGearcoleco-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -200,6 +202,7 @@
 			children = (
 				B37022C5287253B300B3F6DA /* PVGearcolecoCore.h */,
 				B37022C6287253B300B3F6DA /* PVGearcolecoCore.mm */,
+				B30ED0DC2CFD587400AFCFCE /* PVGearcolecoCoreOptions.swift */,
 				B3F8E0222CB388F200017D1B /* PVGearcolecoCore.swift */,
 				B3F8E0232CB388F200017D1B /* CorePlist.swift */,
 				B3F8E0242CB388F200017D1B /* CorePlist-Generated.swift */,
@@ -426,6 +429,7 @@
 				B37022C82872553E00B3F6DA /* PVGearcolecoCore.mm in Sources */,
 				B3F8E0252CB388F200017D1B /* CorePlist.swift in Sources */,
 				B3F8E0262CB388F200017D1B /* CorePlist-Generated.swift in Sources */,
+				B30ED0DD2CFD587400AFCFCE /* PVGearcolecoCoreOptions.swift in Sources */,
 				B3F8E0272CB388F200017D1B /* PVGearcolecoCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

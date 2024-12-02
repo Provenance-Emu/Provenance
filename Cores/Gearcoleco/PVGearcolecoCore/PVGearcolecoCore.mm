@@ -17,6 +17,7 @@
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
 #import <PVLogging/PVLogging.h>
+#import <PVGearcoleco/PVGearcoleco-Swift.h>
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 #import <OpenGL/gl3.h>
@@ -50,7 +51,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-//		pitch_shift = 1;
+		pitch_shift = 1;
 	}
 
 	_current = self;
@@ -78,11 +79,11 @@
 }
 
 - (CGRect)screenRect {
-    return CGRectMake(0, 0, GC_RESOLUTION_WIDTH, GC_RESOLUTION_HEIGHT);
+    return CGRectMake(0, 0, GC_RESOLUTION_WIDTH_WITH_OVERSCAN, GC_RESOLUTION_HEIGHT_WITH_OVERSCAN);
 }
 
 - (GLenum)pixelFormat {
-    return GL_RGB;
+    return GL_RGB565;
 }
 
 - (GLenum)pixelType {
@@ -100,50 +101,12 @@
 }
 
 #if 0
-const struct retro_variable vars[] = {
-   { "Gearcoleco_mode", "MSX Mode; MSX2+|MSX1|MSX2" },
-   { "Gearcoleco_video_mode", "MSX Video Mode; NTSC|PAL|Dynamic" },
-   { "Gearcoleco_hires", "Support high resolution; Off|Interlaced|Progressive" },
-   { "Gearcoleco_overscan", "Support overscan; No|Yes" },
-   { "Gearcoleco_mapper_type_mode", "MSX Mapper Type Mode; "
-         "Guess|"
-         "Generic 8kB|"
-         "Generic 16kB|"
-         "Konami5 8kB|"
-         "Konami4 8kB|"
-         "ASCII 8kB|"
-         "ASCII 16kB|"
-         "GameMaster2|"
-         "FMPAC"
-   },
-   { "Gearcoleco_ram_pages", "MSX Main Memory; Auto|64KB|128KB|256KB|512KB|4MB" },
-   { "Gearcoleco_vram_pages", "MSX Video Memory; Auto|32KB|64KB|128KB|192KB" },
-   { "Gearcoleco_log_level", "Gearcoleco logging; Off|Info|Debug|Spam" },
-   { "Gearcoleco_game_master", "Support Game Master; No|Yes" },
-   { "Gearcoleco_simbdos", "Simulate DiskROM disk access calls; No|Yes" },
-   { "Gearcoleco_autospace", "Use autofire on SPACE; No|Yes" },
-   { "Gearcoleco_allsprites", "Show all sprites; No|Yes" },
-   { "Gearcoleco_font", "Text font; standard|DEFAULT.FNT|ITALIC.FNT|INTERNAT.FNT|CYRILLIC.FNT|KOREAN.FNT|JAPANESE.FNT" },
-   { "Gearcoleco_flush_disk", "Save disk changes; Never|Immediate|On close|To/From SRAM" },
-   { "Gearcoleco_phantom_disk", "Create empty disk when none loaded; No|Yes" },
-   { "Gearcoleco_custom_keyboard_up", up_value},
-   { "Gearcoleco_custom_keyboard_down", down_value},
-   { "Gearcoleco_custom_keyboard_left", left_value},
-   { "Gearcoleco_custom_keyboard_right", right_value},
-   { "Gearcoleco_custom_keyboard_a", a_value},
-   { "Gearcoleco_custom_keyboard_b", b_value},
-   { "Gearcoleco_custom_keyboard_y", y_value},
-   { "Gearcoleco_custom_keyboard_x", x_value},
-   { "Gearcoleco_custom_keyboard_start", start_value},
-   { "Gearcoleco_custom_keyboard_select", select_value},
-   { "Gearcoleco_custom_keyboard_l", l_value},
-   { "Gearcoleco_custom_keyboard_r", r_value},
-   { "Gearcoleco_custom_keyboard_l2", l2_value},
-   { "Gearcoleco_custom_keyboard_r2", r2_value},
-   { "Gearcoleco_custom_keyboard_l3", l3_value},
-   { "Gearcoleco_custom_keyboard_r3", r3_value},
-   { NULL, NULL },
-};
+{ "gearcoleco_timing", "Refresh Rate (restart); Auto|NTSC (60 Hz)|PAL (50 Hz)" },
+{ "gearcoleco_aspect_ratio", "Aspect Ratio (restart); 1:1 PAR|4:3 DAR|16:9 DAR" },
+{ "gearcoleco_overscan", "Overscan; Disabled|Top+Bottom|Full (284 width)|Full (320 width)" },
+{ "gearcoleco_up_down_allowed", "Allow Up+Down / Left+Right; Disabled|Enabled" },
+{ "gearcoleco_spinners", "Spinner support; Disabled|Super Action Controller|Wheel Controller|Roller Controller" },
+{ "gearcoleco_spinner_sensitivity", "Spinner Sensitivity; 1|2|3|4|5|6|7|8|9|10" },
 #endif
 
 #pragma mark - Options
@@ -152,35 +115,40 @@ const struct retro_variable vars[] = {
 
 
     #define V(x) strcmp(variable, x) == 0
-    if (V("Gearcoleco_video_mode")) {
-        // NTSC|PAL|Dynamic
-        char *value = strdup("Dynamic");
+    if (V("gearcoleco_no_sprite_limit")) {
+        // { "gearcoleco_no_sprite_limit", "No Sprite Limit; Disabled|Enabled" },
+        char *value = PVGearcolecoCoreOptions.no_sprite_limit ? strdup("Enabled") : strdup("Disabled");
         return value;
-    } else if (V("Gearcoleco_mode")) {
-            // MSX2+|MSX1|MSX2
-            char * value = strdup("MSX2+");
+    } else if (V("gearcoleco_timing")) {
+        // { "gearcoleco_timing", "Refresh Rate (restart); Auto|NTSC (60 Hz)|PAL (50 Hz)" },
+        char *value = strdup("Auto");
+        return value;
+    } else if (V("gearcoleco_overscan")) {
+//        { "gearcoleco_overscan", "Overscan; Disabled|Top+Bottom|Full (284 width)|Full (320 width)" },
+            int overscan = PVGearcolecoCoreOptions.overscan;
+            char * value;
+            switch (overscan) {
+                case 0:
+                    value = strdup("Disabled");
+                    break;
+                case 1:
+                    value = strdup("Top+Bottom");
+                    break;
+                case 2:
+                    value = strdup("Full (284 width)");
+                    break;
+                case 3:
+                    value = strdup("Full (320 width)");
+                    break;
+            }
             return value;
-    } else if (V("Gearcoleco_hires")) {
-            // Off|Interlaced|Progressive
-            char *value = strdup("Progressive");
+    } else if (V("gearcoleco_up_down_allowed")) {
+//        { "gearcoleco_up_down_allowed", "Allow Up+Down / Left+Right; Disabled|Enabled" },
+            char *value = strdup("Enabled");
             return value;
-    } else if (V("Gearcoleco_overscan")) {
-            // No|Yes
-            char *value = strdup("Yes");
-            return value;
-    } else if (V("Gearcoleco_mapper_type_mode")) {
-//        { "Gearcoleco_mapper_type_mode", "MSX Mapper Type Mode; "
-//              "Guess|"
-//              "Generic 8kB|"
-//              "Generic 16kB|"
-//              "Konami5 8kB|"
-//              "Konami4 8kB|"
-//              "ASCII 8kB|"
-//              "ASCII 16kB|"
-//              "GameMaster2|"
-//              "FMPAC"
-//        },
-            char *value = strdup("Guess");
+    } else if (V("gearcoleco_aspect_ratio")) {
+            // { "gearcoleco_aspect_ratio", "Aspect Ratio (restart); 1:1 PAR|4:3 DAR|16:9 DAR" },
+            char *value = strdup("4:3 DAR");
             return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);
