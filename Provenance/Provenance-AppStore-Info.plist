@@ -223,7 +223,7 @@
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Provenance uses the local network to find and communicate with AltServer.</string>
+	<string>Provenance uses the local network to find and communicate with Web Server.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom).</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
