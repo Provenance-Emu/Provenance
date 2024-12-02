@@ -50,7 +50,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-//         pitch_shift = 1; // Override pitch shift for this core
+		pitch_shift = 1;
 	}
 
 	_current = self;
@@ -66,7 +66,7 @@
 #pragma mark - Running
 
 - (NSTimeInterval)frameInterval {
-    return 60;
+    return av_info.timing.fps ?: 60.0; // Default to 60fps if av_info hasn't been set yet
 }
 
 - (CGSize)aspectSize {
@@ -77,8 +77,11 @@
     return CGSizeMake(GC_RESOLUTION_WIDTH_WITH_OVERSCAN, GC_RESOLUTION_HEIGHT_WITH_OVERSCAN);
 }
 
+- (CGRect)screenRect {
+    return CGRectMake(0, 0, GC_RESOLUTION_WIDTH, GC_RESOLUTION_HEIGHT);
+}
+
 - (GLenum)pixelFormat {
-//     return GL_RGB;
     return GL_RGB565;
 }
 
@@ -323,6 +326,7 @@ const struct retro_variable vars[] = {
 
 - (void)swapBuffers {
     [super swapBuffers];
+    pitch_shift = 1;
 }
 
 @end
