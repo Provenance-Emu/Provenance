@@ -23,9 +23,17 @@
 #import <GLUT/GLUT.h>
 #endif
 
+#include "../../Gearcoleco/src/definitions.h"
+#include "../../Gearcoleco/src/video.h"
+
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 #define OpenEmu 1
+
+#define GC_RESOLUTION_WIDTH 256
+#define GC_RESOLUTION_HEIGHT 192
+#define GC_RESOLUTION_WIDTH_WITH_OVERSCAN 272
+#define GC_RESOLUTION_HEIGHT_WITH_OVERSCAN 208
 
 #pragma mark - Private
 @interface PVGearcolecoCoreBridge() {
@@ -42,6 +50,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
+        // pitch_shift = 1; // Override pitch shift for this core
 	}
 
 	_current = self;
@@ -53,78 +62,8 @@
 }
 
 #pragma mark - PVEmulatorCore
-//- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
-//	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
-//	const char *dataPath;
-//
-//    [self initControllBuffers];
-//
-//	// TODO: Proper path
-//	NSString *configPath = self.saveStatesPath;
-//	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
-//
-//	[[NSFileManager defaultManager] createDirectoryAtPath:configPath
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:nil];
-//
-//	NSString *batterySavesDirectory = self.batterySavesPath;
-//	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:NULL];
-//
-//    return YES;
-//}
 
 #pragma mark - Running
-//- (void)startEmulation {
-//	if (!_isInitialized)
-//	{
-//		[self.renderDelegate willRenderFrameOnAlternateThread];
-//        _isInitialized = true;
-//		_frameInterval = dol_host->GetFrameInterval();
-//	}
-//	[super startEmulation];
-//
-	//Disable the OE framelimiting
-//	[self.renderDelegate suspendFPSLimiting];
-//	if(!self.isRunning) {
-//		[super startEmulation];
-////        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
-//	}
-//}
-
-//- (void)setPauseEmulation:(BOOL)flag {
-//	[super setPauseEmulation:flag];
-//}
-//
-//- (void)stopEmulation {
-//	_isInitialized = false;
-//
-//	self->shouldStop = YES;
-////	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-////    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
-//	[self.frontBufferCondition lock];
-//	[self.frontBufferCondition signal];
-//	[self.frontBufferCondition unlock];
-//
-//	[super stopEmulation];
-//}
-//
-//- (void)resetEmulation {
-//	//	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-//	[self.frontBufferCondition lock];
-//	[self.frontBufferCondition signal];
-//	[self.frontBufferCondition unlock];
-//}
-
-//# pragma mark - Cheats
-//- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
-//}
-//
-//- (BOOL)supportsRumble { return NO; }
-//- (BOOL)supportsCheatCode { return NO; }
 
 - (NSTimeInterval)frameInterval {
     return 60;
@@ -135,11 +74,11 @@
 }
 
 - (CGSize)bufferSize {
-    return CGSizeMake(1024, 768);
+    return CGSizeMake(GC_RESOLUTION_WIDTH_WITH_OVERSCAN, GC_RESOLUTION_HEIGHT_WITH_OVERSCAN);
 }
 
 - (GLenum)pixelFormat {
-    return GL_RGB;
+    return GL_RGB565;
 }
 
 - (GLenum)pixelType {
@@ -147,22 +86,9 @@
 }
 
 - (GLenum)internalPixelFormat {
-    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
     return GL_RGB565;
 }
 
-
-//- (GLenum)pixelFormat {
-//    return GL_BGRA;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_UNSIGNED_BYTE;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    return GL_RGBA;
-//}
 # pragma mark - Audio
 
 - (double)audioSampleRate {
@@ -219,8 +145,8 @@ const struct retro_variable vars[] = {
 #pragma mark - Options
 - (void *)getVariable:(const char *)variable {
     ILOG(@"%s", variable);
-    
-    
+
+
     #define V(x) strcmp(variable, x) == 0
     if (V("Gearcoleco_video_mode")) {
         // NTSC|PAL|Dynamic
@@ -256,8 +182,146 @@ const struct retro_variable vars[] = {
         ELOG(@"Unprocessed var: %s", variable);
         return nil;
     }
-    
+
 #undef V
     return NULL;
 }
+#pragma mark - Control
+
+-(void)didPushColecoVisionButton:(enum PVColecoVisionButton)button forPlayer:(NSInteger)player {
+    switch (button) {
+        case PVColecoVisionButtonUp:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = 1;
+            break;
+        case PVColecoVisionButtonDown:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = 1;
+            break;
+        case PVColecoVisionButtonLeft:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = 1;
+            break;
+        case PVColecoVisionButtonRight:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = 1;
+            break;
+        case PVColecoVisionButtonLeftAction:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_B] = 1; // Fire 1
+            break;
+        case PVColecoVisionButtonRightAction:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_A] = 1; // Fire 2
+            break;
+        // Keypad buttons
+        case PVColecoVisionButton1:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_Y] = 1; // Keypad 1
+            break;
+        case PVColecoVisionButton2:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_X] = 1; // Keypad 2
+            break;
+        case PVColecoVisionButton3:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L] = 1; // Keypad 3
+            break;
+        case PVColecoVisionButton4:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R] = 1; // Keypad 4
+            break;
+        case PVColecoVisionButton5:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L2] = 1; // Keypad 5
+            break;
+        case PVColecoVisionButton6:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R2] = 1; // Keypad 6
+            break;
+        case PVColecoVisionButton7:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L3] = 1; // Keypad 7
+            break;
+        case PVColecoVisionButton8:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R3] = 1; // Keypad 8
+            break;
+        case PVColecoVisionButton9:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_SELECT] = 1; // Keypad 9
+            break;
+        case PVColecoVisionButton0:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_START] = 1; // Keypad 0
+            break;
+        case PVColecoVisionButtonAsterisk:
+            _pad[player][12] = 1; // Keypad *
+            break;
+        case PVColecoVisionButtonPound:
+            _pad[player][13] = 1; // Keypad #
+            break;
+        default:
+            break;
+    }
+}
+
+-(void)didReleaseColecoVisionButton:(enum PVColecoVisionButton)button forPlayer:(NSInteger)player {
+    switch (button) {
+        case PVColecoVisionButtonUp:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = 0;
+            break;
+        case PVColecoVisionButtonDown:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = 0;
+            break;
+        case PVColecoVisionButtonLeft:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = 0;
+            break;
+        case PVColecoVisionButtonRight:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = 0;
+            break;
+        case PVColecoVisionButtonLeftAction:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_B] = 0;
+            break;
+        case PVColecoVisionButtonRightAction:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_A] = 0;
+            break;
+        // Keypad buttons
+        case PVColecoVisionButton1:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_Y] = 0;
+            break;
+        case PVColecoVisionButton2:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_X] = 0;
+            break;
+        case PVColecoVisionButton3:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L] = 0;
+            break;
+        case PVColecoVisionButton4:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R] = 0;
+            break;
+        case PVColecoVisionButton5:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L2] = 0;
+            break;
+        case PVColecoVisionButton6:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R2] = 0;
+            break;
+        case PVColecoVisionButton7:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_L3] = 0;
+            break;
+        case PVColecoVisionButton8:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_R3] = 0;
+            break;
+        case PVColecoVisionButton9:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_SELECT] = 0;
+            break;
+        case PVColecoVisionButton0:
+            _pad[player][RETRO_DEVICE_ID_JOYPAD_START] = 0;
+            break;
+        case PVColecoVisionButtonAsterisk:
+            _pad[player][12] = 0;
+            break;
+        case PVColecoVisionButtonPound:
+            _pad[player][13] = 0;
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
+    [self didPushColecoVisionButton:(PVColecoVisionButton)button forPlayer:player];
+}
+
+- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
+    [self didReleaseColecoVisionButton:(PVColecoVisionButton)button forPlayer:player];
+}
+
+- (void)swapBuffers {
+    [super swapBuffers];
+}
+
 @end
