@@ -26,9 +26,9 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
         public let sortedGames: [T.GameType]
     }
 
-    internal let database: RomDatabase
-    internal let databaseDriver: T
-    private let romMigrator: ROMLocationMigrator
+    public let database: RomDatabase
+    public let databaseDriver: T
+    public let  romMigrator: ROMLocationMigrator
 
     public init(database: RomDatabase) {
         self.database = database
