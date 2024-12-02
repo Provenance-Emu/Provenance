@@ -7,7 +7,6 @@
 //
 
 #import "PVPPSSPPCore+Saves.h"
-#import "PVPPSSPPCore.h"
 @import PVSupport;
 @import PVEmulatorCore;
 @import PVCoreBridge;
