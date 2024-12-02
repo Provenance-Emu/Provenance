@@ -50,7 +50,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-		pitch_shift = 1;
+//		pitch_shift = 1;
 	}
 
 	_current = self;
@@ -326,7 +326,6 @@ const struct retro_variable vars[] = {
 
 - (void)swapBuffers {
     [super swapBuffers];
-    pitch_shift = 0;
 }
 
 @end
