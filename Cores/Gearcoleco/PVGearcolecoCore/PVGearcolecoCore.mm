@@ -82,7 +82,7 @@
 }
 
 - (GLenum)pixelFormat {
-    return GL_RGB565;
+    return GL_RGB;
 }
 
 - (GLenum)pixelType {
@@ -326,7 +326,7 @@ const struct retro_variable vars[] = {
 
 - (void)swapBuffers {
     [super swapBuffers];
-    pitch_shift = 1;
+    pitch_shift = 0;
 }
 
 @end
