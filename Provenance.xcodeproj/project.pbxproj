@@ -192,6 +192,10 @@
 		B30059852C7974F5003010F5 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30059842C7974F5003010F5 /* PVSupport */; };
 		B30585692C0C14EE00B91D7A /* PVWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = B30585682C0C14EE00B91D7A /* PVWebServer */; };
 		B305856E2C0D52F200B91D7A /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B305856D2C0D52F200B91D7A /* PVLibrary */; };
+		B30ED0D72CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */; };
+		B30ED0D82CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B30ED0DA2CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */; };
+		B30ED0DB2CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3122A422CBB2F4900005705 /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3122A412CBB2F4900005705 /* PVMelonDS.framework */; };
 		B3122A432CBB2F4900005705 /* PVMelonDS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3122A412CBB2F4900005705 /* PVMelonDS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B312805F274C60EC00550720 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
@@ -225,7 +229,6 @@
 		B318E29E2CAB58A300D0E599 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E29C2CAB58A300D0E599 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E2A02CAB5A2600D0E599 /* PVProSystem-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B318E29F2CAB5A2600D0E599 /* PVProSystem-Dynamic */; };
 		B318E2A12CAB5A2600D0E599 /* PVProSystem-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B318E29F2CAB5A2600D0E599 /* PVProSystem-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B318E2A32CAB5A4B00D0E599 /* PVCoreMednafen in Frameworks */ = {isa = PBXBuildFile; productRef = B318E2A22CAB5A4B00D0E599 /* PVCoreMednafen */; };
 		B32111A52CBC428700BE8D6C /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B32111B12CBC42B500BE8D6C /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B323B0092BF46D2800CEA3CF /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B323B0082BF46D2800CEA3CF /* PVLibrary */; };
@@ -762,7 +765,6 @@
 		B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF70652191733D000FA7F9 /* GameController.framework */; };
 		B3AFCF962977A80700A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF952977A80700A01010 /* PVLogging */; };
 		B3AFCF982977A80C00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF972977A80C00A01010 /* PVLogging */; };
-		B3B6E7482CA4CF4500002BFD /* PVCoreMednafen in Frameworks */ = {isa = PBXBuildFile; productRef = B3B6E7472CA4CF4500002BFD /* PVCoreMednafen */; };
 		B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; };
 		B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3BE9F9B2C79869F006D989E /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9A2C79869F006D989E /* PVSettings */; };
@@ -1515,6 +1517,7 @@
 				B3F8E0212CB379E500017D1B /* PVGME.framework in Embed Frameworks */,
 				B3E2AA4F2CB638F400E2636D /* PVDesmume2015.framework in Embed Frameworks */,
 				B3FC5AC82CE4376D00D378C9 /* PVEmuThree.framework in Embed Frameworks */,
+				B30ED0DB2CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */,
 				B3C65E612CA53668000E37B0 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3A1868C2CBCBAF900BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */,
 				B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */,
@@ -1574,6 +1577,7 @@
 				B318E29E2CAB58A300D0E599 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */,
 				B318E2962CAB571100D0E599 /* PVBliss-Dynamic in Embed Frameworks */,
+				B30ED0D82CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */,
 				B318E27E2CAB4C4200D0E599 /* PVSNES.framework in Embed Frameworks */,
 				B318E2812CAB4C6400D0E599 /* PVFCEU.framework in Embed Frameworks */,
 				B318E2872CAB512F00D0E599 /* PVMupen64Plus.framework in Embed Frameworks */,
@@ -2844,12 +2848,12 @@
 				B35EEFB82C6C6D1A00EBD1A8 /* Defaults in Frameworks */,
 				B35EEFB92C6C6D1A00EBD1A8 /* PVUI in Frameworks */,
 				B3C65E622CA53668000E37B0 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				B30ED0DA2CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */,
 				B3C65E5A2CA53666000E37B0 /* PVMupen64Plus.framework in Frameworks */,
 				B35EEFBA2C6C6D1A00EBD1A8 /* libz.tbd in Frameworks */,
 				B35EEFBB2C6C6D1A00EBD1A8 /* CoreTelephony.framework in Frameworks */,
 				B392B3E22CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
 				B37321A72C900B1E00CF59EF /* PVTGBDual-Dynamic in Frameworks */,
-				B3B6E7482CA4CF4500002BFD /* PVCoreMednafen in Frameworks */,
 				B35EEFBD2C6C6D1A00EBD1A8 /* PVPlists in Frameworks */,
 				B35EEFBE2C6C6D1A00EBD1A8 /* PVWebServer in Frameworks */,
 				B3F8E11A2CB3CE4600017D1B /* PVMelonDS.framework in Frameworks */,
@@ -2919,6 +2923,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3F9049E2C1FE9D8002283B3 /* libbz2.tbd in Frameworks */,
+				B30ED0D72CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */,
 				B38FB4A82CBEF6B0006786C6 /* libavcodec.xcframework in Frameworks */,
 				B33B4F4B2C1A5B4B007371C5 /* RealmSwift in Frameworks */,
 				B3E2AA382CB635BB00E2636D /* PVGME.framework in Frameworks */,
@@ -2954,7 +2959,6 @@
 				B318E28C2CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B33BD1B52C6A619F001E933A /* PVAtari800-Dynamic in Frameworks */,
 				B38FB4AE2CBEF6B1006786C6 /* libswresample.xcframework in Frameworks */,
-				B318E2A32CAB5A4B00D0E599 /* PVCoreMednafen in Frameworks */,
 				B394CD7A2BDEE53A006B63E8 /* MetalKit.framework in Frameworks */,
 				B35B17812CCCDFD1007059CA /* PVAudio in Frameworks */,
 				B35573742CC4843600A4BA16 /* MoltenVK in Frameworks */,
@@ -4457,7 +4461,6 @@
 				B35D52812C96C83E006BE5BF /* PVFreeDO-Dynamic */,
 				B3E1BC4A2C96DD0500EB4238 /* PVProSystem-Dynamic */,
 				B3E1BF932C96F21400EB4238 /* PVBliss-Dynamic */,
-				B3B6E7472CA4CF4500002BFD /* PVCoreMednafen */,
 				B32D45BC2CB730AE006B76C2 /* PVGambatte */,
 				B3FC972F2CB8B6BA00C6DB31 /* PVVisualBoyAdvance-Dynamic */,
 				B33A763A2CC5168C00FC746F /* SiriusRating */,
@@ -4466,6 +4469,7 @@
 				B392B3E12CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic */,
 				B37228CB2CCDC7D300E6F627 /* FreemiumKit */,
 				B39680482CE720E300E1AB6D /* Perception */,
+				B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */,
 			);
 			productName = Provenance;
 			productReference = B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */;
@@ -4524,7 +4528,6 @@
 				B386DD672C8939C60021A7BA /* PVFreeDO-Dynamic */,
 				B318E2942CAB571100D0E599 /* PVBliss-Dynamic */,
 				B318E29F2CAB5A2600D0E599 /* PVProSystem-Dynamic */,
-				B318E2A22CAB5A4B00D0E599 /* PVCoreMednafen */,
 				B32D45C62CB7310C006B76C2 /* PVGambatte */,
 				B382362B2CC4623100DCE080 /* SiriusRating */,
 				B35573732CC4843600A4BA16 /* MoltenVK */,
@@ -4532,6 +4535,7 @@
 				B35B17802CCCDFD1007059CA /* PVAudio */,
 				B37228C92CCDC7A700E6F627 /* FreemiumKit */,
 				B38A68BF2CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic */,
+				B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -11296,6 +11300,16 @@
 			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
 			productName = PVLibrary;
 		};
+		B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
+			productName = "PVCoreMednafen-Dynamic";
+		};
+		B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
+			productName = "PVCoreMednafen-Dynamic";
+		};
 		B318E2942CAB571100D0E599 /* PVBliss-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Cores/Bliss" */;
@@ -11305,11 +11319,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */;
 			productName = "PVProSystem-Dynamic";
-		};
-		B318E2A22CAB5A4B00D0E599 /* PVCoreMednafen */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
-			productName = PVCoreMednafen;
 		};
 		B323B0082BF46D2800CEA3CF /* PVLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -11941,11 +11950,6 @@
 		B3AFCF972977A80C00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
-		};
-		B3B6E7472CA4CF4500002BFD /* PVCoreMednafen */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
-			productName = PVCoreMednafen;
 		};
 		B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;

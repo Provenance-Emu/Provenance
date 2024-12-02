@@ -132,10 +132,10 @@ let package = Package(
             name: "PVCoreMednafen",
             targets: ["MednafenGameCore"]),
         // TODO: Fix MDFN_HIDE hiding symbols in dynamic builds
-//        .library(
-//            name: "PVCoreMednafen-Dynamic",
-//            type: .dynamic,
-//            targets: ["MednafenGameCore"]),
+        .library(
+            name: "PVCoreMednafen-Dynamic",
+            type: .dynamic,
+            targets: ["MednafenGameCore"]),
         .library(
             name: "PVCoreMednafen-Static",
             type: .static,
