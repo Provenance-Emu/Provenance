@@ -212,7 +212,7 @@ class PVSettingsViewModel: ObservableObject {
             title: "Re-Scan all ROM Directories?",
             message: """
                 Attempt scan all ROM Directories,
-                import all new ROMs found, and update existing ROMs
+                import all new ROMs found, and update existing ROMs, and recover save states.
                 """,
             preferredStyle: .alert
         )

@@ -1,6 +1,24 @@
 {
-  "originHash" : "c76af2cf0ed3103331d746b738bc8973bf534246a714d82da5869cb0caca17ee",
+  "originHash" : "2b15c8052d6aba466a44cc8ac80fb1f92529b726039a7a349f7cd98a1ca76bcb",
   "pins" : [
+    {
+      "identity" : "activityindicatorview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/ActivityIndicatorView.git",
+      "state" : {
+        "revision" : "9970fd0bb7a05dad0b6566ae1f56937716686b24",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "animatedgradient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/AnimatedGradient.git",
+      "state" : {
+        "revision" : "70f5d34bc553483936e86eca3984b6e12302ead2",
+        "version" : "1.0.0"
+      }
+    },
     {
       "identity" : "bitbytedata",
       "kind" : "remoteSourceControl",
@@ -29,12 +47,30 @@
       }
     },
     {
+      "identity" : "daterangepicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MrAsterisco/DateRangePicker",
+      "state" : {
+        "revision" : "9fd27bed5a951e7a48e2211465fdfc7e9bf2cbe7",
+        "version" : "1.0.2"
+      }
+    },
+    {
       "identity" : "defaults",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
         "branch" : "main",
         "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
+      }
+    },
+    {
+      "identity" : "floatingbutton",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/FloatingButton.git",
+      "state" : {
+        "revision" : "cf77c2f124df1423d90a9a1985e9b9ccfa4b9b3e",
+        "version" : "1.3.0"
       }
     },
     {
@@ -71,6 +107,15 @@
       "state" : {
         "revision" : "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
         "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "opendateinterval",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MrAsterisco/OpenDateInterval",
+      "state" : {
+        "revision" : "acf88f98adae4ef2f7040d3fcc23685b094b219b",
+        "version" : "1.0.0"
       }
     },
     {
@@ -242,6 +287,15 @@
       "state" : {
         "revision" : "e984fd2e08140ad5a95d084be38fe02b774bc15d",
         "version" : "0.2.3"
+      }
+    },
+    {
+      "identity" : "swipecellsui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DominikButz/SwipeCellSUI.git",
+      "state" : {
+        "revision" : "d1b121a9b30789b603d7fa7559889925f20fe47e",
+        "version" : "2.1.4"
       }
     },
     {

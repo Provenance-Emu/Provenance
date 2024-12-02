@@ -23,9 +23,8 @@ public extension URL {
 #if os(tvOS)
         return cachesPath
 #else
-        if USE_APP_GROUPS,
-            let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) {
-            return groupURL.appendingPathComponent("Documents/")
+        if USE_APP_GROUPS {
+            return documentsPathAppGroup ?? documentsPathLocal
         } else {
             return documentsPathLocal
         }
@@ -34,19 +33,36 @@ public extension URL {
     
     static let cachesPath: URL = {
         #if os(tvOS)
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+        return cachesPathLocal
         #else
-        
-        if USE_APP_GROUPS, let groupCaches = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) {
-            return groupCaches.appending(component: "Caches/")
-
+        if USE_APP_GROUPS {
+            return cachesPathAppGroup ?? cachesPathLocal
         } else {
-            let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-            return URL(fileURLWithPath: paths.first!, isDirectory: true)
-
+            return cachesPathLocal
         }
         #endif
+    }()
+    
+    static let cachesPathLocal: URL = {
+        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        
+        return URL(fileURLWithPath: paths.first!, isDirectory: true)
+    }()
+    
+    static let cachesPathAppGroup: URL? = {
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) else {
+            return nil
+        }
+        
+        return groupURL.appendingPathComponent("Caches/")
+    }()
+    
+    static let documentsPathAppGroup: URL? = {
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) else {
+            return nil
+        }
+                
+        return groupURL.appendingPathComponent("Documents/")
     }()
     
     static let documentsPathLocal: URL = {

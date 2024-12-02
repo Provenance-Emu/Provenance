@@ -182,15 +182,37 @@ public final class ROMLocationMigrator {
             ]
         }
     }
+    
+    public func printFolderContents() async {
+        for (oldPath, newPath) in oldPaths {
+            try? await printFolderContents(oldPath)
+            try? await printFolderContents(newPath)
+        }
+    }
+    
+    /// Debug print contents of folder and it's subfolders
+    public func printFolderContents(_ folder: URL) async throws {
+        let contents = try await fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil, options: [])
+        let paths = contents.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }).sorted(by: { $0.path < $1.path }).map { $0.relativePath }
+        DLOG("Contents of path: \(folder.standardizedFileURL): \(paths.joined(separator: ", "))")
+    }
 
     /// Migrates files from old location to new location if necessary
     public func migrateIfNeeded() async throws {
         ILOG("Checking if file migration is needed...")
+        #if DEBUG
+        await try? printFolderContents()
+        #endif
 
         for (oldPath, newPath) in oldPaths {
             if fileManager.fileExists(atPath: oldPath.path) {
                 ILOG("Found old directory to migrate: \(oldPath.lastPathComponent)")
-
+                // Contents of old directory
+                #if DEBUG
+                let contents = try await fileManager.contentsOfDirectory(at: oldPath, includingPropertiesForKeys: nil, options: [])
+                let paths = contents.map { $0.relativePath }.joined(separator: ", ")
+                DLOG("PATHS: \(paths)")
+                #endif
                 if !fileManager.fileExists(atPath: newPath.path) {
                     try fileManager.createDirectory(at: newPath,
                                                  withIntermediateDirectories: true,
@@ -198,6 +220,9 @@ public final class ROMLocationMigrator {
                 }
 
                 try await migrateDirectory(from: oldPath, to: newPath)
+
+                // Clean up empty directories after migration is complete
+                try await cleanupSourceDirectory(oldPath)
             } else {
                 ILOG("No old \(oldPath.lastPathComponent) directory found, skipping migration")
             }
@@ -208,66 +233,123 @@ public final class ROMLocationMigrator {
     private func migrateDirectory(from sourceDir: URL, to destDir: URL) async throws {
         ILOG("Migrating directory: \(sourceDir.lastPathComponent)")
 
-        // Get all items in source directory
-        let contents = try fileManager.contentsOfDirectory(
+        // Get all items in source directory with minimal property loading
+        let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey]
+        let enumerator = FileManager.default.enumerator(
             at: sourceDir,
-            includingPropertiesForKeys: [.isDirectoryKey],
+            includingPropertiesForKeys: Array(resourceKeys),
             options: [.skipsHiddenFiles]
         )
 
-        ILOG("Found \(contents.count) items to process in \(sourceDir.lastPathComponent)")
+        guard let enumerator = enumerator else {
+            ELOG("Failed to create enumerator for \(sourceDir.path)")
+            return
+        }
 
+        // Process items in chunks to avoid memory pressure
+        let chunkSize = 20
+        var itemsToProcess: [URL] = []
+
+        while let url = enumerator.nextObject() as? URL {
+            itemsToProcess.append(url)
+
+            if itemsToProcess.count >= chunkSize {
+                try await processChunk(itemsToProcess, sourceDir: sourceDir, destDir: destDir)
+                itemsToProcess.removeAll(keepingCapacity: true)
+
+                // Brief pause between chunks to let the system breathe
+                try await Task.sleep(nanoseconds: 50_000_000) // 50ms
+            }
+        }
+
+        // Process remaining items
+        if !itemsToProcess.isEmpty {
+            try await processChunk(itemsToProcess, sourceDir: sourceDir, destDir: destDir)
+        }
+    }
+
+    private func processChunk(_ urls: [URL], sourceDir: URL, destDir: URL) async throws {
         try await withThrowingTaskGroup(of: Void.self) { group in
-            for itemURL in contents {
+            for itemURL in urls {
                 group.addTask {
-                    let isDirectory = try itemURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory ?? false
                     let relativePath = itemURL.lastPathComponent
                     let destinationURL = destDir.appendingPathComponent(relativePath)
 
-                    if isDirectory {
-                        // Create destination directory if it doesn't exist
-                        if !self.fileManager.fileExists(atPath: destinationURL.path) {
-                            try self.fileManager.createDirectory(at: destinationURL,
-                                                              withIntermediateDirectories: true,
-                                                              attributes: nil)
-                        }
-                        // Recursively migrate contents of subdirectory
-                        try await self.migrateDirectory(from: itemURL, to: destinationURL)
+                    // Quick check for existing files first
+                    if FileManager.default.fileExists(atPath: destinationURL.path) {
+                        ILOG("Skipping \(relativePath) as it already exists")
+                        return
+                    }
 
-                        // Try to remove empty source directory
-                        if try self.fileManager.contentsOfDirectory(atPath: itemURL.path).isEmpty {
-                            try await self.fileManager.removeItem(at: itemURL)
-                            ILOG("Removed empty directory: \(itemURL.lastPathComponent)")
+                    let resourceValues = try itemURL.resourceValues(forKeys: [.isDirectoryKey])
+
+                    if resourceValues.isDirectory ?? false {
+                        // Handle directory
+                        if !FileManager.default.fileExists(atPath: destinationURL.path) {
+                            try FileManager.default.createDirectory(
+                                at: destinationURL,
+                                withIntermediateDirectories: true,
+                                attributes: nil
+                            )
                         }
+                        try await self.migrateDirectory(from: itemURL, to: destinationURL)
                     } else {
-                        // Handle file migration
-                        if self.fileManager.fileExists(atPath: destinationURL.path) {
-                            ILOG("Skipping \(relativePath) as it already exists in destination")
-                        } else {
-                            try self.fileManager.moveItem(at: itemURL, to: destinationURL)
-                            ILOG("Successfully migrated: \(relativePath)")
-                        }
+                        // Handle file
+                        try FileManager.default.moveItem(at: itemURL, to: destinationURL)
+                        ILOG("Migrated: \(relativePath)")
                     }
                 }
             }
-
             try await group.waitForAll()
         }
+    }
 
-        // Try to remove source directory if empty
+    private func cleanupSourceDirectory(_ sourceDir: URL) async throws {
         do {
-            let remainingItems = try fileManager.contentsOfDirectory(
+            let contents = try FileManager.default.contentsOfDirectory(
                 at: sourceDir,
-                includingPropertiesForKeys: nil,
+                includingPropertiesForKeys: [.isDirectoryKey],
                 options: [.skipsHiddenFiles]
             )
 
-            if remainingItems.isEmpty {
-                try await fileManager.removeItem(at: sourceDir)
-                ILOG("Removed empty directory: \(sourceDir.lastPathComponent)")
+            // First check if there are any files (non-directories)
+            let hasFiles = contents.contains { url in
+                let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+                return !isDirectory
+            }
+
+            if !hasFiles {
+                // Process subdirectories recursively
+                for url in contents {
+                    let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+                    if isDirectory {
+                        try await cleanupSourceDirectory(url)
+                    }
+                }
+
+                // Check again after processing subdirectories
+                let remainingContents = try FileManager.default.contentsOfDirectory(
+                    at: sourceDir,
+                    includingPropertiesForKeys: nil,
+                    options: [.skipsHiddenFiles]
+                )
+
+                if remainingContents.isEmpty {
+                    try await FileManager.default.removeItem(at: sourceDir)
+                    ILOG("Removed empty directory: \(sourceDir.lastPathComponent)")
+                }
             }
         } catch {
-            ELOG("Error cleaning up directory \(sourceDir.lastPathComponent): \(error.localizedDescription)")
+            ELOG("Error cleaning up \(sourceDir.lastPathComponent): \(error.localizedDescription)")
+        }
+    }
+}
+
+// Add this extension to support chunking
+private extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
         }
     }
 }

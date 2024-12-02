@@ -3,12 +3,15 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [ ] Recover of games with bad paths
+- [ ] Recover of save states not loading images
 - [ ] ugly retroarch ui in app, a bit unresponsive
 - [ ] Gearcoloco bottom buttons are wrong values
 - [ ] Pokemini audio fucked up
 - [ ] import queue, clicking an item should import it
 - [ ] Atari 2600 not using our controller for retroarch
 - [ ] Hud still looping
+- [ ] save state manager is showing saves for all roms
 - [ ] importer doesn't auto start on import or selection of conflicts
 - [X] PCFX retroarch controls fucked, right is held down, actions don't do shit (using bultin controls)
 - [X] N64 retroarch don't load (no disabled)
