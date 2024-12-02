@@ -46,6 +46,25 @@ public extension RomDatabase {
                 // 2. Check if this save state already exists in the database
                 if let existingSave = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateMetadata.id) {
                     DLOG("Save state already exists: \(existingSave.id)")
+
+                    // Check if the existing save state's image needs to be updated
+                    if let existingImage = existingSave.image,
+                       !fileManager.fileExists(atPath: existingImage.url.path) {
+
+                        // Look for the image in the same directory as the save state
+                        let localImageURL = jsonURL.deletingPathExtension().deletingPathExtension()
+                            .appendingPathExtension("jpg")
+
+                        if fileManager.fileExists(atPath: localImageURL.path) {
+                            DLOG("Found image file at alternate location for existing save: \(localImageURL.path)")
+                            try? realm.write {
+                                existingSave.image = PVImageFile(withURL: localImageURL)
+                                ILOG("Updated image path for existing save state: \(existingSave.id)")
+                            }
+                        } else {
+                            WLOG("No valid image found for existing save state: \(existingSave.id)")
+                        }
+                    }
                     continue
                 }
 
@@ -72,9 +91,23 @@ public extension RomDatabase {
                 // 6. Create PVImageFile for the screenshot if it exists
                 var imageFile: PVImageFile?
                 if let imageURLString = saveStateMetadata.image?.url,
-                   let imageURL = URL(string: imageURLString),
-                   fileManager.fileExists(atPath: imageURL.path) {
-                    imageFile = PVImageFile(withURL: imageURL)
+                   let originalImageURL = URL(string: imageURLString) {
+
+                    // First try the original path from JSON
+                    if fileManager.fileExists(atPath: originalImageURL.path) {
+                        imageFile = PVImageFile(withURL: originalImageURL)
+                    } else {
+                        // If original path fails, look for the image in the same directory as the save state
+                        let localImageURL = jsonURL.deletingPathExtension().deletingPathExtension()
+                            .appendingPathExtension("jpg")
+
+                        if fileManager.fileExists(atPath: localImageURL.path) {
+                            DLOG("Found image file at alternate location: \(localImageURL.path)")
+                            imageFile = PVImageFile(withURL: localImageURL)
+                        } else {
+                            WLOG("Image file not found at original path (\(originalImageURL.path)) or local path (\(localImageURL.path))")
+                        }
+                    }
                 }
 
                 // 7. Create new PVSaveState
@@ -84,7 +117,7 @@ public extension RomDatabase {
                     file: saveFile,
                     date: Date(timeIntervalSinceReferenceDate: saveStateMetadata.date),
                     image: imageFile,
-                    isAutosave: saveStateMetadata.isAutosave,
+                    isAutosave: saveStateMetadata.isAutosave ?? false,
                     isPinned: saveStateMetadata.isPinned ?? false,
                     isFavorite: saveStateMetadata.isFavorite ?? false,
                     userDescription: saveStateMetadata.userDescription,
@@ -283,12 +316,15 @@ public extension RomDatabase {
 // MARK: - Save State Metadata Structs
 private struct SaveStateMetadata: Codable {
     let id: String
-    let isAutosave: Bool
+    let isAutosave: Bool?
+    let isPinned: Bool?
+    let isFavorite: Bool?
     let date: TimeInterval
     let game: GameMetadata
     let core: CoreMetadata
     let file: FileMetadata
     let image: ImageMetadata?
+    let userDescription: String?
 }
 
 private struct GameMetadata: Codable {

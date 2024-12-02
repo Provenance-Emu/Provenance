@@ -182,15 +182,37 @@ public final class ROMLocationMigrator {
             ]
         }
     }
+    
+    public func printFolderContents() async {
+        for (oldPath, newPath) in oldPaths {
+            try? await printFolderContents(oldPath)
+            try? await printFolderContents(newPath)
+        }
+    }
+    
+    /// Debug print contents of folder and it's subfolders
+    public func printFolderContents(_ folder: URL) async throws {
+        let contents = try await fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil, options: [])
+        let paths = contents.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }).sorted(by: { $0.path < $1.path }).map { $0.relativePath }
+        DLOG("Contents of path: \(folder.standardizedFileURL): \(paths.joined(separator: ", "))")
+    }
 
     /// Migrates files from old location to new location if necessary
     public func migrateIfNeeded() async throws {
         ILOG("Checking if file migration is needed...")
+        #if DEBUG
+        await try? printFolderContents()
+        #endif
 
         for (oldPath, newPath) in oldPaths {
             if fileManager.fileExists(atPath: oldPath.path) {
                 ILOG("Found old directory to migrate: \(oldPath.lastPathComponent)")
-
+                // Contents of old directory
+                #if DEBUG
+                let contents = try await fileManager.contentsOfDirectory(at: oldPath, includingPropertiesForKeys: nil, options: [])
+                let paths = contents.map { $0.relativePath }.joined(separator: ", ")
+                DLOG("PATHS: \(paths)")
+                #endif
                 if !fileManager.fileExists(atPath: newPath.path) {
                     try fileManager.createDirectory(at: newPath,
                                                  withIntermediateDirectories: true,
