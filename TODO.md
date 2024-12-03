@@ -8,7 +8,7 @@ _My personal TODO notes_
 - [X] App store blocked cores still showing up
 - [ ] Mupen retroarch no video
 - [ ] ugly retroarch ui in app, a bit unresponsive
-- [ ] Pokemini audio fucked up
+- [X] Pokemini audio fucked up
 - [ ] Retroarch core options not showing up
 - [X] vectrex crashes due to missing screen rect
 - [X] Recover of games with bad paths
