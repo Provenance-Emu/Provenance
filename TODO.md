@@ -5,10 +5,10 @@ _My personal TODO notes_
 
 - [ ] App store blocked cores still showing up
 - [ ] Mupen retroarch no video
-- [ ] Recover of games with bad paths
-- [ ] Recover of save states not loading images
+- [X] Recover of games with bad paths
+- [X] Recover of save states not loading images
 - [ ] ugly retroarch ui in app, a bit unresponsive
-- [ ] Gearcoloco bottom buttons are wrong values
+- [X] Gearcoloco bottom buttons are wrong values
 - [ ] Pokemini audio fucked up
 - [ ] import queue, clicking an item should import it
 - [ ] Atari 2600 not using our controller for retroarch
@@ -115,8 +115,14 @@ _My personal TODO notes_
 
 ### Cores to translate
 
+- [ ] Gearcoloco
+    - Video bad
+- [ ] PVEP128
+- [ ] Flycast / Reicast
 - [ ] PVFreeIntV
 - [ ] PVfMSX
+- [ ] Duckstation
+- [ ] PCSXRearmed
 
 ### Retroarch cores to add
 
