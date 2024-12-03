@@ -37,6 +37,7 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [ ] Mednafen loads Famicom Disks but gets stuck on bios
 - [ ] Opening roms from md5/siri search doesn't work (Claude had good sample code)
 - [X] Test iOS 17.0 and then 16.X
 - [X] Remove or fix new shaders
