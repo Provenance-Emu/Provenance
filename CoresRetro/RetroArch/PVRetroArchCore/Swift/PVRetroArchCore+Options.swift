@@ -44,7 +44,7 @@ extension PVRetroArchCore: CoreOptional {
                .init(title: "Angrylion", description: "Angrylion", value: 0),
                .init(title: "GlideN64", description: "GlideN64", value: 1)
           ],
-          defaultValue: 1)
+          defaultValue: 0)
     }
     static var apple2MachineOption: CoreOption {
           .enumeration(.init(title: "System Model",
@@ -149,6 +149,7 @@ extension PVRetroArchCore: CoreOptional {
         var coreOptions: [CoreOption] = [gsOption]
         var isDOS=false
         coreOptions.append(retroArchControllerOption)
+        DLOG("Getting options for coreClassName: \(self.coreClassName) systemName:\(self.systemName)")
         if (self.coreClassName.contains("mupen")) {
             coreOptions.append(mupenRDPOption)
         }
@@ -308,7 +309,7 @@ extension PVRetroArchCore: CoreOptional {
                 optionOverwrite = false
             }
             if (coreIdentifier.contains("mupen")) {
-                let rdpOpt = PVRetroArchCore.valueForOption(PVRetroArchCore.mupenRDPOption).asInt ?? 1
+                let rdpOpt = PVRetroArchCore.valueForOption(PVRetroArchCore.mupenRDPOption).asInt ?? 0
                 if (rdpOpt == 0) {
                     optionValues += "mupen64plus-rdp-plugin = \"angrylion\"\n"
                 } else {
@@ -420,7 +421,7 @@ extension PVRetroArchCoreCore: CoreActions {
                 menuToggle()
                 break;
             default:
-                print("Unknown action: " + action.title)
+                WLOG("Unknown action: " + action.title)
         }
     }
 }
