@@ -4,7 +4,7 @@
 // Copyright (c) 2012- PPSSPP Project.
 //
 
-#import "PVPPSSPPCore.h"
+//#import "PVPPSSPPCore.h"
 #import "PVPPSSPPCore+Controls.h"
 #import "PVPPSSPPCore+Audio.h"
 #import "PVPPSSPPCore+Video.h"
