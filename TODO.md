@@ -3,6 +3,8 @@ _My personal TODO notes_
 
 ## Show stoppers
 
+- [ ] App store blocked cores still showing up
+- [ ] Mupen retroarch no video
 - [ ] Recover of games with bad paths
 - [ ] Recover of save states not loading images
 - [ ] ugly retroarch ui in app, a bit unresponsive
