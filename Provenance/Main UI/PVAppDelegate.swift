@@ -134,7 +134,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                 Future<Void, Error> { promise in
                     Task { @MainActor in
                         do {
-                            try RomDatabase.sharedInstance.deleteAllGames()
+//                            try RomDatabase.sharedInstance.deleteAllGames()
                             if let _ = self.gameLibraryViewController {
                                 self.gameLibraryViewController?.checkROMs(false)
                             } else {
