@@ -6,6 +6,9 @@ import SwiftUI
 
 /// Protocol defining the requirements for a save state driver
 public protocol SaveStateDriver: ObservableObject {
+    /// The game ID to filter save states by
+    var gameId: String? { get set }
+
     /// Publisher for save state changes
     var saveStatesSubject: CurrentValueSubject<[SaveStateRowViewModel], Never> { get }
     var saveStatesPublisher: AnyPublisher<[SaveStateRowViewModel], Never> { get }
@@ -18,9 +21,6 @@ public protocol SaveStateDriver: ObservableObject {
 
     /// Get initial save states (for setup)
     func getAllSaveStates() -> [SaveStateRowViewModel]
-
-    /// Get save states filtered by game ID
-    func getSaveStates(forGameId gameID: String) -> [SaveStateRowViewModel]
 
     /// Update save state properties
     func update(saveState: SaveStateRowViewModel)
@@ -39,7 +39,4 @@ public protocol SaveStateDriver: ObservableObject {
 
     /// Share save state
     func share(saveStateId: String) -> URL?
-
-    /// Load save states for a specific game
-    func loadSaveStates(forGameId gameID: String)
 }

@@ -60,8 +60,7 @@ public struct ContinuesManagementHeaderView: View {
                         .font(.subheadline)
                         .foregroundColor(.white)
 
-                    Text("\(viewModel.numberOfSaves) Save States - \(viewModel.savesTotalSize) MB")
-                        .font(.subheadline)
+                    Text("\(viewModel.numberOfSaves) Save States - \(String(format: "%.2f", Float(viewModel.savesTotalSize) / 1024.0 / 1024.0)) MB") .font(.subheadline)
                         .foregroundColor(.grey.gEEE)
                 }
             }

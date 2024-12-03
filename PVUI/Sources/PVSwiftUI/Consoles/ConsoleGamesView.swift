@@ -20,7 +20,7 @@ import Combine
 
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
-    
+
     static let played = ConsoleGamesFilterModeFlags(rawValue: 1 << 0)
     static let neverPlayed = ConsoleGamesFilterModeFlags(rawValue: 1 << 1)
     static let recentlyImported = ConsoleGamesFilterModeFlags(rawValue: 1 << 2)
@@ -28,19 +28,19 @@ struct ConsoleGamesFilterModeFlags: OptionSet {
 }
 
 struct ConsoleGamesView: SwiftUI.View {
-    
+
     @StateObject internal var gamesViewModel: ConsoleGamesViewModel
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedRealmObject var console: PVSystem
     weak var rootDelegate: PVRootDelegate?
-    
+
     let gamesForSystemPredicate: NSPredicate
-    
+
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     @State internal var gameLibraryItemsPerRow: Int = 4
     @Default(.gameLibraryScale) internal var gameLibraryScale
-    
+
     /// GameContextMenuDelegate
     @State internal var showImagePicker = false
     @State internal var selectedImage: UIImage?
@@ -55,64 +55,64 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showRecentSaveStates) internal var showRecentSaveStates
     @Default(.showFavorites) internal var showFavorites
     @Default(.showRecentGames) internal var showRecentGames
-    
-    
+
+
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
-    
+
     @State private var gamepadHandler: Any?
     @State private var lastFocusedSection: HomeSectionType?
-    
+
     @State private var gamepadCancellable: AnyCancellable?
-    
+
     @State private var navigationTimer: Timer?
     @State private var initialDelay: TimeInterval = 0.5
     @State private var repeatDelay: TimeInterval = 0.15
-    
+
     /// Note: these CANNOT be in a @StateObject
     @ObservedResults(
         PVGame.self,
         filter: NSPredicate(format: "systemIdentifier == %@"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var games
-    
+
     @ObservedResults(
         PVSaveState.self,
         filter: NSPredicate(format: "game.systemIdentifier == %@"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
     ) var recentSaveStates
-    
+
     @ObservedResults(
         PVRecentGame.self,
         filter: NSPredicate(format: "game.systemIdentifier == %@")
     ) var recentlyPlayedGames
-    
+
     @ObservedResults(
         PVGame.self,
         filter: NSPredicate(format: "isFavorite == true AND systemIdentifier == %@")
     ) var favorites
-    
+
     @ObservedResults(
         PVGame.self,
         filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
-    
+
     @State var isShowingSaveStates = false
-    
+
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
         let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
         return verticalSizeClass == .compact ? baseHeight / 2 : baseHeight
     }
-    
+
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
         _gamesViewModel = StateObject(wrappedValue: ConsoleGamesViewModel(console: console))
         self.console = console
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
         self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
-        
+
         _games = ObservedResults(
             PVGame.self,
             filter: NSPredicate(format: "systemIdentifier == %@", console.identifier),
@@ -137,7 +137,7 @@ struct ConsoleGamesView: SwiftUI.View {
             sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: viewModel.sortGamesAscending)
         )
     }
-    
+
     var body: some SwiftUI.View {
         GeometryReader { geometry in
             ZStack {
@@ -181,10 +181,10 @@ struct ConsoleGamesView: SwiftUI.View {
                 .onAppear {
                     adjustZoomLevel(for: gameLibraryScale)
                     setupGamepadHandling()
-                    
+
                     // Set initial focus
                     let sections: [HomeSectionType] = availableSections
-                    
+
                     if let firstSection = sections.first {
                         gamesViewModel.focusedSection = firstSection
                         gamesViewModel.focusedItemInSection = getFirstItemInSection(firstSection)
@@ -223,7 +223,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
                 /// Create the Realm driver
                 if let driver = try? RealmSaveStateDriver(realm: realm) {
-                    
+
                     /// Create view model
                     let viewModel = ContinuesMagementViewModel(
                         driver: driver,
@@ -238,12 +238,14 @@ struct ConsoleGamesView: SwiftUI.View {
                                 }
                             }
                         })
-                    
+
                     /// Create and configure the view
                     if #available(iOS 16.4, *) {
                         ContinuesMagementView(viewModel: viewModel)
                             .onAppear {
-                                driver.loadSaveStates(forGameId: game.id)
+                                /// Set the game ID filter
+                                driver.gameId = game.id
+
                                 let game = game.freeze()
                                 Task { @MainActor in
                                     let image: UIImage? = await game.fetchArtworkFromCache()
@@ -254,7 +256,9 @@ struct ConsoleGamesView: SwiftUI.View {
                     } else {
                         ContinuesMagementView(viewModel: viewModel)
                             .onAppear {
-                                driver.loadSaveStates(forGameId: game.id)
+                                /// Set the game ID filter
+                                driver.gameId = game.id
+
                                 let game = game.freeze()
                                 Task { @MainActor in
                                     let image: UIImage? = await game.fetchArtworkFromCache()
@@ -269,26 +273,26 @@ struct ConsoleGamesView: SwiftUI.View {
         }
         .ignoresSafeArea(.all)
     }
-    
+
     // MARK: - Helper Methods
     private var hasRecentSaveStates: Bool {
         !recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
     }
-    
+
     private var hasFavorites: Bool {
         !favorites.filter("systemIdentifier == %@", console.identifier).isEmpty
     }
-    
+
     private var hasRecentlyPlayedGames: Bool {
         !recentlyPlayedGames.isEmpty
     }
-    
+
     private func loadGame(_ game: PVGame) {
         Task.detached { @MainActor in
             await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
         }
     }
-    
+
     var itemsPerRow: Int {
         let roundedScale = Int(gameLibraryScale.rounded())
         // If games is less than count, just use the games to fill the row.
@@ -301,7 +305,7 @@ struct ConsoleGamesView: SwiftUI.View {
         }
         return count
     }
-    
+
     private func showGamesGrid(_ games: [PVGame]) -> some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return LazyVGrid(columns: columns, spacing: 10) {
@@ -327,7 +331,7 @@ struct ConsoleGamesView: SwiftUI.View {
         }
         .padding(.horizontal, 10)
     }
-    
+
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
         return ScrollViewReader { proxy in
@@ -369,7 +373,7 @@ struct ConsoleGamesView: SwiftUI.View {
             }
         }
     }
-    
+
     private func showGamesList(_ games: [PVGame]) -> some View {
         LazyVStack(spacing: 0) {
             ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
@@ -397,7 +401,7 @@ struct ConsoleGamesView: SwiftUI.View {
             }
         }
     }
-    
+
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
@@ -421,39 +425,39 @@ struct ConsoleGamesView: SwiftUI.View {
             }
         }
     }
-    
+
     private func calculateGridItemSize() -> CGFloat {
         let numberOfItemsPerRow: CGFloat = CGFloat(gameLibraryScale)
         let totalSpacing: CGFloat = 10 * (numberOfItemsPerRow - 1)
         let availableWidth = UIScreen.main.bounds.width - totalSpacing - 20
         return availableWidth / numberOfItemsPerRow
     }
-    
+
     private func adjustZoomLevel(for magnification: Float) {
         gameLibraryItemsPerRow = calculatedZoomLevel(for: magnification)
     }
-    
+
     private func calculatedZoomLevel(for magnification: Float) -> Int {
         let isIPad = UIDevice.current.userInterfaceIdiom == .pad
         let defaultZoomLevel = isIPad ? 8 : 4
-        
+
         // Handle invalid magnification values
         guard !magnification.isNaN && !magnification.isInfinite else {
             return defaultZoomLevel
         }
-        
+
         // Calculate the target zoom level based on magnification
         let targetZoomLevel = Float(defaultZoomLevel) / magnification
-        
+
         // Round to the nearest even number
         let roundedZoomLevel = round(targetZoomLevel / 2) * 2
-        
+
         // Clamp the value between 2 and 16
         let clampedZoomLevel = max(2, min(16, roundedZoomLevel))
-        
+
         return Int(clampedZoomLevel)
     }
-    
+
 #if !os(tvOS)
     private func magnificationGesture() -> some Gesture {
         MagnificationGesture()
@@ -465,12 +469,12 @@ struct ConsoleGamesView: SwiftUI.View {
             }
     }
 #endif
-    
-    
+
+
     private func setupGamepadHandling() {
         // Cancel existing handler if it exists
         gamepadCancellable?.cancel()
-        
+
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { event in
@@ -478,11 +482,11 @@ struct ConsoleGamesView: SwiftUI.View {
                 guard !viewModel.isMenuVisible,
                       viewModel.selectedConsole?.identifier == console.identifier
                 else { return }
-                
+
                 DLOG("Gamepad event: \(event)")
                 // DLOG("Selected console: \(String(describing: viewModel.selectedConsole))")
                 DLOG("Current console: \(console.identifier)")
-                
+
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {
@@ -501,7 +505,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
     }
-    
+
     private func showOptionsMenu(for gameId: String) {
         // Implement context menu showing logic here
         // This would show the same menu as the long-press context menu
@@ -517,7 +521,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
 // MARK: - View Components
 extension ConsoleGamesView {
-    
+
     @ViewBuilder
     private func displayOptionsView() -> some View {
         GamesDisplayOptionsView(
@@ -530,7 +534,7 @@ extension ConsoleGamesView {
         .padding(.top, 16)
         .padding(.bottom, 16)
     }
-    
+
     @ViewBuilder
     private func continueSection() -> some View {
         Group {
@@ -551,7 +555,7 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func favoritesSection() -> some View {
         Group {
@@ -566,7 +570,7 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func recentlyPlayedSection() -> some View {
         Group {
@@ -583,7 +587,7 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func gamesSection() -> some View {
         Group {
@@ -599,7 +603,7 @@ extension ConsoleGamesView {
                     Text("\(console.name) Games")
                         .font(.title2)
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    
+
                     if viewModel.viewGamesAsGrid {
                         showGamesGrid(games)
                     } else {
@@ -609,11 +613,11 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func gameItem(_ game: PVGame, section: HomeSectionType) -> some View {
         if !game.isInvalidated {
-            
+
             GameItemView(
                 game: game,
                 constrainHeight: true,
@@ -648,7 +652,7 @@ extension ConsoleGamesView {
             }
         }
     }
-    
+
     @ViewBuilder
     private func saveStateItem(_ saveState: PVSaveState) -> some View {
         if !saveState.isInvalidated && !saveState.game.isInvalidated {
@@ -686,7 +690,7 @@ extension ConsoleGamesView {
 struct ConsoleGamesView_Previews: PreviewProvider {
     static let console: PVSystem = ._rlmDefaultValue()
     static let viewModel: PVRootViewModel = .init()
-    
+
     static var previews: some SwiftUI.View {
         ConsoleGamesView(console: console,
                          viewModel: viewModel,

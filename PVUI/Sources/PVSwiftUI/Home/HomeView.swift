@@ -72,7 +72,7 @@ struct HomeView: SwiftUI.View {
     @State private var delayTask: Task<Void, Never>?
 
     @State private var isControllerConnected: Bool = false
-    
+
     /// GameContextMenuDelegate
     @State internal var showImagePicker = false
     @State internal var selectedImage: UIImage?
@@ -88,7 +88,7 @@ struct HomeView: SwiftUI.View {
 //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
         self.viewModel = viewModel
-        
+
         _allGames = ObservedResults(
             PVGame.self,
             sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)
@@ -205,7 +205,7 @@ struct HomeView: SwiftUI.View {
             let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
             /// Create the Realm driver
             if let driver = try? RealmSaveStateDriver(realm: realm) {
-                
+
                 /// Create view model
                 let viewModel = ContinuesMagementViewModel(
                     driver: driver,
@@ -220,12 +220,14 @@ struct HomeView: SwiftUI.View {
                             }
                         }
                     })
-                
+
                 /// Create and configure the view
                 if #available(iOS 16.4, *) {
                     ContinuesMagementView(viewModel: viewModel)
                         .onAppear {
-                            driver.loadSaveStates(forGameId: game.id)
+                            /// Set the game ID filter
+                            driver.gameId = game.id
+
                             let game = game.freeze()
                             Task { @MainActor in
                                 let image: UIImage? = await game.fetchArtworkFromCache()
@@ -236,7 +238,9 @@ struct HomeView: SwiftUI.View {
                 } else {
                     ContinuesMagementView(viewModel: viewModel)
                         .onAppear {
-                            driver.loadSaveStates(forGameId: game.id)
+                            /// Set the game ID filter
+                            driver.gameId = game.id
+
                             let game = game.freeze()
                             Task { @MainActor in
                                 let image: UIImage? = await game.fetchArtworkFromCache()
@@ -280,34 +284,34 @@ struct HomeView: SwiftUI.View {
                 }
             }
     }
-    
+
     @Default(.gameLibraryScale) internal var gameLibraryScale
     @State internal var gameLibraryItemsPerRow: Int = 4
     private func adjustZoomLevel(for magnification: Float) {
         gameLibraryItemsPerRow = calculatedZoomLevel(for: magnification)
     }
-    
+
     private func calculatedZoomLevel(for magnification: Float) -> Int {
         let isIPad = UIDevice.current.userInterfaceIdiom == .pad
         let defaultZoomLevel = isIPad ? 8 : 4
-        
+
         // Handle invalid magnification values
         guard !magnification.isNaN && !magnification.isInfinite else {
             return defaultZoomLevel
         }
-        
+
         // Calculate the target zoom level based on magnification
         let targetZoomLevel = Float(defaultZoomLevel) / magnification
-        
+
         // Round to the nearest even number
         let roundedZoomLevel = round(targetZoomLevel / 2) * 2
-        
+
         // Clamp the value between 2 and 16
         let clampedZoomLevel = max(2, min(16, roundedZoomLevel))
-        
+
         return Int(clampedZoomLevel)
     }
-    
+
     var itemsPerRow: Int {
         let roundedScale = Int(gameLibraryScale.rounded())
         // If games is less than count, just use the games to fill the row.
@@ -387,7 +391,7 @@ struct HomeView: SwiftUI.View {
         }
         .padding(.horizontal, 10)
     }
-    
+
     /// Creates a grid item view for a game with focus and context menu
     @ViewBuilder
     private func gameGridItem(_ game: PVGame) -> some View {
@@ -958,4 +962,3 @@ extension HomeView: GameContextMenuDelegate {
         continuesManagementState = ContinuesManagementState(game: game)
     }
 }
-

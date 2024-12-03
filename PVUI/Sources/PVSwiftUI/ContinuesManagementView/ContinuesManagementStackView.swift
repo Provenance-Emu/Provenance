@@ -121,14 +121,14 @@ public struct ContinuesManagementContentView: View {
         ContinuesManagementContentView(viewModel: viewModel)
             .frame(height: 400)
             .onAppear {
-                mockDriver.loadSaveStates(forGameId: "1")
+                mockDriver.gameId = "1"  // Set the game ID filter
             }
 
         /// Edit mode
         ContinuesManagementContentView(viewModel: viewModel)
             .frame(height: 400)
             .onAppear {
-                mockDriver.loadSaveStates(forGameId: "1")
+                mockDriver.gameId = "1"  // Set the game ID filter
                 viewModel.controlsViewModel.isEditing = true
             }
     }
@@ -154,7 +154,7 @@ public struct ContinuesManagementContentView: View {
         .frame(height: 400)
         .padding()
         .onAppear {
-            mockDriver.loadSaveStates(forGameId: "1")
+            mockDriver.gameId = "1"  // Set the game ID filter
         }
 }
 

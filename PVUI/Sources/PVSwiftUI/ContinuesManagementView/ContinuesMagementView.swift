@@ -164,7 +164,7 @@ public class ContinuesMagementViewModel: ObservableObject {
 
         // Observe save states size
         driver.savesSizePublisher
-            .map { Int($0 / 1024 / 1024) } // Convert to MB
+            .map { Int($0) }
             .receive(on: DispatchQueue.main)
             .assign(to: \.savesTotalSize, on: headerViewModel)
             .store(in: &cancellables)
@@ -284,11 +284,6 @@ public class ContinuesMagementViewModel: ObservableObject {
         )
 
         setupObservers()
-
-        // Subscribe to numberOfSaves changes
-        driver.numberOfSavesPublisher
-            .assign(to: \.numberOfSaves, on: headerViewModel)
-            .store(in: &cancellables)
     }
 
     /// Select all save states
