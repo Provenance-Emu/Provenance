@@ -343,6 +343,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
         // to provide the correct data for creating views.
         let m3uFile: URL? = PVEmulatorConfiguration.m3uFile(forGame: game)
+        // TODO: Why are we using `UserDefaults`? @JoeMatt
         var romPathMaybe: URL? = UserDefaults.standard.url(forKey: game.romPath) ?? m3uFile
         if romPathMaybe == nil {
             romPathMaybe = game.file.url

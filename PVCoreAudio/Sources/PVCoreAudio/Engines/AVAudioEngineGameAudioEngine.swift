@@ -140,20 +140,130 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
     private func readBlockForBuffer(_ buffer: RingBufferProtocol) -> OEAudioBufferReadBlock {
         return { buf, max -> Int in
             let bytesAvailable = buffer.availableBytes
-            let bytesToRead = min(bytesAvailable, max)
+            let bytesPerSample = self.gameCore.audioBitDepth / 8
+            let is8Bit = bytesPerSample == 1
+            let sourceChannels = self.gameCore.channelCount(forBuffer: 0)
+
+            // For 8-bit audio, we need to read half as many bytes since we'll expand to 16-bit
+            let bytesToRead = min(bytesAvailable, is8Bit ? max / 2 : max)
 
             if bytesToRead == 0 {
                 memset(buf, 0, max)
                 return max
             }
 
-            let bytesRead = buffer.read(buf, preferredSize: bytesToRead)
+            if is8Bit {
+                // Create a temporary buffer for 8-bit data
+                var source8 = [Int8](repeating: 0, count: bytesToRead)
+                let bytesRead = buffer.read(UnsafeMutableRawPointer(&source8), preferredSize: bytesToRead)
+                let samplesRead = bytesRead
+                let output = buf.assumingMemoryBound(to: Int16.self)
 
-            if bytesRead < max {
-                memset(buf.advanced(by: bytesRead), 0, max - bytesRead)
+                if sourceChannels == 1 {
+                    // Process 8 samples at a time for mono
+                    let simdCount = samplesRead / 8
+                    for i in 0..<simdCount {
+                        // Load 8 samples
+                        let monoVector = SIMD8<Int8>(
+                            source8[i * 8 + 0],
+                            source8[i * 8 + 1],
+                            source8[i * 8 + 2],
+                            source8[i * 8 + 3],
+                            source8[i * 8 + 4],
+                            source8[i * 8 + 5],
+                            source8[i * 8 + 6],
+                            source8[i * 8 + 7]
+                        )
+
+                        // Convert Int8 to Int16 and shift
+                        let monoVector16 = SIMD8<Int16>(
+                            Int16(monoVector[0]) << 8,
+                            Int16(monoVector[1]) << 8,
+                            Int16(monoVector[2]) << 8,
+                            Int16(monoVector[3]) << 8,
+                            Int16(monoVector[4]) << 8,
+                            Int16(monoVector[5]) << 8,
+                            Int16(monoVector[6]) << 8,
+                            Int16(monoVector[7]) << 8
+                        )
+
+                        // Interleave mono samples to stereo
+                        for j in 0..<8 {
+                            let outputIndex = (i * 16) + (j * 2)
+                            output[outputIndex] = monoVector16[j]     // Left
+                            output[outputIndex + 1] = monoVector16[j] // Right
+                        }
+                    }
+
+                    // Handle remaining samples
+                    let remaining = samplesRead % 8
+                    if remaining > 0 {
+                        let startIdx = simdCount * 8
+                        for i in 0..<remaining {
+                            let sample = Int16(source8[startIdx + i]) << 8
+                            let outputIndex = (simdCount * 16) + (i * 2)
+                            output[outputIndex] = sample     // Left
+                            output[outputIndex + 1] = sample // Right
+                        }
+                    }
+                } else {
+                    // Process 16 samples at a time for stereo
+                    let simdCount = (samplesRead / 16) * 2  // Process pairs for stereo
+                    for i in 0..<simdCount {
+                        let stereoVector = SIMD8<Int8>(
+                            source8[i * 8 + 0],
+                            source8[i * 8 + 1],
+                            source8[i * 8 + 2],
+                            source8[i * 8 + 3],
+                            source8[i * 8 + 4],
+                            source8[i * 8 + 5],
+                            source8[i * 8 + 6],
+                            source8[i * 8 + 7]
+                        )
+
+                        let stereoVector16 = SIMD8<Int16>(
+                            Int16(stereoVector[0]) << 8,
+                            Int16(stereoVector[1]) << 8,
+                            Int16(stereoVector[2]) << 8,
+                            Int16(stereoVector[3]) << 8,
+                            Int16(stereoVector[4]) << 8,
+                            Int16(stereoVector[5]) << 8,
+                            Int16(stereoVector[6]) << 8,
+                            Int16(stereoVector[7]) << 8
+                        )
+
+                        // Store converted stereo samples
+                        for j in 0..<8 {
+                            output[i * 8 + j] = stereoVector16[j]
+                        }
+                    }
+
+                    // Handle remaining samples
+                    let remaining = (samplesRead % 16) / 2
+                    if remaining > 0 {
+                        let startIdx = simdCount * 8
+                        for i in 0..<remaining {
+                            output[startIdx + i] = Int16(source8[startIdx * 2 + i * 2]) << 8
+                            output[startIdx + i + 1] = Int16(source8[startIdx * 2 + i * 2 + 1]) << 8
+                        }
+                    }
+                }
+
+                if bytesRead * 2 < max {
+                    memset(buf.advanced(by: bytesRead * 2), 0, max - (bytesRead * 2))
+                }
+
+                return max
+            } else {
+                // Handle 16-bit normally
+                let bytesRead = buffer.read(buf, preferredSize: bytesToRead)
+
+                if bytesRead < max {
+                    memset(buf.advanced(by: bytesRead), 0, max - bytesRead)
+                }
+
+                return max
             }
-
-            return max
         }
     }
 

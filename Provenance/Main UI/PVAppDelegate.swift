@@ -114,6 +114,13 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                             }
                         }
                         RomDatabase.sharedInstance.recoverAllSaveStates()
+                        do {
+                            try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()
+                            try await AppState.shared.gameLibrary?.romMigrator.fixPartialPaths()
+
+                        } catch {
+                            ELOG("Error: \(error.localizedDescription)")
+                        }
                     }
                     promise(.success(()))
                 }
@@ -127,7 +134,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                 Future<Void, Error> { promise in
                     Task { @MainActor in
                         do {
-                            try RomDatabase.sharedInstance.deleteAllGames()
+//                            try RomDatabase.sharedInstance.deleteAllGames()
                             if let _ = self.gameLibraryViewController {
                                 self.gameLibraryViewController?.checkROMs(false)
                             } else {
@@ -136,6 +143,12 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
                                 }
                             }
                             RomDatabase.sharedInstance.recoverAllSaveStates()
+                            do {
+                                try await AppState.shared.gameLibrary?.romMigrator.fixOrphanedFiles()
+                                try await AppState.shared.gameLibrary?.romMigrator.fixPartialPaths()
+                            } catch {
+                                ELOG("Error: \(error.localizedDescription)")
+                            }
                             promise(.success(()))
                         } catch {
                             ELOG("Failed to refresh all objects. \(error.localizedDescription)")

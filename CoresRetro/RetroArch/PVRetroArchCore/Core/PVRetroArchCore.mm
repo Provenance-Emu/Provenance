@@ -13,6 +13,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
+#import <PVLogging/PVLoggingObjC.h>
 
 /* RetroArch Includes */
 #include <stdint.h>
@@ -61,12 +62,13 @@ extern int g_gs_preference;
         self.extractArchive = false;
         PVRetroArchCore.systemName = self.systemIdentifier;
         PVRetroArchCore.coreClassName = self.coreIdentifier;
+        ILOG(@"PVRetroArchCore.coreClassName: %@, coreClassName: %@", PVRetroArchCore.systemName, PVRetroArchCore.coreClassName);
         [self parseOptions];
 		CGRect bounds=[[UIScreen mainScreen] bounds];
 		_videoWidth  = bounds.size.width;
 		_videoHeight = bounds.size.height;
 		_videoBitDepth = 32;
-		sampleRate = 44100;
+		sampleRate = 48000;
 		self->resFactor = 1;
         self.ffSpeed = 300;
         self.smSpeed = 300;
@@ -124,7 +126,7 @@ extern int g_gs_preference;
     for (NSString* key in info.allKeys) {
         NSString *value=[info valueForKey:key];
         [self processOption:key value:value];
-        printf("Received Option key:%s value:%s\n",key.UTF8String, value.UTF8String);
+        ILOG(@"Received Option key:%s value:%s\n",key.UTF8String, value.UTF8String);
     }
 }
 -(void)processOption:(NSString *)key value:(NSString*)value {

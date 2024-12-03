@@ -580,7 +580,7 @@ static void emulation_run(BOOL skipFrame) {
         //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
         self->sampleRate         = 48000;
     }
-    else if([[self systemIdentifier] isEqualToString:@"com.provenance.nes"])
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.nes"] || [[self systemIdentifier] isEqualToString:@"com.provenance.fds"])
     {
         self.systemType = MednaSystemNES;
         

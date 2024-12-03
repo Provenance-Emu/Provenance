@@ -5,20 +5,28 @@ import PVLibrary
 import SwiftUI
 
 public class RealmSaveStateDriver: SaveStateDriver {
+    /// The game ID to filter save states by
+    public var gameId: String? {
+        didSet {
+            updateSaveStates()
+        }
+    }
+
     private let realm: Realm
+    private var notificationToken: NotificationToken?
+
+    /// Publisher for save state changes
     public let saveStatesSubject = CurrentValueSubject<[SaveStateRowViewModel], Never>([])
     public var saveStatesPublisher: AnyPublisher<[SaveStateRowViewModel], Never> {
         saveStatesSubject.eraseToAnyPublisher()
     }
 
-    public var numberOfSaveStates: Int {
-        saveStatesSubject.value.count
-    }
-
+    /// Publisher for number of saves
     public var numberOfSavesPublisher: AnyPublisher<Int, Never> {
-        saveStatesSubject.map { $0.count }.eraseToAnyPublisher()
+        saveStatesPublisher.map { $0.count }.eraseToAnyPublisher()
     }
 
+    /// Publisher for total size of all save states
     public var savesSizePublisher: AnyPublisher<UInt64, Never> {
         saveStatesSubject.map { saveStates in
             self.realm.objects(PVSaveState.self)
@@ -29,22 +37,42 @@ public class RealmSaveStateDriver: SaveStateDriver {
         }.eraseToAnyPublisher()
     }
 
-    public init(realm: Realm? = nil) throws {
-        self.realm = try realm ?? Realm()
-
-        // Observe Realm changes
-        let token = self.realm.objects(PVSaveState.self).observe { [weak self] changes in
-            self?.handleRealmChanges(changes)
-        }
-        self.notificationToken = token
+    public init(realm: Realm) {
+        self.realm = realm
+        setupObservers()
     }
 
     deinit {
         notificationToken?.invalidate()
     }
 
+    private func setupObservers() {
+        let results = realm.objects(PVSaveState.self)
+        notificationToken = results.observe { [weak self] changes in
+            self?.updateSaveStates()
+        }
+        updateSaveStates()
+    }
+
+    private func updateSaveStates() {
+        var results = realm.objects(PVSaveState.self)
+
+        if let gameId = gameId {
+            results = results.filter("game.id == %@", gameId)
+        }
+
+        let viewModels = convertRealmResults(results)
+        saveStatesSubject.send(viewModels)
+    }
+
     public func getAllSaveStates() -> [SaveStateRowViewModel] {
-        convertRealmResults(realm.objects(PVSaveState.self))
+        var results = realm.objects(PVSaveState.self)
+
+        if let gameId = gameId {
+            results = results.filter("game.id == %@", gameId)
+        }
+
+        return convertRealmResults(results)
     }
 
     public func getSaveStates(forGameId gameID: String) -> [SaveStateRowViewModel] {
@@ -87,13 +115,12 @@ public class RealmSaveStateDriver: SaveStateDriver {
             realmSaveState.userDescription = saveState.description
             realmSaveState.isPinned = saveState.isPinned
             realmSaveState.isFavorite = saveState.isFavorite
-            realmSaveState.isAutosave = saveState.isAutoSave
         }
     }
 
     public func delete(saveStates: [SaveStateRowViewModel]) {
-        let saveStateIds = saveStates.map { $0.id }
-        let realmSaveStates = realm.objects(PVSaveState.self).filter("id IN %@", saveStateIds)
+        let ids = saveStates.map { $0.id }
+        let realmSaveStates = realm.objects(PVSaveState.self).filter("id IN %@", ids)
 
         try? realm.write {
             realm.delete(realmSaveStates)
@@ -105,31 +132,20 @@ public class RealmSaveStateDriver: SaveStateDriver {
         saveStatesSubject.send(states)
     }
 
-    private var notificationToken: NotificationToken?
-
-    private func handleRealmChanges(_ changes: RealmCollectionChange<Results<PVSaveState>>) {
-        switch changes {
-        case .initial(let results), .update(let results, _, _, _):
-            saveStatesSubject.send(convertRealmResults(results))
-        case .error(let error):
-            print("Error observing Realm changes: \(error)")
-        }
-    }
-
     private func convertRealmResults(_ results: Results<PVSaveState>) -> [SaveStateRowViewModel] {
         results
             .filter {
                 $0.game != nil
             }
             .map { realmSaveState in
-                
+
                 let thumbnailImage: SwiftUI.Image
                 if let uiImage = realmSaveState.fetchUIImage() {
                     thumbnailImage = .init(uiImage: uiImage)
                 } else {
                     thumbnailImage = .init(uiImage: UIImage.missingArtworkImage(gameTitle: realmSaveState.game?.title ?? "Deleted", ratio: 1))
                 }
-                
+
                 let viewModel = SaveStateRowViewModel(
                     id: realmSaveState.id,
                     gameID: realmSaveState.game.id,
@@ -141,7 +157,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
                     isPinned: realmSaveState.isPinned,
                     isFavorite: realmSaveState.isFavorite
                 )
-                
+
                 return viewModel
         }
     }

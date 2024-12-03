@@ -4,10 +4,10 @@
 //  Copyright (c) 2012- PPSSPP Project.
 //
 
-#import "PVPPSSPPCore.h"
-#import "PVPPSSPPCore+Controls.h"
-#import "PVPPSSPPCore+Audio.h"
-#import "PVPPSSPPCore+Video.h"
+#import <PVPPSSPP/PVPPSSPPCore.h>
+#import <PVPPSSPP/PVPPSSPPCore+Controls.h>
+#import <PVPPSSPP/PVPPSSPPCore+Audio.h>
+#import <PVPPSSPP/PVPPSSPPCore+Video.h>
 #import <PVPPSSPP/PVPPSSPP-Swift.h>
 #import <Foundation/Foundation.h>
 @import PVSupport;

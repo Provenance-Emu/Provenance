@@ -21,7 +21,7 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public typealias DomainType = LocalFile
 
     nonisolated(unsafe)
-    internal dynamic var partialPath: String = ""
+    public dynamic var partialPath: String = ""
     nonisolated(unsafe)
     internal dynamic var md5Cache: String?
     //    @objc private dynamic var crcCache: String?

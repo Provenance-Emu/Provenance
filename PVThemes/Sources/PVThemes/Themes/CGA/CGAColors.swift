@@ -314,19 +314,19 @@ public struct CGACyanThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     ///     Divider
     public var menuDivider: UIColor { .CGA.cyan.brightness(0.6) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.cyan.brightness(1.0) }
+    public var menuIconTint: UIColor { .CGA.cyanShadow.brightness(1.0) }
     ///     Header
     ///         Background
     public var menuHeaderBackground: UIColor { .CGA.cyanShadow.brightness(0.7) }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .CGA.cyanShadow.brightness(1.0) }
+    public var menuHeaderIconTint: UIColor { .CGA.cyan.brightness(1.0) }
     ///     Section Header
     ///         Background
     public var menuSectionHeaderBackground: UIColor { .CGA.cyan.brightness(0.3) }
     ///         Text
     public var menuSectionHeaderText: UIColor { .CGA.cyanShadow.brightness(0.5) }
     ///         Icon
-    public var menuSectionHeaderIconTint: UIColor {.CGA.cyan }
+    public var menuSectionHeaderIconTint: UIColor { .CGA.cyan }
 }
 
 public struct CGAPurpleThemePalette: UXThemePalette, Codable, Sendable, Hashable {

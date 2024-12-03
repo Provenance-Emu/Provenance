@@ -205,18 +205,41 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             let status = withObservationTracking {
                 directoryWatcher.extractionStatus
             } onChange: {
-                let newStatus = self.directoryWatcher.extractionStatus
-                if newStatus != lastStatus {
-                    DLOG("[\(streamID)] Status changed: \(newStatus)")
-                    continuation.yield(newStatus)
-                    lastStatus = newStatus
+                Task { @MainActor in
+                    let newStatus = self.directoryWatcher.extractionStatus
+                    if newStatus != lastStatus {
+                        DLOG("[\(streamID)] Status changed to: \(newStatus)")
+                        continuation.yield(newStatus)
+                        lastStatus = newStatus
+
+                        // If we reach completed or idle state, finish the stream
+                        if case .completed = newStatus {
+                            DLOG("[\(streamID)] Extraction completed, finishing stream")
+                            continuation.finish()
+                        } else if case .idle = newStatus {
+                            DLOG("[\(streamID)] Extraction idle, finishing stream")
+                            continuation.finish()
+                        }
+                    }
                 }
             }
 
+            // Only yield initial status if different
             if status != lastStatus {
                 DLOG("[\(streamID)] Initial status: \(status)")
                 continuation.yield(status)
                 lastStatus = status
+
+                // Check if we should finish the stream on initial status
+                if case .completed = status {
+                    DLOG("[\(streamID)] Initial status completed, finishing stream")
+                    continuation.finish()
+                    break
+                } else if case .idle = status {
+                    DLOG("[\(streamID)] Initial status idle, finishing stream")
+                    continuation.finish()
+                    break
+                }
             }
 
             try? await Task.sleep(for: .seconds(0.1))
@@ -481,11 +504,22 @@ extension PVGameLibraryUpdatesController: ConflictsController {
     }
 
     public func deleteConflict(path: URL) async {
+        DLOG("Deleting conflict file at: \(path.path)")
+
+        // First find and remove the item from the import queue
+        if let index = gameImporter.importQueue.firstIndex(where: { $0.url == path }) {
+            DLOG("Found matching item in import queue, removing at index \(index)")
+            gameImporter.removeImports(at: IndexSet(integer: index))
+        }
+
+        // Then delete the actual file
         do {
             try FileManager.default.removeItem(at: path)
+            DLOG("Successfully deleted file")
         } catch {
-            ELOG("\(error.localizedDescription)")
+            ELOG("Failed to delete file: \(error.localizedDescription)")
         }
+
         await updateConflicts()
     }
 

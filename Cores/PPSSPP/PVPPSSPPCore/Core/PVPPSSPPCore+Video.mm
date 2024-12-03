@@ -6,7 +6,9 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import "PVPPSSPPCore+Video.h"
+#import "OGLGraphicsContext.h"
+#import "VulkanGraphicsContext.h"
+
 //#import "PVPPSSPPCore.h"
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
@@ -40,9 +42,6 @@
 #if !PPSSPP_PLATFORM(WINDOWS) && !PPSSPP_PLATFORM(SWITCH)
     #include <dlfcn.h>
 #endif
-
-#include "OGLGraphicsContext.h"
-#include "VulkanGraphicsContext.h"
 
 /* PSP Includes */
 //#import <dlfcn.h>

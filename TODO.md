@@ -3,17 +3,17 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [ ] Recover of games with bad paths
-- [ ] Recover of save states not loading images
+- [X] Hud still looping
+- [X] save state manager is showing saves for all roms
+- [X] App store blocked cores still showing up
 - [ ] ugly retroarch ui in app, a bit unresponsive
-- [ ] Gearcoloco bottom buttons are wrong values
-- [ ] Pokemini audio fucked up
-- [ ] import queue, clicking an item should import it
-- [ ] Atari 2600 not using our controller for retroarch
-- [ ] Hud still looping
-- [ ] vectrex crashes due to missing screen rect
-- [ ] save state manager is showing saves for all roms
-- [ ] importer doesn't auto start on import or selection of conflicts
+- [X] Pokemini audio fucked up
+- [ ] Retroarch core options not showing up
+- [X] vectrex crashes due to missing screen rect
+- [X] Recover of games with bad paths
+- [X] Recover of save states not loading images
+- [X] Gearcoloco bottom buttons are wrong values
+- [X] importer doesn't auto start on import or selection of conflicts
 - [X] PCFX retroarch controls fucked, right is held down, actions don't do shit (using bultin controls)
 - [X] N64 retroarch don't load (no disabled)
 - [X] retroarch non gl cores are blank
@@ -37,12 +37,14 @@ _My personal TODO notes_
 
 ## Major bugs
 
+- [ ] Mednafen FDS sometimes crashes on load (it worked then it didn't)
+- [ ] Mednafen loads Famicom Disks but gets stuck on bios
 - [ ] Opening roms from md5/siri search doesn't work (Claude had good sample code)
 - [X] Test iOS 17.0 and then 16.X
 - [X] Remove or fix new shaders
 - [ ] Artwork ratios are wrong
 - [X] BIOS screens show mismatch when there isn't
-- [ ] Fix or remove Flycast retroarch for Dreamcast
+- [X] Fix or remove Flycast retroarch for Dreamcast
 - [ ] Share on old UI crashes app (realm threading issue)
 - [X] Checking Import UI is hanging (removed for now)
     - [ ] fix public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async
@@ -60,6 +62,7 @@ _My personal TODO notes_
 
 ## Minor bugs
 
+- [ ] Atari 2600 not using our controller for retroarch
 - [ ] Spotlight no worky, crashes
 - [ ] archive extraction HUD doens't show % progress updates
 - [ ] Screensots for retroarch cores is the wrong space (3ds too)
@@ -104,16 +107,25 @@ _My personal TODO notes_
     - Partially implimented
 - [ ] iCloud sync
 - [ ] Save state share in savestate manager swift ui view
+- [ ] import queue, clicking an item should import it
 
 ### Kind of want
 
 - [X] New save states management page
     - [X] (New design)[https://discord.com/channels/@me/1034683216059179069/1307885448030326877]
 
-### Cores to translate
+### Cores to translate / fix
 
+- [ ] Gearcoloco
+    - Video bad
+- [ ] PVEP128
+- [ ] PVVecX
+- [ ] Flycast / Reicast
 - [ ] PVFreeIntV
 - [ ] PVfMSX
+- [ ] Duckstation
+- [ ] PCSXRearmed
+- [ ] Mupen retroarch no video
 
 ### Retroarch cores to add
 
