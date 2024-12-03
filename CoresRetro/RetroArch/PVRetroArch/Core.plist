@@ -438,6 +438,8 @@
 			<string>https://docs.libretro.com/library/play/</string>
 			<key>PVProjectVersion</key>
 			<string>0.66</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
