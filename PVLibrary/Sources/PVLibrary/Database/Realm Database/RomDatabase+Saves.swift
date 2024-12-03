@@ -17,7 +17,9 @@ public extension RomDatabase {
         let saveStatesDirectory: URL = Paths.saveSavesPath
         // iterate sub-dirs calling recoverSaveStates(forPath: path)
         let fm = FileManager.default
-        let subdirectories = try! fm.contentsOfDirectory(at: saveStatesDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+        guard let subdirectories = try? fm.contentsOfDirectory(at: saveStatesDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles]) else {
+            return
+        }
         for subdirectory in subdirectories {
             recoverSaveStates(forPath: subdirectory)
         }
