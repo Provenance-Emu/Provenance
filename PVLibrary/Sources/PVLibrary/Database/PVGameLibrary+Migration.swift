@@ -362,30 +362,28 @@ public final class ROMLocationMigrator {
                 continue
             }
 
-            let currentPath = file.relativePath
+            let currentPath = file.partialPath
             DLOG("Checking path for game \(game.title): \(currentPath)")
-
+            let romsPrefix = Paths.romsPath.lastPathComponent + "/"
             // Check if path needs fixing
-            if !currentPath.hasPrefix("ROMs/") {
+            if !currentPath.hasPrefix(romsPrefix) || currentPath.contains("Container"){
                 // If it starts with the system ID, add ROMs/ prefix
                 if currentPath.hasPrefix(game.systemIdentifier + "/") {
-                    let newPath = "ROMs/" + currentPath
+                    let newPath = romsPrefix + currentPath
                     DLOG("Fixing path: \(currentPath) -> \(newPath)")
 
                     try realm.write {
-                        let newFile = PVFile(withPartialPath: newPath)
-                        game.file = newFile
+                        game.file.partialPath = newPath
                     }
                     fixCount += 1
                     ILOG("Fixed partial path for \(game.title)")
                 } else {
                     // If it's just a filename, add full path
-                    let newPath = "ROMs/\(game.systemIdentifier)/\(currentPath)"
+                    let newPath = "\(romsPrefix)\(game.systemIdentifier)/\(file.url.lastPathComponent)"
                     DLOG("Fixing path: \(currentPath) -> \(newPath)")
 
                     try realm.write {
-                        let newFile = PVFile(withPartialPath: newPath)
-                        game.file = newFile
+                        game.file.partialPath = newPath
                     }
                     fixCount += 1
                     ILOG("Fixed partial path for \(game.title)")
