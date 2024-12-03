@@ -320,6 +320,7 @@ SideMenuView: SwiftUI.View {
                 navController.navigationBar.standardAppearance = appearance
                 navController.navigationBar.scrollEdgeAppearance = appearance
                 navController.navigationBar.compactAppearance = appearance
+                navController.navigationBar.tintColor = themeManager.currentPalette.menuIconTint
             }
 #endif
 
@@ -327,17 +328,18 @@ SideMenuView: SwiftUI.View {
         })
         .introspectViewController(customize: { vc in
             let image = UIImage(named: "provnavicon")
-            let menuHeaderIconTint = themeManager.currentPalette.menuHeaderIconTint
+            let menuIconTint = themeManager.currentPalette.menuIconTint
 
-            if menuHeaderIconTint != .clear {
-                    image?.applyTintEffectWithColor(menuHeaderIconTint)
+            if menuIconTint != .clear {
+                    image?.applyTintEffectWithColor(menuIconTint)
             }
             let provenanceLogo = UIBarButtonItem(image: image)
-            provenanceLogo.tintColor = themeManager.currentPalette.menuHeaderIconTint
+            provenanceLogo.tintColor = themeManager.currentPalette.menuIconTint
             vc.navigationItem.leftBarButtonItem = provenanceLogo
-            vc.navigationItem.leftBarButtonItem?.tintColor = menuHeaderIconTint
-            vc.navigationController?.navigationBar.tintColor = menuHeaderIconTint
+            vc.navigationItem.leftBarButtonItem?.tintColor = menuIconTint
+            vc.navigationController?.navigationBar.tintColor = menuIconTint
         })
+        .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
 #endif
         .background(themeManager.currentPalette.menuBackground.swiftUIColor)
         .add(self.searchBar)
