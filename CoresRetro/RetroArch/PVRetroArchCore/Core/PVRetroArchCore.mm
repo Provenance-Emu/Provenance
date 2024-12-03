@@ -66,7 +66,7 @@ extern int g_gs_preference;
 		_videoWidth  = bounds.size.width;
 		_videoHeight = bounds.size.height;
 		_videoBitDepth = 32;
-		sampleRate = 44100;
+		sampleRate = 48000;
 		self->resFactor = 1;
         self.ffSpeed = 300;
         self.smSpeed = 300;
