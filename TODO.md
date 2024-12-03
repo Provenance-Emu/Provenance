@@ -6,7 +6,6 @@ _My personal TODO notes_
 - [X] Hud still looping
 - [X] save state manager is showing saves for all roms
 - [X] App store blocked cores still showing up
-- [ ] Mupen retroarch no video
 - [ ] ugly retroarch ui in app, a bit unresponsive
 - [X] Pokemini audio fucked up
 - [ ] Retroarch core options not showing up
@@ -115,7 +114,7 @@ _My personal TODO notes_
 - [X] New save states management page
     - [X] (New design)[https://discord.com/channels/@me/1034683216059179069/1307885448030326877]
 
-### Cores to translate
+### Cores to translate / fix
 
 - [ ] Gearcoloco
     - Video bad
@@ -126,6 +125,7 @@ _My personal TODO notes_
 - [ ] PVfMSX
 - [ ] Duckstation
 - [ ] PCSXRearmed
+- [ ] Mupen retroarch no video
 
 ### Retroarch cores to add
 
