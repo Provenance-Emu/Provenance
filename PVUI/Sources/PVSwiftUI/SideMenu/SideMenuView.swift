@@ -336,6 +336,7 @@ SideMenuView: SwiftUI.View {
             provenanceLogo.tintColor = themeManager.currentPalette.menuHeaderIconTint
             vc.navigationItem.leftBarButtonItem = provenanceLogo
             vc.navigationItem.leftBarButtonItem?.tintColor = menuHeaderIconTint
+            vc.navigationController?.navigationBar.tintColor = menuHeaderIconTint
         })
 #endif
         .background(themeManager.currentPalette.menuBackground.swiftUIColor)
