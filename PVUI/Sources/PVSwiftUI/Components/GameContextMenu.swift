@@ -18,6 +18,9 @@ import PVUIBase
 struct GameContextMenu: SwiftUI.View {
 
     var game: PVGame
+    var cores: [PVCore] {
+        game.system.cores.filter{!(AppState.shared.isAppStore && $0.appStoreDisabled)}
+    }
 
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
@@ -25,7 +28,7 @@ struct GameContextMenu: SwiftUI.View {
     var body: some SwiftUI.View {
         Group {
             if !game.isInvalidated {
-                if game.system.cores.count > 1 {
+                if cores.count > 1 {
                     Button {
                         Task { @MainActor in
                             await rootDelegate?.root_presentCoreSelection(forGame: game, sender: self)

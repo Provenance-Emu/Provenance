@@ -66,7 +66,12 @@ struct SystemSection: View {
 
             // Cores
             SettingsRow(title: "Cores",
-                       value: system.cores.map { $0.projectName }.joined(separator: ", "))
+                       value: system.cores
+                .filter{ core in
+                    !(AppState.shared.isAppStore && core.appStoreDisabled)
+                }
+                .map { $0.projectName }
+                .joined(separator: ", "))
 
             // BIOSes
             if let bioses = system.BIOSes, !bioses.isEmpty {

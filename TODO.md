@@ -5,7 +5,7 @@ _My personal TODO notes_
 
 - [X] Hud still looping
 - [X] save state manager is showing saves for all roms
-- [ ] App store blocked cores still showing up
+- [X] App store blocked cores still showing up
 - [ ] Mupen retroarch no video
 - [ ] ugly retroarch ui in app, a bit unresponsive
 - [ ] Pokemini audio fucked up
