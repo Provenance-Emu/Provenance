@@ -21,11 +21,35 @@ struct CoreOptionsListView: View {
 
     private var coreItems: [CoreListItem] {
         viewModel.availableCores.compactMap { core in
-            guard let _ = NSClassFromString(core.principleClass) as? CoreOptional.Type else {
+            guard let coreClass = NSClassFromString(core.principleClass) as? CoreOptional.Type else {
                 return nil
             }
+
+            // Check if the core has any meaningful options
+            let hasOptions = hasValidOptions(in: coreClass.options)
+            guard hasOptions else {
+                return nil
+            }
+
             return CoreListItem(core: core)
         }
+    }
+
+    /// Recursively check if there are any meaningful options in the array
+    private func hasValidOptions(in options: [CoreOption]) -> Bool {
+        for option in options {
+            switch option {
+            case .group(_, let subOptions):
+                // Recursively check group's options
+                if hasValidOptions(in: subOptions) {
+                    return true
+                }
+            case .bool, .string, .enumeration, .range, .rangef, .multi:
+                // Any non-group option is considered valid
+                return true
+            }
+        }
+        return false
     }
 
     var body: some View {
