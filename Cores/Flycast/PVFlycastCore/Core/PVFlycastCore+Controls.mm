@@ -45,11 +45,19 @@ typedef unsigned short u16;
 typedef unsigned int   u32;
 
     // Flycast controller data
+#ifdef LIBRETRO
 extern u16 kcode[4];
 extern u8 rt[4];
 extern u8 lt[4];
 extern u32 vks[4];
 extern s8 joyx[4], joyy[4];
+#else
+u16 kcode[4];
+u8 rt[4];
+u8 lt[4];
+u32 vks[4];
+s8 joyx[4], joyy[4];
+#endif
 
 @implementation PVFlycastCoreBridge (Controls)
 
