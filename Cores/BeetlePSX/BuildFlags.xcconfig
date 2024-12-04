@@ -13,7 +13,7 @@ GL_APIENTRYP=GLAPIENTRY*
 // HAVE_VULKAN=0 HAVE_JIT=0 WANT_16BPP=0 WANT_8BPP=1 LIGHTREC_DEBUG=0 HAVE_OPENGL=0  HAVE_SHM=1 USE_FIXED
 // HAVE_CDROM=1
 //OTHER_CFLAGS = $(inherited) -ObjC -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fmodules -fcxx-modules
-OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules
+OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules 
 
 // OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load
 

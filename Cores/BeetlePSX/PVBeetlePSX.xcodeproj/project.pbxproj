@@ -33,6 +33,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		B3145FB12CFFD4D3009FB8B3 /* libbeetle_psx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libbeetle_psx.a */; };
+		B3145FB42CFFD4E0009FB8B3 /* PVBeetlePSXCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVBeetlePSXCore.mm */; settings = {COMPILER_FLAGS = "-fmodules -fcxx-modules"; }; };
+		B3145FB72CFFD5F6009FB8B3 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FB62CFFD5F6009FB8B3 /* PVCoreBridge */; };
+		B3145FBA2CFFD632009FB8B3 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FB92CFFD632009FB8B3 /* PVPlists */; };
+		B3145FBD2CFFD66C009FB8B3 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FBC2CFFD66C009FB8B3 /* PVLogging */; };
+		B3145FBF2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3145FBE2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework */; };
 		B3607AA428922A9900509A68 /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0D72872978C00EAEB37 /* error.cpp */; };
 		B3607AA528922A9900509A68 /* mednafen-endian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0D32872978C00EAEB37 /* mednafen-endian.cpp */; };
 		B3607AA628922A9900509A68 /* MemoryStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1192872978C00EAEB37 /* MemoryStream.cpp */; };
@@ -184,6 +190,20 @@
 			remoteGlobalIDString = 9312496F298CEBB7002DE0C2;
 			remoteInfo = BuildPSXTV;
 		};
+		B3145C9A2CFFC834009FB8B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 937EAAF2296C2022003D89EB;
+			remoteInfo = BuildPSXiOS;
+		};
+		B3145FB22CFFD4D3009FB8B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B30178D2207C901D0051B93D;
+			remoteInfo = beetle_psx;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -210,6 +230,7 @@
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libbeetle_psx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbeetle_psx.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		B3145FBE2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3344BC32859E088006E6B3A /* libbeetle_psx-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libbeetle_psx-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
@@ -1139,6 +1160,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3145FB72CFFD5F6009FB8B3 /* PVCoreBridge in Frameworks */,
+				B3145FB12CFFD4D3009FB8B3 /* libbeetle_psx.a in Frameworks */,
+				B3145FBF2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework in Frameworks */,
+				B3145FBD2CFFD66C009FB8B3 /* PVLogging in Frameworks */,
+				B3145FBA2CFFD632009FB8B3 /* PVPlists in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1191,6 +1217,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3145FBE2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework */,
 				B3AB13D42949B57E005DCCDE /* OpenGL.framework */,
 				B3CE8037287405DC00B6BB5A /* liblzma.tbd */,
 				B3CE8038287405DC00B6BB5A /* libz.tbd */,
@@ -2872,7 +2899,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3145C9B2CFFC834009FB8B3 /* PBXTargetDependency */,
 				93124976298CEBD1002DE0C2 /* PBXTargetDependency */,
+				B3145FB32CFFD4D3009FB8B3 /* PBXTargetDependency */,
 			);
 			name = PVBeetlePSX;
 			productName = PVReicast;
@@ -2923,6 +2952,11 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B3145FB52CFFD5F6009FB8B3 /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3145FB82CFFD632009FB8B3 /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3145FBB2CFFD66C009FB8B3 /* XCLocalSwiftPackageReference "../../PVLogging" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -3163,6 +3197,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3145FB42CFFD4E0009FB8B3 /* PVBeetlePSXCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3172,14 +3207,25 @@
 		93124976298CEBD1002DE0C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilters = (
-				ios,
-				maccatalyst,
 				tvos,
-				watchos,
 				xros,
 			);
 			target = 9312496F298CEBB7002DE0C2 /* BuildPSXTV */;
 			targetProxy = 93124975298CEBD1002DE0C2 /* PBXContainerItemProxy */;
+		};
+		B3145C9B2CFFC834009FB8B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+			);
+			target = 937EAAF2296C2022003D89EB /* BuildPSXiOS */;
+			targetProxy = B3145C9A2CFFC834009FB8B3 /* PBXContainerItemProxy */;
+		};
+		B3145FB32CFFD4D3009FB8B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B30178D2207C901D0051B93D /* beetle_psx */;
+			targetProxy = B3145FB22CFFD4D3009FB8B3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3630,6 +3676,36 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B3145FB52CFFD5F6009FB8B3 /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B3145FB82CFFD632009FB8B3 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B3145FBB2CFFD66C009FB8B3 /* XCLocalSwiftPackageReference "../../PVLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLogging;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3145FB62CFFD5F6009FB8B3 /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B3145FB92CFFD632009FB8B3 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B3145FBC2CFFD66C009FB8B3 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }
