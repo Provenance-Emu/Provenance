@@ -7,6 +7,9 @@ struct CoreOptionsDetailView: View {
     let coreClass: CoreOptional.Type
     let title: String
 
+    /// State to track current values of options
+    @State private var optionValues: [String: Any] = [:]
+
     private var groupedOptions: [(title: String, options: [CoreOption])] {
         var rootOptions = [CoreOption]()
         var groups = [(title: String, options: [CoreOption])]()
@@ -42,6 +45,59 @@ struct CoreOptionsDetailView: View {
             }
         }
         .navigationTitle(title)
+        .onAppear {
+            // Load initial values
+            loadOptionValues()
+        }
+    }
+
+    private func loadOptionValues() {
+        for group in groupedOptions {
+            for option in group.options {
+                let value = getCurrentValue(for: option)
+                if let value = value {
+                    optionValues[option.key] = value
+                }
+            }
+        }
+    }
+
+    private func getCurrentValue(for option: CoreOption) -> Any? {
+        switch option {
+        case .bool(_, let defaultValue):
+            return coreClass.storedValueForOption(Bool.self, option.key) ?? defaultValue
+        case .string(_, let defaultValue):
+            return coreClass.storedValueForOption(String.self, option.key) ?? defaultValue
+        case .enumeration(_, _, let defaultValue):
+            return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
+        case .range(_, _, let defaultValue):
+            return coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue
+        case .rangef(_, _, let defaultValue):
+            return coreClass.storedValueForOption(Float.self, option.key) ?? defaultValue
+        case .multi(_, let values):
+            return coreClass.storedValueForOption(String.self, option.key) ?? values.first?.title
+        case .group(_, _):
+            return nil
+        @unknown default:
+            return nil
+        }
+    }
+
+    private func setValue(_ value: Any, for option: CoreOption) {
+        optionValues[option.key] = value
+
+        switch value {
+        case let boolValue as Bool:
+            coreClass.setValue(boolValue, forOption: option)
+        case let stringValue as String:
+            coreClass.setValue(stringValue, forOption: option)
+        case let intValue as Int:
+            coreClass.setValue(intValue, forOption: option)
+        case let floatValue as Float:
+            coreClass.setValue(floatValue, forOption: option)
+        default:
+            break
+        }
     }
 
     @ViewBuilder
@@ -49,8 +105,8 @@ struct CoreOptionsDetailView: View {
         switch option {
         case let .bool(display, defaultValue):
             Toggle(isOn: Binding(
-                get: { coreClass.storedValueForOption(Bool.self, option.key) ?? defaultValue },
-                set: { coreClass.setValue($0, forOption: option) }
+                get: { optionValues[option.key] as? Bool ?? defaultValue },
+                set: { setValue($0, for: option) }
             )) {
                 VStack(alignment: .leading) {
                     Text(display.title)
@@ -64,8 +120,8 @@ struct CoreOptionsDetailView: View {
 
         case let .enumeration(display, values, defaultValue):
             let selection = Binding(
-                get: { coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue },
-                set: { coreClass.setValue($0, forOption: option) }
+                get: { optionValues[option.key] as? Int ?? defaultValue },
+                set: { setValue($0, for: option) }
             )
 
             NavigationLink {
@@ -115,8 +171,8 @@ struct CoreOptionsDetailView: View {
                 }
                 Slider(
                     value: Binding(
-                        get: { Double(coreClass.storedValueForOption(Int.self, option.key) ?? defaultValue) },
-                        set: { coreClass.setValue(Int($0), forOption: option) }
+                        get: { Double(optionValues[option.key] as? Int ?? defaultValue) },
+                        set: { setValue(Int($0), for: option) }
                     ),
                     in: Double(range.min)...Double(range.max),
                     step: 1
@@ -139,8 +195,8 @@ struct CoreOptionsDetailView: View {
                 }
                 Slider(
                     value: Binding(
-                        get: { Double(coreClass.storedValueForOption(Float.self, option.key) ?? defaultValue) },
-                        set: { coreClass.setValue(Float($0), forOption: option) }
+                        get: { Double(optionValues[option.key] as? Float ?? defaultValue) },
+                        set: { setValue(Float($0), for: option) }
                     ),
                     in: Double(range.min)...Double(range.max),
                     step: 0.1
@@ -155,8 +211,8 @@ struct CoreOptionsDetailView: View {
 
         case let .multi(display, values):
             let selection = Binding(
-                get: { coreClass.storedValueForOption(String.self, option.key) ?? values.first?.title ?? "" },
-                set: { coreClass.setValue($0, forOption: option) }
+                get: { optionValues[option.key] as? String ?? values.first?.title ?? "" },
+                set: { setValue($0, for: option) }
             )
 
             NavigationLink {
@@ -198,8 +254,8 @@ struct CoreOptionsDetailView: View {
 
         case let .string(display, defaultValue):
             let text = Binding(
-                get: { coreClass.storedValueForOption(String.self, option.key) ?? defaultValue },
-                set: { coreClass.setValue($0, forOption: option) }
+                get: { optionValues[option.key] as? String ?? defaultValue },
+                set: { setValue($0, for: option) }
             )
 
             VStack(alignment: .leading) {
