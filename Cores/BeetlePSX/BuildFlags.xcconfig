@@ -15,7 +15,7 @@ GL_APIENTRYP=GLAPIENTRY*
 //OTHER_CFLAGS = $(inherited) -ObjC -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fmodules -fcxx-modules
 OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules 
 
-// OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load
+ OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load
 
 // EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(inherited)
 
