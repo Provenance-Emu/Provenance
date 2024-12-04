@@ -87,8 +87,8 @@
         "repositoryURL": "https://github.com/FlineDev/FreemiumKit.git",
         "state": {
           "branch": null,
-          "revision": "20eafe6b3b91e494294d8a5693e9693acb8442b6",
-          "version": "1.15.1"
+          "revision": "602b69b45c0e827ef1514c6386ed762b6dba7747",
+          "version": "1.16.0"
         }
       },
       {
@@ -375,7 +375,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "82d470564d01c42ee62d651e644c5ea6953561e2",
+          "revision": "5e0a83ec255a0f4bb6a3cf8c4abcae46bfc2c3c5",
           "version": null
         }
       }
