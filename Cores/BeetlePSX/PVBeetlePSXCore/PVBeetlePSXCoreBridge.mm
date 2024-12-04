@@ -6,7 +6,7 @@
 //  Copyright © 2022 Provenance. All rights reserved.
 //
 
-#import "PVBeetlePSXCore.h"
+#import "PVBeetlePSXCoreBridge.h"
 #include <stdatomic.h>
 #include "libretro_options.h"
 //#import "PVBeetlePSXCore+Controls.h"
@@ -23,7 +23,7 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVBeetlePSXCore() {
+@interface PVBeetlePSXCoreBridge() {
 
 }
 
@@ -31,7 +31,7 @@
 
 #pragma mark - PVBeetlePSXCore Begin
 
-@implementation PVBeetlePSXCore
+@implementation PVBeetlePSXCoreBridge
 {
 }
 

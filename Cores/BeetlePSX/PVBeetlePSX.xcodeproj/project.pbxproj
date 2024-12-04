@@ -34,13 +34,18 @@
 
 /* Begin PBXBuildFile section */
 		B3145FB12CFFD4D3009FB8B3 /* libbeetle_psx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libbeetle_psx.a */; };
-		B3145FB42CFFD4E0009FB8B3 /* PVBeetlePSXCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVBeetlePSXCore.mm */; settings = {COMPILER_FLAGS = "-fmodules -fcxx-modules"; }; };
+		B3145FB42CFFD4E0009FB8B3 /* PVBeetlePSXCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVBeetlePSXCoreBridge.mm */; settings = {COMPILER_FLAGS = "-fmodules -fcxx-modules"; }; };
 		B3145FB72CFFD5F6009FB8B3 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FB62CFFD5F6009FB8B3 /* PVCoreBridge */; };
 		B3145FBA2CFFD632009FB8B3 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FB92CFFD632009FB8B3 /* PVPlists */; };
 		B3145FBD2CFFD66C009FB8B3 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FBC2CFFD66C009FB8B3 /* PVLogging */; };
 		B3145FBF2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3145FBE2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework */; };
 		B3145FC22CFFD7E4009FB8B3 /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE6F2872978A00EAEB37 /* glsym_es2.c */; };
 		B3145FC32CFFD7FF009FB8B3 /* libbeetle_psx-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libbeetle_psx-libretro.a */; };
+		B3145FC72CFFD83B009FB8B3 /* PVBeetlePSXCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3145FC42CFFD83B009FB8B3 /* PVBeetlePSXCore.swift */; };
+		B3145FC82CFFD83B009FB8B3 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3145FC52CFFD83B009FB8B3 /* CorePlist.swift */; };
+		B3145FC92CFFD83B009FB8B3 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3145FC62CFFD83B009FB8B3 /* CorePlist-Generated.swift */; };
+		B3145FCC2CFFD9B0009FB8B3 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FCB2CFFD9B0009FB8B3 /* PVCoreObjCBridge */; };
+		B3145FCF2CFFDA1A009FB8B3 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FCE2CFFDA1A009FB8B3 /* PVEmulatorCore */; };
 		B3607AA428922A9900509A68 /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0D72872978C00EAEB37 /* error.cpp */; };
 		B3607AA528922A9900509A68 /* mednafen-endian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0D32872978C00EAEB37 /* mednafen-endian.cpp */; };
 		B3607AA628922A9900509A68 /* MemoryStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1192872978C00EAEB37 /* MemoryStream.cpp */; };
@@ -153,7 +158,7 @@
 		B3681B932874167800C0136F /* pgxp_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0752872978C00EAEB37 /* pgxp_mem.c */; };
 		B3681B952874167A00C0136F /* pgxp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0782872978C00EAEB37 /* pgxp_cpu.c */; };
 		B3681B972874168A00C0136F /* pgxp_gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0792872978C00EAEB37 /* pgxp_gpu.c */; };
-		B37022C92872554300B3F6DA /* PVBeetlePSXCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVBeetlePSXCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B37022C92872554300B3F6DA /* PVBeetlePSXCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVBeetlePSXCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CD2872558F00B3F6DA /* PVBeetlePSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVBeetlePSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AB13DB2949BA15005DCCDE /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAEC52872978B00EAEB37 /* glsm.c */; };
 		B3AB13DC2949BB4D005DCCDE /* rsx_lib_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0652872978C00EAEB37 /* rsx_lib_gl.cpp */; };
@@ -232,6 +237,9 @@
 		B30178D3207C901D0051B93D /* libbeetle_psx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbeetle_psx.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B3145FBE2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3145FC42CFFD83B009FB8B3 /* PVBeetlePSXCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVBeetlePSXCore.swift; sourceTree = "<group>"; };
+		B3145FC52CFFD83B009FB8B3 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3145FC62CFFD83B009FB8B3 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3344BC32859E088006E6B3A /* libbeetle_psx-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libbeetle_psx-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
@@ -247,8 +255,8 @@
 		B37022C0287253B300B3F6DA /* PVBeetlePSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVBeetlePSX.h; sourceTree = "<group>"; };
 		B37022C1287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B37022C3287253B300B3F6DA /* PVBeetlePSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVBeetlePSX.h; sourceTree = "<group>"; };
-		B37022C5287253B300B3F6DA /* PVBeetlePSXCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVBeetlePSXCore.h; sourceTree = "<group>"; };
-		B37022C6287253B300B3F6DA /* PVBeetlePSXCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVBeetlePSXCore.mm; sourceTree = "<group>"; };
+		B37022C5287253B300B3F6DA /* PVBeetlePSXCoreBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVBeetlePSXCoreBridge.h; sourceTree = "<group>"; };
+		B37022C6287253B300B3F6DA /* PVBeetlePSXCoreBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVBeetlePSXCoreBridge.mm; sourceTree = "<group>"; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1166,6 +1174,8 @@
 				B3145FB12CFFD4D3009FB8B3 /* libbeetle_psx.a in Frameworks */,
 				B3145FBF2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B3145FBD2CFFD66C009FB8B3 /* PVLogging in Frameworks */,
+				B3145FCC2CFFD9B0009FB8B3 /* PVCoreObjCBridge in Frameworks */,
+				B3145FCF2CFFDA1A009FB8B3 /* PVEmulatorCore in Frameworks */,
 				B3145FBA2CFFD632009FB8B3 /* PVPlists in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1186,8 +1196,11 @@
 		B37022C4287253B300B3F6DA /* PVBeetlePSXCore */ = {
 			isa = PBXGroup;
 			children = (
-				B37022C5287253B300B3F6DA /* PVBeetlePSXCore.h */,
-				B37022C6287253B300B3F6DA /* PVBeetlePSXCore.mm */,
+				B3145FC42CFFD83B009FB8B3 /* PVBeetlePSXCore.swift */,
+				B3145FC52CFFD83B009FB8B3 /* CorePlist.swift */,
+				B3145FC62CFFD83B009FB8B3 /* CorePlist-Generated.swift */,
+				B37022C5287253B300B3F6DA /* PVBeetlePSXCoreBridge.h */,
+				B37022C6287253B300B3F6DA /* PVBeetlePSXCoreBridge.mm */,
 			);
 			path = PVBeetlePSXCore;
 			sourceTree = "<group>";
@@ -2848,7 +2861,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B37022CD2872558F00B3F6DA /* PVBeetlePSX.h in Headers */,
-				B37022C92872554300B3F6DA /* PVBeetlePSXCore.h in Headers */,
+				B37022C92872554300B3F6DA /* PVBeetlePSXCoreBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2930,6 +2943,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1610;
 					};
 				};
 			};
@@ -2958,6 +2972,8 @@
 				B3145FB52CFFD5F6009FB8B3 /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 				B3145FB82CFFD632009FB8B3 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 				B3145FBB2CFFD66C009FB8B3 /* XCLocalSwiftPackageReference "../../PVLogging" */,
+				B3145FCA2CFFD9B0009FB8B3 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3145FCD2CFFDA1A009FB8B3 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -3199,7 +3215,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3145FB42CFFD4E0009FB8B3 /* PVBeetlePSXCore.mm in Sources */,
+				B3145FB42CFFD4E0009FB8B3 /* PVBeetlePSXCoreBridge.mm in Sources */,
+				B3145FC72CFFD83B009FB8B3 /* PVBeetlePSXCore.swift in Sources */,
+				B3145FC82CFFD83B009FB8B3 /* CorePlist.swift in Sources */,
+				B3145FC92CFFD83B009FB8B3 /* CorePlist-Generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3396,6 +3415,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -3421,6 +3441,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
@@ -3523,6 +3544,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -3548,6 +3570,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
@@ -3692,6 +3715,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVLogging;
 		};
+		B3145FCA2CFFD9B0009FB8B3 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3145FCD2CFFDA1A009FB8B3 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3706,6 +3737,14 @@
 		B3145FBC2CFFD66C009FB8B3 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B3145FCB2CFFD9B0009FB8B3 /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3145FCE2CFFDA1A009FB8B3 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
