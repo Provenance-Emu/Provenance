@@ -14,7 +14,7 @@
 //#import "PVBeetlePSXCore+Video.h"
 //
 //#import "PVBeetlePSXCore+Audio.h"
-
+#import <PVLogging/PVLoggingObjC.h>
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
 
