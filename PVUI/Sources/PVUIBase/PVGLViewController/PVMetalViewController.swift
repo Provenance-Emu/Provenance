@@ -848,7 +848,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT)):
             return .rgb10a2Unorm // Better match for RGB unsigned short
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_SHORT_5_6_5)),
-            (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_SHORT_5_6_5)):
+            (GLenum(GL_BGRA), GLenum(GL_UNSIGNED_SHORT_5_6_5)),
+            (GLenum(GL_UNSIGNED_SHORT_5_6_5), GLenum(GL_UNSIGNED_BYTE)):
             return .b5g6r5Unorm
         case (GLenum(GL_RGB), GLenum(GL_UNSIGNED_INT)):
             return .rgba32Uint // Approximation, might lose precision
