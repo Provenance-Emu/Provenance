@@ -1842,6 +1842,7 @@
 		B313544926E4C3B90047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B31364762970092D00C34FED /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3145FD02CFFDAE2009FB8B3 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B31553612CC2FD5500C472CA /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D12192652000693472 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D62192659900693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3213,6 +3214,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3145FD02CFFDAE2009FB8B3 /* PVBeetlePSX.framework */,
 				B35197FB2D1A5EF100D2B413 /* PVGenesis.framework */,
 				B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */,
 				B32C08EB2D053DD50024A3E2 /* PVEmuThree.framework */,
