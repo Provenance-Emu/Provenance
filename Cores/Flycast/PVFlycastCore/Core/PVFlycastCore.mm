@@ -147,6 +147,15 @@ volatile bool has_init = false;
 
 	return YES;
 }
+#else
+- (instancetype)init {
+    if (self = [super init]) {
+    }
+
+    _current = self;
+    return self;
+}
+
 #endif
 - (void)printSettings {
 //#define LIST_OF_VARIABLES \
