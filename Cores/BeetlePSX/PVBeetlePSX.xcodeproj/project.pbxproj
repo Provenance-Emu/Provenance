@@ -39,6 +39,8 @@
 		B3145FBA2CFFD632009FB8B3 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FB92CFFD632009FB8B3 /* PVPlists */; };
 		B3145FBD2CFFD66C009FB8B3 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3145FBC2CFFD66C009FB8B3 /* PVLogging */; };
 		B3145FBF2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3145FBE2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework */; };
+		B3145FC22CFFD7E4009FB8B3 /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE6F2872978A00EAEB37 /* glsym_es2.c */; };
+		B3145FC32CFFD7FF009FB8B3 /* libbeetle_psx-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libbeetle_psx-libretro.a */; };
 		B3607AA428922A9900509A68 /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0D72872978C00EAEB37 /* error.cpp */; };
 		B3607AA528922A9900509A68 /* mednafen-endian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0D32872978C00EAEB37 /* mednafen-endian.cpp */; };
 		B3607AA628922A9900509A68 /* MemoryStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1192872978C00EAEB37 /* MemoryStream.cpp */; };
@@ -153,7 +155,6 @@
 		B3681B972874168A00C0136F /* pgxp_gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0792872978C00EAEB37 /* pgxp_gpu.c */; };
 		B37022C92872554300B3F6DA /* PVBeetlePSXCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVBeetlePSXCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CD2872558F00B3F6DA /* PVBeetlePSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVBeetlePSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3AB13D82949B9CE005DCCDE /* glsym_es3.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE6C2872978A00EAEB37 /* glsym_es3.c */; };
 		B3AB13DB2949BA15005DCCDE /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAEC52872978B00EAEB37 /* glsm.c */; };
 		B3AB13DC2949BB4D005DCCDE /* rsx_lib_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0652872978C00EAEB37 /* rsx_lib_gl.cpp */; };
 		B3AB13DD2949BBA0005DCCDE /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE702872978A00EAEB37 /* rglgen.c */; };
@@ -1160,6 +1161,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3145FC32CFFD7FF009FB8B3 /* libbeetle_psx-libretro.a in Frameworks */,
 				B3145FB72CFFD5F6009FB8B3 /* PVCoreBridge in Frameworks */,
 				B3145FB12CFFD4D3009FB8B3 /* libbeetle_psx.a in Frameworks */,
 				B3145FBF2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework in Frameworks */,
@@ -3185,9 +3187,9 @@
 				B3681B7C287412DC00C0136F /* beetle_psx_globals.c in Sources */,
 				B3607B582892327600509A68 /* dma.cpp in Sources */,
 				B3607ACB28922B0B00509A68 /* compat_strl.c in Sources */,
-				B3AB13D82949B9CE005DCCDE /* glsym_es3.c in Sources */,
 				B3607ACC28922B0B00509A68 /* fopen_utf8.c in Sources */,
 				B3607AF228922BEF00509A68 /* libretro_cbs.c in Sources */,
+				B3145FC22CFFD7E4009FB8B3 /* glsym_es2.c in Sources */,
 				B3607ACA28922B0B00509A68 /* retro_dirent.c in Sources */,
 				B3607ACE28922B0B00509A68 /* encoding_utf.c in Sources */,
 			);
