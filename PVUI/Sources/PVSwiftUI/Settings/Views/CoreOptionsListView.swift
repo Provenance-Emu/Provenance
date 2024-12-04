@@ -7,11 +7,25 @@ private struct CoreListItem: Identifiable {
     let id: String
     let name: String
     let coreClass: CoreOptional.Type
+    let optionCount: Int
 
     init(core: PVCore) {
         self.id = core.identifier
         self.name = core.projectName
         self.coreClass = NSClassFromString(core.principleClass) as! CoreOptional.Type
+        self.optionCount = CoreListItem.countOptions(in: self.coreClass.options)
+    }
+
+    /// Recursively count all options, including those in groups
+    private static func countOptions(in options: [CoreOption]) -> Int {
+        options.reduce(0) { count, option in
+            switch option {
+            case .group(_, let subOptions):
+                return count + countOptions(in: subOptions)
+            case .bool, .string, .enumeration, .range, .rangef, .multi:
+                return count + 1
+            }
+        }
     }
 }
 
@@ -73,9 +87,12 @@ private struct CoreListItemView: View {
         NavigationLink {
             CoreOptionsDetailView(coreClass: item.coreClass, title: item.name)
         } label: {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(item.name)
                     .font(.headline)
+                Text("\(item.optionCount) option\(item.optionCount == 1 ? "" : "s")")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
