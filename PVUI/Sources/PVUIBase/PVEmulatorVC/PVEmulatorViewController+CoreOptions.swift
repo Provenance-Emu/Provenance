@@ -10,27 +10,38 @@ import Foundation
 import PVSupport
 import PVEmulatorCore
 import PVCoreBridge
+import SwiftUI
 
 extension PVEmulatorViewController {
     func showCoreOptions() {
-        var coreClass = type(of: core)
+        guard let coreClass = type(of: core) as? CoreOptional.Type else { return }
 
-        coreClass.coreClassName = core.coreIdentifier ?? ""
+        // Create the SwiftUI view
+        let coreOptionsView = CoreOptionsDetailView(
+            coreClass: coreClass,
+            title: "Core Options"
+        )
 
-        let optionsVC = CoreOptionsViewController(withCore: coreClass as! any CoreOptional.Type)  // Assuming this initializer expects a PVEmulatorCore.Type
-        optionsVC.title = "Core Options"
-        let nav = UINavigationController(rootViewController: optionsVC)
+        // Create a hosting controller
+        let hostingController = UIHostingController(rootView: coreOptionsView)
+        let nav = UINavigationController(rootViewController: hostingController)
 
-#if os(iOS)
-        optionsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNav))
+        // Add done button for iOS
+        #if os(iOS)
+        hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: self,
+            action: #selector(dismissNav)
+        )
         // disable iOS 13 swipe to dismiss...
         nav.isModalInPresentation = true
-        present(nav, animated: true, completion: nil)
-#else
+        present(nav, animated: true)
+        #else
+        // Add menu button gesture for tvOS
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissNav))
         tap.allowedPressTypes = [.menu]
-        optionsVC.view.addGestureRecognizer(tap)
-        present(TVFullscreenController(rootViewController: nav), animated: true, completion: nil)
-#endif
+        hostingController.view.addGestureRecognizer(tap)
+        present(TVFullscreenController(rootViewController: nav), animated: true)
+        #endif
     }
 }
