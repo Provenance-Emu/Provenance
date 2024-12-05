@@ -10,15 +10,31 @@ struct CoreOptionsDetailView: View {
     /// State to track current values of options
     @State private var optionValues: [String: Any] = [:]
 
-    private var groupedOptions: [(title: String, options: [CoreOption])] {
+    private struct IdentifiableOption: Identifiable {
+        let id = UUID()
+        let option: CoreOption
+    }
+
+    private struct OptionGroup: Identifiable {
+        let id = UUID()
+        let title: String
+        let options: [IdentifiableOption]
+
+        init(title: String, options: [CoreOption]) {
+            self.title = title
+            self.options = options.map { IdentifiableOption(option: $0) }
+        }
+    }
+
+    private var groupedOptions: [OptionGroup] {
         var rootOptions = [CoreOption]()
-        var groups = [(title: String, options: [CoreOption])]()
+        var groups = [OptionGroup]()
 
         // Process options into groups
         coreClass.options.forEach { option in
             switch option {
             case let .group(display, subOptions):
-                groups.append((title: display.title, options: subOptions))
+                groups.append(OptionGroup(title: display.title, options: subOptions))
             default:
                 rootOptions.append(option)
             }
@@ -26,23 +42,31 @@ struct CoreOptionsDetailView: View {
 
         // Add root options as first group if any exist
         if !rootOptions.isEmpty {
-            groups.insert((title: "General", options: rootOptions), at: 0)
+            groups.insert(OptionGroup(title: "General", options: rootOptions), at: 0)
         }
 
         return groups
     }
 
     var body: some View {
-        List {
-            ForEach(groupedOptions.indices, id: \.self) { sectionIndex in
-                let group = groupedOptions[sectionIndex]
-                Section(header: Text(group.title)) {
-                    ForEach(group.options.indices, id: \.self) { optionIndex in
-                        let option = group.options[optionIndex]
-                        optionView(for: option)
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(groupedOptions) { group in
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(group.title)
+                            .font(.headline)
+                            .padding(.horizontal)
+
+                        ForEach(group.options) { identifiableOption in
+                            optionView(for: identifiableOption.option)
+                                .padding(.horizontal)
+                        }
                     }
+                    .padding(.vertical, 8)
+                    .background(Color(.secondarySystemGroupedBackground))
                 }
             }
+            .padding(.vertical)
         }
         .navigationTitle(title)
         .onAppear {
@@ -53,10 +77,10 @@ struct CoreOptionsDetailView: View {
 
     private func loadOptionValues() {
         for group in groupedOptions {
-            for option in group.options {
-                let value = getCurrentValue(for: option)
+            for identifiableOption in group.options {
+                let value = getCurrentValue(for: identifiableOption.option)
                 if let value = value {
-                    optionValues[option.key] = value
+                    optionValues[identifiableOption.option.key] = value
                 }
             }
         }

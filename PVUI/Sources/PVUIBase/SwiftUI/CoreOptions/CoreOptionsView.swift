@@ -8,8 +8,11 @@
 import SwiftUI
 
 /// View that provides access to core-specific options
-struct CoreOptionsView: View {
-    var body: some View {
+public struct CoreOptionsView: View {
+    
+    public init() {}
+    
+    public var body: some View {
         CoreOptionsListView()
     }
 }
