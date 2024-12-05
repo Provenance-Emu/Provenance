@@ -112,40 +112,13 @@ _My personal TODO notes_
 ## AppStore Review
 
 - [\] Update screenshots without copyright material
-- [X] Remove apple referecnces from app description
-- [X] Custom build without certain cores
-    - Anything apple
-
-- [X] Screenshots
-- [X] Remove "beta" text
 
 ## Provenance Plus
 
 ## High Priority
 
-- [X] Privacy policy / EULA in settings!
-- [X] Add in-app purchase and screen
 - [ ] Add app rating with SiruisRating
-- [X] Add alternative icons
-    - [X] AppIcon-8bit1
-    - [X] AppIcon-8bit2
-    - [X] AppIcon-8bit3
-    - [X] AppIcon-8bit4
-    - [X] AppIcon-8bit5
-    - [X] AppIcon-Blue-Negative
-    - [X] AppIcon-Blue
-    - [X] AppIcon-Cyan
-    - [X] AppIcon-Gem
-    - [X] AppIcon-Gold
-    - [X] AppIcon-Paint1
-    - [X] AppIcon-Paint2
-    - [X] AppIcon-Purple
-    - [X] AppIcon-Seafoam
-    - [X] AppIcon-Yellow
 
 ### Low Priority
 - [ ] Finish themes
 - [ ] Add Shiragame
-- [X] Hide some features behind is plus in app store builds
-    - [X] Advanced settings
-    - [X] Extra themes
