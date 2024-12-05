@@ -49,24 +49,16 @@ struct CoreOptionsDetailView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(groupedOptions) { group in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(group.title)
-                            .font(.headline)
-                            .padding(.horizontal)
-
-                        ForEach(group.options) { identifiableOption in
-                            optionView(for: identifiableOption.option)
-                                .padding(.horizontal)
-                        }
+        Form {
+            ForEach(groupedOptions) { group in
+                SwiftUI.Section {
+                    ForEach(group.options) { identifiableOption in
+                        optionView(for: identifiableOption.option)
                     }
-                    .padding(.vertical, 8)
-                    .background(Color(.secondarySystemGroupedBackground))
+                } header: {
+                    Text(group.title)
                 }
             }
-            .padding(.vertical)
         }
         .navigationTitle(title)
         .onAppear {
