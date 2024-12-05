@@ -3,48 +3,15 @@ _My personal TODO notes_
 
 ## Show stoppers
 
-- [X] Hud still looping
-- [X] save state manager is showing saves for all roms
-- [X] App store blocked cores still showing up
 - [ ] ugly retroarch ui in app, a bit unresponsive
-- [X] Pokemini audio fucked up
 - [ ] Retroarch core options not showing up
-- [X] vectrex crashes due to missing screen rect
-- [X] Recover of games with bad paths
-- [X] Recover of save states not loading images
-- [X] Gearcoloco bottom buttons are wrong values
-- [X] importer doesn't auto start on import or selection of conflicts
-- [X] PCFX retroarch controls fucked, right is held down, actions don't do shit (using bultin controls)
-- [X] N64 retroarch don't load (no disabled)
-- [X] retroarch non gl cores are blank
-- [X] EP128 crashes, fix or remove. (removed)
-- [X] app groups, get rid?
-- [X] Games pausing not working
-- [ ] New save state mangager
-    - [X] doesn't load from homeview
-    - [X] Hide share or impliment
-    - [X] Save state images
-    - [ ] swipe sucks
-    - [X] top to play, with confirmation
-    - [X] Fix main game artwork async, or missing artwork view
-    - [X] Number of save states count updates on delete
-    - [X] Save state images
-    - [X] Transparent background on the wrapper view controller,
-    - [X] Glitchy search bar hiding
-- [X] test,fix,finish PVImageFile pathOfCachedImage
-
-- [X] Shared documents :        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
 
 ## Major bugs
 
 - [ ] Mednafen FDS sometimes crashes on load (it worked then it didn't)
 - [ ] Mednafen loads Famicom Disks but gets stuck on bios
 - [ ] Opening roms from md5/siri search doesn't work (Claude had good sample code)
-- [X] Test iOS 17.0 and then 16.X
-- [X] Remove or fix new shaders
 - [ ] Artwork ratios are wrong
-- [X] BIOS screens show mismatch when there isn't
-- [X] Fix or remove Flycast retroarch for Dreamcast
 - [ ] Share on old UI crashes app (realm threading issue)
 - [X] Checking Import UI is hanging (removed for now)
     - [ ] fix public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) async
