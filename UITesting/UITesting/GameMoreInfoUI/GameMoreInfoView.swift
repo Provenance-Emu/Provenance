@@ -13,6 +13,7 @@ struct LabelRowView: View {
     let label: String
     let value: String?
     var onLongPress: (() -> Void)?
+    var isEditable: Bool = true
 
     var body: some View {
         HStack {
@@ -26,7 +27,9 @@ struct LabelRowView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle()) // Make entire area tappable
                 .onLongPressGesture {
-                    onLongPress?()
+                    if isEditable {
+                        onLongPress?()
+                    }
                 }
         }
         .padding(.vertical, 4)
@@ -60,8 +63,8 @@ class GameMoreInfoViewModel: ObservableObject {
     var name: String? {
         get { game?.name }
         set {
-            if var game = game {
-                game.name = newValue
+            if let newValue = newValue {
+                driver.updateGameName(id: gameId, value: newValue)
             }
         }
     }
@@ -80,8 +83,8 @@ class GameMoreInfoViewModel: ObservableObject {
     var developer: String? {
         get { game?.developer }
         set {
-            if var game = game {
-                game.developer = newValue
+            if let newValue = newValue {
+                driver.updateGameDeveloper(id: gameId, value: newValue)
             }
         }
     }
@@ -90,8 +93,8 @@ class GameMoreInfoViewModel: ObservableObject {
     var publishDate: String? {
         get { game?.publishDate }
         set {
-            if var game = game {
-                game.publishDate = newValue
+            if let newValue = newValue {
+                driver.updateGamePublishDate(id: gameId, value: newValue)
             }
         }
     }
@@ -100,8 +103,8 @@ class GameMoreInfoViewModel: ObservableObject {
     var genres: String? {
         get { game?.genres }
         set {
-            if var game = game {
-                game.genres = newValue
+            if let newValue = newValue {
+                driver.updateGameGenres(id: gameId, value: newValue)
             }
         }
     }
@@ -110,8 +113,8 @@ class GameMoreInfoViewModel: ObservableObject {
     var region: String? {
         get { game?.region }
         set {
-            if var game = game {
-                game.region = newValue
+            if let newValue = newValue {
+                driver.updateGameRegion(id: gameId, value: newValue)
             }
         }
     }
@@ -282,91 +285,165 @@ struct FullscreenArtworkView: View {
     }
 }
 
+/// Main view for displaying game information
 struct GameMoreInfoView: View {
     @StateObject var viewModel: GameMoreInfoViewModel
+    @State private var editingField: EditableField?
+    @State private var editingValue: String = ""
+
+    private enum EditableField: Identifiable {
+        case name
+        case developer
+        case publishDate
+        case genres
+        case region
+
+        var id: Self { self }
+
+        var title: String {
+            switch self {
+            case .name: return "Game Name"
+            case .developer: return "Developer"
+            case .publishDate: return "Publish Date"
+            case .genres: return "Genres"
+            case .region: return "Region"
+            }
+        }
+    }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Artwork view at the top
+                // Artwork section
                 GameArtworkView(
                     frontArtwork: viewModel.frontArtwork,
                     backArtwork: viewModel.backArtwork
                 )
-                .padding(.vertical)
 
-                // Info rows
-                VStack(spacing: 12) {
+                // Game information section
+                VStack(spacing: 8) {
                     LabelRowView(
                         label: "Name",
-                        value: viewModel.name,
-                        onLongPress: {
-                            print("Edit name")
-                        }
-                    )
+                        value: viewModel.name
+                    ) {
+                        editField(.name, initialValue: viewModel.name)
+                    }
 
                     LabelRowView(
                         label: "Filename",
-                        value: viewModel.filename
+                        value: viewModel.filename,
+                        isEditable: false
                     )
 
                     LabelRowView(
                         label: "System",
-                        value: viewModel.system
+                        value: viewModel.system,
+                        isEditable: false
                     )
 
                     LabelRowView(
                         label: "Developer",
-                        value: viewModel.developer,
-                        onLongPress: {
-                            print("Edit developer")
-                        }
-                    )
+                        value: viewModel.developer
+                    ) {
+                        editField(.developer, initialValue: viewModel.developer)
+                    }
 
                     LabelRowView(
                         label: "Publish Date",
-                        value: viewModel.publishDate,
-                        onLongPress: {
-                            print("Edit publish date")
-                        }
-                    )
+                        value: viewModel.publishDate
+                    ) {
+                        editField(.publishDate, initialValue: viewModel.publishDate)
+                    }
 
                     LabelRowView(
                         label: "Genres",
-                        value: viewModel.genres,
-                        onLongPress: {
-                            print("Edit genres")
-                        }
-                    )
+                        value: viewModel.genres
+                    ) {
+                        editField(.genres, initialValue: viewModel.genres)
+                    }
 
                     LabelRowView(
                         label: "Region",
-                        value: viewModel.region,
-                        onLongPress: {
-                            print("Edit region")
-                        }
-                    )
+                        value: viewModel.region
+                    ) {
+                        editField(.region, initialValue: viewModel.region)
+                    }
 
-                    LabelRowView(
-                        label: "Plays",
-                        value: viewModel.plays.map(String.init),
-                        onLongPress: {
-                            print("Reset plays")
-                        }
-                    )
+                    // Stats section
+                    VStack(spacing: 8) {
+                        LabelRowView(
+                            label: "Play Count",
+                            value: viewModel.plays.map(String.init) ?? "Never",
+                            isEditable: false
+                        )
 
-                    LabelRowView(
-                        label: "Time Spent",
-                        value: viewModel.timeSpent.map(String.init),
-                        onLongPress: {
-                            print("Reset time spent")
+                        LabelRowView(
+                            label: "Time Played",
+                            value: formatPlayTime(viewModel.timeSpent),
+                            isEditable: false
+                        )
+
+                        Button("Reset Stats") {
+                            viewModel.resetStats()
                         }
-                    )
+                        .padding(.top)
+                    }
                 }
                 .padding()
             }
         }
-        .navigationTitle("Game Info")
+        .alert(editingField?.title ?? "", isPresented: .init(
+            get: { editingField != nil },
+            set: { if !$0 { editingField = nil } }
+        )) {
+            TextField("Value", text: $editingValue)
+            Button("Cancel", role: .cancel) {
+                editingField = nil
+            }
+            Button("Save") {
+                saveEdit()
+            }
+        } message: {
+            Text("Enter a new value")
+        }
+    }
+
+    private func editField(_ field: EditableField, initialValue: String?) {
+        editingField = field
+        editingValue = initialValue ?? ""
+    }
+
+    private func saveEdit() {
+        guard let field = editingField else { return }
+
+        switch field {
+        case .name:
+            viewModel.name = editingValue
+        case .developer:
+            viewModel.developer = editingValue
+        case .publishDate:
+            viewModel.publishDate = editingValue
+        case .genres:
+            viewModel.genres = editingValue
+        case .region:
+            viewModel.region = editingValue
+        }
+
+        editingField = nil
+    }
+
+    private func formatPlayTime(_ seconds: Int?) -> String {
+        guard let seconds = seconds else { return "Never" }
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        return "\(hours)h \(minutes)m"
+    }
+}
+
+// MARK: - Preview
+struct GameMoreInfoView_Previews: PreviewProvider {
+    static var previews: some View {
+        GameMoreInfoView(viewModel: GameMoreInfoViewModel.mockViewModel())
     }
 }
 
