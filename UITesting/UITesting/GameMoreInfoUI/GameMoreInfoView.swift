@@ -440,31 +440,28 @@ struct GameMoreInfoView: View {
     }
 }
 
+#if DEBUG
 // MARK: - Preview
-struct GameMoreInfoView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // Mock driver preview
-            GameMoreInfoView(viewModel: GameMoreInfoViewModel.mockViewModel())
-                .previewDisplayName("Mock Driver")
-
-            // Realm driver preview
-            if let driver = try? RealmGameLibraryDriver.previewDriver(),
-               let firstGameId = driver.firstGameId() {
-                GameMoreInfoView(
-                    viewModel: GameMoreInfoViewModel(
-                        driver: driver,
-                        gameId: firstGameId
-                    )
-                )
-                .previewDisplayName("Realm Driver")
-            }
-        }
-    }
-}
-
-#Preview {
+#Preview("Mock Data") {
     NavigationView {
         GameMoreInfoView(viewModel: .mockViewModel())
     }
 }
+
+#Preview("Realm Data") {
+    NavigationView {
+        // Realm driver preview
+        if let driver = try? RealmGameLibraryDriver.previewDriver(),
+           let firstGameId = driver.firstGameId() {
+            GameMoreInfoView(
+                viewModel: GameMoreInfoViewModel(
+                    driver: driver,
+                    gameId: firstGameId
+                )
+            )
+            .previewDisplayName("Realm Driver")
+        }
+    }
+}
+
+#endif
