@@ -8,23 +8,44 @@
 import Combine
 import Foundation
 
+protocol GameMoreInfoViewModelDataSource {
+    var name: String? { get set }
+    var filename: String? { get }
+    var system: String? { get }
+    var region: String? { get set }
+    var developer: String? { get set }
+    var publishDate: String? { get set }
+    var genres: String? { get set }
+    var playCount: Int? { get }
+    var timeSpentInGame: Int? { get }
+    var boxFrontArtwork: URL? { get }
+    var boxBackArtwork: URL? { get }
+    var id: String { get }
+}
+
 /// Mock implementation of PVGameLibraryEntry for previews
-internal class MockGameLibraryEntry: ObservableObject, GameMoreInfoViewModelDataSource {
-    
-    var name: String? { title}
-    
+internal class MockGameLibraryEntry: Identifiable, ObservableObject, GameMoreInfoViewModelDataSource {
+    var name: String? {
+        get { title }
+        set { title = newValue ?? "" }
+    }
+
     var filename: String? { romPath }
-    
+
     var system: String? { "NES" }
-    
-    var region: String? { "USA" }
-    
+
+    var region: String? {
+        get { regionName }
+        set { regionName = newValue }
+    }
+
     var title: String = "Super Mario World"
     var id: String = "mock-id"
     var romPath: String = "/path/to/mario.sfc"
     var customArtworkURL: String = ""
     var originalArtworkURL: URL? = URL(string: "https://example.com/mario.jpg")
     var boxFrontArtwork: URL? { URL(string: customArtworkURL) ?? originalArtworkURL }
+    var boxBackArtwork: URL? { boxBackArtworkURL }
     var requiresSync: Bool = false
     var isFavorite: Bool = true
     var romSerial: String? = "SNS-MW-USA"

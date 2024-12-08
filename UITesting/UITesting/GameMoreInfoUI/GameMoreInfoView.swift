@@ -33,22 +33,18 @@ struct LabelRowView: View {
     }
 }
 
-protocol GameMoreInfoViewModelDataSource {
-    var boxFrontArtwork: URL? { get }
-    var boxBackArtworkURL: URL? { get }
-    var name: String? { get }
-    var filename: String? { get }
-    var system: String? { get }
-    var developer: String? { get }
-    var publishDate: String? { get }
-    var genres: String? { get }
-    var region: String? { get }
-    var playCount: Int? { get }
-    var timeSpentInGame: Int? { get }
-}
-
 class GameMoreInfoViewModel: ObservableObject {
-    @Published var game: GameMoreInfoViewModelDataSource?
+    @Published private var driver: any GameLibraryDriver
+    private let gameId: String
+
+    init(driver: any GameLibraryDriver, gameId: String) {
+        self.driver = driver
+        self.gameId = gameId
+    }
+
+    private var game: GameMoreInfoViewModelDataSource? {
+        driver.game(byId: gameId)
+    }
 
     /// Front Artwork
     var frontArtwork: URL? {
@@ -57,59 +53,90 @@ class GameMoreInfoViewModel: ObservableObject {
 
     /// Back Artwork
     var backArtwork: URL? {
-        game?.boxBackArtworkURL
+        game?.boxBackArtwork
     }
 
     /// Name (Editable)
     var name: String? {
-        game?.name
+        get { game?.name }
+        set {
+            if var game = game {
+                game.name = newValue
+            }
+        }
     }
 
-    /// Filename
+    /// Filename (Read-only)
     var filename: String? {
         game?.filename
     }
 
-    /// System
+    /// System (Read-only)
     var system: String? {
         game?.system
     }
 
     /// Developer (Editable)
     var developer: String? {
-        game?.developer
+        get { game?.developer }
+        set {
+            if var game = game {
+                game.developer = newValue
+            }
+        }
     }
 
     /// Publish Date (Editable)
     var publishDate: String? {
-        game?.publishDate
+        get { game?.publishDate }
+        set {
+            if var game = game {
+                game.publishDate = newValue
+            }
+        }
     }
 
     /// Genres (Comma seperated, editable)
     var genres: String? {
-        game?.genres
+        get { game?.genres }
+        set {
+            if var game = game {
+                game.genres = newValue
+            }
+        }
     }
 
     /// Region (Editable)
     var region: String? {
-        game?.region
+        get { game?.region }
+        set {
+            if var game = game {
+                game.region = newValue
+            }
+        }
     }
 
-    /// Plays (Resetable)
+    /// Plays (Read-only, Resetable)
     var plays: Int? {
         game?.playCount
     }
 
-    /// Time Spent (Resetable)
+    /// Time Spent (Read-only, Resetable)
     var timeSpent: Int? {
         game?.timeSpentInGame
     }
 
-    /// Initialize with a mock game for previews
+    /// Reset game statistics
+    func resetStats() {
+        driver.resetGameStats(id: gameId)
+    }
+
+    /// Initialize with a mock driver for previews
     static func mockViewModel() -> GameMoreInfoViewModel {
-        let viewModel = GameMoreInfoViewModel()
-        viewModel.game = MockGameLibraryEntry()
-        return viewModel
+        GameMoreInfoViewModel(
+            driver: MockGameLibraryDriver(),
+            gameId: "mario" // Using one of our mock game IDs
+        )
     }
 }
 
