@@ -2,6 +2,7 @@ import Foundation
 import RealmSwift
 import PVRealm
 import PVLibrary
+import UIKit
 
 /// A Realm-based implementation of GameLibraryDriver
 final class RealmGameLibraryDriver: GameLibraryDriver {
@@ -83,7 +84,6 @@ final class RealmGameLibraryDriver: GameLibraryDriver {
 
 /// Wrapper to adapt PVGame to GameMoreInfoViewModelDataSource
 private struct RealmGameWrapper: GameMoreInfoViewModelDataSource {
-    
     let game: PVGame
 
     var name: String? {
@@ -115,13 +115,32 @@ private struct RealmGameWrapper: GameMoreInfoViewModelDataSource {
 
     var playCount: Int? { game.playCount }
     var timeSpentInGame: Int? { game.timeSpentInGame }
-    var boxFrontArtwork: URL? { URL(string: game.originalArtworkURL) }
-    var boxBackArtwork: URL? { URL(string: game.boxBackArtworkURL ?? "") }
+
+    var boxFrontArtwork: UIImage? {
+        // For now, just return a placeholder
+        // In a real implementation, this would use PVMediaCache or similar
+        UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
+    }
+
+    var boxBackArtwork: UIImage? {
+        // For now, just return a placeholder
+        // In a real implementation, this would use PVMediaCache or similar
+        UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
+    }
+
     var referenceURL: URL? {
-        URL(string: game.referenceURL ?? "")
+        if let urlString = game.referenceURL {
+            return URL(string: urlString)
+        }
+        return nil
     }
 
     var id: String { game.md5Hash }
+
+    var boxArtAspectRatio: CGFloat {
+        let ratio = game.boxartAspectRatio
+        return ratio.rawValue
+    }
 }
 
 // MARK: - Preview Helpers

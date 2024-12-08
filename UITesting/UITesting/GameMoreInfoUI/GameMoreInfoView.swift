@@ -50,13 +50,18 @@ class GameMoreInfoViewModel: ObservableObject {
     }
 
     /// Front Artwork
-    var frontArtwork: URL? {
+    var frontArtwork: UIImage? {
         game?.boxFrontArtwork
     }
 
     /// Back Artwork
-    var backArtwork: URL? {
+    var backArtwork: UIImage? {
         game?.boxBackArtwork
+    }
+
+    /// Box art aspect ratio
+    var boxArtAspectRatio: CGFloat {
+        game?.boxArtAspectRatio ?? 1.0
     }
 
     /// Name (Editable)
@@ -145,8 +150,9 @@ class GameMoreInfoViewModel: ObservableObject {
 
 /// View for displaying and interacting with game artwork
 struct GameArtworkView: View {
-    let frontArtwork: URL?
-    let backArtwork: URL?
+    let frontArtwork: UIImage?
+    let backArtwork: UIImage?
+    let aspectRatio: CGFloat
     @State private var isShowingBack = false
     @State private var isShowingFullscreen = false
 
@@ -167,10 +173,11 @@ struct GameArtworkView: View {
                     isShowingFullscreen = true
                 }
         }
-        .frame(width: 200, height: 200)
+        .aspectRatio(aspectRatio, contentMode: .fit)
+        .frame(maxWidth: 300)
         .fullScreenCover(isPresented: $isShowingFullscreen) {
             FullscreenArtworkView(
-                url: isShowingBack ? backArtwork : frontArtwork,
+                image: isShowingBack ? backArtwork : frontArtwork,
                 isShowingBack: $isShowingBack
             )
         }
@@ -178,14 +185,10 @@ struct GameArtworkView: View {
 
     private var artworkImage: some View {
         Group {
-            if let url = isShowingBack ? backArtwork : frontArtwork {
-                AsyncImage(url: url) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } placeholder: {
-                    ProgressView()
-                }
+            if let image = isShowingBack ? backArtwork : frontArtwork {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
             } else {
                 Image(systemName: "photo")
                     .resizable()
@@ -202,7 +205,7 @@ struct GameArtworkView: View {
 
 /// Fullscreen view for artwork with zoom and pan
 struct FullscreenArtworkView: View {
-    let url: URL?
+    let image: UIImage?
     @Binding var isShowingBack: Bool
     @Environment(\.dismiss) private var dismiss
     @State private var scale: CGFloat = 1.0
@@ -216,70 +219,48 @@ struct FullscreenArtworkView: View {
                 ZStack {
                     Color.black.edgesIgnoringSafeArea(.all)
 
-                    if let url = url {
-                        AsyncImage(url: url) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .scaleEffect(scale)
-                                .offset(offset)
-                                .gesture(
-                                    MagnificationGesture()
-                                        .onChanged { value in
-                                            scale = lastScale * value.magnitude
-                                        }
-                                        .onEnded { _ in
-                                            lastScale = scale
-                                        }
-                                )
-                                .gesture(
-                                    DragGesture()
-                                        .onChanged { value in
-                                            offset = CGSize(
-                                                width: lastOffset.width + value.translation.width,
-                                                height: lastOffset.height + value.translation.height
-                                            )
-                                        }
-                                        .onEnded { _ in
-                                            lastOffset = offset
-                                        }
-                                )
-                                .onTapGesture(count: 2) {
-                                    withAnimation {
-                                        scale = 1.0
-                                        lastScale = 1.0
-                                        offset = .zero
-                                        lastOffset = .zero
+                    if let image = image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .scaleEffect(scale)
+                            .offset(offset)
+                            .gesture(
+                                MagnificationGesture()
+                                    .onChanged { value in
+                                        scale = lastScale * value.magnitude
                                     }
+                                    .onEnded { _ in
+                                        lastScale = scale
+                                    }
+                            )
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        offset = CGSize(
+                                            width: lastOffset.width + value.translation.width,
+                                            height: lastOffset.height + value.translation.height
+                                        )
+                                    }
+                                    .onEnded { _ in
+                                        lastOffset = offset
+                                    }
+                            )
+                            .onTapGesture(count: 2) {
+                                withAnimation {
+                                    scale = 1.0
+                                    lastScale = 1.0
+                                    offset = .zero
+                                    lastOffset = .zero
                                 }
-                        } placeholder: {
-                            ProgressView()
-                        }
+                            }
                     }
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
-                        dismiss()
-                    }
+            .navigationBarItems(
+                leading: Button("Done") {
+                    dismiss()
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Flip") {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            isShowingBack.toggle()
-                        }
-                    }
-                }
-            }
-            .gesture(
-                DragGesture()
-                    .onEnded { value in
-                        if value.translation.height > 100 {
-                            dismiss()
-                        }
-                    }
             )
         }
     }
@@ -317,8 +298,10 @@ struct GameMoreInfoView: View {
                 // Artwork section
                 GameArtworkView(
                     frontArtwork: viewModel.frontArtwork,
-                    backArtwork: viewModel.backArtwork
+                    backArtwork: viewModel.backArtwork,
+                    aspectRatio: viewModel.boxArtAspectRatio
                 )
+                .padding(.vertical)
 
                 // Game information section
                 VStack(spacing: 8) {

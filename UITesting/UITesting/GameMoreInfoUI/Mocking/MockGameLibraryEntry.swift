@@ -7,6 +7,8 @@
 
 import Combine
 import Foundation
+import UIKit
+import PVRealm
 
 protocol GameMoreInfoViewModelDataSource {
     var name: String? { get set }
@@ -18,10 +20,11 @@ protocol GameMoreInfoViewModelDataSource {
     var genres: String? { get set }
     var playCount: Int? { get }
     var timeSpentInGame: Int? { get }
-    var boxFrontArtwork: URL? { get }
-    var boxBackArtwork: URL? { get }
+    var boxFrontArtwork: UIImage? { get }
+    var boxBackArtwork: UIImage? { get }
     var referenceURL: URL? { get }
     var id: String { get }
+    var boxArtAspectRatio: CGFloat { get }
 }
 
 /// Mock implementation of PVGameLibraryEntry for previews
@@ -44,9 +47,13 @@ internal class MockGameLibraryEntry: Identifiable, ObservableObject, GameMoreInf
     var id: String = "mock-id"
     var romPath: String = "/path/to/mario.sfc"
     var customArtworkURL: String = ""
-    var originalArtworkURL: URL? = URL(string: "https://example.com/mario.jpg")
-    var boxFrontArtwork: URL? { URL(string: customArtworkURL) ?? originalArtworkURL }
-    var boxBackArtwork: URL? { boxBackArtworkURL }
+    private var originalArtworkURL: URL? = URL(string: "https://example.com/mario.jpg")
+    var boxFrontArtwork: UIImage? {
+        UIImage.image(withText: title, ratio: boxArtAspectRatio)
+    }
+    var boxBackArtwork: UIImage? {
+        UIImage.image(withText: title, ratio: boxArtAspectRatio)
+    }
     var requiresSync: Bool = false
     var isFavorite: Bool = true
     var romSerial: String? = "SNS-MW-USA"
@@ -61,7 +68,7 @@ internal class MockGameLibraryEntry: Identifiable, ObservableObject, GameMoreInf
     var timeSpentInGame: Int? = 3600 // 1 hour
     var rating: Int = 5
     var gameDescription: String? = "Experience Mario's most exciting adventure yet in this classic SNES title!"
-    var boxBackArtworkURL: URL? = URL(string: "https://example.com/mario-back.jpg")
+    private var boxBackArtworkURL: URL? = URL(string: "https://example.com/mario-back.jpg")
     var developer: String? = "Nintendo"
     var publisher: String? = "Nintendo"
     var publishDate: String? = "1990-11-21"
@@ -72,4 +79,7 @@ internal class MockGameLibraryEntry: Identifiable, ObservableObject, GameMoreInf
     var regionID: Int = 1
     var systemShortName: String? = "SNES"
     var language: String? = "English"
+
+    /// Default aspect ratio for SNES games
+    var boxArtAspectRatio: CGFloat { 1.0 }
 }
