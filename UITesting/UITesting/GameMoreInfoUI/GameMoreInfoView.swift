@@ -443,7 +443,23 @@ struct GameMoreInfoView: View {
 // MARK: - Preview
 struct GameMoreInfoView_Previews: PreviewProvider {
     static var previews: some View {
-        GameMoreInfoView(viewModel: GameMoreInfoViewModel.mockViewModel())
+        Group {
+            // Mock driver preview
+            GameMoreInfoView(viewModel: GameMoreInfoViewModel.mockViewModel())
+                .previewDisplayName("Mock Driver")
+
+            // Realm driver preview
+            if let driver = try? RealmGameLibraryDriver.previewDriver(),
+               let firstGameId = driver.firstGameId() {
+                GameMoreInfoView(
+                    viewModel: GameMoreInfoViewModel(
+                        driver: driver,
+                        gameId: firstGameId
+                    )
+                )
+                .previewDisplayName("Realm Driver")
+            }
+        }
     }
 }
 
