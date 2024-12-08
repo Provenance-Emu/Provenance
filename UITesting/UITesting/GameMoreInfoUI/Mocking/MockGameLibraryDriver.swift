@@ -1,6 +1,21 @@
 import Foundation
 import Combine
 
+/// Protocol for paged game library data source
+protocol PagedGameLibraryDataSource {
+    /// Get total number of games
+    var gameCount: Int { get }
+
+    /// Get game ID at index
+    func gameId(at index: Int) -> String?
+
+    /// Get index for game ID
+    func index(for gameId: String) -> Int?
+
+    /// Get game IDs sorted by system then name
+    var sortedGameIds: [String] { get }
+}
+
 /// Protocol for game library data driver
 protocol GameLibraryDriver: ObservableObject {
     /// Get a game by ID
@@ -18,7 +33,7 @@ protocol GameLibraryDriver: ObservableObject {
 }
 
 /// Mock implementation of game library driver
-class MockGameLibraryDriver: GameLibraryDriver {
+class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
     @Published private var games: [MockGameLibraryEntry] = []
 
     init() {
@@ -53,6 +68,14 @@ class MockGameLibraryDriver: GameLibraryDriver {
                 genres: "RPG"
             )
         ]
+
+        // Sort games by system then name
+        games.sort { g1, g2 in
+            if g1.system == g2.system {
+                return g1.title < g2.title
+            }
+            return (g1.system ?? "") < (g2.system ?? "")
+        }
     }
 
     private func createMockGame(
@@ -68,8 +91,6 @@ class MockGameLibraryDriver: GameLibraryDriver {
         game.systemIdentifier = system
         game.developer = developer
         game.genres = genres
-        game.originalArtworkURL = URL(string: "https://example.com/\(id)-front.jpg")
-        game.boxBackArtworkURL = URL(string: "https://example.com/\(id)-back.jpg")
         return game
     }
 
@@ -124,6 +145,25 @@ class MockGameLibraryDriver: GameLibraryDriver {
             game.timeSpentInGame = 0
             game.lastPlayed = nil
         }
+    }
+
+    // MARK: - PagedGameLibraryDataSource
+
+    var gameCount: Int {
+        games.count
+    }
+
+    func gameId(at index: Int) -> String? {
+        guard index >= 0 && index < games.count else { return nil }
+        return games[index].id
+    }
+
+    func index(for gameId: String) -> Int? {
+        games.firstIndex { $0.id == gameId }
+    }
+
+    var sortedGameIds: [String] {
+        games.map(\.id)
     }
 }
 

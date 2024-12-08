@@ -423,6 +423,52 @@ struct GameMoreInfoView: View {
     }
 }
 
+// MARK: - Paged Game Info View Model
+class PagedGameMoreInfoViewModel: ObservableObject {
+    @Published var currentIndex: Int
+    private let driver: (any GameLibraryDriver & PagedGameLibraryDataSource)
+
+    init(driver: any GameLibraryDriver & PagedGameLibraryDataSource, initialGameId: String? = nil) {
+        self.driver = driver
+        if let gameId = initialGameId, let index = driver.index(for: gameId) {
+            self.currentIndex = index
+        } else {
+            self.currentIndex = 0
+        }
+    }
+
+    var currentGameId: String? {
+        driver.gameId(at: currentIndex)
+    }
+
+    var gameCount: Int {
+        driver.gameCount
+    }
+
+    func makeGameViewModel(for index: Int) -> GameMoreInfoViewModel? {
+        guard let gameId = driver.gameId(at: index) else { return nil }
+        return GameMoreInfoViewModel(driver: driver, gameId: gameId)
+    }
+}
+
+// MARK: - Paged Game Info View
+struct PagedGameMoreInfoView: View {
+    @StateObject var viewModel: PagedGameMoreInfoViewModel
+
+    var body: some View {
+        TabView(selection: $viewModel.currentIndex) {
+            ForEach(0..<viewModel.gameCount, id: \.self) { index in
+                if let gameViewModel = viewModel.makeGameViewModel(for: index) {
+                    GameMoreInfoView(viewModel: gameViewModel)
+                        .tag(index)
+                }
+            }
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .always))
+    }
+}
+
 #if DEBUG
 // MARK: - Preview
 #Preview("Mock Data") {

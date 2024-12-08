@@ -27,19 +27,19 @@ struct UITestingApp: App {
 
     @StateObject
     private var mockImportStatusDriverData = MockImportStatusDriverData()
-    
+
     var body: some Scene {
         WindowGroup {
             ZStack {
                 Color.secondary.ignoresSafeArea()
-                
+
                 VStack(spacing: 20) {
                     HStack {
                         Button("Show Realm Driver") {
                             showingRealmSheet = true
                         }
                         .buttonStyle(.borderedProminent)
-                        
+
                         Button("Show Mock Driver") {
                             showingMockSheet = true
                         }
@@ -50,7 +50,7 @@ struct UITestingApp: App {
                             showingSettings = true
                         }
                         .buttonStyle(.borderedProminent)
-                        
+
                         Button("Show Import Queue") {
                             showImportStatus = true
                         }
@@ -72,10 +72,10 @@ struct UITestingApp: App {
             .sheet(isPresented: $showingRealmSheet) {
                 let testRealm = try! RealmSaveStateTestFactory.createInMemoryRealm()
                 let mockDriver = try! RealmSaveStateDriver(realm: testRealm)
-                
+
                 /// Get the first game from realm for the view model
                 let game = testRealm.objects(PVGame.self).first!
-                
+
                 /// Create view model with game data
                 let viewModel = ContinuesMagementViewModel(
                     driver: mockDriver,
@@ -83,7 +83,7 @@ struct UITestingApp: App {
                     systemTitle: "Game Boy",
                     numberOfSaves: game.saveStates.count
                 )
-                
+
                 ContinuesMagementView(viewModel: viewModel)
                     .onAppear {
                         /// Load initial states through the publisher
@@ -102,7 +102,7 @@ struct UITestingApp: App {
                     numberOfSaves: mockDriver.getAllSaveStates().count,
                     gameUIImage: mockDriver.gameUIImage
                 )
-                
+
                 ContinuesMagementView(viewModel: viewModel)
                     .onAppear {
                     }
@@ -112,7 +112,7 @@ struct UITestingApp: App {
                 let gameImporter = GameImporter.shared
                 let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
                 let menuDelegate = MockPVMenuDelegate()
-                
+
                 PVSettingsView(
                     conflictsController: pvgamelibraryUpdatesController,
                     menuDelegate: menuDelegate) {
@@ -129,7 +129,9 @@ struct UITestingApp: App {
             }
             .sheet(isPresented: $showGameMoreInfo) {
                 NavigationView {
-                    GameMoreInfoView(viewModel: .mockViewModel())
+                    let driver = MockGameLibraryDriver()
+                    PagedGameMoreInfoView(viewModel: PagedGameMoreInfoViewModel(driver: driver))
+                        .navigationTitle("Game Info")
                 }
             }
             .sheet(isPresented: $showGameMoreInfoRealm) {
@@ -158,31 +160,31 @@ struct UITestingApp: App {
 
 class MockPVMenuDelegate: PVMenuDelegate {
     func didTapImports() {
-        
+
     }
-    
+
     func didTapSettings() {
-        
+
     }
-    
+
     func didTapHome() {
-        
+
     }
-    
+
     func didTapAddGames() {
-        
+
     }
-    
+
     func didTapConsole(with consoleId: String) {
-        
+
     }
-    
+
     func didTapCollection(with collection: Int) {
-        
+
     }
-    
+
     func closeMenu() {
-        
+
     }
 }
 
@@ -191,21 +193,21 @@ struct MainView_Previews: PreviewProvider {
     @State static private var showingSettings = false
     @State static private var showImportQueue = false
     @State static private var mockImportStatusDriverData = MockImportStatusDriverData()
-    
+
     static var previews: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            
+
             VStack(spacing: 20) {
                 Button("Show Realm Driver") { }
                     .buttonStyle(.borderedProminent)
-                
+
                 Button("Show Mock Driver") { }
                     .buttonStyle(.borderedProminent)
-                
+
                 Button("Show Settings") { }
                     .buttonStyle(.borderedProminent)
-                
+
                 Button("Show Import Queue") {
                     showImportQueue = true
                 }
@@ -216,11 +218,11 @@ struct MainView_Previews: PreviewProvider {
             let gameImporter = MockGameImporter()
             let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
             let menuDelegate = MockPVMenuDelegate()
-            
+
             PVSettingsView(
                 conflictsController: pvgamelibraryUpdatesController,
                 menuDelegate: menuDelegate) {
-                    
+
                 }
         }
         .sheet(isPresented: .init(
