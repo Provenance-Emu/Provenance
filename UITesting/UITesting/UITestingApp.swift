@@ -22,7 +22,8 @@ struct UITestingApp: App {
     @State private var showingMockSheet = false
     @State private var showingSettings = false
     @State private var showImportStatus = false
-    
+    @State private var showGameMoreInfo = false
+
     @StateObject
     private var mockImportStatusDriverData = MockImportStatusDriverData()
     
@@ -32,25 +33,34 @@ struct UITestingApp: App {
                 Color.secondary.ignoresSafeArea()
                 
                 VStack(spacing: 20) {
-                    Button("Show Realm Driver") {
-                        showingRealmSheet = true
+                    HStack {
+                        Button("Show Realm Driver") {
+                            showingRealmSheet = true
+                        }
+                        .buttonStyle(.borderedProminent)
+                        
+                        Button("Show Mock Driver") {
+                            showingMockSheet = true
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
-                    .buttonStyle(.borderedProminent)
-                    
-                    Button("Show Mock Driver") {
-                        showingMockSheet = true
+                    HStack {
+                        Button("Show Settings") {
+                            showingSettings = true
+                        }
+                        .buttonStyle(.borderedProminent)
+                        
+                        Button("Show Import Queue") {
+                            showImportStatus = true
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
-                    .buttonStyle(.borderedProminent)
-                    
-                    Button("Show Settings") {
-                        showingSettings = true
+                    HStack {
+                        Button("Show Game Info") {
+                            showGameMoreInfo = true
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
-                    .buttonStyle(.borderedProminent)
-                    
-                    Button("Show Import Queue") {
-                        showImportStatus = true
-                    }
-                    .buttonStyle(.borderedProminent)
                 }
             }
             .sheet(isPresented: $showingRealmSheet) {
@@ -110,6 +120,11 @@ struct UITestingApp: App {
                     delegate: mockImportStatusDriverData) {
                         print("Import Status View Closed")
                     }
+            }
+            .sheet(isPresented: $showGameMoreInfo) {
+                NavigationView {
+                    GameMoreInfoView(viewModel: .mockViewModel())
+                }
             }
             .onAppear {
 #if canImport(FreemiumKit)
