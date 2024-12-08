@@ -23,6 +23,7 @@ struct UITestingApp: App {
     @State private var showingSettings = false
     @State private var showImportStatus = false
     @State private var showGameMoreInfo = false
+    @State private var showGameMoreInfoRealm = false
 
     @StateObject
     private var mockImportStatusDriverData = MockImportStatusDriverData()
@@ -60,6 +61,11 @@ struct UITestingApp: App {
                             showGameMoreInfo = true
                         }
                         .buttonStyle(.borderedProminent)
+                        Button("Show Game Info Realm") {
+                            showGameMoreInfoRealm = true
+                        }
+                        .buttonStyle(.borderedProminent)
+
                     }
                 }
             }
@@ -124,6 +130,18 @@ struct UITestingApp: App {
             .sheet(isPresented: $showGameMoreInfo) {
                 NavigationView {
                     GameMoreInfoView(viewModel: .mockViewModel())
+                }
+            }
+            .sheet(isPresented: $showGameMoreInfoRealm) {
+                if let driver = try? RealmGameLibraryDriver.previewDriver(),
+                   let firstGameId = driver.firstGameId() {
+                    GameMoreInfoView(
+                        viewModel: GameMoreInfoViewModel(
+                            driver: driver,
+                            gameId: firstGameId
+                        )
+                    )
+                    .previewDisplayName("Realm Driver")
                 }
             }
             .onAppear {
