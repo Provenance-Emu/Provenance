@@ -20,6 +20,7 @@ protocol GameMoreInfoViewModelDataSource {
     var timeSpentInGame: Int? { get }
     var boxFrontArtwork: URL? { get }
     var boxBackArtwork: URL? { get }
+    var referenceURL: URL? { get }
     var id: String { get }
 }
 
@@ -65,7 +66,7 @@ internal class MockGameLibraryEntry: Identifiable, ObservableObject, GameMoreInf
     var publisher: String? = "Nintendo"
     var publishDate: String? = "1990-11-21"
     var genres: String? = "Platform, Action"
-    var referenceURL: String? = "https://example.com/mario"
+    var referenceURL: URL? = URL(string:"https://example.com/mario")
     var releaseID: String? = "SNS-MW-USA"
     var regionName: String? = "USA"
     var regionID: Int = 1

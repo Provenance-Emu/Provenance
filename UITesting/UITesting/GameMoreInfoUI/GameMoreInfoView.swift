@@ -459,7 +459,6 @@ struct GameMoreInfoView: View {
                     gameId: firstGameId
                 )
             )
-            .previewDisplayName("Realm Driver")
         }
     }
 }

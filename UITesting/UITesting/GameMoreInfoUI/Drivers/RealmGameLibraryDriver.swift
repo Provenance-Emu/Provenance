@@ -83,6 +83,7 @@ final class RealmGameLibraryDriver: GameLibraryDriver {
 
 /// Wrapper to adapt PVGame to GameMoreInfoViewModelDataSource
 private struct RealmGameWrapper: GameMoreInfoViewModelDataSource {
+    
     let game: PVGame
 
     var name: String? {
@@ -116,6 +117,10 @@ private struct RealmGameWrapper: GameMoreInfoViewModelDataSource {
     var timeSpentInGame: Int? { game.timeSpentInGame }
     var boxFrontArtwork: URL? { URL(string: game.originalArtworkURL) }
     var boxBackArtwork: URL? { URL(string: game.boxBackArtworkURL ?? "") }
+    var referenceURL: URL? {
+        URL(string: game.referenceURL ?? "")
+    }
+
     var id: String { game.md5Hash }
 }
 
