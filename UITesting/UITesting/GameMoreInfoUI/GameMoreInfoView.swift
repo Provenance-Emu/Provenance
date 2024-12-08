@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVLibrary
+import SafariServices
 
 /// A reusable view for displaying a label and value pair with optional editing
 struct LabelRowView: View {
@@ -62,6 +63,11 @@ class GameMoreInfoViewModel: ObservableObject {
     /// Box art aspect ratio
     var boxArtAspectRatio: CGFloat {
         game?.boxArtAspectRatio ?? 1.0
+    }
+
+    /// Reference URL for game info
+    var referenceURL: URL? {
+        game?.referenceURL
     }
 
     /// Name (Editable)
@@ -271,6 +277,7 @@ struct GameMoreInfoView: View {
     @StateObject var viewModel: GameMoreInfoViewModel
     @State private var editingField: EditableField?
     @State private var editingValue: String = ""
+    @State private var showingWebView = false
 
     private enum EditableField: Identifiable {
         case name
@@ -375,6 +382,21 @@ struct GameMoreInfoView: View {
                 .padding()
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    showingWebView = true
+                } label: {
+                    Image(systemName: "safari")
+                }
+                .disabled(viewModel.referenceURL == nil)
+            }
+        }
+        .sheet(isPresented: $showingWebView) {
+            if let url = viewModel.referenceURL {
+                GameReferenceWebView(url: url)
+            }
+        }
         .alert(editingField?.title ?? "", isPresented: .init(
             get: { editingField != nil },
             set: { if !$0 { editingField = nil } }
@@ -467,6 +489,29 @@ struct PagedGameMoreInfoView: View {
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
     }
+}
+
+// MARK: - Web View
+struct GameReferenceWebView: View {
+    let url: URL
+
+    var body: some View {
+        SafariWebView(url: url)
+            .edgesIgnoringSafeArea(.bottom)
+    }
+}
+
+struct SafariWebView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let config = SFSafariViewController.Configuration()
+        config.barCollapsingEnabled = true
+        config.entersReaderIfAvailable = true
+        return SFSafariViewController(url: url, configuration: config)
+    }
+
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 }
 
 #if DEBUG

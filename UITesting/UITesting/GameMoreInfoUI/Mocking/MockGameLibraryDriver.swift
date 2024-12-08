@@ -44,28 +44,32 @@ class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
                 title: "Super Mario World",
                 system: "SNES",
                 developer: "Nintendo",
-                genres: "Platform, Action"
+                genres: "Platform, Action",
+                referenceURL: "https://www.mobygames.com/game/super-mario-world"
             ),
             createMockGame(
                 id: "zelda",
                 title: "The Legend of Zelda",
                 system: "NES",
                 developer: "Nintendo",
-                genres: "Action, Adventure"
+                genres: "Action, Adventure",
+                referenceURL: nil
             ),
             createMockGame(
                 id: "sonic",
                 title: "Sonic the Hedgehog",
                 system: "Genesis",
                 developer: "Sega",
-                genres: "Platform"
+                genres: "Platform",
+                referenceURL: "https://www.mobygames.com/game/sonic-the-hedgehog"
             ),
             createMockGame(
                 id: "ff7",
                 title: "Final Fantasy VII",
                 system: "PlayStation",
                 developer: "Square",
-                genres: "RPG"
+                genres: "RPG",
+                referenceURL: nil
             )
         ]
 
@@ -83,7 +87,8 @@ class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
         title: String,
         system: String,
         developer: String,
-        genres: String
+        genres: String,
+        referenceURL: String?
     ) -> MockGameLibraryEntry {
         let game = MockGameLibraryEntry()
         game.id = id
@@ -91,6 +96,9 @@ class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
         game.systemIdentifier = system
         game.developer = developer
         game.genres = genres
+        if let urlString = referenceURL {
+            game.referenceURL = URL(string: urlString)
+        }
         return game
     }
 
