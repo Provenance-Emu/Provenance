@@ -463,6 +463,14 @@ class PagedGameMoreInfoViewModel: ObservableObject {
         driver.gameId(at: currentIndex)
     }
 
+    var currentGameName: String {
+        if let gameId = currentGameId,
+           let game = driver.game(byId: gameId) {
+            return game.name ?? "Unknown Game"
+        }
+        return "Unknown Game"
+    }
+
     var gameCount: Int {
         driver.gameCount
     }
@@ -488,6 +496,7 @@ struct PagedGameMoreInfoView: View {
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
+        .navigationTitle(viewModel.currentGameName)
     }
 }
 
