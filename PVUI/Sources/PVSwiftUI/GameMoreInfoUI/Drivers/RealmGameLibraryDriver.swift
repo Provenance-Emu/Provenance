@@ -5,7 +5,7 @@ import PVLibrary
 import UIKit
 
 /// A Realm-based implementation of GameLibraryDriver
-final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
+public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
     private let realm: Realm
     private var sortedGames: Results<PVGame>
 
@@ -20,7 +20,7 @@ final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
             ])
     }
 
-    func game(byId id: String) -> GameMoreInfoViewModelDataSource? {
+    public func game(byId id: String) -> GameMoreInfoViewModelDataSource? {
         guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) else {
             return nil
         }
@@ -35,56 +35,56 @@ final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
 
     // MARK: - PagedGameLibraryDataSource
 
-    var gameCount: Int {
+    public var gameCount: Int {
         sortedGames.count
     }
 
-    func gameId(at index: Int) -> String? {
+    public func gameId(at index: Int) -> String? {
         guard index >= 0 && index < sortedGames.count else { return nil }
         return sortedGames[index].md5Hash
     }
 
-    func index(for gameId: String) -> Int? {
+    public func index(for gameId: String) -> Int? {
         sortedGames.firstIndex { $0.md5Hash == gameId }
     }
 
-    var sortedGameIds: [String] {
+    public var sortedGameIds: [String] {
         sortedGames.map(\.md5Hash)
     }
 
     // MARK: - Game Updates
 
-    func updateGameName(id: String, value: String?) {
+    public func updateGameName(id: String, value: String?) {
         updateGame(id: id) { game in
             game.title = value ?? ""
         }
     }
 
-    func updateGameDeveloper(id: String, value: String?) {
+    public func updateGameDeveloper(id: String, value: String?) {
         updateGame(id: id) { game in
             game.developer = value
         }
     }
 
-    func updateGamePublishDate(id: String, value: String?) {
+    public func updateGamePublishDate(id: String, value: String?) {
         updateGame(id: id) { game in
             game.publishDate = value
         }
     }
 
-    func updateGameGenres(id: String, value: String?) {
+    public func updateGameGenres(id: String, value: String?) {
         updateGame(id: id) { game in
             game.genres = value
         }
     }
 
-    func updateGameRegion(id: String, value: String?) {
+    public func updateGameRegion(id: String, value: String?) {
         updateGame(id: id) { game in
             game.regionName = value
         }
     }
 
-    func resetGameStats(id: String) {
+    public func resetGameStats(id: String) {
         updateGame(id: id) { game in
             game.playCount = 0
             game.timeSpentInGame = 0
@@ -176,7 +176,7 @@ private struct RealmGameWrapper: GameMoreInfoViewModelDataSource {
 
 // MARK: - Preview Helpers
 
-extension RealmGameLibraryDriver {
+public extension RealmGameLibraryDriver {
     /// Create a preview Realm with mock data
     static func previewDriver() throws -> RealmGameLibraryDriver {
         // Create in-memory Realm for previews

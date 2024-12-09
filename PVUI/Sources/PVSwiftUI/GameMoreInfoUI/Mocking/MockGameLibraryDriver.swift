@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 /// Protocol for paged game library data source
-protocol PagedGameLibraryDataSource {
+public protocol PagedGameLibraryDataSource {
     /// Get total number of games
     var gameCount: Int { get }
 
@@ -17,7 +17,7 @@ protocol PagedGameLibraryDataSource {
 }
 
 /// Protocol for game library data driver
-protocol GameLibraryDriver: ObservableObject {
+public protocol GameLibraryDriver: ObservableObject {
     /// Get a game by ID
     func game(byId id: String) -> GameMoreInfoViewModelDataSource?
 
@@ -33,10 +33,10 @@ protocol GameLibraryDriver: ObservableObject {
 }
 
 /// Mock implementation of game library driver
-class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
+public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
     @Published private var games: [MockGameLibraryEntry] = []
 
-    init() {
+    public init() {
         // Create some mock entries
         games = [
             createMockGame(
@@ -102,7 +102,7 @@ class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
         return game
     }
 
-    func game(byId id: String) -> GameMoreInfoViewModelDataSource? {
+    public func game(byId id: String) -> GameMoreInfoViewModelDataSource? {
         games.first { $0.id == id }
     }
 
@@ -117,37 +117,37 @@ class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
         return nil
     }
 
-    func updateGameName(id: String, value: String?) {
+    public func updateGameName(id: String, value: String?) {
         updateGame(id) { game in
             game.name = value
         }
     }
 
-    func updateGameDeveloper(id: String, value: String?) {
+    public func updateGameDeveloper(id: String, value: String?) {
         updateGame(id) { game in
             game.developer = value
         }
     }
 
-    func updateGamePublishDate(id: String, value: String?) {
+    public func updateGamePublishDate(id: String, value: String?) {
         updateGame(id) { game in
             game.publishDate = value
         }
     }
 
-    func updateGameGenres(id: String, value: String?) {
+    public func updateGameGenres(id: String, value: String?) {
         updateGame(id) { game in
             game.genres = value
         }
     }
 
-    func updateGameRegion(id: String, value: String?) {
+    public func updateGameRegion(id: String, value: String?) {
         updateGame(id) { game in
             game.region = value
         }
     }
 
-    func resetGameStats(id: String) {
+    public func resetGameStats(id: String) {
         updateGame(id) { game in
             game.playCount = 0
             game.timeSpentInGame = 0
@@ -157,20 +157,20 @@ class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
 
     // MARK: - PagedGameLibraryDataSource
 
-    var gameCount: Int {
+    public var gameCount: Int {
         games.count
     }
 
-    func gameId(at index: Int) -> String? {
+    public func gameId(at index: Int) -> String? {
         guard index >= 0 && index < games.count else { return nil }
         return games[index].id
     }
 
-    func index(for gameId: String) -> Int? {
+    public func index(for gameId: String) -> Int? {
         games.firstIndex { $0.id == gameId }
     }
 
-    var sortedGameIds: [String] {
+    public var sortedGameIds: [String] {
         games.map(\.id)
     }
 }

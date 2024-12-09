@@ -476,11 +476,11 @@ struct GameMoreInfoView: View {
 }
 
 // MARK: - Paged Game Info View Model
-class PagedGameMoreInfoViewModel: ObservableObject {
+public class PagedGameMoreInfoViewModel: ObservableObject {
     @Published var currentIndex: Int
     private let driver: (any GameLibraryDriver & PagedGameLibraryDataSource)
 
-    init(driver: any GameLibraryDriver & PagedGameLibraryDataSource, initialGameId: String? = nil) {
+    public init(driver: any GameLibraryDriver & PagedGameLibraryDataSource, initialGameId: String? = nil) {
         self.driver = driver
         if let gameId = initialGameId, let index = driver.index(for: gameId) {
             self.currentIndex = index
@@ -512,10 +512,14 @@ class PagedGameMoreInfoViewModel: ObservableObject {
 }
 
 // MARK: - Paged Game Info View
-struct PagedGameMoreInfoView: View {
+public struct PagedGameMoreInfoView: View {
     @StateObject var viewModel: PagedGameMoreInfoViewModel
-
-    var body: some View {
+    
+    public init(viewModel: PagedGameMoreInfoViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+    
+    public var body: some View {
         TabView(selection: $viewModel.currentIndex) {
             ForEach(0..<viewModel.gameCount, id: \.self) { index in
                 if let gameViewModel = viewModel.makeGameViewModel(for: index) {
