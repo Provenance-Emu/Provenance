@@ -5,13 +5,19 @@ import PVLibrary
 import UIKit
 
 /// A Realm-based implementation of GameLibraryDriver
-final class RealmGameLibraryDriver: GameLibraryDriver {
+final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
     private let realm: Realm
+    private var sortedGames: Results<PVGame>
 
     /// Initialize with an optional Realm instance
     /// - Parameter realm: Optional Realm instance. If nil, the default Realm will be used.
     init(realm: Realm? = nil) throws {
         self.realm = try realm ?? .init()
+        self.sortedGames = self.realm.objects(PVGame.self)
+            .sorted(by: [
+                SortDescriptor(keyPath: "systemIdentifier"),
+                SortDescriptor(keyPath: "title")
+            ])
     }
 
     func game(byId id: String) -> GameMoreInfoViewModelDataSource? {
@@ -24,8 +30,29 @@ final class RealmGameLibraryDriver: GameLibraryDriver {
 
     /// Get the first game ID in the database
     func firstGameId() -> String? {
-        return realm.objects(PVGame.self).first?.md5Hash
+        return sortedGames.first?.md5Hash
     }
+
+    // MARK: - PagedGameLibraryDataSource
+
+    var gameCount: Int {
+        sortedGames.count
+    }
+
+    func gameId(at index: Int) -> String? {
+        guard index >= 0 && index < sortedGames.count else { return nil }
+        return sortedGames[index].md5Hash
+    }
+
+    func index(for gameId: String) -> Int? {
+        sortedGames.firstIndex { $0.md5Hash == gameId }
+    }
+
+    var sortedGameIds: [String] {
+        sortedGames.map(\.md5Hash)
+    }
+
+    // MARK: - Game Updates
 
     func updateGameName(id: String, value: String?) {
         updateGame(id: id) { game in
@@ -140,6 +167,10 @@ private struct RealmGameWrapper: GameMoreInfoViewModelDataSource {
     var boxArtAspectRatio: CGFloat {
         let ratio = game.boxartAspectRatio
         return ratio.rawValue
+    }
+
+    var debugDescription: String? {
+        game.debugDescription
     }
 }
 

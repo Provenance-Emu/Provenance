@@ -135,15 +135,11 @@ struct UITestingApp: App {
                 }
             }
             .sheet(isPresented: $showGameMoreInfoRealm) {
-                if let driver = try? RealmGameLibraryDriver.previewDriver(),
-                   let firstGameId = driver.firstGameId() {
-                    GameMoreInfoView(
-                        viewModel: GameMoreInfoViewModel(
-                            driver: driver,
-                            gameId: firstGameId
-                        )
-                    )
-                    .previewDisplayName("Realm Driver")
+                if let driver = try? RealmGameLibraryDriver.previewDriver() {
+                    NavigationView {
+                        PagedGameMoreInfoView(viewModel: PagedGameMoreInfoViewModel(driver: driver))
+                            .navigationTitle("Game Info")
+                    }
                 }
             }
             .onAppear {

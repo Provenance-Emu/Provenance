@@ -25,6 +25,7 @@ protocol GameMoreInfoViewModelDataSource {
     var referenceURL: URL? { get }
     var id: String { get }
     var boxArtAspectRatio: CGFloat { get }
+    var debugDescription: String? { get }
 }
 
 /// Mock implementation of PVGameLibraryEntry for previews
@@ -82,4 +83,16 @@ internal class MockGameLibraryEntry: Identifiable, ObservableObject, GameMoreInf
 
     /// Default aspect ratio for SNES games
     var boxArtAspectRatio: CGFloat { 1.0 }
+
+    var debugDescription: String? {
+        """
+        Mock Game Debug Info:
+        ID: \(id)
+        System: \(systemIdentifier)
+        ROM Path: \(romPath)
+        MD5: \(md5Hash)
+        CRC: \(crc)
+        Import Date: \(importDate)
+        """
+    }
 }

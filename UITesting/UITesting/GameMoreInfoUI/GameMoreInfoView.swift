@@ -70,6 +70,11 @@ class GameMoreInfoViewModel: ObservableObject {
         game?.referenceURL
     }
 
+    /// Debug description if available
+    var debugDescription: String? {
+        game?.debugDescription
+    }
+
     /// Name (Editable)
     var name: String? {
         get { game?.name }
@@ -272,12 +277,28 @@ struct FullscreenArtworkView: View {
     }
 }
 
-/// Main view for displaying game information
+// MARK: - Debug Info View
+struct GameDebugInfoView: View {
+    let debugInfo: String
+
+    var body: some View {
+        ScrollView {
+            Text(debugInfo)
+                .font(.system(.body, design: .monospaced))
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .navigationTitle("Debug Info")
+    }
+}
+
+// MARK: - Game Info View
 struct GameMoreInfoView: View {
     @StateObject var viewModel: GameMoreInfoViewModel
     @State private var editingField: EditableField?
     @State private var editingValue: String = ""
     @State private var showingWebView = false
+    @State private var showingDebugInfo = false
 
     private enum EditableField: Identifiable {
         case name
@@ -384,12 +405,20 @@ struct GameMoreInfoView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    showingWebView = true
-                } label: {
-                    Image(systemName: "safari")
+                HStack {
+                    if viewModel.debugDescription != nil {
+                        NavigationLink(destination: GameDebugInfoView(debugInfo: viewModel.debugDescription!)) {
+                            Image(systemName: "info.circle")
+                        }
+                    }
+
+                    Button {
+                        showingWebView = true
+                    } label: {
+                        Image(systemName: "safari")
+                    }
+                    .disabled(viewModel.referenceURL == nil)
                 }
-                .disabled(viewModel.referenceURL == nil)
             }
         }
         .sheet(isPresented: $showingWebView) {
