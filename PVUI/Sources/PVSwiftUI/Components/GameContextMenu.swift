@@ -25,6 +25,8 @@ struct GameContextMenu: SwiftUI.View {
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
 
+    @State private var showingGameMoreInfo = false
+
     var body: some SwiftUI.View {
         Group {
             if !game.isInvalidated {
@@ -36,7 +38,7 @@ struct GameContextMenu: SwiftUI.View {
                     } label: { Label("Open in...", systemImage: "gamecontroller") }
                 }
                 Button {
-                    showMoreInfo(forGame: game)
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowGameInfoFor: game)
                 } label: { Label("Game Info", systemImage: "info.circle") }
                 Button {
                     showSaveStatesManager(forGame: game)
@@ -105,21 +107,6 @@ struct GameContextMenu: SwiftUI.View {
 }
 
 extension GameContextMenu {
-
-    func showMoreInfo(forGame game: PVGame) {
-        guard !game.isInvalidated else { return }
-        let moreInfoCollectionVC = GameMoreInfoViewController(game: game)
-        if let rootDelegate = rootDelegate as? UIViewController {
-
-            let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module)
-                .instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
-            firstVC.game = game
-
-            let moreInfoCollectionVC = GameMoreInfoPageViewController()
-            moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
-            rootDelegate.show(moreInfoCollectionVC, sender: self)
-        }
-    }
 
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
         guard !game.isInvalidated else { return }

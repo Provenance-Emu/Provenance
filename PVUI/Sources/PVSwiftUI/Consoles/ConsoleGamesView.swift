@@ -33,6 +33,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedRealmObject var console: PVSystem
     weak var rootDelegate: PVRootDelegate?
+    var showGameInfo: (PVGame) -> Void
 
     let gamesForSystemPredicate: NSPredicate
 
@@ -106,11 +107,17 @@ struct ConsoleGamesView: SwiftUI.View {
         return verticalSizeClass == .compact ? baseHeight / 2 : baseHeight
     }
 
-    init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
+    init(
+        console: PVSystem,
+        viewModel: PVRootViewModel,
+        rootDelegate: PVRootDelegate? = nil,
+        showGameInfo: @escaping (PVGame) -> Void
+    ) {
         _gamesViewModel = StateObject(wrappedValue: ConsoleGamesViewModel(console: console))
         self.console = console
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
+        self.showGameInfo = showGameInfo
         self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
 
         _games = ObservedResults(
@@ -694,7 +701,8 @@ struct ConsoleGamesView_Previews: PreviewProvider {
     static var previews: some SwiftUI.View {
         ConsoleGamesView(console: console,
                          viewModel: viewModel,
-                         rootDelegate: nil)
+                         rootDelegate: nil,
+                         showGameInfo: {_ in})
     }
 }
 

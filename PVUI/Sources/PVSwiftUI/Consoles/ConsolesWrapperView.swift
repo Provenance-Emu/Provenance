@@ -32,8 +32,15 @@ struct ConsolesWrapperView: SwiftUI.View {
     weak var rootDelegate: (PVRootDelegate & PVMenuDelegate)!
 
     @State private var showEmptySystems: Bool
+    @State private var gameInfoState: GameInfoState?
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
     @ObservedObject private var themeManager = ThemeManager.shared
+
+    /// State for game info presentation
+    struct GameInfoState: Identifiable {
+        let id: String
+        let game: PVGame
+    }
 
     // MARK: - Initializer
 
@@ -59,15 +66,45 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     // MARK: - Body
 
+    private func makeGameMoreInfoView(for state: GameInfoState) -> some View {
+        let viewModel: GameMoreInfoViewModel
+        do {
+            viewModel = GameMoreInfoViewModel(
+                driver: try RealmGameLibraryDriver(),
+                gameId: state.game.id
+            )
+        } catch {
+            return AnyView(Text("Failed to load game info: \(error.localizedDescription)"))
+        }
+        return AnyView(GameMoreInfoView(viewModel: viewModel))
+    }
+
     var body: some SwiftUI.View {
         if consoles.isEmpty {
             showNoConsolesView()
         } else {
             showConsoles()
+                .sheet(item: $gameInfoState) { state in
+                    NavigationView {
+                        makeGameMoreInfoView(for: state)
+                            .navigationBarTitleDisplayMode(.inline)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") {
+                                        gameInfoState = nil
+                                    }
+                                }
+                            }
+                    }
+                }
         }
     }
 
     // MARK: - Helper Methods
+
+    func showGameInfo(for game: PVGame) {
+        gameInfoState = GameInfoState(id: game.id, game: game)
+    }
 
     private func sortedConsoles() -> [PVSystem] {
         viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
@@ -83,7 +120,12 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     private func showConsoles() -> some View {
         TabView(selection: $delegate.selectedTab) {
-            HomeView(gameLibrary: rootDelegate.gameLibrary!, delegate: rootDelegate, viewModel: viewModel)
+            HomeView(
+                gameLibrary: rootDelegate.gameLibrary!,
+                delegate: rootDelegate,
+                viewModel: viewModel,
+                showGameInfo: showGameInfo
+            )
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
@@ -91,7 +133,12 @@ struct ConsolesWrapperView: SwiftUI.View {
                 .ignoresSafeArea(.all, edges: .bottom)
 
             ForEach(sortedConsoles(), id: \.self) { console in
-                ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
+                ConsoleGamesView(
+                    console: console,
+                    viewModel: viewModel,
+                    rootDelegate: rootDelegate,
+                    showGameInfo: showGameInfo
+                )
                     .tabItem {
                         Label(console.name, systemImage: console.iconName)
                     }

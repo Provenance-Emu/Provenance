@@ -29,6 +29,7 @@ struct HomeView: SwiftUI.View {
 
     weak var rootDelegate: PVRootDelegate?
     @ObservedObject var viewModel: PVRootViewModel
+    var showGameInfo: (PVGame) -> Void
 
     @Default(.showRecentSaveStates) private var showRecentSaveStates
     @Default(.showRecentGames) private var showRecentGames
@@ -84,10 +85,16 @@ struct HomeView: SwiftUI.View {
     @State internal var systemMoveState: SystemMoveState?
     @State internal var continuesManagementState: ContinuesManagementState?
 
-    init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil, viewModel: PVRootViewModel) {
+    init(
+        gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil,
+        delegate: PVRootDelegate? = nil,
+        viewModel: PVRootViewModel,
+        showGameInfo: @escaping (PVGame) -> Void
+    ) {
 //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
         self.viewModel = viewModel
+        self.showGameInfo = showGameInfo
 
         _allGames = ObservedResults(
             PVGame.self,
@@ -960,5 +967,9 @@ extension HomeView: GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to show save states for game")
         continuesManagementState = ContinuesManagementState(game: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor game: PVGame) {
+        showGameInfo(game)
     }
 }
