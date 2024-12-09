@@ -402,6 +402,7 @@ struct GameMoreInfoView: View {
                 }
                 .padding()
             }
+            .padding(.bottom, 50)
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
