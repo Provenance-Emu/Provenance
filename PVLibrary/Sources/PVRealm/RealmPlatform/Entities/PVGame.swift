@@ -15,7 +15,7 @@ import PVFileSystem
 @objcMembers
 public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     @Persisted public var title: String = ""
-    @Persisted(wrappedValue: NSUUID().uuidString) public var id :String
+    @Persisted(wrappedValue: NSUUID().uuidString, indexed: true) public var id :String
 
     // TODO: This is a 'partial path' meaing it's something like {system id}.filename
     // We should make this an absolute path but would need a Realm translater and modifying
