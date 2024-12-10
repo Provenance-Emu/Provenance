@@ -21,7 +21,9 @@ public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDa
     }
 
     public func game(byId id: String) -> GameMoreInfoViewModelDataSource? {
-        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) else {
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) ??
+              sortedGames.first(where: {$0.id == id})
+            else {
             return nil
         }
 

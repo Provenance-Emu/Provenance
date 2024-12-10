@@ -36,7 +36,7 @@ struct GameContextMenu: SwiftUI.View {
                     } label: { Label("Open in...", systemImage: "gamecontroller") }
                 }
                 Button {
-                    contextMenuDelegate?.gameContextMenu(self, didRequestShowGameInfoFor: game.id)
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowGameInfoFor: game.md5Hash)
                 } label: { Label("Game Info", systemImage: "info.circle") }
                 Button {
                     contextMenuDelegate?.gameContextMenu(self, didRequestShowSaveStatesFor: game)
