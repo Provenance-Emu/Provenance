@@ -29,7 +29,7 @@ struct HomeView: SwiftUI.View {
 
     weak var rootDelegate: PVRootDelegate?
     @ObservedObject var viewModel: PVRootViewModel
-    var showGameInfo: (PVGame) -> Void
+    var showGameInfo: (String) -> Void
 
     @Default(.showRecentSaveStates) private var showRecentSaveStates
     @Default(.showRecentGames) private var showRecentGames
@@ -89,7 +89,7 @@ struct HomeView: SwiftUI.View {
         gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil,
         delegate: PVRootDelegate? = nil,
         viewModel: PVRootViewModel,
-        showGameInfo: @escaping (PVGame) -> Void
+        showGameInfo: @escaping (String) -> Void
     ) {
 //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
@@ -969,7 +969,7 @@ extension HomeView: GameContextMenuDelegate {
         continuesManagementState = ContinuesManagementState(game: game)
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor game: PVGame) {
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor game: String) {
         showGameInfo(game)
     }
 }

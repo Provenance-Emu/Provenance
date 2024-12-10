@@ -33,7 +33,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedRealmObject var console: PVSystem
     weak var rootDelegate: PVRootDelegate?
-    var showGameInfo: (PVGame) -> Void
+    var showGameInfo: (String) -> Void
 
     let gamesForSystemPredicate: NSPredicate
 
@@ -111,7 +111,7 @@ struct ConsoleGamesView: SwiftUI.View {
         console: PVSystem,
         viewModel: PVRootViewModel,
         rootDelegate: PVRootDelegate? = nil,
-        showGameInfo: @escaping (PVGame) -> Void
+        showGameInfo: @escaping (String) -> Void
     ) {
         _gamesViewModel = StateObject(wrappedValue: ConsoleGamesViewModel(console: console))
         self.console = console

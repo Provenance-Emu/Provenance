@@ -133,7 +133,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         continuesManagementState = ContinuesManagementState(game: game)
     }
 
-    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor game: PVGame) {
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor game: String) {
         showGameInfo(game)
     }
 }
