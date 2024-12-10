@@ -69,7 +69,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         let viewModel: GameMoreInfoViewModel
         do {
             viewModel = GameMoreInfoViewModel(
-                driver: try RealmGameLibraryDriver(),
+                driver: try RealmGameLibraryDriver(realm: RomDatabase.sharedInstance.realm),
                 gameId: state.id
             )
         } catch {
@@ -101,8 +101,8 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     // MARK: - Helper Methods
 
-    func showGameInfo(for game: String) {
-        gameInfoState = GameInfoState(id: game.md5Hash)
+    func showGameInfo(for gameID: String) {
+        gameInfoState = GameInfoState(id: gameID)
     }
 
     private func sortedConsoles() -> [PVSystem] {

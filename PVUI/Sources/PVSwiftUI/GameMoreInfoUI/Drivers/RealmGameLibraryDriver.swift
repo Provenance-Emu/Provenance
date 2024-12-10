@@ -41,7 +41,12 @@ public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDa
     }
 
     public func game(byId id: String) -> (any GameMoreInfoViewModelDataSource)? {
-        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) else {
+        let id = id.uppercased()
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) ??
+                sortedGames.first(where: { $0.md5Hash == id })
+        else {
+            ELOG("No game found for primary key: \(id)")
+            DLOG("All md5s: " + sortedGames.map { "\($0.md5Hash)" }.joined(separator: ", "))
             return nil
         }
 
