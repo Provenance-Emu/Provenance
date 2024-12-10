@@ -60,6 +60,9 @@ extension GameLaunchingViewController where Self: UIViewController {
     
     @MainActor
     func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
+        guard game.realm != nil else {
+            return
+        }
         
         @ThreadSafe var game: PVGame! = game
         @ThreadSafe var core = core

@@ -101,8 +101,8 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     // MARK: - Helper Methods
 
-    func showGameInfo(for gameID: String) {
-        gameInfoState = GameInfoState(id: gameID)
+    func showGameInfo(for game: String) {
+        gameInfoState = GameInfoState(id: game.md5Hash)
     }
 
     private func sortedConsoles() -> [PVSystem] {

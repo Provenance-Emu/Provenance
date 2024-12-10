@@ -9,45 +9,38 @@ import SwiftUI
 import PVLibrary
 import SafariServices
 
-/// A reusable view for displaying a label and value pair with optional editing
-struct LabelRowView: View {
-    let label: String
-    let value: String?
-    var onLongPress: (() -> Void)?
-    var isEditable: Bool = true
-
-    var body: some View {
-        HStack {
-            // Label side - right aligned
-            Text(label + ":")
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .foregroundColor(.secondary)
-
-            // Value side - left aligned
-            Text(value ?? "")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle()) // Make entire area tappable
-                .onLongPressGesture {
-                    if isEditable {
-                        onLongPress?()
-                    }
-                }
-        }
-        .padding(.vertical, 4)
-    }
-}
 
 class GameMoreInfoViewModel: ObservableObject {
     @Published private var driver: any GameLibraryDriver
     private let gameId: String
+    @Published private(set) var game: (any GameMoreInfoViewModelDataSource)?
 
     init(driver: any GameLibraryDriver, gameId: String) {
         self.driver = driver
         self.gameId = gameId
+
+        // Initial load
+        self.game = driver.game(byId: gameId)
+        
+        ILOG("Game set: \(self.game.debugDescription)")
+
+        // Observe changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(gameDidUpdate),
+            name: .gameLibraryDidUpdate,
+            object: nil
+        )
     }
 
-    private var game: GameMoreInfoViewModelDataSource? {
-        driver.game(byId: gameId)
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc private func gameDidUpdate() {
+        DispatchQueue.main.async {
+            self.game = self.driver.game(byId: self.gameId)
+        }
     }
 
     /// Front Artwork
@@ -159,138 +152,6 @@ class GameMoreInfoViewModel: ObservableObject {
     }
 }
 
-/// View for displaying and interacting with game artwork
-struct GameArtworkView: View {
-    let frontArtwork: UIImage?
-    let backArtwork: UIImage?
-    let aspectRatio: CGFloat
-    @State private var isShowingBack = false
-    @State private var isShowingFullscreen = false
-
-    var body: some View {
-        ZStack {
-            // Main artwork view
-            artworkImage
-                .rotation3DEffect(
-                    .degrees(isShowingBack ? 180 : 0),
-                    axis: (x: 0.0, y: 1.0, z: 0.0)
-                )
-                .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        isShowingBack.toggle()
-                    }
-                }
-                .onTapGesture(count: 2) {
-                    isShowingFullscreen = true
-                }
-        }
-        .aspectRatio(aspectRatio, contentMode: .fit)
-        .frame(maxWidth: 300)
-        .fullScreenCover(isPresented: $isShowingFullscreen) {
-            FullscreenArtworkView(
-                image: isShowingBack ? backArtwork : frontArtwork,
-                isShowingBack: $isShowingBack
-            )
-        }
-    }
-
-    private var artworkImage: some View {
-        Group {
-            if let image = isShowingBack ? backArtwork : frontArtwork {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
-                Image(systemName: "photo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.secondary)
-                    .padding()
-            }
-        }
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
-        .shadow(radius: 3)
-    }
-}
-
-/// Fullscreen view for artwork with zoom and pan
-struct FullscreenArtworkView: View {
-    let image: UIImage?
-    @Binding var isShowingBack: Bool
-    @Environment(\.dismiss) private var dismiss
-    @State private var scale: CGFloat = 1.0
-    @State private var lastScale: CGFloat = 1.0
-    @State private var offset = CGSize.zero
-    @State private var lastOffset = CGSize.zero
-
-    var body: some View {
-        NavigationView {
-            GeometryReader { geometry in
-                ZStack {
-                    Color.black.edgesIgnoringSafeArea(.all)
-
-                    if let image = image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .scaleEffect(scale)
-                            .offset(offset)
-                            .gesture(
-                                MagnificationGesture()
-                                    .onChanged { value in
-                                        scale = lastScale * value.magnitude
-                                    }
-                                    .onEnded { _ in
-                                        lastScale = scale
-                                    }
-                            )
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        offset = CGSize(
-                                            width: lastOffset.width + value.translation.width,
-                                            height: lastOffset.height + value.translation.height
-                                        )
-                                    }
-                                    .onEnded { _ in
-                                        lastOffset = offset
-                                    }
-                            )
-                            .onTapGesture(count: 2) {
-                                withAnimation {
-                                    scale = 1.0
-                                    lastScale = 1.0
-                                    offset = .zero
-                                    lastOffset = .zero
-                                }
-                            }
-                    }
-                }
-            }
-            .navigationBarItems(
-                leading: Button("Done") {
-                    dismiss()
-                }
-            )
-        }
-    }
-}
-
-// MARK: - Debug Info View
-struct GameDebugInfoView: View {
-    let debugInfo: String
-
-    var body: some View {
-        ScrollView {
-            Text(debugInfo)
-                .font(.system(.body, design: .monospaced))
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .navigationTitle("Debug Info")
-    }
-}
 
 // MARK: - Game Info View
 struct GameMoreInfoView: View {
@@ -514,11 +375,11 @@ public class PagedGameMoreInfoViewModel: ObservableObject {
 // MARK: - Paged Game Info View
 public struct PagedGameMoreInfoView: View {
     @StateObject var viewModel: PagedGameMoreInfoViewModel
-    
+
     public init(viewModel: PagedGameMoreInfoViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
     public var body: some View {
         TabView(selection: $viewModel.currentIndex) {
             ForEach(0..<viewModel.gameCount, id: \.self) { index in

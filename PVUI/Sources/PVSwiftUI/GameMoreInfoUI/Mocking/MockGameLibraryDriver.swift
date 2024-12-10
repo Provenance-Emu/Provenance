@@ -19,7 +19,7 @@ public protocol PagedGameLibraryDataSource {
 /// Protocol for game library data driver
 public protocol GameLibraryDriver: ObservableObject {
     /// Get a game by ID
-    func game(byId id: String) -> GameMoreInfoViewModelDataSource?
+    func game(byId id: String) -> (any GameMoreInfoViewModelDataSource)?
 
     /// Update game properties
     func updateGameName(id: String, value: String?)
@@ -102,7 +102,7 @@ public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
         return game
     }
 
-    public func game(byId id: String) -> GameMoreInfoViewModelDataSource? {
+    public func game(byId id: String) -> (any GameMoreInfoViewModelDataSource)? {
         games.first { $0.id == id }
     }
 

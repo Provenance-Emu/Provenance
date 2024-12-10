@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import PVRealm
 
-public protocol GameMoreInfoViewModelDataSource {
+public protocol GameMoreInfoViewModelDataSource: ObservableObject {
     var name: String? { get set }
     var filename: String? { get }
     var system: String? { get }

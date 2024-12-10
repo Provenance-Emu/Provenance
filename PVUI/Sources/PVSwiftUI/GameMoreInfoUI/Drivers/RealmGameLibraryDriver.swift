@@ -3,11 +3,13 @@ import RealmSwift
 import PVRealm
 import PVLibrary
 import UIKit
+import PVLogging
 
 /// A Realm-based implementation of GameLibraryDriver
 public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
     private let realm: Realm
     private var sortedGames: Results<PVGame>
+    private var notificationTokens: [NotificationToken] = []
 
     /// Initialize with an optional Realm instance
     /// - Parameter realm: Optional Realm instance. If nil, the default Realm will be used.
@@ -18,14 +20,43 @@ public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDa
                 SortDescriptor(keyPath: "systemIdentifier"),
                 SortDescriptor(keyPath: "title")
             ])
+
+        // Observe Realm changes
+        let token = sortedGames.observe { [weak self] changes in
+            switch changes {
+            case .initial:
+                break
+            case .update:
+                // Notify observers that data has changed
+                NotificationCenter.default.post(name: .gameLibraryDidUpdate, object: nil)
+            case .error(let error):
+                ELOG("Error observing Realm changes: \(error)")
+            }
+        }
+        notificationTokens.append(token)
     }
 
-    public func game(byId id: String) -> GameMoreInfoViewModelDataSource? {
-        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) ??
-              sortedGames.first(where: {$0.id == id})
-            else {
+    deinit {
+        notificationTokens.forEach { $0.invalidate() }
+    }
+
+    public func game(byId id: String) -> (any GameMoreInfoViewModelDataSource)? {
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) else {
             return nil
         }
+
+        // Observe this specific game for changes
+        let token = game.observe { [weak self] change in
+            switch change {
+            case .change:
+                NotificationCenter.default.post(name: .gameLibraryDidUpdate, object: nil)
+            case .error(let error):
+                print("Error observing game changes: \(error)")
+            case .deleted:
+                NotificationCenter.default.post(name: .gameLibraryDidUpdate, object: nil)
+            }
+        }
+        notificationTokens.append(token)
 
         return RealmGameWrapper(game: game)
     }
@@ -112,9 +143,13 @@ public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDa
 }
 
 /// Wrapper to adapt PVGame to GameMoreInfoViewModelDataSource
-private struct RealmGameWrapper: GameMoreInfoViewModelDataSource {
+private class RealmGameWrapper: GameMoreInfoViewModelDataSource {
     let game: PVGame
 
+    init(game: PVGame) {
+        self.game = game
+    }
+    
     var name: String? {
         get { game.title }
         set { /* Handled by driver */ }
@@ -231,4 +266,9 @@ public extension RealmGameLibraryDriver {
 
         return try RealmGameLibraryDriver(realm: realm)
     }
+}
+
+// MARK: - Notification Names
+public extension Notification.Name {
+    static let gameLibraryDidUpdate = Notification.Name("gameLibraryDidUpdate")
 }
