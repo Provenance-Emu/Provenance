@@ -6,64 +6,35 @@ import UIKit
 import PVLogging
 
 /// A Realm-based implementation of GameLibraryDriver
+@MainActor
 public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSource {
     private let realm: Realm
     private var sortedGames: Results<PVGame>
-    private var notificationTokens: [NotificationToken] = []
+    private var gameWrappers: [String: RealmGameWrapper] = [:]
 
     /// Initialize with an optional Realm instance
     /// - Parameter realm: Optional Realm instance. If nil, the default Realm will be used.
-    init(realm: Realm? = nil) throws {
+    public init(realm: Realm? = nil) throws {
         self.realm = try realm ?? .init()
         self.sortedGames = self.realm.objects(PVGame.self)
             .sorted(by: [
                 SortDescriptor(keyPath: "systemIdentifier"),
                 SortDescriptor(keyPath: "title")
             ])
-
-        // Observe Realm changes
-        let token = sortedGames.observe { [weak self] changes in
-            switch changes {
-            case .initial:
-                break
-            case .update:
-                // Notify observers that data has changed
-                NotificationCenter.default.post(name: .gameLibraryDidUpdate, object: nil)
-            case .error(let error):
-                ELOG("Error observing Realm changes: \(error)")
-            }
-        }
-        notificationTokens.append(token)
-    }
-
-    deinit {
-        notificationTokens.forEach { $0.invalidate() }
     }
 
     public func game(byId id: String) -> (any GameMoreInfoViewModelDataSource)? {
-        let id = id.uppercased()
-        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) ??
-                sortedGames.first(where: { $0.md5Hash == id })
-        else {
-            ELOG("No game found for primary key: \(id)")
-            DLOG("All md5s: " + sortedGames.map { "\($0.md5Hash)" }.joined(separator: ", "))
+        if let existing = gameWrappers[id] {
+            return existing
+        }
+
+        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) else {
             return nil
         }
 
-        // Observe this specific game for changes
-        let token = game.observe { [weak self] change in
-            switch change {
-            case .change:
-                NotificationCenter.default.post(name: .gameLibraryDidUpdate, object: nil)
-            case .error(let error):
-                print("Error observing game changes: \(error)")
-            case .deleted:
-                NotificationCenter.default.post(name: .gameLibraryDidUpdate, object: nil)
-            }
-        }
-        notificationTokens.append(token)
-
-        return RealmGameWrapper(game: game)
+        let wrapper = RealmGameWrapper(game: game)
+        gameWrappers[id] = wrapper
+        return wrapper
     }
 
     /// Get the first game ID in the database
@@ -148,20 +119,48 @@ public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDa
 }
 
 /// Wrapper to adapt PVGame to GameMoreInfoViewModelDataSource
+@MainActor
 private class RealmGameWrapper: GameMoreInfoViewModelDataSource {
-    let game: PVGame
+    @ObservedRealmObject private var game: PVGame
+    @Published private(set) var frontArtwork: UIImage?
+    @Published private(set) var backArtwork: UIImage?
 
     init(game: PVGame) {
-        self.game = game
+        self._game = ObservedRealmObject(wrappedValue: game)
+        // Set placeholder images immediately
+        self.frontArtwork = UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
+        Task { await loadArtwork() }
     }
-    
+
+    private func loadArtwork() async {
+        // Try to load front artwork
+        if let artworkURL = game.activeArtworkURL,
+           let image = await PVMediaCache.shareInstance().image(forKey: artworkURL) {
+            await MainActor.run { self.frontArtwork = image }
+        }
+
+        // Try to load back artwork
+        if let backURL = game.boxBackArtworkURL,
+           let image = await PVMediaCache.shareInstance().image(forKey: backURL) {
+            await MainActor.run { self.backArtwork = image }
+        }
+    }
+
     var name: String? {
         get { game.title }
         set { /* Handled by driver */ }
     }
 
-    var filename: String? { game.file.fileName }
-    var system: String? { game.system.name }
+    var filename: String? {
+        get { game.file.fileName }
+        set { /* Handled by driver */ }
+    }
+
+    var system: String? {
+        get { game.system.name }
+        set { /* Handled by driver */ }
+    }
+
     var region: String? {
         get { game.regionName }
         set { /* Handled by driver */ }
@@ -182,37 +181,49 @@ private class RealmGameWrapper: GameMoreInfoViewModelDataSource {
         set { /* Handled by driver */ }
     }
 
-    var playCount: Int? { game.playCount }
-    var timeSpentInGame: Int? { game.timeSpentInGame }
+    var playCount: Int? {
+        get { game.playCount }
+        set { /* Handled by driver */ }
+    }
+
+    var timeSpentInGame: Int? {
+        get { game.timeSpentInGame }
+        set { /* Handled by driver */ }
+    }
 
     var boxFrontArtwork: UIImage? {
-        // For now, just return a placeholder
-        // In a real implementation, this would use PVMediaCache or similar
-        UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
+        get { frontArtwork }
+        set { /* Handled by driver */ }
     }
 
     var boxBackArtwork: UIImage? {
-        // For now, just return a placeholder
-        // In a real implementation, this would use PVMediaCache or similar
-        UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
+        get { backArtwork }
+        set { /* Handled by driver */ }
     }
 
     var referenceURL: URL? {
-        if let urlString = game.referenceURL {
-            return URL(string: urlString)
+        get {
+            if let urlString = game.referenceURL {
+                return URL(string: urlString)
+            }
+            return nil
         }
-        return nil
+        set { /* Handled by driver */ }
     }
 
-    var id: String { game.md5Hash }
+    var id: String {
+        get { game.md5Hash }
+        set { /* Handled by driver */ }
+    }
 
     var boxArtAspectRatio: CGFloat {
-        let ratio = game.boxartAspectRatio
-        return ratio.rawValue
+        get { game.boxartAspectRatio.rawValue }
+        set { /* Handled by driver */ }
     }
 
     var debugDescription: String? {
-        game.debugDescription
+        get { game.debugDescription }
+        set { /* Handled by driver */ }
     }
 }
 

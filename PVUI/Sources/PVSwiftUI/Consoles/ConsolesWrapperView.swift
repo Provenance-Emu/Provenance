@@ -66,16 +66,16 @@ struct ConsolesWrapperView: SwiftUI.View {
     // MARK: - Body
 
     private func makeGameMoreInfoView(for state: GameInfoState) -> some View {
-        let viewModel: GameMoreInfoViewModel
         do {
-            viewModel = GameMoreInfoViewModel(
-                driver: try RealmGameLibraryDriver(realm: RomDatabase.sharedInstance.realm),
-                gameId: state.id
+            let driver = try RealmGameLibraryDriver()
+            let viewModel = PagedGameMoreInfoViewModel(
+                driver: driver,
+                initialGameId: state.id
             )
+            return PagedGameMoreInfoView(viewModel: viewModel)
         } catch {
-            return AnyView(Text("Failed to load game info: \(error.localizedDescription)"))
+            return Text("Failed to load game info: \(error.localizedDescription)")
         }
-        return AnyView(GameMoreInfoView(viewModel: viewModel))
     }
 
     var body: some SwiftUI.View {
@@ -101,8 +101,8 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     // MARK: - Helper Methods
 
-    func showGameInfo(for gameID: String) {
-        gameInfoState = GameInfoState(id: gameID)
+    func showGameInfo(for gameId: String) {
+        gameInfoState = GameInfoState(id: gameId)
     }
 
     private func sortedConsoles() -> [PVSystem] {
