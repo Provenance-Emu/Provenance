@@ -4,6 +4,7 @@ import PVRealm
 import PVLibrary
 import UIKit
 import PVLogging
+import Combine
 
 /// A Realm-based implementation of GameLibraryDriver
 @MainActor
@@ -120,24 +121,37 @@ public final class RealmGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDa
 
 /// Wrapper to adapt PVGame to GameMoreInfoViewModelDataSource
 @MainActor
-private class RealmGameWrapper: GameMoreInfoViewModelDataSource {
+private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkObservable {
     @ObservedRealmObject private var game: PVGame
     @Published private(set) var frontArtwork: UIImage?
     @Published private(set) var backArtwork: UIImage?
 
+    func frontArtworkPublisher() -> AnyPublisher<UIImage?, Never> {
+        $frontArtwork.eraseToAnyPublisher()
+    }
+
+    func backArtworkPublisher() -> AnyPublisher<UIImage?, Never> {
+        $backArtwork.eraseToAnyPublisher()
+    }
+
     init(game: PVGame) {
         self._game = ObservedRealmObject(wrappedValue: game)
-        // Set placeholder images immediately
-        self.frontArtwork = UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
+        // Don't set placeholder immediately anymore
         Task { await loadArtwork() }
     }
 
     private func loadArtwork() async {
         // Try to load front artwork
         let artworkURL = game.trueArtworkURL
-        if !artworkURL.isEmpty,
-           let image = await PVMediaCache.shareInstance().image(forKey: artworkURL) {
-            await MainActor.run { self.frontArtwork = image }
+        if !artworkURL.isEmpty {
+            if let image = await PVMediaCache.shareInstance().image(forKey: artworkURL) {
+                await MainActor.run { self.frontArtwork = image }
+            } else {
+                // Set placeholder while loading
+                await MainActor.run {
+                    self.frontArtwork = UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
+                }
+            }
         }
 
         // Try to load back artwork

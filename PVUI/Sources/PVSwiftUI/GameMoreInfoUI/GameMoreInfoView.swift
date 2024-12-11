@@ -8,7 +8,17 @@
 import SwiftUI
 import PVLibrary
 import SafariServices
+import Combine
 
+/// Protocol for observing artwork changes
+protocol ArtworkObservable: AnyObject {
+    var frontArtwork: UIImage? { get }
+    var backArtwork: UIImage? { get }
+
+    // Specific methods for each artwork publisher
+    func frontArtworkPublisher() -> AnyPublisher<UIImage?, Never>
+    func backArtworkPublisher() -> AnyPublisher<UIImage?, Never>
+}
 
 class GameMoreInfoViewModel: ObservableObject {
     @Published private var driver: any GameLibraryDriver
@@ -16,12 +26,23 @@ class GameMoreInfoViewModel: ObservableObject {
     @Published private(set) var game: (any GameMoreInfoViewModelDataSource)?
     @Published var isDebugExpanded = false
 
+    /// Front Artwork with published wrapper
+    @Published private(set) var frontArtwork: UIImage?
+
+    /// Back Artwork with published wrapper
+    @Published private(set) var backArtwork: UIImage?
+
     init(driver: any GameLibraryDriver, gameId: String) {
         self.driver = driver
         self.gameId = gameId
 
         // Initial load
         self.game = driver.game(byId: gameId)
+
+        // Setup artwork observation
+        if let game = self.game as? ArtworkObservable {
+            observeArtwork(from: game)
+        }
 
         ILOG("Game set: \(self.game.debugDescription)")
 
@@ -34,24 +55,28 @@ class GameMoreInfoViewModel: ObservableObject {
         )
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+    private func observeArtwork(from game: ArtworkObservable) {
+        // Use combine to observe artwork changes
+        game.frontArtworkPublisher()
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$frontArtwork)
+
+        game.backArtworkPublisher()
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$backArtwork)
     }
 
     @objc private func gameDidUpdate() {
         DispatchQueue.main.async {
             self.game = self.driver.game(byId: self.gameId)
+            if let game = self.game as? ArtworkObservable {
+                self.observeArtwork(from: game)
+            }
         }
     }
 
-    /// Front Artwork
-    var frontArtwork: UIImage? {
-        game?.boxFrontArtwork
-    }
-
-    /// Back Artwork
-    var backArtwork: UIImage? {
-        game?.boxBackArtwork
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     /// Box art aspect ratio
@@ -183,7 +208,7 @@ struct GameMoreInfoView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Artwork section
+                // Artwork section with direct binding to published properties
                 GameArtworkView(
                     frontArtwork: viewModel.frontArtwork,
                     backArtwork: viewModel.backArtwork
