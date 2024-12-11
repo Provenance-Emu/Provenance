@@ -330,17 +330,21 @@ struct GameMoreInfoView: View {
             }
             .padding(.bottom, 50)
         }
-        .alert(item: $editingField) { field in
-            Alert(
-                title: Text("Edit \(field.title)"),
-                message: nil,
-                primaryButton: .default(Text("Save")) {
+        .alert(editingField?.title ?? "", isPresented: .init(
+            get: { editingField != nil },
+            set: { if !$0 { editingField = nil } }
+        )) {
+            TextField("Value", text: $editingValue)
+            Button("Cancel", role: .cancel) {
+                editingField = nil
+            }
+            Button("Save") {
+                if let field = editingField {
                     saveEdit(field)
-                },
-                secondaryButton: .cancel {
-                    editingField = nil
                 }
-            )
+            }
+        } message: {
+            Text("Enter a new value")
         }
     }
 
