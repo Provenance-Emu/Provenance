@@ -21,7 +21,7 @@ struct GameArtworkView: View {
     }
 
     private var currentArtwork: UIImage? {
-        showingFrontArt ? frontArtwork : (backArtwork ?? frontArtwork)
+        showingFrontArt ? frontArtwork : (backArtwork?.withHorizontallyFlippedOrientation())
     }
 
     var body: some View {
@@ -54,7 +54,7 @@ struct GameArtworkView: View {
             .fullScreenCover(isPresented: $showingFullscreen) {
                 FullscreenArtworkView(
                     frontImage: frontArtwork,
-                    backImage: backArtwork
+                    backImage: backArtwork?.withHorizontallyFlippedOrientation()
                 )
             }
     }

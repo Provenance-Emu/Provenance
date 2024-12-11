@@ -25,7 +25,7 @@ public extension UIImage {
         // TODO: To be replaced with the correct system placeholder
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        
+
         let foregroundColor: UIColor = foregroundColor ?? ThemeManager.shared.currentPalette.settingsCellText ?? UIColor.white
 
         #if os(iOS)
