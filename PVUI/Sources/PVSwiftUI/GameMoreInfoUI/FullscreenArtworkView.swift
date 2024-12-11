@@ -19,6 +19,9 @@ struct FullscreenArtworkView: View {
     @State private var dragOffset = CGSize.zero
     @GestureState private var isDragging = false
 
+    private let maxZoom: CGFloat = 3.0
+    private let defaultZoom: CGFloat = 1.0
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -34,7 +37,8 @@ struct FullscreenArtworkView: View {
                         .gesture(
                             MagnificationGesture()
                                 .onChanged { value in
-                                    scale = lastScale * value.magnitude
+                                    let newScale = lastScale * value.magnitude
+                                    scale = min(max(defaultZoom, newScale), maxZoom)
                                 }
                                 .onEnded { _ in
                                     lastScale = scale
@@ -46,7 +50,7 @@ struct FullscreenArtworkView: View {
                                     state = true
                                 }
                                 .onChanged { value in
-                                    if scale == 1.0 {
+                                    if scale == defaultZoom {
                                         dragOffset = value.translation
                                     } else {
                                         offset = CGSize(
@@ -56,7 +60,7 @@ struct FullscreenArtworkView: View {
                                     }
                                 }
                                 .onEnded { value in
-                                    if scale == 1.0 {
+                                    if scale == defaultZoom {
                                         if abs(dragOffset.height) > 100 {
                                             dismiss()
                                         }
@@ -67,11 +71,18 @@ struct FullscreenArtworkView: View {
                                 }
                         )
                         .onTapGesture(count: 2) {
-                            withAnimation {
-                                scale = 1.0
-                                lastScale = 1.0
-                                offset = .zero
-                                lastOffset = .zero
+                            withAnimation(.spring()) {
+                                if scale > defaultZoom {
+                                    // Reset to default
+                                    scale = defaultZoom
+                                    lastScale = defaultZoom
+                                    offset = .zero
+                                    lastOffset = .zero
+                                } else {
+                                    // Zoom in
+                                    scale = maxZoom
+                                    lastScale = maxZoom
+                                }
                             }
                         }
                 }
