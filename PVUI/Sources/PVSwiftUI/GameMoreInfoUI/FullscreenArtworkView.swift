@@ -10,30 +10,46 @@ import UIKit
 
 /// Fullscreen view for artwork with zoom and pan
 struct FullscreenArtworkView: View {
-    let image: UIImage?
+    let frontImage: UIImage?
+    let backImage: UIImage?
     @Environment(\.dismiss) private var dismiss
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
     @State private var offset = CGSize.zero
     @State private var lastOffset = CGSize.zero
     @State private var dragOffset = CGSize.zero
+    @State private var showingFrontImage = true
+    @State private var isAnimating = false
     @GestureState private var isDragging = false
 
     private let maxZoom: CGFloat = 3.0
     private let defaultZoom: CGFloat = 1.0
+
+    private var currentImage: UIImage? {
+        showingFrontImage ? frontImage : backImage
+    }
+
+    private var canFlip: Bool {
+        backImage != nil
+    }
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 Color.black.edgesIgnoringSafeArea(.all)
 
-                if let image = image {
+                if let image = currentImage {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .scaleEffect(scale)
                         .offset(x: offset.width + dragOffset.width,
                                y: offset.height + dragOffset.height)
+                        .rotation3DEffect(
+                            .degrees(showingFrontImage ? 0 : 180),
+                            axis: (x: 0.0, y: 1.0, z: 0.0)
+                        )
+                        .animation(.easeInOut(duration: isAnimating ? 0.4 : 0), value: showingFrontImage)
                         .gesture(
                             MagnificationGesture()
                                 .onChanged { value in
@@ -83,6 +99,12 @@ struct FullscreenArtworkView: View {
                                     scale = maxZoom
                                     lastScale = maxZoom
                                 }
+                            }
+                        }
+                        .onTapGesture {
+                            if canFlip {
+                                isAnimating = true
+                                showingFrontImage.toggle()
                             }
                         }
                 }

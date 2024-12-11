@@ -52,7 +52,10 @@ struct GameArtworkView: View {
                 isAnimating = false
             }
             .fullScreenCover(isPresented: $showingFullscreen) {
-                FullscreenArtworkView(image: currentArtwork)
+                FullscreenArtworkView(
+                    frontImage: frontArtwork,
+                    backImage: backArtwork
+                )
             }
     }
 }
