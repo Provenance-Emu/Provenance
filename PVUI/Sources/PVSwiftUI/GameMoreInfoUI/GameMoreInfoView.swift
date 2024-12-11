@@ -14,6 +14,7 @@ class GameMoreInfoViewModel: ObservableObject {
     @Published private var driver: any GameLibraryDriver
     private let gameId: String
     @Published private(set) var game: (any GameMoreInfoViewModelDataSource)?
+    @Published var isDebugExpanded = false
 
     init(driver: any GameLibraryDriver, gameId: String) {
         self.driver = driver
@@ -187,11 +188,6 @@ struct GameMoreInfoView: View {
                     frontArtwork: viewModel.frontArtwork,
                     backArtwork: viewModel.backArtwork
                 )
-                .padding(.vertical)
-                .background(Color(.systemBackground))
-                .cornerRadius(8)
-                .shadow(radius: 3)
-                .padding(.horizontal)
 
                 // Game information section
                 VStack(spacing: 8) {
@@ -237,10 +233,11 @@ struct GameMoreInfoView: View {
 
                     LabelRowView(
                         label: "Region",
-                        value: viewModel.region
-                    ) {
-                        editField(.region, initialValue: viewModel.region)
-                    }
+                        value: viewModel.region.map { RegionLabel.format($0) } ?? "",
+                        onLongPress: {
+                            editField(.region, initialValue: viewModel.region)
+                        }
+                    )
 
                     if let playCount = viewModel.plays {
                         LabelRowView(
@@ -266,6 +263,23 @@ struct GameMoreInfoView: View {
                     }
                 }
                 .padding()
+
+                // Debug section
+                if let debugInfo = viewModel.debugDescription {
+                    DisclosureGroup(
+                        isExpanded: $viewModel.isDebugExpanded,
+                        content: {
+                            GameDebugInfoView(debugInfo: debugInfo)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical)
+                        },
+                        label: {
+                            Text("Debug Information")
+                                .font(.headline)
+                        }
+                    )
+                    .padding()
+                }
             }
             .padding(.bottom, 50)
         }
@@ -318,6 +332,7 @@ public class PagedGameMoreInfoViewModel: ObservableObject {
     @Published var currentIndex: Int
     private let driver: (any GameLibraryDriver & PagedGameLibraryDataSource)
     let playGameCallback: ((String) async -> Void)?
+    @Published var isDebugExpanded = false
 
     // Navigation bar item states
     @Published var showingWebView = false
@@ -375,6 +390,10 @@ public class PagedGameMoreInfoViewModel: ObservableObject {
             await callback(gameId)
         }
     }
+
+    var debugDescription: String? {
+        currentGame?.debugDescription
+    }
 }
 
 // MARK: - Paged Game Info View
@@ -420,8 +439,11 @@ public struct PagedGameMoreInfoView: View {
 
                 if viewModel.playGameCallback != nil {
                     Button {
+                        dismiss()  // Dismiss first
                         Task {
-                            await viewModel.playGame()
+                            if let gameId = viewModel.currentGameId {
+                                await viewModel.playGameCallback?(gameId)
+                            }
                         }
                     } label: {
                         Image(systemName: "play.fill")

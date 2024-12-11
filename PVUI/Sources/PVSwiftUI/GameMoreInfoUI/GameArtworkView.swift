@@ -14,13 +14,18 @@ struct GameArtworkView: View {
     let backArtwork: UIImage?
     @State private var showingFrontArt = true
     @State private var isAnimating = false
+    @State private var showingFullscreen = false
 
     private var canShowBackArt: Bool {
         backArtwork != nil
     }
 
+    private var currentArtwork: UIImage? {
+        showingFrontArt ? frontArtwork : (backArtwork ?? frontArtwork)
+    }
+
     var body: some View {
-        Image(uiImage: showingFrontArt ? (frontArtwork ?? UIImage()) : (backArtwork ?? frontArtwork ?? UIImage()))
+        Image(uiImage: currentArtwork ?? UIImage())
             .resizable()
             .aspectRatio(contentMode: .fit)
             .background(Color(.systemBackground))
@@ -32,6 +37,9 @@ struct GameArtworkView: View {
                 axis: (x: 0.0, y: 1.0, z: 0.0)
             )
             .animation(.easeInOut(duration: isAnimating ? 0.4 : 0), value: showingFrontArt)
+            .onTapGesture(count: 2) {
+                showingFullscreen = true
+            }
             .onTapGesture {
                 if canShowBackArt {
                     isAnimating = true
@@ -42,6 +50,9 @@ struct GameArtworkView: View {
                 // Reset to front on appear
                 showingFrontArt = true
                 isAnimating = false
+            }
+            .fullScreenCover(isPresented: $showingFullscreen) {
+                FullscreenArtworkView(image: currentArtwork)
             }
     }
 }
