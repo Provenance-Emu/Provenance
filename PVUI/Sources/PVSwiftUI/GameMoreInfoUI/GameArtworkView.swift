@@ -8,57 +8,36 @@
 import SwiftUI
 import UIKit
 
-/// View for displaying and interacting with game artwork
+/// A view that displays game artwork with optional flipping between front and back artwork
 struct GameArtworkView: View {
     let frontArtwork: UIImage?
     let backArtwork: UIImage?
-    let aspectRatio: CGFloat
-    @State private var isShowingBack = false
-    @State private var isShowingFullscreen = false
+    @State private var showingFrontArt = true
+    @State private var isAnimating = false
 
-    var body: some View {
-        ZStack {
-            // Main artwork view
-            artworkImage
-                .rotation3DEffect(
-                    .degrees(isShowingBack ? 180 : 0),
-                    axis: (x: 0.0, y: 1.0, z: 0.0)
-                )
-                .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        isShowingBack.toggle()
-                    }
-                }
-                .onTapGesture(count: 2) {
-                    isShowingFullscreen = true
-                }
-        }
-        .aspectRatio(aspectRatio, contentMode: .fit)
-        .frame(maxWidth: 300)
-        .fullScreenCover(isPresented: $isShowingFullscreen) {
-            FullscreenArtworkView(
-                image: isShowingBack ? backArtwork : frontArtwork,
-                isShowingBack: $isShowingBack
-            )
-        }
+    private var canShowBackArt: Bool {
+        backArtwork != nil
     }
 
-    private var artworkImage: some View {
-        Group {
-            if let image = isShowingBack ? backArtwork : frontArtwork {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
-                Image(systemName: "photo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.secondary)
-                    .padding()
+    var body: some View {
+        Image(uiImage: showingFrontArt ? (frontArtwork ?? UIImage()) : (backArtwork ?? frontArtwork ?? UIImage()))
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .rotation3DEffect(
+                .degrees(showingFrontArt ? 0 : 180),
+                axis: (x: 0.0, y: 1.0, z: 0.0)
+            )
+            .animation(.easeInOut(duration: isAnimating ? 0.4 : 0), value: showingFrontArt)
+            .onTapGesture {
+                if canShowBackArt {
+                    isAnimating = true
+                    showingFrontArt.toggle()
+                }
             }
-        }
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
-        .shadow(radius: 3)
+            .onAppear {
+                // Reset to front on appear
+                showingFrontArt = true
+                isAnimating = false
+            }
     }
 }

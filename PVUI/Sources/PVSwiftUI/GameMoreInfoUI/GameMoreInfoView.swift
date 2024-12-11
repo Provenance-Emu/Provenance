@@ -21,7 +21,7 @@ class GameMoreInfoViewModel: ObservableObject {
 
         // Initial load
         self.game = driver.game(byId: gameId)
-        
+
         ILOG("Game set: \(self.game.debugDescription)")
 
         // Observe changes
@@ -158,8 +158,6 @@ struct GameMoreInfoView: View {
     @StateObject var viewModel: GameMoreInfoViewModel
     @State private var editingField: EditableField?
     @State private var editingValue: String = ""
-    @State private var showingWebView = false
-    @State private var showingDebugInfo = false
 
     private enum EditableField: Identifiable {
         case name
@@ -187,8 +185,7 @@ struct GameMoreInfoView: View {
                 // Artwork section
                 GameArtworkView(
                     frontArtwork: viewModel.frontArtwork,
-                    backArtwork: viewModel.backArtwork,
-                    aspectRatio: viewModel.boxArtAspectRatio
+                    backArtwork: viewModel.backArtwork
                 )
                 .padding(.vertical)
 
@@ -241,20 +238,23 @@ struct GameMoreInfoView: View {
                         editField(.region, initialValue: viewModel.region)
                     }
 
-                    // Stats section
-                    VStack(spacing: 8) {
+                    if let playCount = viewModel.plays {
                         LabelRowView(
                             label: "Play Count",
-                            value: viewModel.plays.map(String.init) ?? "Never",
+                            value: "\(playCount)",
                             isEditable: false
                         )
+                    }
 
+                    if let timeSpent = viewModel.timeSpent {
                         LabelRowView(
-                            label: "Time Played",
-                            value: formatPlayTime(viewModel.timeSpent),
+                            label: "Time Spent",
+                            value: formatPlayTime(timeSpent),
                             isEditable: false
                         )
+                    }
 
+                    if viewModel.plays != nil || viewModel.timeSpent != nil {
                         Button("Reset Stats") {
                             viewModel.resetStats()
                         }
@@ -265,53 +265,26 @@ struct GameMoreInfoView: View {
             }
             .padding(.bottom, 50)
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                HStack {
-                    if viewModel.debugDescription != nil {
-                        NavigationLink(destination: GameDebugInfoView(debugInfo: viewModel.debugDescription!)) {
-                            Image(systemName: "info.circle")
-                        }
-                    }
-
-                    Button {
-                        showingWebView = true
-                    } label: {
-                        Image(systemName: "safari")
-                    }
-                    .disabled(viewModel.referenceURL == nil)
+        .alert(item: $editingField) { field in
+            Alert(
+                title: Text("Edit \(field.title)"),
+                message: nil,
+                primaryButton: .default(Text("Save")) {
+                    saveEdit(field)
+                },
+                secondaryButton: .cancel {
+                    editingField = nil
                 }
-            }
-        }
-        .sheet(isPresented: $showingWebView) {
-            if let url = viewModel.referenceURL {
-                GameReferenceWebView(url: url)
-            }
-        }
-        .alert(editingField?.title ?? "", isPresented: .init(
-            get: { editingField != nil },
-            set: { if !$0 { editingField = nil } }
-        )) {
-            TextField("Value", text: $editingValue)
-            Button("Cancel", role: .cancel) {
-                editingField = nil
-            }
-            Button("Save") {
-                saveEdit()
-            }
-        } message: {
-            Text("Enter a new value")
+            )
         }
     }
 
     private func editField(_ field: EditableField, initialValue: String?) {
-        editingField = field
         editingValue = initialValue ?? ""
+        editingField = field
     }
 
-    private func saveEdit() {
-        guard let field = editingField else { return }
-
+    private func saveEdit(_ field: EditableField) {
         switch field {
         case .name:
             viewModel.name = editingValue
@@ -341,6 +314,10 @@ public class PagedGameMoreInfoViewModel: ObservableObject {
     @Published var currentIndex: Int
     private let driver: (any GameLibraryDriver & PagedGameLibraryDataSource)
 
+    // Navigation bar item states
+    @Published var showingWebView = false
+    @Published var showingShareSheet = false
+
     public init(driver: any GameLibraryDriver & PagedGameLibraryDataSource, initialGameId: String? = nil) {
         self.driver = driver
         if let gameId = initialGameId, let index = driver.index(for: gameId) {
@@ -352,6 +329,11 @@ public class PagedGameMoreInfoViewModel: ObservableObject {
 
     var currentGameId: String? {
         driver.gameId(at: currentIndex)
+    }
+
+    var currentGame: (any GameMoreInfoViewModelDataSource)? {
+        guard let gameId = currentGameId else { return nil }
+        return driver.game(byId: gameId)
     }
 
     var currentGameName: String {
@@ -369,6 +351,23 @@ public class PagedGameMoreInfoViewModel: ObservableObject {
     func makeGameViewModel(for index: Int) -> GameMoreInfoViewModel? {
         guard let gameId = driver.gameId(at: index) else { return nil }
         return GameMoreInfoViewModel(driver: driver, gameId: gameId)
+    }
+
+    // Navigation bar actions
+    func openWebView() {
+        if let game = currentGame,
+           let urlString = game.referenceURL?.absoluteString,
+           let _ = URL(string: urlString) {
+            showingWebView = true
+        }
+    }
+
+    func shareGame() {
+        showingShareSheet = true
+    }
+
+    func playGame() {
+        // Implement game launch logic
     }
 }
 
@@ -392,6 +391,34 @@ public struct PagedGameMoreInfoView: View {
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
         .navigationTitle(viewModel.currentGameName)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if let game = viewModel.currentGame,
+                   let urlString = game.referenceURL?.absoluteString,
+                   let url = URL(string: urlString) {
+                    Button {
+                        viewModel.openWebView()
+                    } label: {
+                        Image(systemName: "book")
+                    }
+                    .sheet(isPresented: $viewModel.showingWebView) {
+                        GameReferenceWebView(url: url)
+                    }
+                }
+
+                Button {
+                    viewModel.shareGame()
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+
+                Button {
+                    viewModel.playGame()
+                } label: {
+                    Image(systemName: "play.fill")
+                }
+            }
+        }
     }
 }
 

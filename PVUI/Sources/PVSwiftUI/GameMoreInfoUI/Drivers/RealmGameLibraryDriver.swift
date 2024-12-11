@@ -134,15 +134,32 @@ private class RealmGameWrapper: GameMoreInfoViewModelDataSource {
 
     private func loadArtwork() async {
         // Try to load front artwork
-        if let artworkURL = game.activeArtworkURL,
+        let artworkURL = game.trueArtworkURL
+        if !artworkURL.isEmpty,
            let image = await PVMediaCache.shareInstance().image(forKey: artworkURL) {
             await MainActor.run { self.frontArtwork = image }
         }
 
         // Try to load back artwork
         if let backURL = game.boxBackArtworkURL,
-           let image = await PVMediaCache.shareInstance().image(forKey: backURL) {
-            await MainActor.run { self.backArtwork = image }
+           !backURL.isEmpty {
+            // First try to load from cache
+            if let image = await PVMediaCache.shareInstance().image(forKey: backURL) {
+                await MainActor.run { self.backArtwork = image }
+            } else {
+                // If not in cache, try to download
+                guard let url = URL(string: backURL) else { return }
+                do {
+                    let (data, _) = try await URLSession.shared.data(from: url)
+                    if let image = UIImage(data: data) {
+                        // Save to cache for later
+                        try? PVMediaCache.writeData(toDisk: data, withKey: backURL)
+                        await MainActor.run { self.backArtwork = image }
+                    }
+                } catch {
+                    ELOG("Failed to download back artwork: \(error.localizedDescription)")
+                }
+            }
         }
     }
 
@@ -193,12 +210,10 @@ private class RealmGameWrapper: GameMoreInfoViewModelDataSource {
 
     var boxFrontArtwork: UIImage? {
         get { frontArtwork }
-        set { /* Handled by driver */ }
     }
 
     var boxBackArtwork: UIImage? {
         get { backArtwork }
-        set { /* Handled by driver */ }
     }
 
     var referenceURL: URL? {
