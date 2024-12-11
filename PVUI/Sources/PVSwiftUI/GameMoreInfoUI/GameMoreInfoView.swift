@@ -188,6 +188,10 @@ struct GameMoreInfoView: View {
                     backArtwork: viewModel.backArtwork
                 )
                 .padding(.vertical)
+                .background(Color(.systemBackground))
+                .cornerRadius(8)
+                .shadow(radius: 3)
+                .padding(.horizontal)
 
                 // Game information section
                 VStack(spacing: 8) {
@@ -313,13 +317,16 @@ struct GameMoreInfoView: View {
 public class PagedGameMoreInfoViewModel: ObservableObject {
     @Published var currentIndex: Int
     private let driver: (any GameLibraryDriver & PagedGameLibraryDataSource)
+    let playGameCallback: ((String) async -> Void)?
 
     // Navigation bar item states
     @Published var showingWebView = false
-    @Published var showingShareSheet = false
 
-    public init(driver: any GameLibraryDriver & PagedGameLibraryDataSource, initialGameId: String? = nil) {
+    public init(driver: any GameLibraryDriver & PagedGameLibraryDataSource,
+               initialGameId: String? = nil,
+               playGameCallback: ((String) async -> Void)? = nil) {
         self.driver = driver
+        self.playGameCallback = playGameCallback
         if let gameId = initialGameId, let index = driver.index(for: gameId) {
             self.currentIndex = index
         } else {
@@ -362,18 +369,18 @@ public class PagedGameMoreInfoViewModel: ObservableObject {
         }
     }
 
-    func shareGame() {
-        showingShareSheet = true
-    }
-
-    func playGame() {
-        // Implement game launch logic
+    func playGame() async {
+        if let gameId = currentGameId,
+           let callback = playGameCallback {
+            await callback(gameId)
+        }
     }
 }
 
 // MARK: - Paged Game Info View
 public struct PagedGameMoreInfoView: View {
     @StateObject var viewModel: PagedGameMoreInfoViewModel
+    @Environment(\.dismiss) private var dismiss
 
     public init(viewModel: PagedGameMoreInfoViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -392,6 +399,11 @@ public struct PagedGameMoreInfoView: View {
         .indexViewStyle(.page(backgroundDisplayMode: .always))
         .navigationTitle(viewModel.currentGameName)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("Done") {
+                    dismiss()
+                }
+            }
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 if let game = viewModel.currentGame,
                    let urlString = game.referenceURL?.absoluteString,
@@ -406,16 +418,14 @@ public struct PagedGameMoreInfoView: View {
                     }
                 }
 
-                Button {
-                    viewModel.shareGame()
-                } label: {
-                    Image(systemName: "square.and.arrow.up")
-                }
-
-                Button {
-                    viewModel.playGame()
-                } label: {
-                    Image(systemName: "play.fill")
+                if viewModel.playGameCallback != nil {
+                    Button {
+                        Task {
+                            await viewModel.playGame()
+                        }
+                    } label: {
+                        Image(systemName: "play.fill")
+                    }
                 }
             }
         }

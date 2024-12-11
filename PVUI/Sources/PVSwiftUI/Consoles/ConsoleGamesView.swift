@@ -524,6 +524,22 @@ struct ConsoleGamesView: SwiftUI.View {
             )
         }
     }
+
+    private func makeGameMoreInfoView(for game: PVGame) -> some View {
+        do {
+            let driver = try RealmGameLibraryDriver()
+            let viewModel = PagedGameMoreInfoViewModel(
+                driver: driver,
+                initialGameId: game.md5Hash,
+                playGameCallback: { [weak rootDelegate] md5 in
+                    await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                }
+            )
+            return PagedGameMoreInfoView(viewModel: viewModel)
+        } catch {
+            return Text("Failed to initialize game info view: \(error.localizedDescription)")
+        }
+    }
 }
 
 // MARK: - View Components

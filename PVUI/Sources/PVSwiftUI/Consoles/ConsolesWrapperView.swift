@@ -17,6 +17,17 @@ import PVRealm
 import PVThemes
 import Combine
 
+private struct PVRootDelegateKey: EnvironmentKey {
+    static let defaultValue: PVRootDelegate? = nil
+}
+
+extension EnvironmentValues {
+    var rootDelegate: PVRootDelegate? {
+        get { self[PVRootDelegateKey.self] }
+        set { self[PVRootDelegateKey.self] = newValue }
+    }
+}
+
 @available(iOS 14, tvOS 14, *)
 class ConsolesWrapperViewDelegate: ObservableObject {
     @Published var selectedTab = ""
@@ -70,7 +81,10 @@ struct ConsolesWrapperView: SwiftUI.View {
             let driver = try RealmGameLibraryDriver()
             let viewModel = PagedGameMoreInfoViewModel(
                 driver: driver,
-                initialGameId: state.id
+                initialGameId: state.id,
+                playGameCallback: { [weak rootDelegate] md5 in
+                    await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                }
             )
             return PagedGameMoreInfoView(viewModel: viewModel)
         } catch {
@@ -78,25 +92,23 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
     }
 
-    var body: some SwiftUI.View {
-        if consoles.isEmpty {
-            showNoConsolesView()
-        } else {
-            showConsoles()
-                .sheet(item: $gameInfoState) { state in
-                    NavigationView {
-                        makeGameMoreInfoView(for: state)
-                            .navigationBarTitleDisplayMode(.inline)
-                            .toolbar {
-                                ToolbarItem(placement: .navigationBarTrailing) {
-                                    Button("Done") {
-                                        gameInfoState = nil
-                                    }
-                                }
+    var body: some View {
+        AnyView(
+            Group {
+                if consoles.isEmpty {
+                    showNoConsolesView()
+                } else {
+                    showConsoles()
+                        .sheet(item: $gameInfoState) { state in
+                            NavigationView {
+                                makeGameMoreInfoView(for: state)
+                                    .navigationBarTitleDisplayMode(.inline)
                             }
-                    }
+                        }
                 }
-        }
+            }
+        )
+        .environment(\.rootDelegate, rootDelegate)
     }
 
     // MARK: - Helper Methods

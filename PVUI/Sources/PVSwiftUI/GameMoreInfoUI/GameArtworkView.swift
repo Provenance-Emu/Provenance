@@ -23,6 +23,10 @@ struct GameArtworkView: View {
         Image(uiImage: showingFrontArt ? (frontArtwork ?? UIImage()) : (backArtwork ?? frontArtwork ?? UIImage()))
             .resizable()
             .aspectRatio(contentMode: .fit)
+            .background(Color(.systemBackground))
+            .cornerRadius(8)
+            .shadow(radius: 3)
+            .padding()
             .rotation3DEffect(
                 .degrees(showingFrontArt ? 0 : 180),
                 axis: (x: 0.0, y: 1.0, z: 0.0)
