@@ -10011,6 +10011,9 @@
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
 				OTHER_LDFLAGS = "$(inherited)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=appletvos*]" = "org.provenance-emu.provenance.lite";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "org.provenance-emu.provenance.lite";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "org.provenance-emu.provenance.lite";
 				PRODUCT_MODULE_NAME = Provenance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -10086,6 +10089,9 @@
 					"-Wno-deprecated-declarations",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=appletvos*]" = "org.provenance-emu.provenance.lite";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "org.provenance-emu.provenance.lite";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "org.provenance-emu.provenance.lite";
 				PRODUCT_MODULE_NAME = Provenance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -10159,6 +10165,9 @@
 					"-Wno-deprecated-declarations",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=appletvos*]" = "org.provenance-emu.provenance.lite";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "org.provenance-emu.provenance.lite";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "org.provenance-emu.provenance.lite";
 				PRODUCT_MODULE_NAME = Provenance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
