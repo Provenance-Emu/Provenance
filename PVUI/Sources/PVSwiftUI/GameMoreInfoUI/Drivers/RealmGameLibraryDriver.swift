@@ -126,6 +126,10 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
     @Published private(set) var frontArtwork: UIImage?
     @Published private(set) var backArtwork: UIImage?
 
+    var gameDescription: String? {
+        game.gameDescription
+    }
+
     func frontArtworkPublisher() -> AnyPublisher<UIImage?, Never> {
         $frontArtwork.eraseToAnyPublisher()
     }

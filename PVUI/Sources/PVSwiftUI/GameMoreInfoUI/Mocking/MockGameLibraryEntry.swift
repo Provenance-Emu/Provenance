@@ -26,6 +26,8 @@ public protocol GameMoreInfoViewModelDataSource: ObservableObject {
     var id: String { get }
     var boxArtAspectRatio: CGFloat { get }
     var debugDescription: String? { get }
+    /// Game description text if available
+    var gameDescription: String? { get }
 }
 
 /// Mock implementation of PVGameLibraryEntry for previews
@@ -68,7 +70,12 @@ internal class MockGameLibraryEntry: Identifiable, ObservableObject, GameMoreInf
     var playCount: Int? = 42
     var timeSpentInGame: Int? = 3600 // 1 hour
     var rating: Int = 5
-    var gameDescription: String? = "Experience Mario's most exciting adventure yet in this classic SNES title!"
+    var gameDescription: String? = """
+        Experience Mario's most exciting adventure yet in this classic SNES title!
+        Join Mario and Yoshi as they explore Dinosaur Land to rescue Princess Peach
+        from the evil Bowser. Discover new power-ups, secret exits, and hidden paths
+        across multiple worlds filled with challenging enemies and puzzles.
+        """
     private var boxBackArtworkURL: URL? = URL(string: "https://example.com/mario-back.jpg")
     var developer: String? = "Nintendo"
     var publisher: String? = "Nintendo"

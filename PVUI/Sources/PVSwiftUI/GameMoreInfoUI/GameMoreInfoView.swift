@@ -176,6 +176,11 @@ class GameMoreInfoViewModel: ObservableObject {
             gameId: "mario" // Using one of our mock game IDs
         )
     }
+
+    /// Game description if available
+    var gameDescription: String? {
+        game?.gameDescription
+    }
 }
 
 
@@ -288,6 +293,23 @@ struct GameMoreInfoView: View {
                     }
                 }
                 .padding()
+
+                // Game description section
+                if let description = viewModel.gameDescription,
+                   !description.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Description")
+                            .font(.headline)
+
+                        ScrollView {
+                            Text(description)
+                                .font(.body)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .frame(maxHeight: 200)
+                    }
+                    .padding()
+                }
 
                 // Debug section
                 if let debugInfo = viewModel.debugDescription {

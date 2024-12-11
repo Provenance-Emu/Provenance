@@ -99,6 +99,38 @@ public class MockGameLibraryDriver: GameLibraryDriver, PagedGameLibraryDataSourc
         if let urlString = referenceURL {
             game.referenceURL = URL(string: urlString)
         }
+
+        // Add custom descriptions for each game
+        game.gameDescription = switch id {
+        case "mario":
+            """
+            Experience Mario's most exciting adventure yet in this classic SNES title!
+            Join Mario and Yoshi as they explore Dinosaur Land to rescue Princess Peach
+            from the evil Bowser. Discover new power-ups, secret exits, and hidden paths
+            across multiple worlds filled with challenging enemies and puzzles.
+            """
+        case "zelda":
+            """
+            Embark on an epic quest to save Princess Zelda and the kingdom of Hyrule.
+            As Link, you'll explore a vast world, discover dungeons, collect powerful
+            items, and face challenging enemies in this groundbreaking NES adventure.
+            """
+        case "sonic":
+            """
+            Speed through multiple zones as Sonic the Hedgehog in this classic Genesis
+            platformer. Use your spin dash to defeat Dr. Robotnik's mechanical army
+            and collect the Chaos Emeralds to save the animals of Green Hill Zone.
+            """
+        case "ff7":
+            """
+            Join Cloud Strife and a diverse cast of characters in this epic RPG.
+            Battle the evil Shinra Corporation, uncover dark secrets, and save the
+            planet from destruction in this PlayStation masterpiece.
+            """
+        default:
+            nil
+        }
+
         return game
     }
 
