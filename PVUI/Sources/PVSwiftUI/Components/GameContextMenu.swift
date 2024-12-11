@@ -15,8 +15,8 @@ import PVRealm
 import PVLogging
 import PVUIBase
 
+/// A SwiftUI context menu for game-related actions
 struct GameContextMenu: SwiftUI.View {
-
     var game: PVGame
     var cores: [PVCore] {
         game.system.cores.filter{!(AppState.shared.isAppStore && $0.appStoreDisabled)}
@@ -36,10 +36,10 @@ struct GameContextMenu: SwiftUI.View {
                     } label: { Label("Open in...", systemImage: "gamecontroller") }
                 }
                 Button {
-                    showMoreInfo(forGame: game)
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowGameInfoFor: game.md5Hash)
                 } label: { Label("Game Info", systemImage: "info.circle") }
                 Button {
-                    showSaveStatesManager(forGame: game)
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowSaveStatesFor: game)
                 } label: {
                     Label("Manage Save States", systemImage: "clock.arrow.circlepath")
                 }
@@ -72,10 +72,6 @@ struct GameContextMenu: SwiftUI.View {
                 Button {
                     pasteArtwork(forGame: game)
                 } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
-                //            Button {
-                //                share(game: game)
-                //            } label: { Label("Share", systemImage: "square.and.arrow.up") }
-                // New menu item to clear custom artwork
                 if game.customArtworkURL != "" {
                     Button {
                         clearCustomArtwork(forGame: game)
@@ -105,22 +101,6 @@ struct GameContextMenu: SwiftUI.View {
 }
 
 extension GameContextMenu {
-
-    func showMoreInfo(forGame game: PVGame) {
-        guard !game.isInvalidated else { return }
-        let moreInfoCollectionVC = GameMoreInfoViewController(game: game)
-        if let rootDelegate = rootDelegate as? UIViewController {
-
-            let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module)
-                .instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
-            firstVC.game = game
-
-            let moreInfoCollectionVC = GameMoreInfoPageViewController()
-            moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
-            rootDelegate.show(moreInfoCollectionVC, sender: self)
-        }
-    }
-
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
         // Get the MD5 of the game
@@ -128,14 +108,13 @@ extension GameContextMenu {
         // Copy to pasteboard
 #if !os(tvOS)
         UIPasteboard.general.string = md5
-        #endif
-
+#endif
         rootDelegate?.showMessage("The MD5 hash for \(game.title) has been copied to the clipboard.", title: "MD5 Copied")
     }
 
     func pasteArtwork(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
-        #if !os(tvOS)
+#if !os(tvOS)
         DLOG("Attempting to paste artwork for game: \(game.title)")
         let pasteboard = UIPasteboard.general
         if let pastedImage = pasteboard.image {
@@ -161,27 +140,15 @@ extension GameContextMenu {
             DLOG("No image or URL found in pasteboard")
             artworkNotFoundAlert()
         }
-        #else
+#else
         DLOG("Pasting artwork not supported on this platform")
         rootDelegate?.showMessage("Pasting artwork is not supported on this platform.", title: "Not Supported")
-        #endif
+#endif
     }
 
     func artworkNotFoundAlert() {
         DLOG("Showing artwork not found alert")
         rootDelegate?.showMessage("Pasteboard did not contain an image.", title: "Artwork Not Found")
-    }
-
-    func share(game: PVGame) {
-        guard !game.isInvalidated else { return }
-        #if !os(tvOS)
-        DLOG("Attempting to share game: \(game.title)")
-        #warning("TODO: Share button action")
-        self.rootDelegate?.showUnderConstructionAlert()
-        #else
-        DLOG("Sharing not supported on this platform")
-        rootDelegate?.showMessage("Sharing is not supported on this platform.", title: "Not Supported")
-        #endif
     }
 
     private func saveArtwork(image: UIImage, forGame game: PVGame) {
@@ -206,7 +173,6 @@ extension GameContextMenu {
             DLOG("Database transaction completed successfully")
             rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
 
-            // Verify the image can be retrieved
             DLOG("Attempting to verify image retrieval")
             PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
                 if let retrievedImage = retrievedImage {
@@ -281,10 +247,5 @@ extension GameContextMenu {
            let viewController = windowScene.windows.first?.rootViewController {
             viewController.present(alert, animated: true)
         }
-    }
-
-    private func showSaveStatesManager(forGame game: PVGame) {
-        guard !game.isInvalidated else { return }
-        contextMenuDelegate?.gameContextMenu(self, didRequestShowSaveStatesFor: game)
     }
 }

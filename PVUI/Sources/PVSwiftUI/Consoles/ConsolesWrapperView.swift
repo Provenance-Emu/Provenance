@@ -17,6 +17,17 @@ import PVRealm
 import PVThemes
 import Combine
 
+private struct PVRootDelegateKey: EnvironmentKey {
+    static let defaultValue: PVRootDelegate? = nil
+}
+
+extension EnvironmentValues {
+    var rootDelegate: PVRootDelegate? {
+        get { self[PVRootDelegateKey.self] }
+        set { self[PVRootDelegateKey.self] = newValue }
+    }
+}
+
 @available(iOS 14, tvOS 14, *)
 class ConsolesWrapperViewDelegate: ObservableObject {
     @Published var selectedTab = ""
@@ -32,8 +43,14 @@ struct ConsolesWrapperView: SwiftUI.View {
     weak var rootDelegate: (PVRootDelegate & PVMenuDelegate)!
 
     @State private var showEmptySystems: Bool
+    @State private var gameInfoState: GameInfoState?
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
     @ObservedObject private var themeManager = ThemeManager.shared
+
+    /// State for game info presentation
+    struct GameInfoState: Identifiable {
+        let id: String
+    }
 
     // MARK: - Initializer
 
@@ -59,15 +76,46 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     // MARK: - Body
 
-    var body: some SwiftUI.View {
-        if consoles.isEmpty {
-            showNoConsolesView()
-        } else {
-            showConsoles()
+    private func makeGameMoreInfoView(for state: GameInfoState) -> some View {
+        do {
+            let driver = try RealmGameLibraryDriver()
+            let viewModel = PagedGameMoreInfoViewModel(
+                driver: driver,
+                initialGameId: state.id,
+                playGameCallback: { [weak rootDelegate] md5 in
+                    await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                }
+            )
+            return PagedGameMoreInfoView(viewModel: viewModel)
+        } catch {
+            return Text("Failed to load game info: \(error.localizedDescription)")
         }
     }
 
+    var body: some View {
+        AnyView(
+            Group {
+                if consoles.isEmpty {
+                    showNoConsolesView()
+                } else {
+                    showConsoles()
+                        .sheet(item: $gameInfoState) { state in
+                            NavigationView {
+                                makeGameMoreInfoView(for: state)
+                                    .navigationBarTitleDisplayMode(.inline)
+                            }
+                        }
+                }
+            }
+        )
+        .environment(\.rootDelegate, rootDelegate)
+    }
+
     // MARK: - Helper Methods
+
+    func showGameInfo(for gameId: String) {
+        gameInfoState = GameInfoState(id: gameId)
+    }
 
     private func sortedConsoles() -> [PVSystem] {
         viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
@@ -83,7 +131,12 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     private func showConsoles() -> some View {
         TabView(selection: $delegate.selectedTab) {
-            HomeView(gameLibrary: rootDelegate.gameLibrary!, delegate: rootDelegate, viewModel: viewModel)
+            HomeView(
+                gameLibrary: rootDelegate.gameLibrary!,
+                delegate: rootDelegate,
+                viewModel: viewModel,
+                showGameInfo: showGameInfo
+            )
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
@@ -91,7 +144,12 @@ struct ConsolesWrapperView: SwiftUI.View {
                 .ignoresSafeArea(.all, edges: .bottom)
 
             ForEach(sortedConsoles(), id: \.self) { console in
-                ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
+                ConsoleGamesView(
+                    console: console,
+                    viewModel: viewModel,
+                    rootDelegate: rootDelegate,
+                    showGameInfo: showGameInfo
+                )
                     .tabItem {
                         Label(console.name, systemImage: console.iconName)
                     }

@@ -132,4 +132,8 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         DLOG("ConsoleGamesView: Received request to show save states for game")
         continuesManagementState = ContinuesManagementState(game: game)
     }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+        showGameInfo(gameId)
+    }
 }
