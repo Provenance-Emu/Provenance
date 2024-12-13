@@ -35,3 +35,7 @@ public enum RemoteDatabases: CaseIterable {
     case theGamesDB
 #endif
 }
+
+public protocol ArtworkLookupService {
+    
+}

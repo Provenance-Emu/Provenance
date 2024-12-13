@@ -162,6 +162,7 @@ public extension OpenVGDB {
         }
     }
     
+    private
     func releaseID(forCRCs crcs: Set<String>) -> String? {
         let roms = Table("ROMs")
         let romID = Expression<Int>(value: "romID")
