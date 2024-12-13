@@ -456,10 +456,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         return updateGameFields(game, gameDBRecordInfo:chosenResult, forceRefresh:forceRefresh)
     }
     
-    func releaseID(forCRCs crcs: Set<String>) -> String? {
-        return openVGDB?.releaseID(forCRCs: crcs)
-    }
-
     enum DatabaseQueryError: Error {
         case invalidSystemID
     }
