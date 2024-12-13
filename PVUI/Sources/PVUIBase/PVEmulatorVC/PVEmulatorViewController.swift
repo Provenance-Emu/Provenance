@@ -264,8 +264,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         let alpha: CGFloat = CGFloat(Defaults[.controllerOpacity])
         menuButton = MenuButton(type: .custom)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-        menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
-        menuButton?.setImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
+        menuButton?.setImage(UIImage(named: "button-menu", in: Bundle.module, with: nil), for: .normal)
+        menuButton?.setImage(UIImage(named: "button-menu-pressed", in: Bundle.module, with: nil), for: .highlighted)
         // Commenting out title label for now (menu has changed to graphic only)
         // [self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
         // menuButton?.titleLabel?.font = UIFont.systemFont(ofSize: 12)

@@ -233,7 +233,7 @@ SideMenuView: SwiftUI.View {
                             Divider()
                                 .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-                            MenuItemView(icon: .named("prov_home_icon"), rowTitle: "Home", isFocused: focusedItem == "home") {
+                            MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.module), rowTitle: "Home", isFocused: focusedItem == "home") {
                                 delegate.didTapHome()
                             }
                             .focusableIfAvailable()
@@ -243,7 +243,7 @@ SideMenuView: SwiftUI.View {
                             Divider()
                                 .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-                            MenuItemView(icon: .named("prov_settings_gear"), rowTitle: "Settings", isFocused: focusedItem == "settings") {
+                            MenuItemView(icon: .named("prov_settings_gear", PVUIBase.BundleLoader.module), rowTitle: "Settings", isFocused: focusedItem == "settings") {
                                 delegate.didTapSettings()
                             }
                             .focusableIfAvailable()
@@ -252,7 +252,7 @@ SideMenuView: SwiftUI.View {
     //                        Divider()
     //                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
     //
-    //                        MenuItemView(icon: .named("prov_add_games_icon"), rowTitle: "Add Games") {
+    //                        MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.module), rowTitle: "Add Games") {
     //                            delegate?.didTapAddGames()
     //                        }
                             Divider()
@@ -327,7 +327,7 @@ SideMenuView: SwiftUI.View {
             navController.navigationBar.tintColor = themeManager.currentPalette.menuHeaderIconTint
         })
         .introspectViewController(customize: { vc in
-            let image = UIImage(named: "provnavicon")
+            let image = UIImage(named: "provnavicon", in: PVUIBase.BundleLoader.module, with: nil)
             let menuIconTint = themeManager.currentPalette.menuIconTint
 
             if menuIconTint != .clear {

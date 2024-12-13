@@ -123,7 +123,7 @@ final class JSDPad: MovableButtonView {
     private var currentDirection: JSDPadDirection = .none
 
     private lazy var dPadImageView: UIImageView = {
-        let dPadImageView = UIImageView(image: UIImage(named: "dPad-None"))
+        let dPadImageView = UIImageView(image: UIImage(named: "dPad-None", in: Bundle.module, with: nil))
         let frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
         dPadImageView.frame = frame
         dPadImageView.translatesAutoresizingMaskIntoConstraints = true
@@ -191,23 +191,23 @@ final class JSDPad: MovableButtonView {
         var image: UIImage?
         switch direction {
             case .up:
-                image = UIImage(named: "dPad-Up")
+                image = UIImage(named: "dPad-Up", in: Bundle.module, with: nil)
             case .down:
-                image = UIImage(named: "dPad-Down")
+                image = UIImage(named: "dPad-Down", in: Bundle.module, with: nil)
             case .left:
-                image = UIImage(named: "dPad-Left")
+                image = UIImage(named: "dPad-Left", in: Bundle.module, with: nil)
             case .right:
-                image = UIImage(named: "dPad-Right")
+                image = UIImage(named: "dPad-Right", in: Bundle.module, with: nil)
             case .upLeft:
-                image = UIImage(named: "dPad-UpLeft")
+                image = UIImage(named: "dPad-UpLeft", in: Bundle.module, with: nil)
             case .upRight:
-                image = UIImage(named: "dPad-UpRight")
+                image = UIImage(named: "dPad-UpRight", in: Bundle.module, with: nil)
             case .downLeft:
-                image = UIImage(named: "dPad-DownLeft")
+                image = UIImage(named: "dPad-DownLeft", in: Bundle.module, with: nil)
             case .downRight:
-                image = UIImage(named: "dPad-DownRight")
+                image = UIImage(named: "dPad-DownRight", in: Bundle.module, with: nil)
             case .none:
-                image = UIImage(named: "dPad-None")
+                image = UIImage(named: "dPad-None", in: Bundle.module, with: nil)
         }
         return image
     }

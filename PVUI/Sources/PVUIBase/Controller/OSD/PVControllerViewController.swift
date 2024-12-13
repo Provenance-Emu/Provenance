@@ -671,8 +671,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                             button.tintColor = UIColor(hex: tintColor)
                         }
 
-                        button.backgroundImage = UIImage(named: "button")
-                        button.backgroundImagePressed = UIImage(named: "button-pressed")
+                        button.backgroundImage = UIImage(named: "button", in: Bundle.module, with: nil)
+                        button.backgroundImagePressed = UIImage(named: "button-pressed", in: Bundle.module, with: nil)
                         button.delegate = self
                         buttonGroup.addSubview(button)
                         buttons.append(button)
@@ -812,8 +812,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             self.rightShoulderButton = rightShoulderButton
             rightShoulderButton.titleLabel?.text = control.PVControlTitle
             rightShoulderButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-            rightShoulderButton.backgroundImage = UIImage(named: "button-thin")
-            rightShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            rightShoulderButton.backgroundImage = UIImage(named: "button-thin", in: Bundle.module, with: nil)
+            rightShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed", in: Bundle.module, with: nil)
             rightShoulderButton.delegate = self
             rightShoulderButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             rightShoulderButton.alpha = alpha
@@ -839,8 +839,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             self.rightShoulderButton2 = rightShoulderButton2
             rightShoulderButton2.titleLabel?.text = control.PVControlTitle
             rightShoulderButton2.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-            rightShoulderButton2.backgroundImage = UIImage(named: "button-thin")
-            rightShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            rightShoulderButton2.backgroundImage = UIImage(named: "button-thin", in: Bundle.module, with: nil)
+            rightShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed", in: Bundle.module, with: nil)
             rightShoulderButton2.delegate = self
             rightShoulderButton2.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             rightShoulderButton2.alpha = alpha
@@ -887,8 +887,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             self.zTriggerButton = zTriggerButton
             zTriggerButton.titleLabel?.text = control.PVControlTitle
             zTriggerButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-            zTriggerButton.backgroundImage = UIImage(named: "button-thin")
-            zTriggerButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            zTriggerButton.backgroundImage = UIImage(named: "button-thin", in: Bundle.module, with: nil)
+            zTriggerButton.backgroundImagePressed = UIImage(named: "button-thin-pressed", in: Bundle.module, with: nil)
             zTriggerButton.delegate = self
             zTriggerButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             zTriggerButton.alpha = alpha
@@ -932,8 +932,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             if let tintColor = control.PVControlTint {
                 leftShoulderButton.tintColor = UIColor(hex: tintColor)
             }
-            leftShoulderButton.backgroundImage = UIImage(named: "button-thin")
-            leftShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            leftShoulderButton.backgroundImage = UIImage(named: "button-thin", in: Bundle.module, with: nil)
+            leftShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed", in: Bundle.module, with: nil)
             leftShoulderButton.delegate = self
             leftShoulderButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             leftShoulderButton.alpha = alpha
@@ -959,7 +959,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             leftShoulderButton2.titleLabel?.text = control.PVControlTitle
             leftShoulderButton2.titleLabel?.font = UIFont.systemFont(ofSize: 8)
             leftShoulderButton2.backgroundImage = UIImage(named: "button-thin")
-            leftShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            leftShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed", in: Bundle.module, with: nil)
             leftShoulderButton2.delegate = self
             leftShoulderButton2.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             leftShoulderButton2.alpha = alpha
@@ -1027,8 +1027,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             self.selectButton = selectButton
             selectButton.titleLabel?.text = control.PVControlTitle
             selectButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-            selectButton.backgroundImage = UIImage(named: "button-thin")
-            selectButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            selectButton.backgroundImage = UIImage(named: "button-thin", in: Bundle.module, with: nil)
+            selectButton.backgroundImagePressed = UIImage(named: "button-thin-pressed", in: Bundle.module, with: nil)
             selectButton.delegate = self
             selectButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             selectButton.alpha = alpha
@@ -1096,8 +1096,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             self.startButton = startButton
             startButton.titleLabel?.text = control.PVControlTitle
             startButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-            startButton.backgroundImage = UIImage(named: "button-thin")
-            startButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            startButton.backgroundImage = UIImage(named: "button-thin", in: Bundle.module, with: nil)
+            startButton.backgroundImagePressed = UIImage(named: "button-thin-pressed", in: Bundle.module, with: nil)
             startButton.delegate = self
             startButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             startButton.alpha = alpha
@@ -1161,8 +1161,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             self.leftAnalogButton = leftAnalogButton
             leftAnalogButton.titleLabel?.text = control.PVControlTitle
             leftAnalogButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-            leftAnalogButton.backgroundImage = UIImage(named: "button-thin")
-            leftAnalogButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            leftAnalogButton.backgroundImage = UIImage(named: "button-thin", in: Bundle.module, with: nil)
+            leftAnalogButton.backgroundImagePressed = UIImage(named: "button-thin-pressed", in: Bundle.module, with: nil)
             leftAnalogButton.delegate = self
             leftAnalogButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             leftAnalogButton.alpha = alpha
@@ -1221,8 +1221,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             self.rightAnalogButton = rightAnalogButton
             rightAnalogButton.titleLabel?.text = control.PVControlTitle
             rightAnalogButton.titleLabel?.font = UIFont.systemFont(ofSize: 9)
-            rightAnalogButton.backgroundImage = UIImage(named: "button-thin")
-            rightAnalogButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+            rightAnalogButton.backgroundImage = UIImage(named: "button-thin", in: Bundle.module, with: nil)
+            rightAnalogButton.backgroundImagePressed = UIImage(named: "button-thin-pressed", in: Bundle.module, with: nil)
             rightAnalogButton.delegate = self
             rightAnalogButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             rightAnalogButton.alpha = alpha

@@ -550,7 +550,6 @@
 		B35EEFE02C6C6D1A00EBD1A8 /* PVCoreAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B35EEF6A2C6C6D1A00EBD1A8 /* PVCoreAudio */; };
 		B35EEFE32C6C6D1A00EBD1A8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		B35EEFE42C6C6D1A00EBD1A8 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
-		B35EEFE82C6C6D1A00EBD1A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		B35EEFE92C6C6D1A00EBD1A8 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B35EEFED2C6C6D1A00EBD1A8 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B35EEFEF2C6C6D1A00EBD1A8 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
@@ -681,6 +680,8 @@
 		B39B538A2C66E7BA00C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53892C66E7BA00C220C6 /* PVSettings */; };
 		B39CE2882C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B39CE2872C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic */; };
 		B39CE2892C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B39CE2872C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B39D8F092D0CEC5300577667 /* Assets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */; };
+		B39D8F0A2D0CEC5300577667 /* Assets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */; };
 		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186672CBCA4C000BB1FFE /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A186682CBCA4C500BB1FFE /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -876,7 +877,6 @@
 		B3F7E3BE297736BE00362B92 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B3F7E2A3297736BE00362B92 /* Introspect */; };
 		B3F7E3C5297736BE00362B92 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		B3F7E3C6297736BE00362B92 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
-		B3F7E3CB297736BE00362B92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		B3F7E3CD297736BE00362B92 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F7E3D9297736BE00362B92 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F7E443297736C200362B92 /* RxTableViewRealmDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */; };
@@ -2110,6 +2110,7 @@
 		B39C4B652BF09F0400F199BB /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = Cores/PPSSPP/lib/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib; sourceTree = "<group>"; };
+		B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-Lite.xcassets"; sourceTree = "<group>"; };
 		B3A186802CBCBA8100BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A186832CBCBA9E00BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A186842CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3635,6 +3636,7 @@
 				B361938F221FB93B00F73875 /* Provenance-Free.entitlements */,
 				B3977533219AB53F00E16AD5 /* Provenance.entitlements */,
 				B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */,
+				B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */,
 				1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */,
 				B3F43DCE2168075200CDD40A /* Settings.bundle */,
 				B3296EEA26CAC3ED0088AC32 /* Strings.strings */,
@@ -5126,11 +5128,11 @@
 				B35EEFE42C6C6D1A00EBD1A8 /* Strings.strings in Resources */,
 				B3E17E232CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,
 				B3DF8EE02CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
-				B35EEFE82C6C6D1A00EBD1A8 /* Assets.xcassets in Resources */,
 				B35EEFE92C6C6D1A00EBD1A8 /* Settings.bundle in Resources */,
 				B35EEFED2C6C6D1A00EBD1A8 /* LaunchImageTV.png in Resources */,
 				B35EEFEF2C6C6D1A00EBD1A8 /* TVAssets.xcassets in Resources */,
 				B35EEFF22C6C6D1A00EBD1A8 /* licenses.html in Resources */,
+				B39D8F092D0CEC5300577667 /* Assets-Lite.xcassets in Resources */,
 				B35EEFF52C6C6D1A00EBD1A8 /* SaveStates.storyboard in Resources */,
 				B35EEFF62C6C6D1A00EBD1A8 /* Cheats.storyboard in Resources */,
 				B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */,
@@ -5196,11 +5198,11 @@
 				B3F7E3C5297736BE00362B92 /* InfoPlist.strings in Resources */,
 				B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */,
 				B3F7E3C6297736BE00362B92 /* Strings.strings in Resources */,
-				B3F7E3CB297736BE00362B92 /* Assets.xcassets in Resources */,
 				B3F7E3CD297736BE00362B92 /* Settings.bundle in Resources */,
 				B3A3D0302CCCC62B00589F82 /* TVAssets.xcassets in Resources */,
 				B3F7E3D9297736BE00362B92 /* licenses.html in Resources */,
 				B3DF8EDD2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
+				B39D8F0A2D0CEC5300577667 /* Assets-Lite.xcassets in Resources */,
 				B3E17E292CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8324,7 +8326,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Lite";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8422,7 +8424,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = Provenance;
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Lite";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8521,7 +8523,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = Provenance;
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Lite";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -9978,7 +9980,7 @@
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Provenance Lite Debug";
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Lite";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -10051,7 +10053,7 @@
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Provenance Lite";
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Lite";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -10124,7 +10126,7 @@
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Provenance Lite";
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Lite";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

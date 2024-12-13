@@ -28,7 +28,7 @@ public final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var collapseButton: UIButton = {
         let button = UIButton(type: .custom)
 
-        button.setImage(UIImage(named: "chevron_down"), for: .normal)
+        button.setImage(UIImage(named: "chevron_down", in: Bundle.module, with: nil), for: .normal)
         button.clipsToBounds = true
         #if os(iOS)
             button.tintColor = ThemeManager.shared.currentPalette.gameLibraryHeaderText
