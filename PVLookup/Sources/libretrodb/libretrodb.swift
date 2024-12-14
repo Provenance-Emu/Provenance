@@ -95,29 +95,86 @@ public final class libretrodb {
         """
     }
 
+    /// Constants for artwork URL construction
+    private enum ArtworkConstants {
+        static let baseURL = "http://thumbnails.libretro.com"
+        static let boxartPath = "Named_Boxarts"
+
+        // Map manufacturer IDs to names
+        static let manufacturers: [Int: String] = [
+            1: "SNK",
+            2: "Sega",
+            3: "NEC",
+            8: "Nintendo",
+            5: "Sony",
+            // ... add other manufacturers
+        ]
+
+        // Map platform IDs to names
+        static let platforms: [Int: String] = [
+            75: "Game Boy",
+            115: "Game Boy Advance",
+            28: "Nintendo Entertainment System",
+            37: "Super Nintendo Entertainment System",
+            15: "Mega Drive",
+            108: "PC Engine",
+            // ... add other platforms
+        ]
+    }
+
+    /// Constructs the artwork URL for a given metadata
+    private func constructArtworkURL(platform: String, manufacturer: String?, displayName: String) -> String? {
+        let platformPath: String
+        if let manufacturer = manufacturer {
+            platformPath = "\(manufacturer) - \(platform)"
+        } else {
+            platformPath = platform
+        }
+
+        // URL encode the components
+        guard let encodedPlatform = platformPath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
+              let encodedName = displayName.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            return nil
+        }
+
+        return "\(ArtworkConstants.baseURL)/\(encodedPlatform)/\(ArtworkConstants.boxartPath)/\(encodedName).png"
+    }
+
     /// Convert database result to ROMMetadata
     private func convertToROMMetadata(_ metadata: LibretroDBROMMetadata) -> ROMMetadata {
+        // Construct artwork URL if we have the necessary information
+        let artworkURL: String?
+        if let platform = metadata.platform {
+            artworkURL = constructArtworkURL(
+                platform: platform,
+                manufacturer: metadata.manufacturer,
+                displayName: metadata.gameTitle
+            )
+        } else {
+            artworkURL = nil
+        }
+
         return ROMMetadata(
             gameTitle: metadata.gameTitle,
-            boxImageURL: nil, // Not available in libretrodb
+            boxImageURL: artworkURL,  // Now using the constructed URL
             region: metadata.region,
-            gameDescription: nil, // Not available in libretrodb
-            boxBackURL: nil, // Not available in libretrodb
+            gameDescription: nil,
+            boxBackURL: nil,  // Could potentially construct a back box URL if needed
             developer: metadata.developer,
             publisher: metadata.publisher,
-            serial: nil, // Not available in libretrodb
-            releaseDate: metadata.releaseYear.map { "\($0)" }, // Convert year to string
+            serial: nil,
+            releaseDate: metadata.releaseYear.map { "\($0)" },
             genres: metadata.genre,
-            referenceURL: nil, // Not available in libretrodb
-            releaseID: nil, // Not available in libretrodb
-            language: nil, // Not available in libretrodb
-            regionID: nil, // Not available in libretrodb
-            systemID: 0, // Need to map platform to system ID
+            referenceURL: nil,
+            releaseID: nil,
+            language: nil,
+            regionID: nil,
+            systemID: 0,
             systemShortName: metadata.platform,
             romFileName: metadata.romName,
-            romHashCRC: nil, // Not available in libretrodb
+            romHashCRC: nil,
             romHashMD5: metadata.romMD5,
-            romID: nil // Not available in libretrodb
+            romID: nil
         )
     }
 }

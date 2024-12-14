@@ -320,4 +320,24 @@ final class LibretroDBTests {
             }
         }
     }
+
+    // MARK: - Artwork Tests
+    func testArtworkURLConstruction() async throws {
+        let md5 = "3CA38A30F1EC411073FC369C9EE41E2E"  // Pool of Radiance
+        let results = try db.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)
+        let metadata = results?.first
+
+        #expect(metadata?.boxImageURL != nil)
+        #expect(metadata?.boxImageURL?.contains("thumbnails.libretro.com") == true)
+        #expect(metadata?.boxImageURL?.contains("Named_Boxarts") == true)
+        #expect(metadata?.boxImageURL?.hasSuffix(".png") == true)
+    }
+
+    func testAdvanceWarsArtworkURL() async throws {
+        let results = try db.searchDatabase(usingFilename: "Advance Wars", systemID: PlatformID.gba)
+        let metadata = results?.first
+
+        let expectedURL = "http://thumbnails.libretro.com/Nintendo%20-%20Game%20Boy%20Advance/Named_Boxarts/Advance%20Wars%20%28USA%29.png"
+        #expect(metadata?.boxImageURL == expectedURL)
+    }
 }
