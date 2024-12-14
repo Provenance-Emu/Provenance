@@ -85,6 +85,17 @@ public struct System: Codable, SystemProtocol, Sendable {
         self.supported = supported
         self.appStoreDisabled = appStoreDisabled
     }
+    
+    /// For testing only
+    public init(
+        identifier: String,
+        name: String,
+        shortName: String,
+        manufacturer: String,
+        screenType: ScreenType = .crt
+    ) {
+        self.init(name: name, identifier: identifier, shortName: shortName, manufacturer: manufacturer, releaseYear: 0, bits: .unknown, headerByteSize: 0, openvgDatabaseID: 0, options: [], extensions: [])
+    }
 }
 
 public extension System {

@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 11/27/24.
 //
 
+#if DEBUG
 import PVSwiftUI
 
 public class MockImportStatusDriverData: ObservableObject {
@@ -39,3 +40,4 @@ extension MockImportStatusDriverData: ImportStatusDelegate {
         gameImporter.startProcessing()
     }
 }
+#endif

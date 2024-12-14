@@ -115,7 +115,7 @@ public protocol GameImporting {
 
     func addImport(_ item: ImportQueueItem)
     func addImports(forPaths paths: [URL])
-    func addImports(forPaths paths: [URL], targetSystem: AnySystem)
+    func addImports(forPaths paths: [URL], targetSystem: System)
 
     func removeImports(at offsets: IndexSet)
     func startProcessing()
@@ -383,13 +383,13 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     @MainActor
-    public func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
+    public func addImports(forPaths paths: [URL], targetSystem: System) {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
 
         for path in paths {
             var item = ImportQueueItem(url: path, fileType: .unknown)
-            item.userChosenSystem?.identifier = targetSystem.identifier
+            item.userChosenSystem = targetSystem
             self.addImportItemToQueue(item)
         }
     }
@@ -733,8 +733,8 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         //update item's candidate systems with the result of determineSystems
         item.systems = systems.map{$0.identifier}.compactMap { identifier in
-            if let pvSystem = PVEmulatorConfiguration.system(forIdentifier: identifier) {
-                return pvSystem
+            if let system: System = PVEmulatorConfiguration.system(forIdentifier: identifier) {
+                return system
             }
             return nil
         }

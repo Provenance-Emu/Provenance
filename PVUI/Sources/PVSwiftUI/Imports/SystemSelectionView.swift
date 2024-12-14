@@ -43,7 +43,7 @@ import PVPrimitives
     
     
     let item: ImportQueueItem = {
-        let systems: [PVSystem] = [
+        let systems: [System] = [
             .init(
                 identifier: "com.provenance.jaguar",
                 name: "Jaguar",

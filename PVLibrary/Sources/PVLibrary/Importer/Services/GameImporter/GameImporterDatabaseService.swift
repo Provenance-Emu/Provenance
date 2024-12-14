@@ -88,7 +88,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
         } else {
             DLOG("No existing game found, starting import to database")
-            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem as! AnySystem, relatedFiles: nil)
+            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem as! System, relatedFiles: nil)
         }
     }
 
@@ -126,7 +126,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     /// Imports a ROM to the database
     @MainActor
-    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: AnySystem, relatedFiles: [URL]?) async throws {
+    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: System, relatedFiles: [URL]?) async throws {
 
         guard let _ = queueItem.destinationUrl else {
             //how did we get here, throw?

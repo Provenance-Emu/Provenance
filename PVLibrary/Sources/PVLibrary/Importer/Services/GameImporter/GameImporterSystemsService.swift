@@ -17,7 +17,7 @@ public protocol GameImporterSystemsServicing {
     func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem], romFilename: String) -> [GameType]?
 
     /// Determine which systems can handle this import item
-    func determineSystems(for item: ImportQueueItem) async throws -> [AnySystem]
+    func determineSystems(for item: ImportQueueItem) async throws -> [System]
 }
 
 class GameImporterSystemsService: GameImporterSystemsServicing {
@@ -40,12 +40,12 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         return matches.isEmpty ? nil : matches
     }
 
-    func determineSystems(for item: ImportQueueItem) async throws -> [AnySystem] {
+    func determineSystems(for item: ImportQueueItem) async throws -> [System] {
         // First try MD5 lookup
         if let md5 = item.md5 {
             if let systemID = try await lookup.system(forRomMD5: md5, or: item.url.lastPathComponent) {
-                if let system = PVEmulatorConfiguration.system(forDatabaseID: systemID) {
-                    if let anySystem = system as? AnySystem {
+                if let system: System = PVEmulatorConfiguration.system(forDatabaseID: systemID) {
+                    if let anySystem = system as? System {
                         return [anySystem]
                     }
                 }
@@ -55,6 +55,6 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         // Fallback to extension-based lookup
         let fileExtension = item.url.pathExtension.lowercased()
         return (PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) ?? [])
-            .compactMap { $0 as? AnySystem }
+            .compactMap { $0.asDomain() }
     }
 }

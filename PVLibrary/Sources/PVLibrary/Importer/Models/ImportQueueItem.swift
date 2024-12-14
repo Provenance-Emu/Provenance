@@ -61,7 +61,7 @@ public enum ProcessingState {
 public class ImportQueueItem: Identifiable, ObservableObject {
     
     // TODO: Make this more generic with AnySystem, some System?
-    public typealias System = PVSystem //AnySystem
+    //public typealias System = PVSystem //AnySystem
     
     public let id = UUID()
     public var url: URL
@@ -91,7 +91,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     
     @MainActor
     private func updateSystems() {
-        systems = RomDatabase.sharedInstance.all(PVSystem.self).map { $0.freeze() }
+        systems = RomDatabase.sharedInstance.all(PVSystem.self).map { $0.asDomain() }
     }
     
     public init(url: URL, fileType: FileType = .unknown) {

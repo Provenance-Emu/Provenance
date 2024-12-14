@@ -75,7 +75,7 @@ public final class PVEmulatorConfiguration: NSObject {
     }
 
     public class func databaseID(forSystemID systemID: String) -> Int? {
-        return system(forIdentifier: systemID)?.openvgDatabaseID
+        return (system(forIdentifier: systemID) as System?)?.openvgDatabaseID
     }
 
     public class func systemID(forDatabaseID databaseID: Int) -> String? {
@@ -198,22 +198,31 @@ public extension PVEmulatorConfiguration {
         let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
         return system
     }
-
+    
+    class func system(forDatabaseID databaseID : Int) -> System? {
+        let pvsystem: PVSystem? = system(forDatabaseID: databaseID)
+        return pvsystem?.asDomain()
+    }
 
     @objc
     class func system(forIdentifier systemID: String) -> PVSystem? {
         let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
         return system
     }
+    
+    class func system(forIdentifier systemID: String) -> System? {
+        let pvsystem: PVSystem? = system(forIdentifier: systemID)
+        return pvsystem?.asDomain()
+    }
 
     @objc
     class func name(forSystemIdentifier systemID: String) -> String? {
-        return system(forIdentifier: systemID)?.name
+        return (system(forIdentifier: systemID) as System?)?.name
     }
 
     @objc
     class func shortName(forSystemIdentifier systemID: String) -> String? {
-        return system(forIdentifier: systemID)?.shortName
+        return (system(forIdentifier: systemID) as System?)?.shortName
     }
 
     class func controllerLayout(forSystemIdentifier systemID: String) -> [ControlLayoutEntry]? {
@@ -238,7 +247,7 @@ public extension PVEmulatorConfiguration {
     }
 
     class func requiresBIOS(forSystemIdentifier systemID: String) -> Bool {
-        return system(forIdentifier: systemID)?.requiresBIOS ?? false
+        return (system(forIdentifier: systemID) as System?)?.requiresBIOS ?? false
     }
 
     @objc
