@@ -4,64 +4,73 @@ public extension SystemIdentifier {
     /// LibretroDB platform ID for this system
     var libretroDatabaseID: Int {
         switch self {
-        case ._3DO: return 73
-        case .MAME: return 41  // Arcade Games
         case .Atari2600: return 38  // 2600
         case .Atari5200: return 77  // 5200
         case .Atari7800: return 34  // 7800
         case .AtariJaguar: return 29  // Jaguar
         case .AtariJaguarCD: return 29  // Using same as Jaguar since no CD-specific ID
-        case .WonderSwan: return 33
-        case .WonderSwanColor: return 109
+        case .AtariST: return 55  // ST
+        case .C64: return 100  // Commodore 64
         case .ColecoVision: return 114
-        case .Vectrex: return 69
-        case .Intellivision: return 92
-        case .PCE: return 108  // PC Engine - TurboGrafx 16
-        case .PCECD: return 12  // PC Engine CD - TurboGrafx-CD
-        case .PCFX: return 20
-        case .SGFX: return 3   // PC Engine SuperGrafx
+        case .DOS: return 10
+        case .DS: return 90    // Nintendo DS
+        case .Dreamcast: return 99
         case .FDS: return 40   // Family Computer Disk System
         case .GB: return 75    // Game Boy
         case .GBA: return 115  // Game Boy Advance
         case .GBC: return 86   // Game Boy Color
         case .GameCube: return 51
-        case .N64: return 22   // Nintendo 64
-        case .DS: return 90    // Nintendo DS
-        case .NES: return 28   // Nintendo Entertainment System
-        case .PokemonMini: return 30
-        case .SNES: return 37  // Super Nintendo Entertainment System
-        case .VirtualBoy: return 113
-        case .Wii: return 101
-        case .Sega32X: return 14  // 32X
         case .GameGear: return 78
-        case .MasterSystem: return 83  // Master System - Mark III
-        case .SegaCD: return 2   // Mega-CD - Sega CD
         case .Genesis: return 15  // Mega Drive - Genesis
-        case .Saturn: return 47
-        case .SG1000: return 76
+        case .Intellivision: return 92
+        case .Lynx: return 79
+        case .MAME: return 41  // Arcade Games
+        case .MSX2: return 63
+        case .MSX: return 36
+        case .MasterSystem: return 83  // Master System - Mark III
+        case .N64: return 22   // Nintendo 64
+        case .NES: return 28   // Nintendo Entertainment System
         case .NGP: return 9    // Neo Geo Pocket
         case .NGPC: return 71  // Neo Geo Pocket Color
-        case .PSX: return 6    // PlayStation
-        case .PSP: return 61   // PlayStation Portable
         case .Odyssey2: return 35
-        case .C64: return 100  // Commodore 64
-        case .MSX: return 36
-        case .MSX2: return 63
-        case ._3DS: return 21  // Nintendo 3DS
-        case .DOS: return 10
-        case .Dreamcast: return 99
-        case .ZXSpectrum: return 64
-//        case .Amiga: return 89
-        case .AtariST: return 55  // ST
+        case .PCE: return 108  // PC Engine - TurboGrafx 16
+        case .PCECD: return 12  // PC Engine CD - TurboGrafx-CD
+        case .PCFX: return 20
         case .PS2: return 56   // PlayStation 2
         case .PS3: return 48   // PlayStation 3
+        case .PSP: return 61   // PlayStation Portable
+        case .PSX: return 6    // PlayStation
+        case .PokemonMini: return 30
+        case .SG1000: return 76
+        case .SGFX: return 3   // PC Engine SuperGrafx
+        case .SNES: return 37  // Super Nintendo Entertainment System
+        case .Saturn: return 47
+        case .Sega32X: return 14  // 32X
+        case .SegaCD: return 2   // Mega-CD - Sega CD
         case .Supervision: return 82
-        case .Lynx: return 79
+        case .Vectrex: return 69
+        case .VirtualBoy: return 113
+        case .Wii: return 101
+        case .WonderSwan: return 33
+        case .WonderSwanColor: return 109
+        case .ZXSpectrum: return 64
+        case ._3DO: return 73
+        case ._3DS: return 21  // Nintendo 3DS
+//      case .Amiga: return 89
 
         // Systems we don't map (yet)
-        case .Atari8bit, .EP128, .MegaDuck, .NeoGeo, .PalmOS,
-             .PokemonMini, .TIC80, .AppleII, .Music,
-             .Macintosh, .RetroArch, .Unknown:
+        case
+                .AppleII,
+                .Atari8bit,
+                .EP128,
+                .Macintosh,
+                .MegaDuck,
+                .Music,
+                .NeoGeo,
+                .PalmOS,
+                .TIC80,
+                .RetroArch,
+                .Unknown:
             return 0
         }
     }
@@ -71,59 +80,59 @@ public extension SystemIdentifier {
     /// - Returns: The corresponding SystemIdentifier, if one exists
     static func fromLibretroDatabaseID(_ libretroDatabaseID: Int) -> SystemIdentifier? {
         switch libretroDatabaseID {
-        case 73: return ._3DO
-        case 41: return .MAME          // Arcade Games
-        case 38: return .Atari2600     // 2600
-        case 77: return .Atari5200     // 5200
-        case 34: return .Atari7800     // 7800
-        case 29: return .AtariJaguar   // Jaguar
-        case 33: return .WonderSwan
-        case 109: return .WonderSwanColor
-        case 114: return .ColecoVision
-        case 69: return .Vectrex
-        case 92: return .Intellivision
+        case 100: return .C64          // Commodore 64
+        case 101: return .Wii           // Wii
         case 108: return .PCE          // PC Engine - TurboGrafx 16
+        case 109: return .WonderSwanColor
+        case 10: return .DOS
+        case 113: return .VirtualBoy    // VirtualBoy
+        case 114: return .ColecoVision
+        case 115: return .GBA          // Game Boy Advance
         case 12: return .PCECD         // PC Engine CD
+        case 14: return .Sega32X       // 32X
+        case 15: return .Genesis       // Mega Drive
         case 20: return .PCFX
+        case 21: return ._3DS          // Nintendo 3DS
+        case 22: return .N64           // Nintendo 64
+        case 28: return .NES           // Nintendo Entertainment System
+        case 29: return .AtariJaguar   // Jaguar
+        case 2: return .SegaCD         // Mega-CD
+        case 30: return .PokemonMini   // Nintendo PokeMini
+        case 33: return .WonderSwan
+        case 34: return .Atari7800     // 7800
+        case 35: return .Odyssey2
+        case 36: return .MSX
+        case 37: return .SNES          // Super Nintendo Entertainment System
+        case 38: return .Atari2600     // 2600
         case 3: return .SGFX           // PC Engine SuperGrafx
         case 40: return .FDS           // Family Computer Disk System
-        case 75: return .GB            // Game Boy
-        case 115: return .GBA          // Game Boy Advance
-        case 86: return .GBC           // Game Boy Color
-        case 51: return .GameCube
-        case 22: return .N64           // Nintendo 64
-        case 90: return .DS            // Nintendo DS
-        case 28: return .NES           // Nintendo Entertainment System
-        case 37: return .SNES          // Super Nintendo Entertainment System
-        case 113: return .VirtualBoy    // VirtualBoy
-        case 101: return .Wii           // Wii
-        case 49: return .Wii            // Wii (Digital)
-        case 14: return .Sega32X       // 32X
-        case 78: return .GameGear
-        case 83: return .MasterSystem  // Master System - Mark III
-        case 2: return .SegaCD         // Mega-CD
-        case 15: return .Genesis       // Mega Drive
+        case 41: return .MAME          // Arcade Games
         case 47: return .Saturn
-        case 76: return .SG1000
-        case 9: return .NGP            // Neo Geo Pocket
-        case 71: return .NGPC          // Neo Geo Pocket Color
-        case 6: return .PSX            // PlayStation
-        case 61: return .PSP           // PlayStation Portable
-        case 35: return .Odyssey2
-        case 100: return .C64          // Commodore 64
-        case 36: return .MSX
-        case 63: return .MSX2
-        case 21: return ._3DS          // Nintendo 3DS
-        case 10: return .DOS
-        case 99: return .Dreamcast
-        case 64: return .ZXSpectrum
-//        case 89: return .Amiga
+        case 48: return .PS3           // PlayStation 3
+        case 49: return .Wii            // Wii (Digital)
+        case 51: return .GameCube
         case 55: return .AtariST       // ST
         case 56: return .PS2           // PlayStation 2
-        case 48: return .PS3           // PlayStation 3
-        case 82: return .Supervision   // Watara Supervision
-        case 30: return .PokemonMini   // Nintendo PokeMini
+        case 61: return .PSP           // PlayStation Portable
+        case 63: return .MSX2
+        case 64: return .ZXSpectrum
+        case 69: return .Vectrex
+        case 6: return .PSX            // PlayStation
+        case 71: return .NGPC          // Neo Geo Pocket Color
+        case 73: return ._3DO
+        case 75: return .GB            // Game Boy
+        case 76: return .SG1000
+        case 77: return .Atari5200     // 5200
+        case 78: return .GameGear
         case 79: return .Lynx
+        case 82: return .Supervision   // Watara Supervision
+        case 83: return .MasterSystem  // Master System - Mark III
+        case 86: return .GBC           // Game Boy Color
+        case 90: return .DS            // Nintendo DS
+        case 92: return .Intellivision
+        case 99: return .Dreamcast
+        case 9: return .NGP            // Neo Geo Pocket
+        // case 89: return .Amiga
         // Unsupported systems:
         // case 4: Quake II
         // case 5: Game.com
