@@ -137,11 +137,24 @@ public extension OpenVGDB {
 
 // MARK: - Database Queries
 public extension OpenVGDB {
+    public enum OpenVGDBError: Error {
+        case invalidSystemID(Int)
+        case invalidQuery(String)
+    }
+
+    /// Valid system IDs from the database
+    static let validSystemIDs = Set(1...47)  // Based on the provided database dump
+
+    private func isValidSystemID(_ systemID: Int) -> Bool {
+        return Self.validSystemIDs.contains(systemID)
+    }
+
     func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
         let query: String
 
-        if let systemID = systemID {
+        // Only include valid system IDs in the query
+        if let systemID = systemID, isValidSystemID(systemID) {
             query = """
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
@@ -165,7 +178,8 @@ public extension OpenVGDB {
         let properties = getStandardProperties()
         let query: String
 
-        if let systemID = systemID {
+        // Only include valid system IDs in the query
+        if let systemID = systemID, isValidSystemID(systemID) {
             query = """
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
@@ -188,8 +202,14 @@ public extension OpenVGDB {
     }
 
     func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [ROMMetadata]? {
+        // Filter to only valid system IDs
+        let validSystemIDs = systemIDs.filter(isValidSystemID)
+        guard !validSystemIDs.isEmpty else {
+            return nil
+        }
+
         let properties = getStandardProperties()
-        let systemIDsString = systemIDs.map { String($0) }.joined(separator: ",")
+        let systemIDsString = validSystemIDs.map { String($0) }.joined(separator: ",")
 
         let query = """
             SELECT DISTINCT \(properties)
