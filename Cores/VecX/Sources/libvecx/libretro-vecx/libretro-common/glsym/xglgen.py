@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 """
-   License statement applies to this file (glgen.py) only.
-""" 
+   License statement applies to this file (xglgen.py) only.
+"""
 
 """
    Permission is hereby granted, free of charge,
@@ -33,16 +33,36 @@ def noext(sym):
          return False
    return True
 
+def fix_multiline_functions(lines):
+   fixed_lines = []
+   temp_lines = []
+   for line in lines:
+      if line.count('(') > line.count(')'):
+         temp_lines.append(line)
+      else:
+         if len(temp_lines) > 0:
+            if line.count(')') > line.count('('):
+               temp_lines.append(line)
+               fixed_line = re.sub(' +',' ', ''.join(temp_lines).replace('\n','').replace('\t',''))
+               fixed_lines.append(fixed_line)
+               temp_lines = []
+            else:
+               temp_lines.append(line)
+         else:
+            fixed_lines.append(line)
+   return fixed_lines
+
 def find_gl_symbols(lines):
    typedefs = []
    syms = []
    for line in lines:
+      # Note this doesn't work automated; this script is designed as a helper
       m = re.search(r'^typedef.+PFN(\S+)PROC.+$', line)
-      g = re.search(r'^.+(gl\S+)\W*\(.+\).*$', line)
-      if m and noext(m.group(1)):
-         typedefs.append(m.group(0).replace('PFN', 'RGLSYM').replace('GLDEBUGPROC', 'RGLGENGLDEBUGPROC'))
-      if g and noext(g.group(1)):
-         syms.append(g.group(1))
+      g = re.search(r'^GLAPI\s(.+)\s(.+)\s(gl\S+)\W*\((.+)\).*', line)
+      if g and noext(g.group(3)):
+         typedefs.append('typedef ' + g.group(1) + ' (APIENTRYP RGLSYM' + g.group(3).upper() + 'PROC) (' + g.group(4) + ');')
+         syms.append(g.group(3))
+
    return (typedefs, syms)
 
 def generate_defines(gl_syms):
@@ -52,7 +72,7 @@ def generate_defines(gl_syms):
    return res
 
 def generate_declarations(gl_syms):
-   return ['RGLSYM' + x.upper() + 'PROC ' + '__rglgen_' + x + ';' for x in gl_syms]
+   return ['RGLSYM' + x.upper() + 'PROC ' + x + ';' for x in gl_syms]
 
 def generate_macros(gl_syms):
    return ['    SYM(' + x.replace('gl', '') + '),' for x in gl_syms]
@@ -68,7 +88,7 @@ if __name__ == '__main__':
          banned_ext.append(banned)
 
    with open(sys.argv[1], 'r') as f:
-      lines = f.readlines()
+      lines = fix_multiline_functions(f.readlines())
       typedefs, syms = find_gl_symbols(lines)
 
       overrides = generate_defines(syms)
@@ -87,6 +107,7 @@ if __name__ == '__main__':
 
       f.write('#ifdef GL_APIENTRY\n')
       f.write('typedef void (GL_APIENTRY *RGLGENGLDEBUGPROC)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);\n')
+      f.write('typedef void (GL_APIENTRY *RGLGENGLDEBUGPROCKHR)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);\n')
       f.write('#else\n')
       f.write('#ifndef APIENTRY\n')
       f.write('#define APIENTRY\n')
@@ -104,6 +125,13 @@ if __name__ == '__main__':
 
       f.write('#if !defined(GL_OES_fixed_point) && !defined(HAVE_OPENGLES2)\n')
       f.write('typedef GLint GLfixed;\n')
+      f.write('#endif\n')
+
+      f.write('#if defined(OSX) && !defined(MAC_OS_X_VERSION_10_7)\n')
+      f.write('typedef long long int GLint64;\n')
+      f.write('typedef unsigned long long int GLuint64;\n')
+      f.write('typedef unsigned long long int GLuint64EXT;\n')
+      f.write('typedef struct __GLsync *GLsync;\n')
       f.write('#endif\n')
 
       dump(f, typedefs)
@@ -128,5 +156,3 @@ if __name__ == '__main__':
       f.write('    { NULL, NULL },\n')
       f.write('};\n')
       dump(f, declarations)
-
-

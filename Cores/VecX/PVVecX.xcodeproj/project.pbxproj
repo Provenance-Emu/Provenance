@@ -32,6 +32,7 @@
 		B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C2682894EB37007B76FD /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B39768F82859E23200558958 /* libvecx-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libvecx-libretro.a */; };
 		B3AFCF842977A72900A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF832977A72900A01010 /* PVLogging */; };
+		B3B498092D0D72BE00CB02D4 /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B498072D0D72B700CB02D4 /* glsm.c */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C8A65F2877D6350037A946 /* PVVecXCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVVecXCore+Controls.mm */; };
@@ -111,6 +112,7 @@
 		B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B498072D0D72B700CB02D4 /* glsm.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = glsm.c; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVVecX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVVecX.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -235,6 +237,14 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
+		B3B498082D0D72B700CB02D4 /* glsm */ = {
+			isa = PBXGroup;
+			children = (
+				B3B498072D0D72B700CB02D4 /* glsm.c */,
+			);
+			path = glsm;
+			sourceTree = "<group>";
+		};
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
@@ -340,6 +350,7 @@
 		B3E6C1A92894D32A00CF98C7 /* libretro-common */ = {
 			isa = PBXGroup;
 			children = (
+				B3B498082D0D72B700CB02D4 /* glsm */,
 				B3E6C1AA2894D32A00CF98C7 /* glsym */,
 				B3E6C1B22894D32A00CF98C7 /* include */,
 			);
@@ -602,6 +613,7 @@
 			files = (
 				B380C2592894E846007B76FD /* libretro.c in Sources */,
 				B353CC06293F86B900124F12 /* glsym_es2.c in Sources */,
+				B3B498092D0D72BE00CB02D4 /* glsm.c in Sources */,
 				B3EB8B28293F835000BCCBAE /* rglgen.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -808,7 +820,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = "vecx-libretro";
@@ -829,7 +841,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = "vecx-libretro";
@@ -850,7 +862,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = "vecx-libretro";
