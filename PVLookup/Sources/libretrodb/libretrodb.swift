@@ -183,6 +183,9 @@ public final class libretrodb {
 public extension libretrodb {
     /// Search by MD5 or other key
     func searchDatabase(usingKey key: String, value: String, systemID: Int?) throws -> [ROMMetadata]? {
+        // Convert OpenVGDB system ID to libretrodb platform ID
+        let platformID = systemID.flatMap { SystemIDMapping.convertToLibretroID($0) }
+
         var query = standardMetadataQuery
 
         switch key {
@@ -194,8 +197,8 @@ public extension libretrodb {
             return nil
         }
 
-        if let systemID = systemID {
-            query += " AND platform_id = \(systemID)"
+        if let platformID = platformID {
+            query += " AND platform_id = \(platformID)"
         }
 
         let results = try db.execute(query: query)
@@ -229,14 +232,17 @@ public extension libretrodb {
 
     /// Search by filename across multiple systems
     func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [ROMMetadata]? {
+        // Convert OpenVGDB system IDs to libretrodb platform IDs
+        let platformIDs = SystemIDMapping.convertToLibretroIDs(systemIDs)
+
         var query = standardMetadataQuery
         let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
 
         query += " WHERE roms.name LIKE '%\(escapedFilename)%' COLLATE NOCASE"
 
-        if !systemIDs.isEmpty {
-            let systemIDList = systemIDs.map(String.init).joined(separator: ",")
-            query += " AND platform_id IN (\(systemIDList))"
+        if !platformIDs.isEmpty {
+            let platformIDList = platformIDs.map(String.init).joined(separator: ",")
+            query += " AND platform_id IN (\(platformIDList))"
         }
 
         let results = try db.execute(query: query)

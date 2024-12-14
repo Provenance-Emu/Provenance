@@ -149,4 +149,56 @@ public extension SystemIdentifier {
         default: return nil
         }
     }
+
+    static func fromOpenVGDBID(_ openVGDBID: Int) -> SystemIdentifier? {
+        switch openVGDBID {
+        case 1: return ._3DO
+        case 2: return .MAME
+        case 3: return .Atari2600
+        case 4: return .Atari5200
+        case 5: return .Atari7800
+        case 6: return .Lynx
+        case 7: return .AtariJaguar
+        case 8: return .AtariJaguarCD
+        case 9: return .WonderSwan
+        case 10: return .WonderSwanColor
+        case 11: return .ColecoVision
+        case 12: return .Vectrex
+        case 13: return .Intellivision
+        case 14: return .PCE
+        case 15: return .PCECD
+        case 16: return .PCFX
+        case 17: return .SGFX
+        case 18: return .FDS
+        case 19: return .GB
+        case 20: return .GBA
+        case 21: return .GBC
+        case 22: return .GameCube
+        case 23: return .N64
+        case 24: return .DS
+        case 25: return .NES
+        case 26: return .SNES
+        case 27: return .VirtualBoy
+        case 28: return .Wii
+        case 29: return .Sega32X
+        case 30: return .GameGear
+        case 31: return .MasterSystem
+        case 32: return .SegaCD
+        case 33: return .Genesis
+        case 34: return .Saturn
+        case 35: return .SG1000
+        case 36: return .NGP
+        case 37: return .NGPC
+        case 38: return .PSX
+        case 39: return .PSP
+        case 40: return .Odyssey2
+        case 41: return .C64
+        case 42: return .MSX
+        case 43: return .MSX2
+        case 45: return .RetroArch
+        case 46: return ._3DS
+        case 47: return .AppleII
+        default: return nil
+        }
+    }
 }

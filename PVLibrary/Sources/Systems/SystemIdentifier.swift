@@ -205,7 +205,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
             false
         }
     }
-    
+
     public
     var offset: UInt64 {
         switch self {
