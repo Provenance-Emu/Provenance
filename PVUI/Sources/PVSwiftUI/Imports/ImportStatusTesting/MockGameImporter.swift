@@ -16,6 +16,7 @@ class MockGameImporter: GameImporting, ObservableObject {
     @Published public var importQueue: [ImportQueueItem] = []
     @Published private(set) public var processingState: ProcessingState = .idle
 
+    @MainActor
     public init(importStatus: String = "", importQueue: [ImportQueueItem] = [], processingState: ProcessingState = .idle, importStartedHandler: GameImporterImportStartedHandler? = nil, completionHandler: GameImporterCompletionHandler? = nil, finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil, finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil, spotlightCompletionHandler: GameImporterCompletionHandler? = nil, spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil) {
         self.importStatus = importStatus
         self.importQueue = importQueue
@@ -56,6 +57,7 @@ class MockGameImporter: GameImporting, ObservableObject {
         }
     }
     
+    @MainActor
     public func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
         for path in paths {
             let item = ImportQueueItem(url: path, fileType: .unknown)

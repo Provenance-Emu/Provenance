@@ -57,12 +57,13 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         romsPath = url
     }
 
+    @MainActor
     internal func importGameIntoDatabase(queueItem: ImportQueueItem) async throws {
         guard queueItem.fileType != .bios else {
             return
         }
 
-        guard let targetSystem = queueItem.targetSystem() else {
+        guard let targetSystem = await queueItem.targetSystem() else {
             throw GameImporterError.systemNotDetermined
         }
 
@@ -124,6 +125,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     /// Imports a ROM to the database
+    @MainActor
     internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: AnySystem, relatedFiles: [URL]?) async throws {
 
         guard let _ = queueItem.destinationUrl else {

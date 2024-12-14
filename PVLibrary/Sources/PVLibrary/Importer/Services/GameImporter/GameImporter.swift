@@ -382,6 +382,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
+    @MainActor
     public func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
@@ -416,14 +417,14 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Only start processing if it's not already active
         guard processingState == .idle else { return }
         self.processingState = .processing
-        Task {
+        Task { @MainActor in
             await preProcessQueue()
             await processQueue()
         }
     }
 
     //MARK: Processing functions
-
+    @MainActor
     private func preProcessQueue() async {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
@@ -643,6 +644,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     // Processes each ImportItem in the queue sequentially
+    @MainActor
     private func processQueue() async {
         ILOG("GameImportQueue - processQueue beginning Import Processing")
         DispatchQueue.main.async {
@@ -660,6 +662,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     // Process a single ImportItem and update its status
+    @MainActor
     private func processItem(_ item: ImportQueueItem) async {
         ILOG("GameImportQueue - processing item in queue: \(item.url)")
         item.status = .processing
@@ -704,6 +707,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
+    @MainActor
     private func performImport(for item: ImportQueueItem) async throws {
 
         //ideally this wouldn't be needed here because we'd have done it elsewhere
@@ -728,8 +732,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         //update item's candidate systems with the result of determineSystems
-        item.systems = systems.compactMap { system in
-            if let pvSystem = PVEmulatorConfiguration.system(forIdentifier: system.identifier) {
+        item.systems = systems.map{$0.identifier}.compactMap { identifier in
+            if let pvSystem = PVEmulatorConfiguration.system(forIdentifier: identifier) {
                 return pvSystem
             }
             return nil
