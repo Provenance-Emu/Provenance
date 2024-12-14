@@ -515,7 +515,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
             detailText: .subtitle("Join our Discord server for help and community chat."),
-            icon: .named("discord", in: PVUIBase.BundleLoader.module),
+            icon: .named("discord", in: PVUIBase.BundleLoader.myBundle),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
@@ -530,7 +530,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         let xRow = NavigationRow(
             text: NSLocalizedString("X", comment: ""),
             detailText: .subtitle("Follow us on X for release and other announcements."),
-            icon: .named("x", in: PVUIBase.BundleLoader.module),
+            icon: .named("x", in: PVUIBase.BundleLoader.myBundle),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
@@ -545,7 +545,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         let githubRow = NavigationRow(
             text: NSLocalizedString("GitHub", comment: ""),
             detailText: .subtitle("Check out GitHub for code, reporting bugs and contributing."),
-            icon: .named("github", in: PVUIBase.BundleLoader.module),
+            icon: .named("github", in: PVUIBase.BundleLoader.myBundle),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
@@ -566,7 +566,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         let patreonRow = NavigationRow(
             text: NSLocalizedString("Patreon", comment: ""),
             detailText: .subtitle(patreonText),
-            icon: .named("patreon", in: PVUIBase.BundleLoader.module),
+            icon: .named("patreon", in: PVUIBase.BundleLoader.myBundle),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
@@ -581,7 +581,7 @@ public final class PVSettingsViewController: QuickTableViewController {
         let youTubeRow = NavigationRow(
             text: NSLocalizedString("YouTube", comment: ""),
             detailText: .subtitle("Help tutorial videos and new feature previews."),
-            icon: .named("youtube", in: PVUIBase.BundleLoader.module),
+            icon: .named("youtube", in: PVUIBase.BundleLoader.myBundle),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0

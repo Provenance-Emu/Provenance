@@ -309,34 +309,34 @@ private struct SocialLinksSection: View {
                 Link(destination: URL(string: "https://www.patreon.com/provenance")!) {
                     SettingsRow(title: "Patreon",
                                 subtitle: "Support us on Patreon.",
-                                icon: .named("patreon", PVUIBase.BundleLoader.module))
+                                icon: .named("patreon", PVUIBase.BundleLoader.myBundle))
                 }
             }
             if !isAppStore {
                 Link(destination: URL(string: "https://discord.gg/4TK7PU5")!) {
                     SettingsRow(title: "Discord",
                                 subtitle: "Join our Discord server for help and community chat.",
-                                icon: .named("discord", PVUIBase.BundleLoader.module))
+                                icon: .named("discord", PVUIBase.BundleLoader.myBundle))
                 }
             }
             if !isAppStore {
                 Link(destination: URL(string: "https://twitter.com/provenanceapp")!) {
                     SettingsRow(title: "X",
                                 subtitle: "Follow us on X for release and other announcements.",
-                                icon: .named("x", PVUIBase.BundleLoader.module))
+                                icon: .named("x", PVUIBase.BundleLoader.myBundle))
                 }
             }
             if !isAppStore {
                 Link(destination: URL(string: "https://www.youtube.com/channel/UCKeN6unYKdayfgLWulXgB1w")!) {
                     SettingsRow(title: "YouTube",
                                 subtitle: "Help tutorial videos and new feature previews.",
-                                icon: .named("youtube", PVUIBase.BundleLoader.module))
+                                icon: .named("youtube", PVUIBase.BundleLoader.myBundle))
                 }
             }
             Link(destination: URL(string: "https://github.com/Provenance-Emu/Provenance")!) {
                 SettingsRow(title: "GitHub",
                             subtitle: "Check out GitHub for code, reporting bugs and contributing.",
-                            icon: .named("github", PVUIBase.BundleLoader.module))
+                            icon: .named("github", PVUIBase.BundleLoader.myBundle))
             }
         }
     }

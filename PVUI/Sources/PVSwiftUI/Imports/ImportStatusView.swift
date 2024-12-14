@@ -18,22 +18,6 @@ public protocol ImportStatusDelegate : AnyObject {
     func forceImportsAction()
 }
 
-func iconNameForFileType(_ type: FileType) -> String {
-    
-    switch type {
-    case .bios:
-        return "bios_filled"
-    case .artwork:
-        return "image_icon_256"
-    case .game:
-        return "file_icon_256"
-    case .cdRom:
-        return "cd_icon_256"
-    case .unknown:
-        return "questionMark"
-    }
-}
-
 public struct ImportStatusView: View {
     @ObservedObject
     public var updatesController: PVGameLibraryUpdatesController
