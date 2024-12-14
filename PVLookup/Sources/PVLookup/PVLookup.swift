@@ -51,48 +51,58 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     // MARK: - ROMMetadataProvider Implementation
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
         // Try OpenVGDB first
-        if let result = try await searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first {
-            return result
+        let openVGDBResult = try await searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first
+
+        // Get libretrodb result
+        let libretroDatabaseResult = try libreTroDB.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first
+
+        // If we have both results, merge them
+        if let openVGDBMetadata = openVGDBResult,
+           let libretroDatabaseMetadata = libretroDatabaseResult {
+            return openVGDBMetadata.merged(with: libretroDatabaseMetadata)
         }
 
-        // Fall back to libretrodb if no results
-        return try libreTroDB.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first
+        // Otherwise return whichever one we have
+        return openVGDBResult ?? libretroDatabaseResult
     }
 
     public func searchDatabase(usingKey key: String, value: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        // Try OpenVGDB first
-        if let results = try openVGDB.searchDatabase(usingKey: key, value: value, systemID: systemID) {
-            if !results.isEmpty {
-                return results
-            }
+        // Get results from both databases
+        let openVGDBResults = try openVGDB.searchDatabase(usingKey: key, value: value, systemID: systemID)
+        let libretroDatabaseResults = try libreTroDB.searchDatabase(usingKey: key, value: value, systemID: systemID)
+
+        // If we have results from both, merge them
+        if let openVGDBMetadata = openVGDBResults,
+           let libretroDatabaseMetadata = libretroDatabaseResults {
+            return openVGDBMetadata.merged(with: libretroDatabaseMetadata)
         }
 
-        // Fall back to libretrodb if no results
-        return try libreTroDB.searchDatabase(usingKey: key, value: value, systemID: systemID)
+        // Otherwise return whichever one we have
+        return openVGDBResults ?? libretroDatabaseResults
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        // Try OpenVGDB first
-        if let results = try openVGDB.searchDatabase(usingFilename: filename, systemID: systemID) {
-            if !results.isEmpty {
-                return results
-            }
+        let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemID: systemID)
+        let libretroDatabaseResults = try libreTroDB.searchDatabase(usingFilename: filename, systemID: systemID)
+
+        if let openVGDBMetadata = openVGDBResults,
+           let libretroDatabaseMetadata = libretroDatabaseResults {
+            return openVGDBMetadata.merged(with: libretroDatabaseMetadata)
         }
 
-        // Fall back to libretrodb if no results
-        return try libreTroDB.searchDatabase(usingFilename: filename, systemID: systemID)
+        return openVGDBResults ?? libretroDatabaseResults
     }
 
     public func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
-        // Try OpenVGDB first
-        if let results = try openVGDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs) {
-            if !results.isEmpty {
-                return results
-            }
+        let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs)
+        let libretroDatabaseResults = try libreTroDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs)
+
+        if let openVGDBMetadata = openVGDBResults,
+           let libretroDatabaseMetadata = libretroDatabaseResults {
+            return openVGDBMetadata.merged(with: libretroDatabaseMetadata)
         }
 
-        // Fall back to libretrodb if no results
-        return try libreTroDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs)
+        return openVGDBResults ?? libretroDatabaseResults
     }
 
     public func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
