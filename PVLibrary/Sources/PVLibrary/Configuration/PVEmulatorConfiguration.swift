@@ -194,7 +194,7 @@ public extension PVEmulatorConfiguration {
 
     @objc
     class func system(forDatabaseID databaseID : Int) -> PVSystem? {
-        let systemID = systemID(forDatabaseID: databaseID)
+        guard let systemID = systemID(forDatabaseID: databaseID) else { return nil }
         let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
         return system
     }
