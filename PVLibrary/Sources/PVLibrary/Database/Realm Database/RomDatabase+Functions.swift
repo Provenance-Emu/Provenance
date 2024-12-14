@@ -8,7 +8,6 @@
 import PVRealm
 import Foundation
 import PVLogging
-import PVLookup
 
 public extension RomDatabase {
 }

@@ -198,8 +198,8 @@ public extension RomDatabase {
     }
     
     static func getArtCache(_ md5:String, systemIdentifier:String) -> [String: AnyObject]? {
-        if RomDatabase.artMD5DBCache == nil ||
-            RomDatabase.artFileNameToMD5Cache == nil {
+        if RomDatabase.artMD5DBCache.isEmpty ||
+            RomDatabase.artFileNameToMD5Cache.isEmpty {
             NSLog("RomDatabase:getArtCache:ArtCache not found, reloading")
             self.reloadArtDBCache()
         }
@@ -212,8 +212,8 @@ public extension RomDatabase {
     }
 
     static func getArtCacheByFileName(_ filename:String, systemIdentifier:String) ->  [String: AnyObject]? {
-        if RomDatabase.artMD5DBCache == nil ||
-            RomDatabase.artFileNameToMD5Cache == nil {
+        if RomDatabase.artMD5DBCache.isEmpty ||
+            RomDatabase.artFileNameToMD5Cache.isEmpty{
             NSLog("RomDatabase:getArtCacheByFileName:ArtCache not found, reloading")
             self.reloadArtDBCache()
         }
@@ -226,7 +226,7 @@ public extension RomDatabase {
     }
 
     static func getArtCacheByFileName(_ filename:String) -> [String: AnyObject]? {
-        if RomDatabase.artMD5DBCache == nil || RomDatabase.artFileNameToMD5Cache == nil {
+        if RomDatabase.artMD5DBCache.isEmpty || RomDatabase.artFileNameToMD5Cache.isEmpty {
             ILOG("RomDatabase:getArtCacheByFileName: ArtCache not found, reloading")
             self.reloadArtDBCache()
         }

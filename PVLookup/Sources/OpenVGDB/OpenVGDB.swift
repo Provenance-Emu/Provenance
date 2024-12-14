@@ -23,17 +23,17 @@ actor OpenVGDBActor:GlobalActor
 }
 
 public final class OpenVGDB {
-    
+
     #warning("TODO: Convert to SQLSwift")
     /// Legacy connection
     private let vgdb: PVSQLiteDatabase
-    
+
     /// SQLSwift connection
     lazy var sqldb: Connection = {
         let sqldb = try! Connection(openvgdbPath.path, readonly: true)
         return sqldb
     }()
-    
+
     lazy var openvgdbPath: URL = {
         let bundle = Bundle.module
         guard let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite") else {
@@ -47,7 +47,7 @@ public final class OpenVGDB {
             if database.url.lastPathComponent != "openvgdb.sqlite" {
                 fatalError("Database must be named 'openvgdb.sqlite'")
             }
-            
+
             vgdb = database
         } else {
             let url = Bundle.module.url(forResource: "openvgdb", withExtension: "sqlite")!
@@ -61,15 +61,11 @@ public final class OpenVGDB {
     }
 }
 
-/// Artwork Queries
+// MARK: - Artwork Queries
 public extension OpenVGDB {
-    
     typealias ArtworkMapping = (romMD5: [String:[String: AnyObject]], romFileNameToMD5: [String:String])
-    
-    
-    /// Maps roms to artwork as a quick index
-    /// - Returns: a tuple of Rom filename and key to md5, crc etc
-    func getArtworkMappings() throws -> ArtworkMapping  {
+
+    func getArtworkMappings() throws -> ArtworkMapping {
         let results = try self.getAllReleases()
         var romMD5:[String:[String: AnyObject]] = [:]
         var romFileNameToMD5:[String:String] = [:]
@@ -93,7 +89,7 @@ public extension OpenVGDB {
         }
         return (romMD5, romFileNameToMD5)
     }
-    
+
     package func getAllReleases() throws -> SQLQueryResponse {
         let queryString = """
             SELECT
@@ -125,118 +121,180 @@ public extension OpenVGDB {
         let results = try vgdb.execute(query: queryString)
         return results
     }
-    
+
     func system(forRomMD5 md5: String, or filename: String? = nil) throws -> Int? {
-        var queryString = "SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '\(md5)'"
+        var query = "SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '\(md5)'"
         if let filename = filename {
-            queryString += " OR romFileName LIKE '\(filename)'"
+            query += " OR romFileName LIKE '\(filename)'"
         }
-        
-        let results = try vgdb.execute(query: queryString)
+
+        let results = try vgdb.execute(query: query)
         guard let match = results.first else { return nil }
 
-        let databaseID = match["systemID"] as? Int 
-        return databaseID
+        return (match["systemID"] as? NSNumber)?.intValue
     }
-    
-    func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [[String: NSObject]]? {
-        let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
-        
-        let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" AND systemID IN (%@) ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-        let dbSystemID: String = systemIDs.compactMap { "\($0)" }.joined(separator: ",")
-        let queryString = String(format: likeQuery, filename, dbSystemID, filename)
-        
-        let results: [Any]?
-        
-        do {
-            results = try vgdb.execute(query: queryString)
-        } catch {
-            ELOG("Failed to execute query: \(error.localizedDescription)")
-            throw error
-        }
-        
-        if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
-            return validResult
-        } else {
-            return nil
-        }
-    }
-    
-    private
-    func releaseID(forCRCs crcs: Set<String>) -> String? {
-        let roms = Table("ROMs")
-        let romID = Expression<Int>(value: "romID")
-        let romHashCRC = Expression<String>(value: "romHashCRC")
-        
-        let query = roms.select(romID).filter(crcs.contains(romHashCRC))
-        
-        do {
-            let result = try sqldb.pluck(query)
-            let foundROMid = try result?.get(romID)
-            return foundROMid
-        } catch {
-            ELOG("Query error: \(error.localizedDescription)")
-            return nil
-        }
-    }
-    
-    func searchDatabase(usingFilename filename: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
-        let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
-        
-        let queryString: String
+}
+
+// MARK: - Database Queries
+public extension OpenVGDB {
+    func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [ROMMetadata]? {
+        let properties = getStandardProperties()
+        let query: String
+
         if let systemID = systemID {
-            let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-            let dbSystemID: String = String(systemID)
-            queryString = String(format: likeQuery, filename, dbSystemID, filename)
+            query = """
+                SELECT DISTINCT \(properties)
+                FROM ROMs rom
+                LEFT JOIN RELEASES release USING (romID)
+                WHERE \(key) = '\(value)'
+                AND systemID = \(systemID)
+                """
         } else {
-            let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-            queryString = String(format: likeQuery, filename, filename)
+            query = """
+                SELECT DISTINCT \(properties)
+                FROM ROMs rom
+                LEFT JOIN RELEASES release USING (romID)
+                WHERE \(key) = '\(value)'
+                """
         }
-        
-        let results: [Any]?
-        
-        do {
-            results = try vgdb.execute(query: queryString)
-        } catch {
-            ELOG("Failed to execute query: \(error.localizedDescription)")
-            throw error
-        }
-        
-        if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
-            return validResult
-        } else {
-            return nil
-        }
+
+        return try executeQuery(query)
     }
-    
-    func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
-        var results: [Any]?
-        
-        let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
-        
-        let exactQuery = "SELECT DISTINCT " + properties + ", TEMPsystemShortName as 'systemShortName', systemID as 'systemID' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
-        
-        let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
-        
-        let queryString: String
+
+    func searchDatabase(usingFilename filename: String, systemID: Int? = nil) throws -> [ROMMetadata]? {
+        let properties = getStandardProperties()
+        let query: String
+
         if let systemID = systemID {
-            let dbSystemID: String = String(systemID)
-            queryString = String(format: likeQuery, key, value, dbSystemID, key, value)
+            query = """
+                SELECT DISTINCT \(properties)
+                FROM ROMs rom
+                LEFT JOIN RELEASES release USING (romID)
+                WHERE romFileName LIKE '%\(filename)%'
+                AND systemID = \(systemID)
+                ORDER BY case when romFileName LIKE '\(filename)%' then 1 else 0 end DESC
+                """
         } else {
-            queryString = String(format: exactQuery, key, value)
+            query = """
+                SELECT DISTINCT \(properties)
+                FROM ROMs rom
+                LEFT JOIN RELEASES release USING (romID)
+                WHERE romFileName LIKE '%\(filename)%'
+                ORDER BY case when romFileName LIKE '\(filename)%' then 1 else 0 end DESC
+                """
         }
-        
-        do {
-            results = try vgdb.execute(query: queryString)
-        } catch {
-            ELOG("Failed to execute query: \(error.localizedDescription)")
-            throw error
-        }
-        
-        if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
-            return validResult
-        } else {
+
+        return try executeQuery(query)
+    }
+
+    func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [ROMMetadata]? {
+        let properties = getStandardProperties()
+        let systemIDsString = systemIDs.map { String($0) }.joined(separator: ",")
+
+        let query = """
+            SELECT DISTINCT \(properties)
+            FROM ROMs rom
+            LEFT JOIN RELEASES release USING (romID)
+            WHERE romFileName LIKE '%\(filename)%'
+            AND systemID IN (\(systemIDsString))
+            ORDER BY case when romFileName LIKE '\(filename)%' then 1 else 0 end DESC
+            """
+
+        return try executeQuery(query)
+    }
+}
+
+// MARK: - Private Helpers
+private extension OpenVGDB {
+    func getStandardProperties() -> String {
+        return """
+            releaseTitleName as 'gameTitle',
+            releaseCoverFront as 'boxImageURL',
+            TEMPRomRegion as 'region',
+            releaseDescription as 'gameDescription',
+            releaseCoverBack as 'boxBackURL',
+            releaseDeveloper as 'developer',
+            releasePublisher as 'publisher',
+            romSerial as 'serial',
+            releaseDate as 'releaseDate',
+            releaseGenre as 'genres',
+            releaseReferenceURL as 'referenceURL',
+            releaseID as 'releaseID',
+            romLanguage as 'language',
+            regionLocalizedID as 'regionID',
+            systemID as 'systemID',
+            TEMPsystemShortName as 'systemShortName',
+            romFileName,
+            romHashCRC,
+            romHashMD5,
+            romID
+            """
+    }
+
+    func convertToROMMetadata(_ dict: [String: NSObject]) -> ROMMetadata? {
+        guard let systemID = (dict["systemID"] as? NSNumber)?.intValue else {
             return nil
         }
+
+        return ROMMetadata(
+            gameTitle: (dict["gameTitle"] as? String) ?? "",
+            boxImageURL: dict["boxImageURL"] as? String,
+            region: dict["region"] as? String,
+            gameDescription: dict["gameDescription"] as? String,
+            boxBackURL: dict["boxBackURL"] as? String,
+            developer: dict["developer"] as? String,
+            publisher: dict["publisher"] as? String,
+            serial: dict["serial"] as? String,
+            releaseDate: dict["releaseDate"] as? String,
+            genres: dict["genres"] as? String,
+            referenceURL: dict["referenceURL"] as? String,
+            releaseID: (dict["releaseID"] as? NSNumber)?.stringValue,
+            language: dict["language"] as? String,
+            regionID: (dict["regionID"] as? NSNumber)?.intValue,
+            systemID: systemID,
+            systemShortName: dict["systemShortName"] as? String,
+            romFileName: dict["romFileName"] as? String,
+            romHashCRC: dict["romHashCRC"] as? String,
+            romHashMD5: dict["romHashMD5"] as? String,
+            romID: (dict["romID"] as? NSNumber)?.intValue
+        )
     }
+
+    func executeQuery(_ query: String) throws -> [ROMMetadata]? {
+        let results = try vgdb.execute(query: query)
+        guard let validResults = results as? [[String: NSObject]], !validResults.isEmpty else {
+            return nil
+        }
+        return validResults.compactMap(convertToROMMetadata)
+    }
+}
+
+/// Represents metadata for a ROM/game from the OpenVGDB database
+public struct ROMMetadata: Codable {
+    public let gameTitle: String
+    public let boxImageURL: String?
+    public let region: String?
+    public let gameDescription: String?
+    public let boxBackURL: String?
+    public let developer: String?
+    public let publisher: String?
+    public let serial: String?
+    public let releaseDate: String?
+    public let genres: String?
+    public let referenceURL: String?
+    public let releaseID: String?
+    public let language: String?
+    public let regionID: Int?
+    public let systemID: Int
+    public let systemShortName: String?
+    public let romFileName: String?
+    public let romHashCRC: String?
+    public let romHashMD5: String?
+    public let romID: Int?
+}
+
+/// Result type for artwork mappings query
+public struct ArtworkMappings {
+    public let romMD5: [String: [String: AnyObject]]
+    public let romFileNameToMD5: [String: String]
 }
