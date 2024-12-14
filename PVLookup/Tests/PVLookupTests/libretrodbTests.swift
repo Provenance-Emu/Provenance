@@ -6,9 +6,10 @@
 //
 
 import Testing
+import Foundation
 @testable import PVLookup
 @testable import libretrodb
-import ROMMetadataProvider
+@testable import ROMMetadataProvider
 
 // MARK: - Platform Constants
 private extension LibretroDBTests {
@@ -339,5 +340,69 @@ final class LibretroDBTests {
 
         let expectedURL = "http://thumbnails.libretro.com/Nintendo%20-%20Game%20Boy%20Advance/Named_Boxarts/Advance%20Wars%20%28USA%29.png"
         #expect(metadata?.boxImageURL == expectedURL)
+    }
+
+    // Add to Artwork Tests
+    func testArtworkMappings() async throws {
+        let mappings = try db.getArtworkMappings()
+
+        // Verify we got mappings
+        #expect(!mappings.romMD5.isEmpty)
+        #expect(!mappings.romFileNameToMD5.isEmpty)
+
+        // Test specific game
+        let advanceWarsMD5 = "SOME_MD5_HERE" // Replace with actual MD5
+        let metadata = mappings.romMD5[advanceWarsMD5]
+        #expect(metadata != nil)
+        #expect(metadata?["boxImageURL"]?.contains("thumbnails.libretro.com") == true)
+
+        // Test filename mapping
+        let filename = "Advance Wars (USA).gba"
+        let md5 = mappings.romFileNameToMD5[filename]
+        #expect(md5 != nil)
+
+        // Test platform-specific mapping
+        let platformKey = "\(PlatformID.gba):Advance Wars"
+        let platformMD5 = mappings.romFileNameToMD5[platformKey]
+        #expect(platformMD5 != nil)
+    }
+
+    // Test caching
+    func testArtworkMappingsCaching() async throws {
+        // Clear any existing cache
+        try? FileManager.default.removeItem(at: libretrodb.ArtworkCacheConstants.cacheURL)
+
+        // First call should generate and cache
+        let firstMappings = try db.getArtworkMappings()
+
+        // Verify cache file exists
+        #expect(FileManager.default.fileExists(atPath: libretrodb.ArtworkCacheConstants.cacheURL.path))
+
+        // Second call should use cache
+        let secondMappings = try db.getArtworkMappings()
+
+        // Verify mappings match
+        #expect(firstMappings.romMD5.count == secondMappings.romMD5.count)
+        #expect(firstMappings.romFileNameToMD5.count == secondMappings.romFileNameToMD5.count)
+    }
+
+    // Add cache staleness test
+    func testArtworkMappingsCacheStaleness() async throws {
+        // Create stale cache
+        let staleCache = libretrodb.ArtworkCache(
+            romMD5: [:],
+            romFileNameToMD5: [:],
+            timestamp: Date().addingTimeInterval(-25 * 60 * 60) // 25 hours ago
+        )
+
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(staleCache)
+        try data.write(to: libretrodb.ArtworkCacheConstants.cacheURL)
+
+        // Get mappings should regenerate due to stale cache
+        let mappings = try db.getArtworkMappings()
+
+        // Verify we got fresh data
+        #expect(!mappings.romMD5.isEmpty)
     }
 }

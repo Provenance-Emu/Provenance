@@ -286,4 +286,136 @@ public extension libretrodb {
             manufacturer: dict["manufacturer_name"] as? String
         )
     }
+
+    /// Query to get all ROM metadata for artwork mapping
+    private var artworkMappingQuery: String {
+        """
+        SELECT DISTINCT
+            roms.md5,
+            roms.name as rom_name,
+            games.display_name,
+            platforms.name as platform_name,
+            manufacturers.name as manufacturer_name,
+            games.platform_id
+        FROM roms
+        INNER JOIN games ON games.serial_id = roms.serial_id
+        LEFT JOIN platforms ON games.platform_id = platforms.id
+        LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+        WHERE roms.md5 IS NOT NULL
+        """
+    }
+
+    /// Constants for artwork cache
+    internal enum ArtworkCacheConstants {
+        static let cacheFileName = "libretrodb_artwork_cache.json"
+
+        static var cacheURL: URL {
+            let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+            return cacheDir.appendingPathComponent(cacheFileName)
+        }
+    }
+
+    /// Cache structure for artwork mappings
+    internal struct ArtworkCache: Codable {
+        let romMD5: [String: [String: String]]
+        let romFileNameToMD5: [String: String]
+        let timestamp: Date
+
+        var asArtworkMapping: ArtworkMapping {
+            return ArtworkMappings(romMD5: romMD5, romFileNameToMD5: romFileNameToMD5)
+        }
+    }
+
+    /// Get artwork mappings for all ROMs in the database
+    func getArtworkMappings() throws -> ArtworkMapping {
+        // Try to load from cache first
+        if let cached = try? loadArtworkCache(), !isCacheStale(cached) {
+            return cached.asArtworkMapping
+        }
+
+        // Generate new mappings
+        let mappings = try generateArtworkMappings()
+
+        // Save to cache
+        try? saveArtworkCache(mappings)
+
+        return mappings
+    }
+
+    /// Generate fresh artwork mappings from the database
+    private func generateArtworkMappings() throws -> ArtworkMapping {
+        let results = try db.execute(query: artworkMappingQuery)
+        var romMD5: [String: [String: String]] = [:]
+        var romFileNameToMD5: [String: String] = [:]
+
+        for result in results {
+            guard let md5 = result["md5"] as? String,
+                  let displayName = result["display_name"] as? String,
+                  let platform = result["platform_name"] as? String else {
+                continue
+            }
+
+            let manufacturer = result["manufacturer_name"] as? String
+
+            // Construct artwork URL
+            if let artworkURL = constructArtworkURL(
+                platform: platform,
+                manufacturer: manufacturer,
+                displayName: displayName
+            ) {
+                // Create metadata dictionary
+                var metadata: [String: String] = [
+                    "gameTitle": displayName,
+                    "boxImageURL": artworkURL
+                ]
+
+                // Add optional fields if available
+                if let platformID = result["platform_id"] as? Int {
+                    metadata["systemID"] = String(platformID)
+                }
+                if let romName = result["rom_name"] as? String {
+                    metadata["romFileName"] = romName
+                    // Map filename to MD5
+                    romFileNameToMD5[romName] = md5
+                }
+
+                // Store in romMD5 mapping
+                romMD5[md5] = metadata
+
+                // If we have a platform ID, create a platform-specific mapping
+                if let platformID = result["platform_id"] as? Int {
+                    let key = "\(platformID):\(displayName)"
+                    romFileNameToMD5[key] = md5
+                }
+            }
+        }
+
+        return ArtworkMappings(romMD5: romMD5, romFileNameToMD5: romFileNameToMD5)
+    }
+
+    /// Save artwork mappings to cache file
+    private func saveArtworkCache(_ mappings: ArtworkMapping) throws {
+        let cache = ArtworkCache(
+            romMD5: mappings.romMD5,
+            romFileNameToMD5: mappings.romFileNameToMD5,
+            timestamp: Date()
+        )
+
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(cache)
+        try data.write(to: ArtworkCacheConstants.cacheURL)
+    }
+
+    /// Load artwork mappings from cache file
+    private func loadArtworkCache() throws -> ArtworkCache? {
+        let data = try Data(contentsOf: ArtworkCacheConstants.cacheURL)
+        let decoder = JSONDecoder()
+        return try decoder.decode(ArtworkCache.self, from: data)
+    }
+
+    /// Check if cache is stale (older than 24 hours)
+    private func isCacheStale(_ cache: ArtworkCache) -> Bool {
+        let staleInterval: TimeInterval = 24 * 60 * 60 // 24 hours
+        return Date().timeIntervalSince(cache.timestamp) > staleInterval
+    }
 }

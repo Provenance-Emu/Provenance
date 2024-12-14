@@ -107,7 +107,8 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
 
     // MARK: - ArtworkLookupService Implementation
     public func getArtworkMappings() async throws -> ArtworkMapping {
-        try await withCheckedThrowingContinuation { continuation in
+        // Try OpenVGDB first
+        let openVGDBMappings = try await withCheckedThrowingContinuation { continuation in
             do {
                 let result = try openVGDB.getArtworkMappings()
                 continuation.resume(returning: result)
@@ -115,6 +116,15 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
                 continuation.resume(throwing: error)
             }
         }
+
+        // Then get libretrodb mappings
+        let libretroDBArtwork = try libreTroDB.getArtworkMappings()
+
+        // Merge the mappings
+        let mergedMD5 = openVGDBMappings.romMD5.merging(libretroDBArtwork.romMD5) { (_, new) in new }
+        let mergedFilenames = openVGDBMappings.romFileNameToMD5.merging(libretroDBArtwork.romFileNameToMD5) { (_, new) in new }
+
+        return ArtworkMappings(romMD5: mergedMD5, romFileNameToMD5: mergedFilenames)
     }
 
     // MARK: - Database Search Methods
