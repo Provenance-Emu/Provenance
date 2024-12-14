@@ -9,6 +9,8 @@ import Foundation
 import PVLogging
 import SQLite
 import PVSQLiteDatabase
+import ROMMetadataProvider
+import PVLookupTypes
 
 @globalActor
 public
@@ -63,34 +65,49 @@ public final class OpenVGDB {
 
 // MARK: - Artwork Queries
 public extension OpenVGDB {
-    typealias ArtworkMapping = (romMD5: [String:[String: AnyObject]], romFileNameToMD5: [String:String])
+    enum OpenVGDBError: Error {
+        case invalidSystemID(Int)
+        case invalidQuery(String)
+    }
+
+    /// Valid system IDs from the database
+    static let validSystemIDs = Set(1...47)  // Based on the provided database dump
 
     func getArtworkMappings() throws -> ArtworkMapping {
         let results = try self.getAllReleases()
-        var romMD5:[String:[String: AnyObject]] = [:]
-        var romFileNameToMD5:[String:String] = [:]
+        var romMD5: [String: [String: String]] = [:]
+        var romFileNameToMD5: [String: String] = [:]
+
         for res in results {
             if let md5 = res["romHashMD5"] as? String, !md5.isEmpty {
-                let md5 : String = md5.uppercased()
-                romMD5[md5] = res
+                let md5 = md5.uppercased()
+                var metadata: [String: String] = [:]
+                for (key, value) in res {
+                    metadata[key] = String(describing: value)
+                }
+                romMD5[md5] = metadata
+
                 if let systemID = res["systemID"] as? Int {
                     if let filename = res["romFileName"] as? String, !filename.isEmpty {
-                        let key : String = String(systemID) + ":" + filename
-                        romFileNameToMD5[key]=md5
-                        romFileNameToMD5[filename]=md5
+                        let key = String(systemID) + ":" + filename
+                        romFileNameToMD5[key] = md5
+                        romFileNameToMD5[filename] = md5
                     }
-                    let key : String = String(systemID) + ":" + md5
-                    romFileNameToMD5[key]=md5
+                    let key = String(systemID) + ":" + md5
+                    romFileNameToMD5[key] = md5
                 }
                 if let crc = res["romHashCRC"] as? String, !crc.isEmpty {
-                    romFileNameToMD5[crc]=md5
+                    romFileNameToMD5[crc] = md5
                 }
             }
         }
-        return (romMD5, romFileNameToMD5)
+        return ArtworkMappings(romMD5: romMD5, romFileNameToMD5: romFileNameToMD5)
     }
+}
 
-    package func getAllReleases() throws -> SQLQueryResponse {
+// MARK: - Private Artwork Helpers
+private extension OpenVGDB {
+    func getAllReleases() throws -> SQLQueryResponse {
         let queryString = """
             SELECT
                 release.regionLocalizedID as 'regionID',
@@ -118,51 +135,12 @@ public extension OpenVGDB {
             AND rom.systemID = system.systemID
             AND release.regionLocalizedID = region.regionID
             """
-        let results = try vgdb.execute(query: queryString)
-        return results
-    }
-
-    func system(forRomMD5 md5: String, or filename: String? = nil) throws -> Int? {
-        var query = "SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '\(md5)'"
-        if let filename = filename {
-            query += " OR romFileName LIKE '\(filename)'"
-        }
-
-        let results = try vgdb.execute(query: query)
-        guard let match = results.first else { return nil }
-
-        return (match["systemID"] as? NSNumber)?.intValue
+        return try vgdb.execute(query: queryString)
     }
 }
 
 // MARK: - Database Queries
 public extension OpenVGDB {
-    public enum OpenVGDBError: Error {
-        case invalidSystemID(Int)
-        case invalidQuery(String)
-    }
-
-    /// Valid system IDs from the database
-    static let validSystemIDs = Set(1...47)  // Based on the provided database dump
-
-    private func isValidSystemID(_ systemID: Int) -> Bool {
-        return Self.validSystemIDs.contains(systemID)
-    }
-
-    private func escapeSQLString(_ string: String) -> String {
-        // Escape special characters in SQL strings
-        return string.replacingOccurrences(of: "'", with: "''")
-    }
-
-    private func escapeLikePattern(_ pattern: String) -> String {
-        // Escape special characters in LIKE patterns
-        var escaped = pattern
-        escaped = escaped.replacingOccurrences(of: "%", with: "\\%")
-        escaped = escaped.replacingOccurrences(of: "_", with: "\\_")
-        escaped = escaped.replacingOccurrences(of: "'", with: "''")
-        return escaped
-    }
-
     func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
         let escapedValue = escapeSQLString(value)
@@ -248,10 +226,38 @@ public extension OpenVGDB {
 
         return try executeQuery(query)
     }
+
+    func system(forRomMD5 md5: String, or filename: String? = nil) throws -> Int? {
+        var query = "SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '\(md5)'"
+        if let filename = filename {
+            query += " OR romFileName LIKE '\(filename)'"
+        }
+
+        let results = try vgdb.execute(query: query)
+        guard let match = results.first else { return nil }
+
+        return (match["systemID"] as? NSNumber)?.intValue
+    }
 }
 
 // MARK: - Private Helpers
 private extension OpenVGDB {
+    func isValidSystemID(_ systemID: Int) -> Bool {
+        return Self.validSystemIDs.contains(systemID)
+    }
+
+    func escapeSQLString(_ string: String) -> String {
+        return string.replacingOccurrences(of: "'", with: "''")
+    }
+
+    func escapeLikePattern(_ pattern: String) -> String {
+        var escaped = pattern
+        escaped = escaped.replacingOccurrences(of: "%", with: "\\%")
+        escaped = escaped.replacingOccurrences(of: "_", with: "\\_")
+        escaped = escaped.replacingOccurrences(of: "'", with: "''")
+        return escaped
+    }
+
     func getStandardProperties() -> String {
         return """
             releaseTitleName as 'gameTitle',
@@ -277,12 +283,51 @@ private extension OpenVGDB {
             """
     }
 
+    func executeQuery(_ query: String) throws -> [ROMMetadata]? {
+        let results = try vgdb.execute(query: query)
+        guard let validResults = results as? [[String: NSObject]], !validResults.isEmpty else {
+            return nil
+        }
+        return validResults.compactMap(convertToROMMetadata)
+    }
+
     func convertToROMMetadata(_ dict: [String: NSObject]) -> ROMMetadata? {
+        // First convert to our internal type
+        guard let internalMetadata = convertToOpenVGDBMetadata(dict) else {
+            return nil
+        }
+
+        // Then convert to public ROMMetadata
+        return ROMMetadata(
+            gameTitle: internalMetadata.gameTitle,
+            boxImageURL: internalMetadata.boxImageURL,
+            region: internalMetadata.region,
+            gameDescription: internalMetadata.gameDescription,
+            boxBackURL: internalMetadata.boxBackURL,
+            developer: internalMetadata.developer,
+            publisher: internalMetadata.publisher,
+            serial: internalMetadata.serial,
+            releaseDate: internalMetadata.releaseDate,
+            genres: internalMetadata.genres,
+            referenceURL: internalMetadata.referenceURL,
+            releaseID: internalMetadata.releaseID,
+            language: internalMetadata.language,
+            regionID: internalMetadata.regionID,
+            systemID: internalMetadata.systemID,
+            systemShortName: internalMetadata.systemShortName,
+            romFileName: internalMetadata.romFileName,
+            romHashCRC: internalMetadata.romHashCRC,
+            romHashMD5: internalMetadata.romHashMD5,
+            romID: internalMetadata.romID
+        )
+    }
+
+    func convertToOpenVGDBMetadata(_ dict: [String: NSObject]) -> OpenVGDBROMMetadata? {
         guard let systemID = (dict["systemID"] as? NSNumber)?.intValue else {
             return nil
         }
 
-        return ROMMetadata(
+        return OpenVGDBROMMetadata(
             gameTitle: (dict["gameTitle"] as? String) ?? "",
             boxImageURL: dict["boxImageURL"] as? String,
             region: dict["region"] as? String,
@@ -305,42 +350,4 @@ private extension OpenVGDB {
             romID: (dict["romID"] as? NSNumber)?.intValue
         )
     }
-
-    func executeQuery(_ query: String) throws -> [ROMMetadata]? {
-        let results = try vgdb.execute(query: query)
-        guard let validResults = results as? [[String: NSObject]], !validResults.isEmpty else {
-            return nil
-        }
-        return validResults.compactMap(convertToROMMetadata)
-    }
-}
-
-/// Represents metadata for a ROM/game from the OpenVGDB database
-public struct ROMMetadata: Codable {
-    public let gameTitle: String
-    public let boxImageURL: String?
-    public let region: String?
-    public let gameDescription: String?
-    public let boxBackURL: String?
-    public let developer: String?
-    public let publisher: String?
-    public let serial: String?
-    public let releaseDate: String?
-    public let genres: String?
-    public let referenceURL: String?
-    public let releaseID: String?
-    public let language: String?
-    public let regionID: Int?
-    public let systemID: Int
-    public let systemShortName: String?
-    public let romFileName: String?
-    public let romHashCRC: String?
-    public let romHashMD5: String?
-    public let romID: Int?
-}
-
-/// Result type for artwork mappings query
-public struct ArtworkMappings {
-    public let romMD5: [String: [String: AnyObject]]
-    public let romFileNameToMD5: [String: String]
 }

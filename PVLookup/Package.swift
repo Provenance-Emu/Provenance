@@ -64,13 +64,12 @@ let package = Package(
         .target(
             name: "PVLookup",
             dependencies: [
-                // .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
-                // .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
                 "PVLogging",
                 "OpenVGDB",
-//                "ShiraGame",
-                // "TheGamesDB"
-        ]),
+                "ROMMetadataProvider",
+                "PVLookupTypes"
+            ]
+        ),
 
         // SQLite Wrapper
 
@@ -99,9 +98,9 @@ let package = Package(
         .target(
             name: "OpenVGDB",
             dependencies: [
-                "ROMMetadataProvider",
                 "PVSQLiteDatabase",
-                "Lighter"
+                "Lighter",
+                "PVLookupTypes"
             ],
             resources: [
                 .copy("Resources/openvgdb.sqlite"),
@@ -132,17 +131,25 @@ let package = Package(
                 // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
                 // .plugin(name: "Enlighter", package: "Lighter")
             ]),
-        
+
         // MARK: ROMMetadataProvider
         .target(
-            name: "ROMMetadataProvider"),
+            name: "ROMMetadataProvider",
+            dependencies: ["PVLookupTypes"]
+        ),
 
         // MARK: PVLookupTests tests
 
         .testTarget(
             name: "PVLookupTests",
             dependencies: ["PVLookup"]
-        )
+        ),
+
+        // Add new target
+        .target(
+            name: "PVLookupTypes",
+            dependencies: []
+        ),
     ],
     swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu18,
