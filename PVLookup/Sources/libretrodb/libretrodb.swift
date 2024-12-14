@@ -190,7 +190,9 @@ public extension libretrodb {
 
         switch key {
         case "romHashMD5":
-            query += " WHERE roms.md5 = '\(value)' COLLATE NOCASE"
+            // Normalize MD5 to uppercase
+            let normalizedMD5 = value.uppercased()
+            query += " WHERE roms.md5 = '\(normalizedMD5)' COLLATE NOCASE"
         case "romHashCRC":
             return nil // Not supported in libretrodb
         default:
@@ -258,7 +260,10 @@ public extension libretrodb {
     func system(forRomMD5 md5: String, or filename: String?) throws -> Int? {
         var query = "SELECT DISTINCT platform_id FROM games"
         query += " INNER JOIN roms ON games.serial_id = roms.serial_id"
-        query += " WHERE roms.md5 = '\(md5)' COLLATE NOCASE"
+
+        // Normalize MD5 to uppercase
+        let normalizedMD5 = md5.uppercased()
+        query += " WHERE roms.md5 = '\(normalizedMD5)' COLLATE NOCASE"
 
         if let filename = filename {
             let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")

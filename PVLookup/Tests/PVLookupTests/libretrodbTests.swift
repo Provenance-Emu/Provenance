@@ -405,4 +405,35 @@ final class LibretroDBTests {
         // Verify we got fresh data
         #expect(!mappings.romMD5.isEmpty)
     }
+
+    func testMD5CaseNormalization() async throws {
+        // Test with lowercase MD5
+        let md5Lower = "3ca38a30f1ec411073fc369c9ee41e2e"
+        let resultsLower = try db.searchDatabase(usingKey: "romHashMD5", value: md5Lower, systemID: nil)
+
+        // Test with uppercase MD5
+        let md5Upper = "3CA38A30F1EC411073FC369C9EE41E2E"
+        let resultsUpper = try db.searchDatabase(usingKey: "romHashMD5", value: md5Upper, systemID: nil)
+
+        // Test with mixed case MD5
+        let md5Mixed = "3cA38a30F1ec411073Fc369c9eE41E2e"
+        let resultsMixed = try db.searchDatabase(usingKey: "romHashMD5", value: md5Mixed, systemID: nil)
+
+        // All queries should return the same result
+        #expect(resultsLower?.first?.romHashMD5 == resultsUpper?.first?.romHashMD5)
+        #expect(resultsLower?.first?.romHashMD5 == resultsMixed?.first?.romHashMD5)
+
+        // The returned MD5 should be uppercase
+        #expect(resultsLower?.first?.romHashMD5?.uppercased() == resultsLower?.first?.romHashMD5)
+    }
+
+    func testSystemLookupMD5CaseNormalization() async throws {
+        let md5Lower = "3ca38a30f1ec411073fc369c9ee41e2e"
+        let md5Upper = "3CA38A30F1EC411073FC369C9EE41E2E"
+
+        let systemIDLower = try db.system(forRomMD5: md5Lower, or: nil)
+        let systemIDUpper = try db.system(forRomMD5: md5Upper, or: nil)
+
+        #expect(systemIDLower == systemIDUpper)
+    }
 }
