@@ -102,9 +102,9 @@ public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, 
 public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
 public protocol GameImporting {
-    
+
     typealias ImportQueueItemType = ImportQueueItem
-    
+
     func initSystems() async
 
     var importStatus: String { get }
@@ -116,16 +116,16 @@ public protocol GameImporting {
     func addImport(_ item: ImportQueueItem)
     func addImports(forPaths paths: [URL])
     func addImports(forPaths paths: [URL], targetSystem: AnySystem)
-    
+
     func removeImports(at offsets: IndexSet)
     func startProcessing()
-    
+
     func clearCompleted()
 
     func sortImportQueueItems(_ importQueueItems: [ImportQueueItemType]) -> [ImportQueueItemType]
 
     func importQueueContainsDuplicate(_ queue: [ImportQueueItemType], ofItem queueItem: ImportQueueItemType) -> Bool
-    
+
     var importStartedHandler: GameImporterImportStartedHandler? { get set }
     /// Closure called when import completes
     var completionHandler: GameImporterCompletionHandler? { get set }
@@ -133,7 +133,7 @@ public protocol GameImporting {
     var finishedImportHandler: GameImporterFinishedImportingGameHandler? { get set }
     /// Closure called when artwork finishes downloading
     var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? { get set }
-    
+
     /// Spotlight Handerls
     /// Closure called when spotlight completes
     var spotlightCompletionHandler: GameImporterCompletionHandler? { get set }
@@ -172,9 +172,6 @@ public final class GameImporter: GameImporting, ObservableObject {
                                                           GameImporterSystemsService(),
                                                           ArtworkImporter(),
                                                           DefaultCDFileHandler())
-
-    /// Instance of OpenVGDB for database operations
-    var openVGDB = OpenVGDB.init()
 
     /// Queue for handling import work
     let workQueue: OperationQueue = {
@@ -267,9 +264,6 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         //set service dependencies
         gameImporterDatabaseService.setRomsPath(url: romsPath)
-        gameImporterDatabaseService.setOpenVGDB(openVGDB)
-
-        gameImporterSystemsService.setOpenVGDB(openVGDB)
 
         gameImporterArtworkImporter.setSystemsService(gameImporterSystemsService)
     }
@@ -334,14 +328,12 @@ public final class GameImporter: GameImporting, ObservableObject {
                     Task.detached {
                         ILOG("RealmCollection changed state to .initial")
                         self.systemToPathMap = await updateSystemToPathMap()
-                        self.gameImporterSystemsService.setExtensionsToSystemMapping(updateromExtensionToSystemsMap())
                         self.initialized.leave()
                     }
                 case .update:
                     Task.detached {
                         ILOG("RealmCollection changed state to .update")
                         self.systemToPathMap = await updateSystemToPathMap()
-                        self.gameImporterSystemsService.setExtensionsToSystemMapping(updateromExtensionToSystemsMap())
                     }
                 case let .error(error):
                     ELOG("RealmCollection changed state to .error")
@@ -457,7 +449,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         //lastly, move and cue (and child bin) files under the parent m3u (if they exist)
         organizeM3UFiles(in: &importQueue)
     }
-    
+
     public func clearCompleted() {
         self.importQueue = self.importQueue.filter({
             switch $0.status {
@@ -736,7 +728,12 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         //update item's candidate systems with the result of determineSystems
-        item.systems = systems
+        item.systems = systems.compactMap { system in
+            if let pvSystem = PVEmulatorConfiguration.system(forIdentifier: system.identifier) {
+                return pvSystem
+            }
+            return nil
+        }
 
         //this might be a conflict if we can't infer what to do
         //for BIOS, we can handle multiple systems, so allow that to proceed

@@ -146,7 +146,7 @@ public extension PVEmulatorConfiguration {
             ELOG("No system cached for id \(system.identifier)")
             return []
         }
-        return system.cores.map{ $0 } ?? []
+        return system.cores.map{ $0 }
     }
 
     class func games(forSystem system: any SystemProtocol) -> [PVGame] {
@@ -154,7 +154,7 @@ public extension PVEmulatorConfiguration {
             ELOG("No system cached for id \(system.identifier)")
             return []
         }
-        return system.games.map(\.self) ?? []
+        return system.games.map(\.self)
     }
 
     class func gamesCount(forSystem system: any SystemProtocol) -> Int {
@@ -162,7 +162,7 @@ public extension PVEmulatorConfiguration {
             ELOG("No system cached for id \(system.identifier)")
             return 0
         }
-        return system.games.count ?? 0
+        return system.games.count
     }
 
     class func systemsFromCache(forFileExtension fileExtension: String) -> [PVSystem]? {
@@ -385,14 +385,14 @@ public extension PVEmulatorConfiguration {
 }
 
 public extension PVEmulatorConfiguration {
-    public enum BIOSError: Error {
+    enum BIOSError: Error {
         case unknownBIOSFile
         case invalidMD5Hash
         case systemNotFound
         case biosAlreadyExists
     }
 
-    public static func validateAndImportBIOS(at url: URL) async throws {
+    static func validateAndImportBIOS(at url: URL) async throws {
         let fileName = url.lastPathComponent
         let fileData = try Data(contentsOf: url)
         let md5Hash = fileData.md5

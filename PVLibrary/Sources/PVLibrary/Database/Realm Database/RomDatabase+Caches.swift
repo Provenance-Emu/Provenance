@@ -12,10 +12,10 @@ import PVLookup
 import AsyncAlgorithms
 
 public extension RomDatabase {
-    
+
     // MARK: - Reloads
 
-    
+
     /// Reload all caches
     /// - Parameter force: force a reload even if cache sizes match
     static func reloadCaches(force: Bool = false) {
@@ -26,7 +26,7 @@ public extension RomDatabase {
             self.reloadGamesCache(force: force)
         }
     }
-    
+
     /// Refreash Realm and reload caches
     /// - Parameter force: force a reload even if cache sizes match
     static func reloadCache(force: Bool = false) {
@@ -34,7 +34,7 @@ public extension RomDatabase {
         self.refresh()
         self.reloadCaches(force: force)
     }
-    
+
     /// Reload BIOS cache
     /// - Parameter force: force a reload even if cache sizes match
     static func reloadBIOSCache() {
@@ -44,12 +44,12 @@ public extension RomDatabase {
         }
         _biosCache = files
     }
-    
+
     /// Reload Cores cache
     /// - Parameter force: force a reload even if cache sizes match
     static func reloadCoresCache(force: Bool = false) {
         let cores = PVCore.all.toArray()
-        
+
         if cores.count == _coreCache?.count, !cores.isEmpty, !force {
             ILOG("Skipping reload cores cache, not required for forced")
             return
@@ -59,14 +59,14 @@ public extension RomDatabase {
             dbCore[core.identifier] = core.detached()
         }
     }
-    
+
     /// Reload Systems cache
     /// - Parameter force: force a reload even if cache sizes match
     static func reloadSystemsCache(force: Bool = false) {
         let systems = PVSystem.all.toArray()
 
         ILOG("Current systems count: \(systems.count)")
-        
+
         if systems.count == _systemCache?.count && !systems.isEmpty && !force {
             ILOG("Skipping reload system cache, not required for forced")
             return
@@ -85,7 +85,7 @@ public extension RomDatabase {
             ILOG("Skipping reload games cache, not required for forced")
             return
         }
-        
+
         _gamesCache = games.reduce(into: [:]) {
             dbGames, game in
             dbGames = addGameCache(game, cache: dbGames)
@@ -135,7 +135,7 @@ public extension RomDatabase {
         }
         _fileSystemROMCache = files
     }
-    
+
     static func addFileSystemROMCache(_ system:PVSystem, files:[URL:PVSystem]) -> [URL:PVSystem] {
         var files = files
         let systemDir = system.romsDirectory
@@ -158,19 +158,19 @@ public extension RomDatabase {
             }
         return files
     }
-    
+
     static func addFileSystemROMCache(_ system:PVSystem) {
         Task {
             _fileSystemROMCache = addFileSystemROMCache(system, files:RomDatabase.fileSystemROMCache)
         }
     }
-    
+
     static func getFileSystemROMCache(for system: PVSystem) -> [URL:PVSystem] {
         if RomDatabase.fileSystemROMCache == nil {
             self.reloadFileSystemROMCache()
         }
         var files:[URL:PVSystem] = [:]
-        
+
         fileSystemROMCache.forEach({
             key, value in
             if value.identifier == system.identifier {
@@ -179,30 +179,33 @@ public extension RomDatabase {
         })
         return files
     }
-    
+
     static func reloadArtDBCache() {
         VLOG("RomDatabase:reloadArtDBCache")
         if RomDatabase._artMD5DBCache != nil && RomDatabase._artFileNameToMD5Cache != nil {
             ILOG("RomDatabase:reloadArtDBCache:Cache Found, Skipping Data Reload")
+            return
         }
-        do {
-            let openVGDB = OpenVGDB.init()
-            let mappings = try openVGDB.getArtworkMappings()
-            _artMD5DBCache = mappings.romMD5
-            _artFileNameToMD5Cache = mappings.romFileNameToMD5
-        } catch {
-            _artMD5DBCache = [:]
-            _artFileNameToMD5Cache = [:]
-            ELOG("Failed to execute query: \(error.localizedDescription)")
+
+        Task {
+            do {
+                let mappings = try await PVLookup.shared.getArtworkMappings()
+                _artMD5DBCache = mappings.romMD5.mapValues { $0 as [String: AnyObject] }
+                _artFileNameToMD5Cache = mappings.romFileNameToMD5
+            } catch {
+                _artMD5DBCache = [:]
+                _artFileNameToMD5Cache = [:]
+                ELOG("Failed to load artwork mappings: \(error.localizedDescription)")
+            }
         }
     }
-    
-    static func getArtCache(_ md5:String, systemIdentifier:String) -> [String: AnyObject]? {
-        if RomDatabase.artMD5DBCache.isEmpty ||
-            RomDatabase.artFileNameToMD5Cache.isEmpty {
+
+    static func getArtCache(_ md5: String, systemIdentifier: String) -> [String: AnyObject]? {
+        if RomDatabase.artMD5DBCache.isEmpty || RomDatabase.artFileNameToMD5Cache.isEmpty {
             NSLog("RomDatabase:getArtCache:ArtCache not found, reloading")
             self.reloadArtDBCache()
         }
+
         if let systemID = PVEmulatorConfiguration.databaseID(forSystemID: systemIdentifier),
            let md5 = artFileNameToMD5Cache[String(systemID) + ":" + md5],
            let art = artMD5DBCache[md5] {

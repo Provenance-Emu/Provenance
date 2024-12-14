@@ -1,4 +1,5 @@
 import PVLookup
+import PVLookupTypes
 
 public extension ROMMetadata {
     /// The corresponding PVSystem for this ROM metadata

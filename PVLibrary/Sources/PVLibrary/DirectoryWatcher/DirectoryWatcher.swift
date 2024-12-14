@@ -168,6 +168,15 @@ public final class DirectoryWatcher: ObservableObject {
         ILOG("Monitoring stopped for directory: \(watchedDirectory.path)")
     }
 
+    public func isWatchingFile(at path: URL) async -> Bool {
+        let isWatching = await watcherManager.isWatching(path)
+        ILOG("Checked if watching file: \(path.lastPathComponent), result: \(isWatching)")
+        return isWatching
+    }
+
+    public func isWatchingAnyFile() async -> Bool {
+        return await !watcherManager.hasActiveWatchers()
+    }
 
     /// Extract an archive from a file path
     public func extractArchive(at filePath: URL) async throws {
@@ -207,10 +216,10 @@ public final class DirectoryWatcher: ObservableObject {
             try FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
 
             var extractedFiles: [URL] = []
-            for try await extractedFile in extractor.extract(at: filePath, to: tempDirectory) { progress in
+            for try await extractedFile in extractor.extract(at: filePath, to: tempDirectory, progress: { progress in
                 ILOG("Extraction progress for \(filePath.lastPathComponent): \(Int(progress * 100))%")
                 self.extractionProgress = progress
-            } {
+            }) {
                 extractedFiles.append(extractedFile)
                 updateExtractionStatus(.updatedArchive(path: extractedFile))
                 ILOG("Extracted file: \(extractedFile.path)")
@@ -308,7 +317,7 @@ public final class DirectoryWatcher: ObservableObject {
 public extension DirectoryWatcher {
 
     /// Check if a file is an archive
-    public func isArchive(_ url: URL) -> Bool {
+    func isArchive(_ url: URL) -> Bool {
         let result = extractors.keys.contains { archiveType in
             url.pathExtension.lowercased() == archiveType.rawValue
         }
@@ -518,16 +527,6 @@ fileprivate extension DirectoryWatcher {
             completedFilesContinuation?.yield([path])
         }
     }
-
-    public func isWatchingFile(at path: URL) async -> Bool {
-        let isWatching = await watcherManager.isWatching(path)
-        ILOG("Checked if watching file: \(path.lastPathComponent), result: \(isWatching)")
-        return isWatching
-    }
-
-    public func isWatchingAnyFile() async -> Bool {
-        return await !watcherManager.hasActiveWatchers()
-    }
 }
 
 // MARK: - Utility Functions
@@ -603,7 +602,7 @@ struct TimerSequence: AsyncSequence {
 // MARK: - Extracted Files Stream
 public extension DirectoryWatcher {
     /// Create a stream of extracted files
-    public func extractedFilesStream(at path: URL) -> AsyncStream<[URL]> {
+    func extractedFilesStream(at path: URL) -> AsyncStream<[URL]> {
         ILOG("Creating extracted files stream for path: \(path.path)")
         return AsyncStream { continuation in
             Task {
@@ -618,7 +617,7 @@ public extension DirectoryWatcher {
                     case .started, .idle:
                         ILOG("Extraction status changed to \(status)")
                         break
-                    case .startedArchive(path: let path):
+                    case .startedArchive(path: _):
                         ILOG("Extraction status changed to \(status)")
                     case .updatedArchive(path: let path):
                         ILOG("Extraction updated, yielding path: \(path)")

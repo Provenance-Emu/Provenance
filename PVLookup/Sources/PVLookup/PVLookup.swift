@@ -90,6 +90,33 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
             }
         }
     }
+
+    // MARK: - Database Search Methods
+    public func searchDatabase(usingKey key: String, value: String, systemID: Int?) async throws -> [ROMMetadata]? {
+        try await withCheckedThrowingContinuation { continuation in
+            do {
+                let result = try database.searchDatabase(usingKey: key, value: value, systemID: systemID)
+                continuation.resume(returning: result)
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+
+    public func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
+        try await withCheckedThrowingContinuation { continuation in
+            do {
+                let result = try database.searchDatabase(usingFilename: filename, systemIDs: systemIDs)
+                continuation.resume(returning: result)
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+
+    public func searchDatabase(usingMD5 md5: String, systemID: Int?) async throws -> [ROMMetadata]? {
+        return try await searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemID)
+    }
 }
 
 // MARK: - Database Type Enums

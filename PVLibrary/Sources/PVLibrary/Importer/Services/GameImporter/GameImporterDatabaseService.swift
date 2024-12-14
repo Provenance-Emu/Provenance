@@ -20,25 +20,24 @@ import PVPrimitives
 import PVRealm
 import Perception
 import SwiftUI
+import PVLookupTypes
 
 public protocol GameImporterDatabaseServicing {
-    // TODO: Make me more generic
-//    associatedtype GameType: PVGameLibraryEntry
-    typealias GameType = PVGame // PVGameLibraryEntry
+    typealias GameType = PVGame
 
     func setRomsPath(url:URL)
     func importGameIntoDatabase(queueItem: ImportQueueItem) async throws
     func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws
-    func getUpdatedGameInfo(for game: GameType, forceRefresh: Bool) -> GameType
+    func getUpdatedGameInfo(for game: GameType, forceRefresh: Bool) async throws -> GameType
     func getArtwork(forGame game: GameType) async -> GameType
 }
 
 extension CharacterSet {
     var GameImporterDatabaseServiceCharset: CharacterSet {
-        GameImporterDatabaseServiceCharset
+        _GameImporterDatabaseServiceCharset
     }
 }
-fileprivate let GameImporterDatabaseServiceCharset: CharacterSet = {
+fileprivate let _GameImporterDatabaseServiceCharset: CharacterSet = {
     var c = CharacterSet.punctuationCharacters
     c.remove(charactersIn: ",-+&.'")
     return c
@@ -199,12 +198,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
         var game:PVGame = game
         if game.requiresSync {
-            game = getUpdatedGameInfo(for: game, forceRefresh: true)
+            game = try await getUpdatedGameInfo(for: game, forceRefresh: true)
         }
         if game.originalArtworkFile == nil {
             game = await getArtwork(forGame: game)
         }
-        await self.saveGame(game)
+        self.saveGame(game)
     }
 
     @discardableResult
@@ -343,32 +342,22 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     @discardableResult
-    func getUpdatedGameInfo(for game: PVGame, forceRefresh: Bool = true) -> PVGame {
+    func getUpdatedGameInfo(for game: PVGame, forceRefresh: Bool = true) async throws -> PVGame {
         var resultsMaybe: [ROMMetadata]?
 
-        // Step 1 - Try to find by MD5 (using existing MD5 only since it's the primary key)
-        do {
-            resultsMaybe = try await lookup.searchDatabase(usingKey: "romHashMD5", value: game.md5Hash, systemID: nil)
-        } catch {
-            ELOG("\(error.localizedDescription)")
-        }
+        // Remove do-catch since we're now throwing
+        resultsMaybe = try await lookup.searchDatabase(usingKey: "romHashMD5", value: game.md5Hash, systemID: nil)
 
         // Step 2 - Try to find by CRC if MD5 search failed
-        if resultsMaybe == nil || resultsMaybe!.isEmpty {
-            if !game.crc.isEmpty {
-                do {
-                    resultsMaybe = try await lookup.searchDatabase(usingKey: "romHashCRC", value: game.crc, systemID: nil)
-                } catch {
-                    ELOG("\(error.localizedDescription)")
-                }
-            }
+        if resultsMaybe == nil || resultsMaybe!.isEmpty, !game.crc.isEmpty {
+            resultsMaybe = try await lookup.searchDatabase(usingKey: "romHashCRC", value: game.crc, systemID: nil)
         }
 
         // Step 3 - Try by filename if still no results
         if resultsMaybe == nil || resultsMaybe!.isEmpty {
-            let fileName: String = game.file.url.lastPathComponent
+            let fileName = game.file.url.lastPathComponent
             // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
-            let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: GameImporterDatabaseServiceCharset)
+            let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: _GameImporterDatabaseServiceCharset)
             var gameTitleLen: Int
             if nonCharRange.length > 0, nonCharRange.location > 1 {
                 gameTitleLen = nonCharRange.location - 1
@@ -379,11 +368,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
             // Convert system identifier to database ID
             if let system = SystemIdentifier(rawValue: game.systemIdentifier) {
-                do {
-                    resultsMaybe = try await lookup.searchDatabase(usingFilename: subfileName, systemID: system.openVGDBID)
-                } catch {
-                    ELOG("\(error.localizedDescription)")
-                }
+                resultsMaybe = try await lookup.searchDatabase(usingFilename: subfileName, systemID: system.openVGDBID)
             }
         }
 
@@ -421,7 +406,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         case invalidSystemID
     }
 
-    func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [ROMMetadata]? {
+    func searchDatabase(usingKey key: String, value: String, systemID: String) async throws -> [ROMMetadata]? {
         guard let system = SystemIdentifier(rawValue: systemID) else {
             throw DatabaseQueryError.invalidSystemID
         }
@@ -429,7 +414,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         return try await lookup.searchDatabase(usingKey: key, value: value, systemID: system.openVGDBID)
     }
 
-    func searchDatabase(usingFilename filename: String, systemID: String) throws -> [ROMMetadata]? {
+    func searchDatabase(usingFilename filename: String, systemID: String) async throws -> [ROMMetadata]? {
         guard let system = SystemIdentifier(rawValue: systemID) else {
             throw DatabaseQueryError.invalidSystemID
         }
@@ -437,20 +422,19 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         return try await lookup.searchDatabase(usingFilename: filename, systemID: system.openVGDBID)
     }
 
-    // TODO: This was a quick copy of the general version for filenames specifically
-    func searchDatabase(usingFilename filename: String, systemIDs: [String]) throws -> [ROMMetadata]? {
-        let systemIDInts: [Int] = systemIDs.compactMap { systemID in
-            guard let system = SystemIdentifier(rawValue: systemID) else {
-                return nil
+    private func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
+        // Create a query that searches across multiple systems
+        var results: [ROMMetadata] = []
+        for systemID in systemIDs {
+            if let systemResults = try await lookup.searchDatabase(usingFilename: filename, systemID: systemID) {
+                results.append(contentsOf: systemResults)
             }
-            return system.openVGDBID
         }
+        return results.isEmpty ? nil : results
+    }
 
-        guard !systemIDInts.isEmpty else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try await lookup.searchDatabase(usingFilename: filename, systemIDs: systemIDInts)
+    private func searchDatabase(usingMD5 md5: String, systemID: Int?) async throws -> [ROMMetadata]? {
+        return try await lookup.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemID)
     }
 
     /// Saves a game to the database
@@ -502,10 +486,6 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
         return try await lookup.searchDatabase(usingFilename: filename, systemID: systemID)
-    }
-
-    func searchDatabase(usingMD5 md5: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        return try await lookup.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemID)
     }
 
     func getArtworkMappings() async throws -> ArtworkMapping {
