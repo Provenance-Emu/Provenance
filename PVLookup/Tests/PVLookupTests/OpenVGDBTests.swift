@@ -61,6 +61,39 @@ struct OpenVGDBTest {
         languages: ["En", "Fr", "De", "Es", "It", "Nl"]
     )
 
+    let specialCharacterROMs = (
+        apostrophe: (
+            title: "Knuckles' Chaotix",
+            filename: "Knuckles' Chaotix (USA).32x",
+            systemID: 29,  // 32X
+            region: "USA"
+        ),
+        comma: (
+            title: "Motto Hayaku! Seikaku ni!",
+            filename: "Motto Hayaku! Seikaku ni! - Kazu Sense, Keisanryoku Up Training - Suutore (Japan) [b].nds",
+            systemID: 24,  // Nintendo DS
+            region: "Japan"
+        ),
+        quotes: (
+            title: "The King of Fighters '98: Dream Match Never Ends",
+            filename: "King of Fighters '98, The - Dream Match Never Ends (Japan) (v1.0).cue",
+            systemID: 38,  // PlayStation
+            region: "Japan"
+        ),
+        exclamation: (
+            title: "Motto Hayaku!",
+            filename: "Motto Hayaku! Seikaku ni! - Kazu Sense, Keisanryoku Up Training - Suutore (Japan) [b].nds",
+            systemID: 24,  // Nintendo DS
+            region: "Japan"
+        ),
+        plus: (
+            title: "Mathematicien + Echo",
+            filename: "Mathematicien + Echo (France).bin",
+            systemID: 40,
+            region: "France"
+        )
+    )
+
     // MARK: - Basic Search Tests
     @Test func testMD5Search() throws {
         let results = try database.searchDatabase(usingKey: "romHashMD5", value: testROM1.md5)
@@ -344,5 +377,85 @@ struct OpenVGDBTest {
         #expect(OpenVGDB.validSystemIDs.contains(testROM2.systemID))  // PSX
         #expect(OpenVGDB.validSystemIDs.contains(batmanVengeance.systemID))  // GBA
         #expect(OpenVGDB.validSystemIDs.contains(knucklesChaotix.systemID))  // 32X
+    }
+
+    // MARK: - Special Character Tests
+    @Test func testSearchWithSpecialCharacters() throws {
+        // Test apostrophe
+        let apostropheResults = try database.searchDatabase(
+            usingFilename: specialCharacterROMs.apostrophe.title,
+            systemID: specialCharacterROMs.apostrophe.systemID
+        )
+        #expect(apostropheResults != nil)
+        #expect(apostropheResults?.first?.gameTitle.contains("'") == true)
+
+        // Test comma and exclamation
+        let commaResults = try database.searchDatabase(
+            usingFilename: "Motto Hayaku!",  // Search for simpler part of the name
+            systemID: specialCharacterROMs.comma.systemID
+        )
+        #expect(commaResults != nil)
+        #expect(commaResults?.first?.gameTitle.contains("!") == true)
+
+        // Test quotes and numbers
+        let quotesResults = try database.searchDatabase(
+            usingFilename: "King of Fighters '98",  // Updated search term
+            systemID: specialCharacterROMs.quotes.systemID
+        )
+        #expect(quotesResults != nil)
+        #expect(quotesResults?.first?.gameTitle.contains("'98") == true)
+
+        // Test plus sign
+        let plusResults = try database.searchDatabase(
+            usingFilename: "Mathematicien +",
+            systemID: specialCharacterROMs.plus.systemID
+        )
+        #expect(plusResults != nil)
+        #expect(plusResults?.first?.gameTitle.contains("+") == true)
+    }
+
+    @Test func testPartialSearchWithSpecialCharacters() throws {
+        // Test searching before special character
+        let beforeResults = try database.searchDatabase(
+            usingFilename: "Knuckles",
+            systemID: specialCharacterROMs.apostrophe.systemID
+        )
+        #expect(beforeResults != nil)
+        #expect(beforeResults?.first?.gameTitle.hasPrefix("Knuckles") == true)
+
+        // Test searching after special character
+        let afterResults = try database.searchDatabase(
+            usingFilename: "Chaotix",
+            systemID: specialCharacterROMs.apostrophe.systemID
+        )
+        #expect(afterResults != nil)
+        #expect(afterResults?.first?.gameTitle.contains("Chaotix") == true)
+
+        // Test searching with multiple special characters
+        let multipleResults = try database.searchDatabase(
+            usingFilename: "King of Fighters '98",
+            systemID: specialCharacterROMs.quotes.systemID
+        )
+        #expect(multipleResults != nil)
+        #expect(multipleResults?.first?.gameTitle.contains("'98") == true)
+    }
+
+    @Test func testExactMatchWithSpecialCharacters() throws {
+        // Test exact filename match with special characters
+        let exactResults = try database.searchDatabase(
+            usingFilename: specialCharacterROMs.plus.filename,
+            systemID: specialCharacterROMs.plus.systemID
+        )
+        #expect(exactResults != nil)
+        #expect(exactResults?.count == 1)
+        #expect(exactResults?.first?.romFileName == specialCharacterROMs.plus.filename)
+
+        // Test exact title match with special characters
+        let titleResults = try database.searchDatabase(
+            usingFilename: "King of Fighters '98",  // Updated search term
+            systemID: specialCharacterROMs.quotes.systemID
+        )
+        #expect(titleResults != nil)
+        #expect(titleResults?.first?.gameTitle == specialCharacterROMs.quotes.title)
     }
 }

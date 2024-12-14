@@ -149,17 +149,31 @@ public extension OpenVGDB {
         return Self.validSystemIDs.contains(systemID)
     }
 
+    private func escapeSQLString(_ string: String) -> String {
+        // Escape special characters in SQL strings
+        return string.replacingOccurrences(of: "'", with: "''")
+    }
+
+    private func escapeLikePattern(_ pattern: String) -> String {
+        // Escape special characters in LIKE patterns
+        var escaped = pattern
+        escaped = escaped.replacingOccurrences(of: "%", with: "\\%")
+        escaped = escaped.replacingOccurrences(of: "_", with: "\\_")
+        escaped = escaped.replacingOccurrences(of: "'", with: "''")
+        return escaped
+    }
+
     func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
+        let escapedValue = escapeSQLString(value)
         let query: String
 
-        // Only include valid system IDs in the query
         if let systemID = systemID, isValidSystemID(systemID) {
             query = """
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE \(key) = '\(value)'
+                WHERE \(key) = '\(escapedValue)'
                 AND systemID = \(systemID)
                 """
         } else {
@@ -167,7 +181,7 @@ public extension OpenVGDB {
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE \(key) = '\(value)'
+                WHERE \(key) = '\(escapedValue)'
                 """
         }
 
@@ -176,25 +190,37 @@ public extension OpenVGDB {
 
     func searchDatabase(usingFilename filename: String, systemID: Int? = nil) throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
+        let escapedPattern = escapeLikePattern(filename)
         let query: String
 
-        // Only include valid system IDs in the query
         if let systemID = systemID, isValidSystemID(systemID) {
             query = """
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE romFileName LIKE '%\(filename)%'
+                WHERE (romFileName LIKE '%\(escapedPattern)%' ESCAPE '\\'
+                   OR releaseTitleName LIKE '%\(escapedPattern)%' ESCAPE '\\')
                 AND systemID = \(systemID)
-                ORDER BY case when romFileName LIKE '\(filename)%' then 1 else 0 end DESC
+                ORDER BY
+                    CASE
+                        WHEN romFileName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 1
+                        WHEN releaseTitleName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 2
+                        ELSE 3
+                    END
                 """
         } else {
             query = """
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE romFileName LIKE '%\(filename)%'
-                ORDER BY case when romFileName LIKE '\(filename)%' then 1 else 0 end DESC
+                WHERE (romFileName LIKE '%\(escapedPattern)%' ESCAPE '\\'
+                   OR releaseTitleName LIKE '%\(escapedPattern)%' ESCAPE '\\')
+                ORDER BY
+                    CASE
+                        WHEN romFileName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 1
+                        WHEN releaseTitleName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 2
+                        ELSE 3
+                    END
                 """
         }
 
