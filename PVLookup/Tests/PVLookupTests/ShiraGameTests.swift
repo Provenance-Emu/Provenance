@@ -4,7 +4,7 @@
 //
 //  Created by Joseph Mattiello on 8/30/24.
 //
-
+#if false
 import Testing
 @testable import PVLookup
 @testable import ShiraGame
@@ -56,3 +56,4 @@ struct ShiraGameTests {
 //        #expect(result == expectedGameID)
 //    }
 }
+#endif

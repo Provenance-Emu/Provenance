@@ -9,90 +9,280 @@ import Testing
 @testable import PVLookup
 @testable import OpenVGDB
 
-struct OpenVGTest {
-    
+struct OpenVGDBTest {
     let database = OpenVGDB()
-    
-    @Test func testSQLSearch() {
 
-        // Expected test data
-        // Two entries share the same romFileName,
-        let expected1: [String: Any] = ["romID": 55288, "systemID": 34, "regionID": 21, "romHashCRC": "5AD4DE86", "romHashMD5": "C43FA61C0D031D85B357BDDC055B24F7", "romHashSHA1": "377AE436A8FAEED2AB8E48939D6DE824232F8F2D", "romSize": 853, "romFileName": "NHL 97 (USA).cue", "romExtensionlessFileName": "NHL 97 (USA)", "romSerial": "T-5016H", "romHeader": "53454741205345474153415455524E205345474120545020542D353020202020542D353031364820202056312E303030313939363130323543442D312F312020552020202020202020202020202020204A4154202020202020202020202020204E484C2039372053617475726E2020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020200000000000000000000000000000000000001000000000000000000000000000002F0000000000000000000000000000", "romLanguage": "English", "TEMPromRegion": "USA", "romDumpSource": "Redump"]
+    // MARK: - Test Data
+    let testROM1 = (
+        md5: "C43FA61C0D031D85B357BDDC055B24F7",
+        crc: "5AD4DE86",
+        filename: "NHL 97 (USA).cue",
+        serial: "T-5016H",
+        systemID: 34,  // Saturn
+        region: "USA",
+        regionID: 21
+    )
 
-        let expected2: [String: Any?] = ["romID": 67221, "systemID": 38, "regionID": 21, "romHashCRC": "E8293371", "romHashMD5": "C02F86B655B981E04959AADEFC8103F6", "romHashSHA1": "BF8BD066BEBF5451E4CDD5D09D841C83E9D14EEF", "romSize": 936, "romFileName": "NHL 97 (USA).cue", "romExtensionlessFileName": "NHL 97 (USA)", "romSerial": "SLUS-00030", "romHeader": nil, "romLanguage": "English", "TEMPromRegion": "USA", "romDumpSource": "Redump"]
+    let testROM2 = (
+        md5: "C02F86B655B981E04959AADEFC8103F6",
+        crc: "E8293371",
+        filename: "NHL 97 (USA).cue",
+        serial: "SLUS-00030",
+        systemID: 38,  // PSX
+        region: "USA",
+        regionID: 21
+    )
 
-        let md5SearchResult = try! database.searchDatabase(usingKey: "romHashMD5", value: expected1["romHashMD5"]! as! String)
-        let md5SearchCorrectSystemResult = try! database.searchDatabase(usingKey: "romHashMD5", value: expected1["romHashMD5"]! as! String, systemID: 34)
-        let md5SearchIncorrectSystemResult = try! database.searchDatabase(usingKey: "romHashMD5", value: expected1["romHashMD5"]! as! String, systemID: 99)
+    // MARK: - Additional Test Data
+    let knucklesChaotix = (
+        releaseID: 46016,
+        romID: 15786,
+        title: "Knuckles' Chaotix",
+        regionID: 21,  // USA
+        region: "USA",
+        systemID: 29,  // Sega 32X
+        description: "Knuckles, the edgiest Echidna on the block, is back! This screamin' wild ride's got everything but a speed limit. Race for the rings, and hoooOOOOLD ON!",
+        developer: "Sega",
+        genres: "Action,Platformer,2D",
+        releaseDate: "Apr 20, 1995",
+        boxFrontURL: "https://gamefaqs.gamespot.com/a/box/1/0/7/45107_front.jpg",
+        boxBackURL: "https://gamefaqs.gamespot.com/a/box/1/0/7/45107_back.jpg"
+    )
 
-        #expect(md5SearchResult != nil)
-        #expect(md5SearchCorrectSystemResult != nil)
-        #expect(md5SearchIncorrectSystemResult == nil)
+    let batmanVengeance = (
+        romID: 6091,
+        systemID: 20,  // GBA
+        regionID: 7,   // Europe
+        crc: "783AC0C7",
+        md5: "FFFE680EFF483B4D4366964EB7A150D8",
+        sha1: "413D18EE8A41E4B5051EA5BED343EDF8E52EEEE2",
+        filename: "Batman - Vengeance (Europe) (En,Fr,De,Es,It,Nl).gba",
+        region: "Europe",
+        languages: ["En", "Fr", "De", "Es", "It", "Nl"]
+    )
 
-        #expect(md5SearchResult?.first != nil)
-        #expect(md5SearchCorrectSystemResult?.first  != nil)
+    // MARK: - Basic Search Tests
+    @Test func testMD5Search() throws {
+        let results = try database.searchDatabase(usingKey: "romHashMD5", value: testROM1.md5)
 
-        #expect(md5SearchResult!.count == 1)
-        #expect(md5SearchCorrectSystemResult!.count == 1)
+        #expect(results != nil)
+        #expect(results?.count == 1)
 
-        let first1 = md5SearchResult!.first!
-        #expect(first1["serial"] as! String == expected1["romSerial"]! as! String)
-
-        let fileNameSearch = try! database.searchDatabase(usingKey: "romFileName", value: expected1["romFileName"]! as! String)
-        #expect(md5SearchResult?.first != nil)
-        #expect(fileNameSearch!.count > 1)
-
-        #expect(fileNameSearch![0]["serial"] as! String == expected1["romSerial"]! as! String)
-        #expect(fileNameSearch![1]["serial"] as! String == expected2["romSerial"]! as! String)
+        let metadata = results?.first
+        #expect(metadata?.romHashMD5 == testROM1.md5)
+        #expect(metadata?.serial == testROM1.serial)
+        #expect(metadata?.systemID == testROM1.systemID)
+        #expect(metadata?.region == testROM1.region)
+        #expect(metadata?.regionID == testROM1.regionID)
     }
 
+    @Test func testMD5SearchWithSystem() throws {
+        // Should find with correct system
+        let correctResults = try database.searchDatabase(
+            usingKey: "romHashMD5",
+            value: testROM1.md5,
+            systemID: testROM1.systemID
+        )
+        #expect(correctResults?.count == 1)
+
+        // Should not find with wrong system
+        let wrongResults = try database.searchDatabase(
+            usingKey: "romHashMD5",
+            value: testROM1.md5,
+            systemID: 99
+        )
+        #expect(wrongResults == nil)
+    }
+
+    @Test func testFilenameSearch() throws {
+        let results = try database.searchDatabase(usingFilename: testROM1.filename)
+
+        #expect(results != nil)
+        #expect(results!.count > 1)  // Should find both NHL 97 versions
+
+        let saturnVersion = results?.first { $0.systemID == testROM1.systemID }
+        let psxVersion = results?.first { $0.systemID == testROM2.systemID }
+
+        #expect(saturnVersion != nil)
+        #expect(psxVersion != nil)
+        #expect(saturnVersion?.serial == testROM1.serial)
+        #expect(psxVersion?.serial == testROM2.serial)
+    }
+
+    @Test func testFilenameSearchWithSystemID() throws {
+        let results = try database.searchDatabase(
+            usingFilename: testROM1.filename,
+            systemID: testROM1.systemID
+        )
+
+        #expect(results != nil)
+        #expect(results?.count == 1)
+        #expect(results?.first?.systemID == testROM1.systemID)
+        #expect(results?.first?.serial == testROM1.serial)
+    }
+
+    @Test func testFilenameSearchWithMultipleSystemIDs() throws {
+        let results = try database.searchDatabase(
+            usingFilename: testROM1.filename,
+            systemIDs: [testROM1.systemID, testROM2.systemID]
+        )
+
+        #expect(results != nil)
+        #expect(results?.count == 2)
+        #expect((results?.contains { $0.systemID == testROM1.systemID }) == true)
+        #expect((results?.contains { $0.systemID == testROM2.systemID }) == true)
+    }
+
+    // MARK: - System Lookup Tests
+    @Test func testSystemForRomMD5Only() throws {
+        let systemID = try database.system(forRomMD5: testROM1.md5)
+        #expect(systemID == testROM1.systemID)
+    }
+
+    @Test func testSystemForRomFilenameOnly() throws {
+        let systemID = try database.system(forRomMD5: "", or: testROM1.filename)
+        #expect(systemID != nil)  // Will return one of the valid systems
+    }
+
+    @Test func testSystemForRomMD5AndFilename() throws {
+        let systemID = try database.system(forRomMD5: testROM1.md5, or: testROM1.filename)
+        #expect(systemID == testROM1.systemID)
+    }
+
+    // MARK: - Artwork Tests
     @Test func testGetArtworkMappings() throws {
-        let artworkMapp: OpenVGDB.ArtworkMapping = try database.getArtworkMappings()
-        #expect(artworkMapp.romFileNameToMD5.count > 0)
-        #expect(artworkMapp.romMD5.count > 0)
-    }
-    
-    @Test func testGetAllReleases() throws {
-        let allReleases = try database.getAllReleases()
-        #expect(allReleases.count > 0)
-    }
- 
-    @Test func testSystemForRomMD5Only() {
+        let mappings = try database.getArtworkMappings()
 
-    }
-    
-    @Test func testSystemForRomFilenameOnly() {
+        #expect(mappings.romMD5.count > 0)
+        #expect(mappings.romFileNameToMD5.count > 0)
 
-    }
-    
-    @Test func testSystemForRomMD5AndFilename() {
+        // Test specific ROM lookup
+        let md5Data = mappings.romMD5[testROM1.md5]
+        #expect(md5Data != nil)
+        #expect(md5Data?["romFileName"] as? String == testROM1.filename)
 
-    }
-    
-    @Test func testSearchDatabaseUsingFilenameForSystemIDs() {
-//        let db = Database()
-//        let results = try! db.searchDatabase(usingFilename: "Super Mario")
-//        #expect(results)
-    }
-        
-    @Test func testReleaseIDForCRCs() {
-
+        // Test filename to MD5 mapping
+        let md5FromFilename = mappings.romFileNameToMD5["\(testROM1.systemID):\(testROM1.filename)"]
+        #expect(md5FromFilename == testROM1.md5)
     }
 
-    
-    @Test func testSearchDatabaseUsingFilenameWithSystemID() {
-
+    // MARK: - Error Tests
+    @Test func testInvalidSystemID() throws {
+        do {
+            _ = try database.searchDatabase(
+                usingFilename: testROM1.filename,
+                systemID: 999999
+            )
+            #expect(false, "Should have thrown an error")
+        } catch {
+            #expect(true)
+        }
     }
-    
-    @Test func testSearchDatabaseUsingFilenameWithoutSystemID() {
 
+    @Test func testInvalidMD5() throws {
+        let results = try database.searchDatabase(
+            usingKey: "romHashMD5",
+            value: "INVALID_MD5_HASH"
+        )
+        #expect(results == nil)
     }
 
-    @Test func searchDatabaseUsingKeyValueWithSystemID() {
+    // MARK: - Additional Search Tests
+    @Test func testMultiLanguageGameSearch() throws {
+        let results = try database.searchDatabase(
+            usingFilename: batmanVengeance.filename,
+            systemID: batmanVengeance.systemID
+        )
 
+        #expect(results != nil)
+        #expect(results?.count == 1)
+        let game = results?.first
+        #expect(game?.romHashMD5 == batmanVengeance.md5)
+        #expect(game?.romHashCRC == batmanVengeance.crc)
+        #expect(game?.region == batmanVengeance.region)
     }
-    
-    @Test func searchDatabaseUsingKeyValueWithoutSystemID() {
 
+    @Test func testGameWithApostrophe() throws {
+        let results = try database.searchDatabase(
+            usingFilename: "Knuckles' Chaotix",
+            systemID: knucklesChaotix.systemID
+        )
+
+        #expect(results != nil)
+        let game = results?.first
+        #expect(game?.gameTitle == knucklesChaotix.title)
+        #expect(game?.gameDescription == knucklesChaotix.description)
+        #expect(game?.developer == knucklesChaotix.developer)
+        #expect(game?.genres == knucklesChaotix.genres)
+        #expect(game?.boxImageURL == knucklesChaotix.boxFrontURL)
+        #expect(game?.boxBackURL == knucklesChaotix.boxBackURL)
+    }
+
+    // MARK: - Region Tests
+    @Test func testRegionSpecificSearch() throws {
+        // Test USA region
+        let usaResults = try database.searchDatabase(
+            usingFilename: "NHL 97",
+            systemID: testROM1.systemID
+        )
+        #expect(usaResults?.first?.regionID == 21)  // USA
+
+        // Test Europe region
+        let euroResults = try database.searchDatabase(
+            usingFilename: batmanVengeance.filename,
+            systemID: batmanVengeance.systemID
+        )
+        #expect(euroResults?.first?.regionID == 7)  // Europe
+    }
+
+    // MARK: - File Format Tests
+    @Test func testCueFileSearch() throws {
+        let results = try database.searchDatabase(
+            usingFilename: "Sol-Feace (USA)",
+            systemID: 32  // Sega CD
+        )
+
+        #expect(results != nil)
+        let game = results?.first
+        #expect((game?.romFileName?.hasSuffix(".cue")) == true)
+    }
+
+    @Test func testISORomSearch() throws {
+        let results = try database.searchDatabase(
+            usingFilename: "One Piece - Pirates Carnival",
+            systemID: 22  // GameCube
+        )
+
+        #expect(results != nil)
+        let game = results?.first
+        #expect((game?.romFileName?.hasSuffix(".iso")) == true)
+    }
+
+    // MARK: - Edge Case Tests
+    @Test func testGameWithSpecialCharacters() throws {
+        // Test game with hyphen
+        let results1 = try database.searchDatabase(
+            usingFilename: "Shin Megami Tensei - Devil Survivor",
+            systemID: 24  // Nintendo DS
+        )
+        #expect(results1 != nil)
+
+        // Test game with Japanese characters
+        let results2 = try database.searchDatabase(
+            usingFilename: "Bleach - Heat the Soul",
+            systemID: 39  // PSP
+        )
+        #expect(results2 != nil)
+    }
+
+    @Test func testPartialFilenameMatch() throws {
+        // Should match "Knuckles' Chaotix" with just "Chaotix"
+        let results = try database.searchDatabase(
+            usingFilename: "Chaotix",
+            systemID: knucklesChaotix.systemID
+        )
+
+        #expect(results != nil)
+        #expect((results?.contains { $0.gameTitle == knucklesChaotix.title }) == true)
     }
 }
