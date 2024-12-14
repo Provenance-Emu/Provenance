@@ -9,6 +9,7 @@ import Foundation
 import OpenVGDB
 import ROMMetadataProvider
 import PVLookupTypes
+import libretrodb
 
 /// Protocol for basic ROM metadata lookup operations
 public protocol ROMMetadataLookup {
@@ -38,52 +39,77 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     public static let shared = PVLookup()
 
     // MARK: - Properties
-    private let database: OpenVGDB
+    private let openVGDB: OpenVGDB
+    private let libreTroDB: libretrodb
 
     // MARK: - Initialization
     private init() {
-        self.database = OpenVGDB()
+        self.openVGDB = OpenVGDB()
+        self.libreTroDB = libretrodb()
     }
 
     // MARK: - ROMMetadataProvider Implementation
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
-        try await withCheckedThrowingContinuation { continuation in
-            do {
-                let result = try database.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first
-                continuation.resume(returning: result)
-            } catch {
-                continuation.resume(throwing: error)
+        // Try OpenVGDB first
+        if let result = try await searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first {
+            return result
+        }
+
+        // Fall back to libretrodb if no results
+        return try libreTroDB.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first
+    }
+
+    public func searchDatabase(usingKey key: String, value: String, systemID: Int?) async throws -> [ROMMetadata]? {
+        // Try OpenVGDB first
+        if let results = try openVGDB.searchDatabase(usingKey: key, value: value, systemID: systemID) {
+            if !results.isEmpty {
+                return results
             }
         }
+
+        // Fall back to libretrodb if no results
+        return try libreTroDB.searchDatabase(usingKey: key, value: value, systemID: systemID)
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        try await withCheckedThrowingContinuation { continuation in
-            do {
-                let result = try database.searchDatabase(usingFilename: filename, systemID: systemID)
-                continuation.resume(returning: result)
-            } catch {
-                continuation.resume(throwing: error)
+        // Try OpenVGDB first
+        if let results = try openVGDB.searchDatabase(usingFilename: filename, systemID: systemID) {
+            if !results.isEmpty {
+                return results
             }
         }
+
+        // Fall back to libretrodb if no results
+        return try libreTroDB.searchDatabase(usingFilename: filename, systemID: systemID)
+    }
+
+    public func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
+        // Try OpenVGDB first
+        if let results = try openVGDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs) {
+            if !results.isEmpty {
+                return results
+            }
+        }
+
+        // Fall back to libretrodb if no results
+        return try libreTroDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs)
     }
 
     public func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
-        try await withCheckedThrowingContinuation { continuation in
-            do {
-                let result = try database.system(forRomMD5: md5, or: filename)
-                continuation.resume(returning: result)
-            } catch {
-                continuation.resume(throwing: error)
-            }
+        // Try OpenVGDB first
+        if let systemID = try openVGDB.system(forRomMD5: md5, or: filename) {
+            return systemID
         }
+
+        // Fall back to libretrodb if no results
+        return try libreTroDB.system(forRomMD5: md5, or: filename)
     }
 
     // MARK: - ArtworkLookupService Implementation
     public func getArtworkMappings() async throws -> ArtworkMapping {
         try await withCheckedThrowingContinuation { continuation in
             do {
-                let result = try database.getArtworkMappings()
+                let result = try openVGDB.getArtworkMappings()
                 continuation.resume(returning: result)
             } catch {
                 continuation.resume(throwing: error)
@@ -92,28 +118,6 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     }
 
     // MARK: - Database Search Methods
-    public func searchDatabase(usingKey key: String, value: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        try await withCheckedThrowingContinuation { continuation in
-            do {
-                let result = try database.searchDatabase(usingKey: key, value: value, systemID: systemID)
-                continuation.resume(returning: result)
-            } catch {
-                continuation.resume(throwing: error)
-            }
-        }
-    }
-
-    public func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
-        try await withCheckedThrowingContinuation { continuation in
-            do {
-                let result = try database.searchDatabase(usingFilename: filename, systemIDs: systemIDs)
-                continuation.resume(returning: result)
-            } catch {
-                continuation.resume(throwing: error)
-            }
-        }
-    }
-
     public func searchDatabase(usingMD5 md5: String, systemID: Int?) async throws -> [ROMMetadata]? {
         return try await searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemID)
     }

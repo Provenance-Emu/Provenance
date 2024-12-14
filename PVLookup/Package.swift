@@ -67,7 +67,8 @@ let package = Package(
                 "PVLogging",
                 "OpenVGDB",
                 "ROMMetadataProvider",
-                "PVLookupTypes"
+                "PVLookupTypes",
+                "libretrodb"
             ]
         ),
 
@@ -89,6 +90,23 @@ let package = Package(
         //     plugins: [
         //         .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
         // ]),
+        
+        // MARK:  libretrodb
+
+        // https://github.com/avojak/libretrodb-sqlite
+        .target(
+            name: "libretrodb",
+            dependencies: [
+                "PVSQLiteDatabase",
+                "PVLookupTypes"
+            ],
+            resources: [
+                .copy("Resources/libretrodb.sqlite"),
+            ],
+            plugins: [
+                // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
+                // .plugin(name: "Enlighter", package: "Lighter")
+        ]),
 
         // MARK:  OpenVGDB
 

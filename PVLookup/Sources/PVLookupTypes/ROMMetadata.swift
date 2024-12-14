@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents metadata for a ROM/game
-public struct ROMMetadata: Codable, Sendable {
+public struct ROMMetadata: Codable, Sendable, Equatable {
     public let gameTitle: String
     public let boxImageURL: String?
     public let region: String?
