@@ -1,30 +1,24 @@
+import Foundation
 import PVLookupTypes
+import Systems
 
 extension ROMMetadata {
-    /// Convenience initializer for testing purposes
-    /// - Parameters:
-    ///   - gameTitle: Title of the game
-    ///   - region: Optional region
-    ///   - systemID: System ID (defaults to 0)
-    ///   - romHashMD5: MD5 hash of the ROM
-    ///   - additionalFields: Dictionary of additional fields to set
-    static func forTesting(
-        gameTitle: String,
-        region: String? = nil,
-        systemID: Int = 0,
-        romHashMD5: String? = nil,
-        additionalFields: [String: String]? = nil
+    /// Creates a test instance with minimal required fields
+    static func testInstance(
+        gameTitle: String = "Test Game",
+        systemID: SystemIdentifier = .Unknown,
+        romHashMD5: String? = nil
     ) -> ROMMetadata {
         ROMMetadata(
             gameTitle: gameTitle,
             boxImageURL: nil,
-            region: region,
+            region: nil,
             gameDescription: nil,
             boxBackURL: nil,
-            developer: additionalFields?["developer"],
-            publisher: additionalFields?["publisher"],
+            developer: nil,
+            publisher: nil,
             serial: nil,
-            releaseDate: additionalFields?["releaseDate"],
+            releaseDate: nil,
             genres: nil,
             referenceURL: nil,
             releaseID: nil,
@@ -35,7 +29,8 @@ extension ROMMetadata {
             romFileName: nil,
             romHashCRC: nil,
             romHashMD5: romHashMD5,
-            romID: nil
+            romID: nil,
+            isBIOS: nil
         )
     }
 }

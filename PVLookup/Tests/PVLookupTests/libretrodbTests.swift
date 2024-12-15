@@ -11,6 +11,7 @@ import Foundation
 @testable import libretrodb
 @testable import ROMMetadataProvider
 import Systems
+import PVLookupTypes
 
 // MARK: - Platform Constants
 private extension LibretroDBTests {
@@ -82,7 +83,7 @@ struct LibretroDBTests {
         #expect(results != nil)
         #expect(!results!.isEmpty)
         #expect(results?.first?.gameTitle == "Turrican")
-        #expect(results?.first?.systemID == SystemIdentifier.PCE.openVGDBID)
+        #expect(results?.first?.systemID == .PCE)
     }
 
     @Test
@@ -106,7 +107,7 @@ struct LibretroDBTests {
         #expect(metadata != nil)
         #expect(metadata?.gameTitle == "Advanced Dungeons & Dragons - Pool of Radiance")
         #expect(metadata?.romHashMD5 == md5)
-        #expect(metadata?.systemID == SystemIdentifier.NES.openVGDBID)
+        #expect(metadata?.systemID == .NES)
     }
 
     @Test
