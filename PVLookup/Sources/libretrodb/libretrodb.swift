@@ -13,6 +13,77 @@ import ROMMetadataProvider
 import PVLookupTypes
 import Systems
 
+/* LibretroDB
+
+Schema:
+
+CREATE TABLE IF NOT EXISTS "developers" (
+  id integer PRIMARY KEY,
+  name text
+);
+
+CREATE TABLE IF NOT EXISTS "franchises" (
+  id integer PRIMARY KEY,
+  name text
+);
+
+CREATE TABLE IF NOT EXISTS "games" (
+  id integer PRIMARY KEY,
+  serial_id text,
+  developer_id integer,
+  publisher_id integer,
+  rating_id integer,
+  users integer,
+  franchise_id integer,
+  release_year integer,
+  release_month integer,
+  region_id integer,
+  genre_id integer,
+  display_name text,
+  full_name text,
+  platform_id integer
+);
+
+CREATE TABLE IF NOT EXISTS "genres" (
+  id integer PRIMARY KEY,
+  name text
+);
+
+CREATE TABLE IF NOT EXISTS "manufacturers" (
+  id integer PRIMARY KEY,
+  name text
+);
+
+CREATE TABLE IF NOT EXISTS "platforms" (
+  id integer PRIMARY KEY,
+  name text,
+  manufacturer_id integer
+);
+
+CREATE TABLE IF NOT EXISTS "publishers" (
+  id integer PRIMARY KEY,
+  name text
+);
+
+CREATE TABLE IF NOT EXISTS "ratings" (
+  id integer PRIMARY KEY,
+  name text
+);
+
+CREATE TABLE IF NOT EXISTS "regions" (
+  id integer PRIMARY KEY,
+  name text
+);
+
+CREATE TABLE IF NOT EXISTS "roms" (
+  id integer PRIMARY KEY,
+  serial_id text,
+  name text,
+  md5 text
+);
+
+*/
+
 @globalActor
 public actor libretrodbActor: GlobalActor {
     public static let shared = libretrodbActor()
@@ -157,7 +228,10 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 
         // Convert platform ID to SystemIdentifier
         let systemIdentifier = metadata.platform.flatMap { platformName in
-            SystemIdentifier.fromLibretroDatabaseID(Int(platformName) ?? 0)
+            if let platformID = Int(platformName) {
+                return SystemIdentifier.fromLibretroDatabaseID(platformID)
+            }
+            return nil
         } ?? .Unknown
 
         return ROMMetadata(
@@ -223,8 +297,8 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 public extension libretrodb {
     /// Search by MD5 or other key
     func searchDatabase(usingKey key: String, value: String, systemID: Int?) throws -> [ROMMetadata]? {
-        // Convert OpenVGDB system ID to libretrodb platform ID
-        let platformID = systemID.flatMap { SystemIdentifier.fromOpenVGDBID($0)?.libretroDatabaseID }
+        // Use the platform_id directly since we're in libretrodb
+        let platformID = systemID  // No conversion needed
 
         var query = standardMetadataQuery
 
@@ -274,8 +348,8 @@ public extension libretrodb {
 
     /// Search by filename across multiple systems
     func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [ROMMetadata]? {
-        // Convert OpenVGDB system IDs to libretrodb platform IDs
-        let platformIDs = systemIDs.compactMap { SystemIdentifier.fromOpenVGDBID($0)?.libretroDatabaseID }
+        // Use the platform_ids directly since we're in libretrodb
+        let platformIDs = systemIDs  // No conversion needed
 
         var query = standardMetadataQuery
         let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
@@ -298,10 +372,11 @@ public extension libretrodb {
 
     /// Get system ID for a ROM
     func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
-        // Use existing query but return SystemIdentifier directly
+        // Use serial_id to join roms and games
         let query = """
-            SELECT platform_id FROM rom r
-            JOIN game g ON r.game_id = g.game_id
+            SELECT platform_id
+            FROM roms r
+            JOIN games g ON r.serial_id = g.serial_id
             WHERE r.md5 = '\(md5.uppercased())'
         """
 
@@ -313,9 +388,10 @@ public extension libretrodb {
         // Try filename if MD5 fails
         if let filename = filename {
             let query = """
-                SELECT platform_id FROM rom r
-                JOIN game g ON r.game_id = g.game_id
-                WHERE r.file_name LIKE '%\(filename)%'
+                SELECT platform_id
+                FROM roms r
+                JOIN games g ON r.serial_id = g.serial_id
+                WHERE r.name LIKE '%\(filename)%'
             """
             if let result = try db.execute(query: query).first,
                let platformId = result["platform_id"] as? Int {

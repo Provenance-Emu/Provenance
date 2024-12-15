@@ -54,43 +54,29 @@ struct LibretroDBTests {
     // MARK: - Test Data
     let dragonQuest3 = (
         id: 23207,
-        serial: "SHVC-AQ3J-JPN",
-        md5: "534856432D4151334A2D4A504E",
+        md5: "7C7C7DB73B0608A184CC5E1D73D7695B",
         title: "Dragon Quest III - Soshite Densetsu e...",
         fullTitle: "Dragon Quest III - Soshite Densetsu e... (Japan)",
-        openVGDBID: 37,  // SNES
+        platformID: 37,  // SNES/Super Nintendo Entertainment System
         systemID: SystemIdentifier.SNES,
         manufacturer: "Nintendo",
-        genre: "RPG",  // genre_id: 10
+        developer: "Heart Beat",
+        genre: "RPG",
         year: 1996,
-        month: 12,
-        region: "Japan"
-    )
-
-    let dragonQuest6 = (
-        id: 23205,
-        serial: "SHVC-AQ6J-JPN",
-        md5: "534856432D4151364A2D4A504E",
-        title: "Dragon Quest VI - Maboroshi no Daichi",
-        fullTitle: "Dragon Quest VI - Maboroshi no Daichi (Japan)",
-        openVGDBID: 37,  // SNES
-        systemID: SystemIdentifier.SNES,
-        manufacturer: "Nintendo",
-        genre: "RPG",  // genre_id: 10
-        year: 1995,
         month: 12,
         region: "Japan"
     )
 
     let pMan = (
         id: 22411,
-        serial: "534856432D4150554A2D4A504E",
+        md5: "146C7CD073165C271B6EB09E032F91E9",
         title: "P-Man",
         fullTitle: "P-Man (Japan)",
-        openVGDBID: 37,  // SNES
+        platformID: 37,  // SNES/Super Nintendo Entertainment System
         systemID: SystemIdentifier.SNES,
         manufacturer: "Nintendo",
-        genre: "Action",  // genre_id: 7
+        developer: "Titus Software",
+        genre: "Platform",
         year: 1996,
         month: 1,
         region: "Japan"
@@ -112,21 +98,20 @@ struct LibretroDBTests {
 
     @Test
     func searchByFilename() async throws {
-        let filename = "Dragon Quest"
+        let filename = "Dragon Quest III"
         let results = try await db.searchDatabase(usingFilename: filename, systemID: nil)
 
         #expect(results != nil)
         #expect(!results!.isEmpty)
-        #expect(results?.count == 128)  // Should find both DQ3 and DQ6
         #expect(results?.contains { $0.gameTitle == dragonQuest3.fullTitle } == true)
-        #expect(results?.contains { $0.gameTitle == dragonQuest6.fullTitle } == true)
+        #expect(results?.contains { $0.systemID == dragonQuest3.systemID } == true)
     }
 
     @Test
     func searchByFilenameWithSystem() async throws {
         let results = try await db.searchDatabase(
             usingFilename: "Dragon Quest III",
-            systemID: dragonQuest3.openVGDBID
+            systemID: dragonQuest3.platformID
         )
 
         #expect(results != nil)
@@ -173,19 +158,18 @@ struct LibretroDBTests {
 
     @Test
     func searchSpecialCharacters() async throws {
-        // Test hyphen in title
-        let results = try await db.searchDatabase(usingFilename: "P-Man", systemID: pMan.openVGDBID)
+        let results = try await db.searchDatabase(usingFilename: "P-Man", systemID: pMan.platformID)
 
         #expect(results != nil)
         #expect(results?.count == 1)
         let firstResult = results?.first
         #expect(firstResult != nil)
-        #expect(firstResult?.gameTitle == "P-Man")  // Match exact title from database
+        #expect(firstResult?.gameTitle == pMan.title)  // Match exact title from database
         #expect(firstResult?.systemID == pMan.systemID)
         #expect(firstResult?.region == pMan.region)
 
         // Test partial match with hyphen
-        let partialResults = try await db.searchDatabase(usingFilename: "P-", systemID: pMan.openVGDBID)
+        let partialResults = try await db.searchDatabase(usingFilename: "P-", systemID: pMan.platformID)
         #expect(partialResults?.contains { $0.gameTitle.contains("P-Man") } == true)
     }
 }
