@@ -124,7 +124,8 @@ let package = Package(
                 "PVSQLiteDatabase",
                 "Lighter",
                 "PVLookupTypes",
-                "PVPrimitives"
+                "PVPrimitives",
+                "ROMMetadataProvider"
             ],
             resources: [
                 .copy("Resources/openvgdb.sqlite"),
@@ -161,9 +162,18 @@ let package = Package(
             ]),
 
         // MARK: ROMMetadataProvider
+        
         .target(
             name: "ROMMetadataProvider",
             dependencies: ["PVLookupTypes"]
+        ),
+        
+        
+        // MARK: PVLookupTypes
+        
+        .target(
+            name: "PVLookupTypes",
+            dependencies: ["PVPrimitives"]
         ),
 
         // MARK: PVLookupTests tests
@@ -171,12 +181,6 @@ let package = Package(
         .testTarget(
             name: "PVLookupTests",
             dependencies: ["PVLookup"]
-        ),
-
-        // Add new target
-        .target(
-            name: "PVLookupTypes",
-            dependencies: ["PVPrimitives"]
         ),
     ],
     swiftLanguageModes: [.v5, .v6],

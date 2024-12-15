@@ -200,7 +200,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     ///   - filename: Optional filename as fallback
     /// - Returns: OpenVGDB system ID if found
     @available(*, deprecated, message: "Use systemIdentifier(forRomMD5:or:) instead")
-    public func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
+    internal func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
         if let identifier = try await systemIdentifier(forRomMD5: md5, or: filename) {
             return identifier.openVGDBID
         }
