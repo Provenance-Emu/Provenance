@@ -12,6 +12,7 @@ import PVLookupTypes
 import libretrodb
 import ShiraGame
 import PVSystems
+import PVLogging
 
 /// Protocol for basic ROM metadata lookup operations
 public protocol ROMMetadataLookup {
@@ -67,7 +68,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
             isInitializing = true
             shiraGame = try await ShiraGame()
         } catch {
-            print("Failed to initialize ShiraGame: \(error)")
+            ELOG("Failed to initialize ShiraGame: \(error)")
         }
         isInitializing = false
     }
@@ -86,48 +87,42 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
 
     // MARK: - ROMMetadataProvider Implementation
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
-        print("PVLookup: Searching for MD5: \(md5)")
+        ILOG("PVLookup: Searching for MD5: \(md5)")
 
         // Normalize MD5 case for each database's preference
         let upperMD5 = md5.uppercased()
-        let lowerMD5 = md5.lowercased()
 
-        // Try all databases
+        // Try primary databases first
         let openVGDBResult = try await searchDatabase(usingKey: "romHashMD5", value: upperMD5, systemID: nil)?.first
-        print("PVLookup: OpenVGDB result: \(String(describing: openVGDBResult))")
+        DLOG("PVLookup: OpenVGDB result: \(String(describing: openVGDBResult))")
 
         let libretroDatabaseResult = try libreTroDB.searchDatabase(usingKey: "romHashMD5", value: upperMD5, systemID: nil)?.first
-        print("PVLookup: LibretroDB result: \(String(describing: libretroDatabaseResult))")
+        DLOG("PVLookup: LibretroDB result: \(String(describing: libretroDatabaseResult))")
 
-        let shiraGameResult = try await getShiraGame()?.searchROM(byMD5: lowerMD5)
-        print("PVLookup: ShiraGame result: \(String(describing: shiraGameResult))")
+        // If we have results from primary databases, merge them
+        if openVGDBResult != nil || libretroDatabaseResult != nil {
+            var result = openVGDBResult ?? libretroDatabaseResult!
 
-        // Start with OpenVGDB result if available (highest priority)
-        var mergedResult = openVGDBResult ?? libretroDatabaseResult ?? shiraGameResult
-
-        // Then merge in additional data with priority: OpenVGDB > LibretroDB > ShiraGame
-        if var result = mergedResult {
-            // Always use OpenVGDB as base if available
+            // Merge if we have both
             if let openVGDBData = openVGDBResult {
                 result = openVGDBData
+                if let libretroDatabaseData = libretroDatabaseResult {
+                    result = result.merged(with: libretroDatabaseData)
+                }
             }
 
-            // Merge in LibretroDB data if available
-            if let libretroDatabaseData = libretroDatabaseResult {
-                result = result.merged(with: libretroDatabaseData)
-            }
-
-            // Merge in ShiraGame data for any missing fields
-            if let shiraGameData = shiraGameResult {
-                result = result.merged(with: shiraGameData)
-            }
-
-            mergedResult = result
+            return result
         }
 
-        return mergedResult
+        // Only try ShiraGame if we found nothing in primary databases
+        ILOG("PVLookup: No results from primary databases, trying ShiraGame...")
+        let shiraGameResult = try await getShiraGame()?.searchROM(byMD5: md5.lowercased())
+        DLOG("PVLookup: ShiraGame result: \(String(describing: shiraGameResult))")
+
+        return shiraGameResult
     }
 
+    @available(*, deprecated, message: "Use searchROM(byMD5:) instead")
     public func searchDatabase(usingKey key: String, value: String, systemID: Int?) async throws -> [ROMMetadata]? {
         // Get results from both databases
         let openVGDBResults = try openVGDB.searchDatabase(usingKey: key, value: value, systemID: systemID)
@@ -144,23 +139,33 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        // Get results from each database
+        ILOG("PVLookup: Searching for filename: \(filename)")
+
+        // Try primary databases first
         let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemID: systemID)
+        DLOG("PVLookup: OpenVGDB results: \(String(describing: openVGDBResults?.count)) matches")
+
         let libretroDatabaseResults = try await libreTroDB.searchDatabase(usingFilename: filename, systemID: systemID)
+        DLOG("PVLookup: LibretroDB results: \(String(describing: libretroDatabaseResults?.count)) matches")
+
+        // If we have results from primary databases, merge them
+        if openVGDBResults != nil || libretroDatabaseResults != nil {
+            var results = openVGDBResults ?? []
+
+            if let libretroDatabaseData = libretroDatabaseResults {
+                results = results.merged(with: libretroDatabaseData)
+            }
+
+            DLOG("PVLookup: Returning \(results.count) merged results from primary databases")
+            return results.isEmpty ? nil : results
+        }
+
+        // Only try ShiraGame if we found nothing in primary databases
+        ILOG("PVLookup: No results from primary databases, trying ShiraGame...")
         let shiraGameResults = try await getShiraGame()?.searchDatabase(usingFilename: filename, systemID: systemID)
+        DLOG("PVLookup: ShiraGame results: \(String(describing: shiraGameResults?.count)) matches")
 
-        // Merge results with priority: OpenVGDB > libretrodb > ShiraGame
-        var mergedResults = openVGDBResults ?? []
-
-        if let libretroDatabaseResults = libretroDatabaseResults {
-            mergedResults = mergedResults.merged(with: libretroDatabaseResults)
-        }
-
-        if let shiraGameResults = shiraGameResults {
-            mergedResults = mergedResults.merged(with: shiraGameResults)
-        }
-
-        return mergedResults.isEmpty ? nil : mergedResults
+        return shiraGameResults
     }
 
     public func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
