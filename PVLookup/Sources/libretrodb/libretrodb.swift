@@ -586,4 +586,13 @@ public extension libretrodb {
         let staleInterval: TimeInterval = 24 * 60 * 60 // 24 hours
         return Date().timeIntervalSince(cache.timestamp) > staleInterval
     }
+
+    /// Get possible artwork URLs for a ROM
+    /// - Parameter rom: The ROM metadata
+    /// - Returns: Array of possible artwork URLs, or nil if none found
+    public func getArtworkURLs(forRom rom: ROMMetadata) throws -> [URL]? {
+        // TODO: Implement artwork URL generation based on LibretroDB data
+        // For now, return nil
+        return nil
+    }
 }

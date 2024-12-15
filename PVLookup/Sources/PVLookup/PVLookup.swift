@@ -35,6 +35,9 @@ public protocol ROMMetadataLookup {
 public protocol ArtworkLookupService {
     /// Get artwork mappings for ROMs
     func getArtworkMappings() async throws -> ArtworkMapping
+
+    /// Get possible URLs for a ROM
+    func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]?
 }
 
 /// Main lookup service that combines ROM metadata and artwork lookup capabilities
@@ -249,6 +252,22 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         let mergedFilenames = openVGDBMappings.romFileNameToMD5.merging(libretroDBArtwork.romFileNameToMD5) { (_, new) in new }
 
         return ArtworkMappings(romMD5: mergedMD5, romFileNameToMD5: mergedFilenames)
+    }
+
+    public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+        var urls: [URL] = []
+
+        // Try OpenVGDB
+        if let openVGDBUrls = try openVGDB.getArtworkURLs(forRom: rom) {
+            urls.append(contentsOf: openVGDBUrls)
+        }
+
+        // Try LibretroDB
+        if let libretroDBArtworkUrls = try libreTroDB.getArtworkURLs(forRom: rom) {
+            urls.append(contentsOf: libretroDBArtworkUrls)
+        }
+
+        return urls.isEmpty ? nil : urls
     }
 
     // MARK: - Database Search Methods
