@@ -45,7 +45,7 @@ let package = Package(
         .package(url: "https://github.com/JoeMatt/Lighter.git", branch: "develop"),
 
 //        .package(url: "https://github.com/JoeMatt/SWCompression.git", branch: "develop"),
-        .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.18")),
 
         // Swagger Generation by @Apple
         // https://tinyurl.com/yn3dnbr5
@@ -147,7 +147,7 @@ let package = Package(
                 "PVLookupTypes",
                 "PVPrimitives",
                 "Lighter",
-                "Zip"
+                .product(name: "ZIPFoundation", package: "ZIPFoundation")
             ],
             resources: [
 //                .copy("Resources/shiragame.sqlite3.7z"),

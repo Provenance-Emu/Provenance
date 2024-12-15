@@ -1,5 +1,5 @@
 import Foundation
-import Zip
+import ZIPFoundation
 
 extension FileManager {
     /// Extracts a zip file to a destination directory
@@ -15,9 +15,7 @@ extension FileManager {
             try createDirectory(at: destinationURL, withIntermediateDirectories: true)
 
             print("FileManager+Zip: Attempting to unzip...")
-            try Zip.unzipFile(sourceURL, destination: destinationURL, overwrite: true, password: nil, progress: { progress in
-                print("FileManager+Zip: Extraction progress: \(Int(progress * 100))%")
-            })
+            try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
 
             print("FileManager+Zip: Extraction complete")
             print("FileManager+Zip: Destination contents: \(try contentsOfDirectory(atPath: destinationURL.path))")
