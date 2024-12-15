@@ -30,10 +30,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(
-            name: "PVLogging",
-            path: "../PVLogging"
-        ),
+        .package(path: "../PVLogging"),
+        .package(path: "../PVPrimitives"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
 
         ///
@@ -45,6 +43,8 @@ let package = Package(
         // https://github.com/Lighter-swift/Lighter
         //.package(url: "https://github.com/Lighter-swift/Lighter.git", from: "1.4.4"),
         .package(url: "https://github.com/JoeMatt/Lighter.git", branch: "develop"),
+
+        .package(url: "https://github.com/JoeMatt/SWCompression.git", branch: "develop"),
 
         // Swagger Generation by @Apple
         // https://tinyurl.com/yn3dnbr5
@@ -68,7 +68,9 @@ let package = Package(
                 "OpenVGDB",
                 "ROMMetadataProvider",
                 "PVLookupTypes",
-                "libretrodb"
+                "libretrodb",
+                "ShiraGame",
+                "PVPrimitives"
             ]
         ),
 
@@ -90,7 +92,7 @@ let package = Package(
         //     plugins: [
         //         .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
         // ]),
-        
+
         // MARK:  libretrodb
 
         // https://github.com/avojak/libretrodb-sqlite
@@ -98,7 +100,8 @@ let package = Package(
             name: "libretrodb",
             dependencies: [
                 "PVSQLiteDatabase",
-                "PVLookupTypes"
+                "PVLookupTypes",
+                "PVPrimitives"
             ],
             resources: [
                 .copy("Resources/libretrodb.sqlite"),
@@ -118,7 +121,8 @@ let package = Package(
             dependencies: [
                 "PVSQLiteDatabase",
                 "Lighter",
-                "PVLookupTypes"
+                "PVLookupTypes",
+                "PVPrimitives"
             ],
             resources: [
                 .copy("Resources/openvgdb.sqlite"),
@@ -139,10 +143,13 @@ let package = Package(
             dependencies: [
                 "ROMMetadataProvider",
                 "PVSQLiteDatabase",
-                "Lighter"
+                "PVLookupTypes",
+                "PVPrimitives",
+                "Lighter",
+                .product(name: "SWCompression", package: "SWCompression")
             ],
             resources: [
-                // .copy("Resources/shiragame.sqlite3"),
+                .copy("Resources/shiragame.sqlite3.7z"),
                 .copy("Resources/shiragame_schema.sql"),
             ],
             plugins: [

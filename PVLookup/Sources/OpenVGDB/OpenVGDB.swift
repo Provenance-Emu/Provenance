@@ -26,7 +26,6 @@ actor OpenVGDBActor:GlobalActor
 
 public final class OpenVGDB {
 
-    #warning("TODO: Convert to SQLSwift")
     /// Legacy connection
     private let vgdb: PVSQLiteDatabase
 

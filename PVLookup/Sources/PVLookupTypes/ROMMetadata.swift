@@ -22,28 +22,30 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
     public let romHashCRC: String?
     public let romHashMD5: String?
     public let romID: Int?
+    public let isBIOS: Bool?
 
     public init(
         gameTitle: String,
-        boxImageURL: String?,
-        region: String?,
-        gameDescription: String?,
-        boxBackURL: String?,
-        developer: String?,
-        publisher: String?,
-        serial: String?,
-        releaseDate: String?,
-        genres: String?,
-        referenceURL: String?,
-        releaseID: String?,
-        language: String?,
-        regionID: Int?,
+        boxImageURL: String? = nil,
+        region: String? = nil,
+        gameDescription: String? = nil,
+        boxBackURL: String? = nil,
+        developer: String? = nil,
+        publisher: String? = nil,
+        serial: String? = nil,
+        releaseDate: String? = nil,
+        genres: String? = nil,
+        referenceURL: String? = nil,
+        releaseID: String? = nil,
+        language: String? = nil,
+        regionID: Int? = nil,
         systemID: Int,
-        systemShortName: String?,
-        romFileName: String?,
-        romHashCRC: String?,
-        romHashMD5: String?,
-        romID: Int?
+        systemShortName: String? = nil,
+        romFileName: String? = nil,
+        romHashCRC: String? = nil,
+        romHashMD5: String? = nil,
+        romID: Int? = nil,
+        isBIOS: Bool? = nil
     ) {
         self.gameTitle = gameTitle
         self.boxImageURL = boxImageURL
@@ -65,5 +67,6 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
         self.romHashCRC = romHashCRC
         self.romHashMD5 = romHashMD5
         self.romID = romID
+        self.isBIOS = isBIOS
     }
 }

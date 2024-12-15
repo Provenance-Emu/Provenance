@@ -10,6 +10,7 @@ import OpenVGDB
 import ROMMetadataProvider
 import PVLookupTypes
 import libretrodb
+import ShiraGame
 
 /// Protocol for basic ROM metadata lookup operations
 public protocol ROMMetadataLookup {
@@ -41,11 +42,13 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     // MARK: - Properties
     private let openVGDB: OpenVGDB
     private let libreTroDB: libretrodb
+    private let shiraGame: ShiraGame
 
     // MARK: - Initialization
     private init() {
         self.openVGDB = OpenVGDB()
         self.libreTroDB = libretrodb()
+        self.shiraGame = ShiraGame()
     }
 
     // MARK: - ROMMetadataProvider Implementation
@@ -56,14 +59,20 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         // Get libretrodb result
         let libretroDatabaseResult = try libreTroDB.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first
 
-        // If we have both results, merge them
+        // Get ShiraGame result
+        let shiraGameResult = try await shiraGame.searchROM(byMD5: md5)
+
+        // Merge results with priority: OpenVGDB > libretrodb > ShiraGame
         if let openVGDBMetadata = openVGDBResult,
-           let libretroDatabaseMetadata = libretroDatabaseResult {
-            return openVGDBMetadata.merged(with: libretroDatabaseMetadata)
+           let libretroDatabaseMetadata = libretroDatabaseResult,
+           let shiraGameMetadata = shiraGameResult {
+            return openVGDBMetadata
+                .merged(with: libretroDatabaseMetadata)
+                .merged(with: shiraGameMetadata)
         }
 
         // Otherwise return whichever one we have
-        return openVGDBResult ?? libretroDatabaseResult
+        return openVGDBResult ?? libretroDatabaseResult ?? shiraGameResult
     }
 
     public func searchDatabase(usingKey key: String, value: String, systemID: Int?) async throws -> [ROMMetadata]? {

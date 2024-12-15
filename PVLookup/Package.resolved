@@ -1,6 +1,33 @@
 {
-  "originHash" : "73bc9aee447bc8b1e86af38387b01e3caaef488d4ef24dac6375d42a86fa6f37",
+  "originHash" : "3628618fd3ff09be66f171d0516a401bae5bf0bafa8942ab71ee483fb08662a3",
   "pins" : [
+    {
+      "identity" : "bitbytedata",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsolomko/BitByteData",
+      "state" : {
+        "revision" : "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
+        "version" : "2.0.4"
+      }
+    },
+    {
+      "identity" : "checksum",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
+      "state" : {
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ef1b2318fb549002bb533bec3a8ad98ae09f2cb6"
+      }
+    },
     {
       "identity" : "lighter",
       "kind" : "remoteSourceControl",
@@ -17,6 +44,24 @@
       "state" : {
         "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
         "version" : "0.15.3"
+      }
+    },
+    {
+      "identity" : "swcompression",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/SWCompression.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "6ab39d1a3d9db303947ea5408925c48b9367204f"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
       }
     },
     {

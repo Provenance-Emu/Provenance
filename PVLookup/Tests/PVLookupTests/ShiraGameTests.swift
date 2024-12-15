@@ -4,56 +4,50 @@
 //
 //  Created by Joseph Mattiello on 8/30/24.
 //
-#if false
+
 import Testing
-@testable import PVLookup
 @testable import ShiraGame
+@testable import PVLookupTypes
 
-struct ShiraGameTests {
-    
-    let database = ShiraGameDB()
+final class ShiraGameTests {
+    let db: ShiraGame
 
-    @Test func testSearchGameByID() {
-        let idToSearch = 1
-        
-        let expectedEntryName = "3-D Genesis (USA) (Proto)"
-        let expectedEntryTitle = "3-D Genesis"
-
-        let resultMaybe = database.getGame(byID: idToSearch)
-        #expect(resultMaybe != nil)
-        let result = resultMaybe!
-
-        #expect(result.entryName == expectedEntryName)
-        #expect(result.entryTitle == expectedEntryTitle)
+    override func setUp() {
+        db = try! ShiraGame()
     }
-    
-    @Test func testSearchROMByMD5() {
-        let md5 = "cac9928a84e1001817b223f0cecaa3f2"
-        
-        let expectedGameID = 1
-        
-        let resultMaybe = database.searchROM(byMD5: md5)
-        #expect(resultMaybe != nil)
-        let result = resultMaybe!
 
-        #expect(result == expectedGameID)
+    func testSearchByMD5() async throws {
+        let md5 = "SOME_KNOWN_MD5"  // Replace with actual MD5
+        let result = try await db.searchROM(byMD5: md5)
+
+        #expect(result != nil)
+        #expect(result?.romHashMD5 == md5)
     }
-    
-//    @Test func testgetROMsByID() {
-//        let md5 = "cac9928a84e1001817b223f0cecaa3f2"
-//        
-//        let expectedFileName = "3-D Genesis (USA) (Proto).a26"
-//        let expectedMD5 = "cac9928a84e1001817b223f0cecaa3f2"
-//        let expectedCRC = "931a0bdc"
-//        let expectedSHA1 = "0e146e5eb1a68cba4f8fa55ec6f125438efcfcb4"
-//        let expectedSize = 8192
-//        let expectedGameID = 1
-//        
-//        let resultMaybe = database.searchROM(byMD5: md5)
-//        #expect(resultMaybe != nil)
-//        let result = resultMaybe!
-//
-//        #expect(result == expectedGameID)
-//    }
+
+    func testSearchByFilename() async throws {
+        let results = try await db.searchDatabase(usingFilename: "Mario", systemID: nil)
+
+        #expect(results != nil)
+        #expect(!results!.isEmpty)
+    }
+
+    func testSystemIDMapping() async throws {
+        // Test NES game
+        let nesGame = try await db.searchDatabase(usingFilename: "Super Mario Bros", systemID: SystemIdentifier.NES.openVGDBID)?.first
+        #expect(nesGame?.systemID == SystemIdentifier.NES.openVGDBID)
+
+        // Test system lookup
+        let systemID = try await db.system(forRomMD5: "SOME_MD5", or: "Super Mario Bros")
+        #expect(systemID == SystemIdentifier.NES.openVGDBID)
+    }
+
+    func testBIOSDetection() async throws {
+        // Test a known BIOS file
+        let biosResult = try await db.searchDatabase(usingFilename: "bios", systemID: nil)?.first
+        #expect(biosResult?.isBIOS == true)
+
+        // Test a regular game
+        let gameResult = try await db.searchDatabase(usingFilename: "Super Mario", systemID: nil)?.first
+        #expect(gameResult?.isBIOS == false)
+    }
 }
-#endif

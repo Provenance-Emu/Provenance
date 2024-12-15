@@ -16,7 +16,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "PVPrimitives",
-            targets: ["PVPrimitives"]
+            targets: ["PVPrimitives", "Systems"]
         ),
     ],
     dependencies: [
@@ -40,6 +40,14 @@ let package = Package(
             name: "PVPrimitives",
             dependencies: ["PVSupport", "PVLogging", "PVHashing"]
         ),
+        // MARK: ------------ Systems ------------
+        .target(
+            name: "Systems",
+            dependencies: [
+                "PVSupport",
+                "PVLogging",
+                "PVHashing"
+        ]),
     ],
     swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu18,
