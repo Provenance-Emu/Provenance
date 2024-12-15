@@ -7,11 +7,18 @@
 
 import Testing
 import Systems
+import Foundation
 @testable import ShiraGame
 @testable import PVLookupTypes
-#if false
+
 struct ShiraGameTests {
-    let db: ShiraGame = .init()
+    let db: ShiraGame
+
+    init() async throws {
+        print("Starting ShiraGame test initialization...")
+        self.db = try await ShiraGame()
+        print("ShiraGame initialization complete")
+    }
 
     // MARK: - MD5 Search Tests
     @Test
@@ -90,4 +97,3 @@ struct ShiraGameTests {
         #expect(!licensed!.gameTitle.contains("(Unl)"))
     }
 }
-#endif

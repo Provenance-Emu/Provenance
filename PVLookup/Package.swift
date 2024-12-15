@@ -149,7 +149,8 @@ let package = Package(
                 .product(name: "SWCompression", package: "SWCompression")
             ],
             resources: [
-                .copy("Resources/shiragame.sqlite3.7z"),
+//                .copy("Resources/shiragame.sqlite3.7z"),
+                .copy("Resources/shiragame.sqlite3.zip"),
                 .copy("Resources/shiragame_schema.sql"),
             ],
             plugins: [

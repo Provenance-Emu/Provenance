@@ -5,49 +5,78 @@ public enum ShiraGameError: Error {
     case databaseNotFound
     case extractionFailed
     case invalidCompressedFile
+    case initializationTimeout
 }
 
 /// Utility class for managing the ShiraGame database
-public enum ShiraGameManager {
+public actor ShiraGameManager {
+    /// Singleton instance to coordinate database operations
+    public static let shared = ShiraGameManager()
+
     /// Path to the extracted database in Caches directory
-    public static var databasePath: URL {
+    public nonisolated var databasePath: URL {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
             .appendingPathComponent("shiragame.sqlite3")
     }
 
     /// Ensures the database is extracted and ready to use
-    public static func prepareDatabaseIfNeeded() throws {
+    public func prepareDatabaseIfNeeded() async throws {
         let fileManager = FileManager.default
+        print("ShiraGameManager: Checking if database needs preparation...")
 
         // Check if database already exists
         if fileManager.fileExists(atPath: databasePath.path) {
+            print("ShiraGameManager: Database already exists")
             return
         }
 
+        print("ShiraGameManager: Database not found, starting extraction...")
+
         // Get the compressed database from the bundle
-        guard let compressedURL = Bundle.module.url(forResource: "shiragame.sqlite3", withExtension: "7z") else {
+        guard let compressedURL = Bundle.module.url(forResource: "shiragame.sqlite3", withExtension: "zip") else {
+            print("ShiraGameManager: Failed to find compressed database in bundle")
             throw ShiraGameError.databaseNotFound
         }
+
+        print("ShiraGameManager: Found compressed database at: \(compressedURL)")
 
         // Create a temporary directory for extraction
         let tempDir = fileManager.temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
         try fileManager.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        print("ShiraGameManager: Created temp directory at: \(tempDir)")
 
         defer {
             try? fileManager.removeItem(at: tempDir)
+            print("ShiraGameManager: Cleaned up temp directory")
         }
 
         // Extract using Archive
+        print("ShiraGameManager: Starting extraction...")
         try extractZipDatabase(from: compressedURL, to: tempDir)
+        print("ShiraGameManager: Extraction complete")
 
         // Move extracted database to final location
         let extractedDB = tempDir.appendingPathComponent("shiragame.sqlite3")
         try fileManager.moveItem(at: extractedDB, to: databasePath)
+        print("ShiraGameManager: Moved database to final location")
     }
 
-    private static func extractZipDatabase(from sourceURL: URL, to destinationURL: URL) throws {
-        guard (try? FileManager.default.zipItem(at: sourceURL, unzipTo: destinationURL)) != nil else {
+    private func extractZipDatabase(from sourceURL: URL, to destinationURL: URL) throws {
+        do {
+            print("ShiraGameManager: Using FileManager to unzip database...")
+            print("ShiraGameManager: Source file exists: \(FileManager.default.fileExists(atPath: sourceURL.path))")
+            print("ShiraGameManager: Source file size: \(try FileManager.default.attributesOfItem(atPath: sourceURL.path)[.size] ?? 0)")
+
+            try FileManager.default.zipItem(at: sourceURL, unzipTo: destinationURL)
+
+            print("ShiraGameManager: Destination directory contents: \(try FileManager.default.contentsOfDirectory(atPath: destinationURL.path))")
+            print("ShiraGameManager: Unzip successful")
+        } catch {
+            print("ShiraGameManager: Unzip failed with detailed error: \(error)")
+            print("ShiraGameManager: Error domain: \(error as NSError).domain")
+            print("ShiraGameManager: Error code: \((error as NSError).code)")
+            print("ShiraGameManager: Error description: \((error as NSError).localizedDescription)")
             throw ShiraGameError.extractionFailed
         }
     }

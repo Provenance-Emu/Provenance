@@ -6,17 +6,69 @@ import PVLookupTypes
 import Systems
 
 public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
-    private let db: ShiragameSchema
+    private var db: ShiragameSchema
+    private let initializer: DatabaseInitializer
+    private lazy var initializationTask: Task<Void, Error> = self.createInitializationTask()
+    private let timeout: TimeInterval = 30  // 30 second timeout
+
+    private actor DatabaseInitializer {
+        var db: ShiragameSchema
+
+        init(initialDB: ShiragameSchema) {
+            self.db = initialDB
+        }
+
+        func updateDB(with newDB: ShiragameSchema) {
+            self.db = newDB
+        }
+
+        func getDB() -> ShiragameSchema {
+            return db
+        }
+    }
+
+    private func createInitializationTask() -> Task<Void, Error> {
+        return Task { @MainActor in
+            try await ShiraGameManager.shared.prepareDatabaseIfNeeded()
+            let realDB = ShiragameSchema(url: ShiraGameManager.shared.databasePath)
+            await self.initializer.updateDB(with: realDB)
+            self.db = realDB
+        }
+    }
 
     public init() {
-        // Ensure database is extracted
-        try! ShiraGameManager.prepareDatabaseIfNeeded()
+        let emptyDB = ShiragameSchema(url: URL(fileURLWithPath: ""))
+        self.db = emptyDB
+        self.initializer = DatabaseInitializer(initialDB: emptyDB)
+    }
 
-        // Initialize database using the generated schema
-        self.db = ShiragameSchema(url: ShiraGameManager.databasePath)
+    // Helper to wait for initialization
+    private func awaitInitialization() async throws {
+        try await withTimeout(timeout) { [initializationTask] in  // Capture specific property
+            try await initializationTask.value
+        }
+    }
+
+    private func withTimeout<T: Sendable>(_ seconds: TimeInterval, operation: @escaping @Sendable () async throws -> T) async throws -> T {
+        try await withThrowingTaskGroup(of: T.self) { group in
+            group.addTask {
+                try await operation()
+            }
+
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                throw ShiraGameError.initializationTimeout
+            }
+
+            let result = try await group.next()!
+            group.cancelAll()
+            return result
+        }
     }
 
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
+        try await awaitInitialization()
+
         // Normalize MD5 to uppercase
         let normalizedMD5 = md5.uppercased()
 
@@ -32,6 +84,8 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
+        try await awaitInitialization()
+
         // Find ROMs matching filename
         let roms = try db.roms.filter(filter: { $0.fileName.contains(filename) })
         if roms.isEmpty { return nil }
@@ -64,6 +118,8 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
     }
 
     public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
+        try await awaitInitialization()
+
         let normalizedMD5 = md5.uppercased()
 
         // Try MD5 first
