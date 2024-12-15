@@ -48,17 +48,10 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     // MARK: - Properties
     private let openVGDB: OpenVGDB
     private let libreTroDB: libretrodb
-    #if canImport(ShiraGame)
+#if canImport(ShiraGame)
     private var shiraGame: ShiraGame?
-    #endif
     private var isInitializing = false
     private var initializationTask: Task<Void, Error>?
-
-    // MARK: - Initialization
-    private init() {
-        self.openVGDB = OpenVGDB()
-        self.libreTroDB = libretrodb()
-    }
 
     private func ensureInitialization() async {
         if initializationTask == nil {
@@ -68,7 +61,6 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         }
     }
 
-#if canImport(ShiraGame)
     private func initializeShiraGame() async {
         guard !isInitializing && shiraGame == nil else { return }
 
@@ -93,6 +85,12 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         return shiraGame
     }
 #endif
+    
+    // MARK: - Initialization
+    private init() {
+        self.openVGDB = OpenVGDB()
+        self.libreTroDB = libretrodb()
+    }
 
     // MARK: - ROMMetadataProvider Implementation
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
@@ -173,16 +171,16 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
             return results.isEmpty ? nil : results
         }
 
-        #if canImport(ShiraGame)
+#if canImport(ShiraGame)
         // Only try ShiraGame if we found nothing in primary databases
         ILOG("PVLookup: No results from primary databases, trying ShiraGame...")
         let shiraGameResults = try await getShiraGame()?.searchDatabase(usingFilename: filename, systemID: systemID)
         DLOG("PVLookup: ShiraGame results: \(String(describing: shiraGameResults?.count)) matches")
 
         return shiraGameResults
-        #else
+#else
         return nil
-        #endif
+#endif
     }
 
     public func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
