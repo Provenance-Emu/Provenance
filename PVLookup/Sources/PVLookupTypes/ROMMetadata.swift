@@ -70,6 +70,33 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
         self.romID = romID
         self.isBIOS = isBIOS
     }
+
+    /// Creates a copy with a new title
+    func copy(gameTitle: String) -> ROMMetadata {
+        return ROMMetadata(
+            gameTitle: gameTitle,
+            boxImageURL: self.boxImageURL,
+            region: self.region,
+            gameDescription: self.gameDescription,
+            boxBackURL: self.boxBackURL,
+            developer: self.developer,
+            publisher: self.publisher,
+            serial: self.serial,
+            releaseDate: self.releaseDate,
+            genres: self.genres,
+            referenceURL: self.referenceURL,
+            releaseID: self.releaseID,
+            language: self.language,
+            regionID: self.regionID,
+            systemID: self.systemID,
+            systemShortName: self.systemShortName,
+            romFileName: self.romFileName,
+            romHashCRC: self.romHashCRC,
+            romHashMD5: self.romHashMD5,
+            romID: self.romID,
+            isBIOS: self.isBIOS
+        )
+    }
 }
 
 // For backward compatibility
