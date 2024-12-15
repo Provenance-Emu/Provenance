@@ -44,7 +44,8 @@ let package = Package(
         //.package(url: "https://github.com/Lighter-swift/Lighter.git", from: "1.4.4"),
         .package(url: "https://github.com/JoeMatt/Lighter.git", branch: "develop"),
 
-        .package(url: "https://github.com/JoeMatt/SWCompression.git", branch: "develop"),
+//        .package(url: "https://github.com/JoeMatt/SWCompression.git", branch: "develop"),
+        .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
 
         // Swagger Generation by @Apple
         // https://tinyurl.com/yn3dnbr5
@@ -146,7 +147,7 @@ let package = Package(
                 "PVLookupTypes",
                 "PVPrimitives",
                 "Lighter",
-                .product(name: "SWCompression", package: "SWCompression")
+                "Zip"
             ],
             resources: [
 //                .copy("Resources/shiragame.sqlite3.7z"),

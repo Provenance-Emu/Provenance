@@ -19,8 +19,17 @@ public actor ShiraGameManager {
             .appendingPathComponent("shiragame.sqlite3")
     }
 
+    private var isDatabasePrepared = false
+
     /// Ensures the database is extracted and ready to use
     public func prepareDatabaseIfNeeded() async throws {
+        if isDatabasePrepared {
+            print("ShiraGameManager: Database already prepared")
+            return
+        }
+
+        print("ShiraGameManager: Starting database preparation...")
+
         let fileManager = FileManager.default
         print("ShiraGameManager: Checking if database needs preparation...")
 
@@ -60,6 +69,19 @@ public actor ShiraGameManager {
         let extractedDB = tempDir.appendingPathComponent("shiragame.sqlite3")
         try fileManager.moveItem(at: extractedDB, to: databasePath)
         print("ShiraGameManager: Moved database to final location")
+
+        isDatabasePrepared = true
+        print("ShiraGameManager: Database preparation complete")
+
+        // Verify database exists and is readable
+        guard FileManager.default.fileExists(atPath: databasePath.path) else {
+            print("ShiraGameManager: Database file not found after preparation!")
+            throw ShiraGameError.databaseNotFound
+        }
+
+        // Try opening database to verify it's valid
+        _ = try ShiragameSchema(url: databasePath)
+        print("ShiraGameManager: Database verified and ready")
     }
 
     private func extractZipDatabase(from sourceURL: URL, to destinationURL: URL) throws {

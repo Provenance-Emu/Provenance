@@ -2,38 +2,42 @@ import Testing
 import Foundation
 @testable import ShiraGame
 
-final class ShiraGameManagerTests {
-    func setUp() {
-        // Clean up any existing database
-        try? FileManager.default.removeItem(at: ShiraGameManager.databasePath)
+struct ShiraGameManagerTests {
+    let manager = ShiraGameManager.shared
+
+    @Test
+    func testDatabasePath() async {
+        let dbPath = manager.databasePath
+        #expect(dbPath.lastPathComponent == "shiragame.sqlite3")
+        #expect(dbPath.path.contains("Caches"))
     }
 
-    func testDatabaseExtraction() throws {
-        // Verify database doesn't exist
-        #expect(!FileManager.default.fileExists(atPath: ShiraGameManager.databasePath.path))
+    @Test
+    func testDatabaseExtraction() async throws {
+        // Remove any existing database
+        try? FileManager.default.removeItem(at: manager.databasePath)
+        #expect(!FileManager.default.fileExists(atPath: manager.databasePath.path))
 
         // Extract database
-        try ShiraGameManager.prepareDatabaseIfNeeded()
+        try await manager.prepareDatabaseIfNeeded()
+        #expect(FileManager.default.fileExists(atPath: manager.databasePath.path))
 
-        // Verify database exists
-        #expect(FileManager.default.fileExists(atPath: ShiraGameManager.databasePath.path))
-
-        // Verify it's a valid SQLite database
-        let data = try Data(contentsOf: ShiraGameManager.databasePath)
-        let header = "SQLite format 3"
-        #expect(String(data: data.prefix(header.count), encoding: .utf8)?.hasPrefix(header) == true)
+        // Get file size
+        let attributes = try FileManager.default.attributesOfItem(atPath: manager.databasePath.path)
+        let fileSize = attributes[.size] as! Int64
+        #expect(fileSize > 0)
     }
 
-    func testCaching() throws {
-        // First extraction
-        try ShiraGameManager.prepareDatabaseIfNeeded()
-        let firstModificationDate = try FileManager.default.attributesOfItem(atPath: ShiraGameManager.databasePath.path)[.modificationDate] as? Date
+    @Test
+    func testDatabaseExtractionIdempotent() async throws {
+        // Extract database twice
+        try await manager.prepareDatabaseIfNeeded()
+        let firstModificationDate = try FileManager.default.attributesOfItem(atPath: manager.databasePath.path)[.modificationDate] as! Date
 
-        // Second extraction - should use cached file
-        try ShiraGameManager.prepareDatabaseIfNeeded()
-        let secondModificationDate = try FileManager.default.attributesOfItem(atPath: ShiraGameManager.databasePath.path)[.modificationDate] as? Date
+        try await manager.prepareDatabaseIfNeeded()
+        let secondModificationDate = try FileManager.default.attributesOfItem(atPath: manager.databasePath.path)[.modificationDate] as! Date
 
-        // Verify dates match (cached file was used)
+        // Should be the same file (not re-extracted)
         #expect(firstModificationDate == secondModificationDate)
     }
 }

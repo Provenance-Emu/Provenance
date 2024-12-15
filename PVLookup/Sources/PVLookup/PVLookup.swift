@@ -42,25 +42,53 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     // MARK: - Properties
     private let openVGDB: OpenVGDB
     private let libreTroDB: libretrodb
-    private let shiraGame: ShiraGame
+    private var shiraGame: ShiraGame?
+    private var isInitializing = false
+    private var initializationTask: Task<Void, Error>?
 
     // MARK: - Initialization
     private init() {
         self.openVGDB = OpenVGDB()
         self.libreTroDB = libretrodb()
-        self.shiraGame = ShiraGame()
+    }
+
+    private func ensureInitialization() async {
+        if initializationTask == nil {
+            initializationTask = Task { [self] in
+                await self.initializeShiraGame()
+            }
+        }
+    }
+
+    private func initializeShiraGame() async {
+        guard !isInitializing && shiraGame == nil else { return }
+
+        do {
+            isInitializing = true
+            shiraGame = try await ShiraGame()
+        } catch {
+            print("Failed to initialize ShiraGame: \(error)")
+        }
+        isInitializing = false
+    }
+
+    // Helper to safely access ShiraGame
+    private func getShiraGame() async -> ShiraGame? {
+        await ensureInitialization()
+
+        // If still initializing, wait for initialization
+        if isInitializing, let task = initializationTask {
+            // Wait for initialization to complete
+            _ = await task.result
+        }
+        return shiraGame
     }
 
     // MARK: - ROMMetadataProvider Implementation
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
-        // Try OpenVGDB first
         let openVGDBResult = try await searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first
-
-        // Get libretrodb result
         let libretroDatabaseResult = try libreTroDB.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)?.first
-
-        // Get ShiraGame result
-        let shiraGameResult = try await shiraGame.searchROM(byMD5: md5)
+        let shiraGameResult = try await getShiraGame()?.searchROM(byMD5: md5)
 
         // Merge results with priority: OpenVGDB > libretrodb > ShiraGame
         if let openVGDBMetadata = openVGDBResult,
@@ -71,7 +99,6 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
                 .merged(with: shiraGameMetadata)
         }
 
-        // Otherwise return whichever one we have
         return openVGDBResult ?? libretroDatabaseResult ?? shiraGameResult
     }
 
@@ -94,7 +121,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         // Get results from each database
         let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemID: systemID)
         let libretroDatabaseResults = try await libreTroDB.searchDatabase(usingFilename: filename, systemID: systemID)
-        let shiraGameResults = try await shiraGame.searchDatabase(usingFilename: filename, systemID: systemID)
+        let shiraGameResults = try await getShiraGame()?.searchDatabase(usingFilename: filename, systemID: systemID)
 
         // Merge results with priority: OpenVGDB > libretrodb > ShiraGame
         var mergedResults = openVGDBResults ?? []
@@ -154,7 +181,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         }
 
         // Try ShiraGame as a backup - using ShiraGame's own conversion
-        if let systemID = try await shiraGame.system(forRomMD5: md5, or: filename),
+        if let systemID = try await getShiraGame()?.system(forRomMD5: md5, or: filename),
            let identifier = SystemIdentifier.fromShiraGameID(String(systemID)) {
             return identifier
         }

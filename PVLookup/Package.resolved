@@ -1,15 +1,6 @@
 {
-  "originHash" : "3628618fd3ff09be66f171d0516a401bae5bf0bafa8942ab71ee483fb08662a3",
+  "originHash" : "c6b6729979b928e9b962d60c3cd8f81fad0c8d5539a5986b65ef33b1a0e280db",
   "pins" : [
-    {
-      "identity" : "bitbytedata",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tsolomko/BitByteData",
-      "state" : {
-        "revision" : "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
-        "version" : "2.0.4"
-      }
-    },
     {
       "identity" : "checksum",
       "kind" : "remoteSourceControl",
@@ -47,15 +38,6 @@
       }
     },
     {
-      "identity" : "swcompression",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/SWCompression.git",
-      "state" : {
-        "branch" : "develop",
-        "revision" : "6ab39d1a3d9db303947ea5408925c48b9367204f"
-      }
-    },
-    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax",
@@ -71,6 +53,15 @@
       "state" : {
         "branch" : "develop",
         "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
+      }
+    },
+    {
+      "identity" : "zip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/Zip.git",
+      "state" : {
+        "revision" : "67fa55813b9e7b3b9acee9c0ae501def28746d76",
+        "version" : "2.1.2"
       }
     }
   ],

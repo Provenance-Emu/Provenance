@@ -36,10 +36,23 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
         }
     }
 
-    public init() {
-        let emptyDB = ShiragameSchema(url: URL(fileURLWithPath: ""))
+    public init() async throws {
+        print("ShiraGame: Starting initialization...")
+
+        // Initialize with empty database first
+        let emptyDB = try ShiragameSchema(url: URL(fileURLWithPath: ""))
         self.db = emptyDB
         self.initializer = DatabaseInitializer(initialDB: emptyDB)
+
+        // Wait for database preparation to complete
+        print("ShiraGame: Waiting for database preparation...")
+        try await ShiraGameManager.shared.prepareDatabaseIfNeeded()
+
+        // Now initialize with real database
+        print("ShiraGame: Initializing with prepared database...")
+        self.db = try ShiragameSchema(url: ShiraGameManager.shared.databasePath)
+
+        print("ShiraGame: Initialization complete")
     }
 
     // Helper to wait for initialization
@@ -69,18 +82,24 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
         try await awaitInitialization()
 
-        // Normalize MD5 to uppercase
-        let normalizedMD5 = md5.uppercased()
+        // Normalize MD5 to lowercase to match database
+        let normalizedMD5 = md5.lowercased()
 
         // First find the ROM
         let roms = try db.roms.filter(filter: { $0.md5 == normalizedMD5 })
+        print("ShiraGame: Found \(roms.count) ROMs for MD5: \(normalizedMD5)")
         guard let rom = roms.first else { return nil }
 
         // Then find the corresponding game
         let games = try db.games.filter(filter: { $0.id == rom.gameId })
+        print("ShiraGame: Found \(games.count) games for ROM ID: \(rom.gameId)")
         guard let game = games.first else { return nil }
 
-        return convertToROMMetadata(game: game, rom: rom)
+        print("ShiraGame: Platform ID: \(game.platformId)")
+        let metadata = convertToROMMetadata(game: game, rom: rom)
+        print("ShiraGame: System ID: \(metadata.systemID)")
+
+        return metadata
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
@@ -99,8 +118,11 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
             return false
         })
 
-        if let systemID = systemID {
-            games = games.filter { $0.platformId == String(systemID) }
+        // Convert OpenVGDB system ID to ShiraGame platform ID
+        if let systemID = systemID,
+           let systemIdentifier = SystemIdentifier.fromOpenVGDBID(systemID) {
+            let platformId = systemIdentifier.shiraGameID
+            games = try db.games.filter(filter: { $0.platformId == platformId })
         }
 
         return games.compactMap { game in
@@ -120,7 +142,7 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
     public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
         try await awaitInitialization()
 
-        let normalizedMD5 = md5.uppercased()
+        let normalizedMD5 = md5.lowercased()
 
         // Try MD5 first
         if let rom = try db.roms.filter(filter: { $0.md5 == normalizedMD5 }).first,

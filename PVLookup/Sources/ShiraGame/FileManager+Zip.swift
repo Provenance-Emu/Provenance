@@ -1,5 +1,5 @@
 import Foundation
-import SWCompression
+import Zip
 
 extension FileManager {
     /// Extracts a zip file to a destination directory
@@ -7,27 +7,26 @@ extension FileManager {
     ///   - sourceURL: URL of the zip file
     ///   - destinationURL: URL of the directory to extract to
     func zipItem(at sourceURL: URL, unzipTo destinationURL: URL) throws {
-        // Read the zip file data
-        let data = try Data(contentsOf: sourceURL)
+        do {
+            print("FileManager+Zip: Starting extraction...")
+            print("FileManager+Zip: Source file exists: \(FileManager.default.fileExists(atPath: sourceURL.path))")
 
-        // Extract the archive using SWCompression's ZIP support
-        let archive = try ZipContainer.open(container: data)
+            // Create destination directory if needed
+            try createDirectory(at: destinationURL, withIntermediateDirectories: true)
 
-        // Create destination directory if needed
-        try createDirectory(at: destinationURL, withIntermediateDirectories: true)
+            print("FileManager+Zip: Attempting to unzip...")
+            try Zip.unzipFile(sourceURL, destination: destinationURL, overwrite: true, password: nil, progress: { progress in
+                print("FileManager+Zip: Extraction progress: \(Int(progress * 100))%")
+            })
 
-        // Extract each entry
-        for entry in archive {
-            let entryPath = destinationURL.appendingPathComponent(entry.info.name)
+            print("FileManager+Zip: Extraction complete")
+            print("FileManager+Zip: Destination contents: \(try contentsOfDirectory(atPath: destinationURL.path))")
 
-            // Create parent directories if needed
-            try createDirectory(at: entryPath.deletingLastPathComponent(),
-                              withIntermediateDirectories: true)
-
-            // Extract and write the file
-            if let data = entry.data {
-                try data.write(to: entryPath)
-            }
+        } catch {
+            print("FileManager+Zip: Extraction failed with error: \(error)")
+            print("FileManager+Zip: Error details:")
+            print("  Description: \(error.localizedDescription)")
+            throw error
         }
     }
 }
