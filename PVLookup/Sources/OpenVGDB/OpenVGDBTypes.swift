@@ -2,7 +2,7 @@ import Foundation
 import PVSystems
 
 /// Internal representation of ROM metadata from the OpenVGDB database
-internal struct OpenVGDBROMMetadata: Codable {
+internal struct OpenVGDBROMMetadata: Codable, Sendable, Equatable {
     let gameTitle: String
     let boxImageURL: String?
     let region: String?

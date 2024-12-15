@@ -108,9 +108,112 @@ public extension OpenVGDB {
     /// - Parameter rom: The ROM metadata
     /// - Returns: Array of possible artwork URLs, or nil if none found
     public func getArtworkURLs(forRom rom: ROMMetadata) throws -> [URL]? {
-        // TODO: Implement artwork URL generation based on OpenVGDB data
-        // For now, return nil
-        return nil
+        var urls: [URL] = []
+
+        // 1. Try MD5 search first (exact match, no system filter needed)
+        if let md5 = rom.romHashMD5 {
+            let md5Query = """
+                SELECT DISTINCT
+                    release.releaseCoverFront,
+                    release.releaseCoverBack,
+                    release.releaseCoverCart,
+                    release.releaseCoverDisc
+                FROM ROMs rom
+                JOIN RELEASES release ON rom.romID = release.romID
+                WHERE rom.romHashMD5 = '\(md5.uppercased())' COLLATE NOCASE
+            """
+
+            if let results = try? vgdb.execute(query: md5Query) {
+                urls.append(contentsOf: extractURLs(from: results))
+                if !urls.isEmpty { return urls }
+            }
+        }
+
+        // Prepare system ID filter if available and not unknown
+        let systemFilter: String
+        if case .Unknown = rom.systemID {
+            systemFilter = ""
+        } else {
+            systemFilter = " AND rom.systemID = \(rom.systemID.openVGDBID)"
+        }
+
+        // 2. Try ROM name search
+        if let romName = rom.romFileName?.replacingOccurrences(of: "'", with: "''") {
+            let nameQuery = """
+                SELECT DISTINCT
+                    release.releaseCoverFront,
+                    release.releaseCoverBack,
+                    release.releaseCoverCart,
+                    release.releaseCoverDisc
+                FROM ROMs rom
+                JOIN RELEASES release ON rom.romID = release.romID
+                WHERE rom.romFileName LIKE '%\(romName)%' COLLATE NOCASE
+                \(systemFilter)
+            """
+
+            if let results = try? vgdb.execute(query: nameQuery) {
+                urls.append(contentsOf: extractURLs(from: results))
+                if !urls.isEmpty { return urls }
+            }
+        }
+
+        // 3. Try exact matches by ID or serial if available
+        if let romID = rom.romID {
+            let idQuery = """
+                SELECT DISTINCT
+                    release.releaseCoverFront,
+                    release.releaseCoverBack,
+                    release.releaseCoverCart,
+                    release.releaseCoverDisc
+                FROM ROMs rom
+                JOIN RELEASES release ON rom.romID = release.romID
+                WHERE rom.romID = \(romID)
+            """
+
+            if let results = try? vgdb.execute(query: idQuery) {
+                urls.append(contentsOf: extractURLs(from: results))
+                if !urls.isEmpty { return urls }
+            }
+        }
+
+        if let serial = rom.serial?.replacingOccurrences(of: "'", with: "''") {
+            let serialQuery = """
+                SELECT DISTINCT
+                    release.releaseCoverFront,
+                    release.releaseCoverBack,
+                    release.releaseCoverCart,
+                    release.releaseCoverDisc
+                FROM ROMs rom
+                JOIN RELEASES release ON rom.romID = release.romID
+                WHERE rom.romSerial = '\(serial)'
+            """
+
+            if let results = try? vgdb.execute(query: serialQuery) {
+                urls.append(contentsOf: extractURLs(from: results))
+            }
+        }
+
+        return urls.isEmpty ? nil : urls
+    }
+
+    // Helper to extract URLs from query results
+    private func extractURLs(from results: [[String: Any]]) -> [URL] {
+        var urls: [URL] = []
+
+        for result in results {
+            // Check each possible artwork field
+            let fields = ["releaseCoverFront", "releaseCoverBack", "releaseCoverCart", "releaseCoverDisc"]
+
+            for field in fields {
+                if let urlString = result[field] as? String,
+                   !urlString.isEmpty,
+                   let url = URL(string: urlString) {
+                    urls.append(url)
+                }
+            }
+        }
+
+        return urls
     }
 }
 
