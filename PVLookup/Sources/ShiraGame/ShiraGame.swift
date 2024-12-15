@@ -55,20 +55,28 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
         }
     }
 
+    @available(*, deprecated)
     public func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
+        if let identifier = try await systemIdentifier(forRomMD5: md5, or: filename) {
+            return identifier.openVGDBID
+        }
+        return nil
+    }
+
+    public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
         let normalizedMD5 = md5.uppercased()
 
         // Try MD5 first
         if let rom = try db.roms.filter(filter: { $0.md5 == normalizedMD5 }).first,
            let game = try db.games.filter(filter: { $0.id == rom.gameId }).first {
-            return Int(game.platformId)
+            return SystemIdentifier.fromShiraGameID(game.platformId)
         }
 
         // Try filename if MD5 fails
         if let filename = filename,
            let rom = try db.roms.filter(filter: { $0.fileName.contains(filename) }).first,
            let game = try db.games.filter(filter: { $0.id == rom.gameId }).first {
-            return Int(game.platformId)
+            return SystemIdentifier.fromShiraGameID(game.platformId)
         }
 
         return nil
@@ -77,7 +85,7 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
     // MARK: - Private Helpers
 
     private func convertToROMMetadata(game: ShiragameSchema.Game, rom: ShiragameSchema.Rom) -> ROMMetadata {
-        let systemIdentifier = SystemIdentifier.fromShiraGameID(game.platformId)
+        let systemIdentifier = SystemIdentifier.fromShiraGameID(game.platformId) ?? .Unknown
 
         return ROMMetadata(
             gameTitle: game.entryName,
@@ -94,13 +102,13 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
             releaseID: nil,
             language: nil,
             regionID: nil,
-            systemID: systemIdentifier?.openVGDBID ?? 0,  // Use OpenVGDB IDs for consistency
+            systemID: systemIdentifier,  // Now passing SystemIdentifier directly
             systemShortName: game.platformId,
             romFileName: rom.fileName,
             romHashCRC: rom.crc,
             romHashMD5: rom.md5,
             romID: Int(game.id ?? 0),
-            isBIOS: game.isSystem  // Set isBIOS from isSystem field
+            isBIOS: game.isSystem
         )
     }
 }

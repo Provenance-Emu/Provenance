@@ -35,7 +35,6 @@ public protocol ArtworkLookupService {
 }
 
 /// Main lookup service that combines ROM metadata and artwork lookup capabilities
-@globalActor
 public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     // MARK: - Singleton
     public static let shared = PVLookup()
@@ -94,7 +93,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
         // Get results from each database
         let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemID: systemID)
-        let libretroDatabaseResults = try libreTroDB.searchDatabase(usingFilename: filename, systemID: systemID)
+        let libretroDatabaseResults = try await libreTroDB.searchDatabase(usingFilename: filename, systemID: systemID)
         let shiraGameResults = try await shiraGame.searchDatabase(usingFilename: filename, systemID: systemID)
 
         // Merge results with priority: OpenVGDB > libretrodb > ShiraGame
@@ -148,15 +147,15 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
             return identifier
         }
 
-        // Try libretrodb next
-        if let systemID = try libreTroDB.system(forRomMD5: md5, or: filename),
-           let identifier = SystemIdentifier.fromOpenVGDBID(systemID) {
+        // Try libretrodb next - using libretrodb's own conversion
+        if let systemID = try await libreTroDB.system(forRomMD5: md5, or: filename),
+           let identifier = SystemIdentifier.fromLibretroDatabaseID(systemID) {
             return identifier
         }
 
-        // Try ShiraGame as a backup
+        // Try ShiraGame as a backup - using ShiraGame's own conversion
         if let systemID = try await shiraGame.system(forRomMD5: md5, or: filename),
-           let identifier = SystemIdentifier.fromOpenVGDBID(systemID) {
+           let identifier = SystemIdentifier.fromShiraGameID(String(systemID)) {
             return identifier
         }
 
@@ -166,14 +165,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     // MARK: - ArtworkLookupService Implementation
     public func getArtworkMappings() async throws -> ArtworkMapping {
         // Try OpenVGDB first
-        let openVGDBMappings = try await withCheckedThrowingContinuation { continuation in
-            do {
-                let result = try openVGDB.getArtworkMappings()
-                continuation.resume(returning: result)
-            } catch {
-                continuation.resume(throwing: error)
-            }
-        }
+        let openVGDBMappings = try openVGDB.getArtworkMappings()
 
         // Then get libretrodb mappings
         let libretroDBArtwork = try libreTroDB.getArtworkMappings()

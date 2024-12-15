@@ -1,4 +1,5 @@
 import Foundation
+import Systems
 
 /// Represents metadata for a ROM/game
 public struct ROMMetadata: Codable, Sendable, Equatable {
@@ -16,7 +17,7 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
     public let releaseID: String?
     public let language: String?
     public let regionID: Int?
-    public let systemID: Int
+    public let systemID: SystemIdentifier
     public let systemShortName: String?
     public let romFileName: String?
     public let romHashCRC: String?
@@ -39,7 +40,7 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
         releaseID: String? = nil,
         language: String? = nil,
         regionID: Int? = nil,
-        systemID: Int,
+        systemID: SystemIdentifier,
         systemShortName: String? = nil,
         romFileName: String? = nil,
         romHashCRC: String? = nil,
@@ -68,5 +69,14 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
         self.romHashMD5 = romHashMD5
         self.romID = romID
         self.isBIOS = isBIOS
+    }
+}
+
+// For backward compatibility
+public extension ROMMetadata {
+    /// Get the OpenVGDB system ID (deprecated)
+    @available(*, deprecated, message: "Use systemID directly")
+    var openVGDBSystemID: Int {
+        return systemID.openVGDBID
     }
 }

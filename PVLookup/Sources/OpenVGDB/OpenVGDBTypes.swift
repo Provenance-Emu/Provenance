@@ -1,4 +1,5 @@
 import Foundation
+import Systems
 
 /// Internal representation of ROM metadata from the OpenVGDB database
 internal struct OpenVGDBROMMetadata: Codable {
@@ -16,7 +17,7 @@ internal struct OpenVGDBROMMetadata: Codable {
     let releaseID: String?
     let language: String?
     let regionID: Int?
-    let systemID: Int
+    let systemID: SystemIdentifier
     let systemShortName: String?
     let romFileName: String?
     let romHashCRC: String?

@@ -11,6 +11,7 @@ import SQLite
 import PVSQLiteDatabase
 import ROMMetadataProvider
 import PVLookupTypes
+import Systems
 
 @globalActor
 public actor libretrodbActor: GlobalActor {
@@ -35,7 +36,7 @@ internal struct LibretroDBROMMetadata: Codable {
 }
 
 /// LibretroDB provides ROM metadata from a SQLite database converted from RetroArch's database
-public final class libretrodb {
+public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 
     /// Legacy connection
     private let db: PVSQLiteDatabase
@@ -154,12 +155,17 @@ public final class libretrodb {
             artworkURL = nil
         }
 
+        // Convert platform ID to SystemIdentifier
+        let systemIdentifier = metadata.platform.flatMap { platformName in
+            SystemIdentifier.fromLibretroDatabaseID(Int(platformName) ?? 0)
+        } ?? .Unknown
+
         return ROMMetadata(
             gameTitle: metadata.gameTitle,
-            boxImageURL: artworkURL,  // Now using the constructed URL
+            boxImageURL: artworkURL,
             region: metadata.region,
             gameDescription: nil,
-            boxBackURL: nil,  // Could potentially construct a back box URL if needed
+            boxBackURL: nil,
             developer: metadata.developer,
             publisher: metadata.publisher,
             serial: nil,
@@ -169,13 +175,47 @@ public final class libretrodb {
             releaseID: nil,
             language: nil,
             regionID: nil,
-            systemID: 0,
+            systemID: systemIdentifier,
             systemShortName: metadata.platform,
             romFileName: metadata.romName,
             romHashCRC: nil,
             romHashMD5: metadata.romMD5,
             romID: nil
         )
+    }
+
+    // MARK: - ROMMetadataProvider Implementation
+
+    public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
+        let results = try searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)
+        return results?.first
+    }
+
+    public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
+        var query = standardMetadataQuery
+        let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
+
+        query += " WHERE roms.name LIKE '%\(escapedFilename)%' COLLATE NOCASE"
+
+        if let systemID = systemID {
+            query += " AND platform_id = \(systemID)"
+        }
+
+        let results = try db.execute(query: query)
+        return results.compactMap { dict in
+            guard let metadata = try? convertDictToMetadata(dict) else {
+                return nil
+            }
+            return convertToROMMetadata(metadata)
+        }
+    }
+
+    @available(*, deprecated, message: "Use systemIdentifier(forRomMD5:or:) instead")
+    public func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
+        if let identifier = try await systemIdentifier(forRomMD5: md5, or: filename) {
+            return identifier.openVGDBID
+        }
+        return nil
     }
 }
 
@@ -257,26 +297,33 @@ public extension libretrodb {
     }
 
     /// Get system ID for a ROM
-    func system(forRomMD5 md5: String, or filename: String?) throws -> Int? {
-        var query = "SELECT DISTINCT platform_id FROM games"
-        query += " INNER JOIN roms ON games.serial_id = roms.serial_id"
+    func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
+        // Use existing query but return SystemIdentifier directly
+        let query = """
+            SELECT platform_id FROM rom r
+            JOIN game g ON r.game_id = g.game_id
+            WHERE r.md5 = '\(md5.uppercased())'
+        """
 
-        // Normalize MD5 to uppercase
-        let normalizedMD5 = md5.uppercased()
-        query += " WHERE roms.md5 = '\(normalizedMD5)' COLLATE NOCASE"
+        if let result = try db.execute(query: query).first,
+           let platformId = result["platform_id"] as? Int {
+            return SystemIdentifier.fromLibretroDatabaseID(platformId)
+        }
 
+        // Try filename if MD5 fails
         if let filename = filename {
-            let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
-            query += " OR roms.name LIKE '%\(escapedFilename)%' COLLATE NOCASE"
+            let query = """
+                SELECT platform_id FROM rom r
+                JOIN game g ON r.game_id = g.game_id
+                WHERE r.file_name LIKE '%\(filename)%'
+            """
+            if let result = try db.execute(query: query).first,
+               let platformId = result["platform_id"] as? Int {
+                return SystemIdentifier.fromLibretroDatabaseID(platformId)
+            }
         }
 
-        let results = try db.execute(query: query)
-        guard let match = results.first,
-              let platformID = match["platform_id"] as? Int else {
-            return nil
-        }
-
-        return platformID
+        return nil
     }
 
     // MARK: - Private Helpers

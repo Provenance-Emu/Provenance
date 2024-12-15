@@ -1,4 +1,5 @@
 import Foundation
+import Systems
 
 public extension ROMMetadata {
     /// Merges two ROMMetadata objects, with the first one taking priority
@@ -6,6 +7,14 @@ public extension ROMMetadata {
     /// - Parameter other: The secondary ROMMetadata to merge with
     /// - Returns: A new ROMMetadata with merged values
     func merged(with other: ROMMetadata) -> ROMMetadata {
+        // Helper function to choose the best system ID
+        func chooseBestSystemID(_ first: SystemIdentifier, _ second: SystemIdentifier) -> SystemIdentifier {
+            if case .Unknown = first {
+                return second
+            }
+            return first
+        }
+
         return ROMMetadata(
             gameTitle: gameTitle.isEmpty ? other.gameTitle : gameTitle,
             boxImageURL: boxImageURL ?? other.boxImageURL,
@@ -21,12 +30,13 @@ public extension ROMMetadata {
             releaseID: releaseID ?? other.releaseID,
             language: language ?? other.language,
             regionID: regionID ?? other.regionID,
-            systemID: systemID == 0 ? other.systemID : systemID,
+            systemID: chooseBestSystemID(systemID, other.systemID),
             systemShortName: systemShortName ?? other.systemShortName,
             romFileName: romFileName ?? other.romFileName,
             romHashCRC: romHashCRC ?? other.romHashCRC,
             romHashMD5: romHashMD5 ?? other.romHashMD5,
-            romID: romID ?? other.romID
+            romID: romID ?? other.romID,
+            isBIOS: isBIOS ?? other.isBIOS
         )
     }
 }

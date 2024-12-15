@@ -11,6 +11,7 @@ import SQLite
 import PVSQLiteDatabase
 import ROMMetadataProvider
 import PVLookupTypes
+import Systems
 
 @globalActor
 public
@@ -322,7 +323,8 @@ private extension OpenVGDB {
     }
 
     func convertToOpenVGDBMetadata(_ dict: [String: NSObject]) -> OpenVGDBROMMetadata? {
-        guard let systemID = (dict["systemID"] as? NSNumber)?.intValue else {
+        guard let systemIDInt = (dict["systemID"] as? NSNumber)?.intValue,
+              let systemID = SystemIdentifier.fromOpenVGDBID(systemIDInt) else {
             return nil
         }
 
@@ -342,6 +344,34 @@ private extension OpenVGDB {
             language: dict["language"] as? String,
             regionID: (dict["regionID"] as? NSNumber)?.intValue,
             systemID: systemID,
+            systemShortName: dict["systemShortName"] as? String,
+            romFileName: dict["romFileName"] as? String,
+            romHashCRC: dict["romHashCRC"] as? String,
+            romHashMD5: dict["romHashMD5"] as? String,
+            romID: (dict["romID"] as? NSNumber)?.intValue
+        )
+    }
+
+    private func convertToROMMetadata(_ dict: [String: Any], systemID: Int) -> ROMMetadata {
+        // Convert systemID to SystemIdentifier
+        let systemIdentifier = SystemIdentifier.fromOpenVGDBID(systemID) ?? .Unknown
+
+        return ROMMetadata(
+            gameTitle: (dict["gameTitle"] as? String) ?? "",
+            boxImageURL: dict["boxImageURL"] as? String,
+            region: dict["region"] as? String,
+            gameDescription: dict["gameDescription"] as? String,
+            boxBackURL: dict["boxBackURL"] as? String,
+            developer: dict["developer"] as? String,
+            publisher: dict["publisher"] as? String,
+            serial: dict["serial"] as? String,
+            releaseDate: dict["releaseDate"] as? String,
+            genres: dict["genres"] as? String,
+            referenceURL: dict["referenceURL"] as? String,
+            releaseID: dict["releaseID"] as? String,
+            language: dict["language"] as? String,
+            regionID: (dict["regionID"] as? NSNumber)?.intValue,
+            systemID: systemIdentifier,  // Now using SystemIdentifier
             systemShortName: dict["systemShortName"] as? String,
             romFileName: dict["romFileName"] as? String,
             romHashCRC: dict["romHashCRC"] as? String,
