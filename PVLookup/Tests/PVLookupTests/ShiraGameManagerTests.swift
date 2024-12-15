@@ -1,8 +1,9 @@
 import Testing
+import Foundation
 @testable import ShiraGame
 
 final class ShiraGameManagerTests {
-    override func setUp() {
+    func setUp() {
         // Clean up any existing database
         try? FileManager.default.removeItem(at: ShiraGameManager.databasePath)
     }
@@ -18,7 +19,7 @@ final class ShiraGameManagerTests {
         #expect(FileManager.default.fileExists(atPath: ShiraGameManager.databasePath.path))
 
         // Verify it's a valid SQLite database
-        let data = try Data(contentsOf: ShiraGameManager.databasePath, count: 16)
+        let data = try Data(contentsOf: ShiraGameManager.databasePath)
         let header = "SQLite format 3"
         #expect(String(data: data.prefix(header.count), encoding: .utf8)?.hasPrefix(header) == true)
     }

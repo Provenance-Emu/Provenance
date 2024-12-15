@@ -47,7 +47,7 @@ public enum ShiraGameManager {
     }
 
     private static func extractZipDatabase(from sourceURL: URL, to destinationURL: URL) throws {
-        guard let archive = try? FileManager.default.zipItem(at: sourceURL, unzipTo: destinationURL) else {
+        guard (try? FileManager.default.zipItem(at: sourceURL, unzipTo: destinationURL)) != nil else {
             throw ShiraGameError.extractionFailed
         }
     }

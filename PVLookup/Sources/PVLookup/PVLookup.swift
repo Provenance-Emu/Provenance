@@ -91,15 +91,23 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
+        // Get results from each database
         let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemID: systemID)
         let libretroDatabaseResults = try libreTroDB.searchDatabase(usingFilename: filename, systemID: systemID)
+        let shiraGameResults = try await shiraGame.searchDatabase(usingFilename: filename, systemID: systemID)
 
-        if let openVGDBMetadata = openVGDBResults,
-           let libretroDatabaseMetadata = libretroDatabaseResults {
-            return openVGDBMetadata.merged(with: libretroDatabaseMetadata)
+        // Merge results with priority: OpenVGDB > libretrodb > ShiraGame
+        var mergedResults = openVGDBResults ?? []
+
+        if let libretroDatabaseResults = libretroDatabaseResults {
+            mergedResults = mergedResults.merged(with: libretroDatabaseResults)
         }
 
-        return openVGDBResults ?? libretroDatabaseResults
+        if let shiraGameResults = shiraGameResults {
+            mergedResults = mergedResults.merged(with: shiraGameResults)
+        }
+
+        return mergedResults.isEmpty ? nil : mergedResults
     }
 
     public func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
@@ -120,8 +128,13 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
             return systemID
         }
 
-        // Fall back to libretrodb if no results
-        return try libreTroDB.system(forRomMD5: md5, or: filename)
+        // Try libretrodb next
+        if let systemID = try libreTroDB.system(forRomMD5: md5, or: filename) {
+            return systemID
+        }
+
+        // Try ShiraGame as a backup
+        return try await shiraGame.system(forRomMD5: md5, or: filename)
     }
 
     // MARK: - ArtworkLookupService Implementation
