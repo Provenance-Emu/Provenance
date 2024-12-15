@@ -55,9 +55,10 @@ struct LibretroDBTests {
     let dragonQuest3 = (
         id: 23207,
         md5: "7C7C7DB73B0608A184CC5E1D73D7695B",
-        title: "Dragon Quest III - Soshite Densetsu e...",
-        fullTitle: "Dragon Quest III - Soshite Densetsu e... (Japan)",
-        platformID: 37,  // SNES/Super Nintendo Entertainment System
+        romName: "Dragon Quest III - Soshite Densetsu e... (Japan).sfc",
+        displayName: "Dragon Quest III - Soshite Densetsu e...",
+        fullName: "Dragon Quest III - Soshite Densetsu e... (Japan)",
+        platformID: 37,
         systemID: SystemIdentifier.SNES,
         manufacturer: "Nintendo",
         developer: "Heart Beat",
@@ -70,9 +71,10 @@ struct LibretroDBTests {
     let pMan = (
         id: 22411,
         md5: "146C7CD073165C271B6EB09E032F91E9",
-        title: "P-Man",
-        fullTitle: "P-Man (Japan)",
-        platformID: 37,  // SNES/Super Nintendo Entertainment System
+        romName: "P-Man (Japan).sfc",
+        displayName: "P-Man",
+        fullName: "P-Man (Japan)",
+        platformID: 37,
         systemID: SystemIdentifier.SNES,
         manufacturer: "Nintendo",
         developer: "Titus Software",
@@ -93,7 +95,7 @@ struct LibretroDBTests {
 
         #expect(resultsLower?.count == resultsUpper?.count)
         #expect(resultsLower?.first?.gameTitle == resultsUpper?.first?.gameTitle)
-        #expect(resultsLower?.first?.gameTitle == dragonQuest3.fullTitle)
+        #expect(resultsLower?.first?.gameTitle == dragonQuest3.displayName)
     }
 
     @Test
@@ -103,7 +105,7 @@ struct LibretroDBTests {
 
         #expect(results != nil)
         #expect(!results!.isEmpty)
-        #expect(results?.contains { $0.gameTitle == dragonQuest3.fullTitle } == true)
+        #expect(results?.contains { $0.gameTitle == dragonQuest3.displayName } == true)
         #expect(results?.contains { $0.systemID == dragonQuest3.systemID } == true)
     }
 
@@ -116,7 +118,7 @@ struct LibretroDBTests {
 
         #expect(results != nil)
         #expect(!results!.isEmpty)
-        #expect(results?.first?.gameTitle == dragonQuest3.fullTitle)
+        #expect(results?.first?.gameTitle == dragonQuest3.displayName)
         #expect(results?.first?.systemID == dragonQuest3.systemID)
     }
 
@@ -128,7 +130,11 @@ struct LibretroDBTests {
 
     @Test
     func systemIdentifierByFilename() async throws {
-        let identifier = try await db.systemIdentifier(forRomMD5: "invalid", or: dragonQuest3.title)
+        let identifier = try await db.systemIdentifier(
+            forRomMD5: "invalid",
+            or: dragonQuest3.displayName,
+            platformID: dragonQuest3.platformID
+        )
         #expect(identifier == dragonQuest3.systemID)
     }
 
@@ -137,7 +143,7 @@ struct LibretroDBTests {
         let metadata = try await db.searchROM(byMD5: dragonQuest3.md5)
 
         #expect(metadata != nil)
-        #expect(metadata?.gameTitle == dragonQuest3.fullTitle)
+        #expect(metadata?.gameTitle == dragonQuest3.fullName)
         #expect(metadata?.systemID == dragonQuest3.systemID)
         #expect(metadata?.region == dragonQuest3.region)
         #expect(metadata?.genres == dragonQuest3.genre)
@@ -152,7 +158,7 @@ struct LibretroDBTests {
 
     @Test
     func invalidSystemID() async throws {
-        let results = try await db.searchDatabase(usingFilename: dragonQuest3.title, systemID: 999)
+        let results = try await db.searchDatabase(usingFilename: dragonQuest3.displayName, systemID: 999)
         #expect(results?.isEmpty != false)
     }
 
@@ -164,7 +170,7 @@ struct LibretroDBTests {
         #expect(results?.count == 1)
         let firstResult = results?.first
         #expect(firstResult != nil)
-        #expect(firstResult?.gameTitle == pMan.title)  // Match exact title from database
+        #expect(firstResult?.gameTitle == pMan.displayName)
         #expect(firstResult?.systemID == pMan.systemID)
         #expect(firstResult?.region == pMan.region)
 

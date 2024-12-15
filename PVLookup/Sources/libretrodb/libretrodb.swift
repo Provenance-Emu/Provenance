@@ -140,6 +140,7 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
     private var standardMetadataQuery: String {
         """
         SELECT games.serial_id,
+            games.platform_id,
             games.release_year,
             games.release_month,
             games.display_name,
@@ -177,20 +178,46 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
             1: "SNK",
             2: "Sega",
             3: "NEC",
-            8: "Nintendo",
+            4: "Atari",
             5: "Sony",
-            // ... add other manufacturers
+            6: "Bandai",
+            7: "Hudson",
+            8: "Nintendo",
+            9: "Commodore",
+            10: "Microsoft"
         ]
 
         // Map platform IDs to names
         static let platforms: [Int: String] = [
-            75: "Game Boy",
-            115: "Game Boy Advance",
             28: "Nintendo Entertainment System",
             37: "Super Nintendo Entertainment System",
+            75: "Game Boy",
+            86: "Game Boy Color",
+            115: "Game Boy Advance",
             15: "Mega Drive",
             108: "PC Engine",
-            // ... add other platforms
+            6: "PlayStation",
+            56: "PlayStation 2",
+            61: "PlayStation Portable",
+            38: "Atari 2600",
+            34: "Atari 7800",
+            29: "Atari Jaguar",
+            99: "Dreamcast",
+            51: "GameCube",
+            22: "Nintendo 64",
+            90: "Nintendo DS",
+            21: "Nintendo 3DS",
+            78: "Game Gear",
+            83: "Master System",
+            47: "Saturn",
+            73: "3DO",
+            114: "ColecoVision",
+            92: "Intellivision",
+            79: "Lynx",
+            35: "Odyssey2",
+            69: "Vectrex",
+            113: "Virtual Boy",
+            101: "Wii"
         ]
     }
 
@@ -371,8 +398,8 @@ public extension libretrodb {
     }
 
     /// Get system ID for a ROM
-    func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
-        // Use serial_id to join roms and games
+    func systemIdentifier(forRomMD5 md5: String, or filename: String?, platformID: Int? = nil) async throws -> SystemIdentifier? {
+        // MD5 search stays the same
         let query = """
             SELECT platform_id
             FROM roms r
@@ -385,14 +412,21 @@ public extension libretrodb {
             return SystemIdentifier.fromLibretroDatabaseID(platformId)
         }
 
-        // Try filename if MD5 fails
+        // Try filename with optional platform filter
         if let filename = filename {
-            let query = """
+            var query = """
                 SELECT platform_id
                 FROM roms r
                 JOIN games g ON r.serial_id = g.serial_id
                 WHERE r.name LIKE '%\(filename)%'
             """
+
+            if let platformID = platformID {
+                query += " AND g.platform_id = \(platformID)"
+            }
+
+            query += " LIMIT 1"
+
             if let result = try db.execute(query: query).first,
                let platformId = result["platform_id"] as? Int {
                 return SystemIdentifier.fromLibretroDatabaseID(platformId)
@@ -416,7 +450,7 @@ public extension libretrodb {
             genre: dict["genre_name"] as? String,
             romName: dict["rom_name"] as? String,
             romMD5: dict["rom_md5"] as? String,
-            platform: dict["platform_name"] as? String,
+            platform: (dict["platform_id"] as? Int)?.description,
             manufacturer: dict["manufacturer_name"] as? String
         )
     }
