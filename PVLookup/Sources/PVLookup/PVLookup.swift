@@ -11,6 +11,7 @@ import ROMMetadataProvider
 import PVLookupTypes
 import libretrodb
 import ShiraGame
+import Systems
 
 /// Protocol for basic ROM metadata lookup operations
 public protocol ROMMetadataLookup {
@@ -122,19 +123,44 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         return openVGDBResults ?? libretroDatabaseResults
     }
 
+    /// Get system ID for a ROM using MD5 or filename
+    /// - Parameters:
+    ///   - md5: MD5 hash of the ROM
+    ///   - filename: Optional filename as fallback
+    /// - Returns: OpenVGDB system ID if found
+    @available(*, deprecated, message: "Use systemIdentifier(forRomMD5:or:) instead")
     public func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
+        if let identifier = try await systemIdentifier(forRomMD5: md5, or: filename) {
+            return identifier.openVGDBID
+        }
+        return nil
+    }
+
+    /// Get SystemIdentifier for a ROM using MD5 or filename
+    /// - Parameters:
+    ///   - md5: MD5 hash of the ROM
+    ///   - filename: Optional filename as fallback
+    /// - Returns: SystemIdentifier if found
+    public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
         // Try OpenVGDB first
-        if let systemID = try openVGDB.system(forRomMD5: md5, or: filename) {
-            return systemID
+        if let systemID = try openVGDB.system(forRomMD5: md5, or: filename),
+           let identifier = SystemIdentifier.fromOpenVGDBID(systemID) {
+            return identifier
         }
 
         // Try libretrodb next
-        if let systemID = try libreTroDB.system(forRomMD5: md5, or: filename) {
-            return systemID
+        if let systemID = try libreTroDB.system(forRomMD5: md5, or: filename),
+           let identifier = SystemIdentifier.fromOpenVGDBID(systemID) {
+            return identifier
         }
 
         // Try ShiraGame as a backup
-        return try await shiraGame.system(forRomMD5: md5, or: filename)
+        if let systemID = try await shiraGame.system(forRomMD5: md5, or: filename),
+           let identifier = SystemIdentifier.fromOpenVGDBID(systemID) {
+            return identifier
+        }
+
+        return nil
     }
 
     // MARK: - ArtworkLookupService Implementation
