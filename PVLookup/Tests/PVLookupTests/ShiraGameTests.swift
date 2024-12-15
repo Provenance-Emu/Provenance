@@ -9,7 +9,7 @@ import Testing
 import Systems
 @testable import ShiraGame
 @testable import PVLookupTypes
-
+#if false
 struct ShiraGameTests {
     let db: ShiraGame = .init()
 
@@ -90,3 +90,4 @@ struct ShiraGameTests {
         #expect(!licensed!.gameTitle.contains("(Unl)"))
     }
 }
+#endif

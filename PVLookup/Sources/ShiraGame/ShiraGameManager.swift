@@ -25,7 +25,7 @@ public enum ShiraGameManager {
         }
 
         // Get the compressed database from the bundle
-        guard let compressedURL = Bundle.module.url(forResource: "shiragame.sqlite3", withExtension: "zip") else {
+        guard let compressedURL = Bundle.module.url(forResource: "shiragame.sqlite3", withExtension: "7z") else {
             throw ShiraGameError.databaseNotFound
         }
 

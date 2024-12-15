@@ -224,7 +224,7 @@ public extension libretrodb {
     /// Search by MD5 or other key
     func searchDatabase(usingKey key: String, value: String, systemID: Int?) throws -> [ROMMetadata]? {
         // Convert OpenVGDB system ID to libretrodb platform ID
-        let platformID = systemID.flatMap { SystemIDMapping.convertToLibretroID($0) }
+        let platformID = systemID.flatMap { SystemIdentifier.fromOpenVGDBID($0)?.libretroDatabaseID }
 
         var query = standardMetadataQuery
 
@@ -275,7 +275,7 @@ public extension libretrodb {
     /// Search by filename across multiple systems
     func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [ROMMetadata]? {
         // Convert OpenVGDB system IDs to libretrodb platform IDs
-        let platformIDs = SystemIDMapping.convertToLibretroIDs(systemIDs)
+        let platformIDs = systemIDs.compactMap { SystemIdentifier.fromOpenVGDBID($0)?.libretroDatabaseID }
 
         var query = standardMetadataQuery
         let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
