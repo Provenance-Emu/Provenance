@@ -10,7 +10,7 @@ import Foundation
 @testable import PVLookup
 @testable import libretrodb
 @testable import ROMMetadataProvider
-import Systems
+import PVSystems
 import PVLookupTypes
 
 // MARK: - Platform Constants

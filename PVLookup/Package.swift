@@ -71,7 +71,7 @@ let package = Package(
                 "PVLookupTypes",
                 "libretrodb",
                 "ShiraGame",
-                "PVPrimitives"
+                "PVPrimitives",
             ]
         ),
 
@@ -102,7 +102,8 @@ let package = Package(
             dependencies: [
                 "PVSQLiteDatabase",
                 "PVLookupTypes",
-                "PVPrimitives"
+                "PVPrimitives",
+                "ROMMetadataProvider"
             ],
             resources: [
                 .copy("Resources/libretrodb.sqlite"),
@@ -175,7 +176,7 @@ let package = Package(
         // Add new target
         .target(
             name: "PVLookupTypes",
-            dependencies: []
+            dependencies: ["PVPrimitives"]
         ),
     ],
     swiftLanguageModes: [.v5, .v6],

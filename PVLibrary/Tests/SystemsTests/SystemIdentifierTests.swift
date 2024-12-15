@@ -1,5 +1,5 @@
 import Testing
-@testable import Systems
+@testable import PVSystems
 
 final class SystemIdentifierTests {
     // MARK: - OpenVGDB Conversion Tests

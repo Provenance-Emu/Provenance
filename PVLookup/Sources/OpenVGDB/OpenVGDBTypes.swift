@@ -1,5 +1,5 @@
 import Foundation
-import Systems
+import PVSystems
 
 /// Internal representation of ROM metadata from the OpenVGDB database
 internal struct OpenVGDBROMMetadata: Codable {

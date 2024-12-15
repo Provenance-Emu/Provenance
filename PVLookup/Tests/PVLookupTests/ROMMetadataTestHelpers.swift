@@ -1,6 +1,6 @@
 import Foundation
 import PVLookupTypes
-import Systems
+import PVSystems
 
 extension ROMMetadata {
     /// Creates a test instance with minimal required fields

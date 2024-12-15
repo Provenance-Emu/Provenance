@@ -9,7 +9,7 @@ import Testing
 @testable import PVLookupTypes
 @testable import PVLookup
 @testable import OpenVGDB
-import Systems
+import PVSystems
 
 struct OpenVGDBTests {
     let db = OpenVGDB()

@@ -381,7 +381,7 @@ public extension PVEmulatorConfiguration {
 }
 
 // MARK: System queries
-import Systems
+import PVSystems
 
 public extension PVEmulatorConfiguration {
     class func romDirectory(forSystemIdentifier system: SystemIdentifier) -> URL {

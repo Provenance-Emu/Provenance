@@ -11,7 +11,7 @@ import ROMMetadataProvider
 import PVLookupTypes
 import libretrodb
 import ShiraGame
-import Systems
+import PVSystems
 
 /// Protocol for basic ROM metadata lookup operations
 public protocol ROMMetadataLookup {

@@ -1,5 +1,6 @@
 import Foundation
-import Systems
+import PVSystems
+import PVPrimitives
 
 public extension ROMMetadata {
     /// Merges two ROMMetadata objects, with the first one taking priority

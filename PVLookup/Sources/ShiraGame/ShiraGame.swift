@@ -3,7 +3,7 @@ import PVLogging
 import Lighter
 import ROMMetadataProvider
 import PVLookupTypes
-import Systems
+import PVSystems
 
 public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
     private var db: ShiragameSchema

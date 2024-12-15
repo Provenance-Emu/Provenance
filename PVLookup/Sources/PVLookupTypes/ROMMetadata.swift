@@ -1,5 +1,5 @@
 import Foundation
-import Systems
+import PVSystems
 
 /// Represents metadata for a ROM/game
 public struct ROMMetadata: Codable, Sendable, Equatable {
