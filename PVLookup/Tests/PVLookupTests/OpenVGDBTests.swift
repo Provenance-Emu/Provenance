@@ -116,34 +116,49 @@ struct OpenVGDBTests {
     // MARK: - Artwork URL Tests
 
     let artworkTestData = (
-        // ROM with MD5 match
+        // ROM with MD5 match (PSX game)
         md5Match: (
-            md5: "F73D2D0EFF548E8FC66996F27ACF2B4B",
-            romID: 81222,
-            systemID: SystemIdentifier.Atari2600,
-            fileName: "Pitfall (1983) (CCE) (C-813).a26",
+            md5: "877BA8B62470C85149A9BA32B012D069",
+            crc: "7D7F6E2E",
+            romID: 63271,
+            systemID: SystemIdentifier.PSX,
+            fileName: "...Iru! (Japan).cue",
+            serial: "SLPS-00965",
+            title: "...Iru!",
+            region: "Japan",
+            regionID: 13,
             expectedURLs: [
-                "releaseCoverFront": "https://example.com/pitfall_front.jpg",
-                "releaseCoverBack": "https://example.com/pitfall_back.jpg"
+                "releaseCoverFront": "https://gamefaqs.gamespot.com/a/box/3/5/1/307351_front.jpg",
+                "releaseCoverBack": "https://gamefaqs.gamespot.com/a/box/3/5/1/307351_back.jpg"
             ]
         ),
 
-        // ROM with filename match
+        // ROM with filename match (Saturn game)
         filenameMatch: (
-            fileName: "Super Mario World (USA).sfc",
-            systemID: SystemIdentifier.SNES,
+            fileName: "2do Arukotoha Sand-R (Japan).cue",
+            systemID: SystemIdentifier.Saturn,
+            romID: 54588,
+            serial: "T-6802G,T-6804G",
+            title: "2do Arukotoha Sand-R",
+            region: "Japan",
+            regionID: 13,
             expectedURLs: [
-                "releaseCoverFront": "https://example.com/mario_front.jpg",
-                "releaseCoverCart": "https://example.com/mario_cart.jpg"
+                "releaseCoverFront": "https://gamefaqs.gamespot.com/a/box/6/3/8/308638_front.jpg",
+                "releaseCoverBack": "https://gamefaqs.gamespot.com/a/box/6/3/8/308638_back.jpg"
             ]
         ),
 
-        // ROM with serial match
+        // ROM with serial match (GameCube game)
         serialMatch: (
-            serial: "SNSP-MW-USA",
-            systemID: SystemIdentifier.SNES,
+            serial: "GW7D69",
+            systemID: SystemIdentifier.GameCube,
+            romID: 84282,
+            fileName: "007 - Agent im Kreuzfeuer (Germany).iso",
+            title: "007: Agent im Kreuzfeuer",
+            region: "Germany",
+            regionID: 10,
             expectedURLs: [
-                "releaseCoverFront": "https://example.com/mario_serial_front.jpg"
+                "releaseCoverFront": "https://art.gametdb.com/wii/cover/DE/GW7D69.png"
             ]
         )
     )
@@ -152,9 +167,13 @@ struct OpenVGDBTests {
     func testArtworkURLsByMD5() throws {
         // Create ROM metadata with MD5
         let metadata = ROMMetadata(
-            gameTitle: "Pitfall",
+            gameTitle: artworkTestData.md5Match.title,
+            region: artworkTestData.md5Match.region,
+            serial: artworkTestData.md5Match.serial,
+            regionID: artworkTestData.md5Match.regionID,
             systemID: artworkTestData.md5Match.systemID,
             romFileName: artworkTestData.md5Match.fileName,
+            romHashCRC: artworkTestData.md5Match.crc,
             romHashMD5: artworkTestData.md5Match.md5,
             romID: artworkTestData.md5Match.romID
         )
@@ -237,5 +256,44 @@ struct OpenVGDBTests {
 
         let urls = try db.getArtworkURLs(forRom: metadata)
         #expect(urls == nil)
+    }
+
+    @Test
+    func testArtworkURLsByPartialFilename() throws {
+        // Create ROM metadata with partial filename
+        let metadata = ROMMetadata(
+            gameTitle: artworkTestData.serialMatch.title,
+            region: artworkTestData.serialMatch.region,
+            systemID: artworkTestData.serialMatch.systemID,
+            romFileName: "007"  // Just the partial filename
+        )
+
+        let urls = try db.getArtworkURLs(forRom: metadata)
+
+        #expect(urls != nil)
+        #expect((urls?.count ?? 0) >= artworkTestData.serialMatch.expectedURLs.count)
+
+        // Verify expected URLs are present - should find the full game's artwork
+        for (_, expectedURL) in artworkTestData.serialMatch.expectedURLs {
+            #expect(urls?.contains(where: { $0.absoluteString == expectedURL }) == true)
+        }
+
+        // Also test with a different partial match
+        let metadata2 = ROMMetadata(
+            gameTitle: artworkTestData.filenameMatch.title,
+            region: artworkTestData.filenameMatch.region,
+            systemID: artworkTestData.filenameMatch.systemID,
+            romFileName: "Arukotoha"  // Partial match from middle of filename
+        )
+
+        let urls2 = try db.getArtworkURLs(forRom: metadata2)
+
+        #expect(urls2 != nil)
+        #expect(urls2?.count == artworkTestData.filenameMatch.expectedURLs.count)
+
+        // Should find the Saturn game's artwork
+        for (_, expectedURL) in artworkTestData.filenameMatch.expectedURLs {
+            #expect(urls2?.contains(where: { $0.absoluteString == expectedURL }) == true)
+        }
     }
 }
