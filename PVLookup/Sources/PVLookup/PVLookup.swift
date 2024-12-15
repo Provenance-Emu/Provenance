@@ -10,7 +10,9 @@ import OpenVGDB
 import ROMMetadataProvider
 import PVLookupTypes
 import libretrodb
+#if canImport(ShiraGame)
 import ShiraGame
+#endif
 import PVSystems
 import PVLogging
 
@@ -43,7 +45,9 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     // MARK: - Properties
     private let openVGDB: OpenVGDB
     private let libreTroDB: libretrodb
+    #if canImport(ShiraGame)
     private var shiraGame: ShiraGame?
+    #endif
     private var isInitializing = false
     private var initializationTask: Task<Void, Error>?
 
@@ -61,6 +65,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         }
     }
 
+#if canImport(ShiraGame)
     private func initializeShiraGame() async {
         guard !isInitializing && shiraGame == nil else { return }
 
@@ -84,6 +89,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         }
         return shiraGame
     }
+#endif
 
     // MARK: - ROMMetadataProvider Implementation
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
@@ -114,12 +120,16 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
             return result
         }
 
+        #if canImport(ShiraGame)
         // Only try ShiraGame if we found nothing in primary databases
         ILOG("PVLookup: No results from primary databases, trying ShiraGame...")
         let shiraGameResult = try await getShiraGame()?.searchROM(byMD5: md5.lowercased())
         DLOG("PVLookup: ShiraGame result: \(String(describing: shiraGameResult))")
 
         return shiraGameResult
+        #else
+        return nil
+        #endif
     }
 
     @available(*, deprecated, message: "Use searchROM(byMD5:) instead")
@@ -160,12 +170,16 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
             return results.isEmpty ? nil : results
         }
 
+        #if canImport(ShiraGame)
         // Only try ShiraGame if we found nothing in primary databases
         ILOG("PVLookup: No results from primary databases, trying ShiraGame...")
         let shiraGameResults = try await getShiraGame()?.searchDatabase(usingFilename: filename, systemID: systemID)
         DLOG("PVLookup: ShiraGame results: \(String(describing: shiraGameResults?.count)) matches")
 
         return shiraGameResults
+        #else
+        return nil
+        #endif
     }
 
     public func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
@@ -211,11 +225,13 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
             return identifier
         }
 
+        #if canImport(ShiraGame)
         // Try ShiraGame as a backup - using ShiraGame's own conversion
         if let systemID = try await getShiraGame()?.system(forRomMD5: md5, or: filename),
            let identifier = SystemIdentifier.fromShiraGameID(String(systemID)) {
             return identifier
         }
+        #endif
 
         return nil
     }
@@ -244,6 +260,10 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
 // MARK: - Database Type Enums
 public enum LocalDatabases: CaseIterable {
     case openVGDB
+    case libretro
+    #if canImport(ShiraGame)
+    case shiraGame
+    #endif
 }
 
 public enum RemoteDatabases: CaseIterable {
