@@ -376,8 +376,12 @@ public extension libretrodb {
     /// Search by filename across multiple systems
     func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [ROMMetadata]? {
         // Use the platform_ids directly since we're in libretrodb
-        let platformIDs = systemIDs  // No conversion needed
-
+        let platformIDs = systemIDs.compactMap {
+            SystemIdentifier.fromOpenVGDBID($0) ?? SystemIdentifier.fromLibretroDatabaseID($0)
+        }.map {
+            $0.libretroDatabaseID
+        }
+        
         var query = standardMetadataQuery
         let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
 
