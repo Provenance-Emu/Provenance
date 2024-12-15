@@ -143,11 +143,11 @@ struct LibretroDBTests {
         let metadata = try await db.searchROM(byMD5: dragonQuest3.md5)
 
         #expect(metadata != nil)
-        #expect(metadata?.gameTitle == dragonQuest3.fullName)
+        #expect(metadata?.gameTitle == dragonQuest3.displayName)
         #expect(metadata?.systemID == dragonQuest3.systemID)
         #expect(metadata?.region == dragonQuest3.region)
         #expect(metadata?.genres == dragonQuest3.genre)
-        #expect(metadata?.developer == dragonQuest3.manufacturer)
+        #expect(metadata?.developer == dragonQuest3.developer)
     }
 
     @Test
