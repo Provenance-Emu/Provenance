@@ -15,6 +15,8 @@ import PVSystems
 
 struct PVLookupTests {
     let lookup: PVLookup
+    let openVGDB: OpenVGDB
+    let libreTroDB: libretrodb
 
     // Test data for Pitfall with metadata from all databases
     let pitfall = (
@@ -46,6 +48,8 @@ struct PVLookupTests {
 
     init() async throws {
         self.lookup = .shared
+        self.openVGDB = OpenVGDB()
+        self.libreTroDB = libretrodb()
     }
 
     @Test
@@ -67,18 +71,83 @@ struct PVLookupTests {
     }
 
     @Test
-    func searchPitfallByFilename() async throws {
-        // Test with ShiraGame filename
-        let shiraResults = try await lookup.searchDatabase(usingFilename: pitfall.shiraGame.fileName, systemID: nil)
-        let shiraVersion = shiraResults?.first { $0.romHashMD5 == pitfall.shiraGame.md5 }
-        #expect(shiraVersion != nil)
-        #expect(shiraVersion?.systemID == .Atari2600)
+    func searchPitfallByFilenameInOpenVGDB() async throws {
+        // Test OpenVGDB directly
+        let openVGDBResults = try openVGDB.searchDatabase(
+            usingFilename: pitfall.openVGDB.fileName,
+            systemID: pitfall.openVGDB.systemID
+        )
 
-        // Test with OpenVGDB filename
-        let vgdbResults = try await lookup.searchDatabase(usingFilename: pitfall.openVGDB.fileName, systemID: nil)
-        let vgdbVersion = vgdbResults?.first { $0.romHashMD5?.uppercased() == pitfall.shiraGame.md5.uppercased() }
+        #expect(openVGDBResults != nil)
+        let vgdbVersion = openVGDBResults?.first {
+            $0.romHashMD5?.uppercased() == pitfall.shiraGame.md5.uppercased()
+        }
         #expect(vgdbVersion != nil)
         #expect(vgdbVersion?.systemID == .Atari2600)
+        #expect(vgdbVersion?.gameTitle == pitfall.openVGDB.title)
+        #expect(vgdbVersion?.region == pitfall.openVGDB.region)
+    }
+
+    @Test
+    func searchPitfallByFilenameInLibretroDB() async throws {
+        // Test LibretroDB directly
+        let libretroDB = libretrodb()
+        let results = try libretroDB.searchMetadata(
+            usingFilename: "Pitfall",
+            systemID: SystemIdentifier.Atari2600.libretroDatabaseID
+        )
+
+        #expect(results != nil)
+        let libretroDatabaseVersion = results?.first {
+            $0.romHashMD5?.uppercased() == pitfall.shiraGame.md5.uppercased()
+        }
+        #expect(libretroDatabaseVersion != nil)
+        #expect(libretroDatabaseVersion?.systemID == .Atari2600)
+    }
+
+    @Test
+    func searchPitfallByFilenameInShiraGame() async throws {
+        // Test ShiraGame directly
+        let shiraGame = try await ShiraGame()
+        let results = try await shiraGame.searchDatabase(
+            usingFilename: pitfall.shiraGame.fileName,
+            systemID: nil
+        )
+
+        #expect(results != nil)
+        let shiraVersion = results?.first {
+            $0.romHashMD5 == pitfall.shiraGame.md5
+        }
+        #expect(shiraVersion != nil)
+        #expect(shiraVersion?.systemID == .Atari2600)
+        #expect(shiraVersion?.gameTitle == pitfall.shiraGame.entryName)
+    }
+
+    @Test
+    func searchPitfallByFilenameInPVLookup() async throws {
+        // Test combined results through PVLookup
+        let results = try await lookup.searchDatabase(
+            usingFilename: "Pitfall",
+            systemID: SystemIdentifier.Atari2600.openVGDBID
+        )
+
+        #expect(results != nil)
+        #expect(results?.allSatisfy { $0.systemID == .Atari2600 } == true)
+
+        // Find our specific version
+        let version = results?.first {
+            $0.romHashMD5?.uppercased() == pitfall.shiraGame.md5.uppercased()
+        }
+        #expect(version != nil)
+
+        // Verify merged metadata
+        if let metadata = version {
+            #expect(metadata.systemID == .Atari2600)
+            #expect(metadata.romHashCRC?.uppercased() == pitfall.shiraGame.crc.uppercased())
+            // OpenVGDB data should take priority in merged results
+            #expect(metadata.region == pitfall.openVGDB.region)
+            #expect(metadata.regionID == pitfall.openVGDB.regionID)
+        }
     }
 
     @Test
@@ -131,5 +200,79 @@ struct PVLookupTests {
 
         // At least one database should find it
         #expect(openVGDBResult != nil || shiraGameResult != nil || libretroDatabaseResult != nil)
+    }
+
+    @Test
+    func testGetArtworkURLs() async throws {
+        // Create test ROM metadata
+        let rom = ROMMetadata(
+            gameTitle: "Sonic CD",
+            systemID: .SegaCD,
+            romFileName: "Sonic CD (USA).cue",
+            romHashMD5: "c7658288"  // Example MD5
+        )
+
+        let urls = try await lookup.getArtworkURLs(forRom: rom)
+
+        #expect(urls != nil)
+        #expect(!urls!.isEmpty)
+
+        // Verify we got URLs from both databases
+        let openVGDBUrls = urls?.filter { $0.absoluteString.contains("gamefaqs.gamespot.com") }
+        let libretroDatabaseUrls = urls?.filter { $0.absoluteString.contains("thumbnails.libretro.com") }
+
+        // We should have at least one URL from either database
+        #expect(openVGDBUrls?.isEmpty == false || libretroDatabaseUrls?.isEmpty == false)
+
+        // If we have libretro URLs, verify the system name is correct
+        if let libretroDatabaseUrl = libretroDatabaseUrls?.first {
+            #expect(libretroDatabaseUrl.absoluteString.contains("Sega%20-%20Mega-CD%20-%20Sega%20CD"))
+        }
+    }
+
+    @Test
+    func testGetArtworkURLsWithUnknownSystem() async throws {
+        // Test with Unknown system
+        let rom = ROMMetadata(
+            gameTitle: "Unknown Game",
+            systemID: .Unknown,
+            romFileName: "game.bin"
+        )
+
+        let urls = try await lookup.getArtworkURLs(forRom: rom)
+        #expect(urls == nil)  // Should return nil for Unknown system
+    }
+
+    @Test
+    func testGetArtworkURLsWithMultipleMatches() async throws {
+        // Create test ROM metadata for a game with multiple versions
+        let rom = ROMMetadata(
+            gameTitle: "Pitfall",
+            systemID: .Atari2600,
+            romFileName: "Pitfall (USA).a26",
+            romHashMD5: pitfall.shiraGame.md5
+        )
+
+        let urls = try await lookup.getArtworkURLs(forRom: rom) ?? []
+
+        #expect(!urls.isEmpty)
+
+        // Verify we got URLs from both databases and they're deduplicated
+        let uniqueUrls = Set(urls.map { $0.absoluteString })
+        #expect(uniqueUrls.count == urls.count)  // No duplicates
+    }
+
+    @Test
+    func testGetArtworkURLsWithNoMatches() async throws {
+        // Test with valid system but non-existent game
+        let rom = ROMMetadata(
+            gameTitle: "Non Existent Game",
+            systemID: .SNES,
+            romFileName: "fake.sfc",
+            romHashMD5: "0000000000000000000000000000000"
+        )
+
+        let urls = try await lookup.getArtworkURLs(forRom: rom)
+        #expect(urls == nil)  // Should return nil for no matches
     }
 }
