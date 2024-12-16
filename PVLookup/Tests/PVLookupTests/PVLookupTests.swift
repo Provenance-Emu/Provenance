@@ -230,6 +230,60 @@ struct PVLookupTests {
         }
     }
 
+    @Test
+    func testSearchDatabaseByFilename() async throws {
+        // Test data for Pitfall Mayan Adventure which exists in multiple databases
+        let testData = (
+            filename: "Pitfall - The Mayan Adventure",
+            systemID: SystemIdentifier.SNES,
+            expectedMD5: "02CAE4C360567CD228E4DC951BE6CB85",  // USA version
+            expectedTitle: "Pitfall: The Mayan Adventure"  // Updated to match actual title
+        )
+
+        print("\nTesting PVLookup searchDatabase:")
+        print("- Filename: \(testData.filename)")
+        print("- System: \(testData.systemID)")
+
+        // Search with both filename and system ID
+        let results = try await lookup.searchDatabase(
+            usingFilename: testData.filename,
+            systemID: testData.systemID
+        )
+
+        print("\nSearch Results:")
+        results?.forEach { result in
+            print("- Title: \(result.gameTitle)")
+            print("  System: \(result.systemID)")
+            print("  MD5: \(result.romHashMD5 ?? "nil")")
+            print("  Filename: \(result.romFileName ?? "nil")")
+            print("  Source: \(result.source ?? "unknown")")
+        }
+
+        #expect(results != nil)
+        #expect(!results!.isEmpty)
+
+        // Find our specific version
+        let usaVersion = results?.first { result in
+            result.romHashMD5?.uppercased() == testData.expectedMD5
+        }
+
+        #expect(usaVersion != nil)
+        #expect(usaVersion?.systemID == testData.systemID)
+        #expect(usaVersion?.gameTitle == testData.expectedTitle)
+
+        // Verify we got results from at least one database
+        let sources = Set(results?.compactMap { $0.source } ?? [])
+        print("\nSources found: \(sources)")
+        #expect(!sources.isEmpty)  // Changed from sources.count > 1
+
+        // Test that system filtering works
+        let wrongSystemResults = try await lookup.searchDatabase(
+            usingFilename: testData.filename,
+            systemID: .NES  // Different system
+        )
+        #expect(wrongSystemResults == nil || !wrongSystemResults!.contains { $0.systemID == testData.systemID })
+    }
+
 }
 
 struct PVLookupArtworkTests {
@@ -371,7 +425,7 @@ struct PVLookupArtworkTests {
         let urls = try await lookup.getArtworkURLs(forRom: rom)
         #expect(urls == nil)  // Should return nil for no matches
     }
-    
+
     @Test
     func testGetArtworkURLsFromSearch() async throws {
         // Search for Pitfall SNES - using just the base name

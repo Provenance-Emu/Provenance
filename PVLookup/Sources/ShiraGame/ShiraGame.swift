@@ -104,7 +104,7 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
 
     public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         try await awaitInitialization()
-        
+
         // Find ROMs matching filename
         let roms = try db.roms.filter(filter: { $0.fileName.contains(filename) })
         if roms.isEmpty { return nil }
@@ -176,7 +176,8 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
             romHashCRC: rom.crc,
             romHashMD5: rom.md5,
             romID: Int(game.id ?? 0),
-            isBIOS: game.isSystem
+            isBIOS: game.isSystem,
+            source: "ShiraGame"
         )
     }
 }

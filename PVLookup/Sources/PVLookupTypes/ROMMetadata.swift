@@ -24,6 +24,7 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
     public let romHashMD5: String?
     public let romID: Int?
     public let isBIOS: Bool?
+    public let source: String?
 
     public init(
         gameTitle: String,
@@ -46,7 +47,8 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
         romHashCRC: String? = nil,
         romHashMD5: String? = nil,
         romID: Int? = nil,
-        isBIOS: Bool? = nil
+        isBIOS: Bool? = nil,
+        source: String? = nil
     ) {
         self.gameTitle = gameTitle
         self.boxImageURL = boxImageURL
@@ -69,6 +71,7 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
         self.romHashMD5 = romHashMD5
         self.romID = romID
         self.isBIOS = isBIOS
+        self.source = source
     }
 
     /// Creates a copy with a new title
@@ -94,7 +97,8 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
             romHashCRC: self.romHashCRC,
             romHashMD5: self.romHashMD5,
             romID: self.romID,
-            isBIOS: self.isBIOS
+            isBIOS: self.isBIOS,
+            source: self.source
         )
     }
 }

@@ -257,7 +257,7 @@ public extension OpenVGDB {
         let properties = getStandardProperties()
         let escapedValue = escapeSQLString(value)
         let query: String
-        
+
         let systemID = systemID?.openVGDBID
 
         if let systemID = systemID {
@@ -284,7 +284,7 @@ public extension OpenVGDB {
         let properties = getStandardProperties()
         let escapedPattern = escapeLikePattern(filename)
         let query: String
-        
+
         let systemID = systemID?.openVGDBID
 
         if let systemID = systemID {
@@ -322,7 +322,7 @@ public extension OpenVGDB {
     }
 
     func searchDatabase(usingFilename filename: String, systemIDs: [SystemIdentifier]) throws -> [ROMMetadata]? {
-        
+
         let validSystemIDs = systemIDs.map(\.openVGDBID)
 
         let properties = getStandardProperties()
@@ -430,7 +430,8 @@ private extension OpenVGDB {
             romFileName: internalMetadata.romFileName,
             romHashCRC: internalMetadata.romHashCRC,
             romHashMD5: internalMetadata.romHashMD5,
-            romID: internalMetadata.romID
+            romID: internalMetadata.romID,
+            source: "OpenVGDB"
         )
     }
 
@@ -488,7 +489,8 @@ private extension OpenVGDB {
             romFileName: dict["romFileName"] as? String,
             romHashCRC: dict["romHashCRC"] as? String,
             romHashMD5: dict["romHashMD5"] as? String,
-            romID: (dict["romID"] as? NSNumber)?.intValue
+            romID: (dict["romID"] as? NSNumber)?.intValue,
+            source: "OpenVGDB"
         )
     }
 }

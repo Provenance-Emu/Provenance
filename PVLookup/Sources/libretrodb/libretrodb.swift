@@ -264,7 +264,8 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
             romFileName: metadata.romName,
             romHashCRC: nil,
             romHashMD5: metadata.romMD5,
-            romID: nil
+            romID: nil,
+            source: "LibretroDB"
         )
     }
 
