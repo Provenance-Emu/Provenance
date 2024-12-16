@@ -89,24 +89,6 @@ public actor libretrodbActor: GlobalActor {
     public static let shared = libretrodbActor()
 }
 
-/// Internal representation of ROM metadata from the libretrodb database
-internal struct LibretroDBROMMetadata: Codable {
-    let gameTitle: String
-    let fullName: String?
-    let releaseYear: Int?
-    let releaseMonth: Int?
-    let developer: String?
-    let publisher: String?
-    let rating: String?
-    let franchise: String?
-    let region: String?
-    let genre: String?
-    let romName: String?
-    let romMD5: String?
-    let platform: String?
-    let manufacturer: String?
-}
-
 /// LibretroDB provides ROM metadata from a SQLite database converted from RetroArch's database
 public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 
@@ -294,22 +276,17 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        var query = standardMetadataQuery
-        let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
+        print("\nLibretroDB search details:")
+        print("- Input systemID (OpenVGDB): \(String(describing: systemID))")
 
-        query += " WHERE roms.name LIKE '%\(escapedFilename)%' COLLATE NOCASE"
-
-        if let systemID = systemID {
-            query += " AND platform_id = \(systemID)"
+        // Convert from OpenVGDB ID to LibretroDB ID
+        let libretroDatabaseID = systemID.flatMap { openVGDBID in
+            SystemIdentifier.fromOpenVGDBID(openVGDBID)?.libretroDatabaseID
         }
 
-        let results = try db.execute(query: query)
-        return results.compactMap { dict in
-            guard let metadata = try? convertDictToMetadata(dict) else {
-                return nil
-            }
-            return convertToROMMetadata(metadata)
-        }
+        print("- Converted to LibretroDB ID: \(String(describing: libretroDatabaseID))")
+
+        return try searchMetadata(usingFilename: filename, systemID: libretroDatabaseID)
     }
 
     @available(*, deprecated, message: "Use systemIdentifier(forRomMD5:or:) instead")
@@ -437,11 +414,23 @@ public extension libretrodb {
 
     // MARK: - Private Helpers
     private func convertDictToMetadata(_ dict: [String: Any]) throws -> LibretroDBROMMetadata {
+        guard let gameTitle = dict["game_title"] as? String else {
+            throw LibretroDBError.invalidMetadata
+        }
+
+        // Convert platform_id to string safely
+        let platformString: String?
+        if let platformId = dict["platform_id"] as? Int {
+            platformString = String(platformId)
+        } else {
+            platformString = nil
+        }
+
         return LibretroDBROMMetadata(
-            gameTitle: (dict["display_name"] as? String) ?? "",
+            gameTitle: gameTitle,
             fullName: dict["full_name"] as? String,
-            releaseYear: (dict["release_year"] as? Int),
-            releaseMonth: (dict["release_month"] as? Int),
+            releaseYear: dict["release_year"] as? Int,
+            releaseMonth: dict["release_month"] as? Int,
             developer: dict["developer_name"] as? String,
             publisher: dict["publisher_name"] as? String,
             rating: dict["rating_name"] as? String,
@@ -450,8 +439,10 @@ public extension libretrodb {
             genre: dict["genre_name"] as? String,
             romName: dict["rom_name"] as? String,
             romMD5: dict["rom_md5"] as? String,
-            platform: (dict["platform_id"] as? Int)?.description,
-            manufacturer: dict["manufacturer_name"] as? String
+            platform: platformString,
+            manufacturer: dict["manufacturer_name"] as? String,
+            genres: (dict["genres"] as? String)?.components(separatedBy: ","),
+            romFileName: dict["rom_name"] as? String
         )
     }
 
@@ -661,9 +652,56 @@ public extension libretrodb {
 
     /// Search by filename
     func searchMetadata(usingFilename filename: String, systemID: Int?) throws -> [ROMMetadata]? {
-        guard let results = try searchDatabase(usingFilename: filename, systemID: systemID) else {
-            return nil
+        print("\nLibretroDB search details:")
+        print("- Input filename: \(filename)")
+        print("- Input systemID: \(String(describing: systemID))")
+
+        let query = """
+            SELECT DISTINCT
+                games.display_name as game_title,
+                games.full_name,
+                games.release_year,
+                games.release_month,
+                developers.name as developer_name,
+                publishers.name as publisher_name,
+                ratings.name as rating_name,
+                franchises.name as franchise_name,
+                regions.name as region_name,
+                genres.name as genre_name,
+                roms.name as rom_name,
+                roms.md5 as rom_md5,
+                platforms.id as platform_id,
+                manufacturers.name as manufacturer_name,
+                GROUP_CONCAT(genres.name) as genres
+            FROM games
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            LEFT JOIN roms ON games.serial_id = roms.serial_id
+            LEFT JOIN developers ON games.developer_id = developers.id
+            LEFT JOIN publishers ON games.publisher_id = publishers.id
+            LEFT JOIN ratings ON games.rating_id = ratings.id
+            LEFT JOIN franchises ON games.franchise_id = franchises.id
+            LEFT JOIN regions ON games.region_id = regions.id
+            LEFT JOIN genres ON games.genre_id = genres.id
+            LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+            WHERE roms.name LIKE '%\(filename)%'
+            \(systemID != nil ? "AND games.platform_id = \(systemID!)" : "")
+            GROUP BY games.id
+            """
+        print("- Generated SQL query: \(query)")
+
+        let results = try db.execute(query: query)
+        let metadata = try results.compactMap { dict in
+            try? convertDictToMetadata(dict)
         }
-        return results.map(convertToROMMetadata)
+
+        print("- Found \(metadata.count) results:")
+        metadata.forEach { result in
+            print("  • Title: \(result.gameTitle)")
+            print("    System: \(result.platform)")
+            print("    MD5: \(result.romMD5 ?? "nil")")
+            print("    Filename: \(result.romFileName ?? "nil")")
+        }
+
+        return metadata.isEmpty ? nil : metadata.map(convertToROMMetadata)
     }
 }

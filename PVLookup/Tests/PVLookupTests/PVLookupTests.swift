@@ -204,6 +204,79 @@ struct PVLookupTests {
     }
 
     @Test
+    func testLibretroDBPitfallSearch() async throws {
+        // Try different search variations
+        let searches = [
+            "Pitfall - The Mayan Adventure",
+            "Pitfall - The Mayan Adventure (USA)",
+            "Pitfall",
+            "Mayan Adventure"
+        ]
+
+        for searchTerm in searches {
+            let results = try libreTroDB.searchMetadata(
+                usingFilename: searchTerm,
+                systemID: SystemIdentifier.SNES.libretroDatabaseID
+            )
+
+            print("\nLibretroDB search for '\(searchTerm)':")
+            print("Found \(results?.count ?? 0) results")
+            results?.forEach { result in
+                print("- Title: \(result.gameTitle)")
+                print("  System: \(result.systemID)")
+                print("  MD5: \(result.romHashMD5 ?? "nil")")
+                print("  Filename: \(result.romFileName ?? "nil")")
+            }
+        }
+    }
+
+}
+
+struct PVLookupArtworkTests {
+    let lookup: PVLookup
+    let openVGDB: OpenVGDB
+    let libreTroDB: libretrodb
+
+    init() async throws {
+        self.lookup = .shared
+        self.openVGDB = OpenVGDB()
+        self.libreTroDB = libretrodb()
+    }
+
+    @Test
+    func testLibretroDBDirectArtworkURLs() async throws {
+        // Create test ROM metadata for a game we know has artwork
+        let rom = ROMMetadata(
+            gameTitle: "Pitfall - The Mayan Adventure",
+            systemID: .SNES,
+            romFileName: "Pitfall - The Mayan Adventure (USA).sfc",
+            romHashMD5: "02CAE4C360567CD228E4DC951BE6CB85"
+        )
+
+        // Test LibretroDB directly
+        let urls = libreTroDB.getArtworkURLs(forGame: rom)
+
+        print("\nLibretroDB Direct URL Test:")
+        print("Input:")
+        print("- System Name: \(rom.systemID.libretroDatabaseName)")
+        print("- Filename: \(rom.romFileName ?? "")")
+
+        print("\nGenerated URLs:")
+        urls.forEach { print("- \($0.absoluteString)") }
+
+        #expect(!urls.isEmpty)
+
+        // Verify URL structure
+        let expectedSystemPath = "Nintendo%20-%20Super%20Nintendo%20Entertainment%20System"
+        let expectedFilename = "Pitfall%20-%20The%20Mayan%20Adventure%20(USA)"  // Removed .sfc
+
+        for url in urls {
+            #expect(url.absoluteString.contains(expectedSystemPath))
+            #expect(url.absoluteString.contains(expectedFilename))
+        }
+    }
+
+    @Test
     func testGetArtworkURLs() async throws {
         // Create test ROM metadata
         let rom = ROMMetadata(
@@ -251,10 +324,19 @@ struct PVLookupTests {
             gameTitle: "Pitfall - The Mayan Adventure",
             systemID: .SNES,
             romFileName: "Pitfall - The Mayan Adventure (USA).sfc",
-            romHashMD5: "02CAE4C360567CD228E4DC951BE6CB85"  // USA SNES version from our query
+            romHashMD5: "02CAE4C360567CD228E4DC951BE6CB85"  // USA SNES version
         )
 
+        print("\nTesting artwork URLs for ROM:")
+        print("- Title: \(rom.gameTitle)")
+        print("- System: \(rom.systemID)")
+        print("- Filename: \(rom.romFileName)")
+        print("- MD5: \(rom.romHashMD5)")
+
         let urls = try await lookup.getArtworkURLs(forRom: rom) ?? []
+
+        print("\nReturned URLs: \(urls.count)")
+        urls.forEach { print("- \($0.absoluteString)") }
 
         #expect(!urls.isEmpty)
 
@@ -262,9 +344,11 @@ struct PVLookupTests {
         let openVGDBUrls = urls.filter { $0.absoluteString.contains("gamefaqs.gamespot.com") }
         let libretroDatabaseUrls = urls.filter { $0.absoluteString.contains("thumbnails.libretro.com") }
 
-        // Log URLs for debugging
-        print("OpenVGDB URLs: \(openVGDBUrls)")
-        print("LibretroDB URLs: \(libretroDatabaseUrls)")
+        print("\nOpenVGDB URLs: \(openVGDBUrls.count)")
+        openVGDBUrls.forEach { print("- \($0.absoluteString)") }
+
+        print("\nLibretroDB URLs: \(libretroDatabaseUrls.count)")
+        libretroDatabaseUrls.forEach { print("- \($0.absoluteString)") }
 
         // We should have at least one URL from either database
         #expect(openVGDBUrls.count > 0 || libretroDatabaseUrls.count > 0)
@@ -287,4 +371,57 @@ struct PVLookupTests {
         let urls = try await lookup.getArtworkURLs(forRom: rom)
         #expect(urls == nil)  // Should return nil for no matches
     }
+    
+    @Test
+    func testGetArtworkURLsFromSearch() async throws {
+        // Search for Pitfall SNES - using just the base name
+        let results = try await lookup.searchDatabase(
+            usingFilename: "Pitfall - The Mayan Adventure",  // Removed (USA)
+            systemID: SystemIdentifier.SNES.openVGDBID
+        )
+
+        print("\nSearch Results:")
+        results?.forEach { result in
+            print("- Title: \(result.gameTitle)")
+            print("  System: \(result.systemID)")
+            print("  MD5: \(result.romHashMD5 ?? "nil")")
+            print("  Filename: \(result.romFileName ?? "nil")")  // Added to see filename
+        }
+
+        #expect(results != nil)
+        let pitfallSNES = results?.first { result in
+            result.romHashMD5?.uppercased() == "02CAE4C360567CD228E4DC951BE6CB85"  // USA SNES version
+        }
+        #expect(pitfallSNES != nil)
+
+        // Get artwork URLs for the found ROM
+        let urls = try await lookup.getArtworkURLs(forRom: pitfallSNES!) ?? []
+
+        print("\nArtwork URLs for search result:")
+        urls.forEach { print("- \($0.absoluteString)") }
+
+        #expect(!urls.isEmpty)
+
+        // Verify we got URLs from both databases
+        let openVGDBUrls = urls.filter { $0.absoluteString.contains("gamefaqs.gamespot.com") }
+        let libretroDatabaseUrls = urls.filter { $0.absoluteString.contains("thumbnails.libretro.com") }
+
+        print("\nOpenVGDB URLs: \(openVGDBUrls.count)")
+        openVGDBUrls.forEach { print("- \($0.absoluteString)") }
+
+        print("\nLibretroDB URLs: \(libretroDatabaseUrls.count)")
+        libretroDatabaseUrls.forEach { print("- \($0.absoluteString)") }
+
+        // We should have at least one URL from either database
+        #expect(openVGDBUrls.count > 0 || libretroDatabaseUrls.count > 0)
+
+        // If we have libretro URLs, verify the system name and filename
+        if let libretroDatabaseUrl = libretroDatabaseUrls.first {
+            let expectedSystemPath = "Nintendo%20-%20Super%20Nintendo%20Entertainment%20System"
+            let expectedFilename = "Pitfall%20-%20The%20Mayan%20Adventure%20(USA)"
+            #expect(libretroDatabaseUrl.absoluteString.contains(expectedSystemPath))
+            #expect(libretroDatabaseUrl.absoluteString.contains(expectedFilename))
+        }
+    }
+
 }

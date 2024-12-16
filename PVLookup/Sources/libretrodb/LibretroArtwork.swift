@@ -59,3 +59,43 @@ public struct LibretroArtwork {
         return validURLs
     }
 }
+
+import PVLookupTypes
+
+extension ROMMetadata {
+    var libretroDBArtworkURLs: [URL] {
+        print("\nLibretroDB artwork URL generation for ROM:")
+        print("- Title: \(gameTitle)")
+        print("- System: \(systemID)")
+        print("- System Name: \(systemID.libretroDatabaseName)")
+        print("- Filename: \(romFileName ?? "nil")")
+        print("- MD5: \(romHashMD5 ?? "nil")")
+
+        let baseURL = "https://thumbnails.libretro.com"
+        let systemFolder = systemID.libretroDatabaseName
+            .replacingOccurrences(of: " ", with: "%20")
+
+        // Remove the file extension using NSString's deletingPathExtension
+        let filename = (romFileName as NSString?)?.deletingPathExtension
+            .replacingOccurrences(of: " ", with: "%20") ?? ""
+
+        print("\nURL Components:")
+        print("- Base URL: \(baseURL)")
+        print("- System folder: \(systemFolder)")
+        print("- Processed filename: \(filename)")
+
+        let boxartURL = URL(string: "\(baseURL)/\(systemFolder)/Named_Boxarts/\(filename).png")
+        let titleURL = URL(string: "\(baseURL)/\(systemFolder)/Named_Titles/\(filename).png")
+        let snapsURL = URL(string: "\(baseURL)/\(systemFolder)/Named_Snaps/\(filename).png")
+
+        print("\nConstructed URLs:")
+        print("- Boxart: \(boxartURL?.absoluteString ?? "nil")")
+        print("- Title: \(titleURL?.absoluteString ?? "nil")")
+        print("- Snaps: \(snapsURL?.absoluteString ?? "nil")")
+
+        let urls = [boxartURL, titleURL, snapsURL].compactMap { $0 }
+        print("\nReturning \(urls.count) valid URLs")
+
+        return urls
+    }
+}
