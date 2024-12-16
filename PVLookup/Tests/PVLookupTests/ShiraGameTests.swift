@@ -84,7 +84,7 @@ struct ShiraGameTests {
         // Test 1: Using systemID filter during search
         let filteredResults = try await db.searchDatabase(
             usingFilename: "3-D Tic-Tac-Toe",
-            systemID: SystemIdentifier.Atari2600.openVGDBID
+            systemID: SystemIdentifier.Atari2600
         )
 
         // Print debug info

@@ -80,7 +80,7 @@ public actor ShiraGameManager {
         }
 
         // Try opening database to verify it's valid
-        _ = try ShiragameSchema(url: databasePath)
+        _ = ShiragameSchema(url: databasePath)
         print("ShiraGameManager: Database verified and ready")
     }
 

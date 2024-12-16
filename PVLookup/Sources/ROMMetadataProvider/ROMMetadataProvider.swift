@@ -7,11 +7,7 @@ public protocol ROMMetadataProvider {
     func searchROM(byMD5 md5: String) async throws -> ROMMetadata?
 
     /// Search by filename
-    func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]?
-
-    /// Get system ID for ROM - Deprecated
-//    @available(*, deprecated, message: "Use systemIdentifier(forRomMD5:or:) instead")
-//    func system(forRomMD5 md5: String, or filename: String?) async throws -> Int?
+    func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]?
 
     /// Get SystemIdentifier for ROM
     /// - Parameters:

@@ -36,7 +36,7 @@ struct PVLookupTests {
         // OpenVGDB data
         openVGDB: (
             romID: 81222,
-            systemID: 3,
+            systemID: SystemIdentifier.Atari2600,
             regionID: 21,
             fileName: "Pitfall (1983) (CCE) (C-813).a26",
             title: "Pitfall",
@@ -94,7 +94,7 @@ struct PVLookupTests {
         let libretroDB = libretrodb()
         let results = try libretroDB.searchMetadata(
             usingFilename: "Pitfall - The Mayan Adventure",
-            systemID: SystemIdentifier.SNES.libretroDatabaseID  // 37 for SNES
+            systemID: SystemIdentifier.SNES
         )
 
         #expect(results != nil)
@@ -129,7 +129,7 @@ struct PVLookupTests {
         // Test combined results through PVLookup
         let results = try await lookup.searchDatabase(
             usingFilename: "Pitfall",
-            systemID: SystemIdentifier.Atari2600.openVGDBID
+            systemID: SystemIdentifier.Atari2600
         )
 
         #expect(results != nil)
@@ -155,7 +155,7 @@ struct PVLookupTests {
     func searchPitfallWithSystem() async throws {
         let results = try await lookup.searchDatabase(
             usingFilename: "Pitfall",
-            systemID: SystemIdentifier.Atari2600.openVGDBID
+            systemID: SystemIdentifier.Atari2600
         )
 
         #expect(results != nil)
@@ -178,7 +178,7 @@ struct PVLookupTests {
     @Test
     func searchPitfallByMD5InEachDatabase() async throws {
         // Test OpenVGDB
-        let openVGDBResult = try await lookup.searchDatabase(
+        let openVGDBResult = try openVGDB.searchDatabase(
             usingKey: "romHashMD5",
             value: pitfall.shiraGame.md5,
             systemID: nil
@@ -216,7 +216,7 @@ struct PVLookupTests {
         for searchTerm in searches {
             let results = try libreTroDB.searchMetadata(
                 usingFilename: searchTerm,
-                systemID: SystemIdentifier.SNES.libretroDatabaseID
+                systemID: SystemIdentifier.SNES
             )
 
             print("\nLibretroDB search for '\(searchTerm)':")
@@ -330,8 +330,8 @@ struct PVLookupArtworkTests {
         print("\nTesting artwork URLs for ROM:")
         print("- Title: \(rom.gameTitle)")
         print("- System: \(rom.systemID)")
-        print("- Filename: \(rom.romFileName)")
-        print("- MD5: \(rom.romHashMD5)")
+        print("- Filename: \(rom.romFileName ?? "nil")")
+        print("- MD5: \(rom.romHashMD5 ?? "nil")")
 
         let urls = try await lookup.getArtworkURLs(forRom: rom) ?? []
 
@@ -377,7 +377,7 @@ struct PVLookupArtworkTests {
         // Search for Pitfall SNES - using just the base name
         let results = try await lookup.searchDatabase(
             usingFilename: "Pitfall - The Mayan Adventure",  // Removed (USA)
-            systemID: SystemIdentifier.SNES.openVGDBID
+            systemID: SystemIdentifier.SNES
         )
 
         print("\nSearch Results:")

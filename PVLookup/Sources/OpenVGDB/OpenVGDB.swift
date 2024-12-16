@@ -107,7 +107,7 @@ public extension OpenVGDB {
     /// Get possible artwork URLs for a ROM
     /// - Parameter rom: The ROM metadata
     /// - Returns: Array of possible artwork URLs, or nil if none found
-    public func getArtworkURLs(forRom rom: ROMMetadata) throws -> [URL]? {
+    func getArtworkURLs(forRom rom: ROMMetadata) throws -> [URL]? {
         var urls: [URL] = []
 
         // 1. Try MD5 search first (exact match, no system filter needed)
@@ -253,12 +253,14 @@ private extension OpenVGDB {
 
 // MARK: - Database Queries
 public extension OpenVGDB {
-    func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [ROMMetadata]? {
+    func searchDatabase(usingKey key: String, value: String, systemID: SystemIdentifier? = nil) throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
         let escapedValue = escapeSQLString(value)
         let query: String
+        
+        let systemID = systemID?.openVGDBID
 
-        if let systemID = systemID, isValidSystemID(systemID) {
+        if let systemID = systemID {
             query = """
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
@@ -278,12 +280,14 @@ public extension OpenVGDB {
         return try executeQuery(query)
     }
 
-    func searchDatabase(usingFilename filename: String, systemID: Int? = nil) throws -> [ROMMetadata]? {
+    func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier? = nil) throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
         let escapedPattern = escapeLikePattern(filename)
         let query: String
+        
+        let systemID = systemID?.openVGDBID
 
-        if let systemID = systemID, isValidSystemID(systemID) {
+        if let systemID = systemID {
             query = """
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
@@ -317,12 +321,9 @@ public extension OpenVGDB {
         return try executeQuery(query)
     }
 
-    func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [ROMMetadata]? {
-        // Filter to only valid system IDs
-        let validSystemIDs = systemIDs.filter(isValidSystemID)
-        guard !validSystemIDs.isEmpty else {
-            return nil
-        }
+    func searchDatabase(usingFilename filename: String, systemIDs: [SystemIdentifier]) throws -> [ROMMetadata]? {
+        
+        let validSystemIDs = systemIDs.map(\.openVGDBID)
 
         let properties = getStandardProperties()
         let systemIDsString = validSystemIDs.map { String($0) }.joined(separator: ",")
@@ -339,7 +340,7 @@ public extension OpenVGDB {
         return try executeQuery(query)
     }
 
-    func system(forRomMD5 md5: String, or filename: String? = nil) throws -> Int? {
+    func system(forRomMD5 md5: String, or filename: String? = nil) throws -> SystemIdentifier? {
         var query = "SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '\(md5)'"
         if let filename = filename {
             query += " OR romFileName LIKE '\(filename)'"
@@ -348,16 +349,15 @@ public extension OpenVGDB {
         let results = try vgdb.execute(query: query)
         guard let match = results.first else { return nil }
 
-        return (match["systemID"] as? NSNumber)?.intValue
+        guard let openVGDBSystemID = (match["systemID"] as? NSNumber)?.intValue else {
+            return nil
+        }
+        return SystemIdentifier.fromOpenVGDBID(openVGDBSystemID)
     }
 }
 
 // MARK: - Private Helpers
 private extension OpenVGDB {
-    func isValidSystemID(_ systemID: Int) -> Bool {
-        return Self.validSystemIDs.contains(systemID)
-    }
-
     func escapeSQLString(_ string: String) -> String {
         return string.replacingOccurrences(of: "'", with: "''")
     }

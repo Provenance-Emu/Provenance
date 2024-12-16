@@ -58,7 +58,6 @@ struct LibretroDBTests {
         romName: "Dragon Quest III - Soshite Densetsu e... (Japan).sfc",
         displayName: "Dragon Quest III - Soshite Densetsu e...",
         fullName: "Dragon Quest III - Soshite Densetsu e... (Japan)",
-        platformID: 37,
         systemID: SystemIdentifier.SNES,
         manufacturer: "Nintendo",
         developer: "Heart Beat",
@@ -74,7 +73,6 @@ struct LibretroDBTests {
         romName: "P-Man (Japan).sfc",
         displayName: "P-Man",
         fullName: "P-Man (Japan)",
-        platformID: 37,
         systemID: SystemIdentifier.SNES,
         manufacturer: "Nintendo",
         developer: "Titus Software",
@@ -113,7 +111,7 @@ struct LibretroDBTests {
     func searchByFilenameWithSystem() async throws {
         let results = try await db.searchDatabase(
             usingFilename: "Dragon Quest III",
-            systemID: dragonQuest3.platformID
+            systemID: dragonQuest3.systemID
         )
 
         #expect(results != nil)
@@ -133,7 +131,7 @@ struct LibretroDBTests {
         let identifier = try await db.systemIdentifier(
             forRomMD5: "invalid",
             or: dragonQuest3.displayName,
-            platformID: dragonQuest3.platformID
+            platformID: dragonQuest3.systemID
         )
         #expect(identifier == dragonQuest3.systemID)
     }
@@ -158,13 +156,13 @@ struct LibretroDBTests {
 
     @Test
     func invalidSystemID() async throws {
-        let results = try await db.searchDatabase(usingFilename: dragonQuest3.displayName, systemID: 999)
+        let results = try await db.searchDatabase(usingFilename: dragonQuest3.displayName, systemID: SystemIdentifier.Unknown)
         #expect(results?.isEmpty != false)
     }
 
     @Test
     func searchSpecialCharacters() async throws {
-        let results = try await db.searchDatabase(usingFilename: "P-Man", systemID: pMan.platformID)
+        let results = try await db.searchDatabase(usingFilename: "P-Man", systemID: pMan.systemID)
 
         #expect(results != nil)
         #expect(results?.count == 1)
@@ -175,7 +173,7 @@ struct LibretroDBTests {
         #expect(firstResult?.region == pMan.region)
 
         // Test partial match with hyphen
-        let partialResults = try await db.searchDatabase(usingFilename: "P-", systemID: pMan.platformID)
+        let partialResults = try await db.searchDatabase(usingFilename: "P-", systemID: pMan.systemID)
         #expect(partialResults?.contains { $0.gameTitle.contains("P-Man") } == true)
     }
 }

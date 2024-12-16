@@ -59,7 +59,7 @@ struct OpenVGDBTests {
         let results = try db.searchDatabase(
             usingKey: "romHashMD5",
             value: nhlSaturn.md5,
-            systemID: nhlSaturn.openVGDBID
+            systemID: nhlSaturn.systemID
         )
         #expect(results?.count == 1)
         #expect(results?.first?.systemID == nhlSaturn.systemID)
@@ -91,7 +91,7 @@ struct OpenVGDBTests {
     func searchByFilenameWithSystem() async throws {
         let results = try db.searchDatabase(
             usingFilename: nhlSaturn.filename,
-            systemID: nhlSaturn.openVGDBID  // Use openVGDBID for API call
+            systemID: nhlSaturn.systemID  // Use openVGDBID for API call
         )
         #expect(results?.count == 1)
         #expect(results?.first?.systemID == nhlSaturn.systemID)  // Compare SystemIdentifier directly
@@ -101,15 +101,13 @@ struct OpenVGDBTests {
 
     @Test
     func systemLookupByMD5() async throws {
-        let rawSystemID = try db.system(forRomMD5: nhlSaturn.md5)
-        let systemIdentifier = SystemIdentifier.fromOpenVGDBID(rawSystemID ?? 0)
+        let systemIdentifier = try db.system(forRomMD5: nhlSaturn.md5)
         #expect(systemIdentifier == nhlSaturn.systemID)
     }
 
     @Test
     func systemLookupByFilename() async throws {
-        let rawSystemID = try db.system(forRomMD5: "invalid", or: nhlSaturn.filename)
-        let systemIdentifier = SystemIdentifier.fromOpenVGDBID(rawSystemID ?? 0)
+        let systemIdentifier = try db.system(forRomMD5: "invalid", or: nhlSaturn.filename)
         #expect(systemIdentifier == nhlSaturn.systemID)
     }
 

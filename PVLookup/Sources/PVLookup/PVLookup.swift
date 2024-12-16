@@ -16,30 +16,6 @@ import ShiraGame
 import PVSystems
 import PVLogging
 
-/// Protocol for basic ROM metadata lookup operations
-public protocol ROMMetadataLookup {
-    /// Search database using a filename
-    func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]?
-
-    /// Search database using a specific key/value pair
-    func searchDatabase(usingKey key: String, value: String, systemID: Int?) async throws -> [ROMMetadata]?
-
-    /// Search database using filename across multiple systems
-    func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]?
-
-    /// Get system ID for a ROM using MD5 or filename
-    func system(forRomMD5 md5: String, or filename: String?) async throws -> Int?
-}
-
-/// Protocol specifically for artwork lookup operations
-public protocol ArtworkLookupService {
-    /// Get artwork mappings for ROMs
-    func getArtworkMappings() async throws -> ArtworkMapping
-
-    /// Get possible URLs for a ROM
-    func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]?
-}
-
 /// Main lookup service that combines ROM metadata and artwork lookup capabilities
 public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     // MARK: - Singleton
@@ -100,10 +76,10 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         let upperMD5 = md5.uppercased()
 
         // Try primary databases first
-        let openVGDBResult = try await searchDatabase(usingKey: "romHashMD5", value: upperMD5, systemID: nil)?.first
+        let openVGDBResult = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: upperMD5, systemID: nil)?.first
         DLOG("PVLookup: OpenVGDB result: \(String(describing: openVGDBResult))")
 
-        let libretroDatabaseResult = try await libreTroDB.searchMetadata(usingKey: "romHashMD5", value: upperMD5, systemID: nil)?.first
+        let libretroDatabaseResult = try libreTroDB.searchMetadata(usingKey: "md5", value: upperMD5, systemID: nil)?.first
         DLOG("PVLookup: LibretroDB result: \(String(describing: libretroDatabaseResult))")
 
         // If we have results from primary databases, merge them
@@ -133,30 +109,14 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         #endif
     }
 
-    @available(*, deprecated, message: "Use searchROM(byMD5:) instead")
-    public func searchDatabase(usingKey key: String, value: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        // Get results from both databases
-        let openVGDBResults = try openVGDB.searchDatabase(usingKey: key, value: value, systemID: systemID)
-        let libretroDatabaseResults = try await libreTroDB.searchMetadata(usingKey: key, value: value, systemID: systemID)
-
-        // If we have results from both, merge them
-        if let openVGDBMetadata = openVGDBResults,
-           let libretroDatabaseMetadata = libretroDatabaseResults {
-            return openVGDBMetadata.merged(with: libretroDatabaseMetadata)
-        }
-
-        // Otherwise return whichever one we have
-        return openVGDBResults ?? libretroDatabaseResults
-    }
-
-    public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
+    public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         ILOG("PVLookup: Searching for filename: \(filename)")
 
         // Try primary databases first
         let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemID: systemID)
         DLOG("PVLookup: OpenVGDB results: \(String(describing: openVGDBResults?.count)) matches")
 
-        let libretroDatabaseResults = try await libreTroDB.searchMetadata(usingFilename: filename, systemID: systemID)
+        let libretroDatabaseResults = try libreTroDB.searchMetadata(usingFilename: filename, systemID: systemID)
         DLOG("PVLookup: LibretroDB results: \(String(describing: libretroDatabaseResults?.count)) matches")
 
         // If we have results from primary databases, merge them
@@ -183,7 +143,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
 #endif
     }
 
-    public func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
+    public func searchDatabase(usingFilename filename: String, systemIDs: [SystemIdentifier]) async throws -> [ROMMetadata]? {
         let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs)
         let libretroDatabaseResults = try libreTroDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs)
 
@@ -205,35 +165,6 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         if let identifier = try await systemIdentifier(forRomMD5: md5, or: filename) {
             return identifier.openVGDBID
         }
-        return nil
-    }
-
-    /// Get SystemIdentifier for a ROM using MD5 or filename
-    /// - Parameters:
-    ///   - md5: MD5 hash of the ROM
-    ///   - filename: Optional filename as fallback
-    /// - Returns: SystemIdentifier if found
-    public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
-        // Try OpenVGDB first
-        if let systemID = try openVGDB.system(forRomMD5: md5, or: filename),
-           let identifier = SystemIdentifier.fromOpenVGDBID(systemID) {
-            return identifier
-        }
-
-        // Try libretrodb next - using libretrodb's own conversion
-        if let systemID = try await libreTroDB.system(forRomMD5: md5, or: filename),
-           let identifier = SystemIdentifier.fromLibretroDatabaseID(systemID) {
-            return identifier
-        }
-
-        #if canImport(ShiraGame)
-        // Try ShiraGame as a backup - using ShiraGame's own conversion
-        if let systemID = try await getShiraGame()?.system(forRomMD5: md5, or: filename),
-           let identifier = SystemIdentifier.fromShiraGameID(String(systemID)) {
-            return identifier
-        }
-        #endif
-
         return nil
     }
 
@@ -268,9 +199,56 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         return urls.isEmpty ? nil : urls
     }
 
-    // MARK: - Database Search Methods
-    public func searchDatabase(usingMD5 md5: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        return try await searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemID)
+    // MARK: - MD5 Searching
+    
+    /// Get SystemIdentifier for a ROM using MD5 or filename
+    /// - Parameters:
+    ///   - md5: MD5 hash of the ROM
+    ///   - filename: Optional filename as fallback
+    /// - Returns: SystemIdentifier if found
+    public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
+        // Try OpenVGDB first
+        if let systemID = try openVGDB.system(forRomMD5: md5, or: filename) {
+            return systemID
+        }
+
+        // Try libretrodb next - using libretrodb's own conversion
+        if let systemID = try await libreTroDB.systemIdentifier(forRomMD5: md5, or: filename) {
+            return systemID
+        }
+
+        #if canImport(ShiraGame)
+        // Try ShiraGame as a backup - using ShiraGame's own conversion
+        if let systemID = try await getShiraGame()?.system(forRomMD5: md5, or: filename),
+           let identifier = SystemIdentifier.fromShiraGameID(String(systemID)) {
+            return identifier
+        }
+        #endif
+
+        return nil
+    }
+    
+    
+    /// Search for all possible ROMs for a MD5, with optional narrowing to specific `SystemIdentifier`
+    /// - Parameters:
+    ///   - md5: md5 hash, preferabbly uppercased though we'll manage that for you
+    ///   - systemID: System ID optinally to filter on
+    /// - Returns: Optional array of `ROMMetadata`
+    public func searchDatabase(usingMD5 md5: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
+        // Get results from both databases
+        let systemIdentifiter: SystemIdentifier? = systemID
+
+        let openVGDBResults = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemIdentifiter)
+        let libretroDatabaseResults = try libreTroDB.searchMetadata(usingKey: "md5", value: md5, systemID: systemIdentifiter)
+
+        // If we have results from both, merge them
+        if let openVGDBMetadata = openVGDBResults,
+           let libretroDatabaseMetadata = libretroDatabaseResults {
+            return openVGDBMetadata.merged(with: libretroDatabaseMetadata)
+        }
+
+        // Otherwise return whichever one we have
+        return openVGDBResults ?? libretroDatabaseResults
     }
 }
 

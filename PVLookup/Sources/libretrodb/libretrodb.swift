@@ -275,35 +275,20 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
         return results?.first.map(convertToROMMetadata)
     }
 
-    public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
+    public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         print("\nLibretroDB search details:")
-        print("- Input systemID (OpenVGDB): \(String(describing: systemID))")
+        print("- Input systemID: \(String(describing: systemID))")
 
-        // Convert from OpenVGDB ID to LibretroDB ID
-        let libretroDatabaseID = systemID.flatMap { openVGDBID in
-            SystemIdentifier.fromOpenVGDBID(openVGDBID)?.libretroDatabaseID
-        }
-
-        print("- Converted to LibretroDB ID: \(String(describing: libretroDatabaseID))")
-
-        return try searchMetadata(usingFilename: filename, systemID: libretroDatabaseID)
-    }
-
-    @available(*, deprecated, message: "Use systemIdentifier(forRomMD5:or:) instead")
-    public func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
-        if let identifier = try await systemIdentifier(forRomMD5: md5, or: filename) {
-            return identifier.openVGDBID
-        }
-        return nil
+        return try searchMetadata(usingFilename: filename, systemID: systemID)
     }
 }
 
 // MARK: - Query Methods
 public extension libretrodb {
     /// Search by MD5 or other key
-    internal func searchDatabase(usingKey key: String, value: String, systemID: Int?) throws -> [LibretroDBROMMetadata]? {
+    internal func searchDatabase(usingKey key: String, value: String, systemID: SystemIdentifier?) throws -> [LibretroDBROMMetadata]? {
         // Use the platform_id directly since we're in libretrodb
-        let platformID = systemID  // No conversion needed
+        let platformID = systemID?.libretroDatabaseID  // No conversion needed
 
         var query = standardMetadataQuery
 
@@ -329,13 +314,13 @@ public extension libretrodb {
     }
 
     /// Search by filename
-    internal func searchDatabase(usingFilename filename: String, systemID: Int?) throws -> [LibretroDBROMMetadata]? {
+    internal func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) throws -> [LibretroDBROMMetadata]? {
         var query = standardMetadataQuery
         let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
 
         query += " WHERE roms.name LIKE '%\(escapedFilename)%' COLLATE NOCASE"
 
-        if let systemID = systemID {
+        if let systemID = systemID?.libretroDatabaseID {
             query += " AND platform_id = \(systemID)"
         }
 
@@ -346,11 +331,9 @@ public extension libretrodb {
     }
 
     /// Search by filename across multiple systems
-    func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [ROMMetadata]? {
+    func searchDatabase(usingFilename filename: String, systemIDs: [SystemIdentifier]) throws -> [ROMMetadata]? {
         // Use the platform_ids directly since we're in libretrodb
-        let platformIDs = systemIDs.compactMap {
-            SystemIdentifier.fromOpenVGDBID($0) ?? SystemIdentifier.fromLibretroDatabaseID($0)
-        }.map {
+        let platformIDs = systemIDs.map {
             $0.libretroDatabaseID
         }
 
@@ -374,7 +357,9 @@ public extension libretrodb {
     }
 
     /// Get system ID for a ROM
-    func systemIdentifier(forRomMD5 md5: String, or filename: String?, platformID: Int? = nil) async throws -> SystemIdentifier? {
+    func systemIdentifier(forRomMD5 md5: String, or filename: String?, platformID: SystemIdentifier? = nil) async throws -> SystemIdentifier? {
+        let platformID = platformID?.libretroDatabaseID
+        
         // MD5 search stays the same
         let query = """
             SELECT platform_id
@@ -643,15 +628,17 @@ public extension libretrodb {
     }
 
     /// Search by MD5 or other key
-    func searchMetadata(usingKey key: String, value: String, systemID: Int?) throws -> [ROMMetadata]? {
-        guard let results = try searchDatabase(usingKey: key, value: value, systemID: systemID) else {
+    func searchMetadata(usingKey key: String, value: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
+        guard let results: [LibretroDBROMMetadata] = try searchDatabase(usingKey: key, value: value, systemID: systemID) else {
             return nil
         }
         return results.map(convertToROMMetadata)
     }
 
     /// Search by filename
-    func searchMetadata(usingFilename filename: String, systemID: Int?) throws -> [ROMMetadata]? {
+    func searchMetadata(usingFilename filename: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
+        let systemID = systemID?.libretroDatabaseID
+        
         print("\nLibretroDB search details:")
         print("- Input filename: \(filename)")
         print("- Input systemID: \(String(describing: systemID))")

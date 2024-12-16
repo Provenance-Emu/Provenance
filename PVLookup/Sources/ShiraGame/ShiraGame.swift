@@ -40,7 +40,7 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
         print("ShiraGame: Starting initialization...")
 
         // Initialize with empty database first
-        let emptyDB = try ShiragameSchema(url: URL(fileURLWithPath: ""))
+        let emptyDB = ShiragameSchema(url: URL(fileURLWithPath: ""))
         self.db = emptyDB
         self.initializer = DatabaseInitializer(initialDB: emptyDB)
 
@@ -50,7 +50,7 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
 
         // Now initialize with real database
         print("ShiraGame: Initializing with prepared database...")
-        self.db = try ShiragameSchema(url: ShiraGameManager.shared.databasePath)
+        self.db = ShiragameSchema(url: ShiraGameManager.shared.databasePath)
 
         print("ShiraGame: Initialization complete")
     }
@@ -102,9 +102,9 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
         return metadata
     }
 
-    public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
+    public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         try await awaitInitialization()
-
+        
         // Find ROMs matching filename
         let roms = try db.roms.filter(filter: { $0.fileName.contains(filename) })
         if roms.isEmpty { return nil }
@@ -119,9 +119,7 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
         })
 
         // Convert OpenVGDB system ID to ShiraGame platform ID
-        if let systemID = systemID,
-           let systemIdentifier = SystemIdentifier.fromOpenVGDBID(systemID) {
-            let platformId = systemIdentifier.shiraGameID
+        if let platformId = systemID?.shiraGameID {
             games = try db.games.filter(filter: { $0.platformId == platformId })
         }
 
@@ -129,14 +127,6 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
             guard let rom = roms.first(where: { $0.gameId == game.id }) else { return nil }
             return convertToROMMetadata(game: game, rom: rom)
         }
-    }
-
-    @available(*, deprecated)
-    public func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
-        if let identifier = try await systemIdentifier(forRomMD5: md5, or: filename) {
-            return identifier.openVGDBID
-        }
-        return nil
     }
 
     public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
