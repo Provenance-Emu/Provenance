@@ -348,12 +348,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         var resultsMaybe: [ROMMetadata]?
 
         // Remove do-catch since we're now throwing
-        resultsMaybe = try await lookup.searchDatabase(usingKey: "romHashMD5", value: game.md5Hash, systemID: nil)
+        resultsMaybe = try await lookup.searchDatabase(usingMD5: game.md5Hash, systemID: nil)
 
         // Step 2 - Try to find by CRC if MD5 search failed
-        if resultsMaybe == nil || resultsMaybe!.isEmpty, !game.crc.isEmpty {
-            resultsMaybe = try await lookup.searchDatabase(usingKey: "romHashCRC", value: game.crc, systemID: nil)
-        }
+//        if resultsMaybe == nil || resultsMaybe!.isEmpty, !game.crc.isEmpty {
+//            resultsMaybe = try await lookup.searchDatabase(usingKey: "romHashCRC", value: game.crc, systemID: nil)
+//        }
 
         // Step 3 - Try by filename if still no results
         if resultsMaybe == nil || resultsMaybe!.isEmpty {
@@ -370,7 +370,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
             // Convert system identifier to database ID
             if let system = SystemIdentifier(rawValue: game.systemIdentifier) {
-                resultsMaybe = try await lookup.searchDatabase(usingFilename: subfileName, systemID: system.openVGDBID)
+                resultsMaybe = try await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
             }
         }
 
@@ -408,23 +408,23 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         case invalidSystemID
     }
 
-    func searchDatabase(usingKey key: String, value: String, systemID: String) async throws -> [ROMMetadata]? {
-        guard let system = SystemIdentifier(rawValue: systemID) else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try await lookup.searchDatabase(usingKey: key, value: value, systemID: system.openVGDBID)
-    }
+//    func searchDatabase(usingKey key: String, value: String, systemID: String) async throws -> [ROMMetadata]? {
+//        guard let system = SystemIdentifier(rawValue: systemID) else {
+//            throw DatabaseQueryError.invalidSystemID
+//        }
+//
+//        return try await lookup.searchDatabase(usingKey: key, value: value, systemID: system)
+//    }
 
     func searchDatabase(usingFilename filename: String, systemID: String) async throws -> [ROMMetadata]? {
         guard let system = SystemIdentifier(rawValue: systemID) else {
             throw DatabaseQueryError.invalidSystemID
         }
 
-        return try await lookup.searchDatabase(usingFilename: filename, systemID: system.openVGDBID)
+        return try await lookup.searchDatabase(usingFilename: filename, systemID: system)
     }
 
-    private func searchDatabase(usingFilename filename: String, systemIDs: [Int]) async throws -> [ROMMetadata]? {
+    private func searchDatabase(usingFilename filename: String, systemIDs: [SystemIdentifier]) async throws -> [ROMMetadata]? {
         // Create a query that searches across multiple systems
         var results: [ROMMetadata] = []
         for systemID in systemIDs {
@@ -435,8 +435,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         return results.isEmpty ? nil : results
     }
 
-    private func searchDatabase(usingMD5 md5: String, systemID: Int?) async throws -> [ROMMetadata]? {
-        return try await lookup.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemID)
+    private func searchDatabase(usingMD5 md5: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
+        return try await lookup.searchDatabase(usingMD5: md5, systemID: systemID)
     }
 
     /// Saves a game to the database
@@ -486,7 +486,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         return nil
     }
 
-    func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
+    func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         return try await lookup.searchDatabase(usingFilename: filename, systemID: systemID)
     }
 

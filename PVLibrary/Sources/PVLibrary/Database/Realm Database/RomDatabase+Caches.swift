@@ -102,7 +102,7 @@ public extension RomDatabase {
         return cache
     }
     static func addRelativeFileCache(_ file:URL, game: PVGame) async {
-        if let cache = await _gamesCache {
+        if let cache = _gamesCache {
             _gamesCache = addRelativeFileCache(file, game: game, cache: cache)
         }
     }
