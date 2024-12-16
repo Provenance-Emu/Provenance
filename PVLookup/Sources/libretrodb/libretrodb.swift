@@ -381,7 +381,7 @@ public extension libretrodb {
         }.map {
             $0.libretroDatabaseID
         }
-        
+
         var query = standardMetadataQuery
         let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
 
@@ -591,12 +591,39 @@ public extension libretrodb {
         return Date().timeIntervalSince(cache.timestamp) > staleInterval
     }
 
-    /// Get possible artwork URLs for a ROM
-    /// - Parameter rom: The ROM metadata
-    /// - Returns: Array of possible artwork URLs, or nil if none found
-    public func getArtworkURLs(forRom rom: ROMMetadata) throws -> [URL]? {
-        // TODO: Implement artwork URL generation based on LibretroDB data
-        // For now, return nil
-        return nil
+    /// Gets artwork URLs for a ROM by searching the libretro database and constructing thumbnail URLs
+    /// - Parameter rom: ROM metadata to search with
+    /// - Returns: Array of valid artwork URLs from libretro thumbnails
+    public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+        // Get libretro URLs if we have a valid system name
+        let libretroDatabaseName = rom.systemID.libretroDatabaseName
+        guard !libretroDatabaseName.isEmpty else {
+            return nil
+        }
+
+        // Try to find matching ROM in libretro database
+        let results = try searchDatabase(usingFilename: rom.romFileName)
+
+        var libretroDatabaseUrls: [URL] = []
+
+        // Try with full_name first
+        if let fullName = results?.first?.fullName {
+            let urls = await LibretroArtwork.getValidURLs(
+                systemName: libretroDatabaseName,
+                gameName: fullName
+            )
+            libretroDatabaseUrls.append(contentsOf: urls)
+        }
+
+        // If no results with full_name, try with display_name
+        if libretroDatabaseUrls.isEmpty, let displayName = results?.first?.displayName {
+            let urls = await LibretroArtwork.getValidURLs(
+                systemName: libretroDatabaseName,
+                gameName: displayName
+            )
+            libretroDatabaseUrls.append(contentsOf: urls)
+        }
+
+        return libretroDatabaseUrls.isEmpty ? nil : libretroDatabaseUrls
     }
 }
