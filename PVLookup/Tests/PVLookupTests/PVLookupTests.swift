@@ -284,6 +284,95 @@ struct PVLookupTests {
         #expect(wrongSystemResults == nil || !wrongSystemResults!.contains { $0.systemID == testData.systemID })
     }
 
+    @Test
+    func testSearchDatabaseByMD5WithSystem() async throws {
+        // Test data for Pitfall Mayan Adventure SNES
+        let testData = (
+            md5: "02CAE4C360567CD228E4DC951BE6CB85",  // USA version
+            systemID: SystemIdentifier.SNES,
+            expectedTitle: "Pitfall: The Mayan Adventure",
+            expectedFilename: "Pitfall - The Mayan Adventure (USA).sfc"
+        )
+
+        print("\nTesting searchDatabase by MD5 with system:")
+        print("- MD5: \(testData.md5)")
+        print("- System: \(testData.systemID)")
+
+        // Search with both MD5 and system ID
+        let results = try await lookup.searchDatabase(
+            usingMD5: testData.md5,
+            systemID: testData.systemID
+        )
+
+        print("\nSearch Results:")
+        results?.forEach { result in
+            print("- Title: \(result.gameTitle)")
+            print("  System: \(result.systemID)")
+            print("  MD5: \(result.romHashMD5 ?? "nil")")
+            print("  Filename: \(result.romFileName ?? "nil")")
+            print("  Source: \(result.source ?? "unknown")")
+        }
+
+        #expect(results != nil)
+        #expect(results?.count == 1)  // Should only find one match with system filter
+
+        let match = results?.first
+        #expect(match?.systemID == testData.systemID)
+        #expect(match?.gameTitle == testData.expectedTitle)
+        #expect(match?.romFileName == testData.expectedFilename)
+        #expect(match?.romHashMD5?.uppercased() == testData.md5)
+    }
+
+    @Test
+    func testSearchDatabaseByFilenameAcrossSystems() async throws {
+        // Test searching for Pitfall across multiple systems
+        let testData = (
+            filename: "Pitfall - The Mayan Adventure",
+            systems: [SystemIdentifier.SNES, SystemIdentifier.Genesis, SystemIdentifier.SegaCD],
+            expectedMD5s: [
+                "02CAE4C360567CD228E4DC951BE6CB85",  // SNES USA
+                "6A80D2D34CDFAFD03703B0FE76D10399",  // Genesis USA
+                "C7658288B84A5F9521B5A19C0694D076"   // SegaCD USA
+            ]
+        )
+
+        print("\nTesting searchDatabase across systems:")
+        print("- Filename: \(testData.filename)")
+        print("- Systems: \(testData.systems)")
+
+        let results = try await lookup.searchDatabase(
+            usingFilename: testData.filename,
+            systemIDs: testData.systems
+        )
+
+        print("\nSearch Results:")
+        results?.forEach { result in
+            print("- Title: \(result.gameTitle)")
+            print("  System: \(result.systemID)")
+            print("  MD5: \(result.romHashMD5 ?? "nil")")
+            print("  Filename: \(result.romFileName ?? "nil")")
+            print("  Source: \(result.source ?? "unknown")")
+        }
+
+        #expect(results != nil)
+        #expect(!results!.isEmpty)
+
+        // Verify we found matches for different systems
+        let foundSystems = Set(results?.map(\.systemID) ?? [])
+        print("\nFound systems: \(foundSystems)")
+        #expect(foundSystems.count > 1)  // Should find matches in multiple systems
+
+        // Verify we found some of our expected MD5s
+        let foundMD5s = Set(results?.compactMap { $0.romHashMD5?.uppercased() } ?? [])
+        print("\nFound MD5s: \(foundMD5s)")
+        let matchingMD5s = foundMD5s.intersection(Set(testData.expectedMD5s))
+        #expect(!matchingMD5s.isEmpty)  // Should find at least one expected MD5
+
+        // Verify all results are from requested systems
+        let requestedSystems = Set(testData.systems)
+        #expect(results?.allSatisfy { requestedSystems.contains($0.systemID) } == true)
+    }
+
 }
 
 struct PVLookupArtworkTests {
@@ -478,4 +567,108 @@ struct PVLookupArtworkTests {
         }
     }
 
+}
+
+struct PVLookupSystemTests {
+    let lookup: PVLookup
+
+    init() async throws {
+        self.lookup = .shared
+    }
+
+    @Test
+    func testSystemIdentifierByMD5() async throws {
+        // Test with known Pitfall SNES ROM
+        let testData = (
+            md5: "02CAE4C360567CD228E4DC951BE6CB85",  // Pitfall Mayan Adventure USA
+            expectedSystem: SystemIdentifier.SNES
+        )
+
+        let identifier = try await lookup.systemIdentifier(forRomMD5: testData.md5, or: nil)
+        #expect(identifier == testData.expectedSystem)
+
+        // Test with invalid MD5
+        let invalidIdentifier = try await lookup.systemIdentifier(forRomMD5: "invalid", or: nil)
+        #expect(invalidIdentifier == nil)
+    }
+
+    @Test
+    func testSystemIdentifierByFilename() async throws {
+        // Test with filename fallback
+        let testData = (
+            md5: "invalid",
+            filename: "Pitfall - The Mayan Adventure (USA).sfc",
+            expectedSystem: SystemIdentifier.SNES
+        )
+
+        let identifier = try await lookup.systemIdentifier(
+            forRomMD5: testData.md5,
+            or: testData.filename
+        )
+        #expect(identifier == testData.expectedSystem)
+    }
+
+    @Test
+    func testLegacySystemByMD5() async throws {
+        // Test deprecated system(forRomMD5:or:)
+        let testData = (
+            md5: "02CAE4C360567CD228E4DC951BE6CB85",  // Pitfall Mayan Adventure USA
+            expectedOpenVGDBID: SystemIdentifier.SNES.openVGDBID
+        )
+
+        let systemID = try await lookup.system(forRomMD5: testData.md5, or: nil)
+        #expect(systemID == testData.expectedOpenVGDBID)
+    }
+
+    @Test
+    func testArtworkMappings() async throws {
+        let mappings = try await lookup.getArtworkMappings()
+
+        // Test known MD5 mappings
+        let knownMD5 = "02CAE4C360567CD228E4DC951BE6CB85"  // Pitfall Mayan Adventure USA
+        #expect(mappings.romMD5[knownMD5] != nil)
+
+        // Test known filename mappings
+        let knownFilename = "Pitfall - The Mayan Adventure (USA).sfc"
+        #expect(mappings.romFileNameToMD5[knownFilename] != nil)
+
+        // Verify mappings aren't empty
+        #expect(!mappings.romMD5.isEmpty)
+        #expect(!mappings.romFileNameToMD5.isEmpty)
+    }
+
+    @Test
+    func testGetArtworkURLsForROM() async throws {
+        // Test with known ROM that should have artwork
+        let rom = ROMMetadata(
+            gameTitle: "Pitfall - The Mayan Adventure",
+            systemID: .SNES,
+            romFileName: "Pitfall - The Mayan Adventure (USA).sfc",
+            romHashMD5: "02CAE4C360567CD228E4DC951BE6CB85"
+        )
+
+        let urls = try await lookup.getArtworkURLs(forRom: rom)
+
+        print("\nArtwork URLs for ROM:")
+        print("- Title: \(rom.gameTitle)")
+        print("- System: \(rom.systemID)")
+        print("- MD5: \(rom.romHashMD5 ?? "nil")")
+
+        print("\nReturned URLs:")
+        urls?.forEach { print("- \($0.absoluteString)") }
+
+        #expect(urls != nil)
+        #expect(!urls!.isEmpty)
+
+        // Verify URLs from different sources
+        let openVGDBUrls = urls?.filter { $0.absoluteString.contains("gamefaqs.gamespot.com") }
+        let libretroDatabaseUrls = urls?.filter { $0.absoluteString.contains("thumbnails.libretro.com") }
+
+        print("\nURLs by source:")
+        print("- OpenVGDB: \(openVGDBUrls?.count ?? 0)")
+        print("- LibretroDB: \(libretroDatabaseUrls?.count ?? 0)")
+
+        // Should have at least one URL from either source
+        #expect(openVGDBUrls?.isEmpty == false || libretroDatabaseUrls?.isEmpty == false)
+    }
 }
