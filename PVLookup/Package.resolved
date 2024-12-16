@@ -1,5 +1,5 @@
 {
-  "originHash" : "3dc9dec08df688a337bdeec30e5831b1a9ceb906b2842124a36f400dbaae4abb",
+  "originHash" : "e82b22e0dda7fcbfc19f09feed4609e5f75579b895952910e7ddbad253415083",
   "pins" : [
     {
       "identity" : "checksum",
@@ -35,6 +35,24 @@
       "state" : {
         "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
         "version" : "0.15.3"
+      }
+    },
+    {
+      "identity" : "swift-http-types",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-http-types",
+      "state" : {
+        "revision" : "ef18d829e8b92d731ad27bb81583edd2094d1ce3",
+        "version" : "1.3.1"
+      }
+    },
+    {
+      "identity" : "swift-openapi-runtime",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-openapi-runtime",
+      "state" : {
+        "revision" : "5e119a3d52dde0229312ed586be99c666c6b6f64",
+        "version" : "1.7.0"
       }
     },
     {

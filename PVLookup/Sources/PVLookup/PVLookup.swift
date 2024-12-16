@@ -17,7 +17,7 @@ import PVSystems
 import PVLogging
 
 /// Main lookup service that combines ROM metadata and artwork lookup capabilities
-public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
+public actor PVLookup: ROMMetadataProvider, ArtworkLookupOfflineService {
     // MARK: - Singleton
     public static let shared = PVLookup()
 

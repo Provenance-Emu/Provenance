@@ -11,7 +11,7 @@ import PVLookupTypes
 import PVSystems
 
 /// Protocol specifically for artwork lookup operations
-public protocol ArtworkLookupService {
+public protocol ArtworkLookupOfflineService {
     /// Get artwork mappings for ROMs
     func getArtworkMappings() async throws -> ArtworkMapping
 
