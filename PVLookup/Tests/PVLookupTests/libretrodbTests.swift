@@ -176,4 +176,48 @@ struct LibretroDBTests {
         let partialResults = try await db.searchDatabase(usingFilename: "P-", systemID: pMan.systemID)
         #expect(partialResults?.contains { $0.gameTitle.contains("P-Man") } == true)
     }
+
+    @Test
+    func debugDragonQuestData() throws {
+        // Query by MD5
+        let md5Query = """
+            SELECT
+                games.display_name,
+                games.full_name,
+                roms.md5,
+                roms.name as rom_name,
+                platforms.id as platform_id,
+                platforms.name as platform_name
+            FROM games
+            LEFT JOIN roms ON games.serial_id = roms.serial_id
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            WHERE roms.md5 = '\(dragonQuest3.md5.uppercased())'
+            """
+
+        print("\nSearching by MD5: \(dragonQuest3.md5)")
+        let md5Results = try db.db.execute(query: md5Query)
+        print("MD5 search results:")
+        md5Results.forEach { print($0) }
+
+        // Query by name
+        let nameQuery = """
+            SELECT
+                games.display_name,
+                games.full_name,
+                roms.md5,
+                roms.name as rom_name,
+                platforms.id as platform_id,
+                platforms.name as platform_name
+            FROM games
+            LEFT JOIN roms ON games.serial_id = roms.serial_id
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            WHERE games.display_name LIKE '%Dragon Quest III%'
+            OR roms.name LIKE '%Dragon Quest III%'
+            """
+
+        print("\nSearching by name: Dragon Quest III")
+        let nameResults = try db.db.execute(query: nameQuery)
+        print("Name search results:")
+        nameResults.forEach { print($0) }
+    }
 }

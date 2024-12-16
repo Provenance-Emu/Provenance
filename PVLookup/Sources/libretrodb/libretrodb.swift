@@ -93,7 +93,7 @@ public actor libretrodbActor: GlobalActor {
 public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 
     /// Legacy connection
-    private let db: PVSQLiteDatabase
+    internal let db: PVSQLiteDatabase
 
     /// SQLite.swift connection for more modern queries
     lazy var sqldb: Connection = {
@@ -271,8 +271,11 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
     // MARK: - ROMMetadataProvider Implementation
 
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
-        let results: [LibretroDBROMMetadata]? = try searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)
-        return results?.first.map(convertToROMMetadata)
+        if let results = try await searchByMD5(md5),
+           let firstResult = results.first {
+            return firstResult
+        }
+        return nil
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
@@ -287,30 +290,12 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 public extension libretrodb {
     /// Search by MD5 or other key
     internal func searchDatabase(usingKey key: String, value: String, systemID: SystemIdentifier?) throws -> [LibretroDBROMMetadata]? {
-        // Use the platform_id directly since we're in libretrodb
-        let platformID = systemID?.libretroDatabaseID  // No conversion needed
-
-        var query = standardMetadataQuery
-
-        switch key {
-        case "romHashMD5":
-            // Normalize MD5 to uppercase
-            let normalizedMD5 = value.uppercased()
-            query += " WHERE roms.md5 = '\(normalizedMD5)' COLLATE NOCASE"
-        case "romHashCRC":
-            return nil // Not supported in libretrodb
-        default:
-            return nil
+        if key == "romHashMD5" || key == "md5" {
+            let results: [LibretroDBROMMetadata]? = try searchByMD5Internal(value.uppercased(), systemID: systemID)
+            return results
         }
-
-        if let platformID = platformID {
-            query += " AND platform_id = \(platformID)"
-        }
-
-        let results = try db.execute(query: query)
-        return results.compactMap { dict in
-            try? convertDictToMetadata(dict)
-        }
+        // Handle other keys if needed
+        return nil
     }
 
     /// Search by filename
@@ -359,7 +344,7 @@ public extension libretrodb {
     /// Get system ID for a ROM
     func systemIdentifier(forRomMD5 md5: String, or filename: String?, platformID: SystemIdentifier? = nil) async throws -> SystemIdentifier? {
         let platformID = platformID?.libretroDatabaseID
-        
+
         // MD5 search stays the same
         let query = """
             SELECT platform_id
@@ -566,7 +551,7 @@ public extension libretrodb {
     /// Gets artwork URLs for a ROM by searching the libretro database and constructing thumbnail URLs
     /// - Parameter rom: ROM metadata to search with
     /// - Returns: Array of valid artwork URLs from libretro thumbnails
-    public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+    func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
         let libretroDatabaseName = rom.systemID.libretroDatabaseName
         guard !libretroDatabaseName.isEmpty else {
             return nil
@@ -629,16 +614,65 @@ public extension libretrodb {
 
     /// Search by MD5 or other key
     func searchMetadata(usingKey key: String, value: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
-        guard let results: [LibretroDBROMMetadata] = try searchDatabase(usingKey: key, value: value, systemID: systemID) else {
-            return nil
+        print("\nLibretroDB metadata search:")
+        print("- Key: \(key)")
+        print("- Value: \(value)")
+        print("- SystemID: \(String(describing: systemID))")
+
+        // Map the external key names to database column names
+        let dbColumn = switch key {
+            case "romHashMD5": "roms.md5"
+            default: key
         }
-        return results.map(convertToROMMetadata)
+
+        let query = """
+            SELECT DISTINCT
+                games.display_name as game_title,
+                games.full_name,
+                games.release_year,
+                games.release_month,
+                developers.name as developer_name,
+                publishers.name as publisher_name,
+                ratings.name as rating_name,
+                franchises.name as franchise_name,
+                regions.name as region_name,
+                genres.name as genre_name,
+                roms.name as rom_name,
+                roms.md5 as rom_md5,
+                platforms.id as platform_id,
+                manufacturers.name as manufacturer_name,
+                GROUP_CONCAT(genres.name) as genres
+            FROM games
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            LEFT JOIN roms ON games.serial_id = roms.serial_id
+            LEFT JOIN developers ON games.developer_id = developers.id
+            LEFT JOIN publishers ON games.publisher_id = publishers.id
+            LEFT JOIN ratings ON games.rating_id = ratings.id
+            LEFT JOIN franchises ON games.franchise_id = franchises.id
+            LEFT JOIN regions ON games.region_id = regions.id
+            LEFT JOIN genres ON games.genre_id = genres.id
+            LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+            WHERE \(dbColumn) = '\(value.uppercased())'
+            \(systemID != nil ? "AND games.platform_id = \(systemID!.libretroDatabaseID)" : "")
+            GROUP BY games.id
+            """
+
+        print("- Generated query: \(query)")
+        let results = try db.execute(query: query)
+        print("- Raw results: \(results)")
+
+        let metadata = results.compactMap { dict in
+            try? convertDictToMetadata(dict)
+        }
+        print("- Converted metadata: \(metadata)")
+
+        return metadata.isEmpty ? nil : metadata.map(convertToROMMetadata)
     }
 
     /// Search by filename
     func searchMetadata(usingFilename filename: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
         let systemID = systemID?.libretroDatabaseID
-        
+
         print("\nLibretroDB search details:")
         print("- Input filename: \(filename)")
         print("- Input systemID: \(String(describing: systemID))")
@@ -677,18 +711,80 @@ public extension libretrodb {
         print("- Generated SQL query: \(query)")
 
         let results = try db.execute(query: query)
-        let metadata = try results.compactMap { dict in
+        let metadata = results.compactMap { dict in
             try? convertDictToMetadata(dict)
         }
 
         print("- Found \(metadata.count) results:")
         metadata.forEach { result in
             print("  • Title: \(result.gameTitle)")
-            print("    System: \(result.platform)")
+            print("    System: \(result.platform ?? "nil")")
             print("    MD5: \(result.romMD5 ?? "nil")")
             print("    Filename: \(result.romFileName ?? "nil")")
         }
 
         return metadata.isEmpty ? nil : metadata.map(convertToROMMetadata)
+    }
+
+    /// Search directly by MD5 hash with optional system filter
+    func searchByMD5(_ md5: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
+        guard let results = try searchByMD5Internal(md5, systemID: systemID) else {
+            return nil
+        }
+        // Explicitly convert each LibretroDBROMMetadata to ROMMetadata
+        let romMetadata: [ROMMetadata] = results.map { libretroMetadata in
+            convertToROMMetadata(libretroMetadata)
+        }
+        return romMetadata
+    }
+
+    /// Internal implementation of MD5 search that returns LibretroDBROMMetadata
+    private func searchByMD5Internal(_ md5: String, systemID: SystemIdentifier? = nil) throws -> [LibretroDBROMMetadata]? {
+        print("\nLibretroDB MD5 search:")
+        print("- MD5: \(md5)")
+        print("- SystemID: \(String(describing: systemID))")
+
+        let query = """
+            SELECT DISTINCT
+                games.display_name as game_title,
+                games.full_name,
+                games.release_year,
+                games.release_month,
+                developers.name as developer_name,
+                publishers.name as publisher_name,
+                ratings.name as rating_name,
+                franchises.name as franchise_name,
+                regions.name as region_name,
+                genres.name as genre_name,
+                roms.name as rom_name,
+                roms.md5 as rom_md5,
+                platforms.id as platform_id,
+                manufacturers.name as manufacturer_name,
+                GROUP_CONCAT(genres.name) as genres
+            FROM games
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            LEFT JOIN roms ON games.serial_id = roms.serial_id
+            LEFT JOIN developers ON games.developer_id = developers.id
+            LEFT JOIN publishers ON games.publisher_id = publishers.id
+            LEFT JOIN ratings ON games.rating_id = ratings.id
+            LEFT JOIN franchises ON games.franchise_id = franchises.id
+            LEFT JOIN regions ON games.region_id = regions.id
+            LEFT JOIN genres ON games.genre_id = genres.id
+            LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+            WHERE roms.md5 = '\(md5.uppercased())'
+            \(systemID != nil ? "AND games.platform_id = \(systemID!.libretroDatabaseID)" : "")
+            GROUP BY games.id
+            """
+
+        print("- Generated query: \(query)")
+        let results = try db.execute(query: query)
+        print("- Raw results: \(results)")
+
+        let metadata: [LibretroDBROMMetadata] = results.compactMap { dict in
+            try? convertDictToMetadata(dict)
+        }
+        print("- Converted metadata: \(metadata)")
+
+        return metadata.isEmpty ? nil : metadata
     }
 }
