@@ -263,7 +263,7 @@ extension SystemIdentifier {
         case .ColecoVision: return "Coleco - ColecoVision"
         case .Intellivision: return "Mattel - Intellivision"
         case .Odyssey2:     return "Magnavox - Odyssey2"
-        case ._3DO:      return "3DO - 3DO"
+        case ._3DO:      return "The 3DO Company - 3DO"
 
         // Unknown/Default
         case .Unknown:      return ""
