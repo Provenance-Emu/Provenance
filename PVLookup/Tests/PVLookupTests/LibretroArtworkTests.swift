@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+@testable import libretrodb
 @testable import PVLookup
 
 struct LibretroArtworkTests {

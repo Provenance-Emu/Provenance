@@ -92,6 +92,7 @@ public actor libretrodbActor: GlobalActor {
 /// Internal representation of ROM metadata from the libretrodb database
 internal struct LibretroDBROMMetadata: Codable {
     let gameTitle: String
+    let fullName: String?
     let releaseYear: Int?
     let releaseMonth: Int?
     let developer: String?
@@ -288,8 +289,8 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
     // MARK: - ROMMetadataProvider Implementation
 
     public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
-        let results = try searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)
-        return results?.first
+        let results: [LibretroDBROMMetadata]? = try searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)
+        return results?.first.map(convertToROMMetadata)
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [ROMMetadata]? {
@@ -323,7 +324,7 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 // MARK: - Query Methods
 public extension libretrodb {
     /// Search by MD5 or other key
-    func searchDatabase(usingKey key: String, value: String, systemID: Int?) throws -> [ROMMetadata]? {
+    internal func searchDatabase(usingKey key: String, value: String, systemID: Int?) throws -> [LibretroDBROMMetadata]? {
         // Use the platform_id directly since we're in libretrodb
         let platformID = systemID  // No conversion needed
 
@@ -346,15 +347,12 @@ public extension libretrodb {
 
         let results = try db.execute(query: query)
         return results.compactMap { dict in
-            guard let metadata = try? convertDictToMetadata(dict) else {
-                return nil
-            }
-            return convertToROMMetadata(metadata)
+            try? convertDictToMetadata(dict)
         }
     }
 
     /// Search by filename
-    func searchDatabase(usingFilename filename: String, systemID: Int?) throws -> [ROMMetadata]? {
+    internal func searchDatabase(usingFilename filename: String, systemID: Int?) throws -> [LibretroDBROMMetadata]? {
         var query = standardMetadataQuery
         let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
 
@@ -366,10 +364,7 @@ public extension libretrodb {
 
         let results = try db.execute(query: query)
         return results.compactMap { dict in
-            guard let metadata = try? convertDictToMetadata(dict) else {
-                return nil
-            }
-            return convertToROMMetadata(metadata)
+            try? convertDictToMetadata(dict)
         }
     }
 
@@ -444,6 +439,7 @@ public extension libretrodb {
     private func convertDictToMetadata(_ dict: [String: Any]) throws -> LibretroDBROMMetadata {
         return LibretroDBROMMetadata(
             gameTitle: (dict["display_name"] as? String) ?? "",
+            fullName: dict["full_name"] as? String,
             releaseYear: (dict["release_year"] as? Int),
             releaseMonth: (dict["release_month"] as? Int),
             developer: dict["developer_name"] as? String,
@@ -516,7 +512,7 @@ public extension libretrodb {
 
     /// Generate fresh artwork mappings from the database
     private func generateArtworkMappings() throws -> ArtworkMapping {
-        let results = try db.execute(query: artworkMappingQuery)
+        let results: [[String: Any]] = try db.execute(query: artworkMappingQuery)
         var romMD5: [String: [String: String]] = [:]
         var romFileNameToMD5: [String: String] = [:]
 
@@ -595,35 +591,79 @@ public extension libretrodb {
     /// - Parameter rom: ROM metadata to search with
     /// - Returns: Array of valid artwork URLs from libretro thumbnails
     public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
-        // Get libretro URLs if we have a valid system name
         let libretroDatabaseName = rom.systemID.libretroDatabaseName
         guard !libretroDatabaseName.isEmpty else {
             return nil
         }
 
-        // Try to find matching ROM in libretro database
-        let results = try searchDatabase(usingFilename: rom.romFileName)
-
         var libretroDatabaseUrls: [URL] = []
 
-        // Try with full_name first
-        if let fullName = results?.first?.fullName {
-            let urls = await LibretroArtwork.getValidURLs(
-                systemName: libretroDatabaseName,
-                gameName: fullName
-            )
-            libretroDatabaseUrls.append(contentsOf: urls)
+        // Try MD5 search first if available
+        if let md5 = rom.romHashMD5?.uppercased() {
+            let results: [LibretroDBROMMetadata]? = try searchDatabase(usingKey: "romHashMD5", value: md5, systemID: nil)
+            if let results = results {
+                // Try with full_name first
+                if let firstResult = results.first,
+                   let fullName = firstResult.fullName {
+                    let urls = await LibretroArtwork.getValidURLs(
+                        systemName: libretroDatabaseName,
+                        gameName: fullName
+                    )
+                    libretroDatabaseUrls.append(contentsOf: urls)
+                }
+
+                // If no results with full_name, try with display_name (gameTitle)
+                if libretroDatabaseUrls.isEmpty, let firstResult = results.first {
+                    let urls = await LibretroArtwork.getValidURLs(
+                        systemName: libretroDatabaseName,
+                        gameName: firstResult.gameTitle
+                    )
+                    libretroDatabaseUrls.append(contentsOf: urls)
+                }
+            }
         }
 
-        // If no results with full_name, try with display_name
-        if libretroDatabaseUrls.isEmpty, let displayName = results?.first?.displayName {
-            let urls = await LibretroArtwork.getValidURLs(
-                systemName: libretroDatabaseName,
-                gameName: displayName
-            )
-            libretroDatabaseUrls.append(contentsOf: urls)
+        // If MD5 search found no results and we have a filename, try filename search
+        if libretroDatabaseUrls.isEmpty, let filename = rom.romFileName {
+            let results: [LibretroDBROMMetadata]? = try searchDatabase(usingFilename: filename, systemID: nil)
+            if let results = results {
+                // Try with full_name first
+                if let firstResult = results.first,
+                   let fullName = firstResult.fullName {
+                    let urls = await LibretroArtwork.getValidURLs(
+                        systemName: libretroDatabaseName,
+                        gameName: fullName
+                    )
+                    libretroDatabaseUrls.append(contentsOf: urls)
+                }
+
+                // If no results with full_name, try with display_name (gameTitle)
+                if libretroDatabaseUrls.isEmpty, let firstResult = results.first {
+                    let urls = await LibretroArtwork.getValidURLs(
+                        systemName: libretroDatabaseName,
+                        gameName: firstResult.gameTitle
+                    )
+                    libretroDatabaseUrls.append(contentsOf: urls)
+                }
+            }
         }
 
         return libretroDatabaseUrls.isEmpty ? nil : libretroDatabaseUrls
+    }
+
+    /// Search by MD5 or other key
+    func searchMetadata(usingKey key: String, value: String, systemID: Int?) throws -> [ROMMetadata]? {
+        guard let results = try searchDatabase(usingKey: key, value: value, systemID: systemID) else {
+            return nil
+        }
+        return results.map(convertToROMMetadata)
+    }
+
+    /// Search by filename
+    func searchMetadata(usingFilename filename: String, systemID: Int?) throws -> [ROMMetadata]? {
+        guard let results = try searchDatabase(usingFilename: filename, systemID: systemID) else {
+            return nil
+        }
+        return results.map(convertToROMMetadata)
     }
 }

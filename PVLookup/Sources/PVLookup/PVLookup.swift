@@ -85,7 +85,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         return shiraGame
     }
 #endif
-    
+
     // MARK: - Initialization
     private init() {
         self.openVGDB = OpenVGDB()
@@ -103,7 +103,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         let openVGDBResult = try await searchDatabase(usingKey: "romHashMD5", value: upperMD5, systemID: nil)?.first
         DLOG("PVLookup: OpenVGDB result: \(String(describing: openVGDBResult))")
 
-        let libretroDatabaseResult = try libreTroDB.searchDatabase(usingKey: "romHashMD5", value: upperMD5, systemID: nil)?.first
+        let libretroDatabaseResult = try await libreTroDB.searchMetadata(usingKey: "romHashMD5", value: upperMD5, systemID: nil)?.first
         DLOG("PVLookup: LibretroDB result: \(String(describing: libretroDatabaseResult))")
 
         // If we have results from primary databases, merge them
@@ -137,7 +137,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
     public func searchDatabase(usingKey key: String, value: String, systemID: Int?) async throws -> [ROMMetadata]? {
         // Get results from both databases
         let openVGDBResults = try openVGDB.searchDatabase(usingKey: key, value: value, systemID: systemID)
-        let libretroDatabaseResults = try libreTroDB.searchDatabase(usingKey: key, value: value, systemID: systemID)
+        let libretroDatabaseResults = try await libreTroDB.searchMetadata(usingKey: key, value: value, systemID: systemID)
 
         // If we have results from both, merge them
         if let openVGDBMetadata = openVGDBResults,
@@ -156,7 +156,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemID: systemID)
         DLOG("PVLookup: OpenVGDB results: \(String(describing: openVGDBResults?.count)) matches")
 
-        let libretroDatabaseResults = try await libreTroDB.searchDatabase(usingFilename: filename, systemID: systemID)
+        let libretroDatabaseResults = try await libreTroDB.searchMetadata(usingFilename: filename, systemID: systemID)
         DLOG("PVLookup: LibretroDB results: \(String(describing: libretroDatabaseResults?.count)) matches")
 
         // If we have results from primary databases, merge them
@@ -261,7 +261,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupService {
         }
 
         // Try LibretroDB
-        if let libretroDBArtworkUrls = try libreTroDB.getArtworkURLs(forRom: rom) {
+        if let libretroDBArtworkUrls = try await libreTroDB.getArtworkURLs(forRom: rom) {
             urls.append(contentsOf: libretroDBArtworkUrls)
         }
 
