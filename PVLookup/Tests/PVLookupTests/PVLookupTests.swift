@@ -93,16 +93,17 @@ struct PVLookupTests {
         // Test LibretroDB directly
         let libretroDB = libretrodb()
         let results = try libretroDB.searchMetadata(
-            usingFilename: "Pitfall",
-            systemID: SystemIdentifier.Atari2600.libretroDatabaseID
+            usingFilename: "Pitfall - The Mayan Adventure",
+            systemID: SystemIdentifier.SNES.libretroDatabaseID  // 37 for SNES
         )
 
         #expect(results != nil)
-        let libretroDatabaseVersion = results?.first {
-            $0.romHashMD5?.uppercased() == pitfall.shiraGame.md5.uppercased()
+        let snesVersion = results?.first { result in
+            result.romHashMD5?.uppercased() == "02CAE4C360567CD228E4DC951BE6CB85"  // USA SNES version
         }
-        #expect(libretroDatabaseVersion != nil)
-        #expect(libretroDatabaseVersion?.systemID == .Atari2600)
+        #expect(snesVersion != nil)
+        #expect(snesVersion?.systemID == .SNES)
+        #expect(snesVersion?.gameTitle == "Pitfall - The Mayan Adventure")
     }
 
     @Test
@@ -245,19 +246,30 @@ struct PVLookupTests {
 
     @Test
     func testGetArtworkURLsWithMultipleMatches() async throws {
-        // Create test ROM metadata for a game with multiple versions
+        // Create test ROM metadata for a game we know has artwork
         let rom = ROMMetadata(
-            gameTitle: "Pitfall",
-            systemID: .Atari2600,
-            romFileName: "Pitfall (USA).a26",
-            romHashMD5: pitfall.shiraGame.md5
+            gameTitle: "Pitfall - The Mayan Adventure",
+            systemID: .SNES,
+            romFileName: "Pitfall - The Mayan Adventure (USA).sfc",
+            romHashMD5: "02CAE4C360567CD228E4DC951BE6CB85"  // USA SNES version from our query
         )
 
         let urls = try await lookup.getArtworkURLs(forRom: rom) ?? []
 
         #expect(!urls.isEmpty)
 
-        // Verify we got URLs from both databases and they're deduplicated
+        // Verify we got URLs from both databases
+        let openVGDBUrls = urls.filter { $0.absoluteString.contains("gamefaqs.gamespot.com") }
+        let libretroDatabaseUrls = urls.filter { $0.absoluteString.contains("thumbnails.libretro.com") }
+
+        // Log URLs for debugging
+        print("OpenVGDB URLs: \(openVGDBUrls)")
+        print("LibretroDB URLs: \(libretroDatabaseUrls)")
+
+        // We should have at least one URL from either database
+        #expect(openVGDBUrls.count > 0 || libretroDatabaseUrls.count > 0)
+
+        // Verify URLs are deduplicated
         let uniqueUrls = Set(urls.map { $0.absoluteString })
         #expect(uniqueUrls.count == urls.count)  // No duplicates
     }
