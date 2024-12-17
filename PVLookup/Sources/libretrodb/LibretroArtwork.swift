@@ -7,6 +7,22 @@ public struct LibretroArtwork {
     /// Base URL for libretro thumbnails
     private static let baseURL = "https://thumbnails.libretro.com"
 
+    /// Cache for URL validation results
+    private static let urlCache = URLCache(
+        memoryCapacity: 10 * 1024 * 1024,  // 10MB memory cache
+        diskCapacity: 50 * 1024 * 1024,    // 50MB disk cache
+        directory: nil
+    )
+
+    /// Cache duration for URL validation results
+    private static let cacheDuration: TimeInterval = 3600 // 1 hour
+
+    private let db: libretrodb
+
+    public init(db: libretrodb = .init()) {
+        self.db = db
+    }
+
     /// Constructs artwork URLs for a given system and game name
     /// - Parameters:
     ///   - systemName: Full system name (e.g. "Nintendo - Game Boy Advance")
@@ -18,19 +34,19 @@ public struct LibretroArtwork {
 
         // Check each possible type in the OptionSet
         if types.contains(.boxFront) {
-            if let url = constructURL(systemName: systemName, gameName: gameName, folder: "Named_Boxarts") {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: "Named_Boxarts") {
                 urls.append(url)
             }
         }
 
         if types.contains(.titleScreen) {
-            if let url = constructURL(systemName: systemName, gameName: gameName, folder: "Named_Titles") {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: "Named_Titles") {
                 urls.append(url)
             }
         }
 
         if types.contains(.screenshot) {
-            if let url = constructURL(systemName: systemName, gameName: gameName, folder: "Named_Snaps") {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: "Named_Snaps") {
                 urls.append(url)
             }
         }
@@ -45,19 +61,37 @@ public struct LibretroArtwork {
         return URL(string: urlString ?? "")
     }
 
-    /// Validates if a URL exists by performing a HEAD request
-    /// - Parameter url: URL to validate
-    /// - Returns: True if URL returns 200 status code
+    /// Validates if a URL exists with caching
     public static func validateURL(_ url: URL) async -> Bool {
+        // Check cache first
+        let cacheRequest = URLRequest(url: url)
+        if let cachedResponse = urlCache.cachedResponse(for: cacheRequest),
+           cachedResponse.response is HTTPURLResponse {
+            return true
+        }
+
+        // If not in cache, perform HEAD request
         var request = URLRequest(url: url)
         request.httpMethod = "HEAD"
 
         do {
             let (_, response) = try await URLSession.shared.data(for: request)
-            return (response as? HTTPURLResponse)?.statusCode == 200
+            if let httpResponse = response as? HTTPURLResponse,
+               httpResponse.statusCode == 200 {
+                // Cache successful responses
+                let cachedResponse = CachedURLResponse(
+                    response: response,
+                    data: Data(),
+                    userInfo: nil,
+                    storagePolicy: .allowed
+                )
+                urlCache.storeCachedResponse(cachedResponse, for: request)
+                return true
+            }
         } catch {
             return false
         }
+        return false
     }
 
     /// Gets valid artwork URLs for a given system and game name
@@ -109,31 +143,66 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
         systemID: SystemIdentifier?,
         artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
-        // Use default types if none specified
         let types = artworkTypes ?? .defaults
         let systemName = systemID?.libretroDatabaseName ?? ""
 
-        // Construct and validate URLs
-        let urls = LibretroArtwork.constructURLs(systemName: systemName, gameName: name, types: types)
-        var validArtwork: [ArtworkMetadata] = []
+        // Get a limited set of matching games
+        let results = try db.searchMetadata(
+            usingFilename: name,
+            systemID: systemID
+        )
+        guard let games = results else { return nil }
 
-        for url in urls {
-            if await LibretroArtwork.validateURL(url) {
-                // Determine artwork type from URL path
-                let type = ArtworkType.fromLibretroPath(url.path)
+        // Limit results after the fact if needed
+        let limitedGames = Array(games.prefix(10))
 
-                validArtwork.append(ArtworkMetadata(
-                    url: url,
-                    type: type,
-                    resolution: nil,
-                    description: nil,
-                    source: "LibretroThumbnails",
-                    systemID: systemID
-                ))
+        // Batch URL construction and validation
+        let allURLs = limitedGames.flatMap { game -> [(URL, ArtworkType, ROMMetadata)] in
+            let gameName = game.romFileName?.deletingPathExtension() ?? ""
+            let systemFolder = game.systemID.libretroDatabaseName
+                .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? ""
+
+            // Create array of types to iterate
+            let typeArray: [ArtworkType] = [.boxFront, .titleScreen, .screenshot]
+            let selectedTypes = typeArray.filter { types.contains($0) }
+
+            return selectedTypes.compactMap { type -> (URL, ArtworkType, ROMMetadata)? in
+                let folder = type.libretroDatabaseFolder
+                guard
+                      let url = Self.constructURL(systemName: systemFolder, gameName: gameName, folder: folder) else {
+                    return nil
+                }
+                return (url, type, game)
             }
         }
 
-        return validArtwork.isEmpty ? nil : validArtwork
+        // Validate URLs in parallel
+        let validResults = await withTaskGroup(of: (URL, ArtworkType, ROMMetadata, Bool).self) { group in
+            for (url, type, metadata) in allURLs {
+                group.addTask {
+                    let isValid = await LibretroArtwork.validateURL(url)
+                    return (url, type, metadata, isValid)
+                }
+            }
+
+            var results: [(URL, ArtworkType, ROMMetadata)] = []
+            for await (url, type, metadata, isValid) in group where isValid {
+                results.append((url, type, metadata))
+            }
+            return results
+        }
+
+        // Convert to ArtworkMetadata
+        return validResults.map { url, type, metadata in
+            ArtworkMetadata(
+                url: url,
+                type: type,
+                resolution: nil,
+                description: metadata.gameTitle,
+                source: "LibretroThumbnails",
+                systemID: metadata.systemID
+            )
+        }
     }
 
     /// Get artwork for a specific game ID
