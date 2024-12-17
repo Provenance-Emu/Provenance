@@ -149,12 +149,9 @@ struct ArtworkSearchView: View {
         errorMessage = nil
         artworkResults.removeAll()
 
-        // TODO: Implement actual search using PVLookup
-        // This is just a placeholder
         do {
-            // Example implementation:
-            let service = TheGamesDBService()
-            if let results = try await service.searchArtwork(
+            // Use PVLookup.shared instead of TheGamesDBService directly
+            if let results = try await PVLookup.shared.searchArtwork(
                 byGameName: searchText,
                 systemID: selectedSystem,
                 artworkTypes: selectedTypes
