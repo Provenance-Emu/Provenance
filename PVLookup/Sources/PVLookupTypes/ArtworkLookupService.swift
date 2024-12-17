@@ -69,4 +69,7 @@ public protocol ArtworkLookupService: Sendable {
         forGameID gameID: String,
         artworkTypes: [ArtworkType]?
     ) async throws -> [ArtworkMetadata]?
+    
+    /// Get possible URLs for a ROM
+    func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]?
 }

@@ -3,7 +3,7 @@ import Foundation
 /// Protocol defining TheGamesDB API client interface
 protocol TheGamesDBClient: Actor {
     func searchGames(name: String, platformID: Int?) async throws -> GamesResponse
-    func getGameImages(gameID: String, types: [String]?) async throws -> ImagesResponse
+    func getGameImages(gameID: String?, types: [String]?) async throws -> ImagesResponse
 }
 
 /// Default implementation of TheGamesDB API client
@@ -50,8 +50,8 @@ actor TheGamesDBClientImpl: TheGamesDBClient {
     }
 
     /// Get game images
-    func getGameImages(gameID: String, types: [String]? = nil) async throws -> ImagesResponse {
-        var params = ["games_id": gameID]
+    func getGameImages(gameID: String?, types: [String]? = nil) async throws -> ImagesResponse {
+        var params = ["games_id": gameID ?? ""]
         if let types = types {
             params["filter[type]"] = types.joined(separator: ",")
         }

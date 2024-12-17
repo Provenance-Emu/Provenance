@@ -25,7 +25,7 @@ actor OpenVGDBActor:GlobalActor
     }
 }
 
-public final class OpenVGDB {
+public final class OpenVGDB: ArtworkLookupOfflineService, @unchecked Sendable {
 
     /// Legacy connection
     private let vgdb: PVSQLiteDatabase
@@ -465,9 +465,12 @@ private extension OpenVGDB {
         )
     }
 
-    private func convertToROMMetadata(_ dict: [String: Any], systemID: Int) -> ROMMetadata {
+    private func convertToROMMetadata(_ dict: SQLQueryDict) -> ROMMetadata? {
         // Convert systemID to SystemIdentifier
-        let systemIdentifier = SystemIdentifier.fromOpenVGDBID(systemID) ?? .Unknown
+        guard let systemIDInt = (dict["systemID"] as? NSNumber)?.intValue,
+              let systemIdentifier = SystemIdentifier.fromOpenVGDBID(systemIDInt) else {
+            return nil
+        }
 
         return ROMMetadata(
             gameTitle: (dict["gameTitle"] as? String) ?? "",
@@ -481,10 +484,10 @@ private extension OpenVGDB {
             releaseDate: dict["releaseDate"] as? String,
             genres: dict["genres"] as? String,
             referenceURL: dict["referenceURL"] as? String,
-            releaseID: dict["releaseID"] as? String,
+            releaseID: (dict["releaseID"] as? NSNumber)?.stringValue,
             language: dict["language"] as? String,
             regionID: (dict["regionID"] as? NSNumber)?.intValue,
-            systemID: systemIdentifier,  // Now using SystemIdentifier
+            systemID: systemIdentifier,
             systemShortName: dict["systemShortName"] as? String,
             romFileName: dict["romFileName"] as? String,
             romHashCRC: dict["romHashCRC"] as? String,
@@ -492,5 +495,112 @@ private extension OpenVGDB {
             romID: (dict["romID"] as? NSNumber)?.intValue,
             source: "OpenVGDB"
         )
+    }
+}
+
+extension OpenVGDB {
+    /// Search for artwork by game name and system
+    public func searchArtwork(
+        byGameName name: String,
+        systemID: SystemIdentifier?,
+        artworkTypes: [ArtworkType]?
+    ) async throws -> [ArtworkMetadata]? {
+        // Search for games matching the name
+        let results = try searchDatabase(usingFilename: name, systemID: systemID)
+
+        // Convert matching games' artwork URLs to ArtworkMetadata
+        var artworks: [ArtworkMetadata] = []
+
+        if let results = results {
+            for result in results {
+                // Get artwork URLs for this game
+                if let urls = try getArtworkURLs(forRom: result) {
+                    // Convert URLs to ArtworkMetadata
+                    for url in urls {
+                        // Determine artwork type from URL path
+                        let type: ArtworkType = if url.path.contains("front") {
+                            .boxFront
+                        } else if url.path.contains("back") {
+                            .boxBack
+                        } else if url.path.contains("screenshot") {
+                            .screenshot
+                        } else {
+                            .other
+                        }
+
+                        // Only include requested types
+                        if artworkTypes?.contains(type) ?? true {
+                            artworks.append(ArtworkMetadata(
+                                url: url,
+                                type: type,
+                                resolution: nil,
+                                description: nil,
+                                source: "OpenVGDB"
+                            ))
+                        }
+                    }
+                }
+            }
+        }
+
+        return artworks.isEmpty ? nil : artworks
+    }
+
+    /// Get artwork for a specific game ID
+    public func getArtwork(
+        forGameID gameID: String,
+        artworkTypes: [ArtworkType]?
+    ) async throws -> [ArtworkMetadata]? {
+        // In OpenVGDB, we can use the romID as gameID
+        guard let romID = Int(gameID) else { return nil }
+
+        // Search for ROM by ID
+        let query = """
+            SELECT DISTINCT
+                release.releaseCoverFront,
+                release.releaseCoverBack,
+                release.releaseCoverCart,
+                release.releaseCoverDisc,
+                rom.*
+            FROM ROMs rom
+            JOIN RELEASES release ON rom.romID = release.romID
+            WHERE rom.romID = \(romID)
+        """
+
+        let results = try vgdb.execute(query: query)
+        guard let result = results.first,
+              let metadata = convertToROMMetadata(result) else { return nil }
+
+        // Get artwork URLs
+        guard let urls = try getArtworkURLs(forRom: metadata) else { return nil }
+
+        // Convert URLs to ArtworkMetadata
+        var artworks: [ArtworkMetadata] = []
+
+        for url in urls {
+            // Determine artwork type from URL path
+            let type: ArtworkType = if url.path.contains("front") {
+                .boxFront
+            } else if url.path.contains("back") {
+                .boxBack
+            } else if url.path.contains("screenshot") {
+                .screenshot
+            } else {
+                .other
+            }
+
+            // Only include requested types
+            if artworkTypes?.contains(type) ?? true {
+                artworks.append(ArtworkMetadata(
+                    url: url,
+                    type: type,
+                    resolution: nil,
+                    description: nil,
+                    source: "OpenVGDB"
+                ))
+            }
+        }
+
+        return artworks.isEmpty ? nil : artworks
     }
 }

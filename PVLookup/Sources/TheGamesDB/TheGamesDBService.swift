@@ -12,7 +12,9 @@ public enum TheGamesDBServiceError: Error {
 }
 
 /// Service for accessing TheGamesDB API
-public final class TheGamesDBService: ArtworkLookupService {
+public final class TheGamesDBService: ArtworkLookupOnlineService {
+
+
     private let client: any TheGamesDBClient
 
     /// Create a new instance of TheGamesDBService
@@ -32,19 +34,53 @@ public final class TheGamesDBService: ArtworkLookupService {
         systemID: SystemIdentifier?,
         artworkTypes: [ArtworkType]?
     ) async throws -> [ArtworkMetadata]? {
-        // Search for game
+        // Search for games
         let response = try await client.searchGames(
             name: name,
             platformID: systemID?.theGamesDBID
         )
 
-        // Get first matching game
-        guard let game = response.data.games.first else {
+        // No games found
+        if response.data.games.isEmpty {
             return nil
         }
 
-        // Get artwork for this game
-        return try await getArtwork(forGameID: "\(game.id)", artworkTypes: artworkTypes)
+        // Get artwork for each game
+        var allArtwork: [ArtworkMetadata] = []
+        for game in response.data.games {
+            let gameID = "\(game.id)"
+            if let gameArtwork = try await getArtwork(
+                forGameID: gameID,
+                artworkTypes: artworkTypes
+            ) {
+                // Sort artwork within this game's results
+                let sortedGameArtwork = sortArtworkByType(gameArtwork)
+                allArtwork.append(contentsOf: sortedGameArtwork)
+            }
+        }
+
+        return allArtwork.isEmpty ? nil : allArtwork
+    }
+
+    // Helper function to sort artwork by type priority
+    private func sortArtworkByType(_ artwork: [ArtworkMetadata]) -> [ArtworkMetadata] {
+        let priority: [ArtworkType] = [
+            .boxFront,    // Front cover is highest priority
+            .boxBack,     // Back cover next
+            .screenshot,  // Screenshots
+            .titleScreen, // Title screens
+            .clearLogo,  // Clear logos
+            .banner,     // Banners
+            .fanArt,     // Fan art
+            .manual,     // Manuals
+            .other       // Other types last
+        ]
+
+        return artwork.sorted { a, b in
+            let aIndex = priority.firstIndex(of: a.type) ?? priority.count
+            let bIndex = priority.firstIndex(of: b.type) ?? priority.count
+            return aIndex < bIndex
+        }
     }
 
     public func getArtwork(
@@ -60,6 +96,7 @@ public final class TheGamesDBService: ArtworkLookupService {
         var artworks: [ArtworkMetadata] = []
         let baseURL = response.data.base_url.original
 
+        // Iterate through all image types in the response
         for (_, images) in response.data.images {
             for image in images {
                 if let url = URL(string: baseURL + image.filename),
@@ -78,6 +115,53 @@ public final class TheGamesDBService: ArtworkLookupService {
         }
 
         return artworks.isEmpty ? nil : artworks
+    }
+
+    /// Gets artwork URLs for a ROM by searching TheGamesDB
+    /// - Parameter rom: ROM metadata to search with
+    /// - Returns: Array of artwork URLs, or nil if none found
+    public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+        let gameTitle = rom.gameTitle
+        // First try searching by game name if we have one
+        if !gameTitle.isEmpty {
+            let artwork = try await searchArtwork(
+                byGameName: gameTitle,
+                systemID: rom.systemID,
+                artworkTypes: nil  // Get all artwork types
+            )
+
+            // Sort artwork and return URLs
+            if let artwork = artwork {
+                let sortedArtwork = sortArtworkByType(artwork)
+                let urls = sortedArtwork.map(\.url)
+                if !urls.isEmpty {
+                    return urls
+                }
+            }
+        }
+
+        // If we have a filename but no results from title search, try with filename
+        if let filename = rom.romFileName, !filename.isEmpty {
+            // Strip extension and common ROM notation like (USA), [!], etc
+            let cleanName = (filename as NSString).deletingPathExtension
+                .replacingOccurrences(of: "\\s*\\([^)]*\\)|\\s*\\[[^\\]]*\\]",
+                                    with: "",
+                                    options: [.regularExpression])
+
+            let artwork = try await searchArtwork(
+                byGameName: cleanName,
+                systemID: rom.systemID,
+                artworkTypes: nil
+            )
+
+            // Sort artwork and return URLs
+            if let artwork = artwork {
+                let sortedArtwork = sortArtworkByType(artwork)
+                return sortedArtwork.map { $0.url }
+            }
+        }
+
+        return nil
     }
 }
 

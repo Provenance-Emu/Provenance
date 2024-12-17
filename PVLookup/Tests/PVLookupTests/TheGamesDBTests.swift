@@ -66,42 +66,44 @@ struct TheGamesDBTests {
 }
 
 // MARK: - Mock Client
-private actor MockTheGamesDBClient {
-    func searchGames(name: String, platformID: String?) async throws -> GamesResponse {
-        // Return mock data for Super Mario World
+private actor MockTheGamesDBClient: TheGamesDBClient {
+    func searchGames(name: String, platformID: Int?) async throws -> GamesResponse {
+        // Return mock game data
         return GamesResponse(
             code: 200,
             status: "Success",
             data: .init(games: [
-                Game(
+                .init(
                     id: 1,
                     game_title: "Super Mario World",
-                    platform: 6  // SNES
+                    platform: platformID ?? 6  // SNES platform ID
+                ),
+                .init(
+                    id: 2,
+                    game_title: "Super Mario World 2: Yoshi's Island",
+                    platform: platformID ?? 6
                 )
             ])
         )
     }
 
-    func getGameImages(gameID: String, types: [String]?) async throws -> ImagesResponse {
-        // Filter images based on requested types
-        var images: [String: [GameImage]] = [:]
-
-        // Base set of available images
-        let allImages = [
+    func getGameImages(gameID: String?, types: [String]?) async throws -> ImagesResponse {
+        // Return mock image data
+        let allImages: [String: [GameImage]] = [
             "boxart": [
                 GameImage(
                     id: 1,
                     type: "boxart",
                     side: "front",
-                    filename: "boxart/front/1-1.jpg",
-                    resolution: "1024x1024"
+                    filename: "boxart/1-1.jpg",
+                    resolution: "2048x2048"
                 ),
                 GameImage(
                     id: 2,
                     type: "boxart",
                     side: "back",
-                    filename: "boxart/back/1-1.jpg",
-                    resolution: "1024x1024"
+                    filename: "boxart/1-2.jpg",
+                    resolution: "2048x2048"
                 )
             ],
             "screenshot": [
@@ -115,17 +117,13 @@ private actor MockTheGamesDBClient {
             ]
         ]
 
+        var images: [String: [GameImage]] = [:]
+
         // If types are specified, only return those types
         if let types = types {
             for type in types {
                 if let typeImages = allImages[type] {
-                    // For boxart, check if we need to filter by side
-                    if type == "boxart" {
-                        // Only include front boxart
-                        images[type] = typeImages.filter { $0.side == "front" }
-                    } else {
-                        images[type] = typeImages
-                    }
+                    images[type] = typeImages
                 }
             }
         } else {
@@ -147,6 +145,3 @@ private actor MockTheGamesDBClient {
         )
     }
 }
-
-// MARK: - TheGamesDBClient Protocol
-extension MockTheGamesDBClient: TheGamesDBClient {}

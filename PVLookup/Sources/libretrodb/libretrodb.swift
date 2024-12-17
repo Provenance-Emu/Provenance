@@ -789,3 +789,65 @@ public extension libretrodb {
         return metadata.isEmpty ? nil : metadata
     }
 }
+
+extension libretrodb {
+    /// Search for artwork by game name and system
+    public func searchArtwork(
+        byGameName name: String,
+        systemID: SystemIdentifier?,
+        artworkTypes: [ArtworkType]?
+    ) async throws -> [ArtworkMetadata]? {
+        // Search for games matching the name
+        let results = try searchMetadata(usingFilename: name, systemID: systemID)
+
+        // Convert matching games' artwork URLs to ArtworkMetadata
+        var artworks: [ArtworkMetadata] = []
+
+        if let results = results {
+            for result in results {
+                // Get artwork URLs for this game
+                if let urls = try await getArtworkURLs(forRom: result) {
+                    // Convert URLs to ArtworkMetadata
+                    for url in urls {
+                        // Determine artwork type from URL path
+                        let type: ArtworkType = if url.path.contains("Named_Boxarts") {
+                            .boxFront
+                        } else if url.path.contains("Named_Titles") {
+                            .titleScreen
+                        } else if url.path.contains("Named_Snaps") {
+                            .screenshot
+                        } else {
+                            .other
+                        }
+
+                        // Only include requested types
+                        if artworkTypes?.contains(type) ?? true {
+                            artworks.append(ArtworkMetadata(
+                                url: url,
+                                type: type,
+                                resolution: nil,
+                                description: nil,
+                                source: "LibretroDB"
+                            ))
+                        }
+                    }
+                }
+            }
+        }
+
+        return artworks.isEmpty ? nil : artworks
+    }
+
+    /// Get artwork for a specific game ID
+    public func getArtwork(
+        forGameID gameID: String,
+        artworkTypes: [ArtworkType]?
+    ) async throws -> [ArtworkMetadata]? {
+        // In LibretroDB, we can search by game name since we don't use IDs
+        return try await searchArtwork(
+            byGameName: gameID,
+            systemID: nil,
+            artworkTypes: artworkTypes
+        )
+    }
+}
