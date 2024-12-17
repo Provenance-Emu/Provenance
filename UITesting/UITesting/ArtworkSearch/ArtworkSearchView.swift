@@ -7,29 +7,54 @@ import TheGamesDB
 struct ArtworkSearchView: View {
     @State private var searchText = ""
     @State private var selectedSystem: SystemIdentifier?
-    @State private var searchMode: ArtworkSearchMode = .both
     @State private var artworkResults: [ArtworkMetadata] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @Environment(\.sampleArtworkResults) private var sampleResults
+    @State private var collapsedGroups: Set<String> = Set()
 
     let onSelect: (ArtworkSelectionData) -> Void
 
-    var body: some View {
-        VStack {
-            // Search controls
-            searchControls
+    // Use sample results in preview
+    private var displayResults: [ArtworkMetadata] {
+        #if DEBUG
+        return !sampleResults.isEmpty ? sampleResults : artworkResults
+        #else
+        return artworkResults
+        #endif
+    }
 
-            // Results grid
-            if isLoading {
-                ProgressView()
-            } else if let error = errorMessage {
-                Text(error)
-                    .foregroundColor(.red)
-            } else {
-                artworkGrid
+    // Group results by source domain
+    private var groupedResults: [(String, [ArtworkMetadata])] {
+        Dictionary(grouping: displayResults) { artwork in
+            artwork.url.host ?? "Unknown Source"
+        }
+        .sorted { $0.key < $1.key }
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Search controls - always at top
+            searchControls
+                .padding()
+
+            // Results area with fixed spacing
+            VStack {
+                if isLoading {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                } else if let error = errorMessage {
+                    Spacer()
+                    Text(error)
+                        .foregroundColor(.red)
+                    Spacer()
+                } else {
+                    artworkGrid
+                }
             }
         }
-        .padding()
+        .background(Color(uiColor: .systemBackground))
     }
 
     private var searchControls: some View {
@@ -51,35 +76,65 @@ struct ArtworkSearchView: View {
                 Text("System:")
                 Picker("System", selection: $selectedSystem) {
                     Text("Any").tag(nil as SystemIdentifier?)
-                    ForEach(SystemIdentifier.allCases.sorted { $0.rawValue < $1.rawValue }, id: \.self) { system in
-                        Text(system.rawValue)
+                    ForEach(SystemIdentifier.allCases.filter{!$0.libretroDatabaseName.isEmpty}.sorted {
+                        $0.libretroDatabaseName < $1.libretroDatabaseName
+                    }, id: \.self) { system in
+                        Text(system.libretroDatabaseName)
                             .tag(Optional(system))
                     }
                 }
+                Spacer()
             }
-
-            // Search mode selector
-            Picker("Search Mode", selection: $searchMode) {
-                Text("Offline").tag(ArtworkSearchMode.offline)
-                Text("Online").tag(ArtworkSearchMode.online)
-                Text("Both").tag(ArtworkSearchMode.both)
-            }
-            .pickerStyle(.segmented)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
     private var artworkGrid: some View {
         ScrollView {
-            LazyVGrid(columns: [
-                GridItem(.adaptive(minimum: 150, maximum: 200))
-            ], spacing: 20) {
-                ForEach(artworkResults, id: \.url) { artwork in
-                    ArtworkGridItem(artwork: artwork) { selectionData in
-                        onSelect(selectionData)
+            LazyVStack(spacing: 20) {
+                ForEach(groupedResults, id: \.0) { source, artworks in
+                    VStack(alignment: .leading, spacing: 8) {
+                        // Collapsible header
+                        Button {
+                            withAnimation {
+                                if collapsedGroups.contains(source) {
+                                    collapsedGroups.remove(source)
+                                } else {
+                                    collapsedGroups.insert(source)
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text(source)
+                                    .font(.headline)
+                                Spacer()
+                                Image(systemName: collapsedGroups.contains(source) ? "chevron.right" : "chevron.down")
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal)
+
+                        // Collapsible content - show if NOT collapsed
+                        if !collapsedGroups.contains(source) {
+                            LazyVGrid(columns: [
+                                GridItem(.adaptive(minimum: 150, maximum: 200))
+                            ], spacing: 20) {
+                                ForEach(artworks, id: \.url) { artwork in
+                                    ArtworkGridItem(artwork: artwork) { selectionData in
+                                        onSelect(selectionData)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                        }
                     }
+
+                    Divider()
                 }
             }
-            .padding()
+            .padding(.vertical)
         }
     }
 
@@ -170,3 +225,58 @@ struct ArtworkGridItem: View {
         }
     }
 }
+
+#if DEBUG
+// Environment key for sample data
+private struct SampleArtworkResultsKey: EnvironmentKey {
+    static let defaultValue: [ArtworkMetadata] = []
+}
+
+extension EnvironmentValues {
+    var sampleArtworkResults: [ArtworkMetadata] {
+        get { self[SampleArtworkResultsKey.self] }
+        set { self[SampleArtworkResultsKey.self] = newValue }
+    }
+}
+
+#Preview("Artwork Search") {
+    NavigationView {
+        ArtworkSearchView { selection in
+            print("Preview selected artwork: \(selection.metadata.url)")
+        }
+        .navigationTitle("Artwork Search")
+    }
+}
+
+#Preview("Artwork Search - With Results") {
+    NavigationView {
+        ArtworkSearchView { selection in
+            print("Preview selected artwork: \(selection.metadata.url)")
+        }
+        .navigationTitle("Artwork Search")
+    }
+    .environment(\.sampleArtworkResults, [
+        ArtworkMetadata(
+            url: URL(string: "https://cdn.thegamesdb.net/images/original/boxart/front/136-1.jpg")!,
+            type: .boxFront,
+            resolution: "2100x1500",
+            description: nil,
+            source: "TheGamesDB"
+        ),
+        ArtworkMetadata(
+            url: URL(string: "https://cdn.thegamesdb.net/images/original/screenshot/136-1.jpg")!,
+            type: .screenshot,
+            resolution: "1920x1080",
+            description: nil,
+            source: "TheGamesDB"
+        ),
+        ArtworkMetadata(
+            url: URL(string: "https://retrodb.net/images/boxart/snes/super-mario-world.jpg")!,
+            type: .boxFront,
+            resolution: "800x600",
+            description: nil,
+            source: "LibretroDB"
+        )
+    ])
+}
+#endif

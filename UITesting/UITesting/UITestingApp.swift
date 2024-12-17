@@ -156,8 +156,9 @@ struct UITestingApp: App {
                         showArtworkSearch = false
                     }
                     .navigationTitle("Artwork Search")
+                    .background(Color(uiColor: .systemBackground))
                 }
-                .presentationBackground(.clear)
+                .presentationBackground(Color(uiColor: .systemBackground))
             }
             .onAppear {
 #if canImport(FreemiumKit)
