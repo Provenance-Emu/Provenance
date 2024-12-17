@@ -87,7 +87,6 @@ public final class TheGamesDBService: ArtworkLookupOnlineService {
         forGameID gameID: String,
         artworkTypes: [ArtworkType]?
     ) async throws -> [ArtworkMetadata]? {
-        // Convert our types to TheGamesDB types and filter out empty strings
         let types = artworkTypes?.compactMap { $0.theGamesDBType }
             .filter { !$0.isEmpty }
 
@@ -96,12 +95,29 @@ public final class TheGamesDBService: ArtworkLookupOnlineService {
         var artworks: [ArtworkMetadata] = []
         let baseURL = response.data.base_url.original
 
-        // Iterate through all image types in the response
-        for (_, images) in response.data.images {
+        // Process boxart first
+        for (_, images) in response.data.imagesDictionary {  // Use imagesDictionary property
             for image in images {
+                if image.type == "boxart",
+                   let url = URL(string: baseURL + image.filename),
+                   let type = ArtworkType(fromTheGamesDB: image.type, side: image.side),
+                   artworkTypes?.contains(type) ?? true {
+                    artworks.append(ArtworkMetadata(
+                        url: url,
+                        type: type,
+                        resolution: image.resolution,
+                        description: nil,
+                        source: "TheGamesDB"
+                    ))
+                }
+            }
+        }
+
+        // Then process other types
+        for (_, images) in response.data.imagesDictionary {  // Use imagesDictionary property
+            for image in images where image.type != "boxart" {
                 if let url = URL(string: baseURL + image.filename),
                    let type = ArtworkType(fromTheGamesDB: image.type, side: image.side),
-                   // Only include artwork of requested types
                    artworkTypes?.contains(type) ?? true {
                     artworks.append(ArtworkMetadata(
                         url: url,
