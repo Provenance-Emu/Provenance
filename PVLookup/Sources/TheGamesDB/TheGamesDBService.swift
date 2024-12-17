@@ -44,35 +44,40 @@ public final class TheGamesDBService: ArtworkLookupOnlineService {
             return nil
         }
 
-        // Get artwork for first game match
-        let gameID = String(games[0].id)
-        let imagesResponse = try await client.getGameImages(gameID: gameID, types: nil)
+        var allArtworkMetadata: [ArtworkMetadata] = []
 
-        var artworkMetadata: [ArtworkMetadata] = []
-        let baseURL = imagesResponse.data.base_url.original
+        // Get artwork for all games in first page
+        for game in games {
+            let gameID = String(game.id)
+            let imagesResponse = try await client.getGameImages(gameID: gameID, types: nil)
+            let baseURL = imagesResponse.data.base_url.original
 
-        // Process images
-        for (_, images) in imagesResponse.data.imagesDictionary {
-            for image in images {
-                if let url = URL(string: baseURL + image.filename),
-                   let type = ArtworkType(fromTheGamesDB: image.type, side: image.side),
-                   artworkTypes?.contains(type) ?? true {
-                    let systemID = SystemIdentifier(theGamesDBID: games[0].platform)  // Use our new initializer that handles Int?
-                    artworkMetadata.append(
-                        ArtworkMetadata(
-                            url: url,
-                            type: type,
-                            resolution: image.resolution,
-                            description: games[0].game_title,  // Add game title as description
-                            source: "TheGamesDB",
-                            systemID: systemID
+            // Process images
+            for (_, images) in imagesResponse.data.imagesDictionary {
+                for image in images {
+                    if let url = URL(string: baseURL + image.filename),
+                       let type = ArtworkType(fromTheGamesDB: image.type, side: image.side),
+                       artworkTypes?.contains(type) ?? true {
+                        let systemID = SystemIdentifier(theGamesDBID: game.platform)
+                        allArtworkMetadata.append(
+                            ArtworkMetadata(
+                                url: url,
+                                type: type,
+                                resolution: image.resolution,
+                                description: game.game_title,
+                                source: "TheGamesDB",
+                                systemID: systemID
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
 
-        return artworkMetadata.isEmpty ? nil : artworkMetadata
+        // TODO: Handle pagination if needed
+        // if let nextPage = gamesResponse.pages.next { ... }
+
+        return allArtworkMetadata.isEmpty ? nil : allArtworkMetadata
     }
 
     // Helper function to sort artwork by type priority
@@ -100,12 +105,8 @@ public final class TheGamesDBService: ArtworkLookupOnlineService {
         forGameID gameID: String,
         artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
-        // Fix: Convert single string to array with one element if not empty
-        let types: [String]? = if let type = artworkTypes?.theGamesDBType, !type.isEmpty {
-            [type]
-        } else {
-            nil
-        }
+        // Convert OptionSet to array of TheGamesDB types
+        let types = artworkTypes?.theGamesDBTypes
 
         let response = try await client.getGameImages(gameID: gameID, types: types)
 
@@ -230,6 +231,29 @@ private extension ArtworkType {
         case .other: return ""
         default: return ""  // Make switch exhaustive
         }
+    }
+
+    var theGamesDBTypes: [String] {
+        var types: [String] = []
+        if self.contains(.boxFront) || self.contains(.boxBack) {
+            types.append("boxart")
+        }
+        if self.contains(.fanArt) {
+            types.append("fanart")
+        }
+        if self.contains(.banner) {
+            types.append("banner")
+        }
+        if self.contains(.screenshot) {
+            types.append("screenshot")
+        }
+        if self.contains(.clearLogo) {
+            types.append("clearlogo")
+        }
+        if self.contains(.titleScreen) {
+            types.append("titlescreen")
+        }
+        return types
     }
 }
 

@@ -28,3 +28,22 @@ public struct ArtworkType: OptionSet, Codable, Sendable, Hashable {
     /// Default set of artwork types
     public static let defaults: ArtworkType = [.boxFront, .titleScreen, .screenshot]
 }
+
+
+// Helper for display names
+public extension ArtworkType {
+    var displayName: String {
+        switch self {
+        case .boxFront: return "Box Front"
+        case .boxBack: return "Box Back"
+        case .screenshot: return "Screenshot"
+        case .titleScreen: return "Title Screen"
+        case .clearLogo: return "Clear Logo"
+        case .banner: return "Banner"
+        case .fanArt: return "Fan Art"
+        case .manual: return "Manual"
+        case .other: return "Other"
+        default: return "Unknown"
+        }
+    }
+}

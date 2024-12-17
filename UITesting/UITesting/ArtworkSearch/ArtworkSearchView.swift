@@ -12,6 +12,7 @@ struct ArtworkSearchView: View {
     @State private var errorMessage: String?
     @Environment(\.sampleArtworkResults) private var sampleResults
     @State private var collapsedGroups: Set<String> = Set()
+    @State private var selectedTypes: ArtworkType = .defaults
 
     let onSelect: (ArtworkSelectionData) -> Void
 
@@ -58,7 +59,7 @@ struct ArtworkSearchView: View {
     }
 
     private var searchControls: some View {
-        VStack {
+        VStack(spacing: 12) {
             // Search bar
             HStack {
                 Image(systemName: "magnifyingglass")
@@ -85,8 +86,11 @@ struct ArtworkSearchView: View {
                 }
                 Spacer()
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+
+            // New artwork type selector
+            ArtworkTypeSelector(selectedTypes: $selectedTypes)
         }
+        .padding()
     }
 
     private var artworkGrid: some View {
@@ -153,7 +157,7 @@ struct ArtworkSearchView: View {
             if let results = try await service.searchArtwork(
                 byGameName: searchText,
                 systemID: selectedSystem,
-                artworkTypes: [.boxFront, .screenshot]
+                artworkTypes: selectedTypes
             ) {
                 artworkResults = results
             }
@@ -202,7 +206,7 @@ struct ArtworkGridItem: View {
                 }
 
                 HStack {
-                    Text(artwork.type.rawValue)
+                    Text(artwork.type.displayName)
                         .font(.caption)
 
                     if showSystem, let system = artwork.systemID?.libretroDatabaseName {
@@ -245,6 +249,67 @@ struct ArtworkGridItem: View {
             }
         } catch {
             print("Error loading image: \(error)")
+        }
+    }
+}
+
+// Add this new view for artwork type selection
+struct ArtworkTypeSelector: View {
+    @Binding var selectedTypes: ArtworkType
+
+    private let allTypes: [ArtworkType] = [
+        .boxFront, .boxBack, .screenshot, .titleScreen,
+        .clearLogo, .banner, .fanArt, .manual
+    ]
+
+    // Helper to count selected types
+    private var selectedCount: Int {
+        allTypes.filter { selectedTypes.contains($0) }.count
+    }
+
+    var body: some View {
+        Menu {
+            ForEach(allTypes, id: \.rawValue) { type in
+                Button {
+                    if selectedTypes.contains(type) {
+                        selectedTypes.remove(type)
+                    } else {
+                        selectedTypes.insert(type)
+                    }
+                } label: {
+                    HStack {
+                        Text(type.displayName)
+                        if selectedTypes.contains(type) {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }
+
+            Divider()
+
+            Button("Select All") {
+                selectedTypes = ArtworkType(allTypes)
+            }
+
+            Button("Clear All") {
+                selectedTypes = []
+            }
+
+            Button("Reset to Defaults") {
+                selectedTypes = .defaults
+            }
+        } label: {
+            HStack {
+                Text("Artwork Types")
+                Image(systemName: "chevron.up.chevron.down")
+                Spacer()
+                // Show count of selected types using our helper
+                if selectedCount > 0 {
+                    Text("\(selectedCount) selected")
+                        .foregroundColor(.secondary)
+                }
+            }
         }
     }
 }
