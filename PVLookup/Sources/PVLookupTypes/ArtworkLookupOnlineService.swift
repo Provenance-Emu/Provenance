@@ -9,5 +9,6 @@ import PVSystems
 
 /// Protocol for artwork lookup operations that require an online connection
 public protocol ArtworkLookupOnlineService: ArtworkLookupService {
-    func searchArtwork(byGameName name: String, systemID: SystemIdentifier?, artworkTypes: [ArtworkType]?) async throws -> [ArtworkMetadata]?
+    /// Get artwork mappings for ROMs
+    func getArtworkMappings() async throws -> ArtworkMapping
 }

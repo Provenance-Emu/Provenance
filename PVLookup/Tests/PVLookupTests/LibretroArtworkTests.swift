@@ -16,7 +16,7 @@ struct LibretroArtworkTests {
         let url = LibretroArtwork.constructURLs(
             systemName: "Sega - Dreamcast",
             gameName: "Capcom vs. SNK (USA)",
-            types: [.boxart]
+            types: [.boxFront, .boxBack]
         ).first
 
         #expect(url?.absoluteString == knownValidURLs[1])

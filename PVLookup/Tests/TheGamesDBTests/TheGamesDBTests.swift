@@ -26,7 +26,7 @@ struct TheGamesDBTests {
             let artwork = try await service.searchArtwork(
                 byGameName: "Super Mario World (USA)",  // More specific title
                 systemID: .SNES,
-                artworkTypes: [.boxFront, .screenshot]
+                artworkTypes: [.boxFront, .screenshot]  // OptionSet syntax
             )
 
             print("\nArtwork search results:")
@@ -124,7 +124,7 @@ struct TheGamesDBTests {
         do {
             let artwork = try await service.getArtwork(
                 forGameID: "1018",  // Super Mario World
-                artworkTypes: [.boxFront]  // Only request box art
+                artworkTypes: [.boxFront]  // OptionSet syntax
             )
 
             print("\nFiltered artwork results for game ID 1018:")

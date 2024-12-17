@@ -1,19 +1,6 @@
 import Foundation
 import PVSystems
 
-/// Represents different types of artwork
-public enum ArtworkType: String, Codable, Sendable {
-    case boxFront = "front"
-    case boxBack = "back"
-    case manual = "manual"
-    case screenshot = "screenshot"
-    case titleScreen = "titlescreen"
-    case fanArt = "fanart"
-    case banner = "banner"
-    case clearLogo = "clearlogo"
-    case other = "other"
-}
-
 /// Represents a single piece of artwork with its metadata
 public struct ArtworkMetadata: Codable, Sendable {
     /// The URL to the artwork image
@@ -31,18 +18,23 @@ public struct ArtworkMetadata: Codable, Sendable {
     /// Source database or service that provided this artwork
     public let source: String
 
+    /// System identifier associated with this artwork
+    public let systemID: SystemIdentifier?
+
     public init(
         url: URL,
         type: ArtworkType,
         resolution: String? = nil,
         description: String? = nil,
-        source: String
+        source: String,
+        systemID: SystemIdentifier? = nil
     ) {
         self.url = url
         self.type = type
         self.resolution = resolution
         self.description = description
         self.source = source
+        self.systemID = systemID
     }
 }
 
@@ -57,7 +49,7 @@ public protocol ArtworkLookupService: Sendable {
     func searchArtwork(
         byGameName name: String,
         systemID: SystemIdentifier?,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]?
 
     /// Get artwork for a specific game ID
@@ -67,9 +59,9 @@ public protocol ArtworkLookupService: Sendable {
     /// - Returns: Array of artwork metadata, or nil if none found
     func getArtwork(
         forGameID gameID: String,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]?
-    
+
     /// Get possible URLs for a ROM
     func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]?
 }

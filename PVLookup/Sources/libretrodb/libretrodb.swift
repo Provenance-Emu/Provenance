@@ -795,7 +795,7 @@ extension libretrodb {
     public func searchArtwork(
         byGameName name: String,
         systemID: SystemIdentifier?,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
         // Search for games matching the name
         let results = try searchMetadata(usingFilename: name, systemID: systemID)
@@ -841,7 +841,7 @@ extension libretrodb {
     /// Get artwork for a specific game ID
     public func getArtwork(
         forGameID gameID: String,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
         // In LibretroDB, we can search by game name since we don't use IDs
         return try await searchArtwork(

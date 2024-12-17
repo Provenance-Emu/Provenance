@@ -121,9 +121,11 @@ struct ArtworkSearchView: View {
                                 GridItem(.adaptive(minimum: 150, maximum: 200))
                             ], spacing: 20) {
                                 ForEach(artworks, id: \.url) { artwork in
-                                    ArtworkGridItem(artwork: artwork) { selectionData in
-                                        onSelect(selectionData)
-                                    }
+                                    ArtworkGridItem(
+                                        artwork: artwork,
+                                        onSelect: onSelect,
+                                        showSystem: selectedSystem == nil
+                                    )
                                 }
                             }
                             .padding(.horizontal)
@@ -167,12 +169,14 @@ struct ArtworkSearchView: View {
 struct ArtworkGridItem: View {
     let artwork: ArtworkMetadata
     let onSelect: (ArtworkSelectionData) -> Void
+    let showSystem: Bool
 
     @State private var image: Image?
     @State private var isLoading = true
 
     var body: some View {
-        VStack {
+        VStack(spacing: 4) {
+            // Image section
             if let image = image {
                 image
                     .resizable()
@@ -189,14 +193,33 @@ struct ArtworkGridItem: View {
                     .foregroundColor(.gray)
             }
 
-            Text(artwork.type.rawValue)
-                .font(.caption)
+            // Metadata section
+            VStack(alignment: .leading, spacing: 2) {
+                if let gameName = artwork.description {
+                    Text(gameName)
+                        .font(.caption)
+                        .lineLimit(1)
+                }
 
-            if let resolution = artwork.resolution {
-                Text(resolution)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                HStack {
+                    Text(artwork.type.rawValue)
+                        .font(.caption)
+
+                    if showSystem, let system = artwork.systemID?.libretroDatabaseName {
+                        Text("•")
+                            .font(.caption)
+                        Text(system)
+                            .font(.caption)
+                    }
+                }
+
+                if let resolution = artwork.resolution {
+                    Text(resolution)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding()
         .background(Color.secondary.opacity(0.1))

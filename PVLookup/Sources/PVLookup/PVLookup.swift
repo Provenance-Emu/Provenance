@@ -291,7 +291,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     public func searchArtwork(
         byGameName name: String,
         systemID: SystemIdentifier?,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
         var allArtwork: [ArtworkMetadata] = []
 
@@ -331,7 +331,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     /// Get artwork for a specific game ID across all services
     public func getArtwork(
         forGameID gameID: String,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
         var allArtwork: [ArtworkMetadata] = []
 

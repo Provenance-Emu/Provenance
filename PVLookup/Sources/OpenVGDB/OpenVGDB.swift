@@ -503,19 +503,18 @@ extension OpenVGDB {
     public func searchArtwork(
         byGameName name: String,
         systemID: SystemIdentifier?,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
+        // Use default types if none specified
+        let types = artworkTypes ?? .defaults
+
         // Search for games matching the name
         let results = try searchDatabase(usingFilename: name, systemID: systemID)
-
-        // Convert matching games' artwork URLs to ArtworkMetadata
         var artworks: [ArtworkMetadata] = []
 
         if let results = results {
             for result in results {
-                // Get artwork URLs for this game
                 if let urls = try getArtworkURLs(forRom: result) {
-                    // Convert URLs to ArtworkMetadata
                     for url in urls {
                         // Determine artwork type from URL path
                         let type: ArtworkType = if url.path.contains("front") {
@@ -529,7 +528,7 @@ extension OpenVGDB {
                         }
 
                         // Only include requested types
-                        if artworkTypes?.contains(type) ?? true {
+                        if types.contains(type) {
                             artworks.append(ArtworkMetadata(
                                 url: url,
                                 type: type,
@@ -549,7 +548,7 @@ extension OpenVGDB {
     /// Get artwork for a specific game ID
     public func getArtwork(
         forGameID gameID: String,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
         // In OpenVGDB, we can use the romID as gameID
         guard let romID = Int(gameID) else { return nil }

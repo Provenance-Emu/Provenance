@@ -32,34 +32,47 @@ public final class TheGamesDBService: ArtworkLookupOnlineService {
     public func searchArtwork(
         byGameName name: String,
         systemID: SystemIdentifier?,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
-        // Search for games
-        let response = try await client.searchGames(
-            name: name,
-            platformID: systemID?.theGamesDBID
-        )
+        // Get platform ID if system specified
+        let platformID = systemID?.theGamesDBID
 
-        // No games found
-        if response.data.games.isEmpty {
+        // Search for games
+        let gamesResponse = try await client.searchGames(name: name, platformID: platformID)
+        let games = gamesResponse.data.games
+        guard !games.isEmpty else {
             return nil
         }
 
-        // Get artwork for each game
-        var allArtwork: [ArtworkMetadata] = []
-        for game in response.data.games {
-            let gameID = "\(game.id)"
-            if let gameArtwork = try await getArtwork(
-                forGameID: gameID,
-                artworkTypes: artworkTypes
-            ) {
-                // Sort artwork within this game's results
-                let sortedGameArtwork = sortArtworkByType(gameArtwork)
-                allArtwork.append(contentsOf: sortedGameArtwork)
+        // Get artwork for first game match
+        let gameID = String(games[0].id)
+        let imagesResponse = try await client.getGameImages(gameID: gameID, types: nil)
+
+        var artworkMetadata: [ArtworkMetadata] = []
+        let baseURL = imagesResponse.data.base_url.original
+
+        // Process images
+        for (_, images) in imagesResponse.data.imagesDictionary {
+            for image in images {
+                if let url = URL(string: baseURL + image.filename),
+                   let type = ArtworkType(fromTheGamesDB: image.type, side: image.side),
+                   artworkTypes?.contains(type) ?? true {
+                    let systemID = SystemIdentifier(theGamesDBID: games[0].platform)  // Use our new initializer that handles Int?
+                    artworkMetadata.append(
+                        ArtworkMetadata(
+                            url: url,
+                            type: type,
+                            resolution: image.resolution,
+                            description: games[0].game_title,  // Add game title as description
+                            source: "TheGamesDB",
+                            systemID: systemID
+                        )
+                    )
+                }
             }
         }
 
-        return allArtwork.isEmpty ? nil : allArtwork
+        return artworkMetadata.isEmpty ? nil : artworkMetadata
     }
 
     // Helper function to sort artwork by type priority
@@ -85,10 +98,14 @@ public final class TheGamesDBService: ArtworkLookupOnlineService {
 
     public func getArtwork(
         forGameID gameID: String,
-        artworkTypes: [ArtworkType]?
+        artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
-        let types = artworkTypes?.compactMap { $0.theGamesDBType }
-            .filter { !$0.isEmpty }
+        // Fix: Convert single string to array with one element if not empty
+        let types: [String]? = if let type = artworkTypes?.theGamesDBType, !type.isEmpty {
+            [type]
+        } else {
+            nil
+        }
 
         let response = try await client.getGameImages(gameID: gameID, types: types)
 
@@ -179,6 +196,12 @@ public final class TheGamesDBService: ArtworkLookupOnlineService {
 
         return nil
     }
+
+    /// Get artwork mappings for ROMs
+    public func getArtworkMappings() async throws -> ArtworkMapping {
+        // TheGamesDB doesn't maintain a mapping database
+        return ArtworkMappings(romMD5: [:], romFileNameToMD5: [:])
+    }
 }
 
 private extension ArtworkType {
@@ -191,7 +214,7 @@ private extension ArtworkType {
         case ("screenshot", _): self = .screenshot
         case ("clearlogo", _): self = .clearLogo
         case ("titlescreen", _): self = .titleScreen
-        default: self = .other
+        case (_, _): self = .other  // Make switch exhaustive with catch-all
         }
     }
 
@@ -203,7 +226,9 @@ private extension ArtworkType {
         case .screenshot: return "screenshot"
         case .clearLogo: return "clearlogo"
         case .titleScreen: return "titlescreen"
-        case .manual, .other: return ""
+        case .manual: return ""
+        case .other: return ""
+        default: return ""  // Make switch exhaustive
         }
     }
 }
