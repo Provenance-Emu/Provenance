@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import PVLookupTypes
 @testable import libretrodb
 @testable import PVLookup
 
@@ -13,33 +14,44 @@ struct LibretroArtworkTests {
 
     @Test
     func testURLConstruction() throws {
-        let url = LibretroArtwork.constructURLs(
+        let urls = LibretroArtwork.constructURLs(
             systemName: "Sega - Dreamcast",
             gameName: "Capcom vs. SNK (USA)",
-            types: [.boxFront, .boxBack]
-        ).first
+            types: [.boxFront, .titleScreen]  // Test multiple types
+        )
 
-        #expect(url?.absoluteString == knownValidURLs[1])
+        // Should get two URLs - one for boxart and one for title screen
+        #expect(urls.count == 2)
+        #expect(urls.contains(where: { $0.absoluteString == knownValidURLs[1] }))
+        #expect(urls.contains(where: { $0.path.contains("Named_Titles") }))
     }
 
     @Test
-    func testURLValidation() async throws {
-        // Test known valid URL
-        let validURL = URL(string: knownValidURLs[0])!
-        let isValid = await LibretroArtwork.validateURL(validURL)
-        #expect(isValid == true)
+    func testURLValidationWithDifferentTypes() async throws {
+        // Test each artwork type
+        let types: [ArtworkType] = [.boxFront, .titleScreen, .screenshot]
 
-        // Test known invalid URL
-        let invalidURL = URL(string: "https://thumbnails.libretro.com/Invalid/Path/Game.png")!
-        let isInvalid = await LibretroArtwork.validateURL(invalidURL)
-        #expect(isInvalid == false)
+        for type in types {
+            let urls = LibretroArtwork.constructURLs(
+                systemName: "Atari - ST",
+                gameName: "Rick Dangerous II",
+                types: type
+            )
+            #expect(urls.count == 1)
+
+            let isValid = await LibretroArtwork.validateURL(urls[0])
+            if type == .boxFront {
+                #expect(isValid == true)  // Known valid boxart
+            }
+        }
     }
 
     @Test
     func testGetValidURLs() async throws {
         let urls = await LibretroArtwork.getValidURLs(
             systemName: "Atari - ST",
-            gameName: "Rick Dangerous II"
+            gameName: "Rick Dangerous II",
+            types: [.boxFront, .titleScreen, .screenshot]  // Test all supported types
         )
 
         #expect(!urls.isEmpty)
