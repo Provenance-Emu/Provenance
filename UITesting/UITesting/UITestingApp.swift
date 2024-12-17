@@ -24,6 +24,7 @@ struct UITestingApp: App {
     @State private var showImportStatus = false
     @State private var showGameMoreInfo = false
     @State private var showGameMoreInfoRealm = false
+    @State private var showArtworkSearch = false
 
     @StateObject
     private var mockImportStatusDriverData = MockImportStatusDriverData()
@@ -66,6 +67,12 @@ struct UITestingApp: App {
                         }
                         .buttonStyle(.borderedProminent)
 
+                    }
+                    HStack {
+                        Button("Show Artwork Search") {
+                            showArtworkSearch = true
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
                 }
             }
@@ -141,6 +148,16 @@ struct UITestingApp: App {
                             .navigationTitle("Game Info")
                     }
                 }
+            }
+            .sheet(isPresented: $showArtworkSearch) {
+                NavigationView {
+                    ArtworkSearchView { selection in
+                        print("Selected artwork: \(selection.metadata.url)")
+                        showArtworkSearch = false
+                    }
+                    .navigationTitle("Artwork Search")
+                }
+                .presentationBackground(.clear)
             }
             .onAppear {
 #if canImport(FreemiumKit)
