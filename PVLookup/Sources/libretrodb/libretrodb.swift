@@ -152,56 +152,11 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
     }
 
     /// Constants for artwork URL construction
-    private enum ArtworkConstants {
+    internal enum ArtworkConstants {
         static let baseURL = "http://thumbnails.libretro.com"
         static let boxartPath = "Named_Boxarts"
-
-        // Map manufacturer IDs to names
-        static let manufacturers: [Int: String] = [
-            1: "SNK",
-            2: "Sega",
-            3: "NEC",
-            4: "Atari",
-            5: "Sony",
-            6: "Bandai",
-            7: "Hudson",
-            8: "Nintendo",
-            9: "Commodore",
-            10: "Microsoft"
-        ]
-
-        // Map platform IDs to names
-        static let platforms: [Int: String] = [
-            28: "Nintendo Entertainment System",
-            37: "Super Nintendo Entertainment System",
-            75: "Game Boy",
-            86: "Game Boy Color",
-            115: "Game Boy Advance",
-            15: "Mega Drive",
-            108: "PC Engine",
-            6: "PlayStation",
-            56: "PlayStation 2",
-            61: "PlayStation Portable",
-            38: "Atari 2600",
-            34: "Atari 7800",
-            29: "Atari Jaguar",
-            99: "Dreamcast",
-            51: "GameCube",
-            22: "Nintendo 64",
-            90: "Nintendo DS",
-            21: "Nintendo 3DS",
-            78: "Game Gear",
-            83: "Master System",
-            47: "Saturn",
-            73: "3DO",
-            114: "ColecoVision",
-            92: "Intellivision",
-            79: "Lynx",
-            35: "Odyssey2",
-            69: "Vectrex",
-            113: "Virtual Boy",
-            101: "Wii"
-        ]
+        static let titlesPath = "Named_Titles"
+        static let snapshotPath = "Named_Snaps"
     }
 
     /// Constructs the artwork URL for a given metadata
@@ -797,42 +752,72 @@ extension libretrodb {
         systemID: SystemIdentifier?,
         artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
-        // Search for games matching the name
-        let results = try searchMetadata(usingFilename: name, systemID: systemID)
+        let types = artworkTypes ?? .defaults
 
-        // Convert matching games' artwork URLs to ArtworkMetadata
-        var artworks: [ArtworkMetadata] = []
+        // Use the optimized artwork search
+        let games = try searchGamesForArtwork(name: name, systemID: systemID)
+        guard !games.isEmpty else { return nil }
 
-        if let results = results {
-            for result in results {
-                // Get artwork URLs for this game
-                if let urls = try await getArtworkURLs(forRom: result) {
-                    // Convert URLs to ArtworkMetadata
-                    for url in urls {
-                        // Determine artwork type from URL path
-                        let type: ArtworkType = if url.path.contains("Named_Boxarts") {
-                            .boxFront
-                        } else if url.path.contains("Named_Titles") {
-                            .titleScreen
-                        } else if url.path.contains("Named_Snaps") {
-                            .screenshot
-                        } else {
-                            .other
-                        }
+        // Batch URL validation
+        let urlTasks = games.flatMap { game -> [(URL, ArtworkType, LibretroDBROMMetadata)] in
+            let gameName = game.romFileName?.deletingPathExtension() ?? ""
+            guard let systemID = game.systemID,
+                  let systemFolder = systemID.libretroDatabaseName
+                    .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
+                return []
+            }
 
-                        // Only include requested types
-                        if artworkTypes?.contains(type) ?? true {
-                            artworks.append(ArtworkMetadata(
-                                url: url,
-                                type: type,
-                                resolution: nil,
-                                description: nil,
-                                source: "LibretroDB"
-                            ))
-                        }
-                    }
+            // Create array of possible types
+            var tasks: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
+
+            // Check each possible type in the OptionSet
+            if types.contains(.boxFront) {
+                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: libretrodb.ArtworkConstants.boxartPath) {
+                    tasks.append((url, .boxFront, game))
                 }
             }
+
+            if types.contains(.titleScreen) {
+                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: libretrodb.ArtworkConstants.titlesPath) {
+                    tasks.append((url, .titleScreen, game))
+                }
+            }
+
+            if types.contains(.screenshot) {
+                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: libretrodb.ArtworkConstants.snapshotPath) {
+                    tasks.append((url, .screenshot, game))
+                }
+            }
+
+            return tasks
+        }
+
+        // Validate URLs in parallel
+        let validResults = await withTaskGroup(of: (URL, ArtworkType, LibretroDBROMMetadata, Bool).self) { group in
+            for (url, type, metadata) in urlTasks {
+                group.addTask {
+                    let isValid = await LibretroArtwork.validateURL(url)
+                    return (url, type, metadata, isValid)
+                }
+            }
+
+            var results: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
+            for await (url, type, metadata, isValid) in group where isValid {
+                results.append((url, type, metadata))
+            }
+            return results
+        }
+
+        // Convert to ArtworkMetadata
+        let artworks = validResults.map { url, type, metadata in
+            ArtworkMetadata(
+                url: url,
+                type: type,
+                resolution: nil,
+                description: metadata.gameTitle,
+                source: "LibretroThumbnails",
+                systemID: metadata.systemID
+            )
         }
 
         return artworks.isEmpty ? nil : artworks
@@ -849,5 +834,137 @@ extension libretrodb {
             systemID: nil,
             artworkTypes: artworkTypes
         )
+    }
+
+    /// Optimized batch search for games
+    func searchGames(name: String, systemID: SystemIdentifier? = nil, limit: Int = 10) throws -> [LibretroDBROMMetadata] {
+        // Single optimized query that gets all data at once, including ROM data
+        let query = """
+            WITH matched_games AS (
+                SELECT DISTINCT games.id, games.serial_id
+                FROM games
+                WHERE games.display_name LIKE '%\(name)%'
+                \(systemID != nil ? "AND games.platform_id = \(systemID!.libretroDatabaseID)" : "")
+                LIMIT \(limit)
+            ),
+            game_roms AS (
+                SELECT DISTINCT r.*
+                FROM matched_games mg
+                JOIN roms r ON r.serial_id = mg.serial_id
+            )
+            SELECT DISTINCT
+                games.display_name as game_title,
+                games.full_name,
+                games.release_year,
+                games.release_month,
+                developers.name as developer_name,
+                publishers.name as publisher_name,
+                ratings.name as rating_name,
+                franchises.name as franchise_name,
+                regions.name as region_name,
+                genres.name as genre_name,
+                game_roms.name as rom_name,
+                game_roms.md5 as rom_md5,
+                platforms.id as platform_id,
+                manufacturers.name as manufacturer_name,
+                GROUP_CONCAT(genres.name) as genres
+            FROM matched_games
+            JOIN games ON matched_games.id = games.id
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            LEFT JOIN game_roms ON games.serial_id = game_roms.serial_id
+            LEFT JOIN developers ON games.developer_id = developers.id
+            LEFT JOIN publishers ON games.publisher_id = publishers.id
+            LEFT JOIN ratings ON games.rating_id = ratings.id
+            LEFT JOIN franchises ON games.franchise_id = franchises.id
+            LEFT JOIN regions ON games.region_id = regions.id
+            LEFT JOIN genres ON games.genre_id = genres.id
+            LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+            GROUP BY games.id, game_roms.id
+        """
+
+        let results = try db.execute(query: query)
+        return try results.compactMap { dict in
+            try convertDictToMetadata(dict)
+        }
+    }
+
+    /// Search for games with artwork-specific data
+    /// - Parameters:
+    ///   - name: Game name to search for
+    ///   - systemID: Optional system to filter by
+    ///   - limit: Maximum number of results to return
+    /// - Returns: Array of ROM metadata optimized for artwork lookup
+    func searchGamesForArtwork(name: String, systemID: SystemIdentifier? = nil, limit: Int = 10) throws -> [LibretroDBROMMetadata] {
+        print("\nLibretroDB artwork search:")
+        print("- Name: \(name)")
+        print("- SystemID: \(String(describing: systemID))")
+
+        // Optimize the search query to find more relevant matches
+        let query = """
+            WITH matched_games AS (
+                SELECT DISTINCT games.id, games.serial_id,
+                       CASE
+                           WHEN games.display_name = '\(name)' THEN 0  -- Exact match
+                           WHEN games.display_name LIKE '\(name) %' THEN 1  -- Starts with name
+                           WHEN games.display_name LIKE '% \(name) %' THEN 2  -- Contains word
+                           WHEN games.display_name LIKE '%\(name)%' THEN 3  -- Contains substring
+                           ELSE 4
+                       END as match_quality
+                FROM games
+                WHERE games.display_name LIKE '%\(name)%'
+                AND games.display_name NOT LIKE '%Marionette%'  -- Exclude false matches
+                \(systemID != nil ? "AND games.platform_id = \(systemID!.libretroDatabaseID)" : "")
+                ORDER BY match_quality, games.display_name
+                LIMIT \(limit)
+            )
+            SELECT DISTINCT
+                games.display_name as game_title,
+                roms.name as rom_name,
+                platforms.id as platform_id,
+                manufacturers.name as manufacturer_name
+            FROM matched_games
+            JOIN games ON matched_games.id = games.id
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+            LEFT JOIN roms ON games.serial_id = roms.serial_id
+            ORDER BY matched_games.match_quality, games.display_name
+        """
+
+        print("- Generated query: \(query)")
+        let results = try db.execute(query: query)
+        print("- Raw results: \(results)")
+
+        let metadata = try results.compactMap { dict -> LibretroDBROMMetadata? in
+            // Simplified metadata conversion for artwork
+            guard let gameTitle = dict["game_title"] as? String,
+                  let platformID = (dict["platform_id"] as? NSNumber)?.stringValue else {
+                print("- Failed to convert dict: \(dict)")
+                return nil
+            }
+
+            let rom = LibretroDBROMMetadata(
+                gameTitle: gameTitle,
+                fullName: nil,
+                releaseYear: nil,
+                releaseMonth: nil,
+                developer: nil,
+                publisher: nil,
+                rating: nil,
+                franchise: nil,
+                region: nil,
+                genre: nil,
+                romName: dict["rom_name"] as? String,
+                romMD5: nil,
+                platform: platformID,
+                manufacturer: dict["manufacturer_name"] as? String,
+                genres: nil,
+                romFileName: dict["rom_name"] as? String
+            )
+            print("- Converted to: \(rom)")
+            return rom
+        }
+
+        print("- Found \(metadata.count) games")
+        return metadata
     }
 }

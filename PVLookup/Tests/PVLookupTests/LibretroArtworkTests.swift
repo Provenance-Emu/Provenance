@@ -23,7 +23,7 @@ struct LibretroArtworkTests {
         // Should get two URLs - one for boxart and one for title screen
         #expect(urls.count == 2)
         #expect(urls.contains(where: { $0.absoluteString == knownValidURLs[1] }))
-        #expect(urls.contains(where: { $0.path.contains("Named_Titles") }))
+        #expect(urls.contains(where: { $0.path.contains(libretrodb.ArtworkConstants.titlesPath) }))
     }
 
     @Test

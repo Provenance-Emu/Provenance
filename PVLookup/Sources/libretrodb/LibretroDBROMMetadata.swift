@@ -1,3 +1,6 @@
+import PVLookupTypes
+import PVSystems
+
 /// Internal representation of ROM metadata from the libretrodb database
 struct LibretroDBROMMetadata: Codable {
     let gameTitle: String
@@ -16,4 +19,11 @@ struct LibretroDBROMMetadata: Codable {
     let manufacturer: String?
     let genres: [String]?
     let romFileName: String?
+
+    /// Convert platform ID to SystemIdentifier
+    var systemID: SystemIdentifier? {
+        guard let platformID = platform,
+              let databaseId = Int(platformID) else { return nil }
+        return SystemIdentifier.fromLibretroDatabaseID(databaseId)
+    }
 }

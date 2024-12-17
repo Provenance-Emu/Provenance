@@ -34,19 +34,19 @@ public struct LibretroArtwork {
 
         // Check each possible type in the OptionSet
         if types.contains(.boxFront) {
-            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: "Named_Boxarts") {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.boxartPath) {
                 urls.append(url)
             }
         }
 
         if types.contains(.titleScreen) {
-            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: "Named_Titles") {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.titlesPath) {
                 urls.append(url)
             }
         }
 
         if types.contains(.screenshot) {
-            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: "Named_Snaps") {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.snapshotPath) {
                 urls.append(url)
             }
         }
@@ -55,14 +55,39 @@ public struct LibretroArtwork {
     }
 
     /// Helper to construct a single URL
-    private static func constructURL(systemName: String, gameName: String, folder: String) -> URL? {
-        let urlString = "\(baseURL)/\(systemName)/\(folder)/\(gameName).png"
-            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        return URL(string: urlString ?? "")
+    internal static func constructURL(systemName: String, gameName: String, folder: String) -> URL? {
+        // First decode any existing encoding
+        let decodedSystem = systemName.removingPercentEncoding ?? systemName
+        let decodedGame = gameName.removingPercentEncoding ?? gameName
+
+        // Create URL components
+        var components = URLComponents()
+        components.scheme = "https"  // Keep HTTPS for iOS ATS requirements
+        components.host = "thumbnails.libretro.com"
+
+        // Build path without encoding first
+        let path = "/\(decodedSystem)/\(folder)/\(decodedGame).png"
+
+        // Then encode the entire path at once
+        components.percentEncodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path
+
+        print("Constructing URL:")
+        print("- System: \(decodedSystem)")
+        print("- Game: \(decodedGame)")
+        print("- Folder: \(folder)")
+        print("- Result: \(components.url?.absoluteString ?? "nil")")
+
+        return components.url
     }
 
     /// Validates if a URL exists with caching
     public static func validateURL(_ url: URL) async -> Bool {
+        guard url.scheme == "https",  // Keep HTTPS check
+              url.host == "thumbnails.libretro.com",
+              url.pathExtension.lowercased() == "png" else {
+            return false
+        }
+
         // Check cache first
         let cacheRequest = URLRequest(url: url)
         if let cachedResponse = urlCache.cachedResponse(for: cacheRequest),
@@ -133,6 +158,34 @@ public struct LibretroArtwork {
             types: [.boxFront, .titleScreen, .screenshot]
         )
     }
+
+    private static func cleanGameName(_ name: String) -> String {
+        // Remove file extensions and parenthetical info
+        var cleaned = name
+            .replacingOccurrences(of: " (USA)", with: "")
+            .replacingOccurrences(of: " (Europe)", with: "")
+            .replacingOccurrences(of: " (Japan)", with: "")
+            .replacingOccurrences(of: " (En,Fr,Es)", with: "")
+            .replacingOccurrences(of: " (Rev 1)", with: "")
+            .replacingOccurrences(of: " (Track 1)", with: "")
+            .replacingOccurrences(of: " (Demo)", with: "")
+            .replacingOccurrences(of: " (Kiosk)", with: "")
+            .replacingOccurrences(of: " (Virtual Console)", with: "")
+            .replacingOccurrences(of: " (Wii Virtual Console)", with: "")
+            .replacingOccurrences(of: ".v64", with: "")
+            .replacingOccurrences(of: ".z64", with: "")
+            .replacingOccurrences(of: ".gbc", with: "")
+            .replacingOccurrences(of: ".gba", with: "")
+            .replacingOccurrences(of: ".iso", with: "")
+            .trimmingCharacters(in: .whitespaces)
+
+        // Remove any remaining parenthetical content
+        while let range = cleaned.range(of: #"\([^)]+\)"#, options: .regularExpression) {
+            cleaned.removeSubrange(range)
+        }
+
+        return cleaned.trimmingCharacters(in: .whitespaces)
+    }
 }
 
 // MARK: - ArtworkLookupOfflineService Conformance
@@ -144,55 +197,61 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
         artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
         let types = artworkTypes ?? .defaults
-        let systemName = systemID?.libretroDatabaseName ?? ""
 
-        // Get a limited set of matching games
-        let results = try db.searchMetadata(
-            usingFilename: name,
-            systemID: systemID
-        )
-        guard let games = results else { return nil }
+        // Get all matching games in one query
+        let games = try db.searchGames(name: name, systemID: systemID, limit: 10)
+        guard !games.isEmpty else { return nil }
 
-        // Limit results after the fact if needed
-        let limitedGames = Array(games.prefix(10))
-
-        // Batch URL construction and validation
-        let allURLs = limitedGames.flatMap { game -> [(URL, ArtworkType, ROMMetadata)] in
+        // Batch URL validation
+        let urlTasks = games.flatMap { game -> [(URL, ArtworkType, LibretroDBROMMetadata)] in
             let gameName = game.romFileName?.deletingPathExtension() ?? ""
-            let systemFolder = game.systemID.libretroDatabaseName
-                .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? ""
-
-            // Create array of types to iterate
-            let typeArray: [ArtworkType] = [.boxFront, .titleScreen, .screenshot]
-            let selectedTypes = typeArray.filter { types.contains($0) }
-
-            return selectedTypes.compactMap { type -> (URL, ArtworkType, ROMMetadata)? in
-                let folder = type.libretroDatabaseFolder
-                guard
-                      let url = Self.constructURL(systemName: systemFolder, gameName: gameName, folder: folder) else {
-                    return nil
-                }
-                return (url, type, game)
+            guard let systemID = game.systemID else {
+                return []
             }
+
+            let systemName = systemID.libretroDatabaseName
+            
+            // Create array of possible types
+            var tasks: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
+
+            // Check each possible type in the OptionSet
+            if types.contains(.boxFront) {
+                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.boxartPath) {
+                    tasks.append((url, .boxFront, game))
+                }
+            }
+
+            if types.contains(.titleScreen) {
+                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.titlesPath) {
+                    tasks.append((url, .titleScreen, game))
+                }
+            }
+
+            if types.contains(.screenshot) {
+                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.snapshotPath) {
+                    tasks.append((url, .screenshot, game))
+                }
+            }
+
+            return tasks
         }
 
         // Validate URLs in parallel
-        let validResults = await withTaskGroup(of: (URL, ArtworkType, ROMMetadata, Bool).self) { group in
-            for (url, type, metadata) in allURLs {
+        let validResults = await withTaskGroup(of: (URL, ArtworkType, LibretroDBROMMetadata, Bool).self) { group in
+            for (url, type, metadata) in urlTasks {
                 group.addTask {
-                    let isValid = await LibretroArtwork.validateURL(url)
+                    let isValid = await Self.validateURL(url)
                     return (url, type, metadata, isValid)
                 }
             }
 
-            var results: [(URL, ArtworkType, ROMMetadata)] = []
+            var results: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
             for await (url, type, metadata, isValid) in group where isValid {
                 results.append((url, type, metadata))
             }
             return results
         }
 
-        // Convert to ArtworkMetadata
         return validResults.map { url, type, metadata in
             ArtworkMetadata(
                 url: url,
@@ -229,19 +288,9 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
         // Get system name from ROM metadata
         let systemName = rom.systemID.libretroDatabaseName
 
-        // Try with game title first
-        let title = rom.gameTitle
-        if !title.isEmpty {
-            let urls = await LibretroArtwork.getValidURLs(systemName: systemName, gameName: title)
-            if !urls.isEmpty {
-                return urls
-            }
-        }
-
-        // Fall back to filename if title search yields no results
-        if let filename = rom.romFileName, !filename.isEmpty {
-            let cleanName = filename.deletingPathExtension()
-            let urls = await LibretroArtwork.getValidURLs(systemName: systemName, gameName: cleanName)
+        // Use exact filename without extension
+        if let filename = rom.romFileName?.deletingPathExtension() {
+            let urls = await LibretroArtwork.getValidURLs(systemName: systemName, gameName: filename)
             if !urls.isEmpty {
                 return urls
             }
@@ -255,19 +304,19 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
 private extension ArtworkType {
     var libretroDatabaseFolder: String {
         switch self {
-        case .boxFront: return "Named_Boxarts"
-        case .titleScreen: return "Named_Titles"
-        case .screenshot: return "Named_Snaps"
+        case .boxFront: return libretrodb.ArtworkConstants.boxartPath
+        case .titleScreen: return libretrodb.ArtworkConstants.titlesPath
+        case .screenshot: return libretrodb.ArtworkConstants.snapshotPath
         default: return ""
         }
     }
 
     static func fromLibretroPath(_ path: String) -> ArtworkType {
-        if path.contains("Named_Boxarts") {
+        if path.contains(libretrodb.ArtworkConstants.boxartPath) {
             return .boxFront
-        } else if path.contains("Named_Titles") {
+        } else if path.contains(libretrodb.ArtworkConstants.titlesPath) {
             return .titleScreen
-        } else if path.contains("Named_Snaps") {
+        } else if path.contains(libretrodb.ArtworkConstants.snapshotPath) {
             return .screenshot
         } else {
             return .other
@@ -275,7 +324,7 @@ private extension ArtworkType {
     }
 }
 
-private extension String {
+internal extension String {
     func deletingPathExtension() -> String {
         (self as NSString).deletingPathExtension
     }
