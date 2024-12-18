@@ -191,6 +191,7 @@ struct ArtworkGridItem: View {
     @State private var image: Image?
     @State private var isLoading = true
     @State private var showDetail = false
+    @State private var shouldScrollOnDismiss = false
 
     var body: some View {
         VStack(spacing: 4) {
@@ -246,11 +247,18 @@ struct ArtworkGridItem: View {
         .background(Color.secondary.opacity(0.1))
         .cornerRadius(10)
         .fullScreenCover(isPresented: $showDetail) {
+            if shouldScrollOnDismiss {
+                onArtworkViewed(artwork)
+            }
+            shouldScrollOnDismiss = false
+        } content: {
             ArtworkDetailView(
                 artworks: allArtworks,
                 initialArtwork: artwork,
                 onSelect: onSelect,
-                onPageChange: onArtworkViewed
+                onPageChange: { artwork in
+                    shouldScrollOnDismiss = true
+                }
             )
         }
         .task {
