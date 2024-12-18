@@ -202,6 +202,9 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
         let games = try db.searchGames(name: name, systemID: systemID, limit: 10)
         guard !games.isEmpty else { return nil }
 
+        // Track unique URLs across all tasks
+        var seenURLs = Set<URL>()
+
         // Batch URL validation
         let urlTasks = games.flatMap { game -> [(URL, ArtworkType, LibretroDBROMMetadata)] in
             let gameName = game.romFileName?.deletingPathExtension() ?? ""
@@ -210,26 +213,15 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
             }
 
             let systemName = systemID.libretroDatabaseName
-            
-            // Create array of possible types
             var tasks: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
 
-            // Check each possible type in the OptionSet
-            if types.contains(.boxFront) {
-                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.boxartPath) {
-                    tasks.append((url, .boxFront, game))
-                }
-            }
-
-            if types.contains(.titleScreen) {
-                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.titlesPath) {
-                    tasks.append((url, .titleScreen, game))
-                }
-            }
-
-            if types.contains(.screenshot) {
-                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.snapshotPath) {
-                    tasks.append((url, .screenshot, game))
+            // Check each supported type and deduplicate URLs
+            let supportedTypes: [ArtworkType] = [ArtworkType.retroDBSupported]
+            for type in supportedTypes where types.contains(type) {
+                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: type.libretroDatabaseFolder),
+                   !seenURLs.contains(url) {
+                    seenURLs.insert(url)
+                    tasks.append((url, type, game))
                 }
             }
 
@@ -252,6 +244,7 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
             return results
         }
 
+        // Convert to ArtworkMetadata
         return validResults.map { url, type, metadata in
             ArtworkMetadata(
                 url: url,

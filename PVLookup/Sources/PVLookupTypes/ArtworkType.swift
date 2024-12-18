@@ -1,5 +1,6 @@
 /// Represents different types of artwork
-public struct ArtworkType: OptionSet, Codable, Sendable, Hashable {
+public struct ArtworkType: OptionSet, Codable, Sendable, Hashable, CaseIterable {
+    
     public let rawValue: UInt
 
     public init(rawValue: UInt) {
@@ -26,7 +27,12 @@ public struct ArtworkType: OptionSet, Codable, Sendable, Hashable {
     public static let other       = ArtworkType(rawValue: 1 << 8)
 
     /// Default set of artwork types
-    public static let defaults: ArtworkType = [.boxFront, .titleScreen, .screenshot]
+    public static let defaults: ArtworkType = [.boxFront, .titleScreen, .boxBack]
+    
+    /// Retro DB Supported types
+    public static let retroDBSupported: ArtworkType = [.boxFront, .titleScreen, .screenshot]
+    
+    public static let allCases: [ArtworkType] = [.boxFront, .boxBack, .manual, .screenshot, .titleScreen, .fanArt, .banner, .clearLogo, .other]
 }
 
 
