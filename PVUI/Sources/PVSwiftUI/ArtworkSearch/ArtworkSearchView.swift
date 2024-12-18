@@ -20,6 +20,8 @@ public struct ArtworkSearchView: View {
     @State private var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "artworkSearchHistory") ?? []
     @State private var previewImages: [URL: Image] = [:]
     @State private var showDetail = false
+    @State private var selectedArtwork: ArtworkMetadata?
+    @Environment(\.dismiss) private var dismiss
 
     let onSelect: (ArtworkSelectionData) -> Void
 
@@ -66,12 +68,11 @@ public struct ArtworkSearchView: View {
             VStack {
                 if isLoading {
                     Spacer()
-                    ProgressView()
+                    loadingView
                     Spacer()
                 } else if let error = errorMessage {
                     Spacer()
-                    Text(error)
-                        .foregroundColor(.red)
+                    errorView
                     Spacer()
                 } else if hasSearched && displayResults.isEmpty {
                     Spacer()
@@ -89,6 +90,14 @@ public struct ArtworkSearchView: View {
             }
         }
         .background(Color(uiColor: .systemBackground))
+        .onAppear {
+            if !searchText.isEmpty {
+                DLOG("Auto-searching with initial search text: \(searchText)")
+                Task {
+                    await performSearch()
+                }
+            }
+        }
     }
 
     private var searchControls: some View {
@@ -334,18 +343,36 @@ public struct ArtworkSearchView: View {
             }
             .frame(height: 150)
             .onTapGesture {
-                lastViewedArtwork = artwork
+                selectedArtwork = artwork
                 showDetail = true
             }
             .fullScreenCover(isPresented: $showDetail) {
-                ArtworkDetailView(
-                    artworks: displayResults,
-                    initialArtwork: artwork,
-                    onSelect: onSelect,
-                    onPageChange: { artwork in
-                        lastViewedArtwork = artwork
+                if let artwork = selectedArtwork {
+                    ArtworkDetailView(
+                        artworks: displayResults,
+                        initialArtwork: artwork,
+                        onSelect: { selection in
+                            showDetail = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                dismiss()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    onSelect(selection)
+                                }
+                            }
+                        },
+                        onPageChange: { artwork in
+                            lastViewedArtwork = artwork
+                        }
+                    )
+                }
+            }
+            .onChange(of: showDetail) { isShown in
+                if !isShown {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        lastViewedArtwork = nil
+                        selectedArtwork = nil
                     }
-                )
+                }
             }
 
             // Metadata section
@@ -379,6 +406,39 @@ public struct ArtworkSearchView: View {
         .padding()
         .background(Color.secondary.opacity(0.1))
         .cornerRadius(10)
+    }
+
+    private var loadingView: some View {
+        VStack(spacing: 12) {
+            ProgressView()
+                .scaleEffect(1.5)
+            Text("Searching for artwork...")
+                .foregroundColor(.secondary)
+        }
+    }
+
+    private var errorView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.largeTitle)
+                .foregroundColor(.red)
+
+            Text(errorMessage ?? "Unknown error")
+                .foregroundColor(.red)
+                .multilineTextAlignment(.center)
+
+            Button {
+                Task {
+                    await performSearch()
+                }
+            } label: {
+                Label("Try Again", systemImage: "arrow.clockwise")
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+            }
+            .buttonStyle(.bordered)
+        }
+        .padding()
     }
 }
 
