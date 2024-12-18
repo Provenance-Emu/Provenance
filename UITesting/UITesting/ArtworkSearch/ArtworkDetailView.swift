@@ -15,6 +15,7 @@ struct ArtworkDetailView: View {
     let onPageChange: (ArtworkMetadata) -> Void
     @State private var dragOffset = CGSize.zero
     @State private var isDragging = false
+    private let imageCache = ImageCache.shared
 
     init(artworks: [ArtworkMetadata], initialArtwork: ArtworkMetadata, onSelect: @escaping (ArtworkSelectionData) -> Void, onPageChange: @escaping (ArtworkMetadata) -> Void) {
         self.artworks = artworks
@@ -38,7 +39,8 @@ struct ArtworkDetailView: View {
                         ZoomableImageView(
                             artwork: artwork,
                             previewImage: previewImages[artwork.url],
-                            geometry: geometry
+                            geometry: geometry,
+                            isZoomed: $isZoomed
                         )
                         .tag(index)
                     }
@@ -47,6 +49,7 @@ struct ArtworkDetailView: View {
                     if let artwork = artworks[safe: page] {
                         onPageChange(artwork)
                         preloadAdjacentImages()
+                        HapticManager.impact(style: .light)
                     }
                 }
                 .tabViewStyle(.page)
@@ -55,12 +58,15 @@ struct ArtworkDetailView: View {
                 overlayControls
                     .opacity(1 - (abs(dragOffset.height) / 300.0))
             }
+            // Only allow vertical drag gesture for dismissal
             .gesture(
                 DragGesture()
                     .onChanged { value in
-                        guard !isZoomed else { return }
-                        dragOffset = value.translation
-                        isDragging = true
+                        // Only allow vertical dragging when not zoomed
+                        if !isZoomed && abs(value.translation.width) < abs(value.translation.height) {
+                            dragOffset = value.translation
+                            isDragging = true
+                        }
                     }
                     .onEnded { value in
                         isDragging = false
@@ -134,21 +140,6 @@ struct ArtworkDetailView: View {
                     .font(.caption)
 
                 Spacer()
-
-                if let currentArtwork = artworks[safe: currentPage],
-                   let image = previewImages[currentArtwork.url] {
-                    Button {
-                        onSelect(ArtworkSelectionData(
-                            metadata: currentArtwork,
-                            previewImage: image
-                        ))
-                        dismiss()
-                    } label: {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                    }
-                }
             }
             .padding()
             .background(LinearGradient(colors: [.black.opacity(0.7), .clear],
@@ -174,11 +165,41 @@ struct ArtworkDetailView: View {
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal)
+
+                    // Select button
+                    if let image = previewImages[currentArtwork.url] {
+                        Button {
+                            onSelect(ArtworkSelectionData(
+                                metadata: currentArtwork,
+                                previewImage: image
+                            ))
+                            dismiss()
+                        } label: {
+                            Text("Select This Artwork")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                        .padding(.horizontal)
+                    }
                 }
                 .padding(.bottom, 40)
-                .background(LinearGradient(colors: [.clear, .black.opacity(0.7)],
-                                         startPoint: .top,
-                                         endPoint: .bottom))
+                .padding(.top)
+                .background {
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .overlay {
+                            LinearGradient(
+                                colors: [.clear, .black.opacity(0.3)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        }
+                        .shadow(color: .black.opacity(0.3), radius: 10, y: -5)
+                }
             }
         }
     }
@@ -214,16 +235,28 @@ struct ArtworkDetailView: View {
         }
     }
 
-    private func loadImage(for artwork: ArtworkMetadata) async {
+    private func loadImage(for artwork: ArtworkMetadata, retryCount: Int = 3) async {
         guard previewImages[artwork.url] == nil else { return }
 
         do {
+            if let cached = await imageCache.image(for: artwork.url) {
+                previewImages[artwork.url] = cached
+                return
+            }
+
             let (data, _) = try await URLSession.shared.data(from: artwork.url)
             if let uiImage = UIImage(data: data) {
-                previewImages[artwork.url] = Image(uiImage: uiImage)
+                let image = Image(uiImage: uiImage)
+                previewImages[artwork.url] = image
+                await imageCache.setImage(image, for: artwork.url)
             }
         } catch {
-            print("Error loading image: \(error)")
+            if retryCount > 0 {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                await loadImage(for: artwork, retryCount: retryCount - 1)
+            } else {
+                print("Error loading image after retries: \(error)")
+            }
         }
     }
 }
@@ -232,6 +265,7 @@ struct ZoomableImageView: View {
     let artwork: ArtworkMetadata
     let previewImage: Image?
     let geometry: GeometryProxy
+    @Binding var isZoomed: Bool
 
     @State private var scale = 1.0
     @State private var lastScale = 1.0
@@ -240,7 +274,7 @@ struct ZoomableImageView: View {
     @State private var loadingError: Error?
     @State private var isLoading = true
 
-    private var isZoomed: Bool {
+    private var isImageZoomed: Bool {
         scale > 1.0
     }
 
@@ -272,12 +306,13 @@ struct ZoomableImageView: View {
                             }
                             .onEnded { _ in
                                 lastScale = 1.0
+                                HapticManager.impact(style: .light)
                             }
                     )
                     .simultaneousGesture(
                         DragGesture()
                             .onChanged { value in
-                                guard isZoomed else { return }
+                                guard isImageZoomed else { return }
                                 offset = CGSize(
                                     width: lastOffset.width + value.translation.width,
                                     height: lastOffset.height + value.translation.height
@@ -285,12 +320,13 @@ struct ZoomableImageView: View {
                             }
                             .onEnded { _ in
                                 lastOffset = offset
+                                HapticManager.impact(style: .light)
                             }
                     )
                     .highPriorityGesture(
                         TapGesture(count: 2).onEnded {
-                            withAnimation(.spring()) {
-                                if isZoomed {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                if isImageZoomed {
                                     scale = 1.0
                                     offset = .zero
                                     lastOffset = .zero
@@ -298,11 +334,12 @@ struct ZoomableImageView: View {
                                     scale = 2.0
                                 }
                             }
+                            HapticManager.impact(style: .medium)
                         }
                     )
 
                 // Zoom indicator and reset button
-                if isZoomed {
+                if isImageZoomed {
                     VStack {
                         Text("\(Int(scale * 100))%")
                             .font(.caption)
@@ -332,6 +369,11 @@ struct ZoomableImageView: View {
             }
         }
         .frame(width: geometry.size.width, height: geometry.size.height)
+        .onChange(of: scale) { newScale in
+            isZoomed = newScale > 1.0
+        }
+        .animation(.interactiveSpring(), value: offset)
+        .animation(.spring(), value: scale)
     }
 }
 
