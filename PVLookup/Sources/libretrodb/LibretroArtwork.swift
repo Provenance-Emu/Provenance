@@ -202,59 +202,36 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
         let games = try db.searchGames(name: name, systemID: systemID, limit: 10)
         guard !games.isEmpty else { return nil }
 
-        // Track unique URLs across all tasks
-        var seenURLs = Set<URL>()
+        // Use a set to automatically handle deduplication
+        var artworkSet = Set<ArtworkMetadata>()
 
-        // Batch URL validation
-        let urlTasks = games.flatMap { game -> [(URL, ArtworkType, LibretroDBROMMetadata)] in
+        for game in games {
             let gameName = game.romFileName?.deletingPathExtension() ?? ""
             guard let systemID = game.systemID else {
-                return []
+                continue
             }
 
             let systemName = systemID.libretroDatabaseName
-            var tasks: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
 
-            // Check each supported type and deduplicate URLs
-            let supportedTypes: [ArtworkType] = [ArtworkType.retroDBSupported]
-            for type in supportedTypes where types.contains(type) {
-                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: type.libretroDatabaseFolder),
-                   !seenURLs.contains(url) {
-                    seenURLs.insert(url)
-                    tasks.append((url, type, game))
+            // Check each supported type
+            for type in [ArtworkType.retroDBSupported] where types.contains(type) {
+                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: type.libretroDatabaseFolder) {
+                    let artwork = ArtworkMetadata(
+                        url: url,
+                        type: type,
+                        resolution: nil,
+                        description: game.gameTitle,
+                        source: "LibretroThumbnails",
+                        systemID: game.systemID
+                    )
+                    artworkSet.insert(artwork)
                 }
             }
-
-            return tasks
         }
 
-        // Validate URLs in parallel
-        let validResults = await withTaskGroup(of: (URL, ArtworkType, LibretroDBROMMetadata, Bool).self) { group in
-            for (url, type, metadata) in urlTasks {
-                group.addTask {
-                    let isValid = await Self.validateURL(url)
-                    return (url, type, metadata, isValid)
-                }
-            }
-
-            var results: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
-            for await (url, type, metadata, isValid) in group where isValid {
-                results.append((url, type, metadata))
-            }
-            return results
-        }
-
-        // Convert to ArtworkMetadata
-        return validResults.map { url, type, metadata in
-            ArtworkMetadata(
-                url: url,
-                type: type,
-                resolution: nil,
-                description: metadata.gameTitle,
-                source: "LibretroThumbnails",
-                systemID: metadata.systemID
-            )
-        }
+        // Convert set back to array
+        let artworks = Array(artworkSet)
+        return artworks.isEmpty ? nil : artworks
     }
 
     /// Get artwork for a specific game ID

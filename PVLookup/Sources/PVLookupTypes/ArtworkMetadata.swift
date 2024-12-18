@@ -46,11 +46,13 @@ public struct ArtworkMetadata: Codable, Sendable {
 }
 
 extension ArtworkMetadata: Hashable {
-    public static func == (lhs: ArtworkMetadata, rhs: ArtworkMetadata) -> Bool {
-        lhs.url == rhs.url
-    }
-    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(url)
+        hasher.combine(type)
+        hasher.combine(source)
+    }
+
+    public static func == (lhs: ArtworkMetadata, rhs: ArtworkMetadata) -> Bool {
+        lhs.url == rhs.url && lhs.type == rhs.type && lhs.source == rhs.source
     }
 }
