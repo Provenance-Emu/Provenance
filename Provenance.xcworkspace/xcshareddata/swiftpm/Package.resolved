@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/MrAsterisco/DateRangePicker",
         "state": {
           "branch": null,
-          "revision": "9fd27bed5a951e7a48e2211465fdfc7e9bf2cbe7",
-          "version": "1.0.2"
+          "revision": "5b1ec8990b42f7f4f21a596300707d3a024dd782",
+          "version": "1.0.3"
         }
       },
       {
@@ -281,6 +281,24 @@
         }
       },
       {
+        "package": "swift-http-types",
+        "repositoryURL": "https://github.com/apple/swift-http-types",
+        "state": {
+          "branch": null,
+          "revision": "ef18d829e8b92d731ad27bb81583edd2094d1ce3",
+          "version": "1.3.1"
+        }
+      },
+      {
+        "package": "swift-openapi-runtime",
+        "repositoryURL": "https://github.com/apple/swift-openapi-runtime",
+        "state": {
+          "branch": null,
+          "revision": "5e119a3d52dde0229312ed586be99c666c6b6f64",
+          "version": "1.7.0"
+        }
+      },
+      {
         "package": "swift-perception",
         "repositoryURL": "https://github.com/pointfreeco/swift-perception.git",
         "state": {
@@ -371,11 +389,20 @@
         }
       },
       {
+        "package": "ZIPFoundation",
+        "repositoryURL": "https://github.com/weichsel/ZIPFoundation.git",
+        "state": {
+          "branch": null,
+          "revision": "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
+          "version": "0.9.19"
+        }
+      },
+      {
         "package": "zstd",
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "5e0a83ec255a0f4bb6a3cf8c4abcae46bfc2c3c5",
+          "revision": "f7a8bb1263448e5028aceeba606a08fe3809550f",
           "version": null
         }
       }

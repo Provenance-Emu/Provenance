@@ -17,7 +17,7 @@ import PVLookup
 import PVHashing
 import PVRealm
 import AsyncAlgorithms
-import Systems
+import PVSystems
 import PVMediaCache
 
 let schemaVersion: UInt64 = 14
@@ -484,7 +484,7 @@ public extension RomDatabase {
     
     func allSaveStates(forGameWithID gameID: String) -> Results<PVSaveState> {
         let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID)
-        return realm.objects(PVSaveState.self).filter("game == %@", game)
+        return realm.objects(PVSaveState.self).filter("game == %@", game as Any)
     }
     
     func savetate(forID saveStateID: String) -> PVSaveState? {
@@ -497,11 +497,11 @@ public extension RomDatabase {
 }
 
 public extension Object {
-    public static func all() -> Results<PersistedType> {
+    static func all() -> Results<PersistedType> {
         try! Realm().objects(Self.PersistedType)
     }
     
-    public static func forPrimaryKey(_ primaryKey: String) -> PersistedType? {
+    static func forPrimaryKey(_ primaryKey: String) -> PersistedType? {
         try! Realm().object(ofType: Self.PersistedType.self, forPrimaryKey: primaryKey)
     }
 }

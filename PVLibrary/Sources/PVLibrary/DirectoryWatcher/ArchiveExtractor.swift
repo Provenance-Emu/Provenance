@@ -114,11 +114,11 @@ class SevenZipExtractor: BaseExtractor {
         let entries = try SevenZipContainer.open(container: container)
         
         for (index, item) in entries.enumerated() where item.info.type != .directory {
-            try autoreleasepool {
+            autoreleasepool {
                 let fullPath = destination.appendingPathComponent(item.info.name)
                 Task {
                     if let data = item.data {
-                        try await data.write(to: fullPath, options: [.atomic, .noFileProtection])
+                        try data.write(to: fullPath, options: [.atomic, .noFileProtection])
                     }
                 }
                 yieldPath(fullPath)
@@ -150,11 +150,11 @@ class TarExtractor: BaseExtractor {
         let entries = try TarContainer.open(container: container)
         
         for (index, item) in entries.enumerated() where item.info.type != .directory {
-            try autoreleasepool {
+            autoreleasepool {
                 let fullPath = destination.appendingPathComponent(item.info.name)
                 Task {
                     if let data = item.data {
-                        try await data.write(to: fullPath, options: [.atomic, .noFileProtection])
+                        try data.write(to: fullPath, options: [.atomic, .noFileProtection])
                     }
                 }
                 yieldPath(fullPath)
@@ -167,11 +167,11 @@ class TarExtractor: BaseExtractor {
 private func extractCompressedData(_ data: Data, at path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
     if let entries = try? TarContainer.open(container: data) {
         for (index, item) in entries.enumerated() where item.info.type != .directory {
-            try autoreleasepool {
+            autoreleasepool {
                 let fullPath = destination.appendingPathComponent(item.info.name)
                 Task {
                     if let itemData = item.data {
-                        try await itemData.write(to: fullPath, options: [.atomic, .noFileProtection])
+                        try itemData.write(to: fullPath, options: [.atomic, .noFileProtection])
                     }
                 }
                 yieldPath(fullPath)
@@ -181,7 +181,7 @@ private func extractCompressedData(_ data: Data, at path: URL, to destination: U
     } else {
         let fileName = path.deletingPathExtension().lastPathComponent
         let fullPath = destination.appendingPathComponent(fileName)
-        try await data.write(to: fullPath, options: [.atomic, .noFileProtection])
+        try data.write(to: fullPath, options: [.atomic, .noFileProtection])
         yieldPath(fullPath)
         progress(1.0)
     }

@@ -61,13 +61,17 @@ public enum ProcessingState {
 public class ImportQueueItem: Identifiable, ObservableObject {
     
     // TODO: Make this more generic with AnySystem, some System?
-    public typealias System = PVSystem //AnySystem
+    //public typealias System = PVSystem //AnySystem
     
     public let id = UUID()
     public var url: URL
     public var fileType: FileType
-    public var systems: [System]  // Can be set to the specific system type
-    public var userChosenSystem: (System)?
+    @MainActor
+    @PerceptionIgnored
+    public var systems: [System] = [] // Can be set to the specific system type
+    @MainActor
+    @PerceptionIgnored
+    public var userChosenSystem: (System)? = nil
     public var destinationUrl: URL?
     public var errorValue: String?
     
@@ -78,16 +82,21 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public var status: ImportStatus = .queued {
         didSet {
             if status == .failure {
-                systems = RomDatabase.sharedInstance.all(PVSystem.self).map { $0.freeze() }
+                Task { @MainActor in
+                    updateSystems()
+                }
             }
         }
+    }
+    
+    @MainActor
+    private func updateSystems() {
+        systems = RomDatabase.sharedInstance.all(PVSystem.self).map { $0.asDomain() }
     }
     
     public init(url: URL, fileType: FileType = .unknown) {
         self.url = url
         self.fileType = fileType
-        self.systems = []
-        self.userChosenSystem = nil
         self.childQueueItems = []
     }
     
@@ -108,6 +117,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         var md5: String?
     }
     
+    @MainActor
     public func targetSystem() -> (any SystemProtocol)? {
         guard !systems.isEmpty else {
             return nil

@@ -556,24 +556,35 @@ paths:
 components:
   schemas:
     BaseApiResponse:
+      type: object
       required:
       - code
-      - extra_allowance
-      - remaining_monthly_allowance
       - status
-      type: object
+      - remaining_monthly_allowance
+      - extra_allowance
       properties:
         code:
-          minimum: 0
           type: integer
         status:
           type: string
         remaining_monthly_allowance:
-          minimum: 0
           type: integer
         extra_allowance:
-          minimum: 0
           type: integer
+        pages:
+          type: object
+          nullable: true
+          required: []  # Remove all required fields
+          properties:
+            previous:
+              type: string
+              nullable: true
+            current:
+              type: string
+              nullable: true
+            next:
+              type: string
+              nullable: true
       example:
         code: 200
         status: Success
@@ -700,7 +711,7 @@ components:
                   $ref: '#/components/schemas/PlatformSkinny'
     GamesImages:
       allOf:
-      - $ref: '#/components/schemas/PaginatedApiResponse'
+      - $ref: '#/components/schemas/BaseApiResponse'
       - required:
         - data
         type: object
@@ -708,13 +719,11 @@ components:
           data:
             required:
             - base_url
-            - count
             - images
             type: object
             properties:
-              count:
-                minimum: 0
-                type: integer
+              pages:
+                $ref: '#/components/schemas/Pages'
               base_url:
                 $ref: '#/components/schemas/ImageBaseUrlMeta'
               images:
@@ -1147,4 +1156,59 @@ components:
       example:
         id: 1
         name: Action
+    GamesByGameName:
+      allOf:
+      - $ref: '#/components/schemas/BaseApiResponse'
+      - required:
+        - data
+        - include
+        type: object
+        properties:
+          data:
+            required:
+            - games
+            type: object
+            properties:
+              pages:
+                $ref: '#/components/schemas/Pages'
+              count:
+                minimum: 0
+                type: integer
+                nullable: true
+              games:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+          include:
+            required:
+            - boxart
+            type: object
+            properties:
+              boxart:
+                required:
+                - base_url
+                - data
+                type: object
+                properties:
+                  base_url:
+                    $ref: '#/components/schemas/ImageBaseUrlMeta'
+                  data:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/GameImage'
+    Pages:
+      type: object
+      nullable: true
+      properties:
+        previous:
+          type: string
+          nullable: true
+        current:
+          type: string
+          nullable: true
+        next:
+          type: string
+          nullable: true
 x-original-swagger-version: "2.0"

@@ -128,7 +128,6 @@ let package = Package(
                 "PVHashing",
                 "PVPlists",
                 "PVLookup",
-                "Systems",
                 "PVPrimitives",
                 "PVMediaCache",
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
@@ -165,20 +164,6 @@ let package = Package(
                 "PVLookup",
                 "PVPrimitives",
                 "SwiftCloudDrive",
-                .product(name: "RxCocoa", package: "RxSwift"),
-                .product(name: "RxSwift", package: "RxSwift"),
-                .product(name: "RxRealm", package: "RxRealm"),
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-        ]),
-        // MARK: ------------ Systems ------------
-        .target(
-            name: "Systems",
-            dependencies: [
-                "PVSupport",
-                "PVLogging",
-                "PVHashing",
-                "PVLookup",
-                "PVPrimitives",
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),

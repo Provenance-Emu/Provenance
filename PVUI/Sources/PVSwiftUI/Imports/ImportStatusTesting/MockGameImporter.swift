@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 11/27/24.
 //
 
+#if DEBUG
 import PVSwiftUI
 import SwiftUI
 import Combine
@@ -16,6 +17,7 @@ class MockGameImporter: GameImporting, ObservableObject {
     @Published public var importQueue: [ImportQueueItem] = []
     @Published private(set) public var processingState: ProcessingState = .idle
 
+    @MainActor
     public init(importStatus: String = "", importQueue: [ImportQueueItem] = [], processingState: ProcessingState = .idle, importStartedHandler: GameImporterImportStartedHandler? = nil, completionHandler: GameImporterCompletionHandler? = nil, finishedImportHandler: GameImporterFinishedImportingGameHandler? = nil, finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? = nil, spotlightCompletionHandler: GameImporterCompletionHandler? = nil, spotlightFinishedImportHandler: GameImporterFinishedImportingGameHandler? = nil) {
         self.importStatus = importStatus
         self.importQueue = importQueue
@@ -31,8 +33,8 @@ class MockGameImporter: GameImporting, ObservableObject {
             self.importQueue = [{
                 let item = ImportQueueItem(url: .init(fileURLWithPath: "test.bin"), fileType: .unknown)
                 item.systems = [
-                    PVSystem(identifier: "com.provenance.jaguar", name: "Jaguar", shortName: "Jag", manufacturer: "Atari", screenType: .crt),
-                    PVSystem(identifier: "com.provenance.jaguarcd", name: "Jaguar CD", shortName: "Jag", manufacturer: "Atari", screenType: .crt)
+                    System(identifier: "com.provenance.jaguar", name: "Jaguar", shortName: "Jag", manufacturer: "Atari", screenType: .crt),
+                    System(identifier: "com.provenance.jaguarcd", name: "Jaguar CD", shortName: "Jag", manufacturer: "Atari", screenType: .crt)
                 ]
                 return item
             }(),
@@ -56,10 +58,11 @@ class MockGameImporter: GameImporting, ObservableObject {
         }
     }
     
-    public func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
+    @MainActor
+    public func addImports(forPaths paths: [URL], targetSystem: System) {
         for path in paths {
             let item = ImportQueueItem(url: path, fileType: .unknown)
-            item.userChosenSystem = targetSystem as? PVSystem // TODO: change when generic system types supported
+            item.userChosenSystem = targetSystem // TODO: change when generic system types supported
             addImport(item)
         }
         importStatus = "Added \(paths.count) items to queue"
@@ -134,3 +137,4 @@ class MockGameImporter: GameImporting, ObservableObject {
         })
     }
 }
+#endif

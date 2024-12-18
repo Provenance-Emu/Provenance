@@ -16,7 +16,7 @@ import PVLogging
 import PVUIBase
 
 /// A SwiftUI context menu for game-related actions
-struct GameContextMenu: SwiftUI.View {
+struct GameContextMenu: View {
     var game: PVGame
     var cores: [PVCore] {
         game.system.cores.filter{!(AppState.shared.isAppStore && $0.appStoreDisabled)}
@@ -25,7 +25,12 @@ struct GameContextMenu: SwiftUI.View {
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
 
-    var body: some SwiftUI.View {
+    @State private var showArtworkSearch = false
+    @State private var showImagePicker = false
+    @State private var showArtworkSourceAlert = false
+    @State private var gameToUpdateCover: PVGame?
+
+    var body: some View {
         Group {
             if !game.isInvalidated {
                 if cores.count > 1 {
@@ -66,7 +71,7 @@ struct GameContextMenu: SwiftUI.View {
     #if !os(tvOS)
                 Button {
                     DLOG("GameContextMenu: Choose Cover button tapped")
-                    contextMenuDelegate?.gameContextMenu(self, didRequestChooseCoverFor: game)
+                    contextMenuDelegate?.gameContextMenu(self, didRequestChooseArtworkSourceFor: game)
                 } label: { Label("Choose Cover", systemImage: "book.closed") }
     #endif
                 Button {
@@ -97,6 +102,20 @@ struct GameContextMenu: SwiftUI.View {
                 }
             }
         }
+        .uiKitAlert(
+            "Choose Artwork Source",
+            message: "Select artwork from your photo library or search online sources",
+            isPresented: $showArtworkSourceAlert,
+            buttons: {
+                UIAlertAction(title: "Select from Photos", style: .default) { [contextMenuDelegate] _ in
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowImagePickerFor: game)
+                }
+                UIAlertAction(title: "Search Online", style: .default) { [contextMenuDelegate] _ in
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowArtworkSearchFor: game)
+                }
+                UIAlertAction(title: "Cancel", style: .cancel)
+            }
+        )
     }
 }
 

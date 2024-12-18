@@ -86,9 +86,9 @@ struct ConsolesWrapperView: SwiftUI.View {
                     await rootDelegate?.root_loadGame(byMD5Hash: md5)
                 }
             )
-            return PagedGameMoreInfoView(viewModel: viewModel)
+            return AnyView(PagedGameMoreInfoView(viewModel: viewModel))
         } catch {
-            return Text("Failed to load game info: \(error.localizedDescription)")
+            return AnyView(Text("Failed to load game info: \(error.localizedDescription)"))
         }
     }
 

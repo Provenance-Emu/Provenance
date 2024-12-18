@@ -100,6 +100,9 @@ struct ConsoleGamesView: SwiftUI.View {
     ) var mostPlayed
 
     @State var isShowingSaveStates = false
+    @State internal var showArtworkSearch = false
+
+    @State internal var showArtworkSourceAlert = false
 
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
@@ -203,9 +206,39 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
             .sheet(isPresented: $showImagePicker) {
-#if !os(tvOS)
-                imagePickerView()
-#endif
+                #if !os(tvOS)
+                ImagePicker(sourceType: .photoLibrary) { image in
+                    if let game = gameToUpdateCover {
+                        saveArtwork(image: image, forGame: game)
+                    }
+                    showImagePicker = false
+                    gameToUpdateCover = nil
+                }
+                #endif
+            }
+            .sheet(isPresented: $showArtworkSearch) {
+                ArtworkSearchView(
+                    initialSearch: gameToUpdateCover?.title ?? "",
+                    initialSystem: console.enumValue
+                ) { selection in
+                    if let game = gameToUpdateCover {
+                        Task {
+                            do {
+                                // Load image data from URL
+                                let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                                if let uiImage = UIImage(data: data) {
+                                    await MainActor.run {
+                                        saveArtwork(image: uiImage, forGame: game)
+                                        showArtworkSearch = false
+                                        gameToUpdateCover = nil
+                                    }
+                                }
+                            } catch {
+                                DLOG("Failed to load artwork image: \(error)")
+                            }
+                        }
+                    }
+                }
             }
             .alert("Rename Game", isPresented: $showingRenameAlert) {
                 renameAlertView()
@@ -277,6 +310,25 @@ struct ConsoleGamesView: SwiftUI.View {
                     Text("Error: Could not load save states")
                 }
             }
+            .uiKitAlert(
+                "Choose Artwork Source",
+                message: "Select artwork from your photo library or search online sources",
+                isPresented: $showArtworkSourceAlert,
+                buttons: {
+                    UIAlertAction(title: "Select from Photos", style: .default) { _ in
+                        showArtworkSourceAlert = false
+                        showImagePicker = true
+                    }
+                    UIAlertAction(title: "Search Online", style: .default) { [game = gameToUpdateCover] _ in
+                        showArtworkSourceAlert = false
+                        gameToUpdateCover = game  // Preserve the game reference
+                        showArtworkSearch = true
+                    }
+                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                        showArtworkSourceAlert = false
+                    }
+                }
+            )
         }
         .ignoresSafeArea(.all)
     }
@@ -535,9 +587,9 @@ struct ConsoleGamesView: SwiftUI.View {
                     await rootDelegate?.root_loadGame(byMD5Hash: md5)
                 }
             )
-            return PagedGameMoreInfoView(viewModel: viewModel)
+            return AnyView(PagedGameMoreInfoView(viewModel: viewModel))
         } catch {
-            return Text("Failed to initialize game info view: \(error.localizedDescription)")
+            return AnyView(Text("Failed to initialize game info view: \(error.localizedDescription)"))
         }
     }
 }
@@ -721,5 +773,4 @@ struct ConsoleGamesView_Previews: PreviewProvider {
                          showGameInfo: {_ in})
     }
 }
-
 #endif

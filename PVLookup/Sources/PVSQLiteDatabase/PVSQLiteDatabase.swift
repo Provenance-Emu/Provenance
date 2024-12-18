@@ -14,7 +14,7 @@ package protocol SQLQueryable {
     func execute(query: String) throws -> SQLQueryResponse
 }
 
-public struct PVSQLiteDatabase {
+public struct PVSQLiteDatabase: @unchecked Sendable {
     package let url: URL
     package let connection: SQLite.Connection
 

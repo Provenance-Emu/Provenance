@@ -118,7 +118,7 @@
     } else if (V("vecx_res_multi")) {
         // Internal Resolution Multiplier
         // 1,2,3,4
-        char *value = strdup("4");
+        char *value = strdup("2");
         return value;
     } else if (V("vecx_res_hw")) {
         // Hardware Rendering Resolution

@@ -1,29 +1,50 @@
 import Foundation
+import PVLookupTypes
+import PVSystems
 
 public protocol ROMMetadataProvider {
-    associatedtype GameMetadata
-    associatedtype ROMMetadata
+    /// Search by MD5 hash
+    func searchROM(byMD5 md5: String) async throws -> ROMMetadata?
 
-    // Initialize with a database URL
-    init(databaseURL: URL) throws
+    /// Search by filename
+    func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]?
 
-    // Search by hashes
-    func searchROM(byMD5 md5: String) async throws -> GameMetadata?
-    func searchROM(byCRC crc: String) async throws -> GameMetadata?
-    func searchROM(bySHA1 sha1: String) async throws -> GameMetadata?
+    /// Get SystemIdentifier for ROM
+    /// - Parameters:
+    ///   - md5: MD5 hash of the ROM
+    ///   - filename: Optional filename as fallback
+    /// - Returns: SystemIdentifier if found
+    func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier?
 
-    // Search by filename
-    func searchDatabase(usingFilename filename: String, systemID: Int?) async throws -> [GameMetadata]?
+    /// Search directly by MD5 hash with optional system filter
+    /// - Parameters:
+    ///   - md5: MD5 hash to search for
+    ///   - systemID: Optional system ID to filter results
+    /// - Returns: Array of ROM metadata matching the MD5, or nil if none found
+    func searchByMD5(_ md5: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]?
+}
 
-    // Get ROM metadata
-    func getROMMetadata(forGameID gameID: Int) async throws -> [ROMMetadata]?
+// Default implementation for backward compatibility
+public extension ROMMetadataProvider {
+    func searchByMD5(_ md5: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
+        // Default implementation just wraps searchROM(byMD5:)
+        if let result = try await searchROM(byMD5: md5) {
+            return [result]
+        }
+        return nil
+    }
 
-    // Get full game metadata
-    func getGameMetadata(byID gameID: Int) async throws -> GameMetadata?
+    func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
+        if let systemID = try await system(forRomMD5: md5, or: filename) {
+            return SystemIdentifier.fromOpenVGDBID(systemID)
+        }
+        return nil
+    }
 
-    // Get artwork mappings
-    func getArtworkMappings() async throws -> (romMD5: [String: [String: Any]], romFileNameToMD5: [String: String])
-
-    // Get system ID for ROM
-    func system(forRomMD5 md5: String, or filename: String?) async throws -> Int?
+    func system(forRomMD5 md5: String, or filename: String?) async throws -> Int? {
+        if let identifier = try await systemIdentifier(forRomMD5: md5, or: filename) {
+            return identifier.openVGDBID
+        }
+        return nil
+    }
 }

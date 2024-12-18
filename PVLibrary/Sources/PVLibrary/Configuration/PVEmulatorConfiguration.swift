@@ -75,7 +75,7 @@ public final class PVEmulatorConfiguration: NSObject {
     }
 
     public class func databaseID(forSystemID systemID: String) -> Int? {
-        return system(forIdentifier: systemID)?.openvgDatabaseID
+        return (system(forIdentifier: systemID) as System?)?.openvgDatabaseID
     }
 
     public class func systemID(forDatabaseID databaseID: Int) -> String? {
@@ -146,7 +146,7 @@ public extension PVEmulatorConfiguration {
             ELOG("No system cached for id \(system.identifier)")
             return []
         }
-        return system.cores.map{ $0 } ?? []
+        return system.cores.map{ $0 }
     }
 
     class func games(forSystem system: any SystemProtocol) -> [PVGame] {
@@ -154,7 +154,7 @@ public extension PVEmulatorConfiguration {
             ELOG("No system cached for id \(system.identifier)")
             return []
         }
-        return system.games.map(\.self) ?? []
+        return system.games.map(\.self)
     }
 
     class func gamesCount(forSystem system: any SystemProtocol) -> Int {
@@ -162,7 +162,7 @@ public extension PVEmulatorConfiguration {
             ELOG("No system cached for id \(system.identifier)")
             return 0
         }
-        return system.games.count ?? 0
+        return system.games.count
     }
 
     class func systemsFromCache(forFileExtension fileExtension: String) -> [PVSystem]? {
@@ -194,26 +194,35 @@ public extension PVEmulatorConfiguration {
 
     @objc
     class func system(forDatabaseID databaseID : Int) -> PVSystem? {
-        let systemID = systemID(forDatabaseID: databaseID)
+        guard let systemID = systemID(forDatabaseID: databaseID) else { return nil }
         let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
         return system
     }
-
+    
+    class func system(forDatabaseID databaseID : Int) -> System? {
+        let pvsystem: PVSystem? = system(forDatabaseID: databaseID)
+        return pvsystem?.asDomain()
+    }
 
     @objc
     class func system(forIdentifier systemID: String) -> PVSystem? {
         let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
         return system
     }
+    
+    class func system(forIdentifier systemID: String) -> System? {
+        let pvsystem: PVSystem? = system(forIdentifier: systemID)
+        return pvsystem?.asDomain()
+    }
 
     @objc
     class func name(forSystemIdentifier systemID: String) -> String? {
-        return system(forIdentifier: systemID)?.name
+        return (system(forIdentifier: systemID) as System?)?.name
     }
 
     @objc
     class func shortName(forSystemIdentifier systemID: String) -> String? {
-        return system(forIdentifier: systemID)?.shortName
+        return (system(forIdentifier: systemID) as System?)?.shortName
     }
 
     class func controllerLayout(forSystemIdentifier systemID: String) -> [ControlLayoutEntry]? {
@@ -238,7 +247,7 @@ public extension PVEmulatorConfiguration {
     }
 
     class func requiresBIOS(forSystemIdentifier systemID: String) -> Bool {
-        return system(forIdentifier: systemID)?.requiresBIOS ?? false
+        return (system(forIdentifier: systemID) as System?)?.requiresBIOS ?? false
     }
 
     @objc
@@ -372,7 +381,7 @@ public extension PVEmulatorConfiguration {
 }
 
 // MARK: System queries
-import Systems
+import PVSystems
 
 public extension PVEmulatorConfiguration {
     class func romDirectory(forSystemIdentifier system: SystemIdentifier) -> URL {
@@ -385,14 +394,14 @@ public extension PVEmulatorConfiguration {
 }
 
 public extension PVEmulatorConfiguration {
-    public enum BIOSError: Error {
+    enum BIOSError: Error {
         case unknownBIOSFile
         case invalidMD5Hash
         case systemNotFound
         case biosAlreadyExists
     }
 
-    public static func validateAndImportBIOS(at url: URL) async throws {
+    static func validateAndImportBIOS(at url: URL) async throws {
         let fileName = url.lastPathComponent
         let fileData = try Data(contentsOf: url)
         let md5Hash = fileData.md5
