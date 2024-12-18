@@ -19,6 +19,7 @@ public struct ArtworkSearchView: View {
     @State private var loadingStates: [URL: LoadingState] = [:]
     @State private var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "artworkSearchHistory") ?? []
     @State private var previewImages: [URL: Image] = [:]
+    @State private var showDetail = false
 
     let onSelect: (ArtworkSelectionData) -> Void
 
@@ -234,16 +235,19 @@ public struct ArtworkSearchView: View {
         hasSearched = true
 
         do {
-            // Use PVLookup.shared instead of TheGamesDBService directly
+            // Make sure we're passing all selected types
+            DLOG("Performing search with text: \(searchText), system: \(String(describing: selectedSystem)), types: \(selectedTypes)")
             if let results = try await PVLookup.shared.searchArtwork(
                 byGameName: searchText,
                 systemID: selectedSystem,
-                artworkTypes: selectedTypes
+                artworkTypes: selectedTypes  // Verify this is set correctly
             ) {
+                DLOG("Got \(results.count) results")
                 artworkResults = results
             }
         } catch {
             errorMessage = error.localizedDescription
+            DLOG("Search error: \(error)")
         }
 
         isLoading = false
@@ -331,7 +335,17 @@ public struct ArtworkSearchView: View {
             .frame(height: 150)
             .onTapGesture {
                 lastViewedArtwork = artwork
-                onSelect(ArtworkSelectionData(metadata: artwork, previewImage: previewImages[artwork.url]))
+                showDetail = true
+            }
+            .fullScreenCover(isPresented: $showDetail) {
+                ArtworkDetailView(
+                    artworks: displayResults,
+                    initialArtwork: artwork,
+                    onSelect: onSelect,
+                    onPageChange: { artwork in
+                        lastViewedArtwork = artwork
+                    }
+                )
             }
 
             // Metadata section
