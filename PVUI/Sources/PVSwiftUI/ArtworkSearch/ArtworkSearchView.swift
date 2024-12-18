@@ -4,12 +4,13 @@ import PVLookupTypes
 import PVSystems
 import TheGamesDB
 
-struct ArtworkSearchView: View {
+public struct ArtworkSearchView: View {
     @State private var searchText = ""
     @State private var selectedSystem: SystemIdentifier?
     @State private var artworkResults: [ArtworkMetadata] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @State private var hasSearched = false
     @Environment(\.sampleArtworkResults) private var sampleResults
     @State private var collapsedGroups: Set<String> = Set()
     @State private var selectedTypes: ArtworkType = .defaults
@@ -34,7 +35,13 @@ struct ArtworkSearchView: View {
         .sorted { $0.key < $1.key }
     }
 
-    var body: some View {
+    /// Creates a new ArtworkSearchView
+    /// - Parameter onSelect: Callback when an artwork is selected, providing the artwork metadata and preview image
+    public init(onSelect: @escaping (ArtworkSelectionData) -> Void) {
+        self.onSelect = onSelect
+    }
+
+    public var body: some View {
         VStack(spacing: 0) {
             // Search controls - always at top
             searchControls
@@ -51,6 +58,16 @@ struct ArtworkSearchView: View {
                     Text(error)
                         .foregroundColor(.red)
                     Spacer()
+                } else if hasSearched && displayResults.isEmpty {
+                    Spacer()
+                    NoResultsView(searchText: searchText)
+                    Spacer()
+                } else if !hasSearched {
+                    Spacer()
+                    Text("Search for artwork above")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Spacer()
                 } else {
                     artworkGrid
                 }
@@ -61,7 +78,7 @@ struct ArtworkSearchView: View {
 
     private var searchControls: some View {
         VStack(spacing: 12) {
-            // Search bar
+            // Search bar with button
             HStack {
                 Image(systemName: "magnifyingglass")
                 TextField("Search artwork...", text: $searchText)
@@ -71,6 +88,15 @@ struct ArtworkSearchView: View {
                             await performSearch()
                         }
                     }
+
+                Button {
+                    Task {
+                        await performSearch()
+                    }
+                } label: {
+                    Text("Search")
+                }
+                .disabled(searchText.isEmpty)
             }
 
             // System selector
@@ -87,9 +113,23 @@ struct ArtworkSearchView: View {
                 }
                 Spacer()
             }
+            .onChange(of: selectedSystem) { _ in
+                if !searchText.isEmpty {
+                    Task {
+                        await performSearch()
+                    }
+                }
+            }
 
-            // New artwork type selector
+            // Artwork type selector
             ArtworkTypeSelector(selectedTypes: $selectedTypes)
+                .onChange(of: selectedTypes) { _ in
+                    if !searchText.isEmpty {
+                        Task {
+                            await performSearch()
+                        }
+                    }
+                }
         }
         .padding()
     }
@@ -162,6 +202,7 @@ struct ArtworkSearchView: View {
         isLoading = true
         errorMessage = nil
         artworkResults.removeAll()
+        hasSearched = true
 
         do {
             // Use PVLookup.shared instead of TheGamesDBService directly
@@ -341,6 +382,34 @@ struct ArtworkTypeSelector: View {
                 }
             }
         }
+    }
+}
+
+struct NoResultsView: View {
+    let searchText: String
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 40))
+                .foregroundColor(.gray)
+
+            Text("No artwork found")
+                .font(.headline)
+                .foregroundColor(.primary)
+
+            if !searchText.isEmpty {
+                Text("No results found for \"\(searchText)\"")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+
+            Text("Try adjusting your search or artwork type filters")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
+        .padding()
     }
 }
 

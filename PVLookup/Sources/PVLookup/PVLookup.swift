@@ -293,7 +293,20 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         systemID: SystemIdentifier?,
         artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
-        var allArtwork: [ArtworkMetadata] = []
+        let types = artworkTypes ?? .defaults
+        let cacheKey = ArtworkSearchKey(
+            gameName: name,
+            systemID: systemID,
+            artworkTypes: types
+        )
+
+        // Check cache first
+        if let cachedResults = await ArtworkSearchCache.shared.get(key: cacheKey) {
+            return cachedResults
+        }
+
+        // Perform search if not cached
+        var results: [ArtworkMetadata] = []
 
         // Try OpenVGDB
         if let openVGDBArtwork = try await isolatedOpenVGDB.searchArtwork(
@@ -301,7 +314,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             systemID: systemID,
             artworkTypes: artworkTypes
         ) {
-            allArtwork.append(contentsOf: openVGDBArtwork)
+            results.append(contentsOf: openVGDBArtwork)
         }
 
         // Try LibretroDB
@@ -310,7 +323,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             systemID: systemID,
             artworkTypes: artworkTypes
         ) {
-            allArtwork.append(contentsOf: libretroDBArtwork)
+            results.append(contentsOf: libretroDBArtwork)
         }
 
         // Try TheGamesDB
@@ -319,11 +332,16 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             systemID: systemID,
             artworkTypes: artworkTypes
         ) {
-            allArtwork.append(contentsOf: theGamesDBartwork)
+            results.append(contentsOf: theGamesDBartwork)
         }
 
         // Sort artwork by type priority
-        let sortedArtwork = sortArtworkByType(allArtwork)
+        let sortedArtwork = sortArtworkByType(results)
+
+        // Cache results before returning
+        if !sortedArtwork.isEmpty {
+            await ArtworkSearchCache.shared.set(key: cacheKey, results: sortedArtwork)
+        }
 
         return sortedArtwork.isEmpty ? nil : sortedArtwork
     }
