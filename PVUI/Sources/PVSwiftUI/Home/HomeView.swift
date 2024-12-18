@@ -298,14 +298,17 @@ struct HomeView: SwiftUI.View {
             isPresented: $showArtworkSourceAlert,
             buttons: {
                 UIAlertAction(title: "Select from Photos", style: .default) { _ in
-                    self.gameToUpdateCover = gameToUpdateCover
-                    self.showImagePicker = true
+                    showArtworkSourceAlert = false
+                    showImagePicker = true
                 }
-                UIAlertAction(title: "Search Online", style: .default) { _ in
-                    self.gameToUpdateCover = gameToUpdateCover
-                    self.showArtworkSearch = true
+                UIAlertAction(title: "Search Online", style: .default) { [game = gameToUpdateCover] _ in
+                    showArtworkSourceAlert = false
+                    gameToUpdateCover = game
+                    showArtworkSearch = true
                 }
-                UIAlertAction(title: "Cancel", style: .cancel)
+                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    showArtworkSourceAlert = false
+                }
             }
         )
         /// END: GameContextMenuDelegate
@@ -1033,6 +1036,7 @@ extension HomeView: GameContextMenuDelegate {
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+        DLOG("Setting gameToUpdateCover with game: \(game.title)")
         gameToUpdateCover = game
         showArtworkSourceAlert = true
     }

@@ -15,6 +15,7 @@ import PVLibrary
 import PVPrimitives
 import PVThemes
 import PVRealm
+import PVUIBase
 
 extension BIOSStatus.State {
     var biosStatusImageName: String {
@@ -38,7 +39,7 @@ struct BiosRowView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         return HStack(alignment: .center, spacing: 0) {
-            Image(biosState?.biosStatusImageName ?? BIOSStatus.State.missing.biosStatusImageName).resizable().scaledToFit()
+            Image(biosState?.biosStatusImageName ?? BIOSStatus.State.missing.biosStatusImageName, bundle: PVUIBase.BundleLoader.myBundle).resizable().scaledToFit()
                 .padding(.vertical, 4)
                 .padding(.horizontal, 12)
             VStack(alignment: .leading) {

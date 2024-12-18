@@ -3,9 +3,10 @@ import PVLookup
 import PVLookupTypes
 import PVSystems
 import TheGamesDB
+import PVLogging
 
 public struct ArtworkSearchView: View {
-    @State private var searchText: String = ""
+    @State private var searchText: String
     @State private var selectedSystem: SystemIdentifier?
     @State private var artworkResults: [ArtworkMetadata] = []
     @State private var isLoading = false
@@ -48,8 +49,9 @@ public struct ArtworkSearchView: View {
         initialSystem: SystemIdentifier? = nil,
         onSelect: @escaping (ArtworkSelectionData) -> Void
     ) {
-        self._searchText = State(initialValue: initialSearch)
-        self._selectedSystem = State(initialValue: initialSystem)
+        DLOG("Initializing ArtworkSearchView with initial search: \(initialSearch), initialSystem: \(initialSystem)")
+        self._searchText = State(wrappedValue: initialSearch)
+        self._selectedSystem = State(wrappedValue: initialSystem)
         self.onSelect = onSelect
     }
 

@@ -146,4 +146,10 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         gameToUpdateCover = game
         showArtworkSearch = true
     }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+        DLOG("Setting gameToUpdateCover with game: \(game.title)")
+        gameToUpdateCover = game
+        showArtworkSourceAlert = true
+    }
 }

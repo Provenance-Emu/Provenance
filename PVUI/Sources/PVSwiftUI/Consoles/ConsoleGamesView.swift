@@ -102,7 +102,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @State var isShowingSaveStates = false
     @State internal var showArtworkSearch = false
 
-    @State private var showArtworkSourceAlert = false
+    @State internal var showArtworkSourceAlert = false
 
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
@@ -316,14 +316,17 @@ struct ConsoleGamesView: SwiftUI.View {
                 isPresented: $showArtworkSourceAlert,
                 buttons: {
                     UIAlertAction(title: "Select from Photos", style: .default) { _ in
-                        self.gameToUpdateCover = gameToUpdateCover
-                        self.showImagePicker = true
+                        showArtworkSourceAlert = false
+                        showImagePicker = true
                     }
-                    UIAlertAction(title: "Search Online", style: .default) { _ in
-                        self.gameToUpdateCover = gameToUpdateCover
-                        self.showArtworkSearch = true
+                    UIAlertAction(title: "Search Online", style: .default) { [game = gameToUpdateCover] _ in
+                        showArtworkSourceAlert = false
+                        gameToUpdateCover = game  // Preserve the game reference
+                        showArtworkSearch = true
                     }
-                    UIAlertAction(title: "Cancel", style: .cancel)
+                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                        showArtworkSourceAlert = false
+                    }
                 }
             )
         }
@@ -588,12 +591,6 @@ struct ConsoleGamesView: SwiftUI.View {
         } catch {
             return AnyView(Text("Failed to initialize game info view: \(error.localizedDescription)"))
         }
-    }
-
-    // Add delegate method
-    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
-        gameToUpdateCover = game
-        showArtworkSourceAlert = true
     }
 }
 
