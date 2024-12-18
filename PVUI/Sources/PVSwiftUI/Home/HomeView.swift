@@ -76,6 +76,7 @@ struct HomeView: SwiftUI.View {
 
     /// GameContextMenuDelegate
     @State internal var showImagePicker = false
+    @State internal var showArtworkSearch = false
     @State internal var selectedImage: UIImage?
     @State internal var gameToUpdateCover: PVGame?
     @State internal var showingRenameAlert = false
@@ -84,6 +85,8 @@ struct HomeView: SwiftUI.View {
     @FocusState internal var renameTitleFieldIsFocused: Bool
     @State internal var systemMoveState: SystemMoveState?
     @State internal var continuesManagementState: ContinuesManagementState?
+
+    @State private var showArtworkSourceAlert = false
 
     init(
         gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil,
@@ -185,9 +188,39 @@ struct HomeView: SwiftUI.View {
         /// GameContextMenuDelegate
         /// TODO: This is an ugly copy/paste from `ConsolesGameView.swift`
         .sheet(isPresented: $showImagePicker) {
-#if !os(tvOS)
-            imagePickerView()
-#endif
+            #if !os(tvOS)
+            ImagePicker(sourceType: .photoLibrary) { image in
+                if let game = gameToUpdateCover {
+                    saveArtwork(image: image, forGame: game)
+                }
+                showImagePicker = false
+                gameToUpdateCover = nil
+            }
+            #endif
+        }
+        .sheet(isPresented: $showArtworkSearch) {
+            ArtworkSearchView(
+                initialSearch: gameToUpdateCover?.title ?? "",
+                initialSystem: gameToUpdateCover?.system.enumValue
+            ) { selection in
+                if let game = gameToUpdateCover {
+                    Task {
+                        do {
+                            // Load image data from URL
+                            let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                            if let uiImage = UIImage(data: data) {
+                                await MainActor.run {
+                                    saveArtwork(image: uiImage, forGame: game)
+                                    showArtworkSearch = false
+                                    gameToUpdateCover = nil
+                                }
+                            }
+                        } catch {
+                            DLOG("Failed to load artwork image: \(error)")
+                        }
+                    }
+                }
+            }
         }
         .alert("Rename Game", isPresented: $showingRenameAlert) {
             renameAlertView()
@@ -259,6 +292,22 @@ struct HomeView: SwiftUI.View {
                 Text("Error: Could not load save states")
             }
         }
+        .uiKitAlert(
+            "Choose Artwork Source",
+            message: "Select artwork from your photo library or search online sources",
+            isPresented: $showArtworkSourceAlert,
+            buttons: {
+                UIAlertAction(title: "Select from Photos", style: .default) { _ in
+                    self.gameToUpdateCover = gameToUpdateCover
+                    self.showImagePicker = true
+                }
+                UIAlertAction(title: "Search Online", style: .default) { _ in
+                    self.gameToUpdateCover = gameToUpdateCover
+                    self.showArtworkSearch = true
+                }
+                UIAlertAction(title: "Cancel", style: .cancel)
+            }
+        )
         /// END: GameContextMenuDelegate
     }
 
@@ -971,5 +1020,20 @@ extension HomeView: GameContextMenuDelegate {
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor game: String) {
         showGameInfo(game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+        gameToUpdateCover = game
+        showImagePicker = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+        gameToUpdateCover = game
+        showArtworkSearch = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+        gameToUpdateCover = game
+        showArtworkSourceAlert = true
     }
 }

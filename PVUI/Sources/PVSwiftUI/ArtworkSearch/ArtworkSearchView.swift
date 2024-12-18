@@ -5,7 +5,7 @@ import PVSystems
 import TheGamesDB
 
 public struct ArtworkSearchView: View {
-    @State private var searchText = ""
+    @State private var searchText: String = ""
     @State private var selectedSystem: SystemIdentifier?
     @State private var artworkResults: [ArtworkMetadata] = []
     @State private var isLoading = false
@@ -15,6 +15,9 @@ public struct ArtworkSearchView: View {
     @State private var collapsedGroups: Set<String> = Set()
     @State private var selectedTypes: ArtworkType = .defaults
     @State private var lastViewedArtwork: ArtworkMetadata?
+    @State private var loadingStates: [URL: LoadingState] = [:]
+    @State private var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "artworkSearchHistory") ?? []
+    @State private var previewImages: [URL: Image] = [:]
 
     let onSelect: (ArtworkSelectionData) -> Void
 
@@ -36,8 +39,17 @@ public struct ArtworkSearchView: View {
     }
 
     /// Creates a new ArtworkSearchView
-    /// - Parameter onSelect: Callback when an artwork is selected, providing the artwork metadata and preview image
-    public init(onSelect: @escaping (ArtworkSelectionData) -> Void) {
+    /// - Parameters:
+    ///   - initialSearch: Optional initial search term to populate the search field
+    ///   - initialSystem: Optional system to pre-filter the results
+    ///   - onSelect: Callback when an artwork is selected
+    public init(
+        initialSearch: String = "",
+        initialSystem: SystemIdentifier? = nil,
+        onSelect: @escaping (ArtworkSelectionData) -> Void
+    ) {
+        self._searchText = State(initialValue: initialSearch)
+        self._selectedSystem = State(initialValue: initialSystem)
         self.onSelect = onSelect
     }
 
@@ -85,12 +97,35 @@ public struct ArtworkSearchView: View {
                     .textFieldStyle(.roundedBorder)
                     .onSubmit {
                         Task {
+                            addToHistory(searchText)
                             await performSearch()
                         }
                     }
 
+                // Recent searches menu
+                Menu {
+                    ForEach(searchHistory, id: \.self) { term in
+                        Button(term) {
+                            searchText = term
+                            Task {
+                                await performSearch()
+                            }
+                        }
+                    }
+                    if !searchHistory.isEmpty {
+                        Divider()
+                        Button("Clear History", role: .destructive) {
+                            searchHistory.removeAll()
+                        }
+                    }
+                } label: {
+                    Image(systemName: "clock.arrow.circlepath")
+                }
+                .disabled(searchHistory.isEmpty)
+
                 Button {
                     Task {
+                        addToHistory(searchText)
                         await performSearch()
                     }
                 } label: {
@@ -167,15 +202,7 @@ public struct ArtworkSearchView: View {
                                     GridItem(.adaptive(minimum: 150, maximum: 200))
                                 ], spacing: 20) {
                                     ForEach(artworks, id: \.url) { artwork in
-                                        ArtworkGridItem(
-                                            artwork: artwork,
-                                            allArtworks: artworks,
-                                            onSelect: onSelect,
-                                            showSystem: selectedSystem == nil,
-                                            onArtworkViewed: { artwork in
-                                                lastViewedArtwork = artwork
-                                            }
-                                        )
+                                        artworkGridItem(artwork)
                                     }
                                 }
                                 .padding(.horizontal)
@@ -218,6 +245,124 @@ public struct ArtworkSearchView: View {
         }
 
         isLoading = false
+    }
+
+    enum LoadingState {
+        case loading
+        case loaded
+        case error(Error)
+
+        var isLoading: Bool {
+            if case .loading = self { return true }
+            return false
+        }
+
+        var error: Error? {
+            if case .error(let error) = self { return error }
+            return nil
+        }
+    }
+
+    private func loadArtwork(from url: URL) async {
+        loadingStates[url] = .loading
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let uiImage = UIImage(data: data) {
+                await MainActor.run {
+                    previewImages[url] = Image(uiImage: uiImage)
+                    loadingStates[url] = .loaded
+                }
+            }
+        } catch {
+            await MainActor.run {
+                loadingStates[url] = .error(error)
+                DLOG("Failed to load artwork: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func addToHistory(_ search: String) {
+        guard !search.isEmpty,
+              !searchHistory.contains(search) else { return }
+
+        var newHistory = searchHistory
+        newHistory.insert(search, at: 0)
+        if newHistory.count > 10 {
+            newHistory.removeLast()
+        }
+
+        searchHistory = newHistory
+        UserDefaults.standard.set(newHistory, forKey: "artworkSearchHistory")
+    }
+
+    private func artworkGridItem(_ artwork: ArtworkMetadata) -> some View {
+        VStack {
+            Group {
+                if let loadingState = loadingStates[artwork.url] {
+                    switch loadingState {
+                    case .loading:
+                        ProgressView()
+                    case .loaded:
+                        if let image = previewImages[artwork.url] {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
+                    case .error(let error):
+                        VStack {
+                            Image(systemName: "exclamationmark.triangle")
+                                .foregroundColor(.red)
+                            Text(error.localizedDescription)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                    }
+                } else {
+                    Color.clear
+                        .onAppear {
+                            Task {
+                                await loadArtwork(from: artwork.url)
+                            }
+                        }
+                }
+            }
+            .frame(height: 150)
+            .onTapGesture {
+                lastViewedArtwork = artwork
+                onSelect(ArtworkSelectionData(metadata: artwork, previewImage: previewImages[artwork.url]))
+            }
+
+            // Metadata section
+            VStack(alignment: .leading, spacing: 2) {
+                if let gameName = artwork.description {
+                    Text(gameName)
+                        .font(.caption)
+                        .lineLimit(1)
+                }
+
+                HStack {
+                    Text(artwork.type.displayName)
+                        .font(.caption)
+
+                    if let system = artwork.systemID?.libretroDatabaseName {
+                        Text("•")
+                            .font(.caption)
+                        Text(system)
+                            .font(.caption)
+                    }
+                }
+
+                if let resolution = artwork.resolution {
+                    Text(resolution)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding()
+        .background(Color.secondary.opacity(0.1))
+        .cornerRadius(10)
     }
 }
 
