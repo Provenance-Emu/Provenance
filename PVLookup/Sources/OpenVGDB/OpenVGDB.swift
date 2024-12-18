@@ -505,43 +505,48 @@ extension OpenVGDB {
         systemID: SystemIdentifier?,
         artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
-        // Use default types if none specified
         let types = artworkTypes ?? .defaults
 
-        // Search for games matching the name
-        let results = try searchDatabase(usingFilename: name, systemID: systemID)
-        var artworks: [ArtworkMetadata] = []
+        // Use the existing search method
+        let games = try searchDatabase(usingFilename: name, systemID: systemID)
+        guard let games = games else { return nil }
 
-        if let results = results {
-            for result in results {
-                if let urls = try getArtworkURLs(forRom: result) {
-                    for url in urls {
-                        // Determine artwork type from URL path
-                        let type: ArtworkType = if url.path.contains("front") {
-                            .boxFront
-                        } else if url.path.contains("back") {
-                            .boxBack
-                        } else if url.path.contains("screenshot") {
-                            .screenshot
-                        } else {
-                            .other
-                        }
+        // Use a set to automatically handle deduplication
+        var artworkSet = Set<ArtworkMetadata>()
 
-                        // Only include requested types
-                        if types.contains(type) {
-                            artworks.append(ArtworkMetadata(
-                                url: url,
-                                type: type,
-                                resolution: nil,
-                                description: nil,
-                                source: "OpenVGDB"
-                            ))
-                        }
+        for game in games {
+            // Get artwork URLs for each game
+            if let urls = try getArtworkURLs(forRom: game) {
+                for url in urls {
+                    // Determine artwork type from URL path
+                    let type: ArtworkType = if url.path.contains("front") {
+                        .boxFront
+                    } else if url.path.contains("back") {
+                        .boxBack
+                    } else if url.path.contains("screenshot") {
+                        .screenshot
+                    } else {
+                        .other
+                    }
+
+                    // Only include requested types
+                    if types.contains(type) {
+                        let artwork = ArtworkMetadata(
+                            url: url,
+                            type: type,
+                            resolution: nil,
+                            description: game.gameTitle,
+                            source: "OpenVGDB",
+                            systemID: game.systemID
+                        )
+                        artworkSet.insert(artwork)
                     }
                 }
             }
         }
 
+        // Convert set back to array
+        let artworks = Array(artworkSet)
         return artworks.isEmpty ? nil : artworks
     }
 
