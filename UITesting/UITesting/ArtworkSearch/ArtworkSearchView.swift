@@ -13,6 +13,7 @@ struct ArtworkSearchView: View {
     @Environment(\.sampleArtworkResults) private var sampleResults
     @State private var collapsedGroups: Set<String> = Set()
     @State private var selectedTypes: ArtworkType = .defaults
+    @State private var lastViewedArtwork: ArtworkMetadata?
 
     let onSelect: (ArtworkSelectionData) -> Void
 
@@ -94,53 +95,66 @@ struct ArtworkSearchView: View {
     }
 
     private var artworkGrid: some View {
-        ScrollView {
-            LazyVStack(spacing: 20) {
-                ForEach(groupedResults, id: \.0) { source, artworks in
-                    VStack(alignment: .leading, spacing: 8) {
-                        // Collapsible header
-                        Button {
-                            withAnimation {
-                                if collapsedGroups.contains(source) {
-                                    collapsedGroups.remove(source)
-                                } else {
-                                    collapsedGroups.insert(source)
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(groupedResults, id: \.0) { source, artworks in
+                        VStack(alignment: .leading, spacing: 8) {
+                            // Collapsible header
+                            Button {
+                                withAnimation {
+                                    if collapsedGroups.contains(source) {
+                                        collapsedGroups.remove(source)
+                                    } else {
+                                        collapsedGroups.insert(source)
+                                    }
                                 }
-                            }
-                        } label: {
-                            HStack {
-                                Text(source)
-                                    .font(.headline)
-                                Spacer()
-                                Image(systemName: collapsedGroups.contains(source) ? "chevron.right" : "chevron.down")
-                            }
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .padding(.horizontal)
-
-                        // Collapsible content - show if NOT collapsed
-                        if !collapsedGroups.contains(source) {
-                            LazyVGrid(columns: [
-                                GridItem(.adaptive(minimum: 150, maximum: 200))
-                            ], spacing: 20) {
-                                ForEach(artworks, id: \.url) { artwork in
-                                    ArtworkGridItem(
-                                        artwork: artwork,
-                                        onSelect: onSelect,
-                                        showSystem: selectedSystem == nil
-                                    )
+                            } label: {
+                                HStack {
+                                    Text(source)
+                                        .font(.headline)
+                                    Spacer()
+                                    Image(systemName: collapsedGroups.contains(source) ? "chevron.right" : "chevron.down")
                                 }
+                                .contentShape(Rectangle())
                             }
+                            .buttonStyle(.plain)
                             .padding(.horizontal)
-                            .transition(.move(edge: .top).combined(with: .opacity))
+
+                            // Collapsible content - show if NOT collapsed
+                            if !collapsedGroups.contains(source) {
+                                LazyVGrid(columns: [
+                                    GridItem(.adaptive(minimum: 150, maximum: 200))
+                                ], spacing: 20) {
+                                    ForEach(artworks, id: \.url) { artwork in
+                                        ArtworkGridItem(
+                                            artwork: artwork,
+                                            allArtworks: artworks,
+                                            onSelect: onSelect,
+                                            showSystem: selectedSystem == nil,
+                                            onArtworkViewed: { artwork in
+                                                lastViewedArtwork = artwork
+                                            }
+                                        )
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                            }
+                        }
+
+                        Divider()
+                    }
+                }
+                .padding(.vertical)
+                .onChange(of: lastViewedArtwork) { artwork in
+                    if let artwork = artwork {
+                        withAnimation {
+                            proxy.scrollTo(artwork.url, anchor: .center)
                         }
                     }
-
-                    Divider()
                 }
             }
-            .padding(.vertical)
         }
     }
 
@@ -169,29 +183,35 @@ struct ArtworkSearchView: View {
 // Grid item view
 struct ArtworkGridItem: View {
     let artwork: ArtworkMetadata
+    let allArtworks: [ArtworkMetadata]
     let onSelect: (ArtworkSelectionData) -> Void
     let showSystem: Bool
+    let onArtworkViewed: (ArtworkMetadata) -> Void
 
     @State private var image: Image?
     @State private var isLoading = true
+    @State private var showDetail = false
 
     var body: some View {
         VStack(spacing: 4) {
             // Image section
-            if let image = image {
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 150)
-            } else if isLoading {
-                ProgressView()
-                    .frame(height: 150)
-            } else {
-                Image(systemName: "photo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 150)
-                    .foregroundColor(.gray)
+            Group {
+                if let image = image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                } else if isLoading {
+                    ProgressView()
+                } else {
+                    Image(systemName: "photo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(.gray)
+                }
+            }
+            .frame(height: 150)
+            .onTapGesture {
+                showDetail = true
             }
 
             // Metadata section
@@ -225,8 +245,13 @@ struct ArtworkGridItem: View {
         .padding()
         .background(Color.secondary.opacity(0.1))
         .cornerRadius(10)
-        .onTapGesture {
-            onSelect(ArtworkSelectionData(metadata: artwork, previewImage: image))
+        .fullScreenCover(isPresented: $showDetail) {
+            ArtworkDetailView(
+                artworks: allArtworks,
+                initialArtwork: artwork,
+                onSelect: onSelect,
+                onPageChange: onArtworkViewed
+            )
         }
         .task {
             await loadImage()
