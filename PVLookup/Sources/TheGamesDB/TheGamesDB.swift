@@ -26,6 +26,16 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
         }
     }
 
+    /// Initialize with a specific database for testing
+    internal init(database: PVSQLiteDatabase) async throws {
+        self.manager = TheGamesDBManager.shared
+        do {
+            self.schema = try await TheGamesDBSchema(database: database)
+        } catch {
+            throw TheGamesDBError.databaseNotInitialized
+        }
+    }
+
     public func searchArtwork(
         byGameName name: String,
         systemID: SystemIdentifier?,
@@ -80,7 +90,6 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
                 throw TheGamesDBError.invalidImageData
             }
 
-            let platform = try schema.getPlatform(id: platformId)
             guard let systemID = SystemIdentifier(theGamesDBID: platformId) else {
                 throw TheGamesDBError.invalidPlatformID
             }
@@ -152,9 +161,8 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
             let images = try schema.getImages(gameId: gameId)
 
             for image in images {
-                guard let filename = image["filename"] as? String else { continue }
-                let urlString = "https://cdn.thegamesdb.net/images/original/\(filename)"
-                if let url = URL(string: urlString) {
+                if let filename = image["filename"] as? String,
+                   let url = URL(string: "https://cdn.thegamesdb.net/images/original/\(filename)") {
                     urls.append(url)
                 }
             }
@@ -178,9 +186,8 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
                 let images = try schema.getImages(gameId: gameId)
 
                 for image in images {
-                    guard let filename = image["filename"] as? String else { continue }
-                    let urlString = "https://cdn.thegamesdb.net/images/original/\(filename)"
-                    if let url = URL(string: urlString) {
+                    if let filename = image["filename"] as? String,
+                       let url = URL(string: "https://cdn.thegamesdb.net/images/original/\(filename)") {
                         urls.append(url)
                     }
                 }
@@ -222,4 +229,44 @@ private extension ArtworkType {
 
         return types
     }
+}
+
+private func constructArtworkSearchQuery(name: String, systemID: SystemIdentifier?) -> String {
+    let platformFilter = if let id = systemID?.theGamesDBID {
+        "AND games.platform_id = \(id)"
+    } else {
+        ""
+    }
+    
+    return """
+    WITH matched_games AS (
+        SELECT DISTINCT games.id, games.serial_id,
+               CASE
+                   WHEN games.display_name = '\(name)' THEN 0  -- Exact match
+                   WHEN games.display_name LIKE '\(name) %' THEN 1  -- Starts with name
+                   WHEN games.display_name LIKE '% \(name) %' THEN 2  -- Contains word
+                   WHEN games.display_name LIKE '%\(name)%' THEN 3  -- Contains substring
+                   ELSE 4
+               END as match_quality
+        FROM games
+        WHERE games.display_name LIKE '%\(name)%'
+        AND games.display_name NOT LIKE '%Marionette%'  -- Exclude false matches
+        \(platformFilter)
+        ORDER BY match_quality, games.display_name
+        LIMIT 10
+    )
+    SELECT DISTINCT
+        games.display_name as game_title,
+        roms.name as rom_name,
+        platforms.id as platform_id,
+        manufacturers.name as manufacturer_name,
+        games.developer_id,  -- Just get the ID
+        games.publisher_id   -- Just get the ID
+    FROM matched_games
+    JOIN games ON matched_games.id = games.id
+    LEFT JOIN platforms ON games.platform_id = platforms.id
+    LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+    LEFT JOIN roms ON games.serial_id = roms.serial_id
+    ORDER BY matched_games.match_quality, games.display_name
+    """
 }

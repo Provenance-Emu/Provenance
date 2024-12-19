@@ -7,8 +7,12 @@ import PVSystems
 public struct TheGamesDBSchema {
     private let db: PVSQLiteDatabase
 
-    public init(url: URL) throws {
+    public init(url: URL) async throws {
         self.db = try PVSQLiteDatabase(withURL: url)
+    }
+
+    public init(database: PVSQLiteDatabase) async throws {
+        self.db = database
     }
 
     /// Search for games by name

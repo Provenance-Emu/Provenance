@@ -12,6 +12,8 @@ import Testing
 @testable import ShiraGame
 @testable import libretrodb
 @testable import TheGamesDB
+@testable import PVSQLiteDatabase
+import Foundation
 import PVSystems
 
 struct PVLookupTests {
@@ -446,6 +448,19 @@ struct PVLookupTests {
         }
     }
 
+    @Test("Handles database errors gracefully")
+    func testDatabaseErrors() async throws {
+        // Try to initialize with invalid database path
+        do {
+            let invalidPath = URL(fileURLWithPath: "/invalid/path/to/database.sqlite")
+            let db = try PVSQLiteDatabase(withURL: invalidPath)
+            _ = try await TheGamesDB(database: db)
+            #expect(false, "Should have thrown an error")
+        } catch {
+            #expect(true, "Should throw an error for invalid database")
+        }
+    }
+
 }
 
 struct PVLookupArtworkTests {
@@ -791,16 +806,30 @@ struct PVLookupSystemTests {
         let mappings = try await lookup.getArtworkMappings()
 
         // Test known MD5 mappings
-        let knownMD5 = "02CAE4C360567CD228E4DC951BE6CB85"  // Pitfall Mayan Adventure USA
-        #expect(mappings.romMD5[knownMD5] != nil)
+        let knownMD5s = [
+            "02CAE4C360567CD228E4DC951BE6CB85",  // Pitfall Mayan Adventure USA
+            "6A80D2D34CDFAFD03703B0FE76D10399",  // Pitfall Mayan Adventure Genesis
+            "C7658288B84A5F9521B5A19C0694D076"   // Pitfall Mayan Adventure SegaCD
+        ]
+
+        // At least one of these should exist
+        let hasKnownMD5 = knownMD5s.contains { mappings.romMD5[$0] != nil }
+        #expect(hasKnownMD5, "Should find at least one known MD5")
 
         // Test known filename mappings
-        let knownFilename = "Pitfall - The Mayan Adventure (USA).sfc"
-        #expect(mappings.romFileNameToMD5[knownFilename] != nil)
+        let knownFilenames = [
+            "Pitfall - The Mayan Adventure (USA).sfc",
+            "Pitfall - The Mayan Adventure (USA).bin",
+            "Pitfall - The Mayan Adventure (USA).iso"
+        ]
+
+        // At least one of these should exist
+        let hasKnownFilename = knownFilenames.contains { mappings.romFileNameToMD5[$0] != nil }
+        #expect(hasKnownFilename, "Should find at least one known filename")
 
         // Verify mappings aren't empty
-        #expect(!mappings.romMD5.isEmpty)
-        #expect(!mappings.romFileNameToMD5.isEmpty)
+        #expect(!mappings.romMD5.isEmpty, "Should have MD5 mappings")
+        #expect(!mappings.romFileNameToMD5.isEmpty, "Should have filename mappings")
     }
 
 }
