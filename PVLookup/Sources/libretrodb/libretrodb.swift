@@ -1003,8 +1003,8 @@ extension libretrodb {
             DLOG("- LibretroDB Platform ID: \(systemID.libretroDatabaseID ?? -1)")
         }
 
-        // Clean the name and escape SQL
-        let escapedName = name.replacingOccurrences(of: "'", with: "''")
+        // Clean the name and escape SQL including parentheses
+        let escapedName = escapeSQLString(name)
         let platformFilter = systemID?.libretroDatabaseID != nil ?
             "AND games.platform_id = \(systemID!.libretroDatabaseID)" : ""
 
@@ -1086,5 +1086,12 @@ extension libretrodb {
                 source: "LibretroDB"
             )
         }
+    }
+
+    // Helper to escape SQL special characters
+    private func escapeSQLString(_ input: String) -> String {
+        input.replacingOccurrences(of: "'", with: "''")
+             .replacingOccurrences(of: "(", with: "\\(")
+             .replacingOccurrences(of: ")", with: "\\)")
     }
 }

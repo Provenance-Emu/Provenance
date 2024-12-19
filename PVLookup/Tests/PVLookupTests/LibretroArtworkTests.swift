@@ -363,4 +363,43 @@ struct LibretroArtworkTests {
             }
         }
     }
+
+    @Test("Debug URL construction with special characters")
+    func testURLConstructionWithSpecialChars() throws {
+        let testCases = [
+            (
+                systemName: "Atari - Jaguar",
+                gameName: "Aircars",
+                expected: "https://thumbnails.libretro.com/Atari%20-%20Jaguar/Named_Snaps/Aircars.png"
+            ),
+            (
+                systemName: "Atari - Jaguar",
+                gameName: "Aircars (USA)",
+                expected: "https://thumbnails.libretro.com/Atari%20-%20Jaguar/Named_Snaps/Aircars%20(USA).png"
+            ),
+            (
+                systemName: "Atari - Jaguar",
+                gameName: "Alien vs Predator (World)",
+                expected: "https://thumbnails.libretro.com/Atari%20-%20Jaguar/Named_Snaps/Alien%20vs%20Predator%20(World).png"
+            )
+        ]
+
+        for testCase in testCases {
+            print("\nTesting URL construction:")
+            print("- System Name: \(testCase.systemName)")
+            print("- Game Name: \(testCase.gameName)")
+
+            let url = LibretroArtwork.constructURL(
+                systemName: testCase.systemName,
+                gameName: testCase.gameName,
+                type: .screenshot
+            )
+
+            print("- Constructed: \(url?.absoluteString ?? "nil")")
+            print("- Expected:    \(testCase.expected)")
+
+            #expect(url?.absoluteString == testCase.expected,
+                   "URL should match for '\(testCase.gameName)'")
+        }
+    }
 }
