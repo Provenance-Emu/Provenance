@@ -1,7 +1,7 @@
 import Foundation
 
 /// Errors that can occur when using TheGamesDB
-public enum TheGamesDBError: LocalizedError {
+public enum TheGamesDBError: LocalizedError, Equatable {
     case databaseNotInitialized
     case invalidGameID
     case gameNotFound
@@ -29,6 +29,24 @@ public enum TheGamesDBError: LocalizedError {
             return "Database query error: \(error.localizedDescription)"
         case .databaseError(let error):
             return "Database error: \(error.localizedDescription)"
+        }
+    }
+
+    public static func == (lhs: TheGamesDBError, rhs: TheGamesDBError) -> Bool {
+        switch (lhs, rhs) {
+        case (.databaseNotInitialized, .databaseNotInitialized),
+             (.invalidGameID, .invalidGameID),
+             (.gameNotFound, .gameNotFound),
+             (.invalidPlatformID, .invalidPlatformID),
+             (.invalidImageData, .invalidImageData),
+             (.invalidURL, .invalidURL):
+            return true
+        case (.queryError(let lhsError), .queryError(let rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        case (.databaseError(let lhsError), .databaseError(let rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        default:
+            return false
         }
     }
 }

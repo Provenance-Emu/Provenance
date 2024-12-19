@@ -81,7 +81,8 @@ let package = Package(
         .target(
             name: "PVSQLiteDatabase",
             dependencies: [
-                .product(name: "SQLite", package: "sqlite.swift")
+                .product(name: "SQLite", package: "sqlite.swift"),
+                .product(name: "ZIPFoundation", package: "ZIPFoundation")
             ]
         ),
 
@@ -160,8 +161,7 @@ let package = Package(
                 "PVSQLiteDatabase",
                 "PVLookupTypes",
                 "PVPrimitives",
-                "Lighter",
-                .product(name: "ZIPFoundation", package: "ZIPFoundation")
+                "Lighter"
             ],
             resources: [
 //                .copy("Resources/shiragame.sqlite3.7z"),

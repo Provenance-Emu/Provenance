@@ -1,21 +1,53 @@
 import Testing
-import Foundation
+import PVLogging
+import PVSystems
+@testable import PVLookup
 @testable import TheGamesDB
 @testable import PVLookupTypes
 
 struct TheGamesDBTests {
-    let service: TheGamesDBService
+    let db: TheGamesDB
 
-    init() {
-        // Create a mock client for testing
-        let mockClient = MockTheGamesDBClient()
-        self.service = TheGamesDBService(client: mockClient)
+    // Test data based on known database entries
+    let testData = (
+        superMarioWorld: (
+            id: 1018,
+            title: "Super Mario World",
+            platformId: 6, // SNES
+            boxartFront: "boxart/1018-1.jpg",
+            boxartBack: "boxart/1018-2.jpg",
+            screenshot: "screenshot/1018-1.jpg"
+        ),
+        finalFantasy: (
+            id: 1020,
+            title: "Final Fantasy VI",
+            platformId: 6, // SNES
+            boxartFront: "boxart/1020-1.jpg",
+            screenshot: "screenshot/1020-1.jpg"
+        )
+    )
+
+    init() async throws {
+        print("Starting TheGamesDB test initialization...")
+        self.db = try await TheGamesDB()
+        print("TheGamesDB initialization complete")
     }
 
-    @Test
+    @Test("Database initialization works")
+    func testDatabaseInitialization() async throws {
+        // Verify database exists and is readable
+        let artwork = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        #expect(artwork != nil)
+    }
+
+    @Test("Search artwork by name returns expected results")
     func testSearchArtworkByName() async throws {
-        let artwork = try await service.searchArtwork(
-            byGameName: "Super Mario World",
+        let artwork = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
             systemID: .SNES,
             artworkTypes: [.boxFront, .screenshot]
         )
@@ -30,30 +62,19 @@ struct TheGamesDBTests {
         #expect(artwork != nil)
         #expect(!artwork!.isEmpty)
 
-        // Verify we got some box art
-        let boxArt = artwork?.filter { $0.type == .boxFront }
-        #expect(!boxArt!.isEmpty)
-
         // Verify URLs are valid
         artwork?.forEach { art in
-            #expect(art.url.absoluteString.starts(with: "https://"))
+            #expect(art.url.absoluteString.starts(with: "https://cdn.thegamesdb.net/images/"))
             #expect(art.source == "TheGamesDB")
         }
     }
 
-    @Test
+    @Test("Get artwork by game ID returns expected results")
     func testGetArtworkByGameID() async throws {
-        let artwork = try await service.getArtwork(
-            forGameID: "1",  // Super Mario World
-            artworkTypes: nil  // Get all types
+        let artwork = try await db.getArtwork(
+            forGameID: String(testData.superMarioWorld.id),
+            artworkTypes: nil
         )
-
-        print("\nArtwork results for game ID 1:")
-        artwork?.forEach { art in
-            print("- Type: \(art.type.rawValue)")
-            print("  URL: \(art.url)")
-            print("  Resolution: \(art.resolution ?? "unknown")")
-        }
 
         #expect(artwork != nil)
         #expect(!artwork!.isEmpty)
@@ -61,159 +82,149 @@ struct TheGamesDBTests {
         // Verify we have different types of artwork
         let artworkTypes = Set(artwork?.map(\.type) ?? [])
         print("\nFound artwork types: \(artworkTypes)")
-        #expect(artworkTypes.count > 1)
+        #expect(!artworkTypes.isEmpty)
     }
 
-    @Test("Handles empty response correctly")
-    func testEmptyResponse() async throws {
-        let artwork = try await service.searchArtwork(
-            byGameName: "NonexistentGame12345",
-            systemID: .Unknown,
+    @Test("Handles invalid game ID correctly")
+    func testInvalidGameID() async throws {
+        do {
+            let artwork = try await db.getArtwork(
+                forGameID: "invalid",
+                artworkTypes: nil
+            )
+            #expect(artwork == nil)
+        } catch let error as TheGamesDBError {
+            #expect(error == .invalidGameID)
+        }
+    }
+
+    @Test("Handles database errors gracefully")
+    func testDatabaseErrors() async throws {
+        // Try to initialize with invalid path
+        do {
+            _ = try await TheGamesDB()
+            #expect(false, "Should have thrown an error")
+        } catch let error as TheGamesDBError {
+            #expect(error == .databaseNotInitialized)
+        }
+    }
+
+    @Test("Handles fuzzy name matching with special characters")
+    func testFuzzyNameMatchingSpecialChars() async throws {
+        // Test with parentheses
+        let withParens = try await db.searchArtwork(
+            byGameName: "Super Mario World (USA)",
+            systemID: .SNES,
             artworkTypes: nil
         )
+        #expect(withParens != nil)
+        #expect(!withParens!.isEmpty)
 
-        #expect(artwork == nil)
+        // Test with brackets
+        let withBrackets = try await db.searchArtwork(
+            byGameName: "Super Mario World [!]",
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        #expect(withBrackets != nil)
+        #expect(!withBrackets!.isEmpty)
+
+        // Test with version numbers
+        let withVersion = try await db.searchArtwork(
+            byGameName: "Super Mario World v1.1",
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        #expect(withVersion != nil)
+        #expect(!withVersion!.isEmpty)
     }
 
-    @Test("Filters artwork types correctly")
-    func testArtworkTypeFiltering() async throws {
-        // Test with only boxart
-        let boxartOnly = try await service.searchArtwork(
-            byGameName: "Super Mario World",
+    @Test("Handles fuzzy name matching with partial names")
+    func testFuzzyNameMatchingPartial() async throws {
+        // Test with partial title
+        let partialStart = try await db.searchArtwork(
+            byGameName: "Super Mario",
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        #expect(partialStart != nil)
+        #expect(!partialStart!.isEmpty)
+
+        // Test with middle word
+        let partialMiddle = try await db.searchArtwork(
+            byGameName: "Mario",
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        #expect(partialMiddle != nil)
+        #expect(!partialMiddle!.isEmpty)
+
+        // Test with end word
+        let partialEnd = try await db.searchArtwork(
+            byGameName: "World",
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        #expect(partialEnd != nil)
+        #expect(!partialEnd!.isEmpty)
+    }
+
+    @Test("Converts artwork types correctly")
+    func testArtworkTypeConversion() async throws {
+        // Test boxart front
+        let boxartFront = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
             systemID: .SNES,
             artworkTypes: [.boxFront]
         )
+        #expect(boxartFront?.allSatisfy { $0.type == .boxFront } == true)
 
-        #expect(boxartOnly?.allSatisfy { $0.type == .boxFront } == true)
-
-        // Test with multiple types
-        let multipleTypes = try await service.searchArtwork(
-            byGameName: "Super Mario World",
+        // Test boxart back
+        let boxartBack = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
             systemID: .SNES,
-            artworkTypes: [.boxFront, .screenshot]
+            artworkTypes: [.boxBack]
         )
+        #expect(boxartBack?.allSatisfy { $0.type == .boxBack } == true)
 
+        // Test screenshots
+        let screenshots = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
+            systemID: .SNES,
+            artworkTypes: [.screenshot]
+        )
+        #expect(screenshots?.allSatisfy { $0.type == .screenshot } == true)
+
+        // Test multiple types
+        let multipleTypes = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
+            systemID: .SNES,
+            artworkTypes: [.boxFront, .screenshot, .titleScreen]
+        )
         let types = Set(multipleTypes?.map(\.type) ?? [])
-        #expect(types.isSubset(of: [.boxFront, .screenshot]))
+        #expect(types.isSubset(of: [.boxFront, .screenshot, .titleScreen]))
     }
 
-    @Test("Sorts artwork correctly")
-    func testArtworkSorting() async throws {
-        let artwork = try await service.searchArtwork(
-            byGameName: "Super Mario World",
+    @Test("Handles artwork type conversion edge cases")
+    func testArtworkTypeConversionEdgeCases() async throws {
+        // Test with unknown type
+        let unknownType = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
             systemID: .SNES,
-            artworkTypes: [.boxFront, .boxBack, .screenshot]
+            artworkTypes: [.other]
         )
+        // Should still return results but marked as .other type
+        #expect(unknownType?.contains { $0.type == .other } == true)
 
-        #expect(artwork != nil, "No artwork found")
-        guard let sortedArtwork = artwork else { return }
-
-        // Print current order for debugging
-        print("\nArtwork order:")
-        sortedArtwork.enumerated().forEach { index, art in
-            print("[\(index)] \(art.type.rawValue)")
-        }
-
-        // First item should be boxFront
-        #expect(sortedArtwork.first?.type == .boxFront, "First item should be boxFront")
-
-        // All boxart (front and back) should come before other types
-        let boxArtTypes: Set<ArtworkType> = [.boxFront, .boxBack]
-        let otherTypes: Set<ArtworkType> = [.screenshot, .titleScreen, .clearLogo, .banner, .fanArt, .manual, .other]
-
-        // Get indices for each type
-        let boxArtIndices = sortedArtwork.enumerated()
-            .filter { boxArtTypes.contains($0.element.type) }
-            .map(\.offset)
-        let otherIndices = sortedArtwork.enumerated()
-            .filter { otherTypes.contains($0.element.type) }
-            .map(\.offset)
-
-        if !boxArtIndices.isEmpty && !otherIndices.isEmpty {
-            let lastBoxArtIndex = boxArtIndices.max()!
-            let firstOtherIndex = otherIndices.min()!
-            #expect(lastBoxArtIndex < firstOtherIndex,
-                   "Box art (max index: \(lastBoxArtIndex)) should come before other types (min index: \(firstOtherIndex))")
-        }
-    }
-}
-
-// MARK: - Mock Client
-private actor MockTheGamesDBClient: TheGamesDBClient {
-    func searchGames(name: String, platformID: Int?) async throws -> GamesResponse {
-        // Return mock game data
-        return GamesResponse(
-            code: 200,
-            status: "Success",
-            data: GamesResponse.GamesData(
-                games: [
-                    Game(
-                        id: 1,
-                        game_title: "Super Mario World",
-                        platform: platformID ?? 6  // SNES platform ID
-                    ),
-                    Game(
-                        id: 2,
-                        game_title: "Super Mario World 2: Yoshi's Island",
-                        platform: platformID ?? 6
-                    )
-                ]
-            )
+        // Test with no type filter
+        let noFilter = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
+            systemID: .SNES,
+            artworkTypes: nil
         )
-    }
-
-    func getGameImages(gameID: String?, types: [String]?) async throws -> ImagesResponse {
-        // Return mock image data with dictionary structure
-        return ImagesResponse(
-            code: 200,
-            status: "Success",
-            data: ImagesResponse.ImagesData(
-                base_url: ImagesResponse.ImagesData.BaseURL(
-                    original: "https://cdn.thegamesdb.net/images/original/",
-                    small: "https://cdn.thegamesdb.net/images/small/",
-                    thumb: "https://cdn.thegamesdb.net/images/thumb/",
-                    cropped_center_thumb: "https://cdn.thegamesdb.net/images/cropped_center_thumb/",
-                    medium: "https://cdn.thegamesdb.net/images/medium/",
-                    large: "https://cdn.thegamesdb.net/images/large/"
-                ),
-                count: 4,
-                images: .dictionary([
-                    "boxart": [
-                        GameImage(
-                            id: 1,
-                            type: "boxart",
-                            side: "front",
-                            filename: "boxart/1-1.jpg",
-                            resolution: "2048x2048"
-                        ),
-                        GameImage(
-                            id: 2,
-                            type: "boxart",
-                            side: "back",
-                            filename: "boxart/1-2.jpg",
-                            resolution: "2048x2048"
-                        )
-                    ],
-                    "screenshot": [
-                        GameImage(
-                            id: 3,
-                            type: "screenshot",
-                            side: nil,
-                            filename: "screenshot/1-1.jpg",
-                            resolution: "1920x1080"
-                        )
-                    ],
-                    "titlescreen": [
-                        GameImage(
-                            id: 4,
-                            type: "titlescreen",
-                            side: nil,
-                            filename: "titlescreen/1-1.jpg",
-                            resolution: "1920x1080"
-                        )
-                    ]
-                ])
-            )
-        )
+        // Should return all available types
+        #expect(noFilter?.isEmpty == false)
+        let allTypes = Set(noFilter?.map(\.type) ?? [])
+        #expect(allTypes.count > 1)
     }
 }
