@@ -934,7 +934,7 @@ extension libretrodb {
         let results = try db.execute(query: query)
         print("- Raw results: \(results)")
 
-        let metadata = try results.compactMap { dict -> LibretroDBROMMetadata? in
+        let metadata = results.compactMap { dict -> LibretroDBROMMetadata? in
             // Simplified metadata conversion for artwork
             guard let gameTitle = dict["game_title"] as? String,
                   let platformID = (dict["platform_id"] as? NSNumber)?.stringValue else {

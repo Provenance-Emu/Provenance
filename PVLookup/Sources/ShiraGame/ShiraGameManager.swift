@@ -1,5 +1,6 @@
 import Foundation
 import PVLogging
+import PVSQLiteDatabase
 
 public enum ShiraGameError: Error {
     case databaseNotFound

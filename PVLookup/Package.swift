@@ -92,6 +92,7 @@ let package = Package(
          .target(
              name: "TheGamesDB",
              dependencies: [
+                "PVSQLiteDatabase",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
 //                .product(name: "OpenAPIAsyncHTTPClient", package: "swift-openapi-async-http-client"),
                 "PVLookupTypes",

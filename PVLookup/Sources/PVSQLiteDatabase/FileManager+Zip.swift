@@ -1,7 +1,7 @@
 import Foundation
 import ZIPFoundation
 
-extension FileManager {
+public extension FileManager {
     /// Extracts a zip file to a destination directory
     /// - Parameters:
     ///   - sourceURL: URL of the zip file

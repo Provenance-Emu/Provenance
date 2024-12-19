@@ -27,50 +27,57 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     // MARK: - Properties
     private let openVGDB: OpenVGDB
     private let libreTroDB: libretrodb
-    private let theGamesDB: TheGamesDBService
+    private var theGamesDB: TheGamesDB?
+    private var isInitializing = false
+
 #if canImport(ShiraGame)
     private var shiraGame: ShiraGame?
-    private var isInitializing = false
-    private var initializationTask: Task<Void, Error>?
-
-    private func ensureInitialization() async {
-        if initializationTask == nil {
-            initializationTask = Task { [self] in
-                await self.initializeShiraGame()
-            }
-        }
-    }
-
-    private func initializeShiraGame() async {
-        guard !isInitializing && shiraGame == nil else { return }
-
-        do {
-            isInitializing = true
-            shiraGame = try await ShiraGame()
-        } catch {
-            ELOG("Failed to initialize ShiraGame: \(error)")
-        }
-        isInitializing = false
-    }
-
-    // Helper to safely access ShiraGame
-    private func getShiraGame() async -> ShiraGame? {
-        await ensureInitialization()
-
-        // If still initializing, wait for initialization
-        if isInitializing, let task = initializationTask {
-            // Wait for initialization to complete
-            _ = await task.result
-        }
-        return shiraGame
-    }
 #endif
 
     // MARK: - Initialization
     private init() {
         self.openVGDB = OpenVGDB()
         self.libreTroDB = libretrodb()
-        self.theGamesDB = TheGamesDBService()
+
+        // Start async initialization
+        Task { [weak self] in
+            await self?.initializeDatabases()
+        }
+    }
+
+    private func initializeDatabases() async {
+        // Initialize TheGamesDB
+        do {
+            let db = try await TheGamesDB()
+            self.theGamesDB = db
+        } catch {
+            ELOG("Failed to initialize TheGamesDB: \(error)")
+        }
+
+#if canImport(ShiraGame)
+        // Initialize ShiraGame
+        do {
+            let game = try await ShiraGame()
+            self.shiraGame = game
+        } catch {
+            ELOG("Failed to initialize ShiraGame: \(error)")
+        }
+#endif
+    }
+
+    // Helper to safely access TheGamesDB
+    private func getTheGamesDB() async -> TheGamesDB? {
+        if theGamesDB == nil, !isInitializing {
+            isInitializing = true
+            do {
+                let db = try await TheGamesDB()
+                self.theGamesDB = db
+            } catch {
+                ELOG("Failed to initialize TheGamesDB: \(error)")
+            }
+            isInitializing = false
+        }
+        return theGamesDB
     }
 
     // MARK: - Isolated Properties
@@ -86,9 +93,9 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         }
     }
 
-    nonisolated private var isolatedTheGamesDB: TheGamesDBService {
+    nonisolated private var isolatedTheGamesDB: TheGamesDB? {
         get async {
-            theGamesDB
+            await getTheGamesDB()
         }
     }
 
@@ -211,20 +218,18 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         var urls: [URL] = []
 
         // Try OpenVGDB
-        let openVGDB = await isolatedOpenVGDB
-        if let openVGDBUrls = try openVGDB.getArtworkURLs(forRom: rom) {
+        if let openVGDBUrls = try await openVGDB.getArtworkURLs(forRom: rom) {
             urls.append(contentsOf: openVGDBUrls)
         }
 
         // Try LibretroDB
-        let libreTroDB = await isolatedLibretroDB
         if let libretroDBArtworkUrls = try await libreTroDB.getArtworkURLs(forRom: rom) {
             urls.append(contentsOf: libretroDBArtworkUrls)
         }
 
         // Try TheGamesDB
-        let theGamesDB = await isolatedTheGamesDB
-        if let theGamesDBUrls = try await theGamesDB.getArtworkURLs(forRom: rom) {
+        if let theGamesDB = await getTheGamesDB(),
+           let theGamesDBUrls = try await theGamesDB.getArtworkURLs(forRom: rom) {
             urls.append(contentsOf: theGamesDBUrls)
         }
 
@@ -293,23 +298,10 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         systemID: SystemIdentifier?,
         artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
-        let types = artworkTypes ?? .defaults
-        let cacheKey = ArtworkSearchKey(
-            gameName: name,
-            systemID: systemID,
-            artworkTypes: types
-        )
-
-        // Check cache first
-        if let cachedResults = await ArtworkSearchCache.shared.get(key: cacheKey) {
-            return cachedResults
-        }
-
-        // Perform search if not cached
         var results: [ArtworkMetadata] = []
 
         // Try OpenVGDB
-        if let openVGDBArtwork = try await isolatedOpenVGDB.searchArtwork(
+        if let openVGDBArtwork = try await openVGDB.searchArtwork(
             byGameName: name,
             systemID: systemID,
             artworkTypes: artworkTypes
@@ -318,7 +310,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         }
 
         // Try LibretroDB
-        if let libretroDBArtwork = try await isolatedLibretroDB.searchArtwork(
+        if let libretroDBArtwork = try await libreTroDB.searchArtwork(
             byGameName: name,
             systemID: systemID,
             artworkTypes: artworkTypes
@@ -327,7 +319,8 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         }
 
         // Try TheGamesDB
-        if let theGamesDBartwork = try await isolatedTheGamesDB.searchArtwork(
+        if let theGamesDB = await getTheGamesDB(),
+           let theGamesDBartwork = try await theGamesDB.searchArtwork(
             byGameName: name,
             systemID: systemID,
             artworkTypes: artworkTypes
@@ -338,8 +331,13 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         // Sort artwork by type priority
         let sortedArtwork = sortArtworkByType(results)
 
-        // Cache results before returning
+        // Cache results
         if !sortedArtwork.isEmpty {
+            let cacheKey = ArtworkSearchKey(
+                gameName: name,
+                systemID: systemID,
+                artworkTypes: artworkTypes ?? .defaults
+            )
             await ArtworkSearchCache.shared.set(key: cacheKey, results: sortedArtwork)
         }
 
@@ -354,7 +352,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         var allArtwork: [ArtworkMetadata] = []
 
         // Try OpenVGDB
-        if let openVGDBArtwork = try await isolatedOpenVGDB.getArtwork(
+        if let openVGDBArtwork = try await openVGDB.getArtwork(
             forGameID: gameID,
             artworkTypes: artworkTypes
         ) {
@@ -362,7 +360,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         }
 
         // Try LibretroDB
-        if let libretroDBArtwork = try await isolatedLibretroDB.getArtwork(
+        if let libretroDBArtwork = try await libreTroDB.getArtwork(
             forGameID: gameID,
             artworkTypes: artworkTypes
         ) {
@@ -370,7 +368,8 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         }
 
         // Try TheGamesDB
-        if let theGamesDBartwork = try await isolatedTheGamesDB.getArtwork(
+        if let theGamesDB = await getTheGamesDB(),
+           let theGamesDBartwork = try await theGamesDB.getArtwork(
             forGameID: gameID,
             artworkTypes: artworkTypes
         ) {
@@ -403,6 +402,23 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             return aIndex < bIndex
         }
     }
+
+#if canImport(ShiraGame)
+    // Helper to safely access ShiraGame
+    private func getShiraGame() async -> ShiraGame? {
+        if shiraGame == nil, !isInitializing {
+            isInitializing = true
+            do {
+                let game = try await ShiraGame()
+                self.shiraGame = game
+            } catch {
+                ELOG("Failed to initialize ShiraGame: \(error)")
+            }
+            isInitializing = false
+        }
+        return shiraGame
+    }
+#endif
 }
 
 // MARK: - Database Type Enums
