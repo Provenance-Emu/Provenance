@@ -191,48 +191,61 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
-        ILOG("PVLookup: Searching for filename: \(filename)")
         var results: [ROMMetadata] = []
 
-        // Try OpenVGDB
-        if let openVGDB = await isolatedOpenVGDB,
-           let openVGDBResults = try await openVGDB.searchDatabase(usingFilename: filename, systemID: systemID) {
+        // Search OpenVGDB
+        if let openVGDBResults = try await openVGDB?.searchDatabase(usingFilename: filename, systemID: systemID) {
             results.append(contentsOf: openVGDBResults)
         }
 
-        // Try LibretroDB
-        if let libreTroDB = await isolatedLibretroDB,
-           let libretroDatabaseResults = try libreTroDB.searchMetadata(usingFilename: filename, systemID: systemID) {
+        // Search LibretroDB
+        if let libretroDatabaseResults = try libreTroDB?.searchMetadata(usingFilename: filename, systemID: systemID) {
             results.append(contentsOf: libretroDatabaseResults)
         }
 
-        if !results.isEmpty {
-            DLOG("PVLookup: Returning \(results.count) merged results from primary databases")
-            return results
+        // Search ShiraGame
+        if let shiraGameResults = try await shiraGame?.searchDatabase(usingFilename: filename, systemID: systemID) {
+            results.append(contentsOf: shiraGameResults)
         }
 
-        #if canImport(ShiraGame)
-        // Only try ShiraGame if we found nothing in primary databases
-        ILOG("PVLookup: No results from primary databases, trying ShiraGame...")
-        return try await getShiraGame()?.searchDatabase(usingFilename: filename, systemID: systemID)
-        #else
-        return nil
-        #endif
+        // Add TheGamesDB search
+        if let theGamesDBResults = try theGamesDB?.searchGames(name: filename, platformId: systemID?.theGamesDBID) {
+            results.append(contentsOf: theGamesDBResults)
+        }
+
+        return results.isEmpty ? nil : results
     }
 
     public func searchDatabase(usingFilename filename: String, systemIDs: [SystemIdentifier]) async throws -> [ROMMetadata]? {
         var results: [ROMMetadata] = []
 
-        // Try OpenVGDB
-        if let openVGDB = await isolatedOpenVGDB,
-           let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs) {
-            results.append(contentsOf: openVGDBResults)
+        // Search each system ID
+        for systemID in systemIDs {
+            if let systemResults = try await searchDatabase(usingFilename: filename, systemID: systemID) {
+                results.append(contentsOf: systemResults)
+            }
         }
 
-        // Try LibretroDB
-        if let libreTroDB = await isolatedLibretroDB,
-           let libretroDatabaseResults = try libreTroDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs) {
-            results.append(contentsOf: libretroDatabaseResults)
+        // Add TheGamesDB search for all requested systems
+        let theGamesDBPlatformIds = systemIDs.compactMap { $0.theGamesDBID }
+        for platformId in theGamesDBPlatformIds {
+            if let theGamesDBResults = try theGamesDB?.searchGames(name: filename, platformId: platformId) {
+                let metadata = theGamesDBResults.compactMap { game -> ROMMetadata? in
+                    let gameTitle = game.gameTitle
+                     let systemID = game.systemID
+                    guard systemIDs.contains(systemID) else {
+                        return nil
+                    }
+
+                    return ROMMetadata(
+                        gameTitle: gameTitle,
+                        systemID: systemID,
+                        romFileName: filename,
+                        source: "TheGamesDB"
+                    )
+                }
+                results.append(contentsOf: metadata)
+            }
         }
 
         return results.isEmpty ? nil : results

@@ -255,6 +255,38 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
     }
 
     // Other ArtworkLookupService methods...
+
+    /// Search for games by name and platform ID
+    /// - Parameters:
+    ///   - name: Game name to search for
+    ///   - platformId: Optional platform ID to filter results
+    /// - Returns: Array of ROM metadata
+    public func searchGames(name: String, platformId: Int?) throws -> [ROMMetadata] {
+        do {
+            let results = try schema.searchGames(name: name, platformId: platformId)
+
+            return results.compactMap { game -> ROMMetadata? in
+                guard let gameTitle = game["game_title"] as? String,
+                      let platformId = game["platform"] as? Int,
+                      let systemID = SystemIdentifier(theGamesDBID: platformId) else {
+                    return nil
+                }
+
+                
+                return ROMMetadata(
+                    gameTitle: gameTitle,
+                    region: game["region"] as? String,
+                    gameDescription:  game["overview"] as? String,
+                    developer: game["developer"] as? String,
+                    publisher:  game["publisher"] as? String,
+                    systemID: systemID,
+                    source: "TheGamesDB"
+                )
+            }
+        } catch {
+            throw TheGamesDBError.queryError(error)
+        }
+    }
 }
 
 // Helper to convert ArtworkType to TheGamesDB types
