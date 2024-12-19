@@ -35,13 +35,8 @@ struct TheGamesDBTests {
 
     @Test("Database initialization works")
     func testDatabaseInitialization() async throws {
-        // Verify database exists and is readable
-        let artwork = try await db.searchArtwork(
-            byGameName: testData.superMarioWorld.title,
-            systemID: .SNES,
-            artworkTypes: nil
-        )
-        #expect(artwork != nil)
+        let db = try await TheGamesDB()
+        #expect(db != nil)
     }
 
     @Test("Search artwork by name returns expected results")

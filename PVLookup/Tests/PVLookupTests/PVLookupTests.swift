@@ -48,8 +48,8 @@ struct PVLookupTests {
 
     init() async throws {
         self.lookup = .shared
-        self.openVGDB = OpenVGDB()
-        self.libreTroDB = libretrodb()
+        self.openVGDB = try await OpenVGDB()
+        self.libreTroDB = try await libretrodb()
     }
 
     @Test
@@ -73,7 +73,7 @@ struct PVLookupTests {
     @Test
     func searchPitfallByFilenameInOpenVGDB() async throws {
         // Test OpenVGDB directly
-        let openVGDBResults = try openVGDB.searchDatabase(
+        let openVGDBResults = try await openVGDB.searchDatabase(
             usingFilename: pitfall.openVGDB.fileName,
             systemID: pitfall.openVGDB.systemID
         )
@@ -91,7 +91,7 @@ struct PVLookupTests {
     @Test
     func searchPitfallByFilenameInLibretroDB() async throws {
         // Test LibretroDB directly
-        let libretroDB = libretrodb()
+        let libretroDB = try await libretrodb()
         let results = try libretroDB.searchMetadata(
             usingFilename: "Pitfall - The Mayan Adventure",
             systemID: SystemIdentifier.SNES
@@ -191,7 +191,7 @@ struct PVLookupTests {
         print("Test: ShiraGame result: \(String(describing: shiraGameResult))")
 
         // Test LibretroDB directly
-        let libretroDB = libretrodb()
+        let libretroDB = try await libretrodb()
         let libretroDatabaseResult = try libretroDB.searchDatabase(
             usingKey: "romHashMD5",
             value: pitfall.shiraGame.md5,
@@ -382,8 +382,8 @@ struct PVLookupArtworkTests {
 
     init() async throws {
         self.lookup = .shared
-        self.openVGDB = OpenVGDB()
-        self.libreTroDB = libretrodb()
+        self.openVGDB = try await OpenVGDB()
+        self.libreTroDB = try await libretrodb()
     }
 
     @Test

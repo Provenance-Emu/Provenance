@@ -49,7 +49,17 @@ private extension LibretroDBTests {
 }
 
 struct LibretroDBTests {
-    let db: libretrodb = .init()
+    let db: libretrodb
+
+    init() async throws {
+        self.db = try await libretrodb()
+    }
+
+    @Test("Database initialization works")
+    func testDatabaseInitialization() async throws {
+        let db = try await libretrodb()
+        #expect(db != nil)
+    }
 
     // MARK: - Test Data
     let dragonQuest3 = (
