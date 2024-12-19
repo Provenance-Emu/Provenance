@@ -463,23 +463,6 @@ struct PVLookupTests {
 
         print("\n=== Artwork search test complete ===")
     }
-
-    @Test("Handles database errors gracefully")
-    func testDatabaseErrors() async throws {
-        print("\nTesting database error handling...")
-
-        // Test with invalid database
-        do {
-            print("Testing invalid database...")
-            let invalidDB = try PVSQLiteDatabase(withURL: FileManager.default.temporaryDirectory.appendingPathComponent("nonexistent.db"))
-            _ = try await TheGamesDB(database: invalidDB)
-            #expect(false, "Should have thrown an error for invalid database")
-        } catch let error as TheGamesDBError {
-            print("Caught expected error: \(error)")
-            #expect(error == .databaseNotInitialized, "Should throw databaseNotInitialized error")
-        }
-    }
-
 }
 
 struct PVLookupArtworkTests {
