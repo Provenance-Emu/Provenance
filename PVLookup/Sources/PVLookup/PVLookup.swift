@@ -291,6 +291,11 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     }
 
     public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+        // Early validation
+        guard !rom.gameTitle.isEmpty, rom.systemID != .Unknown else {
+            return nil
+        }
+
         try await ensureDatabasesInitialized()
 
         var urls: [URL] = []

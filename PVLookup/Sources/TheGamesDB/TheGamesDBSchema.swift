@@ -17,7 +17,15 @@ public struct TheGamesDBSchema {
 
     /// Search for games by name
     func searchGames(name: String, platformId: Int? = nil) throws -> SQLQueryResponse {
+        // Clean and escape the search name
+        let cleanName = name
+            .replacingOccurrences(of: "'", with: "''")  // Escape single quotes
+            .replacingOccurrences(of: "\\s*\\([^)]*\\)", with: "", options: .regularExpression)  // Remove parentheses and contents
+            .replacingOccurrences(of: "\\s*\\[[^\\]]*\\]", with: "", options: .regularExpression)  // Remove brackets and contents
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
         let platformFilter = platformId.map { "AND g.platform = \($0)" } ?? ""
+
         let query = """
             SELECT DISTINCT
                 g.id,
@@ -33,7 +41,7 @@ public struct TheGamesDBSchema {
                 s.alias as system_alias
             FROM games g
             LEFT JOIN systems s ON g.platform = s.id
-            WHERE g.game_title LIKE '%\(name)%' \(platformFilter)
+            WHERE g.game_title LIKE '%\(cleanName)%' \(platformFilter)
             """
         return try db.execute(query: query)
     }
@@ -113,19 +121,15 @@ public struct TheGamesDBSchema {
                 g.release_date,
                 g.overview,
                 g.rating,
-                GROUP_CONCAT(DISTINCT d.name) as developers,
-                GROUP_CONCAT(DISTINCT p.name) as publishers,
-                GROUP_CONCAT(DISTINCT gn.name) as genres
+                g.youtube,
+                g.players,
+                g.coop,
+                s.name as system_name,
+                s.alias as system_alias
             FROM games g
-            LEFT JOIN game_developers gd ON g.id = gd.game_id
-            LEFT JOIN developers d ON gd.developer_id = d.id
-            LEFT JOIN game_publishers gp ON g.id = gp.game_id
-            LEFT JOIN publishers p ON gp.publisher_id = p.id
-            LEFT JOIN game_genres gg ON g.id = gg.game_id
-            LEFT JOIN genres gn ON gg.genre_id = gn.id
+            LEFT JOIN systems s ON g.platform = s.id
             WHERE g.game_title LIKE '%\(normalizedName)%' \(platformFilter)
-            GROUP BY g.id
-        """
+            """
         return try db.execute(query: query)
     }
 

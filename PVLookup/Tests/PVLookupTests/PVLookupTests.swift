@@ -741,7 +741,7 @@ struct PVLookupArtworkTests {
 
     @Test("Handles invalid ROM metadata appropriately")
     func testGetArtworkURLsWithInvalidData() async throws {
-        // Test with empty ROM metadata
+        print("\nTesting empty ROM metadata...")
         let emptyRom = ROMMetadata(
             gameTitle: "",
             systemID: .Unknown,
@@ -750,18 +750,18 @@ struct PVLookupArtworkTests {
         )
 
         let emptyResult = try await lookup.getArtworkURLs(forRom: emptyRom)
-        #expect(emptyResult == nil)  // Should return nil for empty metadata
+        #expect(emptyResult == nil, "Empty ROM should return nil")
 
-        // Test with obviously invalid data
+        print("\nTesting invalid ROM metadata...")
         let invalidRom = ROMMetadata(
-            gameTitle: "xyzzy123notarealgame456",  // Very unlikely to match anything
+            gameTitle: "xyzzy123notarealgame456",
             systemID: .Unknown,
             romFileName: "notarealfile.xyz",
             romHashMD5: "0000000000000000000000000000"
         )
 
         let invalidResult = try await lookup.getArtworkURLs(forRom: invalidRom)
-        #expect(invalidResult == nil)  // Should return nil for invalid data
+        #expect(invalidResult == nil, "Invalid ROM should return nil")
     }
 
 }
