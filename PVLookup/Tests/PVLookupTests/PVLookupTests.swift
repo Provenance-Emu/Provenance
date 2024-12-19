@@ -466,14 +466,17 @@ struct PVLookupTests {
 
     @Test("Handles database errors gracefully")
     func testDatabaseErrors() async throws {
-        // Try to initialize with invalid database path
+        print("\nTesting database error handling...")
+
+        // Test with invalid database
         do {
-            let invalidPath = URL(fileURLWithPath: "/invalid/path/to/database.sqlite")
-            let db = try PVSQLiteDatabase(withURL: invalidPath)
-            _ = try await TheGamesDB(database: db)
-            #expect(false, "Should have thrown an error")
-        } catch {
-            #expect(true, "Should throw an error for invalid database")
+            print("Testing invalid database...")
+            let invalidDB = try PVSQLiteDatabase(withURL: FileManager.default.temporaryDirectory.appendingPathComponent("nonexistent.db"))
+            _ = try await TheGamesDB(database: invalidDB)
+            #expect(false, "Should have thrown an error for invalid database")
+        } catch let error as TheGamesDBError {
+            print("Caught expected error: \(error)")
+            #expect(error == .databaseNotInitialized, "Should throw databaseNotInitialized error")
         }
     }
 

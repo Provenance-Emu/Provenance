@@ -1,6 +1,7 @@
 import Testing
 import PVLogging
 import PVSystems
+import Foundation
 @testable import PVLookup
 @testable import TheGamesDB
 @testable import PVLookupTypes
@@ -90,17 +91,6 @@ struct TheGamesDBTests {
             #expect(artwork == nil)
         } catch let error as TheGamesDBError {
             #expect(error == .invalidGameID)
-        }
-    }
-
-    @Test("Handles database errors gracefully")
-    func testDatabaseErrors() async throws {
-        // Try to initialize with invalid path
-        do {
-            _ = try await TheGamesDB()
-            #expect(false, "Should have thrown an error")
-        } catch let error as TheGamesDBError {
-            #expect(error == .databaseNotInitialized)
         }
     }
 

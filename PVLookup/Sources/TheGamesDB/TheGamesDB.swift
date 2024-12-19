@@ -31,8 +31,16 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
     internal init(database: PVSQLiteDatabase) async throws {
         self.manager = TheGamesDBManager.shared
         do {
+            // Verify database is valid by trying a simple query
+            let query = "SELECT name FROM sqlite_master WHERE type='table' AND name='games'"
+            let result = try database.execute(query: query)
+            guard !result.isEmpty else {
+                throw TheGamesDBError.databaseNotInitialized
+            }
+
             self.schema = try await TheGamesDBSchema(database: database)
         } catch {
+            ELOG("Failed to initialize TheGamesDB: \(error)")
             throw TheGamesDBError.databaseNotInitialized
         }
     }
@@ -275,8 +283,43 @@ private extension ArtworkType {
         if self.contains(.clearLogo) {
             types.append("clearlogo")
         }
+        if self.contains(.other) {
+            // When .other is requested, get all types that aren't explicitly handled
+            types.append("fanart")  // These will be converted to .other in init
+            types.append("banner")
+            types.append("clearlogo")
+            types.append("manual")
+            types.append("poster")
+            types.append("flyer")
+        }
 
         return types
+    }
+
+    init?(fromTheGamesDB type: String, side: String?) {
+        print("\nConverting TheGamesDB type:")
+        print("- Type: \(type)")
+        print("- Side: \(String(describing: side))")
+
+        let result: ArtworkType
+        switch (type.lowercased(), side?.lowercased()) {
+        case ("boxart", "back"):
+            result = .boxBack
+        case ("boxart", "front"):
+            result = .boxFront
+        case ("screenshot", _):
+            result = .screenshot
+        case ("titlescreen", _):
+            result = .titleScreen
+        case ("fanart", _), ("banner", _), ("clearlogo", _),
+             ("manual", _), ("poster", _), ("flyer", _):
+            result = .other  // Convert these types to .other
+        default:
+            result = .other  // Any unknown type becomes .other
+        }
+
+        print("- Converted to: \(result)")
+        self = result
     }
 }
 

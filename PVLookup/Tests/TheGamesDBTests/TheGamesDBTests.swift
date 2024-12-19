@@ -12,6 +12,7 @@ import PVSystems
 @testable import TheGamesDB
 @testable import PVLookupTypes
 import PVSQLiteDatabase
+import Foundation
 
 struct TheGamesDBTests {
     let db: TheGamesDB
@@ -149,5 +150,110 @@ struct TheGamesDBTests {
 
         #expect(nameWithRegion != nil)
         #expect(!nameWithRegion!.isEmpty)
+    }
+
+    @Test("Handles fuzzy name matching with special characters")
+    func testFuzzyNameMatchingSpecialChars() async throws {
+        print("\nTesting fuzzy name matching with special characters...")
+
+        // Test base name first to verify database has the game
+        print("\nTesting base name 'Super Mario World'...")
+        let baseName = try await db.searchArtwork(
+            byGameName: "Super Mario World",
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        #expect(baseName != nil && !baseName!.isEmpty, "Base name search should work")
+
+        // Test with parentheses
+        print("\nTesting name with parentheses...")
+        let withParens = try await db.searchArtwork(
+            byGameName: "Super Mario World (USA)",
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        print("Found \(withParens?.count ?? 0) results")
+        #expect(withParens != nil, "Should handle parentheses")
+        #expect(!withParens!.isEmpty, "Should find results with parentheses")
+
+        // Test with brackets
+        print("\nTesting name with brackets...")
+        let withBrackets = try await db.searchArtwork(
+            byGameName: "Super Mario World [!]",
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        print("Found \(withBrackets?.count ?? 0) results")
+        #expect(withBrackets != nil, "Should handle brackets")
+        #expect(!withBrackets!.isEmpty, "Should find results with brackets")
+
+        // Test with version numbers
+        print("\nTesting name with version number...")
+        let withVersion = try await db.searchArtwork(
+            byGameName: "Super Mario World v1.1",
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        print("Found \(withVersion?.count ?? 0) results")
+        #expect(withVersion != nil, "Should handle version numbers")
+        #expect(!withVersion!.isEmpty, "Should find results with version numbers")
+    }
+
+    @Test("Converts artwork types correctly")
+    func testArtworkTypeConversion() async throws {
+        // Test boxart front
+        let boxartFront = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
+            systemID: .SNES,
+            artworkTypes: [.boxFront]
+        )
+        #expect(boxartFront?.allSatisfy { $0.type == .boxFront } == true)
+
+        // Test screenshots
+        let screenshots = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
+            systemID: .SNES,
+            artworkTypes: [.screenshot]
+        )
+        #expect(screenshots?.allSatisfy { $0.type == .screenshot } == true)
+
+        // Test multiple types
+        let multipleTypes = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
+            systemID: .SNES,
+            artworkTypes: [.boxFront, .screenshot, .titleScreen]
+        )
+        let types = Set(multipleTypes?.map(\.type) ?? [])
+        #expect(types.isSubset(of: [.boxFront, .screenshot, .titleScreen]))
+    }
+
+    @Test("Handles artwork type conversion edge cases")
+    func testArtworkTypeConversionEdgeCases() async throws {
+        // Test with no type filter (should get all types)
+        let noFilter = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
+            systemID: .SNES,
+            artworkTypes: nil
+        )
+        #expect(noFilter?.isEmpty == false, "Should return all available types")
+
+        // Verify we get all expected types
+        let allTypes = Set(noFilter?.map(\.type) ?? [])
+        print("\nFound artwork types: \(allTypes)")
+        #expect(allTypes.count > 1, "Should have multiple artwork types")
+
+        // Test with unknown type
+        let unknownType = try await db.searchArtwork(
+            byGameName: testData.superMarioWorld.title,
+            systemID: .SNES,
+            artworkTypes: [.other]
+        )
+
+        // Verify we get fanart as .other type
+        print("\nTesting unknown type conversion:")
+        unknownType?.forEach { art in
+            print("- Type: \(art.type)")
+        }
+        #expect(unknownType?.contains { $0.type == .other } == true, "Should convert unknown types to .other")
     }
 }

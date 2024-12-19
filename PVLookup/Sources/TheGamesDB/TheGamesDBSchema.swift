@@ -15,15 +15,22 @@ public struct TheGamesDBSchema {
         self.db = database
     }
 
-    /// Search for games by name
-    func searchGames(name: String, platformId: Int? = nil) throws -> SQLQueryResponse {
-        // Clean and escape the search name
-        let cleanName = name
-            .replacingOccurrences(of: "'", with: "''")  // Escape single quotes
-            .replacingOccurrences(of: "\\s*\\([^)]*\\)", with: "", options: .regularExpression)  // Remove parentheses and contents
-            .replacingOccurrences(of: "\\s*\\[[^\\]]*\\]", with: "", options: .regularExpression)  // Remove brackets and contents
+    /// Clean game name for searching
+    private func cleanGameName(_ name: String) -> String {
+        // Remove common ROM notation patterns and normalize
+        let cleaned = name
+            .replacingOccurrences(of: "\\s*\\([^)]*\\)", with: "", options: .regularExpression)  // Remove (USA), etc.
+            .replacingOccurrences(of: "\\s*\\[[^\\]]*\\]", with: "", options: .regularExpression) // Remove [!], etc.
+            .replacingOccurrences(of: "\\s*v[0-9.]+", with: "", options: .regularExpression)     // Remove version numbers
+            .replacingOccurrences(of: "'", with: "''")  // Escape single quotes for SQL
             .trimmingCharacters(in: .whitespacesAndNewlines)
 
+        return cleaned
+    }
+
+    /// Search for games by name
+    func searchGames(name: String, platformId: Int? = nil) throws -> SQLQueryResponse {
+        let cleanName = cleanGameName(name)
         let platformFilter = platformId.map { "AND g.platform = \($0)" } ?? ""
 
         let query = """
@@ -48,10 +55,35 @@ public struct TheGamesDBSchema {
 
     /// Get images for a game
     func getImages(gameId: Int, types: [String]? = nil) throws -> SQLQueryResponse {
-        let typeFilter = types.map { types in
-            let typeList = types.map { "'\($0)'" }.joined(separator: ",")
-            return "AND type IN (\(typeList))"
-        } ?? ""
+        var conditions: [String] = []
+
+        print("\nTheGamesDB getImages:")
+        print("- Game ID: \(gameId)")
+        print("- Requested types: \(String(describing: types))")
+
+        if let types = types {
+            let typeConditions = types.map { type -> String in
+                switch type {
+                case "boxart-front":
+                    let condition = "(type = 'boxart' AND side = 'front')"
+                    print("- Adding boxart front condition: \(condition)")
+                    return condition
+                case "boxart-back":
+                    let condition = "(type = 'boxart' AND side = 'back')"
+                    print("- Adding boxart back condition: \(condition)")
+                    return condition
+                default:
+                    let condition = "type = '\(type)'"
+                    print("- Adding type condition: \(condition)")
+                    return condition
+                }
+            }
+            if !typeConditions.isEmpty {
+                let combined = "AND (\(typeConditions.joined(separator: " OR ")))"
+                print("- Combined conditions: \(combined)")
+                conditions.append(combined)
+            }
+        }
 
         let query = """
             SELECT
@@ -62,9 +94,19 @@ public struct TheGamesDBSchema {
                 filename,
                 resolution
             FROM game_artwork
-            WHERE game_id = \(gameId) \(typeFilter)
+            WHERE game_id = \(gameId)
+            \(conditions.joined(separator: " "))
             """
-        return try db.execute(query: query)
+        print("- Final query: \(query)")
+
+        let results = try db.execute(query: query)
+        print("- Found \(results.count) results")
+        results.forEach { result in
+            print("  - Type: \(result["type"] as? String ?? "nil")")
+            print("    Side: \(result["side"] as? String ?? "nil")")
+        }
+
+        return results
     }
 
     /// Get platform info
@@ -106,11 +148,7 @@ public struct TheGamesDBSchema {
 
     /// Search games with fuzzy matching
     func searchGamesFuzzy(name: String, platformId: Int? = nil) throws -> SQLQueryResponse {
-        // Remove special characters and normalize spaces
-        let normalizedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            .replacingOccurrences(of: "[^a-zA-Z0-9\\s]", with: "", options: .regularExpression)
-            .replacingOccurrences(of: "'", with: "''") // Escape single quotes
-
+        let cleanName = cleanGameName(name)
         let platformFilter = platformId.map { "AND g.platform = \($0)" } ?? ""
 
         let query = """
@@ -128,7 +166,15 @@ public struct TheGamesDBSchema {
                 s.alias as system_alias
             FROM games g
             LEFT JOIN systems s ON g.platform = s.id
-            WHERE g.game_title LIKE '%\(normalizedName)%' \(platformFilter)
+            WHERE g.game_title LIKE '%\(cleanName)%' \(platformFilter)
+            ORDER BY
+                CASE
+                    WHEN g.game_title = '\(cleanName)' THEN 0
+                    WHEN g.game_title LIKE '\(cleanName)%' THEN 1
+                    WHEN g.game_title LIKE '% \(cleanName) %' THEN 2
+                    ELSE 3
+                END,
+                g.game_title
             """
         return try db.execute(query: query)
     }
