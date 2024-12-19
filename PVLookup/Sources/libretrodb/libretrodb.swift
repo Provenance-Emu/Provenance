@@ -1093,5 +1093,8 @@ extension libretrodb {
         input.replacingOccurrences(of: "'", with: "''")
              .replacingOccurrences(of: "(", with: "\\(")
              .replacingOccurrences(of: ")", with: "\\)")
+             .replacingOccurrences(of: "[", with: "\\[")
+             .replacingOccurrences(of: "]", with: "\\]")
+             .replacingOccurrences(of: "!", with: "\\!")
     }
 }
