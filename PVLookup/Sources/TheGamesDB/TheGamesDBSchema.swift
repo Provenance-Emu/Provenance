@@ -5,7 +5,7 @@ import PVSystems
 
 /// Schema for TheGamesDB SQLite database
 public struct TheGamesDBSchema {
-    private let db: PVSQLiteDatabase
+    internal let db: PVSQLiteDatabase
 
     public init(url: URL) async throws {
         self.db = try PVSQLiteDatabase(withURL: url)
@@ -17,20 +17,27 @@ public struct TheGamesDBSchema {
 
     /// Search for games by name
     func searchGames(name: String, platformId: Int? = nil) throws -> SQLQueryResponse {
-        let platformFilter = platformId.map { "AND platform = \($0)" } ?? ""
+        let platformFilter = platformId.map { "AND g.platform = \($0)" } ?? ""
         let query = """
             SELECT DISTINCT
-                games.id,
-                games.game_title,
-                games.platform,
-                games.release_date,
-                games.overview,
-                games.developers,
-                games.publishers,
-                games.genres,
-                games.rating
-            FROM games
-            WHERE game_title LIKE '%\(name)%' \(platformFilter)
+                g.id,
+                g.game_title,
+                g.platform,
+                g.release_date,
+                g.overview,
+                g.rating,
+                GROUP_CONCAT(DISTINCT d.name) as developers,
+                GROUP_CONCAT(DISTINCT p.name) as publishers,
+                GROUP_CONCAT(DISTINCT gn.name) as genres
+            FROM games g
+            LEFT JOIN game_developers gd ON g.id = gd.game_id
+            LEFT JOIN developers d ON gd.developer_id = d.id
+            LEFT JOIN game_publishers gp ON g.id = gp.game_id
+            LEFT JOIN publishers p ON gp.publisher_id = p.id
+            LEFT JOIN game_genres gg ON g.id = gg.game_id
+            LEFT JOIN genres gn ON gg.genre_id = gn.id
+            WHERE g.game_title LIKE '%\(name)%' \(platformFilter)
+            GROUP BY g.id
             """
         return try db.execute(query: query)
     }
@@ -73,20 +80,27 @@ public struct TheGamesDBSchema {
     /// Get a game by ID
     func getGame(id: Int) throws -> SQLQueryDict? {
         let query = """
-            SELECT
-                id,
-                game_title,
-                platform,
-                release_date,
-                overview,
-                developers,
-                publishers,
-                genres,
-                rating
-            FROM games
-            WHERE id = \(id)
+            SELECT DISTINCT
+                g.id,
+                g.game_title,
+                g.platform,
+                g.release_date,
+                g.overview,
+                g.rating,
+                GROUP_CONCAT(DISTINCT d.name) as developers,
+                GROUP_CONCAT(DISTINCT p.name) as publishers,
+                GROUP_CONCAT(DISTINCT gn.name) as genres
+            FROM games g
+            LEFT JOIN game_developers gd ON g.id = gd.game_id
+            LEFT JOIN developers d ON gd.developer_id = d.id
+            LEFT JOIN game_publishers gp ON g.id = gp.game_id
+            LEFT JOIN publishers p ON gp.publisher_id = p.id
+            LEFT JOIN game_genres gg ON g.id = gg.game_id
+            LEFT JOIN genres gn ON gg.genre_id = gn.id
+            WHERE g.id = \(id)
+            GROUP BY g.id
             LIMIT 1
-            """
+        """
         return try db.execute(query: query).first
     }
 
@@ -97,22 +111,29 @@ public struct TheGamesDBSchema {
             .replacingOccurrences(of: "[^a-zA-Z0-9\\s]", with: "", options: .regularExpression)
             .replacingOccurrences(of: "'", with: "''") // Escape single quotes
 
-        let platformFilter = platformId.map { "AND platform = \($0)" } ?? ""
+        let platformFilter = platformId.map { "AND g.platform = \($0)" } ?? ""
 
         let query = """
             SELECT DISTINCT
-                games.id,
-                games.game_title,
-                games.platform,
-                games.release_date,
-                games.overview,
-                games.developers,
-                games.publishers,
-                games.genres,
-                games.rating
-            FROM games
-            WHERE game_title LIKE '%\(normalizedName)%' \(platformFilter)
-            """
+                g.id,
+                g.game_title,
+                g.platform,
+                g.release_date,
+                g.overview,
+                g.rating,
+                GROUP_CONCAT(DISTINCT d.name) as developers,
+                GROUP_CONCAT(DISTINCT p.name) as publishers,
+                GROUP_CONCAT(DISTINCT gn.name) as genres
+            FROM games g
+            LEFT JOIN game_developers gd ON g.id = gd.game_id
+            LEFT JOIN developers d ON gd.developer_id = d.id
+            LEFT JOIN game_publishers gp ON g.id = gp.game_id
+            LEFT JOIN publishers p ON gp.publisher_id = p.id
+            LEFT JOIN game_genres gg ON g.id = gg.game_id
+            LEFT JOIN genres gn ON gg.genre_id = gn.id
+            WHERE g.game_title LIKE '%\(normalizedName)%' \(platformFilter)
+            GROUP BY g.id
+        """
         return try db.execute(query: query)
     }
 

@@ -197,6 +197,52 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
         return urls.isEmpty ? nil : urls
     }
 
+    public func getArtworkMappings() async throws -> ArtworkMapping {
+        var romMD5: [String: [String: String]] = [:]
+        var romFileNameToMD5: [String: String] = [:]
+
+        // Get all games with their ROMs
+        let query = """
+            SELECT DISTINCT
+                games.id,
+                games.game_title,
+                games.platform,
+                roms.name as rom_name,
+                roms.md5
+            FROM games
+            JOIN roms ON games.serial_id = roms.serial_id
+            WHERE roms.md5 IS NOT NULL
+        """
+
+        let results = try schema.db.execute(query: query)
+        for result in results {
+            if let md5 = result["md5"] as? String,
+               let romName = result["rom_name"] as? String,
+               let gameTitle = result["game_title"] as? String,
+               let platformId = (result["platform"] as? NSNumber)?.stringValue {
+
+                // Store metadata for this MD5
+                let metadata: [String: String] = [
+                    "gameTitle": gameTitle,
+                    "romName": romName,
+                    "platformId": platformId
+                ]
+
+                romMD5[md5] = metadata
+                romFileNameToMD5[romName] = md5
+
+                // Also store with platform prefix for better matching
+                let platformKey = "\(platformId):\(romName)"
+                romFileNameToMD5[platformKey] = md5
+            }
+        }
+
+        return ArtworkMappings(
+            romMD5: romMD5,
+            romFileNameToMD5: romFileNameToMD5
+        )
+    }
+
     // Other ArtworkLookupService methods...
 }
 
@@ -237,7 +283,7 @@ private func constructArtworkSearchQuery(name: String, systemID: SystemIdentifie
     } else {
         ""
     }
-    
+
     return """
     WITH matched_games AS (
         SELECT DISTINCT games.id, games.serial_id,

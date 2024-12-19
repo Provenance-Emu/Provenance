@@ -48,29 +48,40 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     }
 
     private func initializeDatabases() async {
-        guard !isInitializing else { return }
+        guard !isInitializing else {
+            DLOG("Database initialization already in progress")
+            return
+        }
+
+        ILOG("Starting database initialization...")
         isInitializing = true
 
         // Initialize OpenVGDB
         do {
+            DLOG("Initializing OpenVGDB...")
             let db = try await OpenVGDB()
             self.openVGDB = db
+            DLOG("OpenVGDB initialized successfully")
         } catch {
             ELOG("Failed to initialize OpenVGDB: \(error)")
         }
 
         // Initialize LibretroDB
         do {
+            DLOG("Initializing LibretroDB...")
             let db = try await libretrodb()
             self.libreTroDB = db
+            DLOG("LibretroDB initialized successfully")
         } catch {
             ELOG("Failed to initialize LibretroDB: \(error)")
         }
 
         // Initialize TheGamesDB
         do {
+            DLOG("Initializing TheGamesDB...")
             let db = try await TheGamesDB()
             self.theGamesDB = db
+            DLOG("TheGamesDB initialized successfully")
         } catch {
             ELOG("Failed to initialize TheGamesDB: \(error)")
         }
@@ -86,10 +97,11 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 #endif
 
         isInitializing = false
+        ILOG("Database initialization complete")
     }
 
     // Helper to ensure databases are initialized
-    private func ensureDatabasesInitialized() async throws {
+    internal func ensureDatabasesInitialized() async throws {
         if isInitializing {
             // Wait a bit for initialization to complete
             try await Task.sleep(for: .seconds(1))
@@ -241,6 +253,8 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 
     // MARK: - ArtworkLookupService Implementation
     public func getArtworkMappings() async throws -> ArtworkMapping {
+        try await ensureDatabasesInitialized()
+
         var mergedMD5: [String: [String: String]] = [:]
         var mergedFilenames: [String: String] = [:]
 
@@ -258,7 +272,22 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             mergedFilenames.merge(libretroDBArtwork.romFileNameToMD5) { _, new in new }
         }
 
-        return ArtworkMappings(romMD5: mergedMD5, romFileNameToMD5: mergedFilenames)
+        // Try TheGamesDB
+        if let theGamesDB = await getTheGamesDB() {
+            let theGamesDBMappings = try await theGamesDB.getArtworkMappings()
+            mergedMD5.merge(theGamesDBMappings.romMD5) { _, new in new }
+            mergedFilenames.merge(theGamesDBMappings.romFileNameToMD5) { _, new in new }
+        }
+
+        // Verify we got some mappings
+        if mergedMD5.isEmpty && mergedFilenames.isEmpty {
+            WLOG("No artwork mappings found from any database")
+        }
+
+        return ArtworkMappings(
+            romMD5: mergedMD5,
+            romFileNameToMD5: mergedFilenames
+        )
     }
 
     public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
