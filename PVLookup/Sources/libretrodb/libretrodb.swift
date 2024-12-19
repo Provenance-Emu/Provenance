@@ -91,32 +91,88 @@ public actor libretrodbActor: GlobalActor {
 
 /// LibretroDB provides ROM metadata from a SQLite database converted from RetroArch's database
 public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
-
-    /// Legacy connection
     internal let db: PVSQLiteDatabase
+    private let manager: LibretroDBManager
 
-    /// SQLite.swift connection for more modern queries
-    lazy var sqldb: Connection = {
-        let sqldb = try! Connection(dbPath.path, readonly: true)
-        return sqldb
-    }()
+    private actor DatabaseConnection {
+        private var connection: Connection?
 
-    /// Path to the database file
-    lazy var dbPath: URL = {
-        let bundle = Bundle.module
-        guard let sqlFile = bundle.url(forResource: "libretrodb", withExtension: "sqlite") else {
-            fatalError("Unable to locate `libretrodb.sqlite`")
+        func execute(path: String, query: String) throws -> [LibretroDBROMMetadata] {
+            if connection == nil {
+                connection = try Connection(path, readonly: true)
+            }
+            guard let db = connection else {
+                throw LibretroDBError.databaseError("Failed to create database connection")
+            }
+
+            let stmt = try db.prepare(query)
+            var results: [LibretroDBROMMetadata] = []
+            for row in stmt {
+                var dict: [String: Any] = [:]
+                for (index, name) in stmt.columnNames.enumerated() {
+                    dict[name] = row[index]
+                }
+
+                // Convert to ROMMetadata
+                if let metadata = convertToROMMetadata(dict) {
+                    results.append(metadata)
+                }
+            }
+            return results
         }
-        return sqlFile
-    }()
 
-    public init() {
+        private func convertToROMMetadata(_ dict: [String: Any]) -> LibretroDBROMMetadata? {
+            guard let gameTitle = dict["game_title"] as? String else { return nil }
+
+            return LibretroDBROMMetadata(
+                gameTitle: gameTitle,
+                fullName: dict["full_name"] as? String,
+                releaseYear: dict["release_year"] as? Int,
+                releaseMonth: dict["release_month"] as? Int,
+                developer: dict["developer_name"] as? String,
+                publisher: dict["publisher_name"] as? String,
+                rating: dict["rating_name"] as? String,
+                franchise: dict["franchise_name"] as? String,
+                region: dict["region_name"] as? String,
+                genre: dict["genre_name"] as? String,
+                romName: dict["rom_name"] as? String,
+                romMD5: dict["rom_md5"] as? String,
+                platform: dict["platform_id"] as? String,
+                manufacturer: dict["manufacturer_name"] as? String,
+                genres: (dict["genres"] as? String)?.components(separatedBy: ","),
+                romFileName: dict["rom_name"] as? String
+            )
+        }
+
+        internal static func formatReleaseDate(year: Int?, month: Int?) -> String? {
+            guard let year = year else { return nil }
+            if let month = month {
+                return String(format: "%04d-%02d", year, month)
+            }
+            return String(format: "%04d", year)
+        }
+    }
+
+    private let dbConnection: DatabaseConnection
+
+    public init() async throws {
+        self.manager = LibretroDBManager.shared
+        self.dbConnection = DatabaseConnection()
+
         do {
-            let url = Bundle.module.url(forResource: "libretrodb", withExtension: "sqlite")!
-            self.db = try PVSQLiteDatabase(withURL: url)
+            try await manager.prepareDatabaseIfNeeded()
+            self.db = try await PVSQLiteDatabase(withURL: manager.databasePath)
         } catch {
-            fatalError("Failed to open database: \(error)")
+            throw LibretroDBError.databaseNotInitialized
         }
+    }
+
+    @libretrodbActor
+    private func executeQuery(_ query: String) async throws -> [ROMMetadata] {
+        let path = await manager.databasePath.path
+        let libretroDB = try await dbConnection.execute(path: path, query: query)
+        // Convert LibretroDBROMMetadata to ROMMetadata
+        return libretroDB.map { convertToROMMetadata($0) }
     }
 
     /// Standard query to get ROM metadata by MD5
@@ -179,44 +235,26 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 
     /// Convert database result to ROMMetadata
     private func convertToROMMetadata(_ metadata: LibretroDBROMMetadata) -> ROMMetadata {
-        // Construct artwork URL if we have the necessary information
-        let artworkURL: String?
-        if let platform = metadata.platform {
-            artworkURL = constructArtworkURL(
-                platform: platform,
-                manufacturer: metadata.manufacturer,
-                displayName: metadata.gameTitle
-            )
-        } else {
-            artworkURL = nil
-        }
-
-        // Convert platform ID to SystemIdentifier
-        let systemIdentifier = metadata.platform.flatMap { platformName in
-            if let platformID = Int(platformName) {
-                return SystemIdentifier.fromLibretroDatabaseID(platformID)
-            }
-            return nil
-        } ?? .Unknown
+        let systemID = metadata.platform.flatMap { SystemIdentifier.fromLibretroDatabaseID(Int($0) ?? 0) } ?? .Unknown
 
         return ROMMetadata(
             gameTitle: metadata.gameTitle,
-            boxImageURL: artworkURL,
+            boxImageURL: nil,
             region: metadata.region,
             gameDescription: nil,
             boxBackURL: nil,
             developer: metadata.developer,
             publisher: metadata.publisher,
             serial: nil,
-            releaseDate: metadata.releaseYear.map { "\($0)" },
-            genres: metadata.genre,
+            releaseDate: DatabaseConnection.formatReleaseDate(year: metadata.releaseYear, month: metadata.releaseMonth),
+            genres: metadata.genres?.joined(separator: ","),
             referenceURL: nil,
             releaseID: nil,
             language: nil,
             regionID: nil,
-            systemID: systemIdentifier,
-            systemShortName: metadata.platform,
-            romFileName: metadata.romName,
+            systemID: systemID,
+            systemShortName: nil,
+            romFileName: metadata.romFileName,
             romHashCRC: nil,
             romHashMD5: metadata.romMD5,
             romID: nil,
@@ -235,8 +273,8 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
     }
 
     public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
-        print("\nLibretroDB search details:")
-        print("- Input systemID: \(String(describing: systemID))")
+        DLOG("\nLibretroDB search details:")
+        DLOG("- Input systemID: \(String(describing: systemID))")
 
         return try searchMetadata(usingFilename: filename, systemID: systemID)
     }
@@ -570,10 +608,10 @@ public extension libretrodb {
 
     /// Search by MD5 or other key
     func searchMetadata(usingKey key: String, value: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
-        print("\nLibretroDB metadata search:")
-        print("- Key: \(key)")
-        print("- Value: \(value)")
-        print("- SystemID: \(String(describing: systemID))")
+        DLOG("\nLibretroDB metadata search:")
+        DLOG("- Key: \(key)")
+        DLOG("- Value: \(value)")
+        DLOG("- SystemID: \(String(describing: systemID))")
 
         // Map the external key names to database column names
         let dbColumn = switch key {
@@ -613,14 +651,14 @@ public extension libretrodb {
             GROUP BY games.id
             """
 
-        print("- Generated query: \(query)")
+        DLOG("- Generated query: \(query)")
         let results = try db.execute(query: query)
-        print("- Raw results: \(results)")
+        DLOG("- Raw results: \(results)")
 
         let metadata = results.compactMap { dict in
             try? convertDictToMetadata(dict)
         }
-        print("- Converted metadata: \(metadata)")
+        DLOG("- Converted metadata: \(metadata)")
 
         return metadata.isEmpty ? nil : metadata.map(convertToROMMetadata)
     }
@@ -629,9 +667,9 @@ public extension libretrodb {
     func searchMetadata(usingFilename filename: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
         let systemID = systemID?.libretroDatabaseID
 
-        print("\nLibretroDB search details:")
-        print("- Input filename: \(filename)")
-        print("- Input systemID: \(String(describing: systemID))")
+        DLOG("\nLibretroDB search details:")
+        DLOG("- Input filename: \(filename)")
+        DLOG("- Input systemID: \(String(describing: systemID))")
 
         let query = """
             SELECT DISTINCT
@@ -664,19 +702,19 @@ public extension libretrodb {
             \(systemID != nil ? "AND games.platform_id = \(systemID!)" : "")
             GROUP BY games.id
             """
-        print("- Generated SQL query: \(query)")
+        DLOG("- Generated SQL query: \(query)")
 
         let results = try db.execute(query: query)
         let metadata = results.compactMap { dict in
             try? convertDictToMetadata(dict)
         }
 
-        print("- Found \(metadata.count) results:")
+        DLOG("- Found \(metadata.count) results:")
         metadata.forEach { result in
-            print("  • Title: \(result.gameTitle)")
-            print("    System: \(result.platform ?? "nil")")
-            print("    MD5: \(result.romMD5 ?? "nil")")
-            print("    Filename: \(result.romFileName ?? "nil")")
+            DLOG("  • Title: \(result.gameTitle)")
+            DLOG("    System: \(result.platform ?? "nil")")
+            DLOG("    MD5: \(result.romMD5 ?? "nil")")
+            DLOG("    Filename: \(result.romFileName ?? "nil")")
         }
 
         return metadata.isEmpty ? nil : metadata.map(convertToROMMetadata)
@@ -696,9 +734,9 @@ public extension libretrodb {
 
     /// Internal implementation of MD5 search that returns LibretroDBROMMetadata
     private func searchByMD5Internal(_ md5: String, systemID: SystemIdentifier? = nil) throws -> [LibretroDBROMMetadata]? {
-        print("\nLibretroDB MD5 search:")
-        print("- MD5: \(md5)")
-        print("- SystemID: \(String(describing: systemID))")
+        DLOG("\nLibretroDB MD5 search:")
+        DLOG("- MD5: \(md5)")
+        DLOG("- SystemID: \(String(describing: systemID))")
 
         let query = """
             SELECT DISTINCT
@@ -732,14 +770,14 @@ public extension libretrodb {
             GROUP BY games.id
             """
 
-        print("- Generated query: \(query)")
+        DLOG("- Generated query: \(query)")
         let results = try db.execute(query: query)
-        print("- Raw results: \(results)")
+        DLOG("- Raw results: \(results)")
 
         let metadata: [LibretroDBROMMetadata] = results.compactMap { dict in
             try? convertDictToMetadata(dict)
         }
-        print("- Converted metadata: \(metadata)")
+        DLOG("- Converted metadata: \(metadata)")
 
         return metadata.isEmpty ? nil : metadata
     }
@@ -754,38 +792,57 @@ extension libretrodb {
     ) async throws -> [ArtworkMetadata]? {
         let types = artworkTypes ?? .defaults
 
-        // Use the optimized artwork search
-        let games = try searchGamesForArtwork(name: name, systemID: systemID)
-        guard !games.isEmpty else { return nil }
+        // Get all matching games in one query
+        let metadata = try await searchGamesForArtwork(name: name, systemID: systemID)
+
+        guard !metadata.isEmpty else {
+            DLOG("Query returned no results")
+            return nil
+        }
 
         // Batch URL validation
-        let urlTasks = games.flatMap { game -> [(URL, ArtworkType, LibretroDBROMMetadata)] in
-            let gameName = game.romFileName?.deletingPathExtension() ?? ""
-            guard let systemID = game.systemID,
-                  let systemFolder = systemID.libretroDatabaseName
-                    .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
+        let urlTasks = metadata.flatMap { game -> [(URL, ArtworkType, ROMMetadata)] in
+            let gameName = game.romFileName ?? game.gameTitle
+            let systemID = game.systemID
+
+            #if DEBUG
+            DLOG("\nConstructing URLs for game:")
+            DLOG("- Game Title: \(game.gameTitle)")
+            DLOG("- ROM Name: \(game.romFileName ?? "nil")")
+            DLOG("- System ID: \(systemID)")
+            DLOG("- System Name: \(systemID.libretroDatabaseName)")
+            #endif
+
+            guard let systemFolder = systemID.libretroDatabaseName
+                    .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
                 return []
             }
 
-            // Create array of possible types
-            var tasks: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
+            var tasks: [(URL, ArtworkType, ROMMetadata)] = []
 
-            // Check each possible type in the OptionSet
+            // For each supported type, try to construct a URL
             if types.contains(.boxFront) {
-                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: libretrodb.ArtworkConstants.boxartPath) {
+                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, type: .boxFront) {
+                    #if DEBUG
+                    DLOG("- Boxart URL: \(url)")
+                    #endif
                     tasks.append((url, .boxFront, game))
                 }
             }
-
-            if types.contains(.titleScreen) {
-                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: libretrodb.ArtworkConstants.titlesPath) {
-                    tasks.append((url, .titleScreen, game))
+            if types.contains(.screenshot) {
+                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, type: .screenshot) {
+                    #if DEBUG
+                    DLOG("- Screenshot URL: \(url)")
+                    #endif
+                    tasks.append((url, .screenshot, game))
                 }
             }
-
-            if types.contains(.screenshot) {
-                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: libretrodb.ArtworkConstants.snapshotPath) {
-                    tasks.append((url, .screenshot, game))
+            if types.contains(.titleScreen) {
+                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, type: .titleScreen) {
+                    #if DEBUG
+                    DLOG("- Titlescreen URL: \(url)")
+                    #endif
+                    tasks.append((url, .titleScreen, game))
                 }
             }
 
@@ -793,7 +850,7 @@ extension libretrodb {
         }
 
         // Validate URLs in parallel
-        let validResults = await withTaskGroup(of: (URL, ArtworkType, LibretroDBROMMetadata, Bool).self) { group in
+        let validResults = await withTaskGroup(of: (URL, ArtworkType, ROMMetadata, Bool).self) { group in
             for (url, type, metadata) in urlTasks {
                 group.addTask {
                     let isValid = await LibretroArtwork.validateURL(url)
@@ -801,7 +858,7 @@ extension libretrodb {
                 }
             }
 
-            var results: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
+            var results: [(URL, ArtworkType, ROMMetadata)] = []
             for await (url, type, metadata, isValid) in group where isValid {
                 results.append((url, type, metadata))
             }
@@ -815,12 +872,57 @@ extension libretrodb {
                 type: type,
                 resolution: nil,
                 description: metadata.gameTitle,
-                source: "LibretroThumbnails",
+                source: "LibretroDB",
                 systemID: metadata.systemID
             )
         }
 
         return artworks.isEmpty ? nil : artworks
+    }
+
+    private func constructArtworkSearchQuery(name: String, systemID: SystemIdentifier?) -> String {
+        let escapedName = name.replacingOccurrences(of: "'", with: "''")
+        let platformFilter = systemID != nil ? "AND games.platform_id = \(systemID!.libretroDatabaseID)" : ""
+
+        return """
+            WITH matched_games AS (
+                SELECT DISTINCT games.id, games.serial_id,
+                       CASE
+                           WHEN games.display_name = '\(escapedName)' THEN 0  -- Exact match
+                           WHEN games.display_name LIKE '\(escapedName) %' THEN 1  -- Starts with name
+                           WHEN games.display_name LIKE '% \(escapedName) %' THEN 2  -- Contains word
+                           WHEN games.display_name LIKE '%\(escapedName)%' THEN 3  -- Contains substring
+                           WHEN games.display_name LIKE '%\(escapedName)% (Aftermarket)%' THEN 4  -- Aftermarket version
+                           WHEN games.display_name LIKE '%\(escapedName)% (Beta)%' THEN 5  -- Beta version
+                           ELSE 6
+                       END as match_quality
+                FROM games
+                WHERE games.display_name LIKE '%\(escapedName)%'
+                \(platformFilter)
+                ORDER BY match_quality, games.display_name
+                LIMIT 10
+            )
+            SELECT DISTINCT
+                games.display_name as game_title,
+                games.full_name,
+                roms.name as rom_name,
+                platforms.id as platform_id,
+                platforms.name as platform_name,
+                manufacturers.name as manufacturer_name,
+                developers.name as developer_name,
+                publishers.name as publisher_name,
+                regions.name as region_name,
+                games.platform_id as raw_platform_id  -- Add this for debugging
+            FROM matched_games
+            JOIN games ON matched_games.id = games.id
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+            LEFT JOIN roms ON games.serial_id = roms.serial_id
+            LEFT JOIN developers ON games.developer_id = developers.id
+            LEFT JOIN publishers ON games.publisher_id = publishers.id
+            LEFT JOIN regions ON games.region_id = regions.id
+            ORDER BY matched_games.match_quality, games.display_name
+            """
     }
 
     /// Get artwork for a specific game ID
@@ -892,79 +994,104 @@ extension libretrodb {
     /// - Parameters:
     ///   - name: Game name to search for
     ///   - systemID: Optional system to filter by
-    ///   - limit: Maximum number of results to return
     /// - Returns: Array of ROM metadata optimized for artwork lookup
-    func searchGamesForArtwork(name: String, systemID: SystemIdentifier? = nil, limit: Int = 10) throws -> [LibretroDBROMMetadata] {
-        print("\nLibretroDB artwork search:")
-        print("- Name: \(name)")
-        print("- SystemID: \(String(describing: systemID))")
+    internal func searchGamesForArtwork(name: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata] {
+        DLOG("\nLibretroDB artwork search:")
+        DLOG("- Name: \(name)")
+        DLOG("- SystemID: \(String(describing: systemID))")
+        if let systemID = systemID {
+            DLOG("- LibretroDB Platform ID: \(systemID.libretroDatabaseID ?? -1)")
+        }
+
+        // Clean the name and escape SQL including parentheses
+        let escapedName = escapeSQLString(name)
+        let platformFilter = systemID?.libretroDatabaseID != nil ?
+            "AND games.platform_id = \(systemID!.libretroDatabaseID)" : ""
 
         // Optimize the search query to find more relevant matches
         let query = """
             WITH matched_games AS (
                 SELECT DISTINCT games.id, games.serial_id,
                        CASE
-                           WHEN games.display_name = '\(name)' THEN 0  -- Exact match
-                           WHEN games.display_name LIKE '\(name) %' THEN 1  -- Starts with name
-                           WHEN games.display_name LIKE '% \(name) %' THEN 2  -- Contains word
-                           WHEN games.display_name LIKE '%\(name)%' THEN 3  -- Contains substring
+                           WHEN LOWER(games.display_name) = LOWER('\(escapedName)') THEN 0  -- Exact match
+                           WHEN LOWER(games.display_name) LIKE LOWER('\(escapedName) %') THEN 1  -- Starts with name
+                           WHEN LOWER(games.display_name) LIKE LOWER('% \(escapedName) %') THEN 2  -- Contains word
+                           WHEN LOWER(games.display_name) LIKE LOWER('%\(escapedName)%') THEN 3  -- Contains substring
                            ELSE 4
                        END as match_quality
                 FROM games
-                WHERE games.display_name LIKE '%\(name)%'
-                AND games.display_name NOT LIKE '%Marionette%'  -- Exclude false matches
-                \(systemID != nil ? "AND games.platform_id = \(systemID!.libretroDatabaseID)" : "")
+                WHERE LOWER(games.display_name) LIKE LOWER('%\(escapedName)%')
+                \(platformFilter)
                 ORDER BY match_quality, games.display_name
-                LIMIT \(limit)
+                LIMIT 10
             )
             SELECT DISTINCT
                 games.display_name as game_title,
+                games.full_name,
                 roms.name as rom_name,
                 platforms.id as platform_id,
-                manufacturers.name as manufacturer_name
+                platforms.name as platform_name,
+                manufacturers.name as manufacturer_name,
+                developers.name as developer_name,
+                publishers.name as publisher_name,
+                regions.name as region_name,
+                games.platform_id as raw_platform_id
             FROM matched_games
             JOIN games ON matched_games.id = games.id
             LEFT JOIN platforms ON games.platform_id = platforms.id
             LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
             LEFT JOIN roms ON games.serial_id = roms.serial_id
+            LEFT JOIN developers ON games.developer_id = developers.id
+            LEFT JOIN publishers ON games.publisher_id = publishers.id
+            LEFT JOIN regions ON games.region_id = regions.id
             ORDER BY matched_games.match_quality, games.display_name
-        """
+            """
 
-        print("- Generated query: \(query)")
-        let results = try db.execute(query: query)
-        print("- Raw results: \(results)")
+        DLOG("- Generated query: \(query)")
+        let rawResults = try db.execute(query: query)
+        DLOG("- Raw results count: \(rawResults.count)")
 
-        let metadata = try results.compactMap { dict -> LibretroDBROMMetadata? in
-            // Simplified metadata conversion for artwork
-            guard let gameTitle = dict["game_title"] as? String,
-                  let platformID = (dict["platform_id"] as? NSNumber)?.stringValue else {
-                print("- Failed to convert dict: \(dict)")
+        if rawResults.isEmpty {
+            DLOG("- No results found!")
+            // Debug platform mapping
+            DLOG("- Platform mapping check:")
+            DLOG("  • SystemID: \(systemID?.rawValue ?? "nil")")
+            DLOG("  • LibretroDB ID: \(systemID?.libretroDatabaseID ?? -1)")
+            return []
+        } else {
+            DLOG("- Found results:")
+            rawResults.forEach { result in
+                DLOG("  • Game: \(result["game_title"] as? String ?? "nil")")
+                DLOG("    Platform ID: \(result["raw_platform_id"] as? Int ?? -1)")
+                DLOG("    Platform Name: \(result["platform_name"] as? String ?? "nil")")
+            }
+        }
+
+        // Convert raw results to ROMMetadata
+        return rawResults.compactMap { result in
+            guard let gameTitle = result["game_title"] as? String,
+                  let platformId = result["platform_id"] as? Int,
+                  let systemID = SystemIdentifier.fromLibretroDatabaseID(platformId) else {
                 return nil
             }
 
-            let rom = LibretroDBROMMetadata(
+            return ROMMetadata(
                 gameTitle: gameTitle,
-                fullName: nil,
-                releaseYear: nil,
-                releaseMonth: nil,
-                developer: nil,
-                publisher: nil,
-                rating: nil,
-                franchise: nil,
-                region: nil,
-                genre: nil,
-                romName: dict["rom_name"] as? String,
-                romMD5: nil,
-                platform: platformID,
-                manufacturer: dict["manufacturer_name"] as? String,
-                genres: nil,
-                romFileName: dict["rom_name"] as? String
+                region: result["region_name"] as? String,
+                gameDescription: nil,
+                developer: result["developer_name"] as? String,
+                publisher: result["publisher_name"] as? String,
+                systemID: systemID,
+                romFileName: result["rom_name"] as? String,
+                source: "LibretroDB"
             )
-            print("- Converted to: \(rom)")
-            return rom
         }
+    }
 
-        print("- Found \(metadata.count) games")
-        return metadata
+    // Helper to escape SQL special characters
+    private func escapeSQLString(_ input: String) -> String {
+        input.replacingOccurrences(of: "'", with: "''")
+             .replacingOccurrences(of: "(", with: "\\(")
+             .replacingOccurrences(of: ")", with: "\\)")
     }
 }

@@ -1,6 +1,7 @@
 import Foundation
 import PVSystems
 import PVLookupTypes
+import PVSQLiteDatabase
 
 /// Handles artwork URL construction and validation for libretro thumbnails
 public struct LibretroArtwork {
@@ -17,10 +18,26 @@ public struct LibretroArtwork {
     /// Cache duration for URL validation results
     private static let cacheDuration: TimeInterval = 3600 // 1 hour
 
-    private let db: libretrodb
+    private let libreTroDB: libretrodb
 
-    public init(db: libretrodb = .init()) {
-        self.db = db
+    public init(libreTroDB: libretrodb) {
+        self.libreTroDB = libreTroDB
+    }
+
+    /// Search for artwork by game name
+    /// - Parameters:
+    ///   - name: Name of the game
+    ///   - systemID: Optional system ID to filter by
+    ///   - types: Types of artwork to search for
+    /// - Returns: Array of artwork metadata
+    func searchArtwork(
+        byGameName name: String,
+        systemID: SystemIdentifier?,
+        types: Set<ArtworkType>
+    ) async throws -> [ArtworkMetadata] {
+        // Use libretrodb's search function
+        let metadata = try await libreTroDB.searchGamesForArtwork(name: name, systemID: systemID)
+        return convertToArtwork(metadata, types: types)
     }
 
     /// Constructs artwork URLs for a given system and game name
@@ -34,19 +51,19 @@ public struct LibretroArtwork {
 
         // Check each possible type in the OptionSet
         if types.contains(.boxFront) {
-            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.boxartPath) {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, type: .boxFront) {
                 urls.append(url)
             }
         }
 
         if types.contains(.titleScreen) {
-            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.titlesPath) {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, type: .titleScreen) {
                 urls.append(url)
             }
         }
 
         if types.contains(.screenshot) {
-            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.snapshotPath) {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, type: .screenshot) {
                 urls.append(url)
             }
         }
@@ -55,27 +72,43 @@ public struct LibretroArtwork {
     }
 
     /// Helper to construct a single URL
-    internal static func constructURL(systemName: String, gameName: String, folder: String) -> URL? {
+    internal static func constructURL(systemName: String, gameName: String, type: ArtworkType) -> URL? {
+        #if DEBUG
+        print("\nLibretroArtwork URL construction:")
+        print("- System Name: \(systemName)")
+        print("- Game Name: \(gameName)")
+        print("- Type: \(type)")
+        #endif
+
+        guard var components = URLComponents(string: baseURL) else {
+            return nil
+        }
+
+        // Ensure HTTPS
+        components.scheme = "https"
+
+        // Get the appropriate folder based on artwork type
+        let folder = type.libretroDatabaseFolder
+
         // First decode any existing encoding
         let decodedSystem = systemName.removingPercentEncoding ?? systemName
         let decodedGame = gameName.removingPercentEncoding ?? gameName
 
-        // Create URL components
-        var components = URLComponents()
-        components.scheme = "https"  // Keep HTTPS for iOS ATS requirements
-        components.host = "thumbnails.libretro.com"
+        // Remove file extension using NSString method
+        let gameNameWithoutExt = (decodedGame as NSString).deletingPathExtension
 
         // Build path without encoding first
-        let path = "/\(decodedSystem)/\(folder)/\(decodedGame).png"
+        let path = "/\(decodedSystem)/\(folder)/\(gameNameWithoutExt).png"
 
-        // Then encode the entire path at once
+        // Create URL with properly encoded path
         components.percentEncodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path
 
-        print("Constructing URL:")
-        print("- System: \(decodedSystem)")
-        print("- Game: \(decodedGame)")
+        #if DEBUG
         print("- Folder: \(folder)")
-        print("- Result: \(components.url?.absoluteString ?? "nil")")
+        print("- Game without ext: \(gameNameWithoutExt)")
+        print("- Path: \(path)")
+        print("- Final URL: \(components.url?.absoluteString ?? "nil")")
+        #endif
 
         return components.url
     }
@@ -186,6 +219,71 @@ public struct LibretroArtwork {
 
         return cleaned.trimmingCharacters(in: .whitespaces)
     }
+
+    private func convertToArtwork(_ metadata: [ROMMetadata], types: Set<ArtworkType>) -> [ArtworkMetadata] {
+        var artworks: [ArtworkMetadata] = []
+
+        for game in metadata {
+            let systemID = game.systemID
+            let systemName = systemID.libretroDatabaseName
+            let gameName = game.romFileName ?? game.gameTitle
+
+            let urls = Self.constructURLs(
+                systemName: systemName,
+                gameName: gameName,
+                types: ArtworkType(types)
+            )
+
+            for url in urls {
+                // Create ArtworkMetadata for each URL
+                let type = determineArtworkType(from: url)
+                let artwork = ArtworkMetadata(
+                    url: url,
+                    type: type,
+                    resolution: nil,
+                    description: game.gameTitle,
+                    source: "LibretroDB",
+                    systemID: systemID
+                )
+                artworks.append(artwork)
+            }
+        }
+
+        return artworks
+    }
+
+    private func determineArtworkType(from url: URL) -> ArtworkType {
+        let path = url.path.lowercased()
+        if path.contains("/named_boxarts/") {
+            return .boxFront
+        } else if path.contains("/named_titles/") {
+            return .titleScreen
+        } else if path.contains("/named_snaps/") {
+            return .screenshot
+        }
+        return .other
+    }
+
+    /// Gets the appropriate path for artwork based on type
+    /// - Parameters:
+    ///   - type: Type of artwork
+    ///   - systemName: System name
+    ///   - gameName: Game name
+    /// - Returns: URL path component
+    static func getArtworkPath(for type: ArtworkType, systemName: String, gameName: String) -> String {
+        // First decode any existing encoding
+        let decodedSystem = systemName.removingPercentEncoding ?? systemName
+        let decodedGame = gameName.removingPercentEncoding ?? gameName
+
+        // Get the appropriate folder based on artwork type
+        let folder = type.libretroDatabaseFolder
+
+        // Build path without encoding first
+        let path = "/\(decodedSystem)/\(folder)/\(decodedGame).png"
+
+        // Then encode the entire path
+        return path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path
+    }
 }
 
 // MARK: - ArtworkLookupOfflineService Conformance
@@ -199,23 +297,21 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
         let types = artworkTypes ?? .defaults
 
         // Get all matching games in one query
-        let games = try db.searchGames(name: name, systemID: systemID, limit: 10)
-        guard !games.isEmpty else { return nil }
+        let metadata = try await libreTroDB.searchGamesForArtwork(name: name, systemID: systemID)
+        guard !metadata.isEmpty else { return nil }
 
         // Use a set to automatically handle deduplication
         var artworkSet = Set<ArtworkMetadata>()
 
-        for game in games {
-            let gameName = game.romFileName?.deletingPathExtension() ?? ""
-            guard let systemID = game.systemID else {
-                continue
-            }
+        for game in metadata {
+            let gameName = game.romFileName ?? game.gameTitle
+            let systemID = game.systemID
 
             let systemName = systemID.libretroDatabaseName
 
             // Check each supported type
             for type in [ArtworkType.retroDBSupported] where types.contains(type) {
-                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: type.libretroDatabaseFolder) {
+                if let url = Self.constructURL(systemName: systemName, gameName: gameName, type: type) {
                     let artwork = ArtworkMetadata(
                         url: url,
                         type: type,
@@ -234,39 +330,75 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
         return artworks.isEmpty ? nil : artworks
     }
 
-    /// Get artwork for a specific game ID
+    public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+        return Self.getArtworkURLs(forRom: rom)
+    }
+
     public func getArtwork(
         forGameID gameID: String,
         artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
-        // For libretro, this is the same as searchArtwork since we don't use IDs
-        return try await searchArtwork(
-            byGameName: gameID,
-            systemID: nil,
-            artworkTypes: artworkTypes
-        )
+        // LibretroDB doesn't support direct game ID lookup for artwork
+        return nil
     }
 
     /// Get artwork mappings for ROMs
     public func getArtworkMappings() async throws -> ArtworkMapping {
-        // LibretroArtwork doesn't maintain a mapping database
-        return ArtworkMappings(romMD5: [:], romFileNameToMD5: [:])
-    }
+        // Query the database for all ROM mappings
+        let query = """
+            SELECT DISTINCT
+                roms.md5,
+                roms.name as rom_name,
+                games.display_name as game_title,
+                games.platform_id,
+                platforms.name as platform_name,
+                manufacturers.name as manufacturer_name
+            FROM roms
+            JOIN games ON roms.serial_id = games.serial_id
+            LEFT JOIN platforms ON games.platform_id = platforms.id
+            LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+            WHERE roms.md5 IS NOT NULL
+        """
 
-    /// Get artwork URLs for a ROM
-    public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
-        // Get system name from ROM metadata
-        let systemName = rom.systemID.libretroDatabaseName
+        let results = try libreTroDB.db.execute(query: query)
+        var romMD5: [String: [String: String]] = [:]
+        var romFileNameToMD5: [String: String] = [:]
 
-        // Use exact filename without extension
-        if let filename = rom.romFileName?.deletingPathExtension() {
-            let urls = await LibretroArtwork.getValidURLs(systemName: systemName, gameName: filename)
-            if !urls.isEmpty {
-                return urls
+        for result in results {
+            if let md5 = result["md5"] as? String,
+               let romName = result["rom_name"] as? String,
+               let gameTitle = result["game_title"] as? String,
+               let platformId = (result["platform_id"] as? NSNumber)?.stringValue {
+
+                // Store metadata for this MD5
+                var metadata: [String: String] = [
+                    "gameTitle": gameTitle,
+                    "romName": romName,
+                    "platformId": platformId
+                ]
+
+                // Add optional fields if present
+                if let platformName = result["platform_name"] as? String {
+                    metadata["platformName"] = platformName
+                }
+                if let manufacturerName = result["manufacturer_name"] as? String {
+                    metadata["manufacturerName"] = manufacturerName
+                }
+
+                // Store in mappings
+                romMD5[md5] = metadata
+                romFileNameToMD5[romName] = md5
+
+                // Store with platform prefix for better matching
+                let platformKey = "\(platformId):\(romName)"
+                romFileNameToMD5[platformKey] = md5
             }
         }
 
-        return nil
+        return ArtworkMappings(
+            romMD5: romMD5,
+            romFileNameToMD5: romFileNameToMD5
+        )
     }
 }
 

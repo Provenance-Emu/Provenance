@@ -1,5 +1,6 @@
 import Foundation
 import PVLogging
+import PVSQLiteDatabase
 
 public enum ShiraGameError: Error {
     case databaseNotFound
@@ -24,81 +25,85 @@ public actor ShiraGameManager {
     /// Ensures the database is extracted and ready to use
     public func prepareDatabaseIfNeeded() async throws {
         if isDatabasePrepared {
-            print("ShiraGameManager: Database already prepared")
+            DLOG("ShiraGameManager: Database already prepared")
             return
         }
 
-        print("ShiraGameManager: Starting database preparation...")
+        DLOG("ShiraGameManager: Starting database preparation...")
 
         let fileManager = FileManager.default
-        print("ShiraGameManager: Checking if database needs preparation...")
+        DLOG("ShiraGameManager: Checking if database needs preparation...")
 
         // Check if database already exists
         if fileManager.fileExists(atPath: databasePath.path) {
-            print("ShiraGameManager: Database already exists")
+            DLOG("ShiraGameManager: Database already exists")
             return
         }
 
-        print("ShiraGameManager: Database not found, starting extraction...")
+        DLOG("ShiraGameManager: Database not found, starting extraction...")
 
         // Get the compressed database from the bundle
         guard let compressedURL = Bundle.module.url(forResource: "shiragame.sqlite3", withExtension: "zip") else {
-            print("ShiraGameManager: Failed to find compressed database in bundle")
+            DLOG("ShiraGameManager: Failed to find compressed database in bundle")
             throw ShiraGameError.databaseNotFound
         }
 
-        print("ShiraGameManager: Found compressed database at: \(compressedURL)")
+        DLOG("ShiraGameManager: Found compressed database at: \(compressedURL)")
 
         // Create a temporary directory for extraction
         let tempDir = fileManager.temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
         try fileManager.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        print("ShiraGameManager: Created temp directory at: \(tempDir)")
+        DLOG("ShiraGameManager: Created temp directory at: \(tempDir)")
 
         defer {
             try? fileManager.removeItem(at: tempDir)
-            print("ShiraGameManager: Cleaned up temp directory")
+            DLOG("ShiraGameManager: Cleaned up temp directory")
         }
 
         // Extract using Archive
-        print("ShiraGameManager: Starting extraction...")
+        DLOG("ShiraGameManager: Starting extraction...")
         try extractZipDatabase(from: compressedURL, to: tempDir)
-        print("ShiraGameManager: Extraction complete")
+        DLOG("ShiraGameManager: Extraction complete")
 
         // Move extracted database to final location
         let extractedDB = tempDir.appendingPathComponent("shiragame.sqlite3")
         try fileManager.moveItem(at: extractedDB, to: databasePath)
-        print("ShiraGameManager: Moved database to final location")
+        DLOG("ShiraGameManager: Moved database to final location")
 
         isDatabasePrepared = true
-        print("ShiraGameManager: Database preparation complete")
+        DLOG("ShiraGameManager: Database preparation complete")
 
         // Verify database exists and is readable
         guard FileManager.default.fileExists(atPath: databasePath.path) else {
-            print("ShiraGameManager: Database file not found after preparation!")
+            DLOG("ShiraGameManager: Database file not found after preparation!")
             throw ShiraGameError.databaseNotFound
         }
 
         // Try opening database to verify it's valid
         _ = ShiragameSchema(url: databasePath)
-        print("ShiraGameManager: Database verified and ready")
+        DLOG("ShiraGameManager: Database verified and ready")
     }
 
     private func extractZipDatabase(from sourceURL: URL, to destinationURL: URL) throws {
         do {
+            #if DEBUG
             print("ShiraGameManager: Using FileManager to unzip database...")
             print("ShiraGameManager: Source file exists: \(FileManager.default.fileExists(atPath: sourceURL.path))")
             print("ShiraGameManager: Source file size: \(try FileManager.default.attributesOfItem(atPath: sourceURL.path)[.size] ?? 0)")
+            #endif
 
             try FileManager.default.zipItem(at: sourceURL, unzipTo: destinationURL)
 
+            #if DEBUG
             print("ShiraGameManager: Destination directory contents: \(try FileManager.default.contentsOfDirectory(atPath: destinationURL.path))")
             print("ShiraGameManager: Unzip successful")
+            #endif
         } catch {
-            print("ShiraGameManager: Unzip failed with detailed error: \(error)")
-            print("ShiraGameManager: Error domain: \(error as NSError).domain")
-            print("ShiraGameManager: Error code: \((error as NSError).code)")
-            print("ShiraGameManager: Error description: \((error as NSError).localizedDescription)")
+            DLOG("ShiraGameManager: Unzip failed with detailed error: \(error)")
+            DLOG("ShiraGameManager: Error domain: \(error as NSError).domain")
+            DLOG("ShiraGameManager: Error code: \((error as NSError).code)")
+            DLOG("ShiraGameManager: Error description: \((error as NSError).localizedDescription)")
             throw ShiraGameError.extractionFailed
         }
     }

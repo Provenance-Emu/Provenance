@@ -12,7 +12,17 @@ import Testing
 import PVSystems
 
 struct OpenVGDBTests {
-    let db = OpenVGDB()
+    let db: OpenVGDB
+
+    init() async throws {
+        self.db = try await OpenVGDB()
+    }
+
+    @Test("Database initialization works")
+    func testDatabaseInitialization() async throws {
+        let db = try await OpenVGDB()
+        #expect(db != nil)
+    }
 
     // MARK: - Test Data
     let nhlSaturn = (
@@ -89,7 +99,7 @@ struct OpenVGDBTests {
 
     @Test
     func searchByFilenameWithSystem() async throws {
-        let results = try db.searchDatabase(
+        let results = try await db.searchDatabase(
             usingFilename: nhlSaturn.filename,
             systemID: nhlSaturn.systemID  // Use openVGDBID for API call
         )
@@ -107,7 +117,7 @@ struct OpenVGDBTests {
 
     @Test
     func systemLookupByFilename() async throws {
-        let systemIdentifier = try db.system(forRomMD5: "invalid", or: nhlSaturn.filename)
+        let systemIdentifier = try await db.systemIdentifier(forRomMD5: "invalid", or: nhlSaturn.filename)
         #expect(systemIdentifier == nhlSaturn.systemID)
     }
 

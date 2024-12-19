@@ -81,7 +81,8 @@ let package = Package(
         .target(
             name: "PVSQLiteDatabase",
             dependencies: [
-                .product(name: "SQLite", package: "sqlite.swift")
+                .product(name: "SQLite", package: "sqlite.swift"),
+                .product(name: "ZIPFoundation", package: "ZIPFoundation")
             ]
         ),
 
@@ -92,11 +93,15 @@ let package = Package(
          .target(
              name: "TheGamesDB",
              dependencies: [
+                "PVSQLiteDatabase",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
 //                .product(name: "OpenAPIAsyncHTTPClient", package: "swift-openapi-async-http-client"),
                 "PVLookupTypes",
                 "ROMMetadataProvider",
                 "PVPrimitives"
+             ],
+             resources: [
+                .copy("Resources/thegamesdb.sqlite.zip")
              ],
              plugins: [
 //                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
@@ -114,7 +119,7 @@ let package = Package(
                 "ROMMetadataProvider"
             ],
             resources: [
-                .copy("Resources/libretrodb.sqlite"),
+                .copy("Resources/libretrodb.sqlite.zip"),
             ],
             plugins: [
                 // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
@@ -136,8 +141,8 @@ let package = Package(
                 "ROMMetadataProvider"
             ],
             resources: [
-                .copy("Resources/openvgdb.sqlite"),
-                .copy("Resources/openvgdb_schema.sql"),
+                .copy("Resources/openvgdb.sqlite.zip"),
+//                .copy("Resources/openvgdb_schema.sql"),
             ],
             plugins: [
                 // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
@@ -156,13 +161,12 @@ let package = Package(
                 "PVSQLiteDatabase",
                 "PVLookupTypes",
                 "PVPrimitives",
-                "Lighter",
-                .product(name: "ZIPFoundation", package: "ZIPFoundation")
+                "Lighter"
             ],
             resources: [
 //                .copy("Resources/shiragame.sqlite3.7z"),
                 .copy("Resources/shiragame.sqlite3.zip"),
-                .copy("Resources/shiragame_schema.sql"),
+//                .copy("Resources/shiragame_schema.sql"),
             ],
             plugins: [
                 // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
