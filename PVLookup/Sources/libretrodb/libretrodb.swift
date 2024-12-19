@@ -12,7 +12,6 @@ import PVSQLiteDatabase
 import ROMMetadataProvider
 import PVLookupTypes
 import PVSystems
-import LibretroDBManager
 
 /* LibretroDB
 
@@ -92,11 +91,74 @@ public actor libretrodbActor: GlobalActor {
 
 /// LibretroDB provides ROM metadata from a SQLite database converted from RetroArch's database
 public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
-    private let db: PVSQLiteDatabase
+    internal let db: PVSQLiteDatabase
     private let manager: LibretroDBManager
+
+    private actor DatabaseConnection {
+        private var connection: Connection?
+
+        func execute(path: String, query: String) throws -> [LibretroDBROMMetadata] {
+            if connection == nil {
+                connection = try Connection(path, readonly: true)
+            }
+            guard let db = connection else {
+                throw LibretroDBError.databaseError("Failed to create database connection")
+            }
+
+            let stmt = try db.prepare(query)
+            var results: [LibretroDBROMMetadata] = []
+            for row in stmt {
+                var dict: [String: Any] = [:]
+                for (index, name) in stmt.columnNames.enumerated() {
+                    dict[name] = row[index]
+                }
+
+                // Convert to ROMMetadata
+                if let metadata = convertToROMMetadata(dict) {
+                    results.append(metadata)
+                }
+            }
+            return results
+        }
+
+        private func convertToROMMetadata(_ dict: [String: Any]) -> LibretroDBROMMetadata? {
+            guard let gameTitle = dict["game_title"] as? String else { return nil }
+
+            return LibretroDBROMMetadata(
+                gameTitle: gameTitle,
+                fullName: dict["full_name"] as? String,
+                releaseYear: dict["release_year"] as? Int,
+                releaseMonth: dict["release_month"] as? Int,
+                developer: dict["developer_name"] as? String,
+                publisher: dict["publisher_name"] as? String,
+                rating: dict["rating_name"] as? String,
+                franchise: dict["franchise_name"] as? String,
+                region: dict["region_name"] as? String,
+                genre: dict["genre_name"] as? String,
+                romName: dict["rom_name"] as? String,
+                romMD5: dict["rom_md5"] as? String,
+                platform: dict["platform_id"] as? String,
+                manufacturer: dict["manufacturer_name"] as? String,
+                genres: (dict["genres"] as? String)?.components(separatedBy: ","),
+                romFileName: dict["rom_name"] as? String
+            )
+        }
+
+        internal static func formatReleaseDate(year: Int?, month: Int?) -> String? {
+            guard let year = year else { return nil }
+            if let month = month {
+                return String(format: "%04d-%02d", year, month)
+            }
+            return String(format: "%04d", year)
+        }
+    }
+
+    private let dbConnection: DatabaseConnection
 
     public init() async throws {
         self.manager = LibretroDBManager.shared
+        self.dbConnection = DatabaseConnection()
+
         do {
             try await manager.prepareDatabaseIfNeeded()
             self.db = try await PVSQLiteDatabase(withURL: manager.databasePath)
@@ -105,23 +167,13 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
         }
     }
 
-    /// Legacy connection
-    internal let db: PVSQLiteDatabase
-
-    /// SQLite.swift connection for more modern queries
-    lazy var sqldb: Connection = {
-        let sqldb = try! Connection(dbPath.path, readonly: true)
-        return sqldb
-    }()
-
-    /// Path to the database file
-    lazy var dbPath: URL = {
-        let bundle = Bundle.module
-        guard let sqlFile = bundle.url(forResource: "libretrodb", withExtension: "sqlite") else {
-            fatalError("Unable to locate `libretrodb.sqlite`")
-        }
-        return sqlFile
-    }()
+    @libretrodbActor
+    private func executeQuery(_ query: String) async throws -> [ROMMetadata] {
+        let path = await manager.databasePath.path
+        let libretroDB = try await dbConnection.execute(path: path, query: query)
+        // Convert LibretroDBROMMetadata to ROMMetadata
+        return libretroDB.map { convertToROMMetadata($0) }
+    }
 
     /// Standard query to get ROM metadata by MD5
     private var standardMetadataQuery: String {
@@ -183,44 +235,26 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 
     /// Convert database result to ROMMetadata
     private func convertToROMMetadata(_ metadata: LibretroDBROMMetadata) -> ROMMetadata {
-        // Construct artwork URL if we have the necessary information
-        let artworkURL: String?
-        if let platform = metadata.platform {
-            artworkURL = constructArtworkURL(
-                platform: platform,
-                manufacturer: metadata.manufacturer,
-                displayName: metadata.gameTitle
-            )
-        } else {
-            artworkURL = nil
-        }
-
-        // Convert platform ID to SystemIdentifier
-        let systemIdentifier = metadata.platform.flatMap { platformName in
-            if let platformID = Int(platformName) {
-                return SystemIdentifier.fromLibretroDatabaseID(platformID)
-            }
-            return nil
-        } ?? .Unknown
+        let systemID = metadata.platform.flatMap { SystemIdentifier.fromLibretroDatabaseID(Int($0) ?? 0) } ?? .Unknown
 
         return ROMMetadata(
             gameTitle: metadata.gameTitle,
-            boxImageURL: artworkURL,
+            boxImageURL: nil,
             region: metadata.region,
             gameDescription: nil,
             boxBackURL: nil,
             developer: metadata.developer,
             publisher: metadata.publisher,
             serial: nil,
-            releaseDate: metadata.releaseYear.map { "\($0)" },
-            genres: metadata.genre,
+            releaseDate: DatabaseConnection.formatReleaseDate(year: metadata.releaseYear, month: metadata.releaseMonth),
+            genres: metadata.genres?.joined(separator: ","),
             referenceURL: nil,
             releaseID: nil,
             language: nil,
             regionID: nil,
-            systemID: systemIdentifier,
-            systemShortName: metadata.platform,
-            romFileName: metadata.romName,
+            systemID: systemID,
+            systemShortName: nil,
+            romFileName: metadata.romFileName,
             romHashCRC: nil,
             romHashMD5: metadata.romMD5,
             romID: nil,
@@ -758,8 +792,9 @@ extension libretrodb {
     ) async throws -> [ArtworkMetadata]? {
         let types = artworkTypes ?? .defaults
 
-        // Use the optimized artwork search
-        let games = try searchGamesForArtwork(name: name, systemID: systemID)
+        // Use the optimized artwork search but keep as LibretroDBROMMetadata
+        let path = await manager.databasePath.path
+        let games = try await dbConnection.execute(path: path, query: constructArtworkSearchQuery(name: name, systemID: systemID))
         guard !games.isEmpty else { return nil }
 
         // Batch URL validation
@@ -771,24 +806,23 @@ extension libretrodb {
                 return []
             }
 
-            // Create array of possible types
             var tasks: [(URL, ArtworkType, LibretroDBROMMetadata)] = []
 
             // Check each possible type in the OptionSet
             if types.contains(.boxFront) {
-                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: libretrodb.ArtworkConstants.boxartPath) {
+                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: ArtworkConstants.boxartPath) {
                     tasks.append((url, .boxFront, game))
                 }
             }
 
             if types.contains(.titleScreen) {
-                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: libretrodb.ArtworkConstants.titlesPath) {
+                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: ArtworkConstants.titlesPath) {
                     tasks.append((url, .titleScreen, game))
                 }
             }
 
             if types.contains(.screenshot) {
-                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: libretrodb.ArtworkConstants.snapshotPath) {
+                if let url = LibretroArtwork.constructURL(systemName: systemFolder, gameName: gameName, folder: ArtworkConstants.snapshotPath) {
                     tasks.append((url, .screenshot, game))
                 }
             }
@@ -825,6 +859,38 @@ extension libretrodb {
         }
 
         return artworks.isEmpty ? nil : artworks
+    }
+
+    private func constructArtworkSearchQuery(name: String, systemID: SystemIdentifier?) -> String {
+        """
+        WITH matched_games AS (
+            SELECT DISTINCT games.id, games.serial_id,
+                   CASE
+                       WHEN games.display_name = '\(name)' THEN 0  -- Exact match
+                       WHEN games.display_name LIKE '\(name) %' THEN 1  -- Starts with name
+                       WHEN games.display_name LIKE '% \(name) %' THEN 2  -- Contains word
+                       WHEN games.display_name LIKE '%\(name)%' THEN 3  -- Contains substring
+                       ELSE 4
+                   END as match_quality
+            FROM games
+            WHERE games.display_name LIKE '%\(name)%'
+            AND games.display_name NOT LIKE '%Marionette%'  -- Exclude false matches
+            \(systemID != nil ? "AND games.platform_id = \(systemID!.libretroDatabaseID)" : "")
+            ORDER BY match_quality, games.display_name
+            LIMIT 10
+        )
+        SELECT DISTINCT
+            games.display_name as game_title,
+            roms.name as rom_name,
+            platforms.id as platform_id,
+            manufacturers.name as manufacturer_name
+        FROM matched_games
+        JOIN games ON matched_games.id = games.id
+        LEFT JOIN platforms ON games.platform_id = platforms.id
+        LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+        LEFT JOIN roms ON games.serial_id = roms.serial_id
+        ORDER BY matched_games.match_quality, games.display_name
+        """
     }
 
     /// Get artwork for a specific game ID
@@ -898,7 +964,7 @@ extension libretrodb {
     ///   - systemID: Optional system to filter by
     ///   - limit: Maximum number of results to return
     /// - Returns: Array of ROM metadata optimized for artwork lookup
-    func searchGamesForArtwork(name: String, systemID: SystemIdentifier? = nil, limit: Int = 10) throws -> [LibretroDBROMMetadata] {
+    internal func searchGamesForArtwork(name: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata] {
         print("\nLibretroDB artwork search:")
         print("- Name: \(name)")
         print("- SystemID: \(String(describing: systemID))")
@@ -919,7 +985,7 @@ extension libretrodb {
                 AND games.display_name NOT LIKE '%Marionette%'  -- Exclude false matches
                 \(systemID != nil ? "AND games.platform_id = \(systemID!.libretroDatabaseID)" : "")
                 ORDER BY match_quality, games.display_name
-                LIMIT \(limit)
+                LIMIT 10
             )
             SELECT DISTINCT
                 games.display_name as game_title,
@@ -935,40 +1001,9 @@ extension libretrodb {
         """
 
         print("- Generated query: \(query)")
-        let results = try db.execute(query: query)
+        let results = try await executeQuery(query)
         print("- Raw results: \(results)")
 
-        let metadata = results.compactMap { dict -> LibretroDBROMMetadata? in
-            // Simplified metadata conversion for artwork
-            guard let gameTitle = dict["game_title"] as? String,
-                  let platformID = (dict["platform_id"] as? NSNumber)?.stringValue else {
-                print("- Failed to convert dict: \(dict)")
-                return nil
-            }
-
-            let rom = LibretroDBROMMetadata(
-                gameTitle: gameTitle,
-                fullName: nil,
-                releaseYear: nil,
-                releaseMonth: nil,
-                developer: nil,
-                publisher: nil,
-                rating: nil,
-                franchise: nil,
-                region: nil,
-                genre: nil,
-                romName: dict["rom_name"] as? String,
-                romMD5: nil,
-                platform: platformID,
-                manufacturer: dict["manufacturer_name"] as? String,
-                genres: nil,
-                romFileName: dict["rom_name"] as? String
-            )
-            print("- Converted to: \(rom)")
-            return rom
-        }
-
-        print("- Found \(metadata.count) games")
-        return metadata
+        return results // Already ROMMetadata
     }
 }

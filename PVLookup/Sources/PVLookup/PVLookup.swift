@@ -190,13 +190,13 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 
         // Try OpenVGDB
         if let openVGDB = await isolatedOpenVGDB,
-           let openVGDBResults = try await openVGDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs) {
+           let openVGDBResults = try openVGDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs) {
             results.append(contentsOf: openVGDBResults)
         }
 
         // Try LibretroDB
         if let libreTroDB = await isolatedLibretroDB,
-           let libretroDatabaseResults = try await libreTroDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs) {
+           let libretroDatabaseResults = try libreTroDB.searchDatabase(usingFilename: filename, systemIDs: systemIDs) {
             results.append(contentsOf: libretroDatabaseResults)
         }
 
@@ -243,7 +243,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 
         // Try OpenVGDB
         if let openVGDB = await isolatedOpenVGDB,
-           let openVGDBUrls = try await openVGDB.getArtworkURLs(forRom: rom) {
+           let openVGDBUrls = try openVGDB.getArtworkURLs(forRom: rom) {
             urls.append(contentsOf: openVGDBUrls)
         }
 
@@ -306,13 +306,13 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 
         // Try OpenVGDB
         if let openVGDB = await isolatedOpenVGDB,
-           let openVGDBResults = try await openVGDB.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemID) {
+           let openVGDBResults = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemID) {
             results.append(contentsOf: openVGDBResults)
         }
 
         // Try LibretroDB
         if let libreTroDB = await isolatedLibretroDB,
-           let libretroDatabaseResults = try await libreTroDB.searchMetadata(usingKey: "md5", value: md5, systemID: systemID) {
+           let libretroDatabaseResults = try libreTroDB.searchMetadata(usingKey: "md5", value: md5, systemID: systemID) {
             results.append(contentsOf: libretroDatabaseResults)
         }
 
