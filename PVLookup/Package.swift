@@ -98,6 +98,9 @@ let package = Package(
                 "ROMMetadataProvider",
                 "PVPrimitives"
              ],
+             resources: [
+                .copy("Resources/thegamesdb.sqlite.zip")
+             ],
              plugins: [
 //                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
          ]),
@@ -114,7 +117,7 @@ let package = Package(
                 "ROMMetadataProvider"
             ],
             resources: [
-                .copy("Resources/libretrodb.sqlite"),
+                .copy("Resources/libretrodb.sqlite.zip"),
             ],
             plugins: [
                 // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
@@ -136,8 +139,8 @@ let package = Package(
                 "ROMMetadataProvider"
             ],
             resources: [
-                .copy("Resources/openvgdb.sqlite"),
-                .copy("Resources/openvgdb_schema.sql"),
+                .copy("Resources/openvgdb.sqlite.zip"),
+//                .copy("Resources/openvgdb_schema.sql"),
             ],
             plugins: [
                 // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
@@ -162,7 +165,7 @@ let package = Package(
             resources: [
 //                .copy("Resources/shiragame.sqlite3.7z"),
                 .copy("Resources/shiragame.sqlite3.zip"),
-                .copy("Resources/shiragame_schema.sql"),
+//                .copy("Resources/shiragame_schema.sql"),
             ],
             plugins: [
                 // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
