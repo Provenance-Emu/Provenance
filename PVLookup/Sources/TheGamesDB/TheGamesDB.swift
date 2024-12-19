@@ -329,9 +329,9 @@ private extension ArtworkType {
     }
 
     init?(fromTheGamesDB type: String, side: String?) {
-        print("\nConverting TheGamesDB type:")
-        print("- Type: \(type)")
-        print("- Side: \(String(describing: side))")
+        DLOG("\nConverting TheGamesDB type:")
+        DLOG("- Type: \(type)")
+        DLOG("- Side: \(String(describing: side))")
 
         let result: ArtworkType
         switch (type.lowercased(), side?.lowercased()) {
@@ -350,7 +350,7 @@ private extension ArtworkType {
             result = .other  // Any unknown type becomes .other
         }
 
-        print("- Converted to: \(result)")
+        DLOG("- Converted to: \(result)")
         self = result
     }
 }
@@ -374,7 +374,6 @@ private func constructArtworkSearchQuery(name: String, systemID: SystemIdentifie
                END as match_quality
         FROM games
         WHERE games.display_name LIKE '%\(name)%'
-        AND games.display_name NOT LIKE '%Marionette%'  -- Exclude false matches
         \(platformFilter)
         ORDER BY match_quality, games.display_name
         LIMIT 10

@@ -2,6 +2,7 @@ import Foundation
 import PVSQLiteDatabase
 import PVLookupTypes
 import PVSystems
+import PVLogging
 
 /// Schema for TheGamesDB SQLite database
 public struct TheGamesDBSchema {
@@ -57,30 +58,30 @@ public struct TheGamesDBSchema {
     func getImages(gameId: Int, types: [String]? = nil) throws -> SQLQueryResponse {
         var conditions: [String] = []
 
-        print("\nTheGamesDB getImages:")
-        print("- Game ID: \(gameId)")
-        print("- Requested types: \(String(describing: types))")
+        DLOG("\nTheGamesDB getImages:")
+        DLOG("- Game ID: \(gameId)")
+        DLOG("- Requested types: \(String(describing: types))")
 
         if let types = types {
             let typeConditions = types.map { type -> String in
                 switch type {
                 case "boxart-front":
                     let condition = "(type = 'boxart' AND side = 'front')"
-                    print("- Adding boxart front condition: \(condition)")
+                    DLOG("- Adding boxart front condition: \(condition)")
                     return condition
                 case "boxart-back":
                     let condition = "(type = 'boxart' AND side = 'back')"
-                    print("- Adding boxart back condition: \(condition)")
+                    DLOG("- Adding boxart back condition: \(condition)")
                     return condition
                 default:
                     let condition = "type = '\(type)'"
-                    print("- Adding type condition: \(condition)")
+                    DLOG("- Adding type condition: \(condition)")
                     return condition
                 }
             }
             if !typeConditions.isEmpty {
                 let combined = "AND (\(typeConditions.joined(separator: " OR ")))"
-                print("- Combined conditions: \(combined)")
+                DLOG("- Combined conditions: \(combined)")
                 conditions.append(combined)
             }
         }
@@ -97,13 +98,13 @@ public struct TheGamesDBSchema {
             WHERE game_id = \(gameId)
             \(conditions.joined(separator: " "))
             """
-        print("- Final query: \(query)")
+        DLOG("- Final query: \(query)")
 
         let results = try db.execute(query: query)
-        print("- Found \(results.count) results")
+        DLOG("- Found \(results.count) results")
         results.forEach { result in
-            print("  - Type: \(result["type"] as? String ?? "nil")")
-            print("    Side: \(result["side"] as? String ?? "nil")")
+            DLOG("  - Type: \(result["type"] as? String ?? "nil")")
+            DLOG("    Side: \(result["side"] as? String ?? "nil")")
         }
 
         return results

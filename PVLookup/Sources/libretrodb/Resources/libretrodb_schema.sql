@@ -75,3 +75,18 @@ CREATE TABLE roms (
     name TEXT,
     md5 TEXT
 );
+
+
+-- Add artwork table
+CREATE TABLE artwork (
+    id INTEGER PRIMARY KEY,
+    serial_id TEXT,
+    type TEXT,      -- boxart, screenshot, titlescreen, etc.
+    url TEXT,       -- URL to the artwork
+    FOREIGN KEY(serial_id) REFERENCES games(serial_id)
+);
+
+
+-- Create index for faster artwork lookups
+CREATE INDEX idx_artwork_serial_id ON artwork(serial_id);
+CREATE INDEX idx_artwork_type ON artwork(type);

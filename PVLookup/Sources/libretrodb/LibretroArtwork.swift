@@ -51,19 +51,19 @@ public struct LibretroArtwork {
 
         // Check each possible type in the OptionSet
         if types.contains(.boxFront) {
-            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.boxartPath) {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, type: .boxFront) {
                 urls.append(url)
             }
         }
 
         if types.contains(.titleScreen) {
-            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.titlesPath) {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, type: .titleScreen) {
                 urls.append(url)
             }
         }
 
         if types.contains(.screenshot) {
-            if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: libretrodb.ArtworkConstants.snapshotPath) {
+            if let url = Self.constructURL(systemName: systemName, gameName: gameName, type: .screenshot) {
                 urls.append(url)
             }
         }
@@ -72,27 +72,43 @@ public struct LibretroArtwork {
     }
 
     /// Helper to construct a single URL
-    internal static func constructURL(systemName: String, gameName: String, folder: String) -> URL? {
+    internal static func constructURL(systemName: String, gameName: String, type: ArtworkType) -> URL? {
+        #if DEBUG
+        print("\nLibretroArtwork URL construction:")
+        print("- System Name: \(systemName)")
+        print("- Game Name: \(gameName)")
+        print("- Type: \(type)")
+        #endif
+
+        guard var components = URLComponents(string: baseURL) else {
+            return nil
+        }
+
+        // Ensure HTTPS
+        components.scheme = "https"
+
+        // Get the appropriate folder based on artwork type
+        let folder = type.libretroDatabaseFolder
+
         // First decode any existing encoding
         let decodedSystem = systemName.removingPercentEncoding ?? systemName
         let decodedGame = gameName.removingPercentEncoding ?? gameName
 
-        // Create URL components
-        var components = URLComponents()
-        components.scheme = "https"  // Keep HTTPS for iOS ATS requirements
-        components.host = "thumbnails.libretro.com"
+        // Remove file extension using NSString method
+        let gameNameWithoutExt = (decodedGame as NSString).deletingPathExtension
 
         // Build path without encoding first
-        let path = "/\(decodedSystem)/\(folder)/\(decodedGame).png"
+        let path = "/\(decodedSystem)/\(folder)/\(gameNameWithoutExt).png"
 
-        // Then encode the entire path at once
+        // Create URL with properly encoded path
         components.percentEncodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path
 
-        print("Constructing URL:")
-        print("- System: \(decodedSystem)")
-        print("- Game: \(decodedGame)")
+        #if DEBUG
         print("- Folder: \(folder)")
-        print("- Result: \(components.url?.absoluteString ?? "nil")")
+        print("- Game without ext: \(gameNameWithoutExt)")
+        print("- Path: \(path)")
+        print("- Final URL: \(components.url?.absoluteString ?? "nil")")
+        #endif
 
         return components.url
     }
@@ -247,6 +263,27 @@ public struct LibretroArtwork {
         }
         return .other
     }
+
+    /// Gets the appropriate path for artwork based on type
+    /// - Parameters:
+    ///   - type: Type of artwork
+    ///   - systemName: System name
+    ///   - gameName: Game name
+    /// - Returns: URL path component
+    static func getArtworkPath(for type: ArtworkType, systemName: String, gameName: String) -> String {
+        // First decode any existing encoding
+        let decodedSystem = systemName.removingPercentEncoding ?? systemName
+        let decodedGame = gameName.removingPercentEncoding ?? gameName
+
+        // Get the appropriate folder based on artwork type
+        let folder = type.libretroDatabaseFolder
+
+        // Build path without encoding first
+        let path = "/\(decodedSystem)/\(folder)/\(decodedGame).png"
+
+        // Then encode the entire path
+        return path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path
+    }
 }
 
 // MARK: - ArtworkLookupOfflineService Conformance
@@ -274,7 +311,7 @@ extension LibretroArtwork: ArtworkLookupOfflineService {
 
             // Check each supported type
             for type in [ArtworkType.retroDBSupported] where types.contains(type) {
-                if let url = Self.constructURL(systemName: systemName, gameName: gameName, folder: type.libretroDatabaseFolder) {
+                if let url = Self.constructURL(systemName: systemName, gameName: gameName, type: type) {
                     let artwork = ArtworkMetadata(
                         url: url,
                         type: type,

@@ -37,7 +37,7 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
     }
 
     public init() async throws {
-        print("ShiraGame: Starting initialization...")
+        DLOG("ShiraGame: Starting initialization...")
 
         // Initialize with empty database first
         let emptyDB = ShiragameSchema(url: URL(fileURLWithPath: ""))
@@ -45,14 +45,14 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
         self.initializer = DatabaseInitializer(initialDB: emptyDB)
 
         // Wait for database preparation to complete
-        print("ShiraGame: Waiting for database preparation...")
+        DLOG("ShiraGame: Waiting for database preparation...")
         try await ShiraGameManager.shared.prepareDatabaseIfNeeded()
 
         // Now initialize with real database
-        print("ShiraGame: Initializing with prepared database...")
+        DLOG("ShiraGame: Initializing with prepared database...")
         self.db = ShiragameSchema(url: ShiraGameManager.shared.databasePath)
 
-        print("ShiraGame: Initialization complete")
+        DLOG("ShiraGame: Initialization complete")
     }
 
     // Helper to wait for initialization
@@ -87,17 +87,17 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
 
         // First find the ROM
         let roms = try db.roms.filter(filter: { $0.md5 == normalizedMD5 })
-        print("ShiraGame: Found \(roms.count) ROMs for MD5: \(normalizedMD5)")
+        DLOG("ShiraGame: Found \(roms.count) ROMs for MD5: \(normalizedMD5)")
         guard let rom = roms.first else { return nil }
 
         // Then find the corresponding game
         let games = try db.games.filter(filter: { $0.id == rom.gameId })
-        print("ShiraGame: Found \(games.count) games for ROM ID: \(rom.gameId)")
+        DLOG("ShiraGame: Found \(games.count) games for ROM ID: \(rom.gameId)")
         guard let game = games.first else { return nil }
 
-        print("ShiraGame: Platform ID: \(game.platformId)")
+        DLOG("ShiraGame: Platform ID: \(game.platformId)")
         let metadata = convertToROMMetadata(game: game, rom: rom)
-        print("ShiraGame: System ID: \(metadata.systemID)")
+        DLOG("ShiraGame: System ID: \(metadata.systemID)")
 
         return metadata
     }
