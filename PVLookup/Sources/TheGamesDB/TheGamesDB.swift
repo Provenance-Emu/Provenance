@@ -11,6 +11,7 @@ import PVLookupTypes
 import PVSystems
 import PVLogging
 import PVSQLiteDatabase
+import CryptoKit
 
 public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
     private let schema: TheGamesDBSchema
@@ -149,6 +150,11 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
     }
 
     public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+        // Early return for invalid data
+        guard !rom.gameTitle.isEmpty, rom.systemID != .Unknown else {
+            return nil
+        }
+
         var urls: [URL] = []
 
         let games = try schema.searchGames(
@@ -168,8 +174,8 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
             }
         }
 
-        if urls.isEmpty {
-            // Try fuzzy match
+        // Only try fuzzy match if we have a valid system ID
+        if urls.isEmpty && rom.systemID != .Unknown {
             let cleanName = rom.gameTitle.replacingOccurrences(
                 of: "\\s*\\([^)]*\\)|\\s*\\[[^\\]]*\\]",
                 with: "",
@@ -201,39 +207,36 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
         var romMD5: [String: [String: String]] = [:]
         var romFileNameToMD5: [String: String] = [:]
 
-        // Get all games with their ROMs
+        // Get all games with artwork
         let query = """
             SELECT DISTINCT
-                games.id,
-                games.game_title,
-                games.platform,
-                roms.name as rom_name,
-                roms.md5
-            FROM games
-            JOIN roms ON games.serial_id = roms.serial_id
-            WHERE roms.md5 IS NOT NULL
-        """
+                g.id,
+                g.game_title,
+                g.platform,
+                ga.filename,
+                s.name as system_name
+            FROM games g
+            JOIN game_artwork ga ON g.id = ga.game_id
+            LEFT JOIN systems s ON g.platform = s.id
+            """
 
         let results = try schema.db.execute(query: query)
         for result in results {
-            if let md5 = result["md5"] as? String,
-               let romName = result["rom_name"] as? String,
-               let gameTitle = result["game_title"] as? String,
+            if let gameTitle = result["game_title"] as? String,
+               let filename = result["filename"] as? String,
                let platformId = (result["platform"] as? NSNumber)?.stringValue {
 
-                // Store metadata for this MD5
+                // Store metadata using filename as key
                 let metadata: [String: String] = [
                     "gameTitle": gameTitle,
-                    "romName": romName,
-                    "platformId": platformId
+                    "filename": filename,
+                    "platformId": platformId,
+                    "systemName": result["system_name"] as? String ?? ""
                 ]
 
-                romMD5[md5] = metadata
-                romFileNameToMD5[romName] = md5
-
-                // Also store with platform prefix for better matching
-                let platformKey = "\(platformId):\(romName)"
-                romFileNameToMD5[platformKey] = md5
+                // Use filename as the key since it should be unique in TheGamesDB
+                romFileNameToMD5[filename] = filename
+                romMD5[filename] = metadata
             }
         }
 
@@ -315,4 +318,12 @@ private func constructArtworkSearchQuery(name: String, systemID: SystemIdentifie
     LEFT JOIN roms ON games.serial_id = roms.serial_id
     ORDER BY matched_games.match_quality, games.display_name
     """
+}
+
+private extension String {
+    /// Generate MD5 hash of the string
+    var md5: String {
+        let digest = Insecure.MD5.hash(data: self.data(using: .utf8) ?? Data())
+        return digest.map { String(format: "%02hhx", $0) }.joined()
+    }
 }
