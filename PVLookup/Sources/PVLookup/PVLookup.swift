@@ -29,6 +29,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     private var libreTroDB: libretrodb?
     private var theGamesDB: TheGamesDB?
     private var isInitializing = false
+    private var initializationTask: Task<Void, Error>?
 
 #if canImport(ShiraGame)
     private var shiraGame: ShiraGame?
@@ -36,13 +37,20 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 
     // MARK: - Initialization
     private init() {
-        // Start async initialization
+        // Initialize properties
+        startInitialization()
+    }
+
+    private nonisolated func startInitialization() {
         Task { [weak self] in
             await self?.initializeDatabases()
         }
     }
 
     private func initializeDatabases() async {
+        guard !isInitializing else { return }
+        isInitializing = true
+
         // Initialize OpenVGDB
         do {
             let db = try await OpenVGDB()
@@ -76,6 +84,21 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             ELOG("Failed to initialize ShiraGame: \(error)")
         }
 #endif
+
+        isInitializing = false
+    }
+
+    // Helper to ensure databases are initialized
+    private func ensureDatabasesInitialized() async throws {
+        if isInitializing {
+            // Wait a bit for initialization to complete
+            try await Task.sleep(for: .seconds(1))
+        }
+
+        // If any database isn't initialized, do it now
+        if openVGDB == nil || libreTroDB == nil || theGamesDB == nil {
+            await initializeDatabases()
+        }
     }
 
     // Helper to safely access OpenVGDB
@@ -239,6 +262,8 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     }
 
     public func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? {
+        try await ensureDatabasesInitialized()
+
         var urls: [URL] = []
 
         // Try OpenVGDB
@@ -325,6 +350,8 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         systemID: SystemIdentifier?,
         artworkTypes: ArtworkType?
     ) async throws -> [ArtworkMetadata]? {
+        try await ensureDatabasesInitialized()
+
         var results: [ArtworkMetadata] = []
 
         // Try OpenVGDB
