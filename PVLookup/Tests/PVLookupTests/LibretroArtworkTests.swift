@@ -276,31 +276,9 @@ struct LibretroArtworkTests {
 
     @Test("Verifies known Jaguar artwork URL")
     func testKnownJaguarArtwork() async throws {
-        // First, let's see what Jaguar games we have
-        let debugQuery = """
-            SELECT DISTINCT
-                games.display_name,
-                games.full_name,
-                roms.name as rom_name,
-                platforms.name as platform_name
-            FROM games
-            JOIN platforms ON games.platform_id = platforms.id
-            LEFT JOIN roms ON games.serial_id = roms.serial_id
-            WHERE platforms.id = 29  -- Jaguar's platform ID
-            ORDER BY games.display_name
-            """
-
-        let debugResults = try db.db.execute(query: debugQuery)
-        print("\nJaguar games in database:")
-        debugResults.forEach { result in
-            print("- Title: \(result["display_name"] as Any)")
-            print("  Full Name: \(result["full_name"] as Any)")
-            print("  ROM: \(result["rom_name"] as Any)")
-        }
-
-        // Now try the artwork search
+        // Use a game we know exists in the database
         let jaguarGame = TestGame(
-            title: "Air Cars",  // Try with a space
+            title: "Alien vs Predator",  // Matches database entry exactly
             systemID: .AtariJaguar,
             expectedArtwork: ["screenshot"]
         )
@@ -320,7 +298,7 @@ struct LibretroArtworkTests {
             #expect(!artwork.isEmpty, "Should have at least one artwork result")
 
             // Verify the known screenshot URL
-            let knownURL = "https://thumbnails.libretro.com/Atari%20-%20Jaguar/Named_Snaps/Aircars%20(USA)%20(Aftermarket).png"
+            let knownURL = "https://thumbnails.libretro.com/Atari%20-%20Jaguar/Named_Snaps/Alien%20vs%20Predator%20(World).png"
             let hasKnownURL = artwork.contains { $0.url.absoluteString == knownURL }
             #expect(hasKnownURL, "Should find known screenshot URL")
 
