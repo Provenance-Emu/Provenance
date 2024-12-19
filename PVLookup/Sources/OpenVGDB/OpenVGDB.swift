@@ -338,13 +338,8 @@ public extension OpenVGDB {
 
 // MARK: - Private Helpers
 private extension OpenVGDB {
-    func escapeSQLString(_ input: String) -> String {
-        input.replacingOccurrences(of: "'", with: "''")
-             .replacingOccurrences(of: "(", with: "\\(")
-             .replacingOccurrences(of: ")", with: "\\)")
-             .replacingOccurrences(of: "[", with: "\\[")
-             .replacingOccurrences(of: "]", with: "\\]")
-             .replacingOccurrences(of: "!", with: "\\!")
+    func escapeSQLString(_ string: String) -> String {
+        return string.replacingOccurrences(of: "'", with: "''")
     }
 
     func escapeLikePattern(_ pattern: String) -> String {

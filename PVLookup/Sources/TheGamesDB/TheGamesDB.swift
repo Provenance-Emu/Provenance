@@ -272,7 +272,7 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
                     return nil
                 }
 
-
+                
                 return ROMMetadata(
                     gameTitle: gameTitle,
                     region: game["region"] as? String,
@@ -400,13 +400,4 @@ private extension String {
         let digest = Insecure.MD5.hash(data: self.data(using: .utf8) ?? Data())
         return digest.map { String(format: "%02hhx", $0) }.joined()
     }
-}
-
-private func escapeSQLString(_ input: String) -> String {
-    input.replacingOccurrences(of: "'", with: "''")
-         .replacingOccurrences(of: "(", with: "\\(")
-         .replacingOccurrences(of: ")", with: "\\)")
-         .replacingOccurrences(of: "[", with: "\\[")
-         .replacingOccurrences(of: "]", with: "\\]")
-         .replacingOccurrences(of: "!", with: "\\!")
 }
