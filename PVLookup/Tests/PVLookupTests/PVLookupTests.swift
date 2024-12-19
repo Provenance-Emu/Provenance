@@ -771,6 +771,8 @@ struct PVLookupSystemTests {
 
     init() async throws {
         self.lookup = .shared
+        // Ensure databases are initialized
+        try await lookup.ensureDatabasesInitialized()
     }
 
     @Test
@@ -798,11 +800,18 @@ struct PVLookupSystemTests {
             expectedSystem: SystemIdentifier.SNES
         )
 
+        print("\nTesting system identifier by filename:")
+        print("- MD5: \(testData.md5)")
+        print("- Filename: \(testData.filename)")
+        print("- Expected System: \(testData.expectedSystem)")
+
         let identifier = try await lookup.systemIdentifier(
             forRomMD5: testData.md5,
             or: testData.filename
         )
-        #expect(identifier == testData.expectedSystem)
+
+        print("- Found System: \(String(describing: identifier))")
+        #expect(identifier == testData.expectedSystem, "System identifier should match expected system")
     }
 
     @Test

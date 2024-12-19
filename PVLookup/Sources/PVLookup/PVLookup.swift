@@ -324,29 +324,38 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     ///   - filename: Optional filename as fallback
     /// - Returns: SystemIdentifier if found
     public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
+        let upperMD5 = md5.uppercased()
+        var identifier: SystemIdentifier?
+
         // Try OpenVGDB first
-        if let openVGDB = await isolatedOpenVGDB,
-           let systemID = try await openVGDB.system(forRomMD5: md5, or: filename),
-           let Identifier = SystemIdentifier.fromOpenVGDBID(systemID) {
-            return Identifier
+        if let openVGDB = await isolatedOpenVGDB {
+            if let systemID = try await openVGDB.system(forRomMD5: upperMD5, or: filename),
+               let systemIdentifier = SystemIdentifier.fromOpenVGDBID(systemID) {
+                identifier = systemIdentifier
+            }
         }
 
-        // Try libretrodb next
-        if let libreTroDB = await isolatedLibretroDB,
-           let systemID = try await libreTroDB.systemIdentifier(forRomMD5: md5, or: filename) {
-            return systemID
+        // If no result from OpenVGDB, try LibretroDB
+        if identifier == nil,
+           let libreTroDB = await isolatedLibretroDB {
+            if let systemID = try await libreTroDB.systemIdentifier(forRomMD5: upperMD5, or: filename) {
+                identifier = systemID
+            }
         }
 
         #if canImport(ShiraGame)
-        // Try ShiraGame as a backup
-        if let shiraGame = await getShiraGame(),
-           let systemID = try await shiraGame.system(forRomMD5: md5, or: filename),
-           let identifier = SystemIdentifier.fromShiraGameID(String(systemID)) {
-            return identifier
+        // If still no result, try ShiraGame
+        if identifier == nil,
+           let shiraGame = await getShiraGame() {
+            if let systemID = try await shiraGame.system(forRomMD5: upperMD5, or: filename),
+               let shiraIdentifier = SystemIdentifier.fromShiraGameID(String(systemID)) {
+                identifier = shiraIdentifier
+            }
         }
         #endif
 
-        return nil
+        DLOG("System identifier result for MD5: \(upperMD5), filename: \(filename ?? "nil"): \(String(describing: identifier))")
+        return identifier
     }
 
 
