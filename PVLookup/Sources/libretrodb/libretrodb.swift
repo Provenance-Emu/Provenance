@@ -12,6 +12,7 @@ import PVSQLiteDatabase
 import ROMMetadataProvider
 import PVLookupTypes
 import PVSystems
+import LibretroDBManager
 
 /* LibretroDB
 
@@ -91,6 +92,18 @@ public actor libretrodbActor: GlobalActor {
 
 /// LibretroDB provides ROM metadata from a SQLite database converted from RetroArch's database
 public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
+    private let db: PVSQLiteDatabase
+    private let manager: LibretroDBManager
+
+    public init() async throws {
+        self.manager = LibretroDBManager.shared
+        do {
+            try await manager.prepareDatabaseIfNeeded()
+            self.db = try await PVSQLiteDatabase(withURL: manager.databasePath)
+        } catch {
+            throw LibretroDBError.databaseNotInitialized
+        }
+    }
 
     /// Legacy connection
     internal let db: PVSQLiteDatabase
@@ -109,15 +122,6 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
         }
         return sqlFile
     }()
-
-    public init() {
-        do {
-            let url = Bundle.module.url(forResource: "libretrodb", withExtension: "sqlite")!
-            self.db = try PVSQLiteDatabase(withURL: url)
-        } catch {
-            fatalError("Failed to open database: \(error)")
-        }
-    }
 
     /// Standard query to get ROM metadata by MD5
     private var standardMetadataQuery: String {
