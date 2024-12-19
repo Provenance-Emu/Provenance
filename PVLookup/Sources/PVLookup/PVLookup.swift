@@ -356,20 +356,36 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     ///   - systemID: System ID optinally to filter on
     /// - Returns: Optional array of `ROMMetadata`
     public func searchDatabase(usingMD5 md5: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
-        var results: [ROMMetadata] = []
+        var resultsByMD5: [String: ROMMetadata] = [:]  // Track results by MD5
+        let upperMD5 = md5.uppercased()
 
-        // Try OpenVGDB
+        // Try OpenVGDB first (preferred source)
         if let openVGDB = await isolatedOpenVGDB,
-           let openVGDBResults = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: md5, systemID: systemID) {
-            results.append(contentsOf: openVGDBResults)
+           let openVGDBResults = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: upperMD5, systemID: systemID) {
+            for result in openVGDBResults {
+                if let resultMD5 = result.romHashMD5?.uppercased() {
+                    resultsByMD5[resultMD5] = result
+                }
+            }
         }
 
-        // Try LibretroDB
+        // Try LibretroDB and merge with existing results
         if let libreTroDB = await isolatedLibretroDB,
-           let libretroDatabaseResults = try libreTroDB.searchMetadata(usingKey: "md5", value: md5, systemID: systemID) {
-            results.append(contentsOf: libretroDatabaseResults)
+           let libretroDatabaseResults = try libreTroDB.searchMetadata(usingKey: "md5", value: upperMD5, systemID: systemID) {
+            for result in libretroDatabaseResults {
+                if let resultMD5 = result.romHashMD5?.uppercased() {
+                    if let existing = resultsByMD5[resultMD5] {
+                        // Use existing merge functionality
+                        resultsByMD5[resultMD5] = existing.merged(with: result)
+                    } else {
+                        // New result
+                        resultsByMD5[resultMD5] = result
+                    }
+                }
+            }
         }
 
+        let results = Array(resultsByMD5.values)
         return results.isEmpty ? nil : results
     }
 
