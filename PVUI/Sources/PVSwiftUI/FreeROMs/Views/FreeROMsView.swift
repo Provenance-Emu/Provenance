@@ -5,6 +5,8 @@ import PVSystems
 public struct FreeROMsView: View {
     /// Callback when a ROM is downloaded
     let onROMDownloaded: (ROM, URL) -> Void
+    /// Optional callback when view is dismissed
+    let onDismiss: (() -> Void)?
 
     @StateObject private var downloadManager = ROMDownloadManager()
     @State private var searchText = ""
@@ -12,9 +14,13 @@ public struct FreeROMsView: View {
     @State private var systems: [(id: String, name: String, roms: [ROM])] = []
     @State private var loadingError: Error?
     @State private var isLoading = false
-    
-    public init(onROMDownloaded: @escaping (ROM, URL) -> Void) {
+
+    public init(
+        onROMDownloaded: @escaping (ROM, URL) -> Void,
+        onDismiss: (() -> Void)? = nil
+    ) {
         self.onROMDownloaded = onROMDownloaded
+        self.onDismiss = onDismiss
     }
 
     public var body: some View {
@@ -109,6 +115,9 @@ public struct FreeROMsView: View {
             if systems.isEmpty && loadingError == nil {
                 loadROMs()
             }
+        }
+        .onDisappear {
+            onDismiss?()
         }
     }
 
@@ -313,4 +322,3 @@ struct FreeROMsView_Previews: PreviewProvider {
     }
 }
 #endif
-

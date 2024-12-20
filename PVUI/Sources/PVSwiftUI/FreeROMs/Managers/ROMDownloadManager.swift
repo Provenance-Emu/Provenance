@@ -58,7 +58,7 @@ class ROMDownloadManager: ObservableObject {
 
     private func startDownload(rom: ROM, from url: URL, completion: @escaping (Result<URL, Error>) -> Void) {
         DLOG("Starting download of \(rom.id) at \(url.absoluteString)")
-        
+
         let downloadTask = URLSession.shared.downloadTask(with: url) { [weak self] tempURL, response, error in
             defer {
                 self?.semaphore.signal()
@@ -92,10 +92,29 @@ class ROMDownloadManager: ObservableObject {
                 return
             }
 
-            DispatchQueue.main.async {
-                self?.activeDownloads[rom.id] = .completed(localURL: tempURL)
+            // Create a new temporary URL with the correct filename
+            let tempDir = FileManager.default.temporaryDirectory
+            let destinationURL = tempDir.appendingPathComponent(rom.file)
+
+            do {
+                // Remove any existing file
+                if FileManager.default.fileExists(atPath: destinationURL.path) {
+                    try FileManager.default.removeItem(at: destinationURL)
+                }
+
+                // Move the downloaded file to the new location
+                try FileManager.default.moveItem(at: tempURL, to: destinationURL)
+
+                DispatchQueue.main.async {
+                    self?.activeDownloads[rom.id] = .completed(localURL: destinationURL)
+                }
+                completion(.success(destinationURL))
+            } catch {
+                DispatchQueue.main.async {
+                    self?.activeDownloads[rom.id] = .failed(error: .networkError(error))
+                }
+                completion(.failure(error))
             }
-            completion(.success(tempURL))
         }
 
         // Observe download progress
