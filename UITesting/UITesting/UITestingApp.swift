@@ -25,6 +25,7 @@ struct UITestingApp: App {
     @State private var showGameMoreInfo = false
     @State private var showGameMoreInfoRealm = false
     @State private var showArtworkSearch = false
+    @State private var showFreeROMs = false
 
     @StateObject
     private var mockImportStatusDriverData = MockImportStatusDriverData()
@@ -74,6 +75,10 @@ struct UITestingApp: App {
                         }
                         .buttonStyle(.borderedProminent)
                     }
+                    Button("Show Free ROMs") {
+                        showFreeROMs = true
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
             }
             .sheet(isPresented: $showingRealmSheet) {
@@ -159,6 +164,11 @@ struct UITestingApp: App {
                     .background(Color(uiColor: .systemBackground))
                 }
                 .presentationBackground(Color(uiColor: .systemBackground))
+            }
+            .sheet(isPresented: $showFreeROMs) {
+                FreeROMsView { rom, url in
+                    print("Downloaded ROM: \(rom.file) to: \(url)")
+                }
             }
             .onAppear {
 #if canImport(FreemiumKit)
