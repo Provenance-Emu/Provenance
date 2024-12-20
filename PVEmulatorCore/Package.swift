@@ -20,7 +20,7 @@ var pvemulatorCoreSwiftFlags: [SwiftSetting] = [
 let package = Package(
     name: "PVEmulatorCore",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v11),
