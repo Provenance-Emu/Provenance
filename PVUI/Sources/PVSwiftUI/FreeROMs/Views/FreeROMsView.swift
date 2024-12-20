@@ -3,6 +3,23 @@ import PVSystems
 
 /// View for displaying and downloading free ROMs
 public struct FreeROMsView: View {
+    /// Systems to exclude from the list
+    private static let unsupportedSystems: Set<SystemIdentifier> = [
+//        ._3DS,        // Not supported yet
+        .Dreamcast,
+        .MAME,
+        .PS2,         // Not supported yet
+        .PS3,         // Not supported yet
+        .Wii,         // Not supported yet
+        .GameCube,    // Not supported yet
+//        .DOS,         // Not supported yet
+        .Macintosh,   // Not supported yet
+        .PalmOS,      // Not supported yet
+        .Music,        // Not a gaming system
+        .TIC80,
+        .Vectrex
+    ]
+
     /// Callback when a ROM is downloaded
     let onROMDownloaded: (ROM, URL) -> Void
     /// Optional callback when view is dismissed
@@ -21,6 +38,15 @@ public struct FreeROMsView: View {
     ) {
         self.onROMDownloaded = onROMDownloaded
         self.onDismiss = onDismiss
+    }
+
+    private var filteredSystems: [(id: String, name: String, roms: [ROM])] {
+        systems.filter { system in
+            guard let systemIdentifier = SystemIdentifier(rawValue: system.id) else {
+                return false
+            }
+            return !Self.unsupportedSystems.contains(systemIdentifier)
+        }
     }
 
     public var body: some View {
@@ -50,7 +76,7 @@ public struct FreeROMsView: View {
                     ProgressView("Loading ROMs...")
                 } else if !systems.isEmpty {
                     List {
-                        ForEach(systems, id: \.id) { system in
+                        ForEach(filteredSystems, id: \.id) { system in
                             Section {
                                 if expandedSystems.contains(system.id) {
                                     ForEach(filteredROMs(system.roms)) { rom in
@@ -157,7 +183,7 @@ public struct FreeROMsView: View {
 
                 do {
                     let mapping = try JSONDecoder().decode(ROMMapping.self, from: data)
-                    // Transform the mapping into our simpler array structure
+                    // Transform the mapping into our simpler array structure without filtering
                     self.systems = mapping.systems.compactMap { key, value in
                         if let systemIdentifier = SystemIdentifier(rawValue: key) {
                             return (id: key,

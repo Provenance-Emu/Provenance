@@ -10,10 +10,13 @@ class ROMDownloadManager: ObservableObject {
     @Published private(set) var activeDownloads: [String: DownloadStatus] = [:]
 
     /// Queue of pending downloads
-    private var downloadQueue: [(ROM, URL, (Result<URL, Error>) -> Void)] = []
+    private var pendingDownloads: [(ROM, URL, (Result<URL, Error>) -> Void)] = []
 
     /// Semaphore to control concurrent downloads
     private let semaphore = DispatchSemaphore(value: 3)
+
+    /// Queue for managing download operations
+    private let downloadQueue = DispatchQueue(label: "com.provenance.downloads", qos: .userInitiated)
 
     enum DownloadStatus {
         case downloading(progress: Double)
@@ -47,27 +50,42 @@ class ROMDownloadManager: ObservableObject {
     func download(rom: ROM, from url: URL, completion: @escaping (Result<URL, Error>) -> Void) {
         guard activeDownloads[rom.id] == nil else { return }
 
-        // Add to queue if at max concurrent downloads
-        if activeDownloads.count >= maxConcurrentDownloads {
-            downloadQueue.append((rom, url, completion))
-            return
-        }
+        downloadQueue.async { [weak self] in
+            guard let self = self else { return }
 
-        startDownload(rom: rom, from: url, completion: completion)
+            // Wait for a semaphore slot
+            self.semaphore.wait()
+
+            DispatchQueue.main.async {
+                self.activeDownloads[rom.id] = .downloading(progress: 0.0)
+            }
+
+            self.startDownload(rom: rom, from: url) { result in
+                // Signal semaphore after download completes
+                self.semaphore.signal()
+
+                DispatchQueue.main.async {
+                    // Process next download if any
+                    if !self.pendingDownloads.isEmpty {
+                        let next = self.pendingDownloads.removeFirst()
+                        self.download(rom: next.0, from: next.1, completion: next.2)
+                    }
+                }
+
+                completion(result)
+            }
+        }
     }
 
     private func startDownload(rom: ROM, from url: URL, completion: @escaping (Result<URL, Error>) -> Void) {
         DLOG("Starting download of \(rom.id) at \(url.absoluteString)")
 
         let downloadTask = URLSession.shared.downloadTask(with: url) { [weak self] tempURL, response, error in
-            defer {
-                self?.semaphore.signal()
-                self?.processNextDownload()
-            }
+            guard let self = self else { return }
 
             if let error = error {
                 DispatchQueue.main.async {
-                    self?.activeDownloads[rom.id] = .failed(error: .networkError(error))
+                    self.activeDownloads[rom.id] = .failed(error: .networkError(error))
                 }
                 completion(.failure(error))
                 return
@@ -77,18 +95,17 @@ class ROMDownloadManager: ObservableObject {
                !(200...299).contains(httpResponse.statusCode) {
                 let error = DownloadStatus.DownloadError.invalidResponse(httpResponse.statusCode)
                 DispatchQueue.main.async {
-                    self?.activeDownloads[rom.id] = .failed(error: error)
+                    self.activeDownloads[rom.id] = .failed(error: error)
                 }
                 completion(.failure(error))
                 return
             }
 
             guard let tempURL = tempURL else {
-                let error = DownloadStatus.DownloadError.noData
                 DispatchQueue.main.async {
-                    self?.activeDownloads[rom.id] = .failed(error: error)
+                    self.activeDownloads[rom.id] = .failed(error: .noData)
                 }
-                completion(.failure(error))
+                completion(.failure(DownloadStatus.DownloadError.noData))
                 return
             }
 
@@ -97,21 +114,19 @@ class ROMDownloadManager: ObservableObject {
             let destinationURL = tempDir.appendingPathComponent(rom.file)
 
             do {
-                // Remove any existing file
                 if FileManager.default.fileExists(atPath: destinationURL.path) {
                     try FileManager.default.removeItem(at: destinationURL)
                 }
 
-                // Move the downloaded file to the new location
                 try FileManager.default.moveItem(at: tempURL, to: destinationURL)
 
                 DispatchQueue.main.async {
-                    self?.activeDownloads[rom.id] = .completed(localURL: destinationURL)
+                    self.activeDownloads[rom.id] = .completed(localURL: destinationURL)
                 }
                 completion(.success(destinationURL))
             } catch {
                 DispatchQueue.main.async {
-                    self?.activeDownloads[rom.id] = .failed(error: .networkError(error))
+                    self.activeDownloads[rom.id] = .failed(error: .networkError(error))
                 }
                 completion(.failure(error))
             }
@@ -130,14 +145,6 @@ class ROMDownloadManager: ObservableObject {
         observations.insert(observation)
 
         downloadTask.resume()
-        activeDownloads[rom.id] = .downloading(progress: 0.0)
-    }
-
-    private func processNextDownload() {
-        guard !downloadQueue.isEmpty else { return }
-
-        let next = downloadQueue.removeFirst()
-        startDownload(rom: next.0, from: next.1, completion: next.2)
     }
 
     /// Set download error state
