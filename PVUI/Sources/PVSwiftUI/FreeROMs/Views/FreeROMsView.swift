@@ -88,9 +88,23 @@ public struct FreeROMsView: View {
                                 }
                             } header: {
                                 HStack {
-                                    Text(system.name)
+                                    VStack(alignment: .leading) {
+                                        Text(system.name)
+                                            .font(.headline)
+                                        Text("\(system.roms.count) ROMs")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                    }
+
                                     Spacer()
-                                    Text("\(system.roms.count) ROMs")
+
+                                    Button {
+                                        downloadAllROMs(for: system)
+                                    } label: {
+                                        Image(systemName: "arrow.down.circle.fill")
+                                            .foregroundColor(.blue)
+                                            .font(.system(size: 22))
+                                    }
                                 }
                                 .contentShape(Rectangle())
                                 .onTapGesture {
@@ -200,6 +214,20 @@ public struct FreeROMsView: View {
                 }
             }
         }.resume()
+    }
+
+    private func downloadAllROMs(for system: (id: String, name: String, roms: [ROM])) {
+        Haptics.notification(type: .success)
+
+        // Queue all ROMs for download
+        for rom in system.roms {
+            guard let url = URL(string: "https://data.provenance-emu.com/ROMs/\(system.id)/\(rom.file)") else {
+                downloadManager.setError(.invalidURL, for: rom.id)
+                continue
+            }
+
+            downloadManager.download(rom: rom, from: url) { _ in }
+        }
     }
 }
 
