@@ -2,7 +2,7 @@ import SwiftUI
 import PVSystems
 
 /// View for displaying and downloading free ROMs
-struct FreeROMsView: View {
+public struct FreeROMsView: View {
     /// Callback when a ROM is downloaded
     let onROMDownloaded: (ROM, URL) -> Void
 
@@ -12,8 +12,12 @@ struct FreeROMsView: View {
     @State private var systems: [(id: String, name: String, roms: [ROM])] = []
     @State private var loadingError: Error?
     @State private var isLoading = false
+    
+    public init(onROMDownloaded: @escaping (ROM, URL) -> Void) {
+        self.onROMDownloaded = onROMDownloaded
+    }
 
-    var body: some View {
+    public var body: some View {
         NavigationView {
             Group {
                 if let error = loadingError {
@@ -71,9 +75,13 @@ struct FreeROMsView: View {
                         }
                     }
                 } else {
-                    ContentUnavailableView("No ROMs Found",
-                                         systemImage: "gamecontroller.fill",
-                                         description: Text("Try checking your internet connection and retry."))
+                    if #available(iOS 17.0, tvOS 17.0, macOS 14.0, *) {
+                        ContentUnavailableView("No ROMs Found",
+                                             systemImage: "gamecontroller.fill",
+                                             description: Text("Try checking your internet connection and retry."))
+                    } else {
+                        Text("No ROMs Found")
+                    }
                 }
             }
             .navigationTitle("Free ROMs")
