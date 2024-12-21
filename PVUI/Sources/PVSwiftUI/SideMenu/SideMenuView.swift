@@ -252,7 +252,7 @@ SideMenuView: SwiftUI.View {
                             Divider()
                                 .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
     
-                            MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Add Games", isFocused: focusedItem == "addgames") {
+                            MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Add Games", isFocused: focusedItem == "addgames"   ) {
                                 delegate?.didTapAddGames()
                             }
                             .focusableIfAvailable()
