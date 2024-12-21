@@ -249,20 +249,25 @@ SideMenuView: SwiftUI.View {
                             .focusableIfAvailable()
                             .focused($focusedItem, equals: "settings")
 
-    //                        Divider()
-    //                            .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-    //
-    //                        MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Add Games") {
-    //                            delegate?.didTapAddGames()
-    //                        }
+                            Divider()
+                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+    
+                            MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Add Games", isFocused: focusedItem == "addgames") {
+                                delegate?.didTapAddGames()
+                            }
+                            .focusableIfAvailable()
+                            .focused($focusedItem, equals: "addgames")
+                            
+                            
                             Divider()
                                 .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
-                            MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Add Games", isFocused: focusedItem == "imports") {
+                            MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Import Queue", isFocused: focusedItem == "imports") {
                                 delegate.didTapImports()
                             }
                             .focusableIfAvailable()
                             .focused($focusedItem, equals: "imports")
+                            
     #if canImport(FreemiumKit)
                             Divider()
                                 .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
