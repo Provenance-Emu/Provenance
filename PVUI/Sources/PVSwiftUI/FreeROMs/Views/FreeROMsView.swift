@@ -353,19 +353,6 @@ struct DownloadButton: View {
     }
 }
 
-private enum Haptics {
-    static func impact(style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) {
-        let generator = UIImpactFeedbackGenerator(style: style)
-        generator.impactOccurred()
-    }
-
-    static func notification(type: UINotificationFeedbackGenerator.FeedbackType) {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(type)
-    }
-}
-
-
 #if DEBUG
 // MARK: - Preview
 struct FreeROMsView_Previews: PreviewProvider {
