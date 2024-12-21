@@ -369,9 +369,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             let subfileName = String(fileName.prefix(gameTitleLen))
 
             // Convert system identifier to database ID
-            if let system = SystemIdentifier(rawValue: game.systemIdentifier) {
-                resultsMaybe = try await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
-            }
+            let system = SystemIdentifier(rawValue: game.systemIdentifier)
+            resultsMaybe = try await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
         }
 
         // If no results found at all, return the original game
@@ -379,8 +378,10 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             return game
         }
 
+        var chosenResult: ROMMetadata?
+        
         // Try to find USA version first (Region ID 21)
-        var chosenResult: ROMMetadata? = results.first { metadata in
+        chosenResult = results.first { metadata in
             return metadata.regionID == 21 // USA region ID
         } ?? results.first { metadata in
             // Fallback: try matching by region string containing "USA"
@@ -397,7 +398,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         game.requiresSync = false
         guard let metadata = chosenResult else {
-            NSLog("Unable to find ROM \(game.romPath) in OpenVGDB")
+            WLOG("Unable to find ROM \(game.romPath) in OpenVGDB")
             return game
         }
 
