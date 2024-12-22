@@ -388,11 +388,11 @@ public struct CGAPurpleThemePalette: UXThemePalette, Codable, Sendable, Hashable
     ///     Background
     public var menuBackground: UIColor { .CGA.purple.brightness(0.2) }
     ///     Text
-    public var menuText: UIColor { .CGA.purpleShadow }
+    public var menuText: UIColor { .CGA.purple }
     ///     Divider
     public var menuDivider: UIColor { .CGA.purple.brightness(0.4) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.purpleShadow }
+    public var menuIconTint: UIColor { .CGA.purple }
     ///     Header
     ///         Background
     public var menuHeaderBackground: UIColor { .CGA.purple.brightness(0.3) }
