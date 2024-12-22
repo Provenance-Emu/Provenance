@@ -815,7 +815,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 //check the child queue items for duplicates
                 return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: queueItem)
             }
-            DLOG("Duplicate Queue Item not detected for \(existing.url.lastPathComponent.lowercased()) - compared with \(queueItem.url.lastPathComponent.lowercased())")
+            // DLOG("Duplicate Queue Item not detected for \(existing.url.lastPathComponent.lowercased()) - compared with \(queueItem.url.lastPathComponent.lowercased())")
             return false
         }
 
