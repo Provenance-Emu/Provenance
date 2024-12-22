@@ -13,7 +13,7 @@ let __LIBRETRO__ = "0"
 let package = Package(
     name: "PVCoreVisualBoyAdvance",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v16),
         .tvOS(.v15),
         .watchOS(.v9),
         .macOS(.v11),

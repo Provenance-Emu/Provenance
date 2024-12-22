@@ -745,7 +745,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             //conflict
             item.status = .conflict
             //start figuring out what to do, because this item is a conflict
-            try await gameImporterFileService.moveToConflictsFolder(item, conflictsPath: conflictPath)
+//            try await gameImporterFileService.moveToConflictsFolder(item, conflictsPath: conflictPath)
             throw GameImporterError.conflictDetected
         }
 
