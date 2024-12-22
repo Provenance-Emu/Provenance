@@ -137,11 +137,11 @@ struct ConsolesWrapperView: SwiftUI.View {
                 viewModel: viewModel,
                 showGameInfo: showGameInfo
             )
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
-                .tag("home")
-                .ignoresSafeArea(.all, edges: .bottom)
+            .tabItem {
+                Label("Home", systemImage: "house")
+            }
+            .tag("home")
+            .ignoresSafeArea(.all, edges: .bottom)
 
             ForEach(sortedConsoles(), id: \.self) { console in
                 ConsoleGamesView(
@@ -150,12 +150,15 @@ struct ConsolesWrapperView: SwiftUI.View {
                     rootDelegate: rootDelegate,
                     showGameInfo: showGameInfo
                 )
-                    .tabItem {
-                        Label(console.name, systemImage: console.iconName)
-                    }
-                    .tag(console.identifier)
-                    .ignoresSafeArea(.all, edges: .bottom)
+                .tabItem {
+                    Label(console.name, systemImage: console.iconName)
+                }
+                .tag(console.identifier)
+                .ignoresSafeArea(.all, edges: .bottom)
             }
+        }
+        .onChange(of: delegate.selectedTab) { _ in
+            Haptics.impact(style: .soft)
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))

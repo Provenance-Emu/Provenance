@@ -349,6 +349,7 @@ struct GameMoreInfoView: View {
     }
 
     private func editField(_ field: EditableField, initialValue: String?) {
+        Haptics.impact(style: .light)
         editingValue = initialValue ?? ""
         editingField = field
     }
@@ -464,6 +465,9 @@ public struct PagedGameMoreInfoView: View {
                         .tag(index)
                 }
             }
+        }
+        .onChange(of: viewModel.currentIndex) { _ in
+            Haptics.impact(style: .soft)
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
