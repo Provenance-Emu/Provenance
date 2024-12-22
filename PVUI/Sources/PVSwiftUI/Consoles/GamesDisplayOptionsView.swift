@@ -104,38 +104,51 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 #endif
 
             Spacer()
-            OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
-                Text("Sort")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font)
-            }
-            OptionsIndicator(pointDown: true, action: { toggleViewTypeAction() }) {
-                Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font.weight(.light))
-            }
-            Button(action: {
-                Haptics.impact(style: .light)
-                zoomOut()
-            }) {
-                Image(systemName: "minus.magnifyingglass")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font)
-            }
-            .disabled(!canZoomOut)
-            .padding(.trailing, padding)
-            .padding(.leading, padding)
+            Group {
+                OptionsIndicator(pointDown: sortAscending, action: {
+                    Haptics.impact(style: .light)
+                    toggleSortAction()
+                }) {
+                    Text("Sort")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
+                .contentShape(Rectangle())
 
-            Button(action: {
-                Haptics.impact(style: .light)
-                zoomIn()
-            }) {
-                Image(systemName: "plus.magnifyingglass")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font)
+                OptionsIndicator(pointDown: true, action: {
+                    Haptics.impact(style: .light)
+                    toggleViewTypeAction()
+                }) {
+                    Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font.weight(.light))
+                }
+                .contentShape(Rectangle())
+
+                Button(action: {
+                    Haptics.impact(style: .light)
+                    zoomOut()
+                }) {
+                    Image(systemName: "minus.magnifyingglass")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
+                .disabled(!canZoomOut)
+                .padding(.trailing, padding)
+                .padding(.leading, padding)
+
+                Button(action: {
+                    Haptics.impact(style: .light)
+                    zoomIn()
+                }) {
+                    Image(systemName: "plus.magnifyingglass")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
+                .disabled(!canZoomIn)
+                .padding(.trailing, padding)
             }
-            .disabled(!canZoomIn)
-            .padding(.trailing, padding)
+            .allowsHitTesting(true)
         }
         .onAppear {
             gameLibraryScale = Defaults[.gameLibraryScale]

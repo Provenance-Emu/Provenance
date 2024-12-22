@@ -151,8 +151,10 @@ struct ConsoleGamesView: SwiftUI.View {
     var body: some SwiftUI.View {
         GeometryReader { geometry in
             ZStack {
-                 VStack(spacing: 0) {
+                VStack(spacing: 0) {
                     displayOptionsView()
+                        .allowsHitTesting(true)
+                        .contentShape(Rectangle())
                     ZStack(alignment: .bottom) {
                         ScrollView {
                             ScrollViewReader { proxy in
@@ -185,25 +187,6 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 .edgesIgnoringSafeArea(.bottom)
-#if !os(tvOS)
-                .gesture(magnificationGesture())
-#endif
-                .onAppear {
-                    adjustZoomLevel(for: gameLibraryScale)
-                    setupGamepadHandling()
-
-                    // Set initial focus
-                    let sections: [HomeSectionType] = availableSections
-
-                    if let firstSection = sections.first {
-                        gamesViewModel.focusedSection = firstSection
-                        gamesViewModel.focusedItemInSection = getFirstItemInSection(firstSection)
-                        DLOG("Set initial focus - Section: \(firstSection), Item: \(String(describing: gamesViewModel.focusedItemInSection))")
-                    }
-                }
-                .onDisappear {
-                    gamepadCancellable?.cancel()
-                }
             }
             .sheet(isPresented: $showImagePicker) {
                 #if !os(tvOS)
@@ -607,6 +590,8 @@ extension ConsoleGamesView {
         )
         .padding(.top, 16)
         .padding(.bottom, 16)
+        .allowsHitTesting(true)
+        .contentShape(Rectangle())
     }
 
     @ViewBuilder
