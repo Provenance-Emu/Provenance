@@ -36,6 +36,7 @@
 			<string>iso</string>
 			<string>cso</string>
 			<string>7z</string>
+			<string>elf</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
