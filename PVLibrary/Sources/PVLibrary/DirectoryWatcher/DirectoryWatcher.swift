@@ -609,20 +609,20 @@ public extension DirectoryWatcher {
                 for await status in self.extractionStatusSequence {
                     switch status {
                     case .completed(let paths):
-                        ILOG("Extraction completed, yielding paths: \(paths)")
+                        print("Extraction completed, yielding paths: \(paths)")
                         continuation.yield(paths)
                     case .updated(let path):
-                        ILOG("Extraction updated, yielding path: \(path)")
+                        print("Extraction updated, yielding path: \(path)")
                         continuation.yield([path])
                     case .started, .idle:
-                        ILOG("Extraction status changed to \(status)")
+                        print("Extraction status changed to \(status)")
                         break
                     case .startedArchive(path: _):
-                        ILOG("Extraction status changed to \(status)")
+                        print("Extraction status changed to \(status)")
                     case .updatedArchive(path: let path):
-                        ILOG("Extraction updated, yielding path: \(path)")
+                        print("Extraction updated, yielding path: \(path)")
                     case .completedArchive(paths: let paths):
-                        ILOG("Extraction completed, yielding paths: \(paths)")
+                        print("Extraction completed, yielding paths: \(paths)")
                     }
                 }
                 ILOG("Extraction status sequence finished")

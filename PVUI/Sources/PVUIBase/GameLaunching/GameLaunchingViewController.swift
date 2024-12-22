@@ -314,7 +314,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         //            .sorted { $0.supportedSystems.count <= $1.supportedSystems.count }
         
         let coreChoiceAlert = UIAlertController(title: "Multiple cores found",
-                                                message: "Select which core to use with this game. If not sure, select the 1st option.",
+                                                message: "Select which core to use with this game.",
                                                 preferredStyle: .actionSheet)
 #if os(macOS) || targetEnvironment(macCatalyst)
         if let senderView = sender as? UIView ?? self.view {

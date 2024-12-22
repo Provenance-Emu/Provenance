@@ -360,7 +360,13 @@ struct ConsoleGamesView: SwiftUI.View {
         if AppState.shared.isSimulator {
             count = max(0,roundedScale )
         } else {
-            count = min(max(0, roundedScale), games.count)
+            // TODO: Fill space on iOS or certain layouts only, or a max width?
+            let fillSpace = false
+            if fillSpace {
+                count = min(max(1, roundedScale), games.count)
+            } else {
+                count = max(1, roundedScale)
+            }
         }
         return count
     }
@@ -483,13 +489,6 @@ struct ConsoleGamesView: SwiftUI.View {
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
             }
         }
-    }
-
-    private func calculateGridItemSize() -> CGFloat {
-        let numberOfItemsPerRow: CGFloat = CGFloat(gameLibraryScale)
-        let totalSpacing: CGFloat = 10 * (numberOfItemsPerRow - 1)
-        let availableWidth = UIScreen.main.bounds.width - totalSpacing - 20
-        return availableWidth / numberOfItemsPerRow
     }
 
     private func adjustZoomLevel(for magnification: Float) {

@@ -47,7 +47,7 @@ struct NoConsolesView: SwiftUI.View {
                         .blendMode(.difference)
 
                     Button(action: {
-                        delegate?.didTapImports()
+                        delegate?.didTapAddGames()
                     }) {
                         HStack {
                             Image(systemName: "checklist")

@@ -53,7 +53,7 @@ extension PVRootViewController: PVMenuDelegate {
             presentError("Importer could not be loaded", source: self.view)
             return
         }
-        
+
         NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
 
         let settingsView = ImportStatusView(updatesController:updatesController, gameImporter: gameImporter, delegate: self) {
@@ -98,6 +98,7 @@ extension PVRootViewController: PVMenuDelegate {
 #if os(iOS) || os(tvOS)
         /// from PVGameLibraryViewController#getMoreROMs
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
+
 #if !os(tvOS)
         actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
 
@@ -126,6 +127,28 @@ extension PVRootViewController: PVMenuDelegate {
         actionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
 //        actionSheet.popoverPresentationController?.sourceView = self.view
 //        actionSheet.popoverPresentationController?.sourceRect = self.view?.bounds ?? UIScreen.main.bounds
+
+
+        // Add Free ROMs option
+        actionSheet.addAction(UIAlertAction(title: "Free ROMs", style: .default, handler: { [weak self] _ in
+            self?.dismiss(animated: true) {
+                let freeROMsView = FreeROMsView(
+                    onROMDownloaded: { rom, tempURL in
+                        // Handle the downloaded ROM
+                        DLOG("Recieved downloaded file at: \(tempURL)")
+                        self?.updatesController.handlePickedDocuments([tempURL])
+                    },
+                    onDismiss: {
+                        // Optional: Handle dismiss if needed
+                        self?.didTapImports()
+                    }
+                )
+
+                let hostingController = UIHostingController(rootView: freeROMsView)
+                let navigationController = UINavigationController(rootViewController: hostingController)
+                self?.present(navigationController, animated: true)
+            }
+        }))
 
         if let presentedViewController = presentedViewController {
             presentedViewController.present(actionSheet, animated: true, completion: nil)

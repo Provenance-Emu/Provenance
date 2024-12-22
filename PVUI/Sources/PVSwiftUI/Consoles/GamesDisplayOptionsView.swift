@@ -49,17 +49,32 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 Toggle(isOn: $showGameTitles) {
                     Label("Show Game Titles", systemImage: "textformat")
                 }
+                .onChange(of: showGameTitles) { _ in
+                    Haptics.impact(style: .light)
+                }
                 Toggle(isOn: $showRecentGames) {
                     Label("Show Recent Games", systemImage: "clock")
+                }
+                .onChange(of: showRecentGames) { _ in
+                    Haptics.impact(style: .light)
                 }
                 Toggle(isOn: $showRecentSaveStates) {
                     Label("Show Save States", systemImage: "bookmark")
                 }
+                .onChange(of: showRecentSaveStates) { _ in
+                    Haptics.impact(style: .light)
+                }
                 Toggle(isOn: $showFavorites) {
                     Label("Show Favorites", systemImage: "star")
                 }
+                .onChange(of: showFavorites) { _ in
+                    Haptics.impact(style: .light)
+                }
                 Toggle(isOn: $showGameBadges) {
                     Label("Show Badges", systemImage: "rosette")
+                }
+                .onChange(of: showGameBadges) { _ in
+                    Haptics.impact(style: .light)
                 }
             }
             label: {
@@ -99,7 +114,10 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(font.weight(.light))
             }
-            Button(action: zoomOut) {
+            Button(action: {
+                Haptics.impact(style: .light)
+                zoomOut()
+            }) {
                 Image(systemName: "minus.magnifyingglass")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(font)
@@ -108,7 +126,10 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             .padding(.trailing, padding)
             .padding(.leading, padding)
 
-            Button(action: zoomIn) {
+            Button(action: {
+                Haptics.impact(style: .light)
+                zoomIn()
+            }) {
                 Image(systemName: "plus.magnifyingglass")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(font)
@@ -126,12 +147,14 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     private func zoomIn() {
         if canZoomIn {
+            Haptics.impact(style: .light)
             Defaults[.gameLibraryScale] -= 1
         }
     }
 
     private func zoomOut() {
         if canZoomOut {
+            Haptics.impact(style: .light)
             Defaults[.gameLibraryScale] += 1
         }
     }
