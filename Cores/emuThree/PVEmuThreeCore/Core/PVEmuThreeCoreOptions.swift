@@ -33,9 +33,18 @@ import PVCoreBridge
     
     static var cpuClockOption: CoreOption {
         .enumeration(.init(title: "CPU Clock",
-                           description: "(Requires Restart)",
+                           description: "(Requires Restart) Underclocking can increase performance but may cause the game to freeze. Overclocking may reduce in game lag but also might cause freezes",
                            requiresRestart: true),
                      values: [
+                        .init(title: "10%", description: "10%", value: 10),
+                        .init(title: "20%", description: "20%", value: 20),
+                        .init(title: "30%", description: "30%", value: 30),
+                        .init(title: "40%", description: "40%", value: 40),
+                        .init(title: "50%", description: "50%", value: 50),
+                        .init(title: "60%", description: "60%", value: 60),
+                        .init(title: "70%", description: "70%", value: 70),
+                        .init(title: "80%", description: "80%", value: 80),
+                        .init(title: "90%", description: "90%", value: 90),
                         .init(title: "100%", description: "100%", value: 100),
                         .init(title: "200%", description: "200%", value: 200),
                         .init(title: "300%", description: "300%", value: 300),
