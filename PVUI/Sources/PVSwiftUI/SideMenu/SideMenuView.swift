@@ -116,7 +116,7 @@ SideMenuView: SwiftUI.View {
     }
 
     func versionText() -> String {
-        let gitBranch = PackageBuild.info.builtBy ?? Bundle.main.infoDictionary?["GIT_BRANCH"] as? String ?? ""
+        let gitBranch = PackageBuild.info.branch ?? Bundle.main.infoDictionary?["GIT_BRANCH"] as? String ?? ""
         let masterBranch: Bool = gitBranch.lowercased() == "master"
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")

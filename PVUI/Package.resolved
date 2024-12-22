@@ -1,5 +1,5 @@
 {
-  "originHash" : "2b15c8052d6aba466a44cc8ac80fb1f92529b726039a7a349f7cd98a1ca76bcb",
+  "originHash" : "27aa332ab166710b1db2411c280bd93a1faa3a9cf87274eb08e45edcb42ced24",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -121,10 +121,10 @@
     {
       "identity" : "packagebuildinfo",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/PackageBuildInfo",
+      "location" : "https://github.com/DimaRU/PackageBuildInfo.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "d9c2c27e799b00dedf0620e5d6268968bcf5320e"
+        "revision" : "b58288cada24fdaaedaaa329afe52d910794fdb2",
+        "version" : "1.0.4"
       }
     },
     {
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ashleymills/Reachability.swift.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6"
+        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
+        "version" : "5.2.4"
       }
     },
     {
@@ -236,6 +236,24 @@
       }
     },
     {
+      "identity" : "swift-http-types",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-http-types",
+      "state" : {
+        "revision" : "ef18d829e8b92d731ad27bb81583edd2094d1ce3",
+        "version" : "1.3.1"
+      }
+    },
+    {
+      "identity" : "swift-openapi-runtime",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-openapi-runtime",
+      "state" : {
+        "revision" : "5e119a3d52dde0229312ed586be99c666c6b6f64",
+        "version" : "1.7.0"
+      }
+    },
+    {
       "identity" : "swift-perception",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception.git",
@@ -314,6 +332,15 @@
       "state" : {
         "revision" : "38e0ce0598e06b034271f296a8e15b149c91aa19",
         "version" : "2.4.3"
+      }
+    },
+    {
+      "identity" : "zipfoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/weichsel/ZIPFoundation.git",
+      "state" : {
+        "revision" : "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
+        "version" : "0.9.19"
       }
     }
   ],
