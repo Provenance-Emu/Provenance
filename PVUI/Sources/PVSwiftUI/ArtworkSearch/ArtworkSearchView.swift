@@ -12,7 +12,9 @@ public struct ArtworkSearchView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var hasSearched = false
+    #if DEBUG
     @Environment(\.sampleArtworkResults) private var sampleResults
+    #endif
     @State private var collapsedGroups: Set<String> = Set()
     @State private var selectedTypes: ArtworkType = .defaults
     @State private var lastViewedArtwork: ArtworkMetadata?
