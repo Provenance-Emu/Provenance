@@ -17,10 +17,12 @@ import PVUIBase
 
 /// A SwiftUI context menu for game-related actions
 struct GameContextMenu: View {
-    var game: PVGame
-    var cores: [PVCore] {
-        game.system.cores.filter{!(AppState.shared.isAppStore && $0.appStoreDisabled)}
-    }
+    // Use a frozen game to avoid Realm threading issues
+    let game: PVGame
+
+    // Cache computed properties
+    @State private var availableCores: [PVCore] = []
+    @State private var hasSaveStates: Bool = false
 
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
@@ -30,13 +32,29 @@ struct GameContextMenu: View {
     @State private var showArtworkSourceAlert = false
     @State private var gameToUpdateCover: PVGame?
 
+    init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
+        // Ensure we're working with a frozen copy
+        self.game = game.isFrozen ? game : game.freeze()
+        self.rootDelegate = rootDelegate
+        self.contextMenuDelegate = contextMenuDelegate
+
+        // Initialize computed properties
+        _availableCores = State(initialValue: game.system.cores.filter {
+            !(AppState.shared.isAppStore && $0.appStoreDisabled)
+        })
+        _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
+    }
+
     var body: some View {
         Group {
             if !game.isInvalidated {
-                if cores.count > 1 {
+                if availableCores.count > 1 {
                     Button {
                         Task { @MainActor in
-                            await rootDelegate?.root_presentCoreSelection(forGame: game, sender: self)
+                            // Thaw game for UI operations
+                            if let thawedGame = game.thaw() {
+                                await rootDelegate?.root_presentCoreSelection(forGame: thawedGame, sender: self)
+                            }
                         }
                     } label: { Label("Open in...", systemImage: "gamecontroller") }
                 }
@@ -51,10 +69,7 @@ struct GameContextMenu: View {
                 .disabled(game.saveStates.isEmpty)
                 Button {
                     // Toggle isFavorite for the selected PVGame
-                    let thawedGame = game.thaw()!
-                    try! Realm().write {
-                        thawedGame.isFavorite = !thawedGame.isFavorite
-                    }
+                    toggleFavorite()
                 } label: { Label("Favorite", systemImage: "heart") }
                 Button {
                     contextMenuDelegate?.gameContextMenu(self, didRequestRenameFor: game)
@@ -90,13 +105,13 @@ struct GameContextMenu: View {
                 if #available(iOS 15, tvOS 15, macOS 12, *) {
                     Button(role: .destructive) {
                         Task.detached { @MainActor in
-                            rootDelegate?.attemptToDelete(game: game)
+                            rootDelegate?.attemptToDelete(game: game, deleteSaves: false)
                         }
                     } label: { Label("Delete", systemImage: "trash") }
                 } else {
                     Button {
                         Task.detached { @MainActor in
-                            rootDelegate?.attemptToDelete(game: game)
+                            rootDelegate?.attemptToDelete(game: game, deleteSaves: false)
                         }
                     } label: { Label("Delete", systemImage: "trash") }
                 }
@@ -116,6 +131,48 @@ struct GameContextMenu: View {
                 UIAlertAction(title: "Cancel", style: .cancel)
             }
         )
+    }
+
+    // Move heavy operations to background tasks
+    private func toggleFavorite() {
+        Task {
+            // Perform Realm write on background thread
+            try await RomDatabase.sharedInstance.asyncWriteTransaction {
+                if let thawedGame = game.thaw() {
+                    thawedGame.isFavorite.toggle()
+                }
+            }
+        }
+    }
+
+    private func saveArtwork(image: UIImage, forGame game: PVGame) {
+        Task {
+            do {
+                let uniqueID = UUID().uuidString
+                let key = "artwork_\(game.md5)_\(uniqueID)"
+
+                // Write image to disk asynchronously
+                try await Task.detached(priority: .background) {
+                    try PVMediaCache.writeImage(toDisk: image, withKey: key)
+                }.value
+
+                // Update Realm on main thread
+                try await RomDatabase.sharedInstance.asyncWriteTransaction {
+                    if let thawedGame = game.thaw() {
+                        thawedGame.customArtworkURL = key
+                    }
+                }
+
+                await MainActor.run {
+                    rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
+                }
+            } catch {
+                await MainActor.run {
+                    DLOG("Failed to set custom artwork: \(error.localizedDescription)")
+                    rootDelegate?.showMessage("Failed to set custom artwork: \(error.localizedDescription)", title: "Error")
+                }
+            }
+        }
     }
 }
 
@@ -168,44 +225,6 @@ extension GameContextMenu {
     func artworkNotFoundAlert() {
         DLOG("Showing artwork not found alert")
         rootDelegate?.showMessage("Pasteboard did not contain an image.", title: "Artwork Not Found")
-    }
-
-    private func saveArtwork(image: UIImage, forGame game: PVGame) {
-        DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
-
-        let uniqueID = UUID().uuidString
-        let key = "artwork_\(game.md5)_\(uniqueID)"
-        DLOG("Generated key for image: \(key)")
-
-        do {
-            DLOG("Attempting to write image to disk")
-            try PVMediaCache.writeImage(toDisk: image, withKey: key)
-            DLOG("Image successfully written to disk")
-
-            DLOG("Attempting to update game's customArtworkURL")
-            try RomDatabase.sharedInstance.writeTransaction {
-                let thawedGame = game.thaw()
-                DLOG("Game thawed: \(thawedGame?.title ?? "Unknown")")
-                thawedGame?.customArtworkURL = key
-                DLOG("Game's customArtworkURL updated to: \(key)")
-            }
-            DLOG("Database transaction completed successfully")
-            rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
-
-            DLOG("Attempting to verify image retrieval")
-            PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
-                if let retrievedImage = retrievedImage {
-                    DLOG("Successfully retrieved saved image for key: \(retrievedKey)")
-                    DLOG("Retrieved image size: \(retrievedImage.size)")
-                } else {
-                    DLOG("Failed to retrieve saved image for key: \(retrievedKey)")
-                }
-            }
-        } catch {
-            DLOG("Failed to set custom artwork: \(error.localizedDescription)")
-            DLOG("Error details: \(error)")
-            rootDelegate?.showMessage("Failed to set custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
-        }
     }
 
     private func clearCustomArtwork(forGame game: PVGame) {

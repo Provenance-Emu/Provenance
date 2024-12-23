@@ -224,87 +224,143 @@ SideMenuView: SwiftUI.View {
         }
     }
 
+    // MARK: - View Builders
+    @ViewBuilder
+    private func headerItems() -> some View {
+        Group {
+            Divider()
+                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+
+            MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home") {
+                delegate.didTapHome()
+            }
+            .focusableIfAvailable()
+            .focused($focusedItem, equals: "home")
+            .id("home")
+
+            Divider()
+                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+
+            MenuItemView(icon: .named("prov_settings_gear", PVUIBase.BundleLoader.myBundle), rowTitle: "Settings", isFocused: focusedItem == "settings") {
+                delegate.didTapSettings()
+            }
+            .focusableIfAvailable()
+            .focused($focusedItem, equals: "settings")
+        }
+    }
+
+    @ViewBuilder
+    private func addGamesSection() -> some View {
+        Group {
+            Divider()
+                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+
+            MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Add Games", isFocused: focusedItem == "addgames") {
+                delegate?.didTapAddGames()
+            }
+            .focusableIfAvailable()
+            .focused($focusedItem, equals: "addgames")
+        }
+    }
+
+    @ViewBuilder
+    private func importQueueSection() -> some View {
+        Group {
+            Divider()
+                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+
+            MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Import Queue", isFocused: focusedItem == "imports") {
+                delegate.didTapImports()
+            }
+            .focusableIfAvailable()
+            .focused($focusedItem, equals: "imports")
+        }
+    }
+
+    @ViewBuilder
+    private func consolesSection() -> some View {
+        Group {
+            if consoles.count > 0 {
+                MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
+                    viewModel.sortConsolesAscending.toggle()
+                }
+                ForEach(sortedConsoles(), id: \.self) { console in
+                    Divider()
+                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                    MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name, isFocused: focusedItem == console.identifier) {
+                        delegate.didTapConsole(with: console.identifier)
+                    }
+                    .focusableIfAvailable()
+                    .focused($focusedItem, equals: console.identifier)
+                    .id(console.identifier)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func footerSection() -> some View {
+        Group {
+            MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
+            Spacer()
+        }
+    }
+
+    @ViewBuilder
+    private func searchResultsList() -> some View {
+        LazyVStack {
+            ForEach(filteredSearchResults(), id: \.self) { game in
+                GameItemView(
+                    game: game,
+                    constrainHeight: false,
+                    viewType: .row,
+                    sectionContext: .allGames,
+                    isFocused: .constant(false) ,
+                    action: {
+                        Task.detached { @MainActor in
+                            await rootDelegate.root_load(game, sender: self, core: nil, saveState: nil)
+                        }
+                    }
+                )
+                .contextMenu {
+                    GameContextMenu(
+                        game: game,
+                        rootDelegate: rootDelegate,
+                        contextMenuDelegate: nil
+                    )
+                }
+                GamesDividerView()
+            }
+        }
+        .padding(.horizontal, 10)
+    }
+
+    // MARK: - Body
     public var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack {
                         LazyVStack(alignment: .leading, spacing: 0) {
-                            Divider()
-                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                            headerItems()
+                            addGamesSection()
+                            importQueueSection()
 
-                            MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home") {
-                                delegate.didTapHome()
-                            }
-                            .focusableIfAvailable()
-                            .focused($focusedItem, equals: "home")
-                            .id("home")
-
-                            Divider()
-                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-
-                            MenuItemView(icon: .named("prov_settings_gear", PVUIBase.BundleLoader.myBundle), rowTitle: "Settings", isFocused: focusedItem == "settings") {
-                                delegate.didTapSettings()
-                            }
-                            .focusableIfAvailable()
-                            .focused($focusedItem, equals: "settings")
-
-                            Divider()
-                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-    
-                            MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Add Games", isFocused: focusedItem == "addgames"   ) {
-                                delegate?.didTapAddGames()
-                            }
-                            .focusableIfAvailable()
-                            .focused($focusedItem, equals: "addgames")
-                            
-                            
-                            Divider()
-                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-
-                            MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Import Queue", isFocused: focusedItem == "imports") {
-                                delegate.didTapImports()
-                            }
-                            .focusableIfAvailable()
-                            .focused($focusedItem, equals: "imports")
-                            
-    #if canImport(FreemiumKit)
+                            #if canImport(FreemiumKit)
                             Divider()
                                 .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
                             PaidStatusView(style: .plain)
                                 .listRowBackground(Color.accentColor)
                                 .padding(.vertical, 10)
                                 .padding(.horizontal, 10)
-    #endif
-                            if consoles.count > 0 {
-                                MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
-                                    viewModel.sortConsolesAscending.toggle()
-                                }
-                                ForEach(sortedConsoles(), id: \.self) { console in
-                                    Divider()
-                                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                                    MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name, isFocused: focusedItem == console.identifier) {
-                                        delegate.didTapConsole(with: console.identifier)
-                                    }
-                                    .focusableIfAvailable()
-                                    .focused($focusedItem, equals: console.identifier)
-                                    .id(console.identifier)
-                                }
-                            }
-                            MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
-                            Spacer()
+                            #endif
+
+                            consolesSection()
+                            footerSection()
                         }
                     }
                     .onChange(of: focusedItem) { newValue in
-                        print("Focus changed from \(String(describing: lastFocusedItem)) to \(String(describing: newValue))")
-                        lastFocusedItem = newValue
-
-                        // Scroll to the focused item with animation
-                        if let focused = newValue {
-                            withAnimation {
-                                proxy.scrollTo(focused, anchor: .center)
-                            }
-                        }
+                        handleFocusChange(newValue, proxy: proxy)
                     }
                 }
                 .onAppear {
@@ -355,18 +411,7 @@ SideMenuView: SwiftUI.View {
                     ApplyBackgroundWrapper {
                         ScrollView {
                             VStack {
-                                LazyVStack {
-                                    ForEach(filteredSearchResults(), id: \.self) { game in
-                                        GameItemView(game: game, viewType: .row, sectionContext: .allGames, isFocused: .constant(false)) {
-                                            Task.detached { @MainActor in
-                                                await rootDelegate.root_load(game, sender: self, core: nil, saveState: nil)
-                                            }
-                                        }
-                                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
-                                        GamesDividerView()
-                                    }
-                                }
-                                .padding(.horizontal, 10)
+                                searchResultsList()
                             }
                             .background(themeManager.currentPalette.menuBackground.swiftUIColor)
                         }
@@ -386,6 +431,18 @@ SideMenuView: SwiftUI.View {
         .onChange(of: gamepadManager.isControllerConnected) { isConnected in
             if isConnected {
                 focusedItem = "home"
+            }
+        }
+    }
+
+    private func handleFocusChange(_ newValue: String?, proxy: ScrollViewProxy) {
+        print("Focus changed from \(String(describing: lastFocusedItem)) to \(String(describing: newValue))")
+        lastFocusedItem = newValue
+
+        // Scroll to the focused item with animation
+        if let focused = newValue {
+            withAnimation {
+                proxy.scrollTo(focused, anchor: .center)
             }
         }
     }
