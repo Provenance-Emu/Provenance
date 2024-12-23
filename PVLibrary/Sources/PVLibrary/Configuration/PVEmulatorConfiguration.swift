@@ -320,10 +320,11 @@ public extension PVEmulatorConfiguration {
     }
 
     class func path(forGame game: PVGame) -> URL {
-        return URL.documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
+        return
+        PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
     }
     class func path(forGame game: PVGame, url:URL) -> URL {
-        return URL.documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(url.lastPathComponent)
+        return PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.systemIdentifier).appendingPathComponent(url.lastPathComponent)
     }
 }
 
