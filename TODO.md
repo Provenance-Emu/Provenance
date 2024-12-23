@@ -69,6 +69,7 @@ _My personal TODO notes_
 
 ###  Really want
 
+- [ ] Add an option to use AppGroups
 - [ ] Add more artwork lookups
 - [ ] Gamepad navigation in swiftUI
     - Partially implimented
