@@ -13,7 +13,7 @@ import PVLogging
 // MARK: - PVRootDelegate
 
 public protocol PVRootDelegate: AnyObject {
-    func attemptToDelete(game: PVGame)
+    func attemptToDelete(game: PVGame, deleteSaves: Bool)
     func showUnderConstructionAlert()
     // objects fetched via @ObservedResults are `frozen`, so we need to thaw them before Realm lets us use them
     // the following methods call their equivalent GameLaunchingViewController methods with thawed objects
