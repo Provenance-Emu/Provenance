@@ -69,13 +69,17 @@ _My personal TODO notes_
 
 ###  Really want
 
+- [ ] GameImportQueue
+    - [ ] Pause/play on game start/stop
+    - [ ] clicking an item should import it
+    - [ ] indicator, pause/start in queue UI
+    - [ ] Inidicator, pause/start in main UI
 - [ ] Add an option to use AppGroups
-- [ ] Add more artwork lookups
 - [ ] Gamepad navigation in swiftUI
     - Partially implimented
 - [ ] iCloud sync
 - [ ] Save state share in savestate manager swift ui view
-- [ ] import queue, clicking an item should import it
+- [X] Add more artwork lookups
 
 ### Kind of want
 
