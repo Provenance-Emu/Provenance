@@ -677,6 +677,8 @@ public extension RomDatabase {
                 ELOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
                 throw RomDeletionError.fileManagerDeletionError(error)
             }
+        } else {
+            ELOG("No rom found at path: \(romURL.path)")
         }
         // Delete from Spotlight search
 #if os(iOS)

@@ -319,11 +319,15 @@ public extension PVEmulatorConfiguration {
         return screenshotsPath
     }
 
+    class func path(forSystem system: SystemIdentifier) -> URL {
+        return Paths.romsPath.appending(component: system.rawValue)
+    }
+    
     class func path(forGame game: PVGame) -> URL {
-        return URL.documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
+        return Paths.romsPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
     }
     class func path(forGame game: PVGame, url:URL) -> URL {
-        return URL.documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(url.lastPathComponent)
+        return Paths.romsPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(url.lastPathComponent)
     }
 }
 
