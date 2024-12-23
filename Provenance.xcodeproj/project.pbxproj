@@ -543,12 +543,14 @@
 		B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF82C6C6D1A00EBD1A8 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
+		B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
+		B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B36A8D442CCD5480002357DD /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D432CCD5480002357DD /* Defaults */; };
 		B36A8D462CCD548E002357DD /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D452CCD548E002357DD /* MBProgressHUD */; };
 		B36A8D4A2CCD54C7002357DD /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D492CCD54C7002357DD /* PVUI */; };
 		B36A8D4C2CCD54CE002357DD /* PVThemes in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D4B2CCD54CE002357DD /* PVThemes */; };
 		B36A8D4E2CCD54E0002357DD /* PVWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D4D2CCD54E0002357DD /* PVWebServer */; };
-		B36A8D502CCD5518002357DD /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D4F2CCD5518002357DD /* PVJIT */; };
+		B36A8D502CCD5518002357DD /* PVJIT in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B36A8D4F2CCD5518002357DD /* PVJIT */; };
 		B36B852F29599A6000FDEA29 /* PVGearcoleco.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; };
 		B36B853029599A6000FDEA29 /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36B853529599A9600FDEA29 /* PVOpera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3231BEE28966661003CC116 /* PVOpera.framework */; };
@@ -641,7 +643,7 @@
 		B394CDC12BDEE53A006B63E8 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B394CDCC2BDEE53A006B63E8 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B394CDEA2BDF7018006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
-		B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
+		B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B394CDEC2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
 		B3952F562C697A02000B0308 /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B3952F552C697A02000B0308 /* PVUI */; };
 		B3952F582C698F54000B0308 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3952F572C698F54000B0308 /* Defaults */; };
@@ -818,7 +820,7 @@
 		B3F7E2F7297736BE00362B92 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */; };
 		B3F7E30C297736BE00362B92 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
 		B3F7E311297736BE00362B92 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
-		B3F7E378297736BE00362B92 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; };
+		B3F7E378297736BE00362B92 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E37A297736BE00362B92 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		B3F7E37D297736BE00362B92 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B3F7E37E297736BE00362B92 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
@@ -2303,8 +2305,12 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"PVAppDelegate+AppRating.swift",
-				"PVAppDelegate+NitoTV.swift",
 			);
+			platformFiltersByRelativePath = {
+				"PVAppDelegate+NitoTV.swift" = (
+					tvos,
+				);
+			};
 			target = B3F7E295297736BE00362B92 /* Provenance-Lite */;
 		};
 		B39436552CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
@@ -5123,12 +5129,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				9368551E2A8956220087FE6B /* modules in Resources */,
+				B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */,
 				B3F7E3C5297736BE00362B92 /* InfoPlist.strings in Resources */,
 				B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */,
 				B3F7E3C6297736BE00362B92 /* Strings.strings in Resources */,
 				B3F7E3CD297736BE00362B92 /* Settings.bundle in Resources */,
 				B3A3D0302CCCC62B00589F82 /* TVAssets.xcassets in Resources */,
 				B3F7E3D9297736BE00362B92 /* licenses.html in Resources */,
+				B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */,
 				B3DF8EDD2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B39D8F0A2D0CEC5300577667 /* Assets-Lite.xcassets in Resources */,
 				B3E17E292CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,

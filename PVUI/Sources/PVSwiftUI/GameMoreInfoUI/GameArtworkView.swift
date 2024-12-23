@@ -28,7 +28,9 @@ struct GameArtworkView: View {
         Image(uiImage: currentArtwork ?? UIImage())
             .resizable()
             .aspectRatio(contentMode: .fit)
+#if !os(tvOS)
             .background(Color(.systemBackground))
+        #endif
             .cornerRadius(8)
             .shadow(radius: 3)
             .padding()

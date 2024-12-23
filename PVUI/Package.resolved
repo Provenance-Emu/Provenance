@@ -1,5 +1,5 @@
 {
-  "originHash" : "27aa332ab166710b1db2411c280bd93a1faa3a9cf87274eb08e45edcb42ced24",
+  "originHash" : "c69d89d1d9d8ae4d05bbd4c26c319842dc43517b8f08799413d7d2aa843cf04d",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MrAsterisco/DateRangePicker",
       "state" : {
-        "revision" : "9fd27bed5a951e7a48e2211465fdfc7e9bf2cbe7",
-        "version" : "1.0.2"
+        "revision" : "5b1ec8990b42f7f4f21a596300707d3a024dd782",
+        "version" : "1.0.3"
       }
     },
     {
@@ -61,7 +61,7 @@
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
         "branch" : "main",
-        "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
+        "revision" : "ef1b2318fb549002bb533bec3a8ad98ae09f2cb6"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/FlineDev/FreemiumKit.git",
       "state" : {
-        "revision" : "034f0a9c67eb24be90ec4334369dc23d44245f35",
-        "version" : "1.11.0"
+        "revision" : "15e874e9ef7402e4ace0ebb2f66926bea2662ad3",
+        "version" : "1.16.1"
       }
     },
     {
@@ -150,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "e474a8d2270a8b12ac63ac9504e4757e39814b99",
-        "version" : "14.13.0"
+        "revision" : "85eeca41654cc9070ad81a21a4b1d153ad467c33",
+        "version" : "14.13.1"
       }
     },
     {
@@ -159,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "863498d37a9f0e72caa65963da9641d8cdfc8228",
-        "version" : "10.54.0"
+        "revision" : "a3abcdf95a3176f5ad990239920aad4ef86e00de",
+        "version" : "10.54.2"
       }
     },
     {
@@ -213,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-async-algorithms",
       "state" : {
-        "revision" : "5c8bd186f48c16af0775972700626f0b74588278",
-        "version" : "1.0.2"
+        "revision" : "4c3ea81f81f0a25d0470188459c6d4bf20cf2f97",
+        "version" : "1.0.3"
       }
     },
     {
@@ -259,7 +259,7 @@
       "location" : "https://github.com/pointfreeco/swift-perception.git",
       "state" : {
         "branch" : "main",
-        "revision" : "7335e4aab6136e42adeb7545a10570e543336d11"
+        "revision" : "8d52279b9809ef27eabe7d5420f03734528f19da"
       }
     },
     {
@@ -294,8 +294,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/danielsaidi/SwiftUIKit.git",
       "state" : {
-        "revision" : "7ec03cf8ea6d5a5dfc4739c8c55f370d195ca5d5",
-        "version" : "5.0.0"
+        "revision" : "e8010b950528712edd4cb022da60ba98cbb85b04",
+        "version" : "5.0.2"
       }
     },
     {
@@ -321,8 +321,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "770f990d3e4eececb57ac04a6076e22f8c97daeb",
-        "version" : "1.4.2"
+        "revision" : "a3f634d1a409c7979cabc0a71b3f26ffa9fc8af1",
+        "version" : "1.4.3"
       }
     },
     {

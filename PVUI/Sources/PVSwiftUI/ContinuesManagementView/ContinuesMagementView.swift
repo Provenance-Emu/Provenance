@@ -11,7 +11,9 @@ import AnimatedGradient
 import PVThemes
 import Combine
 import RealmSwift
+#if !os(tvOS)
 import OpenDateInterval
+#endif
 
 extension Publishers {
     struct CombineLatest5Data<A: Publisher, B: Publisher, C: Publisher, D: Publisher, E: Publisher>: Publisher
@@ -125,6 +127,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             .store(in: &cancellables)
 
         /// Create a publisher that combines all filter criteria
+#if !os(tvOS)
         let filterPublisher = Publishers.CombineLatest5(
             controlsViewModel.$filterFavoritesOnly,
             controlsViewModel.$isAutoSavesEnabled,
@@ -132,12 +135,21 @@ public class ContinuesMagementViewModel: ObservableObject {
             controlsViewModel.$sortAscending,
             $searchText
         )
+        #else
+        let filterPublisher = Publishers.CombineLatest4(
+            controlsViewModel.$filterFavoritesOnly,
+            controlsViewModel.$isAutoSavesEnabled,
+            controlsViewModel.$sortAscending,
+            $searchText
+        )
+        #endif
 
         /// Combine save states with filter criteria
         Publishers.CombineLatest(
             $saveStates,
             filterPublisher
         )
+#if !os(tvOS)
         .map { [weak self] states, filterCriteria in
             let (favoritesOnly, autoSavesEnabled, dateRange, sortAscending, searchText) = filterCriteria
             var filtered = states
@@ -159,6 +171,28 @@ public class ContinuesMagementViewModel: ObservableObject {
                 sortAscending: sortAscending
             ) ?? []
         }
+#else
+        .map { [weak self] states, filterCriteria in
+            let (favoritesOnly, autoSavesEnabled, sortAscending, searchText) = filterCriteria
+            var filtered = states
+
+            // Apply search filter
+            if !searchText.isEmpty {
+                filtered = filtered.filter {
+                    guard let description = $0.description else { return false }
+                    return description.localizedCaseInsensitiveContains(searchText)
+                }
+            }
+
+            // Apply other filters
+            return self?.applyFilters(
+                to: filtered,
+                favoritesOnly: favoritesOnly,
+                autoSavesEnabled: autoSavesEnabled,
+                sortAscending: sortAscending
+            ) ?? []
+        }
+#endif
         .receive(on: DispatchQueue.main)
         .assign(to: &$filteredAndSortedSaveStates)
 
@@ -176,6 +210,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
+#if !os(tvOS)
     private func applyFilters(
         to states: [SaveStateRowViewModel],
         favoritesOnly: Bool,
@@ -209,7 +244,33 @@ public class ContinuesMagementViewModel: ObservableObject {
                 return sortAscending ? first.saveDate < second.saveDate : first.saveDate > second.saveDate
             }
     }
+    #else
+    private func applyFilters(
+        to states: [SaveStateRowViewModel],
+        favoritesOnly: Bool,
+        autoSavesEnabled: Bool,
+        sortAscending: Bool
+    ) -> [SaveStateRowViewModel] {
+        states
+            .filter { state in
+                /// Apply favorites filter
+                if favoritesOnly && !state.isFavorite { return false }
 
+                /// Apply auto-save filter
+                if !autoSavesEnabled && state.isAutoSave { return false }
+
+                return true
+            }
+            .sorted { first, second in
+                /// Sort by pin status first
+                if first.isPinned != second.isPinned {
+                    return first.isPinned
+                }
+                /// Then by date
+                return sortAscending ? first.saveDate < second.saveDate : first.saveDate > second.saveDate
+            }
+    }
+    #endif
     private func observeRowViewModel(_ viewModel: SaveStateRowViewModel) {
         /// Observe pin changes
         viewModel.$isPinned

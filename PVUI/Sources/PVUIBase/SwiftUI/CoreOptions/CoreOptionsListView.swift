@@ -96,7 +96,9 @@ private struct CoreListItemView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
+#if !os(tvOS)
             .background(Color(.secondarySystemGroupedBackground))
+#endif
             .cornerRadius(10)
         }
         .padding(.horizontal)

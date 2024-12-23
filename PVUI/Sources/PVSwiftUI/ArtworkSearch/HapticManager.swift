@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if !os(tvOS)
 struct HapticManager {
     static func impact(style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) {
         #if os(iOS)
@@ -15,3 +16,4 @@ struct HapticManager {
         #endif
     }
 }
+#endif

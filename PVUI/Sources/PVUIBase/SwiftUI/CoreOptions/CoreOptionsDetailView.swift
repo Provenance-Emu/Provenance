@@ -185,6 +185,7 @@ struct CoreOptionsDetailView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
+#if !os(tvOS)
                 Slider(
                     value: Binding(
                         get: { Double(optionValues[option.key] as? Int ?? defaultValue) },
@@ -199,6 +200,7 @@ struct CoreOptionsDetailView: View {
                 } maximumValueLabel: {
                     Text("\(range.max)")
                 }
+#endif
             }
 
         case let .rangef(display, range, defaultValue):
@@ -209,6 +211,7 @@ struct CoreOptionsDetailView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
+#if !os(tvOS)
                 Slider(
                     value: Binding(
                         get: { Double(optionValues[option.key] as? Float ?? defaultValue) },
@@ -223,6 +226,7 @@ struct CoreOptionsDetailView: View {
                 } maximumValueLabel: {
                     Text(String(format: "%.1f", range.max))
                 }
+#endif
             }
 
         case let .multi(display, values):
@@ -282,7 +286,9 @@ struct CoreOptionsDetailView: View {
                         .foregroundColor(.secondary)
                 }
                 TextField("Value", text: text)
+#if !os(tvOS)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+#endif
             }
 
         case .group(_, _):

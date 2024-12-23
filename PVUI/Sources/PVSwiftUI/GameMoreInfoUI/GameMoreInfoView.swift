@@ -7,7 +7,9 @@
 
 import SwiftUI
 import PVLibrary
+#if canImport(SafariServices)
 import SafariServices
+#endif
 import Combine
 
 /// Protocol for observing artwork changes
@@ -313,6 +315,7 @@ struct GameMoreInfoView: View {
 
                 // Debug section
                 if let debugInfo = viewModel.debugDescription {
+                    #if !os(tvOS)
                     DisclosureGroup(
                         isExpanded: $viewModel.isDebugExpanded,
                         content: {
@@ -326,6 +329,7 @@ struct GameMoreInfoView: View {
                         }
                     )
                     .padding()
+                    #endif
                 }
             }
             .padding(.bottom, 50)
@@ -349,7 +353,9 @@ struct GameMoreInfoView: View {
     }
 
     private func editField(_ field: EditableField, initialValue: String?) {
+        #if !os(tvOS)
         Haptics.impact(style: .light)
+        #endif
         editingValue = initialValue ?? ""
         editingField = field
     }
@@ -467,7 +473,9 @@ public struct PagedGameMoreInfoView: View {
             }
         }
         .onChange(of: viewModel.currentIndex) { _ in
+#if !os(tvOS)
             Haptics.impact(style: .soft)
+            #endif
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
@@ -479,6 +487,7 @@ public struct PagedGameMoreInfoView: View {
                 }
             }
             ToolbarItemGroup(placement: .navigationBarTrailing) {
+#if canImport(SafariServices)
                 if let game = viewModel.currentGame,
                    let urlString = game.referenceURL?.absoluteString,
                    let url = URL(string: urlString) {
@@ -491,6 +500,7 @@ public struct PagedGameMoreInfoView: View {
                         GameReferenceWebView(url: url)
                     }
                 }
+#endif
 
                 if viewModel.playGameCallback != nil {
                     Button {
@@ -510,6 +520,7 @@ public struct PagedGameMoreInfoView: View {
 }
 
 // MARK: - Web View
+#if canImport(SafariServices)
 struct GameReferenceWebView: View {
     let url: URL
 
@@ -531,6 +542,7 @@ struct SafariWebView: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 }
+#endif
 
 #if DEBUG
 // MARK: - Preview

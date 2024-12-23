@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 
+#if !os(tvOS)
 public enum Haptics {
     public static func impact(style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) {
         let generator = UIImpactFeedbackGenerator(style: style)
@@ -12,3 +13,4 @@ public enum Haptics {
         generator.notificationOccurred(type)
     }
 }
+#endif

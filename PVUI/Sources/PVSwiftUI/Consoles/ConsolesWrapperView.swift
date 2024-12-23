@@ -102,7 +102,9 @@ struct ConsolesWrapperView: SwiftUI.View {
                         .sheet(item: $gameInfoState) { state in
                             NavigationView {
                                 makeGameMoreInfoView(for: state)
+                                #if !os(tvOS)
                                     .navigationBarTitleDisplayMode(.inline)
+                                #endif
                             }
                         }
                 }
@@ -158,7 +160,9 @@ struct ConsolesWrapperView: SwiftUI.View {
             }
         }
         .onChange(of: delegate.selectedTab) { _ in
+            #if !os(tvOS)
             Haptics.impact(style: .soft)
+            #endif
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))

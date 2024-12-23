@@ -91,7 +91,9 @@ public struct ArtworkSearchView: View {
                 }
             }
         }
+        #if !os(tvOS)
         .background(Color(uiColor: .systemBackground))
+        #endif
         .onAppear {
             if !searchText.isEmpty {
                 DLOG("Auto-searching with initial search text: \(searchText)")
@@ -108,7 +110,9 @@ public struct ArtworkSearchView: View {
             HStack {
                 Image(systemName: "magnifyingglass")
                 TextField("Search artwork...", text: $searchText)
+                #if !os(tvOS)
                     .textFieldStyle(.roundedBorder)
+                #endif
                     .onSubmit {
                         Task {
                             addToHistory(searchText)
@@ -117,25 +121,29 @@ public struct ArtworkSearchView: View {
                     }
 
                 // Recent searches menu
-                Menu {
-                    ForEach(searchHistory, id: \.self) { term in
-                        Button(term) {
-                            searchText = term
-                            Task {
-                                await performSearch()
+                if #available(tvOS 17.0, *) {
+                    Menu {
+                        ForEach(searchHistory, id: \.self) { term in
+                            Button(term) {
+                                searchText = term
+                                Task {
+                                    await performSearch()
+                                }
                             }
                         }
-                    }
-                    if !searchHistory.isEmpty {
-                        Divider()
-                        Button("Clear History", role: .destructive) {
-                            searchHistory.removeAll()
+                        if !searchHistory.isEmpty {
+                            Divider()
+                            Button("Clear History", role: .destructive) {
+                                searchHistory.removeAll()
+                            }
                         }
+                    } label: {
+                        Image(systemName: "clock.arrow.circlepath")
                     }
-                } label: {
-                    Image(systemName: "clock.arrow.circlepath")
+                    .disabled(searchHistory.isEmpty)
+                } else {
+                    // Fallback on earlier versions
                 }
-                .disabled(searchHistory.isEmpty)
 
                 Button {
                     Task {
@@ -562,48 +570,52 @@ struct ArtworkTypeSelector: View {
     }
 
     var body: some View {
-        Menu {
-            ForEach(allTypes, id: \.rawValue) { type in
-                Button {
-                    if selectedTypes.contains(type) {
-                        selectedTypes.remove(type)
-                    } else {
-                        selectedTypes.insert(type)
-                    }
-                } label: {
-                    HStack {
-                        Text(type.displayName)
+        if #available(tvOS 17.0, *) {
+            Menu {
+                ForEach(allTypes, id: \.rawValue) { type in
+                    Button {
                         if selectedTypes.contains(type) {
-                            Image(systemName: "checkmark")
+                            selectedTypes.remove(type)
+                        } else {
+                            selectedTypes.insert(type)
+                        }
+                    } label: {
+                        HStack {
+                            Text(type.displayName)
+                            if selectedTypes.contains(type) {
+                                Image(systemName: "checkmark")
+                            }
                         }
                     }
                 }
-            }
-
-            Divider()
-
-            Button("Select All") {
-                selectedTypes = ArtworkType(allTypes)
-            }
-
-            Button("Clear All") {
-                selectedTypes = []
-            }
-
-            Button("Reset to Defaults") {
-                selectedTypes = .defaults
-            }
-        } label: {
-            HStack {
-                Text("Artwork Types")
-                Image(systemName: "chevron.up.chevron.down")
-                Spacer()
-                // Show count of selected types using our helper
-                if selectedCount > 0 {
-                    Text("\(selectedCount) selected")
-                        .foregroundColor(.secondary)
+                
+                Divider()
+                
+                Button("Select All") {
+                    selectedTypes = ArtworkType(allTypes)
+                }
+                
+                Button("Clear All") {
+                    selectedTypes = []
+                }
+                
+                Button("Reset to Defaults") {
+                    selectedTypes = .defaults
+                }
+            } label: {
+                HStack {
+                    Text("Artwork Types")
+                    Image(systemName: "chevron.up.chevron.down")
+                    Spacer()
+                    // Show count of selected types using our helper
+                    if selectedCount > 0 {
+                        Text("\(selectedCount) selected")
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
+        } else {
+            // Fallback on earlier versions
         }
     }
 }

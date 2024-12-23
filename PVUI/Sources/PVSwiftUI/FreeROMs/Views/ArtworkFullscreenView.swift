@@ -28,6 +28,7 @@ struct ArtworkFullscreenView: View {
                 }
             }
         }
+#if !os(tvOS)
         .gesture(
             DragGesture()
                 .onEnded { gesture in
@@ -36,6 +37,7 @@ struct ArtworkFullscreenView: View {
                     }
                 }
         )
+#endif
         .onTapGesture {
             dismiss()
         }

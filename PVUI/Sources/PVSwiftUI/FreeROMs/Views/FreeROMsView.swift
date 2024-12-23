@@ -108,7 +108,9 @@ public struct FreeROMsView: View {
                                 }
                                 .contentShape(Rectangle())
                                 .onTapGesture {
+#if !os(tvOS)
                                     Haptics.impact(style: .rigid)
+                                    #endif
                                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                         if expandedSystems.contains(system.id) {
                                             expandedSystems.remove(system.id)
@@ -217,8 +219,9 @@ public struct FreeROMsView: View {
     }
 
     private func downloadAllROMs(for system: (id: String, name: String, roms: [ROM])) {
+#if !os(tvOS)
         Haptics.notification(type: .success)
-
+        #endif
         // Queue all ROMs for download
         for rom in system.roms {
             guard let url = URL(string: "https://data.provenance-emu.com/ROMs/\(system.id)/\(rom.file)") else {
@@ -259,7 +262,9 @@ struct ROMRowView: View {
                     if let coverPath = artwork.cover,
                        let coverURL = URL(string: "https://data.provenance-emu.com/ROMs/\(systemId)/\(coverPath)") {
                         ArtworkThumbnail(url: coverURL) {
+#if !os(tvOS)
                             Haptics.impact(style: .light)
+                            #endif
                             selectedArtwork = coverURL
                         }
                         .transition(.scale.combined(with: .opacity))
@@ -268,7 +273,9 @@ struct ROMRowView: View {
                     if let screenshotPath = artwork.screenshot,
                        let screenshotURL = URL(string: "https://data.provenance-emu.com/ROMs/\(systemId)/\(screenshotPath)") {
                         ArtworkThumbnail(url: screenshotURL) {
+#if !os(tvOS)
                             Haptics.impact(style: .light)
+                            #endif
                             selectedArtwork = screenshotURL
                         }
                         .transition(.scale.combined(with: .opacity))
@@ -329,7 +336,9 @@ struct DownloadButton: View {
                         }
                 case .failed(let error):
                     DownloadErrorView(error: error) {
+#if !os(tvOS)
                         Haptics.notification(type: .warning)
+                        #endif
                         startDownload()
                     }
                 }
@@ -348,7 +357,9 @@ struct DownloadButton: View {
             downloadManager.setError(.invalidURL, for: rom.id)
             return
         }
+#if !os(tvOS)
         Haptics.notification(type: .success)
+        #endif
         downloadManager.download(rom: rom, from: url) { _ in }
     }
 }
