@@ -108,7 +108,7 @@
 //#define HAVE_IOS_TOUCHMOUSE 0
 #undef HAVE_IOS_TOUCHMOUSE
 #define HAVE_COCOATOUCH 1
-#define TARGET_OS_IOS 1
+//#define TARGET_OS_IOS 1
 #define TARGET_OS_TVOS 1
 #else
 #define HAVE_IOS_TOUCHMOUSE 1
@@ -160,7 +160,9 @@
 
 #if TARGET_OS_IOS
 @property(readwrite) BOOL shouldLockCurrentInterfaceOrientation;
+#if !TARGET_OS_TV
 @property(readwrite) UIInterfaceOrientation lockInterfaceOrientation;
+#endif
 #endif
 
 @property(nonatomic,readwrite) CADisplayLink *displayLink;

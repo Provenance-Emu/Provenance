@@ -267,6 +267,8 @@
 		<key>UIImageName</key>
 		<string>LaunchImage.png</string>
 	</dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreenTV.storyboard</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>

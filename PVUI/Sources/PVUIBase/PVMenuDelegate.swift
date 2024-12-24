@@ -34,7 +34,7 @@ extension PVMenuDelegate where Self: WebServerActivatorController & WebServerAct
         UIApplication.shared.open(url, options: [:]) { completed in
             ILOG("Completed: \(completed ? "Yes":"No")")
         }
-#elseif canImport(SafariServices)
+#elseif canImport(SafariServices) && !os(tvOS)
         let config = SFSafariViewController.Configuration()
         config.entersReaderIfAvailable = false
         let safariVC = SFSafariViewController(url: url, configuration: config)
