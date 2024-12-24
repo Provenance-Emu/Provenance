@@ -10,6 +10,9 @@ import SwiftUI
 #if canImport(PVWebServer)
 import PVWebServer
 #endif
+#if canImport(SafariServices)
+import SafariServices
+#endif
 
 public protocol PVMenuDelegate: AnyObject {
     func didTapImports()
@@ -22,7 +25,14 @@ public protocol PVMenuDelegate: AnyObject {
 }
 
 #if canImport(PVWebServer)
-extension PVMenuDelegate where Self: WebServerActivatorController & WebServerActivatorControllerRootClass {
+
+#if os(tvOS)
+public typealias WebServerDelegateViewController = WebServerActivatorController & WebServerActivatorControllerRootClass
+#else
+public typealias WebServerDelegateViewController = WebServerActivatorController & SFSafariViewControllerDelegate & UIViewController
+#endif
+
+extension PVMenuDelegate where Self: WebServerDelegateViewController {
     
     public func showServer() {
         guard let ipURL: String = PVWebServer.shared.urlString else {
@@ -59,29 +69,5 @@ extension PVMenuDelegate where Self: WebServerActivatorController & WebServerAct
         alert.preferredAction = alert.actions.last
         present(alert, animated: true) { () -> Void in }
     }
-    
-    
-    public func startWebServer() {
-        // start web transfer service
-        if PVWebServer.shared.startServers() {
-            // show alert view
-            showServerActiveAlert(sender: self.view, barButtonItem: navigationItem.rightBarButtonItem)
-        } else {
-#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
-            let message = "Check your network connection or settings and free up ports: 8080, 8081."
-#else
-            let message = "Check your network connection or settings and free up ports: 80, 81."
-#endif
-            let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
-            alert.preferredContentSize = CGSize(width: 300, height: 150)
-            alert.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
-            alert.popoverPresentationController?.sourceView = self.view
-            alert.popoverPresentationController?.sourceRect = self.view?.bounds ?? UIScreen.main.bounds
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
-            }))
-            present(alert, animated: true) { () -> Void in }
-        }
-    }
-
 }
 #endif

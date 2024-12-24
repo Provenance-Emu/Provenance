@@ -23,9 +23,10 @@ struct ProvenanceApp: App {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
 
-                    // Initialize the settings factory
+                    // Initialize the settings factory and import presenter
                     #if os(tvOS)
                     appState.settingsFactory = SwiftUISettingsViewControllerFactory()
+                    appState.importOptionsPresenter = SwiftUIImportOptionsPresenter()
                     #endif
 
             #if canImport(FreemiumKit)

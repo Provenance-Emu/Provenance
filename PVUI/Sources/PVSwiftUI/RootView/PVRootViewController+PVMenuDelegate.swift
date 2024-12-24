@@ -152,6 +152,30 @@ extension PVRootViewController: PVMenuDelegate {
     public func didTapCollection(with collection: Int) {
         /* TODO: collections */
     }
+    
+#if canImport(PVWebServer)
+    func startWebServer() {
+        // start web transfer service
+        if PVWebServer.shared.startServers() {
+            // show alert view
+            showServerActiveAlert(sender: self.view, barButtonItem: navigationItem.rightBarButtonItem)
+        } else {
+#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
+            let message = "Check your network connection or settings and free up ports: 8080, 8081."
+#else
+            let message = "Check your network connection or settings and free up ports: 80, 81."
+#endif
+            let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+            alert.popoverPresentationController?.sourceView = self.view
+            alert.popoverPresentationController?.sourceRect = self.view?.bounds ?? UIScreen.main.bounds
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+            }))
+            present(alert, animated: true) { () -> Void in }
+        }
+    }
+#endif
 }
 
 #if !os(tvOS)
