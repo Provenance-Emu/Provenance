@@ -127,7 +127,9 @@ public final class DirectoryWatcher: ObservableObject {
         self.watcherManager = FileWatcherManager(label: "org.provenance-emu.provenance.fileWatcherManager")
         ILOG("DirectoryWatcher initialized with directory: \(directory.path)")
         createDirectoryIfNeeded()
-        processExistingArchives()
+        Task {
+            processExistingArchives()
+        }
     }
 
     /// Start monitoring the directory for changes
@@ -349,7 +351,7 @@ fileprivate extension DirectoryWatcher {
         Task.detached {
             do {
                 let contents = try FileManager.default.contentsOfDirectory(at: self.watchedDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
-                ILOG("Found \(contents.count) items in directory")
+                ILOG("Found \(contents.count) items in directory: \(self.watchedDirectory)")
                 for file in contents where Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) {
                     ILOG("Processing existing archive: \(file.lastPathComponent)")
                     try await self.extractArchive(at: file)
