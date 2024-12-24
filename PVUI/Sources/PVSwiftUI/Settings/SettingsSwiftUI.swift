@@ -57,11 +57,11 @@ public struct PVSettingsView: View {
                 CollapsibleSection(title: "Saves") {
                     SavesSection()
                 }
-#if !os(tvOS)
+
                 CollapsibleSection(title: "Audio") {
                     AudioSection()
                 }
-#endif
+
                 CollapsibleSection(title: "Video") {
                     VideoSection()
                 }
@@ -84,6 +84,7 @@ public struct PVSettingsView: View {
                     AdvancedSection()
                 }
 
+                #if !os(tvOS)
                 CollapsibleSection(title: "Social Links") {
                     SocialLinksSection()
                 }
@@ -91,7 +92,8 @@ public struct PVSettingsView: View {
                 CollapsibleSection(title: "Documentation") {
                     DocumentationSection()
                 }
-
+                #endif
+                
                 CollapsibleSection(title: "Build") {
                     BuildSection(viewModel: viewModel)
                         .environmentObject(viewModel)
@@ -103,10 +105,12 @@ public struct PVSettingsView: View {
             }
             .listStyle(GroupedListStyle())
             .navigationTitle("Settings")
+            #if !os(tvOS)
             .navigationBarItems(
                 leading: Button("Done") { dismissAction() },  // Use dismissAction here
                 trailing: Button("Help") { viewModel.showHelp() }
             )
+            #endif
         }
         .onAppear {
             viewModel.setupConflictsObserver()
@@ -193,7 +197,7 @@ private struct AppSection: View {
                             icon: .sfSymbol("lock.fill"))
             }
 
-
+            #if !os(tvOS)
             /// App icon selection section
             PaidFeatureView {
                 NavigationLink(destination: AppIconSelectorView()) {
@@ -226,6 +230,7 @@ private struct AppSection: View {
                     )
                 }
             }
+            #endif
         }
     }
 }
@@ -418,13 +423,14 @@ private struct ExtraInfoSection: View {
     }
 }
 
-#if !os(tvOS)
 private struct AudioSection: View {
+    #if !os(tvOS)
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
-
+    #endif
     var body: some View {
         Section(header: Text("Audio")) {
+            #if !os(tvOS)
             ThemedToggle(isOn: $volumeHUD) {
                 SettingsRow(title: "Volume HUD",
                             subtitle: "Show volume indicator when changing volume.",
@@ -443,7 +449,7 @@ private struct AudioSection: View {
             Text("System-wide volume level for games.")
                 .font(.caption)
                 .foregroundColor(.secondary)
-
+            #endif
             // Add the new navigation link wrapped in PaidFeatureView
             PaidFeatureView {
                 NavigationLink(destination: AudioEngineSettingsView()) {
@@ -459,7 +465,6 @@ private struct AudioSection: View {
         }
     }
 }
-#endif
 
 private struct VideoSection: View {
     @Default(.multiThreadedGL) var multiThreadedGL

@@ -32,12 +32,14 @@ extension CocoaView {
 
 extension CocoaView: HelperBarActionDelegate {
 	func keyboardButtonTapped() {
+        #if !os(tvOS)
 		toggleCustomKeyboard()
 	        if isKeyboardEnabled {
 	            NotificationCenter.default.post(name: Notification.Name("HideTouchControls"), object: nil)
 	        } else {
 	            NotificationCenter.default.post(name: Notification.Name("ShowTouchControls"), object: nil)
 	        }
+        #endif
 	}
 
 	func mouseButtonTapped() {
@@ -55,7 +57,11 @@ extension CocoaView: HelperBarActionDelegate {
 	}
 
 	var isKeyboardEnabled: Bool {
+        #if !os(tvOS)
 		!keyboardController.view.isHidden
+        #else
+        return false
+        #endif
 	}
 
 	var isMouseEnabled: Bool {
@@ -455,6 +461,7 @@ extension CocoaView {
 	}
 
 	@objc public func setupEmulatorKeyboard() {
+        #if !os(tvOS)
 		keyboardController = EmulatorKeyboardController(leftKeyboardModel: leftKeyboardModel, rightKeyboardModel: rightKeyboardModel)
 		keyboardController.leftKeyboardModel.delegate = self;
 		keyboardController.rightKeyboardModel.delegate = self;
@@ -472,9 +479,11 @@ extension CocoaView {
 		keyboardController.rightKeyboardModel.modifierDelegate = self
 		keyboardController.view.isHidden = true
 		keyboardModifierState = 0
+        #endif
 	}
 }
 
+#if !os(tvOS)
 extension CocoaView: EmulatorKeyboardKeyPressedDelegate {
 	func keyUp(_ key: KeyCoded) {
 		print("keyUp: code=\(key.keyCode) keyboardModifierState = \(keyboardModifierState)")
@@ -591,7 +600,7 @@ extension CocoaView: EmulatorKeyboardModifierPressedDelegate {
 		return false
 	}
 }
-
+#endif
 
 class HelperBarViewController: UIViewController {
 	var viewModel = HelperBarViewModel()

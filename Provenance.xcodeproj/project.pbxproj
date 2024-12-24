@@ -145,7 +145,6 @@
 		939A43092A35ADE2001AFF6B /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
 		939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93A728632AAF073B0052B279 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93A728622AAF073B0052B279 /* PVLogging */; };
-		93A728642AAF073B0052B279 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 93A728622AAF073B0052B279 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; };
 		93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B300593D2C794D6B003010F5 /* Provenance Mini Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B300593C2C794D6B003010F5 /* Provenance Mini Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -189,8 +188,8 @@
 		B318E28B2CAB512F00D0E599 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2842CAB512F00D0E599 /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E28C2CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2852CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework */; };
 		B318E28D2CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2852CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B318E28F2CAB51EE00D0E599 /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E28E2CAB51EE00D0E599 /* PVEmuThree.framework */; };
-		B318E2902CAB51EE00D0E599 /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E28E2CAB51EE00D0E599 /* PVEmuThree.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B318E28F2CAB51EE00D0E599 /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E28E2CAB51EE00D0E599 /* PVEmuThree.framework */; platformFilters = (ios, maccatalyst, ); };
+		B318E2902CAB51EE00D0E599 /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E28E2CAB51EE00D0E599 /* PVEmuThree.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E2952CAB571100D0E599 /* PVBliss-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B318E2942CAB571100D0E599 /* PVBliss-Dynamic */; };
 		B318E2962CAB571100D0E599 /* PVBliss-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B318E2942CAB571100D0E599 /* PVBliss-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B318E29A2CAB586800D0E599 /* snes9x.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2992CAB586800D0E599 /* snes9x.framework */; };
@@ -298,59 +297,30 @@
 		B341FD152BE61EC100718929 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */; };
 		B341FD2D2BE61EC100718929 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B341FD932BE61EC100718929 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FD942BE61EC100718929 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FD952BE61EC100718929 /* PVPicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FD962BE61EC100718929 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FD972BE61EC100718929 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FD982BE61EC100718929 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FD992BE61EC100718929 /* PVCrabEmu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F103276B6BBD003AE510 /* PVCrabEmu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FD9A2BE61EC100718929 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B341FCC62BE61EC100718929 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B341FD9B2BE61EC100718929 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD9C2BE61EC100718929 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FD9D2BE61EC100718929 /* PVGB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FD9E2BE61EC100718929 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD9F2BE61EC100718929 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FDA02BE61EC100718929 /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9027DCB2CA00E83180 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FDA12BE61EC100718929 /* PVProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE24293F34740050BDB6 /* PVProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FDA22BE61EC100718929 /* PVFreeIntv.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FDA32BE61EC100718929 /* PVVirtualJaguar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9127DCB2CA00E83180 /* PVVirtualJaguar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FDA42BE61EC100718929 /* PVStella.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FDA52BE61EC100718929 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FDA62BE61EC100718929 /* PVGBA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FDA72BE61EC100718929 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FDA82BE61EC100718929 /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FDA92BE61EC100718929 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FDAE2BE61EC100718929 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
 		B341FDB02BE61EC100718929 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		B341FDB12BE61EC100718929 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B341FDB22BE61EC100718929 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
 		B341FDB32BE61EC100718929 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
-		B341FDB42BE61EC100718929 /* PVVirtualJaguar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9127DCB2CA00E83180 /* PVVirtualJaguar.framework */; };
 		B341FDB52BE61EC100718929 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		B341FDB62BE61EC100718929 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
 		B341FDB72BE61EC100718929 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		B341FDB82BE61EC100718929 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; };
 		B341FDB92BE61EC100718929 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
-		B341FDBA2BE61EC100718929 /* PVCrabEmu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F103276B6BBD003AE510 /* PVCrabEmu.framework */; };
 		B341FDBB2BE61EC100718929 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
 		B341FDBC2BE61EC100718929 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
 		B341FDBD2BE61EC100718929 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */; };
 		B341FDBE2BE61EC100718929 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; };
-		B341FDBF2BE61EC100718929 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
 		B341FDC02BE61EC100718929 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DB17C8D60C0019F6D2 /* Security.framework */; };
-		B341FDC12BE61EC100718929 /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9027DCB2CA00E83180 /* PVTGBDual.framework */; };
-		B341FDC22BE61EC100718929 /* PVBliss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; };
 		B341FDC32BE61EC100718929 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; };
-		B341FDC42BE61EC100718929 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; };
-		B341FDC52BE61EC100718929 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B341FDC62BE61EC100718929 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
 		B341FDC72BE61EC100718929 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D517C8D5450019F6D2 /* CoreData.framework */; };
-		B341FDC82BE61EC100718929 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
-		B341FDC92BE61EC100718929 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; };
 		B341FDCA2BE61EC100718929 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
-		B341FDCB2BE61EC100718929 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
-		B341FDCC2BE61EC100718929 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
-		B341FDCD2BE61EC100718929 /* PVProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE24293F34740050BDB6 /* PVProSystem.framework */; };
 		B341FDCE2BE61EC100718929 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
 		B341FDCF2BE61EC100718929 /* PVFreeIntv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; };
 		B341FDD02BE61EC100718929 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B341FCC42BE61EC100718929 /* Reachability */; };
@@ -361,10 +331,8 @@
 		B341FDD52BE61EC100718929 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
 		B341FDD62BE61EC100718929 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		B341FDD82BE61EC100718929 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
-		B341FDD92BE61EC100718929 /* PVPicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */; };
 		B341FDDA2BE61EC100718929 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B341FCC22BE61EC100718929 /* Introspect */; };
 		B341FDDB2BE61EC100718929 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B341FCC62BE61EC100718929 /* PVLogging */; };
-		B341FDDC2BE61EC100718929 /* PVGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; };
 		B341FDDE2BE61EC100718929 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		B341FDDF2BE61EC100718929 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B341FDE42BE61EC100718929 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
@@ -428,6 +396,42 @@
 		B34969582C4E64AD00D37F79 /* PVThemes in Frameworks */ = {isa = PBXBuildFile; productRef = B34969572C4E64AD00D37F79 /* PVThemes */; };
 		B34A20152C62F96100E34059 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B34A20142C62F96100E34059 /* PVPlists */; };
 		B34E4F4A2C11796B001559E8 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B34E4F492C11796B001559E8 /* PVLogging */; };
+		B35197C22D1A5A4E00D2B413 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
+		B35197C32D1A5A4E00D2B413 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B35197C82D1A5ABA00D2B413 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B35197C72D1A5ABA00D2B413 /* RealmSwift */; };
+		B35197C92D1A5ABA00D2B413 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197C72D1A5ABA00D2B413 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197CB2D1A5AFB00D2B413 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B35197CA2D1A5AFB00D2B413 /* RxDataSources */; };
+		B35197CD2D1A5B2000D2B413 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B35197CC2D1A5B2000D2B413 /* ZipArchive */; };
+		B35197CF2D1A5B4F00D2B413 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B35197CE2D1A5B4F00D2B413 /* MBProgressHUD */; };
+		B35197D12D1A5B5E00D2B413 /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B35197D02D1A5B5E00D2B413 /* PVUI */; };
+		B35197D32D1A5B6400D2B413 /* PVWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = B35197D22D1A5B6400D2B413 /* PVWebServer */; };
+		B35197D72D1A5BF800D2B413 /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197D62D1A5BF800D2B413 /* PVVirtualJaguar-Dynamic */; };
+		B35197D82D1A5BF800D2B413 /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197D62D1A5BF800D2B413 /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197DA2D1A5C2500D2B413 /* PVCrabEmu-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197D92D1A5C2500D2B413 /* PVCrabEmu-Dynamic */; };
+		B35197DB2D1A5C2500D2B413 /* PVCrabEmu-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197D92D1A5C2500D2B413 /* PVCrabEmu-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197DD2D1A5C6A00D2B413 /* PVPokeMini-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197DC2D1A5C6A00D2B413 /* PVPokeMini-Dynamic */; };
+		B35197DE2D1A5C6A00D2B413 /* PVPokeMini-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197DC2D1A5C6A00D2B413 /* PVPokeMini-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197E02D1A5C6F00D2B413 /* PVProSystem-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197DF2D1A5C6F00D2B413 /* PVProSystem-Dynamic */; };
+		B35197E12D1A5C6F00D2B413 /* PVProSystem-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197DF2D1A5C6F00D2B413 /* PVProSystem-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197E32D1A5C7C00D2B413 /* PVPicoDrive-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197E22D1A5C7C00D2B413 /* PVPicoDrive-Dynamic */; };
+		B35197E42D1A5C7C00D2B413 /* PVPicoDrive-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197E22D1A5C7C00D2B413 /* PVPicoDrive-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197E62D1A5C9200D2B413 /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197E52D1A5C9200D2B413 /* PVTGBDual-Dynamic */; };
+		B35197E72D1A5C9200D2B413 /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197E52D1A5C9200D2B413 /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197E92D1A5CC000D2B413 /* PVBliss-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197E82D1A5CC000D2B413 /* PVBliss-Dynamic */; };
+		B35197EA2D1A5CC000D2B413 /* PVBliss-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197E82D1A5CC000D2B413 /* PVBliss-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197EC2D1A5D4100D2B413 /* PVStella-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197EB2D1A5D4100D2B413 /* PVStella-Dynamic */; };
+		B35197ED2D1A5D4100D2B413 /* PVStella-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197EB2D1A5D4100D2B413 /* PVStella-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197EF2D1A5DD700D2B413 /* PVAtari800-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197EE2D1A5DD700D2B413 /* PVAtari800-Dynamic */; };
+		B35197F02D1A5DD700D2B413 /* PVAtari800-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197EE2D1A5DD700D2B413 /* PVAtari800-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197F22D1A5E0B00D2B413 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B35197F12D1A5E0B00D2B413 /* PVLibrary */; };
+		B35197F42D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197F32D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic */; };
+		B35197F52D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197F32D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197F72D1A5E7600D2B413 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B35197F62D1A5E7600D2B413 /* PVSupport */; };
+		B35197F92D1A5ED600D2B413 /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35197F82D1A5ED600D2B413 /* PVCoremGBA-Dynamic */; };
+		B35197FA2D1A5ED600D2B413 /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35197F82D1A5ED600D2B413 /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B35197FC2D1A5EF100D2B413 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35197FB2D1A5EF100D2B413 /* PVGenesis.framework */; };
+		B35197FD2D1A5EF100D2B413 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B35197FB2D1A5EF100D2B413 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B35197FF2D1A5F5300D2B413 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B35197FE2D1A5F5300D2B413 /* Defaults */; };
 		B351E7CE2CBE072D0000E087 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); };
 		B351E7CF2CBE072D0000E087 /* libavformat.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B351E7D02CBE072D0000E087 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; platformFilters = (ios, maccatalyst, ); };
@@ -543,12 +547,14 @@
 		B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF82C6C6D1A00EBD1A8 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
+		B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
+		B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B36A8D442CCD5480002357DD /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D432CCD5480002357DD /* Defaults */; };
 		B36A8D462CCD548E002357DD /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D452CCD548E002357DD /* MBProgressHUD */; };
 		B36A8D4A2CCD54C7002357DD /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D492CCD54C7002357DD /* PVUI */; };
 		B36A8D4C2CCD54CE002357DD /* PVThemes in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D4B2CCD54CE002357DD /* PVThemes */; };
 		B36A8D4E2CCD54E0002357DD /* PVWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D4D2CCD54E0002357DD /* PVWebServer */; };
-		B36A8D502CCD5518002357DD /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D4F2CCD5518002357DD /* PVJIT */; };
+		B36A8D502CCD5518002357DD /* PVJIT in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B36A8D4F2CCD5518002357DD /* PVJIT */; };
 		B36B852F29599A6000FDEA29 /* PVGearcoleco.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; };
 		B36B853029599A6000FDEA29 /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36B853529599A9600FDEA29 /* PVOpera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3231BEE28966661003CC116 /* PVOpera.framework */; };
@@ -572,8 +578,8 @@
 		B37321A72C900B1E00CF59EF /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; };
 		B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
-		B377EBE52CB2B34C00E9B750 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; };
-		B377EBE62CB2B34C00E9B750 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B377EBE52CB2B34C00E9B750 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; platformFilters = (ios, maccatalyst, ); };
+		B377EBE62CB2B34C00E9B750 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377ECA82CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */; };
 		B377ECA92CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377ECC92CB3533C00E9B750 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; };
@@ -597,16 +603,16 @@
 		B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B38FB4A12CBEF57B006786C6 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */; };
 		B38FB4A22CBEF57C006786C6 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4A82CBEF6B0006786C6 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; };
-		B38FB4A92CBEF6B0006786C6 /* libavcodec.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4AA2CBEF6B0006786C6 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; };
-		B38FB4AB2CBEF6B0006786C6 /* libavformat.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4AC2CBEF6B0006786C6 /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; };
-		B38FB4AD2CBEF6B0006786C6 /* libavutil.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4AE2CBEF6B1006786C6 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; };
-		B38FB4AF2CBEF6B1006786C6 /* libswresample.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4B02CBEF6B1006786C6 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; };
-		B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B38FB4A82CBEF6B0006786C6 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4A92CBEF6B0006786C6 /* libavcodec.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B38FB4AA2CBEF6B0006786C6 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4AB2CBEF6B0006786C6 /* libavformat.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B38FB4AC2CBEF6B0006786C6 /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4AD2CBEF6B0006786C6 /* libavutil.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B38FB4AE2CBEF6B1006786C6 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4AF2CBEF6B1006786C6 /* libswresample.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B38FB4B02CBEF6B1006786C6 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38FB4B22CBEF961006786C6 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B392B3E22CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B392B3E12CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic */; };
@@ -641,7 +647,7 @@
 		B394CDC12BDEE53A006B63E8 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B394CDCC2BDEE53A006B63E8 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B394CDEA2BDF7018006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
-		B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
+		B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B394CDEC2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
 		B3952F562C697A02000B0308 /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B3952F552C697A02000B0308 /* PVUI */; };
 		B3952F582C698F54000B0308 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3952F572C698F54000B0308 /* Defaults */; };
@@ -788,8 +794,8 @@
 		B3E2AA312CB6346900E2636D /* PVOpera.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2F2CB6346900E2636D /* PVOpera.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA382CB635BB00E2636D /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA372CB635BB00E2636D /* PVGME.framework */; };
 		B3E2AA392CB635BB00E2636D /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA372CB635BB00E2636D /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E2AA4E2CB638F400E2636D /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA4D2CB638F400E2636D /* PVDesmume2015.framework */; };
-		B3E2AA4F2CB638F400E2636D /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA4D2CB638F400E2636D /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E2AA4E2CB638F400E2636D /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA4D2CB638F400E2636D /* PVDesmume2015.framework */; platformFilters = (ios, maccatalyst, ); };
+		B3E2AA4F2CB638F400E2636D /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA4D2CB638F400E2636D /* PVDesmume2015.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA512CB63A6200E2636D /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA502CB63A6200E2636D /* PVBeetlePSX.framework */; };
 		B3E2AA522CB63A6200E2636D /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA502CB63A6200E2636D /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA542CB63A7B00E2636D /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA532CB63A7B00E2636D /* PVBeetlePSX.framework */; };
@@ -818,7 +824,7 @@
 		B3F7E2F7297736BE00362B92 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */; };
 		B3F7E30C297736BE00362B92 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
 		B3F7E311297736BE00362B92 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
-		B3F7E378297736BE00362B92 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; };
+		B3F7E378297736BE00362B92 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E37A297736BE00362B92 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		B3F7E37D297736BE00362B92 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B3F7E37E297736BE00362B92 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
@@ -1243,7 +1249,6 @@
 				B3FAC985292B475E005E8B11 /* PVAtari800.framework in Embed Frameworks */,
 				B3FC97372CB8B6C400C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
 				B3FAC9AD292B477E005E8B11 /* PVOpera.framework in Embed Frameworks */,
-				93A728642AAF073B0052B279 /* PVLogging in Embed Frameworks */,
 				B3FAC9AB292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3FAC9A5292B4778005E8B11 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3FAC999292B476C005E8B11 /* PVGME.framework in Embed Frameworks */,
@@ -1372,29 +1377,27 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B341FD932BE61EC100718929 /* PVFCEU.framework in Embed Frameworks */,
-				B341FD942BE61EC100718929 /* PVMednafen.framework in Embed Frameworks */,
 				B3FC973A2CB8B6CC00C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
-				B341FD952BE61EC100718929 /* PVPicoDrive.framework in Embed Frameworks */,
+				B35197FA2D1A5ED600D2B413 /* PVCoremGBA-Dynamic in Embed Frameworks */,
+				B35197C92D1A5ABA00D2B413 /* RealmSwift in Embed Frameworks */,
+				B35197E42D1A5C7C00D2B413 /* PVPicoDrive-Dynamic in Embed Frameworks */,
 				B3A186922CBCBB2C00BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */,
-				B341FD962BE61EC100718929 /* PVAtari800.framework in Embed Frameworks */,
-				B341FD972BE61EC100718929 /* PVSupport.framework in Embed Frameworks */,
-				B341FD982BE61EC100718929 /* PVLibrary.framework in Embed Frameworks */,
-				B341FD992BE61EC100718929 /* PVCrabEmu.framework in Embed Frameworks */,
-				B341FD9A2BE61EC100718929 /* PVLogging in Embed Frameworks */,
-				B341FD9B2BE61EC100718929 /* PVGenesis.framework in Embed Frameworks */,
+				B35197E12D1A5C6F00D2B413 /* PVProSystem-Dynamic in Embed Frameworks */,
 				B341FD9C2BE61EC100718929 /* PVRSPCXD4.framework in Embed Frameworks */,
-				B341FD9D2BE61EC100718929 /* PVGB.framework in Embed Frameworks */,
-				B341FD9E2BE61EC100718929 /* PVPokeMini.framework in Embed Frameworks */,
+				B35197D82D1A5BF800D2B413 /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
+				B35197DE2D1A5C6A00D2B413 /* PVPokeMini-Dynamic in Embed Frameworks */,
+				B35197C32D1A5A4E00D2B413 /* PVRetroArch.framework in Embed Frameworks */,
 				B341FD9F2BE61EC100718929 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
-				B341FDA02BE61EC100718929 /* PVTGBDual.framework in Embed Frameworks */,
-				B341FDA12BE61EC100718929 /* PVProSystem.framework in Embed Frameworks */,
+				B35197F52D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic in Embed Frameworks */,
 				B341FDA22BE61EC100718929 /* PVFreeIntv.framework in Embed Frameworks */,
-				B341FDA32BE61EC100718929 /* PVVirtualJaguar.framework in Embed Frameworks */,
-				B341FDA42BE61EC100718929 /* PVStella.framework in Embed Frameworks */,
+				B35197EA2D1A5CC000D2B413 /* PVBliss-Dynamic in Embed Frameworks */,
 				B341FDA52BE61EC100718929 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
-				B341FDA62BE61EC100718929 /* PVGBA.framework in Embed Frameworks */,
+				B35197E72D1A5C9200D2B413 /* PVTGBDual-Dynamic in Embed Frameworks */,
+				B35197ED2D1A5D4100D2B413 /* PVStella-Dynamic in Embed Frameworks */,
+				B35197F02D1A5DD700D2B413 /* PVAtari800-Dynamic in Embed Frameworks */,
 				B341FDA72BE61EC100718929 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
-				B341FDA82BE61EC100718929 /* PVBliss.framework in Embed Frameworks */,
+				B35197FD2D1A5EF100D2B413 /* PVGenesis.framework in Embed Frameworks */,
+				B35197DB2D1A5C2500D2B413 /* PVCrabEmu-Dynamic in Embed Frameworks */,
 				B341FDA92BE61EC100718929 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1958,6 +1961,7 @@
 		B347B3972BC4CD80006A3B2D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS17.4.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
 		B35104C32896646800FA401F /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35104C62896648500FA401F /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B35197FB2D1A5EF100D2B413 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B351E7C92CBE072C0000E087 /* libavformat.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavformat.xcframework; path = Cores/emuThree/lib/libavformat.xcframework; sourceTree = "<group>"; };
 		B351E7CA2CBE072C0000E087 /* libswresample.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswresample.xcframework; path = Cores/emuThree/lib/libswresample.xcframework; sourceTree = "<group>"; };
 		B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavcodec.xcframework; path = Cores/emuThree/lib/libavcodec.xcframework; sourceTree = "<group>"; };
@@ -2303,8 +2307,12 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"PVAppDelegate+AppRating.swift",
-				"PVAppDelegate+NitoTV.swift",
 			);
+			platformFiltersByRelativePath = {
+				"PVAppDelegate+NitoTV.swift" = (
+					tvos,
+				);
+			};
 			target = B3F7E295297736BE00362B92 /* Provenance-Lite */;
 		};
 		B39436552CCDEC9F004D5DFB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
@@ -2626,54 +2634,61 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B341FDAE2BE61EC100718929 /* PVGB.framework in Frameworks */,
 				B341FDB02BE61EC100718929 /* Photos.framework in Frameworks */,
 				B341FDB12BE61EC100718929 /* GameController.framework in Frameworks */,
 				B32D45C32CB73101006B76C2 /* PVGambatte in Frameworks */,
 				B341FDB22BE61EC100718929 /* libxml2.dylib in Frameworks */,
 				B341FDB32BE61EC100718929 /* MetalKit.framework in Frameworks */,
-				B341FDB42BE61EC100718929 /* PVVirtualJaguar.framework in Frameworks */,
+				B35197CF2D1A5B4F00D2B413 /* MBProgressHUD in Frameworks */,
 				B341FDB52BE61EC100718929 /* CoreServices.framework in Frameworks */,
+				B35197FC2D1A5EF100D2B413 /* PVGenesis.framework in Frameworks */,
 				B341FDB62BE61EC100718929 /* libz.dylib in Frameworks */,
+				B35197C82D1A5ABA00D2B413 /* RealmSwift in Frameworks */,
+				B35197D32D1A5B6400D2B413 /* PVWebServer in Frameworks */,
+				B35197DA2D1A5C2500D2B413 /* PVCrabEmu-Dynamic in Frameworks */,
+				B35197EC2D1A5D4100D2B413 /* PVStella-Dynamic in Frameworks */,
 				B341FDB72BE61EC100718929 /* libstdc++.dylib in Frameworks */,
+				B35197C22D1A5A4E00D2B413 /* PVRetroArch.framework in Frameworks */,
 				B341FDB82BE61EC100718929 /* PVRSPCXD4.framework in Frameworks */,
 				B3FC97392CB8B6CC00C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
+				B35197E92D1A5CC000D2B413 /* PVBliss-Dynamic in Frameworks */,
 				B341FDB92BE61EC100718929 /* libc++.dylib in Frameworks */,
-				B341FDBA2BE61EC100718929 /* PVCrabEmu.framework in Frameworks */,
 				B341FDBB2BE61EC100718929 /* AVFoundation.framework in Frameworks */,
 				B3A186912CBCBB2C00BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */,
+				B35197D72D1A5BF800D2B413 /* PVVirtualJaguar-Dynamic in Frameworks */,
 				B341FDBC2BE61EC100718929 /* PVMupen64Plus.framework in Frameworks */,
 				B341FDBD2BE61EC100718929 /* CFNetwork.framework in Frameworks */,
 				B341FDBE2BE61EC100718929 /* PVMupen64PlusVideoRice.framework in Frameworks */,
-				B341FDBF2BE61EC100718929 /* PVPokeMini.framework in Frameworks */,
 				B341FDC02BE61EC100718929 /* Security.framework in Frameworks */,
-				B341FDC12BE61EC100718929 /* PVTGBDual.framework in Frameworks */,
-				B341FDC22BE61EC100718929 /* PVBliss.framework in Frameworks */,
+				B35197E02D1A5C6F00D2B413 /* PVProSystem-Dynamic in Frameworks */,
+				B35197E62D1A5C9200D2B413 /* PVTGBDual-Dynamic in Frameworks */,
 				B341FDC32BE61EC100718929 /* PVFCEU.framework in Frameworks */,
-				B341FDC42BE61EC100718929 /* PVStella.framework in Frameworks */,
-				B341FDC52BE61EC100718929 /* PVAtari800.framework in Frameworks */,
 				B341FDC62BE61EC100718929 /* SystemConfiguration.framework in Frameworks */,
 				B341FDC72BE61EC100718929 /* CoreData.framework in Frameworks */,
-				B341FDC82BE61EC100718929 /* PVLibrary.framework in Frameworks */,
-				B341FDC92BE61EC100718929 /* PVMednafen.framework in Frameworks */,
 				B341FDCA2BE61EC100718929 /* AudioToolbox.framework in Frameworks */,
-				B341FDCB2BE61EC100718929 /* PVGenesis.framework in Frameworks */,
-				B341FDCC2BE61EC100718929 /* PVSupport.framework in Frameworks */,
-				B341FDCD2BE61EC100718929 /* PVProSystem.framework in Frameworks */,
+				B35197F72D1A5E7600D2B413 /* PVSupport in Frameworks */,
 				B341FDCE2BE61EC100718929 /* UIKit.framework in Frameworks */,
 				B341FDCF2BE61EC100718929 /* PVFreeIntv.framework in Frameworks */,
 				B341FDD02BE61EC100718929 /* Reachability in Frameworks */,
+				B35197EF2D1A5DD700D2B413 /* PVAtari800-Dynamic in Frameworks */,
 				B341FDD12BE61EC100718929 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B341FDD22BE61EC100718929 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				B35197D12D1A5B5E00D2B413 /* PVUI in Frameworks */,
+				B35197F92D1A5ED600D2B413 /* PVCoremGBA-Dynamic in Frameworks */,
 				B341FDD32BE61EC100718929 /* SteamController in Frameworks */,
 				B341FDD42BE61EC100718929 /* Metal.framework in Frameworks */,
+				B35197DD2D1A5C6A00D2B413 /* PVPokeMini-Dynamic in Frameworks */,
+				B35197F22D1A5E0B00D2B413 /* PVLibrary in Frameworks */,
 				B341FDD52BE61EC100718929 /* OpenGLES.framework in Frameworks */,
 				B341FDD62BE61EC100718929 /* Foundation.framework in Frameworks */,
+				B35197E32D1A5C7C00D2B413 /* PVPicoDrive-Dynamic in Frameworks */,
+				B35197CB2D1A5AFB00D2B413 /* RxDataSources in Frameworks */,
+				B35197FF2D1A5F5300D2B413 /* Defaults in Frameworks */,
 				B341FDD82BE61EC100718929 /* CoreGraphics.framework in Frameworks */,
-				B341FDD92BE61EC100718929 /* PVPicoDrive.framework in Frameworks */,
 				B341FDDA2BE61EC100718929 /* Introspect in Frameworks */,
 				B341FDDB2BE61EC100718929 /* PVLogging in Frameworks */,
-				B341FDDC2BE61EC100718929 /* PVGBA.framework in Frameworks */,
+				B35197CD2D1A5B2000D2B413 /* ZipArchive in Frameworks */,
+				B35197F42D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3174,6 +3189,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B35197FB2D1A5EF100D2B413 /* PVGenesis.framework */,
 				B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */,
 				B32C08EB2D053DD50024A3E2 /* PVEmuThree.framework */,
 				B32C08E12D0534450024A3E2 /* PVMelonDS.framework */,
@@ -4224,6 +4240,26 @@
 				B341FCC62BE61EC100718929 /* PVLogging */,
 				B32D45C22CB73101006B76C2 /* PVGambatte */,
 				B3FC97382CB8B6CC00C6DB31 /* PVVisualBoyAdvance-Dynamic */,
+				B35197C72D1A5ABA00D2B413 /* RealmSwift */,
+				B35197CA2D1A5AFB00D2B413 /* RxDataSources */,
+				B35197CC2D1A5B2000D2B413 /* ZipArchive */,
+				B35197CE2D1A5B4F00D2B413 /* MBProgressHUD */,
+				B35197D02D1A5B5E00D2B413 /* PVUI */,
+				B35197D22D1A5B6400D2B413 /* PVWebServer */,
+				B35197D62D1A5BF800D2B413 /* PVVirtualJaguar-Dynamic */,
+				B35197D92D1A5C2500D2B413 /* PVCrabEmu-Dynamic */,
+				B35197DC2D1A5C6A00D2B413 /* PVPokeMini-Dynamic */,
+				B35197DF2D1A5C6F00D2B413 /* PVProSystem-Dynamic */,
+				B35197E22D1A5C7C00D2B413 /* PVPicoDrive-Dynamic */,
+				B35197E52D1A5C9200D2B413 /* PVTGBDual-Dynamic */,
+				B35197E82D1A5CC000D2B413 /* PVBliss-Dynamic */,
+				B35197EB2D1A5D4100D2B413 /* PVStella-Dynamic */,
+				B35197EE2D1A5DD700D2B413 /* PVAtari800-Dynamic */,
+				B35197F12D1A5E0B00D2B413 /* PVLibrary */,
+				B35197F32D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic */,
+				B35197F62D1A5E7600D2B413 /* PVSupport */,
+				B35197F82D1A5ED600D2B413 /* PVCoremGBA-Dynamic */,
+				B35197FE2D1A5F5300D2B413 /* Defaults */,
 			);
 			productName = Provenance;
 			productReference = B341FE082BE61EC100718929 /* Provenance.app */;
@@ -5123,12 +5159,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				9368551E2A8956220087FE6B /* modules in Resources */,
+				B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */,
 				B3F7E3C5297736BE00362B92 /* InfoPlist.strings in Resources */,
 				B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */,
 				B3F7E3C6297736BE00362B92 /* Strings.strings in Resources */,
 				B3F7E3CD297736BE00362B92 /* Settings.bundle in Resources */,
 				B3A3D0302CCCC62B00589F82 /* TVAssets.xcassets in Resources */,
 				B3F7E3D9297736BE00362B92 /* licenses.html in Resources */,
+				B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */,
 				B3DF8EDD2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B39D8F0A2D0CEC5300577667 /* Assets-Lite.xcassets in Resources */,
 				B3E17E292CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,
@@ -11358,6 +11396,106 @@
 		B34E4F492C11796B001559E8 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B35197C72D1A5ABA00D2B413 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E0CF982C054D3F00F45074 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		B35197CA2D1A5AFB00D2B413 /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B395958D2BF47033004C5AA9 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
+		};
+		B35197CC2D1A5B2000D2B413 /* ZipArchive */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E0CFA02C054F9F00F45074 /* XCRemoteSwiftPackageReference "ZipArchive" */;
+			productName = ZipArchive;
+		};
+		B35197CE2D1A5B4F00D2B413 /* MBProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */;
+			productName = MBProgressHUD;
+		};
+		B35197D02D1A5B5E00D2B413 /* PVUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */;
+			productName = PVUI;
+		};
+		B35197D22D1A5B6400D2B413 /* PVWebServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B30585672C0C14ED00B91D7A /* XCLocalSwiftPackageReference "PVWebServer" */;
+			productName = PVWebServer;
+		};
+		B35197D62D1A5BF800D2B413 /* PVVirtualJaguar-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */;
+			productName = "PVVirtualJaguar-Dynamic";
+		};
+		B35197D92D1A5C2500D2B413 /* PVCrabEmu-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */;
+			productName = "PVCrabEmu-Dynamic";
+		};
+		B35197DC2D1A5C6A00D2B413 /* PVPokeMini-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			productName = "PVPokeMini-Dynamic";
+		};
+		B35197DF2D1A5C6F00D2B413 /* PVProSystem-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */;
+			productName = "PVProSystem-Dynamic";
+		};
+		B35197E22D1A5C7C00D2B413 /* PVPicoDrive-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */;
+			productName = "PVPicoDrive-Dynamic";
+		};
+		B35197E52D1A5C9200D2B413 /* PVTGBDual-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */;
+			productName = "PVTGBDual-Dynamic";
+		};
+		B35197E82D1A5CC000D2B413 /* PVBliss-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Cores/Bliss" */;
+			productName = "PVBliss-Dynamic";
+		};
+		B35197EB2D1A5D4100D2B413 /* PVStella-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			productName = "PVStella-Dynamic";
+		};
+		B35197EE2D1A5DD700D2B413 /* PVAtari800-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			productName = "PVAtari800-Dynamic";
+		};
+		B35197F12D1A5E0B00D2B413 /* PVLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
+			productName = PVLibrary;
+		};
+		B35197F32D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
+			productName = "PVCoreMednafen-Dynamic";
+		};
+		B35197F62D1A5E7600D2B413 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */;
+			productName = PVSupport;
+		};
+		B35197F82D1A5ED600D2B413 /* PVCoremGBA-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
+			productName = "PVCoremGBA-Dynamic";
+		};
+		B35197FE2D1A5F5300D2B413 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
 		};
 		B35573732CC4843600A4BA16 /* MoltenVK */ = {
 			isa = XCSwiftPackageProductDependency;

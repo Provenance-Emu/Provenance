@@ -27,7 +27,9 @@ struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
 
     var body: some SwiftUI.View {
         Button {
+#if !os(tvOS)
             Haptics.impact(style: .light)
+            #endif
             action()
         } label: {
             HStack(spacing: 3) {

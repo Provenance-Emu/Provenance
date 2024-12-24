@@ -31,7 +31,11 @@ struct ContinuesSearchBar: View {
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 10)
+            #if os(tvOS)
+                .fill(currentPalette.settingsHeaderBackground?.swiftUIColor ?? .gray)
+            #else
                 .fill(currentPalette.settingsHeaderBackground?.swiftUIColor ?? Color(.systemGray6))
+            #endif
         )
     }
 }

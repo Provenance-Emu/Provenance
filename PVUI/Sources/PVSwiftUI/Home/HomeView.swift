@@ -262,7 +262,7 @@ struct HomeView: SwiftUI.View {
                     })
 
                 /// Create and configure the view
-                if #available(iOS 16.4, *) {
+                if #available(iOS 16.4, tvOS 16.4, *) {
                     ContinuesMagementView(viewModel: viewModel)
                         .onAppear {
                             /// Set the game ID filter

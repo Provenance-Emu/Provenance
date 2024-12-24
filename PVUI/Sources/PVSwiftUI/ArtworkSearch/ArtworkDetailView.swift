@@ -49,7 +49,9 @@ struct ArtworkDetailView: View {
                     if let artwork = artworks[safe: page] {
                         onPageChange(artwork)
                         preloadAdjacentImages()
+                        #if !os(tvOS)
                         HapticManager.impact(style: .light)
+                        #endif
                     }
                 }
                 .tabViewStyle(.page)
@@ -59,6 +61,7 @@ struct ArtworkDetailView: View {
                     .opacity(1 - (abs(dragOffset.height) / 300.0))
             }
             // Only allow vertical drag gesture for dismissal
+#if !os(tvOS)
             .gesture(
                 DragGesture()
                     .onChanged { value in
@@ -79,12 +82,14 @@ struct ArtworkDetailView: View {
                         }
                     }
             )
+            #endif
             .offset(y: dragOffset.height)
             .animation(.interactiveSpring(), value: isDragging)
         }
         .task {
             await loadInitialImages()
         }
+#if !os(tvOS)
         .gesture(
             DragGesture(minimumDistance: 50)
                 .onEnded { value in
@@ -99,6 +104,7 @@ struct ArtworkDetailView: View {
                     }
                 }
         )
+        #endif
         .onAppear {
             #if os(macOS)
             NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
@@ -297,6 +303,7 @@ struct ZoomableImageView: View {
                     .aspectRatio(contentMode: .fit)
                     .scaleEffect(scale)
                     .offset(offset)
+#if !os(tvOS)
                     .gesture(
                         MagnificationGesture()
                             .onChanged { value in
@@ -306,9 +313,13 @@ struct ZoomableImageView: View {
                             }
                             .onEnded { _ in
                                 lastScale = 1.0
+                                #if !os(tvOS)
                                 HapticManager.impact(style: .light)
+                                #endif
                             }
                     )
+#endif
+#if !os(tvOS)
                     .simultaneousGesture(
                         DragGesture()
                             .onChanged { value in
@@ -320,9 +331,12 @@ struct ZoomableImageView: View {
                             }
                             .onEnded { _ in
                                 lastOffset = offset
+                                #if !os(tvOS)
                                 HapticManager.impact(style: .light)
+                                #endif
                             }
                     )
+#endif
                     .highPriorityGesture(
                         TapGesture(count: 2).onEnded {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -334,7 +348,9 @@ struct ZoomableImageView: View {
                                     scale = 2.0
                                 }
                             }
+#if !os(tvOS)
                             HapticManager.impact(style: .medium)
+                            #endif
                         }
                     )
 

@@ -8,8 +8,10 @@
 import PVSwiftUI
 import SwiftUI
 import PVThemes
+#if !os(tvOS)
 import DateRangePicker
 import OpenDateInterval
+#endif
 
 /// View model for the list controls
 public class ContinuesManagementListControlsViewModel: ObservableObject {
@@ -23,8 +25,10 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
     @Published var currentMonth: Int = Calendar.current.component(.month, from: .now)
     /// Current visible year: Int = Calendar.current.component(.year, from: .now)
     @Published var currentYear: Int = Calendar.current.component(.year, from: .now)
+    #if !os(tvOS)
     /// Date range for filtering
     @Published var dateRange: OpenDateInterval?
+    #endif
     /// Minimum selectable date
     @Published var minimumDate: Date?
     /// Maximum selectable date
@@ -58,7 +62,11 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
     }
 
     var backgroundColor: Color {
+        #if os(tvOS)
+        currentPalette.settingsCellBackground?.swiftUIColor ?? Color.white
+        #else
         currentPalette.settingsCellBackground?.swiftUIColor ?? Color(uiColor: .systemBackground)
+        #endif
     }
 
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -69,12 +77,14 @@ public class ContinuesManagementListControlsViewModel: ObservableObject {
         minimumDate = saveStates.map({ $0.saveDate }).min()
         maximumDate = saveStates.map({ $0.saveDate }).max()
 
+        #if !os(tvOS)
         /// Optionally set initial date range to full range
         dateRange = minimumDate.flatMap { min in
             maximumDate.map { max in
                 OpenDateInterval(start: min, end: max)
             }
         }
+        #endif
     }
 
     public init(
@@ -153,10 +163,12 @@ public struct ContinuesManagementListControlsView: View {
                     Button {
                         showingDatePicker.toggle()
                     } label: {
+                        #if !os(tvOS)
                         Image(systemName: viewModel.dateRange != nil ? "calendar.badge.checkmark" : "calendar")
                             .foregroundStyle(
                                 viewModel.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor
                             )
+                        #endif
                     }
 
                     Divider()
@@ -199,6 +211,7 @@ public struct ContinuesManagementListControlsView: View {
 
                 Spacer()
 
+#if !os(tvOS)
                 /// Date range display
                 if let dateRange = viewModel.dateRange {
                     HStack(spacing: 8) {
@@ -218,6 +231,7 @@ public struct ContinuesManagementListControlsView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+#endif
             }
             .frame(height: viewModel.isEditing ? nil : 4.0)  /// Maintain original height when not editing
         }
@@ -246,6 +260,7 @@ public struct ContinuesManagementListControlsView: View {
             }
         }
         .sheet(isPresented: $showingDatePicker) {
+            #if !os(tvOS)
             NavigationView {
                 DateRangePicker(
                     month: $viewModel.currentMonth,
@@ -264,6 +279,7 @@ public struct ContinuesManagementListControlsView: View {
                     }
                 }
             }
+            #endif
         }
     }
 }

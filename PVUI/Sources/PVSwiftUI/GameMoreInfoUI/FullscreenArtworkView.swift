@@ -50,6 +50,7 @@ struct FullscreenArtworkView: View {
                             axis: (x: 0.0, y: 1.0, z: 0.0)
                         )
                         .animation(.easeInOut(duration: isAnimating ? 0.4 : 0), value: showingFrontImage)
+                    #if !os(tvOS)
                         .gesture(
                             MagnificationGesture()
                                 .onChanged { value in
@@ -86,6 +87,7 @@ struct FullscreenArtworkView: View {
                                     }
                                 }
                         )
+                    #endif
                         .onTapGesture(count: 2) {
                             withAnimation(.spring()) {
                                 if scale > defaultZoom {

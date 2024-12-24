@@ -202,8 +202,8 @@ let package = Package(
                 "AnimatedGradient",
                 "FloatingButton",
                 "ActivityIndicatorView",
-                "SwipeCellSUI",
-                "DateRangePicker"
+                .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
+                .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
             ]
         ),
         

@@ -479,7 +479,7 @@ void cocoa_file_load_with_detect_core(const char *filename);
 
 - (void)draggingExited:(id <NSDraggingInfo>)sender { [self setNeedsDisplay: YES]; }
 
-#elif TARGET_OS_IOS
+#elif TARGET_OS_IOS 
 -(void) showNativeMenu
 {
     dispatch_async(dispatch_get_main_queue(), ^{
