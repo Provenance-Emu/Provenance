@@ -89,6 +89,9 @@ public class AppState: ObservableObject {
     /// Task for observing changes to useUIKit
     private var useUIKitObservationTask: Task<Void, Never>?
 
+    /// Settings factory for creating settings view controllers
+    public var settingsFactory: PVSettingsViewControllerFactory?
+
     /// Initializer
     private init() {
         ILOG("AppState: Initializing")
@@ -97,6 +100,7 @@ public class AppState: ObservableObject {
                 useUIKit = value
             }
         }
+
         ILOG("AppState: Initialization completed")
     }
 

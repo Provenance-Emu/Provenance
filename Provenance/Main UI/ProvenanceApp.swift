@@ -23,6 +23,11 @@ struct ProvenanceApp: App {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
 
+                    // Initialize the settings factory
+                    #if os(tvOS)
+                    appState.settingsFactory = SwiftUISettingsViewControllerFactory()
+                    #endif
+
             #if canImport(FreemiumKit)
                 #if targetEnvironment(simulator) || DEBUG
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
@@ -37,7 +42,7 @@ struct ProvenanceApp: App {
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 appState.startBootupSequence()
-                
+
                 /// Swizzle sendEvent(UIEvent)
                 if !appState.sendEventWasSwizzled {
                     UIApplication.swizzleSendEvent()
@@ -51,7 +56,7 @@ struct ProvenanceApp: App {
 /// Hack to get touches send to RetroArch
 
 extension UIApplication {
-    
+
     /// Swap implipmentations of sendEvent() while
     /// maintaing a reference back to the original
     @objc static func swizzleSendEvent() {
@@ -65,17 +70,17 @@ extension UIApplication {
             method_exchangeImplementations(originalMethod, orginalStoreMethod)
             method_exchangeImplementations(originalMethod, swizzledMethod)
     }
-    
+
     /// Placeholder for storing original selector
     @objc func originalSendEvent(_ event: UIEvent) { }
-    
+
     /// The sendEvent that will be called
     @objc func pv_sendEvent(_ event: UIEvent) {
 //        print("Handling touch event: \(event.type.rawValue ?? -1)")
         if let core = AppState.shared.emulationState.core {
             core.sendEvent(event)
         }
-  
+
         originalSendEvent(event)
     }
 }

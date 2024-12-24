@@ -174,6 +174,21 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 
     var hud: MBProgressHUD!
 
+    // Add property for settings factory
+    private let settingsFactory: PVSettingsViewControllerFactory?
+
+    // Add initializer that takes the factory
+    init(settingsFactory: PVSettingsViewControllerFactory) {
+        self.settingsFactory = settingsFactory
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        // Use a default implementation or inject through AppDelegate
+        self.settingsFactory = AppState.shared.settingsFactory
+        super.init(coder: coder)
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -575,6 +590,11 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 
         // If using a UICollectionView or UITableView
         collectionView.contentInsetAdjustmentBehavior = .never
+
+        #if os(tvOS)
+        settingsBarButtonItem.target = self
+        settingsBarButtonItem.action = #selector(settingsCommand)
+        #endif
     }
 
     func setupObservers() {
@@ -785,6 +805,9 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
             settingsVC.conflictsController = updatesController
         } else if segue.identifier == "SplitSettingsSegue" {
 #if os(tvOS)
+            // Cancel the original segue
+            return
+#else
             let splitVC = segue.destination as! PVTVSplitViewController
             let navVC = splitVC.viewControllers[1] as! UINavigationController
             let settingsVC = navVC.topViewController as! PVSettingsViewController
@@ -1954,6 +1977,24 @@ extension PVGameLibraryViewController {
     func settingsCommand() {
         performSegue(withIdentifier: "SettingsSegue", sender: self)
     }
+
+#elseif os(tvOS)
+    @objc func settingsCommand() {
+        guard let menuDelegate = self as? PVMenuDelegate,
+              let settingsFactory = settingsFactory else {
+            return
+        }
+
+        let settingsVC = settingsFactory.makeSettingsViewController(
+            conflictsController: updatesController,
+            menuDelegate: menuDelegate,
+            dismissAction: { [weak self] in
+                self?.dismiss(animated: true)
+            }
+        )
+        settingsVC.modalPresentationStyle = .fullScreen
+        present(settingsVC, animated: true)
+    }
 #endif
 }
 
@@ -2108,7 +2149,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
         indexPath.section = max(0, min(collectionView!.numberOfSections-1, indexPath.section))
         let rect:CGRect
         if let cv = getNestedCollectionView(indexPath) {
-            collectionView?.scrollToItem(at: IndexPath(item:0, section: indexPath.section), at: [], animated: false)
+            collectionView?.scrollToItem(at: IndexPath(item:0, section:indexPath.section), at: [], animated: false)
             indexPath.item = max(0, min(cv.numberOfItems(inSection:0)-1, indexPath.item))
             let idx = IndexPath(item:indexPath.item, section:0)
             cv.scrollToItem(at:idx, at:[], animated: false)
