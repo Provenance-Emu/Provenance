@@ -1,6 +1,7 @@
 import UIKit
 import PVUIBase
 import SwiftUI
+import UniformTypeIdentifiers
 #if canImport(PVWebServer)
 import PVWebServer
 #endif
