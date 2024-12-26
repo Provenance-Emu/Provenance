@@ -50,8 +50,16 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         }
 
         // Fallback to extension-based lookup
-        let fileExtension = item.url.pathExtension.lowercased()
-        return (PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) ?? [])
-            .compactMap { $0.systemIdentifier }
+        let filename = item.url.lastPathComponent
+        let fileExtension = filename.components(separatedBy: ".").last?.lowercased() ?? ""
+
+        DLOG("GameImporter: Determining systems for file:")
+        DLOG("- Filename: \(filename)")
+        DLOG("- Extracted extension: \(fileExtension)")
+
+        let systems = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) ?? []
+        DLOG("- Found \(systems.count) compatible systems")
+
+        return systems.compactMap { $0.systemIdentifier }
     }
 }

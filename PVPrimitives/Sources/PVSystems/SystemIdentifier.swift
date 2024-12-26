@@ -207,7 +207,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     }
 
     public
-    var offset: UInt64 {
+    var offset: UInt {
         switch self {
         case .SNES: return 16
         case .NES: return 16

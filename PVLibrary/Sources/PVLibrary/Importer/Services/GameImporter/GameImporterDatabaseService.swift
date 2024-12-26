@@ -461,7 +461,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     /// Calculates the MD5 hash for a given game
     @objc
     public func calculateMD5(forGame game: PVGame) -> String? {
-        var offset: UInt64 = 0
+        var offset: UInt = 0
 
         //this seems to be spread in many places, not sure why.  it might be doable to put this in the queue item, but for now, trying to consolidate.
         //I have no history or explanation for why we need the 16 offset for SNES/NES

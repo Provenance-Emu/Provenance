@@ -77,7 +77,7 @@ let package = Package(
         .package(url: "https://github.com/mtgto/Unrar.swift.git",
                     .upToNextMajor(from: "0.3.16")),
     ],
-    
+
     targets: [
         // MARK: ------------ SwiftCloudDrive ------------
         .target(
@@ -210,7 +210,11 @@ let package = Package(
         // MARK: ------------ Tests ------------
         .testTarget(
             name: "PVLibraryTests",
-            dependencies: ["PVLibrary"]
+            dependencies: [
+                "PVLibrary",
+                "PVLookup",
+                "PVPrimitives"
+            ]
         ),
     ],
     swiftLanguageModes: [.v5],
