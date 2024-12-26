@@ -217,9 +217,9 @@ public extension PVFile {
     }}
 
     nonisolated(unsafe)
-        var fileName: String {get {
-            return url.lastPathComponent
-        }}
+    var fileName: String {get {
+        return url.lastPathComponent
+    }}
 
     var fileNameWithoutExtension: String {get {
         return url.deletingPathExtension().lastPathComponent
