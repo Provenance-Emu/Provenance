@@ -9,6 +9,7 @@ import PVRealm
 import Foundation
 import PVLogging
 import PVLookup
+import PVSystems
 import AsyncAlgorithms
 
 public extension RomDatabase {
@@ -125,6 +126,12 @@ public extension RomDatabase {
         var similarName = romPath.deletingPathExtension().lastPathComponent
         similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)
         return (systemIdentifier as NSString).appendingPathComponent(similarName)
+    }
+    
+    static func altName(_ romPath:URL, systemIdentifier:SystemIdentifier) -> String {
+        var similarName = romPath.deletingPathExtension().lastPathComponent
+        similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)
+        return (systemIdentifier.rawValue as NSString).appendingPathComponent(similarName)
     }
 
     static func reloadFileSystemROMCache() {

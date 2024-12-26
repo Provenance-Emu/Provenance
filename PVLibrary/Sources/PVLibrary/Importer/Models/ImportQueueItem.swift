@@ -8,6 +8,7 @@
 import SwiftUI
 import PVPrimitives
 import Perception
+import PVSystems
 
 // Enum to define the possible statuses of each import
 public enum ImportStatus: Int, CustomStringConvertible, CaseIterable {
@@ -68,10 +69,10 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public var fileType: FileType
     @MainActor
     @PerceptionIgnored
-    public var systems: [System] = [] // Can be set to the specific system type
+    public var systems: [SystemIdentifier] = [] // Can be set to the specific system type
     @MainActor
     @PerceptionIgnored
-    public var userChosenSystem: (System)? = nil
+    public var userChosenSystem: (SystemIdentifier)? = nil
     public var destinationUrl: URL?
     public var errorValue: String?
     
@@ -91,7 +92,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     
     @MainActor
     private func updateSystems() {
-        systems = RomDatabase.sharedInstance.all(PVSystem.self).map { $0.asDomain() }
+        systems = RomDatabase.sharedInstance.all(PVSystem.self).map { $0.systemIdentifier }
     }
     
     public init(url: URL, fileType: FileType = .unknown) {
@@ -118,7 +119,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     }
     
     @MainActor
-    public func targetSystem() -> (any SystemProtocol)? {
+    public func targetSystem() -> SystemIdentifier? {
         guard !systems.isEmpty else {
             return nil
         }
@@ -129,10 +130,10 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         
         if let chosenSystem = userChosenSystem {
             
-            var target:(any SystemProtocol)? = nil
+            var target:SystemIdentifier? = nil
             
             for system in systems {
-                if (chosenSystem.identifier == system.identifier) {
+                if chosenSystem == system {
                     target = system
                 }
             }

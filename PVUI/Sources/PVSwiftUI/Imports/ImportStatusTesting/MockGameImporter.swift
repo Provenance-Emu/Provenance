@@ -10,6 +10,7 @@ import PVSwiftUI
 import SwiftUI
 import Combine
 import PVPrimitives
+import PVSystems
 
 public
 class MockGameImporter: GameImporting, ObservableObject {
@@ -33,8 +34,7 @@ class MockGameImporter: GameImporting, ObservableObject {
             self.importQueue = [{
                 let item = ImportQueueItem(url: .init(fileURLWithPath: "test.bin"), fileType: .unknown)
                 item.systems = [
-                    System(identifier: "com.provenance.jaguar", name: "Jaguar", shortName: "Jag", manufacturer: "Atari", screenType: .crt),
-                    System(identifier: "com.provenance.jaguarcd", name: "Jaguar CD", shortName: "Jag", manufacturer: "Atari", screenType: .crt)
+                    .AtariJaguar, .AtariJaguarCD
                 ]
                 return item
             }(),
@@ -59,7 +59,7 @@ class MockGameImporter: GameImporting, ObservableObject {
     }
     
     @MainActor
-    public func addImports(forPaths paths: [URL], targetSystem: System) {
+    public func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) {
         for path in paths {
             let item = ImportQueueItem(url: path, fileType: .unknown)
             item.userChosenSystem = targetSystem // TODO: change when generic system types supported

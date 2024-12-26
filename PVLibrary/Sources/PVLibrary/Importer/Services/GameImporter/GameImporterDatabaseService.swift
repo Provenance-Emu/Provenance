@@ -73,22 +73,22 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.incorrectDestinationURL
         }
 
-        DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.name)")
+        DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.libretroDatabaseName)")
 
         let filename = queueItem.url.lastPathComponent
-        let partialPath = (targetSystem.identifier as NSString).appendingPathComponent(filename)
-        let similarName = RomDatabase.altName(queueItem.url, systemIdentifier: targetSystem.identifier)
+        let partialPath = (targetSystem.rawValue as NSString).appendingPathComponent(filename)
+        let similarName = RomDatabase.altName(queueItem.url, systemIdentifier: targetSystem)
 
         DLOG("Checking game cache for partialPath: \(partialPath) or similarName: \(similarName)")
         let gamesCache = RomDatabase.gamesCache
 
         if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
-           targetSystem.identifier == existingGame.systemIdentifier {
+           targetSystem.rawValue == existingGame.systemIdentifier {
             DLOG("Found existing game in cache, saving relative path")
             await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
         } else {
             DLOG("No existing game found, starting import to database")
-            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem as! System, relatedFiles: nil)
+            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem, relatedFiles: nil)
         }
     }
 
@@ -126,7 +126,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     /// Imports a ROM to the database
     @MainActor
-    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: System, relatedFiles: [URL]?) async throws {
+    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: SystemIdentifier, relatedFiles: [URL]?) async throws {
 
         guard let _ = queueItem.destinationUrl else {
             //how did we get here, throw?
@@ -137,12 +137,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         let filename = queueItem.url.lastPathComponent
         let filenameSansExtension = queueItem.url.deletingPathExtension().lastPathComponent
         let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
-        let destinationDir = (system.identifier as NSString)
-        let partialPath: String = (system.identifier as NSString).appendingPathComponent(filename)
+        let destinationDir = (system.rawValue as NSString)
+        let partialPath: String = (system.rawValue as NSString).appendingPathComponent(filename)
 
         DLOG("Creating game object with title: \(title), partialPath: \(partialPath)")
 
-        guard let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.identifier) else {
+        guard let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.rawValue) else {
             throw GameImporterError.noSystemMatched
         }
 
