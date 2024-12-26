@@ -7,7 +7,8 @@ public extension ROMMetadata {
     /// Only empty or nil values from the first will be replaced by non-empty values from the second
     /// - Parameter other: The secondary ROMMetadata to merge with
     /// - Returns: A new ROMMetadata with merged values
-    func merged(with other: ROMMetadata) -> ROMMetadata {
+    func merged(with other: ROMMetadata?) -> ROMMetadata {
+        guard let other = other else { return self }
         // Helper function to choose the best system ID
         func chooseBestSystemID(_ first: SystemIdentifier, _ second: SystemIdentifier) -> SystemIdentifier {
             if case .Unknown = first {
@@ -37,7 +38,8 @@ public extension ROMMetadata {
             romHashCRC: romHashCRC ?? other.romHashCRC,
             romHashMD5: romHashMD5 ?? other.romHashMD5,
             romID: romID ?? other.romID,
-            isBIOS: isBIOS ?? other.isBIOS
+            isBIOS: isBIOS ?? other.isBIOS,
+            source: [source, other.source].compactMap(\.self).joined(separator: ",")
         )
     }
 }
