@@ -562,16 +562,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     internal func cmpSpecialExt(obj1Extension: String, obj2Extension: String) -> Bool {
         // Ensure .m3u files are sorted first
-        if obj1Extension == "m3u" && obj2Extension != "m3u" {
+        if obj1Extension == Extensions.m3u.rawValue && obj2Extension != Extensions.m3u.rawValue {
             return true
-        } else if obj2Extension == "m3u" && obj1Extension != "m3u" {
+        } else if obj2Extension == Extensions.m3u.rawValue && obj1Extension != Extensions.m3u.rawValue {
             return false
         }
 
         // Ensure .cue files are sorted second (after .m3u)
-        if obj1Extension == "cue" && obj2Extension != "m3u" && obj2Extension != "cue" {
+        if obj1Extension == Extensions.cue.rawValue && obj2Extension != Extensions.m3u.rawValue && obj2Extension != Extensions.cue.rawValue {
             return true
-        } else if obj2Extension == "cue" && obj1Extension != "m3u" && obj1Extension != "cue" {
+        } else if obj2Extension == Extensions.cue.rawValue && obj1Extension != Extensions.m3u.rawValue && obj1Extension != Extensions.cue.rawValue {
             return false
         }
 
