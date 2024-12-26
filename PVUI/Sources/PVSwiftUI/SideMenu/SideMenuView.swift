@@ -260,6 +260,7 @@ SideMenuView: SwiftUI.View {
             }
             .focusableIfAvailable()
             .focused($focusedItem, equals: "addgames")
+            .id("addgames")
         }
     }
 
