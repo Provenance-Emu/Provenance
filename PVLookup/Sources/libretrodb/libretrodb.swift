@@ -276,7 +276,7 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
         DLOG("\nLibretroDB search details:")
         DLOG("- Input systemID: \(String(describing: systemID))")
 
-        return try searchMetadata(usingFilename: filename, systemID: systemID)
+        return try await searchMetadata(usingFilename: filename, systemID: systemID)
     }
 }
 
@@ -611,7 +611,7 @@ public extension libretrodb {
     }
 
     /// Search by MD5 or other key
-    func searchMetadata(usingKey key: String, value: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
+    func searchMetadata(usingKey key: String, value: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         DLOG("\nLibretroDB metadata search:")
         DLOG("- Key: \(key)")
         DLOG("- Value: \(value)")
@@ -667,15 +667,16 @@ public extension libretrodb {
         return metadata.isEmpty ? nil : metadata.map(convertToROMMetadata)
     }
 
-    /// Search by filename
-    func searchMetadata(usingFilename filename: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
-        let systemID = systemID?.libretroDatabaseID
-
+    /// Search by filename - this is the method being called from PVLookup
+    func searchMetadata(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         DLOG("\nLibretroDB search details:")
         DLOG("- Input filename: \(filename)")
         DLOG("- Input systemID: \(String(describing: systemID))")
 
-        let query = """
+        // Use the sanitization methods from ROMMetadataProvider
+        let pattern = createSQLLikePattern(filename)
+
+        var query = """
             SELECT DISTINCT
                 games.display_name as game_title,
                 games.full_name,
@@ -702,23 +703,21 @@ public extension libretrodb {
             LEFT JOIN regions ON games.region_id = regions.id
             LEFT JOIN genres ON games.genre_id = genres.id
             LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
-            WHERE roms.name LIKE '%\(filename)%'
-            \(systemID != nil ? "AND games.platform_id = \(systemID!)" : "")
-            GROUP BY games.id
+            WHERE roms.name LIKE ?
             """
-        DLOG("- Generated SQL query: \(query)")
 
-        let results = try db.execute(query: query)
-        let metadata = results.compactMap { dict in
-            try? convertDictToMetadata(dict)
+        var parameters: [Any] = [pattern]
+
+        if let systemID = systemID {
+            query += " AND games.platform_id = ?"
+            parameters.append(systemID.libretroDatabaseID)
         }
 
-        DLOG("- Found \(metadata.count) results:")
-        metadata.forEach { result in
-            DLOG("  • Title: \(result.gameTitle)")
-            DLOG("    System: \(result.platform ?? "nil")")
-            DLOG("    MD5: \(result.romMD5 ?? "nil")")
-            DLOG("    Filename: \(result.romFileName ?? "nil")")
+        query += "\nGROUP BY games.id"
+
+        let results = try db.execute(query: query, parameters: parameters)
+        let metadata = try results.compactMap { dict in
+            try convertDictToMetadata(dict)
         }
 
         return metadata.isEmpty ? nil : metadata.map(convertToROMMetadata)

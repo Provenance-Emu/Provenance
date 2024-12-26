@@ -658,7 +658,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
 
             if shouldSearchLibretro,
                let libreTroDB = await isolatedLibretroDB,
-               let results = try libreTroDB.searchMetadata(usingKey: "md5", value: upperMD5, systemID: systemID) {
+               let results = try await libreTroDB.searchMetadata(usingKey: "md5", value: upperMD5, systemID: systemID) {
                 let duration = Date().timeIntervalSince(startTime)
                 DLOG("LibretroDB MD5 search took \(String(format: "%.3f", duration))s - found \(results.count) results")
                 return results

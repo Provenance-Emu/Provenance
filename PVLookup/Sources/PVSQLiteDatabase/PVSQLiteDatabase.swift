@@ -11,7 +11,7 @@ import SQLite
 package typealias SQLQueryDict = [String: AnyObject]
 package typealias SQLQueryResponse = [SQLQueryDict]
 package protocol SQLQueryable {
-    func execute(query: String) throws -> SQLQueryResponse
+    func execute(query: String, parameters: [Any]?) throws -> SQLQueryResponse
 }
 
 public struct PVSQLiteDatabase: @unchecked Sendable {
@@ -26,12 +26,38 @@ public struct PVSQLiteDatabase: @unchecked Sendable {
 }
 
 extension PVSQLiteDatabase: SQLQueryable {
-    package func execute(query: String) throws -> SQLQueryResponse {
+    package func execute(query: String, parameters: [Any]? = nil) throws -> SQLQueryResponse {
         var result = SQLQueryResponse()
-
-        // prepare connection, sql, inout statement
-        // try connection.execute(query)
         let stmt = try connection.prepare(query)
+
+        // Bind parameters if provided
+        if let params = parameters {
+            // Convert parameters to SQLite.Binding types
+            let bindings: [SQLite.Binding?] = params.map { param in
+                switch param {
+                case let text as String:
+                    return text
+                case let number as Int64:
+                    return number
+                case let number as Int:
+                    return Int64(number)
+                case let number as Double:
+                    return number
+                case let data as Data:
+                    return Blob(bytes: [UInt8](data))
+                case let bool as Bool:
+                    return bool
+                case is NSNull:
+                    return nil
+                default:
+                    return String(describing: param)
+                }
+            }
+
+            // Bind all parameters at once
+            _ = stmt.bind(bindings)
+        }
+
         for row in stmt {
             var dict = SQLQueryDict()
             for (index, name) in stmt.columnNames.enumerated() {
