@@ -52,6 +52,12 @@ extension WebServerActivatorController where Self: UIViewController & SFSafariVi
         alert.preferredContentSize = CGSize(width: 300, height: 150)
         alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
             PVWebServer.shared.stopServers()
+            if GameImporter.shared.importQueue.count > 0 {
+                DLOG("safariViewControllerDidFinish, there are imports in the queue, presenting ImportStatusView")
+                DispatchQueue.main.async { [weak self] in
+                    (self as? PVMenuDelegate)?.didTapImports()
+                }
+            }
         }))
         let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.showServer()
