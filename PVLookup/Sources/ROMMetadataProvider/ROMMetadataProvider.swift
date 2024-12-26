@@ -24,6 +24,38 @@ public protocol ROMMetadataProvider {
     func searchByMD5(_ md5: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]?
 }
 
+// Helper methods for database providers
+public extension ROMMetadataProvider {
+    /// Sanitizes a string for safe use in SQL LIKE queries
+    /// - Parameter string: The string to sanitize
+    /// - Returns: A sanitized string safe for SQL LIKE queries
+    func sanitizeForSQLLike(_ string: String) -> String {
+        // First escape special LIKE characters
+        let escapedLike = string
+            .replacingOccurrences(of: "%", with: "\\%")
+            .replacingOccurrences(of: "_", with: "\\_")
+            .replacingOccurrences(of: "\\", with: "\\\\")  // Escape backslashes first
+            .replacingOccurrences(of: "'", with: "''")     // SQL quotes
+            .replacingOccurrences(of: "\"", with: "\\\"")  // Double quotes
+            .replacingOccurrences(of: "(", with: "\\(")    // Parentheses
+            .replacingOccurrences(of: ")", with: "\\)")
+            .replacingOccurrences(of: "[", with: "\\[")    // Square brackets
+            .replacingOccurrences(of: "]", with: "\\]")
+            .replacingOccurrences(of: "*", with: "\\*")    // Wildcards
+            .replacingOccurrences(of: "?", with: "\\?")
+
+        return escapedLike
+    }
+
+    /// Creates a SQL LIKE pattern for fuzzy matching
+    /// - Parameter filename: The filename to create a pattern for
+    /// - Returns: A sanitized SQL LIKE pattern
+    func createSQLLikePattern(_ filename: String) -> String {
+        let sanitized = sanitizeForSQLLike(filename)
+        return "%\(sanitized)%"
+    }
+}
+
 // Default implementation for backward compatibility
 public extension ROMMetadataProvider {
     func searchByMD5(_ md5: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {

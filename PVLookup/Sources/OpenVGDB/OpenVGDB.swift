@@ -13,6 +13,29 @@ import ROMMetadataProvider
 import PVLookupTypes
 import PVSystems
 
+private struct OpenVGDBMetadata {
+    let gameTitle: String
+    let boxImageURL: String?
+    let region: String?
+    let gameDescription: String?
+    let boxBackURL: String?
+    let developer: String?
+    let publisher: String?
+    let serial: String?
+    let releaseDate: String?
+    let genres: String?
+    let referenceURL: String?
+    let releaseID: Int?
+    let language: String?
+    let regionID: Int?
+    let systemID: Int?
+    let systemShortName: String?
+    let romFileName: String?
+    let romHashCRC: String?
+    let romHashMD5: String?
+    let romID: Int?
+}
+
 @globalActor
 public
 actor OpenVGDBActor:GlobalActor
@@ -235,7 +258,7 @@ private extension OpenVGDB {
 public extension OpenVGDB {
     func searchDatabase(usingKey key: String, value: String, systemID: SystemIdentifier? = nil) throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
-        let escapedValue = escapeSQLString(value)
+        let sanitizedValue = sanitizeForSQLLike(value)
         let query: String
 
         let systemID = systemID?.openVGDBID
@@ -245,7 +268,7 @@ public extension OpenVGDB {
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE \(key) = '\(escapedValue)'
+                WHERE \(key) = '\(sanitizedValue)'
                 AND systemID = \(systemID)
                 """
         } else {
@@ -253,7 +276,7 @@ public extension OpenVGDB {
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE \(key) = '\(escapedValue)'
+                WHERE \(key) = '\(sanitizedValue)'
                 """
         }
 
@@ -262,7 +285,7 @@ public extension OpenVGDB {
 
     func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier? = nil) throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
-        let escapedPattern = escapeLikePattern(filename)
+        let pattern = createSQLLikePattern(filename)
         let query: String
 
         let systemID = systemID?.openVGDBID
@@ -272,13 +295,13 @@ public extension OpenVGDB {
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE (romFileName LIKE '%\(escapedPattern)%' ESCAPE '\\'
-                   OR releaseTitleName LIKE '%\(escapedPattern)%' ESCAPE '\\')
+                WHERE (romFileName LIKE '\(pattern)' ESCAPE '\\'
+                   OR releaseTitleName LIKE '\(pattern)' ESCAPE '\\')
                 AND systemID = \(systemID)
                 ORDER BY
                     CASE
-                        WHEN romFileName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 1
-                        WHEN releaseTitleName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 2
+                        WHEN romFileName LIKE '\(pattern)' ESCAPE '\\' THEN 1
+                        WHEN releaseTitleName LIKE '\(pattern)' ESCAPE '\\' THEN 2
                         ELSE 3
                     END
                 """
@@ -287,12 +310,12 @@ public extension OpenVGDB {
                 SELECT DISTINCT \(properties)
                 FROM ROMs rom
                 LEFT JOIN RELEASES release USING (romID)
-                WHERE (romFileName LIKE '%\(escapedPattern)%' ESCAPE '\\'
-                   OR releaseTitleName LIKE '%\(escapedPattern)%' ESCAPE '\\')
+                WHERE (romFileName LIKE '\(pattern)' ESCAPE '\\'
+                   OR releaseTitleName LIKE '\(pattern)' ESCAPE '\\')
                 ORDER BY
                     CASE
-                        WHEN romFileName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 1
-                        WHEN releaseTitleName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 2
+                        WHEN romFileName LIKE '\(pattern)' ESCAPE '\\' THEN 1
+                        WHEN releaseTitleName LIKE '\(pattern)' ESCAPE '\\' THEN 2
                         ELSE 3
                     END
                 """
@@ -302,20 +325,25 @@ public extension OpenVGDB {
     }
 
     func searchDatabase(usingFilename filename: String, systemIDs: [SystemIdentifier]) throws -> [ROMMetadata]? {
-
-        let validSystemIDs = systemIDs.map(\.openVGDBID)
-
+        let platformIDs = systemIDs.map { $0.openVGDBID }
         let properties = getStandardProperties()
-        let systemIDsString = validSystemIDs.map { String($0) }.joined(separator: ",")
+        let pattern = createSQLLikePattern(filename)
 
-        let query = """
+        var query = """
             SELECT DISTINCT \(properties)
             FROM ROMs rom
             LEFT JOIN RELEASES release USING (romID)
-            WHERE romFileName LIKE '%\(filename)%'
-            AND systemID IN (\(systemIDsString))
-            ORDER BY case when romFileName LIKE '\(filename)%' then 1 else 0 end DESC
-            """
+            WHERE romFileName LIKE '\(pattern)' ESCAPE '\\'
+        """
+
+        if !platformIDs.isEmpty {
+            let platformIDList = platformIDs.map(String.init).joined(separator: ",")
+            query += " AND systemID IN (\(platformIDList))"
+        }
+
+        query += """
+            ORDER BY case when romFileName LIKE '\(pattern)' ESCAPE '\\' then 1 else 0 end DESC
+        """
 
         return try executeQuery(query)
     }
@@ -338,18 +366,6 @@ public extension OpenVGDB {
 
 // MARK: - Private Helpers
 private extension OpenVGDB {
-    func escapeSQLString(_ string: String) -> String {
-        return string.replacingOccurrences(of: "'", with: "''")
-    }
-
-    func escapeLikePattern(_ pattern: String) -> String {
-        var escaped = pattern
-        escaped = escaped.replacingOccurrences(of: "%", with: "\\%")
-        escaped = escaped.replacingOccurrences(of: "_", with: "\\_")
-        escaped = escaped.replacingOccurrences(of: "'", with: "''")
-        return escaped
-    }
-
     func getStandardProperties() -> String {
         return """
             releaseTitleName as 'gameTitle',
@@ -385,7 +401,10 @@ private extension OpenVGDB {
 
     func convertToROMMetadata(_ dict: [String: NSObject]) -> ROMMetadata? {
         // First convert to our internal type
-        guard let internalMetadata = convertToOpenVGDBMetadata(dict) else {
+        guard let internalMetadata = convertToOpenVGDBMetadata(dict),
+              // Convert systemID to SystemIdentifier
+              let systemID = internalMetadata.systemID,
+              let systemIdentifier = SystemIdentifier.fromOpenVGDBID(systemID) else {
             return nil
         }
 
@@ -402,10 +421,10 @@ private extension OpenVGDB {
             releaseDate: internalMetadata.releaseDate,
             genres: internalMetadata.genres,
             referenceURL: internalMetadata.referenceURL,
-            releaseID: internalMetadata.releaseID,
+            releaseID: internalMetadata.releaseID?.description,  // Convert Int? to String?
             language: internalMetadata.language,
             regionID: internalMetadata.regionID,
-            systemID: internalMetadata.systemID,
+            systemID: systemIdentifier,  // Use converted SystemIdentifier
             systemShortName: internalMetadata.systemShortName,
             romFileName: internalMetadata.romFileName,
             romHashCRC: internalMetadata.romHashCRC,
@@ -415,14 +434,13 @@ private extension OpenVGDB {
         )
     }
 
-    func convertToOpenVGDBMetadata(_ dict: [String: NSObject]) -> OpenVGDBROMMetadata? {
-        guard let systemIDInt = (dict["systemID"] as? NSNumber)?.intValue,
-              let systemID = SystemIdentifier.fromOpenVGDBID(systemIDInt) else {
+    func convertToOpenVGDBMetadata(_ dict: [String: NSObject]) -> OpenVGDBMetadata? {
+        guard let gameTitle = dict["gameTitle"] as? String else {
             return nil
         }
 
-        return OpenVGDBROMMetadata(
-            gameTitle: (dict["gameTitle"] as? String) ?? "",
+        return OpenVGDBMetadata(
+            gameTitle: gameTitle,
             boxImageURL: dict["boxImageURL"] as? String,
             region: dict["region"] as? String,
             gameDescription: dict["gameDescription"] as? String,
@@ -433,10 +451,10 @@ private extension OpenVGDB {
             releaseDate: dict["releaseDate"] as? String,
             genres: dict["genres"] as? String,
             referenceURL: dict["referenceURL"] as? String,
-            releaseID: (dict["releaseID"] as? NSNumber)?.stringValue,
+            releaseID: (dict["releaseID"] as? NSNumber)?.intValue,
             language: dict["language"] as? String,
             regionID: (dict["regionID"] as? NSNumber)?.intValue,
-            systemID: systemID,
+            systemID: (dict["systemID"] as? NSNumber)?.intValue,
             systemShortName: dict["systemShortName"] as? String,
             romFileName: dict["romFileName"] as? String,
             romHashCRC: dict["romHashCRC"] as? String,
@@ -627,82 +645,75 @@ public extension OpenVGDB {
 
     func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
-        let escapedPattern = escapeLikePattern(filename)
-        let query: String
+        let pattern = createSQLLikePattern(filename)
 
-        let systemID = systemID?.openVGDBID
-
-        if let systemID = systemID {
-            query = """
-                SELECT DISTINCT \(properties)
-                FROM ROMs rom
-                LEFT JOIN RELEASES release USING (romID)
-                WHERE (romFileName LIKE '%\(escapedPattern)%' ESCAPE '\\'
-                   OR releaseTitleName LIKE '%\(escapedPattern)%' ESCAPE '\\')
-                AND systemID = \(systemID)
-                ORDER BY
-                    CASE
-                        WHEN romFileName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 1
-                        WHEN releaseTitleName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 2
-                        ELSE 3
-                    END
-                """
-        } else {
-            query = """
-                SELECT DISTINCT \(properties)
-                FROM ROMs rom
-                LEFT JOIN RELEASES release USING (romID)
-                WHERE (romFileName LIKE '%\(escapedPattern)%' ESCAPE '\\'
-                   OR releaseTitleName LIKE '%\(escapedPattern)%' ESCAPE '\\')
-                ORDER BY
-                    CASE
-                        WHEN romFileName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 1
-                        WHEN releaseTitleName LIKE '\(escapedPattern)%' ESCAPE '\\' THEN 2
-                        ELSE 3
-                    END
-                """
-        }
+        let query = """
+            SELECT DISTINCT \(properties)
+            FROM ROMs rom
+            LEFT JOIN RELEASES release USING (romID)
+            WHERE (romFileName LIKE '\(pattern)' ESCAPE '\\'
+               OR releaseTitleName LIKE '\(pattern)' ESCAPE '\\')
+            \(systemID != nil ? "AND systemID = \(systemID!.openVGDBID)" : "")
+            ORDER BY
+                CASE
+                    WHEN romFileName LIKE '\(pattern)' ESCAPE '\\' THEN 1
+                    WHEN releaseTitleName LIKE '\(pattern)' ESCAPE '\\' THEN 2
+                    ELSE 3
+                END
+            """
 
         return try executeQuery(query)
     }
 
     func searchByMD5(_ md5: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
         let properties = getStandardProperties()
-        let query: String
+        let sanitizedMD5 = sanitizeForSQLLike(md5.uppercased())
 
-        if let systemID = systemID {
-            query = """
-                SELECT DISTINCT \(properties)
-                FROM ROMs rom
-                LEFT JOIN RELEASES release USING (romID)
-                WHERE romHashMD5 = '\(md5.uppercased())' COLLATE NOCASE
-                AND systemID = \(systemID.openVGDBID)
-                """
-        } else {
-            query = """
-                SELECT DISTINCT \(properties)
-                FROM ROMs rom
-                LEFT JOIN RELEASES release USING (romID)
-                WHERE romHashMD5 = '\(md5.uppercased())' COLLATE NOCASE
-                """
-        }
+        let query = """
+            SELECT DISTINCT \(properties)
+            FROM ROMs rom
+            LEFT JOIN RELEASES release USING (romID)
+            WHERE romHashMD5 = '\(sanitizedMD5)' COLLATE NOCASE
+            \(systemID != nil ? "AND systemID = \(systemID!.openVGDBID)" : "")
+            """
 
         return try executeQuery(query)
     }
 
     func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
-        var query = "SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '\(md5.uppercased())' COLLATE NOCASE"
+        // First try MD5
+        var query = """
+            SELECT DISTINCT rom.systemID
+            FROM ROMs rom
+            LEFT JOIN RELEASES release ON rom.romID = release.romID
+            WHERE rom.romHashMD5 = '\(sanitizeForSQLLike(md5.uppercased()))'
+        """
+
+        // Then try filename if provided
         if let filename = filename {
-            let escapedFilename = escapeSQLString(filename)
-            query += " OR romFileName LIKE '%\(escapedFilename)%'"
+            let pattern = createSQLLikePattern(filename)
+            query += """
+                OR rom.romFileName LIKE '\(pattern)' ESCAPE '\\'
+                OR release.releaseTitleName LIKE '\(pattern)' ESCAPE '\\'
+            """
         }
+
+        query += " LIMIT 1"  // Add limit since we only need one match
+
+        DLOG("OpenVGDB systemIdentifier query:")
+        DLOG("- MD5: \(md5)")
+        DLOG("- Filename: \(filename ?? "nil")")
+        DLOG("- Query: \(query)")
 
         let results = try db.execute(query: query)
         guard let result = results.first,
               let systemID = (result["systemID"] as? NSNumber)?.intValue else {
+            DLOG("- No results found")
             return nil
         }
 
-        return SystemIdentifier.fromOpenVGDBID(systemID)
+        let identifier = SystemIdentifier.fromOpenVGDBID(systemID)
+        DLOG("- Found systemID: \(systemID) -> \(String(describing: identifier))")
+        return identifier
     }
 }

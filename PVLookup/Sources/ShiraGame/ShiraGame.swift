@@ -105,28 +105,45 @@ public final class ShiraGame: ROMMetadataProvider, @unchecked Sendable {
     public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         try await awaitInitialization()
 
-        // Find ROMs matching filename
-        let roms = try db.roms.filter(filter: { $0.fileName.contains(filename) })
-        if roms.isEmpty { return nil }
+        // First find ROMs matching filename (case-insensitive)
+        let lowercasedFilename = filename.lowercased()
+        let roms = try db.roms.filter(filter: { rom in
+            let fileName = rom.fileName
+            return fileName.lowercased().contains(lowercasedFilename)
+        })
+
+        if roms.isEmpty {
+            DLOG("ShiraGame: No ROMs found matching filename: \(filename)")
+            return nil
+        }
 
         // Find corresponding games
         let gameIds = Set(roms.map { $0.gameId })
-        var games = try db.games.filter(filter: { game in
-            if let id = game.id {
-                return gameIds.contains(id)
-            }
-            return false
-        })
+        let games: [ShiragameSchema.Game]
 
-        // Convert OpenVGDB system ID to ShiraGame platform ID
         if let platformId = systemID?.shiraGameID {
-            games = try db.games.filter(filter: { $0.platformId == platformId })
+            // If we have a system ID, filter by both game ID and platform
+            games = try db.games.filter(filter: { game in
+                guard let id = game.id else { return false }
+                return gameIds.contains(id) && game.platformId == platformId
+            })
+        } else {
+            // Otherwise just filter by game ID
+            games = try db.games.filter(filter: { game in
+                guard let id = game.id else { return false }
+                return gameIds.contains(id)
+            })
         }
 
-        return games.compactMap { game in
-            guard let rom = roms.first(where: { $0.gameId == game.id }) else { return nil }
+        let results: [ROMMetadata] = games.compactMap { game in
+            guard let rom = roms.first(where: { $0.gameId == game.id }) else {
+                return nil
+            }
             return convertToROMMetadata(game: game, rom: rom)
         }
+
+        DLOG("ShiraGame: Found \(results.count) results for filename: \(filename)")
+        return results.isEmpty ? nil : results
     }
 
     public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {

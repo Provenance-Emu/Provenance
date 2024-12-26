@@ -269,10 +269,10 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         ILOG("PVLookup: Starting database search for filename: \(filename), systemID: \(String(describing: systemID))")
 
         /// Check which databases are enabled before starting parallel tasks
-        let shouldSearchOpenVGDB = await databases.contains(.openVGDB)
-        let shouldSearchLibretro = await databases.contains(.libretro)
-        let shouldSearchShiraGame = await databases.contains(.shiraGame)
-        let shouldSearchTheGamesDB = await databases.contains(.theGamesDB)
+        let shouldSearchOpenVGDB = databases.contains(.openVGDB)
+        let shouldSearchLibretro = databases.contains(.libretro)
+        let shouldSearchShiraGame = databases.contains(.shiraGame)
+        let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run all database searches in parallel
         async let openVGDBResults: [ROMMetadata] = {
@@ -408,9 +408,9 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         try await ensureDatabasesInitialized()
 
         /// Check which databases are enabled
-        let shouldSearchOpenVGDB = await databases.contains(.openVGDB)
-        let shouldSearchLibretro = await databases.contains(.libretro)
-        let shouldSearchTheGamesDB = await databases.contains(.theGamesDB)
+        let shouldSearchOpenVGDB = databases.contains(.openVGDB)
+        let shouldSearchLibretro = databases.contains(.libretro)
+        let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run artwork mapping queries in parallel
         async let openVGDBMappings: ArtworkMapping? = {
@@ -500,9 +500,9 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         ILOG("PVLookup: Starting artwork URL search for ROM: \(rom.gameTitle)")
 
         /// Check which databases are enabled
-        let shouldSearchOpenVGDB = await databases.contains(.openVGDB)
-        let shouldSearchLibretro = await databases.contains(.libretro)
-        let shouldSearchTheGamesDB = await databases.contains(.theGamesDB)
+        let shouldSearchOpenVGDB = databases.contains(.openVGDB)
+        let shouldSearchLibretro = databases.contains(.libretro)
+        let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run artwork URL queries in parallel
         async let openVGDBUrls: [URL] = {
@@ -628,8 +628,8 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         ILOG("PVLookup: Starting database search for MD5: \(upperMD5), systemID: \(String(describing: systemID))")
 
         /// Check which databases are enabled
-        let shouldSearchOpenVGDB = await databases.contains(.openVGDB)
-        let shouldSearchLibretro = await databases.contains(.libretro)
+        let shouldSearchOpenVGDB = databases.contains(.openVGDB)
+        let shouldSearchLibretro = databases.contains(.libretro)
 
         /// Run database searches in parallel
         async let openVGDBResults: [ROMMetadata] = {
@@ -712,9 +712,9 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         ILOG("PVLookup: Starting artwork search for game: \(name), systemID: \(String(describing: systemID))")
 
         /// Check which databases are enabled
-        let shouldSearchOpenVGDB = await databases.contains(.openVGDB)
-        let shouldSearchLibretro = await databases.contains(.libretro)
-        let shouldSearchTheGamesDB = await databases.contains(.theGamesDB)
+        let shouldSearchOpenVGDB = databases.contains(.openVGDB)
+        let shouldSearchLibretro = databases.contains(.libretro)
+        let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run artwork searches in parallel
         async let openVGDBArtwork: [ArtworkMetadata] = {
@@ -812,9 +812,9 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         ILOG("PVLookup: Starting artwork search for gameID: \(gameID)")
 
         /// Check which databases are enabled
-        let shouldSearchOpenVGDB = await databases.contains(.openVGDB)
-        let shouldSearchLibretro = await databases.contains(.libretro)
-        let shouldSearchTheGamesDB = await databases.contains(.theGamesDB)
+        let shouldSearchOpenVGDB = databases.contains(.openVGDB)
+        let shouldSearchLibretro = databases.contains(.libretro)
+        let shouldSearchTheGamesDB = databases.contains(.theGamesDB)
 
         /// Run artwork queries in parallel
         async let openVGDBArtwork: [ArtworkMetadata] = {
