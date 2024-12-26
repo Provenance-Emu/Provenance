@@ -199,7 +199,7 @@ let package = Package(
         
         .testTarget(
             name: "TheGamesDBTests",
-            dependencies: ["TheGamesDB"]
+            dependencies: ["TheGamesDB", "PVLookup"]
         ),
     ],
     swiftLanguageModes: [.v5, .v6],
