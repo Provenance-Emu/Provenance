@@ -12,8 +12,9 @@ import PVSystems
 import PVLogging
 import PVSQLiteDatabase
 import CryptoKit
+import ROMMetadataProvider
 
-public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
+public final class TheGamesDB: ArtworkLookupService, ROMMetadataProvider, @unchecked Sendable {
     private let schema: TheGamesDBSchema
     private let manager: TheGamesDBManager
 
@@ -272,7 +273,7 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
                     return nil
                 }
 
-                
+
                 return ROMMetadata(
                     gameTitle: gameTitle,
                     region: game["region"] as? String,
@@ -286,6 +287,59 @@ public final class TheGamesDB: ArtworkLookupService, @unchecked Sendable {
         } catch {
             throw TheGamesDBError.queryError(error)
         }
+    }
+
+    // Add required ROMMetadataProvider methods
+    public func searchROM(byMD5 md5: String) async throws -> ROMMetadata? {
+        return nil  // TheGamesDB doesn't support MD5 lookup
+    }
+
+    public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
+        return try searchGames(name: filename, platformId: systemID?.theGamesDBID)
+    }
+
+    public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
+        return nil  // TheGamesDB doesn't support system identification by MD5
+    }
+
+    private func constructArtworkSearchQuery(name: String, systemID: SystemIdentifier?) -> String {
+        let sanitizedName = sanitizeForSQLLike(name)
+        let platformFilter = if let id = systemID?.theGamesDBID {
+            "AND games.platform_id = \(id)"
+        } else {
+            ""
+        }
+
+        return """
+        WITH matched_games AS (
+            SELECT DISTINCT games.id, games.serial_id,
+                   CASE
+                       WHEN games.display_name = '\(sanitizedName)' THEN 0
+                       WHEN games.display_name LIKE '\(sanitizedName) %' THEN 1
+                       WHEN games.display_name LIKE '% \(sanitizedName) %' THEN 2
+                       WHEN games.display_name LIKE '%\(sanitizedName)%' THEN 3
+                       ELSE 4
+                   END as match_quality
+            FROM games
+            WHERE games.display_name LIKE '%\(sanitizedName)%'
+            \(platformFilter)
+            ORDER BY match_quality, games.display_name
+            LIMIT 10
+        )
+        SELECT DISTINCT
+            games.display_name as game_title,
+            roms.name as rom_name,
+            platforms.id as platform_id,
+            manufacturers.name as manufacturer_name,
+            games.developer_id,  -- Just get the ID
+            games.publisher_id   -- Just get the ID
+        FROM matched_games
+        JOIN games ON matched_games.id = games.id
+        LEFT JOIN platforms ON games.platform_id = platforms.id
+        LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
+        LEFT JOIN roms ON games.serial_id = roms.serial_id
+        ORDER BY matched_games.match_quality, games.display_name
+        """
     }
 }
 
@@ -353,45 +407,6 @@ private extension ArtworkType {
         DLOG("- Converted to: \(result)")
         self = result
     }
-}
-
-private func constructArtworkSearchQuery(name: String, systemID: SystemIdentifier?) -> String {
-    let platformFilter = if let id = systemID?.theGamesDBID {
-        "AND games.platform_id = \(id)"
-    } else {
-        ""
-    }
-
-    return """
-    WITH matched_games AS (
-        SELECT DISTINCT games.id, games.serial_id,
-               CASE
-                   WHEN games.display_name = '\(name)' THEN 0  -- Exact match
-                   WHEN games.display_name LIKE '\(name) %' THEN 1  -- Starts with name
-                   WHEN games.display_name LIKE '% \(name) %' THEN 2  -- Contains word
-                   WHEN games.display_name LIKE '%\(name)%' THEN 3  -- Contains substring
-                   ELSE 4
-               END as match_quality
-        FROM games
-        WHERE games.display_name LIKE '%\(name)%'
-        \(platformFilter)
-        ORDER BY match_quality, games.display_name
-        LIMIT 10
-    )
-    SELECT DISTINCT
-        games.display_name as game_title,
-        roms.name as rom_name,
-        platforms.id as platform_id,
-        manufacturers.name as manufacturer_name,
-        games.developer_id,  -- Just get the ID
-        games.publisher_id   -- Just get the ID
-    FROM matched_games
-    JOIN games ON matched_games.id = games.id
-    LEFT JOIN platforms ON games.platform_id = platforms.id
-    LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
-    LEFT JOIN roms ON games.serial_id = roms.serial_id
-    ORDER BY matched_games.match_quality, games.display_name
-    """
 }
 
 private extension String {

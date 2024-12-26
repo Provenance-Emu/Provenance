@@ -18,6 +18,8 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
     case unsupportedCDROMFile
     case incorrectDestinationURL
     case conflictDetected
+    case missingRequiredProperty(String)
+    case systemNotFound
 
     /// The domain of the error.
     public static var errorDomain: String {
@@ -39,6 +41,8 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
         case .unsupportedCDROMFile:         return 1010
         case .incorrectDestinationURL:      return 1011
         case .conflictDetected:             return 1012
+        case .missingRequiredProperty:      return 1013
+        case .systemNotFound:               return 1014
         }
     }
 
@@ -93,6 +97,10 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
             return "Internal Error - Bad Destination Path"
         case .conflictDetected:
             return "Conflict"
+        case .missingRequiredProperty(let property):
+            return "Missing required property: \(property)"
+        case .systemNotFound:
+            return "System not found in database"
         }
     }
 }

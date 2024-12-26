@@ -8,6 +8,7 @@
 import SwiftUI
 import PVLibrary
 import Perception
+import PVSystems
 
 struct SystemSelectionView: View {
     @ObservedObject var item: ImportQueueItem
@@ -16,9 +17,7 @@ struct SystemSelectionView: View {
     var body: some View {
         WithPerceptionTracking {
         List {
-            ForEach(item.systems.sorted(by: { a, b in
-                return a.name <= b.name
-            }), id: \.self) { system in
+            ForEach(item.systems.sorted(), id: \.self) { system in
                 Button(action: {
                     // Set the chosen system and update the status
                     item.userChosenSystem = system
@@ -26,7 +25,7 @@ struct SystemSelectionView: View {
                     // Dismiss the view
                     presentationMode.wrappedValue.dismiss()
                 }) {
-                    Text(system.name)
+                    Text(system.fullName)
                         .font(.headline)
                         .padding()
                 }
@@ -43,21 +42,8 @@ import PVPrimitives
     
     
     let item: ImportQueueItem = {
-        let systems: [System] = [
-            .init(
-                identifier: "com.provenance.jaguar",
-                name: "Jaguar",
-                shortName: "Jag",
-                manufacturer: "Atari",
-                screenType: .crt
-            ),
-            .init(
-                identifier: "com.provenance.jaguarcd",
-                name: "Jaguar CD",
-                shortName: "Jag CD",
-                manufacturer: "Atari",
-                screenType: .crt
-            )
+        let systems: [SystemIdentifier] = [
+            .AtariJaguar, .AtariJaguarCD
         ]
 
         let item = ImportQueueItem(url: .init(fileURLWithPath: "Test.bin"),

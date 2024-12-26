@@ -102,7 +102,7 @@ struct PVLookupTests {
     func searchPitfallByFilenameInLibretroDB() async throws {
         // Test LibretroDB directly
         let libretroDB = try await libretrodb()
-        let results = try libretroDB.searchMetadata(
+        let results = try await libretroDB.searchMetadata(
             usingFilename: "Pitfall - The Mayan Adventure",
             systemID: SystemIdentifier.SNES
         )
@@ -224,7 +224,7 @@ struct PVLookupTests {
         ]
 
         for searchTerm in searches {
-            let results = try libreTroDB.searchMetadata(
+            let results = try await libreTroDB.searchMetadata(
                 usingFilename: searchTerm,
                 systemID: SystemIdentifier.SNES
             )

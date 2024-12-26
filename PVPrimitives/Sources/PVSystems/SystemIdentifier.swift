@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable, Hashable {
+public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable, Hashable, Comparable {
     case _3DO = "com.provenance.3DO"
     case _3DS = "com.provenance.3ds"
     case AppleII = "com.provenance.appleII"
@@ -207,7 +207,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     }
 
     public
-    var offset: UInt64 {
+    var offset: UInt {
         switch self {
         case .SNES: return 16
         case .NES: return 16
@@ -252,4 +252,136 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     // are a sub-directory of the current paths. Right now those are just a folder
     // for all games by the game filename - extensions. Even then would be better
     // to use the ROM md5 not the name, since names might have collisions - jm
+
+    /// The manufacturer/company that made the system
+    public var manufacturer: String {
+        switch self {
+        case .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .AtariJaguarCD, .AtariST, .Atari8bit, .Lynx:
+            return "Atari"
+        case .NES, .SNES, .N64, .GameCube, .GB, .GBC, .GBA, .VirtualBoy, .PokemonMini, .FDS, .DS, ._3DS, .Wii:
+            return "Nintendo"
+        case .Genesis, .SegaCD, .MasterSystem, .GameGear, .Saturn, .Dreamcast, .SG1000, .Sega32X:
+            return "Sega"
+        case .PSX, .PSP, .PS2, .PS3:
+            return "Sony"
+        case .PCE, .PCFX, .PCECD, .SGFX:
+            return "NEC"
+        case .NeoGeo, .NGP, .NGPC:
+            return "SNK"
+        case .WonderSwan, .WonderSwanColor:
+            return "Bandai"
+        case .Vectrex:
+            return "GCE"
+        case .ColecoVision:
+            return "Coleco"
+        case .Intellivision:
+            return "Mattel"
+        case .Odyssey2:
+            return "Magnavox"
+        case ._3DO:
+            return "The 3DO Company"
+        case .C64:
+            return "Commodore"
+        case .AppleII, .Macintosh:
+            return "Apple"
+        case .MegaDuck:
+            return "Welback Holdings"
+        case .MSX, .MSX2:
+            return "Microsoft"
+        case .Supervision:
+            return "Watara"
+        case .ZXSpectrum:
+            return "Sinclair"
+        case .DOS:
+            return "IBM"
+        case .EP128:
+            return "Enterprise Systems"
+        case .PalmOS:
+            return "Palm"
+        case .MAME, .Music, .RetroArch, .TIC80:
+            return "Various"
+        case .Unknown:
+            return "Unknown"
+        }
+    }
+
+    /// The name of the system without manufacturer
+    public var systemName: String {
+        switch self {
+        case .Atari2600:     return "2600"
+        case .Atari5200:     return "5200"
+        case .Atari7800:     return "7800"
+        case .AtariJaguar:   return "Jaguar"
+        case .AtariJaguarCD: return "Jaguar CD"
+        case .AtariST:       return "ST"
+        case .Atari8bit:     return "8-bit"
+        case .Lynx:          return "Lynx"
+        case .NES:           return "Nintendo Entertainment System"
+        case .SNES:          return "Super Nintendo Entertainment System"
+        case .N64:           return "Nintendo 64"
+        case .GameCube:      return "GameCube"
+        case .GB:            return "Game Boy"
+        case .GBC:           return "Game Boy Color"
+        case .GBA:           return "Game Boy Advance"
+        case .VirtualBoy:    return "Virtual Boy"
+        case .PokemonMini:   return "Pokemon Mini"
+        case .FDS:           return "Family Computer Disk System"
+        case .Genesis:       return "Mega Drive - Genesis"
+        case .SegaCD:        return "Mega-CD - Sega CD"
+        case .MasterSystem:  return "Master System - Mark III"
+        case .GameGear:      return "Game Gear"
+        case .Saturn:        return "Saturn"
+        case .Dreamcast:     return "Dreamcast"
+        case .SG1000:        return "SG-1000"
+        case .PSX:           return "PlayStation"
+        case .PSP:           return "PlayStation Portable"
+        case .PS2:           return "PlayStation 2"
+        case .PS3:           return "PlayStation 3"
+        case .PCE:           return "PC Engine - TurboGrafx 16"
+        case .PCFX:          return "PC-FX"
+        case .PCECD:         return "PC Engine CD - TurboGrafx-CD"
+        case .SGFX:          return "PC Engine SuperGrafx"
+        case .NeoGeo:        return "Neo Geo"
+        case .NGP:           return "Neo Geo Pocket"
+        case .NGPC:          return "Neo Geo Pocket Color"
+        case .WonderSwan:    return "WonderSwan"
+        case .WonderSwanColor: return "WonderSwan Color"
+        case .Vectrex:       return "Vectrex"
+        case .ColecoVision:  return "ColecoVision"
+        case .Intellivision: return "Intellivision"
+        case .Odyssey2:      return "Odyssey2"
+        case ._3DO:          return "3DO"
+        case ._3DS:          return "Nintendo 3DS"
+        case .AppleII:       return "Apple II"
+        case .C64:           return "C64"
+        case .DOS:           return "DOS"
+        case .DS:            return "Nintendo DS"
+        case .EP128:         return "Enterpise-128"
+        case .Macintosh:     return "Macintosh"
+        case .MAME:          return "MAME"
+        case .MegaDuck:      return "Mega Duck"
+        case .MSX:           return "MSX"
+        case .MSX2:          return "MSX2"
+        case .Music:         return "Music"
+        case .PalmOS:        return "PalmOS"
+        case .RetroArch:     return "Retroarch"
+        case .Sega32X:       return "32X"
+        case .Supervision:   return "Supervision"
+        case .TIC80:         return "TIC-80"
+        case .Wii:           return "Wii"
+        case .ZXSpectrum:    return "ZX Spectrum"
+        case .Unknown:       return "Unknown"
+        }
+    }
+
+    /// Full name in the format "Manufacturer - System Name"
+    public var fullName: String {
+        let mfg = manufacturer
+        return mfg.isEmpty ? systemName : "\(mfg) - \(systemName)"
+    }
+
+    // Add Comparable implementation
+    public static func < (lhs: SystemIdentifier, rhs: SystemIdentifier) -> Bool {
+        lhs.fullName < rhs.fullName
+    }
 }

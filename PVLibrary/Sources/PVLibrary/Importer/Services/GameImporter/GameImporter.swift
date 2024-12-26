@@ -115,7 +115,7 @@ public protocol GameImporting {
 
     func addImport(_ item: ImportQueueItem)
     func addImports(forPaths paths: [URL])
-    func addImports(forPaths paths: [URL], targetSystem: System)
+    func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier)
 
     func removeImports(at offsets: IndexSet)
     func startProcessing()
@@ -383,7 +383,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     @MainActor
-    public func addImports(forPaths paths: [URL], targetSystem: System) {
+    public func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
 
@@ -562,16 +562,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     internal func cmpSpecialExt(obj1Extension: String, obj2Extension: String) -> Bool {
         // Ensure .m3u files are sorted first
-        if obj1Extension == "m3u" && obj2Extension != "m3u" {
+        if obj1Extension == Extensions.m3u.rawValue && obj2Extension != Extensions.m3u.rawValue {
             return true
-        } else if obj2Extension == "m3u" && obj1Extension != "m3u" {
+        } else if obj2Extension == Extensions.m3u.rawValue && obj1Extension != Extensions.m3u.rawValue {
             return false
         }
 
         // Ensure .cue files are sorted second (after .m3u)
-        if obj1Extension == "cue" && obj2Extension != "m3u" && obj2Extension != "cue" {
+        if obj1Extension == Extensions.cue.rawValue && obj2Extension != Extensions.m3u.rawValue && obj2Extension != Extensions.cue.rawValue {
             return true
-        } else if obj2Extension == "cue" && obj1Extension != "m3u" && obj1Extension != "cue" {
+        } else if obj2Extension == Extensions.cue.rawValue && obj1Extension != Extensions.m3u.rawValue && obj1Extension != Extensions.cue.rawValue {
             return false
         }
 
@@ -724,7 +724,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         //get valid systems that this object might support
-        guard let systems = try? await gameImporterSystemsService.determineSystems(for: item), !systems.isEmpty else {
+        guard let systems: [SystemIdentifier] = try? await gameImporterSystemsService.determineSystems(for: item), !systems.isEmpty else {
             //this is actually an import error
             item.status = .failure
             ELOG("No system matched for this Import Item: \(item.url.lastPathComponent)")
@@ -732,13 +732,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         //update item's candidate systems with the result of determineSystems
-        item.systems = systems.map{$0.identifier}.compactMap { identifier in
-            if let system: System = PVEmulatorConfiguration.system(forIdentifier: identifier) {
-                return system
-            }
-            return nil
-        }
-
+        item.systems = systems
+        
         //this might be a conflict if we can't infer what to do
         //for BIOS, we can handle multiple systems, so allow that to proceed
         if item.fileType != .bios && item.targetSystem() == nil {

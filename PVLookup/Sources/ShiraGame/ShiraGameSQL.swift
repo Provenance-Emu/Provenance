@@ -109,7 +109,7 @@ public struct ShiragameSchema : SQLDatabase, SQLDatabaseAsyncFetchOperations {
    *     )
    * ```
    */
-  public struct Game : Identifiable, SQLKeyedTableRecord, Codable, Sendable {
+    public struct Game : Identifiable, SQLKeyedTableRecord, Codable, Sendable, Equatable, Hashable {
     
     /// Static SQL type information for the ``Game`` record.
     public static let schema = Schema()

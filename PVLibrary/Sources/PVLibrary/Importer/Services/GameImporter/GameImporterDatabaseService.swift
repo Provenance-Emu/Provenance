@@ -73,22 +73,22 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.incorrectDestinationURL
         }
 
-        DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.name)")
+        DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.libretroDatabaseName)")
 
         let filename = queueItem.url.lastPathComponent
-        let partialPath = (targetSystem.identifier as NSString).appendingPathComponent(filename)
-        let similarName = RomDatabase.altName(queueItem.url, systemIdentifier: targetSystem.identifier)
+        let partialPath = (targetSystem.rawValue as NSString).appendingPathComponent(filename)
+        let similarName = RomDatabase.altName(queueItem.url, systemIdentifier: targetSystem)
 
         DLOG("Checking game cache for partialPath: \(partialPath) or similarName: \(similarName)")
         let gamesCache = RomDatabase.gamesCache
 
         if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
-           targetSystem.identifier == existingGame.systemIdentifier {
+           targetSystem.rawValue == existingGame.systemIdentifier {
             DLOG("Found existing game in cache, saving relative path")
             await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
         } else {
             DLOG("No existing game found, starting import to database")
-            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem as! System, relatedFiles: nil)
+            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem, relatedFiles: nil)
         }
     }
 
@@ -126,7 +126,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     /// Imports a ROM to the database
     @MainActor
-    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: System, relatedFiles: [URL]?) async throws {
+    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: SystemIdentifier, relatedFiles: [URL]?) async throws {
 
         guard let _ = queueItem.destinationUrl else {
             //how did we get here, throw?
@@ -137,12 +137,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         let filename = queueItem.url.lastPathComponent
         let filenameSansExtension = queueItem.url.deletingPathExtension().lastPathComponent
         let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
-        let destinationDir = (system.identifier as NSString)
-        let partialPath: String = (system.identifier as NSString).appendingPathComponent(filename)
+        let destinationDir = (system.rawValue as NSString)
+        let partialPath: String = (system.rawValue as NSString).appendingPathComponent(filename)
 
         DLOG("Creating game object with title: \(title), partialPath: \(partialPath)")
 
-        guard let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.identifier) else {
+        guard let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.rawValue) else {
             throw GameImporterError.noSystemMatched
         }
 
@@ -205,7 +205,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         if game.originalArtworkFile == nil {
             game = await getArtwork(forGame: game)
         }
-        self.saveGame(game)
+        try self.saveGame(game)
     }
 
     @discardableResult
@@ -345,64 +345,67 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     @discardableResult
     func getUpdatedGameInfo(for game: PVGame, forceRefresh: Bool = true) async throws -> PVGame {
-        var resultsMaybe: [ROMMetadata]?
+        do {
+            var resultsMaybe: [ROMMetadata]?
 
-        // Remove do-catch since we're now throwing
-        resultsMaybe = try await lookup.searchDatabase(usingMD5: game.md5Hash, systemID: nil)
+            // Try MD5 lookup
+            resultsMaybe = try? await lookup.searchDatabase(usingMD5: game.md5Hash, systemID: nil)
 
-        // Step 2 - Try to find by CRC if MD5 search failed
-//        if resultsMaybe == nil || resultsMaybe!.isEmpty, !game.crc.isEmpty {
-//            resultsMaybe = try await lookup.searchDatabase(usingKey: "romHashCRC", value: game.crc, systemID: nil)
-//        }
+            // Try filename lookup if MD5 failed
+            if resultsMaybe == nil || resultsMaybe!.isEmpty {
+                let fileName = game.file.url.lastPathComponent
+                // Remove any extraneous stuff in the rom name
+                let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: _GameImporterDatabaseServiceCharset)
+                var gameTitleLen: Int
+                if nonCharRange.length > 0, nonCharRange.location > 1 {
+                    gameTitleLen = nonCharRange.location - 1
+                } else {
+                    gameTitleLen = fileName.count
+                }
+                let subfileName = String(fileName.prefix(gameTitleLen))
 
-        // Step 3 - Try by filename if still no results
-        if resultsMaybe == nil || resultsMaybe!.isEmpty {
-            let fileName = game.file.url.lastPathComponent
-            // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
-            let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: _GameImporterDatabaseServiceCharset)
-            var gameTitleLen: Int
-            if nonCharRange.length > 0, nonCharRange.location > 1 {
-                gameTitleLen = nonCharRange.location - 1
-            } else {
-                gameTitleLen = fileName.count
+                // Convert system identifier to database ID
+                let system = SystemIdentifier(rawValue: game.systemIdentifier)
+                resultsMaybe = try? await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
             }
-            let subfileName = String(fileName.prefix(gameTitleLen))
 
-            // Convert system identifier to database ID
-            let system = SystemIdentifier(rawValue: game.systemIdentifier)
-            resultsMaybe = try await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
-        }
+            // If no results found, just return the original game
+            guard let results = resultsMaybe, !results.isEmpty else {
+                ILOG("No metadata found for game: \(game.title)")
+                game.requiresSync = false  // Mark as synced so we don't try again
+                return game
+            }
 
-        // If no results found at all, return the original game
-        guard let results = resultsMaybe, !results.isEmpty else {
+            var chosenResult: ROMMetadata?
+
+            // Try to find USA version first (Region ID 21)
+            chosenResult = results.first { metadata in
+                return metadata.regionID == 21 // USA region ID
+            } ?? results.first { metadata in
+                // Fallback: try matching by region string containing "USA"
+                return metadata.region?.uppercased().contains("USA") ?? false
+            }
+
+            // If no USA version found, use the first result
+            if chosenResult == nil {
+                if results.count > 1 {
+                    ILOG("Query returned \(results.count) possible matches. Failed to match USA version. Using first result.")
+                }
+                chosenResult = results.first
+            }
+
+            game.requiresSync = false
+            guard let metadata = chosenResult else {
+                WLOG("Unable to find ROM \(game.romPath) in OpenVGDB")
+                return game
+            }
+
+            return updateGameFields(game, metadata: metadata, forceRefresh: forceRefresh)
+        } catch {
+            WLOG("Error looking up game metadata: \(error.localizedDescription)")
+            game.requiresSync = false  // Mark as synced so we don't try again
             return game
         }
-
-        var chosenResult: ROMMetadata?
-        
-        // Try to find USA version first (Region ID 21)
-        chosenResult = results.first { metadata in
-            return metadata.regionID == 21 // USA region ID
-        } ?? results.first { metadata in
-            // Fallback: try matching by region string containing "USA"
-            return metadata.region?.uppercased().contains("USA") ?? false
-        }
-
-        // If no USA version found, use the first result
-        if chosenResult == nil {
-            if results.count > 1 {
-                ILOG("Query returned \(results.count) possible matches. Failed to match USA version. Using first result.")
-            }
-            chosenResult = results.first
-        }
-
-        game.requiresSync = false
-        guard let metadata = chosenResult else {
-            WLOG("Unable to find ROM \(game.romPath) in OpenVGDB")
-            return game
-        }
-
-        return updateGameFields(game, metadata: metadata, forceRefresh: forceRefresh)
     }
 
     enum DatabaseQueryError: Error {
@@ -441,27 +444,33 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     /// Saves a game to the database
-    func saveGame(_ game:PVGame) {
-        do {
-            let database = RomDatabase.sharedInstance
-            let realm = RomDatabase.sharedInstance.realm
+    func saveGame(_ game: PVGame) throws {
+        let database = RomDatabase.sharedInstance
+        let realm = RomDatabase.sharedInstance.realm
 
-            if let system = realm.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier) {
-                game.system = system
-            }
+        // Get system reference
+        guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier) else {
+            ELOG("System not found in database: \(game.systemIdentifier)")
+            throw GameImporterError.noSystemMatched
+        }
+        game.system = system
+
+        do {
             try database.writeTransaction {
-                database.realm.create(PVGame.self, value:game, update:.modified)
+                database.realm.create(PVGame.self, value: game, update: .modified)
             }
             RomDatabase.addGamesCache(game)
         } catch {
-            ELOG("Couldn't add new game \(error.localizedDescription)")
+            ELOG("Failed to save game: \(error.localizedDescription)")
+            ELOG("Game details - systemID: \(game.systemIdentifier), romPath: \(game.romPath)")
+            throw GameImporterError.failedToMoveROM(error)
         }
     }
 
     /// Calculates the MD5 hash for a given game
     @objc
     public func calculateMD5(forGame game: PVGame) -> String? {
-        var offset: UInt64 = 0
+        var offset: UInt = 0
 
         //this seems to be spread in many places, not sure why.  it might be doable to put this in the queue item, but for now, trying to consolidate.
         //I have no history or explanation for why we need the 16 offset for SNES/NES

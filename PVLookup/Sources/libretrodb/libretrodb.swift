@@ -276,7 +276,7 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
         DLOG("\nLibretroDB search details:")
         DLOG("- Input systemID: \(String(describing: systemID))")
 
-        return try searchMetadata(usingFilename: filename, systemID: systemID)
+        return try await searchMetadata(usingFilename: filename, systemID: systemID)
     }
 }
 
@@ -295,9 +295,9 @@ public extension libretrodb {
     /// Search by filename
     internal func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) throws -> [LibretroDBROMMetadata]? {
         var query = standardMetadataQuery
-        let escapedFilename = filename.replacingOccurrences(of: "'", with: "''")
+        let pattern = createSQLLikePattern(filename)
 
-        query += " WHERE roms.name LIKE '%\(escapedFilename)%' COLLATE NOCASE"
+        query += " WHERE roms.name LIKE '\(pattern)' COLLATE NOCASE"
 
         if let systemID = systemID?.libretroDatabaseID {
             query += " AND platform_id = \(systemID)"
@@ -339,12 +339,13 @@ public extension libretrodb {
     func systemIdentifier(forRomMD5 md5: String, or filename: String?, platformID: SystemIdentifier? = nil) async throws -> SystemIdentifier? {
         let platformID = platformID?.libretroDatabaseID
 
-        // MD5 search stays the same
+        // MD5 search with proper sanitization
+        let sanitizedMD5 = sanitizeForSQLLike(md5.uppercased())
         let query = """
             SELECT platform_id
             FROM roms r
             JOIN games g ON r.serial_id = g.serial_id
-            WHERE r.md5 = '\(md5.uppercased())'
+            WHERE r.md5 = '\(sanitizedMD5)'
         """
 
         if let result = try db.execute(query: query).first,
@@ -352,13 +353,14 @@ public extension libretrodb {
             return SystemIdentifier.fromLibretroDatabaseID(platformId)
         }
 
-        // Try filename with optional platform filter
+        // Try filename with proper sanitization
         if let filename = filename {
+            let pattern = createSQLLikePattern(filename)
             var query = """
                 SELECT platform_id
                 FROM roms r
                 JOIN games g ON r.serial_id = g.serial_id
-                WHERE r.name LIKE '%\(filename)%'
+                WHERE r.name LIKE '\(pattern)' ESCAPE '\\'
             """
 
             if let platformID = platformID {
@@ -366,6 +368,8 @@ public extension libretrodb {
             }
 
             query += " LIMIT 1"
+
+            DLOG("LibretroDB filename search query: \(query)")
 
             if let result = try db.execute(query: query).first,
                let platformId = result["platform_id"] as? Int {
@@ -607,7 +611,7 @@ public extension libretrodb {
     }
 
     /// Search by MD5 or other key
-    func searchMetadata(usingKey key: String, value: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
+    func searchMetadata(usingKey key: String, value: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         DLOG("\nLibretroDB metadata search:")
         DLOG("- Key: \(key)")
         DLOG("- Value: \(value)")
@@ -663,15 +667,16 @@ public extension libretrodb {
         return metadata.isEmpty ? nil : metadata.map(convertToROMMetadata)
     }
 
-    /// Search by filename
-    func searchMetadata(usingFilename filename: String, systemID: SystemIdentifier?) throws -> [ROMMetadata]? {
-        let systemID = systemID?.libretroDatabaseID
-
+    /// Search by filename - this is the method being called from PVLookup
+    func searchMetadata(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         DLOG("\nLibretroDB search details:")
         DLOG("- Input filename: \(filename)")
         DLOG("- Input systemID: \(String(describing: systemID))")
 
-        let query = """
+        // Use the sanitization methods from ROMMetadataProvider
+        let pattern = createSQLLikePattern(filename)
+
+        var query = """
             SELECT DISTINCT
                 games.display_name as game_title,
                 games.full_name,
@@ -698,23 +703,21 @@ public extension libretrodb {
             LEFT JOIN regions ON games.region_id = regions.id
             LEFT JOIN genres ON games.genre_id = genres.id
             LEFT JOIN manufacturers ON platforms.manufacturer_id = manufacturers.id
-            WHERE roms.name LIKE '%\(filename)%'
-            \(systemID != nil ? "AND games.platform_id = \(systemID!)" : "")
-            GROUP BY games.id
+            WHERE roms.name LIKE ?
             """
-        DLOG("- Generated SQL query: \(query)")
 
-        let results = try db.execute(query: query)
-        let metadata = results.compactMap { dict in
-            try? convertDictToMetadata(dict)
+        var parameters: [Any] = [pattern]
+
+        if let systemID = systemID {
+            query += " AND games.platform_id = ?"
+            parameters.append(systemID.libretroDatabaseID)
         }
 
-        DLOG("- Found \(metadata.count) results:")
-        metadata.forEach { result in
-            DLOG("  • Title: \(result.gameTitle)")
-            DLOG("    System: \(result.platform ?? "nil")")
-            DLOG("    MD5: \(result.romMD5 ?? "nil")")
-            DLOG("    Filename: \(result.romFileName ?? "nil")")
+        query += "\nGROUP BY games.id"
+
+        let results = try db.execute(query: query, parameters: parameters)
+        let metadata = try results.compactMap { dict in
+            try convertDictToMetadata(dict)
         }
 
         return metadata.isEmpty ? nil : metadata.map(convertToROMMetadata)
@@ -1000,11 +1003,11 @@ extension libretrodb {
         DLOG("- Name: \(name)")
         DLOG("- SystemID: \(String(describing: systemID))")
         if let systemID = systemID {
-            DLOG("- LibretroDB Platform ID: \(systemID.libretroDatabaseID ?? -1)")
+            DLOG("- LibretroDB Platform ID: \(systemID.libretroDatabaseID)")
         }
 
         // Clean the name and escape SQL including parentheses
-        let escapedName = escapeSQLString(name)
+        let sanitizedName = sanitizeForSQLLike(name)
         let platformFilter = systemID?.libretroDatabaseID != nil ?
             "AND games.platform_id = \(systemID!.libretroDatabaseID)" : ""
 
@@ -1013,14 +1016,14 @@ extension libretrodb {
             WITH matched_games AS (
                 SELECT DISTINCT games.id, games.serial_id,
                        CASE
-                           WHEN LOWER(games.display_name) = LOWER('\(escapedName)') THEN 0  -- Exact match
-                           WHEN LOWER(games.display_name) LIKE LOWER('\(escapedName) %') THEN 1  -- Starts with name
-                           WHEN LOWER(games.display_name) LIKE LOWER('% \(escapedName) %') THEN 2  -- Contains word
-                           WHEN LOWER(games.display_name) LIKE LOWER('%\(escapedName)%') THEN 3  -- Contains substring
+                           WHEN LOWER(games.display_name) = LOWER('\(sanitizedName)') THEN 0  -- Exact match
+                           WHEN LOWER(games.display_name) LIKE LOWER('\(sanitizedName) %') THEN 1  -- Starts with name
+                           WHEN LOWER(games.display_name) LIKE LOWER('% \(sanitizedName) %') THEN 2  -- Contains word
+                           WHEN LOWER(games.display_name) LIKE LOWER('%\(sanitizedName)%') THEN 3  -- Contains substring
                            ELSE 4
                        END as match_quality
                 FROM games
-                WHERE LOWER(games.display_name) LIKE LOWER('%\(escapedName)%')
+                WHERE LOWER(games.display_name) LIKE LOWER('%\(sanitizedName)%')
                 \(platformFilter)
                 ORDER BY match_quality, games.display_name
                 LIMIT 10
@@ -1086,12 +1089,5 @@ extension libretrodb {
                 source: "LibretroDB"
             )
         }
-    }
-
-    // Helper to escape SQL special characters
-    private func escapeSQLString(_ input: String) -> String {
-        input.replacingOccurrences(of: "'", with: "''")
-             .replacingOccurrences(of: "(", with: "\\(")
-             .replacingOccurrences(of: ")", with: "\\)")
     }
 }
