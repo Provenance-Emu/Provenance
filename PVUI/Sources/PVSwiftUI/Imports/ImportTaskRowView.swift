@@ -61,9 +61,15 @@ struct ImportTaskRowView: View {
                             .font(.subheadline)
                             .foregroundColor(fgColor)
                     } else if !item.systems.isEmpty {
-                        Text("\(item.systems.count) systems")
-                            .font(.subheadline)
-                            .foregroundColor(secondaryFgColor)
+                        if item.systems.count == 1 {
+                            Text("\(item.systems.first!.fullName) matched")
+                                .font(.subheadline)
+                                .foregroundColor(secondaryFgColor)
+                        } else {
+                            Text("\(item.systems.count) systems")
+                                .font(.subheadline)
+                                .foregroundColor(secondaryFgColor)
+                        }
                     }
                     
                     if item.status == .failure, let errorText = item.errorValue {
