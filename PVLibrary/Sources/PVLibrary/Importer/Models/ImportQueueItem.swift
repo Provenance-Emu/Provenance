@@ -62,17 +62,10 @@ public enum ProcessingState {
 @Perceptible
 public class ImportQueueItem: Identifiable, ObservableObject {
 
-    // TODO: Make this more generic with AnySystem, some System?
-    //public typealias System = PVSystem //AnySystem
-
     public let id = UUID()
     public var url: URL
     public var fileType: FileType
-    @MainActor
-    @PerceptionIgnored
     public var systems: [SystemIdentifier] = [] // Can be set to the specific system type
-    @MainActor
-    @PerceptionIgnored
     public var userChosenSystem: (SystemIdentifier)? = nil
     public var destinationUrl: URL?
     public var errorValue: String?
@@ -91,9 +84,8 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         }
     }
 
-    @MainActor
     private func updateSystems() {
-        systems = RomDatabase.sharedInstance.all(PVSystem.self).map { $0.systemIdentifier }
+        systems = PVEmulatorConfiguration.availableSystemIdentifiers
     }
 
     private let md5Provider: MD5Provider

@@ -127,20 +127,19 @@ public class AppState: ObservableObject {
     }
 
     /// Method to initialize the database
-    private func initializeDatabase() {
+    @MainActor
+    private func initializeDatabase() async {
         ILOG("AppState: Starting database initialization")
         bootupStateManager.transition(to: .initializingDatabase)
-        Task { @MainActor in
-            do {
-                ILOG("AppState: Calling RomDatabase.initDefaultDatabase()")
-                try await RomDatabase.initDefaultDatabase()
-                ILOG("AppState: Database initialization completed successfully")
-                bootupStateManager.transition(to: .databaseInitialized)
-                await initializeLibrary()
-            } catch {
-                ELOG("AppState: Error initializing database: \(error.localizedDescription)")
-                bootupStateManager.transition(to: .error(error))
-            }
+        do {
+            ILOG("AppState: Calling RomDatabase.initDefaultDatabase()")
+            try await RomDatabase.initDefaultDatabase()
+            ILOG("AppState: Database initialization completed successfully")
+            bootupStateManager.transition(to: .databaseInitialized)
+            await initializeLibrary()
+        } catch {
+            ELOG("AppState: Error initializing database: \(error.localizedDescription)")
+            bootupStateManager.transition(to: .error(error))
         }
     }
 

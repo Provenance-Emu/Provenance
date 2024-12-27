@@ -198,10 +198,15 @@ public final class GameImporter: GameImporting, ObservableObject {
     var importAutoStartDelayTask: Task<Void, Never>?
     public var importQueue: [ImportQueueItem] = [] {
         didSet {
-            importAutoStartDelayTask?.cancel()
-            importAutoStartDelayTask = Task {
-                await try? Task.sleep(for: .seconds(1))
-                self.startProcessing()
+            // Schedule auto-start if there are queued items OR items with a user-chosen system
+            if importQueue.contains(where: {
+                $0.status == .queued || $0.userChosenSystem != nil
+            }) {
+                importAutoStartDelayTask?.cancel()
+                importAutoStartDelayTask = Task {
+                    await try? Task.sleep(for: .seconds(1))
+                    self.startProcessing()
+                }
             }
         }
     }
@@ -646,17 +651,33 @@ public final class GameImporter: GameImporting, ObservableObject {
     // Processes each ImportItem in the queue sequentially
     @MainActor
     private func processQueue() async {
+        // Check for items that are either queued or have a user-chosen system
+        let itemsToProcess = importQueue.filter {
+            $0.status == .queued || $0.userChosenSystem != nil
+        }
+
+        guard !itemsToProcess.isEmpty else {
+            DispatchQueue.main.async {
+                self.processingState = .idle
+            }
+            return
+        }
+
         ILOG("GameImportQueue - processQueue beginning Import Processing")
         DispatchQueue.main.async {
             self.processingState = .processing
         }
 
-        for item in importQueue where item.status == .queued {
+        for item in itemsToProcess {
+            // If there's a user-chosen system, ensure the item is queued
+            if item.userChosenSystem != nil {
+                item.status = .queued
+            }
             await processItem(item)
         }
 
         DispatchQueue.main.async {
-            self.processingState = .idle  // Reset processing status when queue is fully processed
+            self.processingState = .idle
         }
         ILOG("GameImportQueue - processQueue complete Import Processing")
     }
@@ -733,7 +754,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         //update item's candidate systems with the result of determineSystems
         item.systems = systems
-        
+
         //this might be a conflict if we can't infer what to do
         //for BIOS, we can handle multiple systems, so allow that to proceed
         if item.fileType != .bios && item.targetSystem() == nil {
