@@ -17,6 +17,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY: ${{ github.workspace }}
+  DEVELOPER_DIR: /Applications/Xcode_16.0.app/Contents/Developer
+  XCODE_VERSION: '16.0'
 
 jobs:
   build:
@@ -24,109 +26,94 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target:
-          - Provenance-Release
-          - ProvenanceTV-Release
-          - "Provenance-XL Release"
-          - "Provenance-Lite Release"
-          - Provenance-UnderDevelopment
         include:
-          - target: Provenance-Release
+          - target: "Provenance-Lite-iOS"
             sdk: iphoneos
-            scheme: Provenance-Release
-            APP_NAME: Provenance
-            IPA_NAME: Provenance
-          - target: ProvenanceTV-Release
+            scheme: "Provenance-Lite (AppStore) (Release)"
+            APP_NAME: "Provenance-Lite"
+            IPA_NAME: "Provenance-Lite-iOS"
+
+          - target: "Provenance-Lite-tvOS"
             sdk: appletvos
-            scheme: ProvenanceTV-Release
-            APP_NAME: Provenance
-            IPA_NAME: ProvenanceTV
-          - target: Provenance-Release
+            scheme: "Provenance-Lite (AppStore) (Release)"
+            APP_NAME: "Provenance-Lite"
+            IPA_NAME: "Provenance-Lite-tvOS"
+
+          - target: "Provenance-iOS"
+            sdk: iphoneos
+            scheme: "Provenance (AppStore) (Release)"
+            APP_NAME: "Provenance"
+            IPA_NAME: "Provenance-iOS"
+
+          - target: "Provenance-tvOS"
             sdk: appletvos
-            scheme: Provenance-Release
-            APP_NAME: Provenance
-            IPA_NAME: Provenance-tvOS
-          - target: "Provenance-XL Release"
-            sdk: iphoneos
-            scheme: "Provenance-XL Release"
-            APP_NAME: Provenance-XL
-            IPA_NAME: Provenance-XL
-          - target: "Provenance-Lite Release"
-            sdk: iphoneos
-            scheme: "Provenance-Lite Release"
-            APP_NAME: Provenance-Lite
-            IPA_NAME: Provenance-Lite
-          - target: Provenance-UnderDevelopment
-            sdk: iphoneos
-            scheme: Provenance-UnderDevelopment
-            APP_NAME: Provenance-UnderDevelopment
-            IPA_NAME: Provenance-UnderDevelopment
-          # - target: macOS
-          #   sdk: macosx
-          #   scheme: Provenance
+            scheme: "Provenance (AppStore) (Release)"
+            APP_NAME: "Provenance"
+            IPA_NAME: "Provenance-tvOS"
+
+          - target: "Provenance-Catalyst"
+            sdk: macosx
+            scheme: "Provenance (AppStore) (Release)"
+            APP_NAME: "Provenance"
+            IPA_NAME: "Provenance-Catalyst"
+            CATALYST_FLAG: "-destination 'platform=macOS,variant=Mac Catalyst'"
 
     runs-on: 'macos-latest'
     timeout-minutes: 300
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
-
-      # - name: Install Xcode
-      #   uses: maxim-lobanov/setup-xcode@v1
-      #   with:
-      #     xcode-version: ${{ matrix.version }}
+          fetch-depth: 0
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: '16.0'
-          # xcode-select-path: /Applications/Xcode_${{ matrix.version }}.app/Contents/Developer
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Set Build Number
+        run: |
+          BUILD_NUMBER=$(git rev-list --count HEAD)
+          echo "BUILD_NUMBER=${BUILD_NUMBER}" >> $GITHUB_ENV
+          echo "MARKETING_VERSION=$(cat Provenance/Provenance-Info.plist | grep -A1 CFBundleShortVersionString | tail -n1 | sed -E 's/.*>([0-9.]+)<.*/\1/')" >> $GITHUB_ENV
 
       - uses: actions/cache@v3
         with:
-          path: .build
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          path: |
+            .build
+            ~/Library/Caches/org.swift.swiftpm
+            ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-spm-xcode-${{ hashFiles('**/Package.resolved') }}-${{ hashFiles('**/*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-xcode-
 
       - name: Install dependencies
-        run: brew install ldid
-
-      - name: Cache DerivedData
-        uses: irgaly/xcode-cache@v1
-        with:
-          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
-
-      - name: Install Swift Package Cache
         run: |
-          mkdir -p ${{ env.SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY }}
-          chmod -R u+w ${{ env.SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY }}
+          brew install ldid
+          brew install xcbeautify
 
-      - name: Activate IDESkipMacroFingerprintValidation
+      - name: Clean Build Directory
         run: |
-          defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
-
-      # - name: Import Codesign Certificates
-      #   uses: apple-actions/import-codesign-certs@v1
-      #   with:
-      #     p12-file-base64: ${{ secrets.CERT_P12 }}
-      #     p12-password: ${{ secrets.P12_PASS }}
-
-      #- name: Import Codesign Certificates
-      #  uses: apple-actions/import-codesign-certs@v2
-      #  with:
-      #    p12-file-base64: ${{ secrets.CERT_P12 }}
-      #    p12-password: ${{ secrets.P12_PASS }}
+          rm -rf ./build
+          mkdir -p ./build
 
       - name: Build Provenance
+        id: build
+        env:
+          MARKETING_VERSION: ${{ env.MARKETING_VERSION }}
+          BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
         run: |
+          start_time=$(date +%s)
           xcodebuild -configuration Release \
           -workspace Provenance.xcworkspace \
           -scheme "${{ matrix.scheme }}" \
           -sdk ${{ matrix.sdk }} \
+          ${{ matrix.CATALYST_FLAG }} \
           -skipPackagePluginValidation \
           -skipMacroValidation \
+          MARKETING_VERSION=${MARKETING_VERSION} \
+          CURRENT_PROJECT_VERSION=${BUILD_NUMBER} \
           archive \
           -archivePath ./archive \
           CODE_SIGNING_REQUIRED=NO \
@@ -135,56 +122,83 @@ jobs:
           SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY=${{ env.SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY }} \
           DEVELOPMENT_TEAM=S32Z3HMYVQ \
           ORG_IDENTIFIER=org.provenance-emu \
-          | xcpretty && exit ${PIPESTATUS[0]}
-
-      # - name: Build Provenance
-      #   run: |
-      #     rm -rf ~/Library/Developer/Xcode/DerivedData/
-      #     rm ./Provenance.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
-      #     rm ./Provenance.xcworkspace/xcshareddata/swiftpm/Package.resolved
-      #     xcodebuild -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphoneos archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=XYZ0123456 ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
+          | xcbeautify
+          end_time=$(date +%s)
+          echo "duration=$((end_time - start_time))" >> $GITHUB_OUTPUT
 
       - name: Fakesign app
+        if: ${{ matrix.target != 'Provenance-Catalyst' }}
         run: |
-          #rm -rf archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/Frameworks/*.framework/Frameworks/
           ldid -SProvenance/Provenance.entitlements archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}
 
       - name: Convert to IPA
+        if: ${{ matrix.target != 'Provenance-Catalyst' }}
         run: |
           mkdir Payload
           cp -pR "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
           zip -r "${{ matrix.IPA_NAME }}.ipa" Payload
 
-      # - name: Codesign IPA
-      #   uses: mmaetzler/ios-resign-action@d3c2e4cb930bc7edf89894af7af622d3c0d5b571
-      #   with:
-      #     ipa_path: "${{ matrix.IPA_NAME }}.ipa"
-      #     mobileprovision: ${{ secrets.MOBILEPROVISION }}
-      #     cert_p12: ${{ secrets.CERT_P12 }}
-      #     p12_pass: ${{ secrets.P12_PASS }}
-      #     signing_identity: ${{ secrets.SIGNING_IDENTITY }}
+      - name: Package Mac Catalyst App
+        if: ${{ matrix.target == 'Provenance-Catalyst' }}
+        run: |
+          cd archive.xcarchive/Products/Applications/
+          zip -r "${{ github.workspace }}/${{ matrix.IPA_NAME }}.zip" *.app
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: "${{ matrix.IPA_NAME }}.ipa"
-          path: "${{ matrix.IPA_NAME }}.ipa"
+          name: "${{ matrix.IPA_NAME }}-v${{ env.MARKETING_VERSION }}(${{ env.BUILD_NUMBER }})${{ matrix.target == 'Provenance-Catalyst' && '.zip' || '.ipa' }}"
+          path: "${{ matrix.IPA_NAME }}${{ matrix.target == 'Provenance-Catalyst' && '.zip' || '.ipa' }}"
+          if-no-files-found: error
+          retention-days: 90
 
-      # - name: Upload IPA to S3
-      #   if: ${{ github.branch == 'develop' }}
-      #   uses: ebuckthal/s3-upload-artifact@v7
-      #   with:
-      #     bucket: 'sh-sysops'
-      #     key: ${AWS_SECRET_ACCESS_KEY}
-      #     path: 'Provenance.ipa'
+      - name: Record Build Time
+        run: |
+          duration=${{ steps.build.outputs.duration }}
+          minutes=$((duration / 60))
+          seconds=$((duration % 60))
+          echo "Build took ${minutes}m ${seconds}s"
+          echo "### Build Time ⏱️" >> $GITHUB_STEP_SUMMARY
+          echo "- Duration: ${minutes}m ${seconds}s" >> $GITHUB_STEP_SUMMARY
 
-    # - name: Upload IPA to App Center
-    #   uses: wzieba/AppCenter-Github-Action@v1
-    #   if: ${{ github.branch == 'develop' }}
-    #   with:
-    #     appName: wzieba/Sample-App
-    #     token: ${{secrets.APP_CENTER_TOKEN}}
-    #     group: Testers
-    #     file: Provenance.ipa
-    #     notifyTesters: true
-    #     debug: false
+      - name: Build Summary
+        run: |
+          echo "### Build Complete! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "- Version: ${{ env.MARKETING_VERSION }} (${{ env.BUILD_NUMBER }})" >> $GITHUB_STEP_SUMMARY
+          echo "- Target: ${{ matrix.target }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Scheme: ${{ matrix.scheme }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Update Build Status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Build succeeded for ${{ matrix.target }}"
+          else
+            echo "❌ Build failed for ${{ matrix.target }}"
+            exit 1
+          fi
+
+      - name: Notify Discord Build Status
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            STATUS_COLOR="65280"
+            STATUS="✅ Success"
+          else
+            STATUS_COLOR="16711680"
+            STATUS="❌ Failed"
+          fi
+
+          curl -H "Content-Type: application/json" -X POST $DISCORD_WEBHOOK \
+          -d '{
+            "embeds": [{
+              "title": "Build ${{ matrix.target }}",
+              "description": "Version ${{ env.MARKETING_VERSION }} (Build ${{ env.BUILD_NUMBER }})\nScheme: ${{ matrix.scheme }}\nBuild Duration: ${{ steps.build.outputs.duration }}s",
+              "color": '"$STATUS_COLOR"',
+              "footer": {
+                "text": "'"$STATUS"'"
+              }
+            }]
+          }'

@@ -10,6 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - name: Download workflow artifact data
+        uses: actions/github-script@v6
+        id: artifacts
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id,
+            });
+            return artifacts.data;
+
       - name: add artifact links to pull request and related issues step
         uses: tonyhallett/artifacts-url-comments@v1.1.0
         env:
@@ -19,4 +31,29 @@ jobs:
             suffix: Have a nice day.
             format: name
             addTo: pull
-            # addTo: pullandissues
+
+      - name: Notify Discord with Download Links
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          ARTIFACTS_JSON='${{ steps.artifacts.outputs.result }}'
+
+          # Create download links list
+          DOWNLOAD_LINKS=""
+          while IFS= read -r artifact; do
+            name=$(echo $artifact | jq -r '.name')
+            url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/${{ github.event.workflow_run.id }}/artifacts/$(echo $artifact | jq -r '.id')"
+            DOWNLOAD_LINKS+="• [${name}](${url})\n"
+          done < <(echo "$ARTIFACTS_JSON" | jq -c '.artifacts[]')
+
+          curl -H "Content-Type: application/json" -X POST $DISCORD_WEBHOOK \
+          -d '{
+            "embeds": [{
+              "title": "🎮 New Provenance Builds Available",
+              "description": "New builds are ready for download:\n'"${DOWNLOAD_LINKS}"'",
+              "color": 5814783,
+              "footer": {
+                "text": "Pull Request #${{ github.event.workflow_run.pull_requests[0].number }}"
+              }
+            }]
+          }'
