@@ -17,10 +17,9 @@ import PVPrimitives
 @objc
 public final class PVEmulatorConfiguration: NSObject {
 
-    @objc
-    public static let availableSystemIdentifiers: [String] = {
-        systems.map({ (system) -> String in
-            system.identifier
+    public static let availableSystemIdentifiers: [SystemIdentifier] = {
+        systems.map({ (system) -> SystemIdentifier in
+            system.systemIdentifier
         })
     }()
 
@@ -82,10 +81,9 @@ public final class PVEmulatorConfiguration: NSObject {
         return systems.first { $0.openvgDatabaseID == databaseID }?.identifier
     }
 
-    @objc
-    public class func systemIdentifiers(forFileExtension fileExtension: String) -> [String]? {
-        return systems(forFileExtension: fileExtension)?.compactMap({ (system) -> String? in
-            system.identifier
+    public class func systemIdentifiers(forFileExtension fileExtension: String) -> [SystemIdentifier]? {
+        return systems(forFileExtension: fileExtension)?.compactMap({ (system) -> SystemIdentifier? in
+            system.systemIdentifier
         })
     }
 
@@ -190,19 +188,6 @@ public extension PVEmulatorConfiguration {
 // MARK: - System queries
 
 public extension PVEmulatorConfiguration {
-
-
-    @objc
-    class func system(forDatabaseID databaseID : Int) -> PVSystem? {
-        guard let systemID = systemID(forDatabaseID: databaseID) else { return nil }
-        let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
-        return system
-    }
-    
-    class func system(forDatabaseID databaseID : Int) -> System? {
-        let pvsystem: PVSystem? = system(forDatabaseID: databaseID)
-        return pvsystem?.asDomain()
-    }
 
     @objc
     class func system(forIdentifier systemID: String) -> PVSystem? {
