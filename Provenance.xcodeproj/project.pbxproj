@@ -2096,7 +2096,6 @@
 		B3A4FB61278FFA0F00A65248 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Conveniences.swift"; sourceTree = "<group>"; };
 		B3A60E852CB7707F001D99C2 /* FrameworksRetro */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FrameworksRetro; path = CoresRetro/RetroArch/modules/FrameworksRetro; sourceTree = "<group>"; };
-		B3A60E882CB77318001D99C2 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AEDE24293F34740050BDB6 /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3156,7 +3155,6 @@
 				B399119326C0F41300E54426 /* CHANGELOG.md */,
 				B399119126C0F41300E54426 /* LICENSE.md */,
 				B399119226C0F41300E54426 /* README.md */,
-				B3A60E882CB77318001D99C2 /* TODO.md */,
 				B37769042CF6D47300A48B35 /* UITesting.xcodeproj */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
