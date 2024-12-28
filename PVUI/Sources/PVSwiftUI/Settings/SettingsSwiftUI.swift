@@ -651,20 +651,12 @@ private struct AdvancedSection: View {
                     .listRowBackground(Color.accentColor)
                 #endif
                 AdvancedTogglesView()
-
-                #if DEBUG
-                NavigationLink(destination: FeatureFlagsDebugView()) {
-                    SettingsRow(title: "Feature Flags Debug",
-                              subtitle: "Override feature flags for testing",
-                              icon: .sfSymbol("flag.fill"))
-                }
-                #endif
+                SecretSettingsRow()
             }
         }
     }
 }
 
-#if DEBUG
 private struct FeatureFlagsDebugView: View {
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
     @State private var flags: [(key: String, flag: FeatureFlag, enabled: Bool)] = []
@@ -931,7 +923,6 @@ private struct DebugControlsSection: View {
         )
     }
 }
-#endif
 
 private struct AppearanceSection: View {
     @Default(.showGameTitles) var showGameTitles
@@ -966,6 +957,137 @@ private struct AppearanceSection: View {
                 SettingsRow(title: "Show Favorites",
                             subtitle: "Display favorites section.",
                             icon: .sfSymbol("star"))
+            }
+        }
+    }
+}
+
+private struct SecretDPadView: View {
+    enum Direction {
+        case up, down, left, right
+    }
+
+    let onComplete: () -> Void
+    @State private var pressedButtons: [Direction] = []
+    @State private var showDPad = false
+    @Environment(\.dismiss) private var dismiss
+
+    private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
+
+    var body: some View {
+        VStack {
+            if showDPad {
+                // D-Pad Layout
+                VStack(spacing: 0) {
+                    // Up button
+                    Button(action: { pressButton(.up) }) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+
+                    // Middle row (Left, Right)
+                    HStack(spacing: 60) {
+                        Button(action: { pressButton(.left) }) {
+                            Image(systemName: "arrow.left.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }
+
+                        Button(action: { pressButton(.right) }) {
+                            Image(systemName: "arrow.right.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }
+                    }
+
+                    // Down button
+                    Button(action: { pressButton(.down) }) {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+                }
+                .foregroundColor(.accentColor)
+
+                // Show current sequence
+                Text(sequenceText)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.top)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .onLongPressGesture(minimumDuration: 5) {
+            withAnimation {
+                showDPad = true
+            }
+        }
+    }
+
+    private var sequenceText: String {
+        pressedButtons.map { direction in
+            switch direction {
+            case .up: return "↑"
+            case .down: return "↓"
+            case .left: return "←"
+            case .right: return "→"
+            }
+        }.joined(separator: " ")
+    }
+
+    private func pressButton(_ direction: Direction) {
+        pressedButtons.append(direction)
+
+        // Check if the sequence matches the Konami code
+        if pressedButtons.count >= konamiCode.count {
+            let lastEight = Array(pressedButtons.suffix(konamiCode.count))
+            if lastEight == konamiCode {
+                onComplete()
+                dismiss()
+            }
+        }
+
+        // Limit the stored sequence length
+        if pressedButtons.count > 16 {
+            pressedButtons.removeFirst(8)
+        }
+    }
+}
+
+private struct SecretSettingsRow: View {
+    @State private var showSecretView = false
+    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
+
+    var body: some View {
+        Group {
+            #if DEBUG
+            NavigationLink(destination: FeatureFlagsDebugView()) {
+                SettingsRow(title: "Feature Flags Debug",
+                           subtitle: "Override feature flags for testing",
+                           icon: .sfSymbol("flag.fill"))
+            }
+            #else
+            if showFeatureFlagsDebug {
+                NavigationLink(destination: FeatureFlagsDebugView()) {
+                    SettingsRow(title: "Feature Flags Debug",
+                               subtitle: "Override feature flags for testing",
+                               icon: .sfSymbol("flag.fill"))
+                }
+            } else {
+                SettingsRow(title: "About",
+                           subtitle: "Version information",
+                           icon: .sfSymbol("info.circle"))
+                    .onTapGesture {
+                        showSecretView = true
+                    }
+            }
+            #endif
+        }
+        .sheet(isPresented: $showSecretView) {
+            SecretDPadView {
+                showFeatureFlagsDebug = true
             }
         }
     }
