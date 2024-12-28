@@ -13,10 +13,11 @@ import RealmSwift
 import RxRealm
 import PVLogging
 import PVRealm
+import PVFeatureFlags
 @_exported public import PVSettings
 
 public class PVGameLibrary<T> where T: DatabaseDriver {
-
+    
     public struct System {
         public let identifier: String
         public let manufacturer: String
@@ -25,24 +26,26 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
         public let unsupported: Bool
         public let sortedGames: [T.GameType]
     }
-
+    
     public let database: RomDatabase
     public let databaseDriver: T
-    public let  romMigrator: ROMLocationMigrator
-
-    public init(database: RomDatabase) {
+    public let romMigrator: ROMLocationMigrator
+    
+    public init(database: RomDatabase, migrator: ROMLocationMigrator = .init()) {
         self.database = database
         self.databaseDriver = .init(database: database)
-        self.romMigrator = ROMLocationMigrator()
-
+        self.romMigrator = migrator
+        
         // Kick off ROM migration
-        Task.detached {
-            do {
-                try await self.romMigrator.migrateIfNeeded()
-                try await self.romMigrator.fixOrphanedFiles()
-                ILOG("ROM migration completed successfully")
-            } catch {
-                ELOG("ROM migration failed: \(error.localizedDescription)")
+        Task {
+            if await PVFeatureFlagsManager.shared.romPathMigrator {
+                do {
+                    try await self.romMigrator.migrateIfNeeded()
+                    try await self.romMigrator.fixOrphanedFiles()
+                    ILOG("ROM migration completed successfully")
+                } catch {
+                    ELOG("ROM migration failed: \(error.localizedDescription)")
+                }
             }
         }
     }
@@ -67,7 +70,7 @@ extension RealmSwift.LinkingObjects where Element: PVGame {
         case .mostPlayed:
             sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false))
         }
-
+        
         sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: true))
         return sorted(by: sortDescriptors)
     }
@@ -83,7 +86,7 @@ extension Array where Element == PVGameLibrary<RealmDatabaseDriver>.System {
                 return mc == .orderedAscending
             }
         }
-
+        
         switch sortOptions {
         case .title:
             return sorted(by: titleSort)
@@ -91,7 +94,7 @@ extension Array where Element == PVGameLibrary<RealmDatabaseDriver>.System {
             return sorted(by: { (s1, s2) -> Bool in
                 let l1 = s1.sortedGames.first?.lastPlayed
                 let l2 = s2.sortedGames.first?.lastPlayed
-
+                
                 if let l1 = l1, let l2 = l2 {
                     return l1.compare(l2) == .orderedDescending
                 } else if l1 != nil {
@@ -106,7 +109,7 @@ extension Array where Element == PVGameLibrary<RealmDatabaseDriver>.System {
             return sorted(by: { (s1, s2) -> Bool in
                 let l1 = s1.sortedGames.first?.importDate
                 let l2 = s2.sortedGames.first?.importDate
-
+                
                 if let l1 = l1, let l2 = l2 {
                     return l1.compare(l2) == .orderedDescending
                 } else if l1 != nil {
@@ -121,7 +124,7 @@ extension Array where Element == PVGameLibrary<RealmDatabaseDriver>.System {
             return sorted(by: { (s1, s2) -> Bool in
                 let l1 = s1.sortedGames.first?.playCount
                 let l2 = s2.sortedGames.first?.playCount
-
+                
                 if let l1 = l1, let l2 = l2 {
                     return l1 < l2
                 } else if l1 != nil {

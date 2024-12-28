@@ -923,6 +923,13 @@ private struct DebugControlsSection: View {
                 minBuildNumber: "100",
                 allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
                 description: "Test configuration - enabled for all builds"
+            ),
+            "romPathMigrator": FeatureFlag(
+                enabled: true,
+                minVersion: "1.0.0",
+                minBuildNumber: "100",
+                allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+                description: "Test configuration - enabled for all builds"
             )
         ]
 
