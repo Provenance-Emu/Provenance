@@ -8,6 +8,7 @@
 
 import Foundation
 import GameController
+import PVFeatureFlags
 
 #if canImport(SwiftUI)
 #if canImport(Combine)

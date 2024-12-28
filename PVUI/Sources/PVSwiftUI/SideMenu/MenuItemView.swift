@@ -49,7 +49,7 @@ struct MenuItemView: SwiftUI.View {
     }
 
     var body: some SwiftUI.View {
-        let _ = print("MenuItemView '\(rowTitle)' isFocused: \(isFocused)")
+//        let _ = print("MenuItemView '\(rowTitle)' isFocused: \(isFocused)")
         Button {
             action()
         } label: {

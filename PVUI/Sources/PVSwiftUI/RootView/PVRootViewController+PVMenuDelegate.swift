@@ -11,6 +11,7 @@ import SwiftUI
 import PVUIKit
 import UIKit
 #endif
+import PVFeatureFlags
 import RxSwift
 import PVUIBase
 import SwiftUI
@@ -66,10 +67,10 @@ extension PVRootViewController: PVMenuDelegate {
                 self?.dismiss(animated: true)
             }
         )
-        .environmentObject(updatesController)
-        #if canImport(FreemiumKit)
+            .environmentObject(updatesController)
+#if canImport(FreemiumKit)
             .environmentObject(FreemiumKit.shared)
-        #endif
+#endif
 
         let hostingController = UIHostingController(rootView: settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
@@ -104,55 +105,64 @@ extension PVRootViewController: PVMenuDelegate {
         }))
 #endif
 
-        #if canImport(PVWebServer)
+#if canImport(PVWebServer)
         let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { _ in
             self.dismiss(animated: true)
             self.startWebServer()
         })
 
         actionSheet.addAction(webServerAction)
-        #endif
+#endif
         actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
 
         actionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
-//        actionSheet.popoverPresentationController?.sourceView = self.view
-//        actionSheet.popoverPresentationController?.sourceRect = self.view?.bounds ?? UIScreen.main.bounds
+        //        actionSheet.popoverPresentationController?.sourceView = self.view
+        //        actionSheet.popoverPresentationController?.sourceRect = self.view?.bounds ?? UIScreen.main.bounds
 
+        // Ensure we're on the main thread when checking the feature flag
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
 
-        // Add Free ROMs option
-        actionSheet.addAction(UIAlertAction(title: "Free ROMs", style: .default, handler: { [weak self] _ in
-            self?.dismiss(animated: true) {
-                let freeROMsView = FreeROMsView(
-                    onROMDownloaded: { rom, tempURL in
-                        // Handle the downloaded ROM
-                        DLOG("Recieved downloaded file at: \(tempURL)")
-                        self?.updatesController.handlePickedDocuments([tempURL])
-                    },
-                    onDismiss: {
-                        // Optional: Handle dismiss if needed
-                        self?.didTapImports()
+            let isEnabled = PVFeatureFlagsManager.shared.inAppFreeROMs
+            print("Checking inAppFreeROMs in showImportOptionsAlert: \(isEnabled)")
+
+            if isEnabled {
+                // Add Free ROMs option
+                actionSheet.addAction(UIAlertAction(title: "Free ROMs", style: .default, handler: { [weak self] _ in
+                    self?.dismiss(animated: true) {
+                        let freeROMsView = FreeROMsView(
+                            onROMDownloaded: { rom, tempURL in
+                                // Handle the downloaded ROM
+                                DLOG("Recieved downloaded file at: \(tempURL)")
+                                self?.updatesController.handlePickedDocuments([tempURL])
+                            },
+                            onDismiss: {
+                                // Optional: Handle dismiss if needed
+                                self?.didTapImports()
+                            }
+                        )
+
+                        let hostingController = UIHostingController(rootView: freeROMsView)
+                        let navigationController = UINavigationController(rootViewController: hostingController)
+                        self?.present(navigationController, animated: true)
                     }
-                )
-
-                let hostingController = UIHostingController(rootView: freeROMsView)
-                let navigationController = UINavigationController(rootViewController: hostingController)
-                self?.present(navigationController, animated: true)
+                }))
             }
-        }))
 
-        if let presentedViewController = presentedViewController {
-            presentedViewController.present(actionSheet, animated: true, completion: nil)
-        } else {
-            present(actionSheet, animated: true, completion: nil)
+            if let presentedViewController = self.presentedViewController {
+                presentedViewController.present(actionSheet, animated: true, completion: nil)
+            } else {
+                self.present(actionSheet, animated: true, completion: nil)
+            }
         }
-        #endif
+#endif
     }
 
     public func didTapCollection(with collection: Int) {
         /* TODO: collections */
     }
-    
+
 #if canImport(PVWebServer)
     func startWebServer() {
         // start web transfer service

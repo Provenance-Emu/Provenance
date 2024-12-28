@@ -2,6 +2,7 @@ import SwiftUI
 import Foundation
 import PVLogging
 import PVSwiftUI
+import PVFeatureFlags
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -11,11 +12,18 @@ struct ProvenanceApp: App {
     @StateObject private var appState = AppState.shared
     @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
     @Environment(\.scenePhase) private var scenePhase
+    @StateObject private var featureFlags = PVFeatureFlagsManager.shared
 
     var body: some Scene {
         WindowGroup {
             ContentView(appDelegate: appDelegate)
                 .environmentObject(appState)
+                .environmentObject(featureFlags)
+                .task {
+                    try? await featureFlags.loadConfiguration(
+                        from: URL(string: "https://data.provenance-emu.com/features/features.json")!
+                    )
+                }
             #if canImport(FreemiumKit)
                 .environmentObject(FreemiumKit.shared)
             #endif
