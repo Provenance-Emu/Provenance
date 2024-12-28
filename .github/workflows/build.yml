@@ -129,7 +129,7 @@ jobs:
       - name: Fakesign app
         if: ${{ matrix.target != 'Provenance-Catalyst' }}
         run: |
-          ldid -SProvenance/Provenance.entitlements archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}
+          ldid -S"Provenance/Provenance-AppStore.entitlements" "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}"
 
       - name: Convert to IPA
         if: ${{ matrix.target != 'Provenance-Catalyst' }}
