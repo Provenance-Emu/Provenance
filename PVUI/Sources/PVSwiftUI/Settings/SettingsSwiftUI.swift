@@ -15,6 +15,7 @@ import RxSwift
 import RealmSwift
 import Perception
 import PVFeatureFlags
+import Defaults
 
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -667,6 +668,7 @@ private struct FeatureFlagsDebugView: View {
         List {
             LoadingSection(isLoading: isLoading, flags: flags)
             FeatureFlagsSection(flags: flags, featureFlags: featureFlags)
+            UserDefaultsSection()
             ConfigurationSection()
             DebugControlsSection(featureFlags: featureFlags, flags: $flags, isLoading: $isLoading, errorMessage: $errorMessage)
         }
@@ -871,6 +873,7 @@ private struct DebugControlsSection: View {
     @Binding var flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
     @Binding var isLoading: Bool
     @Binding var errorMessage: String?
+    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
 
     var body: some View {
         Section(header: Text("Debug Controls")) {
@@ -891,13 +894,23 @@ private struct DebugControlsSection: View {
             Button("Reset to Default") {
                 Task {
                     do {
+                        // Reset feature flags to default
                         try await loadDefaultConfiguration()
                         flags = featureFlags.getAllFeatureFlags()
+
+                        // Reset unlock status
+                        showFeatureFlagsDebug = false
+
+                        // Reset all user defaults to their default values
+                        Defaults.Keys.useAppGroups.reset()
+                        Defaults.Keys.unsupportedCores.reset()
+                        Defaults.Keys.iCloudSync.reset()
                     } catch {
                         errorMessage = "Failed to load default configuration: \(error.localizedDescription)"
                     }
                 }
             }
+            .foregroundColor(.red) // Make it stand out as a destructive action
         }
     }
 
@@ -1090,5 +1103,56 @@ private struct SecretSettingsRow: View {
                 showFeatureFlagsDebug = true
             }
         }
+    }
+}
+
+private struct UserDefaultsSection: View {
+    @Default(.useAppGroups) var useAppGroups
+    @Default(.unsupportedCores) var unsupportedCores
+    @Default(.iCloudSync) var iCloudSync
+
+    var body: some View {
+        Section(header: Text("User Defaults")) {
+            UserDefaultToggle(
+                title: "useAppGroups",
+                subtitle: "Use App Groups for shared storage",
+                isOn: $useAppGroups
+            )
+
+            UserDefaultToggle(
+                title: "unsupportedCores",
+                subtitle: "Enable experimental and unsupported cores",
+                isOn: $unsupportedCores
+            )
+
+            UserDefaultToggle(
+                title: "iCloudSync",
+                subtitle: "Sync save states and settings with iCloud",
+                isOn: $iCloudSync
+            )
+        }
+    }
+}
+
+private struct UserDefaultToggle: View {
+    let title: String
+    let subtitle: String
+    @Binding var isOn: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(title)
+                        .font(.headline)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Toggle("", isOn: $isOn)
+            }
+        }
+        .padding(.vertical, 4)
     }
 }
