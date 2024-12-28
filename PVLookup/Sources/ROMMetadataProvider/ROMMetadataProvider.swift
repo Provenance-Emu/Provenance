@@ -43,6 +43,7 @@ public extension ROMMetadataProvider {
             .replacingOccurrences(of: "]", with: "\\]")
             .replacingOccurrences(of: "*", with: "\\*")    // Wildcards
             .replacingOccurrences(of: "?", with: "\\?")
+            .replacingOccurrences(of: "#", with: "\\#")
 
         return escapedLike
     }
