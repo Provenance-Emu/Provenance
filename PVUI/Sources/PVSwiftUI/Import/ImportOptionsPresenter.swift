@@ -5,10 +5,12 @@ import UniformTypeIdentifiers
 #if canImport(PVWebServer)
 import PVWebServer
 #endif
+import PVFeatureFlags
 
 public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
     public init() {}
 
+    @MainActor
     public func showImportOptions(
         from viewController: UIViewController,
         updatesController: PVGameLibraryUpdatesController,
@@ -41,38 +43,40 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
         }))
         #endif
 
-        actionSheet.addAction(UIAlertAction(title: "Free ROMs", style: .default, handler: { _ in
-            viewController.dismiss(animated: true) {
-                let freeROMsView = FreeROMsView(
-                    onROMDownloaded: { rom, tempURL in
-                        updatesController.handlePickedDocuments([tempURL])
-                    },
-                    onDismiss: {
-                        let delegate = viewController as? ImportStatusDelegate ?? DefaultImportStatusDelegate(
-                            from: viewController,
-                            updatesController: updatesController
-                        )
-                        // Show import status view
-                        let gameImporter = AppState.shared.gameImporter ?? GameImporter.shared
-                        let settingsView = ImportStatusView(
-                            updatesController: updatesController,
-                            gameImporter: gameImporter,
-                            delegate: delegate,
-                            dismissAction: {
-                                gameImporter.clearCompleted()
-                            }
-                        )
-                        let hostingController = UIHostingController(rootView: settingsView)
-                        let navigationController = UINavigationController(rootViewController: hostingController)
-                        viewController.present(navigationController, animated: true)
-                    }
-                )
+        if PVFeatureFlagsManager.shared.inAppFreeROMs {
+            actionSheet.addAction(UIAlertAction(title: "Free ROMs", style: .default, handler: { _ in
+                viewController.dismiss(animated: true) {
+                    let freeROMsView = FreeROMsView(
+                        onROMDownloaded: { rom, tempURL in
+                            updatesController.handlePickedDocuments([tempURL])
+                        },
+                        onDismiss: {
+                            let delegate = viewController as? ImportStatusDelegate ?? DefaultImportStatusDelegate(
+                                from: viewController,
+                                updatesController: updatesController
+                            )
+                            // Show import status view
+                            let gameImporter = AppState.shared.gameImporter ?? GameImporter.shared
+                            let settingsView = ImportStatusView(
+                                updatesController: updatesController,
+                                gameImporter: gameImporter,
+                                delegate: delegate,
+                                dismissAction: {
+                                    gameImporter.clearCompleted()
+                                }
+                            )
+                            let hostingController = UIHostingController(rootView: settingsView)
+                            let navigationController = UINavigationController(rootViewController: hostingController)
+                            viewController.present(navigationController, animated: true)
+                        }
+                    )
 
-                let hostingController = UIHostingController(rootView: freeROMsView)
-                let navigationController = UINavigationController(rootViewController: hostingController)
-                viewController.present(navigationController, animated: true)
-            }
-        }))
+                    let hostingController = UIHostingController(rootView: freeROMsView)
+                    let navigationController = UINavigationController(rootViewController: hostingController)
+                    viewController.present(navigationController, animated: true)
+                }
+            }))
+        }
 
         actionSheet.addAction(UIAlertAction(title: "Import Queue", style: .default, handler: { _ in
             viewController.dismiss(animated: true) {

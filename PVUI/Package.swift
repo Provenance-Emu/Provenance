@@ -24,6 +24,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../PVAudio"),
+        .package(path: "../PVFeatureFlags"),
         .package(path: "../PVCoreAudio"),
         .package(path: "../PVCoreBridge"),
         .package(path: "../PVEmulatorCore"),
@@ -93,6 +94,7 @@ let package = Package(
                 "PVWebServer",
                 "PVUIObjC",
                 "FreemiumKit",
+                "PVFeatureFlags",
                 .byNameItem(name: "MBProgressHUD", condition: .when(platforms: [.iOS, .macCatalyst, .tvOS, .watchOS])),
                 .byNameItem(name: "PVUI_AppKit", condition: .when(platforms: [.macOS])),
                 .byNameItem(name: "PVUI_TV", condition: .when(platforms: [.tvOS])),
@@ -154,6 +156,7 @@ let package = Package(
                 "PVWebServer",
                 "MBProgressHUD",
                 "FreemiumKit",
+                "PVFeatureFlags",
                 .product(name: "Reachability", package: "reachability.swift"),
                 "RxDataSources",
 //                .product(name: "Dependencies", package: "swift-dependencies")
@@ -202,6 +205,7 @@ let package = Package(
                 "AnimatedGradient",
                 "FloatingButton",
                 "ActivityIndicatorView",
+                "PVFeatureFlags",
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
             ]

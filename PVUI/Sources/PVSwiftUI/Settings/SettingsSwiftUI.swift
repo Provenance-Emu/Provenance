@@ -14,6 +14,7 @@ import RxRealm
 import RxSwift
 import RealmSwift
 import Perception
+import PVFeatureFlags
 
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -93,7 +94,7 @@ public struct PVSettingsView: View {
                     DocumentationSection()
                 }
                 #endif
-                
+
                 CollapsibleSection(title: "Build") {
                     BuildSection(viewModel: viewModel)
                         .environmentObject(viewModel)
@@ -111,18 +112,6 @@ public struct PVSettingsView: View {
                 trailing: Button("Help") { viewModel.showHelp() }
             )
             #endif
-        }
-        .onAppear {
-            viewModel.setupConflictsObserver()
-            withPerceptionTracking {
-                Task { @MainActor in
-                    await AppState.shared.libraryUpdatesController?.updateConflicts()
-                }
-            } onChange: {
-                Task { @MainActor in
-                    viewModel.numberOfConflicts = AppState.shared.libraryUpdatesController?.conflicts.count ?? 0
-                }
-            }
         }
     }
 }
@@ -303,11 +292,11 @@ private struct SavesSection: View {
 }
 
 private struct SocialLinksSection: View {
-    
+
     let isAppStore: Bool = {
         AppState.shared.isAppStore
     }()
-    
+
     var body: some View {
         Section(header: Text("Social")) {
             if !isAppStore {
@@ -620,14 +609,6 @@ private struct LibrarySection: View {
                             subtitle: "Visual options for Game Library",
                             icon: .sfSymbol("eye"))
             }
-
-            NavigationLink(destination: ConflictsView().environmentObject(viewModel)) {
-                SettingsRow(title: "Manage Conflicts",
-                            subtitle: "Resolve conflicting save states and files.",
-                            value: "\(viewModel.numberOfConflicts)",
-                            icon: .sfSymbol("bandage"))
-            }
-            .disabled(viewModel.numberOfConflicts == 0)
         }
     }
 }
@@ -665,16 +646,292 @@ private struct AdvancedSection: View {
     var body: some View {
         Group {
             Section(header: Text("Advanced")) {
-#if canImport(FreemiumKit)
+                #if canImport(FreemiumKit)
                 PaidStatusView(style: .decorative(icon: .star))
                     .listRowBackground(Color.accentColor)
-#endif
+                #endif
                 AdvancedTogglesView()
+
+                #if DEBUG
+                NavigationLink(destination: FeatureFlagsDebugView()) {
+                    SettingsRow(title: "Feature Flags Debug",
+                              subtitle: "Override feature flags for testing",
+                              icon: .sfSymbol("flag.fill"))
+                }
+                #endif
             }
         }
     }
 }
 
+#if DEBUG
+private struct FeatureFlagsDebugView: View {
+    @StateObject private var featureFlags = PVFeatureFlagsManager.shared
+    @State private var flags: [(key: String, flag: FeatureFlag, enabled: Bool)] = []
+    @State private var isLoading = false
+    @State private var errorMessage: String?
+
+    var body: some View {
+        List {
+            LoadingSection(isLoading: isLoading, flags: flags)
+            FeatureFlagsSection(flags: flags, featureFlags: featureFlags)
+            ConfigurationSection()
+            DebugControlsSection(featureFlags: featureFlags, flags: $flags, isLoading: $isLoading, errorMessage: $errorMessage)
+        }
+        .navigationTitle("Feature Flags Debug")
+        .task {
+            await loadInitialConfiguration()
+        }
+        .alert("Error", isPresented: .constant(errorMessage != nil)) {
+            Button("OK") {
+                errorMessage = nil
+            }
+        } message: {
+            if let error = errorMessage {
+                Text(error)
+            }
+        }
+    }
+
+    @MainActor
+    private func loadInitialConfiguration() async {
+        isLoading = true
+
+        do {
+            // First try to refresh from remote
+            try await loadDefaultConfiguration()
+            flags = featureFlags.getAllFeatureFlags()
+            print("Initial flags loaded: \(flags)")
+        } catch {
+            errorMessage = "Failed to load remote configuration: \(error.localizedDescription)"
+            print("Error loading remote configuration: \(error)")
+
+            // If remote fails, try to refresh from current state
+            flags = featureFlags.getAllFeatureFlags()
+        }
+
+        isLoading = false
+    }
+
+    @MainActor
+    private func loadDefaultConfiguration() async throws {
+        try await PVFeatureFlagsManager.shared.loadConfiguration(
+            from: URL(string: "https://data.provenance-emu.com/features/features.json")!
+        )
+    }
+}
+
+private struct LoadingSection: View {
+    let isLoading: Bool
+    let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
+
+    var body: some View {
+        if isLoading {
+            Section {
+                ProgressView("Loading configuration...")
+            }
+        }
+    }
+}
+
+private struct FeatureFlagsSection: View {
+    let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
+    let featureFlags: PVFeatureFlagsManager
+
+    var body: some View {
+        Section(header: Text("Feature Flags Status")) {
+            if flags.isEmpty {
+                Text("No feature flags found")
+                    .foregroundColor(.secondary)
+            } else {
+                ForEach(flags, id: \.key) { flag in
+                    FeatureFlagRow(flag: flag, featureFlags: featureFlags)
+                }
+            }
+        }
+    }
+}
+
+private struct FeatureFlagRow: View {
+    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
+    let featureFlags: PVFeatureFlagsManager
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                FeatureFlagInfo(flag: flag)
+                Spacer()
+                FeatureFlagStatus(flag: flag, featureFlags: featureFlags)
+                FeatureFlagToggle(flag: flag, featureFlags: featureFlags)
+            }
+            FeatureFlagDetails(flag: flag.flag)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+private struct FeatureFlagInfo: View {
+    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(flag.key)
+                .font(.headline)
+            if let description = flag.flag.description {
+                Text(description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+private struct FeatureFlagStatus: View {
+    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
+    let featureFlags: PVFeatureFlagsManager
+
+    var body: some View {
+        VStack(alignment: .trailing) {
+            // Show base configuration state
+            Text("Base Config: \(flag.flag.enabled ? "On" : "Off")")
+                .font(.caption)
+                .foregroundColor(flag.flag.enabled ? .green : .red)
+
+            // Show effective state
+            Text("Effective: \(flag.enabled ? "On" : "Off")")
+                .font(.caption)
+                .foregroundColor(flag.enabled ? .green : .red)
+
+            // Show debug override if present
+            if let override = featureFlags.debugOverrides[flag.key] {
+                Text("Override: \(override ? "On" : "Off")")
+                    .font(.caption)
+                    .foregroundColor(.blue)
+            }
+
+            // Show restrictions if any
+            let restrictions = featureFlags.getFeatureRestrictions(flag.key)
+            if !restrictions.isEmpty {
+                ForEach(restrictions, id: \.self) { restriction in
+                    Text(restriction)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                }
+            }
+        }
+    }
+}
+
+private struct FeatureFlagToggle: View {
+    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
+    let featureFlags: PVFeatureFlagsManager
+
+    var body: some View {
+        Toggle("", isOn: Binding(
+            get: {
+                featureFlags.debugOverrides[flag.key] ?? flag.enabled
+            },
+            set: { newValue in
+                print("Setting toggle to: \(newValue)")
+                featureFlags.setDebugOverride(feature: flag.key, enabled: newValue)
+            }
+        ))
+    }
+}
+
+private struct FeatureFlagDetails: View {
+    let flag: FeatureFlag
+
+    var body: some View {
+        Group {
+            if let minVersion = flag.minVersion {
+                Text("Min Version: \(minVersion)")
+            }
+            if let minBuild = flag.minBuildNumber {
+                Text("Min Build: \(minBuild)")
+            }
+            if let allowedTypes = flag.allowedAppTypes {
+                Text("Allowed Types: \(allowedTypes.joined(separator: ", "))")
+            }
+        }
+        .font(.caption)
+        .foregroundColor(.secondary)
+    }
+}
+
+private struct ConfigurationSection: View {
+    var body: some View {
+        Section(header: Text("Current Configuration")) {
+            Text("App Type: \(PVFeatureFlags.getCurrentAppType().rawValue)")
+            Text("App Version: \(PVFeatureFlags.getCurrentAppVersion())")
+            if let buildNumber = PVFeatureFlags.getCurrentBuildNumber() {
+                Text("Build Number: \(buildNumber)")
+            }
+            Text("Remote URL: https://data.provenance-emu.com/features/features.json")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+    }
+}
+
+private struct DebugControlsSection: View {
+    let featureFlags: PVFeatureFlagsManager
+    @Binding var flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
+    @Binding var isLoading: Bool
+    @Binding var errorMessage: String?
+
+    var body: some View {
+        Section(header: Text("Debug Controls")) {
+            Button("Clear All Overrides") {
+                featureFlags.clearDebugOverrides()
+                flags = featureFlags.getAllFeatureFlags()
+            }
+
+            Button("Refresh Flags") {
+                flags = featureFlags.getAllFeatureFlags()
+            }
+
+            Button("Load Test Configuration") {
+                loadTestConfiguration()
+                flags = featureFlags.getAllFeatureFlags()
+            }
+
+            Button("Reset to Default") {
+                Task {
+                    do {
+                        try await loadDefaultConfiguration()
+                        flags = featureFlags.getAllFeatureFlags()
+                    } catch {
+                        errorMessage = "Failed to load default configuration: \(error.localizedDescription)"
+                    }
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func loadTestConfiguration() {
+        let testFeatures: [String: FeatureFlag] = [
+            "inAppFreeROMs": FeatureFlag(
+                enabled: true,
+                minVersion: "1.0.0",
+                minBuildNumber: "100",
+                allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+                description: "Test configuration - enabled for all builds"
+            )
+        ]
+
+        featureFlags.setDebugConfiguration(features: testFeatures)
+    }
+
+    @MainActor
+    private func loadDefaultConfiguration() async throws {
+        try await PVFeatureFlagsManager.shared.loadConfiguration(
+            from: URL(string: "https://data.provenance-emu.com/features/features.json")!
+        )
+    }
+}
+#endif
 
 private struct AppearanceSection: View {
     @Default(.showGameTitles) var showGameTitles
