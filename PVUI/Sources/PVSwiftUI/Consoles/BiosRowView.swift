@@ -57,8 +57,10 @@ struct BiosRowView: SwiftUI.View {
 
     /// Action to copy MD5 to clipboard
     private func copyMD5() {
+        #if !os(tvOS)
         UIPasteboard.general.string = bios.expectedMD5
         showMD5Alert = true
+        #endif
     }
 
     /// Action to delete BIOS
