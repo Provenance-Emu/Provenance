@@ -81,6 +81,7 @@ let package = Package(
         .target(
             name: "PVSQLiteDatabase",
             dependencies: [
+                "PVLogging",
                 .product(name: "SQLite", package: "sqlite.swift"),
                 .product(name: "ZIPFoundation", package: "ZIPFoundation")
             ]
@@ -93,6 +94,7 @@ let package = Package(
          .target(
              name: "TheGamesDB",
              dependencies: [
+                "PVLogging",
                 "PVSQLiteDatabase",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
 //                .product(name: "OpenAPIAsyncHTTPClient", package: "swift-openapi-async-http-client"),
@@ -113,6 +115,7 @@ let package = Package(
         .target(
             name: "libretrodb",
             dependencies: [
+                "PVLogging",
                 "PVSQLiteDatabase",
                 "PVLookupTypes",
                 "PVPrimitives",
@@ -134,6 +137,7 @@ let package = Package(
         .target(
             name: "OpenVGDB",
             dependencies: [
+                "PVLogging",
                 "PVSQLiteDatabase",
                 "Lighter",
                 "PVLookupTypes",
@@ -157,6 +161,7 @@ let package = Package(
         .target(
             name: "ShiraGame",
             dependencies: [
+                "PVLogging",
                 "ROMMetadataProvider",
                 "PVSQLiteDatabase",
                 "PVLookupTypes",
@@ -177,7 +182,7 @@ let package = Package(
 
         .target(
             name: "ROMMetadataProvider",
-            dependencies: ["PVLookupTypes"]
+            dependencies: ["PVLookupTypes", "PVLogging"]
         ),
 
 
@@ -186,6 +191,7 @@ let package = Package(
         .target(
             name: "PVLookupTypes",
             dependencies: [
+                "PVLogging",
                 "PVPrimitives",
             ]
         ),
@@ -194,12 +200,12 @@ let package = Package(
 
         .testTarget(
             name: "PVLookupTests",
-            dependencies: ["PVLookup"]
+            dependencies: ["PVLookup", "PVLogging"]
         ),
         
         .testTarget(
             name: "TheGamesDBTests",
-            dependencies: ["TheGamesDB", "PVLookup"]
+            dependencies: ["TheGamesDB", "PVLookup", "PVLogging"]
         ),
     ],
     swiftLanguageModes: [.v5, .v6],
