@@ -59,7 +59,7 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
             self.lastSizeCheck = Date()
         }
     }
-    
+
     public override static func ignoredProperties() -> [String] {
         return ["sizeCache", "lastSizeCheck"]
     }
@@ -125,18 +125,16 @@ public extension PVFile {
                 return nil
             }
 
-//            Task {
-                guard let realm = self.realm else {
-                    return nil
-                }
+            // Cache the MD5 only if we're not frozen
+            if !self.isFrozen, let realm = self.realm {
                 do {
                     try realm.write {
                         md5Cache = calculatedMD5
                     }
                 } catch {
-                    ELOG("\(error)")
+                    ELOG("Failed to cache MD5: \(error)")
                 }
-//            }
+            }
 
             return calculatedMD5
         }

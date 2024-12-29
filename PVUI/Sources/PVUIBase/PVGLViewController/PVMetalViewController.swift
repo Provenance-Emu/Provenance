@@ -504,8 +504,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             ELOG("emulatorCore is nil in updateInputTexture()")
             return
         }
+        
 
         let screenRect = emulatorCore.screenRect
+        guard screenRect != .zero else {
+            ELOG("Screenrect was zero, exiting early")
+            return
+        }
+        
         let pixelFormat = getMTLPixelFormat(from: emulatorCore.pixelFormat,
                                             type: emulatorCore.pixelType)
 

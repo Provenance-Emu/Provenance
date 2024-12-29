@@ -641,6 +641,28 @@ public extension RomDatabase {
             NSLog("Failed to hide game \(game.title)\n\(error.localizedDescription)")
         }
     }
+    
+    func delete(bios: PVBIOS) throws {
+        guard let biosURL = bios.file?.url else {
+            ELOG("No path for BIOS")
+            throw RomDeletionError.relatedFiledDeletionError
+        }
+        if FileManager.default.fileExists(atPath: biosURL.path) {
+            do {
+                try FileManager.default.removeItem(at: biosURL)
+                ILOG("Deleted BIOS \(bios.expectedFilename)\n\(biosURL.path)")
+                // Remove the PVFile from the PVBios
+                let realm = try Realm()
+                let bios = bios.warmUp()
+                try realm.write {
+                    bios.file = nil
+                }
+            } catch {
+                WLOG("Failed to delete BIOS \(bios.expectedFilename)\n\(error.localizedDescription)")
+            }
+        }
+    }
+    
     func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false) throws {
         let romURL = PVEmulatorConfiguration.path(forGame: game)
         if deleteArtwork, !game.customArtworkURL.isEmpty {

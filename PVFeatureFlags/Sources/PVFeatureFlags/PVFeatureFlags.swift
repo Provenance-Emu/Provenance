@@ -258,14 +258,26 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// Dictionary of cached feature states
     @Published private var featureStates: [String: Bool] = [:]
 
-    /// Dictionary to store debug overrides - made internal for testing
-    public var debugOverrides: [String: Bool] = [:]
+    /// Dictionary to store debug overrides - persisted in UserDefaults
+    public var debugOverrides: [String: Bool] {
+        get {
+            UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides") as? [String: Bool] ?? [:]
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "PVFeatureFlagsDebugOverrides")
+            objectWillChange.send()
+        }
+    }
 
     /// Dictionary to store remote feature flags
     private var remoteFlags: [String: Bool] = [:]
 
     private init() {
         self.featureFlags = PVFeatureFlags()
+        // Load any persisted debug overrides
+        if let savedOverrides = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides") as? [String: Bool] {
+            print("Loaded debug overrides from UserDefaults: \(savedOverrides)")
+        }
     }
 
     /// Initialize with custom parameters for testing
@@ -302,13 +314,27 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         return enabled
     }
 
+    /// Whether the romPathMigrator feature is enabled
+    public var romPathMigrator: Bool {
+        /// Check debug override first
+        if let override = debugOverrides["romPathMigrator"] {
+            print("Debug override active for romPathMigrator: \(override)")
+            return override
+        }
+
+        /// Fall back to main feature flags system
+        let enabled = featureFlags.isEnabled("romPathMigrator")
+        print("No debug override, using feature flags system value for romPathMigrator: \(enabled)")
+        return enabled
+    }
+
     /// Set a debug override for a feature flag
     public func setDebugOverride(feature: String, enabled: Bool) {
         print("Setting debug override for \(feature) to: \(enabled)")
-        debugOverrides[feature] = enabled
+        var currentOverrides = debugOverrides
+        currentOverrides[feature] = enabled
+        debugOverrides = currentOverrides
         print("Current debug overrides: \(debugOverrides)")
-        // Notify observers that the value has changed
-        objectWillChange.send()
         // Update cached states
         updateFeatureStates()
     }
@@ -345,16 +371,16 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     /// Clear all debug overrides
     public func clearDebugOverrides() {
         print("Clearing all debug overrides")
-        debugOverrides.removeAll()
-        objectWillChange.send()
+        debugOverrides = [:]
         updateFeatureStates()
     }
 
     /// Clear specific debug override
     public func clearDebugOverride(for feature: String) {
         print("Clearing debug override for \(feature)")
-        debugOverrides.removeValue(forKey: feature)
-        objectWillChange.send()
+        var currentOverrides = debugOverrides
+        currentOverrides.removeValue(forKey: feature)
+        debugOverrides = currentOverrides
         updateFeatureStates()
     }
 

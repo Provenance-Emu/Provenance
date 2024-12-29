@@ -11,13 +11,13 @@ import PVLibrary
 import PVThemes
 
 struct BiosesView: View {
-    let console: PVSystem
+    @ObservedRealmObject var console: PVSystem
 
     var body: some View {
         VStack {
             GamesDividerView()
-            ForEach(console.bioses, id: \.self) { bios in
-                BiosRowView(bios: bios.warmUp())
+            ForEach(console.bioses, id: \.expectedFilename) { bios in
+                BiosRowView(biosFilename: bios.expectedFilename)
                 GamesDividerView()
             }
         }
