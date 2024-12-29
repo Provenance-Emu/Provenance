@@ -235,6 +235,9 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
 
             if (dualSense) {
                 padData[playerIndex][PVN64ButtonStart] = dualSense.touchpadButton.touched;
+            } else if (gamepad.rightThumbstickButton != nil) {
+                //fallback for non-dual sense only if the R3 button exists on the controller
+                padData[playerIndex][PVN64ButtonStart] = gamepad.rightThumbstickButton.isPressed;
             }
         } else {
             if (dualSense) {
@@ -243,11 +246,11 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
                 // DualShock-Either Trigger → Z
                 padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed || gamepad.rightTrigger.isPressed;
             } else {
-                // MFi-L2 → Start
-                padData[playerIndex][PVN64ButtonStart] = gamepad.leftTrigger.isPressed;
+                // MFi-R2 → Start
+                padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
 
-                // MFi-R2 → Z
-                padData[playerIndex][PVN64ButtonZ] = gamepad.rightTrigger.isPressed;
+                // MFi-L2 → Z
+                padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
             }
         }
         
