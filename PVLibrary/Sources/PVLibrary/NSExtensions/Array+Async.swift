@@ -19,7 +19,7 @@ extension Array {
 
 extension Array {
     func concurrentForEach(
-        priority: TaskPriority = .default,
+        priority: TaskPriority = .medium,
         _ operation: @escaping (Element) async -> Void
     ) async {
         await withTaskGroup(of: Void.self) { group in

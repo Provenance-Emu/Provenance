@@ -9,9 +9,14 @@
 import CoreGraphics
 import Foundation
 import RealmSwift
-import Systems
+import PVSystems
 
 public extension PVGame {
+    
+    var activeArtworkURL: String? {
+        customArtworkURL.isEmpty ? (originalArtworkURL.isEmpty ? nil : originalArtworkURL) : customArtworkURL
+    }
+    
     var boxartAspectRatio: PVGameBoxArtAspectRatio {
         guard let system = system else { return .square }
         switch system.enumValue {

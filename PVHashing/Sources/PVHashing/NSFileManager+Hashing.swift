@@ -2,33 +2,30 @@ import Checksum
 import Foundation
 import PVLogging
 
-@objc
-public extension FileManager {
-    #if LEGACY_MD5
-    func md5ForFile(atPath path: String, fromOffset offset: FileSize = 0) -> String? {
+extension FileManager: MD5Provider {
+    public func md5ForFile(atPath path: String, fromOffset offset: UInt = 0) -> String? {
+        #if LEGACY_MD5
         guard let url = URL(string: path) else {
             ELOG("File path URL invalid")
             return nil
         }
         return url.checksum(algorithm: .md5, fromOffset: offset)
-    }
-    #else
-    func md5ForFile(atPath path: String, fromOffset offset: UInt64 = 0) -> String? {
+        #else
         guard let url = URL(string: path) else {
             print("Error: File path URL invalid")
             return nil
         }
 
         do {
-            let md5Hash = try calculateMD5Synchronously(of: url, startingAt: offset)
+            let md5Hash = try calculateMD5Synchronously(of: url, startingAt: UInt64(offset))
             VLOG("MD5 Hash: \(md5Hash)")
             return md5Hash
         } catch {
             ELOG("An error occurred: \(error)")
             return nil
         }
+        #endif
     }
-    #endif
 }
 
 import CryptoKit

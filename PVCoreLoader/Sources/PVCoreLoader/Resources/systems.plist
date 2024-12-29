@@ -36,6 +36,7 @@
 			<string>iso</string>
 			<string>7z</string>
 			<string>cso</string>
+			<string>elf</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -2326,7 +2327,6 @@
 			<string>zip</string>
 			<string>cue</string>
 			<string>ccd</string>
-			<string>pce</string>
 			<string>chd</string>
 			<string>toc</string>
 			<string>m3u</string>

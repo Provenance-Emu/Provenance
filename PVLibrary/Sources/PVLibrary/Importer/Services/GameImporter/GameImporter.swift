@@ -16,7 +16,7 @@ import PVCoreLoader
 import AsyncAlgorithms
 import PVPlists
 import PVLookup
-import Systems
+import PVSystems
 import PVMediaCache
 import PVFileSystem
 import PVLogging
@@ -102,9 +102,9 @@ public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, 
 public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
 public protocol GameImporting {
-    
+
     typealias ImportQueueItemType = ImportQueueItem
-    
+
     func initSystems() async
 
     var importStatus: String { get }
@@ -115,17 +115,17 @@ public protocol GameImporting {
 
     func addImport(_ item: ImportQueueItem)
     func addImports(forPaths paths: [URL])
-    func addImports(forPaths paths: [URL], targetSystem: AnySystem)
-    
+    func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier)
+
     func removeImports(at offsets: IndexSet)
     func startProcessing()
-    
+
     func clearCompleted()
 
     func sortImportQueueItems(_ importQueueItems: [ImportQueueItemType]) -> [ImportQueueItemType]
 
     func importQueueContainsDuplicate(_ queue: [ImportQueueItemType], ofItem queueItem: ImportQueueItemType) -> Bool
-    
+
     var importStartedHandler: GameImporterImportStartedHandler? { get set }
     /// Closure called when import completes
     var completionHandler: GameImporterCompletionHandler? { get set }
@@ -133,7 +133,7 @@ public protocol GameImporting {
     var finishedImportHandler: GameImporterFinishedImportingGameHandler? { get set }
     /// Closure called when artwork finishes downloading
     var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler? { get set }
-    
+
     /// Spotlight Handerls
     /// Closure called when spotlight completes
     var spotlightCompletionHandler: GameImporterCompletionHandler? { get set }
@@ -173,9 +173,6 @@ public final class GameImporter: GameImporting, ObservableObject {
                                                           ArtworkImporter(),
                                                           DefaultCDFileHandler())
 
-    /// Instance of OpenVGDB for database operations
-    var openVGDB = OpenVGDB.init()
-
     /// Queue for handling import work
     let workQueue: OperationQueue = {
         let q = OperationQueue()
@@ -201,10 +198,15 @@ public final class GameImporter: GameImporting, ObservableObject {
     var importAutoStartDelayTask: Task<Void, Never>?
     public var importQueue: [ImportQueueItem] = [] {
         didSet {
-            importAutoStartDelayTask?.cancel()
-            importAutoStartDelayTask = Task {
-                await try? Task.sleep(for: .seconds(1))
-                self.startProcessing()
+            // Schedule auto-start if there are queued items OR items with a user-chosen system
+            if importQueue.contains(where: {
+                $0.status == .queued || $0.userChosenSystem != nil
+            }) {
+                importAutoStartDelayTask?.cancel()
+                importAutoStartDelayTask = Task {
+                    await try? Task.sleep(for: .seconds(1))
+                    self.startProcessing()
+                }
             }
         }
     }
@@ -267,9 +269,6 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         //set service dependencies
         gameImporterDatabaseService.setRomsPath(url: romsPath)
-        gameImporterDatabaseService.setOpenVGDB(openVGDB)
-
-        gameImporterSystemsService.setOpenVGDB(openVGDB)
 
         gameImporterArtworkImporter.setSystemsService(gameImporterSystemsService)
     }
@@ -334,14 +333,12 @@ public final class GameImporter: GameImporting, ObservableObject {
                     Task.detached {
                         ILOG("RealmCollection changed state to .initial")
                         self.systemToPathMap = await updateSystemToPathMap()
-                        self.gameImporterSystemsService.setExtensionsToSystemMapping(updateromExtensionToSystemsMap())
                         self.initialized.leave()
                     }
                 case .update:
                     Task.detached {
                         ILOG("RealmCollection changed state to .update")
                         self.systemToPathMap = await updateSystemToPathMap()
-                        self.gameImporterSystemsService.setExtensionsToSystemMapping(updateromExtensionToSystemsMap())
                     }
                 case let .error(error):
                     ELOG("RealmCollection changed state to .error")
@@ -390,13 +387,14 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    public func addImports(forPaths paths: [URL], targetSystem: AnySystem) {
+    @MainActor
+    public func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
 
         for path in paths {
             var item = ImportQueueItem(url: path, fileType: .unknown)
-            item.userChosenSystem?.identifier = targetSystem.identifier
+            item.userChosenSystem = targetSystem
             self.addImportItemToQueue(item)
         }
     }
@@ -424,14 +422,14 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Only start processing if it's not already active
         guard processingState == .idle else { return }
         self.processingState = .processing
-        Task {
+        Task { @MainActor in
             await preProcessQueue()
             await processQueue()
         }
     }
 
     //MARK: Processing functions
-
+    @MainActor
     private func preProcessQueue() async {
         importQueueLock.lock()
         defer { importQueueLock.unlock() }
@@ -457,7 +455,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         //lastly, move and cue (and child bin) files under the parent m3u (if they exist)
         organizeM3UFiles(in: &importQueue)
     }
-    
+
     public func clearCompleted() {
         self.importQueue = self.importQueue.filter({
             switch $0.status {
@@ -569,16 +567,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     internal func cmpSpecialExt(obj1Extension: String, obj2Extension: String) -> Bool {
         // Ensure .m3u files are sorted first
-        if obj1Extension == "m3u" && obj2Extension != "m3u" {
+        if obj1Extension == Extensions.m3u.rawValue && obj2Extension != Extensions.m3u.rawValue {
             return true
-        } else if obj2Extension == "m3u" && obj1Extension != "m3u" {
+        } else if obj2Extension == Extensions.m3u.rawValue && obj1Extension != Extensions.m3u.rawValue {
             return false
         }
 
         // Ensure .cue files are sorted second (after .m3u)
-        if obj1Extension == "cue" && obj2Extension != "m3u" && obj2Extension != "cue" {
+        if obj1Extension == Extensions.cue.rawValue && obj2Extension != Extensions.m3u.rawValue && obj2Extension != Extensions.cue.rawValue {
             return true
-        } else if obj2Extension == "cue" && obj1Extension != "m3u" && obj1Extension != "cue" {
+        } else if obj2Extension == Extensions.cue.rawValue && obj1Extension != Extensions.m3u.rawValue && obj1Extension != Extensions.cue.rawValue {
             return false
         }
 
@@ -651,23 +649,41 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     // Processes each ImportItem in the queue sequentially
+    @MainActor
     private func processQueue() async {
+        // Check for items that are either queued or have a user-chosen system
+        let itemsToProcess = importQueue.filter {
+            $0.status == .queued || $0.userChosenSystem != nil
+        }
+
+        guard !itemsToProcess.isEmpty else {
+            DispatchQueue.main.async {
+                self.processingState = .idle
+            }
+            return
+        }
+
         ILOG("GameImportQueue - processQueue beginning Import Processing")
         DispatchQueue.main.async {
             self.processingState = .processing
         }
 
-        for item in importQueue where item.status == .queued {
+        for item in itemsToProcess {
+            // If there's a user-chosen system, ensure the item is queued
+            if item.userChosenSystem != nil {
+                item.status = .queued
+            }
             await processItem(item)
         }
 
         DispatchQueue.main.async {
-            self.processingState = .idle  // Reset processing status when queue is fully processed
+            self.processingState = .idle
         }
         ILOG("GameImportQueue - processQueue complete Import Processing")
     }
 
     // Process a single ImportItem and update its status
+    @MainActor
     private func processItem(_ item: ImportQueueItem) async {
         ILOG("GameImportQueue - processing item in queue: \(item.url)")
         item.status = .processing
@@ -712,6 +728,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
+    @MainActor
     private func performImport(for item: ImportQueueItem) async throws {
 
         //ideally this wouldn't be needed here because we'd have done it elsewhere
@@ -728,7 +745,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         //get valid systems that this object might support
-        guard let systems = try? await gameImporterSystemsService.determineSystems(for: item), !systems.isEmpty else {
+        guard let systems: [SystemIdentifier] = try? await gameImporterSystemsService.determineSystems(for: item), !systems.isEmpty else {
             //this is actually an import error
             item.status = .failure
             ELOG("No system matched for this Import Item: \(item.url.lastPathComponent)")
@@ -744,7 +761,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             //conflict
             item.status = .conflict
             //start figuring out what to do, because this item is a conflict
-            try await gameImporterFileService.moveToConflictsFolder(item, conflictsPath: conflictPath)
+//            try await gameImporterFileService.moveToConflictsFolder(item, conflictsPath: conflictPath)
             throw GameImporterError.conflictDetected
         }
 
@@ -814,7 +831,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                 //check the child queue items for duplicates
                 return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: queueItem)
             }
-            DLOG("Duplicate Queue Item not detected for \(existing.url.lastPathComponent.lowercased()) - compared with \(queueItem.url.lastPathComponent.lowercased())")
+            // DLOG("Duplicate Queue Item not detected for \(existing.url.lastPathComponent.lowercased()) - compared with \(queueItem.url.lastPathComponent.lowercased())")
             return false
         }
 

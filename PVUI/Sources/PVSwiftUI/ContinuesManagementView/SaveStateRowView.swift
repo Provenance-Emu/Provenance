@@ -8,7 +8,9 @@
 import SwiftUI
 import PVThemes
 import PVSwiftUI
+#if !os(tvOS)
 import SwipeCellSUI
+#endif
 
 /// View model for individual save state rows
 public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
@@ -144,7 +146,7 @@ public struct SaveStateRowView: View {
                             viewModel.isPinned.toggle()
                         }
                     } label: {
-                        if #available(iOS 17.0, *) {
+                        if #available(iOS 17.0, tvOS 17.0, *) {
                             Image(systemName: viewModel.isPinned ? "pin.fill" : "pin")
                                 .rotationEffect(viewModel.isPinned ? .degrees(0.0) : .degrees(45))
                                 .font(.system(size: 16))
@@ -174,7 +176,7 @@ public struct SaveStateRowView: View {
                             viewModel.isFavorite.toggle()
                         }
                     } label: {
-                        if #available(iOS 17.0, *) {
+                        if #available(iOS 17.0, tvOS 17.0, *) {
                             Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
                                 .resizable()
                                 .frame(width: 24, height: 22)
@@ -193,6 +195,7 @@ public struct SaveStateRowView: View {
             }
         }
         .frame(height: 100)
+#if !os(tvOS)
         .swipeCell(
             id: viewModel.id,
             cellWidth: UIScreen.main.bounds.width,
@@ -200,6 +203,7 @@ public struct SaveStateRowView: View {
             trailingSideGroup: trailingSwipeActions(),
             currentUserInteractionCellID: $currentUserInteractionCellID
         )
+#endif
         .uiKitAlert("Load Save State",
                     message: "",
                     isPresented: $showingLoadAlert,
@@ -226,6 +230,7 @@ public struct SaveStateRowView: View {
     }
 
     /// Leading (left) swipe actions
+    #if !os(tvOS)
     private func leadingSwipeActions() -> [SwipeCellActionItem] {
         [
             SwipeCellActionItem(
@@ -275,6 +280,7 @@ public struct SaveStateRowView: View {
             }
         ]
     }
+    #endif
 
     /// Pin button view
     private func pinView(swipeOut: Bool) -> AnyView {

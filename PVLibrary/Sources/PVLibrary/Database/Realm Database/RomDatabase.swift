@@ -17,7 +17,7 @@ import PVLookup
 import PVHashing
 import PVRealm
 import AsyncAlgorithms
-import Systems
+import PVSystems
 import PVMediaCache
 
 let schemaVersion: UInt64 = 14
@@ -119,7 +119,7 @@ public final class RealmConfiguration {
                         return
                     }
 
-                    if let md5 = FileManager.default.md5ForFile(atPath: fullPath.path, fromOffset: UInt64(offset)), !md5.isEmpty {
+                    if let md5 = FileManager.default.md5ForFile(atPath: fullPath.path, fromOffset: UInt(offset)), !md5.isEmpty {
                         newObject!["md5Hash"] = md5
                         counter += 1
                     } else {
@@ -484,7 +484,7 @@ public extension RomDatabase {
     
     func allSaveStates(forGameWithID gameID: String) -> Results<PVSaveState> {
         let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID)
-        return realm.objects(PVSaveState.self).filter("game == %@", game)
+        return realm.objects(PVSaveState.self).filter("game == %@", game as Any)
     }
     
     func savetate(forID saveStateID: String) -> PVSaveState? {
@@ -497,11 +497,11 @@ public extension RomDatabase {
 }
 
 public extension Object {
-    public static func all() -> Results<PersistedType> {
+    static func all() -> Results<PersistedType> {
         try! Realm().objects(Self.PersistedType)
     }
     
-    public static func forPrimaryKey(_ primaryKey: String) -> PersistedType? {
+    static func forPrimaryKey(_ primaryKey: String) -> PersistedType? {
         try! Realm().object(ofType: Self.PersistedType.self, forPrimaryKey: primaryKey)
     }
 }
@@ -641,6 +641,28 @@ public extension RomDatabase {
             NSLog("Failed to hide game \(game.title)\n\(error.localizedDescription)")
         }
     }
+    
+    func delete(bios: PVBIOS) throws {
+        guard let biosURL = bios.file?.url else {
+            ELOG("No path for BIOS")
+            throw RomDeletionError.relatedFiledDeletionError
+        }
+        if FileManager.default.fileExists(atPath: biosURL.path) {
+            do {
+                try FileManager.default.removeItem(at: biosURL)
+                ILOG("Deleted BIOS \(bios.expectedFilename)\n\(biosURL.path)")
+                // Remove the PVFile from the PVBios
+                let realm = try Realm()
+                let bios = bios.warmUp()
+                try realm.write {
+                    bios.file = nil
+                }
+            } catch {
+                WLOG("Failed to delete BIOS \(bios.expectedFilename)\n\(error.localizedDescription)")
+            }
+        }
+    }
+    
     func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false) throws {
         let romURL = PVEmulatorConfiguration.path(forGame: game)
         if deleteArtwork, !game.customArtworkURL.isEmpty {
@@ -677,6 +699,8 @@ public extension RomDatabase {
                 ELOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
                 throw RomDeletionError.fileManagerDeletionError(error)
             }
+        } else {
+            ELOG("No rom found at path: \(romURL.path)")
         }
         // Delete from Spotlight search
 #if os(iOS)

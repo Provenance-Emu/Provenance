@@ -33,6 +33,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedRealmObject var console: PVSystem
     weak var rootDelegate: PVRootDelegate?
+    var showGameInfo: (String) -> Void
 
     let gamesForSystemPredicate: NSPredicate
 
@@ -99,6 +100,9 @@ struct ConsoleGamesView: SwiftUI.View {
     ) var mostPlayed
 
     @State var isShowingSaveStates = false
+    @State internal var showArtworkSearch = false
+
+    @State internal var showArtworkSourceAlert = false
 
     private var sectionHeight: CGFloat {
         // Use compact size class to determine if we're in portrait on iPhone
@@ -106,11 +110,17 @@ struct ConsoleGamesView: SwiftUI.View {
         return verticalSizeClass == .compact ? baseHeight / 2 : baseHeight
     }
 
-    init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
+    init(
+        console: PVSystem,
+        viewModel: PVRootViewModel,
+        rootDelegate: PVRootDelegate? = nil,
+        showGameInfo: @escaping (String) -> Void
+    ) {
         _gamesViewModel = StateObject(wrappedValue: ConsoleGamesViewModel(console: console))
         self.console = console
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
+        self.showGameInfo = showGameInfo
         self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
 
         _games = ObservedResults(
@@ -141,8 +151,10 @@ struct ConsoleGamesView: SwiftUI.View {
     var body: some SwiftUI.View {
         GeometryReader { geometry in
             ZStack {
-                 VStack(spacing: 0) {
+                VStack(spacing: 0) {
                     displayOptionsView()
+                        .allowsHitTesting(true)
+                        .contentShape(Rectangle())
                     ZStack(alignment: .bottom) {
                         ScrollView {
                             ScrollViewReader { proxy in
@@ -175,30 +187,41 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 .edgesIgnoringSafeArea(.bottom)
-#if !os(tvOS)
-                .gesture(magnificationGesture())
-#endif
-                .onAppear {
-                    adjustZoomLevel(for: gameLibraryScale)
-                    setupGamepadHandling()
-
-                    // Set initial focus
-                    let sections: [HomeSectionType] = availableSections
-
-                    if let firstSection = sections.first {
-                        gamesViewModel.focusedSection = firstSection
-                        gamesViewModel.focusedItemInSection = getFirstItemInSection(firstSection)
-                        DLOG("Set initial focus - Section: \(firstSection), Item: \(String(describing: gamesViewModel.focusedItemInSection))")
-                    }
-                }
-                .onDisappear {
-                    gamepadCancellable?.cancel()
-                }
             }
             .sheet(isPresented: $showImagePicker) {
-#if !os(tvOS)
-                imagePickerView()
-#endif
+                #if !os(tvOS)
+                ImagePicker(sourceType: .photoLibrary) { image in
+                    if let game = gameToUpdateCover {
+                        saveArtwork(image: image, forGame: game)
+                    }
+                    showImagePicker = false
+                    gameToUpdateCover = nil
+                }
+                #endif
+            }
+            .sheet(isPresented: $showArtworkSearch) {
+                ArtworkSearchView(
+                    initialSearch: gameToUpdateCover?.title ?? "",
+                    initialSystem: console.enumValue
+                ) { selection in
+                    if let game = gameToUpdateCover {
+                        Task {
+                            do {
+                                // Load image data from URL
+                                let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                                if let uiImage = UIImage(data: data) {
+                                    await MainActor.run {
+                                        saveArtwork(image: uiImage, forGame: game)
+                                        showArtworkSearch = false
+                                        gameToUpdateCover = nil
+                                    }
+                                }
+                            } catch {
+                                DLOG("Failed to load artwork image: \(error)")
+                            }
+                        }
+                    }
+                }
             }
             .alert("Rename Game", isPresented: $showingRenameAlert) {
                 renameAlertView()
@@ -240,7 +263,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         })
 
                     /// Create and configure the view
-                    if #available(iOS 16.4, *) {
+                    if #available(iOS 16.4, tvOS 16.4, *) {
                         ContinuesMagementView(viewModel: viewModel)
                             .onAppear {
                                 /// Set the game ID filter
@@ -270,6 +293,25 @@ struct ConsoleGamesView: SwiftUI.View {
                     Text("Error: Could not load save states")
                 }
             }
+            .uiKitAlert(
+                "Choose Artwork Source",
+                message: "Select artwork from your photo library or search online sources",
+                isPresented: $showArtworkSourceAlert,
+                buttons: {
+                    UIAlertAction(title: "Select from Photos", style: .default) { _ in
+                        showArtworkSourceAlert = false
+                        showImagePicker = true
+                    }
+                    UIAlertAction(title: "Search Online", style: .default) { [game = gameToUpdateCover] _ in
+                        showArtworkSourceAlert = false
+                        gameToUpdateCover = game  // Preserve the game reference
+                        showArtworkSearch = true
+                    }
+                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                        showArtworkSourceAlert = false
+                    }
+                }
+            )
         }
         .ignoresSafeArea(.all)
     }
@@ -301,7 +343,13 @@ struct ConsoleGamesView: SwiftUI.View {
         if AppState.shared.isSimulator {
             count = max(0,roundedScale )
         } else {
-            count = min(max(0, roundedScale), games.count)
+            // TODO: Fill space on iOS or certain layouts only, or a max width?
+            let fillSpace = false
+            if fillSpace {
+                count = min(max(1, roundedScale), games.count)
+            } else {
+                count = max(1, roundedScale)
+            }
         }
         return count
     }
@@ -426,13 +474,6 @@ struct ConsoleGamesView: SwiftUI.View {
         }
     }
 
-    private func calculateGridItemSize() -> CGFloat {
-        let numberOfItemsPerRow: CGFloat = CGFloat(gameLibraryScale)
-        let totalSpacing: CGFloat = 10 * (numberOfItemsPerRow - 1)
-        let availableWidth = UIScreen.main.bounds.width - totalSpacing - 20
-        return availableWidth / numberOfItemsPerRow
-    }
-
     private func adjustZoomLevel(for magnification: Float) {
         gameLibraryItemsPerRow = calculatedZoomLevel(for: magnification)
     }
@@ -517,6 +558,22 @@ struct ConsoleGamesView: SwiftUI.View {
             )
         }
     }
+
+    private func makeGameMoreInfoView(for game: PVGame) -> some View {
+        do {
+            let driver = try RealmGameLibraryDriver()
+            let viewModel = PagedGameMoreInfoViewModel(
+                driver: driver,
+                initialGameId: game.md5Hash,
+                playGameCallback: { [weak rootDelegate] md5 in
+                    await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                }
+            )
+            return AnyView(PagedGameMoreInfoView(viewModel: viewModel))
+        } catch {
+            return AnyView(Text("Failed to initialize game info view: \(error.localizedDescription)"))
+        }
+    }
 }
 
 // MARK: - View Components
@@ -533,6 +590,8 @@ extension ConsoleGamesView {
         )
         .padding(.top, 16)
         .padding(.bottom, 16)
+        .allowsHitTesting(true)
+        .contentShape(Rectangle())
     }
 
     @ViewBuilder
@@ -694,8 +753,8 @@ struct ConsoleGamesView_Previews: PreviewProvider {
     static var previews: some SwiftUI.View {
         ConsoleGamesView(console: console,
                          viewModel: viewModel,
-                         rootDelegate: nil)
+                         rootDelegate: nil,
+                         showGameInfo: {_ in})
     }
 }
-
 #endif

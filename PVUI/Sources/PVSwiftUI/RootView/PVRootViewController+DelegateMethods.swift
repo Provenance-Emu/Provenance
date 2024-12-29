@@ -48,9 +48,9 @@ extension PVRootViewController: PVRootDelegate {
         self.presentCoreSelection(forGame: game.warmUp(), sender: sender)
     }
 
-    public func attemptToDelete(game: PVGame) {
+    public func attemptToDelete(game: PVGame, deleteSaves: Bool) {
         do {
-            try self.delete(game: game)
+            try self.delete(game: game, deleteSaves: deleteSaves)
         } catch {
             self.presentError(error.localizedDescription, source: self.view)
         }
@@ -69,8 +69,8 @@ extension PVRootViewController: PVRootDelegate {
 
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController {
-    func delete(game: PVGame) throws {
-        try RomDatabase.sharedInstance.delete(game: game)
+    func delete(game: PVGame, deleteSaves: Bool) throws {
+        try RomDatabase.sharedInstance.delete(game: game, deleteSaves: deleteSaves)
     }
 }
 

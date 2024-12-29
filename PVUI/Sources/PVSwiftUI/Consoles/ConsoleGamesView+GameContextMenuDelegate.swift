@@ -84,7 +84,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         showImagePicker = true
     }
 
-    private func saveArtwork(image: UIImage, forGame game: PVGame) {
+    internal func saveArtwork(image: UIImage, forGame game: PVGame) {
         DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
 
         let uniqueID = UUID().uuidString
@@ -131,5 +131,25 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to show save states for game")
         continuesManagementState = ContinuesManagementState(game: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+        showGameInfo(gameId)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+        gameToUpdateCover = game
+        showImagePicker = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+        gameToUpdateCover = game
+        showArtworkSearch = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+        DLOG("Setting gameToUpdateCover with game: \(game.title)")
+        gameToUpdateCover = game
+        showArtworkSourceAlert = true
     }
 }

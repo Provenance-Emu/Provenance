@@ -15,14 +15,18 @@ NSString *autoLoadStatefileName;
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
 	if( _isInitialized)
-        [CitraWrapper.sharedInstance requestSave:fileName];
+        @autoreleasepool {
+            [CitraWrapper.sharedInstance requestSave:fileName];
+        }
 	return true;
 }
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
 	bool success=false;
 	if( _isInitialized) {
-        [CitraWrapper.sharedInstance requestSave:fileName];
+        @autoreleasepool {
+            [CitraWrapper.sharedInstance requestSave:fileName];
+        }
 		success=true;
 	}
     if (success) {
@@ -48,13 +52,17 @@ NSString *autoLoadStatefileName;
 		autoLoadStatefileName = fileName;
 		[NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
 	} else {
-        [CitraWrapper.sharedInstance requestLoad:fileName];
+        @autoreleasepool {
+            [CitraWrapper.sharedInstance requestLoad:fileName];
+        }
 	}
     return true;
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
-    [CitraWrapper.sharedInstance requestLoad:fileName];
+    @autoreleasepool {
+        [CitraWrapper.sharedInstance requestLoad:fileName];
+    }
 	bool success=true;
     
     if (success) {

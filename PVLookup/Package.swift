@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PVLookup",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
         .macOS(.v11),
@@ -30,10 +30,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(
-            name: "PVLogging",
-            path: "../PVLogging"
-        ),
+        .package(path: "../PVLogging"),
+        .package(path: "../PVPrimitives"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
 
         ///
@@ -46,12 +44,15 @@ let package = Package(
         //.package(url: "https://github.com/Lighter-swift/Lighter.git", from: "1.4.4"),
         .package(url: "https://github.com/JoeMatt/Lighter.git", branch: "develop"),
 
+//        .package(url: "https://github.com/JoeMatt/SWCompression.git", branch: "develop"),
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.18")),
+
         // Swagger Generation by @Apple
         // https://tinyurl.com/yn3dnbr5
-
-        // .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.0.0"),
-        // .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.0.0"),
-        // .package(url: "https://github.com/apple/swift-openapi-urlsession", from: "1.0.0")
+//        .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.0.0"),
+//        .package(url: "https://github.com/apple/swift-openapi-urlsession", from: "1.0.0"),
+//        .package(url: "https://github.com/swift-server/swift-openapi-async-http-client", from: "1.0.0"),
     ],
 
     targets: [
@@ -64,20 +65,24 @@ let package = Package(
         .target(
             name: "PVLookup",
             dependencies: [
-                // .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
-                // .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
                 "PVLogging",
                 "OpenVGDB",
-//                "ShiraGame",
-                // "TheGamesDB"
-        ]),
+                "ROMMetadataProvider",
+                "PVLookupTypes",
+                "libretrodb",
+                "ShiraGame",
+                "PVPrimitives",
+                "TheGamesDB"
+            ]
+        ),
 
         // SQLite Wrapper
 
         .target(
             name: "PVSQLiteDatabase",
             dependencies: [
-                .product(name: "SQLite", package: "sqlite.swift")
+                .product(name: "SQLite", package: "sqlite.swift"),
+                .product(name: "ZIPFoundation", package: "ZIPFoundation")
             ]
         ),
 
@@ -85,11 +90,41 @@ let package = Package(
 
         // https://github.com/OpenVGDB/OpenVGDB/releases
 
-        // .target(
-        //     name: "TheGamesDB",
-        //     plugins: [
-        //         .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
-        // ]),
+         .target(
+             name: "TheGamesDB",
+             dependencies: [
+                "PVSQLiteDatabase",
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+//                .product(name: "OpenAPIAsyncHTTPClient", package: "swift-openapi-async-http-client"),
+                "PVLookupTypes",
+                "ROMMetadataProvider",
+                "PVPrimitives"
+             ],
+             resources: [
+                .copy("Resources/thegamesdb.sqlite.zip")
+             ],
+             plugins: [
+//                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
+         ]),
+
+        // MARK:  libretrodb
+
+        // https://github.com/avojak/libretrodb-sqlite
+        .target(
+            name: "libretrodb",
+            dependencies: [
+                "PVSQLiteDatabase",
+                "PVLookupTypes",
+                "PVPrimitives",
+                "ROMMetadataProvider"
+            ],
+            resources: [
+                .copy("Resources/libretrodb.sqlite.zip"),
+            ],
+            plugins: [
+                // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
+                // .plugin(name: "Enlighter", package: "Lighter")
+        ]),
 
         // MARK:  OpenVGDB
 
@@ -99,13 +134,15 @@ let package = Package(
         .target(
             name: "OpenVGDB",
             dependencies: [
-                "ROMMetadataProvider",
                 "PVSQLiteDatabase",
-                "Lighter"
+                "Lighter",
+                "PVLookupTypes",
+                "PVPrimitives",
+                "ROMMetadataProvider"
             ],
             resources: [
-                .copy("Resources/openvgdb.sqlite"),
-                .copy("Resources/openvgdb_schema.sql"),
+                .copy("Resources/openvgdb.sqlite.zip"),
+//                .copy("Resources/openvgdb_schema.sql"),
             ],
             plugins: [
                 // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
@@ -122,27 +159,48 @@ let package = Package(
             dependencies: [
                 "ROMMetadataProvider",
                 "PVSQLiteDatabase",
+                "PVLookupTypes",
+                "PVPrimitives",
                 "Lighter"
             ],
             resources: [
-                // .copy("Resources/shiragame.sqlite3"),
-                .copy("Resources/shiragame_schema.sql"),
+//                .copy("Resources/shiragame.sqlite3.7z"),
+                .copy("Resources/shiragame.sqlite3.zip"),
+//                .copy("Resources/shiragame_schema.sql"),
             ],
             plugins: [
                 // .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
                 // .plugin(name: "Enlighter", package: "Lighter")
             ]),
-        
+
         // MARK: ROMMetadataProvider
+
         .target(
-            name: "ROMMetadataProvider"),
+            name: "ROMMetadataProvider",
+            dependencies: ["PVLookupTypes"]
+        ),
+
+
+        // MARK: PVLookupTypes
+
+        .target(
+            name: "PVLookupTypes",
+            dependencies: [
+                "PVPrimitives",
+            ]
+        ),
 
         // MARK: PVLookupTests tests
 
         .testTarget(
             name: "PVLookupTests",
             dependencies: ["PVLookup"]
-        )
+        ),
+        
+        .testTarget(
+            name: "TheGamesDBTests",
+            dependencies: ["TheGamesDB", "PVLookup"]
+        ),
     ],
     swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu18,

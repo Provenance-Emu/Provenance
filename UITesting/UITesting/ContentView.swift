@@ -7,26 +7,39 @@
 
 import SwiftUI
 import PVSwiftUI
+import PVLookup
+import PVLookupTypes
+import PVSystems
 
 struct ContentView: View {
     var body: some View {
-        /// Create mock driver with sample data
-        let mockDriver = MockSaveStateDriver(mockData: true)
+        NavigationView {
+            List {
+                // Continues Management Demo
+                NavigationLink("Continues Management") {
+                    let mockDriver = MockSaveStateDriver(mockData: true)
+                    let viewModel = ContinuesMagementViewModel(
+                        driver: mockDriver,
+                        gameTitle: mockDriver.gameTitle,
+                        systemTitle: mockDriver.systemTitle,
+                        numberOfSaves: mockDriver.getAllSaveStates().count,
+                        gameUIImage: mockDriver.gameUIImage
+                    )
+                    ContinuesMagementView(viewModel: viewModel)
+                        .onAppear {
+                            mockDriver.saveStatesSubject.send(mockDriver.getAllSaveStates())
+                        }
+                }
 
-        /// Create view model with mock driver
-        let viewModel = ContinuesMagementViewModel(
-            driver: mockDriver,
-            gameTitle: mockDriver.gameTitle,
-            systemTitle: mockDriver.systemTitle,
-            numberOfSaves: mockDriver.getAllSaveStates().count,
-            gameUIImage: mockDriver.gameUIImage
-        )
-
-        return ContinuesMagementView(viewModel: viewModel)
-            .onAppear {
-                /// Set the save states from the mock driver
-                mockDriver.saveStatesSubject.send(mockDriver.getAllSaveStates())
+                // Artwork Search Demo
+                NavigationLink("Artwork Search") {
+                    ArtworkSearchView { selection in
+                        print("Selected artwork: \(selection.metadata.url)")
+                    }
+                }
             }
+            .navigationTitle("UI Tests")
+        }
     }
 }
 

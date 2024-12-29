@@ -15,41 +15,61 @@ import PVRealm
 import PVLogging
 import PVUIBase
 
-struct GameContextMenu: SwiftUI.View {
+/// A SwiftUI context menu for game-related actions
+struct GameContextMenu: View {
+    // Use a frozen game to avoid Realm threading issues
+    let game: PVGame
 
-    var game: PVGame
-    var cores: [PVCore] {
-        game.system.cores.filter{!(AppState.shared.isAppStore && $0.appStoreDisabled)}
-    }
+    // Cache computed properties
+    @State private var availableCores: [PVCore] = []
+    @State private var hasSaveStates: Bool = false
 
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
 
-    var body: some SwiftUI.View {
+    @State private var showArtworkSearch = false
+    @State private var showImagePicker = false
+    @State private var showArtworkSourceAlert = false
+    @State private var gameToUpdateCover: PVGame?
+
+    init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
+        // Ensure we're working with a frozen copy
+        self.game = game.isFrozen ? game : game.freeze()
+        self.rootDelegate = rootDelegate
+        self.contextMenuDelegate = contextMenuDelegate
+
+        // Initialize computed properties
+        _availableCores = State(initialValue: game.system.cores.filter {
+            !(AppState.shared.isAppStore && $0.appStoreDisabled)
+        })
+        _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
+    }
+
+    var body: some View {
         Group {
             if !game.isInvalidated {
-                if cores.count > 1 {
+                if availableCores.count > 1 {
                     Button {
                         Task { @MainActor in
-                            await rootDelegate?.root_presentCoreSelection(forGame: game, sender: self)
+                            // Thaw game for UI operations
+                            if let thawedGame = game.thaw() {
+                                await rootDelegate?.root_presentCoreSelection(forGame: thawedGame, sender: self)
+                            }
                         }
                     } label: { Label("Open in...", systemImage: "gamecontroller") }
                 }
                 Button {
-                    showMoreInfo(forGame: game)
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowGameInfoFor: game.md5Hash)
                 } label: { Label("Game Info", systemImage: "info.circle") }
                 Button {
-                    showSaveStatesManager(forGame: game)
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowSaveStatesFor: game)
                 } label: {
                     Label("Manage Save States", systemImage: "clock.arrow.circlepath")
                 }
                 .disabled(game.saveStates.isEmpty)
                 Button {
                     // Toggle isFavorite for the selected PVGame
-                    let thawedGame = game.thaw()!
-                    try! Realm().write {
-                        thawedGame.isFavorite = !thawedGame.isFavorite
-                    }
+                    toggleFavorite()
                 } label: { Label("Favorite", systemImage: "heart") }
                 Button {
                     contextMenuDelegate?.gameContextMenu(self, didRequestRenameFor: game)
@@ -66,16 +86,12 @@ struct GameContextMenu: SwiftUI.View {
     #if !os(tvOS)
                 Button {
                     DLOG("GameContextMenu: Choose Cover button tapped")
-                    contextMenuDelegate?.gameContextMenu(self, didRequestChooseCoverFor: game)
+                    contextMenuDelegate?.gameContextMenu(self, didRequestChooseArtworkSourceFor: game)
                 } label: { Label("Choose Cover", systemImage: "book.closed") }
     #endif
                 Button {
                     pasteArtwork(forGame: game)
                 } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
-                //            Button {
-                //                share(game: game)
-                //            } label: { Label("Share", systemImage: "square.and.arrow.up") }
-                // New menu item to clear custom artwork
                 if game.customArtworkURL != "" {
                     Button {
                         clearCustomArtwork(forGame: game)
@@ -89,15 +105,71 @@ struct GameContextMenu: SwiftUI.View {
                 if #available(iOS 15, tvOS 15, macOS 12, *) {
                     Button(role: .destructive) {
                         Task.detached { @MainActor in
-                            rootDelegate?.attemptToDelete(game: game)
+                            rootDelegate?.attemptToDelete(game: game, deleteSaves: false)
                         }
                     } label: { Label("Delete", systemImage: "trash") }
                 } else {
                     Button {
                         Task.detached { @MainActor in
-                            rootDelegate?.attemptToDelete(game: game)
+                            rootDelegate?.attemptToDelete(game: game, deleteSaves: false)
                         }
                     } label: { Label("Delete", systemImage: "trash") }
+                }
+            }
+        }
+        .uiKitAlert(
+            "Choose Artwork Source",
+            message: "Select artwork from your photo library or search online sources",
+            isPresented: $showArtworkSourceAlert,
+            buttons: {
+                UIAlertAction(title: "Select from Photos", style: .default) { [contextMenuDelegate] _ in
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowImagePickerFor: game)
+                }
+                UIAlertAction(title: "Search Online", style: .default) { [contextMenuDelegate] _ in
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowArtworkSearchFor: game)
+                }
+                UIAlertAction(title: "Cancel", style: .cancel)
+            }
+        )
+    }
+
+    // Move heavy operations to background tasks
+    private func toggleFavorite() {
+        Task {
+            // Perform Realm write on background thread
+            try await RomDatabase.sharedInstance.asyncWriteTransaction {
+                if let thawedGame = game.thaw() {
+                    thawedGame.isFavorite.toggle()
+                }
+            }
+        }
+    }
+
+    private func saveArtwork(image: UIImage, forGame game: PVGame) {
+        Task {
+            do {
+                let uniqueID = UUID().uuidString
+                let key = "artwork_\(game.md5)_\(uniqueID)"
+
+                // Write image to disk asynchronously
+                try await Task.detached(priority: .background) {
+                    try PVMediaCache.writeImage(toDisk: image, withKey: key)
+                }.value
+
+                // Update Realm on main thread
+                try await RomDatabase.sharedInstance.asyncWriteTransaction {
+                    if let thawedGame = game.thaw() {
+                        thawedGame.customArtworkURL = key
+                    }
+                }
+
+                await MainActor.run {
+                    rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
+                }
+            } catch {
+                await MainActor.run {
+                    DLOG("Failed to set custom artwork: \(error.localizedDescription)")
+                    rootDelegate?.showMessage("Failed to set custom artwork: \(error.localizedDescription)", title: "Error")
                 }
             }
         }
@@ -105,22 +177,6 @@ struct GameContextMenu: SwiftUI.View {
 }
 
 extension GameContextMenu {
-
-    func showMoreInfo(forGame game: PVGame) {
-        guard !game.isInvalidated else { return }
-        let moreInfoCollectionVC = GameMoreInfoViewController(game: game)
-        if let rootDelegate = rootDelegate as? UIViewController {
-
-            let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module)
-                .instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
-            firstVC.game = game
-
-            let moreInfoCollectionVC = GameMoreInfoPageViewController()
-            moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
-            rootDelegate.show(moreInfoCollectionVC, sender: self)
-        }
-    }
-
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
         // Get the MD5 of the game
@@ -128,14 +184,13 @@ extension GameContextMenu {
         // Copy to pasteboard
 #if !os(tvOS)
         UIPasteboard.general.string = md5
-        #endif
-
+#endif
         rootDelegate?.showMessage("The MD5 hash for \(game.title) has been copied to the clipboard.", title: "MD5 Copied")
     }
 
     func pasteArtwork(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
-        #if !os(tvOS)
+#if !os(tvOS)
         DLOG("Attempting to paste artwork for game: \(game.title)")
         let pasteboard = UIPasteboard.general
         if let pastedImage = pasteboard.image {
@@ -161,66 +216,15 @@ extension GameContextMenu {
             DLOG("No image or URL found in pasteboard")
             artworkNotFoundAlert()
         }
-        #else
+#else
         DLOG("Pasting artwork not supported on this platform")
         rootDelegate?.showMessage("Pasting artwork is not supported on this platform.", title: "Not Supported")
-        #endif
+#endif
     }
 
     func artworkNotFoundAlert() {
         DLOG("Showing artwork not found alert")
         rootDelegate?.showMessage("Pasteboard did not contain an image.", title: "Artwork Not Found")
-    }
-
-    func share(game: PVGame) {
-        guard !game.isInvalidated else { return }
-        #if !os(tvOS)
-        DLOG("Attempting to share game: \(game.title)")
-        #warning("TODO: Share button action")
-        self.rootDelegate?.showUnderConstructionAlert()
-        #else
-        DLOG("Sharing not supported on this platform")
-        rootDelegate?.showMessage("Sharing is not supported on this platform.", title: "Not Supported")
-        #endif
-    }
-
-    private func saveArtwork(image: UIImage, forGame game: PVGame) {
-        DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
-
-        let uniqueID = UUID().uuidString
-        let key = "artwork_\(game.md5)_\(uniqueID)"
-        DLOG("Generated key for image: \(key)")
-
-        do {
-            DLOG("Attempting to write image to disk")
-            try PVMediaCache.writeImage(toDisk: image, withKey: key)
-            DLOG("Image successfully written to disk")
-
-            DLOG("Attempting to update game's customArtworkURL")
-            try RomDatabase.sharedInstance.writeTransaction {
-                let thawedGame = game.thaw()
-                DLOG("Game thawed: \(thawedGame?.title ?? "Unknown")")
-                thawedGame?.customArtworkURL = key
-                DLOG("Game's customArtworkURL updated to: \(key)")
-            }
-            DLOG("Database transaction completed successfully")
-            rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
-
-            // Verify the image can be retrieved
-            DLOG("Attempting to verify image retrieval")
-            PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
-                if let retrievedImage = retrievedImage {
-                    DLOG("Successfully retrieved saved image for key: \(retrievedKey)")
-                    DLOG("Retrieved image size: \(retrievedImage.size)")
-                } else {
-                    DLOG("Failed to retrieve saved image for key: \(retrievedKey)")
-                }
-            }
-        } catch {
-            DLOG("Failed to set custom artwork: \(error.localizedDescription)")
-            DLOG("Error details: \(error)")
-            rootDelegate?.showMessage("Failed to set custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
-        }
     }
 
     private func clearCustomArtwork(forGame game: PVGame) {
@@ -281,10 +285,5 @@ extension GameContextMenu {
            let viewController = windowScene.windows.first?.rootViewController {
             viewController.present(alert, animated: true)
         }
-    }
-
-    private func showSaveStatesManager(forGame game: PVGame) {
-        guard !game.isInvalidated else { return }
-        contextMenuDelegate?.gameContextMenu(self, didRequestShowSaveStatesFor: game)
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 import PVThemes
 
-@available(iOS 18.0, *)
+@available(iOS 18.0, tvOS 18.0, *)
 struct AnimatedColorsMeshGradientView2: View {
     
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -81,7 +81,7 @@ struct AnimatedColorsMeshGradientView2: View {
     ]
 }
 
-@available(iOS 18.0, *)
+@available(iOS 18.0, tvOS 18.0, *)
 extension AnimatedColorsMeshGradientView2 {
     var body: some View {
         TimelineView(.animation) { timeline in
@@ -98,7 +98,7 @@ extension AnimatedColorsMeshGradientView2 {
     }
 }
 
-@available(iOS 18.0, *)
+@available(iOS 18.0, tvOS 18.0, *)
 extension AnimatedColorsMeshGradientView2 {
     private func animatedColors(for date: Date) -> [Color] {
         let phase = CGFloat(date.timeIntervalSince1970)
@@ -132,7 +132,7 @@ extension AnimatedColorsMeshGradientView2 {
     }
 }
 
-@available(iOS 18.0, *)
+@available(iOS 18.0, tvOS 18.0, *)
 #Preview {
     AnimatedColorsMeshGradientView2()
 }

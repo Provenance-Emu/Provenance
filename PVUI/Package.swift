@@ -24,6 +24,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../PVAudio"),
+        .package(path: "../PVFeatureFlags"),
         .package(path: "../PVCoreAudio"),
         .package(path: "../PVCoreBridge"),
         .package(path: "../PVEmulatorCore"),
@@ -32,7 +33,7 @@ let package = Package(
         .package(path: "../PVSupport"),
         .package(path: "../PVThemes"),
         .package(path: "../PVWebServer"),
-        .package(url: "https://github.com/ashleymills/Reachability.swift.git", branch: "master"),
+        .package(url: "https://github.com/ashleymills/Reachability.swift.git", from: "5.2.4"),
         .package(url: "https://github.com/RxSwiftCommunity/RxDataSources.git", from: "5.0.2"),
         .package(url: "https://github.com/jdg/MBProgressHUD.git", from: "1.2.0"),
 //        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.4.0"),
@@ -40,7 +41,8 @@ let package = Package(
         .package(url: "https://github.com/DimaRU/BuildEnvironment.git", from: "1.0.0"),
 //        .package(path: "../PackageBuildInfo")
         /// https://github.com/DimaRU/PackageBuildInfo
-        .package(url: "https://github.com/JoeMatt/PackageBuildInfo", branch: "master"),
+//        .package(url: "https://github.com/JoeMatt/PackageBuildInfo", branch: "master"),
+        .package(url: "https://github.com/DimaRU/PackageBuildInfo.git", from: "1.0.4"),
         /// FreemiumKit
         .package(url: "https://github.com/FlineDev/FreemiumKit.git", from: "1.11.0"),
         /// SwiftUIKit
@@ -92,6 +94,7 @@ let package = Package(
                 "PVWebServer",
                 "PVUIObjC",
                 "FreemiumKit",
+                "PVFeatureFlags",
                 .byNameItem(name: "MBProgressHUD", condition: .when(platforms: [.iOS, .macCatalyst, .tvOS, .watchOS])),
                 .byNameItem(name: "PVUI_AppKit", condition: .when(platforms: [.macOS])),
                 .byNameItem(name: "PVUI_TV", condition: .when(platforms: [.tvOS])),
@@ -153,6 +156,7 @@ let package = Package(
                 "PVWebServer",
                 "MBProgressHUD",
                 "FreemiumKit",
+                "PVFeatureFlags",
                 .product(name: "Reachability", package: "reachability.swift"),
                 "RxDataSources",
 //                .product(name: "Dependencies", package: "swift-dependencies")
@@ -201,8 +205,9 @@ let package = Package(
                 "AnimatedGradient",
                 "FloatingButton",
                 "ActivityIndicatorView",
-                "SwipeCellSUI",
-                "DateRangePicker"
+                "PVFeatureFlags",
+                .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
+                .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
             ]
         ),
         

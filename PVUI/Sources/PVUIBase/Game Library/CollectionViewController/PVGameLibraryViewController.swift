@@ -174,6 +174,21 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 
     var hud: MBProgressHUD!
 
+    // Add property for settings factory
+    private let settingsFactory: PVSettingsViewControllerFactory?
+
+    // Add initializer that takes the factory
+    init(settingsFactory: PVSettingsViewControllerFactory) {
+        self.settingsFactory = settingsFactory
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        // Use a default implementation or inject through AppDelegate
+        self.settingsFactory = AppState.shared.settingsFactory
+        super.init(coder: coder)
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -575,6 +590,11 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 
         // If using a UICollectionView or UITableView
         collectionView.contentInsetAdjustmentBehavior = .never
+
+        #if os(tvOS)
+        settingsBarButtonItem.target = self
+        settingsBarButtonItem.action = #selector(settingsCommand)
+        #endif
     }
 
     func setupObservers() {
@@ -785,10 +805,13 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
             settingsVC.conflictsController = updatesController
         } else if segue.identifier == "SplitSettingsSegue" {
 #if os(tvOS)
-            let splitVC = segue.destination as! PVTVSplitViewController
-            let navVC = splitVC.viewControllers[1] as! UINavigationController
-            let settingsVC = navVC.topViewController as! PVSettingsViewController
-            settingsVC.conflictsController = updatesController
+            // Cancel the original segue
+            return
+//#else
+//            let splitVC = segue.destination as! PVTVSplitViewController
+//            let navVC = splitVC.viewControllers[1] as! UINavigationController
+//            let settingsVC = navVC.topViewController as! PVSettingsViewController
+//            settingsVC.conflictsController = updatesController
 #endif
         } else if segue.identifier == "gameMoreInfoSegue" {
             let game = sender as! PVGame
@@ -892,77 +915,14 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     // MARK: - Filesystem Helpers
 
     @IBAction func getMoreROMs(_ sender: Any?) {
-        do {
-            try reachability.startNotifier()
-        } catch {
-            ELOG("Unable to start notifier")
-        }
+        guard let presenter = AppState.shared.importOptionsPresenter else { return }
 
-#if !os(tvOS) && canImport(PVWebServer)
-
-        // connected via wifi, let's continue
-
-        let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
-        actionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
-
-        actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
-            let documentPicker: UIDocumentPickerViewController
-
-            let utis: [UTType] = [UTType.rom, UTType.artwork, UTType.savestate, UTType.zip, UTType.sevenZipArchive, UTType.gzip, UTType.image, UTType.jpeg, UTType.png, UTType.bios, UTType.data, UTType.rar]
-
-            documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: utis, asCopy: true)
-
-            documentPicker.allowsMultipleSelection = true
-            documentPicker.delegate = self
-            self.present(documentPicker, animated: true, completion: nil)
-        }))
-
-        let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { _ in
-            self.startWebServer(sender: sender as? UIView)
-        })
-
-        actionSheet.addAction(webServerAction)
-
-        actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
-
-        reachability.whenReachable = { reachability in
-            if reachability.connection == .wifi {
-                webServerAction.isEnabled = true
-            } else {
-                webServerAction.isEnabled = false
-            }
-        }
-
-        reachability.whenUnreachable = { _ in
-            webServerAction.isEnabled = false
-        }
-
-        if traitCollection.userInterfaceIdiom == .pad, let barButtonItem = sender as? UIBarButtonItem {
-            actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
-            actionSheet.popoverPresentationController?.sourceView = collectionView
-        }
-
-        actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
-
-        present(actionSheet, animated: true, completion: nil)
-
-        (actionSheet as UIViewController).rx.deallocating.asObservable().bind { [weak self] in
-            self?.reachability.stopNotifier()
-        }.disposed(by: disposeBag)
-#else // tvOS
-        defer {
-            reachability.stopNotifier()
-        }
-        if reachability.connection != .wifi {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a network to continue!", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
-            }))
-            WLOG("No WiFi. Cannot start web server.")
-            present(alert, animated: true) { () -> Void in }
-        } else {
-            startWebServer(sender: sender as? UIView)
-        }
-#endif
+        presenter.showImportOptions(
+            from: self,
+            updatesController: updatesController,
+            sourceBarButtonItem: sender as? UIBarButtonItem,
+            sourceView: view
+        )
     }
 
 #if canImport(PVWebServer)
@@ -1954,6 +1914,24 @@ extension PVGameLibraryViewController {
     func settingsCommand() {
         performSegue(withIdentifier: "SettingsSegue", sender: self)
     }
+
+#elseif os(tvOS)
+    @objc func settingsCommand() {
+        guard let menuDelegate = self as? PVMenuDelegate,
+              let settingsFactory = settingsFactory else {
+            return
+        }
+
+        let settingsVC = settingsFactory.makeSettingsViewController(
+            conflictsController: updatesController,
+            menuDelegate: menuDelegate,
+            dismissAction: { [weak self] in
+                self?.dismiss(animated: true)
+            }
+        )
+        settingsVC.modalPresentationStyle = .fullScreen
+        present(settingsVC, animated: true)
+    }
 #endif
 }
 
@@ -2108,7 +2086,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
         indexPath.section = max(0, min(collectionView!.numberOfSections-1, indexPath.section))
         let rect:CGRect
         if let cv = getNestedCollectionView(indexPath) {
-            collectionView?.scrollToItem(at: IndexPath(item:0, section: indexPath.section), at: [], animated: false)
+            collectionView?.scrollToItem(at: IndexPath(item:0, section:indexPath.section), at: [], animated: false)
             indexPath.item = max(0, min(cv.numberOfItems(inSection:0)-1, indexPath.item))
             let idx = IndexPath(item:indexPath.item, section:0)
             cv.scrollToItem(at:idx, at:[], animated: false)

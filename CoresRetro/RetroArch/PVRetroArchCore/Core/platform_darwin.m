@@ -422,7 +422,7 @@ void frontend_darwin_get_env(int *argc, char *argv[],
    fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_SHADER], application_data, "shaders", sizeof(g_defaults.dirs[DEFAULT_DIR_SHADER]));
    fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_THUMBNAILS], application_data, "thumbnails", sizeof(g_defaults.dirs[DEFAULT_DIR_THUMBNAILS]));
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || TARGET_OS_TVOS
     {
        int major, minor;
        get_ios_version(&major, &minor);

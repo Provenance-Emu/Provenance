@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 18.0, *)
+@available(iOS 18.0, tvOS 18.0, *)
 struct AnimatedColorsMeshGradientView: View {
         
     private let colors: [Color] = [
@@ -76,7 +76,7 @@ struct AnimatedColorsMeshGradientView: View {
     ]
 }
 
-@available(iOS 18.0, *)
+@available(iOS 18.0, tvOS 18.0, *)
 extension AnimatedColorsMeshGradientView {
     var body: some View {
         TimelineView(.animation) { timeline in
@@ -92,7 +92,7 @@ extension AnimatedColorsMeshGradientView {
     }
 }
 
-@available(iOS 18.0, *)
+@available(iOS 18.0, tvOS 18.0, *)
 extension AnimatedColorsMeshGradientView {
     private func animatedColors(for date: Date) -> [Color] {
         let phase = CGFloat(date.timeIntervalSince1970)
@@ -126,7 +126,7 @@ extension AnimatedColorsMeshGradientView {
     }
 }
 
-@available(iOS 18.0, *)
+@available(iOS 18.0, tvOS 18.0, *)
 #Preview {
     AnimatedColorsMeshGradientView()
 }

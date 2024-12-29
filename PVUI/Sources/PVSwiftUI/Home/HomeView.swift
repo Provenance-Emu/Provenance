@@ -29,6 +29,7 @@ struct HomeView: SwiftUI.View {
 
     weak var rootDelegate: PVRootDelegate?
     @ObservedObject var viewModel: PVRootViewModel
+    var showGameInfo: (String) -> Void
 
     @Default(.showRecentSaveStates) private var showRecentSaveStates
     @Default(.showRecentGames) private var showRecentGames
@@ -75,6 +76,7 @@ struct HomeView: SwiftUI.View {
 
     /// GameContextMenuDelegate
     @State internal var showImagePicker = false
+    @State internal var showArtworkSearch = false
     @State internal var selectedImage: UIImage?
     @State internal var gameToUpdateCover: PVGame?
     @State internal var showingRenameAlert = false
@@ -84,10 +86,18 @@ struct HomeView: SwiftUI.View {
     @State internal var systemMoveState: SystemMoveState?
     @State internal var continuesManagementState: ContinuesManagementState?
 
-    init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil, delegate: PVRootDelegate? = nil, viewModel: PVRootViewModel) {
+    @State private var showArtworkSourceAlert = false
+
+    init(
+        gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil,
+        delegate: PVRootDelegate? = nil,
+        viewModel: PVRootViewModel,
+        showGameInfo: @escaping (String) -> Void
+    ) {
 //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
         self.viewModel = viewModel
+        self.showGameInfo = showGameInfo
 
         _allGames = ObservedResults(
             PVGame.self,
@@ -178,9 +188,39 @@ struct HomeView: SwiftUI.View {
         /// GameContextMenuDelegate
         /// TODO: This is an ugly copy/paste from `ConsolesGameView.swift`
         .sheet(isPresented: $showImagePicker) {
-#if !os(tvOS)
-            imagePickerView()
-#endif
+            #if !os(tvOS)
+            ImagePicker(sourceType: .photoLibrary) { image in
+                if let game = gameToUpdateCover {
+                    saveArtwork(image: image, forGame: game)
+                }
+                showImagePicker = false
+                gameToUpdateCover = nil
+            }
+            #endif
+        }
+        .sheet(isPresented: $showArtworkSearch) {
+            ArtworkSearchView(
+                initialSearch: gameToUpdateCover?.title ?? "",
+                initialSystem: gameToUpdateCover?.system.enumValue
+            ) { selection in
+                if let game = gameToUpdateCover {
+                    Task {
+                        do {
+                            // Load image data from URL
+                            let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                            if let uiImage = UIImage(data: data) {
+                                await MainActor.run {
+                                    saveArtwork(image: uiImage, forGame: game)
+                                    showArtworkSearch = false
+                                    gameToUpdateCover = nil
+                                }
+                            }
+                        } catch {
+                            DLOG("Failed to load artwork image: \(error)")
+                        }
+                    }
+                }
+            }
         }
         .alert("Rename Game", isPresented: $showingRenameAlert) {
             renameAlertView()
@@ -222,7 +262,7 @@ struct HomeView: SwiftUI.View {
                     })
 
                 /// Create and configure the view
-                if #available(iOS 16.4, *) {
+                if #available(iOS 16.4, tvOS 16.4, *) {
                     ContinuesMagementView(viewModel: viewModel)
                         .onAppear {
                             /// Set the game ID filter
@@ -252,6 +292,25 @@ struct HomeView: SwiftUI.View {
                 Text("Error: Could not load save states")
             }
         }
+        .uiKitAlert(
+            "Choose Artwork Source",
+            message: "Select artwork from your photo library or search online sources",
+            isPresented: $showArtworkSourceAlert,
+            buttons: {
+                UIAlertAction(title: "Select from Photos", style: .default) { _ in
+                    showArtworkSourceAlert = false
+                    showImagePicker = true
+                }
+                UIAlertAction(title: "Search Online", style: .default) { [game = gameToUpdateCover] _ in
+                    showArtworkSourceAlert = false
+                    gameToUpdateCover = game
+                    showArtworkSearch = true
+                }
+                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    showArtworkSourceAlert = false
+                }
+            }
+        )
         /// END: GameContextMenuDelegate
     }
 
@@ -960,5 +1019,25 @@ extension HomeView: GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to show save states for game")
         continuesManagementState = ContinuesManagementState(game: game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor game: String) {
+        showGameInfo(game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+        gameToUpdateCover = game
+        showImagePicker = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+        gameToUpdateCover = game
+        showArtworkSearch = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+        DLOG("Setting gameToUpdateCover with game: \(game.title)")
+        gameToUpdateCover = game
+        showArtworkSourceAlert = true
     }
 }

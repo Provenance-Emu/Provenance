@@ -15,7 +15,12 @@ import PVFileSystem
 
 /// Handles migration of ROM and BIOS files from old documents directory to new shared container directory
 public final class ROMLocationMigrator {
-    private let fileManager = FileManager.default
+
+    private let fileManager: FileManager
+
+    public init(fileManager: FileManager = FileManager.default) {
+        self.fileManager = fileManager
+    }
 
     /// Old paths that need migration
     private var oldPaths: [(source: URL, destination: URL)] {

@@ -92,11 +92,15 @@ struct UIKitAlertWrapper: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        guard isPresented else { return }
+        guard isPresented else {
+            // Ensure any presented controller is dismissed
+            if uiViewController.presentedViewController != nil {
+                uiViewController.dismiss(animated: true)
+            }
+            return
+        }
 
-//        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let alert = TVAlertController.init(title:title, message: message, preferredStyle: .alert)
-
+        let alert = TVAlertController(title: title, message: message, preferredStyle: .alert)
         buttons.forEach { alert.addAction($0) }
 
         if uiViewController.presentedViewController == nil {

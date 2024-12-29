@@ -77,7 +77,7 @@ let package = Package(
         .package(url: "https://github.com/mtgto/Unrar.swift.git",
                     .upToNextMajor(from: "0.3.16")),
     ],
-    
+
     targets: [
         // MARK: ------------ SwiftCloudDrive ------------
         .target(
@@ -128,7 +128,6 @@ let package = Package(
                 "PVHashing",
                 "PVPlists",
                 "PVLookup",
-                "Systems",
                 "PVPrimitives",
                 "PVMediaCache",
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
@@ -165,20 +164,6 @@ let package = Package(
                 "PVLookup",
                 "PVPrimitives",
                 "SwiftCloudDrive",
-                .product(name: "RxCocoa", package: "RxSwift"),
-                .product(name: "RxSwift", package: "RxSwift"),
-                .product(name: "RxRealm", package: "RxRealm"),
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-        ]),
-        // MARK: ------------ Systems ------------
-        .target(
-            name: "Systems",
-            dependencies: [
-                "PVSupport",
-                "PVLogging",
-                "PVHashing",
-                "PVLookup",
-                "PVPrimitives",
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
@@ -225,7 +210,11 @@ let package = Package(
         // MARK: ------------ Tests ------------
         .testTarget(
             name: "PVLibraryTests",
-            dependencies: ["PVLibrary"]
+            dependencies: [
+                "PVLibrary",
+                "PVLookup",
+                "PVPrimitives"
+            ]
         ),
     ],
     swiftLanguageModes: [.v5],

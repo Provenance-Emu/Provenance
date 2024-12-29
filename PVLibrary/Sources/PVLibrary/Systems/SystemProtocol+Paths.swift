@@ -20,3 +20,13 @@ public extension SystemProtocol {
         return PVEmulatorConfiguration.romDirectory(forSystemIdentifier: identifier)
     }}
 }
+
+public extension SystemIdentifier {
+    var biosDirectory: URL { get {
+        return PVEmulatorConfiguration.biosPath(forSystemIdentifier: self)
+    }}
+    
+    var romsDirectory: URL { get {
+        return PVEmulatorConfiguration.romDirectory(forSystemIdentifier: self)
+    }}
+}

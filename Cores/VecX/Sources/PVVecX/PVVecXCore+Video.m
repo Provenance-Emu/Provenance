@@ -50,23 +50,23 @@
 
 # pragma mark - Properties
 
-- (CGSize)bufferSize {
-    CGSize size = CGSizeMake(av_info.geometry.max_width, av_info.geometry.max_height);
-    DLOG(@"<%i, %i>", size.width, size.height);
-    return size;
-}
-
-- (CGRect)screenRect {
-    CGRect rect = CGRectMake(0, 0, av_info.geometry.base_width, av_info.geometry.base_height);
-    DLOG(@"<%i, %i>", rect.size.width, rect.size.height);
-    return rect;
-}
-
-- (CGSize)aspectSize {
-    CGSize size = CGSizeMake(1, av_info.geometry.aspect_ratio);
-    DLOG(@"<%i, %i>", size.width, size.height);
-    return size;
-}
+//- (CGSize)bufferSize {
+//    CGSize size = CGSizeMake(av_info.geometry.max_width, av_info.geometry.max_height);
+//    DLOG(@"<%i, %i>", size.width, size.height);
+//    return size;
+//}
+//
+//- (CGRect)screenRect {
+//    CGRect rect = CGRectMake(0, 0, av_info.geometry.base_width, av_info.geometry.base_height);
+//    DLOG(@"<%i, %i>", rect.size.width, rect.size.height);
+//    return rect;
+//}
+//
+//- (CGSize)aspectSize {
+//    CGSize size = CGSizeMake(1, av_info.geometry.aspect_ratio);
+//    DLOG(@"<%i, %i>", size.width, size.height);
+//    return size;
+//}
 
 //- (BOOL)rendersToOpenGL {
 //    return YES;
@@ -97,22 +97,22 @@
  info->geometry.aspect_ratio = 33.0 / 41.0;
  */
 
-- (GLenum)pixelFormat {
-    return GL_RGB;
-}
-
-- (GLenum)pixelType {
-    return GL_UNSIGNED_SHORT_1_5_5_5_REV;
-}
-
-- (GLenum)internalPixelFormat {
-    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-        return GL_RGB565;
-#else
-         return GL_UNSIGNED_SHORT_5_6_5;
-#endif
-}
+//- (GLenum)pixelFormat {
+//    return GL_RGB;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_SHORT_1_5_5_5_REV;
+//}
+//
+//- (GLenum)internalPixelFormat {
+//    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
+//#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
+//        return GL_RGB565;
+//#else
+//         return GL_UNSIGNED_SHORT_5_6_5;
+//#endif
+//}
 
 //
 //- (GLenum)depthFormat {

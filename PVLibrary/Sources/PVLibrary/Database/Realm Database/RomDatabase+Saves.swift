@@ -12,7 +12,7 @@ import PVLogging
 /// Save state purging and recoovery
 public extension RomDatabase {
 
-    public func recoverAllSaveStates() {
+    func recoverAllSaveStates() {
         // Get the base directory for saves
         let saveStatesDirectory: URL = Paths.saveSavesPath
         // iterate sub-dirs calling recoverSaveStates(forPath: path)
@@ -25,7 +25,7 @@ public extension RomDatabase {
         }
     }
 
-    public func recoverSaveStates(forPath path: URL) {
+    func recoverSaveStates(forPath path: URL) {
         let fileManager = FileManager.default
 
         // Get all .svs.json files in the directory
@@ -166,7 +166,7 @@ public extension RomDatabase {
     }
 
     /// Recover save states from the save state directory
-    public func recoverSaveStates(forGame game: PVGame, core: EmulatorCoreIOInterface) throws {
+    func recoverSaveStates(forGame game: PVGame, core: EmulatorCoreIOInterface) throws {
         let saveStatePath: URL = PVEmulatorConfiguration.saveStatePath(forGame: game)
 
         do {
@@ -195,7 +195,6 @@ public extension RomDatabase {
                     do {
                         guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
                             throw SaveStateError.noCoreFound(core.coreIdentifier ?? "null")
-                            return
                         }
                         let imgFile = PVImageFile(withURL:  URL(fileURLWithPath: url.path.replacingOccurrences(of: "svs", with: "jpg")))
                         let saveFile = PVFile(withURL: url)
@@ -214,7 +213,7 @@ public extension RomDatabase {
         }
     }
 
-    public func updateSaveStates(forGame game: PVGame) throws {
+    func updateSaveStates(forGame game: PVGame) throws {
         do {
             // Clear saves from database that don't have files
             for save in game.saveStates {

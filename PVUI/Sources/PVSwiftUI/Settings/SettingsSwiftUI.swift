@@ -14,6 +14,8 @@ import RxRealm
 import RxSwift
 import RealmSwift
 import Perception
+import PVFeatureFlags
+import Defaults
 
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -57,11 +59,11 @@ public struct PVSettingsView: View {
                 CollapsibleSection(title: "Saves") {
                     SavesSection()
                 }
-#if !os(tvOS)
+
                 CollapsibleSection(title: "Audio") {
                     AudioSection()
                 }
-#endif
+
                 CollapsibleSection(title: "Video") {
                     VideoSection()
                 }
@@ -84,6 +86,7 @@ public struct PVSettingsView: View {
                     AdvancedSection()
                 }
 
+                #if !os(tvOS)
                 CollapsibleSection(title: "Social Links") {
                     SocialLinksSection()
                 }
@@ -91,6 +94,7 @@ public struct PVSettingsView: View {
                 CollapsibleSection(title: "Documentation") {
                     DocumentationSection()
                 }
+                #endif
 
                 CollapsibleSection(title: "Build") {
                     BuildSection(viewModel: viewModel)
@@ -103,22 +107,12 @@ public struct PVSettingsView: View {
             }
             .listStyle(GroupedListStyle())
             .navigationTitle("Settings")
+            #if !os(tvOS)
             .navigationBarItems(
                 leading: Button("Done") { dismissAction() },  // Use dismissAction here
                 trailing: Button("Help") { viewModel.showHelp() }
             )
-        }
-        .onAppear {
-            viewModel.setupConflictsObserver()
-            withPerceptionTracking {
-                Task { @MainActor in
-                    await AppState.shared.libraryUpdatesController?.updateConflicts()
-                }
-            } onChange: {
-                Task { @MainActor in
-                    viewModel.numberOfConflicts = AppState.shared.libraryUpdatesController?.conflicts.count ?? 0
-                }
-            }
+            #endif
         }
     }
 }
@@ -193,7 +187,7 @@ private struct AppSection: View {
                             icon: .sfSymbol("lock.fill"))
             }
 
-
+            #if !os(tvOS)
             /// App icon selection section
             PaidFeatureView {
                 NavigationLink(destination: AppIconSelectorView()) {
@@ -226,6 +220,7 @@ private struct AppSection: View {
                     )
                 }
             }
+            #endif
         }
     }
 }
@@ -298,11 +293,11 @@ private struct SavesSection: View {
 }
 
 private struct SocialLinksSection: View {
-    
+
     let isAppStore: Bool = {
         AppState.shared.isAppStore
     }()
-    
+
     var body: some View {
         Section(header: Text("Social")) {
             if !isAppStore {
@@ -418,13 +413,14 @@ private struct ExtraInfoSection: View {
     }
 }
 
-#if !os(tvOS)
 private struct AudioSection: View {
+    #if !os(tvOS)
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
-
+    #endif
     var body: some View {
         Section(header: Text("Audio")) {
+            #if !os(tvOS)
             ThemedToggle(isOn: $volumeHUD) {
                 SettingsRow(title: "Volume HUD",
                             subtitle: "Show volume indicator when changing volume.",
@@ -443,7 +439,7 @@ private struct AudioSection: View {
             Text("System-wide volume level for games.")
                 .font(.caption)
                 .foregroundColor(.secondary)
-
+            #endif
             // Add the new navigation link wrapped in PaidFeatureView
             PaidFeatureView {
                 NavigationLink(destination: AudioEngineSettingsView()) {
@@ -459,7 +455,6 @@ private struct AudioSection: View {
         }
     }
 }
-#endif
 
 private struct VideoSection: View {
     @Default(.multiThreadedGL) var multiThreadedGL
@@ -615,14 +610,6 @@ private struct LibrarySection: View {
                             subtitle: "Visual options for Game Library",
                             icon: .sfSymbol("eye"))
             }
-
-            NavigationLink(destination: ConflictsView().environmentObject(viewModel)) {
-                SettingsRow(title: "Manage Conflicts",
-                            subtitle: "Resolve conflicting save states and files.",
-                            value: "\(viewModel.numberOfConflicts)",
-                            icon: .sfSymbol("bandage"))
-            }
-            .disabled(viewModel.numberOfConflicts == 0)
         }
     }
 }
@@ -660,16 +647,302 @@ private struct AdvancedSection: View {
     var body: some View {
         Group {
             Section(header: Text("Advanced")) {
-#if canImport(FreemiumKit)
+                #if canImport(FreemiumKit)
                 PaidStatusView(style: .decorative(icon: .star))
                     .listRowBackground(Color.accentColor)
-#endif
+                #endif
                 AdvancedTogglesView()
+                SecretSettingsRow()
             }
         }
     }
 }
 
+private struct FeatureFlagsDebugView: View {
+    @StateObject private var featureFlags = PVFeatureFlagsManager.shared
+    @State private var flags: [(key: String, flag: FeatureFlag, enabled: Bool)] = []
+    @State private var isLoading = false
+    @State private var errorMessage: String?
+
+    var body: some View {
+        List {
+            LoadingSection(isLoading: isLoading, flags: flags)
+            FeatureFlagsSection(flags: flags, featureFlags: featureFlags)
+            UserDefaultsSection()
+            ConfigurationSection()
+            DebugControlsSection(featureFlags: featureFlags, flags: $flags, isLoading: $isLoading, errorMessage: $errorMessage)
+        }
+        .navigationTitle("Feature Flags Debug")
+        .task {
+            await loadInitialConfiguration()
+        }
+        .alert("Error", isPresented: .constant(errorMessage != nil)) {
+            Button("OK") {
+                errorMessage = nil
+            }
+        } message: {
+            if let error = errorMessage {
+                Text(error)
+            }
+        }
+    }
+
+    @MainActor
+    private func loadInitialConfiguration() async {
+        isLoading = true
+
+        do {
+            // First try to refresh from remote
+            try await loadDefaultConfiguration()
+            flags = featureFlags.getAllFeatureFlags()
+            print("Initial flags loaded: \(flags)")
+        } catch {
+            errorMessage = "Failed to load remote configuration: \(error.localizedDescription)"
+            print("Error loading remote configuration: \(error)")
+
+            // If remote fails, try to refresh from current state
+            flags = featureFlags.getAllFeatureFlags()
+        }
+
+        isLoading = false
+    }
+
+    @MainActor
+    private func loadDefaultConfiguration() async throws {
+        try await PVFeatureFlagsManager.shared.loadConfiguration(
+            from: URL(string: "https://data.provenance-emu.com/features/features.json")!
+        )
+    }
+}
+
+private struct LoadingSection: View {
+    let isLoading: Bool
+    let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
+
+    var body: some View {
+        if isLoading {
+            Section {
+                ProgressView("Loading configuration...")
+            }
+        }
+    }
+}
+
+private struct FeatureFlagsSection: View {
+    let flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
+    let featureFlags: PVFeatureFlagsManager
+
+    var body: some View {
+        Section(header: Text("Feature Flags Status")) {
+            if flags.isEmpty {
+                Text("No feature flags found")
+                    .foregroundColor(.secondary)
+            } else {
+                ForEach(flags, id: \.key) { flag in
+                    FeatureFlagRow(flag: flag, featureFlags: featureFlags)
+                }
+            }
+        }
+    }
+}
+
+private struct FeatureFlagRow: View {
+    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
+    let featureFlags: PVFeatureFlagsManager
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                FeatureFlagInfo(flag: flag)
+                Spacer()
+                FeatureFlagStatus(flag: flag, featureFlags: featureFlags)
+                FeatureFlagToggle(flag: flag, featureFlags: featureFlags)
+            }
+            FeatureFlagDetails(flag: flag.flag)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+private struct FeatureFlagInfo: View {
+    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(flag.key)
+                .font(.headline)
+            if let description = flag.flag.description {
+                Text(description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+private struct FeatureFlagStatus: View {
+    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
+    let featureFlags: PVFeatureFlagsManager
+
+    var body: some View {
+        VStack(alignment: .trailing) {
+            // Show base configuration state
+            Text("Base Config: \(flag.flag.enabled ? "On" : "Off")")
+                .font(.caption)
+                .foregroundColor(flag.flag.enabled ? .green : .red)
+
+            // Show effective state
+            Text("Effective: \(flag.enabled ? "On" : "Off")")
+                .font(.caption)
+                .foregroundColor(flag.enabled ? .green : .red)
+
+            // Show debug override if present
+            if let override = featureFlags.debugOverrides[flag.key] {
+                Text("Override: \(override ? "On" : "Off")")
+                    .font(.caption)
+                    .foregroundColor(.blue)
+            }
+
+            // Show restrictions if any
+            let restrictions = featureFlags.getFeatureRestrictions(flag.key)
+            if !restrictions.isEmpty {
+                ForEach(restrictions, id: \.self) { restriction in
+                    Text(restriction)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                }
+            }
+        }
+    }
+}
+
+private struct FeatureFlagToggle: View {
+    let flag: (key: String, flag: FeatureFlag, enabled: Bool)
+    let featureFlags: PVFeatureFlagsManager
+
+    var body: some View {
+        Toggle("", isOn: Binding(
+            get: {
+                featureFlags.debugOverrides[flag.key] ?? flag.enabled
+            },
+            set: { newValue in
+                print("Setting toggle to: \(newValue)")
+                featureFlags.setDebugOverride(feature: flag.key, enabled: newValue)
+            }
+        ))
+    }
+}
+
+private struct FeatureFlagDetails: View {
+    let flag: FeatureFlag
+
+    var body: some View {
+        Group {
+            if let minVersion = flag.minVersion {
+                Text("Min Version: \(minVersion)")
+            }
+            if let minBuild = flag.minBuildNumber {
+                Text("Min Build: \(minBuild)")
+            }
+            if let allowedTypes = flag.allowedAppTypes {
+                Text("Allowed Types: \(allowedTypes.joined(separator: ", "))")
+            }
+        }
+        .font(.caption)
+        .foregroundColor(.secondary)
+    }
+}
+
+private struct ConfigurationSection: View {
+    var body: some View {
+        Section(header: Text("Current Configuration")) {
+            Text("App Type: \(PVFeatureFlags.getCurrentAppType().rawValue)")
+            Text("App Version: \(PVFeatureFlags.getCurrentAppVersion())")
+            if let buildNumber = PVFeatureFlags.getCurrentBuildNumber() {
+                Text("Build Number: \(buildNumber)")
+            }
+            Text("Remote URL: https://data.provenance-emu.com/features/features.json")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+    }
+}
+
+private struct DebugControlsSection: View {
+    let featureFlags: PVFeatureFlagsManager
+    @Binding var flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
+    @Binding var isLoading: Bool
+    @Binding var errorMessage: String?
+    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
+
+    var body: some View {
+        Section(header: Text("Debug Controls")) {
+            Button("Clear All Overrides") {
+                featureFlags.clearDebugOverrides()
+                flags = featureFlags.getAllFeatureFlags()
+            }
+
+            Button("Refresh Flags") {
+                flags = featureFlags.getAllFeatureFlags()
+            }
+
+            Button("Load Test Configuration") {
+                loadTestConfiguration()
+                flags = featureFlags.getAllFeatureFlags()
+            }
+
+            Button("Reset to Default") {
+                Task {
+                    do {
+                        // Reset feature flags to default
+                        try await loadDefaultConfiguration()
+                        flags = featureFlags.getAllFeatureFlags()
+
+                        // Reset unlock status
+                        showFeatureFlagsDebug = false
+
+                        // Reset all user defaults to their default values
+                        Defaults.Keys.useAppGroups.reset()
+                        Defaults.Keys.unsupportedCores.reset()
+                        Defaults.Keys.iCloudSync.reset()
+                    } catch {
+                        errorMessage = "Failed to load default configuration: \(error.localizedDescription)"
+                    }
+                }
+            }
+            .foregroundColor(.red) // Make it stand out as a destructive action
+        }
+    }
+
+    @MainActor
+    private func loadTestConfiguration() {
+        let testFeatures: [String: FeatureFlag] = [
+            "inAppFreeROMs": FeatureFlag(
+                enabled: true,
+                minVersion: "1.0.0",
+                minBuildNumber: "100",
+                allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+                description: "Test configuration - enabled for all builds"
+            ),
+            "romPathMigrator": FeatureFlag(
+                enabled: true,
+                minVersion: "1.0.0",
+                minBuildNumber: "100",
+                allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+                description: "Test configuration - enabled for all builds"
+            )
+        ]
+
+        featureFlags.setDebugConfiguration(features: testFeatures)
+    }
+
+    @MainActor
+    private func loadDefaultConfiguration() async throws {
+        try await PVFeatureFlagsManager.shared.loadConfiguration(
+            from: URL(string: "https://data.provenance-emu.com/features/features.json")!
+        )
+    }
+}
 
 private struct AppearanceSection: View {
     @Default(.showGameTitles) var showGameTitles
@@ -706,5 +979,187 @@ private struct AppearanceSection: View {
                             icon: .sfSymbol("star"))
             }
         }
+    }
+}
+
+private struct SecretDPadView: View {
+    enum Direction {
+        case up, down, left, right
+    }
+
+    let onComplete: () -> Void
+    @State private var pressedButtons: [Direction] = []
+    @State private var showDPad = false
+    @Environment(\.dismiss) private var dismiss
+
+    private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
+
+    var body: some View {
+        VStack {
+            if showDPad {
+                // D-Pad Layout
+                VStack(spacing: 0) {
+                    // Up button
+                    Button(action: { pressButton(.up) }) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+
+                    // Middle row (Left, Right)
+                    HStack(spacing: 60) {
+                        Button(action: { pressButton(.left) }) {
+                            Image(systemName: "arrow.left.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }
+
+                        Button(action: { pressButton(.right) }) {
+                            Image(systemName: "arrow.right.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }
+                    }
+
+                    // Down button
+                    Button(action: { pressButton(.down) }) {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+                }
+                .foregroundColor(.accentColor)
+
+                // Show current sequence
+                Text(sequenceText)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.top)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .onLongPressGesture(minimumDuration: 5) {
+            withAnimation {
+                showDPad = true
+            }
+        }
+    }
+
+    private var sequenceText: String {
+        pressedButtons.map { direction in
+            switch direction {
+            case .up: return "↑"
+            case .down: return "↓"
+            case .left: return "←"
+            case .right: return "→"
+            }
+        }.joined(separator: " ")
+    }
+
+    private func pressButton(_ direction: Direction) {
+        pressedButtons.append(direction)
+
+        // Check if the sequence matches the Konami code
+        if pressedButtons.count >= konamiCode.count {
+            let lastEight = Array(pressedButtons.suffix(konamiCode.count))
+            if lastEight == konamiCode {
+                onComplete()
+                dismiss()
+            }
+        }
+
+        // Limit the stored sequence length
+        if pressedButtons.count > 16 {
+            pressedButtons.removeFirst(8)
+        }
+    }
+}
+
+private struct SecretSettingsRow: View {
+    @State private var showSecretView = false
+    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
+
+    var body: some View {
+        Group {
+            #if DEBUG
+            NavigationLink(destination: FeatureFlagsDebugView()) {
+                SettingsRow(title: "Feature Flags Debug",
+                           subtitle: "Override feature flags for testing",
+                           icon: .sfSymbol("flag.fill"))
+            }
+            #else
+            if showFeatureFlagsDebug {
+                NavigationLink(destination: FeatureFlagsDebugView()) {
+                    SettingsRow(title: "Feature Flags Debug",
+                               subtitle: "Override feature flags for testing",
+                               icon: .sfSymbol("flag.fill"))
+                }
+            } else {
+                SettingsRow(title: "About",
+                           subtitle: "Version information",
+                           icon: .sfSymbol("info.circle"))
+                    .onTapGesture {
+                        showSecretView = true
+                    }
+            }
+            #endif
+        }
+        .sheet(isPresented: $showSecretView) {
+            SecretDPadView {
+                showFeatureFlagsDebug = true
+            }
+        }
+    }
+}
+
+private struct UserDefaultsSection: View {
+    @Default(.useAppGroups) var useAppGroups
+    @Default(.unsupportedCores) var unsupportedCores
+    @Default(.iCloudSync) var iCloudSync
+
+    var body: some View {
+        Section(header: Text("User Defaults")) {
+            UserDefaultToggle(
+                title: "useAppGroups",
+                subtitle: "Use App Groups for shared storage",
+                isOn: $useAppGroups
+            )
+
+            UserDefaultToggle(
+                title: "unsupportedCores",
+                subtitle: "Enable experimental and unsupported cores",
+                isOn: $unsupportedCores
+            )
+
+            UserDefaultToggle(
+                title: "iCloudSync",
+                subtitle: "Sync save states and settings with iCloud",
+                isOn: $iCloudSync
+            )
+        }
+    }
+}
+
+private struct UserDefaultToggle: View {
+    let title: String
+    let subtitle: String
+    @Binding var isOn: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(title)
+                        .font(.headline)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Toggle("", isOn: $isOn)
+            }
+        }
+        .padding(.vertical, 4)
     }
 }

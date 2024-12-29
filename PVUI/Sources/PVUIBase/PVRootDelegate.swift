@@ -13,7 +13,7 @@ import PVLogging
 // MARK: - PVRootDelegate
 
 public protocol PVRootDelegate: AnyObject {
-    func attemptToDelete(game: PVGame)
+    func attemptToDelete(game: PVGame, deleteSaves: Bool)
     func showUnderConstructionAlert()
     // objects fetched via @ObservedResults are `frozen`, so we need to thaw them before Realm lets us use them
     // the following methods call their equivalent GameLaunchingViewController methods with thawed objects
@@ -34,6 +34,15 @@ public extension PVRootDelegate {
             return
         }
         await root_load(saveState.game, sender: nil, core: nil, saveState: saveState)
+    }
+
+    /// Load a game by its MD5 hash (primary key)
+    public func root_loadGame(byMD5Hash md5: String) async {
+        guard let game: PVGame = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5)?.freeze() else {
+            showMessage("Failed to load game with MD5: \(md5)", title: "Failed to Load Game")
+            return
+        }
+        await root_load(game, sender: nil, core: nil, saveState: nil)
     }
 }
 

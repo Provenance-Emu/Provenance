@@ -22,6 +22,7 @@ class GameImporterFileService : GameImporterFileServicing {
         
     }
     
+    @MainActor
     package func moveImportItem(toAppropriateSubfolder queueItem: ImportQueueItem) async throws {
         switch (queueItem.fileType) {
             
@@ -66,17 +67,18 @@ class GameImporterFileService : GameImporterFileServicing {
     //MARK: - Normal ROMs and CDROMs
     
     /// Moves an ImportQueueItem to the appropriate subfolder
+    @MainActor
     internal func processQueueItem(_ queueItem: ImportQueueItem) async throws {
         guard queueItem.fileType == .game || queueItem.fileType == .cdRom else {
             throw GameImporterError.unsupportedFile
         }
         
         //this might not be needed...
-        guard !queueItem.systems.isEmpty else {
+        guard await !queueItem.systems.isEmpty else {
             throw GameImporterError.noSystemMatched
         }
         
-        guard let targetSystem = queueItem.targetSystem() else {
+        guard let targetSystem = await queueItem.targetSystem() else {
             throw GameImporterError.systemNotDetermined
         }
         

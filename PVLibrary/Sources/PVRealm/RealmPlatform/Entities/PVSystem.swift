@@ -13,7 +13,7 @@ import PVLogging
 import AsyncAlgorithms
 import PVPlists
 import PVPrimitives
-import Systems
+import PVSystems
 
 public extension AsyncSequence {
     
@@ -101,6 +101,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     @Persisted public var userPreferredCoreID: String?
 
     @Persisted(primaryKey: true) public var identifier: String = ""
+    public var systemIdentifier: SystemIdentifier { SystemIdentifier(rawValue: identifier) ?? .Unknown }
 
     // Hack to store controller layout because I don't want to make
     // all the complex objects it would require. Just store the plist dictionary data

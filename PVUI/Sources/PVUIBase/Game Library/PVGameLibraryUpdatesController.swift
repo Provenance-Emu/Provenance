@@ -332,7 +332,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             }
             if !newGames.isEmpty {
                 ILOG("PVGameLibraryUpdatesController: Adding \(newGames) to the queue")
-                gameImporter.addImports(forPaths: newGames, targetSystem:system)
+                gameImporter.addImports(forPaths: newGames, targetSystem:system.systemIdentifier)
                 queueGames = true
             }
             ILOG("PVGameLibrary: Added items for \(system.identifier) to queue")
