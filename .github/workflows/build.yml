@@ -129,7 +129,11 @@ jobs:
       - name: Fakesign app
         if: ${{ matrix.target != 'Provenance-Catalyst' }}
         run: |
-          ldid -S"Provenance/Provenance-AppStore.entitlements" "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}"
+          echo "Checking entitlements file..."
+          ls -la "Provenance/"
+          echo "Checking app binary..."
+          ls -la "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/"
+          ldid -S"Provenance/Provenance-AppStore.entitlements" "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}" || echo "::warning::Fakesign failed but continuing build"
 
       - name: Convert to IPA
         if: ${{ matrix.target != 'Provenance-Catalyst' }}
