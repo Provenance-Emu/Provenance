@@ -76,7 +76,7 @@ jobs:
         run: |
           BUILD_NUMBER=$(git rev-list --count HEAD)
           echo "BUILD_NUMBER=${BUILD_NUMBER}" >> $GITHUB_ENV
-          echo "MARKETING_VERSION=$(cat Provenance/Provenance-Info.plist | grep -A1 CFBundleShortVersionString | tail -n1 | sed -E 's/.*>([0-9.]+)<.*/\1/')" >> $GITHUB_ENV
+          echo "MARKETING_VERSION=$(grep 'MARKETING_VERSION' Build.xcconfig | cut -d'=' -f2 | xargs)" >> $GITHUB_ENV
 
       - uses: actions/cache@v3
         with:
@@ -112,8 +112,8 @@ jobs:
           ${{ matrix.CATALYST_FLAG }} \
           -skipPackagePluginValidation \
           -skipMacroValidation \
-          MARKETING_VERSION=${MARKETING_VERSION} \
-          CURRENT_PROJECT_VERSION=${BUILD_NUMBER} \
+          MARKETING_VERSION="${MARKETING_VERSION}" \
+          CURRENT_PROJECT_VERSION="${BUILD_NUMBER}" \
           archive \
           -archivePath ./archive \
           CODE_SIGNING_REQUIRED=NO \
