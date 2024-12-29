@@ -51,13 +51,6 @@ jobs:
             APP_NAME: "Provenance"
             IPA_NAME: "Provenance-tvOS"
 
-          - target: "Provenance-Catalyst"
-            sdk: macosx
-            scheme: "Provenance (AppStore) (Release)"
-            APP_NAME: "Provenance"
-            IPA_NAME: "Provenance-Catalyst"
-            CATALYST_FLAG: "-destination 'platform=macOS,variant=Mac Catalyst'"
-
     runs-on: 'macos-latest'
     timeout-minutes: 300
     steps:
@@ -109,7 +102,6 @@ jobs:
           -workspace Provenance.xcworkspace \
           -scheme "${{ matrix.scheme }}" \
           -sdk ${{ matrix.sdk }} \
-          ${{ matrix.CATALYST_FLAG }} \
           -skipPackagePluginValidation \
           -skipMacroValidation \
           MARKETING_VERSION="${MARKETING_VERSION}" \
@@ -127,7 +119,6 @@ jobs:
           echo "duration=$((end_time - start_time))" >> $GITHUB_OUTPUT
 
       - name: Fakesign app
-        if: ${{ matrix.target != 'Provenance-Catalyst' }}
         run: |
           echo "Checking entitlements file..."
           ls -la "Provenance/"
@@ -136,23 +127,16 @@ jobs:
           ldid -S"Provenance/Provenance-AppStore.entitlements" "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}" || echo "::warning::Fakesign failed but continuing build"
 
       - name: Convert to IPA
-        if: ${{ matrix.target != 'Provenance-Catalyst' }}
         run: |
           mkdir Payload
           cp -pR "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
           zip -r "${{ matrix.IPA_NAME }}.ipa" Payload
 
-      - name: Package Mac Catalyst App
-        if: ${{ matrix.target == 'Provenance-Catalyst' }}
-        run: |
-          cd archive.xcarchive/Products/Applications/
-          zip -r "${{ github.workspace }}/${{ matrix.IPA_NAME }}.zip" *.app
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: "${{ matrix.IPA_NAME }}-v${{ env.MARKETING_VERSION }}(${{ env.BUILD_NUMBER }})${{ matrix.target == 'Provenance-Catalyst' && '.zip' || '.ipa' }}"
-          path: "${{ matrix.IPA_NAME }}${{ matrix.target == 'Provenance-Catalyst' && '.zip' || '.ipa' }}"
+          name: "${{ matrix.IPA_NAME }}-v${{ env.MARKETING_VERSION }}(${{ env.BUILD_NUMBER }}).ipa"
+          path: "${{ matrix.IPA_NAME }}.ipa"
           if-no-files-found: error
           retention-days: 90
 
