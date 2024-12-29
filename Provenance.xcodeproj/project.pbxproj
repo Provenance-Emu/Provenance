@@ -265,6 +265,9 @@
 		B32C08F72D053F680024A3E2 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B32C08F62D053F680024A3E2 /* MoltenVK */; };
 		B32C08F92D053FF60024A3E2 /* PVMupen64PlusBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */; };
 		B32C08FA2D053FF70024A3E2 /* PVMupen64PlusBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B32CEE3F2D20D40C0083552D /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B32CEE3E2D20D40C0083552D /* PVFeatureFlags */; };
+		B32CEE412D20D4530083552D /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B32CEE402D20D4530083552D /* PVFeatureFlags */; };
+		B32CEE432D20D45C0083552D /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B32CEE422D20D45C0083552D /* PVFeatureFlags */; };
 		B32D45BD2CB730AE006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45BC2CB730AE006B76C2 /* PVGambatte */; };
 		B32D45C12CB730FB006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45C02CB730FB006B76C2 /* PVGambatte */; };
 		B32D45C32CB73101006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45C22CB73101006B76C2 /* PVGambatte */; };
@@ -2762,6 +2765,7 @@
 				B3EE55DE2C66EBC0004D06E4 /* PVSettings in Frameworks */,
 				B39620982C66E1D70094F6F0 /* PVSupport in Frameworks */,
 				B39620942C66E1C70094F6F0 /* PVLogging in Frameworks */,
+				B32CEE3F2D20D40C0083552D /* PVFeatureFlags in Frameworks */,
 				B39620922C66E1BE0094F6F0 /* PVCoreBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2984,6 +2988,7 @@
 				B3F904A72C2002F9002283B3 /* PVCoreBridge in Frameworks */,
 				B3A1867D2CBCB78C00BB1FFE /* PVLibrary in Frameworks */,
 				B3AFCF962977A80700A01010 /* PVLogging in Frameworks */,
+				B32CEE412D20D4530083552D /* PVFeatureFlags in Frameworks */,
 				111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */,
 				B3EE55E32C66EC14004D06E4 /* Defaults in Frameworks */,
 			);
@@ -3140,6 +3145,7 @@
 				B35B177F2CCCDFC7007059CA /* PVAudio in Frameworks */,
 				B3F8214E2C05429400232722 /* PVSupport in Frameworks */,
 				B3AF705A21916F30000FA7F9 /* Foundation.framework in Frameworks */,
+				B32CEE432D20D45C0083552D /* PVFeatureFlags in Frameworks */,
 				B3AFCF982977A80C00A01010 /* PVLogging in Frameworks */,
 				B35B17852CCCE0BB007059CA /* Defaults in Frameworks */,
 			);
@@ -4583,6 +4589,7 @@
 				B39B53892C66E7BA00C220C6 /* PVSettings */,
 				B3EE55E22C66EC14004D06E4 /* Defaults */,
 				B3A1867C2CBCB78C00BB1FFE /* PVLibrary */,
+				B32CEE402D20D4530083552D /* PVFeatureFlags */,
 			);
 			productName = Spotlight;
 			productReference = B3E21D6B203211BE009939D3 /* Spotlight.appex */;
@@ -4715,6 +4722,7 @@
 				B35B177E2CCCDFC7007059CA /* PVAudio */,
 				B35B17822CCCE035007059CA /* PVLibrary */,
 				B35B17842CCCE0BB007059CA /* Defaults */,
+				B32CEE422D20D45C0083552D /* PVFeatureFlags */,
 			);
 			productName = TopShelf;
 			productReference = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */;
@@ -11298,6 +11306,18 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */;
 			productName = MoltenVK;
+		};
+		B32CEE3E2D20D40C0083552D /* PVFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVFeatureFlags;
+		};
+		B32CEE402D20D4530083552D /* PVFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVFeatureFlags;
+		};
+		B32CEE422D20D45C0083552D /* PVFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVFeatureFlags;
 		};
 		B32D45BC2CB730AE006B76C2 /* PVGambatte */ = {
 			isa = XCSwiftPackageProductDependency;
