@@ -180,6 +180,7 @@
 		B3775C2A2D23629A00C6FC18 /* spirv_cfg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD7C2872978900EAEB37 /* spirv_cfg.cpp */; };
 		B3775C2B2D2362A800C6FC18 /* spirv_cross_parsed_ir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD802872978900EAEB37 /* spirv_cross_parsed_ir.cpp */; };
 		B3775C2C2D2362A800C6FC18 /* spirv_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD832872978900EAEB37 /* spirv_parser.cpp */; };
+		B3775C2E2D23645600C6FC18 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3775C2D2D23645600C6FC18 /* CoreOptions.swift */; };
 		B3AB13DB2949BA15005DCCDE /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAEC52872978B00EAEB37 /* glsm.c */; };
 		B3AB13DC2949BB4D005DCCDE /* rsx_lib_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0652872978C00EAEB37 /* rsx_lib_gl.cpp */; };
 		B3AB13DD2949BBA0005DCCDE /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE702872978A00EAEB37 /* rglgen.c */; };
@@ -277,6 +278,7 @@
 		B37022C3287253B300B3F6DA /* PVBeetlePSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVBeetlePSX.h; sourceTree = "<group>"; };
 		B37022C5287253B300B3F6DA /* PVBeetlePSXCoreBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVBeetlePSXCoreBridge.h; sourceTree = "<group>"; };
 		B37022C6287253B300B3F6DA /* PVBeetlePSXCoreBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVBeetlePSXCoreBridge.mm; sourceTree = "<group>"; };
+		B3775C2D2D23645600C6FC18 /* CoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1217,6 +1219,7 @@
 		B37022C4287253B300B3F6DA /* PVBeetlePSXCore */ = {
 			isa = PBXGroup;
 			children = (
+				B3775C2D2D23645600C6FC18 /* CoreOptions.swift */,
 				B3145FC42CFFD83B009FB8B3 /* PVBeetlePSXCore.swift */,
 				B3145FC52CFFD83B009FB8B3 /* CorePlist.swift */,
 				B3145FC62CFFD83B009FB8B3 /* CorePlist-Generated.swift */,
@@ -3257,6 +3260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3145FB42CFFD4E0009FB8B3 /* PVBeetlePSXCoreBridge.mm in Sources */,
+				B3775C2E2D23645600C6FC18 /* CoreOptions.swift in Sources */,
 				B3145FC72CFFD83B009FB8B3 /* PVBeetlePSXCore.swift in Sources */,
 				B3145FC82CFFD83B009FB8B3 /* CorePlist.swift in Sources */,
 				B3145FC92CFFD83B009FB8B3 /* CorePlist-Generated.swift in Sources */,
