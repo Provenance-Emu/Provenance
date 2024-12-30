@@ -117,19 +117,6 @@
 		B3607B2F28922E3300509A68 /* pgxp_main.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0802872978C00EAEB37 /* pgxp_main.c */; };
 		B3607B3428922ECA00509A68 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0B22872978C00EAEB37 /* surface.cpp */; };
 		B3607B3528922ECA00509A68 /* Deinterlacer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0B02872978C00EAEB37 /* Deinterlacer.cpp */; };
-		B3607B3828922FC700509A68 /* optimizer.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0322872978C00EAEB37 /* optimizer.c */; };
-		B3607B3928922FC700509A68 /* reaper.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0432872978C00EAEB37 /* reaper.c */; };
-		B3607B3A28922FC700509A68 /* blockcache.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB04C2872978C00EAEB37 /* blockcache.c */; };
-		B3607B3B28922FC700509A68 /* interpreter.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB04A2872978C00EAEB37 /* interpreter.c */; };
-		B3607B3C28922FC700509A68 /* lightrec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB04B2872978C00EAEB37 /* lightrec.c */; };
-		B3607B3D28922FC700509A68 /* emitter.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0472872978C00EAEB37 /* emitter.c */; };
-		B3607B3E28922FC700509A68 /* memmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0452872978C00EAEB37 /* memmanager.c */; };
-		B3607B3F28922FC700509A68 /* regcache.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0482872978C00EAEB37 /* regcache.c */; };
-		B3607B4828922FFC00509A68 /* jit_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF032872978B00EAEB37 /* jit_memory.c */; };
-		B3607B4928922FFC00509A68 /* lightning.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF302872978B00EAEB37 /* lightning.c */; };
-		B3607B4B28922FFC00509A68 /* jit_note.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF1C2872978B00EAEB37 /* jit_note.c */; };
-		B3607B4D28922FFC00509A68 /* jit_names.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF2D2872978B00EAEB37 /* jit_names.c */; };
-		B3607B4E28922FFC00509A68 /* jit_size.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF072872978B00EAEB37 /* jit_size.c */; };
 		B3607B562892310A00509A68 /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0A92872978C00EAEB37 /* vorbisfile.c */; };
 		B3607B582892327600509A68 /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0E72872978C00EAEB37 /* dma.cpp */; };
 		B3607B5A289232B200509A68 /* sio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1102872978C00EAEB37 /* sio.cpp */; };
@@ -145,7 +132,6 @@
 		B3607B6E2892348400509A68 /* floor1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0A22872978C00EAEB37 /* floor1.c */; };
 		B3607B702892349600509A68 /* synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0A32872978C00EAEB37 /* synthesis.c */; };
 		B3607B72289234A900509A68 /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0952872978C00EAEB37 /* mdct.c */; };
-		B3607B74289234C100509A68 /* recompiler.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0412872978C00EAEB37 /* recompiler.c */; };
 		B3607B76289234DA00509A68 /* sharedbook.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0A12872978C00EAEB37 /* sharedbook.c */; };
 		B3607B78289234EC00509A68 /* floor0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0992872978C00EAEB37 /* floor0.c */; };
 		B3681B7C287412DC00C0136F /* beetle_psx_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0722872978C00EAEB37 /* beetle_psx_globals.c */; };
@@ -3067,7 +3053,6 @@
 				B3607B0528922C9C00509A68 /* guncon.cpp in Sources */,
 				B3607B2528922E1800509A68 /* kirk_engine.c in Sources */,
 				B3681B912874165100C0136F /* cpu.cpp in Sources */,
-				B3607B3828922FC700509A68 /* optimizer.c in Sources */,
 				B3CE80222874050000B6BB5A /* zutil.c in Sources */,
 				B3607AFE28922C8500509A68 /* frontio.cpp in Sources */,
 				B3607AFF28922C8500509A68 /* mdec.cpp in Sources */,
@@ -3075,8 +3060,6 @@
 				B3607AAA28922A9900509A68 /* Stream.cpp in Sources */,
 				B3607B5C289233B400509A68 /* block.c in Sources */,
 				B3CE8019287404EE00B6BB5A /* libchdr_chd.c in Sources */,
-				B3607B4928922FFC00509A68 /* lightning.c in Sources */,
-				B3607B3C28922FC700509A68 /* lightrec.c in Sources */,
 				B3607B0B28922C9C00509A68 /* dualanalog.cpp in Sources */,
 				B3607B72289234A900509A68 /* mdct.c in Sources */,
 				B3607B2228922E1800509A68 /* ec.c in Sources */,
@@ -3087,7 +3070,6 @@
 				B3607B5A289232B200509A68 /* sio.cpp in Sources */,
 				B3607B0028922C8500509A68 /* timer.cpp in Sources */,
 				B3681B89287415D200C0136F /* spu.cpp in Sources */,
-				B3607B3F28922FC700509A68 /* regcache.c in Sources */,
 				B3681B952874167A00C0136F /* pgxp_cpu.c in Sources */,
 				B3607B0228922C8500509A68 /* irq.cpp in Sources */,
 				B3607B76289234DA00509A68 /* sharedbook.c in Sources */,
@@ -3096,12 +3078,10 @@
 				B3607AD928922BCE00509A68 /* cdromif.cpp in Sources */,
 				B3607AA828922A9900509A68 /* general.cpp in Sources */,
 				B3607B1E28922E0E00509A68 /* aes.c in Sources */,
-				B3607B4828922FFC00509A68 /* jit_memory.c in Sources */,
 				B3681B932874167800C0136F /* pgxp_mem.c in Sources */,
 				B3607B0C28922C9C00509A68 /* negcon.cpp in Sources */,
 				B3607B562892310A00509A68 /* vorbisfile.c in Sources */,
 				B3607B0428922C9C00509A68 /* justifier.cpp in Sources */,
-				B3607B4D28922FFC00509A68 /* jit_names.c in Sources */,
 				B3607AD628922BCE00509A68 /* CDAccess_Image.cpp in Sources */,
 				B3681B7E2874130B00C0136F /* gpu.cpp in Sources */,
 				B3CE8009287404B200B6BB5A /* LzFind.c in Sources */,
@@ -3119,17 +3099,12 @@
 				B3607ADE28922BCE00509A68 /* CDAccess_CCD.cpp in Sources */,
 				B3607B2328922E1800509A68 /* sha1.c in Sources */,
 				B3607B6E2892348400509A68 /* floor1.c in Sources */,
-				B3607B3928922FC700509A68 /* reaper.c in Sources */,
 				B3607B2D28922E3300509A68 /* pgxp_value.c in Sources */,
 				B3607AE028922BCE00509A68 /* misc.cpp in Sources */,
 				B3607B2128922E1800509A68 /* bn.c in Sources */,
 				B3607B0728922C9C00509A68 /* mouse.cpp in Sources */,
 				B3CE800B287404B200B6BB5A /* LzmaEnc.c in Sources */,
 				B3CE800A287404B200B6BB5A /* Lzma86Dec.c in Sources */,
-				B3607B4E28922FFC00509A68 /* jit_size.c in Sources */,
-				B3607B3E28922FC700509A68 /* memmanager.c in Sources */,
-				B3607B74289234C100509A68 /* recompiler.c in Sources */,
-				B3607B4B28922FFC00509A68 /* jit_note.c in Sources */,
 				B3607B0128922C8500509A68 /* gpu_polygon_sub.cpp in Sources */,
 				B3607ADC28922BCE00509A68 /* galois.c in Sources */,
 				B3607B3428922ECA00509A68 /* surface.cpp in Sources */,
@@ -3141,7 +3116,6 @@
 				B3607ADF28922BCE00509A68 /* audioreader.cpp in Sources */,
 				B3607B0828922C9C00509A68 /* gamepad.cpp in Sources */,
 				B3607AD728922BCE00509A68 /* CDAccess.cpp in Sources */,
-				B3607B3B28922FC700509A68 /* interpreter.c in Sources */,
 				B3607AD828922BCE00509A68 /* CDAccess_PBP.cpp in Sources */,
 				B3607AA628922A9900509A68 /* MemoryStream.cpp in Sources */,
 				B3607B0A28922C9C00509A68 /* dualshock.cpp in Sources */,
@@ -3157,11 +3131,9 @@
 				B3607B2028922E1800509A68 /* des.c in Sources */,
 				B3607B0928922C9C00509A68 /* memcard.cpp in Sources */,
 				B3CE8007287404B200B6BB5A /* BraIA64.c in Sources */,
-				B3607B3A28922FC700509A68 /* blockcache.c in Sources */,
 				B3607ADD28922BCE00509A68 /* lec.c in Sources */,
 				B3CE8004287404B200B6BB5A /* CpuArch.c in Sources */,
 				B3607AB228922AA800509A68 /* settings.c in Sources */,
-				B3607B3D28922FC700509A68 /* emitter.c in Sources */,
 				B3CE80202874050000B6BB5A /* inflate.c in Sources */,
 				B3607AA428922A9900509A68 /* error.cpp in Sources */,
 				B3CE8003287404B200B6BB5A /* LzmaDec.c in Sources */,
@@ -3367,7 +3339,10 @@
 					RELEASE,
 					"$(inherited)",
 				);
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = __LIBRETRO__;
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
+					__LIBRETRO__,
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -3493,7 +3468,10 @@
 					RELEASE,
 					"$(inherited)",
 				);
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = __LIBRETRO__;
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
+					__LIBRETRO__,
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
