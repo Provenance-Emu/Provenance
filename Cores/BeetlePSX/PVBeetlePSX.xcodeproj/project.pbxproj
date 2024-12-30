@@ -3393,11 +3393,8 @@
 					"\"$(SRCROOT)/beetle-psx-libretro/lightning-lightrec-include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_MAP_FILE_PATH = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -3522,11 +3519,8 @@
 					"\"$(SRCROOT)/beetle-psx-libretro/lightning-lightrec-include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_MAP_FILE_PATH = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
