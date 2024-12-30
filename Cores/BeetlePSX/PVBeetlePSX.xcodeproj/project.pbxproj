@@ -146,6 +146,40 @@
 		B3681B972874168A00C0136F /* pgxp_gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0792872978C00EAEB37 /* pgxp_gpu.c */; };
 		B37022C92872554300B3F6DA /* PVBeetlePSXCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVBeetlePSXCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CD2872558F00B3F6DA /* PVBeetlePSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVBeetlePSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3775C072D235F2200C6FC18 /* rsx_lib_vulkan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0632872978C00EAEB37 /* rsx_lib_vulkan.cpp */; };
+		B3775C0A2D23608200C6FC18 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B3775C092D23608200C6FC18 /* MoltenVK */; };
+		B3775C0B2D2360D700C6FC18 /* renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD772872978900EAEB37 /* renderer.cpp */; };
+		B3775C0C2D23614D00C6FC18 /* atlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE472872978A00EAEB37 /* atlas.cpp */; };
+		B3775C0D2D23616D00C6FC18 /* texture_tracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBADA22872978A00EAEB37 /* texture_tracker.cpp */; };
+		B3775C0E2D23619100C6FC18 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD8D2872978900EAEB37 /* timer.cpp */; };
+		B3775C0F2D2361AC00C6FC18 /* image_io.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBADA82872978A00EAEB37 /* image_io.cpp */; };
+		B3775C102D2361C000C6FC18 /* config_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBADA42872978A00EAEB37 /* config_parser.cpp */; };
+		B3775C112D2361F500C6FC18 /* device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE0D2872978A00EAEB37 /* device.cpp */; };
+		B3775C122D2361F500C6FC18 /* semaphore_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE102872978A00EAEB37 /* semaphore_manager.cpp */; };
+		B3775C142D2361F500C6FC18 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE132872978A00EAEB37 /* buffer.cpp */; };
+		B3775C152D2361F500C6FC18 /* vulkan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE272872978A00EAEB37 /* vulkan.cpp */; };
+		B3775C162D2361F500C6FC18 /* memory_allocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE012872978A00EAEB37 /* memory_allocator.cpp */; };
+		B3775C172D2361F500C6FC18 /* fence_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE112872978A00EAEB37 /* fence_manager.cpp */; };
+		B3775C182D2361F500C6FC18 /* event_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBADFC2872978A00EAEB37 /* event_manager.cpp */; };
+		B3775C192D2361F500C6FC18 /* texture_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE2B2872978A00EAEB37 /* texture_format.cpp */; };
+		B3775C1A2D2361F500C6FC18 /* cookie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE172872978A00EAEB37 /* cookie.cpp */; };
+		B3775C1B2D2361F500C6FC18 /* pipeline_event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE0B2872978A00EAEB37 /* pipeline_event.cpp */; };
+		B3775C1C2D2361F500C6FC18 /* sampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE0E2872978A00EAEB37 /* sampler.cpp */; };
+		B3775C1E2D2361F500C6FC18 /* render_pass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBADF62872978A00EAEB37 /* render_pass.cpp */; };
+		B3775C1F2D2361F500C6FC18 /* descriptor_set.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE0C2872978A00EAEB37 /* descriptor_set.cpp */; };
+		B3775C202D2361F500C6FC18 /* command_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE042872978A00EAEB37 /* command_pool.cpp */; };
+		B3775C212D2361F500C6FC18 /* fence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE252872978A00EAEB37 /* fence.cpp */; };
+		B3775C222D2361F500C6FC18 /* semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE262872978A00EAEB37 /* semaphore.cpp */; };
+		B3775C232D2361F500C6FC18 /* buffer_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBADF72872978A00EAEB37 /* buffer_pool.cpp */; };
+		B3775C242D2361F500C6FC18 /* query_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE242872978A00EAEB37 /* query_pool.cpp */; };
+		B3775C252D2361F500C6FC18 /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBADFD2872978A00EAEB37 /* image.cpp */; };
+		B3775C262D2361F500C6FC18 /* command_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE0F2872978A00EAEB37 /* command_buffer.cpp */; };
+		B3775C272D2361F500C6FC18 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE122872978A00EAEB37 /* shader.cpp */; };
+		B3775C282D23626300C6FC18 /* volk.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD9F2872978A00EAEB37 /* volk.c */; };
+		B3775C292D23627B00C6FC18 /* spirv_cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD7E2872978900EAEB37 /* spirv_cross.cpp */; };
+		B3775C2A2D23629A00C6FC18 /* spirv_cfg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD7C2872978900EAEB37 /* spirv_cfg.cpp */; };
+		B3775C2B2D2362A800C6FC18 /* spirv_cross_parsed_ir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD802872978900EAEB37 /* spirv_cross_parsed_ir.cpp */; };
+		B3775C2C2D2362A800C6FC18 /* spirv_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAD832872978900EAEB37 /* spirv_parser.cpp */; };
 		B3AB13DB2949BA15005DCCDE /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAEC52872978B00EAEB37 /* glsm.c */; };
 		B3AB13DC2949BB4D005DCCDE /* rsx_lib_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0652872978C00EAEB37 /* rsx_lib_gl.cpp */; };
 		B3AB13DD2949BBA0005DCCDE /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE702872978A00EAEB37 /* rglgen.c */; };
@@ -1159,6 +1193,7 @@
 				B3145FB72CFFD5F6009FB8B3 /* PVCoreBridge in Frameworks */,
 				B3145FB12CFFD4D3009FB8B3 /* libbeetle_psx.a in Frameworks */,
 				B3145FBF2CFFD678009FB8B3 /* PVCoreBridgeRetro.framework in Frameworks */,
+				B3775C0A2D23608200C6FC18 /* MoltenVK in Frameworks */,
 				B3145FBD2CFFD66C009FB8B3 /* PVLogging in Frameworks */,
 				B3145FCC2CFFD9B0009FB8B3 /* PVCoreObjCBridge in Frameworks */,
 				B3145FCF2CFFDA1A009FB8B3 /* PVEmulatorCore in Frameworks */,
@@ -1350,17 +1385,17 @@
 		B3EBAD792872978900EAEB37 /* SPIRV-Cross */ = {
 			isa = PBXGroup;
 			children = (
+				B3EBAD7C2872978900EAEB37 /* spirv_cfg.cpp */,
+				B3EBAD802872978900EAEB37 /* spirv_cross_parsed_ir.cpp */,
+				B3EBAD7E2872978900EAEB37 /* spirv_cross.cpp */,
+				B3EBAD832872978900EAEB37 /* spirv_parser.cpp */,
+				B3EBAD822872978900EAEB37 /* GLSL.std.450.h */,
+				B3EBAD7F2872978900EAEB37 /* spirv_cfg.hpp */,
+				B3EBAD842872978900EAEB37 /* spirv_common.hpp */,
+				B3EBAD7D2872978900EAEB37 /* spirv_cross_parsed_ir.hpp */,
+				B3EBAD812872978900EAEB37 /* spirv_cross.hpp */,
 				B3EBAD7A2872978900EAEB37 /* spirv_parser.hpp */,
 				B3EBAD7B2872978900EAEB37 /* spirv.hpp */,
-				B3EBAD7C2872978900EAEB37 /* spirv_cfg.cpp */,
-				B3EBAD7D2872978900EAEB37 /* spirv_cross_parsed_ir.hpp */,
-				B3EBAD7E2872978900EAEB37 /* spirv_cross.cpp */,
-				B3EBAD7F2872978900EAEB37 /* spirv_cfg.hpp */,
-				B3EBAD802872978900EAEB37 /* spirv_cross_parsed_ir.cpp */,
-				B3EBAD812872978900EAEB37 /* spirv_cross.hpp */,
-				B3EBAD822872978900EAEB37 /* GLSL.std.450.h */,
-				B3EBAD832872978900EAEB37 /* spirv_parser.cpp */,
-				B3EBAD842872978900EAEB37 /* spirv_common.hpp */,
 			);
 			path = "SPIRV-Cross";
 			sourceTree = "<group>";
@@ -1514,58 +1549,58 @@
 		B3EBADF52872978A00EAEB37 /* vulkan */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBADF62872978A00EAEB37 /* render_pass.cpp */,
 				B3EBADF72872978A00EAEB37 /* buffer_pool.cpp */,
-				B3EBADF82872978A00EAEB37 /* query_pool.hpp */,
-				B3EBADF92872978A00EAEB37 /* fence.hpp */,
-				B3EBADFA2872978A00EAEB37 /* semaphore.hpp */,
-				B3EBADFB2872978A00EAEB37 /* vulkan.hpp */,
-				B3EBADFC2872978A00EAEB37 /* event_manager.cpp */,
-				B3EBADFD2872978A00EAEB37 /* image.cpp */,
-				B3EBADFE2872978A00EAEB37 /* texture_format.hpp */,
-				B3EBADFF2872978A00EAEB37 /* wsi_timing.cpp */,
-				B3EBAE002872978A00EAEB37 /* quirks.hpp */,
-				B3EBAE012872978A00EAEB37 /* memory_allocator.cpp */,
-				B3EBAE022872978A00EAEB37 /* vulkan_common.hpp */,
-				B3EBAE032872978A00EAEB37 /* wsi.cpp */,
+				B3EBAE132872978A00EAEB37 /* buffer.cpp */,
+				B3EBAE0F2872978A00EAEB37 /* command_buffer.cpp */,
 				B3EBAE042872978A00EAEB37 /* command_pool.cpp */,
-				B3EBAE052872978A00EAEB37 /* cookie.hpp */,
-				B3EBAE062872978A00EAEB37 /* managers */,
-				B3EBAE0B2872978A00EAEB37 /* pipeline_event.cpp */,
+				B3EBAE172872978A00EAEB37 /* cookie.cpp */,
 				B3EBAE0C2872978A00EAEB37 /* descriptor_set.cpp */,
 				B3EBAE0D2872978A00EAEB37 /* device.cpp */,
-				B3EBAE0E2872978A00EAEB37 /* sampler.cpp */,
-				B3EBAE0F2872978A00EAEB37 /* command_buffer.cpp */,
-				B3EBAE102872978A00EAEB37 /* semaphore_manager.cpp */,
+				B3EBADFC2872978A00EAEB37 /* event_manager.cpp */,
 				B3EBAE112872978A00EAEB37 /* fence_manager.cpp */,
+				B3EBAE252872978A00EAEB37 /* fence.cpp */,
+				B3EBADFD2872978A00EAEB37 /* image.cpp */,
+				B3EBAE012872978A00EAEB37 /* memory_allocator.cpp */,
+				B3EBAE0B2872978A00EAEB37 /* pipeline_event.cpp */,
+				B3EBAE242872978A00EAEB37 /* query_pool.cpp */,
+				B3EBADF62872978A00EAEB37 /* render_pass.cpp */,
+				B3EBAE0E2872978A00EAEB37 /* sampler.cpp */,
+				B3EBAE102872978A00EAEB37 /* semaphore_manager.cpp */,
+				B3EBAE262872978A00EAEB37 /* semaphore.cpp */,
 				B3EBAE122872978A00EAEB37 /* shader.cpp */,
-				B3EBAE132872978A00EAEB37 /* buffer.cpp */,
-				B3EBAE142872978A00EAEB37 /* limits.hpp */,
+				B3EBAE2B2872978A00EAEB37 /* texture_format.cpp */,
+				B3EBAE272872978A00EAEB37 /* vulkan.cpp */,
+				B3EBADFF2872978A00EAEB37 /* wsi_timing.cpp */,
+				B3EBAE032872978A00EAEB37 /* wsi.cpp */,
+				B3EBAE232872978A00EAEB37 /* buffer_pool.hpp */,
+				B3EBAE1F2872978A00EAEB37 /* buffer.hpp */,
+				B3EBAE1C2872978A00EAEB37 /* command_buffer.hpp */,
 				B3EBAE152872978A00EAEB37 /* command_pool.hpp */,
-				B3EBAE162872978A00EAEB37 /* wsi.hpp */,
-				B3EBAE172872978A00EAEB37 /* cookie.cpp */,
-				B3EBAE182872978A00EAEB37 /* pipeline_event.hpp */,
+				B3EBAE052872978A00EAEB37 /* cookie.hpp */,
 				B3EBAE192872978A00EAEB37 /* descriptor_set.hpp */,
 				B3EBAE1A2872978A00EAEB37 /* device.hpp */,
-				B3EBAE1B2872978A00EAEB37 /* semaphore_manager.hpp */,
-				B3EBAE1C2872978A00EAEB37 /* command_buffer.hpp */,
-				B3EBAE1D2872978A00EAEB37 /* sampler.hpp */,
-				B3EBAE1E2872978A00EAEB37 /* fence_manager.hpp */,
-				B3EBAE1F2872978A00EAEB37 /* buffer.hpp */,
-				B3EBAE202872978A00EAEB37 /* shader.hpp */,
-				B3EBAE212872978A00EAEB37 /* render_pass.hpp */,
-				B3EBAE222872978A00EAEB37 /* type_to_string.hpp */,
-				B3EBAE232872978A00EAEB37 /* buffer_pool.hpp */,
-				B3EBAE242872978A00EAEB37 /* query_pool.cpp */,
-				B3EBAE252872978A00EAEB37 /* fence.cpp */,
-				B3EBAE262872978A00EAEB37 /* semaphore.cpp */,
-				B3EBAE272872978A00EAEB37 /* vulkan.cpp */,
 				B3EBAE282872978A00EAEB37 /* event_manager.hpp */,
-				B3EBAE292872978A00EAEB37 /* image.hpp */,
+				B3EBAE1E2872978A00EAEB37 /* fence_manager.hpp */,
+				B3EBADF92872978A00EAEB37 /* fence.hpp */,
 				B3EBAE2A2872978A00EAEB37 /* format.hpp */,
-				B3EBAE2B2872978A00EAEB37 /* texture_format.cpp */,
-				B3EBAE2C2872978A00EAEB37 /* wsi_timing.hpp */,
+				B3EBAE292872978A00EAEB37 /* image.hpp */,
+				B3EBAE142872978A00EAEB37 /* limits.hpp */,
 				B3EBAE2D2872978A00EAEB37 /* memory_allocator.hpp */,
+				B3EBAE182872978A00EAEB37 /* pipeline_event.hpp */,
+				B3EBADF82872978A00EAEB37 /* query_pool.hpp */,
+				B3EBAE002872978A00EAEB37 /* quirks.hpp */,
+				B3EBAE212872978A00EAEB37 /* render_pass.hpp */,
+				B3EBAE1D2872978A00EAEB37 /* sampler.hpp */,
+				B3EBAE1B2872978A00EAEB37 /* semaphore_manager.hpp */,
+				B3EBADFA2872978A00EAEB37 /* semaphore.hpp */,
+				B3EBAE202872978A00EAEB37 /* shader.hpp */,
+				B3EBADFE2872978A00EAEB37 /* texture_format.hpp */,
+				B3EBAE222872978A00EAEB37 /* type_to_string.hpp */,
+				B3EBAE022872978A00EAEB37 /* vulkan_common.hpp */,
+				B3EBADFB2872978A00EAEB37 /* vulkan.hpp */,
+				B3EBAE2C2872978A00EAEB37 /* wsi_timing.hpp */,
+				B3EBAE162872978A00EAEB37 /* wsi.hpp */,
+				B3EBAE062872978A00EAEB37 /* managers */,
 			);
 			path = vulkan;
 			sourceTree = "<group>";
@@ -2960,6 +2995,7 @@
 				B3145FBB2CFFD66C009FB8B3 /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3145FCA2CFFD9B0009FB8B3 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B3145FCD2CFFDA1A009FB8B3 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3775C082D23608200C6FC18 /* XCLocalSwiftPackageReference "../../MoltenVK" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -3152,18 +3188,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3775C0D2D23616D00C6FC18 /* texture_tracker.cpp in Sources */,
+				B3775C0F2D2361AC00C6FC18 /* image_io.cpp in Sources */,
 				B3607AB428922AC500509A68 /* file_stream_transforms.c in Sources */,
 				B3607AC928922B0B00509A68 /* rtime.c in Sources */,
 				B3607AD328922B0B00509A68 /* string_list.c in Sources */,
+				B3775C2B2D2362A800C6FC18 /* spirv_cross_parsed_ir.cpp in Sources */,
+				B3775C2C2D2362A800C6FC18 /* spirv_parser.cpp in Sources */,
+				B3775C2A2D23629A00C6FC18 /* spirv_cfg.cpp in Sources */,
 				B3607AD028922B0B00509A68 /* dir_list.c in Sources */,
 				B3607AB528922AC500509A68 /* file_stream.c in Sources */,
 				B3607AC728922B0B00509A68 /* compat_posix_string.c in Sources */,
 				B3607AD128922B0B00509A68 /* memalign.c in Sources */,
+				B3775C0C2D23614D00C6FC18 /* atlas.cpp in Sources */,
 				B3607AF528922C0300509A68 /* ugui_tools.c in Sources */,
+				B3775C282D23626300C6FC18 /* volk.c in Sources */,
 				B3AB13DD2949BBA0005DCCDE /* rglgen.c in Sources */,
 				B3607ACF28922B0B00509A68 /* file_path.c in Sources */,
 				B3607AC628922B0B00509A68 /* stdstring.c in Sources */,
 				B3AB13DC2949BB4D005DCCDE /* rsx_lib_gl.cpp in Sources */,
+				B3775C0E2D23619100C6FC18 /* timer.cpp in Sources */,
 				B3607ACD28922B0B00509A68 /* compat_strcasestr.c in Sources */,
 				B3607AD428922B3900509A68 /* rthreads.c in Sources */,
 				B3607B1A28922D3600509A68 /* input.cpp in Sources */,
@@ -3174,9 +3218,34 @@
 				B3AB13DB2949BA15005DCCDE /* glsm.c in Sources */,
 				B3681B7C287412DC00C0136F /* beetle_psx_globals.c in Sources */,
 				B3607B582892327600509A68 /* dma.cpp in Sources */,
+				B3775C0B2D2360D700C6FC18 /* renderer.cpp in Sources */,
 				B3607ACB28922B0B00509A68 /* compat_strl.c in Sources */,
+				B3775C112D2361F500C6FC18 /* device.cpp in Sources */,
+				B3775C122D2361F500C6FC18 /* semaphore_manager.cpp in Sources */,
+				B3775C142D2361F500C6FC18 /* buffer.cpp in Sources */,
+				B3775C152D2361F500C6FC18 /* vulkan.cpp in Sources */,
+				B3775C162D2361F500C6FC18 /* memory_allocator.cpp in Sources */,
+				B3775C172D2361F500C6FC18 /* fence_manager.cpp in Sources */,
+				B3775C182D2361F500C6FC18 /* event_manager.cpp in Sources */,
+				B3775C192D2361F500C6FC18 /* texture_format.cpp in Sources */,
+				B3775C1A2D2361F500C6FC18 /* cookie.cpp in Sources */,
+				B3775C1B2D2361F500C6FC18 /* pipeline_event.cpp in Sources */,
+				B3775C1C2D2361F500C6FC18 /* sampler.cpp in Sources */,
+				B3775C1E2D2361F500C6FC18 /* render_pass.cpp in Sources */,
+				B3775C1F2D2361F500C6FC18 /* descriptor_set.cpp in Sources */,
+				B3775C292D23627B00C6FC18 /* spirv_cross.cpp in Sources */,
+				B3775C202D2361F500C6FC18 /* command_pool.cpp in Sources */,
+				B3775C212D2361F500C6FC18 /* fence.cpp in Sources */,
+				B3775C222D2361F500C6FC18 /* semaphore.cpp in Sources */,
+				B3775C232D2361F500C6FC18 /* buffer_pool.cpp in Sources */,
+				B3775C242D2361F500C6FC18 /* query_pool.cpp in Sources */,
+				B3775C252D2361F500C6FC18 /* image.cpp in Sources */,
+				B3775C262D2361F500C6FC18 /* command_buffer.cpp in Sources */,
+				B3775C272D2361F500C6FC18 /* shader.cpp in Sources */,
 				B3607ACC28922B0B00509A68 /* fopen_utf8.c in Sources */,
+				B3775C072D235F2200C6FC18 /* rsx_lib_vulkan.cpp in Sources */,
 				B3607AF228922BEF00509A68 /* libretro_cbs.c in Sources */,
+				B3775C102D2361C000C6FC18 /* config_parser.cpp in Sources */,
 				B3145FC22CFFD7E4009FB8B3 /* glsym_es2.c in Sources */,
 				B3607ACA28922B0B00509A68 /* retro_dirent.c in Sources */,
 				B3607ACE28922B0B00509A68 /* encoding_utf.c in Sources */,
@@ -3366,6 +3435,10 @@
 					"\"$(SRCROOT)/beetle-psx-libretro\"",
 					"\"$(SRCROOT)/beetle-psx-libretro/deps/lightning/include/lightning\"",
 					"\"$(SRCROOT)/beetle-psx-libretro/lightning-lightrec-include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx/khronos/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx/volk\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx/glsl/prebuilt\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx/SPIRV-Cross\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3495,6 +3568,10 @@
 					"\"$(SRCROOT)/beetle-psx-libretro\"",
 					"\"$(SRCROOT)/beetle-psx-libretro/deps/lightning/include/lightning\"",
 					"\"$(SRCROOT)/beetle-psx-libretro/lightning-lightrec-include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx/khronos/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx/volk\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx/glsl/prebuilt\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx/SPIRV-Cross\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3695,6 +3772,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVEmulatorCore;
 		};
+		B3775C082D23608200C6FC18 /* XCLocalSwiftPackageReference "../../MoltenVK" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../MoltenVK;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3717,6 +3798,10 @@
 		B3145FCE2CFFDA1A009FB8B3 /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
+		};
+		B3775C092D23608200C6FC18 /* MoltenVK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MoltenVK;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
