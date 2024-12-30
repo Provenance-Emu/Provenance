@@ -688,17 +688,17 @@ __weak static PVAtari800Bridge * _currentCore;
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            // D-Pad
-            self.controllerStates[playerIndex].up    = dpad.up.isPressed;
-            self.controllerStates[playerIndex].down  = dpad.down.isPressed;
-            self.controllerStates[playerIndex].left  = dpad.left.isPressed;
-            self.controllerStates[playerIndex].right = dpad.right.isPressed;
+            // D-Pad/Left thunb stick
+            self.controllerStates[playerIndex].up    = dpad.up.isPressed || gamepad.leftThumbstick.up.isPressed;
+            self.controllerStates[playerIndex].down  = dpad.down.isPressed || gamepad.leftThumbstick.down.isPressed;
+            self.controllerStates[playerIndex].left  = dpad.left.isPressed || gamepad.leftThumbstick.left.isPressed;
+            self.controllerStates[playerIndex].right = dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed;
             
             // Fire 1
-            self.controllerStates[playerIndex].fire = gamepad.buttonA.isPressed || gamepad.buttonY.isPressed || gamepad.leftTrigger.isPressed;
+            self.controllerStates[playerIndex].fire = gamepad.buttonA.isPressed;
             
             // Fire 2
-            INPUT_key_shift = gamepad.buttonB.isPressed || gamepad.buttonX.isPressed || gamepad.rightTrigger.isPressed;
+            INPUT_key_shift = gamepad.buttonB.isPressed;
             
             // The following buttons are on a shared bus. Only one at a time.
             // If none, state is reset. Since only one button can be registered
@@ -715,9 +715,40 @@ __weak static PVAtari800Bridge * _currentCore;
             // Reset
             else if (gamepad.leftShoulder.isPressed) {
                 INPUT_key_code = AKEY_5200_RESET;
+            } else if (gamepad.leftTrigger.isPressed) {
+                //* button
+                INPUT_key_code = AKEY_5200_ASTERISK;
+            } else if (gamepad.rightTrigger.isPressed) {
+                //# button
+                INPUT_key_code = AKEY_5200_HASH;
+            } else if (gamepad.rightThumbstick.left.isPressed) {
+                //1 button
+                INPUT_key_code = AKEY_5200_1;
+            } else if (gamepad.rightThumbstick.up.isPressed) {
+                //2 button
+                INPUT_key_code = AKEY_5200_2;
+            } else if (gamepad.rightThumbstick.right.isPressed) {
+                //3 button
+                INPUT_key_code = AKEY_5200_3;
+            } else if (gamepad.rightThumbstick.down.isPressed) {
+                //4 button
+                INPUT_key_code = AKEY_5200_4;
+            } else if (gamepad.leftThumbstickButton.isPressed) {
+                //5 button
+                INPUT_key_code = AKEY_5200_5;
+            } else if (gamepad.rightThumbstickButton.isPressed) {
+                //6 button
+                INPUT_key_code = AKEY_5200_6;
+            } else if (gamepad.buttonX.isPressed) {
+                //7 button
+                INPUT_key_code = AKEY_5200_7;
+            } else if (gamepad.buttonY.isPressed) {
+                //8 button
+                INPUT_key_code = AKEY_5200_8;
             } else {
                 INPUT_key_code = AKEY_NONE;
             }
+            //ran out of buttons for 9 and 0, but an idea would be to add an option for the user to use those while sacrificing either the left stick or the dpad to have those buttons.
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad]) {
