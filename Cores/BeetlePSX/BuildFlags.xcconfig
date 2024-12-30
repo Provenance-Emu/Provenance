@@ -13,7 +13,7 @@ GL_APIENTRYP=GLAPIENTRY*
 // HAVE_VULKAN=0 HAVE_JIT=0 WANT_16BPP=0 WANT_8BPP=1 LIGHTREC_DEBUG=0 HAVE_OPENGL=0  HAVE_SHM=1 USE_FIXED
 // HAVE_CDROM=1
 //OTHER_CFLAGS = $(inherited) -ObjC -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fmodules -fcxx-modules
-OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules 
+OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules -Wno-module-import-in-extern-c
 
  OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load
 
@@ -25,7 +25,7 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1 NEON=
 // TODO: Why does this result in some missing symbols?
 // HAVE_OPENGLES_3_1=1
 
-OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -mfpu=neon -D__VEC4_OPT -D__NEON_OPT 
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -D__VEC4_OPT -D__NEON_OPT
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(inherited)
 
 // Simulator
@@ -34,6 +34,7 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = TARGET_IPHONE_SIMULATOR=1 I
 
 // tvOS Device
 //GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) TARGET_IPHONE=1 IOS=1 HAVE_OPENGLES3=1
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -D__VEC4_OPT -D__NEON_OPT
 // HAVE_OPENGLES_3_1=1
 
 // tvOS Simulator
