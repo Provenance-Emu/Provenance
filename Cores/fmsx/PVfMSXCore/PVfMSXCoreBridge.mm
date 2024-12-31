@@ -8,6 +8,7 @@
 
 #import "PVfMSXCoreBridge.h"
 #include <stdatomic.h>
+#include "libretro.h"
 //#import "PVfMSXCore+Controls.h"
 //#import "PVfMSXCore+Audio.h"
 //#import "PVfMSXCore+Video.h"
@@ -127,7 +128,9 @@
 //- (BOOL)supportsCheatCode { return NO; }
 
 - (NSTimeInterval)frameInterval {
-    return 60;
+    retro_system_av_info *info;
+    retro_get_system_av_info(info);
+    return info->timing.fps ?: 60;
 }
 
 - (CGSize)aspectSize {
@@ -139,7 +142,7 @@
 }
 
 - (GLenum)pixelFormat {
-    return GL_RGB;
+    return GL_RGB565;
 }
 
 - (GLenum)pixelType {
@@ -166,7 +169,9 @@
 # pragma mark - Audio
 
 - (double)audioSampleRate {
-    return 48000;
+    retro_system_av_info *info;
+    retro_get_system_av_info(info);
+    return info->timing.sample_rate ?: 48000;
 }
 
 #if 0
@@ -250,7 +255,7 @@ const struct retro_variable vars[] = {
 //              "GameMaster2|"
 //              "FMPAC"
 //        },
-            char *value = strdup("FMPAC");
+            char *value = strdup("Guess");
             return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);
