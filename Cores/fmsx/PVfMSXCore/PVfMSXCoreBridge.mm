@@ -155,25 +155,30 @@
 //    return info.timing.fps ?: 60;
 //}
 
-//- (CGSize)aspectSize {
-//    return CGSizeMake(4, 3);
-//}
-//
-//- (CGSize)bufferSize {
-//    return CGSizeMake(272, 228);
-//}
+- (CGRect)screenRect {
+    return CGRectMake(0, 0, 272, 240);
+}
 
-//- (GLenum)pixelFormat {
-//    return GL_BGRA;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_UNSIGNED_BYTE;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    return GL_RGBA;
-//}
+- (CGSize)aspectSize {
+    return CGSizeMake(4, 3);
+}
+
+- (CGSize)bufferSize {
+    return CGSizeMake(272, 240);
+}
+
+- (GLenum)pixelFormat {
+    return GL_RGB565;
+}
+
+- (GLenum)pixelType {
+    return GL_UNSIGNED_SHORT_5_6_5;
+}
+
+- (GLenum)internalPixelFormat {
+    return GL_RGB565;
+}
+
 # pragma mark - Audio
 
 //- (double)audioSampleRate {
