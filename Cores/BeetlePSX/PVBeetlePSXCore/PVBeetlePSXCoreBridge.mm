@@ -140,7 +140,7 @@
 //}
 //
 - (GLenum)pixelFormat {
-    return GL_UNSIGNED_SHORT_5_6_5;
+    return GL_RGBA;
 }
 
 - (GLenum)pixelType {
@@ -148,7 +148,7 @@
 }
 
 - (GLenum)internalPixelFormat {
-    return GL_UNSIGNED_SHORT_5_6_5;
+    return GL_RGBA;
 }
 
 //- (BOOL)isDoubleBuffered {
