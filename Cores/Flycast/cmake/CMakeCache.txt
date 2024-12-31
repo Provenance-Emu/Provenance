@@ -17,9 +17,6 @@
 //No help, variable specified on the command line.
 APPLE:UNINITIALIZED=ON
 
-//macOS: Build breakpad client and dump symbols
-APPLE_BREAKPAD:BOOL=OFF
-
 //Enable address sanitizer
 ASAN:BOOL=OFF
 
@@ -50,9 +47,23 @@ CMAKE_ADDR2LINE:FILEPATH=CMAKE_ADDR2LINE-NOTFOUND
 //Path to a program.
 CMAKE_AR:FILEPATH=/Applications/Xcode16.1RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar
 
-//For backwards compatibility, what version of CMake commands and
-// syntax should this version of CMake try to support.
-CMAKE_BACKWARDS_COMPATIBILITY:STRING=2.4
+//ASM compiler
+CMAKE_ASM_COMPILER:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
+
+//Flags used by the ASM compiler during all build types.
+CMAKE_ASM_FLAGS:STRING=
+
+//Flags used by the ASM compiler during DEBUG builds.
+CMAKE_ASM_FLAGS_DEBUG:STRING=-g
+
+//Flags used by the ASM compiler during MINSIZEREL builds.
+CMAKE_ASM_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
+
+//Flags used by the ASM compiler during RELEASE builds.
+CMAKE_ASM_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
+
+//Flags used by the ASM compiler during RELWITHDEBINFO builds.
+CMAKE_ASM_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
 //No help, variable specified on the command line.
 CMAKE_BUILD_TYPE:UNINITIALIZED=Release
@@ -339,10 +350,14 @@ ENABLE_EXCEPTIONS:BOOL=OFF
 //Build with support for host app (Flycast) profiler
 ENABLE_FC_PROFILER:BOOL=OFF
 
+//Enable zip_fdopen, which is not allowed in Microsoft CRT secure
+// libraries
+ENABLE_FDOPEN:BOOL=ON
+
 //Build with GDB debugging support
 ENABLE_GDB_SERVER:BOOL=OFF
 
-//Builds glslangValidator and spirv-remap
+//Builds glslang and spirv-remap
 ENABLE_GLSLANG_BINARIES:BOOL=OFF
 
 //If using Emscripten, build glslang.js. Otherwise, builds a sample
@@ -386,10 +401,7 @@ ENABLE_SPVREMAPPER:BOOL=OFF
 ENABLE_WINDOWS_CRYPTO:BOOL=OFF
 
 //Enable use of Zstandard
-ENABLE_ZSTD:BOOL=OFF
-
-//Single output directory for building all executables.
-EXECUTABLE_OUTPUT_PATH:PATH=
+ENABLE_ZSTD:BOOL=ON
 
 //Path to a library.
 FOUNDATION:FILEPATH=/Applications/Xcode16.1RC.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.1.sdk/System/Library/Frameworks/Foundation.framework
@@ -403,14 +415,26 @@ GIT_EXECUTABLE:FILEPATH=/opt/homebrew/bin/git
 //Path to a library.
 GLKIT:FILEPATH=/Applications/Xcode16.1RC.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.1.sdk/System/Library/Frameworks/GLKit.framework
 
+//Installation directory for executables
+INSTALL_BIN_DIR:PATH=/usr/local/bin
+
+//Installation directory for headers
+INSTALL_INC_DIR:PATH=/usr/local/include
+
+//Installation directory for libraries
+INSTALL_LIB_DIR:PATH=/usr/local/lib
+
+//Installation directory for manual pages
+INSTALL_MAN_DIR:PATH=/usr/local/share/man
+
+//Installation directory for pkgconfig (.pc) files
+INSTALL_PKGCONFIG_DIR:PATH=/usr/local/share/pkgconfig
+
 //Install static libraries
 INSTALL_STATIC_LIBS:BOOL=OFF
 
 //No help, variable specified on the command line.
 IOS:UNINITIALIZED=ON
-
-//Single output directory for building all libraries.
-LIBRARY_OUTPUT_PATH:PATH=
 
 //Build libretro core
 LIBRETRO:BOOL=ON
@@ -420,6 +444,9 @@ LIBZIP_DO_INSTALL:BOOL=OFF
 
 //Path to a program.
 MDOCTOOL:FILEPATH=/usr/bin/mandoc
+
+//Path to a program.
+NIHTEST:FILEPATH=NIHTEST-NOTFOUND
 
 //Install library
 NOWIDE_INSTALL:BOOL=OFF
@@ -447,9 +474,6 @@ OpenMP_C_LIB_NAMES:STRING=NOTFOUND
 
 //Path to a library.
 OpenMP_libomp_LIBRARY:FILEPATH=OpenMP_libomp_LIBRARY-NOTFOUND
-
-//Path to a program.
-PERL_EXECUTABLE:FILEPATH=/opt/homebrew/bin/perl
 
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
@@ -490,6 +514,15 @@ UPNPC_BUILD_TESTS:BOOL=OFF
 //Disable installation
 UPNPC_NO_INSTALL:BOOL=ON
 
+//Build with ALSA support
+USE_ALSA:BOOL=ON
+
+//Build and link with breakpad library
+USE_BREAKPAD:BOOL=ON
+
+//Use Discord Presence API
+USE_DISCORD:BOOL=OFF
+
 //Build with Direct3D 11 support
 USE_DX11:BOOL=ON
 
@@ -502,11 +535,23 @@ USE_GLES:BOOL=OFF
 //Use GLES2 API
 USE_GLES2:BOOL=ON
 
+//Use host glslang
+USE_HOST_GLSLANG:BOOL=OFF
+
+//Use host libchdr
+USE_HOST_LIBCHDR:BOOL=OFF
+
 //Use host libzip
 USE_HOST_LIBZIP:BOOL=ON
 
 //Use host SDL library
 USE_HOST_SDL:BOOL=OFF
+
+//Build with AO support
+USE_LIBAO:BOOL=ON
+
+//Build with Lua support
+USE_LUA:BOOL=ON
 
 //Use OpenGL API
 USE_OPENGL:BOOL=OFF
@@ -514,11 +559,26 @@ USE_OPENGL:BOOL=OFF
 //Use OpenMP if available
 USE_OPENMP:BOOL=ON
 
+//Build with OSS support
+USE_OSS:BOOL=OFF
+
+//Build with PulseAudio support
+USE_PULSEAUDIO:BOOL=ON
+
 //RPI: use the legacy Broadcom GLES libraries
 USE_VIDEOCORE:BOOL=OFF
 
 //Build with Vulkan support
 USE_VULKAN:BOOL=ON
+
+//Value Computed by CMake
+VMA_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/VulkanMemoryAllocator
+
+//Value Computed by CMake
+VMA_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+VMA_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/VulkanMemoryAllocator
 
 //Value Computed by CMake
 VULKAN_HEADERS_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/Vulkan-Headers
@@ -532,6 +592,9 @@ VULKAN_HEADERS_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenan
 //No help, variable specified on the command line.
 Vulkan_INCLUDE_DIR:UNINITIALIZED=./MoltenVK/include
 
+//Use lzma asm
+WITH_LZMA_ASM:BOOL=ON
+
 //Use system provided zlib library
 WITH_SYSTEM_ZLIB:BOOL=OFF
 
@@ -540,6 +603,60 @@ XXHASH_BUILD_XXHSUM:BOOL=OFF
 
 XXHASH_BUNDLED_MODE:BOOL=ON
 
+//Visibility for ZDICTLIB_STATIC_API API
+ZDICTLIB_STATIC_API:STRING=
+
+//Visibility for ZDICTLIB_VISIBLE API
+ZDICTLIB_VISIBLE:STRING=
+
+//Enable Zlib Examples
+ZLIB_BUILD_EXAMPLES:BOOL=OFF
+
+//Visibility for ZSTDERRORLIB_VISIBLE API
+ZSTDERRORLIB_VISIBLE:STRING=
+
+//Visibility for ZSTDLIB_STATIC_API API
+ZSTDLIB_STATIC_API:STRING=
+
+//Visibility for ZSTDLIB API
+ZSTDLIB_VISIBLE:STRING=
+
+//BUILD COMPRESSION MODULE
+ZSTD_BUILD_COMPRESSION:BOOL=ON
+
+//BUILD CONTRIB
+ZSTD_BUILD_CONTRIB:BOOL=OFF
+
+//BUILD DECOMPRESSION MODULE
+ZSTD_BUILD_DECOMPRESSION:BOOL=ON
+
+//BUILD DEPRECATED MODULE
+ZSTD_BUILD_DEPRECATED:BOOL=OFF
+
+//BUILD DICTBUILDER MODULE
+ZSTD_BUILD_DICTBUILDER:BOOL=ON
+
+//BUILD PROGRAMS
+ZSTD_BUILD_PROGRAMS:BOOL=OFF
+
+//BUILD SHARED LIBRARIES
+ZSTD_BUILD_SHARED:BOOL=OFF
+
+//BUILD STATIC LIBRARIES
+ZSTD_BUILD_STATIC:BOOL=ON
+
+//BUILD TESTS
+ZSTD_BUILD_TESTS:BOOL=OFF
+
+//LEGACY SUPPORT
+ZSTD_LEGACY_SUPPORT:BOOL=OFF
+
+//MULTITHREADING SUPPORT
+ZSTD_MULTITHREAD_SUPPORT:BOOL=ON
+
+//PROGRAMS LINK SHARED
+ZSTD_PROGRAMS_LINK_SHARED:BOOL=OFF
+
 //No help, variable specified on the command line.
 _OPENMP:UNINITIALIZED=ON
 
@@ -547,7 +664,7 @@ _OPENMP:UNINITIALIZED=ON
 __APPLE__:UNINITIALIZED=ON
 
 //Dependencies for the target
-chdr-static_LIB_DEPENDS:STATIC=general;lzma;general;zlib;
+chdr-static_LIB_DEPENDS:STATIC=general;lzma;general;zlibstatic;general;libzstd_static;
 
 //Value Computed by CMake
 chdr_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr
@@ -565,7 +682,11 @@ flycast_libretro_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Proven
 flycast_libretro_IS_TOP_LEVEL:STATIC=ON
 
 //Dependencies for the target
+<<<<<<< Updated upstream
 flycast_libretro_LIB_DEPENDS:STATIC=general;/Applications/Xcode16.1RC.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.1.sdk/System/Library/Frameworks/Foundation.framework;general;/Applications/Xcode16.1RC.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.1.sdk/System/Library/Frameworks/OpenGLES.framework;general;/Applications/Xcode16.1RC.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.1.sdk/System/Library/Frameworks/GLKit.framework;general;xxHash::xxhash;general;glslang-default-resource-limits;general;SPIRV;general;chdr-static;general;zlib;general;nowide::nowide;general;miniupnpc::miniupnpc;general;zip;general;elf;general;flycast::res;
+=======
+flycast_libretro_LIB_DEPENDS:STATIC=general;/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.1.sdk/System/Library/Frameworks/Foundation.framework;general;/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.1.sdk/System/Library/Frameworks/OpenGLES.framework;general;/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.1.sdk/System/Library/Frameworks/GLKit.framework;general;/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/shell/apple/emulator-ios/OpenMP/OpenMP.xcframework/ios-arm64_arm64e/OpenMP.framework/Versions/A/libomp.a;general;xxHash::xxhash;general;glslang::glslang-default-resource-limits;general;glslang::SPIRV;general;chdr-static;general;nowide::nowide;general;miniupnpc::miniupnpc;general;libzip::zip;general;elf;general;flycast::res;
+>>>>>>> Stashed changes
 
 //Value Computed by CMake
 flycast_libretro_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast
@@ -607,6 +728,15 @@ libzip_IS_TOP_LEVEL:STATIC=OFF
 libzip_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libzip
 
 //Value Computed by CMake
+libzstd_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zstd-1.5.6/build/cmake/lib
+
+//Value Computed by CMake
+libzstd_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+libzstd_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zstd-1.5.6/build/cmake/lib
+
+//Value Computed by CMake
 miniupnpc_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/miniupnpc
 
 //Value Computed by CMake
@@ -624,6 +754,9 @@ nowide_IS_TOP_LEVEL:STATIC=OFF
 //Value Computed by CMake
 nowide_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/nowide
 
+//Path to a library.
+pkgcfg_lib_PC_zstd_zstd:FILEPATH=pkgcfg_lib_PC_zstd_zstd-NOTFOUND
+
 //Value Computed by CMake
 xxHash_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/xxHash/cmake_unofficial
 
@@ -634,16 +767,31 @@ xxHash_IS_TOP_LEVEL:STATIC=OFF
 xxHash_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/xxHash/cmake_unofficial
 
 //Dependencies for the target
-zip_LIB_DEPENDS:STATIC=general;ZLIB::ZLIB;
+zip_LIB_DEPENDS:STATIC=general;zstd::libzstd_static;general;ZLIB::ZLIB;
 
 //Value Computed by CMake
-zlib_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12
+zlib_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.3.1
 
 //Value Computed by CMake
 zlib_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-zlib_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.12
+zlib_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.3.1
+
+//Value Computed by CMake
+zstd_BINARY_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zstd-1.5.6/build/cmake
+
+//Path to a file.
+zstd_DLL:FILEPATH=zstd_DLL-NOTFOUND
+
+//Value Computed by CMake
+zstd_IS_TOP_LEVEL:STATIC=OFF
+
+//Path to a library.
+zstd_SHARED_LIBRARY:FILEPATH=zstd_SHARED_LIBRARY-NOTFOUND
+
+//Value Computed by CMake
+zstd_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zstd-1.5.6/build/cmake
 
 
 ########################
@@ -651,7 +799,7 @@ zlib_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/F
 ########################
 
 //Stored Xcode object GUID
-ALL_BUILD_GUID_CMAKE:INTERNAL=6DB80BBE8DA7D6D87A8D27FD
+ALL_BUILD_GUID_CMAKE:INTERNAL=B727D2F61FE22951697F0BAD
 //Build shared libraries
 BUILD_SHARED_LIBS:INTERNAL=OFF
 //Test CFLAG_Wall
@@ -678,6 +826,19 @@ CFLAG_Wundef:INTERNAL=1
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_COMPILER
+CMAKE_ASM_COMPILER-ADVANCED:INTERNAL=1
+CMAKE_ASM_COMPILER_WORKS:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS
+CMAKE_ASM_FLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS_DEBUG
+CMAKE_ASM_FLAGS_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS_MINSIZEREL
+CMAKE_ASM_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS_RELEASE
+CMAKE_ASM_FLAGS_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS_RELWITHDEBINFO
+CMAKE_ASM_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //This is the directory where this CMakeCache.txt was created
 CMAKE_CACHEFILE_DIR:INTERNAL=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake
 //Major version of cmake used to create the current loaded cache
@@ -685,7 +846,11 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=30
 //Patch version of cmake used to create the current loaded cache
+<<<<<<< Updated upstream
 CMAKE_CACHE_PATCH_VERSION:INTERNAL=5
+=======
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=2
+>>>>>>> Stashed changes
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=/opt/homebrew/Cellar/cmake/3.30.5/bin/cmake
 //Path to cpack program executable.
@@ -790,7 +955,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=19
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=22
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -837,16 +1002,56 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Directory for CMakeRC include files
 CMRC_INCLUDE_DIR:INTERNAL=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/_cmrc/include
+//Test CXX_FLAG_QUNUSED_ARGUMENTS
+CXX_FLAG_QUNUSED_ARGUMENTS:INTERNAL=1
+//Test CXX_FLAG_WALL
+CXX_FLAG_WALL:INTERNAL=1
+//Test CXX_FLAG_WA_NOEXECSTACK
+CXX_FLAG_WA_NOEXECSTACK:INTERNAL=1
+//Test CXX_FLAG_WCAST_ALIGN
+CXX_FLAG_WCAST_ALIGN:INTERNAL=1
+//Test CXX_FLAG_WCAST_QUAL
+CXX_FLAG_WCAST_QUAL:INTERNAL=1
+//Test CXX_FLAG_WEXTRA
+CXX_FLAG_WEXTRA:INTERNAL=1
+//Test CXX_FLAG_WSHADOW
+CXX_FLAG_WSHADOW:INTERNAL=1
+//Test CXX_FLAG_WUNDEF
+CXX_FLAG_WUNDEF:INTERNAL=1
+//Test C_FLAG_QUNUSED_ARGUMENTS
+C_FLAG_QUNUSED_ARGUMENTS:INTERNAL=1
+//Test C_FLAG_WALL
+C_FLAG_WALL:INTERNAL=1
+//Test C_FLAG_WA_NOEXECSTACK
+C_FLAG_WA_NOEXECSTACK:INTERNAL=1
+//Test C_FLAG_WCAST_ALIGN
+C_FLAG_WCAST_ALIGN:INTERNAL=1
+//Test C_FLAG_WCAST_QUAL
+C_FLAG_WCAST_QUAL:INTERNAL=1
+//Test C_FLAG_WEXTRA
+C_FLAG_WEXTRA:INTERNAL=1
+//Test C_FLAG_WSHADOW
+C_FLAG_WSHADOW:INTERNAL=1
+//Test C_FLAG_WSTRICT_PROTOTYPES
+C_FLAG_WSTRICT_PROTOTYPES:INTERNAL=1
+//Test C_FLAG_WUNDEF
+C_FLAG_WUNDEF:INTERNAL=1
 //Details about finding Git
+<<<<<<< Updated upstream
 FIND_PACKAGE_MESSAGE_DETAILS_Git:INTERNAL=[/opt/homebrew/bin/git][v2.47.0()]
 //Details about finding Perl
 FIND_PACKAGE_MESSAGE_DETAILS_Perl:INTERNAL=[/opt/homebrew/bin/perl][v5.40.0()]
+=======
+FIND_PACKAGE_MESSAGE_DETAILS_Git:INTERNAL=[/opt/homebrew/bin/git][v2.47.1()]
+>>>>>>> Stashed changes
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/opt/homebrew/bin/pkg-config][v0.29.2()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Details about finding ZLIB
-FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.2.12/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/libz.a][/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.2.11][c ][v1.2.11(1.1.2)]
+FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[optimized;/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.3.1/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/libz.a;debug;/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.3.1/Debug${EFFECTIVE_PLATFORM_NAME}/libz.a][/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zlib-1.3.1;/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zlib-1.3.1][c ][v(1.1.2)]
+//Details about finding zstd
+FIND_PACKAGE_MESSAGE_DETAILS_zstd:INTERNAL=[/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/core/deps/libchdr/deps/zstd-1.5.6/build/cmake/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/libzstd.a][/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/flycast/core/deps/libchdr/deps/zstd-1.5.6/lib][v(1.3.6)]
 FTS_LIB:INTERNAL=
 //ADVANCED property for variable: GIT_EXECUTABLE
 GIT_EXECUTABLE-ADVANCED:INTERNAL=1
@@ -860,6 +1065,8 @@ HAVE_CLONEFILE:INTERNAL=1
 HAVE_EXPLICIT_BZERO:INTERNAL=
 //Have function explicit_memset
 HAVE_EXPLICIT_MEMSET:INTERNAL=
+//Have function fchmod
+HAVE_FCHMOD:INTERNAL=1
 //Test HAVE_FICLONERANGE
 HAVE_FICLONERANGE:INTERNAL=
 //Have function fileno
@@ -887,16 +1094,22 @@ HAVE_INTTYPES_H_LIBZIP:INTERNAL=1
 //Result of TRY_COMPILE
 HAVE_INT_LIBZIP:INTERNAL=TRUE
 HAVE_LIB_FTS:INTERNAL=
-//Have function localtime_r
+//Have symbol localtime_r
 HAVE_LOCALTIME_R:INTERNAL=1
+//Have symbol localtime_s
+HAVE_LOCALTIME_S:INTERNAL=
 //Result of TRY_COMPILE
 HAVE_LONG_LIBZIP:INTERNAL=TRUE
 //Result of TRY_COMPILE
 HAVE_LONG_LONG_LIBZIP:INTERNAL=TRUE
+//Have function memcpy_s
+HAVE_MEMCPY_S:INTERNAL=
 //Test HAVE_NULLABLE
 HAVE_NULLABLE:INTERNAL=1
 //Result of TRY_COMPILE
 HAVE_OFF64_T:INTERNAL=FALSE
+//Have function random
+HAVE_RANDOM:INTERNAL=1
 //Have function setmode
 HAVE_SETMODE:INTERNAL=1
 //Result of TRY_COMPILE
@@ -905,6 +1118,10 @@ HAVE_SHORT_LIBZIP:INTERNAL=TRUE
 HAVE_SIZEOF_OFF_T:INTERNAL=TRUE
 //Result of TRY_COMPILE
 HAVE_SIZEOF_SIZE_T:INTERNAL=TRUE
+//Have symbol snprintf
+HAVE_SNPRINTF:INTERNAL=1
+//Have symbol snprintf_s
+HAVE_SNPRINTF_S:INTERNAL=
 //Have include stdbool.h
 HAVE_STDBOOL_H:INTERNAL=1
 //Have include stddef.h
@@ -913,14 +1130,20 @@ HAVE_STDDEF_H:INTERNAL=1
 HAVE_STDINT_H:INTERNAL=1
 //Have include stdint.h
 HAVE_STDINT_H_LIBZIP:INTERNAL=1
-//Have function strcasecmp
+//Have symbol strcasecmp
 HAVE_STRCASECMP:INTERNAL=1
 //Have function strdup
 HAVE_STRDUP:INTERNAL=1
+//Have function strerrorlen_s
+HAVE_STRERRORLEN_S:INTERNAL=
+//Have function strerror_s
+HAVE_STRERROR_S:INTERNAL=
 //Have function stricmp
 HAVE_STRICMP:INTERNAL=
 //Have include strings.h
 HAVE_STRINGS_H:INTERNAL=1
+//Have function strncpy_s
+HAVE_STRNCPY_S:INTERNAL=
 //Have function strtoll
 HAVE_STRTOLL:INTERNAL=1
 //Have function strtoull
@@ -949,11 +1172,15 @@ HAVE__FDOPEN:INTERNAL=
 HAVE__FILENO:INTERNAL=
 //Have function _setmode
 HAVE__SETMODE:INTERNAL=
-//Have function _snprintf
+//Have symbol _snprintf
 HAVE__SNPRINTF:INTERNAL=
+//Have symbol _snprintf_s
+HAVE__SNPRINTF_S:INTERNAL=
+//Have symbol _snwprintf_s
+HAVE__SNWPRINTF_S:INTERNAL=
 //Have function _strdup
 HAVE__STRDUP:INTERNAL=
-//Have function _stricmp
+//Have symbol _stricmp
 HAVE__STRICMP:INTERNAL=
 //Have function _strtoi64
 HAVE__STRTOI64:INTERNAL=
@@ -979,6 +1206,8 @@ INT64_T_LIBZIP:INTERNAL=8
 INT8_T_LIBZIP:INTERNAL=1
 //CHECK_TYPE_SIZE: sizeof(int)
 INT_LIBZIP:INTERNAL=4
+//Test LD_FLAG_Z_NOEXECSTACK
+LD_FLAG_Z_NOEXECSTACK:INTERNAL=
 //CHECK_TYPE_SIZE: sizeof(long)
 LONG_LIBZIP:INTERNAL=8
 //CHECK_TYPE_SIZE: sizeof(long long)
@@ -1009,13 +1238,47 @@ OpenMP_C_FLAGS-ADVANCED:INTERNAL=1
 OpenMP_C_LIB_NAMES-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OpenMP_libomp_LIBRARY
 OpenMP_libomp_LIBRARY-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: PERL_EXECUTABLE
-PERL_EXECUTABLE-ADVANCED:INTERNAL=1
+PC_zstd_CFLAGS:INTERNAL=-I/opt/homebrew/opt/zstd/include
+PC_zstd_CFLAGS_I:INTERNAL=
+PC_zstd_CFLAGS_OTHER:INTERNAL=
+PC_zstd_FOUND:INTERNAL=1
+PC_zstd_INCLUDEDIR:INTERNAL=/opt/homebrew/opt/zstd/include
+PC_zstd_INCLUDE_DIRS:INTERNAL=/opt/homebrew/opt/zstd/include
+PC_zstd_LDFLAGS:INTERNAL=-L/opt/homebrew/opt/zstd/lib;-lzstd
+PC_zstd_LDFLAGS_OTHER:INTERNAL=
+PC_zstd_LIBDIR:INTERNAL=/opt/homebrew/opt/zstd/lib
+PC_zstd_LIBRARIES:INTERNAL=zstd
+PC_zstd_LIBRARY_DIRS:INTERNAL=/opt/homebrew/opt/zstd/lib
+PC_zstd_LIBS:INTERNAL=
+PC_zstd_LIBS_L:INTERNAL=
+PC_zstd_LIBS_OTHER:INTERNAL=
+PC_zstd_LIBS_PATHS:INTERNAL=
+PC_zstd_MODULE_NAME:INTERNAL=libzstd
+PC_zstd_PREFIX:INTERNAL=/opt/homebrew/opt/zstd
+PC_zstd_STATIC_CFLAGS:INTERNAL=-I/opt/homebrew/opt/zstd/include
+PC_zstd_STATIC_CFLAGS_I:INTERNAL=
+PC_zstd_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_zstd_STATIC_INCLUDE_DIRS:INTERNAL=/opt/homebrew/opt/zstd/include
+PC_zstd_STATIC_LDFLAGS:INTERNAL=-L/opt/homebrew/opt/zstd/lib;-lzstd
+PC_zstd_STATIC_LDFLAGS_OTHER:INTERNAL=
+PC_zstd_STATIC_LIBDIR:INTERNAL=
+PC_zstd_STATIC_LIBRARIES:INTERNAL=zstd
+PC_zstd_STATIC_LIBRARY_DIRS:INTERNAL=/opt/homebrew/opt/zstd/lib
+PC_zstd_STATIC_LIBS:INTERNAL=
+PC_zstd_STATIC_LIBS_L:INTERNAL=
+PC_zstd_STATIC_LIBS_OTHER:INTERNAL=
+PC_zstd_STATIC_LIBS_PATHS:INTERNAL=
+PC_zstd_VERSION:INTERNAL=1.5.6
+PC_zstd_libzstd_INCLUDEDIR:INTERNAL=
+PC_zstd_libzstd_LIBDIR:INTERNAL=
+PC_zstd_libzstd_PREFIX:INTERNAL=
+PC_zstd_libzstd_VERSION:INTERNAL=
 //ADVANCED property for variable: PKG_CONFIG_ARGN
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
 PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 //Stored Xcode object GUID
+<<<<<<< Updated upstream
 PROJECT_VULKAN_HEADERS_GUID_CMAKE:INTERNAL=EF00748110EA4B729B134097
 //Stored Xcode object GUID
 PROJECT_chdr_GUID_CMAKE:INTERNAL=24364CD0C0E84F96B59FD0EA
@@ -1037,6 +1300,35 @@ PROJECT_nowide_GUID_CMAKE:INTERNAL=498C30ACDAE547FCAB4D6B76
 PROJECT_xxHash_GUID_CMAKE:INTERNAL=0912954A2D704D73B267B839
 //Stored Xcode object GUID
 PROJECT_zlib_GUID_CMAKE:INTERNAL=76973EDB981C4BFE9D5BBE04
+=======
+PROJECT_VMA_GUID_CMAKE:INTERNAL=59D93ABCD77440C89B304E74
+//Stored Xcode object GUID
+PROJECT_VULKAN_HEADERS_GUID_CMAKE:INTERNAL=ED4C67C5C50F4209B620556D
+//Stored Xcode object GUID
+PROJECT_chdr_GUID_CMAKE:INTERNAL=2C42E0F5BAC442009F16C3B4
+//Stored Xcode object GUID
+PROJECT_flycast_libretro_GUID_CMAKE:INTERNAL=3403ADC5BA364B9B8FC3B677
+//Stored Xcode object GUID
+PROJECT_glm_GUID_CMAKE:INTERNAL=55D3DE47C8EA4B8B861C2003
+//Stored Xcode object GUID
+PROJECT_glslang_GUID_CMAKE:INTERNAL=77541474743A44ACA5482AF9
+//Stored Xcode object GUID
+PROJECT_libelf_GUID_CMAKE:INTERNAL=88A889A7B852470589F1DEB5
+//Stored Xcode object GUID
+PROJECT_libzip_GUID_CMAKE:INTERNAL=926F744D43CB4B37B39D724C
+//Stored Xcode object GUID
+PROJECT_libzstd_GUID_CMAKE:INTERNAL=495D58373C554D768A0640AF
+//Stored Xcode object GUID
+PROJECT_miniupnpc_GUID_CMAKE:INTERNAL=FD34F02A26944B9689F64987
+//Stored Xcode object GUID
+PROJECT_nowide_GUID_CMAKE:INTERNAL=DEA8DB4E8C364B87A44829E1
+//Stored Xcode object GUID
+PROJECT_xxHash_GUID_CMAKE:INTERNAL=757AA54F420440B0932422BF
+//Stored Xcode object GUID
+PROJECT_zlib_GUID_CMAKE:INTERNAL=5B67B9BABC924367B20AD50F
+//Stored Xcode object GUID
+PROJECT_zstd_GUID_CMAKE:INTERNAL=E445723D0E364FF49C88FFD8
+>>>>>>> Stashed changes
 //CHECK_TYPE_SIZE: sizeof(short)
 SHORT_LIBZIP:INTERNAL=2
 //CHECK_TYPE_SIZE: sizeof(off_t)
@@ -1055,8 +1347,18 @@ UINT64_T_LIBZIP:INTERNAL=8
 UINT8_T_LIBZIP:INTERNAL=1
 //ADVANCED property for variable: XXHASH_BUNDLED_MODE
 XXHASH_BUNDLED_MODE-ADVANCED:INTERNAL=1
+//STRINGS property for variable: ZDICTLIB_STATIC_API
+ZDICTLIB_STATIC_API-STRINGS:INTERNAL=;hidden;default;protected;internal
+//STRINGS property for variable: ZDICTLIB_VISIBLE
+ZDICTLIB_VISIBLE-STRINGS:INTERNAL=;hidden;default;protected;internal
 //Stored Xcode object GUID
-ZERO_CHECK_GUID_CMAKE:INTERNAL=6D2263BD069F7028F9CB8758
+ZERO_CHECK_GUID_CMAKE:INTERNAL=69835AD03873232AF422EFB0
+//STRINGS property for variable: ZSTDERRORLIB_VISIBLE
+ZSTDERRORLIB_VISIBLE-STRINGS:INTERNAL=;hidden;default;protected;internal
+//STRINGS property for variable: ZSTDLIB_STATIC_API
+ZSTDLIB_STATIC_API-STRINGS:INTERNAL=;hidden;default;protected;internal
+//STRINGS property for variable: ZSTDLIB_VISIBLE
+ZSTDLIB_VISIBLE-STRINGS:INTERNAL=;hidden;default;protected;internal
 //Have include unistd.h
 Z_HAVE_UNISTD_H:INTERNAL=1
 //Path to CMakeRC script
@@ -1073,10 +1375,14 @@ __INT32_LIBZIP:INTERNAL=
 __INT64_LIBZIP:INTERNAL=
 //CHECK_TYPE_SIZE: __int8 unknown
 __INT8_LIBZIP:INTERNAL=
+__pkg_config_arguments_PC_zstd:INTERNAL=QUIET;libzstd
+__pkg_config_checked_PC_zstd:INTERNAL=1
 //Stored Xcode object GUID
 chdr-benchmark_GUID_CMAKE:INTERNAL=6A02EEB9AF975E98F1163ADB
 //Stored Xcode object GUID
 chdr-static_GUID_CMAKE:INTERNAL=306475C933CD35C79B855AD1
+//Stored Xcode object GUID
+clean-all_GUID_CMAKE:INTERNAL=146B629DE4BB64BB67E54FA0
 cmrc_hpp:INTERNAL=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Flycast/cmake/_cmrc/include/cmrc/cmrc.hpp
 //Stored Xcode object GUID
 dist_GUID_CMAKE:INTERNAL=BFE014D0F91E05E8EAF0406F
@@ -1093,17 +1399,30 @@ glslang-default-resource-limits_GUID_CMAKE:INTERNAL=470865334B5B576275C5112C
 //Stored Xcode object GUID
 glslang_GUID_CMAKE:INTERNAL=7D9BA18AFAC54B79E83F387A
 //Stored Xcode object GUID
-install_GUID_CMAKE:INTERNAL=11E917AB434F844A6CA3AEDF
+install_GUID_CMAKE:INTERNAL=1148ED2E9013F6047A670D47
 //Stored Xcode object GUID
 libminiupnpc-static_GUID_CMAKE:INTERNAL=35DBD5B78ECF44833D17B51F
 //Stored Xcode object GUID
-lzma_GUID_CMAKE:INTERNAL=1B6D1D7E89C9A43F8E1A70B4
+libzstd_static_GUID_CMAKE:INTERNAL=92C9B5FE49230EAE1BA30390
+//Stored Xcode object GUID
+lzma_GUID_CMAKE:INTERNAL=419CF4A61CD3DDB0D3BD2ED2
 //Stored Xcode object GUID
 nowide_GUID_CMAKE:INTERNAL=B752C9C7BC3D5683D01E5833
+//ADVANCED property for variable: pkgcfg_lib_PC_zstd_zstd
+pkgcfg_lib_PC_zstd_zstd-ADVANCED:INTERNAL=1
+prefix_result:INTERNAL=/opt/homebrew/opt/zstd/lib
+//Stored Xcode object GUID
+uninstall_GUID_CMAKE:INTERNAL=26CB2AEE0BA90F0F93EA7584
 //Stored Xcode object GUID
 xxhash_GUID_CMAKE:INTERNAL=D59F45CAF99423BB160B8A01
 //Stored Xcode object GUID
 zip_GUID_CMAKE:INTERNAL=7AA1697EDEC0ABD31E514DBF
 //Stored Xcode object GUID
-zlib_GUID_CMAKE:INTERNAL=B128433B4CE4270EFDCFAB54
+zlib_GUID_CMAKE:INTERNAL=C7F71D9148762EB14071D744
+//Stored Xcode object GUID
+zlibstatic_GUID_CMAKE:INTERNAL=807E5D4C084C756426305CD2
+//ADVANCED property for variable: zstd_DLL
+zstd_DLL-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: zstd_SHARED_LIBRARY
+zstd_SHARED_LIBRARY-ADVANCED:INTERNAL=1
 

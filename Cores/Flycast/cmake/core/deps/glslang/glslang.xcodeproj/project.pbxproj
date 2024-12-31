@@ -7,21 +7,33 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		11E917AB434F844A6CA3AEDF /* install */ = {
+		1148ED2E9013F6047A670D47 /* install */ = {
 			isa = PBXAggregateTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = 75DA17C8C86F4464B64CF527 /* Build configuration list for PBXAggregateTarget "install" */;
+=======
+			buildConfigurationList = B552ECA51F6945B28E853B79 /* Build configuration list for PBXAggregateTarget "install" */;
+>>>>>>> Stashed changes
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
+<<<<<<< Updated upstream
 				F5EE3B13BCAD4ACCB617C380 /* PBXTargetDependency */,
+=======
+				E36879BDB3004F2DB94FEA27 /* PBXTargetDependency */,
+>>>>>>> Stashed changes
 			);
 			name = install;
 			productName = install;
 		};
-		6D2263BD069F7028F9CB8758 /* ZERO_CHECK */ = {
+		69835AD03873232AF422EFB0 /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = 83CFC7482BBA4018994EFB55 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+=======
+			buildConfigurationList = A5AC89064EA8494DA6F1CACA /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+>>>>>>> Stashed changes
 			buildPhases = (
 				B77ED2E59AF5027883658851 /* Generate CMakeFiles/ZERO_CHECK */,
 			);
@@ -30,13 +42,18 @@
 			name = ZERO_CHECK;
 			productName = ZERO_CHECK;
 		};
-		6DB80BBE8DA7D6D87A8D27FD /* ALL_BUILD */ = {
+		B727D2F61FE22951697F0BAD /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = A0FD49894FC740A89AC1E848 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+=======
+			buildConfigurationList = 822CC7DDB7E64EDC9AB4AE67 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+>>>>>>> Stashed changes
 			buildPhases = (
 				D8F7BFB277EE08FD00D4E624 /* Generate CMakeFiles/ALL_BUILD */,
 			);
 			dependencies = (
+<<<<<<< Updated upstream
 				12756672AF4844F9BA5660B1 /* PBXTargetDependency */,
 				6B1FBF8AF90240599D11B636 /* PBXTargetDependency */,
 				0AD18FD494EA49A18F80221C /* PBXTargetDependency */,
@@ -45,6 +62,16 @@
 				470A14E667844C63AD818965 /* PBXTargetDependency */,
 				19B0558889334DD895F41F30 /* PBXTargetDependency */,
 				AAAD73FDEF654200963E8AF8 /* PBXTargetDependency */,
+=======
+				EC901A88655946B9A1E9D457 /* PBXTargetDependency */,
+				84BBA90CD55A41F58CC58100 /* PBXTargetDependency */,
+				15688213F4454283BD8595A0 /* PBXTargetDependency */,
+				A9ECAA804FB741B68E1108B7 /* PBXTargetDependency */,
+				CD01BFC111404A3EA59AE6F1 /* PBXTargetDependency */,
+				6BE980BDFCE6422DB981E4E1 /* PBXTargetDependency */,
+				60080D72D32A465FA509564C /* PBXTargetDependency */,
+				7126DA2A1267411482962B4E /* PBXTargetDependency */,
+>>>>>>> Stashed changes
 			);
 			name = ALL_BUILD;
 			productName = ALL_BUILD;
@@ -52,6 +79,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+<<<<<<< Updated upstream
 		00B51280C33A40ECA82B61B8 /* ../flycast/core/deps/glslang/SPIRV/NonSemanticDebugPrintf.h */ = {isa = PBXBuildFile; fileRef = 5D675EE2661B45809D65B81D /* ../flycast/core/deps/glslang/SPIRV/NonSemanticDebugPrintf.h */; };
 		01AC5532212B44D49F9DB266 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/linkValidate.cpp */ = {isa = PBXBuildFile; fileRef = 9A271055C5294FF39C16FD1F /* ../flycast/core/deps/glslang/glslang/MachineIndependent/linkValidate.cpp */; };
 		046EB9DF8BE54D36B17642C3 /* ../flycast/core/deps/glslang/glslang/Include/ResourceLimits.h */ = {isa = PBXBuildFile; fileRef = 916B7940D61C475BBB6CC145 /* ../flycast/core/deps/glslang/glslang/Include/ResourceLimits.h */; };
@@ -192,15 +220,157 @@
 			name = Debug;
 		};
 		74DA66C5811C48D6AE3D6C4D /* MinSizeRel */ = {
+=======
+		0097B0F80E00406DA1F1E91E /* ../flycast/core/deps/glslang/glslang/MachineIndependent/propagateNoContraction.cpp */ = {isa = PBXBuildFile; fileRef = 83B79A500B014FD18FA20720 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/propagateNoContraction.cpp */; };
+		01EC6674E48B4C469480B8EC /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.EXT.h */ = {isa = PBXBuildFile; fileRef = 9673161FDF364617ABF5860A /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.EXT.h */; };
+		034333106D2E4F8DAC6297F3 /* ../flycast/core/deps/glslang/SPIRV/spirv.hpp */ = {isa = PBXBuildFile; fileRef = 1551C078C8D443539AC65782 /* ../flycast/core/deps/glslang/SPIRV/spirv.hpp */; };
+		03F4E642CFB94314B3BC6F10 /* ../flycast/core/deps/glslang/SPIRV/CInterface/spirv_c_interface.cpp */ = {isa = PBXBuildFile; fileRef = CF60D1F62EDC4A27AA9AF822 /* ../flycast/core/deps/glslang/SPIRV/CInterface/spirv_c_interface.cpp */; };
+		04636789B24B4F9192B27146 /* ../flycast/core/deps/glslang/glslang/Include/arrays.h */ = {isa = PBXBuildFile; fileRef = A58D257D05374CEFBE566B54 /* ../flycast/core/deps/glslang/glslang/Include/arrays.h */; };
+		1236669A17D8440EA06B36DA /* ../flycast/core/deps/glslang/SPIRV/NonSemanticDebugPrintf.h */ = {isa = PBXBuildFile; fileRef = 3E498857D40E49768DCC98A4 /* ../flycast/core/deps/glslang/SPIRV/NonSemanticDebugPrintf.h */; };
+		190D141045C34136A621AA74 /* ../flycast/core/deps/glslang/glslang/Include/ResourceLimits.h */ = {isa = PBXBuildFile; fileRef = 51784FAB61CA45C1BAEAE01D /* ../flycast/core/deps/glslang/glslang/Include/ResourceLimits.h */; };
+		1A177A91247E476CB328EFB5 /* ../flycast/core/deps/glslang/SPIRV/spvIR.h */ = {isa = PBXBuildFile; fileRef = AAA977F3131344B8B1F1D127 /* ../flycast/core/deps/glslang/SPIRV/spvIR.h */; };
+		1C3334C6CDDD4237BA136F7F /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang.y */ = {isa = PBXBuildFile; fileRef = B388AC0B89F54BA397A1698D /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang.y */; };
+		1E43CA8192534DE085FAA098 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ShaderLang.cpp */ = {isa = PBXBuildFile; fileRef = 39F69CDEE67D48E2B3DECA6F /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ShaderLang.cpp */; };
+		24093C19DF034A70B0C2B3D8 /* ../flycast/core/deps/glslang/glslang/Include/glslang_c_shader_types.h */ = {isa = PBXBuildFile; fileRef = 0C71BD01DA444ED8B0853FE5 /* ../flycast/core/deps/glslang/glslang/Include/glslang_c_shader_types.h */; };
+		28917C43B62B409AB6ADAEA9 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/RemoveTree.h */ = {isa = PBXBuildFile; fileRef = C63E4C4E011B4CBAB38AC935 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/RemoveTree.h */; };
+		2963AF180BAC478E93B9E607 /* ../flycast/core/deps/glslang/SPIRV/doc.cpp */ = {isa = PBXBuildFile; fileRef = 1FCF57A6C41040C9AF87407C /* ../flycast/core/deps/glslang/SPIRV/doc.cpp */; };
+		29E007E2090A426187BF2FF3 /* ../flycast/core/deps/glslang/glslang/Include/ShHandle.h */ = {isa = PBXBuildFile; fileRef = 69DD6F65A24A481AB25007BD /* ../flycast/core/deps/glslang/glslang/Include/ShHandle.h */; };
+		2A582FCA3D184930A62BC9A8 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/IntermTraverse.cpp */ = {isa = PBXBuildFile; fileRef = 87DEB3F53DEE46CF810B2B3C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/IntermTraverse.cpp */; };
+		2B7AB87F1BCD41F4B443C923 /* ../cmake/core/deps/glslang/OGLCompilersDLL/CMakeFiles/OGLCompiler.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 1BC88BC476D2420D9F41FB02 /* ../cmake/core/deps/glslang/OGLCompilersDLL/CMakeFiles/OGLCompiler.dir/Info.plist */; };
+		303E7973937A4E8EB7DB7CD6 /* ../flycast/core/deps/glslang/SPIRV/SpvTools.h */ = {isa = PBXBuildFile; fileRef = 913DA817ABF04030B1AC246E /* ../flycast/core/deps/glslang/SPIRV/SpvTools.h */; };
+		3102C8C1EBD844F08221640D /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 2818B2341FE54B7596FAAE74 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */; };
+		3322E4D1D41146EABAB6BED8 /* ../flycast/core/deps/glslang/glslang/OSDependent/Unix/ossource.cpp */ = {isa = PBXBuildFile; fileRef = BC7185605DC94B04B4AC4D9E /* ../flycast/core/deps/glslang/glslang/OSDependent/Unix/ossource.cpp */; };
+		3476817E31204B83923CEBE4 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/reflection.cpp */ = {isa = PBXBuildFile; fileRef = 755BF99017604A80AFB008C4 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/reflection.cpp */; };
+		3948F4A066CA46459DA5BBF1 /* ../flycast/core/deps/glslang/SPIRV/Logger.h */ = {isa = PBXBuildFile; fileRef = 5B405EBE43A948A3905729A4 /* ../flycast/core/deps/glslang/SPIRV/Logger.h */; };
+		3ABE64808E95417B857D644C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/parseVersions.h */ = {isa = PBXBuildFile; fileRef = 9046C17DF6234D69A9C82FF2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/parseVersions.h */; };
+		3EDB6F7977AA4D0F875E2A38 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/Link.cpp */ = {isa = PBXBuildFile; fileRef = 1958B5D255B4438889A283C8 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/Link.cpp */; };
+		44FED24A56D545518DB1E1AE /* ../cmake/core/deps/glslang/glslang/CMakeFiles/GenericCodeGen.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 5743D4E259884DDEA78F2D84 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/GenericCodeGen.dir/Info.plist */; };
+		4778E043395E44E4B42B1581 /* ../flycast/core/deps/glslang/glslang/Include/PoolAlloc.h */ = {isa = PBXBuildFile; fileRef = 1539A207618243C3ABF2110F /* ../flycast/core/deps/glslang/glslang/Include/PoolAlloc.h */; };
+		48E34FB74EDB4184B5BE3DA3 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang_tab.cpp */ = {isa = PBXBuildFile; fileRef = F92FCE931BFD4EAC8D4721CC /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang_tab.cpp */; };
+		48E925F8422948DF9F6F7DCF /* ../flycast/core/deps/glslang/glslang/MachineIndependent/PoolAlloc.cpp */ = {isa = PBXBuildFile; fileRef = 6558E8B54C474910B638B8A7 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/PoolAlloc.cpp */; };
+		4CA871C44C4248A89D26AC0C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/InfoSink.cpp */ = {isa = PBXBuildFile; fileRef = 2A55F0400A3449C3827CEBE2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/InfoSink.cpp */; };
+		4D8D70F53BDA4DEE86AF08B5 /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.NV.h */ = {isa = PBXBuildFile; fileRef = A7D2B23D667C41C3B41B73B9 /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.NV.h */; };
+		4F73C2373E8F42019BA86DDB /* ../flycast/core/deps/glslang/SPIRV/NonSemanticShaderDebugInfo100.h */ = {isa = PBXBuildFile; fileRef = 075B701E45FB42A8925D74DE /* ../flycast/core/deps/glslang/SPIRV/NonSemanticShaderDebugInfo100.h */; };
+		507F8C4AE87A4A24A004807D /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 17BBE60A583047F296DEB9CF /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */; };
+		5205E611B09A41A3AC8BBEFE /* ../flycast/core/deps/glslang/glslang/MachineIndependent/RemoveTree.cpp */ = {isa = PBXBuildFile; fileRef = 3BAE1B1A008741398B127638 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/RemoveTree.cpp */; };
+		54A57C2C8E4B45C991E7E921 /* ../flycast/core/deps/glslang/SPIRV/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = B7BCF7E1BFCE45DFA091043D /* ../flycast/core/deps/glslang/SPIRV/CMakeLists.txt */; };
+		55434DC2634C4320991F020F /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Versions.cpp */ = {isa = PBXBuildFile; fileRef = 5330B6A4DF104330B7C0BC16 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Versions.cpp */; };
+		55B2AD15CC8E404DBFDCD85A /* ../flycast/core/deps/glslang/SPIRV/GLSL.std.450.h */ = {isa = PBXBuildFile; fileRef = 03C3E6B5033240449425126C /* ../flycast/core/deps/glslang/SPIRV/GLSL.std.450.h */; };
+		5A78B5959D54436A96661F0F /* ../cmake/core/deps/glslang/glslang/CMakeFiles/glslang.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 2987176D2B724DA790601E3D /* ../cmake/core/deps/glslang/glslang/CMakeFiles/glslang.dir/Info.plist */; };
+		5A8544BDDD104C29ABD9C098 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpContext.h */ = {isa = PBXBuildFile; fileRef = 4DA6C5F14E8243DFAA8402B0 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpContext.h */; };
+		5B6B16C743AE46D6B1C90025 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/attribute.cpp */ = {isa = PBXBuildFile; fileRef = 9CD1B8FC456F44A6B86E8B87 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/attribute.cpp */; };
+		5B9DBDBCC5ED4D61A2C4C430 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/intermOut.cpp */ = {isa = PBXBuildFile; fileRef = 4C8E3CC3DE4144B8AE873C8E /* ../flycast/core/deps/glslang/glslang/MachineIndependent/intermOut.cpp */; };
+		5CD9F16D5BE14C7BBEF65B2A /* ../flycast/core/deps/glslang/SPIRV/bitutils.h */ = {isa = PBXBuildFile; fileRef = DD24E115E4214F67A10408C6 /* ../flycast/core/deps/glslang/SPIRV/bitutils.h */; };
+		5D2C0A64DA2143AC9E16F242 /* ../flycast/core/deps/glslang/SPIRV/Logger.cpp */ = {isa = PBXBuildFile; fileRef = A5655A3D8D7649F594525FB1 /* ../flycast/core/deps/glslang/SPIRV/Logger.cpp */; };
+		612609BC57394E03828A6787 /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.KHR.h */ = {isa = PBXBuildFile; fileRef = 895E3D41C55B474F8237B60F /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.KHR.h */; };
+		62852E203CEC46D58B790349 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/Pp.cpp */ = {isa = PBXBuildFile; fileRef = AA69F3CAF65646E1A123CCC3 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/Pp.cpp */; };
+		65FEADD8254C42E7B97B4469 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseHelper.cpp */ = {isa = PBXBuildFile; fileRef = D938E4B4F50D4D06A9FEA755 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseHelper.cpp */; };
+		66571F0C17F740D893B1F683 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/glslang-default-resource-limits.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 540B71BCFA994B899AAD3519 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/glslang-default-resource-limits.dir/Info.plist */; };
+		6740608793FD406F835A955A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Scan.h */ = {isa = PBXBuildFile; fileRef = 81FF3D51082E4DC1B86E7ED1 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Scan.h */; };
+		67C8B6BEE2C34DDBAA807DB2 /* ../cmake/core/deps/glslang/SPIRV/CMakeFiles/SPIRV.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = BE5140846A374F489A799A76 /* ../cmake/core/deps/glslang/SPIRV/CMakeFiles/SPIRV.dir/Info.plist */; };
+		67FD9496569A4C16B135EA15 /* ../flycast/core/deps/glslang/glslang/OSDependent/Unix/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 94D417BEC4CD4200AEDB2BC1 /* ../flycast/core/deps/glslang/glslang/OSDependent/Unix/CMakeLists.txt */; };
+		685D87CF338A4CDB9FE36ACA /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.ARM.h */ = {isa = PBXBuildFile; fileRef = 309010661F434F989F444684 /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.ARM.h */; };
+		6A014E60588F46F9A8229870 /* ../flycast/core/deps/glslang/SPIRV/SpvPostProcess.cpp */ = {isa = PBXBuildFile; fileRef = 42D2C36ED41443A0BCE1DCFB /* ../flycast/core/deps/glslang/SPIRV/SpvPostProcess.cpp */; };
+		7010B1D60763442A81BD88C4 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/reflection.h */ = {isa = PBXBuildFile; fileRef = 15AF6FC9F0E748C8AB5166D9 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/reflection.h */; };
+		7045BACB79524C51996FF067 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseHelper.h */ = {isa = PBXBuildFile; fileRef = 0ECB55A624544458A8B14A9B /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseHelper.h */; };
+		7069F3EFD7C9435AA4D60BE1 /* ../flycast/core/deps/glslang/SPIRV/SpvBuilder.h */ = {isa = PBXBuildFile; fileRef = D6A05A7B0B9247B0BCBFDDEB /* ../flycast/core/deps/glslang/SPIRV/SpvBuilder.h */; };
+		727A2AD11CF94393BAEFB25A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Versions.h */ = {isa = PBXBuildFile; fileRef = 50847AC2D26C4733ABE1F464 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Versions.h */; };
+		783940E7AC214B81862CE53D /* ../flycast/core/deps/glslang/SPIRV/InReadableOrder.cpp */ = {isa = PBXBuildFile; fileRef = 323CDB128ECF4C1FBF859DDE /* ../flycast/core/deps/glslang/SPIRV/InReadableOrder.cpp */; };
+		7BC2915E0A6644DEA2250F14 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SymbolTable.cpp */ = {isa = PBXBuildFile; fileRef = DE1E1320E4424E04A4A7C413 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SymbolTable.cpp */; };
+		7C251B0CC69A4AC19F7C5613 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/iomapper.cpp */ = {isa = PBXBuildFile; fileRef = 51BBE453EDCF49B7AA76E9EB /* ../flycast/core/deps/glslang/glslang/MachineIndependent/iomapper.cpp */; };
+		7CA68F7B004342D4BAAFC1B4 /* ../flycast/core/deps/glslang/SPIRV/hex_float.h */ = {isa = PBXBuildFile; fileRef = DD2C4B2F49D94330B13322A4 /* ../flycast/core/deps/glslang/SPIRV/hex_float.h */; };
+		7F89608465FF466692057944 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/iomapper.h */ = {isa = PBXBuildFile; fileRef = 0B4BDC19912346539DCE0510 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/iomapper.h */; };
+		850A6D0C9B8D4FDDBEB8922E /* ../flycast/core/deps/glslang/SPIRV/SpvBuilder.cpp */ = {isa = PBXBuildFile; fileRef = 8D06DC30BDD140A3B505F0D6 /* ../flycast/core/deps/glslang/SPIRV/SpvBuilder.cpp */; };
+		850ED9CCFFDB45A2A05E251F /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpTokens.h */ = {isa = PBXBuildFile; fileRef = A18EF3445A9743CDA48A7464 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpTokens.h */; };
+		86ABBA5E9A794A10872FF6D0 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/MachineIndependent.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = D1E69ADD833141C9A543C462 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/MachineIndependent.dir/Info.plist */; };
+		87D7510C01DC4EFFB56F8F03 /* ../cmake/core/deps/glslang/glslang/OSDependent/Unix/CMakeFiles/OSDependent.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 39EA25B088BB4707840E7919 /* ../cmake/core/deps/glslang/glslang/OSDependent/Unix/CMakeFiles/OSDependent.dir/Info.plist */; };
+		8A2326BB846A479E89118125 /* ../flycast/core/deps/glslang/glslang/Public/resource_limits_c.h */ = {isa = PBXBuildFile; fileRef = 9347F78B62934088893C0511 /* ../flycast/core/deps/glslang/glslang/Public/resource_limits_c.h */; };
+		8C8634BF35014B25A226DAF0 /* ../flycast/core/deps/glslang/SPIRV/disassemble.h */ = {isa = PBXBuildFile; fileRef = 4C42B380993043B99A747EE0 /* ../flycast/core/deps/glslang/SPIRV/disassemble.h */; };
+		8C9D6BA3BB1447CB82F25204 /* ../flycast/core/deps/glslang/glslang/Include/Common.h */ = {isa = PBXBuildFile; fileRef = 16ABB306C7184113877CA423 /* ../flycast/core/deps/glslang/glslang/Include/Common.h */; };
+		8F0FE3ADEB4948EDA3D7101B /* ../flycast/core/deps/glslang/glslang/MachineIndependent/gl_types.h */ = {isa = PBXBuildFile; fileRef = C10C68468496458284A02ED5 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/gl_types.h */; };
+		8F402F2FDF7841B5BF9EC72E /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = B6FF1F3A3B60402695319A21 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */; };
+		90C6B0B0EA15412D8BA22CC6 /* ../flycast/core/deps/glslang/OGLCompilersDLL/InitializeDll.cpp */ = {isa = PBXBuildFile; fileRef = FF90E21B6BCE4CD09D51911C /* ../flycast/core/deps/glslang/OGLCompilersDLL/InitializeDll.cpp */; };
+		969E46FF5EA9469BBE1CAC27 /* ../flycast/core/deps/glslang/SPIRV/SpvTools.cpp */ = {isa = PBXBuildFile; fileRef = AB845597DEF442EEA632F1A2 /* ../flycast/core/deps/glslang/SPIRV/SpvTools.cpp */; };
+		9ACA8D2FD4E0404283F14BF2 /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.AMD.h */ = {isa = PBXBuildFile; fileRef = 3773E66924FC4C6F8CD4D10A /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.AMD.h */; };
+		9D2268A17A3E410AABCA60BC /* ../flycast/core/deps/glslang/glslang/Include/BaseTypes.h */ = {isa = PBXBuildFile; fileRef = 52D3508409074533A662EB4C /* ../flycast/core/deps/glslang/glslang/Include/BaseTypes.h */; };
+		9EDF8C94B89A48D59D690334 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseContextBase.cpp */ = {isa = PBXBuildFile; fileRef = 8ACCBA8BD531401F8B105F41 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseContextBase.cpp */; };
+		9F7462EF71ED414AABEBF9B1 /* ../flycast/core/deps/glslang/glslang/Include/glslang_c_interface.h */ = {isa = PBXBuildFile; fileRef = 1896B383A5E64189998EC6C2 /* ../flycast/core/deps/glslang/glslang/Include/glslang_c_interface.h */; };
+		A3B2B7A34C284A0AA33BFC03 /* ../flycast/core/deps/glslang/SPIRV/GlslangToSpv.h */ = {isa = PBXBuildFile; fileRef = 15F648A8128B4615B10DE112 /* ../flycast/core/deps/glslang/SPIRV/GlslangToSpv.h */; };
+		A5D0C4B3F886401496DBB463 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Initialize.h */ = {isa = PBXBuildFile; fileRef = B29F143BB39F43FC9CA007FB /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Initialize.h */; };
+		A697F4EB279142F08B4262AC /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpContext.cpp */ = {isa = PBXBuildFile; fileRef = 02243AB14397468F963C953C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpContext.cpp */; };
+		A80B1A22FC254799BA8278A3 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpScanner.cpp */ = {isa = PBXBuildFile; fileRef = A3167FF0D50C472C9A63902A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpScanner.cpp */; };
+		AB91470D13D44EEA9680E6CE /* ../flycast/core/deps/glslang/glslang/Include/ConstantUnion.h */ = {isa = PBXBuildFile; fileRef = A9B442BFD2DB474C9FB9EE50 /* ../flycast/core/deps/glslang/glslang/Include/ConstantUnion.h */; };
+		ACE1C29B292B4CB0B737D09A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Constant.cpp */ = {isa = PBXBuildFile; fileRef = 62DF94305FE044A69C4BD952 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Constant.cpp */; };
+		AD94C3D9EE4C4848BBC4A48F /* ../flycast/core/deps/glslang/glslang/MachineIndependent/LiveTraverser.h */ = {isa = PBXBuildFile; fileRef = 1761A2D76EA542E898EB7831 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/LiveTraverser.h */; };
+		B1EBFA8F0C28447386829B2D /* ../flycast/core/deps/glslang/SPIRV/GlslangToSpv.cpp */ = {isa = PBXBuildFile; fileRef = E0E0FCA0A9124304ACDE4E53 /* ../flycast/core/deps/glslang/SPIRV/GlslangToSpv.cpp */; };
+		B6E9726D3E0646AAB4C58871 /* ../flycast/core/deps/glslang/glslang/Public/ResourceLimits.h */ = {isa = PBXBuildFile; fileRef = F3898CDA52084BA2A8447A4E /* ../flycast/core/deps/glslang/glslang/Public/ResourceLimits.h */; };
+		B74D1F773E1F4789BCACFD92 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/propagateNoContraction.h */ = {isa = PBXBuildFile; fileRef = FE6559B9E31F4F3B9B657BB7 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/propagateNoContraction.h */; };
+		BD0F37CE57B445AFA0EAA0C9 /* ../flycast/core/deps/glslang/glslang/OSDependent/osinclude.h */ = {isa = PBXBuildFile; fileRef = 655F4611C86B4E1698316926 /* ../flycast/core/deps/glslang/glslang/OSDependent/osinclude.h */; };
+		BE9AE2D51DB046508788A8B2 /* ../flycast/core/deps/glslang/OGLCompilersDLL/InitializeDll.h */ = {isa = PBXBuildFile; fileRef = 55C8426CF42C403FBAC0C3A8 /* ../flycast/core/deps/glslang/OGLCompilersDLL/InitializeDll.h */; };
+		C1613DE921244D7A9694C6FE /* ../flycast/core/deps/glslang/glslang/MachineIndependent/attribute.h */ = {isa = PBXBuildFile; fileRef = EAAA2329F7164EBEA76CFAA2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/attribute.h */; };
+		C3C275249D4446C496438453 /* ../flycast/core/deps/glslang/glslang/Include/intermediate.h */ = {isa = PBXBuildFile; fileRef = EF0F42CBCB2249AFA1D33F5A /* ../flycast/core/deps/glslang/glslang/Include/intermediate.h */; };
+		C3EE0F4F26D242C9A627D118 /* ../flycast/core/deps/glslang/glslang/CInterface/glslang_c_interface.cpp */ = {isa = PBXBuildFile; fileRef = 5FC955EFD04B406F9DE8929D /* ../flycast/core/deps/glslang/glslang/CInterface/glslang_c_interface.cpp */; };
+		C50581FD59254C73B3C87BCA /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang_tab.cpp.h */ = {isa = PBXBuildFile; fileRef = A0EBBE35A34D4DA1AB88A2B5 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang_tab.cpp.h */; };
+		C835D407E37B46AE825821EC /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Scan.cpp */ = {isa = PBXBuildFile; fileRef = FA9F37CACEAA449181EB965A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Scan.cpp */; };
+		CB665AEE1D7C4A5A9523EC42 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpAtom.cpp */ = {isa = PBXBuildFile; fileRef = 051F9F88B20E4B8CB65131C8 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpAtom.cpp */; };
+		CD40D744D13942A7ADC15A59 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = C73A934437E640D9826A8206 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */; };
+		CEB479DB8BD24162BEFA2C12 /* ../flycast/core/deps/glslang/glslang/Include/InitializeGlobals.h */ = {isa = PBXBuildFile; fileRef = F1FEDEB851DB42A3B4B627AA /* ../flycast/core/deps/glslang/glslang/Include/InitializeGlobals.h */; };
+		D106D1405684422F93D20608 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/parseConst.cpp */ = {isa = PBXBuildFile; fileRef = 4E1C1DA57D5749CEA11903F6 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/parseConst.cpp */; };
+		D120CB85C1C94B3785380B6D /* ../flycast/core/deps/glslang/glslang/Include/SpirvIntrinsics.h */ = {isa = PBXBuildFile; fileRef = 3F56EFC65648439FA6260564 /* ../flycast/core/deps/glslang/glslang/Include/SpirvIntrinsics.h */; };
+		D76D5F26A0D94C3C9235BFE4 /* ../flycast/core/deps/glslang/SPIRV/disassemble.cpp */ = {isa = PBXBuildFile; fileRef = 7013AE8FF451471981414EE7 /* ../flycast/core/deps/glslang/SPIRV/disassemble.cpp */; };
+		DA348FAC4ECE4A6C82A70696 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/limits.cpp */ = {isa = PBXBuildFile; fileRef = 2DEBAA798823471685C21C18 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/limits.cpp */; };
+		DAE44DA9B431419586F49702 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/ResourceLimits.cpp */ = {isa = PBXBuildFile; fileRef = 34764B1C17A344428A9F1D50 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/ResourceLimits.cpp */; };
+		DB05258836E84AA4A5512ED2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/linkValidate.cpp */ = {isa = PBXBuildFile; fileRef = 40B8016C5F8B4B05844D0CA2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/linkValidate.cpp */; };
+		E1460961AB944D3A886519AE /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpTokens.cpp */ = {isa = PBXBuildFile; fileRef = ABE9F79068284F3EA088F30B /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpTokens.cpp */; };
+		E69CAD6EDCD24FBD9C8F10F0 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/resource_limits_c.cpp */ = {isa = PBXBuildFile; fileRef = 43B7D9165CF94D10B77C11D1 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/resource_limits_c.cpp */; };
+		EADBD69F1B7349FCBB766012 /* ../flycast/core/deps/glslang/glslang/Public/ShaderLang.h */ = {isa = PBXBuildFile; fileRef = 7B044FDC85A0454DACF8F491 /* ../flycast/core/deps/glslang/glslang/Public/ShaderLang.h */; };
+		EC30ECE39D6542F48FE6E2D9 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/CodeGen.cpp */ = {isa = PBXBuildFile; fileRef = 7D9A9AF0587849E5B6AA4519 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/CodeGen.cpp */; };
+		F2404CFC94B143ECB01BAD4C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/localintermediate.h */ = {isa = PBXBuildFile; fileRef = 3C451336D3B3411BB5D1F3F6 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/localintermediate.h */; };
+		F25FCB885A184FC4A1374F3C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SpirvIntrinsics.cpp */ = {isa = PBXBuildFile; fileRef = C697E61502AC4E21821AD9BF /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SpirvIntrinsics.cpp */; };
+		F3746AE2D45947D6A754551C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ScanContext.h */ = {isa = PBXBuildFile; fileRef = 7400A2FF62AD4A61B2410EA8 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ScanContext.h */; };
+		F713636E613843ED994DC7F3 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SymbolTable.h */ = {isa = PBXBuildFile; fileRef = F78EE21DA56242B883956B60 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SymbolTable.h */; };
+		F7A9C84D4B1A4E80A5C720FC /* ../flycast/core/deps/glslang/glslang/Include/InfoSink.h */ = {isa = PBXBuildFile; fileRef = 85F8F06E97CC4513935B48E5 /* ../flycast/core/deps/glslang/glslang/Include/InfoSink.h */; };
+		F7BB3EBAF1F64996B099CBFD /* ../flycast/core/deps/glslang/glslang/Include/Types.h */ = {isa = PBXBuildFile; fileRef = 5DF280CA4D494847998AFBCD /* ../flycast/core/deps/glslang/glslang/Include/Types.h */; };
+		F7EC025F15164819AEA58D3B /* ../flycast/core/deps/glslang/OGLCompilersDLL/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 9CB6BE756F074644AC5D5E0F /* ../flycast/core/deps/glslang/OGLCompilersDLL/CMakeLists.txt */; };
+		FBC96B6D796E450F9380A108 /* ../flycast/core/deps/glslang/SPIRV/doc.h */ = {isa = PBXBuildFile; fileRef = FA20A7B0F5334F228F6C99FF /* ../flycast/core/deps/glslang/SPIRV/doc.h */; };
+		FE746F7CFE384EA1BAF09BD9 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Initialize.cpp */ = {isa = PBXBuildFile; fileRef = FCAC3AD030784AD2912C3C5A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Initialize.cpp */; };
+		FFD4FAF6DCAF4B01BDF5F153 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Intermediate.cpp */ = {isa = PBXBuildFile; fileRef = 24F9D62ECDC84FDEB210ABBB /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Intermediate.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		5BA6CF9A7862449CAE6E08E9 /* MinSizeRel */ = {
+>>>>>>> Stashed changes
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = MinSizeRel;
 		};
+		AE6BD521B9814EE2AE8D1755 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		B0A62662C8E94032BC671F9D /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		C08D4E093240428DBE669E53 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
+<<<<<<< Updated upstream
 		0AC66B8B970D4518AFAB7453 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
@@ -225,10 +395,16 @@
 		3B170369AB324A1AB03B340A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
+=======
+		0F88F875EE9B493DAD6DA9F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+>>>>>>> Stashed changes
 			proxyType = 1;
 			remoteGlobalIDString = 684AFD806A4E5C0D7DD6F2A1;
 			remoteInfo = GenericCodeGen;
 		};
+<<<<<<< Updated upstream
 		45F9F446AB684C2488A06EA9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
@@ -239,17 +415,106 @@
 		4B9EE3EE326D49F686D378BB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
+=======
+		200A2BB7158E416CBFB161A9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+>>>>>>> Stashed changes
 			proxyType = 1;
 			remoteGlobalIDString = 6CDAF4B90E38082DCB99A331;
 			remoteInfo = MachineIndependent;
 		};
+<<<<<<< Updated upstream
 		5A08C522F9A944E3A234B6EC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
+=======
+		2928D4B16B4F455FB303492E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 69835AD03873232AF422EFB0;
+			remoteInfo = ZERO_CHECK;
+		};
+		2BE2997BEE66492CB2B78EC3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6CDAF4B90E38082DCB99A331;
+			remoteInfo = MachineIndependent;
+		};
+		35E970D3BCAA419A933F0C36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 684AFD806A4E5C0D7DD6F2A1;
+			remoteInfo = GenericCodeGen;
+		};
+		3C003D61615A42E9981FF235 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D9BA18AFAC54B79E83F387A;
+			remoteInfo = glslang;
+		};
+		433720F3DBBD457184CE30F8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D42CDA670F6D1EB800AEA1E4;
+			remoteInfo = OSDependent;
+		};
+		5FD5D62C18AA4BF9B262D5B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D42CDA670F6D1EB800AEA1E4;
+			remoteInfo = OSDependent;
+		};
+		700A0CBE250045D0B3AB6FE7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 836E04CDA84A7B69A8D9114F;
 			remoteInfo = OGLCompiler;
 		};
+		74C644DF73FC4F88A56659A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 684AFD806A4E5C0D7DD6F2A1;
+			remoteInfo = GenericCodeGen;
+		};
+		76C60095935E4A56BE2084F1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D42CDA670F6D1EB800AEA1E4;
+			remoteInfo = OSDependent;
+		};
+		7FF73FEAF4A84FF68C7A03A1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 684AFD806A4E5C0D7DD6F2A1;
+			remoteInfo = GenericCodeGen;
+		};
+		9D02246555194E178AA6A819 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 470865334B5B576275C5112C;
+			remoteInfo = "glslang-default-resource-limits";
+		};
+		AF52FFC0691E42DFAB1AF097 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+>>>>>>> Stashed changes
+			proxyType = 1;
+			remoteGlobalIDString = 836E04CDA84A7B69A8D9114F;
+			remoteInfo = OGLCompiler;
+		};
+<<<<<<< Updated upstream
 		72E4E5C339534E378396BF37 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
@@ -260,10 +525,16 @@
 		770D2E04E3A44B46BD0E568F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
+=======
+		C01F477B95044972B451265C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+>>>>>>> Stashed changes
 			proxyType = 1;
 			remoteGlobalIDString = D42CDA670F6D1EB800AEA1E4;
 			remoteInfo = OSDependent;
 		};
+<<<<<<< Updated upstream
 		8AE508797C744F38AF6FA298 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
@@ -309,10 +580,16 @@
 		BF54934C8CD1405B96375A06 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
+=======
+		C9AA8D9D2867454290511F7E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+>>>>>>> Stashed changes
 			proxyType = 1;
 			remoteGlobalIDString = 6CDAF4B90E38082DCB99A331;
 			remoteInfo = MachineIndependent;
 		};
+<<<<<<< Updated upstream
 		C05901D652FB4ACFA22B3FB0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
@@ -337,10 +614,23 @@
 		F399820A060748658C587582 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3993DA3D4F9B45C89203DB0E /* Project object */;
+=======
+		D3E5A53AD78F47568C5032C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 836E04CDA84A7B69A8D9114F;
+			remoteInfo = OGLCompiler;
+		};
+		E5937AB173AB4F1FBA71A652 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+>>>>>>> Stashed changes
 			proxyType = 1;
 			remoteGlobalIDString = 88B439CC67367559065A97C9;
 			remoteInfo = SPIRV;
 		};
+<<<<<<< Updated upstream
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -471,48 +761,217 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		27FF1770A1B24FA482D895B2 /* Frameworks */ = {
+=======
+		EBEA949C61AF4EAD8F97ECF5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 836E04CDA84A7B69A8D9114F;
+			remoteInfo = OGLCompiler;
+		};
+		EEEE835E2B1A435DB15AC2C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77541474743A44ACA5482AF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B727D2F61FE22951697F0BAD;
+			remoteInfo = ALL_BUILD;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02243AB14397468F963C953C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpContext.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PpContext.cpp; path = glslang/MachineIndependent/preprocessor/PpContext.cpp; sourceTree = SOURCE_ROOT; };
+		03C3E6B5033240449425126C /* ../flycast/core/deps/glslang/SPIRV/GLSL.std.450.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.std.450.h; path = SPIRV/GLSL.std.450.h; sourceTree = SOURCE_ROOT; };
+		051F9F88B20E4B8CB65131C8 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpAtom.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PpAtom.cpp; path = glslang/MachineIndependent/preprocessor/PpAtom.cpp; sourceTree = SOURCE_ROOT; };
+		066CDD6622CE47E1A10079F2 /* OSDependent */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOSDependent.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		075B701E45FB42A8925D74DE /* ../flycast/core/deps/glslang/SPIRV/NonSemanticShaderDebugInfo100.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NonSemanticShaderDebugInfo100.h; path = SPIRV/NonSemanticShaderDebugInfo100.h; sourceTree = SOURCE_ROOT; };
+		0B4BDC19912346539DCE0510 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/iomapper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = iomapper.h; path = glslang/MachineIndependent/iomapper.h; sourceTree = SOURCE_ROOT; };
+		0C71BD01DA444ED8B0853FE5 /* ../flycast/core/deps/glslang/glslang/Include/glslang_c_shader_types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = glslang_c_shader_types.h; path = glslang/Include/glslang_c_shader_types.h; sourceTree = SOURCE_ROOT; };
+		0ECB55A624544458A8B14A9B /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ParseHelper.h; path = glslang/MachineIndependent/ParseHelper.h; sourceTree = SOURCE_ROOT; };
+		1539A207618243C3ABF2110F /* ../flycast/core/deps/glslang/glslang/Include/PoolAlloc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = PoolAlloc.h; path = glslang/Include/PoolAlloc.h; sourceTree = SOURCE_ROOT; };
+		1551C078C8D443539AC65782 /* ../flycast/core/deps/glslang/SPIRV/spirv.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv.hpp; path = SPIRV/spirv.hpp; sourceTree = SOURCE_ROOT; };
+		15AF6FC9F0E748C8AB5166D9 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/reflection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = reflection.h; path = glslang/MachineIndependent/reflection.h; sourceTree = SOURCE_ROOT; };
+		15F648A8128B4615B10DE112 /* ../flycast/core/deps/glslang/SPIRV/GlslangToSpv.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GlslangToSpv.h; path = SPIRV/GlslangToSpv.h; sourceTree = SOURCE_ROOT; };
+		16ABB306C7184113877CA423 /* ../flycast/core/deps/glslang/glslang/Include/Common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Common.h; path = glslang/Include/Common.h; sourceTree = SOURCE_ROOT; };
+		1761A2D76EA542E898EB7831 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/LiveTraverser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LiveTraverser.h; path = glslang/MachineIndependent/LiveTraverser.h; sourceTree = SOURCE_ROOT; };
+		17BBE60A583047F296DEB9CF /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = glslang/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		1896B383A5E64189998EC6C2 /* ../flycast/core/deps/glslang/glslang/Include/glslang_c_interface.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = glslang_c_interface.h; path = glslang/Include/glslang_c_interface.h; sourceTree = SOURCE_ROOT; };
+		1958B5D255B4438889A283C8 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/Link.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Link.cpp; path = glslang/GenericCodeGen/Link.cpp; sourceTree = SOURCE_ROOT; };
+		1BC88BC476D2420D9F41FB02 /* ../cmake/core/deps/glslang/OGLCompilersDLL/CMakeFiles/OGLCompiler.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/core/deps/glslang/OGLCompilersDLL/CMakeFiles/OGLCompiler.dir/Info.plist; sourceTree = "<absolute>"; };
+		1FCF57A6C41040C9AF87407C /* ../flycast/core/deps/glslang/SPIRV/doc.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = doc.cpp; path = SPIRV/doc.cpp; sourceTree = SOURCE_ROOT; };
+		24F9D62ECDC84FDEB210ABBB /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Intermediate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Intermediate.cpp; path = glslang/MachineIndependent/Intermediate.cpp; sourceTree = SOURCE_ROOT; };
+		2818B2341FE54B7596FAAE74 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = glslang/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		2987176D2B724DA790601E3D /* ../cmake/core/deps/glslang/glslang/CMakeFiles/glslang.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/core/deps/glslang/glslang/CMakeFiles/glslang.dir/Info.plist; sourceTree = "<absolute>"; };
+		2A55F0400A3449C3827CEBE2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/InfoSink.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = InfoSink.cpp; path = glslang/MachineIndependent/InfoSink.cpp; sourceTree = SOURCE_ROOT; };
+		2DEBAA798823471685C21C18 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/limits.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = limits.cpp; path = glslang/MachineIndependent/limits.cpp; sourceTree = SOURCE_ROOT; };
+		309010661F434F989F444684 /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.ARM.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.ext.ARM.h; path = SPIRV/GLSL.ext.ARM.h; sourceTree = SOURCE_ROOT; };
+		323CDB128ECF4C1FBF859DDE /* ../flycast/core/deps/glslang/SPIRV/InReadableOrder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = InReadableOrder.cpp; path = SPIRV/InReadableOrder.cpp; sourceTree = SOURCE_ROOT; };
+		34764B1C17A344428A9F1D50 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/ResourceLimits.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ResourceLimits.cpp; path = glslang/ResourceLimits/ResourceLimits.cpp; sourceTree = SOURCE_ROOT; };
+		3773E66924FC4C6F8CD4D10A /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.AMD.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.ext.AMD.h; path = SPIRV/GLSL.ext.AMD.h; sourceTree = SOURCE_ROOT; };
+		39EA25B088BB4707840E7919 /* ../cmake/core/deps/glslang/glslang/OSDependent/Unix/CMakeFiles/OSDependent.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/core/deps/glslang/glslang/OSDependent/Unix/CMakeFiles/OSDependent.dir/Info.plist; sourceTree = "<absolute>"; };
+		39F69CDEE67D48E2B3DECA6F /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ShaderLang.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderLang.cpp; path = glslang/MachineIndependent/ShaderLang.cpp; sourceTree = SOURCE_ROOT; };
+		3BAE1B1A008741398B127638 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/RemoveTree.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = RemoveTree.cpp; path = glslang/MachineIndependent/RemoveTree.cpp; sourceTree = SOURCE_ROOT; };
+		3C451336D3B3411BB5D1F3F6 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/localintermediate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = localintermediate.h; path = glslang/MachineIndependent/localintermediate.h; sourceTree = SOURCE_ROOT; };
+		3E498857D40E49768DCC98A4 /* ../flycast/core/deps/glslang/SPIRV/NonSemanticDebugPrintf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NonSemanticDebugPrintf.h; path = SPIRV/NonSemanticDebugPrintf.h; sourceTree = SOURCE_ROOT; };
+		3F56EFC65648439FA6260564 /* ../flycast/core/deps/glslang/glslang/Include/SpirvIntrinsics.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SpirvIntrinsics.h; path = glslang/Include/SpirvIntrinsics.h; sourceTree = SOURCE_ROOT; };
+		40B8016C5F8B4B05844D0CA2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/linkValidate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = linkValidate.cpp; path = glslang/MachineIndependent/linkValidate.cpp; sourceTree = SOURCE_ROOT; };
+		42D2C36ED41443A0BCE1DCFB /* ../flycast/core/deps/glslang/SPIRV/SpvPostProcess.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SpvPostProcess.cpp; path = SPIRV/SpvPostProcess.cpp; sourceTree = SOURCE_ROOT; };
+		43B7D9165CF94D10B77C11D1 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/resource_limits_c.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = resource_limits_c.cpp; path = glslang/ResourceLimits/resource_limits_c.cpp; sourceTree = SOURCE_ROOT; };
+		4C42B380993043B99A747EE0 /* ../flycast/core/deps/glslang/SPIRV/disassemble.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = disassemble.h; path = SPIRV/disassemble.h; sourceTree = SOURCE_ROOT; };
+		4C8E3CC3DE4144B8AE873C8E /* ../flycast/core/deps/glslang/glslang/MachineIndependent/intermOut.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = intermOut.cpp; path = glslang/MachineIndependent/intermOut.cpp; sourceTree = SOURCE_ROOT; };
+		4DA6C5F14E8243DFAA8402B0 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpContext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = PpContext.h; path = glslang/MachineIndependent/preprocessor/PpContext.h; sourceTree = SOURCE_ROOT; };
+		4E1C1DA57D5749CEA11903F6 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/parseConst.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = parseConst.cpp; path = glslang/MachineIndependent/parseConst.cpp; sourceTree = SOURCE_ROOT; };
+		50847AC2D26C4733ABE1F464 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Versions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Versions.h; path = glslang/MachineIndependent/Versions.h; sourceTree = SOURCE_ROOT; };
+		51784FAB61CA45C1BAEAE01D /* ../flycast/core/deps/glslang/glslang/Include/ResourceLimits.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ResourceLimits.h; path = glslang/Include/ResourceLimits.h; sourceTree = SOURCE_ROOT; };
+		51BBE453EDCF49B7AA76E9EB /* ../flycast/core/deps/glslang/glslang/MachineIndependent/iomapper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = iomapper.cpp; path = glslang/MachineIndependent/iomapper.cpp; sourceTree = SOURCE_ROOT; };
+		52D3508409074533A662EB4C /* ../flycast/core/deps/glslang/glslang/Include/BaseTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BaseTypes.h; path = glslang/Include/BaseTypes.h; sourceTree = SOURCE_ROOT; };
+		5330B6A4DF104330B7C0BC16 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Versions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Versions.cpp; path = glslang/MachineIndependent/Versions.cpp; sourceTree = SOURCE_ROOT; };
+		540B71BCFA994B899AAD3519 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/glslang-default-resource-limits.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/core/deps/glslang/glslang/CMakeFiles/glslang-default-resource-limits.dir/Info.plist"; sourceTree = "<absolute>"; };
+		55C8426CF42C403FBAC0C3A8 /* ../flycast/core/deps/glslang/OGLCompilersDLL/InitializeDll.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = InitializeDll.h; path = OGLCompilersDLL/InitializeDll.h; sourceTree = SOURCE_ROOT; };
+		5743D4E259884DDEA78F2D84 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/GenericCodeGen.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/core/deps/glslang/glslang/CMakeFiles/GenericCodeGen.dir/Info.plist; sourceTree = "<absolute>"; };
+		5924EEA0A10346DC8D10C997 /* glslang */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libglslang.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B405EBE43A948A3905729A4 /* ../flycast/core/deps/glslang/SPIRV/Logger.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Logger.h; path = SPIRV/Logger.h; sourceTree = SOURCE_ROOT; };
+		5DF280CA4D494847998AFBCD /* ../flycast/core/deps/glslang/glslang/Include/Types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Types.h; path = glslang/Include/Types.h; sourceTree = SOURCE_ROOT; };
+		5FC955EFD04B406F9DE8929D /* ../flycast/core/deps/glslang/glslang/CInterface/glslang_c_interface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = glslang_c_interface.cpp; path = glslang/CInterface/glslang_c_interface.cpp; sourceTree = SOURCE_ROOT; };
+		62DF94305FE044A69C4BD952 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Constant.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Constant.cpp; path = glslang/MachineIndependent/Constant.cpp; sourceTree = SOURCE_ROOT; };
+		6558E8B54C474910B638B8A7 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/PoolAlloc.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PoolAlloc.cpp; path = glslang/MachineIndependent/PoolAlloc.cpp; sourceTree = SOURCE_ROOT; };
+		655F4611C86B4E1698316926 /* ../flycast/core/deps/glslang/glslang/OSDependent/osinclude.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = osinclude.h; path = glslang/OSDependent/osinclude.h; sourceTree = SOURCE_ROOT; };
+		69DD6F65A24A481AB25007BD /* ../flycast/core/deps/glslang/glslang/Include/ShHandle.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShHandle.h; path = glslang/Include/ShHandle.h; sourceTree = SOURCE_ROOT; };
+		6C7744C4ADBE45609961FBEC /* OGLCompiler */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOGLCompiler.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7013AE8FF451471981414EE7 /* ../flycast/core/deps/glslang/SPIRV/disassemble.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = disassemble.cpp; path = SPIRV/disassemble.cpp; sourceTree = SOURCE_ROOT; };
+		7400A2FF62AD4A61B2410EA8 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ScanContext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ScanContext.h; path = glslang/MachineIndependent/ScanContext.h; sourceTree = SOURCE_ROOT; };
+		755BF99017604A80AFB008C4 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/reflection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = reflection.cpp; path = glslang/MachineIndependent/reflection.cpp; sourceTree = SOURCE_ROOT; };
+		7B044FDC85A0454DACF8F491 /* ../flycast/core/deps/glslang/glslang/Public/ShaderLang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShaderLang.h; path = glslang/Public/ShaderLang.h; sourceTree = SOURCE_ROOT; };
+		7D9A9AF0587849E5B6AA4519 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/CodeGen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CodeGen.cpp; path = glslang/GenericCodeGen/CodeGen.cpp; sourceTree = SOURCE_ROOT; };
+		81FF3D51082E4DC1B86E7ED1 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Scan.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Scan.h; path = glslang/MachineIndependent/Scan.h; sourceTree = SOURCE_ROOT; };
+		83B79A500B014FD18FA20720 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/propagateNoContraction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = propagateNoContraction.cpp; path = glslang/MachineIndependent/propagateNoContraction.cpp; sourceTree = SOURCE_ROOT; };
+		85F8F06E97CC4513935B48E5 /* ../flycast/core/deps/glslang/glslang/Include/InfoSink.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = InfoSink.h; path = glslang/Include/InfoSink.h; sourceTree = SOURCE_ROOT; };
+		87DEB3F53DEE46CF810B2B3C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/IntermTraverse.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IntermTraverse.cpp; path = glslang/MachineIndependent/IntermTraverse.cpp; sourceTree = SOURCE_ROOT; };
+		895E3D41C55B474F8237B60F /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.KHR.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.ext.KHR.h; path = SPIRV/GLSL.ext.KHR.h; sourceTree = SOURCE_ROOT; };
+		8ACCBA8BD531401F8B105F41 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseContextBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ParseContextBase.cpp; path = glslang/MachineIndependent/ParseContextBase.cpp; sourceTree = SOURCE_ROOT; };
+		8D06DC30BDD140A3B505F0D6 /* ../flycast/core/deps/glslang/SPIRV/SpvBuilder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SpvBuilder.cpp; path = SPIRV/SpvBuilder.cpp; sourceTree = SOURCE_ROOT; };
+		9046C17DF6234D69A9C82FF2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/parseVersions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = parseVersions.h; path = glslang/MachineIndependent/parseVersions.h; sourceTree = SOURCE_ROOT; };
+		913DA817ABF04030B1AC246E /* ../flycast/core/deps/glslang/SPIRV/SpvTools.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SpvTools.h; path = SPIRV/SpvTools.h; sourceTree = SOURCE_ROOT; };
+		9347F78B62934088893C0511 /* ../flycast/core/deps/glslang/glslang/Public/resource_limits_c.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = resource_limits_c.h; path = glslang/Public/resource_limits_c.h; sourceTree = SOURCE_ROOT; };
+		94D417BEC4CD4200AEDB2BC1 /* ../flycast/core/deps/glslang/glslang/OSDependent/Unix/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = glslang/OSDependent/Unix/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		9673161FDF364617ABF5860A /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.EXT.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.ext.EXT.h; path = SPIRV/GLSL.ext.EXT.h; sourceTree = SOURCE_ROOT; };
+		9CB6BE756F074644AC5D5E0F /* ../flycast/core/deps/glslang/OGLCompilersDLL/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = OGLCompilersDLL/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		9CD1B8FC456F44A6B86E8B87 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/attribute.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = attribute.cpp; path = glslang/MachineIndependent/attribute.cpp; sourceTree = SOURCE_ROOT; };
+		A0EBBE35A34D4DA1AB88A2B5 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang_tab.cpp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = glslang_tab.cpp.h; path = glslang/MachineIndependent/glslang_tab.cpp.h; sourceTree = SOURCE_ROOT; };
+		A18EF3445A9743CDA48A7464 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpTokens.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = PpTokens.h; path = glslang/MachineIndependent/preprocessor/PpTokens.h; sourceTree = SOURCE_ROOT; };
+		A3167FF0D50C472C9A63902A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpScanner.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PpScanner.cpp; path = glslang/MachineIndependent/preprocessor/PpScanner.cpp; sourceTree = SOURCE_ROOT; };
+		A5655A3D8D7649F594525FB1 /* ../flycast/core/deps/glslang/SPIRV/Logger.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Logger.cpp; path = SPIRV/Logger.cpp; sourceTree = SOURCE_ROOT; };
+		A58D257D05374CEFBE566B54 /* ../flycast/core/deps/glslang/glslang/Include/arrays.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = arrays.h; path = glslang/Include/arrays.h; sourceTree = SOURCE_ROOT; };
+		A7D2B23D667C41C3B41B73B9 /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.NV.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.ext.NV.h; path = SPIRV/GLSL.ext.NV.h; sourceTree = SOURCE_ROOT; };
+		A9B442BFD2DB474C9FB9EE50 /* ../flycast/core/deps/glslang/glslang/Include/ConstantUnion.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ConstantUnion.h; path = glslang/Include/ConstantUnion.h; sourceTree = SOURCE_ROOT; };
+		AA69F3CAF65646E1A123CCC3 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/Pp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Pp.cpp; path = glslang/MachineIndependent/preprocessor/Pp.cpp; sourceTree = SOURCE_ROOT; };
+		AAA977F3131344B8B1F1D127 /* ../flycast/core/deps/glslang/SPIRV/spvIR.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = spvIR.h; path = SPIRV/spvIR.h; sourceTree = SOURCE_ROOT; };
+		AB845597DEF442EEA632F1A2 /* ../flycast/core/deps/glslang/SPIRV/SpvTools.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SpvTools.cpp; path = SPIRV/SpvTools.cpp; sourceTree = SOURCE_ROOT; };
+		ABE9F79068284F3EA088F30B /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpTokens.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PpTokens.cpp; path = glslang/MachineIndependent/preprocessor/PpTokens.cpp; sourceTree = SOURCE_ROOT; };
+		AC7F35AA762540AB81918F4C /* glslang-default-resource-limits */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libglslang-default-resource-limits.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B29F143BB39F43FC9CA007FB /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Initialize.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Initialize.h; path = glslang/MachineIndependent/Initialize.h; sourceTree = SOURCE_ROOT; };
+		B388AC0B89F54BA397A1698D /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang.y */ = {isa = PBXFileReference; explicitFileType = default; fileEncoding = 4; name = glslang.y; path = glslang/MachineIndependent/glslang.y; sourceTree = SOURCE_ROOT; };
+		B6FF1F3A3B60402695319A21 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = glslang/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		B7BCF7E1BFCE45DFA091043D /* ../flycast/core/deps/glslang/SPIRV/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = SPIRV/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		BC7185605DC94B04B4AC4D9E /* ../flycast/core/deps/glslang/glslang/OSDependent/Unix/ossource.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ossource.cpp; path = glslang/OSDependent/Unix/ossource.cpp; sourceTree = SOURCE_ROOT; };
+		BC8A628A93D043A5BD578D81 /* MachineIndependent */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libMachineIndependent.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE5140846A374F489A799A76 /* ../cmake/core/deps/glslang/SPIRV/CMakeFiles/SPIRV.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/core/deps/glslang/SPIRV/CMakeFiles/SPIRV.dir/Info.plist; sourceTree = "<absolute>"; };
+		C10C68468496458284A02ED5 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/gl_types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gl_types.h; path = glslang/MachineIndependent/gl_types.h; sourceTree = SOURCE_ROOT; };
+		C284073C3230415BA8CA76BE /* ../flycast/core/deps/glslang/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		C63E4C4E011B4CBAB38AC935 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/RemoveTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = RemoveTree.h; path = glslang/MachineIndependent/RemoveTree.h; sourceTree = SOURCE_ROOT; };
+		C697E61502AC4E21821AD9BF /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SpirvIntrinsics.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SpirvIntrinsics.cpp; path = glslang/MachineIndependent/SpirvIntrinsics.cpp; sourceTree = SOURCE_ROOT; };
+		C73A934437E640D9826A8206 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = glslang/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		CF60D1F62EDC4A27AA9AF822 /* ../flycast/core/deps/glslang/SPIRV/CInterface/spirv_c_interface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_c_interface.cpp; path = SPIRV/CInterface/spirv_c_interface.cpp; sourceTree = SOURCE_ROOT; };
+		D0DD4D9B04A24CC9B86A91DA /* SPIRV */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSPIRV.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1E69ADD833141C9A543C462 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/MachineIndependent.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/core/deps/glslang/glslang/CMakeFiles/MachineIndependent.dir/Info.plist; sourceTree = "<absolute>"; };
+		D6A05A7B0B9247B0BCBFDDEB /* ../flycast/core/deps/glslang/SPIRV/SpvBuilder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SpvBuilder.h; path = SPIRV/SpvBuilder.h; sourceTree = SOURCE_ROOT; };
+		D938E4B4F50D4D06A9FEA755 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ParseHelper.cpp; path = glslang/MachineIndependent/ParseHelper.cpp; sourceTree = SOURCE_ROOT; };
+		DAA5A68E2D9A4F918E7B2BA0 /* GenericCodeGen */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libGenericCodeGen.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD24E115E4214F67A10408C6 /* ../flycast/core/deps/glslang/SPIRV/bitutils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitutils.h; path = SPIRV/bitutils.h; sourceTree = SOURCE_ROOT; };
+		DD2C4B2F49D94330B13322A4 /* ../flycast/core/deps/glslang/SPIRV/hex_float.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = hex_float.h; path = SPIRV/hex_float.h; sourceTree = SOURCE_ROOT; };
+		DE1E1320E4424E04A4A7C413 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SymbolTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SymbolTable.cpp; path = glslang/MachineIndependent/SymbolTable.cpp; sourceTree = SOURCE_ROOT; };
+		E0E0FCA0A9124304ACDE4E53 /* ../flycast/core/deps/glslang/SPIRV/GlslangToSpv.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GlslangToSpv.cpp; path = SPIRV/GlslangToSpv.cpp; sourceTree = SOURCE_ROOT; };
+		EAAA2329F7164EBEA76CFAA2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/attribute.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = attribute.h; path = glslang/MachineIndependent/attribute.h; sourceTree = SOURCE_ROOT; };
+		EF0F42CBCB2249AFA1D33F5A /* ../flycast/core/deps/glslang/glslang/Include/intermediate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = intermediate.h; path = glslang/Include/intermediate.h; sourceTree = SOURCE_ROOT; };
+		F1FEDEB851DB42A3B4B627AA /* ../flycast/core/deps/glslang/glslang/Include/InitializeGlobals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = InitializeGlobals.h; path = glslang/Include/InitializeGlobals.h; sourceTree = SOURCE_ROOT; };
+		F3898CDA52084BA2A8447A4E /* ../flycast/core/deps/glslang/glslang/Public/ResourceLimits.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ResourceLimits.h; path = glslang/Public/ResourceLimits.h; sourceTree = SOURCE_ROOT; };
+		F78EE21DA56242B883956B60 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SymbolTable.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SymbolTable.h; path = glslang/MachineIndependent/SymbolTable.h; sourceTree = SOURCE_ROOT; };
+		F92FCE931BFD4EAC8D4721CC /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang_tab.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = glslang_tab.cpp; path = glslang/MachineIndependent/glslang_tab.cpp; sourceTree = SOURCE_ROOT; };
+		FA20A7B0F5334F228F6C99FF /* ../flycast/core/deps/glslang/SPIRV/doc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = doc.h; path = SPIRV/doc.h; sourceTree = SOURCE_ROOT; };
+		FA9F37CACEAA449181EB965A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Scan.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Scan.cpp; path = glslang/MachineIndependent/Scan.cpp; sourceTree = SOURCE_ROOT; };
+		FCAC3AD030784AD2912C3C5A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Initialize.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Initialize.cpp; path = glslang/MachineIndependent/Initialize.cpp; sourceTree = SOURCE_ROOT; };
+		FE6559B9E31F4F3B9B657BB7 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/propagateNoContraction.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = propagateNoContraction.h; path = glslang/MachineIndependent/propagateNoContraction.h; sourceTree = SOURCE_ROOT; };
+		FF90E21B6BCE4CD09D51911C /* ../flycast/core/deps/glslang/OGLCompilersDLL/InitializeDll.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = InitializeDll.cpp; path = OGLCompilersDLL/InitializeDll.cpp; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		50E604CDFA77466682430B59 /* Frameworks */ = {
+>>>>>>> Stashed changes
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+<<<<<<< Updated upstream
 		305914977DCD4BA3A01A1418 /* Frameworks */ = {
+=======
+		6C601B697C2A453EBA5768AE /* Frameworks */ = {
+>>>>>>> Stashed changes
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+<<<<<<< Updated upstream
 		374D439955D04585920C93CE /* Frameworks */ = {
+=======
+		B2C49B40B6F1400CB52B4CCE /* Frameworks */ = {
+>>>>>>> Stashed changes
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+<<<<<<< Updated upstream
 		4F233CD868ED43B8A03C3348 /* Frameworks */ = {
+=======
+		C4FC63814A854AC9ABD518F9 /* Frameworks */ = {
+>>>>>>> Stashed changes
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+<<<<<<< Updated upstream
 		554FF01092574BBA8240B28C /* Frameworks */ = {
+=======
+		D8F4BBDDB5F54CCFA3150ED3 /* Frameworks */ = {
+>>>>>>> Stashed changes
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+<<<<<<< Updated upstream
 		CCCEDFCD587C4B2AB6A42E2E /* Frameworks */ = {
+=======
+		DA6E04557B574B5E9498854B /* Frameworks */ = {
+>>>>>>> Stashed changes
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+<<<<<<< Updated upstream
 		F736DC766C324F3588684323 /* Frameworks */ = {
+=======
+		FE6BCEF511494173AC88A5AC /* Frameworks */ = {
+>>>>>>> Stashed changes
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -522,6 +981,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+<<<<<<< Updated upstream
 		00EA30EF0AD04B49BB13CE17 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -546,12 +1006,16 @@
 			sourceTree = "<group>";
 		};
 		1738C544CAC846D4A9120E93 /* Frameworks */ = {
+=======
+		0241634591B0414AAC00A99D /* Frameworks */ = {
+>>>>>>> Stashed changes
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+<<<<<<< Updated upstream
 		24A9A46CCA6A4EAC9A28FD3B /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -570,10 +1034,84 @@
 				938B99119ED249A69103E620 /* ../flycast/core/deps/glslang/glslang/Include/glslang_c_shader_types.h */,
 				A227BD562E3647AE8623119C /* ../flycast/core/deps/glslang/glslang/Include/intermediate.h */,
 				6FEE37EB4D3548629889FF95 /* ../flycast/core/deps/glslang/glslang/Public/ShaderLang.h */,
+=======
+		27346C46F9F048B49ABB0D14 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				34764B1C17A344428A9F1D50 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/ResourceLimits.cpp */,
+				43B7D9165CF94D10B77C11D1 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/resource_limits_c.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		2B88A3AA58A14E688CAFD8F3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				39EA25B088BB4707840E7919 /* ../cmake/core/deps/glslang/glslang/OSDependent/Unix/CMakeFiles/OSDependent.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		2FD00BA265184A2690E7CCAF /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				55C8426CF42C403FBAC0C3A8 /* ../flycast/core/deps/glslang/OGLCompilersDLL/InitializeDll.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
 		};
+		31E371B8AC754BEDA60E4516 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DAA5A68E2D9A4F918E7B2BA0 /* GenericCodeGen */,
+				BC8A628A93D043A5BD578D81 /* MachineIndependent */,
+				6C7744C4ADBE45609961FBEC /* OGLCompiler */,
+				066CDD6622CE47E1A10079F2 /* OSDependent */,
+				D0DD4D9B04A24CC9B86A91DA /* SPIRV */,
+				5924EEA0A10346DC8D10C997 /* glslang */,
+				AC7F35AA762540AB81918F4C /* glslang-default-resource-limits */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		34CC873283C947249234DA37 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				B29F143BB39F43FC9CA007FB /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Initialize.h */,
+				1761A2D76EA542E898EB7831 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/LiveTraverser.h */,
+				0ECB55A624544458A8B14A9B /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseHelper.h */,
+				C63E4C4E011B4CBAB38AC935 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/RemoveTree.h */,
+				81FF3D51082E4DC1B86E7ED1 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Scan.h */,
+				7400A2FF62AD4A61B2410EA8 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ScanContext.h */,
+				F78EE21DA56242B883956B60 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SymbolTable.h */,
+				50847AC2D26C4733ABE1F464 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Versions.h */,
+				EAAA2329F7164EBEA76CFAA2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/attribute.h */,
+				C10C68468496458284A02ED5 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/gl_types.h */,
+				A0EBBE35A34D4DA1AB88A2B5 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang_tab.cpp.h */,
+				0B4BDC19912346539DCE0510 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/iomapper.h */,
+				3C451336D3B3411BB5D1F3F6 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/localintermediate.h */,
+				9046C17DF6234D69A9C82FF2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/parseVersions.h */,
+				4DA6C5F14E8243DFAA8402B0 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpContext.h */,
+				A18EF3445A9743CDA48A7464 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpTokens.h */,
+				FE6559B9E31F4F3B9B657BB7 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/propagateNoContraction.h */,
+				15AF6FC9F0E748C8AB5166D9 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/reflection.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		35F6AC915315431B99895E14 /* glslang */ = {
+			isa = PBXGroup;
+			children = (
+				E57245875CE0416C8B8C7D2B /* Source Files */,
+				96FFFBED402B4211A1075E2A /* Header Files */,
+				5ADFD708EB214E51A67D8D19 /* Resources */,
+				2818B2341FE54B7596FAAE74 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */,
+>>>>>>> Stashed changes
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+<<<<<<< Updated upstream
 		2F33D1DCC5DF49EF8AD2060A /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -640,10 +1178,19 @@
 				FE4AC682C02B40EDA0424C8E /* Source Files */,
 				33243F1D3E464340BA87C8E4 /* Resources */,
 				498D447CF4A84DE28859317D /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */,
+=======
+		5055DB59BEB64B0FA5ECEA4D /* GenericCodeGen */ = {
+			isa = PBXGroup;
+			children = (
+				5B0FDE499FF049058E62F5B6 /* Source Files */,
+				624E523F0BF9408DA68F4583 /* Resources */,
+				B6FF1F3A3B60402695319A21 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */,
+>>>>>>> Stashed changes
 			);
 			name = GenericCodeGen;
 			sourceTree = "<group>";
 		};
+<<<<<<< Updated upstream
 		4B7B4069DFF84E6FAE22DA44 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -711,10 +1258,28 @@
 				00EA30EF0AD04B49BB13CE17 /* Header Files */,
 				C45538F2C6C84D93BBB20C71 /* Resources */,
 				D6F264FB41184B2CBB42CBFB /* ../flycast/core/deps/glslang/OGLCompilersDLL/CMakeLists.txt */,
+=======
+		50662132EF6748A5B069CC50 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				655F4611C86B4E1698316926 /* ../flycast/core/deps/glslang/glslang/OSDependent/osinclude.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		55A5A6151E1943C688BC446B /* OGLCompiler */ = {
+			isa = PBXGroup;
+			children = (
+				6A9669A284A34CB7BCB928D9 /* Source Files */,
+				2FD00BA265184A2690E7CCAF /* Header Files */,
+				E7254716E63643F182E63AE1 /* Resources */,
+				9CB6BE756F074644AC5D5E0F /* ../flycast/core/deps/glslang/OGLCompilersDLL/CMakeLists.txt */,
+>>>>>>> Stashed changes
 			);
 			name = OGLCompiler;
 			sourceTree = "<group>";
 		};
+<<<<<<< Updated upstream
 		8501E79FABDC4E0981F12311 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -765,10 +1330,17 @@
 		8E7107E5FC95451E8531226E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+=======
+		5ADFD708EB214E51A67D8D19 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2987176D2B724DA790601E3D /* ../cmake/core/deps/glslang/glslang/CMakeFiles/glslang.dir/Info.plist */,
+>>>>>>> Stashed changes
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
+<<<<<<< Updated upstream
 		AA9A0A12B294421EB1857307 = {
 			isa = PBXGroup;
 			children = (
@@ -859,10 +1431,18 @@
 			children = (
 				C688E7F6DF284C4C9A8BE870 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/CodeGen.cpp */,
 				00303AC1104246B18551778B /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/Link.cpp */,
+=======
+		5B0FDE499FF049058E62F5B6 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				7D9A9AF0587849E5B6AA4519 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/CodeGen.cpp */,
+				1958B5D255B4438889A283C8 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/Link.cpp */,
+>>>>>>> Stashed changes
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
+<<<<<<< Updated upstream
 		FE948FB7CF3C4463962DEE37 /* SPIRV */ = {
 			isa = PBXGroup;
 			children = (
@@ -870,11 +1450,55 @@
 				FF2E5A3A3D7F4748965FD194 /* Header Files */,
 				16E2814C12184150B354CF4E /* Resources */,
 				1E47C3007D5748F8AD25FF50 /* ../flycast/core/deps/glslang/SPIRV/CMakeLists.txt */,
+=======
+		5C28AFC1A539403788B23FDA /* MachineIndependent */ = {
+			isa = PBXGroup;
+			children = (
+				A5D919209510437B9324F1F2 /* Source Files */,
+				34CC873283C947249234DA37 /* Header Files */,
+				E392322FE5F643059A45130F /* Resources */,
+				17BBE60A583047F296DEB9CF /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */,
+				B388AC0B89F54BA397A1698D /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang.y */,
+			);
+			name = MachineIndependent;
+			sourceTree = "<group>";
+		};
+		5E4AAAA36900443B828EDCE1 /* glslang */ = {
+			isa = PBXGroup;
+			children = (
+				5055DB59BEB64B0FA5ECEA4D /* GenericCodeGen */,
+				5C28AFC1A539403788B23FDA /* MachineIndependent */,
+				35F6AC915315431B99895E14 /* glslang */,
+				A842F8DA24104F9A8FCB0532 /* glslang-default-resource-limits */,
+				A05A1322A078443989E1E4C4 /* OSDependent */,
+				55A5A6151E1943C688BC446B /* OGLCompiler */,
+				BDC1BDEBBE5D41B09660DE7D /* SPIRV */,
+			);
+			name = glslang;
+			sourceTree = "<group>";
+		};
+		624E523F0BF9408DA68F4583 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5743D4E259884DDEA78F2D84 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/GenericCodeGen.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		6A9669A284A34CB7BCB928D9 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				FF90E21B6BCE4CD09D51911C /* ../flycast/core/deps/glslang/OGLCompilersDLL/InitializeDll.cpp */,
+>>>>>>> Stashed changes
 			);
 			name = SPIRV;
 			sourceTree = "<group>";
 		};
+<<<<<<< Updated upstream
 		FF07C16630B041C8AF421BD5 /* Resources */ = {
+=======
+		6E7EB10D96744082B12BCED2 /* CMake Rules */ = {
+>>>>>>> Stashed changes
 			isa = PBXGroup;
 			children = (
 				90A7DC76110442ACBFBAE02C /* ../cmake/core/deps/glslang/glslang/CMakeFiles/MachineIndependent.dir/Info.plist */,
@@ -915,15 +1539,237 @@
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
+		88C1F7A76ABF4324B978EBC5 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				F3898CDA52084BA2A8447A4E /* ../flycast/core/deps/glslang/glslang/Public/ResourceLimits.h */,
+				9347F78B62934088893C0511 /* ../flycast/core/deps/glslang/glslang/Public/resource_limits_c.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		8C9D8CD4985A4DA882838327 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BE5140846A374F489A799A76 /* ../cmake/core/deps/glslang/SPIRV/CMakeFiles/SPIRV.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		91D649B0839A4971B355001B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				540B71BCFA994B899AAD3519 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/glslang-default-resource-limits.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		96FFFBED402B4211A1075E2A /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				52D3508409074533A662EB4C /* ../flycast/core/deps/glslang/glslang/Include/BaseTypes.h */,
+				16ABB306C7184113877CA423 /* ../flycast/core/deps/glslang/glslang/Include/Common.h */,
+				A9B442BFD2DB474C9FB9EE50 /* ../flycast/core/deps/glslang/glslang/Include/ConstantUnion.h */,
+				85F8F06E97CC4513935B48E5 /* ../flycast/core/deps/glslang/glslang/Include/InfoSink.h */,
+				F1FEDEB851DB42A3B4B627AA /* ../flycast/core/deps/glslang/glslang/Include/InitializeGlobals.h */,
+				1539A207618243C3ABF2110F /* ../flycast/core/deps/glslang/glslang/Include/PoolAlloc.h */,
+				51784FAB61CA45C1BAEAE01D /* ../flycast/core/deps/glslang/glslang/Include/ResourceLimits.h */,
+				69DD6F65A24A481AB25007BD /* ../flycast/core/deps/glslang/glslang/Include/ShHandle.h */,
+				3F56EFC65648439FA6260564 /* ../flycast/core/deps/glslang/glslang/Include/SpirvIntrinsics.h */,
+				5DF280CA4D494847998AFBCD /* ../flycast/core/deps/glslang/glslang/Include/Types.h */,
+				A58D257D05374CEFBE566B54 /* ../flycast/core/deps/glslang/glslang/Include/arrays.h */,
+				1896B383A5E64189998EC6C2 /* ../flycast/core/deps/glslang/glslang/Include/glslang_c_interface.h */,
+				0C71BD01DA444ED8B0853FE5 /* ../flycast/core/deps/glslang/glslang/Include/glslang_c_shader_types.h */,
+				EF0F42CBCB2249AFA1D33F5A /* ../flycast/core/deps/glslang/glslang/Include/intermediate.h */,
+				7B044FDC85A0454DACF8F491 /* ../flycast/core/deps/glslang/glslang/Public/ShaderLang.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		A05A1322A078443989E1E4C4 /* OSDependent */ = {
+			isa = PBXGroup;
+			children = (
+				DD4C92F8C2944E68A23F2B10 /* Source Files */,
+				50662132EF6748A5B069CC50 /* Header Files */,
+				2B88A3AA58A14E688CAFD8F3 /* Resources */,
+				94D417BEC4CD4200AEDB2BC1 /* ../flycast/core/deps/glslang/glslang/OSDependent/Unix/CMakeLists.txt */,
+			);
+			name = OSDependent;
+			sourceTree = "<group>";
+		};
+		A3BA053738CA4E53A4B2FF93 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				6E7EB10D96744082B12BCED2 /* CMake Rules */,
+				C284073C3230415BA8CA76BE /* ../flycast/core/deps/glslang/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		A5D919209510437B9324F1F2 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				62DF94305FE044A69C4BD952 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Constant.cpp */,
+				2A55F0400A3449C3827CEBE2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/InfoSink.cpp */,
+				FCAC3AD030784AD2912C3C5A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Initialize.cpp */,
+				87DEB3F53DEE46CF810B2B3C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/IntermTraverse.cpp */,
+				24F9D62ECDC84FDEB210ABBB /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Intermediate.cpp */,
+				8ACCBA8BD531401F8B105F41 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseContextBase.cpp */,
+				D938E4B4F50D4D06A9FEA755 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseHelper.cpp */,
+				6558E8B54C474910B638B8A7 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/PoolAlloc.cpp */,
+				3BAE1B1A008741398B127638 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/RemoveTree.cpp */,
+				FA9F37CACEAA449181EB965A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Scan.cpp */,
+				39F69CDEE67D48E2B3DECA6F /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ShaderLang.cpp */,
+				C697E61502AC4E21821AD9BF /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SpirvIntrinsics.cpp */,
+				DE1E1320E4424E04A4A7C413 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SymbolTable.cpp */,
+				5330B6A4DF104330B7C0BC16 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Versions.cpp */,
+				9CD1B8FC456F44A6B86E8B87 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/attribute.cpp */,
+				F92FCE931BFD4EAC8D4721CC /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang_tab.cpp */,
+				4C8E3CC3DE4144B8AE873C8E /* ../flycast/core/deps/glslang/glslang/MachineIndependent/intermOut.cpp */,
+				51BBE453EDCF49B7AA76E9EB /* ../flycast/core/deps/glslang/glslang/MachineIndependent/iomapper.cpp */,
+				2DEBAA798823471685C21C18 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/limits.cpp */,
+				40B8016C5F8B4B05844D0CA2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/linkValidate.cpp */,
+				4E1C1DA57D5749CEA11903F6 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/parseConst.cpp */,
+				AA69F3CAF65646E1A123CCC3 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/Pp.cpp */,
+				051F9F88B20E4B8CB65131C8 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpAtom.cpp */,
+				02243AB14397468F963C953C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpContext.cpp */,
+				A3167FF0D50C472C9A63902A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpScanner.cpp */,
+				ABE9F79068284F3EA088F30B /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpTokens.cpp */,
+				83B79A500B014FD18FA20720 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/propagateNoContraction.cpp */,
+				755BF99017604A80AFB008C4 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/reflection.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		A842F8DA24104F9A8FCB0532 /* glslang-default-resource-limits */ = {
+			isa = PBXGroup;
+			children = (
+				27346C46F9F048B49ABB0D14 /* Source Files */,
+				88C1F7A76ABF4324B978EBC5 /* Header Files */,
+				91D649B0839A4971B355001B /* Resources */,
+				C73A934437E640D9826A8206 /* ../flycast/core/deps/glslang/glslang/CMakeLists.txt */,
+			);
+			name = "glslang-default-resource-limits";
+			sourceTree = "<group>";
+		};
+		BDC1BDEBBE5D41B09660DE7D /* SPIRV */ = {
+			isa = PBXGroup;
+			children = (
+				C0036233126F4E92947FC6BC /* Source Files */,
+				D3401E1EA4F440AFB7CEC47E /* Header Files */,
+				8C9D8CD4985A4DA882838327 /* Resources */,
+				B7BCF7E1BFCE45DFA091043D /* ../flycast/core/deps/glslang/SPIRV/CMakeLists.txt */,
+			);
+			name = SPIRV;
+			sourceTree = "<group>";
+		};
+		C0036233126F4E92947FC6BC /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				CF60D1F62EDC4A27AA9AF822 /* ../flycast/core/deps/glslang/SPIRV/CInterface/spirv_c_interface.cpp */,
+				E0E0FCA0A9124304ACDE4E53 /* ../flycast/core/deps/glslang/SPIRV/GlslangToSpv.cpp */,
+				323CDB128ECF4C1FBF859DDE /* ../flycast/core/deps/glslang/SPIRV/InReadableOrder.cpp */,
+				A5655A3D8D7649F594525FB1 /* ../flycast/core/deps/glslang/SPIRV/Logger.cpp */,
+				8D06DC30BDD140A3B505F0D6 /* ../flycast/core/deps/glslang/SPIRV/SpvBuilder.cpp */,
+				42D2C36ED41443A0BCE1DCFB /* ../flycast/core/deps/glslang/SPIRV/SpvPostProcess.cpp */,
+				AB845597DEF442EEA632F1A2 /* ../flycast/core/deps/glslang/SPIRV/SpvTools.cpp */,
+				7013AE8FF451471981414EE7 /* ../flycast/core/deps/glslang/SPIRV/disassemble.cpp */,
+				1FCF57A6C41040C9AF87407C /* ../flycast/core/deps/glslang/SPIRV/doc.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		D3401E1EA4F440AFB7CEC47E /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				3773E66924FC4C6F8CD4D10A /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.AMD.h */,
+				309010661F434F989F444684 /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.ARM.h */,
+				9673161FDF364617ABF5860A /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.EXT.h */,
+				895E3D41C55B474F8237B60F /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.KHR.h */,
+				A7D2B23D667C41C3B41B73B9 /* ../flycast/core/deps/glslang/SPIRV/GLSL.ext.NV.h */,
+				03C3E6B5033240449425126C /* ../flycast/core/deps/glslang/SPIRV/GLSL.std.450.h */,
+				15F648A8128B4615B10DE112 /* ../flycast/core/deps/glslang/SPIRV/GlslangToSpv.h */,
+				5B405EBE43A948A3905729A4 /* ../flycast/core/deps/glslang/SPIRV/Logger.h */,
+				3E498857D40E49768DCC98A4 /* ../flycast/core/deps/glslang/SPIRV/NonSemanticDebugPrintf.h */,
+				075B701E45FB42A8925D74DE /* ../flycast/core/deps/glslang/SPIRV/NonSemanticShaderDebugInfo100.h */,
+				D6A05A7B0B9247B0BCBFDDEB /* ../flycast/core/deps/glslang/SPIRV/SpvBuilder.h */,
+				913DA817ABF04030B1AC246E /* ../flycast/core/deps/glslang/SPIRV/SpvTools.h */,
+				DD24E115E4214F67A10408C6 /* ../flycast/core/deps/glslang/SPIRV/bitutils.h */,
+				4C42B380993043B99A747EE0 /* ../flycast/core/deps/glslang/SPIRV/disassemble.h */,
+				FA20A7B0F5334F228F6C99FF /* ../flycast/core/deps/glslang/SPIRV/doc.h */,
+				DD2C4B2F49D94330B13322A4 /* ../flycast/core/deps/glslang/SPIRV/hex_float.h */,
+				1551C078C8D443539AC65782 /* ../flycast/core/deps/glslang/SPIRV/spirv.hpp */,
+				AAA977F3131344B8B1F1D127 /* ../flycast/core/deps/glslang/SPIRV/spvIR.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		DD4C92F8C2944E68A23F2B10 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				BC7185605DC94B04B4AC4D9E /* ../flycast/core/deps/glslang/glslang/OSDependent/Unix/ossource.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		E392322FE5F643059A45130F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D1E69ADD833141C9A543C462 /* ../cmake/core/deps/glslang/glslang/CMakeFiles/MachineIndependent.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		E3D81C324F4A4DBF9EAE9B29 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		E57245875CE0416C8B8C7D2B /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				5FC955EFD04B406F9DE8929D /* ../flycast/core/deps/glslang/glslang/CInterface/glslang_c_interface.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		E7254716E63643F182E63AE1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1BC88BC476D2420D9F41FB02 /* ../cmake/core/deps/glslang/OGLCompilersDLL/CMakeFiles/OGLCompiler.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		FB998C7C5B364260B17CA1A9 = {
+			isa = PBXGroup;
+			children = (
+				A3BA053738CA4E53A4B2FF93 /* ALL_BUILD */,
+				5E4AAAA36900443B828EDCE1 /* glslang */,
+				31E371B8AC754BEDA60E4516 /* Products */,
+				0241634591B0414AAC00A99D /* Frameworks */,
+				E3D81C324F4A4DBF9EAE9B29 /* Resources */,
+			);
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
 		470865334B5B576275C5112C /* glslang-default-resource-limits */ = {
 			isa = PBXNativeTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = 0FD47650286E44F681C03273 /* Build configuration list for PBXNativeTarget "glslang-default-resource-limits" */;
 			buildPhases = (
 				BEBDA9ABCA514F98BE15D620 /* Sources */,
 				F736DC766C324F3588684323 /* Frameworks */,
+=======
+			buildConfigurationList = FB99EFD42F2C456DAE492770 /* Build configuration list for PBXNativeTarget "glslang-default-resource-limits" */;
+			buildPhases = (
+				9437CC74C26E4FF09369BFF4 /* Sources */,
+				B2C49B40B6F1400CB52B4CCE /* Frameworks */,
+>>>>>>> Stashed changes
 			);
 			buildRules = (
 			);
@@ -931,15 +1777,26 @@
 			);
 			name = "glslang-default-resource-limits";
 			productName = "glslang-default-resource-limits";
+<<<<<<< Updated upstream
 			productReference = BD6F27B42E094567828E9F00 /* glslang-default-resource-limits */;
+=======
+			productReference = AC7F35AA762540AB81918F4C /* glslang-default-resource-limits */;
+>>>>>>> Stashed changes
 			productType = "com.apple.product-type.library.static";
 		};
 		684AFD806A4E5C0D7DD6F2A1 /* GenericCodeGen */ = {
 			isa = PBXNativeTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = 73767AF53FD5494DA456CDD3 /* Build configuration list for PBXNativeTarget "GenericCodeGen" */;
 			buildPhases = (
 				3D582A51CBA2476584342F10 /* Sources */,
 				374D439955D04585920C93CE /* Frameworks */,
+=======
+			buildConfigurationList = C39A3547253A4041A4BC0705 /* Build configuration list for PBXNativeTarget "GenericCodeGen" */;
+			buildPhases = (
+				0030C3F7EE0F44459367C541 /* Sources */,
+				D8F4BBDDB5F54CCFA3150ED3 /* Frameworks */,
+>>>>>>> Stashed changes
 			);
 			buildRules = (
 			);
@@ -947,19 +1804,31 @@
 			);
 			name = GenericCodeGen;
 			productName = GenericCodeGen;
+<<<<<<< Updated upstream
 			productReference = 687604C363EF411EB893280C /* GenericCodeGen */;
+=======
+			productReference = DAA5A68E2D9A4F918E7B2BA0 /* GenericCodeGen */;
+>>>>>>> Stashed changes
 			productType = "com.apple.product-type.library.static";
 		};
 		6CDAF4B90E38082DCB99A331 /* MachineIndependent */ = {
 			isa = PBXNativeTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = 6BD6D5F2D32244ECB3D4FF65 /* Build configuration list for PBXNativeTarget "MachineIndependent" */;
 			buildPhases = (
 				36563FAC29B4464B8F6F3C5B /* Sources */,
 				CCCEDFCD587C4B2AB6A42E2E /* Frameworks */,
+=======
+			buildConfigurationList = 846F25A99A2A4665833E4C63 /* Build configuration list for PBXNativeTarget "MachineIndependent" */;
+			buildPhases = (
+				2B1A265D248B4A328992FE73 /* Sources */,
+				C4FC63814A854AC9ABD518F9 /* Frameworks */,
+>>>>>>> Stashed changes
 			);
 			buildRules = (
 			);
 			dependencies = (
+<<<<<<< Updated upstream
 				0E5E13683B554B5BAC65359F /* PBXTargetDependency */,
 				197194BAA67E4FE089AF019B /* PBXTargetDependency */,
 				3C01BD19987A4BA9ACB7F57A /* PBXTargetDependency */,
@@ -967,18 +1836,35 @@
 			name = MachineIndependent;
 			productName = MachineIndependent;
 			productReference = 2A0114AC2F964DDB8CD0F007 /* MachineIndependent */;
+=======
+				083AEF1B8B3D41FD93390FCB /* PBXTargetDependency */,
+				327CEB95101C4884970461D8 /* PBXTargetDependency */,
+				686132CBB7E94D478917ECC2 /* PBXTargetDependency */,
+			);
+			name = MachineIndependent;
+			productName = MachineIndependent;
+			productReference = BC8A628A93D043A5BD578D81 /* MachineIndependent */;
+>>>>>>> Stashed changes
 			productType = "com.apple.product-type.library.static";
 		};
 		7D9BA18AFAC54B79E83F387A /* glslang */ = {
 			isa = PBXNativeTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = A6E752D53CDF4184BD093177 /* Build configuration list for PBXNativeTarget "glslang" */;
 			buildPhases = (
 				9B4FD6D95F9E42BCBC77E4D1 /* Sources */,
 				27FF1770A1B24FA482D895B2 /* Frameworks */,
+=======
+			buildConfigurationList = E22A75BFAAFE498A9A161237 /* Build configuration list for PBXNativeTarget "glslang" */;
+			buildPhases = (
+				0C0CEEA65F124A519CFF1C3F /* Sources */,
+				FE6BCEF511494173AC88A5AC /* Frameworks */,
+>>>>>>> Stashed changes
 			);
 			buildRules = (
 			);
 			dependencies = (
+<<<<<<< Updated upstream
 				715F7FE160FA41D99CA18D15 /* PBXTargetDependency */,
 				BC4947F0A7B943609D918B24 /* PBXTargetDependency */,
 				1F975FDF63704A95AEBDBD67 /* PBXTargetDependency */,
@@ -987,14 +1873,31 @@
 			name = glslang;
 			productName = glslang;
 			productReference = E9EEB2C075644DF5ABEEB9C3 /* glslang */;
+=======
+				C7E05AF1A9B64654A4F3FC20 /* PBXTargetDependency */,
+				124988F68B0B4AD59811A74F /* PBXTargetDependency */,
+				5695639816DF4EBB9FB0A79B /* PBXTargetDependency */,
+				01CB5651BA51413495C4BB00 /* PBXTargetDependency */,
+			);
+			name = glslang;
+			productName = glslang;
+			productReference = 5924EEA0A10346DC8D10C997 /* glslang */;
+>>>>>>> Stashed changes
 			productType = "com.apple.product-type.library.static";
 		};
 		836E04CDA84A7B69A8D9114F /* OGLCompiler */ = {
 			isa = PBXNativeTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = 6FC7BC1EA80048CC8BED616A /* Build configuration list for PBXNativeTarget "OGLCompiler" */;
 			buildPhases = (
 				29F0ABB455E540A482E5843C /* Sources */,
 				554FF01092574BBA8240B28C /* Frameworks */,
+=======
+			buildConfigurationList = 5DF088B7C26A4610A5B96B92 /* Build configuration list for PBXNativeTarget "OGLCompiler" */;
+			buildPhases = (
+				858541B45AD44D22B5913E3E /* Sources */,
+				50E604CDFA77466682430B59 /* Frameworks */,
+>>>>>>> Stashed changes
 			);
 			buildRules = (
 			);
@@ -1002,19 +1905,31 @@
 			);
 			name = OGLCompiler;
 			productName = OGLCompiler;
+<<<<<<< Updated upstream
 			productReference = 64F067DD1FFA48888DC861E7 /* OGLCompiler */;
+=======
+			productReference = 6C7744C4ADBE45609961FBEC /* OGLCompiler */;
+>>>>>>> Stashed changes
 			productType = "com.apple.product-type.library.static";
 		};
 		88B439CC67367559065A97C9 /* SPIRV */ = {
 			isa = PBXNativeTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = EBA90CCB72034F83A6CF53AA /* Build configuration list for PBXNativeTarget "SPIRV" */;
 			buildPhases = (
 				329F5E53209E4DCFA376F0ED /* Sources */,
 				4F233CD868ED43B8A03C3348 /* Frameworks */,
+=======
+			buildConfigurationList = 9381E48C06814274B2FCC710 /* Build configuration list for PBXNativeTarget "SPIRV" */;
+			buildPhases = (
+				60F483445F9A48D0A224E56B /* Sources */,
+				DA6E04557B574B5E9498854B /* Frameworks */,
+>>>>>>> Stashed changes
 			);
 			buildRules = (
 			);
 			dependencies = (
+<<<<<<< Updated upstream
 				494E623CA2C54165A6311644 /* PBXTargetDependency */,
 				F810CEFA517A494589537099 /* PBXTargetDependency */,
 				3A94025B7DAF4AE1A477C72A /* PBXTargetDependency */,
@@ -1023,14 +1938,31 @@
 			name = SPIRV;
 			productName = SPIRV;
 			productReference = 5C8104380C1847C0B4C3DC01 /* SPIRV */;
+=======
+				837D8BE7D39B4809BAEFBF4B /* PBXTargetDependency */,
+				7541EFC1D511486593673399 /* PBXTargetDependency */,
+				7E09754ACD57419A866EE05F /* PBXTargetDependency */,
+				54994F267C004E1A9CB6C7D1 /* PBXTargetDependency */,
+			);
+			name = SPIRV;
+			productName = SPIRV;
+			productReference = D0DD4D9B04A24CC9B86A91DA /* SPIRV */;
+>>>>>>> Stashed changes
 			productType = "com.apple.product-type.library.static";
 		};
 		D42CDA670F6D1EB800AEA1E4 /* OSDependent */ = {
 			isa = PBXNativeTarget;
+<<<<<<< Updated upstream
 			buildConfigurationList = C084BF34740943C9BBD0D14B /* Build configuration list for PBXNativeTarget "OSDependent" */;
 			buildPhases = (
 				AE2510F13FBF4ADF8D0A749F /* Sources */,
 				305914977DCD4BA3A01A1418 /* Frameworks */,
+=======
+			buildConfigurationList = 87835C9C84694B5DAB96FDA1 /* Build configuration list for PBXNativeTarget "OSDependent" */;
+			buildPhases = (
+				BBE285DE2D224F29ABCFD9CD /* Sources */,
+				6C601B697C2A453EBA5768AE /* Frameworks */,
+>>>>>>> Stashed changes
 			);
 			buildRules = (
 			);
@@ -1038,18 +1970,27 @@
 			);
 			name = OSDependent;
 			productName = OSDependent;
+<<<<<<< Updated upstream
 			productReference = 9CF95F77F6544974B16035B6 /* OSDependent */;
+=======
+			productReference = 066CDD6622CE47E1A10079F2 /* OSDependent */;
+>>>>>>> Stashed changes
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
+<<<<<<< Updated upstream
 		3993DA3D4F9B45C89203DB0E /* Project object */ = {
+=======
+		77541474743A44ACA5482AF9 /* Project object */ = {
+>>>>>>> Stashed changes
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1610;
 			};
+<<<<<<< Updated upstream
 			buildConfigurationList = 7E565578C4B24357B5A2A376 /* Build configuration list for PBXProject "glslang" */;
 			buildSettings = {
 			};
@@ -1062,19 +2003,33 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = AA9A0A12B294421EB1857307;
+=======
+			buildConfigurationList = 9887C24A769440319E2E1E09 /* Build configuration list for PBXProject "glslang" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				C08D4E093240428DBE669E53 /* Debug */,
+				AE6BD521B9814EE2AE8D1755 /* Release */,
+				5BA6CF9A7862449CAE6E08E9 /* MinSizeRel */,
+				B0A62662C8E94032BC671F9D /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = FB998C7C5B364260B17CA1A9;
+>>>>>>> Stashed changes
 			projectDirPath = ../flycast/core/deps/glslang;
 			projectRoot = "";
 			targets = (
-				6DB80BBE8DA7D6D87A8D27FD /* ALL_BUILD */,
+				B727D2F61FE22951697F0BAD /* ALL_BUILD */,
 				684AFD806A4E5C0D7DD6F2A1 /* GenericCodeGen */,
 				6CDAF4B90E38082DCB99A331 /* MachineIndependent */,
 				836E04CDA84A7B69A8D9114F /* OGLCompiler */,
 				D42CDA670F6D1EB800AEA1E4 /* OSDependent */,
 				88B439CC67367559065A97C9 /* SPIRV */,
-				6D2263BD069F7028F9CB8758 /* ZERO_CHECK */,
+				69835AD03873232AF422EFB0 /* ZERO_CHECK */,
 				7D9BA18AFAC54B79E83F387A /* glslang */,
 				470865334B5B576275C5112C /* glslang-default-resource-limits */,
-				11E917AB434F844A6CA3AEDF /* install */,
+				1148ED2E9013F6047A670D47 /* install */,
 			);
 		};
 /* End PBXProject section */
@@ -1225,6 +2180,7 @@ fi
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+<<<<<<< Updated upstream
 		29F0ABB455E540A482E5843C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1315,12 +2271,105 @@ fi
 			files = (
 				0FC39F6E56454983A675DF5B /* ../flycast/core/deps/glslang/glslang/ResourceLimits/ResourceLimits.cpp */,
 				7517CDCD94374E23917BC37B /* ../flycast/core/deps/glslang/glslang/ResourceLimits/resource_limits_c.cpp */,
+=======
+		0030C3F7EE0F44459367C541 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC30ECE39D6542F48FE6E2D9 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/CodeGen.cpp */,
+				3EDB6F7977AA4D0F875E2A38 /* ../flycast/core/deps/glslang/glslang/GenericCodeGen/Link.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C0CEEA65F124A519CFF1C3F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3EE0F4F26D242C9A627D118 /* ../flycast/core/deps/glslang/glslang/CInterface/glslang_c_interface.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2B1A265D248B4A328992FE73 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ACE1C29B292B4CB0B737D09A /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Constant.cpp */,
+				4CA871C44C4248A89D26AC0C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/InfoSink.cpp */,
+				FE746F7CFE384EA1BAF09BD9 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Initialize.cpp */,
+				2A582FCA3D184930A62BC9A8 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/IntermTraverse.cpp */,
+				FFD4FAF6DCAF4B01BDF5F153 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Intermediate.cpp */,
+				9EDF8C94B89A48D59D690334 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseContextBase.cpp */,
+				65FEADD8254C42E7B97B4469 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ParseHelper.cpp */,
+				48E925F8422948DF9F6F7DCF /* ../flycast/core/deps/glslang/glslang/MachineIndependent/PoolAlloc.cpp */,
+				5205E611B09A41A3AC8BBEFE /* ../flycast/core/deps/glslang/glslang/MachineIndependent/RemoveTree.cpp */,
+				C835D407E37B46AE825821EC /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Scan.cpp */,
+				1E43CA8192534DE085FAA098 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/ShaderLang.cpp */,
+				F25FCB885A184FC4A1374F3C /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SpirvIntrinsics.cpp */,
+				7BC2915E0A6644DEA2250F14 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/SymbolTable.cpp */,
+				55434DC2634C4320991F020F /* ../flycast/core/deps/glslang/glslang/MachineIndependent/Versions.cpp */,
+				5B6B16C743AE46D6B1C90025 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/attribute.cpp */,
+				48E34FB74EDB4184B5BE3DA3 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/glslang_tab.cpp */,
+				5B9DBDBCC5ED4D61A2C4C430 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/intermOut.cpp */,
+				7C251B0CC69A4AC19F7C5613 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/iomapper.cpp */,
+				DA348FAC4ECE4A6C82A70696 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/limits.cpp */,
+				DB05258836E84AA4A5512ED2 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/linkValidate.cpp */,
+				D106D1405684422F93D20608 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/parseConst.cpp */,
+				62852E203CEC46D58B790349 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/Pp.cpp */,
+				CB665AEE1D7C4A5A9523EC42 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpAtom.cpp */,
+				A697F4EB279142F08B4262AC /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpContext.cpp */,
+				A80B1A22FC254799BA8278A3 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpScanner.cpp */,
+				E1460961AB944D3A886519AE /* ../flycast/core/deps/glslang/glslang/MachineIndependent/preprocessor/PpTokens.cpp */,
+				0097B0F80E00406DA1F1E91E /* ../flycast/core/deps/glslang/glslang/MachineIndependent/propagateNoContraction.cpp */,
+				3476817E31204B83923CEBE4 /* ../flycast/core/deps/glslang/glslang/MachineIndependent/reflection.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		60F483445F9A48D0A224E56B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03F4E642CFB94314B3BC6F10 /* ../flycast/core/deps/glslang/SPIRV/CInterface/spirv_c_interface.cpp */,
+				B1EBFA8F0C28447386829B2D /* ../flycast/core/deps/glslang/SPIRV/GlslangToSpv.cpp */,
+				783940E7AC214B81862CE53D /* ../flycast/core/deps/glslang/SPIRV/InReadableOrder.cpp */,
+				5D2C0A64DA2143AC9E16F242 /* ../flycast/core/deps/glslang/SPIRV/Logger.cpp */,
+				850A6D0C9B8D4FDDBEB8922E /* ../flycast/core/deps/glslang/SPIRV/SpvBuilder.cpp */,
+				6A014E60588F46F9A8229870 /* ../flycast/core/deps/glslang/SPIRV/SpvPostProcess.cpp */,
+				969E46FF5EA9469BBE1CAC27 /* ../flycast/core/deps/glslang/SPIRV/SpvTools.cpp */,
+				D76D5F26A0D94C3C9235BFE4 /* ../flycast/core/deps/glslang/SPIRV/disassemble.cpp */,
+				2963AF180BAC478E93B9E607 /* ../flycast/core/deps/glslang/SPIRV/doc.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		858541B45AD44D22B5913E3E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90C6B0B0EA15412D8BA22CC6 /* ../flycast/core/deps/glslang/OGLCompilersDLL/InitializeDll.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9437CC74C26E4FF09369BFF4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAE44DA9B431419586F49702 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/ResourceLimits.cpp */,
+				E69CAD6EDCD24FBD9C8F10F0 /* ../flycast/core/deps/glslang/glslang/ResourceLimits/resource_limits_c.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBE285DE2D224F29ABCFD9CD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3322E4D1D41146EABAB6BED8 /* ../flycast/core/deps/glslang/glslang/OSDependent/Unix/ossource.cpp */,
+>>>>>>> Stashed changes
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+<<<<<<< Updated upstream
 		0AD18FD494EA49A18F80221C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6CDAF4B90E38082DCB99A331 /* MachineIndependent */;
@@ -1420,10 +2469,112 @@ fi
 			isa = PBXTargetDependency;
 			target = 6CDAF4B90E38082DCB99A331 /* MachineIndependent */;
 			targetProxy = 275C9FE37ACD49DF86C76326 /* PBXContainerItemProxy */;
+=======
+		01CB5651BA51413495C4BB00 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 836E04CDA84A7B69A8D9114F /* OGLCompiler */;
+			targetProxy = EBEA949C61AF4EAD8F97ECF5 /* PBXContainerItemProxy */;
+		};
+		083AEF1B8B3D41FD93390FCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 684AFD806A4E5C0D7DD6F2A1 /* GenericCodeGen */;
+			targetProxy = 74C644DF73FC4F88A56659A3 /* PBXContainerItemProxy */;
+		};
+		124988F68B0B4AD59811A74F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6CDAF4B90E38082DCB99A331 /* MachineIndependent */;
+			targetProxy = C9AA8D9D2867454290511F7E /* PBXContainerItemProxy */;
+		};
+		15688213F4454283BD8595A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D9BA18AFAC54B79E83F387A /* glslang */;
+			targetProxy = 3C003D61615A42E9981FF235 /* PBXContainerItemProxy */;
+		};
+		327CEB95101C4884970461D8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D42CDA670F6D1EB800AEA1E4 /* OSDependent */;
+			targetProxy = C01F477B95044972B451265C /* PBXContainerItemProxy */;
+		};
+		54994F267C004E1A9CB6C7D1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 836E04CDA84A7B69A8D9114F /* OGLCompiler */;
+			targetProxy = 700A0CBE250045D0B3AB6FE7 /* PBXContainerItemProxy */;
+		};
+		5695639816DF4EBB9FB0A79B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D42CDA670F6D1EB800AEA1E4 /* OSDependent */;
+			targetProxy = 76C60095935E4A56BE2084F1 /* PBXContainerItemProxy */;
+		};
+		60080D72D32A465FA509564C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 88B439CC67367559065A97C9 /* SPIRV */;
+			targetProxy = E5937AB173AB4F1FBA71A652 /* PBXContainerItemProxy */;
+		};
+		686132CBB7E94D478917ECC2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 836E04CDA84A7B69A8D9114F /* OGLCompiler */;
+			targetProxy = D3E5A53AD78F47568C5032C9 /* PBXContainerItemProxy */;
+		};
+		6BE980BDFCE6422DB981E4E1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 836E04CDA84A7B69A8D9114F /* OGLCompiler */;
+			targetProxy = AF52FFC0691E42DFAB1AF097 /* PBXContainerItemProxy */;
+		};
+		7126DA2A1267411482962B4E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 69835AD03873232AF422EFB0 /* ZERO_CHECK */;
+			targetProxy = 2928D4B16B4F455FB303492E /* PBXContainerItemProxy */;
+		};
+		7541EFC1D511486593673399 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6CDAF4B90E38082DCB99A331 /* MachineIndependent */;
+			targetProxy = 2BE2997BEE66492CB2B78EC3 /* PBXContainerItemProxy */;
+		};
+		7E09754ACD57419A866EE05F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D42CDA670F6D1EB800AEA1E4 /* OSDependent */;
+			targetProxy = 433720F3DBBD457184CE30F8 /* PBXContainerItemProxy */;
+		};
+		837D8BE7D39B4809BAEFBF4B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 684AFD806A4E5C0D7DD6F2A1 /* GenericCodeGen */;
+			targetProxy = 0F88F875EE9B493DAD6DA9F5 /* PBXContainerItemProxy */;
+		};
+		84BBA90CD55A41F58CC58100 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6CDAF4B90E38082DCB99A331 /* MachineIndependent */;
+			targetProxy = 200A2BB7158E416CBFB161A9 /* PBXContainerItemProxy */;
+		};
+		A9ECAA804FB741B68E1108B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 470865334B5B576275C5112C /* glslang-default-resource-limits */;
+			targetProxy = 9D02246555194E178AA6A819 /* PBXContainerItemProxy */;
+		};
+		C7E05AF1A9B64654A4F3FC20 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 684AFD806A4E5C0D7DD6F2A1 /* GenericCodeGen */;
+			targetProxy = 7FF73FEAF4A84FF68C7A03A1 /* PBXContainerItemProxy */;
+		};
+		CD01BFC111404A3EA59AE6F1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D42CDA670F6D1EB800AEA1E4 /* OSDependent */;
+			targetProxy = 5FD5D62C18AA4BF9B262D5B9 /* PBXContainerItemProxy */;
+		};
+		E36879BDB3004F2DB94FEA27 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B727D2F61FE22951697F0BAD /* ALL_BUILD */;
+			targetProxy = EEEE835E2B1A435DB15AC2C5 /* PBXContainerItemProxy */;
+		};
+		EC901A88655946B9A1E9D457 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 684AFD806A4E5C0D7DD6F2A1 /* GenericCodeGen */;
+			targetProxy = 35E970D3BCAA419A933F0C36 /* PBXContainerItemProxy */;
+>>>>>>> Stashed changes
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+<<<<<<< Updated upstream
 		0729D576CF0B45A686315CF6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1445,6 +2596,9 @@ fi
 			name = Release;
 		};
 		07FE50A337FD4073867F477F /* Debug */ = {
+=======
+		0932D5209BCF4533B24824CF /* Debug */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1458,14 +2612,21 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+<<<<<<< Updated upstream
 				HEADER_SEARCH_PATHS = (../cmake/include,"$(inherited)");
+=======
+>>>>>>> Stashed changes
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "   '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = MachineIndependent;
+=======
+				PRODUCT_NAME = OSDependent;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -1473,6 +2634,7 @@ fi
 			};
 			name = Debug;
 		};
+<<<<<<< Updated upstream
 		0A18310E0170497BB6AFA9FC /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1502,6 +2664,9 @@ fi
 			name = RelWithDebInfo;
 		};
 		16F7C525D9F84016B014E53C /* Release */ = {
+=======
+		0D09008737EB4B4986C4A36E /* Debug */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1519,6 +2684,7 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
+<<<<<<< Updated upstream
 			name = Release;
 		};
 		1DF6DD030C584E2C808D2012 /* RelWithDebInfo */ = {
@@ -1564,6 +2730,11 @@ fi
 			name = Release;
 		};
 		222D94615BE34EDF9566670D /* RelWithDebInfo */ = {
+=======
+			name = Debug;
+		};
+		0F3B494F6C3845F49CC35F2B /* Debug */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1576,14 +2747,24 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("'-Wl,-undefined,error'","$(inherited)");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = install;
+=======
+				PRODUCT_NAME = ALL_BUILD;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
+<<<<<<< Updated upstream
 			name = RelWithDebInfo;
 		};
 		22CD925DF59E4EA78F349841 /* Release */ = {
+=======
+			name = Debug;
+		};
+		1593372ED4624AC180E4D3A8 /* Release */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1597,14 +2778,21 @@ fi
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+<<<<<<< Updated upstream
 				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/SPIRV/..,../cmake/include,"$(inherited)");
+=======
+>>>>>>> Stashed changes
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = SPIRV;
+=======
+				PRODUCT_NAME = OSDependent;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -1612,7 +2800,117 @@ fi
 			};
 			name = Release;
 		};
+<<<<<<< Updated upstream
 		22E997213B8A4838B44A16E1 /* RelWithDebInfo */ = {
+=======
+		19585AEA18E940609317C32E /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/glslang/..,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "glslang-default-resource-limits";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		1D88C51408DB498297CD1CCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MachineIndependent;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		2492F747923E405AAAB19BE7 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("'-Wl,-undefined,error'","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		30E359CD37E84D2599A88265 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "   '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = OGLCompiler;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		3F07A966C9AA45998D70C261 /* RelWithDebInfo */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1641,6 +2939,7 @@ fi
 			};
 			name = RelWithDebInfo;
 		};
+<<<<<<< Updated upstream
 		25549E266B804873B73E013A /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1656,12 +2955,41 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
+=======
+		3F814B95CB0F427A8DFF8010 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = GenericCodeGen;
+				SECTORDER_FLAGS = "";
+				
+>>>>>>> Stashed changes
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = MinSizeRel;
 		};
+<<<<<<< Updated upstream
 		2CE36ACADD044445ADF2B40F /* MinSizeRel */ = {
+=======
+		403D1061F4314D5CBBF727D3 /* RelWithDebInfo */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1679,9 +3007,84 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
+<<<<<<< Updated upstream
 			name = MinSizeRel;
 		};
 		2FBDC031F5D940B68BC144E8 /* Release */ = {
+=======
+			name = RelWithDebInfo;
+		};
+		427B82A5158540D79FD64D09 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				BUILD_DIR = ../lib;
+			};
+			name = Debug;
+		};
+		51FC1ECB4DBD4725953AED3A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = OSDependent;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		552104BDD3AB432A95734757 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = OSDependent;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		5C3B60FBDD60427E90C18951 /* Release */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1695,14 +3098,22 @@ fi
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+<<<<<<< Updated upstream
 				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/glslang/..,../cmake/include,"$(inherited)");
+=======
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/SPIRV/..,../cmake/include,"$(inherited)");
+>>>>>>> Stashed changes
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = glslang;
+=======
+				PRODUCT_NAME = SPIRV;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -1710,7 +3121,11 @@ fi
 			};
 			name = Release;
 		};
+<<<<<<< Updated upstream
 		317D2CF04A364FA6B6DBE1CC /* MinSizeRel */ = {
+=======
+		5E2F71A79A4C49EF85BB3C49 /* MinSizeRel */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1739,11 +3154,365 @@ fi
 			};
 			name = MinSizeRel;
 		};
+<<<<<<< Updated upstream
 		35E8454265F340A48B29D1C2 /* RelWithDebInfo */ = {
+=======
+		694A51147DA646C99C80F55C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/glslang/..,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "   '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "glslang-default-resource-limits";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		6D0F8169BB904204B3D912F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("'-Wl,-undefined,error'","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		74A34B9251B64FCDB3AD18B7 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("'-Wl,-undefined,error'","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		778C0E2D84C14EF4AC3CFC3A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = OGLCompiler;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		8166BD2B4BB349C4BB943123 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MachineIndependent;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		82837839C17849E1B3CF4BC4 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = OGLCompiler;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		832EB267B5F64ADB97988B3D /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/glslang/..,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "glslang-default-resource-limits";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		87D3BB0418AB40519D9F6583 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = OGLCompiler;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		8CDAE1825C8D4213AC19CD42 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("'-Wl,-undefined,error'","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		937FB2091FD34FCA8762E7D5 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = GenericCodeGen;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		9494BA267CFC49C0998748D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = GenericCodeGen;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		A6EC0AF34DBD4B70BC3B9FC9 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("'-Wl,-undefined,error'","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		A6F77A4BF51E4787B9F63802 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = Release;
+		};
+		B35B23976AC2408BBA4B255C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "   '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = GenericCodeGen;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		B5437CDE7801463B967963F0 /* MinSizeRel */ = {
+>>>>>>> Stashed changes
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+<<<<<<< Updated upstream
 				COMBINE_HIDPI_IMAGES = YES;
 				
 				EXECUTABLE_PREFIX = lib;
@@ -1793,9 +3562,19 @@ fi
 				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
+=======
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+>>>>>>> Stashed changes
 			};
-			name = Debug;
+			name = MinSizeRel;
 		};
+<<<<<<< Updated upstream
 		590AE829DFC247448E94C3A8 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1817,6 +3596,9 @@ fi
 			name = RelWithDebInfo;
 		};
 		67EAAA473BFB4FDD8CDDCE9D /* RelWithDebInfo */ = {
+=======
+		B545B73A01E94AD8B2062CF9 /* RelWithDebInfo */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1830,13 +3612,21 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+<<<<<<< Updated upstream
+=======
+				HEADER_SEARCH_PATHS = (../cmake/include,"$(inherited)");
+>>>>>>> Stashed changes
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = OGLCompiler;
+=======
+				PRODUCT_NAME = MachineIndependent;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -1844,7 +3634,11 @@ fi
 			};
 			name = RelWithDebInfo;
 		};
+<<<<<<< Updated upstream
 		69F871802FFE40169C55450A /* Release */ = {
+=======
+		BD9575F572E448649EE3F443 /* Release */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1864,6 +3658,7 @@ fi
 			};
 			name = Release;
 		};
+<<<<<<< Updated upstream
 		705BC323D57247D8AAFB430E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1942,6 +3737,9 @@ fi
 			name = Release;
 		};
 		7DD9A881DA154EA88D550F7D /* Debug */ = {
+=======
+		BE5392F903394AFD8FF561C7 /* Debug */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1970,6 +3768,7 @@ fi
 			};
 			name = Debug;
 		};
+<<<<<<< Updated upstream
 		7EFAC408588A4CD8889ED7CD /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2028,6 +3827,9 @@ fi
 			name = MinSizeRel;
 		};
 		80D117A1C8D94826858DE3FD /* Debug */ = {
+=======
+		C01E25EB13704A4AAFC0EAAD /* Debug */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2041,14 +3843,22 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+<<<<<<< Updated upstream
 				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/glslang/..,"$(inherited)");
+=======
+				HEADER_SEARCH_PATHS = (../cmake/include,"$(inherited)");
+>>>>>>> Stashed changes
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "   '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = "glslang-default-resource-limits";
+=======
+				PRODUCT_NAME = MachineIndependent;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -2056,7 +3866,11 @@ fi
 			};
 			name = Debug;
 		};
+<<<<<<< Updated upstream
 		82DE162907C144E6A331BF52 /* RelWithDebInfo */ = {
+=======
+		D04130026EEF471683397B94 /* RelWithDebInfo */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2070,13 +3884,21 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+<<<<<<< Updated upstream
+=======
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/SPIRV/..,../cmake/include,"$(inherited)");
+>>>>>>> Stashed changes
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = OSDependent;
+=======
+				PRODUCT_NAME = SPIRV;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -2084,6 +3906,7 @@ fi
 			};
 			name = RelWithDebInfo;
 		};
+<<<<<<< Updated upstream
 		85B76E19940D4445A3FECD7E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2274,6 +4097,9 @@ fi
 			name = RelWithDebInfo;
 		};
 		BE426E4CE31344BF99B0F69F /* Debug */ = {
+=======
+		D24BD01287A04A2E899021C0 /* MinSizeRel */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2291,6 +4117,7 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
+<<<<<<< Updated upstream
 			name = Debug;
 		};
 		C090053B50864C9EAFF8F77F /* MinSizeRel */ = {
@@ -2308,6 +4135,60 @@ fi
 			name = MinSizeRel;
 		};
 		C7958764A9524E53A1526E5B /* Release */ = {
+=======
+			name = MinSizeRel;
+		};
+		D2B3327774F74B6FB0780EA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("'-Wl,-undefined,error'","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		D32F3D0E4BDB4D26B6F27884 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/SPIRV/..,../cmake/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "   '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = SPIRV;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		D5AC093DD42B43EBA5BB70F8 /* Release */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2336,6 +4217,7 @@ fi
 			};
 			name = Release;
 		};
+<<<<<<< Updated upstream
 		CA56E950B4F84AE08501B171 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2386,6 +4268,23 @@ fi
 			name = MinSizeRel;
 		};
 		E3546C36926243D5B46EE744 /* Debug */ = {
+=======
+		EC0A2893DD58467596E3B96C /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = RelWithDebInfo;
+		};
+		F17B02569E1048858CC32077 /* Debug */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2398,14 +4297,22 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("'-Wl,-undefined,error'","$(inherited)");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = ZERO_CHECK;
+=======
+				PRODUCT_NAME = install;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
+<<<<<<< Updated upstream
 		E53F6EF1D329454BB10C7858 /* MinSizeRel */ = {
+=======
+		F2F07B6D1060412B9B20E5DA /* MinSizeRel */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2419,13 +4326,21 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+<<<<<<< Updated upstream
+=======
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/glslang/..,../cmake/include,"$(inherited)");
+>>>>>>> Stashed changes
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = OGLCompiler;
+=======
+				PRODUCT_NAME = glslang;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -2433,7 +4348,11 @@ fi
 			};
 			name = MinSizeRel;
 		};
+<<<<<<< Updated upstream
 		F21F20AC67624FDFBB9B76B7 /* RelWithDebInfo */ = {
+=======
+		FF0148EE84DF440D911DDF4F /* Release */ = {
+>>>>>>> Stashed changes
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2442,24 +4361,38 @@ fi
 				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
+<<<<<<< Updated upstream
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (../cmake/include,"$(inherited)");
+=======
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLSLANG_OSINCLUDE_UNIX,"'ENABLE_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/glslang/glslang/..,../cmake/include,"$(inherited)");
+>>>>>>> Stashed changes
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=c++17' -fPIC -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wunused-parameter -Wunused-value -Wunused-variable -fno-rtti -fno-exceptions ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
+<<<<<<< Updated upstream
 				PRODUCT_NAME = MachineIndependent;
+=======
+				PRODUCT_NAME = glslang;
+>>>>>>> Stashed changes
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
+<<<<<<< Updated upstream
 			name = RelWithDebInfo;
 		};
 		F583C663AB1149138DCEB12D /* MinSizeRel */ = {
@@ -2518,10 +4451,14 @@ fi
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
+=======
+			name = Release;
+>>>>>>> Stashed changes
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+<<<<<<< Updated upstream
 		0FD47650286E44F681C03273 /* Build configuration list for PBXNativeTarget "glslang-default-resource-limits" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2529,10 +4466,20 @@ fi
 				C7958764A9524E53A1526E5B /* Release */,
 				80310039CC5E493CBE542BAA /* MinSizeRel */,
 				35E8454265F340A48B29D1C2 /* RelWithDebInfo */,
+=======
+		5DF088B7C26A4610A5B96B92 /* Build configuration list for PBXNativeTarget "OGLCompiler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30E359CD37E84D2599A88265 /* Debug */,
+				87D3BB0418AB40519D9F6583 /* Release */,
+				82837839C17849E1B3CF4BC4 /* MinSizeRel */,
+				778C0E2D84C14EF4AC3CFC3A /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		6BD6D5F2D32244ECB3D4FF65 /* Build configuration list for PBXNativeTarget "MachineIndependent" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2540,10 +4487,20 @@ fi
 				705BC323D57247D8AAFB430E /* Release */,
 				D5FB5E2BAB1E4B71B0BA3DB7 /* MinSizeRel */,
 				F21F20AC67624FDFBB9B76B7 /* RelWithDebInfo */,
+=======
+		822CC7DDB7E64EDC9AB4AE67 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F3B494F6C3845F49CC35F2B /* Debug */,
+				6D0F8169BB904204B3D912F6 /* Release */,
+				D24BD01287A04A2E899021C0 /* MinSizeRel */,
+				74A34B9251B64FCDB3AD18B7 /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		6FC7BC1EA80048CC8BED616A /* Build configuration list for PBXNativeTarget "OGLCompiler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2551,10 +4508,20 @@ fi
 				21504A3B691D43D789A1630A /* Release */,
 				E53F6EF1D329454BB10C7858 /* MinSizeRel */,
 				67EAAA473BFB4FDD8CDDCE9D /* RelWithDebInfo */,
+=======
+		846F25A99A2A4665833E4C63 /* Build configuration list for PBXNativeTarget "MachineIndependent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01E25EB13704A4AAFC0EAAD /* Debug */,
+				1D88C51408DB498297CD1CCA /* Release */,
+				8166BD2B4BB349C4BB943123 /* MinSizeRel */,
+				B545B73A01E94AD8B2062CF9 /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		73767AF53FD5494DA456CDD3 /* Build configuration list for PBXNativeTarget "GenericCodeGen" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2562,10 +4529,20 @@ fi
 				7C189EEEF58C4195B74AB119 /* Release */,
 				7EFAC408588A4CD8889ED7CD /* MinSizeRel */,
 				0A18310E0170497BB6AFA9FC /* RelWithDebInfo */,
+=======
+		87835C9C84694B5DAB96FDA1 /* Build configuration list for PBXNativeTarget "OSDependent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0932D5209BCF4533B24824CF /* Debug */,
+				1593372ED4624AC180E4D3A8 /* Release */,
+				552104BDD3AB432A95734757 /* MinSizeRel */,
+				51FC1ECB4DBD4725953AED3A /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		75DA17C8C86F4464B64CF527 /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2573,10 +4550,20 @@ fi
 				69F871802FFE40169C55450A /* Release */,
 				75542BF78D6E40B2859C7015 /* MinSizeRel */,
 				222D94615BE34EDF9566670D /* RelWithDebInfo */,
+=======
+		9381E48C06814274B2FCC710 /* Build configuration list for PBXNativeTarget "SPIRV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D32F3D0E4BDB4D26B6F27884 /* Debug */,
+				5C3B60FBDD60427E90C18951 /* Release */,
+				5E2F71A79A4C49EF85BB3C49 /* MinSizeRel */,
+				D04130026EEF471683397B94 /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		7E565578C4B24357B5A2A376 /* Build configuration list for PBXProject "glslang" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2584,10 +4571,20 @@ fi
 				A581108C23E34AA688C97A90 /* Release */,
 				C090053B50864C9EAFF8F77F /* MinSizeRel */,
 				1DF6DD030C584E2C808D2012 /* RelWithDebInfo */,
+=======
+		9887C24A769440319E2E1E09 /* Build configuration list for PBXProject "glslang" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				427B82A5158540D79FD64D09 /* Debug */,
+				A6F77A4BF51E4787B9F63802 /* Release */,
+				B5437CDE7801463B967963F0 /* MinSizeRel */,
+				EC0A2893DD58467596E3B96C /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		83CFC7482BBA4018994EFB55 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2595,10 +4592,20 @@ fi
 				16F7C525D9F84016B014E53C /* Release */,
 				2CE36ACADD044445ADF2B40F /* MinSizeRel */,
 				590AE829DFC247448E94C3A8 /* RelWithDebInfo */,
+=======
+		A5AC89064EA8494DA6F1CACA /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D09008737EB4B4986C4A36E /* Debug */,
+				D2B3327774F74B6FB0780EA3 /* Release */,
+				2492F747923E405AAAB19BE7 /* MinSizeRel */,
+				403D1061F4314D5CBBF727D3 /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		A0FD49894FC740A89AC1E848 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2606,10 +4613,20 @@ fi
 				0729D576CF0B45A686315CF6 /* Release */,
 				25549E266B804873B73E013A /* MinSizeRel */,
 				CA56E950B4F84AE08501B171 /* RelWithDebInfo */,
+=======
+		B552ECA51F6945B28E853B79 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F17B02569E1048858CC32077 /* Debug */,
+				BD9575F572E448649EE3F443 /* Release */,
+				8CDAE1825C8D4213AC19CD42 /* MinSizeRel */,
+				A6EC0AF34DBD4B70BC3B9FC9 /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		A6E752D53CDF4184BD093177 /* Build configuration list for PBXNativeTarget "glslang" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2617,10 +4634,20 @@ fi
 				2FBDC031F5D940B68BC144E8 /* Release */,
 				951B47172FBA4E8FADBC8EEA /* MinSizeRel */,
 				22E997213B8A4838B44A16E1 /* RelWithDebInfo */,
+=======
+		C39A3547253A4041A4BC0705 /* Build configuration list for PBXNativeTarget "GenericCodeGen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B35B23976AC2408BBA4B255C /* Debug */,
+				9494BA267CFC49C0998748D0 /* Release */,
+				3F814B95CB0F427A8DFF8010 /* MinSizeRel */,
+				937FB2091FD34FCA8762E7D5 /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		C084BF34740943C9BBD0D14B /* Build configuration list for PBXNativeTarget "OSDependent" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2628,10 +4655,20 @@ fi
 				8B83C245EDBA4FF2BC2C1C51 /* Release */,
 				F583C663AB1149138DCEB12D /* MinSizeRel */,
 				82DE162907C144E6A331BF52 /* RelWithDebInfo */,
+=======
+		E22A75BFAAFE498A9A161237 /* Build configuration list for PBXNativeTarget "glslang" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE5392F903394AFD8FF561C7 /* Debug */,
+				FF0148EE84DF440D911DDF4F /* Release */,
+				F2F07B6D1060412B9B20E5DA /* MinSizeRel */,
+				3F07A966C9AA45998D70C261 /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+<<<<<<< Updated upstream
 		EBA90CCB72034F83A6CF53AA /* Build configuration list for PBXNativeTarget "SPIRV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2639,11 +4676,24 @@ fi
 				22CD925DF59E4EA78F349841 /* Release */,
 				317D2CF04A364FA6B6DBE1CC /* MinSizeRel */,
 				B050451DB6F444FFBAD19BE7 /* RelWithDebInfo */,
+=======
+		FB99EFD42F2C456DAE492770 /* Build configuration list for PBXNativeTarget "glslang-default-resource-limits" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				694A51147DA646C99C80F55C /* Debug */,
+				D5AC093DD42B43EBA5BB70F8 /* Release */,
+				832EB267B5F64ADB97988B3D /* MinSizeRel */,
+				19585AEA18E940609317C32E /* RelWithDebInfo */,
+>>>>>>> Stashed changes
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
+<<<<<<< Updated upstream
 	rootObject = 3993DA3D4F9B45C89203DB0E /* Project object */;
+=======
+	rootObject = 77541474743A44ACA5482AF9 /* Project object */;
+>>>>>>> Stashed changes
 }

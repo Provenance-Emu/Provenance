@@ -2123,7 +2123,9 @@ static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsi
         const uint32_t *src = (uint16_t*)data + offset;
         uint32_t *dst = strongCurrent->videoBuffer + y * width;
 
-        memcpy(dst, src, sizeof(uint32_t)*width);
+        if(src != NULL && dst != NULL) {
+            memcpy(dst, src, sizeof(uint32_t)*width);
+        }
     });
 
     strongCurrent = nil;

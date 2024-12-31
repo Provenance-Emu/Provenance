@@ -52,21 +52,39 @@ extern const char* const f_fa91_flash_vf4evob_nvmem_zip_end;
 // Pointers to resources/flash/vf4tuned.nvmem.zip
 extern const char* const f_bbdd_flash_vf4tuned_nvmem_zip_begin;
 extern const char* const f_bbdd_flash_vf4tuned_nvmem_zip_end;
-// Pointers to fonts/printer_ascii8x16.bin
-extern const char* const f_86fc_fonts_printer_ascii8x16_bin_begin;
-extern const char* const f_86fc_fonts_printer_ascii8x16_bin_end;
-// Pointers to fonts/printer_ascii12x24.bin
-extern const char* const f_9a8f_fonts_printer_ascii12x24_bin_begin;
-extern const char* const f_9a8f_fonts_printer_ascii12x24_bin_end;
-// Pointers to fonts/printer_kanji16x16.bin
-extern const char* const f_cbc3_fonts_printer_kanji16x16_bin_begin;
-extern const char* const f_cbc3_fonts_printer_kanji16x16_bin_end;
-// Pointers to fonts/printer_kanji24x24.bin
-extern const char* const f_2e10_fonts_printer_kanji24x24_bin_begin;
-extern const char* const f_2e10_fonts_printer_kanji24x24_bin_end;
-// Pointers to fonts/biosfont.bin
-extern const char* const f_df08_fonts_biosfont_bin_begin;
-extern const char* const f_df08_fonts_biosfont_bin_end;
+// Pointers to resources/flash/magicpop.nvmem.zip
+extern const char* const f_7186_flash_magicpop_nvmem_zip_begin;
+extern const char* const f_7186_flash_magicpop_nvmem_zip_end;
+// Pointers to resources/flash/ochaken.nvmem.zip
+extern const char* const f_cee4_flash_ochaken_nvmem_zip_begin;
+extern const char* const f_cee4_flash_ochaken_nvmem_zip_end;
+// Pointers to resources/flash/puyomedal.nvmem.zip
+extern const char* const f_0b8a_flash_puyomedal_nvmem_zip_begin;
+extern const char* const f_0b8a_flash_puyomedal_nvmem_zip_end;
+// Pointers to resources/flash/unomedal.nvmem.zip
+extern const char* const f_c44c_flash_unomedal_nvmem_zip_begin;
+extern const char* const f_c44c_flash_unomedal_nvmem_zip_end;
+// Pointers to resources/flash/westdrmg.nvmem.zip
+extern const char* const f_b7d3_flash_westdrmg_nvmem_zip_begin;
+extern const char* const f_b7d3_flash_westdrmg_nvmem_zip_end;
+// Pointers to resources/picture/f355_print_template.png
+extern const char* const f_1289_picture_f355_print_template_png_begin;
+extern const char* const f_1289_picture_f355_print_template_png_end;
+// Pointers to fonts/printer_ascii8x16.bin.zip
+extern const char* const f_f4d5_fonts_printer_ascii8x16_bin_zip_begin;
+extern const char* const f_f4d5_fonts_printer_ascii8x16_bin_zip_end;
+// Pointers to fonts/printer_ascii12x24.bin.zip
+extern const char* const f_87b3_fonts_printer_ascii12x24_bin_zip_begin;
+extern const char* const f_87b3_fonts_printer_ascii12x24_bin_zip_end;
+// Pointers to fonts/printer_kanji16x16.bin.zip
+extern const char* const f_dc64_fonts_printer_kanji16x16_bin_zip_begin;
+extern const char* const f_dc64_fonts_printer_kanji16x16_bin_zip_end;
+// Pointers to fonts/printer_kanji24x24.bin.zip
+extern const char* const f_2788_fonts_printer_kanji24x24_bin_zip_begin;
+extern const char* const f_2788_fonts_printer_kanji24x24_bin_zip_end;
+// Pointers to fonts/biosfont.bin.zip
+extern const char* const f_d593_fonts_biosfont_bin_zip_begin;
+extern const char* const f_d593_fonts_biosfont_bin_zip_end;
 }
 
 namespace {
@@ -84,6 +102,8 @@ get_root_index() {
     (void)root_directory_dir;
     static auto f_a394_flash_dir = root_directory_dir.directory.add_subdir("flash");
     root_index.emplace("flash", &f_a394_flash_dir.index_entry);
+    static auto f_5456_picture_dir = root_directory_dir.directory.add_subdir("picture");
+    root_index.emplace("picture", &f_5456_picture_dir.index_entry);
     static auto f_980d_fonts_dir = root_directory_dir.directory.add_subdir("fonts");
     root_index.emplace("fonts", &f_980d_fonts_dir.index_entry);
     root_index.emplace(
@@ -207,43 +227,91 @@ get_root_index() {
         )
     );
     root_index.emplace(
-        "fonts/printer_ascii8x16.bin",
-        f_980d_fonts_dir.directory.add_file(
-            "printer_ascii8x16.bin",
-            res_chars::f_86fc_fonts_printer_ascii8x16_bin_begin,
-            res_chars::f_86fc_fonts_printer_ascii8x16_bin_end
+        "flash/magicpop.nvmem.zip",
+        f_a394_flash_dir.directory.add_file(
+            "magicpop.nvmem.zip",
+            res_chars::f_7186_flash_magicpop_nvmem_zip_begin,
+            res_chars::f_7186_flash_magicpop_nvmem_zip_end
         )
     );
     root_index.emplace(
-        "fonts/printer_ascii12x24.bin",
-        f_980d_fonts_dir.directory.add_file(
-            "printer_ascii12x24.bin",
-            res_chars::f_9a8f_fonts_printer_ascii12x24_bin_begin,
-            res_chars::f_9a8f_fonts_printer_ascii12x24_bin_end
+        "flash/ochaken.nvmem.zip",
+        f_a394_flash_dir.directory.add_file(
+            "ochaken.nvmem.zip",
+            res_chars::f_cee4_flash_ochaken_nvmem_zip_begin,
+            res_chars::f_cee4_flash_ochaken_nvmem_zip_end
         )
     );
     root_index.emplace(
-        "fonts/printer_kanji16x16.bin",
-        f_980d_fonts_dir.directory.add_file(
-            "printer_kanji16x16.bin",
-            res_chars::f_cbc3_fonts_printer_kanji16x16_bin_begin,
-            res_chars::f_cbc3_fonts_printer_kanji16x16_bin_end
+        "flash/puyomedal.nvmem.zip",
+        f_a394_flash_dir.directory.add_file(
+            "puyomedal.nvmem.zip",
+            res_chars::f_0b8a_flash_puyomedal_nvmem_zip_begin,
+            res_chars::f_0b8a_flash_puyomedal_nvmem_zip_end
         )
     );
     root_index.emplace(
-        "fonts/printer_kanji24x24.bin",
-        f_980d_fonts_dir.directory.add_file(
-            "printer_kanji24x24.bin",
-            res_chars::f_2e10_fonts_printer_kanji24x24_bin_begin,
-            res_chars::f_2e10_fonts_printer_kanji24x24_bin_end
+        "flash/unomedal.nvmem.zip",
+        f_a394_flash_dir.directory.add_file(
+            "unomedal.nvmem.zip",
+            res_chars::f_c44c_flash_unomedal_nvmem_zip_begin,
+            res_chars::f_c44c_flash_unomedal_nvmem_zip_end
         )
     );
     root_index.emplace(
-        "fonts/biosfont.bin",
+        "flash/westdrmg.nvmem.zip",
+        f_a394_flash_dir.directory.add_file(
+            "westdrmg.nvmem.zip",
+            res_chars::f_b7d3_flash_westdrmg_nvmem_zip_begin,
+            res_chars::f_b7d3_flash_westdrmg_nvmem_zip_end
+        )
+    );
+    root_index.emplace(
+        "picture/f355_print_template.png",
+        f_5456_picture_dir.directory.add_file(
+            "f355_print_template.png",
+            res_chars::f_1289_picture_f355_print_template_png_begin,
+            res_chars::f_1289_picture_f355_print_template_png_end
+        )
+    );
+    root_index.emplace(
+        "fonts/printer_ascii8x16.bin.zip",
         f_980d_fonts_dir.directory.add_file(
-            "biosfont.bin",
-            res_chars::f_df08_fonts_biosfont_bin_begin,
-            res_chars::f_df08_fonts_biosfont_bin_end
+            "printer_ascii8x16.bin.zip",
+            res_chars::f_f4d5_fonts_printer_ascii8x16_bin_zip_begin,
+            res_chars::f_f4d5_fonts_printer_ascii8x16_bin_zip_end
+        )
+    );
+    root_index.emplace(
+        "fonts/printer_ascii12x24.bin.zip",
+        f_980d_fonts_dir.directory.add_file(
+            "printer_ascii12x24.bin.zip",
+            res_chars::f_87b3_fonts_printer_ascii12x24_bin_zip_begin,
+            res_chars::f_87b3_fonts_printer_ascii12x24_bin_zip_end
+        )
+    );
+    root_index.emplace(
+        "fonts/printer_kanji16x16.bin.zip",
+        f_980d_fonts_dir.directory.add_file(
+            "printer_kanji16x16.bin.zip",
+            res_chars::f_dc64_fonts_printer_kanji16x16_bin_zip_begin,
+            res_chars::f_dc64_fonts_printer_kanji16x16_bin_zip_end
+        )
+    );
+    root_index.emplace(
+        "fonts/printer_kanji24x24.bin.zip",
+        f_980d_fonts_dir.directory.add_file(
+            "printer_kanji24x24.bin.zip",
+            res_chars::f_2788_fonts_printer_kanji24x24_bin_zip_begin,
+            res_chars::f_2788_fonts_printer_kanji24x24_bin_zip_end
+        )
+    );
+    root_index.emplace(
+        "fonts/biosfont.bin.zip",
+        f_980d_fonts_dir.directory.add_file(
+            "biosfont.bin.zip",
+            res_chars::f_d593_fonts_biosfont_bin_zip_begin,
+            res_chars::f_d593_fonts_biosfont_bin_zip_end
         )
     );
     return root_index;

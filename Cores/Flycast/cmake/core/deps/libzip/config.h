@@ -4,6 +4,7 @@
 #include "zipconf.h"
 #endif
 /* BEGIN DEFINES */
+#define ENABLE_FDOPEN
 /* #undef HAVE___PROGNAME */
 /* #undef HAVE__CLOSE */
 /* #undef HAVE__DUP */
@@ -11,11 +12,12 @@
 /* #undef HAVE__FILENO */
 /* #undef HAVE__SETMODE */
 /* #undef HAVE__SNPRINTF */
+/* #undef HAVE__SNPRINTF_S */
+/* #undef HAVE__SNWPRINTF_S */
 /* #undef HAVE__STRDUP */
 /* #undef HAVE__STRICMP */
 /* #undef HAVE__STRTOI64 */
 /* #undef HAVE__STRTOUI64 */
-/* #undef HAVE__UMASK */
 /* #undef HAVE__UNLINK */
 #define HAVE_ARC4RANDOM
 #define HAVE_CLONEFILE
@@ -23,22 +25,30 @@
 /* #undef HAVE_CRYPTO */
 /* #undef HAVE_FICLONERANGE */
 #define HAVE_FILENO
+#define HAVE_FCHMOD
 #define HAVE_FSEEKO
 #define HAVE_FTELLO
 #define HAVE_GETPROGNAME
 /* #undef HAVE_GNUTLS */
 /* #undef HAVE_LIBBZ2 */
 /* #undef HAVE_LIBLZMA */
-/* #undef HAVE_LIBZSTD */
+#define HAVE_LIBZSTD
 #define HAVE_LOCALTIME_R
+/* #undef HAVE_LOCALTIME_S */
+/* #undef HAVE_MEMCPY_S */
 /* #undef HAVE_MBEDTLS */
 /* #undef HAVE_MKSTEMP */
 #define HAVE_NULLABLE
 /* #undef HAVE_OPENSSL */
 #define HAVE_SETMODE
+#define HAVE_SNPRINTF
+/* #undef HAVE_SNPRINTF_S */
 #define HAVE_STRCASECMP
 #define HAVE_STRDUP
+/* #undef HAVE_STRERROR_S */
+/* #undef HAVE_STRERRORLEN_S */
 /* #undef HAVE_STRICMP */
+/* #undef HAVE_STRNCPY_S */
 #define HAVE_STRTOLL
 #define HAVE_STRTOULL
 /* #undef HAVE_STRUCT_TM_TM_ZONE */

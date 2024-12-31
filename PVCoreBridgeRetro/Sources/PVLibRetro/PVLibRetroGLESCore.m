@@ -114,14 +114,14 @@ void gl_swap() {
 }
 #endif
 
-//- (BOOL)loadFileAtPath:(NSString *)path error:(NSError * _Nullable __autoreleasing *)error {
-//#if !TARGET_OS_MACCATALYST
-//    EAGLContext* context = [self bestContext];
-//    ILOG(@"%i", context.API);
-//#endif
-//
-//    return [super loadFileAtPath:path error:error];
-//}
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError * _Nullable __autoreleasing *)error {
+#if !TARGET_OS_MACCATALYST
+    EAGLContext* context = [self bestContext];
+    ILOG(@"%i", context.API);
+#endif
+
+    return [super loadFileAtPath:path error:error];
+}
 
 - (BOOL)rendersToOpenGL { return YES; }
 - (BOOL)isDoubleBuffered { return YES; }
@@ -142,9 +142,9 @@ void gl_swap() {
 }
 
 - (void)videoInterrupt {
-//    dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
-//
-//    dispatch_semaphore_wait(glesWaitToBeginFrameSemaphore, [self frameTime]);
+   dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+
+    dispatch_semaphore_wait(glesWaitToBeginFrameSemaphore, [self frameTime]);
 }
 
 - (void)swapBuffers {
@@ -152,9 +152,9 @@ void gl_swap() {
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
-//    dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
-//
-//    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
+    dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
+
+    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
 }
 
 - (void)executeFrame {
@@ -279,8 +279,8 @@ static bool video_driver_cached_frame(void)
     {
         [[NSThread currentThread] setName:@"runGLESRenderThread"];
         [self.renderDelegate startRenderingOnAlternateThread];
-//        BOOL success = gles_init();
-//        assert(success);
+        BOOL success = gles_init();
+        assert(success);
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     EAGLContext* context = [self bestContext];
     ILOG(@"%i", context.API);
@@ -329,7 +329,7 @@ static bool video_driver_cached_frame(void)
    
     MakeCurrentThreadRealTime();
 
-//    [self.renderDelegate startRenderingOnAlternateThread];
+    [self.renderDelegate startRenderingOnAlternateThread];
     has_init = true;
     
     
