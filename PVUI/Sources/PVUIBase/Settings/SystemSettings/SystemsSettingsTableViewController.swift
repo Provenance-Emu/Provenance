@@ -108,7 +108,7 @@ public final class SystemsSettingsTableViewController: QuickTableViewController 
                             cell.backgroundView?.backgroundColor = backgroundColor
                         },
                         action: { _ in
-#if os(iOS)
+#if !os(tvOS)
                             UIPasteboard.general.string = bios.expectedMD5.uppercased()
                             let alert = UIAlertController(title: nil, message: "MD5 copied to clipboard.", preferredStyle: .alert)
                             self.present(alert, animated: true)
