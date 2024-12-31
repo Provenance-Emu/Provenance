@@ -54,8 +54,17 @@ jobs:
     runs-on: 'macos-latest'
     timeout-minutes: 300
     steps:
+      - name: Cache Git checkout
+        uses: actions/cache@v3
+        with:
+          path: .
+          key: git-checkout-${{ github.sha }}
+          restore-keys: |
+            git-checkout-
+
       - name: Checkout code
-        uses: actions/checkout@v3
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
@@ -191,3 +200,9 @@ jobs:
               }
             }]
           }'
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -rf .git
+          rm -rf .build
