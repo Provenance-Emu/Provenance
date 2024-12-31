@@ -5737,6 +5737,9 @@
 					"USE_VULKAN=1",
 					"IOS=1",
 					"TARGET_NO_AREC=1",
+					"USE_OPENGL=1",
+					"GLES=1",
+					"HAVE_OPENGLES=1",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
@@ -5841,6 +5844,9 @@
 					"USE_VULKAN=1",
 					"IOS=1",
 					"TARGET_NO_AREC=1",
+					"USE_OPENGL=1",
+					"GLES=1",
+					"HAVE_OPENGLES=1",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
@@ -6669,6 +6675,9 @@
 					"USE_VULKAN=1",
 					"IOS=1",
 					"TARGET_NO_AREC=1",
+					"USE_OPENGL=1",
+					"GLES=1",
+					"HAVE_OPENGLES=1",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
@@ -8395,6 +8404,9 @@
 					"USE_VULKAN=1",
 					"IOS=1",
 					"TARGET_NO_AREC=1",
+					"USE_OPENGL=1",
+					"GLES=1",
+					"HAVE_OPENGLES=1",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
