@@ -92,7 +92,6 @@
 		0DA635459A884C2FBC04AD66 /* compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB489804734B4A478ACF7589 /* compiler.cpp */; };
 		0DF56F4C0D1045ABAAF94F52 /* pico_md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4E05E1E788DA4F41B222FD40 /* pico_md5.c */; };
 		0E4A7FEB9A3D4D0292FF6DF9 /* IntermTraverse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3CE7E7E2E4E4C679935FB1D /* IntermTraverse.cpp */; };
-		0F20FABF93A64346ADCAF3C5 /* blockmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86B497550DFB42BD81FAE1DF /* blockmanager.cpp */; };
 		0F4BCEE570944DCDA9AAD53A /* zip_set_archive_comment.c in Sources */ = {isa = PBXBuildFile; fileRef = 55DE0EC03D7B40B5AFC44BE0 /* zip_set_archive_comment.c */; };
 		102BD5EB765C4E64BB00D1EF /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2E4826EC5BEA4A679CE87969 /* Alloc.c */; };
 		11B1BE71CF0D4F4CA5D2EC8A /* pointer-auth-aarch64.cc in Sources */ = {isa = PBXBuildFile; fileRef = C41B73A5259540C99053730C /* pointer-auth-aarch64.cc */; };
@@ -120,7 +119,6 @@
 		1E0C71D020F14C2B9CB61806 /* maple_cfg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 298DAC68597149CA98056C37 /* maple_cfg.cpp */; };
 		1E326CDE573843A2B9577699 /* printer_kanji16x16.bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EC45E4F2888484A89D6AB3B /* printer_kanji16x16.bin.cpp */; };
 		1E7176A4B42646058B9BF720 /* naomi_roms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1668D014213B418F95228EED /* naomi_roms.cpp */; };
-		1F11C33B2B374EBE80135473 /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E24E70A737435DA61F95D7 /* driver.cpp */; };
 		1F13CA586EAB4BF3A036D42B /* zip_source_file_stdio_named.c in Sources */ = {isa = PBXBuildFile; fileRef = A4BEC9CDC3564757927D9F3E /* zip_source_file_stdio_named.c */; };
 		1FB7CC22A5754BF2A1EB2EAA /* zip_source_seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 4259991386684245B6491431 /* zip_source_seek.c */; };
 		2078E3434FB749F38AA0C921 /* gdrom_response.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 835C21E4C2834950966A6A8B /* gdrom_response.cpp */; };
@@ -226,7 +224,6 @@
 		67F2580CCECC444DB32CFD4D /* zip_source_get_file_attributes.c in Sources */ = {isa = PBXBuildFile; fileRef = 36A6F05AEA7C460F967F004C /* zip_source_get_file_attributes.c */; };
 		68225723D5D64E33B9EADD00 /* zip_get_file_comment.c in Sources */ = {isa = PBXBuildFile; fileRef = E733C98262A4408CA87ABE0E /* zip_get_file_comment.c */; };
 		6916D060913046809B573292 /* gdi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74ECAD88876C477F81970B37 /* gdi.cpp */; };
-		6A668C8EDC1E440F9DF5E9B6 /* decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7C6E27E6DA4DDF949B7BA5 /* decoder.cpp */; };
 		6B6EE02B277242F8B30130B3 /* elf32.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B67A8A3E90D4C3497CA604A /* elf32.c */; };
 		6BED435E97334CAA9BD351C0 /* zip_add.c in Sources */ = {isa = PBXBuildFile; fileRef = 3F5F39B4BBCC4BC38AEBF7F7 /* zip_add.c */; };
 		6DAFEDD7E648461890B541AF /* zip_buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = E35C06749D344DBCA118C624 /* zip_buffer.c */; };
@@ -269,7 +266,6 @@
 		7E29EA3541984C7D9732EF20 /* pico_protocol.c in Sources */ = {isa = PBXBuildFile; fileRef = B7D17DE1D5824A50AE14C62F /* pico_protocol.c */; };
 		7E87507C82584F5C98651191 /* m1cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF94E62DF2464592A63F2B68 /* m1cartridge.cpp */; };
 		7EF4C0A5F95C4A179D2F0403 /* PoolAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4164500012EF494C83E8056A /* PoolAlloc.cpp */; };
-		7F0A508C615C4C238BCDEA0B /* sh4_opcode_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26FDB216CE934DE6979D0AAF /* sh4_opcode_list.cpp */; };
 		803469BC91344F29B9F6583B /* dmac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FC347EAA93342E283D0BC99 /* dmac.cpp */; };
 		805B2756FFD34A54A111C81C /* Intermediate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F50A78499D64920B5E046E4 /* Intermediate.cpp */; };
 		80D2FCAA6938425BADB44E28 /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78EA809815AE40C799C20FFD /* lib.cpp */; };
@@ -294,7 +290,6 @@
 		8B511007795C4A4DBC600200 /* zip_file_replace.c in Sources */ = {isa = PBXBuildFile; fileRef = AE0E3BB5E61345B8BEBB41BD /* zip_file_replace.c */; };
 		8B8A6A13D5D9474FB3F945EE /* libchdr_huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = E41140A16BCF41E7BBBAFA33 /* libchdr_huffman.c */; };
 		8BFCACC23E944041B7839239 /* mmu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6AE955918D74164BD463DDA /* mmu.cpp */; };
-		8CD7D3A304384DA680D5163D /* mem_watch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF90EAB9F3D64606B9D0AB80 /* mem_watch.cpp */; };
 		8D4D4E7A9EC74EF38182A378 /* zip_unchange_all.c in Sources */ = {isa = PBXBuildFile; fileRef = E7F9D4C85597427AB123ACEF /* zip_unchange_all.c */; };
 		8E0726C003854294A91A11C9 /* pipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA6D5DB0E70742B49644A583 /* pipeline.cpp */; };
 		8E25825E608D4E99920BD26F /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D983AE81F8DC470DAE565C8C /* common.cpp */; };
@@ -404,6 +399,13 @@
 		B3AD6A9D2D23960A001E5EC3 /* printer_kanji24x24.bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A962D23960A001E5EC3 /* printer_kanji24x24.bin.cpp */; };
 		B3AD6A9E2D23960A001E5EC3 /* printer_ascii12x24.bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A922D23960A001E5EC3 /* printer_ascii12x24.bin.cpp */; };
 		B3AD6A9F2D23960A001E5EC3 /* printer_ascii8x16.bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A902D23960A001E5EC3 /* printer_ascii8x16.bin.cpp */; };
+		B3AD6DFB2D239BA4001E5EC3 /* mem_watch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF90EAB9F3D64606B9D0AB80 /* mem_watch.cpp */; };
+		B3AD6DFC2D239C02001E5EC3 /* blockmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86B497550DFB42BD81FAE1DF /* blockmanager.cpp */; };
+		B3AD6DFD2D239C4A001E5EC3 /* shil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F0910D1223C45FA8BA4346A /* shil.cpp */; };
+		B3AD6DFF2D239C70001E5EC3 /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E24E70A737435DA61F95D7 /* driver.cpp */; };
+		B3AD6E002D239C79001E5EC3 /* decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7C6E27E6DA4DDF949B7BA5 /* decoder.cpp */; };
+		B3AD6E012D239E98001E5EC3 /* sh4_opcode_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26FDB216CE934DE6979D0AAF /* sh4_opcode_list.cpp */; };
+		B3AD6E022D239EC2001E5EC3 /* ssa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6CBC49E658CD4D969C971DD7 /* ssa.cpp */; };
 		B3AF4505A91341E9ADDC2AA8 /* attribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14C76DB6C40497ABD8E9919 /* attribute.cpp */; };
 		B40862DAD90E4588AB97C7DF /* disasm-aarch64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 89A8D11CB13C41EBA5503799 /* disasm-aarch64.cc */; };
 		B46103E974C5456A83EED3EF /* zip_fopen_index.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A89BC39656E48A8BB491D5C /* zip_fopen_index.c */; };
@@ -423,7 +425,6 @@
 		BD7A3789D9A9451F97D4E0DB /* wldkicksu.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDD68D1D4456433F86970801 /* wldkicksu.nvmem.zip.cpp */; };
 		BD9713A01E5F4AC1A8C906F2 /* sh4_fpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB6ABC4653E4256AD54EA8C /* sh4_fpu.cpp */; };
 		BD9F6EB87F614220850C0AEF /* sgc_if.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5F1D12EF744CA8D87C6DC /* sgc_if.cpp */; };
-		BE022571CF01454DB566A06D /* shil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F0910D1223C45FA8BA4346A /* shil.cpp */; };
 		C05EF954C7CE4E17A938D242 /* zip_ftell.c in Sources */ = {isa = PBXBuildFile; fileRef = D3FE45CFCDFF4D00880EA768 /* zip_ftell.c */; };
 		C06EE40DE3F048A2AD778172 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2FFE516F72ED48D8B14661CD /* libretro.cpp */; };
 		C0BF8A13160643139E544052 /* touchscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A05DA6958414244A205F2BA /* touchscreen.cpp */; };
@@ -475,7 +476,6 @@
 		D85C658390704E52A962D88B /* zip_file_error_clear.c in Sources */ = {isa = PBXBuildFile; fileRef = 44C8269E1D6647B8B2DFB917 /* zip_file_error_clear.c */; };
 		D86661DD87074CAD848B168A /* compat_strcasestr.c in Sources */ = {isa = PBXBuildFile; fileRef = 34F86366F00D4DE2A4A368F1 /* compat_strcasestr.c */; };
 		D89589BDE7D841559760A433 /* zip_source_window.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F9D0BCACBD84B28A6920CCE /* zip_source_window.c */; };
-		D8A807A1D6B749C292A7E1B9 /* ssa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6CBC49E658CD4D969C971DD7 /* ssa.cpp */; };
 		D9D522C06DA94A8BAA0465A2 /* maple_if.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51112972F69F4DB7BF6F0001 /* maple_if.cpp */; };
 		D9D69709F55844BFBCE02BA7 /* aica.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0258227CF25647ACA81AC488 /* aica.cpp */; };
 		DA93A263F08C452082BB76A8 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 80BE2E8425124101BFB9D7C8 /* crc32.c */; };
@@ -5096,11 +5096,13 @@
 				7A31126B33AE4782AB1E4B65 /* md5.cpp in Sources */,
 				71D417F977F54BD5AB442EEA /* pico_arp.c in Sources */,
 				C5C0C96D6A874379A5F4F935 /* pico_dev_ppp.c in Sources */,
+				B3AD6E022D239EC2001E5EC3 /* ssa.cpp in Sources */,
 				083B9EE64A124000B3666D81 /* pico_dhcp_common.c in Sources */,
 				B31477D62CFFFF29009FB8B3 /* Bra.c in Sources */,
 				7D5806DC09EB49478BAB5CE7 /* pico_dhcp_server.c in Sources */,
 				B67197F9B68B4085AB130971 /* pico_dns_client.c in Sources */,
 				21AF202BC7CA4A149EFD7006 /* pico_dns_common.c in Sources */,
+				B3AD6DFB2D239BA4001E5EC3 /* mem_watch.cpp in Sources */,
 				A99A84D2392C4CF1A341B72B /* pico_ethernet.c in Sources */,
 				C9C72AA6D0FB4283A26B95F8 /* pico_fragments.c in Sources */,
 				162E36540A744A72999E989B /* pico_icmp4.c in Sources */,
@@ -5148,6 +5150,7 @@
 				3DD9E19DDBED485FAAF6EC8B /* dsp_interp.cpp in Sources */,
 				D20C642C6D1B40C08568CE64 /* dsp_x64.cpp in Sources */,
 				ADB6C780D90B40BA96E30165 /* dsp_x86.cpp in Sources */,
+				B3AD6E012D239E98001E5EC3 /* sh4_opcode_list.cpp in Sources */,
 				BD9F6EB87F614220850C0AEF /* sgc_if.cpp in Sources */,
 				30F47D6A802740909AAD9C28 /* arm7.cpp in Sources */,
 				3216E31F951D4C8EB1019B03 /* arm7_rec.cpp in Sources */,
@@ -5172,7 +5175,6 @@
 				D9D522C06DA94A8BAA0465A2 /* maple_if.cpp in Sources */,
 				2E21528FD7A54B199C3E96F1 /* maple_jvs.cpp in Sources */,
 				292584548BA44C0CBE550F69 /* addrspace.cpp in Sources */,
-				8CD7D3A304384DA680D5163D /* mem_watch.cpp in Sources */,
 				774F2450BB28421CB22B5EC1 /* modem.cpp in Sources */,
 				8E83B912451A4997A32739F6 /* awcartridge.cpp in Sources */,
 				B6EC0EC16A974091B947425C /* card_reader.cpp in Sources */,
@@ -5190,6 +5192,7 @@
 				7D1AB63EF8F14FC7898D281C /* netdimm.cpp in Sources */,
 				E360FC22C5664281BDD7D031 /* printer.cpp in Sources */,
 				C0BF8A13160643139E544052 /* touchscreen.cpp in Sources */,
+				B3AD6E002D239C79001E5EC3 /* decoder.cpp in Sources */,
 				B31477D02CFFFE43009FB8B3 /* 7zCrcOpt.c in Sources */,
 				EDA23A1ABEA3423FBE53FACE /* Renderer_if.cpp in Sources */,
 				D1AB572F3D5744B894A33284 /* elan.cpp in Sources */,
@@ -5202,11 +5205,6 @@
 				C0EEBC77F8594FB49DD73CE1 /* ta_ctx.cpp in Sources */,
 				99F05A5FCE4A488EB06E47FE /* ta_util.cpp in Sources */,
 				16B1E940F775443E8403EACF /* ta_vtx.cpp in Sources */,
-				0F20FABF93A64346ADCAF3C5 /* blockmanager.cpp in Sources */,
-				6A668C8EDC1E440F9DF5E9B6 /* decoder.cpp in Sources */,
-				1F11C33B2B374EBE80135473 /* driver.cpp in Sources */,
-				BE022571CF01454DB566A06D /* shil.cpp in Sources */,
-				D8A807A1D6B749C292A7E1B9 /* ssa.cpp in Sources */,
 				BD9713A01E5F4AC1A8C906F2 /* sh4_fpu.cpp in Sources */,
 				DAB28E999D084A9490057933 /* sh4_interpreter.cpp in Sources */,
 				FA05EFC868AF4096B77304A2 /* sh4_opcodes.cpp in Sources */,
@@ -5217,6 +5215,7 @@
 				44CE87DA63F24D9482F2D158 /* fastmmu.cpp in Sources */,
 				F125FF89BECB42AF9081EFC7 /* intc.cpp in Sources */,
 				8BFCACC23E944041B7839239 /* mmu.cpp in Sources */,
+				B3AD6DFF2D239C70001E5EC3 /* driver.cpp in Sources */,
 				D7F8562B3C5D4B3FB10D7122 /* rtc.cpp in Sources */,
 				A00453AE970B4D078E1E8AB4 /* serial.cpp in Sources */,
 				2E732238F34642D8B4C9CC45 /* tmu.cpp in Sources */,
@@ -5226,8 +5225,8 @@
 				B31477D82CFFFF52009FB8B3 /* Bcj2.c in Sources */,
 				F82D3A6E55C04D7DBCE0D1F6 /* sh4_interrupts.cpp in Sources */,
 				D2A5E2AE556C49E7A070CF74 /* sh4_mem.cpp in Sources */,
+				B3AD6DFC2D239C02001E5EC3 /* blockmanager.cpp in Sources */,
 				DFDEFE2873234A1F8F5EC95B /* sh4_mmr.cpp in Sources */,
-				7F0A508C615C4C238BCDEA0B /* sh4_opcode_list.cpp in Sources */,
 				CD5AFC2E5BD54BF1924E1836 /* sh4_rom.cpp in Sources */,
 				DCD6D6EC24C64DD5B630F81C /* sh4_sched.cpp in Sources */,
 				6324944A1F4344028E0D8175 /* storeq.cpp in Sources */,
@@ -5247,6 +5246,7 @@
 				B31477D32CFFFEB4009FB8B3 /* 7zBuf.c in Sources */,
 				D6A41283749B411DAE30F169 /* alienfnt_modem.cpp in Sources */,
 				4AFBD450C6034DA9AF3AF898 /* dns.cpp in Sources */,
+				B3AD6DFD2D239C4A001E5EC3 /* shil.cpp in Sources */,
 				75E111F554E74C169E551E86 /* ggpo.cpp in Sources */,
 				1D85AE3287E44A33A6F9395F /* miniupnp.cpp in Sources */,
 				520B78391117427CB079F070 /* naomi_network.cpp in Sources */,
@@ -5736,6 +5736,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_VULKAN=1",
 					"IOS=1",
+					"TARGET_NO_AREC=1",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
@@ -5839,6 +5840,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_VULKAN=1",
 					"IOS=1",
+					"TARGET_NO_AREC=1",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
@@ -6666,6 +6668,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_VULKAN=1",
 					"IOS=1",
+					"TARGET_NO_AREC=1",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
@@ -8391,6 +8394,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_VULKAN=1",
 					"IOS=1",
+					"TARGET_NO_AREC=1",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
