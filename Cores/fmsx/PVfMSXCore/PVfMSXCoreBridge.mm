@@ -273,4 +273,37 @@ const struct retro_variable vars[] = {
 #undef V
     return NULL;
 }
+
+- (void)didPushMSXButton:(PVMSXButton)button forPlayer:(NSInteger)player {
+    _pad[player][button] = 1;
+}
+
+-(void)didReleaseMSXButton:(enum PVMSXButton)button forPlayer:(NSInteger)player {
+    _pad[player][button] = 0;
+}
+
+- (void)didMoveMSXJoystickDirection:(enum PVMSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    /*
+     float xvalue = gamepad.leftThumbstick.xAxis.value;
+     s8 x=(s8)(xvalue*127);
+     joyx[0] = x;
+
+     float yvalue = gamepad.leftThumbstick.yAxis.value;
+     s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
+     joyy[0] = y;
+     */
+}
+
+-(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    [self didMoveMSXJoystickDirection:(enum PVMSXButton)button withValue:value forPlayer:player];
+}
+
+- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
+    [self didPushMSXButton:(PVMSXButton)button forPlayer:player];
+}
+
+- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
+    [self didReleaseMSXButton:(PVMSXButton)button forPlayer:player];
+}
+
 @end
