@@ -129,6 +129,7 @@ jobs:
       - name: Convert to IPA
         run: |
           mkdir Payload
+          ls -la "archive.xcarchive/Products/Applications"
           cp -pR "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
           zip -r "${{ matrix.IPA_NAME }}.ipa" Payload
 
