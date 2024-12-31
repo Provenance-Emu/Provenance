@@ -31,6 +31,8 @@
 		B3AFCFB32977A87D00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCFB22977A87D00A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3CBAF8B2D2490C000D5224E /* opll.c in Sources */ = {isa = PBXBuildFile; fileRef = B3CBAF872D2490C000D5224E /* opll.c */; };
+		B3CBAF8C2D2490C000D5224E /* WrapNukeYKT.c in Sources */ = {isa = PBXBuildFile; fileRef = B3CBAF892D2490C000D5224E /* WrapNukeYKT.c */; };
 		B3E2AA652CB6531C00E2636D /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA642CB6531C00E2636D /* PVCoreObjCBridge */; };
 		B3E2AA7F2CB6725B00E2636D /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA7E2CB6725B00E2636D /* PVCoreBridgeRetro.framework */; };
 		B3EBB19B28729B4300EAEB37 /* Z80.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC122872971F00EAEB37 /* Z80.c */; };
@@ -146,6 +148,11 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CBAF852D2490C000D5224E /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		B3CBAF862D2490C000D5224E /* opll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opll.h; sourceTree = "<group>"; };
+		B3CBAF872D2490C000D5224E /* opll.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = opll.c; sourceTree = "<group>"; };
+		B3CBAF882D2490C000D5224E /* WrapNukeYKT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WrapNukeYKT.h; sourceTree = "<group>"; };
+		B3CBAF892D2490C000D5224E /* WrapNukeYKT.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = WrapNukeYKT.c; sourceTree = "<group>"; };
 		B3E2AA7E2CB6725B00E2636D /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EBABF72872971F00EAEB37 /* libretro.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libretro.c; sourceTree = "<group>"; };
 		B3EBABF92872971F00EAEB37 /* Sound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
@@ -401,6 +408,19 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B3CBAF8A2D2490C000D5224E /* NukeYKT */ = {
+			isa = PBXGroup;
+			children = (
+				B3CBAF852D2490C000D5224E /* LICENSE */,
+				B3CBAF862D2490C000D5224E /* opll.h */,
+				B3CBAF872D2490C000D5224E /* opll.c */,
+				B3CBAF882D2490C000D5224E /* WrapNukeYKT.h */,
+				B3CBAF892D2490C000D5224E /* WrapNukeYKT.c */,
+			);
+			name = NukeYKT;
+			path = "../fmsx/fmsx-libretro/NukeYKT";
+			sourceTree = SOURCE_ROOT;
+		};
 		B3EBABF62872971F00EAEB37 /* fmsx-libretro */ = {
 			isa = PBXGroup;
 			children = (
@@ -416,6 +436,7 @@
 				B3EBAC942872972000EAEB37 /* link.T */,
 				B3EBAC932872972000EAEB37 /* .gitlab-ci.yml */,
 				B3EBAC982872972000EAEB37 /* .travis.yml */,
+				B3CBAF8A2D2490C000D5224E /* NukeYKT */,
 				B3EBABF82872971F00EAEB37 /* EMULib */,
 				B3EBAC1A2872971F00EAEB37 /* fMSX */,
 				B3EBAC952872972000EAEB37 /* jni */,
@@ -934,6 +955,8 @@
 				B3EBB1A428729B7200EAEB37 /* I8255.c in Sources */,
 				B3EBB1A128729B7200EAEB37 /* WD1793.c in Sources */,
 				B3EBB19E28729B7200EAEB37 /* MCF.c in Sources */,
+				B3CBAF8B2D2490C000D5224E /* opll.c in Sources */,
+				B3CBAF8C2D2490C000D5224E /* WrapNukeYKT.c in Sources */,
 				B3EBB19F28729B7200EAEB37 /* Sound.c in Sources */,
 				B3EBB19B28729B4300EAEB37 /* Z80.c in Sources */,
 				B3EBB1A328729B7200EAEB37 /* SHA1.c in Sources */,
