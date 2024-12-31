@@ -69,7 +69,7 @@ public final class PVBeetlePSXCoreOptions: NSObject, CoreOptions, Sendable {
                 .bool(.init(title: "Software Framebuffer", description: "Enable accurate emulation of framebuffer effects (e.g. motion blur, FF7 battle swirl) when using hardware renderers by running a copy of the software renderer at native resolution in the background. If disabled, these operations are omitted (OpenGL) or rendered on the GPU (Vulkan). Disabling can improve performance but may cause severe graphical errors. Leave enabled if unsure.", requiresRestart: true), defaultValue: true)
             }
             
-            static var allOptions: [CoreOption] { [renderer, rendererSoftwareFramebuffer] }
+            static var allOptions: [CoreOption] { [renderer, rendererUpscale, rendererSoftwareFramebuffer] }
         }
     }
 }
