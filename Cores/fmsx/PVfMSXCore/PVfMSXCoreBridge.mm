@@ -159,9 +159,9 @@
     return CGRectMake(0, 0, 272, 240);
 }
 
-- (CGSize)aspectSize {
-    return CGSizeMake(4, 3);
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(4, 3);
+//}
 
 - (CGSize)bufferSize {
     return CGSizeMake(272, 240);
