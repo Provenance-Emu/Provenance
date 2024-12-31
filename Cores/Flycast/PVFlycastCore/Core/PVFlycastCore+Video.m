@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 11/1/18.
 //  Copyright © 2018 Provenance. All rights reserved.
 //
-#ifndef LIBRETRO
 
 #import "PVFlycastCore+Video.h"
 #import "PVFlycastCore.h"
@@ -19,6 +18,8 @@
 #import <GLUT/GLUT.h>
 #import <GLKit/GLKit.h>
 #endif
+
+#ifndef LIBRETRO
 
 @implementation PVFlycastCoreBridge (Video)
 
@@ -86,5 +87,21 @@
         // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
     return GL_DEPTH_COMPONENT24;
 }
+@end
+#else
+@implementation PVFlycastCoreBridge (Video)
+
+- (GLenum)pixelFormat {
+    return GL_RGBA;
+}
+
+- (GLenum)pixelType {
+    return GL_UNSIGNED_BYTE;
+}
+
+- (GLenum)internalPixelFormat {
+    return GL_RGBA;
+}
+
 @end
 #endif
