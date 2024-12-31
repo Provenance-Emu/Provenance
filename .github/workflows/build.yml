@@ -30,13 +30,13 @@ jobs:
           - target: "Provenance-Lite-iOS"
             sdk: iphoneos
             scheme: "Provenance-Lite (AppStore) (Release)"
-            APP_NAME: "Provenance-Lite"
+            APP_NAME: "Provenance Lite"
             IPA_NAME: "Provenance-Lite-iOS"
 
           - target: "Provenance-Lite-tvOS"
             sdk: appletvos
             scheme: "Provenance-Lite (AppStore) (Release)"
-            APP_NAME: "Provenance-Lite"
+            APP_NAME: "Provenance Lite"
             IPA_NAME: "Provenance-Lite-tvOS"
 
           - target: "Provenance-iOS"
