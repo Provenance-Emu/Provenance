@@ -22,7 +22,7 @@
 #include "rend/TexCache.h"
 #include "hw/maple/maple_devs.h"
 #include "hw/maple/maple_if.h"
-#include "hw/maple/maple_cfg.h"
+//#include "hw/maple/maple_cfg.h"
 
 #pragma mark - Flycast C++ interface
 #include <mach/mach.h>

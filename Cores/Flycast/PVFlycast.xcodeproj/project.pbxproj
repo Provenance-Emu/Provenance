@@ -421,6 +421,7 @@
 		B3AD6A572D238F0D001E5EC3 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3AD6A562D238F0D001E5EC3 /* PVPlists */; };
 		B3AD6A5D2D23918F001E5EC3 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3AD6A5C2D23918F001E5EC3 /* PVCoreBridge */; };
 		B3AD6A602D2391CE001E5EC3 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3AD6A5F2D2391CE001E5EC3 /* PVCoreObjCBridge */; };
+		B3AD6A8D2D2395A3001E5EC3 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -8570,6 +8571,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3A3CC5B2CCC782D00589F82 /* PVCoreBridgeRetro.framework in Frameworks */,
+				B3AD6A8D2D2395A3001E5EC3 /* libz.tbd in Frameworks */,
 				B3AD6A452D238A9D001E5EC3 /* libflycast_libretro.a in Frameworks */,
 				B3AD6A542D238E1D001E5EC3 /* PVLogging in Frameworks */,
 				B3AD6A572D238F0D001E5EC3 /* PVPlists in Frameworks */,

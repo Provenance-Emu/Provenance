@@ -32,7 +32,7 @@
 /* #undef HAVE_GNUTLS */
 /* #undef HAVE_LIBBZ2 */
 /* #undef HAVE_LIBLZMA */
-#define HAVE_LIBZSTD
+//#define HAVE_LIBZSTD
 #define HAVE_LOCALTIME_R
 /* #undef HAVE_LOCALTIME_S */
 /* #undef HAVE_MEMCPY_S */

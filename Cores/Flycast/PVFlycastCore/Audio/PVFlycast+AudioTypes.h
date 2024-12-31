@@ -23,7 +23,7 @@
 #include "rend/TexCache.h"
 #include "hw/maple/maple_devs.h"
 #include "hw/maple/maple_if.h"
-#include "hw/maple/maple_cfg.h"
+//#include "hw/maple/maple_cfg.h"
 
 static volatile Float64 write_ptr = 0;
 static volatile Float64 read_ptr = 0;

@@ -374,6 +374,36 @@
 		B31477D62CFFFF29009FB8B3 /* Bra.c in Sources */ = {isa = PBXBuildFile; fileRef = 995EE8ABBE524214B152A158 /* Bra.c */; };
 		B31477D72CFFFF3D009FB8B3 /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 4AE8371E0A4E475FAABF253E /* Lzma2Dec.c */; };
 		B31477D82CFFFF52009FB8B3 /* Bcj2.c in Sources */ = {isa = PBXBuildFile; fileRef = 6AB6C78F63E74E66A4A76B1E /* Bcj2.c */; };
+		B3AD6A622D23943F001E5EC3 /* biosfont.bin.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A612D23943F001E5EC3 /* biosfont.bin.zip.cpp */; };
+		B3AD6A792D23956D001E5EC3 /* alienfnt.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A652D23956D001E5EC3 /* alienfnt.nvmem.zip.cpp */; };
+		B3AD6A7A2D23956D001E5EC3 /* gunsur2.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A6B2D23956D001E5EC3 /* gunsur2.nvmem.zip.cpp */; };
+		B3AD6A7B2D23956D001E5EC3 /* puyomedal.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A702D23956D001E5EC3 /* puyomedal.nvmem.zip.cpp */; };
+		B3AD6A7C2D23956D001E5EC3 /* otrigger.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A6F2D23956D001E5EC3 /* otrigger.nvmem.zip.cpp */; };
+		B3AD6A7D2D23956D001E5EC3 /* unomedal.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A712D23956D001E5EC3 /* unomedal.nvmem.zip.cpp */; };
+		B3AD6A7E2D23956D001E5EC3 /* vf4tuned.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A742D23956D001E5EC3 /* vf4tuned.nvmem.zip.cpp */; };
+		B3AD6A7F2D23956D001E5EC3 /* wldkicks.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A762D23956D001E5EC3 /* wldkicks.nvmem.zip.cpp */; };
+		B3AD6A802D23956D001E5EC3 /* wldkicksu.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A782D23956D001E5EC3 /* wldkicksu.nvmem.zip.cpp */; };
+		B3AD6A812D23956D001E5EC3 /* f355twn2.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A6A2D23956D001E5EC3 /* f355twn2.nvmem.zip.cpp */; };
+		B3AD6A822D23956D001E5EC3 /* f355.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A682D23956D001E5EC3 /* f355.nvmem.zip.cpp */; };
+		B3AD6A832D23956D001E5EC3 /* f355twin.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A692D23956D001E5EC3 /* f355twin.nvmem.zip.cpp */; };
+		B3AD6A842D23956D001E5EC3 /* magicpop.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A6C2D23956D001E5EC3 /* magicpop.nvmem.zip.cpp */; };
+		B3AD6A852D23956D001E5EC3 /* mazan.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A6D2D23956D001E5EC3 /* mazan.nvmem.zip.cpp */; };
+		B3AD6A862D23956D001E5EC3 /* dirtypig.nvmem2.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A672D23956D001E5EC3 /* dirtypig.nvmem2.zip.cpp */; };
+		B3AD6A872D23956D001E5EC3 /* ochaken.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A6E2D23956D001E5EC3 /* ochaken.nvmem.zip.cpp */; };
+		B3AD6A882D23956D001E5EC3 /* wldkicksj.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A772D23956D001E5EC3 /* wldkicksj.nvmem.zip.cpp */; };
+		B3AD6A892D23956D001E5EC3 /* vf4evob.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A732D23956D001E5EC3 /* vf4evob.nvmem.zip.cpp */; };
+		B3AD6A8A2D23956D001E5EC3 /* vf4.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A722D23956D001E5EC3 /* vf4.nvmem.zip.cpp */; };
+		B3AD6A8B2D23956D001E5EC3 /* westdrmg.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A752D23956D001E5EC3 /* westdrmg.nvmem.zip.cpp */; };
+		B3AD6A8C2D23956D001E5EC3 /* dirtypig.nvmem.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A662D23956D001E5EC3 /* dirtypig.nvmem.zip.cpp */; };
+		B3AD6A8F2D2395D2001E5EC3 /* f355_print_template.png.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A8E2D2395D2001E5EC3 /* f355_print_template.png.cpp */; };
+		B3AD6A982D23960A001E5EC3 /* printer_kanji16x16.bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A942D23960A001E5EC3 /* printer_kanji16x16.bin.cpp */; };
+		B3AD6A992D23960A001E5EC3 /* printer_kanji24x24.bin.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A972D23960A001E5EC3 /* printer_kanji24x24.bin.zip.cpp */; };
+		B3AD6A9A2D23960A001E5EC3 /* printer_ascii8x16.bin.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A912D23960A001E5EC3 /* printer_ascii8x16.bin.zip.cpp */; };
+		B3AD6A9B2D23960A001E5EC3 /* printer_ascii12x24.bin.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A932D23960A001E5EC3 /* printer_ascii12x24.bin.zip.cpp */; };
+		B3AD6A9C2D23960A001E5EC3 /* printer_kanji16x16.bin.zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A952D23960A001E5EC3 /* printer_kanji16x16.bin.zip.cpp */; };
+		B3AD6A9D2D23960A001E5EC3 /* printer_kanji24x24.bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A962D23960A001E5EC3 /* printer_kanji24x24.bin.cpp */; };
+		B3AD6A9E2D23960A001E5EC3 /* printer_ascii12x24.bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A922D23960A001E5EC3 /* printer_ascii12x24.bin.cpp */; };
+		B3AD6A9F2D23960A001E5EC3 /* printer_ascii8x16.bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AD6A902D23960A001E5EC3 /* printer_ascii8x16.bin.cpp */; };
 		B3AF4505A91341E9ADDC2AA8 /* attribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14C76DB6C40497ABD8E9919 /* attribute.cpp */; };
 		B40862DAD90E4588AB97C7DF /* disasm-aarch64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 89A8D11CB13C41EBA5503799 /* disasm-aarch64.cc */; };
 		B46103E974C5456A83EED3EF /* zip_fopen_index.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A89BC39656E48A8BB491D5C /* zip_fopen_index.c */; };
@@ -1501,6 +1531,36 @@
 		B2E24E70A737435DA61F95D7 /* driver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = driver.cpp; path = core/hw/sh4/dyna/driver.cpp; sourceTree = SOURCE_ROOT; };
 		B314397D2CFFE694009FB8B3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS18.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B31439A92CFFE9B7009FB8B3 /* gl_context.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = gl_context.cpp; path = core/wsi/gl_context.cpp; sourceTree = "<group>"; };
+		B3AD6A612D23943F001E5EC3 /* biosfont.bin.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = biosfont.bin.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/fonts/biosfont.bin.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A652D23956D001E5EC3 /* alienfnt.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = alienfnt.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/alienfnt.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A662D23956D001E5EC3 /* dirtypig.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dirtypig.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/dirtypig.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A672D23956D001E5EC3 /* dirtypig.nvmem2.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dirtypig.nvmem2.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/dirtypig.nvmem2.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A682D23956D001E5EC3 /* f355.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = f355.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/f355.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A692D23956D001E5EC3 /* f355twin.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = f355twin.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/f355twin.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A6A2D23956D001E5EC3 /* f355twn2.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = f355twn2.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/f355twn2.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A6B2D23956D001E5EC3 /* gunsur2.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = gunsur2.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/gunsur2.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A6C2D23956D001E5EC3 /* magicpop.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = magicpop.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/magicpop.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A6D2D23956D001E5EC3 /* mazan.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = mazan.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/mazan.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A6E2D23956D001E5EC3 /* ochaken.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ochaken.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/ochaken.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A6F2D23956D001E5EC3 /* otrigger.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = otrigger.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/otrigger.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A702D23956D001E5EC3 /* puyomedal.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = puyomedal.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/puyomedal.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A712D23956D001E5EC3 /* unomedal.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = unomedal.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/unomedal.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A722D23956D001E5EC3 /* vf4.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vf4.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/vf4.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A732D23956D001E5EC3 /* vf4evob.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vf4evob.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/vf4evob.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A742D23956D001E5EC3 /* vf4tuned.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vf4tuned.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/vf4tuned.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A752D23956D001E5EC3 /* westdrmg.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = westdrmg.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/westdrmg.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A762D23956D001E5EC3 /* wldkicks.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = wldkicks.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/wldkicks.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A772D23956D001E5EC3 /* wldkicksj.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = wldkicksj.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/wldkicksj.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A782D23956D001E5EC3 /* wldkicksu.nvmem.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = wldkicksu.nvmem.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/flash/wldkicksu.nvmem.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A8E2D2395D2001E5EC3 /* f355_print_template.png.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = f355_print_template.png.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/picture/f355_print_template.png.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A902D23960A001E5EC3 /* printer_ascii8x16.bin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = printer_ascii8x16.bin.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/fonts/printer_ascii8x16.bin.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A912D23960A001E5EC3 /* printer_ascii8x16.bin.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = printer_ascii8x16.bin.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/fonts/printer_ascii8x16.bin.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A922D23960A001E5EC3 /* printer_ascii12x24.bin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = printer_ascii12x24.bin.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/fonts/printer_ascii12x24.bin.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A932D23960A001E5EC3 /* printer_ascii12x24.bin.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = printer_ascii12x24.bin.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/fonts/printer_ascii12x24.bin.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A942D23960A001E5EC3 /* printer_kanji16x16.bin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = printer_kanji16x16.bin.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/fonts/printer_kanji16x16.bin.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A952D23960A001E5EC3 /* printer_kanji16x16.bin.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = printer_kanji16x16.bin.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/fonts/printer_kanji16x16.bin.zip.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A962D23960A001E5EC3 /* printer_kanji24x24.bin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = printer_kanji24x24.bin.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/fonts/printer_kanji24x24.bin.cpp"; sourceTree = SOURCE_ROOT; };
+		B3AD6A972D23960A001E5EC3 /* printer_kanji24x24.bin.zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = printer_kanji24x24.bin.zip.cpp; path = "../cmake/__cmrc_flycast-resources/intermediate/fonts/printer_kanji24x24.bin.zip.cpp"; sourceTree = SOURCE_ROOT; };
 		B3C14B9763524C0DB56852E1 /* arm7_rec_arm32.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = arm7_rec_arm32.cpp; path = core/hw/arm7/arm7_rec_arm32.cpp; sourceTree = SOURCE_ROOT; };
 		B411A80509C04AC59DEF292A /* pico_defines.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pico_defines.h; path = core/deps/picotcp/include/pico_defines.h; sourceTree = SOURCE_ROOT; };
 		B426E1E17E9745DB8213A936 /* cdipsr.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cdipsr.cpp; path = core/deps/chdpsr/cdipsr.cpp; sourceTree = SOURCE_ROOT; };
@@ -3349,6 +3409,36 @@
 		CAAA69EEDABE4F419485005E /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				B3AD6A902D23960A001E5EC3 /* printer_ascii8x16.bin.cpp */,
+				B3AD6A912D23960A001E5EC3 /* printer_ascii8x16.bin.zip.cpp */,
+				B3AD6A922D23960A001E5EC3 /* printer_ascii12x24.bin.cpp */,
+				B3AD6A932D23960A001E5EC3 /* printer_ascii12x24.bin.zip.cpp */,
+				B3AD6A942D23960A001E5EC3 /* printer_kanji16x16.bin.cpp */,
+				B3AD6A952D23960A001E5EC3 /* printer_kanji16x16.bin.zip.cpp */,
+				B3AD6A962D23960A001E5EC3 /* printer_kanji24x24.bin.cpp */,
+				B3AD6A972D23960A001E5EC3 /* printer_kanji24x24.bin.zip.cpp */,
+				B3AD6A8E2D2395D2001E5EC3 /* f355_print_template.png.cpp */,
+				B3AD6A652D23956D001E5EC3 /* alienfnt.nvmem.zip.cpp */,
+				B3AD6A662D23956D001E5EC3 /* dirtypig.nvmem.zip.cpp */,
+				B3AD6A672D23956D001E5EC3 /* dirtypig.nvmem2.zip.cpp */,
+				B3AD6A682D23956D001E5EC3 /* f355.nvmem.zip.cpp */,
+				B3AD6A692D23956D001E5EC3 /* f355twin.nvmem.zip.cpp */,
+				B3AD6A6A2D23956D001E5EC3 /* f355twn2.nvmem.zip.cpp */,
+				B3AD6A6B2D23956D001E5EC3 /* gunsur2.nvmem.zip.cpp */,
+				B3AD6A6C2D23956D001E5EC3 /* magicpop.nvmem.zip.cpp */,
+				B3AD6A6D2D23956D001E5EC3 /* mazan.nvmem.zip.cpp */,
+				B3AD6A6E2D23956D001E5EC3 /* ochaken.nvmem.zip.cpp */,
+				B3AD6A6F2D23956D001E5EC3 /* otrigger.nvmem.zip.cpp */,
+				B3AD6A702D23956D001E5EC3 /* puyomedal.nvmem.zip.cpp */,
+				B3AD6A712D23956D001E5EC3 /* unomedal.nvmem.zip.cpp */,
+				B3AD6A722D23956D001E5EC3 /* vf4.nvmem.zip.cpp */,
+				B3AD6A732D23956D001E5EC3 /* vf4evob.nvmem.zip.cpp */,
+				B3AD6A742D23956D001E5EC3 /* vf4tuned.nvmem.zip.cpp */,
+				B3AD6A752D23956D001E5EC3 /* westdrmg.nvmem.zip.cpp */,
+				B3AD6A762D23956D001E5EC3 /* wldkicks.nvmem.zip.cpp */,
+				B3AD6A772D23956D001E5EC3 /* wldkicksj.nvmem.zip.cpp */,
+				B3AD6A782D23956D001E5EC3 /* wldkicksu.nvmem.zip.cpp */,
+				B3AD6A612D23943F001E5EC3 /* biosfont.bin.zip.cpp */,
 				99D9FE9E4732401FA6731927 /* alienfnt.nvmem.zip.cpp */,
 				F0697FEA014B4A4682576D6D /* dirtypig.nvmem.zip.cpp */,
 				D3027D38ECD247E48F96D95E /* dirtypig.nvmem2.zip.cpp */,
@@ -4934,7 +5024,36 @@
 				F3B212FC89C04B2A8554863D /* dirtypig.nvmem.zip.cpp in Sources */,
 				90D53E9C1F6847429D932A6C /* dirtypig.nvmem2.zip.cpp in Sources */,
 				178A0512A16C4AA0A5550130 /* f355.nvmem.zip.cpp in Sources */,
+				B3AD6A792D23956D001E5EC3 /* alienfnt.nvmem.zip.cpp in Sources */,
+				B3AD6A7A2D23956D001E5EC3 /* gunsur2.nvmem.zip.cpp in Sources */,
+				B3AD6A982D23960A001E5EC3 /* printer_kanji16x16.bin.cpp in Sources */,
+				B3AD6A992D23960A001E5EC3 /* printer_kanji24x24.bin.zip.cpp in Sources */,
+				B3AD6A9A2D23960A001E5EC3 /* printer_ascii8x16.bin.zip.cpp in Sources */,
+				B3AD6A9B2D23960A001E5EC3 /* printer_ascii12x24.bin.zip.cpp in Sources */,
+				B3AD6A9C2D23960A001E5EC3 /* printer_kanji16x16.bin.zip.cpp in Sources */,
+				B3AD6A9D2D23960A001E5EC3 /* printer_kanji24x24.bin.cpp in Sources */,
+				B3AD6A9E2D23960A001E5EC3 /* printer_ascii12x24.bin.cpp in Sources */,
+				B3AD6A9F2D23960A001E5EC3 /* printer_ascii8x16.bin.cpp in Sources */,
+				B3AD6A7B2D23956D001E5EC3 /* puyomedal.nvmem.zip.cpp in Sources */,
+				B3AD6A7C2D23956D001E5EC3 /* otrigger.nvmem.zip.cpp in Sources */,
+				B3AD6A7D2D23956D001E5EC3 /* unomedal.nvmem.zip.cpp in Sources */,
+				B3AD6A7E2D23956D001E5EC3 /* vf4tuned.nvmem.zip.cpp in Sources */,
+				B3AD6A7F2D23956D001E5EC3 /* wldkicks.nvmem.zip.cpp in Sources */,
+				B3AD6A802D23956D001E5EC3 /* wldkicksu.nvmem.zip.cpp in Sources */,
+				B3AD6A812D23956D001E5EC3 /* f355twn2.nvmem.zip.cpp in Sources */,
+				B3AD6A822D23956D001E5EC3 /* f355.nvmem.zip.cpp in Sources */,
+				B3AD6A832D23956D001E5EC3 /* f355twin.nvmem.zip.cpp in Sources */,
+				B3AD6A842D23956D001E5EC3 /* magicpop.nvmem.zip.cpp in Sources */,
+				B3AD6A852D23956D001E5EC3 /* mazan.nvmem.zip.cpp in Sources */,
+				B3AD6A862D23956D001E5EC3 /* dirtypig.nvmem2.zip.cpp in Sources */,
+				B3AD6A872D23956D001E5EC3 /* ochaken.nvmem.zip.cpp in Sources */,
+				B3AD6A882D23956D001E5EC3 /* wldkicksj.nvmem.zip.cpp in Sources */,
+				B3AD6A892D23956D001E5EC3 /* vf4evob.nvmem.zip.cpp in Sources */,
+				B3AD6A8A2D23956D001E5EC3 /* vf4.nvmem.zip.cpp in Sources */,
+				B3AD6A8B2D23956D001E5EC3 /* westdrmg.nvmem.zip.cpp in Sources */,
+				B3AD6A8C2D23956D001E5EC3 /* dirtypig.nvmem.zip.cpp in Sources */,
 				6EBF8849B07746EEA13FDB36 /* f355twin.nvmem.zip.cpp in Sources */,
+				B3AD6A622D23943F001E5EC3 /* biosfont.bin.zip.cpp in Sources */,
 				F1C2183A13864ABD9642A739 /* f355twn2.nvmem.zip.cpp in Sources */,
 				7286C4B1CC2540CF8080686A /* gunsur2.nvmem.zip.cpp in Sources */,
 				E23B266F9BDE4664AA32E802 /* mazan.nvmem.zip.cpp in Sources */,
@@ -4945,6 +5064,7 @@
 				585CF709C5204BF2A713DD01 /* wldkicks.nvmem.zip.cpp in Sources */,
 				A105AD24D9434371BBB0A341 /* wldkicksj.nvmem.zip.cpp in Sources */,
 				BD7A3789D9A9451F97D4E0DB /* wldkicksu.nvmem.zip.cpp in Sources */,
+				B3AD6A8F2D2395D2001E5EC3 /* f355_print_template.png.cpp in Sources */,
 				C374EC572C7B41969279F792 /* biosfont.bin.cpp in Sources */,
 				01B46C2324DF42AF8ACD562A /* printer_ascii12x24.bin.cpp in Sources */,
 				7D99368A46F34E3B9CFB32C1 /* printer_ascii8x16.bin.cpp in Sources */,

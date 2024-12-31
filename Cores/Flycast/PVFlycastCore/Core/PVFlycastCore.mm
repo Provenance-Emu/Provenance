@@ -25,7 +25,7 @@
 #include "rend/TexCache.h"
 #include "hw/maple/maple_devs.h"
 #include "hw/maple/maple_if.h"
-#include "hw/maple/maple_cfg.h"
+//#include "hw/maple/maple_cfg.h"
 
 //__weak PVFlycastCoreBridge *_current = 0;
 

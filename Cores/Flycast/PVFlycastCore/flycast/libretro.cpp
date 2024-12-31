@@ -53,7 +53,7 @@
 #include "keyboard_map.h"
 #include "hw/maple/maple_cfg.h"
 #include "hw/maple/maple_if.h"
-#include "hw/maple/maple_cfg.h"
+//#include "hw/maple/maple_cfg.h"
 #include "hw/pvr/spg.h"
 #include "hw/naomi/naomi_cart.h"
 #include "hw/naomi/card_reader.h"
