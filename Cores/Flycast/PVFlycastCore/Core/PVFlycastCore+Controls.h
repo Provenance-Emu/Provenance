@@ -7,6 +7,7 @@
 //
 
 #import <PVFlycast/PVFlycastCore.h>
+typedef enum PVDreamcastButton: NSInteger PVDreamcastButton;
 
 NS_ASSUME_NONNULL_BEGIN
 

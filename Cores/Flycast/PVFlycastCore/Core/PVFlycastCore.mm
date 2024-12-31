@@ -15,6 +15,7 @@
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
+@import PVLoggingObjC;
 
 // Flycast imports
 #include "types.h"

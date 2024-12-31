@@ -227,7 +227,7 @@ extension PVFlycastEmuCore: CoreOptional {
     }
 }
 
-@objc public extension PVFlycastCore {
+@objc public extension PVFlycastEmuCore {
 //    @objc var resolution: Int{
 //        PVFlycastCore.valueForOption(PVPlayCore.resolutionOption).asInt ?? 0
 //    }

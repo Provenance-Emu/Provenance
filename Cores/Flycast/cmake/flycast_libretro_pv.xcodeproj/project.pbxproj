@@ -4206,7 +4206,7 @@
 			attributes = {
 				LastUpgradeCheck = 1610;
 			};
-			buildConfigurationList = 5E37AA9E2E31415C8FBD9C35 /* Build configuration list for PBXProject "flycast_libretro" */;
+			buildConfigurationList = 5E37AA9E2E31415C8FBD9C35 /* Build configuration list for PBXProject "flycast_libretro_pv" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -5613,7 +5613,10 @@
 				BUILD_DIR = ../lib;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_VULKAN=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"USE_VULKAN=1",
+					"IOS=1",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = auto;
@@ -5713,7 +5716,10 @@
 				BUILD_DIR = ../lib;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_VULKAN=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"USE_VULKAN=1",
+					"IOS=1",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = auto;
@@ -6537,7 +6543,10 @@
 				BUILD_DIR = ../lib;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_VULKAN=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"USE_VULKAN=1",
+					"IOS=1",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = auto;
@@ -8259,7 +8268,10 @@
 				BUILD_DIR = ../lib;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_VULKAN=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"USE_VULKAN=1",
+					"IOS=1",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = auto;
@@ -9432,7 +9444,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		5E37AA9E2E31415C8FBD9C35 /* Build configuration list for PBXProject "flycast_libretro" */ = {
+		5E37AA9E2E31415C8FBD9C35 /* Build configuration list for PBXProject "flycast_libretro_pv" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				07AA4BE9ECE642058115BAE8 /* Debug */,
