@@ -743,8 +743,6 @@
 		B3AAFB572949F9B800CC8234 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AD724E2D246DC7001E5EC3 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD724D2D246DC7001E5EC3 /* PVfMSX.framework */; };
 		B3AD724F2D246DC7001E5EC3 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD724D2D246DC7001E5EC3 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3AD74452D24737B001E5EC3 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD74442D24737B001E5EC3 /* PVfMSX.framework */; };
-		B3AD74462D24737B001E5EC3 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD74442D24737B001E5EC3 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B3AED2F82BE355BB003A9290 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B3AED2F92BE355C3003A9290 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
@@ -2192,7 +2190,6 @@
 		B3A60E852CB7707F001D99C2 /* FrameworksRetro */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FrameworksRetro; path = CoresRetro/RetroArch/modules/FrameworksRetro; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD724D2D246DC7001E5EC3 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3AD74442D24737B001E5EC3 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD74482D2474F3001E5EC3 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AEDE24293F34740050BDB6 /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
