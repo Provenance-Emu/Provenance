@@ -6,7 +6,7 @@
 //  Copyright © 2022 Provenance. All rights reserved.
 //
 
-#import "PVfMSXCore.h"
+#import "PVfMSXCoreBridge.h"
 #include <stdatomic.h>
 //#import "PVfMSXCore+Controls.h"
 //#import "PVfMSXCore+Audio.h"
@@ -14,9 +14,9 @@
 //
 //#import "PVfMSXCore+Audio.h"
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 @import PVCoreBridge;
-#import <PVLogging/PVLogging.h>
+@import PVLoggingObjC;
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 #import <OpenGL/gl3.h>
@@ -28,7 +28,7 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVfMSXCore() {
+@interface PVfMSXCoreBridge() {
 
 }
 
@@ -36,7 +36,7 @@
 
 #pragma mark - PVfMSXCore Begin
 
-@implementation PVfMSXCore
+@implementation PVfMSXCoreBridge
 {
 }
 

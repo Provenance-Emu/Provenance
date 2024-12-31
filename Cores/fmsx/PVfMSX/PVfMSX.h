@@ -15,4 +15,4 @@ FOUNDATION_EXPORT double PVfMSXVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVfMSXVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVfMSX/PublicHeader.h>
-#import <PVfMSX/PVfMSXCore.h>
+#import <PVfMSX/PVfMSXCoreBridge.h>
