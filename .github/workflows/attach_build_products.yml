@@ -1,8 +1,14 @@
-name: Add artifact links to pull request and related issues
+name: Attach Build Products
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_run:
-    workflows: [Build and Upload Provenance]
-    types: [completed]
+    workflows: ["Build and Upload Provenance"]
+    types:
+      - completed
 
 jobs:
   artifacts-url-comments:
