@@ -736,6 +736,8 @@
 		B3A610272CB8865C001D99C2 /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3A610252CB8865C001D99C2 /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3AAFB562949F9B800CC8234 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, tvos, ); };
 		B3AAFB572949F9B800CC8234 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3AD724E2D246DC7001E5EC3 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD724D2D246DC7001E5EC3 /* PVfMSX.framework */; };
+		B3AD724F2D246DC7001E5EC3 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD724D2D246DC7001E5EC3 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B3AED2F82BE355BB003A9290 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B3AED2F92BE355C3003A9290 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
@@ -1499,6 +1501,7 @@
 				B351E7CF2CBE072D0000E087 /* libavformat.xcframework in Embed Frameworks */,
 				B377ECCA2CB3533C00E9B750 /* PVVecX.framework in Embed Frameworks */,
 				B3E264DA2CA548E3002BB0FE /* PVRSPCXD4.framework in Embed Frameworks */,
+				B3AD724F2D246DC7001E5EC3 /* PVfMSX.framework in Embed Frameworks */,
 				B351E7D72CBE072E0000E087 /* libswscale.xcframework in Embed Frameworks */,
 				B35EEFA52C6C6D1A00EBD1A8 /* RealmSwift in Embed Frameworks */,
 				B37321A22C900A6400CF59EF /* PVAtari800-Dynamic in Embed Frameworks */,
@@ -2116,6 +2119,7 @@
 		B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Conveniences.swift"; sourceTree = "<group>"; };
 		B3A60E852CB7707F001D99C2 /* FrameworksRetro */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FrameworksRetro; path = CoresRetro/RetroArch/modules/FrameworksRetro; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3AD724D2D246DC7001E5EC3 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AEDE24293F34740050BDB6 /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AEDE2A293F34CA0050BDB6 /* PVPicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2840,6 +2844,7 @@
 				B3C65E622CA53668000E37B0 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B30ED0DA2CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */,
 				B3C65E5A2CA53666000E37B0 /* PVMupen64Plus.framework in Frameworks */,
+				B3AD724E2D246DC7001E5EC3 /* PVfMSX.framework in Frameworks */,
 				B35EEFBA2C6C6D1A00EBD1A8 /* libz.tbd in Frameworks */,
 				B35EEFBB2C6C6D1A00EBD1A8 /* CoreTelephony.framework in Frameworks */,
 				B392B3E22CCC5BB700B1C760 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
@@ -3256,6 +3261,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3AD724D2D246DC7001E5EC3 /* PVfMSX.framework */,
 				B35197FB2D1A5EF100D2B413 /* PVGenesis.framework */,
 				B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */,
 				B32C08EB2D053DD50024A3E2 /* PVEmuThree.framework */,
