@@ -244,4 +244,27 @@
     return NULL;
 }
 
+// Override buffer size for BeetlePSX's requirements
+- (CGSize)bufferSize {
+    return CGSizeMake(640, 480);  // Standard PSX resolution
+}
+
+// Set aspect ratio
+- (CGSize)aspectSize {
+    return CGSizeMake(4, 3);  // Standard PSX aspect ratio
+}
+
+#pragma MARK: Controls
+- (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player {
+    DLOG(@"TODO");
+}
+
+- (void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSInteger)player {
+    DLOG(@"TODO");
+}
+
+- (void)didMovePSXJoystickDirection:(PVPSXButton)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    DLOG(@"TODO");
+}
+
 @end
