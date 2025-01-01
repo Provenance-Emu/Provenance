@@ -178,7 +178,7 @@
     
     
 #define V(x) strcmp(variable, x) == 0
-    if (V(BEETLE_OPT(hw_renderer))) {
+    if (V(BEETLE_OPT(renderer))) {
         // hardware, hardware_gl, hardware_vk, software
         NSInteger intValue = PVBeetlePSXCoreOptions.video_renderer;
         char *value = strdup("hardware");
