@@ -120,7 +120,7 @@
 //}
 //
 
-- (BOOL)supportsSaveStates { return NO; }
+- (BOOL)supportsSaveStates { return YES; }
 - (BOOL)supportsRumble { return YES; }
 - (BOOL)supportsCheatCode { return YES; }
 
