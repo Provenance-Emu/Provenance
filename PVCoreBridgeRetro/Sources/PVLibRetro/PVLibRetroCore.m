@@ -1481,6 +1481,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             ILOG(@"%i", *(const unsigned*)data);
             return false;
         case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
+            // TODO: We can support this
                                                       /* const struct retro_disk_control_callback * --
                                                        * Sets an interface which frontend can use to eject and insert
                                                        * disk images.
@@ -1490,21 +1491,34 @@ static bool environment_callback(unsigned cmd, void *data) {
 //            const struct retro_disk_control_callback* cb = (const struct retro_disk_control_callback*)data
 //            ILOG(@"%i", cb->data);
             return false;
-        case RETRO_ENVIRONMENT_SET_HW_RENDER:
-                                                      /* struct retro_hw_render_callback * --
-                                                       * Sets an interface to let a libretro core render with
-                                                       * hardware acceleration.
-                                                       * Should be called in retro_load_game().
-                                                       * If successful, libretro cores will be able to render to a
-                                                       * frontend-provided framebuffer.
-                                                       * The size of this framebuffer will be at least as large as
-                                                       * max_width/max_height provided in get_av_info().
-                                                       * If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or
-                                                       * NULL to retro_video_refresh_t.
-                                                       */
-//            struct retro_hw_render_callback* cb = (const struct retro_hw_render_callback*)data;
-//            ILOG(@"%i", cb);
+        case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER:
+        {
+            // TODO: Needed for 3D
+            ILOG(@"RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER");
+            return false;
+        }
+        case RETRO_ENVIRONMENT_SET_HW_RENDER: {
+            // TODO: Needed for 3D
+            /* struct retro_hw_render_callback * --
+             * Sets an interface to let a libretro core render with
+             * hardware acceleration.
+             * Should be called in retro_load_game().
+             * If successful, libretro cores will be able to render to a
+             * frontend-provided framebuffer.
+             * The size of this framebuffer will be at least as large as
+             * max_width/max_height provided in get_av_info().
+             * If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or
+             * NULL to retro_video_refresh_t.
+             */
+            struct retro_hw_render_callback* cb = (const struct retro_hw_render_callback*)data;
+            ILOG(@"RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: %i", cb);
             return true;
+        }
+////        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE : {
+////            struct retro_hw_render_interface* rend = (struct retro_hw_render_interface*)data;
+////
+////            return true;
+////        }
         case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE: {
                                            /* struct retro_rumble_interface * --
                                             * Gets an interface which is used by a libretro core to set
@@ -1553,6 +1567,7 @@ static bool environment_callback(unsigned cmd, void *data) {
                                             * input_state_callback API.
                                             */
         case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
+            // TODO: Support camera
             return false;
                                            /* struct retro_camera_callback * --
                                             * Gets an interface to a video camera driver.
@@ -1579,6 +1594,8 @@ static bool environment_callback(unsigned cmd, void *data) {
                                             * start and stop the camera driver.
                                             */
         case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE :
+            // TODO: Support location
+
                                            /* struct retro_location_callback * --
                                             * Gets access to the location interface.
                                             * The purpose of this interface is to be able to retrieve
@@ -1610,11 +1627,6 @@ static bool environment_callback(unsigned cmd, void *data) {
 //            return true;
 //        }
 //            // TODO: When/if vulkan support add this
-////        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE : {
-////            struct retro_hw_render_interface* rend = (struct retro_hw_render_interface*)data;
-////
-////            return true;
-////        }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent saveStatesPath];
 
