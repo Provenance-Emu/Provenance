@@ -139,17 +139,17 @@
 //    return CGSizeMake(1024, 1024);
 //}
 //
-- (GLenum)pixelFormat {
-    return GL_RGBA;
-}
-
-- (GLenum)pixelType {
-    return GL_UNSIGNED_BYTE;
-}
-
-- (GLenum)internalPixelFormat {
-    return GL_RGBA;
-}
+//- (GLenum)pixelFormat {
+//    return GL_RGBA;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_BYTE;
+//}
+//
+//- (GLenum)internalPixelFormat {
+//    return GL_RGBA;
+//}
 
 //- (BOOL)isDoubleBuffered {
 //    return YES;
@@ -245,14 +245,14 @@
 }
 
 // Override buffer size for BeetlePSX's requirements
-- (CGSize)bufferSize {
-    return CGSizeMake(640, 480);  // Standard PSX resolution
-}
+//- (CGSize)bufferSize {
+//    return CGSizeMake(640, 480);  // Standard PSX resolution
+//}
 
 // Set aspect ratio
-- (CGSize)aspectSize {
-    return CGSizeMake(4, 3);  // Standard PSX aspect ratio
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(4, 3);  // Standard PSX aspect ratio
+//}
 
 #pragma MARK: Controls
 - (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player {
