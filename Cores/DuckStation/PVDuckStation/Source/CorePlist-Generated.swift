@@ -21,7 +21,7 @@ public enum CorePlist {
   public static let pvProjectURL: String = "https://github.com/stenzek/duckstation/"
   public static let pvProjectVersion: String = "2023.01.11"
   public static let pvSupportedSystems: [String] = ["com.provenance.psx"]
-  public static let pvDisabled: Bool = true
+  public static let pvDisabled: Bool = false
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
