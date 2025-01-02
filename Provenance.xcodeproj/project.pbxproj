@@ -3283,6 +3283,7 @@
 				B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
+				B3FA8E3B2D2738FE00505165 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -4089,6 +4090,14 @@
 				B3EEEDD22920B56A008E2603 /* BackgroundDownloadExtension.entitlements */,
 			);
 			path = BackgroundDownloadExtension;
+			sourceTree = "<group>";
+		};
+		B3FA8E3B2D2738FE00505165 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				B3FA8BCB2D24F52C00505165 /* PVCoreBridgeRetro.framework */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		BE9FDCBA1C210B9E0046DF0E /* TopShelf */ = {
