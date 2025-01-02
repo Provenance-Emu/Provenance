@@ -965,7 +965,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
         [self initializeSettings];
 
         NSBundle *coreBundle = [NSBundle bundleForClass:[PVDuckStationCore class]];
-        NSString *duck_resourcesPath = [coreBundle.bundlePath stringByAppendingPathComponent:@"/duck_resources"];
+        NSString *duck_resourcesPath = [coreBundle.bundlePath stringByAppendingPathComponent:@"/duck_resources/"];
         NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, true).firstObject
                                stringByAppendingPathComponent:@"/ShaderCache.nobackup"];
         NSString *shadersPath = [self.BIOSPath stringByAppendingPathComponent:@"/shaders"];
@@ -1387,7 +1387,7 @@ bool Host::AcquireHostDisplay(RenderAPI api)
 
         // Use `libMoltenVK.dylib`
         // Needs Vulkan 1.1+
-        const char * filename = [NSString stringWithFormat:@"%@/MoltenVK.framework/MoltenVK", bundle.sharedFrameworksPath].cString;
+        const char * filename = [NSString stringWithFormat:@"%@/Frameworks/MoltenVK.framework/MoltenVK", bundle.bundlePath].cString;
 
             // Set vulkan path to molktenVK
         setenv("LIBVULKAN_PATH", filename, 1);
@@ -1883,6 +1883,7 @@ static WindowInfo WindowInfoFromGameCore(PVDuckStationCoreBridge *core)
     wi.type = WindowInfo::Type::MacOS;
     wi.surface_width = core.bufferSize.width;
     wi.surface_height = core.bufferSize.height;
+//    wi.surface_handle = calayer?
 //    wi.surface_width = 640;
 //    wi.surface_height = 480;
     return wi;
