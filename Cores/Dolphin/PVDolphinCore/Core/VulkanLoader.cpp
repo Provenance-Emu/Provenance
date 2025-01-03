@@ -47,7 +47,15 @@ static bool OpenVulkanLibrary()
     return true;
 
   // Use the libvulkan.dylib from the application bundle.
-  std::string filename = "@executable_path/Frameworks/libMoltenVK_Dolphin.dylib";
+  std::string filename = File::GetBundleDirectory() + "/Frameworks/MoltenVK.framework/MoltenVK";
+  if (s_vulkan_module.Open(filename.c_str()))
+    return true;
+    
+  filename = "@executable_path/Frameworks/MolenVK.framework/MolenVK";
+  if (s_vulkan_module.Open(filename.c_str()))
+    return true;
+  
+  filename = "@executable_path/Frameworks/libMoltenVK_Dolphin.dylib";
   return s_vulkan_module.Open(filename.c_str());
 #else
   std::string filename = Common::DynamicLibrary::GetVersionedFilename("vulkan", 1);
