@@ -23,7 +23,8 @@
 </br>
 
 <p align="center">
-<a href="https://www.patreon.com/bePatron?u=8537745"><img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" /></a>
+
+  <!-- <a href="https://www.patreon.com/bePatron?u=8537745"><img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" /></a> -->
 <a href="https://www.amazon.com/hz/wishlist/ls/1VXOGWHIOFVMR?ref_=wl_share"><img src="https://user-images.githubusercontent.com/399864/140426153-b6797d7d-c82f-4542-89ff-b29a3e70525d.jpg"  height="65" /></a>
  </p>
  <div style="align:center" align="center">
