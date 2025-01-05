@@ -15,4 +15,4 @@ FOUNDATION_EXPORT double PVBeetlePSXVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVBeetlePSXVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVBeetlePSX/PublicHeader.h>
-#import <PVBeetlePSX/PVBeetlePSXCore.h>
+#import <PVBeetlePSX/PVBeetlePSXCoreBridge.h>

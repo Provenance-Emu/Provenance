@@ -6,7 +6,8 @@
 //  Copyright © 2022 Provenance. All rights reserved.
 //
 
-#import "PVBeetlePSXCore.h"
+#import "PVBeetlePSXCoreBridge.h"
+#import <PVBeetlePSX/PVBeetlePSX-Swift.h>
 #include <stdatomic.h>
 #include "libretro_options.h"
 //#import "PVBeetlePSXCore+Controls.h"
@@ -14,7 +15,7 @@
 //#import "PVBeetlePSXCore+Video.h"
 //
 //#import "PVBeetlePSXCore+Audio.h"
-
+#import <PVLogging/PVLoggingObjC.h>
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
 
@@ -23,7 +24,7 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVBeetlePSXCore() {
+@interface PVBeetlePSXCoreBridge() {
 
 }
 
@@ -31,7 +32,7 @@
 
 #pragma mark - PVBeetlePSXCore Begin
 
-@implementation PVBeetlePSXCore
+@implementation PVBeetlePSXCoreBridge
 {
 }
 
@@ -119,7 +120,7 @@
 //}
 //
 
-- (BOOL)supportsSaveStates { return NO; }
+- (BOOL)supportsSaveStates { return YES; }
 - (BOOL)supportsRumble { return YES; }
 - (BOOL)supportsCheatCode { return YES; }
 
@@ -162,21 +163,8 @@
 //}
 
 
-# pragma mark - Audio
-
-//- (GLenum)pixelFormat {
-//    return GL_BGRA;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_UNSIGNED_BYTE;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    return GL_RGBA;
-//}
-
 - (BOOL)rendersToOpenGL { return YES; }
+
 # pragma mark - Audio
 
 - (double)audioSampleRate {
@@ -190,9 +178,27 @@
     
     
 #define V(x) strcmp(variable, x) == 0
-    if (V(BEETLE_OPT(hw_renderer))) {
+    if (V(BEETLE_OPT(renderer))) {
         // hardware, hardware_gl, hardware_vk, software
-        char *value = strdup("hardware_gl");
+        NSInteger intValue = PVBeetlePSXCoreOptions.video_renderer;
+        char *value = strdup("hardware");
+        switch (intValue) {
+            case 0:
+                value = strdup("hardware");
+                break;
+            case 1:
+                value = strdup("hardware_gl");
+                break;
+            case 2:
+                value = strdup("hardware_vk");
+                break;
+            case 3:
+                value = strdup("software");
+                break;
+
+            default:
+                break;
+        }
         return value;
     } else if (V(BEETLE_OPT(renderer_software_fb))) {
 //        "Enable accurate emulation of framebuffer effects (e.g. motion blur, FF7 battle swirl) when using hardware renderers by running a copy of the software renderer at native resolution in the background. If disabled, these operations are omitted (OpenGL) or rendered on the GPU (Vulkan). Disabling can improve performance but may cause severe graphical errors. Leave enabled if unsure.",
@@ -203,11 +209,32 @@
 //           { "disabled", NULL },
 //           { NULL, NULL },
 //        },
-            char *value = strdup("disabled");
+            BOOL boolValue = PVBeetlePSXCoreOptions.video_renderer_software_framebuffer;
+            char *value = boolValue ? strdup("enabled") : strdup("disabled");
             return value;
     } else if (V(BEETLE_OPT(internal_resolution))) {
         // 1,2,4,8,16
         char *value = strdup("2x");
+        NSInteger intValue = PVBeetlePSXCoreOptions.video_renderer_upscale;
+        switch (intValue) {
+            case 0:
+                value = strdup("1x");
+                break;
+            case 1:
+                value = strdup("2x");
+                break;
+            case 2:
+                value = strdup("4x");
+                break;
+            case 3:
+                value = strdup("8x");
+                break;
+            case 4:
+                value = strdup("16x");
+                break;
+            default:
+                break;
+        }
         return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);
@@ -215,6 +242,29 @@
     }
 #undef V
     return NULL;
+}
+
+// Override buffer size for BeetlePSX's requirements
+//- (CGSize)bufferSize {
+//    return CGSizeMake(640, 480);  // Standard PSX resolution
+//}
+
+// Set aspect ratio
+//- (CGSize)aspectSize {
+//    return CGSizeMake(4, 3);  // Standard PSX aspect ratio
+//}
+
+#pragma MARK: Controls
+- (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player {
+    DLOG(@"TODO");
+}
+
+- (void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSInteger)player {
+    DLOG(@"TODO");
+}
+
+- (void)didMovePSXJoystickDirection:(PVPSXButton)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    DLOG(@"TODO");
 }
 
 @end
