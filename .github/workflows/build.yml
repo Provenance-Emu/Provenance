@@ -29,27 +29,27 @@ jobs:
         include:
           - target: "Provenance-Lite-iOS"
             sdk: iphoneos
-            scheme: "Provenance-Lite (AppStore) (Release)"
+            scheme: "Provenance-Lite"
             APP_NAME: "Provenance Lite"
             IPA_NAME: "Provenance-Lite-iOS"
 
-          - target: "Provenance-Lite-tvOS"
-            sdk: appletvos
-            scheme: "Provenance-Lite (AppStore) (Release)"
-            APP_NAME: "Provenance Lite"
-            IPA_NAME: "Provenance-Lite-tvOS"
+          # - target: "Provenance-Lite-tvOS"
+          #   sdk: appletvos
+          #   scheme: "Provenance-Lite (AppStore) (Release)"
+          #   APP_NAME: "Provenance Lite"
+          #   IPA_NAME: "Provenance-Lite-tvOS"
 
-          - target: "Provenance-iOS"
-            sdk: iphoneos
-            scheme: "Provenance (AppStore) (Release)"
-            APP_NAME: "Provenance"
-            IPA_NAME: "Provenance-iOS"
+          # - target: "Provenance-iOS"
+          #   sdk: iphoneos
+          #   scheme: "Provenance (AppStore) (Release)"
+          #   APP_NAME: "Provenance"
+          #   IPA_NAME: "Provenance-iOS"
 
-          - target: "Provenance-tvOS"
-            sdk: appletvos
-            scheme: "Provenance (AppStore) (Release)"
-            APP_NAME: "Provenance"
-            IPA_NAME: "Provenance-tvOS"
+          # - target: "Provenance-tvOS"
+          #   sdk: appletvos
+          #   scheme: "Provenance (AppStore) (Release)"
+          #   APP_NAME: "Provenance"
+          #   IPA_NAME: "Provenance-tvOS"
 
     runs-on: 'macos-latest'
     timeout-minutes: 300
