@@ -632,6 +632,7 @@ void Host_Message(HostMessageID id)
 
 void Host_UpdateTitle(const std::string& title)
 {
+    NSLog(@"Host_UpdateTitle called: %s\n", title.c_str());
 }
 
 void Host_UpdateDisasmDialog()
@@ -657,29 +658,35 @@ void Host_TargetRectangleWasUpdated()
 
 bool Host_UINeedsControllerState()
 {
+    NSLog(@"Host_UINeedsControllerState called\n");
 	return false;
 }
 
 bool Host_RendererHasFocus()
 {
+    NSLog(@"Dolphin: Host_RendererHasFocus called\n");
 	return true;
 }
 
 bool Host_RendererIsFullscreen()
 {
+    NSLog(@"Dolphin: Host_RendererIsFullscreen called\n");
 	return false;
 }
 
 void Host_YieldToUI()
 {
+    NSLog(@"Dolphin: Host_YieldToUI called\n");
 }
 
 void Host_UpdateProgressDialog(const char* caption, int position, int total)
 {
+    NSLog(@"Dolphin: Host_UpdateProgressDialog called: %s %i/%i\n", caption, position, total);
 }
 
 void Host_TitleChanged()
 {
+    NSLog(@"Dolphin: Host_TitleChanged called");
 }
 
 std::vector<std::string> Host_GetPreferredLocales()
@@ -689,18 +696,19 @@ std::vector<std::string> Host_GetPreferredLocales()
 
 bool Host_RendererHasFullFocus()
 {
+    NSLog(@"Dolphin: Host_RendererHasFullFocus called");
   return true;
 }
 
 bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgType style)
 {
-    NSLog(@"Message %s %s\n", caption, text);
+    NSLog(@"Dolphin: Message %s %s\n", caption, text);
 	return true;
 }
 
 void UpdateWiiPointer()
 {
-    NSLog(@"Update Wii Pointer\n");
+    NSLog(@"Dolphin: Update Wii Pointer\n");
     if (Core::IsRunningAndStarted() && g_renderer) {
         g_renderer->ResizeSurface();
         ButtonManager::GamepadEvent("Touchscreen", 4, ButtonManager::ButtonType::WIIMOTE_IR_RECENTER, 1);
