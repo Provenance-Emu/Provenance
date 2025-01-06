@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "retroarch.h"
 
 #ifdef _WIN32
 #include <direct.h>
@@ -68,6 +69,7 @@
 #include "runloop.h"
 #include "configuration.h"
 #include "input/input_remapping.h"
+#include "libretro-common/retro_miscellaneous.h"
 
 #ifdef HAVE_MENU
 #include "menu/menu_driver.h"
@@ -176,7 +178,7 @@ static bool command_set_shader(const char *arg)
 
    snprintf(msg, sizeof(msg), "Shader: \"%s\"", arg);
    runloop_msg_queue_push(msg, 1, 120, true);
-   VLOG(@"%s \"%s\".\n",
+   VLOG("%s \"%s\".\n",
          msg_hash_to_str(MSG_APPLYING_SHADER),
          arg);
 
@@ -345,13 +347,13 @@ static void command_parse_sub_msg(command_t *handle, const char *tok)
       if (arg)
       {
          if (!action_map[index].action(arg))
-            ELOG(@"Command \"%s\" failed.\n", arg);
+            ELOG("Command \"%s\" failed.\n", arg);
       }
       else
          handle->state[map[index].id] = true;
    }
    else
-      WLOG(@"%s \"%s\" %s.\n",
+      WLOG("%s \"%s\" %s.\n",
             msg_hash_to_str(MSG_UNRECOGNIZED_COMMAND),
             tok,
             msg_hash_to_str(MSG_RECEIVED));
@@ -378,7 +380,7 @@ static bool command_network_init(command_t *handle, uint16_t port)
    int fd;
    struct addrinfo *res  = NULL;
 
-   VLOG(@"%s %hu.\n",
+   VLOG("%s %hu.\n",
          msg_hash_to_str(MSG_VALUE_BRINGING_UP_COMMAND_INTERFACE_ON_PORT),
          (unsigned short)port);
 
@@ -394,7 +396,7 @@ static bool command_network_init(command_t *handle, uint16_t port)
 
    if (!socket_bind(handle->net_fd, (void*)res))
    {
-      ELOG(@"Failed to bind socket.\n");
+      ELOG("Failed to bind socket.\n");
       goto error;
    }
 
@@ -467,13 +469,13 @@ static bool command_verify(const char *cmd)
    if (command_get_arg(cmd, NULL, NULL))
       return true;
 
-   ELOG(@"Command \"%s\" is not recognized by the program.\n", cmd);
-   ELOG(@"\tValid commands:\n");
+   ELOG("Command \"%s\" is not recognized by the program.\n", cmd);
+   ELOG("\tValid commands:\n");
    for (i = 0; i < sizeof(map) / sizeof(map[0]); i++)
-      ELOG(@"\t\t%s\n", map[i].str);
+      ELOG("\t\t%s\n", map[i].str);
 
    for (i = 0; i < sizeof(action_map) / sizeof(action_map[0]); i++)
-      ELOG(@"\t\t%s %s\n", action_map[i].str, action_map[i].arg_desc);
+      ELOG("\t\t%s %s\n", action_map[i].str, action_map[i].arg_desc);
 
    return false;
 }
@@ -514,7 +516,7 @@ bool command_network_send(const char *cmd_)
 
    if (cmd)
    {
-      VLOG(@"%s: \"%s\" to %s:%hu\n",
+      VLOG("%s: \"%s\" to %s:%hu\n",
             msg_hash_to_str(MSG_SENDING_COMMAND),
             cmd, host, (unsigned short)port);
 
@@ -864,9 +866,9 @@ static void command_event_disk_control_set_eject(bool new_state, bool print_log)
    if (!string_is_empty(msg))
    {
       if (error)
-         ELOG(@"%s\n", msg);
+         ELOG("%s\n", msg);
       else
-         VLOG(@"%s\n", msg);
+         VLOG("%s\n", msg);
 
       /* Only noise in menu. */
       if (print_log)
@@ -923,9 +925,9 @@ static void command_event_disk_control_set_index(unsigned idx)
    if (!string_is_empty(msg))
    {
       if (error)
-         ELOG(@"%s\n", msg);
+         ELOG("%s\n", msg);
       else
-         VLOG(@"%s\n", msg);
+         VLOG("%s\n", msg);
       runloop_msg_queue_push(msg, 1, 180, true);
    }
 }
@@ -967,7 +969,7 @@ static bool command_event_disk_control_append_image(const char *path)
 
    snprintf(msg, sizeof(msg), "%s: ", msg_hash_to_str(MSG_APPENDED_DISK));
    strlcat(msg, path, sizeof(msg));
-   VLOG(@"%s\n", msg);
+   VLOG("%s\n", msg);
    runloop_msg_queue_push(msg, 0, 180, true);
 
    command_event(CMD_EVENT_AUTOSAVE_DEINIT, NULL);
@@ -1014,7 +1016,7 @@ static void command_event_check_disk_prev(
 
    if (!disk_prev_enable)
    {
-      ELOG(@"%s.\n", msg_hash_to_str(MSG_GOT_INVALID_DISK_INDEX));
+      ELOG("%s.\n", msg_hash_to_str(MSG_GOT_INVALID_DISK_INDEX));
       return;
    }
 
@@ -1047,7 +1049,7 @@ static void command_event_check_disk_next(
 
    if (!disk_next_enable)
    {
-      ELOG(@"%s.\n", msg_hash_to_str(MSG_GOT_INVALID_DISK_INDEX));
+      ELOG("%s.\n", msg_hash_to_str(MSG_GOT_INVALID_DISK_INDEX));
       return;
    }
 
@@ -1074,7 +1076,7 @@ static void command_event_set_volume(float gain)
 
    snprintf(msg, sizeof(msg), "Volume: %.1f dB", settings->audio.volume);
    runloop_msg_queue_push(msg, 1, 180, true);
-   VLOG(@"%s\n", msg);
+   VLOG("%s\n", msg);
 
    audio_driver_set_volume_gain(db_to_gain(settings->audio.volume));
 }
@@ -1120,7 +1122,7 @@ static void command_event_init_controllers(void)
             /* Do not fix settings->input.libretro_device[i],
              * because any use of dummy core will reset this,
              * which is not a good idea. */
-            WLOG(@"Input device ID %u is unknown to this "
+            WLOG("Input device ID %u is unknown to this "
                   "libretro implementation. Using RETRO_DEVICE_JOYPAD.\n",
                   device);
             device = RETRO_DEVICE_JOYPAD;
@@ -1131,7 +1133,7 @@ static void command_event_init_controllers(void)
       switch (device)
       {
          case RETRO_DEVICE_NONE:
-            VLOG(@"%s %u.\n",
+            VLOG("%s %u.\n",
                   msg_hash_to_str(MSG_VALUE_DISCONNECTING_DEVICE_FROM_PORT),
                   i + 1);
             set_controller = true;
@@ -1142,7 +1144,7 @@ static void command_event_init_controllers(void)
             /* Some cores do not properly range check port argument.
              * This is broken behavior of course, but avoid breaking
              * cores needlessly. */
-            VLOG(@"Connecting %s (ID: %u) to port %u.\n", ident,
+            VLOG("Connecting %s (ID: %u) to port %u.\n", ident,
                   device, i + 1);
             set_controller = true;
             break;
@@ -1238,12 +1240,12 @@ static void command_event_load_auto_state(void)
 
    ret = content_load_state(savestate_name_auto, false);
 
-   VLOG(@"Found auto savestate in: %s\n", savestate_name_auto);
+   VLOG("Found auto savestate in: %s\n", savestate_name_auto);
 
    snprintf(msg, sizeof(msg), "Auto-loading savestate from \"%s\" %s.",
          savestate_name_auto, ret ? "succeeded" : "failed");
    runloop_msg_queue_push(msg, 1, 180, false);
-   VLOG(@"%s\n", msg);
+   VLOG("%s\n", msg);
 }
 
 static void command_event_set_savestate_auto_index(void)
@@ -1298,7 +1300,7 @@ static void command_event_set_savestate_auto_index(void)
    dir_list_free(dir_list);
 
    settings->state_slot = max_idx;
-   VLOG(@"Found last state slot: #%d\n", settings->state_slot);
+   VLOG("Found last state slot: #%d\n", settings->state_slot);
 }
 
 static bool event_init_content(void)
@@ -1322,7 +1324,7 @@ static bool event_init_content(void)
    command_event_set_savestate_auto_index();
 
    if (event_load_save_files())
-      VLOG(@"%s.\n",
+      VLOG("%s.\n",
             msg_hash_to_str(MSG_SKIPPING_SRAM_LOAD));
 
    command_event_load_auto_state();
@@ -1400,7 +1402,7 @@ static void command_event_restore_default_shader_preset(void)
    if (runloop_ctl(RUNLOOP_CTL_GET_DEFAULT_SHADER_PRESET, &preset) &&
          !string_is_empty(preset))
    {
-      VLOG(@"Shaders: restoring default shader preset to %s\n",
+      VLOG("Shaders: restoring default shader preset to %s\n",
             preset);
       strlcpy(settings->path.shader, preset, sizeof(settings->path.shader));
    }
@@ -1433,7 +1435,7 @@ static bool command_event_save_auto_state(void)
          sizeof(savestate_name_auto));
 
    ret = content_save_state((const char*)savestate_name_auto, true);
-   VLOG(@"Auto save state to \"%s\" %s.\n", savestate_name_auto, ret ?
+   VLOG("Auto save state to \"%s\" %s.\n", savestate_name_auto, ret ?
          "succeeded" : "failed");
 
    return true;
@@ -1469,7 +1471,7 @@ static bool command_event_save_core_config(void)
    else
    {
       runloop_msg_queue_push(msg_hash_to_str(MSG_CONFIG_DIRECTORY_NOT_SET), 1, 180, true);
-      ELOG(@"%s\n", msg_hash_to_str(MSG_CONFIG_DIRECTORY_NOT_SET));
+      ELOG("%s\n", msg_hash_to_str(MSG_CONFIG_DIRECTORY_NOT_SET));
       return false;
    }
 
@@ -1478,7 +1480,7 @@ static bool command_event_save_core_config(void)
          && path_file_exists(config_get_active_core_path()))
    {
       unsigned i;
-      VLOG(@"%s\n", msg_hash_to_str(MSG_USING_CORE_NAME_FOR_NEW_CONFIG));
+      VLOG("%s\n", msg_hash_to_str(MSG_USING_CORE_NAME_FOR_NEW_CONFIG));
 
       /* In case of collision, find an alternative name. */
       for (i = 0; i < 16; i++)
@@ -1514,7 +1516,7 @@ static bool command_event_save_core_config(void)
    if (!found_path)
    {
       /* Fallback to system time... */
-      WLOG(@"%s\n",
+      WLOG("%s\n",
             msg_hash_to_str(MSG_CANNOT_INFER_NEW_CONFIG_PATH));
       fill_dated_filename(config_name,
             file_path_str(FILE_PATH_CONFIG_EXTENSION),
@@ -1539,7 +1541,7 @@ static bool command_event_save_core_config(void)
       snprintf(msg, sizeof(msg), "%s \"%s\".",
             msg_hash_to_str(MSG_SAVED_NEW_CONFIG_TO),
             config_path);
-      VLOG(@"%s\n", msg);
+      VLOG("%s\n", msg);
    }
    else
    {
@@ -1547,7 +1549,7 @@ static bool command_event_save_core_config(void)
             "%s \"%s\".",
             msg_hash_to_str(MSG_FAILED_SAVING_CONFIG_TO),
             config_path);
-      ELOG(@"%s\n", msg);
+      ELOG("%s\n", msg);
    }
 
    runloop_msg_queue_push(msg, 1, 180, true);
@@ -1590,14 +1592,14 @@ void command_event_save_current_config(void)
          snprintf(msg, sizeof(msg), "%s \"%s\".",
                msg_hash_to_str(MSG_SAVED_NEW_CONFIG_TO),
                global->path.config);
-         VLOG(@"%s\n", msg);
+         VLOG("%s\n", msg);
       }
       else
       {
          snprintf(msg, sizeof(msg), "%s \"%s\".",
                msg_hash_to_str(MSG_FAILED_SAVING_CONFIG_TO),
                global->path.config);
-         ELOG(@"%s\n", msg);
+         ELOG("%s\n", msg);
       }
 
       runloop_msg_queue_push(msg, 1, 180, true);
@@ -1746,7 +1748,7 @@ static void command_event_main_state(unsigned cmd)
                MSG_CORE_DOES_NOT_SUPPORT_SAVESTATES), sizeof(msg));
 
    runloop_msg_queue_push(msg, 2, 180, true);
-   VLOG(@"%s\n", msg);
+   VLOG("%s\n", msg);
 }
 
 /**
@@ -1896,7 +1898,7 @@ bool command_event(enum event_command cmd, void *data)
          command_event_init_controllers();
          break;
       case CMD_EVENT_RESET:
-         VLOG(@"%s.\n", msg_hash_to_str(MSG_RESET));
+         VLOG("%s.\n", msg_hash_to_str(MSG_RESET));
          runloop_msg_queue_push(msg_hash_to_str(MSG_RESET), 1, 120, true);
 
 #ifdef HAVE_CHEEVOS
@@ -2068,7 +2070,7 @@ bool command_event(enum event_command cmd, void *data)
 
          if (!settings->audio.mute_enable && !audio_driver_start())
          {
-            ELOG(@"Failed to start audio driver. "
+            ELOG("Failed to start audio driver. "
                   "Will continue without audio.\n");
             audio_driver_unset_active();
          }
@@ -2081,13 +2083,13 @@ bool command_event(enum event_command cmd, void *data)
 
             if (!audio_driver_toggle_mute())
             {
-               ELOG(@"%s.\n",
+               ELOG("%s.\n",
                      msg_hash_to_str(MSG_FAILED_TO_UNMUTE_AUDIO));
                return false;
             }
 
             runloop_msg_queue_push(msg, 1, 180, true);
-            VLOG(@"%s\n", msg);
+            VLOG("%s\n", msg);
          }
          break;
       case CMD_EVENT_OVERLAY_DEINIT:
@@ -2166,7 +2168,7 @@ bool command_event(enum event_command cmd, void *data)
          if (!settings->history_list_enable)
             return false;
 
-         VLOG(@"%s: [%s].\n",
+         VLOG("%s: [%s].\n",
                msg_hash_to_str(MSG_LOADING_HISTORY_FILE),
                settings->path.content_history);
          g_defaults.content_history = playlist_init(
@@ -2174,14 +2176,14 @@ bool command_event(enum event_command cmd, void *data)
                settings->content_history_size);
 
 #ifdef HAVE_FFMPEG
-         VLOG(@"%s: [%s].\n",
+         VLOG("%s: [%s].\n",
                msg_hash_to_str(MSG_LOADING_HISTORY_FILE),
                settings->path.content_music_history);
          g_defaults.music_history = playlist_init(
                settings->path.content_music_history,
                settings->content_history_size);
 
-         VLOG(@"%s: [%s].\n",
+         VLOG("%s: [%s].\n",
                msg_hash_to_str(MSG_LOADING_HISTORY_FILE),
                settings->path.content_video_history);
          g_defaults.video_history = playlist_init(
@@ -2190,7 +2192,7 @@ bool command_event(enum event_command cmd, void *data)
 #endif
 
 #ifdef HAVE_IMAGEVIEWER
-         VLOG(@"%s: [%s].\n",
+         VLOG("%s: [%s].\n",
                msg_hash_to_str(MSG_LOADING_HISTORY_FILE),
                settings->path.content_image_history);
          g_defaults.image_history = playlist_init(
@@ -2316,7 +2318,7 @@ bool command_event(enum event_command cmd, void *data)
       case CMD_EVENT_PAUSE_CHECKS:
          if (runloop_ctl(RUNLOOP_CTL_IS_PAUSED, NULL))
          {
-            VLOG(@"%s\n", msg_hash_to_str(MSG_PAUSED));
+            VLOG("%s\n", msg_hash_to_str(MSG_PAUSED));
             command_event(CMD_EVENT_AUDIO_STOP, NULL);
 
             if (settings->video.black_frame_insertion)
@@ -2324,7 +2326,7 @@ bool command_event(enum event_command cmd, void *data)
          }
          else
          {
-            VLOG(@"%s\n", msg_hash_to_str(MSG_UNPAUSED));
+            VLOG("%s\n", msg_hash_to_str(MSG_UNPAUSED));
             command_event(CMD_EVENT_AUDIO_START, NULL);
          }
          break;
@@ -2403,7 +2405,7 @@ bool command_event(enum event_command cmd, void *data)
 #endif
 
             if (!global->sram.use)
-               VLOG(@"%s\n",
+               VLOG("%s\n",
                      msg_hash_to_str(MSG_SRAM_WILL_NOT_BE_SAVED));
 
             if (global->sram.use)
@@ -2571,7 +2573,7 @@ bool command_event(enum event_command cmd, void *data)
             if (!ret)
                return false;
 
-            VLOG(@"%s: %s.\n",
+            VLOG("%s: %s.\n",
                   msg_hash_to_str(MSG_GRAB_MOUSE_STATE),
                   grab_mouse_state ? "yes" : "no");
 

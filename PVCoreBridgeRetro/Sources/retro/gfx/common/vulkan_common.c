@@ -27,6 +27,7 @@
 #include <dynamic/dylib.h>
 
 #include "vulkan_common.h"
+#include "retroarch.h"
 #include "../../performance_counters.h"
 
 static dylib_t vulkan_library;
@@ -53,22 +54,22 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL vulkan_debug_cb(
 
    if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
    {
-      ELOG(@"[Vulkan]: Error: %s: %s\n",
+      ELOG("[Vulkan]: Error: %s: %s\n",
             pLayerPrefix, pMessage);
    }
    else if (flags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
    {
-      WLOG(@"[Vulkan]: Warning: %s: %s\n",
+      WLOG("[Vulkan]: Warning: %s: %s\n",
             pLayerPrefix, pMessage);
    }
    else if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
    {
-      VLOG(@"[Vulkan]: Performance warning: %s: %s\n",
+      VLOG("[Vulkan]: Performance warning: %s: %s\n",
             pLayerPrefix, pMessage);
    }
    else
    {
-      VLOG(@"[Vulkan]: Information: %s: %s\n",
+      VLOG("[Vulkan]: Information: %s: %s\n",
             pLayerPrefix, pMessage);
    }
 
@@ -88,7 +89,7 @@ uint32_t vulkan_find_memory_type(
          return i;
    }
 
-   ELOG(@"[Vulkan]: Failed to find valid memory type. This should never happen.");
+   ELOG("[Vulkan]: Failed to find valid memory type. This should never happen.");
    abort();
 }
 
@@ -107,7 +108,7 @@ uint32_t vulkan_find_memory_type_fallback(
 
    if (host_reqs_first == 0)
    {
-      ELOG(@"[Vulkan]: Failed to find valid memory type. This should never happen.");
+      ELOG("[Vulkan]: Failed to find valid memory type. This should never happen.");
       abort();
    }
 
@@ -209,7 +210,7 @@ void vulkan_log_textures(void)
    unsigned i;
    for (i = 0; i < vk_count; i++)
    {
-      WLOG(@"[Vulkan]: Found leaked texture %llu.\n",
+      WLOG("[Vulkan]: Found leaked texture %llu.\n",
             (unsigned long long)vk_images[i]);
    }
    vk_count = 0;
@@ -219,7 +220,7 @@ static unsigned track_seq;
 static void vulkan_track_alloc(VkImage image)
 {
    vk_images[vk_count++] = image;
-   VLOG(@"[Vulkan]: Alloc %llu (%u).\n",
+   VLOG("[Vulkan]: Alloc %llu (%u).\n",
          (unsigned long long)image, track_seq);
    track_seq++;
 }
@@ -331,7 +332,7 @@ struct vk_texture vulkan_create_texture(vk_t *vk,
 
       if ((format_properties.linearTilingFeatures & required) != required)
       {
-         VLOG(@"[Vulkan]: GPU does not support using linear images as textures. Falling back to copy path.\n");
+         VLOG("[Vulkan]: GPU does not support using linear images as textures. Falling back to copy path.\n");
          type = VULKAN_TEXTURE_STAGING;
       }
    }
@@ -416,7 +417,7 @@ struct vk_texture vulkan_create_texture(vk_t *vk,
           VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) == 0)
    {
       /* Recreate texture but for STAGING this time ... */
-      VLOG(@"[Vulkan]: GPU supports linear images as textures, but not DEVICE_LOCAL. Falling back to copy path.\n");
+      VLOG("[Vulkan]: GPU supports linear images as textures, but not DEVICE_LOCAL. Falling back to copy path.\n");
       type                  = VULKAN_TEXTURE_STAGING;
       vkDestroyImage(device, tex.image, NULL);
 
@@ -1279,7 +1280,7 @@ static bool vulkan_find_instance_extensions(const char **exts, unsigned num_exts
 
    if (!vulkan_find_extensions(exts, num_exts, properties, property_count))
    {
-      ELOG(@"[Vulkan]: Could not find instance extensions. Will attempt without them.\n");
+      ELOG("[Vulkan]: Could not find instance extensions. Will attempt without them.\n");
       ret = false;
       goto end;
    }
@@ -1313,7 +1314,7 @@ static bool vulkan_find_device_extensions(VkPhysicalDevice gpu, const char **ext
 
    if (!vulkan_find_extensions(exts, num_exts, properties, property_count))
    {
-      ELOG(@"[Vulkan]: Could not find device extensions. Will attempt without them.\n");
+      ELOG("[Vulkan]: Could not find device extensions. Will attempt without them.\n");
       ret = false;
       goto end;
    }
@@ -1334,27 +1335,27 @@ static bool vulkan_context_init_gpu(gfx_ctx_vulkan_data_t *vk)
    if (vkEnumeratePhysicalDevices(vk->context.instance,
             &gpu_count, NULL) != VK_SUCCESS)
    {
-      ELOG(@"[Vulkan]: Failed to enumerate physical devices.\n");
+      ELOG("[Vulkan]: Failed to enumerate physical devices.\n");
       return false;
    }
 
    gpus = (VkPhysicalDevice*)calloc(gpu_count, sizeof(*gpus));
    if (!gpus)
    {
-      ELOG(@"[Vulkan]: Failed to enumerate physical devices.\n");
+      ELOG("[Vulkan]: Failed to enumerate physical devices.\n");
       return false;
    }
 
    if (vkEnumeratePhysicalDevices(vk->context.instance,
             &gpu_count, gpus) != VK_SUCCESS)
    {
-      ELOG(@"[Vulkan]: Failed to enumerate physical devices.\n");
+      ELOG("[Vulkan]: Failed to enumerate physical devices.\n");
       return false;
    }
 
    if (gpu_count < 1)
    {
-      ELOG(@"[Vulkan]: Failed to enumerate Vulkan physical device.\n");
+      ELOG("[Vulkan]: Failed to enumerate Vulkan physical device.\n");
       free(gpus);
       return false;
    }
@@ -1390,13 +1391,13 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
 
    if (iface && iface->interface_type != RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN)
    {
-      WLOG(@"[Vulkan]: Got HW context negotiation interface, but it's the wrong API.\n");
+      WLOG("[Vulkan]: Got HW context negotiation interface, but it's the wrong API.\n");
       iface = NULL;
    }
 
    if (iface && iface->interface_version != RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN_VERSION)
    {
-      WLOG(@"[Vulkan]: Got HW context negotiation interface, but it's the wrong interface version.\n");
+      WLOG("[Vulkan]: Got HW context negotiation interface, but it's the wrong interface version.\n");
       iface = NULL;
    }
 
@@ -1422,7 +1423,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
 
       if (!ret)
       {
-         WLOG(@"[Vulkan]: Failed to create device with negotiation interface. Falling back to default path.\n");
+         WLOG("[Vulkan]: Failed to create device with negotiation interface. Falling back to default path.\n");
       }
       else
       {
@@ -1435,7 +1436,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
 
          if (context.presentation_queue != context.queue)
          {
-            ELOG(@"[Vulkan]: Present queue != graphics queue. This is currently not supported.\n");
+            ELOG("[Vulkan]: Present queue != graphics queue. This is currently not supported.\n");
             return false;
          }
       }
@@ -1463,7 +1464,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
 
       if (queue_count < 1)
       {
-         ELOG(@"[Vulkan]: Invalid number of queues detected.\n");
+         ELOG("[Vulkan]: Invalid number of queues detected.\n");
          return false;
       }
 
@@ -1485,7 +1486,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
          if (supported && ((queue_properties[i].queueFlags & required) == required))
          {
             vk->context.graphics_queue_index = i;
-            VLOG(@"[Vulkan]: Queue family %u supports %u sub-queues.\n",
+            VLOG("[Vulkan]: Queue family %u supports %u sub-queues.\n",
                   i, queue_properties[i].queueCount);
             found_queue = true;
             break;
@@ -1496,7 +1497,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
 
       if (!found_queue)
       {
-         ELOG(@"[Vulkan]: Did not find suitable graphics queue.\n");
+         ELOG("[Vulkan]: Did not find suitable graphics queue.\n");
          return false;
       }
 
@@ -1523,19 +1524,19 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
          cached_device      = NULL;
 
          video_driver_set_video_cache_context_ack();
-         VLOG(@"[Vulkan]: Using cached Vulkan context.\n");
+         VLOG("[Vulkan]: Using cached Vulkan context.\n");
       }
       else if (vkCreateDevice(vk->context.gpu, &device_info,
                NULL, &vk->context.device) != VK_SUCCESS)
       {
-         ELOG(@"[Vulkan]: Failed to create device.\n");
+         ELOG("[Vulkan]: Failed to create device.\n");
          return false;
       }
    }
 
    if (!vulkan_load_device_symbols(vk))
    {
-      ELOG(@"[Vulkan]: Failed to load device symbols.\n");
+      ELOG("[Vulkan]: Failed to load device symbols.\n");
       return false;
    }
 
@@ -1549,7 +1550,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
    vk->context.queue_lock = slock_new();
    if (!vk->context.queue_lock)
    {
-      ELOG(@"[Vulkan]: Failed to create queue lock.\n");
+      ELOG("[Vulkan]: Failed to create queue lock.\n");
       return false;
    }
 #endif
@@ -1579,13 +1580,13 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
 
    if (iface && iface->interface_type != RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN)
    {
-      WLOG(@"[Vulkan]: Got HW context negotiation interface, but it's the wrong API.\n");
+      WLOG("[Vulkan]: Got HW context negotiation interface, but it's the wrong API.\n");
       iface = NULL;
    }
 
    if (iface && iface->interface_version != RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN_VERSION)
    {
-      WLOG(@"[Vulkan]: Got HW context negotiation interface, but it's the wrong interface version.\n");
+      WLOG("[Vulkan]: Got HW context negotiation interface, but it's the wrong interface version.\n");
       iface = NULL;
    }
 
@@ -1630,18 +1631,18 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
 
    if (!vulkan_library)
    {
-      ELOG(@"[Vulkan]: Failed to open Vulkan loader.\n");
+      ELOG("[Vulkan]: Failed to open Vulkan loader.\n");
       return false;
    }
 
-   VLOG(@"Vulkan dynamic library loaded.\n");
+   VLOG("Vulkan dynamic library loaded.\n");
    
    PFN_vkGetInstanceProcAddr GetInstanceProcAddr =
       (PFN_vkGetInstanceProcAddr)dylib_proc(vulkan_library, "vkGetInstanceProcAddr");
 
    if (!GetInstanceProcAddr)
    {
-      ELOG(@"[Vulkan]: Failed to load vkGetInstanceProcAddr symbol, broken loader?\n");
+      ELOG("[Vulkan]: Failed to load vkGetInstanceProcAddr symbol, broken loader?\n");
       return false;
    }
 
@@ -1649,7 +1650,7 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
 
    if (!vulkan_symbol_wrapper_load_global_symbols())
    {
-      ELOG(@"[Vulkan]: Failed to load global Vulkan symbols, broken loader?\n");
+      ELOG("[Vulkan]: Failed to load global Vulkan symbols, broken loader?\n");
       return false;
    }
 
@@ -1674,14 +1675,14 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
       info.pApplicationInfo = iface->get_application_info();
       if (info.pApplicationInfo->pApplicationName)
       {
-         VLOG(@"[Vulkan]: App: %s (version %u)\n",
+         VLOG("[Vulkan]: App: %s (version %u)\n",
                info.pApplicationInfo->pApplicationName,
                info.pApplicationInfo->applicationVersion);
       }
 
       if (info.pApplicationInfo->pEngineName)
       {
-         VLOG(@"[Vulkan]: Engine: %s (version %u)\n",
+         VLOG("[Vulkan]: Engine: %s (version %u)\n",
                info.pApplicationInfo->pEngineName,
                info.pApplicationInfo->engineVersion);
       }
@@ -1714,7 +1715,7 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
       info.pfnCallback = vulkan_debug_cb;
       vkCreateDebugReportCallbackEXT(vk->context.instance, &info, NULL, &vk->context.debug_callback);
    }
-   VLOG(@"[Vulkan]: Enabling Vulkan debug layers.\n");
+   VLOG("[Vulkan]: Enabling Vulkan debug layers.\n");
 #endif
 
    /* Try different API versions if driver has compatible
@@ -1728,13 +1729,13 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
 
    if (res == VK_ERROR_INCOMPATIBLE_DRIVER)
    {
-      ELOG(@"Failed to create Vulkan instance.\n");
+      ELOG("Failed to create Vulkan instance.\n");
       return false;
    }
 
    if (!vulkan_load_instance_symbols(vk))
    {
-      ELOG(@"[Vulkan]: Failed to load instance symbols.\n");
+      ELOG("[Vulkan]: Failed to load instance symbols.\n");
       return false;
    }
 
@@ -1998,10 +1999,10 @@ bool vulkan_surface_create(gfx_ctx_vulkan_data_t *vk,
             if (create(vk->context.instance,
                      &surf_info, NULL, &vk->vk_surface) != VK_SUCCESS)
             {
-               ELOG(@"[Vulkan]: Failed to create Android surface.\n");
+               ELOG("[Vulkan]: Failed to create Android surface.\n");
                return false;
             }
-            VLOG(@"[Vulkan]: Created Android surface: %llu\n",
+            VLOG("[Vulkan]: Created Android surface: %llu\n",
                   (unsigned long long)vk->vk_surface);
          }
 #endif
@@ -2139,7 +2140,7 @@ void vulkan_present(gfx_ctx_vulkan_data_t *vk, unsigned index)
 
    if (err != VK_SUCCESS || result != VK_SUCCESS)
    {
-      VLOG(@"[Vulkan]: QueuePresent failed, invalidating swapchain.\n");
+      VLOG("[Vulkan]: QueuePresent failed, invalidating swapchain.\n");
       vk->context.invalid_swapchain = true;
    }
 
@@ -2249,7 +2250,7 @@ void vulkan_acquire_next_image(gfx_ctx_vulkan_data_t *vk)
 
    if (err != VK_SUCCESS)
    {
-      VLOG(@"[Vulkan]: AcquireNextImage failed, invalidating swapchain.\n");
+      VLOG("[Vulkan]: AcquireNextImage failed, invalidating swapchain.\n");
       vk->context.invalid_swapchain = true;
    }
 }
@@ -2282,7 +2283,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
          &present_mode_count, NULL);
    if (present_mode_count < 1 || present_mode_count > 16)
    {
-      ELOG(@"[Vulkan]: Bogus present modes found.\n");
+      ELOG("[Vulkan]: Bogus present modes found.\n");
       return false;
    }
    vkGetPhysicalDeviceSurfacePresentModesKHR(
@@ -2291,7 +2292,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
 
    for (i = 0; i < present_mode_count; i++)
    {
-      VLOG(@"[Vulkan]: Swapchain supports present mode: %u.\n",
+      VLOG("[Vulkan]: Swapchain supports present mode: %u.\n",
             present_modes[i]);
    }
 
@@ -2317,7 +2318,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
       }
    }
 
-   VLOG(@"[Vulkan]: Creating swapchain with present mode: %u\n",
+   VLOG("[Vulkan]: Creating swapchain with present mode: %u\n",
          (unsigned)swapchain_present_mode);
 
    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk->context.gpu,
@@ -2336,7 +2337,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    {
       if (format_count == 0)
       {
-         ELOG(@"[Vulkan]: Surface has no formats.\n");
+         ELOG("[Vulkan]: Surface has no formats.\n");
          return false;
       }
 
@@ -2351,7 +2352,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    else
       swapchain_size           = surface_properties.currentExtent;
 
-   VLOG(@"[Vulkan]: Using swapchain size %u x %u.\n",
+   VLOG("[Vulkan]: Using swapchain size %u x %u.\n",
          swapchain_size.width, swapchain_size.height);
 
    desired_swapchain_images = surface_properties.minImageCount + 1;
@@ -2394,13 +2395,13 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    if (vkCreateSwapchainKHR(vk->context.device,
             &info, NULL, &vk->swapchain) != VK_SUCCESS)
    {
-      ELOG(@"[Vulkan]: Failed to create swapchain.\n");
+      ELOG("[Vulkan]: Failed to create swapchain.\n");
       return false;
    }
 
    if (old_swapchain != VK_NULL_HANDLE)
    {
-      VLOG(@"[Vulkan]: Recycled old swapchain.\n");
+      VLOG("[Vulkan]: Recycled old swapchain.\n");
       vkDestroySwapchainKHR(vk->context.device, old_swapchain, NULL);
    }
 
@@ -2440,7 +2441,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    vkGetSwapchainImagesKHR(vk->context.device, vk->swapchain,
          &vk->context.num_swapchain_images, vk->context.swapchain_images);
 
-   VLOG(@"[Vulkan]: Got %u swapchain images.\n",
+   VLOG("[Vulkan]: Got %u swapchain images.\n",
          vk->context.num_swapchain_images);
 
    for (i = 0; i < vk->context.num_swapchain_images; i++)

@@ -135,7 +135,9 @@ struct string_list *dir_list_new_special(const char *input_dir,
          return NULL;
    }
 
-   return dir_list_new(dir, exts, include_dirs, type == DIR_LIST_CORE_INFO, recursive);
+    bool include_hidden = type == DIR_LIST_CORE_INFO;
+    bool include_compressed = false;
+   return dir_list_new(dir, exts, include_dirs, include_hidden, include_compressed, recursive);
 }
 
 struct string_list *string_list_new_special(enum string_list_type type,

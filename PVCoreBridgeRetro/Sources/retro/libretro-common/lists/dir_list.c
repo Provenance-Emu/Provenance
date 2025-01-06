@@ -158,8 +158,8 @@ static int parse_dir_entry(const char *name, char *file_path,
  * Returns: pointer to a directory listing of type 'struct string_list *' on success,
  * NULL in case of error. Has to be freed manually.
  **/
-struct string_list *dir_list_new(const char *dir,
-      const char *ext, bool include_dirs, bool include_compressed, bool recursive)
+struct string_list *dir_list_new(const char *dir, const char *ext,
+      bool include_dirs, bool include_hidden, bool include_compressed, bool recursive)
 {
    struct string_list *ext_list   = NULL;
    struct string_list *list       = NULL;

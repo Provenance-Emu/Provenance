@@ -43,6 +43,7 @@
 //#include "gfx/video_frame.h"
 
 #include <retro_assert.h>
+#include "rthreads/rthreads.h"
 
 #include "cores/internal_cores.h"
 #include "frontend/frontend_driver.h"
@@ -106,6 +107,11 @@ static bool runloop_game_options_active          = false;
 #ifdef HAVE_THREADS
 static slock_t *_runloop_msg_queue_lock           = NULL;
 #endif
+
+#ifdef HAVE_IMAGEVIEWER
+#define SYMBOL_IMAGEVIEWER(x) current_core->x = libretro_imageviewer_##x
+#endif
+
 //static msg_queue_t *runloop_msg_queue            = NULL;
 
 // MARK: - Config
@@ -1495,7 +1501,42 @@ static bool environment_callback(unsigned cmd, void *data) {
         {
             // TODO: Needed for 3D
             ILOG(@"RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER");
-            return false;
+            unsigned *cb = (unsigned*)data;
+//            settings_t *settings          = config_get_ptr();
+//            const char *video_driver_name = settings->arrays.video_driver;
+//            bool driver_switch_enable     = settings->bools.driver_switch_enable;
+            BOOL useMetal = PVSettingsWrapper.useMetal;
+            
+            RARCH_LOG("[Environ]: GET_PREFERRED_HW_RENDER, video driver name: %s.\n", video_driver_name);
+
+//            if (string_is_equal(video_driver_name, "glcore"))
+//            {
+//                *cb = RETRO_HW_CONTEXT_OPENGL_CORE;
+//                RARCH_LOG("[Environ]: GET_PREFERRED_HW_RENDER - Context callback set to RETRO_HW_CONTEXT_OPENGL_CORE.\n");
+//            }
+//            else if (string_is_equal(video_driver_name, "gl"))
+//            {
+//                *cb = RETRO_HW_CONTEXT_OPENGL;
+//                RARCH_LOG("[Environ]: GET_PREFERRED_HW_RENDER - Context callback set to RETRO_HW_CONTEXT_OPENGL.\n");
+//            }
+            if (useMetal)
+            {
+                *cb = RETRO_HW_CONTEXT_VULKAN;
+                ILOG(@"[Environ]: GET_PREFERRED_HW_RENDER - Context callback set to RETRO_HW_CONTEXT_VULKAN.\n");
+            }
+            else
+            {
+                *cb = RETRO_HW_CONTEXT_OPENGLES3;
+                //*cb = RETRO_HW_CONTEXT_NONE;
+                ILOG(@"[Environ]: GET_PREFERRED_HW_RENDER - Context callback set to RETRO_HW_CONTEXT_NONE.\n");
+            }
+
+//            if (!driver_switch_enable)
+//            {
+//               RARCH_LOG("[Environ]: Driver switching disabled, GET_PREFERRED_HW_RENDER will be ignored.\n");
+//               return false;
+//            }
+            break;
         }
         case RETRO_ENVIRONMENT_SET_HW_RENDER: {
             // TODO: Needed for 3D
@@ -1510,8 +1551,136 @@ static bool environment_callback(unsigned cmd, void *data) {
              * If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or
              * NULL to retro_video_refresh_t.
              */
-            struct retro_hw_render_callback* cb = (const struct retro_hw_render_callback*)data;
-            ILOG(@"RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: %i", cb);
+            struct retro_hw_render_callback *cb  =
+               (struct retro_hw_render_callback*)data;
+
+            ILOG(@"RETRO_ENVIRONMENT_SET_HW_RENDER: %i", cb);
+
+//            video_driver_state_t *video_st       = &video_driver_state;
+//               video_state_get_ptr();
+            struct retro_hw_render_callback *hwr = NULL;
+//            hwr = video_driver_get_hw_context();
+//               VIDEO_DRIVER_GET_HW_CONTEXT_INTERNAL(video_st);
+
+            if (!cb)
+            {
+               ELOG(@"[Environ]: SET_HW_RENDER - No valid callback passed, returning...\n");
+               return false;
+            }
+
+            DLOG(@"[Environ]: SET_HW_RENDER, context type: %s.\n", hw_render_context_name(cb->context_type, cb->version_major, cb->version_minor));
+            
+            switch (cb->context_type)
+            {
+               case RETRO_HW_CONTEXT_NONE:
+                  VLOG(@"Requesting no HW context.\n");
+                  break;
+
+               case RETRO_HW_CONTEXT_VULKAN:
+   #ifdef HAVE_VULKAN
+                  VLOG(@"Requesting Vulkan context.\n");
+                  break;
+   #else
+                  ELOG(@"Requesting Vulkan context, but RetroArch is not compiled against Vulkan. Cannot use HW context.\n");
+                  return false;
+   #endif
+
+   #if defined(HAVE_OPENGLES)
+
+   #if (defined(HAVE_OPENGLES2) || defined(HAVE_OPENGLES3))
+               case RETRO_HW_CONTEXT_OPENGLES2:
+   #ifdef HAVE_OPENGLES3
+               case RETRO_HW_CONTEXT_OPENGLES3:
+   #endif
+                  VLOG(@"Requesting OpenGLES%u context.\n",
+                        cb->context_type == RETRO_HW_CONTEXT_OPENGLES2 ? 2 : 3);
+                  break;
+
+   #if defined(HAVE_OPENGLES3)
+               case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+                  VLOG(@"Requesting OpenGLES%u.%u context.\n",
+                        cb->version_major, cb->version_minor);
+                  break;
+   #endif
+
+   #endif
+               case RETRO_HW_CONTEXT_OPENGL:
+               case RETRO_HW_CONTEXT_OPENGL_CORE:
+                  ELOG(@"Requesting OpenGL context, but RetroArch "
+                        "is compiled against OpenGLES. Cannot use HW context.\n");
+                  return false;
+
+   #elif defined(HAVE_OPENGL)
+               case RETRO_HW_CONTEXT_OPENGLES2:
+               case RETRO_HW_CONTEXT_OPENGLES3:
+                  ELOG(@"Requesting OpenGLES%u context, but RetroArch "
+                        "is compiled against OpenGL. Cannot use HW context.\n",
+                        cb->context_type == RETRO_HW_CONTEXT_OPENGLES2 ? 2 : 3);
+                  return false;
+
+               case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+                  ELOG(@"Requesting OpenGLES%u.%u context, but RetroArch "
+                        "is compiled against OpenGL. Cannot use HW context.\n",
+                        cb->version_major, cb->version_minor);
+                  return false;
+
+               case RETRO_HW_CONTEXT_OPENGL:
+                  VLOG(@"Requesting OpenGL context.\n");
+                  break;
+
+               case RETRO_HW_CONTEXT_OPENGL_CORE:
+                  {
+                     gfx_ctx_flags_t flags;
+                     flags.flags = 0;
+                     BIT32_SET(flags.flags, GFX_CTX_FLAGS_GL_CORE_CONTEXT);
+
+                     video_context_driver_set_flags(&flags);
+
+                     VLOG(@"Requesting core OpenGL context (%u.%u).\n",
+                           cb->version_major, cb->version_minor);
+                  }
+                  break;
+   #endif
+
+               default:
+                  VLOG(@"Requesting unknown context.\n");
+                  return false;
+            }
+
+            
+//            struct retro_hw_render_callback *hwr =
+//            video_driver_get_hw_context();
+            
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGL_CORE)
+         /* TODO/FIXME - should check first if an OpenGL
+          * driver is running */
+         if (cb->context_type == RETRO_HW_CONTEXT_OPENGL_CORE)
+         {
+            /* Ensure that the rest of the frontend knows
+             * we have a core context */
+            gfx_ctx_flags_t flags;
+            flags.flags = 0;
+            BIT32_SET(flags.flags, GFX_CTX_FLAGS_GL_CORE_CONTEXT);
+
+//            video_context_driver_set_flags(&flags);
+         }
+#endif
+
+//         cb->get_current_framebuffer = video_driver_get_current_framebuffer;
+//         cb->get_proc_address        = video_driver_get_proc_address;
+
+         /* Old ABI. Don't copy garbage. */
+         if (cmd & RETRO_ENVIRONMENT_EXPERIMENTAL)
+         {
+            memcpy(hwr,
+                  cb, offsetof(struct retro_hw_render_callback, stencil));
+            memset((uint8_t*)hwr + offsetof(struct retro_hw_render_callback, stencil),
+               0, sizeof(*cb) - offsetof(struct retro_hw_render_callback, stencil));
+         }
+         else
+            memcpy(hwr, cb, sizeof(*cb));
+         DLOG(@"Reached end of SET_HW_RENDER.\n");
+            
             return true;
         }
 ////        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE : {
@@ -1810,37 +1979,37 @@ static void load_dynamic_core(void)
          corepath);
     lib_handle = dylib_load(corepath);
 
-    //    function_t sym       = dylib_proc(lib_handle, "retro_init");
+    function_t sym       = dylib_proc(lib_handle, "retro_init");
 
-    //    if (sym)
-    //    {
-    //        /* Try to verify that -lretro was not linked in from other modules
-    //         * since loading it dynamically and with -l will fail hard. */
-    //        ELOG(@"Serious problem. RetroArch wants to load libretro cores"
-    //             "dyamically, but it is already linked.\n");
-    //        ELOG(@"This could happen if other modules RetroArch depends on "
-    //             "link against libretro directly.\n");
-    //        ELOG(@"Proceeding could cause a crash. Aborting ...\n");
-    //        retroarch_fail(1, "init_libretro_sym()");
-    //    }
-    //
-    //    if (string_is_empty(config_get_active_core_path()))
-    //    {
-    //        ELOG(@"RetroArch is built for dynamic libretro cores, but "
-    //             "libretro_path is not set. Cannot continue.\n");
-    //        retroarch_fail(1, "init_libretro_sym()");
-    //    }
-    //
+    if (sym)
+    {
+        /* Try to verify that -lretro was not linked in from other modules
+         * since loading it dynamically and with -l will fail hard. */
+        ELOG(@"Serious problem. RetroArch wants to load libretro cores"
+             "dyamically, but it is already linked.\n");
+        ELOG(@"This could happen if other modules RetroArch depends on "
+             "link against libretro directly.\n");
+        ELOG(@"Proceeding could cause a crash. Aborting ...\n");
+        retroarch_fail(1, "init_libretro_sym()");
+    }
+
+    if (string_is_empty(config_get_active_core_path()))
+    {
+        ELOG(@"RetroArch is built for dynamic libretro cores, but "
+             "libretro_path is not set. Cannot continue.\n");
+        retroarch_fail(1, "init_libretro_sym()");
+    }
+
     /* Need to use absolute path for this setting. It can be
      * saved to content history, and a relative path would
      * break in that scenario. */
-    //   path_resolve_realpath(
-    //         config_get_active_core_path_ptr(),
-    //         config_get_active_core_path_size());
-    //
-    //   ILOG(@"Loading dynamic libretro core from: \"%s\"\n",
-    //         config_get_active_core_path());
-    //   lib_handle = dylib_load(config_get_active_core_path());
+//    path_resolve_realpath(
+//         config_get_active_core_path_ptr(),
+//         config_get_active_core_path_size());
+
+    ILOG(@"Loading dynamic libretro core from: \"%s\"\n",
+         config_get_active_core_path());
+    lib_handle = dylib_load(config_get_active_core_path());
     if (!lib_handle)
     {
         ELOG(@"Failed to open libretro core: \"%s\"\n",
@@ -2193,12 +2362,14 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         NSAssert(myBundle, @"myBundle was nil");
         const char* path = [myBundle.bundlePath fileSystemRepresentation];
         config_set_active_core_path(path);
-//        load_dynamic_core();
+#ifdef HAVE_DYNAMIC
+        load_dynamic_core();
+#endif
         core = malloc(sizeof(retro_core_t));
         init_libretro_sym(CORE_TYPE_PLAIN, core);
         retro_set_environment(environment_callback);
 
-        memset(_pad, 0, sizeof(int16_t) * 24);
+        memset(_pad, 0, sizeof(int16_t) * PVRETRO_PAD_PLAYER_COUNT * PVRETRO_PAD_BUTTON_COUNT);
 
 //        core_get_info(&info);
 //        std::cout << "Loaded core " << info.library_name << " version " << info.library_version << std::endl;
@@ -2206,9 +2377,14 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 //        std::cout << "Running for " << maxframes << " frames with frame timeout of ";
 //        std::cout << frametimeout << " seconds" << std::endl;
 
+//#if DEBUG
 //        struct retro_system_info info;
 //        bool load_no_info;
 //        libretro_get_system_info("", &info, &load_no_info);
+//        
+//        NSLog(@"\nlibrary_name: %s\nlibrary_version: %s\nvalid_extensions: %s\nneed_fullpath: %s\nblock_extract: %s\n",
+//              info.library_name, info.library_version, info.valid_extensions, info.need_fullpath ? "Yes" : "No", info.block_extract ? "Yes" : "No");
+//#endif
 
         videoBufferA = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBufferB = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));

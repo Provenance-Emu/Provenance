@@ -28,6 +28,7 @@
 #include "record/record_driver.h"
 #include "location/location_driver.h"
 #include "core.h"
+#include "retroarch.h"
 
 #ifdef HAVE_MENU
 #include "menu/menu_driver.h"
@@ -190,7 +191,7 @@ bool driver_find_next(const char *label, char *s, size_t len)
       find_driver_nonempty(label, i + 1, s, len);
    else
    {
-      WLOG(@"%s (current one: \"%s\").\n",
+      WLOG("%s (current one: \"%s\").\n",
             msg_hash_to_str(MSG_COULD_NOT_FIND_ANY_NEXT_DRIVER),
             s);
       return false;

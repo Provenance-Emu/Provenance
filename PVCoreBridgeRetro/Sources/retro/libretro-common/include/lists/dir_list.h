@@ -64,6 +64,8 @@ bool dir_list_append(struct string_list *list, const char *dir, const char *ext,
 struct string_list *dir_list_new(const char *dir, const char *ext,
       bool include_dirs, bool include_hidden, bool include_compressed, bool recursive);
 
+int dir_list_read(const char *dir, struct string_list *list, struct string_list *ext_list, bool include_dirs, bool include_compressed, bool recursive);
+
 /* Warning: 'list' must zero initialised before
  * calling this function, otherwise memory leaks/
  * undefined behaviour will occur */

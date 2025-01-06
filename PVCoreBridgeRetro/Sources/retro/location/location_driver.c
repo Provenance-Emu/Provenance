@@ -103,13 +103,13 @@ void find_location_driver(void)
    else
    {
       unsigned d;
-      ELOG(@"Couldn't find any location driver named \"%s\"\n",
+      ELOG("Couldn't find any location driver named \"%s\"\n",
             settings->location.driver);
       RARCH_LOG_OUTPUT("Available location drivers are:\n");
       for (d = 0; location_driver_find_handle(d); d++)
          RARCH_LOG_OUTPUT("\t%s\n", location_driver_find_ident(d));
        
-      WLOG(@"Going to default to first location driver...\n");
+      WLOG("Going to default to first location driver...\n");
        
       location_driver = (const location_driver_t*)location_driver_find_handle(0);
 
@@ -215,7 +215,7 @@ void init_location(void)
 
    if (!location_data)
    {
-      ELOG(@"Failed to initialize location driver. Will continue without location.\n");
+      ELOG("Failed to initialize location driver. Will continue without location.\n");
       location_driver_ctl(RARCH_LOCATION_CTL_UNSET_ACTIVE, NULL);
    }
 
