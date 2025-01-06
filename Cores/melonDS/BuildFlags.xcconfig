@@ -26,11 +26,25 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES2=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES3=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES31=1
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) JIT_ENABLED=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) JIT_ENABLED=0 // JIT_ENABLED=1
 
-// JIT_ENABLED=1
-OTHER_CFLAGS = $(inherited) -ObjC -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fPIC -fmodules -fcxx-modules
-OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load
+OTHER_CFLAGS = $(inherited) -ObjC
+OTHER_CFLAGS = $(inherited) -ffast-math
+OTHER_CFLAGS = $(inherited) -ftree-vectorize
+OTHER_CFLAGS = $(inherited) -fno-strict-aliasing
+OTHER_CFLAGS = $(inherited) -fpermissive
+OTHER_CFLAGS = $(inherited) -fomit-frame-pointer
+OTHER_CFLAGS = $(inherited) -fPIC
+OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules
+//OTHER_CFLAGS = $(inherited) -fno-operator-names
+//OTHER_CFLAGS = $(inherited) -frename-registers
+//OTHER_CFLAGS = $(inherited) -fno-rtti
+//OTHER_CFLAGS = $(inherited) -fno-operator-names
+//OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
+
+OTHER_LDFLAGS = $(inherited) -ObjC
+OTHER_LDFLAGS = $(inherited) -Wl,-all_load
+OTHER_LDFLAGS = $(inherited) -all_load
 
 GCC_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=armv72] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1
@@ -39,7 +53,6 @@ GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) ARCHITECTURE_X64=1
 
 GCC_PREPROCESSOR_DEFINITIONS[sdk=macos] = $(inherited) HAVE_OPENGL=1 OGLRENDERER_ENABLED=1 CORE=1
 
-//OTHER_CFLAGS = $(inherited) -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant
 
     // Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
