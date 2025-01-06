@@ -17,7 +17,7 @@ import PVCoreBridgeRetro
 open class PVVecXCore: PVEmulatorCore {
     
 //    override open var alwaysUseGL: Bool { true }
-
+    
     let _bridge: PVVecXCoreBridge = .init()
     
     public required init() {

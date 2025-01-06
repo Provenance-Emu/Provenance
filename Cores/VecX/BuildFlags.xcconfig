@@ -6,6 +6,7 @@
 //
 //
 
+
 // All
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) __LIBRETRO__=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) STATIC_LINKING=1
@@ -14,18 +15,20 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_STRINGS=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_STDINT_H=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_INTTYPES_H=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) INLINE=inline
+
+// If want GPU accel
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENGLES=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENGLES2=1
-//GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAS_GPU=1
 //GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENGLES3=1
+//GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENGLES_3_1=1
+//GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAS_GPU=1
 
-// HAVE_OPENGLES_3_1=1
 // HAVE_LIBNX=1
 // TODO: Fix linking with HAS_GPU
 // C_DYNREC=0
-// HAVE_OPENGLES3_1=1
-//GCC_PREPROCESSOR_DEFINITIONS[configuration=Debug] = $(inherited) DEBUG=1
-//GCC_PREPROCESSOR_DEFINITIONS[configuration=Release] = $(inherited) NDEBUG=1
+
+GCC_PREPROCESSOR_DEFINITIONS[configuration=Debug] = $(inherited) DEBUG=1
+GCC_PREPROCESSOR_DEFINITIONS[configuration=Release] = $(inherited) NDEBUG=1
 
 // DISABLE_DYNAREC=1
 OTHER_CFLAGS = $(inherited) -ObjC -Wno-ignored-optimization-argument -Wno-unknown-warning-option -fomit-frame-pointer -fno-exceptions -fno-non-call-exceptions -Wno-address-of-packed-member -Wno-format -Wno-switch -Wno-psabi -fpic -fvisibility=hidden -ffunction-sections -Iinclude -fmodules -fcxx-modules
