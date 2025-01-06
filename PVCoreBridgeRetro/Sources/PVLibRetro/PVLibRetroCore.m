@@ -104,6 +104,10 @@ static bool runloop_perfcnt_enable               = false;
 static bool runloop_overrides_active             = false;
 static bool runloop_game_options_active          = false;
 //static core_option_manager_t *runloop_core_options = NULL;
+
+bool input_set_rumble_state(unsigned port,
+                            enum retro_rumble_effect effect, uint16_t strength);
+
 #ifdef HAVE_THREADS
 static slock_t *_runloop_msg_queue_lock           = NULL;
 #endif
@@ -1699,8 +1703,13 @@ static bool environment_callback(unsigned cmd, void *data) {
                                             * Returns false if rumble functionality is unavailable.
                                             */
             // TODO: Rumble
-            return false;
-        }
+            struct retro_rumble_interface *iface =
+               (struct retro_rumble_interface*)data;
+
+            RARCH_LOG("[Environ]: GET_RUMBLE_INTERFACE.\n");
+            iface->set_rumble_state = input_set_rumble_state;
+            break;
+         }
         case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES: {
                                            /* uint64_t * --
                                             * Gets a bitmask telling which device type are expected to be
@@ -3002,6 +3011,28 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 }
 
 @end
+
+#pragma mark - Rumble
+/**
+ * Sets the rumble state. Used by RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE.
+ *
+ * @param port      User number.
+ * @param effect    Rumble effect.
+ * @param strength  Strength of rumble effect.
+ *
+ * @return true if the rumble state has been successfully set
+ **/
+bool input_set_rumble_state(unsigned port,
+                            enum retro_rumble_effect effect, uint16_t strength) {
+    GET_CURRENT_OR_RETURN(false);
+    if(![current supportsRumble]) {
+        return false;
+    }
+    // TODO: Rumble here
+//    GCController*controller = [current controllerForPlayer:port + 1];
+//    GCDeviceHaptics * haptics = [controller haptics];
+    return true;
+}
 
 unsigned retro_api_version(void)
 {
