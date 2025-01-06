@@ -58,9 +58,9 @@
 #endif
 
 #if TARGET_OS_OSX
-@interface MupenGameNXCore () <PVN64SystemResponderClient>
+@interface PVMupen64PlusNXCoreBridge () <PVN64SystemResponderClient>
 #else
-@interface MupenGameNXCore () <PVN64SystemResponderClient, GLKViewDelegate>
+@interface PVMupen64PlusNXCoreBridge () <PVN64SystemResponderClient, GLKViewDelegate>
 #endif
 - (void)OE_didReceiveStateChangeForParamType:(m64p_core_param)paramType value:(int)newValue;
 

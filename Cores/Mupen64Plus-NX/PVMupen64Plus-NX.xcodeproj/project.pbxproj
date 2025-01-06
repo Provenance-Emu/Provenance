@@ -134,8 +134,6 @@
 		B32297BF28783FF100585AD8 /* compat_posix_string.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A20A2877D0B90037A946 /* compat_posix_string.c */; };
 		B32297C328783FFF00585AD8 /* s16_to_float.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A3B12877D0B90037A946 /* s16_to_float.c */; };
 		B32297C428783FFF00585AD8 /* float_to_s16_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A3B22877D0B90037A946 /* float_to_s16_neon.c */; };
-		B32297C72878400900585AD8 /* float_to_s16_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A3B52877D0B90037A946 /* float_to_s16_neon.S */; };
-		B32297C82878400900585AD8 /* s16_to_float_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A3B62877D0B90037A946 /* s16_to_float_neon.S */; };
 		B32297C92878400900585AD8 /* float_to_s16.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A3B42877D0B90037A946 /* float_to_s16.c */; };
 		B32297CA2878400900585AD8 /* s16_to_float_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A3B32877D0B90037A946 /* s16_to_float_neon.c */; };
 		B32297CF2878401100585AD8 /* features_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A33B2877D0B90037A946 /* features_cpu.c */; };
@@ -157,8 +155,6 @@
 		B32297EF28789D9800585AD8 /* glsym_es3.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A2532877D0B90037A946 /* glsym_es3.c */; };
 		B32297F128789DB900585AD8 /* 3DMathNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C89E612877D0B70037A946 /* 3DMathNeon.cpp */; };
 		B32297F328789DF600585AD8 /* gSPNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C89E602877D0B70037A946 /* gSPNeon.cpp */; };
-		B32297F528789E4D00585AD8 /* sinc_resampler_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A3AD2877D0B90037A946 /* sinc_resampler_neon.S */; };
-		B32297F828789F9500585AD8 /* CRC32_ARMV8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C89E672877D0B70037A946 /* CRC32_ARMV8.cpp */; };
 		B32297F928789FB000585AD8 /* libco.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A3DD2877D0B90037A946 /* libco.c */; };
 		B32297FB28789FF000585AD8 /* parallel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A1402877D0B80037A946 /* parallel.cpp */; };
 		B32297FD2878A00600585AD8 /* rsp_disasm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A1942877D0B80037A946 /* rsp_disasm.cpp */; };
@@ -329,15 +325,26 @@
 		B3F8E11E2CB3DBB400017D1B /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E11D2CB3DBB400017D1B /* PVEmulatorCore */; };
 		B3F8E1212CB3DC6300017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E1202CB3DC6300017D1B /* PVPlists */; };
 		B3F8E1242CB3DC9D00017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E1232CB3DC9D00017D1B /* PVCoreObjCBridge */; };
+		B3FAE8372D277E5800505165 /* PVMupen64Plus-NXCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAE8362D277D1600505165 /* PVMupen64Plus-NXCore.swift */; };
+		B3FAE8382D277E8D00505165 /* libmupen64plus-nx-retro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libmupen64plus-nx-retro.a */; };
+		B3FAE83B2D277E8D00505165 /* libmupen64plus-nx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libmupen64plus-nx.a */; };
+		B3FAE83F2D277F9D00505165 /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C89F542877D0B70037A946 /* CRC_OPT.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B31737FF2783F925002D3ACD /* PBXContainerItemProxy */ = {
+		B3FAE8392D277E8D00505165 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B3303E4B1DED23C600896D96;
-			remoteInfo = "png-iOS";
+			remoteInfo = "mupen64plus-nx-retro";
+		};
+		B3FAE83C2D277E8D00505165 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
+			remoteInfo = "mupen64plus-nx";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2628,6 +2635,9 @@
 		B3C8A6572877D0BB0037A946 /* eventloop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = eventloop.h; sourceTree = "<group>"; };
 		B3EA447B206E10C700E608F6 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3F2058226FBCBC600A4196B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		B3FAE8342D277D1600505165 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3FAE8352D277D1600505165 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
+		B3FAE8362D277D1600505165 /* PVMupen64Plus-NXCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVMupen64Plus-NXCore.swift"; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -2645,8 +2655,10 @@
 			files = (
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
+				B3FAE83B2D277E8D00505165 /* libmupen64plus-nx.a in Frameworks */,
 				B3F8E1212CB3DC6300017D1B /* PVPlists in Frameworks */,
 				B30E99E32C6F04AC00C1431E /* PVCoreBridge in Frameworks */,
+				B3FAE8382D277E8D00505165 /* libmupen64plus-nx-retro.a in Frameworks */,
 				B3F8E1242CB3DC9D00017D1B /* PVCoreObjCBridge in Frameworks */,
 				B30E98B02C6EEF4000C1431E /* PVSupport in Frameworks */,
 				B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */,
@@ -2760,6 +2772,9 @@
 		B33809222877C5530009C732 /* PVMupen64Plus-NXCore */ = {
 			isa = PBXGroup;
 			children = (
+				B3FAE8342D277D1600505165 /* CorePlist.swift */,
+				B3FAE8352D277D1600505165 /* CorePlist-Generated.swift */,
+				B3FAE8362D277D1600505165 /* PVMupen64Plus-NXCore.swift */,
 				B33809272877C5530009C732 /* Mupen-NXOptions.swift */,
 				B33809232877C5530009C732 /* PVMupen64Plus-NXCore.h */,
 				B338092A2877C5530009C732 /* PVMupen64Plus-NXCore.m */,
@@ -7438,6 +7453,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3FAE83A2D277E8D00505165 /* PBXTargetDependency */,
+				B3FAE83D2D277E8D00505165 /* PBXTargetDependency */,
 			);
 			name = "PVMupen64Plus-NX";
 			productName = "PVMupen64Plus-NXDynamic";
@@ -7455,7 +7472,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B31738002783F925002D3ACD /* PBXTargetDependency */,
 			);
 			name = "mupen64plus-nx";
 			productName = glidenhq;
@@ -7557,12 +7573,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B32297C72878400900585AD8 /* float_to_s16_neon.S in Sources */,
 				B32297B528783FD800585AD8 /* file_path.c in Sources */,
 				B32297BE28783FF100585AD8 /* compat_strcasestr.c in Sources */,
 				B32297F928789FB000585AD8 /* libco.c in Sources */,
 				B32297BF28783FF100585AD8 /* compat_posix_string.c in Sources */,
-				B32297F528789E4D00585AD8 /* sinc_resampler_neon.S in Sources */,
 				B32299352878ACBD00585AD8 /* vidext_libretro.c in Sources */,
 				B322975428783DA100585AD8 /* savestates.c in Sources */,
 				B32297B628783FD800585AD8 /* file_path_io.c in Sources */,
@@ -7576,8 +7590,6 @@
 				B322975528783DA100585AD8 /* cheat.c in Sources */,
 				B32297D72878403E00585AD8 /* file_stream.c in Sources */,
 				B32297AB28783F9600585AD8 /* audio_resampler.c in Sources */,
-				B32297C82878400900585AD8 /* s16_to_float_neon.S in Sources */,
-				B32297F828789F9500585AD8 /* CRC32_ARMV8.cpp in Sources */,
 				B32297B328783FD800585AD8 /* config_file_userdata.c in Sources */,
 				B32297DB2878405400585AD8 /* glsm.c in Sources */,
 				B32299332878ACAC00585AD8 /* stdstring.c in Sources */,
@@ -7605,6 +7617,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FAE8372D277E5800505165 /* PVMupen64Plus-NXCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7787,6 +7800,7 @@
 				B32297DE287840D300585AD8 /* CombinerKey.cpp in Sources */,
 				B322972F28783D4300585AD8 /* cached_interp.c in Sources */,
 				B32299262878A67300585AD8 /* interface.c in Sources */,
+				B3FAE83F2D277F9D00505165 /* CRC_OPT.cpp in Sources */,
 				B32298EB2878A60600585AD8 /* F3DDKR.cpp in Sources */,
 				B322974228783D7B00585AD8 /* rsp_core.c in Sources */,
 				B322977028783E2100585AD8 /* pngwrite.c in Sources */,
@@ -7873,10 +7887,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B31738002783F925002D3ACD /* PBXTargetDependency */ = {
+		B3FAE83A2D277E8D00505165 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3303E4B1DED23C600896D96 /* mupen64plus-nx-retro */;
-			targetProxy = B31737FF2783F925002D3ACD /* PBXContainerItemProxy */;
+			targetProxy = B3FAE8392D277E8D00505165 /* PBXContainerItemProxy */;
+		};
+		B3FAE83D2D277E8D00505165 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3800FF4208522DC00FA03B8 /* mupen64plus-nx */;
+			targetProxy = B3FAE83C2D277E8D00505165 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -7935,6 +7954,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/libretro-common/include\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/mupen64plus-core/src\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/mupen64plus-core/subprojects\"",
@@ -7958,7 +7979,7 @@
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/custom/android/include\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/custom/GLideN64\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/libretro-common/crt/include\"",
-					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/mupen64plus-libretro-nx/xxHash\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
@@ -8013,6 +8034,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/libretro-common/include\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/mupen64plus-core/src\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/mupen64plus-core/subprojects\"",
@@ -8036,7 +8059,7 @@
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/custom/android/include\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/custom/GLideN64\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/libretro-common/crt/include\"",
-					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/mupen64plus-libretro-nx/xxHash\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
@@ -8186,7 +8209,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "PVMupen64Plus-NX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -8206,7 +8229,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -8248,7 +8271,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "PVMupen64Plus-NX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -8267,7 +8290,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -8301,7 +8324,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "mupen64plus-nx";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -8339,7 +8365,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "mupen64plus-nx";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
