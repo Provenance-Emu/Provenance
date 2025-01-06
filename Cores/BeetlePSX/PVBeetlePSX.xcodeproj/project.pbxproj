@@ -210,20 +210,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		93124975298CEBD1002DE0C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9312496F298CEBB7002DE0C2;
-			remoteInfo = BuildPSXTV;
-		};
-		B3145C9A2CFFC834009FB8B3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 937EAAF2296C2022003D89EB;
-			remoteInfo = BuildPSXiOS;
-		};
 		B3145FB22CFFD4D3009FB8B3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -2938,8 +2924,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B3145C9B2CFFC834009FB8B3 /* PBXTargetDependency */,
-				93124976298CEBD1002DE0C2 /* PBXTargetDependency */,
 				B3145FB32CFFD4D3009FB8B3 /* PBXTargetDependency */,
 			);
 			name = PVBeetlePSX;
@@ -3270,24 +3254,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		93124976298CEBD1002DE0C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				tvos,
-				xros,
-			);
-			target = 9312496F298CEBB7002DE0C2 /* BuildPSXTV */;
-			targetProxy = 93124975298CEBD1002DE0C2 /* PBXContainerItemProxy */;
-		};
-		B3145C9B2CFFC834009FB8B3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-			);
-			target = 937EAAF2296C2022003D89EB /* BuildPSXiOS */;
-			targetProxy = B3145C9A2CFFC834009FB8B3 /* PBXContainerItemProxy */;
-		};
 		B3145FB32CFFD4D3009FB8B3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B30178D2207C901D0051B93D /* beetle_psx */;
