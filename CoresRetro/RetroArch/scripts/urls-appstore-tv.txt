@@ -6,6 +6,7 @@ https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/dosbox_pure_libret
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/fbneo_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/fceumm_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/flycast_libretro.dylib.zip
+https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/fmsx_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/fuse_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/gambatte_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/gearcoleco_libretro_tvos.dylib.zip
@@ -45,5 +46,6 @@ https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/snes9x_libretro_tv
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/stella2014_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/stella_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/vbam_libretro_tvos.dylib.zip
+https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/vecx_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/virtualjaguar_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/yabause_libretro_tvos.dylib.zip
