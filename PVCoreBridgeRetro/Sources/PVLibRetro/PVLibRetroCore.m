@@ -2602,24 +2602,6 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     return CGSizeMake(width, height);
 }
 
-- (GLenum)pixelFormat {
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGB5_A1; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_RGB565;
-#else
-        case RETRO_PIXEL_FORMAT_RGB565:
-             return GL_UNSIGNED_SHORT_5_6_5;
-#endif
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-            return GL_RGBA8; // GL_RGBA8
-       default:
-            return GL_RGBA;
-    }
-}
 
 - (GLenum)internalPixelFormat {
     switch (pix_fmt)
@@ -2642,10 +2624,36 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     return GL_RGBA;
 }
 
+- (GLenum)pixelFormat {
+    switch (pix_fmt)
+    {
+       case RETRO_PIXEL_FORMAT_0RGB1555:
+            return GL_BGRA; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
+       case RETRO_PIXEL_FORMAT_RGB565:
+            return GL_RGB565;
+#else
+        case RETRO_PIXEL_FORMAT_RGB565:
+             return GL_UNSIGNED_SHORT_5_6_5;
+#endif
+       case RETRO_PIXEL_FORMAT_XRGB8888:
+            return GL_RGBA8; // GL_RGBA8
+       default:
+            return GL_RGBA;
+    }
+}
+
 - (GLenum)pixelType {
-    // GL_UNSIGNED_SHORT_5_6_5
-    // GL_UNSIGNED_BYTE
-    return GL_UNSIGNED_SHORT;
+    switch (pix_fmt) {
+        case RETRO_PIXEL_FORMAT_0RGB1555:
+            return GL_UNSIGNED_SHORT_1_5_5_5_REV;
+        case RETRO_PIXEL_FORMAT_XRGB8888:
+            return GL_UNSIGNED_BYTE;
+        case RETRO_PIXEL_FORMAT_RGB565:
+            return GL_UNSIGNED_SHORT;
+        case RETRO_PIXEL_FORMAT_UNKNOWN:
+            return GL_UNSIGNED_SHORT;
+    }
 }
 
 # pragma mark - Audio
