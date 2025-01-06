@@ -18,15 +18,14 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) __LIBRETRO__
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) MELONDS_VERSION=""
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GIT_VERSION=""
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_THREADS=1
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENGL=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENGLES=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENGLES2=1
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENGLES3=1
+//GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENGLES3=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES2=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES3=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES31=1
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) JIT_ENABLED=0 // JIT_ENABLED=1
+//GCC_PREPROCESSOR_DEFINITIONS = $(inherited) JIT_ENABLED=0 // JIT_ENABLED=1
 
 OTHER_CFLAGS = $(inherited) -ObjC
 OTHER_CFLAGS = $(inherited) -ffast-math
@@ -36,15 +35,14 @@ OTHER_CFLAGS = $(inherited) -fpermissive
 OTHER_CFLAGS = $(inherited) -fomit-frame-pointer
 OTHER_CFLAGS = $(inherited) -fPIC
 OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules
+OTHER_CFLAGS = $(inherited) -Wno-module-import-in-extern-c
 //OTHER_CFLAGS = $(inherited) -fno-operator-names
 //OTHER_CFLAGS = $(inherited) -frename-registers
 //OTHER_CFLAGS = $(inherited) -fno-rtti
 //OTHER_CFLAGS = $(inherited) -fno-operator-names
 //OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
 
-OTHER_LDFLAGS = $(inherited) -ObjC
-OTHER_LDFLAGS = $(inherited) -Wl,-all_load
-OTHER_LDFLAGS = $(inherited) -all_load
+OTHER_LDFLAGS = $(inherited) -ObjC -Wl,-all_load -all_load
 
 GCC_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=armv72] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1

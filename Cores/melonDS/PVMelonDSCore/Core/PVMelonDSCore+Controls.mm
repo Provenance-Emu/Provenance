@@ -9,7 +9,6 @@
 #import <PVMelonDS/PVMelonDS.h>
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
-@import PVCoreBridge;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
