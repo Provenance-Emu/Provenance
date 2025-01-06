@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import MetalKit
 import os
+import PVCoreObjCBridge
 
 @objc public class DolphinVulkanViewController: UIViewController {
 	private var core: PVDolphinCoreBridge!
@@ -26,7 +27,7 @@ import os
 		metalView.colorPixelFormat = .bgra8Unorm;
 		metalView.depthStencilPixelFormat = .depth32Float
 		metalView.translatesAutoresizingMaskIntoConstraints = false
-        metalView.preferredFramesPerSecond = 120
+        metalView.preferredFramesPerSecond = 60
 	}
 	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
