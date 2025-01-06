@@ -24,7 +24,7 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "PVDuckStationCoreBridge.h"
+//#import "PVDuckStationCoreBridge.h"
 #import <PVDuckStation/PVDuckStation-Swift.h>
 @import PVCoreBridge;
 @import PVCoreAudio;
