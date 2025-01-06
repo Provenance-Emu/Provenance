@@ -50,7 +50,7 @@ extern GCController *touch_controller;
 //    }
 }
 
-- (void)handleDreamcastButton:(PVMSXButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
+- (void)handleMSXButton:(PVMSXButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
     switch (button) {
         case(PVMSXButtonUp):
             yAxis=pressed?(!xAxis?1.0:0.5):0;
