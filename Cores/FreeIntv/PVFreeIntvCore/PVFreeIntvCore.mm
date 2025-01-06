@@ -25,15 +25,15 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVFreeIntvCore() {
+@interface PVFreeIntvCoreBridge() {
 
 }
 
 @end
 
-#pragma mark - PVFreeIntvCore Begin
+#pragma mark - PVFreeIntvCoreBridge Begin
 
-@implementation PVFreeIntvCore
+@implementation PVFreeIntvCoreBridge
 {
 }
 
