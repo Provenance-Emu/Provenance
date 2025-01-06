@@ -246,7 +246,7 @@ static void UpdateWiiPointer();
             Config::SetBase(Config::MAIN_DEBUG_HACKY_FASTMEM, hacky_fastmem);
         }
     }
-    Config::SetBase(Config::GFX_SHOW_FPS, false);
+    Config::SetBase(Config::GFX_SHOW_FPS, true);
 
     // Anti Aliasing
     if (self.gsPreference == 0) {
@@ -260,6 +260,9 @@ static void UpdateWiiPointer();
     // Cheats
     SConfig::GetInstance().bEnableCheats = self.enableCheatCode;
 
+    //Setup the CPU Settings
+    SConfig::GetInstance().bMMU = true;
+
     // CPU Overclock
     Config::SetBase(Config::MAIN_CPU_THREAD, true);
     SConfig::GetInstance().m_OCFactor = self.cpuOClock;
@@ -267,7 +270,11 @@ static void UpdateWiiPointer();
 
     // CPU High Level / Low Level Emulation
     SConfig::GetInstance().bDSPHLE = true;
+    SConfig::GetInstance().bDSPThread = true;
     Core::SetIsThrottlerTempDisabled(false);
+    
+    //Split CPU thread from GPU
+    SConfig::GetInstance().bCPUThread = false;
 
     // Wait for Shaders
     Config::SetBase(Config::GFX_WAIT_FOR_SHADERS_BEFORE_STARTING, true);
@@ -282,7 +289,7 @@ static void UpdateWiiPointer();
     Discord::SetDiscordPresenceEnabled(false);
 
     // Alerts
-    Common::SetEnableAlert(false);
+    Common::SetEnableAlert(true);
 
     // Audio
     SConfig::GetInstance().m_Volume = self.volume;
@@ -291,6 +298,14 @@ static void UpdateWiiPointer();
     // Debug Settings
     SConfig::GetInstance().bEnableDebugging = false;
     SConfig::GetInstance().m_ShowFrameCount = false;
+    
+#ifndef IPHONEOS_JAILBROKEN
+    // JIT Settings
+    SConfig::GetInstance().bJITOff = true;
+#endif
+    
+    //Save them now
+   SConfig::GetInstance().SaveSettings();
 }
 
 #pragma mark - Running
@@ -320,7 +335,7 @@ static void UpdateWiiPointer();
             NSLog(@"Error copying the gecko handler: %@", [error description]);
         }
     }
-    user_dir = std::string([saveDirectory UTF8String]);
+    user_dir = std::string(saveDirectory.fileSystemRepresentation);
     Common::RegisterMsgAlertHandler(&MsgAlert);
     UICommon::SetUserDirectory(user_dir);
     UICommon::CreateDirectories();
@@ -620,14 +635,34 @@ bool Host_UIBlocksControllerState()
 void Host_Message(HostMessageID id)
 {
     NSLog(@"message id: %i\n", (int)id);
-  if (id == HostMessageID::WMUserJobDispatch)
-	  s_update_main_frame_event.Set();
-  else if (id == HostMessageID::WMUserStop) {
+    if (id == HostMessageID::WMUserJobDispatch) {
+        s_update_main_frame_event.Set();
+    } else if (id == HostMessageID::WMUserStop) {
 	s_have_wm_user_stop = true;
-	if (Core::IsRunning())
-	  Core::QueueHostJob(&Core::Stop);
-  } else if (id == HostMessageID::WMUserCreate)
+        if (Core::IsRunning()) {
+            Core::QueueHostJob(&Core::Stop);
+        }
+  } else if (id == HostMessageID::WMUserCreate) {
       NSLog(@"User Create Called %i\n", (int)id);
+#ifdef DEBUG
+        //We have to set FPS display here or it doesn't work
+        g_Config.bShowFPS = true;
+        Core::SetState(Core::State::Running);
+#endif
+        
+        // Set the aspect to stretch
+        g_Config.aspect_mode = AspectMode::Stretch;
+        
+        // Core is up,  lets enable Hybric Ubershaders
+        g_Config.iShaderCompilationMode = ShaderCompilationMode::SynchronousUberShaders;
+        //g_Config.bPrecompileUberShaders = true;
+        //g_Config.bBackgroundShaderCompiling = true;
+        //g_Config.bDisableSpecializedShaders = false;
+        
+        //Set the threads to auto (-1)
+        g_Config.iShaderCompilerThreads = -1;
+        g_Config.iShaderPrecompilerThreads = -1;
+  }
 }
 
 void Host_UpdateTitle(const std::string& title)
