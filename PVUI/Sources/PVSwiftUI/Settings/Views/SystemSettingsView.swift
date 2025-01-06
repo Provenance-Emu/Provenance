@@ -20,27 +20,26 @@ struct SystemSettingsView: View {
     var isAppStore: Bool = {
         AppState.shared.isAppStore
     }()
-
+    
     var filteredSystems: [PVSystem] {
         if searchText.isEmpty {
             return systems
                 .filter { system in
-                    let hasValidCores = !system.cores.isEmpty && !(isAppStore && system.appStoreDisabled)
-                    // Only show systems with no cores if unsupportedCores is true
-                    return unsupportedCores ? hasValidCores : (hasValidCores && system.cores.count > 0)
+                    !system.cores.isEmpty && !(isAppStore && system.appStoreDisabled && !Defaults[.unsupportedCores])
                 }
                 .sorted(by: { $0.identifier < $1.identifier })
         }
         return systems.filter { system in
-            let hasValidCores = !system.cores.isEmpty && !(isAppStore && system.appStoreDisabled)
-            let meetsSearchCriteria = system.name.localizedCaseInsensitiveContains(searchText) ||
-                system.manufacturer.localizedCaseInsensitiveContains(searchText) ||
-                system.cores.contains { core in
-                    core.projectName.localizedCaseInsensitiveContains(searchText)
-                } ||
-                (system.BIOSes?.contains { bios in
-                    bios.descriptionText.localizedCaseInsensitiveContains(searchText)
-                } ?? false)
+            !system.cores.isEmpty &&
+            !(isAppStore && system.appStoreDisabled && !Defaults[.unsupportedCores]) &&
+            system.name.localizedCaseInsensitiveContains(searchText) ||
+            system.manufacturer.localizedCaseInsensitiveContains(searchText) ||
+            system.cores.contains { core in
+                core.projectName.localizedCaseInsensitiveContains(searchText)
+            } ||
+            (system.BIOSes?.contains { bios in
+                bios.descriptionText.localizedCaseInsensitiveContains(searchText)
+            } ?? false)
 
             // Only show systems with no cores if unsupportedCores is true
             return (unsupportedCores ? hasValidCores : (hasValidCores && system.cores.count > 0)) && meetsSearchCriteria
@@ -106,11 +105,11 @@ struct SystemSection: View {
             #endif
 
             ForEach(system.cores.filter { core in
-                !(AppState.shared.isAppStore && core.appStoreDisabled)
+                !(AppState.shared.isAppStore && core.appStoreDisabled && !Defaults[.unsupportedCores])
             }, id: \.identifier) { core in
                 Text(core.projectName)
                     .padding(.leading)
-            }
+                }
 
             // BIOSes
             if let bioses = system.BIOSes, !bioses.isEmpty {

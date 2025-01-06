@@ -135,9 +135,8 @@ extension GameLaunchingViewController where Self: UIViewController {
             // Are unsupported cr
             let unsupportedCores = Defaults[.unsupportedCores]
 
-
             let cores: [PVCore] = system.cores.filter {
-                (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
+                (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !Defaults[.unsupportedCores])
             }.sorted(by: { $0.projectName < $1.projectName })
 
             guard !cores.isEmpty else {
