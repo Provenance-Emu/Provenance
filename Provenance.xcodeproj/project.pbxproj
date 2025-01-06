@@ -1068,8 +1068,6 @@
 		B3FAE80C2D27451900505165 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAE80A2D27451900505165 /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAE80E2D2745C600505165 /* PVPCSXRearmed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAE80D2D2745C600505165 /* PVPCSXRearmed.framework */; };
 		B3FAE80F2D2745C600505165 /* PVPCSXRearmed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAE80D2D2745C600505165 /* PVPCSXRearmed.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3FAE8142D27498B00505165 /* PVFuse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAE8132D27498B00505165 /* PVFuse.framework */; };
-		B3FAE8152D27498C00505165 /* PVFuse.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAE8132D27498B00505165 /* PVFuse.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAE8192D27517500505165 /* PVFreeIntv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAE8182D27517500505165 /* PVFreeIntv.framework */; };
 		B3FAE81A2D27517500505165 /* PVFreeIntv.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAE8182D27517500505165 /* PVFreeIntv.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAE81C2D27534D00505165 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAE81B2D27534D00505165 /* PVDolphin.framework */; };
@@ -1656,7 +1654,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B3FAE8302D277C2C00505165 /* PVMelonDSRetro.framework in Embed Frameworks */,
-				B3FAE8152D27498C00505165 /* PVFuse.framework in Embed Frameworks */,
 				B3FAE81D2D27534D00505165 /* PVDolphin.framework in Embed Frameworks */,
 				B3FAE81A2D27517500505165 /* PVFreeIntv.framework in Embed Frameworks */,
 				B3FAE8422D2781F600505165 /* PVfMSX.framework in Embed Frameworks */,
@@ -3188,7 +3185,6 @@
 				B36A8D4E2CCD54E0002357DD /* PVWebServer in Frameworks */,
 				B3F7E3A8297736BE00362B92 /* AudioToolbox.framework in Frameworks */,
 				B36A8D442CCD5480002357DD /* Defaults in Frameworks */,
-				B3FAE8142D27498B00505165 /* PVFuse.framework in Frameworks */,
 				B3F7E3AD297736BE00362B92 /* UIKit.framework in Frameworks */,
 				B3FAE81C2D27534D00505165 /* PVDolphin.framework in Frameworks */,
 				B3FA8BD12D24F54100505165 /* MoltenVK in Frameworks */,
