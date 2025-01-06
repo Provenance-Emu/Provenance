@@ -10,25 +10,42 @@ void PVLog(NSUInteger level, NSUInteger flag, const char *file,
     if (flag == PVLogFlagError) {
         async = NO;
     }
+
+    /// Format the message with variable arguments
     va_list args;
     va_start(args, format);
-    // TODO: Call our swift code instead
-    PVLogEntry* logEntry = [[PVLogEntry alloc] initWithMessage:@""];
-    //     let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
-    [PVLogging.sharedInstance add:logEntry];
-
-//    [DDLog log:async
-//         level:level
-//          flag:flag
-//       context:0
-//          file:file
-//      function:function
-//          line:line
-//           tag:nil
-//        format:(format)
-//          args:args];
-    
+    NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
     va_end(args);
+
+    /// Convert flag to PVLogLevel
+    PVLogLevel logLevel;
+    switch (flag) {
+        case PVLogFlagError:
+            logLevel = PVLogLevelError;
+            break;
+        case PVLogFlagWarning:
+            logLevel = PVLogLevelWarn;
+            break;
+        case PVLogFlagInfo:
+            logLevel = PVLogLevelInfo;
+            break;
+        case PVLogFlagDebug:
+            logLevel = PVLogLevelDebug;
+            break;
+        default:
+            logLevel = PVLogLevelInfo;
+            break;
+    }
+
+    /// Create log entry with all required information
+    PVLogEntry* logEntry = [[PVLogEntry alloc] initWithMessage:message
+                                                        level:logLevel
+                                                         file:[NSString stringWithUTF8String:file]
+                                                    function:[NSString stringWithUTF8String:function]
+                                                 lineNumber:[NSString stringWithFormat:@"%d", line]];
+
+    /// Add to logging system
+    [PVLogging.sharedInstance add:logEntry];
 }
 
 // ClassFinder.m
