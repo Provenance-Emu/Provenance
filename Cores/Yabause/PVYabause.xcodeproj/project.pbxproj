@@ -12,7 +12,6 @@
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B341206F297601A200F5F351 /* libyabause.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B341206B2975FEFF00F5F351 /* libyabause.a */; platformFilters = (ios, maccatalyst, tvos, ); };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
@@ -29,6 +28,8 @@
 		B3F8E0D82CB3B07500017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0D52CB3B07500017D1B /* CorePlist.swift */; };
 		B3F8E0D92CB3B07500017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0D62CB3B07500017D1B /* CorePlist-Generated.swift */; };
 		B3F8E0DC2CB3B1E900017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0DB2CB3B1E900017D1B /* PVPlists */; };
+		B3FAE8052D2742B900505165 /* libyabause.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B341206B2975FEFF00F5F351 /* libyabause.a */; };
+		B3FAE8062D27431300505165 /* libyabause-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libyabause-libretro.a */; };
 		B3FF63CA2873E37000829C14 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB22872965000EAEB37 /* error.c */; };
 		B3FF63CB2873E37000829C14 /* cs1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BB42872964D00EAEB37 /* cs1.c */; };
 		B3FF63CC2873E37000829C14 /* m68kd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0BA2872965100EAEB37 /* m68kd.c */; };
@@ -71,6 +72,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3344B522859E088006E6B3A;
 			remoteInfo = "dos-box-libretro-iOS";
+		};
+		B3FAE8072D27431300505165 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3344B522859E088006E6B3A;
+			remoteInfo = "yabause-libretro";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1479,12 +1487,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B341206F297601A200F5F351 /* libyabause.a in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B3F8E0D02CB3AAF300017D1B /* PVCoreObjCBridge in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B30E99DA2C6F046A00C1431E /* PVCoreBridge in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
+				B3FAE8062D27431300505165 /* libyabause-libretro.a in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B3F8E0DC2CB3B1E900017D1B /* PVPlists in Frameworks */,
@@ -1493,6 +1501,7 @@
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B3FAE8052D2742B900505165 /* libyabause.a in Frameworks */,
 				B30E98A42C6EEEE200C1431E /* PVSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4618,6 +4627,7 @@
 			);
 			dependencies = (
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
+				B3FAE8082D27431300505165 /* PBXTargetDependency */,
 			);
 			name = PVYabause;
 			productName = PVReicast;
@@ -4771,6 +4781,11 @@
 			isa = PBXTargetDependency;
 			target = B3344B522859E088006E6B3A /* yabause-libretro */;
 			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
+		};
+		B3FAE8082D27431300505165 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3344B522859E088006E6B3A /* yabause-libretro */;
+			targetProxy = B3FAE8072D27431300505165 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4947,7 +4962,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4964,7 +4979,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 			};
 			name = Archive;
 		};
@@ -5257,7 +5272,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5275,7 +5290,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 			};
 			name = Debug;
 		};
@@ -5299,7 +5314,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5316,7 +5331,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 			};
 			name = Release;
 		};
