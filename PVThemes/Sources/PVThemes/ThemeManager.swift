@@ -19,7 +19,7 @@ import PVSettings
 
 
 public extension Notification.Name {
-    static let themeDidChange = Notification.Name("com.yourapp.themeDidChange")
+    static let themeDidChange = Notification.Name("com.provenance-emu.themeDidChange")
 }
 
 //import Perception
@@ -38,8 +38,10 @@ public final class ThemeManager: ObservableObject {
     @Published
     public private(set) var currentPalette: any UXThemePalette = ProvenanceThemes.default.palette {
          didSet {
-             if #unavailable(iOS 17.0, tvOS 17.0), currentPalette.name != oldValue.name {
-                 NotificationCenter.default.post(name: .themeDidChange, object: nil)
+             if currentPalette.name != oldValue.name {
+                 Task { @MainActor in
+                     NotificationCenter.default.post(name: .themeDidChange, object: nil)
+                 }
              }
          }
      }
