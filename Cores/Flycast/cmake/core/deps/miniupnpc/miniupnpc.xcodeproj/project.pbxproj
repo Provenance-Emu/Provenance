@@ -7,21 +7,21 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		11E917AB434F844A6CA3AEDF /* install */ = {
+		1148ED2E9013F6047A670D47 /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 55685D80A7554583A7A63D4A /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = 117AEEB723364ED299011231 /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				5F11AD5434C34D88A4DCFEBA /* PBXTargetDependency */,
+				167B40D66AF244E59ACBA60C /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
-		6D2263BD069F7028F9CB8758 /* ZERO_CHECK */ = {
+		69835AD03873232AF422EFB0 /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 5DCF118338AB470F8E9A03E0 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = 955EA07A0AEC472FB77B9A52 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
 				D236A3B5E8BC1909226878EF /* Generate CMakeFiles/ZERO_CHECK */,
 			);
@@ -30,15 +30,15 @@
 			name = ZERO_CHECK;
 			productName = ZERO_CHECK;
 		};
-		6DB80BBE8DA7D6D87A8D27FD /* ALL_BUILD */ = {
+		B727D2F61FE22951697F0BAD /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = DEC20F4CE7FD403A9011E276 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildConfigurationList = 0131BDF39D5C4562B46D4D42 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
 			buildPhases = (
 				F6DE23956123235E524E44E3 /* Generate CMakeFiles/ALL_BUILD */,
 			);
 			dependencies = (
-				F4F21825BA7347849FE1618E /* PBXTargetDependency */,
-				B74B2F4C9FA848B1B6D78D6A /* PBXTargetDependency */,
+				98DB1FAB8E5041ADAFD54FD1 /* PBXTargetDependency */,
+				1BD597F3C2A14318B923A549 /* PBXTargetDependency */,
 			);
 			name = ALL_BUILD;
 			productName = ALL_BUILD;
@@ -46,111 +46,111 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		020206C1B18347F0985A8AC8 /* ../flycast/core/deps/miniupnpc/src/minisoap.c */ = {isa = PBXBuildFile; fileRef = CA33361BD66940BCB97AA2AD /* ../flycast/core/deps/miniupnpc/src/minisoap.c */; };
-		10A4A417772C44FFB7E018B5 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */ = {isa = PBXBuildFile; fileRef = 0B1AB57A71AC42FFAE7225E3 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */; };
-		12BB47BA606445E08F1868B7 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 15498018A70847DB978B1706 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */; };
-		21FD47AFFF60403EAAA8ECBD /* ../flycast/core/deps/miniupnpc/src/minixml.c */ = {isa = PBXBuildFile; fileRef = 00DA6958026B4DE7A4D0EE36 /* ../flycast/core/deps/miniupnpc/src/minixml.c */; };
-		22D9A51010B3446A8F98C488 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */ = {isa = PBXBuildFile; fileRef = 508860005DF342DEAA9317CB /* ../flycast/core/deps/miniupnpc/src/receivedata.c */; };
-		23408DDC78FF41CE9253FF49 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */ = {isa = PBXBuildFile; fileRef = 7586D8665A974BBD9ED99541 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */; };
-		291FA4BDAAE34C28B42053E2 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */ = {isa = PBXBuildFile; fileRef = 5810933237314DA3B4B8AFB8 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */; };
-		32464D30DD2D4E91A78A4C32 /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */ = {isa = PBXBuildFile; fileRef = A77A36FA648A4C0E8AC3BD6B /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */; };
-		651EB36D6BE44686A53F74C4 /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */ = {isa = PBXBuildFile; fileRef = F49BA841718543BC94B2921D /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */; };
-		769F239F1CB44E55B9E15C91 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */ = {isa = PBXBuildFile; fileRef = 9929B22B57EF4ACE9BF91990 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */; };
-		84754D7243B64C83A61E2E06 /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */ = {isa = PBXBuildFile; fileRef = E7CAB462E12949F0B1C0521A /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */; };
-		913B1362A0DD4E0CB8F8DE4C /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */ = {isa = PBXBuildFile; fileRef = 2730E5A65AEC49DCBFA3980B /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */; };
-		ABD1D0D41A804BFAAE544F35 /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */ = {isa = PBXBuildFile; fileRef = D69B4FF2222647A5BE38A11C /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */; };
-		B61B6877248C4DCE8B1F2C09 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */ = {isa = PBXBuildFile; fileRef = 403967A1274A4C21B71038C6 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */; };
-		CAB12376544C43D39FBA602C /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */ = {isa = PBXBuildFile; fileRef = 3C5B73238FB546C8B342DE7A /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */; };
-		CF86A2C352F245FA8BFDE588 /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */ = {isa = PBXBuildFile; fileRef = 22B3843750904C93BBBE0479 /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */; };
-		D24366F540D44F43B36A7D4D /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = EF859373859F48F0A9912C01 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */; };
+		1FE36849D4534353A2E6F29F /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */ = {isa = PBXBuildFile; fileRef = BF06A07DA7244F0FB115ADD9 /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */; };
+		241C92E2BA624712A426A71E /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 7C4F9AEBD99045E39D233C53 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */; };
+		26302F22AE2449AEAB5352E5 /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */ = {isa = PBXBuildFile; fileRef = F064EF3603AE46A0BF329ADE /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */; };
+		2AA8B45678B240C3AF6B2A32 /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */ = {isa = PBXBuildFile; fileRef = 23997C0588EE4E478AA0586B /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */; };
+		2EC7E51D7BBD499EA808E72F /* ../flycast/core/deps/miniupnpc/src/receivedata.c */ = {isa = PBXBuildFile; fileRef = 705C64895AFB41119BB6DCB2 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */; };
+		34E489BF56FB487DA6C0B76B /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */ = {isa = PBXBuildFile; fileRef = 95AE930B993746DEB0DF41D6 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */; };
+		53D8F459BD504C0E824504B8 /* ../flycast/core/deps/miniupnpc/src/minisoap.c */ = {isa = PBXBuildFile; fileRef = F8F6E54D44284A5EBF3F1BFA /* ../flycast/core/deps/miniupnpc/src/minisoap.c */; };
+		57B5B77E71AC49E8A496C6AA /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */ = {isa = PBXBuildFile; fileRef = 143D3DD58CB94AD89D7E98EB /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */; };
+		5FF5C41A638F477BBEE52684 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */ = {isa = PBXBuildFile; fileRef = 12B20BFFF7C644E396EDC37E /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */; };
+		731850FFAB6345A9B20B270F /* ../flycast/core/deps/miniupnpc/src/minixml.c */ = {isa = PBXBuildFile; fileRef = 9B01407713E64271A09554EB /* ../flycast/core/deps/miniupnpc/src/minixml.c */; };
+		8265507BCEB344A487757C84 /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */ = {isa = PBXBuildFile; fileRef = 5F5FAB7A65A44C8DB893053E /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */; };
+		934B8585A2724CC090E59BDA /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */ = {isa = PBXBuildFile; fileRef = AC90228BED584B8099E436A6 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */; };
+		BEEDF2BE39824009A529613F /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = D95A1144DF3A4F0785807643 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */; };
+		E6F7860E7A754C85BB35BEB7 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */ = {isa = PBXBuildFile; fileRef = B2F8117BEA2B4A808EA014A4 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */; };
+		EC05082CF37B4EB6B8BF9EB3 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */ = {isa = PBXBuildFile; fileRef = A89841DA91AE422F9F8420C9 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */; };
+		F07D93B39238462D9BC77A5D /* ../flycast/core/deps/miniupnpc/src/miniwget.c */ = {isa = PBXBuildFile; fileRef = A1A19E5806474253A62C4D89 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */; };
+		FB5E9E4873244105A2B77FED /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */ = {isa = PBXBuildFile; fileRef = 57FEBBB5C8E247DBA5EB9F83 /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		24A439F687CB4615BBC24815 /* Release */ = {
+		24861188D5114E45AA3661AE /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
-		6B67A17180474475866126FF /* Debug */ = {
+		908C66B71F764D249FF3A689 /* Debug */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
 		};
-		7BF06517A98E43BFA39C8320 /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		91C05BF60C294B72BB69F2B0 /* RelWithDebInfo */ = {
+		A9C8211C9E614DEBBCE4027D /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
+		E962E04950D24479B560C0E8 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		0F78D6B0CF1F4BE29EAECB55 /* PBXContainerItemProxy */ = {
+		66AC0C8F210B496481B32634 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 7E4484373F014E98A0AA57A7 /* Project object */;
+			containerPortal = 29B6846338DC4781B5906617 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 6D2263BD069F7028F9CB8758;
+			remoteGlobalIDString = 69835AD03873232AF422EFB0;
 			remoteInfo = ZERO_CHECK;
 		};
-		92A54513C9624094B285842A /* PBXContainerItemProxy */ = {
+		7F07D444840848E9B5D14517 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 7E4484373F014E98A0AA57A7 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6D2263BD069F7028F9CB8758;
-			remoteInfo = ZERO_CHECK;
-		};
-		A7B32F8131474983B7C643C5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7E4484373F014E98A0AA57A7 /* Project object */;
+			containerPortal = 29B6846338DC4781B5906617 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 35DBD5B78ECF44833D17B51F;
 			remoteInfo = "libminiupnpc-static";
 		};
-		AEEA85A3D9A54F2C9F2199FB /* PBXContainerItemProxy */ = {
+		A8CFE8EB20B04AC5B8B0E27D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 7E4484373F014E98A0AA57A7 /* Project object */;
+			containerPortal = 29B6846338DC4781B5906617 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 6DB80BBE8DA7D6D87A8D27FD;
+			remoteGlobalIDString = 69835AD03873232AF422EFB0;
+			remoteInfo = ZERO_CHECK;
+		};
+		DA986636570A4E4B859BA010 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B6846338DC4781B5906617 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B727D2F61FE22951697F0BAD;
 			remoteInfo = ALL_BUILD;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00DA6958026B4DE7A4D0EE36 /* ../flycast/core/deps/miniupnpc/src/minixml.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minixml.c; path = src/minixml.c; sourceTree = SOURCE_ROOT; };
-		0B1AB57A71AC42FFAE7225E3 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = miniwget.c; path = src/miniwget.c; sourceTree = SOURCE_ROOT; };
-		13F131E929EF49BA85CC07F4 /* libminiupnpc-static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libminiupnpc.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		15498018A70847DB978B1706 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist"; sourceTree = "<absolute>"; };
-		22B3843750904C93BBBE0479 /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = portlistingparse.c; path = src/portlistingparse.c; sourceTree = SOURCE_ROOT; };
-		2730E5A65AEC49DCBFA3980B /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnperrors.c; path = src/upnperrors.c; sourceTree = SOURCE_ROOT; };
-		3C5B73238FB546C8B342DE7A /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = miniupnpcstrings.h; path = ../cmake/core/deps/miniupnpc/miniupnpcstrings.h; sourceTree = "<absolute>"; };
-		403967A1274A4C21B71038C6 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = connecthostport.c; path = src/connecthostport.c; sourceTree = SOURCE_ROOT; };
-		508860005DF342DEAA9317CB /* ../flycast/core/deps/miniupnpc/src/receivedata.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = receivedata.c; path = src/receivedata.c; sourceTree = SOURCE_ROOT; };
-		5810933237314DA3B4B8AFB8 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = addr_is_reserved.c; path = src/addr_is_reserved.c; sourceTree = SOURCE_ROOT; };
-		7586D8665A974BBD9ED99541 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = igd_desc_parse.c; path = src/igd_desc_parse.c; sourceTree = SOURCE_ROOT; };
-		9929B22B57EF4ACE9BF91990 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpcommands.c; path = src/upnpcommands.c; sourceTree = SOURCE_ROOT; };
-		A77A36FA648A4C0E8AC3BD6B /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = miniupnpc.c; path = src/miniupnpc.c; sourceTree = SOURCE_ROOT; };
-		C33C7AD0490044B79320C5B8 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		CA33361BD66940BCB97AA2AD /* ../flycast/core/deps/miniupnpc/src/minisoap.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minisoap.c; path = src/minisoap.c; sourceTree = SOURCE_ROOT; };
-		D69B4FF2222647A5BE38A11C /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpreplyparse.c; path = src/upnpreplyparse.c; sourceTree = SOURCE_ROOT; };
-		E7CAB462E12949F0B1C0521A /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minissdpc.c; path = src/minissdpc.c; sourceTree = SOURCE_ROOT; };
-		EF859373859F48F0A9912C01 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		F49BA841718543BC94B2921D /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpdev.c; path = src/upnpdev.c; sourceTree = SOURCE_ROOT; };
+		12B20BFFF7C644E396EDC37E /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = addr_is_reserved.c; path = src/addr_is_reserved.c; sourceTree = SOURCE_ROOT; };
+		143D3DD58CB94AD89D7E98EB /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = portlistingparse.c; path = src/portlistingparse.c; sourceTree = SOURCE_ROOT; };
+		1E4DE741EC064FB0B2BF2745 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		23997C0588EE4E478AA0586B /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minissdpc.c; path = src/minissdpc.c; sourceTree = SOURCE_ROOT; };
+		57FEBBB5C8E247DBA5EB9F83 /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpdev.c; path = src/upnpdev.c; sourceTree = SOURCE_ROOT; };
+		5F5FAB7A65A44C8DB893053E /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = miniupnpc.c; path = src/miniupnpc.c; sourceTree = SOURCE_ROOT; };
+		6C7F04CC206646ACAEAC9B8F /* libminiupnpc-static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libminiupnpc.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		705C64895AFB41119BB6DCB2 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = receivedata.c; path = src/receivedata.c; sourceTree = SOURCE_ROOT; };
+		7C4F9AEBD99045E39D233C53 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist"; sourceTree = "<absolute>"; };
+		95AE930B993746DEB0DF41D6 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = igd_desc_parse.c; path = src/igd_desc_parse.c; sourceTree = SOURCE_ROOT; };
+		9B01407713E64271A09554EB /* ../flycast/core/deps/miniupnpc/src/minixml.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minixml.c; path = src/minixml.c; sourceTree = SOURCE_ROOT; };
+		A1A19E5806474253A62C4D89 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = miniwget.c; path = src/miniwget.c; sourceTree = SOURCE_ROOT; };
+		A89841DA91AE422F9F8420C9 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnperrors.c; path = src/upnperrors.c; sourceTree = SOURCE_ROOT; };
+		AC90228BED584B8099E436A6 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = connecthostport.c; path = src/connecthostport.c; sourceTree = SOURCE_ROOT; };
+		B2F8117BEA2B4A808EA014A4 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpcommands.c; path = src/upnpcommands.c; sourceTree = SOURCE_ROOT; };
+		BF06A07DA7244F0FB115ADD9 /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = miniupnpcstrings.h; path = ../cmake/core/deps/miniupnpc/miniupnpcstrings.h; sourceTree = "<absolute>"; };
+		D95A1144DF3A4F0785807643 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F064EF3603AE46A0BF329ADE /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = upnpreplyparse.c; path = src/upnpreplyparse.c; sourceTree = SOURCE_ROOT; };
+		F8F6E54D44284A5EBF3F1BFA /* ../flycast/core/deps/miniupnpc/src/minisoap.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = minisoap.c; path = src/minisoap.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		D420C69B69EB4E3BAC54F220 /* Frameworks */ = {
+		F125D6B9569647ECB7902F7C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -160,101 +160,101 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		35BB0278670D46669EDBC9C8 = {
-			isa = PBXGroup;
-			children = (
-				81FF0E0211E0466EBF29443E /* libminiupnpc-static */,
-				F968505B963F403E9FAF9279 /* ALL_BUILD */,
-				BB100118E62D44669AB81E0E /* Products */,
-				E836CDAD933D49E69519DAEB /* Frameworks */,
-				6E5413B9BCCB4390BD9842D8 /* Resources */,
-			);
-			sourceTree = "<group>";
-		};
-		6E5413B9BCCB4390BD9842D8 /* Resources */ = {
+		07E8CB705B8149EA9A7C7A74 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		81FF0E0211E0466EBF29443E /* libminiupnpc-static */ = {
+		126DA0B76CFC409BBFE4F439 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				997FDCEDF5E84446909ABFE5 /* Source Files */,
-				901D47CE96C34CC28BC1F991 /* Header Files */,
-				BD9F53F4A9D7418EA28D948F /* Resources */,
-				EF859373859F48F0A9912C01 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */,
-			);
-			name = "libminiupnpc-static";
-			sourceTree = "<group>";
-		};
-		901D47CE96C34CC28BC1F991 /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				3C5B73238FB546C8B342DE7A /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */,
+				BF06A07DA7244F0FB115ADD9 /* ../cmake/core/deps/miniupnpc/miniupnpcstrings.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
 		};
-		997FDCEDF5E84446909ABFE5 /* Source Files */ = {
+		1CBD5FA2502C44E990AC9B47 /* libminiupnpc-static */ = {
 			isa = PBXGroup;
 			children = (
-				5810933237314DA3B4B8AFB8 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */,
-				403967A1274A4C21B71038C6 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */,
-				7586D8665A974BBD9ED99541 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */,
-				CA33361BD66940BCB97AA2AD /* ../flycast/core/deps/miniupnpc/src/minisoap.c */,
-				E7CAB462E12949F0B1C0521A /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */,
-				A77A36FA648A4C0E8AC3BD6B /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */,
-				0B1AB57A71AC42FFAE7225E3 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */,
-				00DA6958026B4DE7A4D0EE36 /* ../flycast/core/deps/miniupnpc/src/minixml.c */,
-				22B3843750904C93BBBE0479 /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */,
-				508860005DF342DEAA9317CB /* ../flycast/core/deps/miniupnpc/src/receivedata.c */,
-				9929B22B57EF4ACE9BF91990 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */,
-				F49BA841718543BC94B2921D /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */,
-				2730E5A65AEC49DCBFA3980B /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */,
-				D69B4FF2222647A5BE38A11C /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */,
+				55D5B993F2434036B2EED76A /* Source Files */,
+				126DA0B76CFC409BBFE4F439 /* Header Files */,
+				D8A88AC7CBA94410A2D5B2CE /* Resources */,
+				D95A1144DF3A4F0785807643 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */,
 			);
-			name = "Source Files";
+			name = "libminiupnpc-static";
 			sourceTree = "<group>";
 		};
-		AC845A39BBFF4DC5A8FAAFBA /* CMake Rules */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "CMake Rules";
-			sourceTree = "<group>";
-		};
-		BB100118E62D44669AB81E0E /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				13F131E929EF49BA85CC07F4 /* libminiupnpc-static */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		BD9F53F4A9D7418EA28D948F /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				15498018A70847DB978B1706 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		E836CDAD933D49E69519DAEB /* Frameworks */ = {
+		436F00BEAEBF463BA698107C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F968505B963F403E9FAF9279 /* ALL_BUILD */ = {
+		55D5B993F2434036B2EED76A /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				AC845A39BBFF4DC5A8FAAFBA /* CMake Rules */,
-				C33C7AD0490044B79320C5B8 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */,
+				12B20BFFF7C644E396EDC37E /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */,
+				AC90228BED584B8099E436A6 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */,
+				95AE930B993746DEB0DF41D6 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */,
+				F8F6E54D44284A5EBF3F1BFA /* ../flycast/core/deps/miniupnpc/src/minisoap.c */,
+				23997C0588EE4E478AA0586B /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */,
+				5F5FAB7A65A44C8DB893053E /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */,
+				A1A19E5806474253A62C4D89 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */,
+				9B01407713E64271A09554EB /* ../flycast/core/deps/miniupnpc/src/minixml.c */,
+				143D3DD58CB94AD89D7E98EB /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */,
+				705C64895AFB41119BB6DCB2 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */,
+				B2F8117BEA2B4A808EA014A4 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */,
+				57FEBBB5C8E247DBA5EB9F83 /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */,
+				A89841DA91AE422F9F8420C9 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */,
+				F064EF3603AE46A0BF329ADE /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		5988E3FAF0404193BD835F4E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6C7F04CC206646ACAEAC9B8F /* libminiupnpc-static */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6357762326594D0FABD36166 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				D247003F0F0848BBB7C1C01E /* CMake Rules */,
+				1E4DE741EC064FB0B2BF2745 /* ../flycast/core/deps/miniupnpc/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		B31859456DC0457F857C061B = {
+			isa = PBXGroup;
+			children = (
+				1CBD5FA2502C44E990AC9B47 /* libminiupnpc-static */,
+				6357762326594D0FABD36166 /* ALL_BUILD */,
+				5988E3FAF0404193BD835F4E /* Products */,
+				436F00BEAEBF463BA698107C /* Frameworks */,
+				07E8CB705B8149EA9A7C7A74 /* Resources */,
+			);
+			sourceTree = "<group>";
+		};
+		D247003F0F0848BBB7C1C01E /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		D8A88AC7CBA94410A2D5B2CE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7C4F9AEBD99045E39D233C53 /* ../cmake/core/deps/miniupnpc/CMakeFiles/libminiupnpc-static.dir/Info.plist */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,48 +262,48 @@
 /* Begin PBXNativeTarget section */
 		35DBD5B78ECF44833D17B51F /* libminiupnpc-static */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 42D4E186E4DF4297830CD886 /* Build configuration list for PBXNativeTarget "libminiupnpc-static" */;
+			buildConfigurationList = 59DDFEC451724EC59FE4A23F /* Build configuration list for PBXNativeTarget "libminiupnpc-static" */;
 			buildPhases = (
-				6817D0D1806E4724AD368813 /* Sources */,
-				D420C69B69EB4E3BAC54F220 /* Frameworks */,
+				EEF4BD3250C34180829078B7 /* Sources */,
+				F125D6B9569647ECB7902F7C /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				865E9DAAB1F343D3B05ACBB4 /* PBXTargetDependency */,
+				7AD0F823F5264DD38755D4BB /* PBXTargetDependency */,
 			);
 			name = "libminiupnpc-static";
 			productName = "libminiupnpc-static";
-			productReference = 13F131E929EF49BA85CC07F4 /* libminiupnpc-static */;
+			productReference = 6C7F04CC206646ACAEAC9B8F /* libminiupnpc-static */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		7E4484373F014E98A0AA57A7 /* Project object */ = {
+		29B6846338DC4781B5906617 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1610;
+				LastUpgradeCheck = 1620;
 			};
-			buildConfigurationList = 4F9A7BBD491F41A0BD2390BB /* Build configuration list for PBXProject "miniupnpc" */;
+			buildConfigurationList = 3DE63E52C518453AAEBAF498 /* Build configuration list for PBXProject "miniupnpc" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				6B67A17180474475866126FF /* Debug */,
-				24A439F687CB4615BBC24815 /* Release */,
-				7BF06517A98E43BFA39C8320 /* MinSizeRel */,
-				91C05BF60C294B72BB69F2B0 /* RelWithDebInfo */,
+				908C66B71F764D249FF3A689 /* Debug */,
+				24861188D5114E45AA3661AE /* Release */,
+				E962E04950D24479B560C0E8 /* MinSizeRel */,
+				A9C8211C9E614DEBBCE4027D /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 35BB0278670D46669EDBC9C8;
+			mainGroup = B31859456DC0457F857C061B;
 			projectDirPath = ../flycast/core/deps/miniupnpc;
 			projectRoot = "";
 			targets = (
-				6DB80BBE8DA7D6D87A8D27FD /* ALL_BUILD */,
-				6D2263BD069F7028F9CB8758 /* ZERO_CHECK */,
-				11E917AB434F844A6CA3AEDF /* install */,
+				B727D2F61FE22951697F0BAD /* ALL_BUILD */,
+				69835AD03873232AF422EFB0 /* ZERO_CHECK */,
+				1148ED2E9013F6047A670D47 /* install */,
 				35DBD5B78ECF44833D17B51F /* libminiupnpc-static */,
 			);
 		};
@@ -455,54 +455,74 @@ fi
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		6817D0D1806E4724AD368813 /* Sources */ = {
+		EEF4BD3250C34180829078B7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				291FA4BDAAE34C28B42053E2 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */,
-				B61B6877248C4DCE8B1F2C09 /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */,
-				23408DDC78FF41CE9253FF49 /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */,
-				020206C1B18347F0985A8AC8 /* ../flycast/core/deps/miniupnpc/src/minisoap.c */,
-				84754D7243B64C83A61E2E06 /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */,
-				32464D30DD2D4E91A78A4C32 /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */,
-				10A4A417772C44FFB7E018B5 /* ../flycast/core/deps/miniupnpc/src/miniwget.c */,
-				21FD47AFFF60403EAAA8ECBD /* ../flycast/core/deps/miniupnpc/src/minixml.c */,
-				CF86A2C352F245FA8BFDE588 /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */,
-				22D9A51010B3446A8F98C488 /* ../flycast/core/deps/miniupnpc/src/receivedata.c */,
-				769F239F1CB44E55B9E15C91 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */,
-				651EB36D6BE44686A53F74C4 /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */,
-				913B1362A0DD4E0CB8F8DE4C /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */,
-				ABD1D0D41A804BFAAE544F35 /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */,
+				5FF5C41A638F477BBEE52684 /* ../flycast/core/deps/miniupnpc/src/addr_is_reserved.c */,
+				934B8585A2724CC090E59BDA /* ../flycast/core/deps/miniupnpc/src/connecthostport.c */,
+				34E489BF56FB487DA6C0B76B /* ../flycast/core/deps/miniupnpc/src/igd_desc_parse.c */,
+				53D8F459BD504C0E824504B8 /* ../flycast/core/deps/miniupnpc/src/minisoap.c */,
+				2AA8B45678B240C3AF6B2A32 /* ../flycast/core/deps/miniupnpc/src/minissdpc.c */,
+				8265507BCEB344A487757C84 /* ../flycast/core/deps/miniupnpc/src/miniupnpc.c */,
+				F07D93B39238462D9BC77A5D /* ../flycast/core/deps/miniupnpc/src/miniwget.c */,
+				731850FFAB6345A9B20B270F /* ../flycast/core/deps/miniupnpc/src/minixml.c */,
+				57B5B77E71AC49E8A496C6AA /* ../flycast/core/deps/miniupnpc/src/portlistingparse.c */,
+				2EC7E51D7BBD499EA808E72F /* ../flycast/core/deps/miniupnpc/src/receivedata.c */,
+				E6F7860E7A754C85BB35BEB7 /* ../flycast/core/deps/miniupnpc/src/upnpcommands.c */,
+				FB5E9E4873244105A2B77FED /* ../flycast/core/deps/miniupnpc/src/upnpdev.c */,
+				EC05082CF37B4EB6B8BF9EB3 /* ../flycast/core/deps/miniupnpc/src/upnperrors.c */,
+				26302F22AE2449AEAB5352E5 /* ../flycast/core/deps/miniupnpc/src/upnpreplyparse.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5F11AD5434C34D88A4DCFEBA /* PBXTargetDependency */ = {
+		167B40D66AF244E59ACBA60C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6DB80BBE8DA7D6D87A8D27FD /* ALL_BUILD */;
-			targetProxy = AEEA85A3D9A54F2C9F2199FB /* PBXContainerItemProxy */;
+			target = B727D2F61FE22951697F0BAD /* ALL_BUILD */;
+			targetProxy = DA986636570A4E4B859BA010 /* PBXContainerItemProxy */;
 		};
-		865E9DAAB1F343D3B05ACBB4 /* PBXTargetDependency */ = {
+		1BD597F3C2A14318B923A549 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6D2263BD069F7028F9CB8758 /* ZERO_CHECK */;
-			targetProxy = 92A54513C9624094B285842A /* PBXContainerItemProxy */;
+			target = 69835AD03873232AF422EFB0 /* ZERO_CHECK */;
+			targetProxy = A8CFE8EB20B04AC5B8B0E27D /* PBXContainerItemProxy */;
 		};
-		B74B2F4C9FA848B1B6D78D6A /* PBXTargetDependency */ = {
+		7AD0F823F5264DD38755D4BB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6D2263BD069F7028F9CB8758 /* ZERO_CHECK */;
-			targetProxy = 0F78D6B0CF1F4BE29EAECB55 /* PBXContainerItemProxy */;
+			target = 69835AD03873232AF422EFB0 /* ZERO_CHECK */;
+			targetProxy = 66AC0C8F210B496481B32634 /* PBXContainerItemProxy */;
 		};
-		F4F21825BA7347849FE1618E /* PBXTargetDependency */ = {
+		98DB1FAB8E5041ADAFD54FD1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 35DBD5B78ECF44833D17B51F /* libminiupnpc-static */;
-			targetProxy = A7B32F8131474983B7C643C5 /* PBXContainerItemProxy */;
+			targetProxy = 7F07D444840848E9B5D14517 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0E876E02F38A4E23A260FD25 /* Release */ = {
+		09B350A9E62F464FB816E4D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		212423B533FB4371BC0A2A90 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -520,9 +540,9 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = RelWithDebInfo;
 		};
-		1A8B234590584AE1ABA5CA59 /* MinSizeRel */ = {
+		2FBD2B25EFF646DDA2694826 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -534,131 +554,9 @@ fi
 				SWIFT_COMPILATION_MODE = wholemodule;
 				BUILD_DIR = ../lib;
 			};
-			name = MinSizeRel;
-		};
-		1F1E8F262F7F43529AE37B7B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		3AA03F28DDA845CB9E6DC101 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = auto;
-				BUILD_DIR = ../lib;
-			};
-			name = Debug;
-		};
-		45A9725DC413454EB408FE17 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
 			name = RelWithDebInfo;
 		};
-		55E5189629804D97A9A22CE8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		5D7E7358C29D426BABF072C8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		7041595D5F86463CB357CB75 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",MINIUPNP_STATICLIB,MINIUPNPC_SET_SOCKET_TIMEOUT,_BSD_SOURCE,_DEFAULT_SOURCE,_DARWIN_C_SOURCE,"$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../flycast/core/deps/miniupnpc/include,../cmake/core/deps/miniupnpc,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = ("       -DNDEBUG -fPIC ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = miniupnpc;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		7A9BD8FE3DC14EA8AFEBCB5E /* MinSizeRel */ = {
+		4253740F58964538B9B587B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -676,9 +574,9 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = Debug;
 		};
-		82A7AD4B847F40C2972F08A2 /* MinSizeRel */ = {
+		42B62D09F10541DC9D6D2B42 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -698,7 +596,7 @@ fi
 			};
 			name = MinSizeRel;
 		};
-		88A617055B4C4B9F8F80875A /* MinSizeRel */ = {
+		443A70C9E05D41FE8D550826 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -727,7 +625,7 @@ fi
 			};
 			name = MinSizeRel;
 		};
-		8CCF7857E22C4A0C8D0EB725 /* Release */ = {
+		4A8F60CEA7FE4CD9871C6254 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -756,7 +654,36 @@ fi
 			};
 			name = Release;
 		};
-		8ECC80D7856240AFA9ED29DC /* RelWithDebInfo */ = {
+		4E35BA3218104ACA94B341C2 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",MINIUPNP_STATICLIB,MINIUPNPC_SET_SOCKET_TIMEOUT,_BSD_SOURCE,_DEFAULT_SOURCE,_DARWIN_C_SOURCE,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/miniupnpc/include,../cmake/core/deps/miniupnpc,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = miniupnpc;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		A9B4DB4502F34D95939F9852 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -776,7 +703,7 @@ fi
 			};
 			name = RelWithDebInfo;
 		};
-		950A718C29014AE39F3FBF76 /* RelWithDebInfo */ = {
+		AD1C3978A2B647CBB222B76A /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -794,9 +721,9 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = MinSizeRel;
 		};
-		C2C688637E6541A7B6EEF670 /* Debug */ = {
+		AE84DED6BCE840F1BF4CB1C1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -825,7 +752,7 @@ fi
 			};
 			name = Debug;
 		};
-		C6F1B20521F54ECC82C5AD98 /* MinSizeRel */ = {
+		BB9AFAC7F829416090FFA2F3 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -838,14 +765,14 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
+				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = RelWithDebInfo;
 		};
-		D660B2A996FF4FF78449BB90 /* Debug */ = {
+		CFF0696241974329AEFF8B6A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -865,7 +792,108 @@ fi
 			};
 			name = Debug;
 		};
-		D6C0CE88E14B45019E869F57 /* Debug */ = {
+		D069ADC076E741B59EA2CB40 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		D35FA78AD9A34F7790E23D77 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = MinSizeRel;
+		};
+		D5574E7ADD814231B7B7929A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E603D1C78DE24B999BDFA3DE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				BUILD_DIR = ../lib;
+			};
+			name = Debug;
+		};
+		EA9C98E88EDC4376B06578DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		ECE6A8BA82CA4B2EBA146DD4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = Release;
+		};
+		F74ED30BDBEC44CFA1799768 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -883,95 +911,67 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
-		};
-		F0D1D4F2396E42C2A7774C15 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = auto;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				BUILD_DIR = ../lib;
-			};
-			name = RelWithDebInfo;
-		};
-		FD330F8B62A54C4E8672445E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = auto;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				BUILD_DIR = ../lib;
-			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		42D4E186E4DF4297830CD886 /* Build configuration list for PBXNativeTarget "libminiupnpc-static" */ = {
+		0131BDF39D5C4562B46D4D42 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C2C688637E6541A7B6EEF670 /* Debug */,
-				8CCF7857E22C4A0C8D0EB725 /* Release */,
-				88A617055B4C4B9F8F80875A /* MinSizeRel */,
-				7041595D5F86463CB357CB75 /* RelWithDebInfo */,
+				4253740F58964538B9B587B4 /* Debug */,
+				F74ED30BDBEC44CFA1799768 /* Release */,
+				AD1C3978A2B647CBB222B76A /* MinSizeRel */,
+				212423B533FB4371BC0A2A90 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		4F9A7BBD491F41A0BD2390BB /* Build configuration list for PBXProject "miniupnpc" */ = {
+		117AEEB723364ED299011231 /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3AA03F28DDA845CB9E6DC101 /* Debug */,
-				FD330F8B62A54C4E8672445E /* Release */,
-				1A8B234590584AE1ABA5CA59 /* MinSizeRel */,
-				F0D1D4F2396E42C2A7774C15 /* RelWithDebInfo */,
+				D5574E7ADD814231B7B7929A /* Debug */,
+				EA9C98E88EDC4376B06578DE /* Release */,
+				D069ADC076E741B59EA2CB40 /* MinSizeRel */,
+				A9B4DB4502F34D95939F9852 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		55685D80A7554583A7A63D4A /* Build configuration list for PBXAggregateTarget "install" */ = {
+		3DE63E52C518453AAEBAF498 /* Build configuration list for PBXProject "miniupnpc" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5D7E7358C29D426BABF072C8 /* Debug */,
-				1F1E8F262F7F43529AE37B7B /* Release */,
-				C6F1B20521F54ECC82C5AD98 /* MinSizeRel */,
-				8ECC80D7856240AFA9ED29DC /* RelWithDebInfo */,
+				E603D1C78DE24B999BDFA3DE /* Debug */,
+				ECE6A8BA82CA4B2EBA146DD4 /* Release */,
+				D35FA78AD9A34F7790E23D77 /* MinSizeRel */,
+				2FBD2B25EFF646DDA2694826 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		5DCF118338AB470F8E9A03E0 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		59DDFEC451724EC59FE4A23F /* Build configuration list for PBXNativeTarget "libminiupnpc-static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D660B2A996FF4FF78449BB90 /* Debug */,
-				55E5189629804D97A9A22CE8 /* Release */,
-				82A7AD4B847F40C2972F08A2 /* MinSizeRel */,
-				45A9725DC413454EB408FE17 /* RelWithDebInfo */,
+				AE84DED6BCE840F1BF4CB1C1 /* Debug */,
+				4A8F60CEA7FE4CD9871C6254 /* Release */,
+				443A70C9E05D41FE8D550826 /* MinSizeRel */,
+				4E35BA3218104ACA94B341C2 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		DEC20F4CE7FD403A9011E276 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		955EA07A0AEC472FB77B9A52 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D6C0CE88E14B45019E869F57 /* Debug */,
-				0E876E02F38A4E23A260FD25 /* Release */,
-				7A9BD8FE3DC14EA8AFEBCB5E /* MinSizeRel */,
-				950A718C29014AE39F3FBF76 /* RelWithDebInfo */,
+				CFF0696241974329AEFF8B6A /* Debug */,
+				09B350A9E62F464FB816E4D5 /* Release */,
+				42B62D09F10541DC9D6D2B42 /* MinSizeRel */,
+				BB9AFAC7F829416090FFA2F3 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 7E4484373F014E98A0AA57A7 /* Project object */;
+	rootObject = 29B6846338DC4781B5906617 /* Project object */;
 }

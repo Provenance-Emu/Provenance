@@ -74,7 +74,7 @@
 			<key>PVProjectName</key>
 			<string>Flycast (RetroArch)</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dreamcast</string>
