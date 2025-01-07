@@ -167,6 +167,8 @@ public extension RomDatabase {
 
     /// Recover save states from the save state directory
     func recoverSaveStates(forGame game: PVGame, core: EmulatorCoreIOInterface) throws {
+        let game = game.warmUp()
+
         let saveStatePath: URL = PVEmulatorConfiguration.saveStatePath(forGame: game)
 
         do {
@@ -214,6 +216,7 @@ public extension RomDatabase {
     }
 
     func updateSaveStates(forGame game: PVGame) throws {
+        let game = game.warmUp()
         do {
             // Clear saves from database that don't have files
             for save in game.saveStates {
