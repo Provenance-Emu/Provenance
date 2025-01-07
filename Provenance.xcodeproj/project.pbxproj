@@ -279,6 +279,7 @@
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
+		B33A09342D2D0B0C00BFB6C9 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B33A09332D2D0B0C00BFB6C9 /* PVJIT */; };
 		B33A763B2CC5168C00FC746F /* SiriusRating in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B33A763A2CC5168C00FC746F /* SiriusRating */; };
 		B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, tvos, ); productRef = B33B4F3F2C198F32007371C5 /* MBProgressHUD */; };
 		B33B4F4B2C1A5B4B007371C5 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F4A2C1A5B4B007371C5 /* RealmSwift */; };
@@ -2919,6 +2920,7 @@
 				B35B17812CCCDFD1007059CA /* PVAudio in Frameworks */,
 				B35573742CC4843600A4BA16 /* MoltenVK in Frameworks */,
 				B3E2A9FA2CB60F1200E2636D /* PVPPSSPP.framework in Frameworks */,
+				B33A09342D2D0B0C00BFB6C9 /* PVJIT in Frameworks */,
 				B32D45C72CB7310C006B76C2 /* PVGambatte in Frameworks */,
 				B3E2AA212CB6306600E2636D /* PVYabause.framework in Frameworks */,
 				B3E2AA302CB6346900E2636D /* PVOpera.framework in Frameworks */,
@@ -4502,6 +4504,7 @@
 				B38A68BF2CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic */,
 				B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */,
 				B3E77F832D1F57E6004A3AD2 /* PVFeatureFlags */,
+				B33A09332D2D0B0C00BFB6C9 /* PVJIT */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -11352,6 +11355,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
 			productName = PVGambatte;
+		};
+		B33A09332D2D0B0C00BFB6C9 /* PVJIT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B305856A2C0C150100B91D7A /* XCLocalSwiftPackageReference "PVJIT" */;
+			productName = PVJIT;
 		};
 		B33A763A2CC5168C00FC746F /* SiriusRating */ = {
 			isa = XCSwiftPackageProductDependency;
