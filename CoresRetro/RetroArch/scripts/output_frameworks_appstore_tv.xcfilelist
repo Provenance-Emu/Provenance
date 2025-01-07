@@ -5,7 +5,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_mercury_accuracy_libretro_tvos.fra
 $(SRCROOT)/CoresRetro/RetroArch/modules/dosbox_pure_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/fbneo_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/fceumm_libretro_tvos.framework
-$(SRCROOT)/CoresRetro/RetroArch/modules/flycast_libretro.framework
+#$(SRCROOT)/CoresRetro/RetroArch/modules/flycast_libretro.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/fuse_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gambatte_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/gearcoleco_libretro_tvos.framework
@@ -47,5 +47,6 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/sameboy_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/stella2014_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/stella_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/vbam_libretro_tvos.framework
+$(SRCROOT)/CoresRetro/RetroArch/modules/vecx_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/virtualjaguar_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/yabause_libretro_tvos.framework

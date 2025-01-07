@@ -5,7 +5,7 @@ https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/bsnes_mercury_accu
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/dosbox_pure_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/fbneo_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/fceumm_libretro_tvos.dylib.zip
-https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/flycast_libretro.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/flycast_libretro.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/fmsx_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/fuse_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/gambatte_libretro_tvos.dylib.zip
