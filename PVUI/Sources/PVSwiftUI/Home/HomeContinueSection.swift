@@ -17,6 +17,7 @@ class ContinuesSectionViewModel: ObservableObject {
     @Published var currentPage: Int = 0
     @Published var selectedItemId: String?
     @Published var hasFocus: Bool = false
+    @Published var isControllerConnected: Bool = GamepadManager.shared.isControllerConnected
 
     /// Filtered save states from parent
     private var saveStates: [PVSaveState] = []
@@ -340,7 +341,7 @@ private struct SaveStatesGridView: View {
                             )
                         }
                     },
-                    isFocused: parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id
+                    isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected
                 )
                 .focusableIfAvailable()
                 .onChange(of: parentFocusedItem) { newValue in
