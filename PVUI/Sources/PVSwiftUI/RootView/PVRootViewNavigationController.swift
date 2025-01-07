@@ -78,33 +78,35 @@ public final class PVRootViewNavigationController: UINavigationController {
     
     var paletteListener: Any?
     func _initThemeListener() {
-        if #available(iOS 17.0, tvOS 17.0, *) {
-            paletteListener = withObservationTracking {
-                _ = ThemeManager.shared.currentPalette
-            } onChange: { [unowned self] in
-                DLOG("changed: \(ThemeManager.shared.currentPalette.name)")
-                Task.detached { @MainActor in
-                    self.applyCustomTheme()
-                }
-            }
-        } else {
-            paletteListener = withPerceptionTracking {
-                _ = ThemeManager.shared.currentPalette
-            } onChange: {
-                print("changed: ", ThemeManager.shared.currentPalette)
-                Task.detached { @MainActor in
-                    self.applyCustomTheme()
-                }
-            }
-
-            // Fallback for earlier versions
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(handleThemeChange),
-                name: .themeDidChange, // You need to define this notification name in ThemeManager
-                object: nil
-            )
-        }
+//        if #available(iOS 17.0, tvOS 17.0, *) {
+//            paletteListener = withObservationTracking {
+//                _ = ThemeManager.shared.currentPalette
+//            } onChange: { [unowned self] in
+//                DLOG("changed: \(ThemeManager.shared.currentPalette.name)")
+//                Task.detached { @MainActor in
+//                    self.applyCustomTheme()
+//                }
+//            }
+//        } else {
+//            paletteListener = withPerceptionTracking {
+//                _ = ThemeManager.shared.currentPalette
+//            } onChange: {
+//                print("changed: ", ThemeManager.shared.currentPalette)
+//                Task.detached { @MainActor in
+//                    self.applyCustomTheme()
+//                }
+//            }
+//
+//
+//        }
+        
+        // Fallback for earlier versions
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleThemeChange),
+            name: .themeDidChange, // You need to define this notification name in ThemeManager
+            object: nil
+        )
     }
     
     // Add this method to handle theme changes for earlier versions
