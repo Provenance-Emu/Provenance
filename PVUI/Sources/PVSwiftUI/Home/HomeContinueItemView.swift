@@ -40,6 +40,7 @@ struct HomeContinueItemView: SwiftUI.View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: height)
                             .frame(maxWidth: .infinity)
+                            .id(themeManager.currentPalette.name)
                     }
 
                     HStack {
