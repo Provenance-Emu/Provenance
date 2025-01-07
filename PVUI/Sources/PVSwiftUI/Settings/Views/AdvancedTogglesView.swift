@@ -52,9 +52,12 @@ internal struct AdvancedTogglesView: View {
                 }
             }
 
-            PremiumThemedToggle(isOn: $useMetalRenderer) {
-                SettingsRow(title: "Metal Renderer",
-                            subtitle: "Use Metal for improved graphics performance.",
+            PremiumThemedToggle(isOn: Binding(
+                get: { !useMetalRenderer },
+                set: { useMetalRenderer = !$0 }
+            )) {
+                SettingsRow(title: "OpenGL Renderer",
+                            subtitle: "Use OpenGL instead of Metal renderer for legacy graphics filters. Not all cores are supported.",
                             icon: .sfSymbol("cpu"))
             }
 
