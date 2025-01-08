@@ -281,7 +281,7 @@ extension PVEmuThreeCoreOptions {
     
     func parseOptions() {
         self.gsPreference = NSNumber(value: PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.gsOption).asInt ?? 0).int8Value
-        self.resFactor = NSNumber(value: PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.resolutionOption).asInt ?? 0).int8Value
+        self.resFactor = NSNumber(value: PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.resolutionOption).asInt ?? 1).int8Value
         self.enableHLE = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableHLEOption).asBool
         self.cpuOClock = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.cpuClockOption).asInt ?? 0).int8Value
         self.enableJIT = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableJITOption).asBool
