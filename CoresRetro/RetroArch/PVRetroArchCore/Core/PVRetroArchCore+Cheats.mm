@@ -4,7 +4,7 @@
 /* RetroArch Includes */
 #include "core.h"
 
-@implementation PVRetroArchCore (Cheats)
+@implementation PVRetroArchCoreBridge (Cheats)
 #pragma mark - Cheats
 const char* cheatCode;
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType: (NSString *)codeType

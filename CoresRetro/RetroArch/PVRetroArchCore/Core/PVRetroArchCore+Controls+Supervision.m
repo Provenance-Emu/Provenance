@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
-#import "PVRetroArchCore+Controls.h"
+#import "PVRetroArchCoreBridge+Controls.h"
 #import "./cocoa_common.h"
 
 /* RetroArch Includes */
@@ -31,10 +31,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (GBControls) <PVSupervisionSystemResponderClient>
+@interface PVRetroArchCoreBridge (GBControls) <PVSupervisionSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (GBControls)
+@implementation PVRetroArchCoreBridge (GBControls)
 #pragma mark - Control
 - (void)didPushSupervisionButton:(PVSupervisionButton)button forPlayer:(NSInteger)player {
     [self handleGBButton:button forPlayer:player pressed:true];

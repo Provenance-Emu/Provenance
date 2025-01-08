@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (N64Controls) <PVN64SystemResponderClient>
+@interface PVRetroArchCoreBridge (N64Controls) <PVN64SystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (N64Controls)
+@implementation PVRetroArchCoreBridge (N64Controls)
 #pragma mark - Control
 - (void)didPushN64Button:(PVN64Button)button forPlayer:(NSInteger)player {
     [self handleN64Button:button forPlayer:player pressed:true value:1];

@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -43,7 +43,7 @@ typedef signed char    s8;
 typedef unsigned short u16;
 typedef unsigned int   u32;
 extern bool _isInitialized;
-extern __weak PVRetroArchCore *_current;
+extern __weak PVRetroArchCoreBridge *_current;
 void handle_touch_event(NSArray* touches);
 void handle_click_event(CGPoint click, bool pressed);
 GCController *touch_controller;
@@ -52,7 +52,7 @@ void apple_gamecontroller_joypad_connect(GCController *controller);
 void refresh_gamecontrollers();
 void apple_gamecontroller_joypad_disconnect(GCController* controller);
 
-@implementation PVRetroArchCore (Controls)
+@implementation PVRetroArchCoreBridge (Controls)
 - (void)initControllBuffers {}
 #pragma mark - Control
 -(void)controllerConnected:(NSNotification *)notification {

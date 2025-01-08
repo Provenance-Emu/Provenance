@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (PSPControls) <PVPSPSystemResponderClient>
+@interface PVRetroArchCoreBridge (PSPControls) <PVPSPSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (PSPControls)
+@implementation PVRetroArchCoreBridge (PSPControls)
 #pragma mark - Control
 - (void)didPushPSPButton:(PVPSPButton)button forPlayer:(NSInteger)player {
     [self handlePSPButton:button forPlayer:player pressed:true value:1];

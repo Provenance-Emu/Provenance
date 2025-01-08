@@ -28,7 +28,7 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     public override var isDoubleBuffered: Bool { true }
     
     // MARK: Lifecycle
-    public lazy var _bridge: PVRetroArchCore = .init()
+    public lazy var _bridge: PVRetroArchCoreBridge = .init()
     
     public required init() {
         super.init()

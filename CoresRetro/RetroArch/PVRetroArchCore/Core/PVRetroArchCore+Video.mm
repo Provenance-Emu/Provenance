@@ -6,13 +6,13 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import "PVRetroArchCore+Video.h"
+#import "PVRetroArchCoreBridge+Video.h"
 
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
 
-@implementation PVRetroArchCore (Video)
+@implementation PVRetroArchCoreBridge (Video)
 
 # pragma mark - Methods
 - (void)videoInterrupt {}

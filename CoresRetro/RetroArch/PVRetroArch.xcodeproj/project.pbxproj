@@ -85,7 +85,7 @@
 		93B3B1932A8CAA7800B60325 /* libZipArchive_RetroArch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1532A8CA9D100B60325 /* libZipArchive_RetroArch.a */; };
 		93B3B1952A8CAB0E00B60325 /* liblzma.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1942A8CAB0E00B60325 /* liblzma.tbd */; };
 		93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */; };
-		93B3B1992A8CBA5F00B60325 /* PVRetroArchCore+Archive.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B3B1982A8CBA5F00B60325 /* PVRetroArchCore+Archive.h */; };
+		93B3B1992A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B3B1982A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h */; };
 		93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */; };
 		93B3B2722A8CC8C200B60325 /* libRarArchive_RetroArch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1B32A8CC39800B60325 /* libRarArchive_RetroArch.a */; };
 		93B3BCE62A8CE91900B60325 /* lh5_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC902A8CE91800B60325 /* lh5_decoder.c */; };
@@ -212,13 +212,13 @@
 		93F66EC52966D6E100203EB3 /* cocoa_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FF38392966337100772659 /* cocoa_common.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BA743D2965B96D00A49D66 /* cocoa_gl_ctx.m */; };
 		93FF38202965FF9C00772659 /* PVRetroArchCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVRetroArchCore.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
-		93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVRetroArchCore+Audio.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		93FF38212965FF9C00772659 /* PVRetroArchCoreBridge+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVRetroArchCoreBridge+Audio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38222965FF9C00772659 /* PVRetroArchCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVRetroArchCore+Audio.mm */; };
-		93FF38232965FF9C00772659 /* PVRetroArchCore+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVRetroArchCore+Video.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		93FF38232965FF9C00772659 /* PVRetroArchCoreBridge+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVRetroArchCoreBridge+Video.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38242965FF9C00772659 /* PVRetroArchCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVRetroArchCore+Video.mm */; };
-		93FF38252965FF9C00772659 /* PVRetroArchCore+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVRetroArchCore+Saves.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		93FF38252965FF9C00772659 /* PVRetroArchCoreBridge+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVRetroArchCoreBridge+Saves.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38262965FF9C00772659 /* PVRetroArchCore+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVRetroArchCore+Saves.mm */; };
-		93FF38272965FF9C00772659 /* PVRetroArchCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVRetroArchCore+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		93FF38272965FF9C00772659 /* PVRetroArchCoreBridge+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVRetroArchCoreBridge+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */; };
 		93FF38292965FF9C00772659 /* PVRetroArchCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */; };
 		93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVRetroArch.mm */; };
@@ -228,7 +228,7 @@
 		B30C8C882BF45AFB00C91991 /* PVRetroArchCore+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C852BF45AFA00C91991 /* PVRetroArchCore+Options.swift */; };
 		B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */; };
 		B30C8C8C2BF45BDC00C91991 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */; };
-		B3135B9C26E4CC290047F338 /* PVRetroArchCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVRetroArchCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3135B9C26E4CC290047F338 /* PVRetroArchCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVRetroArchCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVRetroArch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B32111B52CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m in Sources */ = {isa = PBXBuildFile; fileRef = B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
@@ -442,7 +442,7 @@
 		93B3B1532A8CA9D100B60325 /* libZipArchive_RetroArch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZipArchive_RetroArch.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B3B1942A8CAB0E00B60325 /* liblzma.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = liblzma.tbd; path = usr/lib/liblzma.tbd; sourceTree = SDKROOT; };
 		93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Archive+PC98.m"; sourceTree = "<group>"; };
-		93B3B1982A8CBA5F00B60325 /* PVRetroArchCore+Archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCore+Archive.h"; sourceTree = "<group>"; };
+		93B3B1982A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Archive.h"; sourceTree = "<group>"; };
 		93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Archive.m"; sourceTree = "<group>"; };
 		93B3B1B32A8CC39800B60325 /* libRarArchive_RetroArch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRarArchive_RetroArch.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B3B4122A8CE56800B60325 /* UnrarKit.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnrarKit.podspec; sourceTree = "<group>"; };
@@ -819,14 +819,14 @@
 		B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Supervision.m"; sourceTree = "<group>"; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		B3447E96218B809200557ACE /* PVRetroArchCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCore+Controls.h"; sourceTree = "<group>"; };
+		B3447E96218B809200557ACE /* PVRetroArchCoreBridge+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Controls.h"; sourceTree = "<group>"; };
 		B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls.m"; sourceTree = "<group>"; };
 		B3447EA0218B881000557ACE /* PVRetroArch.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVRetroArch.mm; sourceTree = "<group>"; };
-		B3447EA9218BC59D00557ACE /* PVRetroArchCore+Saves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCore+Saves.h"; sourceTree = "<group>"; };
+		B3447EA9218BC59D00557ACE /* PVRetroArchCoreBridge+Saves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Saves.h"; sourceTree = "<group>"; };
 		B3447EAA218BC59D00557ACE /* PVRetroArchCore+Saves.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVRetroArchCore+Saves.mm"; sourceTree = "<group>"; };
-		B3447EAD218BC5C500557ACE /* PVRetroArchCore+Video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCore+Video.h"; sourceTree = "<group>"; };
+		B3447EAD218BC5C500557ACE /* PVRetroArchCoreBridge+Video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Video.h"; sourceTree = "<group>"; };
 		B3447EAE218BC5C500557ACE /* PVRetroArchCore+Video.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVRetroArchCore+Video.mm"; sourceTree = "<group>"; };
-		B3447EB1218BC69700557ACE /* PVRetroArchCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCore+Audio.h"; sourceTree = "<group>"; };
+		B3447EB1218BC69700557ACE /* PVRetroArchCoreBridge+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+Audio.h"; sourceTree = "<group>"; };
 		B3447EB2218BC69700557ACE /* PVRetroArchCore+Audio.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVRetroArchCore+Audio.mm"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
@@ -841,7 +841,7 @@
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		B3C76223207833DE009950E4 /* PVRetroArchCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCore.h; sourceTree = "<group>"; };
+		B3C76223207833DE009950E4 /* PVRetroArchCoreBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCoreBridge.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVRetroArchCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVRetroArchCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PS2.m"; sourceTree = "<group>"; };
@@ -1698,12 +1698,12 @@
 				93B66BA82967EFCA00A621DD /* vulkan_common.c */,
 				93FF383A2966337100772659 /* apple_platform.h */,
 				93FF38392966337100772659 /* cocoa_common.h */,
-				B3C76223207833DE009950E4 /* PVRetroArchCore.h */,
-				93B3B1982A8CBA5F00B60325 /* PVRetroArchCore+Archive.h */,
-				B3447EB1218BC69700557ACE /* PVRetroArchCore+Audio.h */,
-				B3447E96218B809200557ACE /* PVRetroArchCore+Controls.h */,
-				B3447EA9218BC59D00557ACE /* PVRetroArchCore+Saves.h */,
-				B3447EAD218BC5C500557ACE /* PVRetroArchCore+Video.h */,
+				B3C76223207833DE009950E4 /* PVRetroArchCoreBridge.h */,
+				93B3B1982A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h */,
+				B3447EB1218BC69700557ACE /* PVRetroArchCoreBridge+Audio.h */,
+				B3447E96218B809200557ACE /* PVRetroArchCoreBridge+Controls.h */,
+				B3447EA9218BC59D00557ACE /* PVRetroArchCoreBridge+Saves.h */,
+				B3447EAD218BC5C500557ACE /* PVRetroArchCoreBridge+Video.h */,
 				93B66BA72967EFC900A621DD /* vulkan_common.h */,
 				93B66BCC2968004900A621DD /* vulkan_metal.h */,
 				93835810296CFAA600A23231 /* cocoa_common.m */,
@@ -1894,16 +1894,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93FF38232965FF9C00772659 /* PVRetroArchCore+Video.h in Headers */,
-				93FF38252965FF9C00772659 /* PVRetroArchCore+Saves.h in Headers */,
-				93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Headers */,
-				93FF38272965FF9C00772659 /* PVRetroArchCore+Controls.h in Headers */,
-				B3135B9C26E4CC290047F338 /* PVRetroArchCore.h in Headers */,
+				93FF38232965FF9C00772659 /* PVRetroArchCoreBridge+Video.h in Headers */,
+				93FF38252965FF9C00772659 /* PVRetroArchCoreBridge+Saves.h in Headers */,
+				93FF38212965FF9C00772659 /* PVRetroArchCoreBridge+Audio.h in Headers */,
+				93FF38272965FF9C00772659 /* PVRetroArchCoreBridge+Controls.h in Headers */,
+				B3135B9C26E4CC290047F338 /* PVRetroArchCoreBridge.h in Headers */,
 				932A5CC129686AEB0032C168 /* retroarch.h in Headers */,
 				932A5CBF29686A8E0032C168 /* libretro.h in Headers */,
 				93F66EC52966D6E100203EB3 /* cocoa_common.h in Headers */,
 				B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */,
-				93B3B1992A8CBA5F00B60325 /* PVRetroArchCore+Archive.h in Headers */,
+				93B3B1992A8CBA5F00B60325 /* PVRetroArchCoreBridge+Archive.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

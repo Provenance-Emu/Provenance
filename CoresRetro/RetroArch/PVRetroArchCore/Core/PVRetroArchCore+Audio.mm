@@ -1,14 +1,14 @@
 //
-//  PVRetroArchCore+Audio.m
+//  PVRetroArchCoreBridge+Audio.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import "PVRetroArchCore+Audio.h"
+#import "PVRetroArchCoreBridge+Audio.h"
 
-@implementation PVRetroArchCore (Audio)
+@implementation PVRetroArchCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
 	return isNTSC ? 60 : 50;

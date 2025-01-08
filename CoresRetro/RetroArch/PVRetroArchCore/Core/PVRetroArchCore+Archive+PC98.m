@@ -1,12 +1,12 @@
 #import <Foundation/Foundation.h>
-#import "PVRetroArchCore+Archive.h"
+#import "PVRetroArchCoreBridge+Archive.h"
 
 NSString* PC98_EXTENSIONS  = @"d88|88d|d98|98d|fdi|xdf|hdm|dup|2hd|tfd|nfd|hd4|hd5|hd9|fdd|h01|hdb|ddb|dd6|dcp|dcu|flp|img|ima|bin|fim|thd|nhd|hdi|vhd|slh|hdn|cmd";
 
-@interface PVRetroArchCore (Archive)
+@interface PVRetroArchCoreBridge (Archive)
 @end
 
-@implementation PVRetroArchCore (Archive)
+@implementation PVRetroArchCoreBridge (Archive)
 - (NSMutableArray *)getPC98Files:(NSString *)path {
     NSError *error = nil;
     NSMutableArray<NSDictionary *> *files = [NSMutableArray arrayWithArray:@[]];

@@ -1,12 +1,12 @@
 #import <Foundation/Foundation.h>
-#import "PVRetroArchCore+Archive.h"
+#import "PVRetroArchCoreBridge+Archive.h"
 
 NSString* MAME_EXTENSIONS  = @"zip|cmd";
 
-@interface PVRetroArchCore (Archive)
+@interface PVRetroArchCoreBridge (Archive)
 @end
 
-@implementation PVRetroArchCore (Archive)
+@implementation PVRetroArchCoreBridge (Archive)
 - (NSString *)checkROM_MAME:(NSString*)romFile {
     [self cleanIni];
     [self writeUIini];

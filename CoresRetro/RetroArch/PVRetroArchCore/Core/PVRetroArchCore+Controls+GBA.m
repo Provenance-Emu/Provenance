@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (GBAControls) <PVGBASystemResponderClient>
+@interface PVRetroArchCoreBridge (GBAControls) <PVGBASystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (GBAControls)
+@implementation PVRetroArchCoreBridge (GBAControls)
 #pragma mark - Control
 - (void)didPushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player {
     [self handleGBAButton:button forPlayer:player pressed:true];

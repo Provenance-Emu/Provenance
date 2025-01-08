@@ -12,7 +12,7 @@
  *  You should have received a copy of the GNU General Public License along with RetroArch.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
-// Adds _library=[_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:[PVRetroArchCore class]] error:&error];
+// Adds _library=[_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] error:&error];
 // Adds cocoa_common / apple_platform local includes
 
 #import <Foundation/Foundation.h>

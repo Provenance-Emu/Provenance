@@ -1,12 +1,12 @@
 #import <Foundation/Foundation.h>
-#import "PVRetroArchCore+Archive.h"
+#import "PVRetroArchCoreBridge+Archive.h"
 
 NSString* AppleII_EXTENSIONS  = @"dsk|do|bin|nib|fdi|td0|imd|cqm|d77|d88|1dd|image|dc|po|2mg|2img|img|chd|hdv|2mg";
 
-@interface PVRetroArchCore (Archive)
+@interface PVRetroArchCoreBridge (Archive)
 @end
 
-@implementation PVRetroArchCore (Archive)
+@implementation PVRetroArchCoreBridge (Archive)
 - (NSMutableArray *)getAppleIIFiles:(NSString *)path extract:(bool)extract {
     NSError *error = nil;
     NSMutableArray<NSDictionary *> *files = [NSMutableArray arrayWithArray:@[]];

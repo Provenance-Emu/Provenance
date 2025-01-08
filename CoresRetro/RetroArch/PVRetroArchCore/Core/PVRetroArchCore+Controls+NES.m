@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (NESControls) <PVNESSystemResponderClient>
+@interface PVRetroArchCoreBridge (NESControls) <PVNESSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (NESControls)
+@implementation PVRetroArchCoreBridge (NESControls)
 #pragma mark - Control
 - (void)didPushNESButton:(PVNESButton)button forPlayer:(NSInteger)player {
     [self handleNESButton:button forPlayer:player pressed:true];

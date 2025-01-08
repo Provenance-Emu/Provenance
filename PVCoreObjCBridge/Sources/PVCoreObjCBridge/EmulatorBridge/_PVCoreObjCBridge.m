@@ -137,8 +137,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 static NSString *_coreClassName;
 + (NSString *)coreClassName {
     // options are identified by classname
-    if (_coreClassName && [_coreClassName containsString:@"dylib"])
+    if (_coreClassName && ([_coreClassName containsString:@"dylib"] || [_coreClassName containsString:@"framework"])) {
         return _coreClassName;
+    }
     return NSStringFromClass(self);
 }
 + (void)setCoreClassName:(NSString *)name {
