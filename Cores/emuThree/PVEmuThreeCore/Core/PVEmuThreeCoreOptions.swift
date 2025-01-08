@@ -249,7 +249,7 @@ import PVCoreBridge
         var options = [CoreOption]()
         let coreOptions: [CoreOption] = [
             resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
-            shaderTypeOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, volumeOption,
+            shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, volumeOption,
             stretchAudioOption, swapScreenOption, uprightScreenOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
         ]
         let coreGroup:CoreOption = .group(.init(title: "EmuThreeds Core",
@@ -283,24 +283,24 @@ extension PVEmuThreeCoreOptions {
         self.gsPreference = NSNumber(value: PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.gsOption).asInt ?? 0).int8Value
         self.resFactor = NSNumber(value: PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.resolutionOption).asInt ?? 1).int8Value
         self.enableHLE = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableHLEOption).asBool
-        self.cpuOClock = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.cpuClockOption).asInt ?? 0).int8Value
+        self.cpuOClock = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.cpuClockOption).asInt ?? 100).int8Value
         self.enableJIT = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableJITOption).asBool
         self.useNew3DS =
         PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableNew3DSOption).asBool
         self.asyncShader = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableAsyncShaderOption).asBool
         self.asyncPresent = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableAsyncPresentOption).asBool
-        self.shaderType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.shaderTypeOption).asInt ?? 0).int8Value
+        self.shaderType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.shaderTypeOption).asInt ?? 2).int8Value
         self.enableVSync = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableVSyncOption).asBool
         self.enableShaderAccurate = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableShaderAccurateMulOption).asBool
         self.enableShaderJIT = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableShaderJITOption).asBool
-        self.portraitType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.portraitTypeOption).asInt ?? 0).int8Value
-        self.landscapeType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.landscapeTypeOption).asInt ?? 0).int8Value
+        self.portraitType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.portraitTypeOption).asInt ?? 5).int8Value
+        self.landscapeType = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.landscapeTypeOption).asInt ?? 5).int8Value
         self.stretchAudio = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.stretchAudioOption).asBool
         self.volume = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.volumeOption).asInt ?? 100).int8Value
         self.swapScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.swapScreenOption).asBool
         self.uprightScreen = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.uprightScreenOption).asBool
         self.preloadTextures = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.preloadTextuesOption).asBool
         self.stereoRender = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.stereoRenderOption).asInt ?? 0).int8Value
-        self.threedFactor = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.threedFactorOption).asInt ?? 0).int8Value
+        self.threedFactor = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.threedFactorOption).asInt ?? 100).int8Value
     }
 }
