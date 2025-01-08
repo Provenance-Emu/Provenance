@@ -139,64 +139,34 @@ s8 joyx[4], joyy[4];
     }
 }
 
--(void)didPushDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player {
+-(void)didPushVectrexButton:(enum PVVectrexButton)button forPlayer:(NSInteger)player {
 //	if(_isInitialized)
 //	  {
 //	  }
 }
 
--(void)didReleaseDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player {
+-(void)didReleaseVectrexButton:(enum PVVectrexButton)button forPlayer:(NSInteger)player {
 //	if(_isInitialized)
 //	  {
 //	  }
 }
 
-- (void)didMoveDOSJoystickDirection:(enum PVDOSButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+- (void)didMoveVectrexJoystickDirection:(enum PVVectrexButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
 //	if(_isInitialized)
 //	  {
 //	  }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self didMoveDOSJoystickDirection:(enum PVDOSButton)button withValue:value forPlayer:player];
+    [self didMoveVectrexJoystickDirection:(enum PVVectrexButton)button withValue:value forPlayer:player];
 }
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didPushDOSButton:(PVDOSButton)button forPlayer:player];
+    [self didPushVectrexButton:(PVVectrexButton)button forPlayer:player];
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didReleaseDOSButton:(PVDOSButton)button forPlayer:player];
+    [self didReleaseVectrexButton:(PVVectrexButton)button forPlayer:player];
 }
-
-
-# pragma mark - Input Wii
-//- (oneway void)didMoveWiiJoystickDirection:(OEWiiButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
-//{
-//	if(_isInitialized)
-//	{
-//		dol_host->SetAxis(button, value, (int)player);
-//	}
-//}
-//
-//- (oneway void)didPushWiiButton:(OEWiiButton)button forPlayer:(NSUInteger)player
-//{
-//	if(_isInitialized)
-//	{
-//		if (button > OEWiiButtonCount) {
-//			dol_host->processSpecialKeys(button , (int)player);
-//		} else {
-//			dol_host->setButtonState(button, 1, (int)player);
-//		}
-//	}
-//}
-//
-//- (oneway void)didReleaseWiiButton:(OEWiiButton)button forPlayer:(NSUInteger)player
-//{
-//	if(_isInitialized && button != OEWiimoteSideways && button != OEWiimoteUpright)
-//	{
-//		dol_host->setButtonState(button, 0, (int)player);
-//	}
-//}
 
 @end
