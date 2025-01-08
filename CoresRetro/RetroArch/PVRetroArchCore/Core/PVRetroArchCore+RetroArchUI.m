@@ -652,7 +652,7 @@ void extract_bundles();
 	if (flag) {
 		if (!self.batterySavesPath) {
 			NSFileManager *fm = [[NSFileManager alloc] init];
-			self.batterySavesPath = [NSString stringWithFormat:@"%@/RetroArch/config",[[fm URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject].path];
+			self.batterySavesPath = [NSString stringWithFormat:@"%@/RetroArch/config", self.documentsDirectory];
 			NSString *fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/retroarch.cfg",
 								  self.batterySavesPath];
 			if ([fm fileExistsAtPath: fileName]) {
