@@ -61,6 +61,14 @@ import PVCoreBridge
               defaultValue: false)
     }
     
+    static var enableLoggingOption: CoreOption {
+        .bool(.init(
+            title: "Enable Logging",
+            description: "May affect performance",
+            requiresRestart: true),
+              defaultValue: false)
+    }
+    
     static var enableNew3DSOption: CoreOption {
         .bool(.init(
             title: "Enable New 3DS",
@@ -248,7 +256,7 @@ import PVCoreBridge
     public static var options: [CoreOption] {
         var options = [CoreOption]()
         let coreOptions: [CoreOption] = [
-            resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
+            resolutionOption, enableHLEOption, cpuClockOption, enableJITOption, enableLoggingOption, enableNew3DSOption, gsOption, enableAsyncShaderOption, enableAsyncPresentOption,
             shaderTypeOption, enableVSyncOption, enableShaderAccurateMulOption, enableShaderJITOption, portraitTypeOption, landscapeTypeOption, volumeOption,
             stretchAudioOption, swapScreenOption, uprightScreenOption, preloadTextuesOption, stereoRenderOption, threedFactorOption
         ]
@@ -266,6 +274,7 @@ extension PVEmuThreeCoreOptions {
     @objc public static var enableHLE: Bool { valueForOption(PVEmuThreeCoreOptions.enableHLEOption) }
     @objc public static var cpuClock: Int { valueForOption(PVEmuThreeCoreOptions.cpuClockOption)  }
     @objc public static var enableJIT: Bool { valueForOption(PVEmuThreeCoreOptions.enableJITOption) }
+    @objc public static var enableLogging: Bool { valueForOption(PVEmuThreeCoreOptions.enableLoggingOption) }
     @objc public static var enableNew3DS: Bool { valueForOption(PVEmuThreeCoreOptions.enableNew3DSOption) }
     @objc public static var gs: Int { valueForOption(PVEmuThreeCoreOptions.gsOption)  }
     @objc public static var enableAsyncShader: Bool { valueForOption(PVEmuThreeCoreOptions.enableAsyncShaderOption) }
@@ -285,6 +294,7 @@ extension PVEmuThreeCoreOptions {
         self.enableHLE = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableHLEOption).asBool
         self.cpuOClock = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.cpuClockOption).asInt ?? 100).int8Value
         self.enableJIT = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableJITOption).asBool
+        self.enableLogging = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableLoggingOption).asBool
         self.useNew3DS =
         PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableNew3DSOption).asBool
         self.asyncShader = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.enableAsyncShaderOption).asBool
