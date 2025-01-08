@@ -657,7 +657,6 @@
 		B3952F562C697A02000B0308 /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B3952F552C697A02000B0308 /* PVUI */; };
 		B3952F582C698F54000B0308 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3952F572C698F54000B0308 /* Defaults */; };
 		B395958F2BF47033004C5AA9 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B395958E2BF47033004C5AA9 /* RxDataSources */; };
-		B396208B2C66E14C0094F6F0 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B396208E2C66E14C0094F6F0 /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B39620922C66E1BE0094F6F0 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B39620912C66E1BE0094F6F0 /* PVCoreBridge */; };
 		B39620942C66E1C70094F6F0 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B39620932C66E1C70094F6F0 /* PVLogging */; };
@@ -1159,13 +1158,6 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
-		B396208C2C66E14C0094F6F0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E21D6A203211BE009939D3;
-			remoteInfo = Spotlight;
-		};
 		B396208F2C66E14C0094F6F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1549,7 +1541,6 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed Foundation Extensions */,
-				B396208B2C66E14C0094F6F0 /* Spotlight.appex in Embed Foundation Extensions */,
 				B396208E2C66E14C0094F6F0 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -4460,7 +4451,6 @@
 			dependencies = (
 				B394CC572BDEE53A006B63E8 /* PBXTargetDependency */,
 				B38C69B62BEB2CB300AE4F86 /* PBXTargetDependency */,
-				B396208D2C66E14C0094F6F0 /* PBXTargetDependency */,
 				B39620902C66E14C0094F6F0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
@@ -6017,16 +6007,6 @@
 			isa = PBXTargetDependency;
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B394CC582BDEE53A006B63E8 /* PBXContainerItemProxy */;
-		};
-		B396208D2C66E14C0094F6F0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-				macos,
-			);
-			target = B3E21D6A203211BE009939D3 /* Spotlight */;
-			targetProxy = B396208C2C66E14C0094F6F0 /* PBXContainerItemProxy */;
 		};
 		B39620902C66E14C0094F6F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -9014,7 +8994,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
