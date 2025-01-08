@@ -433,7 +433,10 @@ void extract_bundles();
         }
 
 		// Core Identifier is the dylib file name
-		char *param[] = { "retroarch", "-L", sysPath.UTF8String, [romPath UTF8String], "--appendconfig", optConfig.UTF8String, "--verbose", NULL };
+        char *param[] = { "retroarch",
+            "-L", sysPath.stringByStandardizingPath.UTF8String, romPath.stringByStandardizingPath.UTF8String,
+            "--appendconfig", optConfig.UTF8String,
+            "--verbose", NULL };
 		argc=7;
 		argv=param;
 		NSLog(@"Loading %s %s\n", param[2], param[3]);
