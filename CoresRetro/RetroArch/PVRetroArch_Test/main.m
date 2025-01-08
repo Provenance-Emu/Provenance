@@ -1,4 +1,4 @@
-#import <PVRetroArch/PVRetroArchCore.h>
+#import <PVRetroArch/PVRetroArchCoreBridge.h>
 #import <PVRetroArch/RetroArch-Swift.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -6,7 +6,7 @@
 @property (nonatomic) UIWindow* window;
 @property (nonatomic) UIView* view;
 @end
-PVRetroArchCore *core;
+PVRetroArchCoreBridge *core;
 @implementation TestRunner
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {
@@ -19,7 +19,7 @@ PVRetroArchCore *core;
     view_controller.view.frame=bounds;
     self.view=view_controller.view;
     [self.window setRootViewController:view_controller];
-    core=[PVRetroArchCore alloc];
+    core=[PVRetroArchCoreBridge alloc];
     [core setRootView:true];
     [core startEmulation];
 }

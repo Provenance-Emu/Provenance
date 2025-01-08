@@ -6,6 +6,6 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-//#import "PVRetroArchCore.h"
-//#import "PVRetroArchCore+Controls.h"
-//#import "PVRetroArchCore+Video.h"
+//#import "PVRetroArchCoreBridge.h"
+//#import "PVRetroArchCoreBridge+Controls.h"
+//#import "PVRetroArchCoreBridge+Video.h"

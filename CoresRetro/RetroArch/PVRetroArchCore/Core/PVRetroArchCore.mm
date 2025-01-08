@@ -1,14 +1,14 @@
 //
-//  PVRetroArchCore.m
+//  PVRetroArchCoreBridge.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 4/6/18.
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import "PVRetroArchCore+Controls.h"
-#import "PVRetroArchCore+Audio.h"
-#import "PVRetroArchCore+Video.h"
+#import "PVRetroArchCoreBridge+Controls.h"
+#import "PVRetroArchCoreBridge+Audio.h"
+#import "PVRetroArchCoreBridge+Video.h"
 #import <PVRetroArch/RetroArch-Swift.h>
 
 #import <Foundation/Foundation.h>
@@ -43,26 +43,29 @@
 #endif
 #import <AVFoundation/AVFoundation.h>
 
-__weak PVRetroArchCore *_current;
+__weak PVRetroArchCoreBridge *_current;
 bool _isInitialized;
 extern int g_gs_preference;
 
 #pragma mark - Private
-@interface PVRetroArchCore() {
+@interface PVRetroArchCoreBridge() {
 }
 @end
 
-#pragma mark - PVRetroArchCore Begin
-@implementation PVRetroArchCore {
+#pragma mark - PVRetroArchCoreBridge Begin
+@implementation PVRetroArchCoreBridge {
 	NSString *autoLoadStatefileName;
 }
 - (instancetype)init {
 	if (self = [super init]) {
         self.skipLayout = true;
         self.extractArchive = false;
-        PVRetroArchCore.systemName = self.systemIdentifier;
-        PVRetroArchCore.coreClassName = self.coreIdentifier;
-        ILOG(@"PVRetroArchCore.coreClassName: %@, coreClassName: %@", PVRetroArchCore.systemName, PVRetroArchCore.coreClassName);
+        PVRetroArchCoreCore.systemName = self.systemIdentifier;
+        PVRetroArchCoreCore.coreClassName = self.coreIdentifier;
+
+        PVRetroArchCoreBridge.systemName = self.systemIdentifier;
+        PVRetroArchCoreBridge.coreClassName = self.coreIdentifier;
+        ILOG(@"PVRetroArchCoreBridge.coreClassName: %@, coreClassName: %@", PVRetroArchCoreBridge.systemName, PVRetroArchCoreBridge.coreClassName);
         [self parseOptions];
 		CGRect bounds=[[UIScreen mainScreen] bounds];
 		_videoWidth  = bounds.size.width;
@@ -98,8 +101,11 @@ extern int g_gs_preference;
     self.alwaysUseMetal = true;
     self.skipLayout = true;
     self.extractArchive = false;
-    PVRetroArchCore.systemName = self.systemIdentifier;
-    PVRetroArchCore.coreClassName = self.coreIdentifier;
+    PVRetroArchCoreCore.systemName = self.systemIdentifier;
+    PVRetroArchCoreCore.coreClassName = self.coreIdentifier;
+
+    PVRetroArchCoreBridge.systemName = self.systemIdentifier;
+    PVRetroArchCoreBridge.coreClassName = self.coreIdentifier;
     [self parseOptions];
 	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
 	NSString *configPath = self.saveStatesPath;

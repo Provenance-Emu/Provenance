@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (SaturnControls) <PVSaturnSystemResponderClient>
+@interface PVRetroArchCoreBridge (SaturnControls) <PVSaturnSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (SaturnControls)
+@implementation PVRetroArchCoreBridge (SaturnControls)
 #pragma mark - Control
 - (void)didPushSSButton:(PVSaturnButton)button forPlayer:(NSInteger)player {
     [self handleSaturnButton:button forPlayer:player pressed:true value:1];

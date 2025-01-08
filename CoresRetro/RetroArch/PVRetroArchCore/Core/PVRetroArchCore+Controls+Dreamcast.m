@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (DreamcastControls) <PVDreamcastSystemResponderClient>
+@interface PVRetroArchCoreBridge (DreamcastControls) <PVDreamcastSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (DreamcastControls)
+@implementation PVRetroArchCoreBridge (DreamcastControls)
 #pragma mark - Control
 - (void)didPushDreamcastButton:(PVDreamcastButton)button forPlayer:(NSInteger)player {
     [self handleDreamcastButton:button forPlayer:player pressed:true value:1];

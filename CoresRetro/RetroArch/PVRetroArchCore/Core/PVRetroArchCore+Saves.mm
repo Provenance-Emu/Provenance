@@ -6,7 +6,7 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import "PVRetroArchCore+Saves.h"
+#import "PVRetroArchCoreBridge+Saves.h"
 #include "content.h"
 #include "core_info.h"
 
@@ -16,7 +16,7 @@
 extern bool _isInitialized;
 bool firstLoad = true;
 NSString *autoLoadStatefileName;
-@implementation PVRetroArchCore (Saves)
+@implementation PVRetroArchCoreBridge (Saves)
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {
 	return core_info_current_supports_savestate();

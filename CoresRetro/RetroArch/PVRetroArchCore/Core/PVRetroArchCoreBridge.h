@@ -13,7 +13,7 @@
 @protocol PVRetroArchCoreResponderClient;
 @protocol ObjCBridgedCoreBridge;
 
-@interface PVRetroArchCore : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVRetroArchCoreResponderClient, UIApplicationDelegate> {
+@interface PVRetroArchCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVRetroArchCoreResponderClient, UIApplicationDelegate> {
     int videoWidth;
     int videoHeight;
     int videoBitDepth;
@@ -65,7 +65,7 @@
 @property (nonatomic) UIWindow* window;
 @property (nonatomic) NSString* documentsDirectory;
 @property (nonatomic) int menu_count;
-+ (PVRetroArchCore *)get;
++ (PVRetroArchCoreBridge *)get;
 - (void)showGameView;
 - (void)supportOtherAudioSessions;
 - (void)refreshSystemConfig;
@@ -223,7 +223,7 @@ extern apple_frontend_settings_t apple_frontend_settings;
 #endif
 
 void get_ios_version(int *major, int *minor);
-extern __weak PVRetroArchCore *_current;
+extern __weak PVRetroArchCoreBridge *_current;
 #define RETRO_DEVICE_KEYBOARD 3
 #ifndef KEYCODE_KEYCODE_H
 #define KEYCODE_KEYCODE_H

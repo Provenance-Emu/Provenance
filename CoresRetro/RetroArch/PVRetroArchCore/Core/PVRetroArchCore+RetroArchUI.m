@@ -1,15 +1,15 @@
 //
-//  PVRetroArchCore.m
+//  PVRetroArchCoreBridge.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 4/6/18.
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import "PVRetroArchCore+Controls.h"
-#import "PVRetroArchCore+Audio.h"
-#import "PVRetroArchCore+Video.h"
-#import "PVRetroArchCore+Archive.h"
+#import "PVRetroArchCoreBridge+Controls.h"
+#import "PVRetroArchCoreBridge+Audio.h"
+#import "PVRetroArchCoreBridge+Video.h"
+#import "PVRetroArchCoreBridge+Archive.h"
 #import <PVRetroArch/RetroArch-Swift.h>
 #import <Foundation/Foundation.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
@@ -77,12 +77,12 @@ extern bool firstLoad;
 char **argv;
 int argc =  1;
 
-#pragma mark - PVRetroArchCore Begin
+#pragma mark - PVRetroArchCoreBridge Begin
 
-@interface PVRetroArchCore (RetroArchUI)
+@interface PVRetroArchCoreBridge (RetroArchUI)
 @end
 
-@implementation PVRetroArchCore (RetroArchUI)
+@implementation PVRetroArchCoreBridge (RetroArchUI)
 
 - (void)initialize {
     [super initialize];
@@ -202,11 +202,11 @@ void extract_bundles();
     NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.27.1.cfg",
                          self.batterySavesPath];
 	if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
-        NSString *src = [[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"retroarch.cfg" ofType:nil];
+        NSString *src = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"retroarch.cfg" ofType:nil];
         [self syncResource:src to:fileName];
         [self syncResource:src to:verFile];
         
-        NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"arrow.png" ofType:nil];
+        NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"arrow.png" ofType:nil];
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/flatui/png/arrow.png", self.batterySavesPath]];
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/monochrome/png/arrow.png", self.batterySavesPath]];
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/../../RetroArch/assets/xmb/automatic/png/arrow.png", self.batterySavesPath]];
@@ -227,11 +227,11 @@ void extract_bundles();
         content=@"video_driver = \"gl\"\n";
     else if (self.gsPreference == 2)
         content=@"video_driver = \"vulkan\"\n";
-    [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"pv_ui_overlay" ofType:nil]
+    [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay" ofType:nil]
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/overlays/pv_ui_overlay" ]];
-    [self syncResource:[[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"pv_ui_overlay/pv_ui.cfg" ofType:nil]
+    [self syncResource:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay/pv_ui.cfg" ofType:nil]
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/overlays/pv_ui_overlay/pv_ui.cfg" ]];
-    [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"mame_plugins" ofType:nil]
+    [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"mame_plugins" ofType:nil]
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/plugins" ]];
     if (!self.retroArchControls) {
         content = [content stringByAppendingString:
@@ -439,7 +439,7 @@ void extract_bundles();
 		NSLog(@"Loading %s %s\n", param[2], param[3]);
 	}
     if (processing_init) {
-        [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
+        [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
         processing_init=false;
     }
 //	NSError *error;
@@ -587,7 +587,7 @@ void extract_bundles();
 }
 - (void)setCursorVisible:(bool)v { /* no-op for iOS */ }
 - (bool)setDisableDisplaySleep:(bool)disable { /* no-op for iOS */ return NO; }
-+(PVRetroArchCore *) get { self; }
++(PVRetroArchCoreBridge *) get { self; }
 -(NSString*)documentsDirectory {
 	if (self.documentsDirectory == nil) {
 #if TARGET_OS_IOS

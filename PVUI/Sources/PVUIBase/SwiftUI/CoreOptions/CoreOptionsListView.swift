@@ -38,7 +38,7 @@ struct CoreOptionsListView: View {
             guard let coreClass = NSClassFromString(core.principleClass) as? CoreOptional.Type else {
                 return nil
             }
-
+            
             // Check if the core has any meaningful options
             let hasOptions = hasValidOptions(in: coreClass.options)
             guard hasOptions else {

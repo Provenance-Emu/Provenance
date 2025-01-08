@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (DSControls) <PVDSSystemResponderClient>
+@interface PVRetroArchCoreBridge (DSControls) <PVDSSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (DSControls)
+@implementation PVRetroArchCoreBridge (DSControls)
 #pragma mark - Control
 - (void)didPushDSButton:(PVDSButton)button forPlayer:(NSInteger)player {
     [self handleDSButton:button forPlayer:player pressed:true value:1];

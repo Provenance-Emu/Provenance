@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (PCEControls) <PVPCESystemResponderClient>
+@interface PVRetroArchCoreBridge (PCEControls) <PVPCESystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (PCEControls)
+@implementation PVRetroArchCoreBridge (PCEControls)
 #pragma mark - Control
 - (void)didPushPCEButton:(PVPCEButton)button forPlayer:(NSInteger)player {
     [self handlePCEButton:button forPlayer:player pressed:true value:1];

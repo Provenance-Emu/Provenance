@@ -14,11 +14,11 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 // Local Changes:
-// Add PVRetroArchCore.h
+// Add PVRetroArchCoreBridge.h
 #ifndef __COCOA_COMMON_SHARED_H
 #define __COCOA_COMMON_SHARED_H
 
-#import <PVRetroArch/PVRetroArchCore.h>
+#import <PVRetroArch/PVRetroArchCoreBridge.h>
 
 #import <Foundation/Foundation.h>
 
