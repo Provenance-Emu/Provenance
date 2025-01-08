@@ -119,7 +119,7 @@ extern int g_gs_preference;
 							  withIntermediateDirectories:YES
 											   attributes:nil
 													error:NULL];
-	romPath = [path copy];
+    romPath = [[path copy] stringByStandardizingPath];
 	return YES;
 }
 -(void)startHaptic { }
