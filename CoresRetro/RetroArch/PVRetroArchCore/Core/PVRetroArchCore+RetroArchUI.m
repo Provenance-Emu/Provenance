@@ -233,6 +233,9 @@ void extract_bundles();
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/overlays/pv_ui_overlay/pv_ui.cfg" ]];
     [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"mame_plugins" ofType:nil]
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/plugins" ]];
+    [self syncResource:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"hatari.cfg" ofType:nil]
+                     to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/hatari.cfg" ]];
+
     if (!self.retroArchControls) {
         content = [content stringByAppendingString:
                        @"input_overlay_enable = \"false\"\n"
