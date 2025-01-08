@@ -302,6 +302,5 @@ extension PVEmuThreeCoreOptions {
         self.preloadTextures = PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.preloadTextuesOption).asBool
         self.stereoRender = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.stereoRenderOption).asInt ?? 0).int8Value
         self.threedFactor = NSNumber(value:PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.threedFactorOption).asInt ?? 0).int8Value
-        self.cpuOClock = self.cpuOClock < 100 ? 100 : self.cpuOClock
     }
 }
