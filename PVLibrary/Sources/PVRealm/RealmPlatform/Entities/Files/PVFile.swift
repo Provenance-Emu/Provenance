@@ -185,14 +185,16 @@ public extension PVFile {
             if let attr = try? FileManager.default.attributesOfItem(atPath: path) as NSDictionary {
                 fileSize = attr.fileSize()
 
-                // Update cache
-                do {
-                    try realm?.writeAsync {
-                        self.sizeCache = Int(fileSize)
-                        self.lastSizeCheck = Date()
+                // Cache the size only if we're not frozen
+                if !self.isFrozen, let realm = self.realm {
+                    do {
+                        try realm.write {
+                            self.sizeCache = Int(fileSize)
+                            self.lastSizeCheck = Date()
+                        }
+                    } catch {
+                        ELOG("Failed to update size cache: \(error)")
                     }
-                } catch {
-                    ELOG("Failed to update size cache: \(error)")
                 }
             } else {
                 ELOG("No attributesOfItem at path: \(path)")
