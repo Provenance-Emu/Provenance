@@ -2,13 +2,24 @@ import SwiftUI
 import PVCoreBridge
 import PVLibrary
 
+/// View model to manage core options state
+private class CoreOptionsState: ObservableObject {
+    @Published var selectedValues: [String: Any] = [:]
+    @Published var optionValues: [String: Any] = [:]
+
+    func updateValue(_ value: Any, forKey key: String) {
+        selectedValues[key] = value
+        optionValues[key] = value
+        objectWillChange.send()
+    }
+}
+
 /// View that displays and allows editing of core options for a specific core
 struct CoreOptionsDetailView: View {
     let coreClass: CoreOptional.Type
     let title: String
-
-    /// State to track current values of options
-    @State private var optionValues: [String: Any] = [:]
+    @StateObject private var viewModel = CoreOptionsViewModel()
+    @StateObject private var state = CoreOptionsState()
 
     private struct IdentifiableOption: Identifiable {
         let id = UUID()
@@ -62,7 +73,6 @@ struct CoreOptionsDetailView: View {
         }
         .navigationTitle(title)
         .onAppear {
-            // Load initial values
             loadOptionValues()
         }
     }
@@ -72,7 +82,7 @@ struct CoreOptionsDetailView: View {
             for identifiableOption in group.options {
                 let value = getCurrentValue(for: identifiableOption.option)
                 if let value = value {
-                    optionValues[identifiableOption.option.key] = value
+                    state.optionValues[identifiableOption.option.key] = value
                 }
             }
         }
@@ -100,7 +110,7 @@ struct CoreOptionsDetailView: View {
     }
 
     private func setValue(_ value: Any, for option: CoreOption) {
-        optionValues[option.key] = value
+        state.optionValues[option.key] = value
 
         switch value {
         case let boolValue as Bool:
@@ -112,6 +122,7 @@ struct CoreOptionsDetailView: View {
         case let floatValue as Float:
             coreClass.setValue(floatValue, forOption: option)
         default:
+            WLOG("📱 Warning: Unhandled value type: \(type(of: value))")
             break
         }
     }
@@ -121,7 +132,7 @@ struct CoreOptionsDetailView: View {
         switch option {
         case let .bool(display, defaultValue):
             Toggle(isOn: Binding(
-                get: { optionValues[option.key] as? Bool ?? defaultValue },
+                get: { state.optionValues[option.key] as? Bool ?? defaultValue },
                 set: { setValue($0, for: option) }
             )) {
                 VStack(alignment: .leading) {
@@ -136,34 +147,24 @@ struct CoreOptionsDetailView: View {
 
         case let .enumeration(display, values, defaultValue):
             let selection = Binding(
-                get: { optionValues[option.key] as? Int ?? defaultValue },
-                set: { setValue($0, for: option) }
+                get: {
+                    let value = state.selectedValues[option.key] as? Int ?? state.optionValues[option.key] as? Int ?? defaultValue
+                    return value
+                },
+                set: { newValue in
+                    withAnimation {
+                        setValue(newValue, for: option)
+                        state.updateValue(newValue, forKey: option.key)
+                    }
+                }
             )
 
             NavigationLink {
-                List {
-                    ForEach(values, id: \.value) { value in
-                        Button {
-                            selection.wrappedValue = value.value
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(value.title)
-                                    if let description = value.description {
-                                        Text(description)
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                                Spacer()
-                                if value.value == selection.wrappedValue {
-                                    Image(systemName: "checkmark")
-                                }
-                            }
-                        }
-                    }
-                }
-                .navigationTitle(display.title)
+                EnumerationSelectionList(
+                    values: values,
+                    selection: selection,
+                    title: display.title
+                )
             } label: {
                 VStack(alignment: .leading) {
                     Text(display.title)
@@ -188,7 +189,7 @@ struct CoreOptionsDetailView: View {
 #if !os(tvOS)
                 Slider(
                     value: Binding(
-                        get: { Double(optionValues[option.key] as? Int ?? defaultValue) },
+                        get: { Double(state.optionValues[option.key] as? Int ?? defaultValue) },
                         set: { setValue(Int($0), for: option) }
                     ),
                     in: Double(range.min)...Double(range.max),
@@ -214,7 +215,7 @@ struct CoreOptionsDetailView: View {
 #if !os(tvOS)
                 Slider(
                     value: Binding(
-                        get: { Double(optionValues[option.key] as? Float ?? defaultValue) },
+                        get: { Double(state.optionValues[option.key] as? Float ?? defaultValue) },
                         set: { setValue(Float($0), for: option) }
                     ),
                     in: Double(range.min)...Double(range.max),
@@ -231,34 +232,21 @@ struct CoreOptionsDetailView: View {
 
         case let .multi(display, values):
             let selection = Binding(
-                get: { optionValues[option.key] as? String ?? values.first?.title ?? "" },
-                set: { setValue($0, for: option) }
+                get: { state.selectedValues[option.key] as? String ?? state.optionValues[option.key] as? String ?? values.first?.title ?? "" },
+                set: { newValue in
+                    withAnimation {
+                        setValue(newValue, for: option)
+                        state.updateValue(newValue, forKey: option.key)
+                    }
+                }
             )
 
             NavigationLink {
-                List {
-                    ForEach(values, id: \.title) { value in
-                        Button {
-                            selection.wrappedValue = value.title
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(value.title)
-                                    if let description = value.description {
-                                        Text(description)
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                                Spacer()
-                                if value.title == selection.wrappedValue {
-                                    Image(systemName: "checkmark")
-                                }
-                            }
-                        }
-                    }
-                }
-                .navigationTitle(display.title)
+                MultiSelectionList(
+                    values: values,
+                    selection: selection,
+                    title: display.title
+                )
             } label: {
                 VStack(alignment: .leading) {
                     Text(display.title)
@@ -274,7 +262,7 @@ struct CoreOptionsDetailView: View {
 
         case let .string(display, defaultValue):
             let text = Binding(
-                get: { optionValues[option.key] as? String ?? defaultValue },
+                get: { state.optionValues[option.key] as? String ?? defaultValue },
                 set: { setValue($0, for: option) }
             )
 
@@ -294,5 +282,91 @@ struct CoreOptionsDetailView: View {
         case .group(_, _):
             EmptyView() // Groups are handled at the section level
         }
+    }
+}
+
+// MARK: - Helper Views
+private struct EnumerationSelectionList: View {
+    let values: [CoreOptionEnumValue]
+    @Binding var selection: Int
+    let title: String
+
+    // Add state to force refresh
+    @State private var selectedValue: Int
+
+    init(values: [CoreOptionEnumValue], selection: Binding<Int>, title: String) {
+        self.values = values
+        self._selection = selection
+        self.title = title
+        self._selectedValue = State(initialValue: selection.wrappedValue)
+    }
+
+    var body: some View {
+        List {
+            ForEach(values, id: \.value) { value in
+                Button {
+                    withAnimation {
+                        selectedValue = value.value
+                        selection = value.value
+                    }
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(value.title)
+                            if let description = value.description {
+                                Text(description)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        Spacer()
+                        if value.value == selectedValue {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle(title)
+        .onAppear {
+            selectedValue = selection
+        }
+        .onChange(of: selection) { newValue in
+            selectedValue = newValue
+        }
+    }
+}
+
+private struct MultiSelectionList: View {
+    let values: [CoreOptionMultiValue]
+    @Binding var selection: String
+    let title: String
+
+    var body: some View {
+        List {
+            ForEach(values, id: \.title) { value in
+                Button {
+                    withAnimation {
+                        selection = value.title
+                    }
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(value.title)
+                            if let description = value.description {
+                                Text(description)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        Spacer()
+                        if value.title == selection {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle(title)
     }
 }
