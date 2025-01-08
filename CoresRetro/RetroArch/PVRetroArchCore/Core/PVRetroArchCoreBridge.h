@@ -13,7 +13,10 @@
 @protocol PVRetroArchCoreResponderClient;
 @protocol ObjCBridgedCoreBridge;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface PVRetroArchCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVRetroArchCoreResponderClient, UIApplicationDelegate> {
+#pragma clang diagnostic pop
     int videoWidth;
     int videoHeight;
     int videoBitDepth;
