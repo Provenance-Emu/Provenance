@@ -41,7 +41,7 @@ struct ClassFinder {
         for i in 0..<Int(imageCount) {
             if let imageName = String(cString: imageList[i], encoding: .utf8) {
                 // Get image handle using dlopen
-                if let handle = dlopen(imageName, RTLD_LAZY) {
+                if let handle = dlopen(imageName, RTLD_NOLOAD) {
                     defer { dlclose(handle) }
                     let classes = objc_enumerateClasses(fromImage: .image(handle), subclassing: parentClass)
                     allSubclasses.append(contentsOf: classes)
@@ -85,7 +85,7 @@ struct ClassFinder {
         for i in 0..<Int(imageCount) {
             if let imageName = String(cString: imageList[i], encoding: .utf8) {
                 // Get image handle using dlopen
-                if let handle = dlopen(imageName, RTLD_LAZY) {
+                if let handle = dlopen(imageName, RTLD_NOLOAD) {
                     defer { dlclose(handle) }
                     let classes = objc_enumerateClasses(fromImage: .image(handle), conformingTo: protocolToImplement)
                     allImplementingClasses.append(contentsOf: classes)
