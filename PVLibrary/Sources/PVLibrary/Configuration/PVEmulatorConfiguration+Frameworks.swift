@@ -78,7 +78,9 @@ public extension PVEmulatorConfiguration {
         }
         //this calls refresh anyway
         RomDatabase.reloadCache(force: true)
+        #if DEBUG
         printListOfSystems()
+        #endif
     }
     
     /// Parse plists to update PVSystems
