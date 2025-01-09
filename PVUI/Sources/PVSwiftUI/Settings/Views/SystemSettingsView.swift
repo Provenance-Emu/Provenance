@@ -49,6 +49,32 @@ struct SystemSettingsView: View {
     }
 
     var body: some View {
+        #if os(tvOS)
+        VStack {
+            // Search field at the top
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.secondary)
+                TextField("Search systems, cores, or BIOSes", text: $searchText)
+                    .padding(8)
+//                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+            }
+            .padding()
+
+            // Scrollable list
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(filteredSystems) { system in
+                        SystemSection(system: system)
+                            .focusable(true)
+                    }
+                }
+                .padding()
+            }
+        }
+        .navigationTitle("Systems")
+        #else
         List {
             ForEach(filteredSystems) { system in
                 SystemSection(system: system)
@@ -57,6 +83,7 @@ struct SystemSettingsView: View {
         .searchable(text: $searchText, prompt: "Search systems, cores, or BIOSes")
         .listStyle(GroupedListStyle())
         .navigationTitle("Systems")
+        #endif
     }
 }
 
@@ -102,13 +129,16 @@ struct SystemSection: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 30, height: 30)
+                    .tint(themeManager.currentPalette.menuHeaderText.swiftUIColor)
+                    .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor)
+
                 Text(system.name)
                     .font(.title2.bold())
                     .foregroundColor(themeManager.currentPalette.menuHeaderText.swiftUIColor)
             }
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
+            // .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
         }
     }
 }
