@@ -553,6 +553,7 @@
 		B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF82C6C6D1A00EBD1A8 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
+		B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = B35F93E02D2F71450016E633 /* WhatsNewKit */; };
 		B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B36A8D442CCD5480002357DD /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D432CCD5480002357DD /* Defaults */; };
@@ -2871,6 +2872,7 @@
 				B3E77F842D1F57E6004A3AD2 /* PVFeatureFlags in Frameworks */,
 				B318E28F2CAB51EE00D0E599 /* PVEmuThree.framework in Frameworks */,
 				B38FB4AC2CBEF6B0006786C6 /* libavutil.xcframework in Frameworks */,
+				B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */,
 				B38FB4A12CBEF57B006786C6 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B3EF26F02BE7F9690066D4B6 /* libc.tbd in Frameworks */,
 				B3EF26EE2BE7F8EC0066D4B6 /* libc++.tbd in Frameworks */,
@@ -4487,6 +4489,7 @@
 				B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */,
 				B3E77F832D1F57E6004A3AD2 /* PVFeatureFlags */,
 				B33A09332D2D0B0C00BFB6C9 /* PVJIT */,
+				B35F93E02D2F71450016E633 /* WhatsNewKit */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -4893,6 +4896,7 @@
 				B38A68BA2CCEFB73001C57D0 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */,
 				B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */,
 				B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */,
+				B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -11025,6 +11029,14 @@
 				kind = branch;
 			};
 		};
+		B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SvenTiigi/WhatsNewKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.1;
+			};
+		};
 		B37228C82CCDC7A700E6F627 /* XCRemoteSwiftPackageReference "FreemiumKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/FlineDev/FreemiumKit.git";
@@ -11733,6 +11745,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B35EEF792C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		B35F93E02D2F71450016E633 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
 		};
 		B36A8D432CCD5480002357DD /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;

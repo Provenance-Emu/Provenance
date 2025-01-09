@@ -3,6 +3,9 @@ import PVLogging
 import PVSwiftUI
 import PVUIBase
 import PVThemes
+#if canImport(WhatsNewKit)
+import WhatsNewKit
+#endif
 
 struct ContentView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -32,5 +35,11 @@ struct ContentView: View {
         }
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+#if canImport(WhatsNewKit)
+        // Automatically present a WhatsNewView, if needed.
+        // The WhatsNew that should be presented to the user
+        // is automatically retrieved from the `WhatsNewEnvironment`
+        .whatsNewSheet()
+#endif
     }
 }
