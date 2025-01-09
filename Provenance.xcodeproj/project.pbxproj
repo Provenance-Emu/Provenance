@@ -553,8 +553,9 @@
 		B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF82C6C6D1A00EBD1A8 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
-		B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = B35F93E02D2F71450016E633 /* WhatsNewKit */; };
-		B35F93E32D2F811B0016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = B35F93E22D2F811B0016E633 /* WhatsNewKit */; };
+		B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E02D2F71450016E633 /* WhatsNewKit */; };
+		B35F93E32D2F811B0016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E22D2F811B0016E633 /* WhatsNewKit */; };
+		B35F93E52D2F8E560016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E42D2F8E560016E633 /* WhatsNewKit */; };
 		B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B36A8D442CCD5480002357DD /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D432CCD5480002357DD /* Defaults */; };
@@ -3000,6 +3001,7 @@
 				B3F7E37A297736BE00362B92 /* Photos.framework in Frameworks */,
 				B3F7E37D297736BE00362B92 /* GameController.framework in Frameworks */,
 				B3F7E37E297736BE00362B92 /* libxml2.dylib in Frameworks */,
+				B35F93E52D2F8E560016E633 /* WhatsNewKit in Frameworks */,
 				B3F7E37F297736BE00362B92 /* MetalKit.framework in Frameworks */,
 				B3E77F862D1F57F3004A3AD2 /* PVFeatureFlags in Frameworks */,
 				B36A8D502CCD5518002357DD /* PVJIT in Frameworks */,
@@ -4636,6 +4638,7 @@
 				B36A8D4F2CCD5518002357DD /* PVJIT */,
 				B3250A2E2CCEE29800E6D7CE /* FreemiumKit */,
 				B3E77F852D1F57F3004A3AD2 /* PVFeatureFlags */,
+				B35F93E42D2F8E560016E633 /* WhatsNewKit */,
 			);
 			productName = Provenance;
 			productReference = B3F7E421297736BE00362B92 /* Provenance-Lite.app */;
@@ -11764,6 +11767,11 @@
 			productName = WhatsNewKit;
 		};
 		B35F93E22D2F811B0016E633 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
+		};
+		B35F93E42D2F8E560016E633 /* WhatsNewKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
 			productName = WhatsNewKit;
