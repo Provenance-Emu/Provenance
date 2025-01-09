@@ -26,7 +26,7 @@
  */
 
 #include <Foundation/Foundation.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLoggingObjC.h>
 #include "snes9x.h"
 #include "memmap.h"
 #include "gfx.h"
@@ -87,6 +87,9 @@ void S9xHandlePortCommand(s9xcommand_t cmd, int16 data1, int16 data2)
     DLOG(@"Port command");
 }
 
+bool8 S9xOpenSoundDevice(void) {
+    return true;
+}
 
 void S9xGenerateSound ()
 {

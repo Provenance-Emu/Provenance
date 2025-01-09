@@ -12,7 +12,7 @@ variables:
   ${{ if contains('main,develop,release', variables['Build.SourceBranchName']) }}:
     configuration: 'Release'
   ${{ if not(contains('main,develop,release', variables['Build.SourceBranchName'])) }}:
-    configuration: 'Debug'
+    configuration: 'Release'
   name: $(Build.SourceBranchName)
   tag: $(Build.BuildNumber)
   CertificateFileName: 'developer_cert.p12'
@@ -39,6 +39,7 @@ variables:
 jobs:
 # Builds
 - job: iOS
+  timeoutInMinutes: 300
   steps:
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching
@@ -59,20 +60,22 @@ jobs:
 
     - task: Xcode@5
       inputs:
-        scheme: '$(scheme)'
-        xcWorkspacePath: '$(xcWorkspacePath)'
-        xcodeDeveloperDir: /Applications/Xcode_14.1.app/Contents/Developer
-        xcodeVersion: specifyPath
-        exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
-        packageApp: false
-        destinationPlatformOption: $(destinationPlatformOption)
-        useXcpretty: false
-        configuration: '$(configuration)'
-        exportMethod: '$(ExportMethod)'
-        destinationSimulators: 'iPhone 11 Pro'
-        # signingOption: 'manual'
-        # signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
-        # provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
+       actions: 'build'
+       scheme: '$(scheme)'
+       xcWorkspacePath: '$(xcWorkspacePath)'
+       xcodeDeveloperDir: /Applications/Xcode_14.1.app/Contents/Developer
+       xcodeVersion: specifyPath
+       exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
+       useXcpretty: false
+       configuration: '$(configuration)'
+       # exportMethod: '$(ExportMethod)'
+       # packageApp: false
+       # destinationPlatformOption: $(destinationPlatformOption)
+       # destinationSimulators: 'iPhone 11 Pro'
+       # signingOption: 'manual'
+       # signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+       # provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
+       args: 'CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=S32Z3HMYVQ ORG_IDENTIFIER=org.provenance-emu'
       displayName: Building project $(scheme)
 
   # - task: CopyFiles@2

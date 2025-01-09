@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "61D573A8-BE23-4136-A6BC-3B1854B05E6D"
+   type = "3"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2107C20B-957A-4E20-84C2-FF6B5926995C"
+            shouldBeEnabled = "No"
+            nameForDebugger = "RealmValueForKey"
+            ignoreCount = "0"
+            continueAfterRunningActions = "Yes"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Provenance-fmnqyejnhdyaeteisvwsdqchzshl/SourcePackages/checkouts/realm-swift/Realm/RLMObjectBase.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "189"
+            endingLineNumber = "189"
+            landmarkName = "-valueForKey:"
+            landmarkType = "7">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.DebuggerCommand">
+                  <ActionContent
+                     consoleCommand = "po key">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

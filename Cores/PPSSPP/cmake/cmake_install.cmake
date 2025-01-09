@@ -1,4 +1,4 @@
-# Install script for directory: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp
+# Install script for directory: ../libretro_ppsspp
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -37,7 +37,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/objdump")
 endif()
 
-set(CMAKE_BINARY_DIR "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake")
+set(CMAKE_BINARY_DIR "../cmake")
 
 if(NOT PLATFORM_NAME)
   if(NOT "$ENV{PLATFORM_NAME}" STREQUAL "")
@@ -59,8 +59,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/cmake_install.cmake")
-  include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/libretro/cmake_install.cmake")
+  include("../cmake/ext/cmake_install.cmake")
 
 endif()
 
@@ -72,5 +71,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "../cmake/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -3,17 +3,31 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		112E7E2F247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
 		1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31D2492A9B400636C8A /* CoreServices.framework */; };
 		11AFB2B324867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
+		B3016F3729764BA4002D82F4 /* Consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2229764BA4002D82F4 /* Consts.swift */; };
+		B3016F3829764BA4002D82F4 /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2429764BA4002D82F4 /* Identifiable.swift */; };
+		B3016F3929764BA4002D82F4 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2629764BA4002D82F4 /* DataManager.swift */; };
+		B3016F3A29764BA4002D82F4 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2729764BA4002D82F4 /* Keychain.swift */; };
+		B3016F3B29764BA4002D82F4 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2829764BA4002D82F4 /* DatabaseManager.swift */; };
+		B3016F3C29764BA4002D82F4 /* PatreonAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2A29764BA4002D82F4 /* PatreonAPI.swift */; };
+		B3016F3D29764BA4002D82F4 /* Benefit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2C29764BA4002D82F4 /* Benefit.swift */; };
+		B3016F3E29764BA4002D82F4 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2D29764BA4002D82F4 /* Campaign.swift */; };
+		B3016F3F29764BA4002D82F4 /* Patron.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2E29764BA4002D82F4 /* Patron.swift */; };
+		B3016F4029764BA4002D82F4 /* Tier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2F29764BA4002D82F4 /* Tier.swift */; };
+		B3016F4129764BA4002D82F4 /* PatreonAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3029764BA4002D82F4 /* PatreonAccount.swift */; };
+		B3016F4229764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3129764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift */; };
+		B3016F4329764BA4002D82F4 /* NSXPCConnection+MachServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3329764BA4002D82F4 /* NSXPCConnection+MachServices.swift */; };
+		B3016F4429764BA4002D82F4 /* Bundle+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3429764BA4002D82F4 /* Bundle+AltStore.swift */; };
+		B3016F4529764BA4002D82F4 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3529764BA4002D82F4 /* Result+Conveniences.swift */; };
+		B3016F4629764BA4002D82F4 /* NSError+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3629764BA4002D82F4 /* NSError+AltStore.swift */; };
 		B305EF9F276B50E2003AE510 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9E276B50DF003AE510 /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
-		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3067F632106B8650091437F /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3067F642106B8650091437F /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */; };
 		B3067F652106B8690091437F /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D242106B4D600DDEBD6 /* Time Utilities.swift */; };
@@ -22,6 +36,7 @@
 		B30E7AEB26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
 		B31117AC218EB24300C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B326E8D42B4E22DA00340AC9 /* RxRealm in Frameworks */ = {isa = PBXBuildFile; productRef = B326E8D32B4E22DA00340AC9 /* RxRealm */; };
 		B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
 		B3274E612106BA5B00857F52 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
 		B3274E642106BAA200857F52 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
@@ -46,7 +61,6 @@
 		B3274E802106BDD300857F52 /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* GameImporter.swift */; };
 		B3274E842106BF2F00857F52 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
 		B3274E862106BFD000857F52 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
-		B336B90626B39ABA00960A81 /* RxRealm in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90526B39ABA00960A81 /* RxRealm */; };
 		B336B90F26B39BCF00960A81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90E26B39BCF00960A81 /* SQLite */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B354E78E219A76C80041F971 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
@@ -68,7 +82,6 @@
 		B354E7C9219A7E470041F971 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C8219A7E470041F971 /* System.swift */; };
 		B354E7CC219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
-		B364D4BF2870E80100B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4BE2870E80100B93A4B /* PVLibRetro.framework */; };
 		B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227D21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
 		B378228021D41E460077E86F /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
@@ -76,7 +89,8 @@
 		B37B4DF027B2292F0068F8D1 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B37B4DEF27B2292F0068F8D1 /* Differentiator */; };
 		B37B4DF227B2292F0068F8D1 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B37B4DF127B2292F0068F8D1 /* RxDataSources */; };
 		B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
-		B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3A3204027209B4300F338F6 /* ZipArchive */; };
+		B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3A3204027209B4300F338F6 /* ZipArchive */; settings = {ATTRIBUTES = (Required, ); }; };
+		B3A7914F2BF3535400EBCFB4 /* OESQLiteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A7914E2BF3535400EBCFB4 /* OESQLiteDatabase.swift */; };
 		B3AF42F42107145C002211EE /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475821071CDB002211EE /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -214,16 +228,10 @@
 		B3CDEEB021D493AC000C55F7 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
 		B3CDEEB321D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
 		B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
+		B3E5BDC1297788E20011CCBF /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E5BDC0297788E20011CCBF /* PVLogging */; };
+		B3F3574D2BE0BD9200F2D5DA /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F3574C2BE0BD9200F2D5DA /* PVLibRetro.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3FAC8DE292B1DDD005E8B11 /* PVPatreon.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3FAC8E9292B1E1B005E8B11 /* Patron.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E3292B1E17005E8B11 /* Patron.swift */; };
-		B3FAC8EA292B1E1B005E8B11 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E4292B1E17005E8B11 /* Campaign.swift */; };
-		B3FAC8EB292B1E1B005E8B11 /* Benefit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E5292B1E18005E8B11 /* Benefit.swift */; };
-		B3FAC8EC292B1E1B005E8B11 /* PatreonAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E6292B1E18005E8B11 /* PatreonAccount.swift */; };
-		B3FAC8ED292B1E1B005E8B11 /* PatreonAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E7292B1E18005E8B11 /* PatreonAPI.swift */; };
-		B3FAC8EE292B1E1B005E8B11 /* Tier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E8292B1E1A005E8B11 /* Tier.swift */; };
 		B3FAC8EF292B1E1C005E8B11 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; };
-		B3FAC8F0292B1E1C005E8B11 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3FAC8F6292B2551005E8B11 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8F5292B2551005E8B11 /* Keychain.swift */; };
 		B3FAC8F9292B26EA005E8B11 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = B3FAC8F8292B26EA005E8B11 /* KeychainAccess */; };
 		B3FAC8FB292B3155005E8B11 /* PVUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8FA292B3155005E8B11 /* PVUser.swift */; };
 		B3FAC8FD292B3240005E8B11 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8FC292B3240005E8B11 /* User.swift */; };
@@ -260,13 +268,12 @@
 			name = "Copy Framework";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3FAC8F3292B1E1C005E8B11 /* Embed Frameworks */ = {
+		B3E5BDB92977716B0011CCBF /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3FAC8F0292B1E1C005E8B11 /* PVLibrary.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -278,9 +285,24 @@
 		1180B31D2492A9B400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		1180B31F2492A9C200636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibrary+Migration.swift"; sourceTree = "<group>"; };
+		B3016F2229764BA4002D82F4 /* Consts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Consts.swift; path = ../../../PVPatreon/Consts.swift; sourceTree = "<group>"; };
+		B3016F2429764BA4002D82F4 /* Identifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifiable.swift; sourceTree = "<group>"; };
+		B3016F2629764BA4002D82F4 /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		B3016F2729764BA4002D82F4 /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		B3016F2829764BA4002D82F4 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		B3016F2A29764BA4002D82F4 /* PatreonAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatreonAPI.swift; sourceTree = "<group>"; };
+		B3016F2C29764BA4002D82F4 /* Benefit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Benefit.swift; sourceTree = "<group>"; };
+		B3016F2D29764BA4002D82F4 /* Campaign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
+		B3016F2E29764BA4002D82F4 /* Patron.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Patron.swift; sourceTree = "<group>"; };
+		B3016F2F29764BA4002D82F4 /* Tier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tier.swift; sourceTree = "<group>"; };
+		B3016F3029764BA4002D82F4 /* PatreonAccount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatreonAccount.swift; sourceTree = "<group>"; };
+		B3016F3129764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift"; sourceTree = "<group>"; };
+		B3016F3329764BA4002D82F4 /* NSXPCConnection+MachServices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSXPCConnection+MachServices.swift"; sourceTree = "<group>"; };
+		B3016F3429764BA4002D82F4 /* Bundle+AltStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+AltStore.swift"; sourceTree = "<group>"; };
+		B3016F3529764BA4002D82F4 /* Result+Conveniences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Result+Conveniences.swift"; sourceTree = "<group>"; };
+		B3016F3629764BA4002D82F4 /* NSError+AltStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSError+AltStore.swift"; sourceTree = "<group>"; };
 		B305EF9E276B50DF003AE510 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/iOSSupport/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		B305EFA0276B5112003AE510 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
-		B305F082276B5152003AE510 /* PVLibrary-tvOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVLibrary-tvOS copy-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLibrary/PVLibrary-tvOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		B305F083276B5229003AE510 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -345,12 +367,14 @@
 		B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
 		B364D4BE2870E80100B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D4C22870E81200B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B36AE7D9295ED64E00CC9D4F /* Service_TheGamesDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service_TheGamesDB.swift; sourceTree = "<group>"; };
 		B378226D21D409F20077E86F /* Extractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extractor.swift; sourceTree = "<group>"; };
 		B378227921D41E1C0077E86F /* SavePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePackage.swift; sourceTree = "<group>"; };
 		B378227C21D41E310077E86F /* GamePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePackage.swift; sourceTree = "<group>"; };
 		B378227F21D41E460077E86F /* PackageResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageResult.swift; sourceTree = "<group>"; };
 		B378228421D41E9B0077E86F /* LibrarySerializerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySerializerError.swift; sourceTree = "<group>"; };
 		B383F3BB219BB29600DB6926 /* iCloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudSync.swift; sourceTree = "<group>"; };
+		B3A7914E2BF3535400EBCFB4 /* OESQLiteDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OESQLiteDatabase.swift; sourceTree = "<group>"; };
 		B3AF460B21071CA5002211EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B3AF460C21071CA5002211EE /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; path = CHANGELOG; sourceTree = "<group>"; };
 		B3AF460D21071CA5002211EE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -681,15 +705,9 @@
 		B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter2.swift; sourceTree = "<group>"; };
 		B3CDEEB221D497CD000C55F7 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
+		B3F3574C2BE0BD9200F2D5DA /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FAC8DB292B1DDD005E8B11 /* PVPatreon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPatreon.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPatreon.h; sourceTree = "<group>"; };
-		B3FAC8E3292B1E17005E8B11 /* Patron.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Patron.swift; path = ../../../PVPatreon/Patron.swift; sourceTree = "<group>"; };
-		B3FAC8E4292B1E17005E8B11 /* Campaign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Campaign.swift; path = ../../../PVPatreon/Campaign.swift; sourceTree = "<group>"; };
-		B3FAC8E5292B1E18005E8B11 /* Benefit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Benefit.swift; path = ../../../PVPatreon/Benefit.swift; sourceTree = "<group>"; };
-		B3FAC8E6292B1E18005E8B11 /* PatreonAccount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatreonAccount.swift; path = ../../../PVPatreon/PatreonAccount.swift; sourceTree = "<group>"; };
-		B3FAC8E7292B1E18005E8B11 /* PatreonAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatreonAPI.swift; path = ../../../PVPatreon/PatreonAPI.swift; sourceTree = "<group>"; };
-		B3FAC8E8292B1E1A005E8B11 /* Tier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Tier.swift; path = ../../../PVPatreon/Tier.swift; sourceTree = "<group>"; };
-		B3FAC8F5292B2551005E8B11 /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		B3FAC8FA292B3155005E8B11 /* PVUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PVUser.swift; path = PVLibrary/RealmPlatform/Entities/PVUser.swift; sourceTree = SOURCE_ROOT; };
 		B3FAC8FC292B3240005E8B11 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CF17109C2585F97000258602 /* PVCheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheats.swift; sourceTree = "<group>"; };
@@ -707,11 +725,12 @@
 				B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */,
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
 				1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */,
+				B326E8D42B4E22DA00340AC9 /* RxRealm in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
-				B364D4BF2870E80100B93A4B /* PVLibRetro.framework in Frameworks */,
 				B37B4DF227B2292F0068F8D1 /* RxDataSources in Frameworks */,
-				B336B90626B39ABA00960A81 /* RxRealm in Frameworks */,
+				B3F3574D2BE0BD9200F2D5DA /* PVLibRetro.framework in Frameworks */,
 				B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */,
+				B3E5BDC1297788E20011CCBF /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -735,9 +754,65 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B3016F2329764BA4002D82F4 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F2429764BA4002D82F4 /* Identifiable.swift */,
+			);
+			name = Protocols;
+			path = ../../../PVPatreon/Protocols;
+			sourceTree = "<group>";
+		};
+		B3016F2529764BA4002D82F4 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F2829764BA4002D82F4 /* DatabaseManager.swift */,
+				B3016F2629764BA4002D82F4 /* DataManager.swift */,
+				B3016F2729764BA4002D82F4 /* Keychain.swift */,
+			);
+			name = Delegates;
+			path = ../../../PVPatreon/Delegates;
+			sourceTree = "<group>";
+		};
+		B3016F2929764BA4002D82F4 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F2B29764BA4002D82F4 /* Models */,
+				B3016F2A29764BA4002D82F4 /* PatreonAPI.swift */,
+				B3016F3129764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift */,
+			);
+			name = API;
+			path = ../../../PVPatreon/API;
+			sourceTree = "<group>";
+		};
+		B3016F2B29764BA4002D82F4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F2C29764BA4002D82F4 /* Benefit.swift */,
+				B3016F2D29764BA4002D82F4 /* Campaign.swift */,
+				B3016F2E29764BA4002D82F4 /* Patron.swift */,
+				B3016F2F29764BA4002D82F4 /* Tier.swift */,
+				B3016F3029764BA4002D82F4 /* PatreonAccount.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B3016F3229764BA4002D82F4 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F3429764BA4002D82F4 /* Bundle+AltStore.swift */,
+				B3016F3629764BA4002D82F4 /* NSError+AltStore.swift */,
+				B3016F3329764BA4002D82F4 /* NSXPCConnection+MachServices.swift */,
+				B3016F3529764BA4002D82F4 /* Result+Conveniences.swift */,
+			);
+			name = Extensions;
+			path = ../../../PVPatreon/Extensions;
+			sourceTree = "<group>";
+		};
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3F3574C2BE0BD9200F2D5DA /* PVLibRetro.framework */,
 				B364D4C22870E81200B93A4B /* PVLibRetro.framework */,
 				B364D4BE2870E80100B93A4B /* PVLibRetro.framework */,
 				B305F083276B5229003AE510 /* PVSupport.framework */,
@@ -870,7 +945,6 @@
 				B3FAC8DC292B1DDD005E8B11 /* PVPatreon */,
 				B3579D102106B11D00DDEBD6 /* Products */,
 				B3067F492106B5A20091437F /* Frameworks */,
-				B305F082276B5152003AE510 /* PVLibrary-tvOS copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -887,6 +961,7 @@
 		B3579D112106B11D00DDEBD6 /* PVLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				B36AE7D8295ED61600CC9D4F /* Metadata Lookup */,
 				B3579D322106B4D700DDEBD6 /* Importer */,
 				B378228221D41E5A0077E86F /* Serializer */,
 				B354E784219A76C80041F971 /* Domain */,
@@ -909,6 +984,7 @@
 			children = (
 				112E7E2E247EF3840050431C /* PVGameLibrary.swift */,
 				11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */,
+				B3A7914E2BF3535400EBCFB4 /* OESQLiteDatabase.swift */,
 				B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */,
 				B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */,
 			);
@@ -970,6 +1046,14 @@
 				B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */,
 			);
 			path = NSExtensions;
+			sourceTree = "<group>";
+		};
+		B36AE7D8295ED61600CC9D4F /* Metadata Lookup */ = {
+			isa = PBXGroup;
+			children = (
+				B36AE7D9295ED64E00CC9D4F /* Service_TheGamesDB.swift */,
+			);
+			path = "Metadata Lookup";
 			sourceTree = "<group>";
 		};
 		B378227721D41DEE0077E86F /* Models */ = {
@@ -1485,25 +1569,14 @@
 		B3FAC8DC292B1DDD005E8B11 /* PVPatreon */ = {
 			isa = PBXGroup;
 			children = (
-				B3FAC8F4292B2551005E8B11 /* Keychain */,
-				B3FAC8E5292B1E18005E8B11 /* Benefit.swift */,
-				B3FAC8E4292B1E17005E8B11 /* Campaign.swift */,
-				B3FAC8E6292B1E18005E8B11 /* PatreonAccount.swift */,
-				B3FAC8E7292B1E18005E8B11 /* PatreonAPI.swift */,
-				B3FAC8E3292B1E17005E8B11 /* Patron.swift */,
-				B3FAC8E8292B1E1A005E8B11 /* Tier.swift */,
 				B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */,
+				B3016F2229764BA4002D82F4 /* Consts.swift */,
+				B3016F2929764BA4002D82F4 /* API */,
+				B3016F2529764BA4002D82F4 /* Delegates */,
+				B3016F3229764BA4002D82F4 /* Extensions */,
+				B3016F2329764BA4002D82F4 /* Protocols */,
 			);
 			path = PVPatreon;
-			sourceTree = "<group>";
-		};
-		B3FAC8F4292B2551005E8B11 /* Keychain */ = {
-			isa = PBXGroup;
-			children = (
-				B3FAC8F5292B2551005E8B11 /* Keychain.swift */,
-			);
-			name = Keychain;
-			path = ../../../PVPatreon/Keychain;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1526,7 +1599,6 @@
 				B31117AC218EB24300C495A2 /* LzmaSDKObjCReader.h in Headers */,
 				B3AF475921071CDB002211EE /* LzmaSDKObjCItem.h in Headers */,
 				B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */,
-				B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1549,6 +1621,7 @@
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
 				B3579D0C2106B11D00DDEBD6 /* Frameworks */,
 				B3579D0D2106B11D00DDEBD6 /* Resources */,
+				B3E5BDB92977716B0011CCBF /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1556,11 +1629,12 @@
 			);
 			name = PVLibrary;
 			packageProductDependencies = (
-				B336B90526B39ABA00960A81 /* RxRealm */,
 				B336B90E26B39BCF00960A81 /* SQLite */,
 				B3A3204027209B4300F338F6 /* ZipArchive */,
 				B37B4DEF27B2292F0068F8D1 /* Differentiator */,
 				B37B4DF127B2292F0068F8D1 /* RxDataSources */,
+				B3E5BDC0297788E20011CCBF /* PVLogging */,
+				B326E8D32B4E22DA00340AC9 /* RxRealm */,
 			);
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
@@ -1593,7 +1667,6 @@
 				B3FAC8D7292B1DDD005E8B11 /* Sources */,
 				B3FAC8D8292B1DDD005E8B11 /* Frameworks */,
 				B3FAC8D9292B1DDD005E8B11 /* Resources */,
-				B3FAC8F3292B1E1C005E8B11 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1631,12 +1704,12 @@
 					};
 					B3FAC8DA292B1DDD005E8B11 = {
 						CreatedOnToolsVersion = 14.1;
-						LastSwiftMigration = 1410;
+						LastSwiftMigration = 1420;
 					};
 				};
 			};
 			buildConfigurationList = B3579D092106B11D00DDEBD6 /* Build configuration list for PBXProject "PVLibrary" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1644,12 +1717,13 @@
 				Base,
 			);
 			mainGroup = B3579D052106B11D00DDEBD6;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */,
 				B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */,
 				B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				B3FAC8F7292B26EA005E8B11 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
+				B326E8D22B4E22DA00340AC9 /* XCRemoteSwiftPackageReference "RxRealm" */,
 			);
 			productRefGroup = B3579D102106B11D00DDEBD6 /* Products */;
 			projectDirPath = "";
@@ -1694,7 +1768,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3AF47AD21071F43002211EE /* MethodProps.cpp in Sources */,
-				B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */,
 				B3AF47A621071F43002211EE /* CreateCoder.cpp in Sources */,
 				B3274E752106BC1D00857F52 /* PVCore.swift in Sources */,
 				B3AF47BA21071F76002211EE /* ByteSwap.cpp in Sources */,
@@ -1847,6 +1920,7 @@
 				B3FAC8FD292B3240005E8B11 /* User.swift in Sources */,
 				B3AF478221071E85002211EE /* Lzma2Enc.c in Sources */,
 				B3AF47C421071F76002211EE /* PpmdDecoder.cpp in Sources */,
+				B3A7914F2BF3535400EBCFB4 /* OESQLiteDatabase.swift in Sources */,
 				B3AF476121071E28002211EE /* LzmaSDKObjCBufferProcessor.mm in Sources */,
 				B3AF47B821071F76002211EE /* BranchMisc.cpp in Sources */,
 				B3CDEEB321D497CD000C55F7 /* Package.swift in Sources */,
@@ -1889,13 +1963,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3FAC8E9292B1E1B005E8B11 /* Patron.swift in Sources */,
-				B3FAC8ED292B1E1B005E8B11 /* PatreonAPI.swift in Sources */,
-				B3FAC8EC292B1E1B005E8B11 /* PatreonAccount.swift in Sources */,
-				B3FAC8EE292B1E1B005E8B11 /* Tier.swift in Sources */,
-				B3FAC8EA292B1E1B005E8B11 /* Campaign.swift in Sources */,
-				B3FAC8EB292B1E1B005E8B11 /* Benefit.swift in Sources */,
-				B3FAC8F6292B2551005E8B11 /* Keychain.swift in Sources */,
+				B3016F4229764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift in Sources */,
+				B3016F4129764BA4002D82F4 /* PatreonAccount.swift in Sources */,
+				B3016F4529764BA4002D82F4 /* Result+Conveniences.swift in Sources */,
+				B3016F3D29764BA4002D82F4 /* Benefit.swift in Sources */,
+				B3016F3E29764BA4002D82F4 /* Campaign.swift in Sources */,
+				B3016F4629764BA4002D82F4 /* NSError+AltStore.swift in Sources */,
+				B3016F3C29764BA4002D82F4 /* PatreonAPI.swift in Sources */,
+				B3016F4329764BA4002D82F4 /* NSXPCConnection+MachServices.swift in Sources */,
+				B3016F3729764BA4002D82F4 /* Consts.swift in Sources */,
+				B3016F3A29764BA4002D82F4 /* Keychain.swift in Sources */,
+				B3016F3F29764BA4002D82F4 /* Patron.swift in Sources */,
+				B3016F3B29764BA4002D82F4 /* DatabaseManager.swift in Sources */,
+				B3016F4029764BA4002D82F4 /* Tier.swift in Sources */,
+				B3016F3929764BA4002D82F4 /* DataManager.swift in Sources */,
+				B3016F3829764BA4002D82F4 /* Identifiable.swift in Sources */,
+				B3016F4429764BA4002D82F4 /* Bundle+AltStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1915,211 +1998,11 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		B324C5352191A78D009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B317380127841959002D3ACD /* Build.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
-				CLANG_CXX_LIBRARY = "compiler-default";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
-				ENABLE_BITCODE = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_VERSION = 5.0;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VALIDATE_PRODUCT = YES;
-				VALIDATE_WORKSPACE = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		B324C5362191A78D009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"LZMASDKOBJC=1",
-					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvlibrary.PVLibrary";
-				PRODUCT_NAME = PVLibrary;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				VALIDATE_WORKSPACE = YES;
-			};
-			name = Archive;
-		};
-		B324C5382191A78D009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = PVLibraryTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibraryTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_WORKSPACE = YES;
-			};
-			name = Archive;
-		};
-		B3579D152106B11D00DDEBD6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B317380127841959002D3ACD /* Build.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
-				CLANG_CXX_LIBRARY = "compiler-default";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
-				ENABLE_BITCODE = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VALIDATE_WORKSPACE = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
 		B3579D162106B11D00DDEBD6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B317380127841959002D3ACD /* Build.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -2150,15 +2033,15 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = "";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -2168,8 +2051,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -2179,77 +2064,29 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
-		};
-		B3579D182106B11D00DDEBD6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"LZMASDKOBJC=1",
-					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvlibrary.PVLibrary";
-				PRODUCT_NAME = PVLibrary;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				VALIDATE_WORKSPACE = YES;
-			};
-			name = Debug;
 		};
 		B3579D192106B11D00DDEBD6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",
 					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
@@ -2265,39 +2102,15 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvlibrary.PVLibrary";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
-		};
-		B3C04B6A2107867200E7AF79 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = PVLibraryTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibraryTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_WORKSPACE = YES;
-			};
-			name = Debug;
 		};
 		B3C04B6B2107867200E7AF79 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -2320,12 +2133,148 @@
 			};
 			name = Release;
 		};
-		B3FAC8DF292B1DDD005E8B11 /* Debug */ = {
+		B3D067882BC4E94E00A7327F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B317380127841959002D3ACD /* Build.xcconfig */;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VALIDATE_PRODUCT = NO;
+				VALIDATE_WORKSPACE = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3D067892BC4E94E00A7327F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"LZMASDKOBJC=1",
+					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = PVLibrary/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvlibrary.PVLibrary";
+				PRODUCT_NAME = PVLibrary;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Debug;
+		};
+		B3D0678A2BC4E94E00A7327F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = PVLibraryTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibraryTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Debug;
+		};
+		B3D0678B2BC4E94E00A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2333,7 +2282,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2348,14 +2297,10 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPatreon";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = auto;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 			};
@@ -2364,6 +2309,7 @@
 		B3FAC8E0292B1DDD005E8B11 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -2375,7 +2321,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2390,58 +2336,15 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPatreon";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = auto;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 			};
 			name = Release;
-		};
-		B3FAC8E1292B1DDD005E8B11 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPatreon";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = auto;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4";
-			};
-			name = Archive;
 		};
 /* End XCBuildConfiguration section */
 
@@ -2449,9 +2352,8 @@
 		B3579D092106B11D00DDEBD6 /* Build configuration list for PBXProject "PVLibrary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3579D152106B11D00DDEBD6 /* Debug */,
 				B3579D162106B11D00DDEBD6 /* Release */,
-				B324C5352191A78D009F4EDC /* Archive */,
+				B3D067882BC4E94E00A7327F /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2459,9 +2361,8 @@
 		B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3579D182106B11D00DDEBD6 /* Debug */,
 				B3579D192106B11D00DDEBD6 /* Release */,
-				B324C5362191A78D009F4EDC /* Archive */,
+				B3D067892BC4E94E00A7327F /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2469,9 +2370,8 @@
 		B3C04B692107867200E7AF79 /* Build configuration list for PBXNativeTarget "PVLibraryTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C04B6A2107867200E7AF79 /* Debug */,
 				B3C04B6B2107867200E7AF79 /* Release */,
-				B324C5382191A78D009F4EDC /* Archive */,
+				B3D0678A2BC4E94E00A7327F /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2479,9 +2379,8 @@
 		B3FAC8E2292B1DDD005E8B11 /* Build configuration list for PBXNativeTarget "PVPatreon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3FAC8DF292B1DDD005E8B11 /* Debug */,
 				B3FAC8E0292B1DDD005E8B11 /* Release */,
-				B3FAC8E1292B1DDD005E8B11 /* Archive */,
+				B3D0678B2BC4E94E00A7327F /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2489,12 +2388,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */ = {
+		B326E8D22B4E22DA00340AC9 /* XCRemoteSwiftPackageReference "RxRealm" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RxSwiftCommunity/RxRealm.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.5;
+				kind = exactVersion;
+				version = 5.0.6;
 			};
 		};
 		B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
@@ -2502,7 +2401,7 @@
 			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.13.2;
+				minimumVersion = 0.14.1;
 			};
 		};
 		B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
@@ -2510,7 +2409,7 @@
 			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
+				minimumVersion = 5.0.2;
 			};
 		};
 		B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
@@ -2518,23 +2417,23 @@
 			repositoryURL = "https://github.com/ZipArchive/ZipArchive";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.0;
+				minimumVersion = 2.5.2;
 			};
 		};
 		B3FAC8F7292B26EA005E8B11 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.2.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B336B90526B39ABA00960A81 /* RxRealm */ = {
+		B326E8D32B4E22DA00340AC9 /* RxRealm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */;
+			package = B326E8D22B4E22DA00340AC9 /* XCRemoteSwiftPackageReference "RxRealm" */;
 			productName = RxRealm;
 		};
 		B336B90E26B39BCF00960A81 /* SQLite */ = {
@@ -2556,6 +2455,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */;
 			productName = ZipArchive;
+		};
+		B3E5BDC0297788E20011CCBF /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
 		};
 		B3FAC8F8292B26EA005E8B11 /* KeychainAccess */ = {
 			isa = XCSwiftPackageProductDependency;

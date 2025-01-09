@@ -1,0 +1,12 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdCXX/CompilerIdCXX.xctest/CompilerIdCXX'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x60 }
+  - { offsetInCU: 0x53, offset: 0x53, size: 0x8, addend: 0x0, symName: _info_compiler, symObjAddr: 0x110, symBinAddr: 0x8000, symSize: 0x0 }
+  - { offsetInCU: 0x6E, offset: 0x6E, size: 0x8, addend: 0x0, symName: _info_platform, symObjAddr: 0x118, symBinAddr: 0x8008, symSize: 0x0 }
+  - { offsetInCU: 0x84, offset: 0x84, size: 0x8, addend: 0x0, symName: _info_arch, symObjAddr: 0x120, symBinAddr: 0x8010, symSize: 0x0 }
+  - { offsetInCU: 0x9A, offset: 0x9A, size: 0x8, addend: 0x0, symName: _info_language_standard_default, symObjAddr: 0x128, symBinAddr: 0x8018, symSize: 0x0 }
+  - { offsetInCU: 0xB0, offset: 0xB0, size: 0x8, addend: 0x0, symName: _info_language_extensions_default, symObjAddr: 0x130, symBinAddr: 0x8020, symSize: 0x0 }
+  - { offsetInCU: 0xB9, offset: 0xB9, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x60 }
+...

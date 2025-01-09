@@ -3,23 +3,54 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 63;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		934D2DFF294B4D4600BDEBA5 /* PlayLibAdjustments */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 934D2E18294B4D4700BDEBA5 /* Build configuration list for PBXAggregateTarget "PlayLibAdjustments" */;
+			buildPhases = (
+				934D2E19294B4D5900BDEBA5 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = PlayLibAdjustments;
+			productName = CoreLibAdjustments;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
-		B301797F207C909E0051B93D /* libplay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libplay.a */; };
-		B3135B7326E4C7020047F338 /* libchdr-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B6626E4C6860047F338 /* libchdr-static.a */; };
-		B3135B7426E4C7020047F338 /* libCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4826E4C6860047F338 /* libCodeGen.a */; };
-		B3135B7526E4C7020047F338 /* libFramework_OpenAl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5226E4C6860047F338 /* libFramework_OpenAl.a */; };
-		B3135B7626E4C7020047F338 /* libFramework_OpenGl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5426E4C6860047F338 /* libFramework_OpenGl.a */; };
-		B3135B7726E4C7020047F338 /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4C26E4C6860047F338 /* libFramework.a */; };
-		B3135B7826E4C7020047F338 /* libgsh_opengl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B6826E4C6860047F338 /* libgsh_opengl.a */; };
-		B3135B7926E4C7020047F338 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B6C26E4C6860047F338 /* liblzma.a */; };
-		B3135B7A26E4C7020047F338 /* libPlayCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5C26E4C6860047F338 /* libPlayCore.a */; };
-		B3135B7B26E4C7020047F338 /* libsh_openal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B6E26E4C6860047F338 /* libsh_openal.a */; };
-		B3135B7C26E4C7020047F338 /* libui_shared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B7026E4C6860047F338 /* libui_shared.a */; };
-		B3135B7D26E4C7020047F338 /* libzlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B7226E4C6860047F338 /* libzlib.a */; };
-		B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPlayCore.mm */; };
+		9310345A29436AC3002D218C /* CGSH_Provenance_OGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9310344A29436AC2002D218C /* CGSH_Provenance_OGL.mm */; };
+		9310345B29436AC3002D218C /* CGSH_Provenance_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */; };
+		93161E0C2A5A0AA6000C5362 /* libbz2.1.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 93161E092A5A0A31000C5362 /* libbz2.1.0.tbd */; };
+		9333C7E3298932970042CD99 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		9360C594294CB5E7000322B9 /* service_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C56E294CB5E6000322B9 /* service_funcs.c */; };
+		9360C595294CB5E7000322B9 /* or.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C570294CB5E6000322B9 /* or.c */; };
+		9360C596294CB5E7000322B9 /* mul.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C571294CB5E6000322B9 /* mul.c */; };
+		9360C597294CB5E7000322B9 /* div.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C572294CB5E6000322B9 /* div.c */; };
+		9360C598294CB5E8000322B9 /* xor.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C573294CB5E6000322B9 /* xor.c */; };
+		9360C599294CB5E8000322B9 /* andnot.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C574294CB5E6000322B9 /* andnot.c */; };
+		9360C59A294CB5E8000322B9 /* sqr.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C575294CB5E6000322B9 /* sqr.c */; };
+		9360C59B294CB5E8000322B9 /* and.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C576294CB5E6000322B9 /* and.c */; };
+		9360C59C294CB5E8000322B9 /* cmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C577294CB5E6000322B9 /* cmp.c */; };
+		9360C59D294CB5E8000322B9 /* add.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C578294CB5E6000322B9 /* add.c */; };
+		9360C59E294CB5E8000322B9 /* sub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C579294CB5E6000322B9 /* sub.c */; };
+		9360C59F294CB5E8000322B9 /* bitset_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57A294CB5E6000322B9 /* bitset_funcs.c */; };
+		9360C5A0294CB5E8000322B9 /* basic_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57B294CB5E6000322B9 /* basic_funcs.c */; };
+		9360C5A1294CB5E8000322B9 /* modular_arithmetic.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57C294CB5E6000322B9 /* modular_arithmetic.c */; };
+		9360C5A2294CB5E8000322B9 /* str_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57D294CB5E6000322B9 /* str_funcs.c */; };
+		9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57E294CB5E6000322B9 /* number_theory.c */; };
+		9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57F294CB5E6000322B9 /* memory_manager.c */; };
+		9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */; };
+		939AAF6E2A791EF0007709E5 /* libplay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libplay.a */; };
+		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
+		939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
+		939B194A29490A840024133A /* CGSH_MTLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939B194929490A820024133A /* CGSH_MTLViewController.swift */; };
+		93C68BEF298ADF5E0008E5A3 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93C68BEE298ADF5D0008E5A3 /* PVDebug.c */; };
+		93F5FBF42945D1B600493D4F /* PVPlayCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5FBF32945D1B600493D4F /* PVPlayCoreOptions.swift */; };
+		B30E991A2C6EF24000C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99192C6EF24000C1431E /* PVSupport */; };
+		B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPlayCore.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
 		B3135B9C26E4CC290047F338 /* PVPlayCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVPlayCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135B9D26E4CC330047F338 /* PVPlayCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVPlayCore+Audio.h */; };
 		B3135B9E26E4CC330047F338 /* PVPlayCore+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVPlayCore+Video.h */; };
@@ -33,279 +64,230 @@
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B351223A27843318001C4B83 /* PVPlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVPlay.mm */; };
-		B3512262278435B1001C4B83 /* decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122572784355F001C4B83 /* decompress.c */; };
-		B3512263278435B1001C4B83 /* blocksort.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122502784355E001C4B83 /* blocksort.c */; };
-		B3512264278435B1001C4B83 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122532784355E001C4B83 /* huffman.c */; };
-		B3512265278435B1001C4B83 /* crctable.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122562784355F001C4B83 /* crctable.c */; };
-		B3512266278435B1001C4B83 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122512784355E001C4B83 /* compress.c */; };
-		B3512267278435B1001C4B83 /* randtable.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122522784355E001C4B83 /* randtable.c */; };
-		B3512268278435B1001C4B83 /* bzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = B351224B27843535001C4B83 /* bzlib.c */; };
-		B3512269278435B1001C4B83 /* bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = B351224F2784355E001C4B83 /* bzip2.c */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
+		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7DB293F2A8B0010B746 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
-		B3AEDE18293F2F710050BDB6 /* libFramework_Amazon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4E26E4C6860047F338 /* libFramework_Amazon.a */; };
-		B3AEDE1B293F2FBE0050BDB6 /* libFramework_Http.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5026E4C6860047F338 /* libFramework_Http.a */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
-		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		B398591D2CE3C18B009C8B6E /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B398591C2CE3C18B009C8B6E /* MoltenVK.xcframework */; };
+		B3A33CB229475F010090F1F3 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CB129475F010090F1F3 /* libz.tbd */; };
+		B3A6208E2947895B00ED28E3 /* CGSH_VulkaniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A6208C2947895B00ED28E3 /* CGSH_VulkaniOS.h */; };
+		B3A6208F2947895B00ED28E3 /* CGSH_VulkaniOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A6208D2947895B00ED28E3 /* CGSH_VulkaniOS.mm */; settings = {COMPILER_FLAGS = "-Wno-module-import-in-extern-c"; }; };
+		B3A6209129478A7600ED28E3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209029478A7600ED28E3 /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209229478A7F00ED28E3 /* CoreGraphics.framework */; };
+		B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209429478A9B00ED28E3 /* MetalKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		B3ABAEFD2BCCF93900D77B8C /* libAltKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAEFE2BCCF93900D77B8C /* libCAltKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAEFF2BCCF93900D77B8C /* libchdr-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF002BCCF93900D77B8C /* libCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF012BCCF93900D77B8C /* libFramework_Amazon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF022BCCF93900D77B8C /* libFramework_Http.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED42BCCF87F00D77B8C /* libFramework_Http.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF032BCCF93900D77B8C /* libFramework_OpenAl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF042BCCF93900D77B8C /* libFramework_OpenGl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF052BCCF93900D77B8C /* libFramework_Vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF062BCCF93900D77B8C /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECE2BCCF87F00D77B8C /* libFramework.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF072BCCF93900D77B8C /* libgsh_opengl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF082BCCF93900D77B8C /* libgsh_vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF092BCCF93900D77B8C /* libiCade_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEA2BCCF87F00D77B8C /* libiCade_Static.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0A2BCCF93900D77B8C /* liblibzstd_zlibwrapper_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEE2BCCF87F00D77B8C /* liblibzstd_zlibwrapper_static.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0B2BCCF93900D77B8C /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF02BCCF87F00D77B8C /* liblzma.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0C2BCCF93900D77B8C /* libNuanceur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0D2BCCF93900D77B8C /* libPlayCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0E2BCCF93900D77B8C /* libSDWebImage_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF0F2BCCF93900D77B8C /* libsh_openal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF22BCCF87F00D77B8C /* libsh_openal.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF102BCCF93900D77B8C /* libui_shared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF42BCCF87F00D77B8C /* libui_shared.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF112BCCF93900D77B8C /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF62BCCF87F00D77B8C /* libxxhash.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF122BCCF93900D77B8C /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF82BCCF87F00D77B8C /* libz.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3ABAF132BCCF93900D77B8C /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		B3AFCF602977A69F00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF5F2977A69F00A01010 /* PVLogging */; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, xros, ); };
+		B3E2AA042CB61B9E00E2636D /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA032CB61B9E00E2636D /* PVCoreObjCBridge */; };
+		B3E2AA072CB61D1700E2636D /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA062CB61D1700E2636D /* PVPlists */; };
+		B3E2AA0A2CB61E4C00E2636D /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA092CB61E4C00E2636D /* PVEmulatorCore */; };
+		B3E2AA0D2CB61E8500E2636D /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA0C2CB61E8500E2636D /* PVSettings */; };
+		B3E2AA102CB61EC500E2636D /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA0F2CB61EC500E2636D /* PVLogging */; };
+		B3E2AA132CB61EE900E2636D /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2AA112CB61EE900E2636D /* CorePlist.swift */; };
+		B3E2AA142CB61EE900E2636D /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2AA122CB61EE900E2636D /* CorePlist-Generated.swift */; };
+		B3E2AA162CB6200400E2636D /* PVPlayCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2AA152CB6200400E2636D /* PVPlayCore.swift */; };
+		B3E2AA682CB65D0C00E2636D /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA672CB65D0C00E2636D /* PVCoreBridge */; };
 		B3EB8B10293F653D00BCCBAE /* PVPlayCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVPlayCore+Controls.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B313596026E4C49F0047F338 /* PBXContainerItemProxy */ = {
+		934D2E1A294B4D8800BDEBA5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B313558626E4C4950047F338 /* PsfPlayer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D1107320486CEB800E47090;
-			remoteInfo = PsfPlayer;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934D2DFF294B4D4600BDEBA5;
+			remoteInfo = PlayLibAdjustments;
 		};
-		B3135B4726E4C6860047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 55ED97DEA4F246699F2080A2;
-			remoteInfo = CodeGen;
-		};
-		B3135B4926E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEC72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = E726BA1C156D433CB8B91E21;
-			remoteInfo = CodeGenTestSuite;
+			remoteGlobalIDString = 974D33F945594855B9CA3B87;
+			remoteInfo = AltKitPlay;
 		};
-		B3135B4B26E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEC92BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 29FD1C1C009E4F1093BC8BFB;
-			remoteInfo = Framework;
+			remoteGlobalIDString = 516169E1EE0443EAA18EE654;
+			remoteInfo = CAltKitPlay;
 		};
-		B3135B4D26E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAECB2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = F6ED9D38A3464654952A41A5;
-			remoteInfo = Framework_Amazon;
+			remoteGlobalIDString = 7FD2C537E6A74A20914C1BC5;
+			remoteInfo = CodeGenPlay;
 		};
-		B3135B4F26E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAECD2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = A8D3994A5EE74158913F354E;
-			remoteInfo = Framework_Http;
+			remoteGlobalIDString = BF93E5AEFEED46669047AA5D;
+			remoteInfo = FrameworkPlay;
 		};
-		B3135B5126E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAED12BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 9060EE0AD44D40AC879172EC;
-			remoteInfo = Framework_OpenAl;
+			remoteGlobalIDString = CE24008C50CB422A8BF5C0A2;
+			remoteInfo = Framework_AmazonPlay;
 		};
-		B3135B5326E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAED32BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = F84E3BB8C1474DACBD02CFF4;
-			remoteInfo = Framework_OpenGl;
+			remoteGlobalIDString = B09398BEBEB44F268A393BD4;
+			remoteInfo = Framework_HttpPlay;
 		};
-		B3135B5526E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAED52BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = E4D5C957784B4B11AFA123F6;
-			remoteInfo = GsAreaTest;
+			remoteGlobalIDString = 301A72A5796946898D63065A;
+			remoteInfo = Framework_OpenAlPlay;
 		};
-		B3135B5726E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAED72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = CFDBC85E291844F0817EF1BC;
-			remoteInfo = McServTest;
+			remoteGlobalIDString = 0006254557AC4D738F9372E7;
+			remoteInfo = Framework_OpenGlPlay;
 		};
-		B3135B5926E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAED92BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 6FFDC01AC4154B0892EE947F;
-			remoteInfo = Play;
+			remoteGlobalIDString = F0104EC7E894461D82EFA784;
+			remoteInfo = Framework_VulkanPlay;
 		};
-		B3135B5B26E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEDD2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 835865556C7E47ACA35E23D3;
-			remoteInfo = PlayCore;
+			remoteGlobalIDString = 864C901E2C2F4A5AB513FC3F;
+			remoteInfo = NuanceurPlay;
 		};
-		B3135B5D26E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEDF2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 34A1CC5551B24029A5343126;
-			remoteInfo = SDWebImage_Static;
+			remoteGlobalIDString = 25A81220F955465FB0FE282A;
+			remoteInfo = PlayCorePlay;
 		};
-		B3135B5F26E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEE12BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 154B5B9CFA074FBCACA12ED3;
-			remoteInfo = SpuTest;
+			remoteGlobalIDString = 239DC38A57F946AFA21EED13;
+			remoteInfo = SDWebImage_StaticPlay;
 		};
-		B3135B6126E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEE32BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 237985C140534AE98D9C66BB;
-			remoteInfo = VuTest;
+			remoteGlobalIDString = 6A482C3271184230B1156850;
+			remoteInfo = "chdr-staticPlay";
 		};
-		B3135B6326E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEE52BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = D9D654DB1C8D4C0BA7D42A03;
-			remoteInfo = autotest;
+			remoteGlobalIDString = AB8D8EA469694500B799938A;
+			remoteInfo = gsh_openglPlay;
 		};
-		B3135B6526E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEE72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 5A43F9D555E746D5A5CA5016;
-			remoteInfo = "chdr-static";
+			remoteGlobalIDString = AFBB1A81F6CA495CAA3FD663;
+			remoteInfo = gsh_vulkanPlay;
 		};
-		B3135B6726E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEE92BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 5DF293DAD48042618F4ADAC8;
-			remoteInfo = gsh_opengl;
+			remoteGlobalIDString = DC753F83079D486AB6FB387F;
+			remoteInfo = iCade_StaticPlay;
 		};
-		B3135B6926E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEEB2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = CF8694E9339441C7B43F4263;
-			remoteInfo = iCade_Static;
+			remoteGlobalIDString = 91EE5BE7913C49D09455C24F;
+			remoteInfo = libzstd_staticPlay;
 		};
-		B3135B6B26E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEED2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 9FD4F6B64EAA446A93949208;
-			remoteInfo = lzma;
+			remoteGlobalIDString = 2CA5630A100C431CBC9A7BAB;
+			remoteInfo = libzstd_zlibwrapper_staticPlay;
 		};
-		B3135B6D26E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEEF2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 477CC9EDD3824C718568031F;
-			remoteInfo = sh_openal;
+			remoteGlobalIDString = F28704B7A1034846A0111241;
+			remoteInfo = lzmaPlay;
 		};
-		B3135B6F26E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEF12BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = F58C1907D1BB46EAADA034F7;
-			remoteInfo = ui_shared;
+			remoteGlobalIDString = A4EDC0B8FFA44808BAF87B40;
+			remoteInfo = sh_openalPlay;
 		};
-		B3135B7126E4C6860047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEF32BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = F924764A418349D7B9DC8A6B;
-			remoteInfo = zlib;
+			remoteGlobalIDString = 6BD600F8931B460DBF3D220B;
+			remoteInfo = ui_sharedPlay;
 		};
-		B3135B8726E4CA1A0047F338 /* PBXContainerItemProxy */ = {
+		B3ABAEF52BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F703B67F87264F8AB8BA8ACE;
+			remoteInfo = xxhashPlay;
+		};
+		B3ABAEF72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D325F18A8B00400599714273;
+			remoteInfo = zlibPlay;
+		};
+		B3ABAEFB2BCCF91B00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 4A2DC89E739648D6B707DE82;
-			remoteInfo = CodeGen;
-		};
-		B3135B8926E4CA1A0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 78A6B39821F84D46BC18A2F1;
-			remoteInfo = Framework;
-		};
-		B3135B8B26E4CA1A0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4CE77B8E966A4E4481415F58;
-			remoteInfo = Framework_OpenAl;
-		};
-		B3135B8D26E4CA1A0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = C8994A4A30BF428288C41132;
-			remoteInfo = Framework_OpenGl;
-		};
-		B3135B8F26E4CA1A0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 993C9585FC77473A9820C7AC;
-			remoteInfo = PlayCore;
-		};
-		B3135B9126E4CA1A0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 59AF26853FE84A6BB9862BC2;
-			remoteInfo = "chdr-static";
-		};
-		B3135B9326E4CA1A0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8B08BEF7FC644CF5AD4D368E;
-			remoteInfo = lzma;
-		};
-		B3135B9526E4CA1A0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = C90448E417F947A29DE118E0;
-			remoteInfo = sh_openal;
-		};
-		B3135B9726E4CA1A0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3260DC1C9D1A465AA4B1E097;
-			remoteInfo = ui_shared;
-		};
-		B3135B9926E4CA1A0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 180B5733882C4138BCCC205A;
-			remoteInfo = zlib;
-		};
-		B37CE7DD293F2B110010B746 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = EB114EEB04084B60B33F647D;
-			remoteInfo = gsh_opengl;
-		};
-		B3AEDE16293F2F5D0050BDB6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F334D674251041ED82EE5739;
-			remoteInfo = Framework_Amazon;
-		};
-		B3AEDE19293F2FA50050BDB6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 7CFD24AE86FC4EA98CE691F1;
-			remoteInfo = Framework_Http;
+			remoteGlobalIDString = AD15F50FE49049C5B6AE8E2A;
+			remoteInfo = Framework_VulkanPlay;
 		};
 		B3B2546B27842B7B00F97E55 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -313,6 +295,160 @@
 			proxyType = 1;
 			remoteGlobalIDString = B30178D2207C901D0051B93D;
 			remoteInfo = "play-iOS";
+		};
+		B3EA207B2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DB2DF0E4E4494E56AEED493E;
+			remoteInfo = AltKitPlay;
+		};
+		B3EA207D2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DC86612D5DCC4F0491577B88;
+			remoteInfo = CAltKitPlay;
+		};
+		B3EA207F2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 975D23456B0047338231B098;
+			remoteInfo = CodeGenPlay;
+		};
+		B3EA20812BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7C394C304554DFFBD66852F;
+			remoteInfo = FrameworkPlay;
+		};
+		B3EA20832BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 693C7F35EBF246558877B9CD;
+			remoteInfo = Framework_AmazonPlay;
+		};
+		B3EA20852BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = ABACA2F251BC4D9EA11198AC;
+			remoteInfo = Framework_HttpPlay;
+		};
+		B3EA20872BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B9D5716E689042E08E58302E;
+			remoteInfo = Framework_OpenAlPlay;
+		};
+		B3EA20892BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 691DD72EE3FB48388F70C5BA;
+			remoteInfo = Framework_OpenGlPlay;
+		};
+		B3EA208B2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = ECC004E07329422594843450;
+			remoteInfo = NuanceurPlay;
+		};
+		B3EA208D2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A0931A2D00744E07898A5CD3;
+			remoteInfo = PlayCorePlay;
+		};
+		B3EA208F2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DFD9988CB59C4CF18D0A5EA7;
+			remoteInfo = SDWebImage_StaticPlay;
+		};
+		B3EA20912BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8C35B130E60447A39870878B;
+			remoteInfo = "chdr-staticPlay";
+		};
+		B3EA20932BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A97E76974B95454FA92985A7;
+			remoteInfo = gsh_openglPlay;
+		};
+		B3EA20952BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CDFA1D8CB9BC41AC90BC61A9;
+			remoteInfo = gsh_vulkanPlay;
+		};
+		B3EA20972BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9C38F19B42314552B6A76EC0;
+			remoteInfo = iCade_StaticPlay;
+		};
+		B3EA20992BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 29109A4C926E409898D7C057;
+			remoteInfo = libzstd_staticPlay;
+		};
+		B3EA209B2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7A028F9482E40F482DD6DC5;
+			remoteInfo = libzstd_zlibwrapper_staticPlay;
+		};
+		B3EA209D2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 69C54D02ACB649FB9030F3A5;
+			remoteInfo = lzmaPlay;
+		};
+		B3EA209F2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8679EE64A9B446DCA0010082;
+			remoteInfo = sh_openalPlay;
+		};
+		B3EA20A12BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D6FCF72494543C99AE04FD1;
+			remoteInfo = ui_sharedPlay;
+		};
+		B3EA20A32BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 4300EEAE663A4B08A86CD4C6;
+			remoteInfo = xxhashPlay;
+		};
+		B3EA20A52BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AAC0F3FB8734FC3B2AFED17;
+			remoteInfo = zlibPlay;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -329,6 +465,41 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9310344A29436AC2002D218C /* CGSH_Provenance_OGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CGSH_Provenance_OGL.mm; sourceTree = "<group>"; };
+		9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSH_Provenance_OGL.h; sourceTree = "<group>"; };
+		93161E052A5A09BC000C5362 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
+		93161E072A5A09F4000C5362 /* libbz2.1.0.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.1.0.8.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/lib/libbz2.1.0.8.tbd; sourceTree = DEVELOPER_DIR; };
+		93161E092A5A0A31000C5362 /* libbz2.1.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.1.0.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/lib/libbz2.1.0.tbd; sourceTree = DEVELOPER_DIR; };
+		934FA1BC2A79063F0019C951 /* libplay.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libplay.a; path = lib/libplay.a; sourceTree = "<group>"; };
+		9360C56E294CB5E6000322B9 /* service_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = service_funcs.c; sourceTree = "<group>"; };
+		9360C570294CB5E6000322B9 /* or.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = or.c; sourceTree = "<group>"; };
+		9360C571294CB5E6000322B9 /* mul.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mul.c; sourceTree = "<group>"; };
+		9360C572294CB5E6000322B9 /* div.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = div.c; sourceTree = "<group>"; };
+		9360C573294CB5E6000322B9 /* xor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xor.c; sourceTree = "<group>"; };
+		9360C574294CB5E6000322B9 /* andnot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = andnot.c; sourceTree = "<group>"; };
+		9360C575294CB5E6000322B9 /* sqr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqr.c; sourceTree = "<group>"; };
+		9360C576294CB5E6000322B9 /* and.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = and.c; sourceTree = "<group>"; };
+		9360C577294CB5E6000322B9 /* cmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cmp.c; sourceTree = "<group>"; };
+		9360C578294CB5E6000322B9 /* add.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = add.c; sourceTree = "<group>"; };
+		9360C579294CB5E6000322B9 /* sub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sub.c; sourceTree = "<group>"; };
+		9360C57A294CB5E6000322B9 /* bitset_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitset_funcs.c; sourceTree = "<group>"; };
+		9360C57B294CB5E6000322B9 /* basic_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = basic_funcs.c; sourceTree = "<group>"; };
+		9360C57C294CB5E6000322B9 /* modular_arithmetic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = modular_arithmetic.c; sourceTree = "<group>"; };
+		9360C57D294CB5E6000322B9 /* str_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = str_funcs.c; sourceTree = "<group>"; };
+		9360C57E294CB5E6000322B9 /* number_theory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = number_theory.c; sourceTree = "<group>"; };
+		9360C57F294CB5E6000322B9 /* memory_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memory_manager.c; sourceTree = "<group>"; };
+		9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Cheats.mm"; sourceTree = "<group>"; };
+		936FDBA72957F9080073628A /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib; sourceTree = "<group>"; };
+		936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Play.dylib; path = lib/libMoltenVK_Play.dylib; sourceTree = "<group>"; };
+		939B190D2948A59C0024133A /* GSH_VulkanPlatformDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GSH_VulkanPlatformDefs.h; sourceTree = "<group>"; };
+		939B19422948B05F0024133A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
+		939B194929490A820024133A /* CGSH_MTLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGSH_MTLViewController.swift; sourceTree = "<group>"; };
+		93BC0508298AFF2A00BA5157 /* LibPlayConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LibPlayConfig.xcconfig; sourceTree = "<group>"; };
+		93BCC5FE2A9E135200641E90 /* PS2VM.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PS2VM.cpp; sourceTree = "<group>"; };
+		93BCC5FF2A9E135200641E90 /* Iop_SubSystem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Iop_SubSystem.cpp; sourceTree = "<group>"; };
+		93BCC6002A9E135200641E90 /* Iop_Ioman.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Iop_Ioman.cpp; sourceTree = "<group>"; };
+		93C68BEE298ADF5D0008E5A3 /* PVDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PVDebug.c; path = ../../../Debug/PVDebug.c; sourceTree = "<group>"; };
+		93F5FBF32945D1B600493D4F /* PVPlayCoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPlayCoreOptions.swift; sourceTree = "<group>"; };
 		B30178D3207C901D0051B93D /* libplay.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplay.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313545126E4C4930047F338 /* android_build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = android_build.sh; sourceTree = "<group>"; };
 		B313545326E4C4930047F338 /* Play.desktop */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Play.desktop; sourceTree = "<group>"; };
@@ -606,7 +777,6 @@
 		B313558326E4C4950047F338 /* GeneralSettingsDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettingsDebug.xcconfig; sourceTree = "<group>"; };
 		B313558426E4C4950047F338 /* GeneralSettingsRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettingsRelease.xcconfig; sourceTree = "<group>"; };
 		B313558526E4C4950047F338 /* GeneralSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettings.xcconfig; sourceTree = "<group>"; };
-		B313558626E4C4950047F338 /* PsfPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = PsfPlayer.xcodeproj; sourceTree = "<group>"; };
 		B313558C26E4C4950047F338 /* installer64.nsi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = installer64.nsi; sourceTree = "<group>"; };
 		B313558D26E4C4950047F338 /* installer32.nsi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = installer32.nsi; sourceTree = "<group>"; };
 		B313558E26E4C4950047F338 /* Todolist.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Todolist.txt; sourceTree = "<group>"; };
@@ -1519,24 +1689,21 @@
 		B3447EB1218BC69700557ACE /* PVPlayCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPlayCore+Audio.h"; sourceTree = "<group>"; };
 		B3447EB2218BC69700557ACE /* PVPlayCore+Audio.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Audio.mm"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
-		B351224B27843535001C4B83 /* bzlib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bzlib.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/bzlib.c"; sourceTree = "<group>"; };
-		B351224D2784355E001C4B83 /* mk251.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mk251.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/mk251.c"; sourceTree = "<group>"; };
-		B351224E2784355E001C4B83 /* unzcrash.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = unzcrash.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/unzcrash.c"; sourceTree = "<group>"; };
-		B351224F2784355E001C4B83 /* bzip2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bzip2.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/bzip2.c"; sourceTree = "<group>"; };
-		B35122502784355E001C4B83 /* blocksort.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = blocksort.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/blocksort.c"; sourceTree = "<group>"; };
-		B35122512784355E001C4B83 /* compress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = compress.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/compress.c"; sourceTree = "<group>"; };
-		B35122522784355E001C4B83 /* randtable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = randtable.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/randtable.c"; sourceTree = "<group>"; };
-		B35122532784355E001C4B83 /* huffman.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = huffman.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/huffman.c"; sourceTree = "<group>"; };
-		B35122542784355F001C4B83 /* bzip2recover.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bzip2recover.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/bzip2recover.c"; sourceTree = "<group>"; };
-		B35122552784355F001C4B83 /* bzlib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bzlib.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/bzlib.c"; sourceTree = "<group>"; };
-		B35122562784355F001C4B83 /* crctable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = crctable.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/crctable.c"; sourceTree = "<group>"; };
-		B35122572784355F001C4B83 /* decompress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = decompress.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/decompress.c"; sourceTree = "<group>"; };
+		B34A60972947A7080070ED25 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B37CE7DB293F2A8B0010B746 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		B398591C2CE3C18B009C8B6E /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
+		B3A33CB129475F010090F1F3 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B3A33CBB294761170090F1F3 /* libzlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A6208C2947895B00ED28E3 /* CGSH_VulkaniOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSH_VulkaniOS.h; sourceTree = "<group>"; };
+		B3A6208D2947895B00ED28E3 /* CGSH_VulkaniOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CGSH_VulkaniOS.mm; sourceTree = "<group>"; };
+		B3A6209029478A7600ED28E3 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
+		B3A6209229478A7F00ED28E3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B3A6209429478A9B00ED28E3 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVPlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPlay.h; sourceTree = "<group>"; };
@@ -1547,6 +1714,9 @@
 		B3C76223207833DE009950E4 /* PVPlayCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPlayCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVPlayCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVPlayCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3E2AA112CB61EE900E2636D /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3E2AA122CB61EE900E2636D /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
+		B3E2AA152CB6200400E2636D /* PVPlayCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVPlayCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1554,19 +1724,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3AEDE1B293F2FBE0050BDB6 /* libFramework_Http.a in Frameworks */,
-				B3AEDE18293F2F710050BDB6 /* libFramework_Amazon.a in Frameworks */,
-				B3135B7326E4C7020047F338 /* libchdr-static.a in Frameworks */,
-				B3135B7426E4C7020047F338 /* libCodeGen.a in Frameworks */,
-				B3135B7526E4C7020047F338 /* libFramework_OpenAl.a in Frameworks */,
-				B3135B7626E4C7020047F338 /* libFramework_OpenGl.a in Frameworks */,
-				B3135B7726E4C7020047F338 /* libFramework.a in Frameworks */,
-				B3135B7826E4C7020047F338 /* libgsh_opengl.a in Frameworks */,
-				B3135B7926E4C7020047F338 /* liblzma.a in Frameworks */,
-				B3135B7A26E4C7020047F338 /* libPlayCore.a in Frameworks */,
-				B3135B7B26E4C7020047F338 /* libsh_openal.a in Frameworks */,
-				B3135B7C26E4C7020047F338 /* libui_shared.a in Frameworks */,
-				B3135B7D26E4C7020047F338 /* libzlib.a in Frameworks */,
+				B3ABAEFD2BCCF93900D77B8C /* libAltKit.a in Frameworks */,
+				B3ABAEFE2BCCF93900D77B8C /* libCAltKit.a in Frameworks */,
+				B3ABAEFF2BCCF93900D77B8C /* libchdr-static.a in Frameworks */,
+				B3ABAF002BCCF93900D77B8C /* libCodeGen.a in Frameworks */,
+				B3ABAF012BCCF93900D77B8C /* libFramework_Amazon.a in Frameworks */,
+				B3ABAF022BCCF93900D77B8C /* libFramework_Http.a in Frameworks */,
+				B3ABAF032BCCF93900D77B8C /* libFramework_OpenAl.a in Frameworks */,
+				B3ABAF042BCCF93900D77B8C /* libFramework_OpenGl.a in Frameworks */,
+				B3ABAF052BCCF93900D77B8C /* libFramework_Vulkan.a in Frameworks */,
+				B3ABAF062BCCF93900D77B8C /* libFramework.a in Frameworks */,
+				B3ABAF072BCCF93900D77B8C /* libgsh_opengl.a in Frameworks */,
+				B3ABAF082BCCF93900D77B8C /* libgsh_vulkan.a in Frameworks */,
+				B3ABAF092BCCF93900D77B8C /* libiCade_Static.a in Frameworks */,
+				B3ABAF0A2BCCF93900D77B8C /* liblibzstd_zlibwrapper_static.a in Frameworks */,
+				B3ABAF0B2BCCF93900D77B8C /* liblzma.a in Frameworks */,
+				B3ABAF0C2BCCF93900D77B8C /* libNuanceur.a in Frameworks */,
+				B3ABAF0D2BCCF93900D77B8C /* libPlayCore.a in Frameworks */,
+				B3ABAF0E2BCCF93900D77B8C /* libSDWebImage_Static.a in Frameworks */,
+				B3ABAF0F2BCCF93900D77B8C /* libsh_openal.a in Frameworks */,
+				B3ABAF102BCCF93900D77B8C /* libui_shared.a in Frameworks */,
+				B3ABAF112BCCF93900D77B8C /* libxxhash.a in Frameworks */,
+				B3ABAF122BCCF93900D77B8C /* libz.a in Frameworks */,
+				B3ABAF132BCCF93900D77B8C /* libzstd.a in Frameworks */,
+				939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */,
+				B3A33CB229475F010090F1F3 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1574,16 +1756,29 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				939AAF6E2A791EF0007709E5 /* libplay.a in Frameworks */,
+				93161E0C2A5A0AA6000C5362 /* libbz2.1.0.tbd in Frameworks */,
+				939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */,
+				B398591D2CE3C18B009C8B6E /* MoltenVK.xcframework in Frameworks */,
+				B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */,
+				9333C7E3298932970042CD99 /* Foundation.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				B3E2AA0A2CB61E4C00E2636D /* PVEmulatorCore in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
+				B3E2AA0D2CB61E8500E2636D /* PVSettings in Frameworks */,
+				B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */,
 				B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */,
+				B30E991A2C6EF24000C1431E /* PVSupport in Frameworks */,
+				B3E2AA072CB61D1700E2636D /* PVPlists in Frameworks */,
+				B3E2AA682CB65D0C00E2636D /* PVCoreBridge in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libplay.a in Frameworks */,
+				B3E2AA102CB61EC500E2636D /* PVLogging in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
-				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
+				B3A6209129478A7600ED28E3 /* Metal.framework in Frameworks */,
+				B3E2AA042CB61B9E00E2636D /* PVCoreObjCBridge in Frameworks */,
+				B3AFCF602977A69F00A01010 /* PVLogging in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1591,6 +1786,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9360C56D294CB5E6000322B9 /* libbig_int */ = {
+			isa = PBXGroup;
+			children = (
+				9360C56E294CB5E6000322B9 /* service_funcs.c */,
+				9360C56F294CB5E6000322B9 /* low_level_funcs */,
+				9360C57A294CB5E6000322B9 /* bitset_funcs.c */,
+				9360C57B294CB5E6000322B9 /* basic_funcs.c */,
+				9360C57C294CB5E6000322B9 /* modular_arithmetic.c */,
+				9360C57D294CB5E6000322B9 /* str_funcs.c */,
+				9360C57E294CB5E6000322B9 /* number_theory.c */,
+				9360C57F294CB5E6000322B9 /* memory_manager.c */,
+			);
+			name = libbig_int;
+			path = libbig_int/libbig_int;
+			sourceTree = "<group>";
+		};
+		9360C56F294CB5E6000322B9 /* low_level_funcs */ = {
+			isa = PBXGroup;
+			children = (
+				9360C570294CB5E6000322B9 /* or.c */,
+				9360C571294CB5E6000322B9 /* mul.c */,
+				9360C572294CB5E6000322B9 /* div.c */,
+				9360C573294CB5E6000322B9 /* xor.c */,
+				9360C574294CB5E6000322B9 /* andnot.c */,
+				9360C575294CB5E6000322B9 /* sqr.c */,
+				9360C576294CB5E6000322B9 /* and.c */,
+				9360C577294CB5E6000322B9 /* cmp.c */,
+				9360C578294CB5E6000322B9 /* add.c */,
+				9360C579294CB5E6000322B9 /* sub.c */,
+			);
+			path = low_level_funcs;
+			sourceTree = "<group>";
+		};
+		93BCC5FD2A9E135200641E90 /* Play */ = {
+			isa = PBXGroup;
+			children = (
+				93BCC5FE2A9E135200641E90 /* PS2VM.cpp */,
+				93BCC5FF2A9E135200641E90 /* Iop_SubSystem.cpp */,
+				93BCC6002A9E135200641E90 /* Iop_Ioman.cpp */,
+			);
+			path = Play;
+			sourceTree = "<group>";
+		};
 		B313544F26E4C4920047F338 /* Play- */ = {
 			isa = PBXGroup;
 			children = (
@@ -2173,17 +2411,8 @@
 				B313558326E4C4950047F338 /* GeneralSettingsDebug.xcconfig */,
 				B313558426E4C4950047F338 /* GeneralSettingsRelease.xcconfig */,
 				B313558526E4C4950047F338 /* GeneralSettings.xcconfig */,
-				B313558626E4C4950047F338 /* PsfPlayer.xcodeproj */,
 			);
 			path = build_macosx;
-			sourceTree = "<group>";
-		};
-		B313558726E4C4950047F338 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B313596126E4C49F0047F338 /* PsfPlayer.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B313558B26E4C4950047F338 /* installer_win32 */ = {
@@ -3703,28 +3932,29 @@
 		B3135B2B26E4C6850047F338 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3135B4826E4C6860047F338 /* libCodeGen.a */,
-				B3135B4C26E4C6860047F338 /* libFramework.a */,
-				B3135B4E26E4C6860047F338 /* libFramework_Amazon.a */,
-				B3135B5026E4C6860047F338 /* libFramework_Http.a */,
-				B3135B5226E4C6860047F338 /* libFramework_OpenAl.a */,
-				B3135B5426E4C6860047F338 /* libFramework_OpenGl.a */,
-				B3135B5C26E4C6860047F338 /* libPlayCore.a */,
-				B3135B5E26E4C6860047F338 /* libSDWebImage_Static.a */,
-				B3135B6626E4C6860047F338 /* libchdr-static.a */,
-				B3135B6826E4C6860047F338 /* libgsh_opengl.a */,
-				B3135B6A26E4C6860047F338 /* libiCade_Static.a */,
-				B3135B6C26E4C6860047F338 /* liblzma.a */,
-				B3135B6E26E4C6860047F338 /* libsh_openal.a */,
-				B3135B7026E4C6860047F338 /* libui_shared.a */,
-				B3135B7226E4C6860047F338 /* libzlib.a */,
-				B3135B6426E4C6860047F338 /* autotest */,
-				B3135B4A26E4C6860047F338 /* CodeGenTestSuite */,
-				B3135B5626E4C6860047F338 /* GsAreaTest */,
-				B3135B5826E4C6860047F338 /* McServTest */,
-				B3135B5A26E4C6860047F338 /* Play */,
-				B3135B6026E4C6860047F338 /* SpuTest */,
-				B3135B6226E4C6860047F338 /* VuTest */,
+				B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */,
+				B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */,
+				B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */,
+				B3ABAECE2BCCF87F00D77B8C /* libFramework.a */,
+				B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */,
+				B3ABAED42BCCF87F00D77B8C /* libFramework_Http.a */,
+				B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */,
+				B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */,
+				B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */,
+				B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */,
+				B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */,
+				B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */,
+				B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */,
+				B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */,
+				B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */,
+				B3ABAEEA2BCCF87F00D77B8C /* libiCade_Static.a */,
+				B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */,
+				B3ABAEEE2BCCF87F00D77B8C /* liblibzstd_zlibwrapper_static.a */,
+				B3ABAEF02BCCF87F00D77B8C /* liblzma.a */,
+				B3ABAEF22BCCF87F00D77B8C /* libsh_openal.a */,
+				B3ABAEF42BCCF87F00D77B8C /* libui_shared.a */,
+				B3ABAEF62BCCF87F00D77B8C /* libxxhash.a */,
+				B3ABAEF82BCCF87F00D77B8C /* libz.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3732,6 +3962,17 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				93C68BEE298ADF5D0008E5A3 /* PVDebug.c */,
+				9360C56D294CB5E6000322B9 /* libbig_int */,
+				939B194929490A820024133A /* CGSH_MTLViewController.swift */,
+				B3E2AA152CB6200400E2636D /* PVPlayCore.swift */,
+				93F5FBF32945D1B600493D4F /* PVPlayCoreOptions.swift */,
+				B3E2AA112CB61EE900E2636D /* CorePlist.swift */,
+				B3E2AA122CB61EE900E2636D /* CorePlist-Generated.swift */,
+				9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */,
+				9310344A29436AC2002D218C /* CGSH_Provenance_OGL.mm */,
+				B3A6208C2947895B00ED28E3 /* CGSH_VulkaniOS.h */,
+				B3A6208D2947895B00ED28E3 /* CGSH_VulkaniOS.mm */,
 				B3C76223207833DE009950E4 /* PVPlayCore.h */,
 				B3C76224207833DE009950E4 /* PVPlayCore.mm */,
 				B3447EB1218BC69700557ACE /* PVPlayCore+Audio.h */,
@@ -3742,6 +3983,8 @@
 				B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.mm */,
 				B3447E96218B809200557ACE /* PVPlayCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVPlayCore+Controls.mm */,
+				9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */,
+				939B190D2948A59C0024133A /* GSH_VulkanPlatformDefs.h */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -3749,20 +3992,9 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
-				B351224B27843535001C4B83 /* bzlib.c */,
-				B35122502784355E001C4B83 /* blocksort.c */,
-				B351224F2784355E001C4B83 /* bzip2.c */,
-				B35122542784355F001C4B83 /* bzip2recover.c */,
-				B35122552784355F001C4B83 /* bzlib.c */,
-				B35122512784355E001C4B83 /* compress.c */,
-				B35122562784355F001C4B83 /* crctable.c */,
-				B35122572784355F001C4B83 /* decompress.c */,
-				B35122532784355E001C4B83 /* huffman.c */,
-				B351224D2784355E001C4B83 /* mk251.c */,
-				B35122522784355E001C4B83 /* randtable.c */,
-				B351224E2784355E001C4B83 /* unzcrash.c */,
-				B3135B2A26E4C6850047F338 /* Play.xcodeproj */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
+				93BC0508298AFF2A00BA5157 /* LibPlayConfig.xcconfig */,
+				B3135B2A26E4C6850047F338 /* Play.xcodeproj */,
 				B313544F26E4C4920047F338 /* Play- */,
 				B3C762202078327B009950E4 /* PVPlayCore */,
 				B3C7621220783162009950E4 /* PVPlay */,
@@ -3793,6 +4025,20 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B398591C2CE3C18B009C8B6E /* MoltenVK.xcframework */,
+				934FA1BC2A79063F0019C951 /* libplay.a */,
+				93161E092A5A0A31000C5362 /* libbz2.1.0.tbd */,
+				93161E072A5A09F4000C5362 /* libbz2.1.0.8.tbd */,
+				93161E052A5A09BC000C5362 /* libbz2.tbd */,
+				936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */,
+				936FDBA72957F9080073628A /* libMoltenVK.dylib */,
+				B34A60972947A7080070ED25 /* libsqlite3.tbd */,
+				939B19422948B05F0024133A /* libsqlite3.tbd */,
+				B3A6209429478A9B00ED28E3 /* MetalKit.framework */,
+				B3A6209229478A7F00ED28E3 /* CoreGraphics.framework */,
+				B3A6209029478A7600ED28E3 /* Metal.framework */,
+				B3A33CBB294761170090F1F3 /* libzlib.a */,
+				B3A33CB129475F010090F1F3 /* libz.tbd */,
 				B37CE7DB293F2A8B0010B746 /* OpenGL.framework */,
 				B3135BAA26E4CDC50047F338 /* QuartzCore.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
@@ -3814,6 +4060,7 @@
 		B3C762202078327B009950E4 /* PVPlayCore */ = {
 			isa = PBXGroup;
 			children = (
+				93BCC5FD2A9E135200641E90 /* Play */,
 				B3447EB5218BCE2000557ACE /* Core */,
 				B3447EA0218B881000557ACE /* PVPlay.mm */,
 			);
@@ -3832,6 +4079,8 @@
 				B3135B9C26E4CC290047F338 /* PVPlayCore.h in Headers */,
 				B3135B9F26E4CC330047F338 /* PVPlayCore+Saves.h in Headers */,
 				B3135BA126E4CC620047F338 /* PVPlay.h in Headers */,
+				9310345B29436AC3002D218C /* CGSH_Provenance_OGL.h in Headers */,
+				B3A6208E2947895B00ED28E3 /* CGSH_VulkaniOS.h in Headers */,
 				B3135B9E26E4CC330047F338 /* PVPlayCore+Video.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3850,19 +4099,30 @@
 			buildRules = (
 			);
 			dependencies = (
-				B3AEDE1A293F2FA50050BDB6 /* PBXTargetDependency */,
-				B3AEDE17293F2F5D0050BDB6 /* PBXTargetDependency */,
-				B37CE7DE293F2B110010B746 /* PBXTargetDependency */,
-				B3135B8826E4CA1A0047F338 /* PBXTargetDependency */,
-				B3135B8A26E4CA1A0047F338 /* PBXTargetDependency */,
-				B3135B8C26E4CA1A0047F338 /* PBXTargetDependency */,
-				B3135B8E26E4CA1A0047F338 /* PBXTargetDependency */,
-				B3135B9026E4CA1A0047F338 /* PBXTargetDependency */,
-				B3135B9226E4CA1A0047F338 /* PBXTargetDependency */,
-				B3135B9426E4CA1A0047F338 /* PBXTargetDependency */,
-				B3135B9626E4CA1A0047F338 /* PBXTargetDependency */,
-				B3135B9826E4CA1A0047F338 /* PBXTargetDependency */,
-				B3135B9A26E4CA1A0047F338 /* PBXTargetDependency */,
+				B3EA207C2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA207E2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20802BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20822BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20842BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20862BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20882BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA208A2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3ABAEFC2BCCF91B00D77B8C /* PBXTargetDependency */,
+				B3EA208C2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA208E2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20902BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20922BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20942BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20962BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20982BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA209A2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA209C2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA209E2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20A02BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20A22BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20A42BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20A62BDDDEFF003D0239 /* PBXTargetDependency */,
+				934D2E1B294B4D8800BDEBA5 /* PBXTargetDependency */,
 			);
 			name = play;
 			productName = reicast;
@@ -3884,6 +4144,16 @@
 				B3B2546C27842B7B00F97E55 /* PBXTargetDependency */,
 			);
 			name = PVPlay;
+			packageProductDependencies = (
+				B3AFCF5F2977A69F00A01010 /* PVLogging */,
+				B30E99192C6EF24000C1431E /* PVSupport */,
+				B3E2AA032CB61B9E00E2636D /* PVCoreObjCBridge */,
+				B3E2AA062CB61D1700E2636D /* PVPlists */,
+				B3E2AA092CB61E4C00E2636D /* PVEmulatorCore */,
+				B3E2AA0C2CB61E8500E2636D /* PVSettings */,
+				B3E2AA0F2CB61EC500E2636D /* PVLogging */,
+				B3E2AA672CB65D0C00E2636D /* PVCoreBridge */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVPlay.framework */;
 			productType = "com.apple.product-type.framework";
@@ -3896,20 +4166,24 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1300;
-				ORGANIZATIONNAME = "Provenance Emu";
+				LastUpgradeCheck = 1600;
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
+					934D2DFF294B4D4600BDEBA5 = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1410;
 					};
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVPlayCore" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -3917,6 +4191,16 @@
 				Base,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E99182C6EF24000C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B3E2AA022CB61B9E00E2636D /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3E2AA052CB61D1700E2636D /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3E2AA082CB61E4C00E2636D /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3E2AA0B2CB61E8500E2636D /* XCLocalSwiftPackageReference "../../PVSettings" */,
+				B3E2AA0E2CB61EC500E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */,
+				B3E2AA662CB65D0C00E2636D /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -3924,186 +4208,176 @@
 					ProductGroup = B3135B2B26E4C6850047F338 /* Products */;
 					ProjectRef = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 				},
-				{
-					ProductGroup = B313558726E4C4950047F338 /* Products */;
-					ProjectRef = B313558626E4C4950047F338 /* PsfPlayer.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVPlay */,
 				B30178D2207C901D0051B93D /* play */,
+				934D2DFF294B4D4600BDEBA5 /* PlayLibAdjustments */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B313596126E4C49F0047F338 /* PsfPlayer.app */ = {
+		B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = PsfPlayer.app;
-			remoteRef = B313596026E4C49F0047F338 /* PBXContainerItemProxy */;
+			fileType = archive.ar;
+			path = libAltKit.a;
+			remoteRef = B3ABAEC72BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B4826E4C6860047F338 /* libCodeGen.a */ = {
+		B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCAltKit.a;
+			remoteRef = B3ABAEC92BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libCodeGen.a;
-			remoteRef = B3135B4726E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAECB2BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B4A26E4C6860047F338 /* CodeGenTestSuite */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = CodeGenTestSuite;
-			path = CodeGenTestSuite.app;
-			remoteRef = B3135B4926E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B4C26E4C6860047F338 /* libFramework.a */ = {
+		B3ABAECE2BCCF87F00D77B8C /* libFramework.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libFramework.a;
-			remoteRef = B3135B4B26E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAECD2BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B4E26E4C6860047F338 /* libFramework_Amazon.a */ = {
+		B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libFramework_Amazon.a;
-			remoteRef = B3135B4D26E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAED12BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5026E4C6860047F338 /* libFramework_Http.a */ = {
+		B3ABAED42BCCF87F00D77B8C /* libFramework_Http.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libFramework_Http.a;
-			remoteRef = B3135B4F26E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAED32BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5226E4C6860047F338 /* libFramework_OpenAl.a */ = {
+		B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libFramework_OpenAl.a;
-			remoteRef = B3135B5126E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAED52BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5426E4C6860047F338 /* libFramework_OpenGl.a */ = {
+		B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libFramework_OpenGl.a;
-			remoteRef = B3135B5326E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAED72BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5626E4C6860047F338 /* GsAreaTest */ = {
+		B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = GsAreaTest;
-			path = GsAreaTest.app;
-			remoteRef = B3135B5526E4C6860047F338 /* PBXContainerItemProxy */;
+			fileType = archive.ar;
+			path = libFramework_Vulkan.a;
+			remoteRef = B3ABAED92BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5826E4C6860047F338 /* McServTest */ = {
+		B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = McServTest;
-			path = McServTest.app;
-			remoteRef = B3135B5726E4C6860047F338 /* PBXContainerItemProxy */;
+			fileType = archive.ar;
+			path = libNuanceur.a;
+			remoteRef = B3ABAEDD2BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5A26E4C6860047F338 /* Play */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = Play;
-			path = Play.app;
-			remoteRef = B3135B5926E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B5C26E4C6860047F338 /* libPlayCore.a */ = {
+		B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libPlayCore.a;
-			remoteRef = B3135B5B26E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAEDF2BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5E26E4C6860047F338 /* libSDWebImage_Static.a */ = {
+		B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libSDWebImage_Static.a;
-			remoteRef = B3135B5D26E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAEE12BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B6026E4C6860047F338 /* SpuTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = SpuTest;
-			path = SpuTest.app;
-			remoteRef = B3135B5F26E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B6226E4C6860047F338 /* VuTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = VuTest;
-			path = VuTest.app;
-			remoteRef = B3135B6126E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B6426E4C6860047F338 /* autotest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = autotest;
-			path = autotest.app;
-			remoteRef = B3135B6326E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B6626E4C6860047F338 /* libchdr-static.a */ = {
+		B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libchdr-static.a";
-			remoteRef = B3135B6526E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAEE32BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B6826E4C6860047F338 /* libgsh_opengl.a */ = {
+		B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libgsh_opengl.a;
-			remoteRef = B3135B6726E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAEE52BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B6A26E4C6860047F338 /* libiCade_Static.a */ = {
+		B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libgsh_vulkan.a;
+			remoteRef = B3ABAEE72BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEEA2BCCF87F00D77B8C /* libiCade_Static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libiCade_Static.a;
-			remoteRef = B3135B6926E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAEE92BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B6C26E4C6860047F338 /* liblzma.a */ = {
+		B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libzstd.a;
+			remoteRef = B3ABAEEB2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEEE2BCCF87F00D77B8C /* liblibzstd_zlibwrapper_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblibzstd_zlibwrapper_static.a;
+			remoteRef = B3ABAEED2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEF02BCCF87F00D77B8C /* liblzma.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = liblzma.a;
-			remoteRef = B3135B6B26E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAEEF2BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B6E26E4C6860047F338 /* libsh_openal.a */ = {
+		B3ABAEF22BCCF87F00D77B8C /* libsh_openal.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libsh_openal.a;
-			remoteRef = B3135B6D26E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAEF12BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B7026E4C6860047F338 /* libui_shared.a */ = {
+		B3ABAEF42BCCF87F00D77B8C /* libui_shared.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libui_shared.a;
-			remoteRef = B3135B6F26E4C6860047F338 /* PBXContainerItemProxy */;
+			remoteRef = B3ABAEF32BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B7226E4C6860047F338 /* libzlib.a */ = {
+		B3ABAEF62BCCF87F00D77B8C /* libxxhash.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libzlib.a;
-			remoteRef = B3135B7126E4C6860047F338 /* PBXContainerItemProxy */;
+			path = libxxhash.a;
+			remoteRef = B3ABAEF52BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEF82BCCF87F00D77B8C /* libz.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libz.a;
+			remoteRef = B3ABAEF72BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -4119,19 +4393,40 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		934D2E19294B4D5900BDEBA5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib",
+				"${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h",
+				"${SRCROOT}/PVPlayCore/Core/Loader.cpp ",
+				"${SRCROOT}/../PPSSPP/ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib",
+				"${SRCROOT}/../PPSSPP/ppsspp/ext/vulkan",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/lib/libMoltenVK_Play.dylib",
+				"${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp",
+				"${SRCROOT}/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h",
+				"${SRCROOT}/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include/vulkan",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#cp ${SRCROOT}/PVPlayCore/Core/Loader.cpp ${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp\n#cp ${SRCROOT}/../PPSSPP/libretro_ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib ${SRCROOT}/lib/libMoltenVK_Play.dylib\n#cp -pR ${SRCROOT}/../PPSSPP/libretro_ppsspp/ext/vulkan ${SRCROOT}/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include/\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3512262278435B1001C4B83 /* decompress.c in Sources */,
-				B3512264278435B1001C4B83 /* huffman.c in Sources */,
-				B3512263278435B1001C4B83 /* blocksort.c in Sources */,
-				B3512268278435B1001C4B83 /* bzlib.c in Sources */,
-				B3512267278435B1001C4B83 /* randtable.c in Sources */,
-				B3512265278435B1001C4B83 /* crctable.c in Sources */,
-				B3512266278435B1001C4B83 /* compress.c in Sources */,
-				B3512269278435B1001C4B83 /* bzip2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4139,87 +4434,306 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */,
+				9360C59E294CB5E8000322B9 /* sub.c in Sources */,
+				9360C59C294CB5E8000322B9 /* cmp.c in Sources */,
+				9360C598294CB5E8000322B9 /* xor.c in Sources */,
 				B3EB8B10293F653D00BCCBAE /* PVPlayCore+Controls.mm in Sources */,
+				93F5FBF42945D1B600493D4F /* PVPlayCoreOptions.swift in Sources */,
+				9360C59B294CB5E8000322B9 /* and.c in Sources */,
+				9360C59F294CB5E8000322B9 /* bitset_funcs.c in Sources */,
+				9360C5A2294CB5E8000322B9 /* str_funcs.c in Sources */,
 				B3135BA726E4CD5A0047F338 /* PVPlayCore+Video.mm in Sources */,
+				B3E2AA162CB6200400E2636D /* PVPlayCore.swift in Sources */,
+				9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */,
 				B3135BA526E4CD500047F338 /* PVPlayCore+Saves.mm in Sources */,
+				9360C5A0294CB5E8000322B9 /* basic_funcs.c in Sources */,
+				9360C5A1294CB5E8000322B9 /* modular_arithmetic.c in Sources */,
 				B351223A27843318001C4B83 /* PVPlay.mm in Sources */,
+				9360C594294CB5E7000322B9 /* service_funcs.c in Sources */,
+				B3E2AA132CB61EE900E2636D /* CorePlist.swift in Sources */,
+				B3E2AA142CB61EE900E2636D /* CorePlist-Generated.swift in Sources */,
 				B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */,
+				B3A6208F2947895B00ED28E3 /* CGSH_VulkaniOS.mm in Sources */,
+				9310345A29436AC3002D218C /* CGSH_Provenance_OGL.mm in Sources */,
+				9360C597294CB5E7000322B9 /* div.c in Sources */,
 				B3135BA926E4CD600047F338 /* PVPlayCore+Audio.mm in Sources */,
+				9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */,
+				9360C59A294CB5E8000322B9 /* sqr.c in Sources */,
+				9360C595294CB5E7000322B9 /* or.c in Sources */,
+				9360C599294CB5E8000322B9 /* andnot.c in Sources */,
+				93C68BEF298ADF5E0008E5A3 /* PVDebug.c in Sources */,
+				939B194A29490A840024133A /* CGSH_MTLViewController.swift in Sources */,
+				9360C596294CB5E7000322B9 /* mul.c in Sources */,
+				9360C59D294CB5E8000322B9 /* add.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B3135B8826E4CA1A0047F338 /* PBXTargetDependency */ = {
+		934D2E1B294B4D8800BDEBA5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = CodeGen;
-			targetProxy = B3135B8726E4CA1A0047F338 /* PBXContainerItemProxy */;
+			target = 934D2DFF294B4D4600BDEBA5 /* PlayLibAdjustments */;
+			targetProxy = 934D2E1A294B4D8800BDEBA5 /* PBXContainerItemProxy */;
 		};
-		B3135B8A26E4CA1A0047F338 /* PBXTargetDependency */ = {
+		B3ABAEFC2BCCF91B00D77B8C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = Framework;
-			targetProxy = B3135B8926E4CA1A0047F338 /* PBXContainerItemProxy */;
-		};
-		B3135B8C26E4CA1A0047F338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Framework_OpenAl;
-			targetProxy = B3135B8B26E4CA1A0047F338 /* PBXContainerItemProxy */;
-		};
-		B3135B8E26E4CA1A0047F338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Framework_OpenGl;
-			targetProxy = B3135B8D26E4CA1A0047F338 /* PBXContainerItemProxy */;
-		};
-		B3135B9026E4CA1A0047F338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = PlayCore;
-			targetProxy = B3135B8F26E4CA1A0047F338 /* PBXContainerItemProxy */;
-		};
-		B3135B9226E4CA1A0047F338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "chdr-static";
-			targetProxy = B3135B9126E4CA1A0047F338 /* PBXContainerItemProxy */;
-		};
-		B3135B9426E4CA1A0047F338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = lzma;
-			targetProxy = B3135B9326E4CA1A0047F338 /* PBXContainerItemProxy */;
-		};
-		B3135B9626E4CA1A0047F338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = sh_openal;
-			targetProxy = B3135B9526E4CA1A0047F338 /* PBXContainerItemProxy */;
-		};
-		B3135B9826E4CA1A0047F338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ui_shared;
-			targetProxy = B3135B9726E4CA1A0047F338 /* PBXContainerItemProxy */;
-		};
-		B3135B9A26E4CA1A0047F338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = zlib;
-			targetProxy = B3135B9926E4CA1A0047F338 /* PBXContainerItemProxy */;
-		};
-		B37CE7DE293F2B110010B746 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = gsh_opengl;
-			targetProxy = B37CE7DD293F2B110010B746 /* PBXContainerItemProxy */;
-		};
-		B3AEDE17293F2F5D0050BDB6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Framework_Amazon;
-			targetProxy = B3AEDE16293F2F5D0050BDB6 /* PBXContainerItemProxy */;
-		};
-		B3AEDE1A293F2FA50050BDB6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Framework_Http;
-			targetProxy = B3AEDE19293F2FA50050BDB6 /* PBXContainerItemProxy */;
+			name = Framework_VulkanPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3ABAEFB2BCCF91B00D77B8C /* PBXContainerItemProxy */;
 		};
 		B3B2546C27842B7B00F97E55 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B30178D2207C901D0051B93D /* play */;
 			targetProxy = B3B2546B27842B7B00F97E55 /* PBXContainerItemProxy */;
+		};
+		B3EA207C2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AltKitPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA207B2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA207E2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CAltKitPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA207D2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20802BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CodeGenPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA207F2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20822BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = FrameworkPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20812BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20842BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_AmazonPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20832BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20862BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_HttpPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20852BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20882BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_OpenAlPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20872BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA208A2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_OpenGlPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20892BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA208C2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NuanceurPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA208B2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA208E2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PlayCorePlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA208D2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20902BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SDWebImage_StaticPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA208F2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20922BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "chdr-staticPlay";
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20912BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20942BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = gsh_openglPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20932BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20962BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = gsh_vulkanPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20952BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20982BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = iCade_StaticPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20972BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA209A2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libzstd_staticPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20992BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA209C2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libzstd_zlibwrapper_staticPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA209B2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA209E2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = lzmaPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA209D2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20A02BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = sh_openalPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA209F2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20A22BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ui_sharedPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20A12BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20A42BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = xxhashPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20A32BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20A62BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = zlibPlay;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				xros,
+			);
+			targetProxy = B3EA20A52BDDDEFF003D0239 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4243,266 +4757,53 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		B30178DA207C901D0051B93D /* Debug */ = {
+		934D2E01294B4D4700BDEBA5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				OTHER_LDFLAGS = "-ObjC";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
-			name = Debug;
+			name = Release;
 		};
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/../PPSSPP/ppsspp/ext/\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/lib";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
-		};
-		B324C5012191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_BITCODE = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VALIDATE_PRODUCT = YES;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		B324C5022191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					NDEBUG,
-				);
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/CodeGen/include\"",
-					"\"$(SRCROOT)/Play-/Source\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
-				PRODUCT_NAME = PVPlay;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Archive;
-		};
-		B324C5042191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Archive;
-		};
-		B3C7621620783162009950E4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_BITCODE = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					DEBUG,
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
 		};
 		B3C7621720783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4534,16 +4835,19 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					NDEBUG,
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -4552,13 +4856,17 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SYMROOT = "${SRCROOT}/lib/play";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -4567,60 +4875,20 @@
 			};
 			name = Release;
 		};
-		B3C7621920783162009950E4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/CodeGen/include\"",
-					"\"$(SRCROOT)/Play-/Source\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
-				PRODUCT_NAME = PVPlay;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Debug;
-		};
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					NDEBUG,
@@ -4631,37 +4899,238 @@
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Play-/deps/CodeGen/include\"",
 					"\"$(SRCROOT)/Play-/Source\"",
+					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
+					"\"$(SRCROOT)/../../MoltenVK/MoltenVK/include\"",
+					"\"$(SRCROOT)/Play-/deps/Nuanceur/include\"",
+					"\"$(SRCROOT)/PVPlayCore/Core/libbig_int/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/lib",
+					"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
 				PRODUCT_NAME = PVPlay;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_INCLUDE_PATHS = "";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/lib/play";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
+		};
+		B3D067D12BC4FA6500A7327F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					NDEBUG,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/lib/play";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VALIDATE_PRODUCT = YES;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3D067D22BC4FA6500A7327F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
+					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
+					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/Play-/deps/CodeGen/include\"",
+					"\"$(SRCROOT)/Play-/Source\"",
+					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
+					"\"$(SRCROOT)/../../MoltenVK/MoltenVK/include\"",
+					"\"$(SRCROOT)/Play-/deps/Nuanceur/include\"",
+					"\"$(SRCROOT)/PVPlayCore/Core/libbig_int/include\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/lib",
+					"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
+				PRODUCT_NAME = PVPlay;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_INCLUDE_PATHS = "";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/lib/play";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
+			};
+			name = Debug;
+		};
+		B3D067D32BC4FA6500A7327F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
+					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/../PPSSPP/ppsspp/ext/\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/lib";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
+			};
+			name = Debug;
+		};
+		B3D067D42BC4FA6500A7327F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		934D2E18294B4D4700BDEBA5 /* Build configuration list for PBXAggregateTarget "PlayLibAdjustments" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				934D2E01294B4D4700BDEBA5 /* Release */,
+				B3D067D42BC4FA6500A7327F /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "play" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B30178DA207C901D0051B93D /* Debug */,
 				B30178DB207C901D0051B93D /* Release */,
-				B324C5042191A2A2009F4EDC /* Archive */,
+				B3D067D32BC4FA6500A7327F /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4669,9 +5138,8 @@
 		B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVPlayCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C7621620783162009950E4 /* Debug */,
 				B3C7621720783162009950E4 /* Release */,
-				B324C5012191A2A2009F4EDC /* Archive */,
+				B3D067D12BC4FA6500A7327F /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4679,14 +5147,79 @@
 		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVPlay" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C7621920783162009950E4 /* Debug */,
 				B3C7621A20783162009950E4 /* Release */,
-				B324C5022191A2A2009F4EDC /* Archive */,
+				B3D067D22BC4FA6500A7327F /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E99182C6EF24000C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B3E2AA022CB61B9E00E2636D /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3E2AA052CB61D1700E2636D /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B3E2AA082CB61E4C00E2636D /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B3E2AA0B2CB61E8500E2636D /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+		B3E2AA0E2CB61EC500E2636D /* XCLocalSwiftPackageReference "../../PVLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLogging;
+		};
+		B3E2AA662CB65D0C00E2636D /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E99192C6EF24000C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B3AFCF5F2977A69F00A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+		B3E2AA032CB61B9E00E2636D /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3E2AA062CB61D1700E2636D /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B3E2AA092CB61E4C00E2636D /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B3E2AA0C2CB61E8500E2636D /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B3E2AA0F2CB61EC500E2636D /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+		B3E2AA672CB65D0C00E2636D /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

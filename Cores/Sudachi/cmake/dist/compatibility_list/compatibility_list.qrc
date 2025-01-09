@@ -1,0 +1,10 @@
+<!--
+SPDX-FileCopyrightText: 2018 sudachi Emulator Project
+SPDX-License-Identifier: GPL-2.0-or-later
+-->
+
+<RCC>
+  <qresource prefix="compatibility_list">
+      <file>compatibility_list.json</file>
+  </qresource>
+</RCC>

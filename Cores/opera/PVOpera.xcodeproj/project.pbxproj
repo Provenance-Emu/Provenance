@@ -3,72 +3,76 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		9337CFB2298CDFEF007CDDB6 /* OperaRetroArchTV */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9337CFB4298CDFEF007CDDB6 /* Build configuration list for PBXAggregateTarget "OperaRetroArchTV" */;
+			buildPhases = (
+				9337CFB3298CDFEF007CDDB6 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = OperaRetroArchTV;
+			productName = OperaRetroArch;
+		};
+		935BB0502985469B00AA68DC /* OperaRetroArch */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 935BB0542985469B00AA68DC /* Build configuration list for PBXAggregateTarget "OperaRetroArch" */;
+			buildPhases = (
+				935BB055298546C200AA68DC /* Build Opera RetroArch */,
+				937557832A811A9300ECC97D /* Copy Opera RetroArch */,
+			);
+			dependencies = (
+			);
+			name = OperaRetroArch;
+			productName = OperaRetroArch;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
-		B301797F207C909E0051B93D /* libopera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libopera.a */; };
-		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
-		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
-		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B37022C82872553E00B3F6DA /* PVOperaCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVOperaCore.mm */; };
-		B37022C92872554300B3F6DA /* PVOperaCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVOperaCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
-		B37022CD2872558F00B3F6DA /* PVOpera.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVOpera.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B39768F82859E23200558958 /* libopera-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libopera-libretro.a */; };
-		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
-		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		93F6EC6A298ACB1A00397536 /* PVDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F6EC69298ACB1A00397536 /* PVDebug.m */; };
+		B30135942BC77A8B00708809 /* PVOpera.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C3287253B300B3F6DA /* PVOpera.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B30E98AD2C6EEF2900C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98AC2C6EEF2900C1431E /* PVSupport */; };
+		B30E99312C6EF32600C1431E /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99302C6EF32600C1431E /* PVObjCUtils */; };
+		B30E99E02C6F049700C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99DF2C6F049700C1431E /* PVCoreBridge */; };
+		B35D8A862B58E20E00F37E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D8A852B58E20E00F37E8B /* Foundation.framework */; };
+		B3F8DFE72CB36B4000017D1B /* PVOperaCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8DFE42CB36B4000017D1B /* PVOperaCore.swift */; };
+		B3F8DFE82CB36B4000017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8DFE62CB36B4000017D1B /* CorePlist-Generated.swift */; };
+		B3F8DFE92CB36B4000017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8DFE52CB36B4000017D1B /* CorePlist.swift */; };
+		B3F8DFEC2CB36BF800017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFEB2CB36BF800017D1B /* PVCoreObjCBridge */; };
+		B3F8DFEE2CB36C0A00017D1B /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8DFED2CB36C0A00017D1B /* PVCoreBridgeRetro.framework */; };
+		B3F8DFF12CB36CFD00017D1B /* PVOperaCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVOperaCore.h */; };
+		B3F8DFF42CB36D6A00017D1B /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFF32CB36D6A00017D1B /* PVEmulatorCore */; };
+		B3F8DFF72CB36DD600017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFF62CB36DD600017D1B /* PVPlists */; };
+		B3F8DFF82CB36EAA00017D1B /* PVOperaCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVOperaCore.mm */; };
+		B3F8DFFC2CB36F6100017D1B /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B39768F92859E23200558958 /* PBXContainerItemProxy */ = {
+		9337CFB8298CE05F007CDDB6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3344B522859E088006E6B3A;
-			remoteInfo = "dos-box-libretro-iOS";
+			remoteGlobalIDString = 9337CFB2298CDFEF007CDDB6;
+			remoteInfo = OperaRetroArchTV;
+		};
+		935BB0562985484E00AA68DC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 935BB0502985469B00AA68DC;
+			remoteInfo = OperaRetroArch;
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		B30178D1207C901D0051B93D /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3344BBE2859E088006E6B3A /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		B30178D3207C901D0051B93D /* libopera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libopera.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
-		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
-		B3344BC32859E088006E6B3A /* libopera-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libopera-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
-		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		93F6EC69298ACB1A00397536 /* PVDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PVDebug.m; path = ../../Debug/PVDebug.m; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
-		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
-		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
-		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
-		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B35D8A832B58E1F500F37E8B /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B35D8A852B58E20E00F37E8B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B37022BD287253B300B3F6DA /* PVOpera-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVOpera-Prefix.pch"; sourceTree = "<group>"; };
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37022C0287253B300B3F6DA /* PVOpera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVOpera.h; sourceTree = "<group>"; };
@@ -76,16 +80,7 @@
 		B37022C3287253B300B3F6DA /* PVOpera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVOpera.h; sourceTree = "<group>"; };
 		B37022C5287253B300B3F6DA /* PVOperaCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVOperaCore.h; sourceTree = "<group>"; };
 		B37022C6287253B300B3F6DA /* PVOperaCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVOperaCore.mm; sourceTree = "<group>"; };
-		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
-		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVOpera.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVOpera.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EBA44D287296AD00EAEB37 /* Tupfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Tupfile; sourceTree = "<group>"; };
 		B3EBA44E287296AD00EAEB37 /* libretro_core_options.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libretro_core_options.c; sourceTree = "<group>"; };
 		B3EBA44F287296AD00EAEB37 /* libretro.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libretro.c; sourceTree = "<group>"; };
@@ -1139,39 +1134,25 @@
 		B3EBABF22872970300EAEB37 /* cdrom copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "cdrom copy.h"; sourceTree = "<group>"; };
 		B3EBABF42872970300EAEB37 /* stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdint.h; sourceTree = "<group>"; };
 		B3EBABF52872970300EAEB37 /* stdint copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "stdint copy.h"; sourceTree = "<group>"; };
+		B3F8DFE42CB36B4000017D1B /* PVOperaCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVOperaCore.swift; sourceTree = "<group>"; };
+		B3F8DFE52CB36B4000017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3F8DFE62CB36B4000017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
+		B3F8DFED2CB36C0A00017D1B /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B30178D0207C901D0051B93D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3344BBD2859E088006E6B3A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620C20783162009950E4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
-				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
-				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
-				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libopera.a in Frameworks */,
-				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B39768F82859E23200558958 /* libopera-libretro.a in Frameworks */,
-				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
-				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
-				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
+				B30E99E02C6F049700C1431E /* PVCoreBridge in Frameworks */,
+				B3F8DFF42CB36D6A00017D1B /* PVEmulatorCore in Frameworks */,
+				B3F8DFEE2CB36C0A00017D1B /* PVCoreBridgeRetro.framework in Frameworks */,
+				B30E98AD2C6EEF2900C1431E /* PVSupport in Frameworks */,
+				B30E99312C6EF32600C1431E /* PVObjCUtils in Frameworks */,
+				B3F8DFF72CB36DD600017D1B /* PVPlists in Frameworks */,
+				B35D8A862B58E20E00F37E8B /* Foundation.framework in Frameworks */,
+				B3F8DFEC2CB36BF800017D1B /* PVCoreObjCBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1191,9 +1172,13 @@
 		B37022C4287253B300B3F6DA /* PVOperaCore */ = {
 			isa = PBXGroup;
 			children = (
+				93F6EC69298ACB1A00397536 /* PVDebug.m */,
 				B3EBA44C287296AD00EAEB37 /* opera-libretro */,
 				B37022C5287253B300B3F6DA /* PVOperaCore.h */,
 				B37022C6287253B300B3F6DA /* PVOperaCore.mm */,
+				B3F8DFE42CB36B4000017D1B /* PVOperaCore.swift */,
+				B3F8DFE52CB36B4000017D1B /* CorePlist.swift */,
+				B3F8DFE62CB36B4000017D1B /* CorePlist-Generated.swift */,
 			);
 			path = PVOperaCore;
 			sourceTree = "<group>";
@@ -1216,8 +1201,6 @@
 			isa = PBXGroup;
 			children = (
 				B3C7621020783162009950E4 /* PVOpera.framework */,
-				B30178D3207C901D0051B93D /* libopera.a */,
-				B3344BC32859E088006E6B3A /* libopera-libretro.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1225,24 +1208,9 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
-				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
-				B39769172859E3AD00558958 /* CoreFoundation.framework */,
-				B39769182859E3AD00558958 /* Foundation.framework */,
-				B39769132859E3A300558958 /* PVLibrary.framework */,
-				B3135BAA26E4CDC50047F338 /* QuartzCore.framework */,
-				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
-				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
-				B324C31B2191964F009F4EDC /* AVFoundation.framework */,
-				B35E6BF8207D00D00040709A /* AVFoundation.framework */,
-				B35E6BF4207CD2740040709A /* CoreAudio.framework */,
-				B35E6BF3207CD2730040709A /* CoreAudioKit.framework */,
-				B3C7621E2078325C009950E4 /* Foundation.framework */,
-				B339468820783F41008DBAB4 /* libpthread.tbd */,
-				B339468A20783F48008DBAB4 /* libz.tbd */,
-				B3C7621C20783243009950E4 /* OpenGLES.framework */,
-				B3B104B8218F281B00210C39 /* PVSupport.framework */,
-				B3C7622120783297009950E4 /* PVSupport.framework */,
+				B3F8DFED2CB36C0A00017D1B /* PVCoreBridgeRetro.framework */,
+				B35D8A852B58E20E00F37E8B /* Foundation.framework */,
+				B35D8A832B58E1F500F37E8B /* PVSupport.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -3569,48 +3537,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37022CD2872558F00B3F6DA /* PVOpera.h in Headers */,
-				B37022C92872554300B3F6DA /* PVOperaCore.h in Headers */,
+				B30135942BC77A8B00708809 /* PVOpera.h in Headers */,
+				B3F8DFF12CB36CFD00017D1B /* PVOperaCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B30178D2207C901D0051B93D /* opera */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "opera" */;
-			buildPhases = (
-				B30178CF207C901D0051B93D /* Sources */,
-				B30178D0207C901D0051B93D /* Frameworks */,
-				B30178D1207C901D0051B93D /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = opera;
-			productName = reicast;
-			productReference = B30178D3207C901D0051B93D /* libopera.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3344B522859E088006E6B3A /* opera-libretro */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "opera-libretro" */;
-			buildPhases = (
-				B3344B532859E088006E6B3A /* Sources */,
-				B3344BBD2859E088006E6B3A /* Frameworks */,
-				B3344BBE2859E088006E6B3A /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "opera-libretro";
-			productName = reicast;
-			productReference = B3344BC32859E088006E6B3A /* libopera-libretro.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		B3C7620F20783162009950E4 /* PVOpera */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVOpera" */;
@@ -3623,9 +3557,18 @@
 			buildRules = (
 			);
 			dependencies = (
-				B39768FA2859E23200558958 /* PBXTargetDependency */,
+				9337CFB9298CE05F007CDDB6 /* PBXTargetDependency */,
+				935BB0572985484E00AA68DC /* PBXTargetDependency */,
 			);
 			name = PVOpera;
+			packageProductDependencies = (
+				B30E98AC2C6EEF2900C1431E /* PVSupport */,
+				B30E99302C6EF32600C1431E /* PVObjCUtils */,
+				B30E99DF2C6F049700C1431E /* PVCoreBridge */,
+				B3F8DFEB2CB36BF800017D1B /* PVCoreObjCBridge */,
+				B3F8DFF32CB36D6A00017D1B /* PVEmulatorCore */,
+				B3F8DFF62CB36DD600017D1B /* PVPlists */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVOpera.framework */;
 			productType = "com.apple.product-type.framework";
@@ -3639,19 +3582,19 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				LastUpgradeCheck = 1300;
-				ORGANIZATIONNAME = "Provenance Emu";
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
-					B30178D2207C901D0051B93D = {
-						CreatedOnToolsVersion = 9.3;
-						ProvisioningStyle = Automatic;
+					935BB0502985469B00AA68DC = {
+						CreatedOnToolsVersion = 14.2;
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVOpera" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -3670,13 +3613,22 @@
 				nl,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E98AB2C6EEF2900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E992F2C6EF32600C1431E /* XCLocalSwiftPackageReference "../../PVObjCUtils" */,
+				B30E99DE2C6F049700C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3F8DFEA2CB36BF800017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3F8DFF22CB36D6A00017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3F8DFF52CB36DD600017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVOpera */,
-				B3344B522859E088006E6B3A /* opera-libretro */,
-				B30178D2207C901D0051B93D /* opera */,
+				935BB0502985469B00AA68DC /* OperaRetroArch */,
+				9337CFB2298CDFEF007CDDB6 /* OperaRetroArchTV */,
 			);
 		};
 /* End PBXProject section */
@@ -3686,101 +3638,137 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37022CB2872556600B3F6DA /* Core.plist in Resources */,
+				B3F8DFFC2CB36F6100017D1B /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		9337CFB3298CDFEF007CDDB6 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n# Create buildTV Environment\nif [ ! -d \"${SRCROOT}/cmake/buildTV\" ]; then\n    mkdir \"${SRCROOT}/cmake/buildTV\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status opera-libretro | head -n1 | awk '{print $1;}'`operaTV\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/buildTV/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/opera-libretro/\"* \"${SRCROOT}/cmake/buildTV/\"\n    cp \"${SRCROOT}/cmake/Makefile.TV\" \"${SRCROOT}/cmake/buildTV/Makefile\"\nfi\n\n# buildTV\ncd \"${SRCROOT}/cmake/buildTV/\"\n#make clean\nmake -j5\ncp opera_libretro_tvos.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/opera_libretro_tvos.dylib\"\n";
+		};
+		935BB055298546C200AA68DC /* Build Opera RetroArch */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Opera RetroArch";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/cmake/build/opera_libretro_ios.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status opera-libretro | head -n1 | awk '{print $1;}'`\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/opera-libretro/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/\"Makefile \"${SRCROOT}/cmake/build/\"Makefile\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build/\"\n#make clean\nmake -j5\n\nexit 0\n";
+		};
+		937557832A811A9300ECC97D /* Copy Opera RetroArch */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/cmake/build/opera_libretro_ios.dylib",
+			);
+			name = "Copy Opera RetroArch";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/opera_libretro_ios.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"${SRCROOT}/cmake/build/\"opera_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/\"opera_libretro_ios.dylib\nexit 0\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
-		B30178CF207C901D0051B93D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3344B532859E088006E6B3A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37022C82872553E00B3F6DA /* PVOperaCore.mm in Sources */,
+				93F6EC6A298ACB1A00397536 /* PVDebug.m in Sources */,
+				B3F8DFE72CB36B4000017D1B /* PVOperaCore.swift in Sources */,
+				B3F8DFE82CB36B4000017D1B /* CorePlist-Generated.swift in Sources */,
+				B3F8DFF82CB36EAA00017D1B /* PVOperaCore.mm in Sources */,
+				B3F8DFE92CB36B4000017D1B /* CorePlist.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
+		9337CFB9298CE05F007CDDB6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* opera-libretro */;
-			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
+				tvos,
+			);
+			target = 9337CFB2298CDFEF007CDDB6 /* OperaRetroArchTV */;
+			targetProxy = 9337CFB8298CE05F007CDDB6 /* PBXContainerItemProxy */;
+		};
+		935BB0572985484E00AA68DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
+				tvos,
+			);
+			target = 935BB0502985469B00AA68DC /* OperaRetroArch */;
+			targetProxy = 935BB0562985484E00AA68DC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		B30178DA207C901D0051B93D /* Debug */ = {
+		9337CFB6298CDFEF007CDDB6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = opera;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Debug;
-		};
-		B30178DB207C901D0051B93D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = opera;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
 			};
 			name = Release;
 		};
-		B324C5012191A2A2009F4EDC /* Archive */ = {
+		935BB0522985469B00AA68DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		B3C322B72BE33015002D1563 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -3806,16 +3794,15 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_BITCODE = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					RELEASE,
 					"$(inherited)",
@@ -3829,39 +3816,26 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
-				SDKROOT = iphoneos;
+				LD_MAP_FILE_PATH = "";
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/build/$(CONFIGURATION)";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Archive;
+			name = Debug;
 		};
-		B324C5022191A2A2009F4EDC /* Archive */ = {
+		B3C322B82BE33015002D1563 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -3872,14 +3846,14 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVOpera/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3889,174 +3863,30 @@
 				PRODUCT_NAME = PVOpera;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Archive;
-		};
-		B324C5042191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = opera;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Archive;
-		};
-		B3344BC02859E088006E6B3A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "opera-libretro";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 			};
 			name = Debug;
 		};
-		B3344BC12859E088006E6B3A /* Release */ = {
+		B3C322B92BE33015002D1563 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "opera-libretro";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Release;
-		};
-		B3344BC22859E088006E6B3A /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "opera-libretro";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Archive;
-		};
-		B3C7621620783162009950E4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_BITCODE = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					DEBUG,
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = __LIBRETRO__;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3C322BA2BE33015002D1563 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
 			};
 			name = Debug;
 		};
@@ -4064,11 +3894,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -4094,16 +3924,15 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					RELEASE,
 					"$(inherited)",
@@ -4117,42 +3946,28 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
-				SDKROOT = iphoneos;
+				LD_MAP_FILE_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
-		B3C7621920783162009950E4 /* Debug */ = {
+		B3D0679E2BC4EDEF00A7327F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -4161,14 +3976,11 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVOpera/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4178,68 +3990,33 @@
 				PRODUCT_NAME = PVOpera;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Debug;
-		};
-		B3C7621A20783162009950E4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVOpera/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVOpera";
-				PRODUCT_NAME = PVOpera;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 16.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "opera" */ = {
+		9337CFB4298CDFEF007CDDB6 /* Build configuration list for PBXAggregateTarget "OperaRetroArchTV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B30178DA207C901D0051B93D /* Debug */,
-				B30178DB207C901D0051B93D /* Release */,
-				B324C5042191A2A2009F4EDC /* Archive */,
+				9337CFB6298CDFEF007CDDB6 /* Release */,
+				B3C322BA2BE33015002D1563 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "opera-libretro" */ = {
+		935BB0542985469B00AA68DC /* Build configuration list for PBXAggregateTarget "OperaRetroArch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3344BC02859E088006E6B3A /* Debug */,
-				B3344BC12859E088006E6B3A /* Release */,
-				B3344BC22859E088006E6B3A /* Archive */,
+				935BB0522985469B00AA68DC /* Release */,
+				B3C322B92BE33015002D1563 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4247,9 +4024,8 @@
 		B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVOpera" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C7621620783162009950E4 /* Debug */,
 				B3C7621720783162009950E4 /* Release */,
-				B324C5012191A2A2009F4EDC /* Archive */,
+				B3C322B72BE33015002D1563 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4257,14 +4033,67 @@
 		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVOpera" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C7621920783162009950E4 /* Debug */,
-				B3C7621A20783162009950E4 /* Release */,
-				B324C5022191A2A2009F4EDC /* Archive */,
+				B3D0679E2BC4EDEF00A7327F /* Release */,
+				B3C322B82BE33015002D1563 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98AB2C6EEF2900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E992F2C6EF32600C1431E /* XCLocalSwiftPackageReference "../../PVObjCUtils" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVObjCUtils;
+		};
+		B30E99DE2C6F049700C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B3F8DFEA2CB36BF800017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3F8DFF22CB36D6A00017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B3F8DFF52CB36DD600017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E98AC2C6EEF2900C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E99302C6EF32600C1431E /* PVObjCUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVObjCUtils;
+		};
+		B30E99DF2C6F049700C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B3F8DFEB2CB36BF800017D1B /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3F8DFF32CB36D6A00017D1B /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B3F8DFF62CB36DD600017D1B /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

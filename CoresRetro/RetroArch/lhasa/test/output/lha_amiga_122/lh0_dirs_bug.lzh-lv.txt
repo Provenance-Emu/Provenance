@@ -1,0 +1,14 @@
+ PERMSSN    UID  GID      SIZE  RATIO     STAMP     LV
+---------- ----------- ------- ------ ------------ ---
+MainDir/00_File.txt
+[Amiga]                      6 100.0% Jan 11 20:59 [1]
+MainDir/01_Dir/File01.txt
+[Amiga]                      6 100.0% Jan 11 20:59 [1]
+MainDir/02_EmptyDir/
+[Amiga]                      0 ****** Jan 11 20:58 [1]
+MainDir/03_Dir/File01.txt
+[Amiga]                      6 100.0% Jan 11 20:59 [1]
+MainDir/04_File.txt
+[Amiga]                      6 100.0% Jan 11 20:59 [1]
+---------- ----------- ------- ------ ------------ ---
+ Total         5 files      24 100.0% Jan  1  2000

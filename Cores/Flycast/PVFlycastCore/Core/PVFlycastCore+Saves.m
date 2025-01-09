@@ -5,11 +5,12 @@
 //  Created by Joseph Mattiello on 11/1/18.
 //  Copyright © 2018 Provenance. All rights reserved.
 //
+#ifndef LIBRETRO
 
 #import "PVFlycastCore+Saves.h"
 #import "PVFlycastCore.h"
 
-@implementation PVFlycastCore (Saves)
+@implementation PVFlycastCoreBridge (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {
@@ -35,3 +36,4 @@
 }
 
 @end
+#endif

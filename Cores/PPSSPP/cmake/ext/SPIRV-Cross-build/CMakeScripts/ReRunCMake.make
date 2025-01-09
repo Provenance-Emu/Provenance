@@ -5,7 +5,17 @@ empty:=
 space:= $(empty) $(empty)
 spaceplus:= $(empty)\ $(empty)
 
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../cmake/CMakeFiles/cmake.verify_globs))
 
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
-	/opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -H/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake
+.NOTPARALLEL:
+
+.PHONY: all VERIFY_GLOBS
+
+all: VERIFY_GLOBS ../cmake/CMakeFiles/cmake.check_cache
+
+VERIFY_GLOBS:
+	/usr/local/Cellar/cmake/3.26.4/bin/cmake -P ../cmake/CMakeFiles/VerifyGlobs.cmake
+
+../cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
+	/usr/local/Cellar/cmake/3.26.4/bin/cmake -H../libretro_ppsspp -B../cmake

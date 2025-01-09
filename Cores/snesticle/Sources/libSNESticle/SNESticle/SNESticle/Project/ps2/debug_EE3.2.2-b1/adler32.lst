@@ -1,0 +1,195 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/zlib/adler32.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.globl __umoddi3
+   5              	.text
+   6              	.align 2
+   7              	.p2align 3,,7
+   8              	.globl adler32
+   9              	.ent adler32
+  10              	adler32:
+  11              	.frame $sp,80,$31
+  12              	.mask 0x800f0000,-16
+  13              	.fmask 0x00000000,0
+  14 0000 B0FFBD27 	subu $sp,$sp,80
+  15 0004 3A140400 	dsrl $2,$4,16
+  16 0008 3000B3FF 	sd $19,48($sp)
+  17 000c 2D98C000 	move $19,$6
+  18 0010 2000B2FF 	sd $18,32($sp)
+  19 0014 2D90A000 	move $18,$5
+  20 0018 1000B1FF 	sd $17,16($sp)
+  21 001c FFFF5130 	andi $17,$2,0xffff
+  22 0020 0000B0FF 	sd $16,0($sp)
+  23 0024 01000224 	dli $2,0x1
+  24 0028 4000BFFF 	sd $31,64($sp)
+  25              	.set noreorder
+  26              	.set nomacro
+  27 002c 5300A010 	beq $5,$0,$L1
+  28 0030 FFFF9030 	andi $16,$4,0xffff
+  29              	.set macro
+  30              	.set reorder
+  31              	
+  32              	.set noreorder
+  33              	.set nomacro
+  34 0034 5000C010 	beq $6,$0,$L21
+  35 0038 38141100 	dsll $2,$17,16
+  36              	.set macro
+  37              	.set reorder
+  38              	
+  39 003c 00000000 	.p2align 3
+  40              	$L16:
+  41 0040 B115622E 	sltu $2,$19,5553
+  42 0044 B0150C24 	li $12,5552
+  43 0048 0B606202 	movn $12,$19,$2
+  44 004c 10008329 	slt $3,$12,16
+  45              	.set noreorder
+  46              	.set nomacro
+  47 0050 35006014 	bne $3,$0,$L20
+  48 0054 23986C02 	subu $19,$19,$12
+  49              	.set macro
+  50              	.set reorder
+  51              	
+  52              	.p2align 3
+  53              	$L10:
+  54 0058 00004292 	lbu $2,0($18)
+  55 005c F0FF8C25 	addu $12,$12,-16
+  56 0060 01004392 	lbu $3,1($18)
+  57 0064 10008B29 	slt $11,$12,16
+GAS LISTING  			page 2
+
+
+  58 0068 2D800202 	daddu $16,$16,$2
+  59 006c 02004492 	lbu $4,2($18)
+  60 0070 03004292 	lbu $2,3($18)
+  61 0074 2D883002 	daddu $17,$17,$16
+  62 0078 2D800302 	daddu $16,$16,$3
+  63 007c 04004592 	lbu $5,4($18)
+  64 0080 2D883002 	daddu $17,$17,$16
+  65 0084 05004392 	lbu $3,5($18)
+  66 0088 2D800402 	daddu $16,$16,$4
+  67 008c 06004692 	lbu $6,6($18)
+  68 0090 2D883002 	daddu $17,$17,$16
+  69 0094 07004492 	lbu $4,7($18)
+  70 0098 2D800202 	daddu $16,$16,$2
+  71 009c 08004792 	lbu $7,8($18)
+  72 00a0 2D883002 	daddu $17,$17,$16
+  73 00a4 09004292 	lbu $2,9($18)
+  74 00a8 2D800502 	daddu $16,$16,$5
+  75 00ac 0A004892 	lbu $8,10($18)
+  76 00b0 2D883002 	daddu $17,$17,$16
+  77 00b4 0B004592 	lbu $5,11($18)
+  78 00b8 2D800302 	daddu $16,$16,$3
+  79 00bc 0C004992 	lbu $9,12($18)
+  80 00c0 2D883002 	daddu $17,$17,$16
+  81 00c4 0D004392 	lbu $3,13($18)
+  82 00c8 2D800602 	daddu $16,$16,$6
+  83 00cc 0E004A92 	lbu $10,14($18)
+  84 00d0 2D883002 	daddu $17,$17,$16
+  85 00d4 0F004692 	lbu $6,15($18)
+  86 00d8 2D800402 	daddu $16,$16,$4
+  87 00dc 10005226 	addu $18,$18,16
+  88 00e0 2D883002 	daddu $17,$17,$16
+  89 00e4 2D800702 	daddu $16,$16,$7
+  90 00e8 2D883002 	daddu $17,$17,$16
+  91 00ec 2D800202 	daddu $16,$16,$2
+  92 00f0 2D883002 	daddu $17,$17,$16
+  93 00f4 2D800802 	daddu $16,$16,$8
+  94 00f8 2D883002 	daddu $17,$17,$16
+  95 00fc 2D800502 	daddu $16,$16,$5
+  96 0100 2D883002 	daddu $17,$17,$16
+  97 0104 2D800902 	daddu $16,$16,$9
+  98 0108 2D883002 	daddu $17,$17,$16
+  99 010c 2D800302 	daddu $16,$16,$3
+ 100 0110 2D883002 	daddu $17,$17,$16
+ 101 0114 2D800A02 	daddu $16,$16,$10
+ 102 0118 2D883002 	daddu $17,$17,$16
+ 103 011c 2D800602 	daddu $16,$16,$6
+ 104              	.set noreorder
+ 105              	.set nomacro
+ 106 0120 CDFF6011 	beq $11,$0,$L10
+ 107 0124 2D883002 	daddu $17,$17,$16
+ 108              	.set macro
+ 109              	.set reorder
+ 110              	
+ 111              	$L20:
+ 112              	.set noreorder
+ 113              	.set nomacro
+ 114 0128 0A008011 	beq $12,$0,$L22
+GAS LISTING  			page 3
+
+
+ 115 012c 2D200002 	move $4,$16
+ 116              	.set macro
+ 117              	.set reorder
+ 118              	
+ 119              	.p2align 3
+ 120              	$L12:
+ 121 0130 00004292 	lbu $2,0($18)
+ 122 0134 FFFF8C25 	addu $12,$12,-1
+ 123 0138 01005226 	addu $18,$18,1
+ 124 013c 2D800202 	daddu $16,$16,$2
+ 125              	.set noreorder
+ 126 0140 00000000 	nop
+ 127              	.set reorder
+ 128              	.set noreorder
+ 129 0144 00000000 	nop
+ 130              	.set reorder
+ 131              	.set noreorder
+ 132              	.set nomacro
+ 133 0148 F9FF8015 	bne $12,$0,$L12
+ 134 014c 2D883002 	daddu $17,$17,$16
+ 135              	.set macro
+ 136              	.set reorder
+ 137              	
+ 138 0150 2D200002 	move $4,$16
+ 139              	$L22:
+ 140              	.set noreorder
+ 141              	.set nomacro
+ 142 0154 0000000C 	jal __umoddi3
+ 143 0158 F1FF0534 	dli $5,0xfff1
+ 144              	.set macro
+ 145              	.set reorder
+ 146              	
+ 147 015c F1FF0534 	dli $5,0xfff1
+ 148 0160 2D202002 	move $4,$17
+ 149              	.set noreorder
+ 150              	.set nomacro
+ 151 0164 0000000C 	jal __umoddi3
+ 152 0168 2D804000 	move $16,$2
+ 153              	.set macro
+ 154              	.set reorder
+ 155              	
+ 156              	.set noreorder
+ 157              	.set nomacro
+ 158 016c B4FF6016 	bne $19,$0,$L16
+ 159 0170 2D884000 	move $17,$2
+ 160              	.set macro
+ 161              	.set reorder
+ 162              	
+ 163 0174 38141100 	dsll $2,$17,16
+ 164              	$L21:
+ 165 0178 25105000 	or $2,$2,$16
+ 166              	$L1:
+ 167 017c 4000BFDF 	ld $31,64($sp)
+ 168 0180 3000B3DF 	ld $19,48($sp)
+ 169 0184 2000B2DF 	ld $18,32($sp)
+ 170 0188 1000B1DF 	ld $17,16($sp)
+ 171 018c 0000B0DF 	ld $16,0($sp)
+GAS LISTING  			page 4
+
+
+ 172              	
+ 173              	.set noreorder
+ 174              	.set nomacro
+ 175 0190 0800E003 	j $31
+ 176 0194 5000BD27 	addu $sp,$sp,80
+ 177              	.set macro
+ 178              	.set reorder
+ 179              	
+ 180              	.end adler32
+ 181              	$Lfe1:
+ 182              	.size adler32,$Lfe1-adler32
+ 183              	.ident "GCC: (GNU) 3.2.2"

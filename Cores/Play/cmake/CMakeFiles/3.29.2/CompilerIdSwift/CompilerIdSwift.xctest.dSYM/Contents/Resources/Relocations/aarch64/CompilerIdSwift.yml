@@ -1,0 +1,8 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.xctest/CompilerIdSwift'
+relocations:
+  - { offsetInCU: 0x27, offset: 0x91, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x88 }
+  - { offsetInCU: 0x6A, offset: 0xD4, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x88 }
+  - { offsetInCU: 0xD8, offset: 0x142, size: 0x8, addend: 0x0, symName: ___swift_instantiateConcreteTypeFromMangledName, symObjAddr: 0x88, symBinAddr: 0x4088, symSize: 0x40 }
+...

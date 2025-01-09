@@ -1,0 +1,1077 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/proflog.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.rdata
+   5              	.align 3
+   6              	$LC0:
+   7 0000 0900     	.ascii "\t\000"
+   8              	.text
+   9              	.align 2
+  10              	.p2align 3,,7
+  11              	.ent _ProfLogTabify
+  12              	_ProfLogTabify:
+  13              	.frame $sp,48,$31
+  14              	.mask 0x80030000,-16
+  15              	.fmask 0x00000000,0
+  16 0000 D0FFBD27 	subu $sp,$sp,48
+  17 0004 0000B0FF 	sd $16,0($sp)
+  18 0008 2D808000 	move $16,$4
+  19 000c 2000BFFF 	sd $31,32($sp)
+  20              	.set noreorder
+  21              	.set nomacro
+  22 0010 07008018 	blez $4,$L7
+  23 0014 1000B1FF 	sd $17,16($sp)
+  24              	.set macro
+  25              	.set reorder
+  26              	
+  27 0018 0000113C 	lui $17,%hi($LC0)
+  28 001c FFFF1026 	addu $16,$16,-1
+  29              	$L8:
+  30              	.set noreorder
+  31              	.set nomacro
+  32 0020 0000000C 	jal printf
+  33 0024 00002426 	addiu $4,$17,%lo($LC0)
+  34              	.set macro
+  35              	.set reorder
+  36              	
+  37              	.set noreorder
+  38              	.set nomacro
+  39 0028 FDFF001E 	bgtz $16,$L8
+  40 002c FFFF1026 	addu $16,$16,-1
+  41              	.set macro
+  42              	.set reorder
+  43              	
+  44              	$L7:
+  45 0030 2000BFDF 	ld $31,32($sp)
+  46 0034 1000B1DF 	ld $17,16($sp)
+  47 0038 0000B0DF 	ld $16,0($sp)
+  48              	
+  49              	.set noreorder
+  50              	.set nomacro
+  51 003c 0800E003 	j $31
+  52 0040 3000BD27 	addu $sp,$sp,48
+  53              	.set macro
+  54              	.set reorder
+  55              	
+  56              	.end _ProfLogTabify
+  57              	$Lfe1:
+GAS LISTING  			page 2
+
+
+  58              	.size _ProfLogTabify,$Lfe1-_ProfLogTabify
+  59              	.align 2
+  60 0044 00000000 	.p2align 3,,7
+  61              	.ent _ProfLogEntryEqual
+  62              	_ProfLogEntryEqual:
+  63              	.frame $sp,16,$31
+  64              	.mask 0x80000000,-16
+  65              	.fmask 0x00000000,0
+  66 0048 F0FFBD27 	subu $sp,$sp,16
+  67 004c 0000BFFF 	sd $31,0($sp)
+  68 0050 0000848C 	lw $4,0($4)
+  69 0054 0000A58C 	lw $5,0($5)
+  70 0058 01008424 	addu $4,$4,1
+  71              	.set noreorder
+  72              	.set nomacro
+  73 005c 0000000C 	jal strcmp
+  74 0060 0100A524 	addu $5,$5,1
+  75              	.set macro
+  76              	.set reorder
+  77              	
+  78 0064 0000BFDF 	ld $31,0($sp)
+  79 0068 0100422C 	sltu $2,$2,1
+  80              	.set noreorder
+  81              	.set nomacro
+  82 006c 0800E003 	j $31
+  83 0070 1000BD27 	addu $sp,$sp,16
+  84              	.set macro
+  85              	.set reorder
+  86              	
+  87              	.end _ProfLogEntryEqual
+  88              	$Lfe2:
+  89              	.size _ProfLogEntryEqual,$Lfe2-_ProfLogEntryEqual
+  90              	.align 2
+  91 0074 00000000 	.p2align 3,,7
+  92              	.ent _ProfLogAddSection
+  93              	_ProfLogAddSection:
+  94              	.frame $sp,96,$31
+  95              	.mask 0x801f0000,-16
+  96              	.fmask 0x00000000,0
+  97 0078 A0FFBD27 	subu $sp,$sp,96
+  98 007c 0000033C 	lui $3,%hi(_ProfLog_nSections)
+  99 0080 4000B4FF 	sd $20,64($sp)
+ 100 0084 2DA08000 	move $20,$4
+ 101 0088 2000B2FF 	sd $18,32($sp)
+ 102 008c 2D900000 	move $18,$0
+ 103 0090 1000B1FF 	sd $17,16($sp)
+ 104 0094 5000BFFF 	sd $31,80($sp)
+ 105 0098 3000B3FF 	sd $19,48($sp)
+ 106 009c 0000B0FF 	sd $16,0($sp)
+ 107 00a0 0000628C 	lw $2,%lo(_ProfLog_nSections)($3)
+ 108              	
+ 109              	.set noreorder
+ 110              	.set nomacro
+ 111 00a4 0D004018 	blez $2,$L12
+ 112 00a8 2D880000 	move $17,$0
+ 113              	.set macro
+ 114              	.set reorder
+GAS LISTING  			page 3
+
+
+ 115              	
+ 116 00ac 0000023C 	lui $2,%hi(_ProfLog_Section)
+ 117 00b0 2D986000 	move $19,$3
+ 118 00b4 08005024 	addiu $16,$2,%lo(_ProfLog_Section)
+ 119              	.p2align 3
+ 120              	$L16:
+ 121 00b8 0000058E 	lw $5,0($16)
+ 122 00bc 2D208002 	move $4,$20
+ 123              	.set noreorder
+ 124              	.set nomacro
+ 125 00c0 0000000C 	jal strcmp
+ 126 00c4 01003126 	addu $17,$17,1
+ 127              	.set macro
+ 128              	.set reorder
+ 129              	
+ 130              	.set noreorder
+ 131              	.set nomacro
+ 132 00c8 1F004010 	beq $2,$0,$L19
+ 133 00cc 0000628E 	lw $2,%lo(_ProfLog_nSections)($19)
+ 134              	.set macro
+ 135              	.set reorder
+ 136              	
+ 137              	
+ 138 00d0 2A102202 	slt $2,$17,$2
+ 139              	.set noreorder
+ 140              	.set nomacro
+ 141 00d4 F8FF4014 	bne $2,$0,$L16
+ 142 00d8 18001026 	addu $16,$16,24
+ 143              	.set macro
+ 144              	.set reorder
+ 145              	
+ 146              	$L12:
+ 147              	.set noreorder
+ 148              	.set nomacro
+ 149 00dc 0A004012 	beq $18,$0,$L20
+ 150 00e0 0000063C 	lui $6,%hi(_ProfLog_nSections)
+ 151              	.set macro
+ 152              	.set reorder
+ 153              	
+ 154              	$L17:
+ 155 00e4 2D104002 	move $2,$18
+ 156 00e8 5000BFDF 	ld $31,80($sp)
+ 157 00ec 4000B4DF 	ld $20,64($sp)
+ 158 00f0 3000B3DF 	ld $19,48($sp)
+ 159 00f4 2000B2DF 	ld $18,32($sp)
+ 160 00f8 1000B1DF 	ld $17,16($sp)
+ 161 00fc 0000B0DF 	ld $16,0($sp)
+ 162              	
+ 163              	.set noreorder
+ 164              	.set nomacro
+ 165 0100 0800E003 	j $31
+ 166 0104 6000BD27 	addu $sp,$sp,96
+ 167              	.set macro
+ 168              	.set reorder
+ 169              	
+ 170              	$L20:
+ 171 0108 0000C58C 	lw $5,%lo(_ProfLog_nSections)($6)
+GAS LISTING  			page 4
+
+
+ 172              	
+ 173 010c 4000A228 	slt $2,$5,64
+ 174              	.set noreorder
+ 175              	.set nomacro
+ 176 0110 F4FF4010 	beq $2,$0,$L17
+ 177 0114 18000324 	li $3,24
+ 178              	.set macro
+ 179              	.set reorder
+ 180              	
+ 181 0118 0000023C 	lui $2,%hi(_ProfLog_Section)
+ 182 011c 1838A300 	mult $7,$5,$3
+ 183 0120 08004224 	addiu $2,$2,%lo(_ProfLog_Section)
+ 184 0124 0100A424 	addu $4,$5,1
+ 185 0128 0000C4AC 	sw $4,%lo(_ProfLog_nSections)($6)
+ 186 012c 2190E200 	addu $18,$7,$2
+ 187 0130 000054AE 	sw $20,0($18)
+ 188 0134 040040AE 	sw $0,4($18)
+ 189 0138 080040AE 	sw $0,8($18)
+ 190 013c 0C0040AE 	sw $0,12($18)
+ 191              	.set noreorder
+ 192              	.set nomacro
+ 193 0140 E8FF0010 	b $L17
+ 194 0144 100040AE 	sw $0,16($18)
+ 195              	.set macro
+ 196              	.set reorder
+ 197              	
+ 198              	$L19:
+ 199              	.set noreorder
+ 200              	.set nomacro
+ 201 0148 E4FF0010 	b $L12
+ 202 014c 2D900002 	move $18,$16
+ 203              	.set macro
+ 204              	.set reorder
+ 205              	
+ 206              	.end _ProfLogAddSection
+ 207              	$Lfe3:
+ 208              	.size _ProfLogAddSection,$Lfe3-_ProfLogAddSection
+ 209              	.rdata
+ 210 0002 00000000 	.align 3
+ 210      0000
+ 211              	$LC1:
+ 212 0008 252D3136 	.ascii "%-16s %7d %d %d %d\n\000"
+ 212      73202537 
+ 212      64202564 
+ 212      20256420 
+ 212      25640A00 
+ 213              	.text
+ 214              	.align 2
+ 215              	.p2align 3,,7
+ 216              	.ent _ProfLogSection
+ 217              	_ProfLogSection:
+ 218              	.frame $sp,96,$31
+ 219              	.mask 0x800f0000,-16
+ 220              	.fmask 0x00000000,0
+ 221 0150 A0FFBD27 	subu $sp,$sp,96
+ 222 0154 2D488000 	move $9,$4
+ 223 0158 4000B3FF 	sd $19,64($sp)
+GAS LISTING  			page 5
+
+
+ 224 015c 2D98C000 	move $19,$6
+ 225 0160 3000B2FF 	sd $18,48($sp)
+ 226 0164 2D206002 	move $4,$19
+ 227 0168 2000B1FF 	sd $17,32($sp)
+ 228 016c FF003231 	andi $18,$9,0x00ff
+ 229 0170 1000B0FF 	sd $16,16($sp)
+ 230 0174 2D880001 	move $17,$8
+ 231 0178 5000BFFF 	sd $31,80($sp)
+ 232 017c 2D80A000 	move $16,$5
+ 233 0180 0400068D 	lw $6,4($8)
+ 234 0184 0C00EA8C 	lw $10,12($7)
+ 235 0188 0400E88C 	lw $8,4($7)
+ 236 018c 0800238E 	lw $3,8($17)
+ 237 0190 0800E58C 	lw $5,8($7)
+ 238 0194 2330C800 	subu $6,$6,$8
+ 239 0198 0C00228E 	lw $2,12($17)
+ 240 019c 23186500 	subu $3,$3,$5
+ 241 01a0 0000A6AF 	sw $6,0($sp)
+ 242 01a4 23104A00 	subu $2,$2,$10
+ 243 01a8 0400A3AF 	sw $3,4($sp)
+ 244              	.set noreorder
+ 245              	.set nomacro
+ 246 01ac 1E00000C 	jal _ProfLogAddSection
+ 247 01b0 0800A2AF 	sw $2,8($sp)
+ 248              	.set macro
+ 249              	.set reorder
+ 250              	
+ 251 01b4 2D404000 	move $8,$2
+ 252              	.set noreorder
+ 253              	.set nomacro
+ 254 01b8 10004010 	beq $2,$0,$L22
+ 255 01bc 2D200002 	move $4,$16
+ 256              	.set macro
+ 257              	.set reorder
+ 258              	
+ 259 01c0 0400438C 	lw $3,4($2)
+ 260 01c4 0800458C 	lw $5,8($2)
+ 261 01c8 01006324 	addu $3,$3,1
+ 262 01cc 0C00468C 	lw $6,12($2)
+ 263 01d0 040043AC 	sw $3,4($2)
+ 264 01d4 1000478C 	lw $7,16($2)
+ 265 01d8 0000A28F 	lw $2,0($sp)
+ 266              	
+ 267 01dc 2128A200 	addu $5,$5,$2
+ 268 01e0 080005AD 	sw $5,8($8)
+ 269 01e4 0400A28F 	lw $2,4($sp)
+ 270              	
+ 271 01e8 2130C200 	addu $6,$6,$2
+ 272 01ec 0C0006AD 	sw $6,12($8)
+ 273 01f0 0800A28F 	lw $2,8($sp)
+ 274              	
+ 275 01f4 2138E200 	addu $7,$7,$2
+ 276 01f8 100007AD 	sw $7,16($8)
+ 277              	$L22:
+ 278 01fc 08004016 	bne $18,$0,$L24
+ 278      00000000 
+ 279 0204 5000BFDF 	ld $31,80($sp)
+GAS LISTING  			page 6
+
+
+ 280              	$L25:
+ 281 0208 4000B3DF 	ld $19,64($sp)
+ 282 020c 3000B2DF 	ld $18,48($sp)
+ 283 0210 2000B1DF 	ld $17,32($sp)
+ 284 0214 1000B0DF 	ld $16,16($sp)
+ 285              	
+ 286              	.set noreorder
+ 287              	.set nomacro
+ 288 0218 0800E003 	j $31
+ 289 021c 6000BD27 	addu $sp,$sp,96
+ 290              	.set macro
+ 291              	.set reorder
+ 292              	
+ 293              	.p2align 3
+ 294              	$L24:
+ 295 0220 0000000C 	jal _ProfLogTabify
+ 295      00000000 
+ 296 0228 0000A88F 	lw $8,0($sp)
+ 297 022c 0000043C 	lui $4,%hi($LC1)
+ 298 0230 1000298E 	lw $9,16($17)
+ 299 0234 0400A68F 	lw $6,4($sp)
+ 300 0238 2D286002 	move $5,$19
+ 301 023c 0800A78F 	lw $7,8($sp)
+ 302              	.set noreorder
+ 303              	.set nomacro
+ 304 0240 0000000C 	jal printf
+ 305 0244 08008424 	addiu $4,$4,%lo($LC1)
+ 306              	.set macro
+ 307              	.set reorder
+ 308              	
+ 309              	.set noreorder
+ 310              	.set nomacro
+ 311 0248 EFFF0010 	b $L25
+ 312 024c 5000BFDF 	ld $31,80($sp)
+ 313              	.set macro
+ 314              	.set reorder
+ 315              	
+ 316              	.end _ProfLogSection
+ 317              	$Lfe4:
+ 318              	.size _ProfLogSection,$Lfe4-_ProfLogSection
+ 319              	.rdata
+ 320 001c 00000000 	.align 3
+ 321              	$LC2:
+ 322 0020 0A00     	.ascii "\n\000"
+ 323 0022 00000000 	.align 3
+ 323      0000
+ 324              	$LC3:
+ 325 0028 53656374 	.ascii "Section summary: \n\000"
+ 325      696F6E20 
+ 325      73756D6D 
+ 325      6172793A 
+ 325      200A00
+ 326 003b 00000000 	.align 3
+ 326      00
+ 327              	$LC4:
+ 328 0040 252D3234 	.ascii "%-24s %4d %7d %7d %7d %7d %7d %7d\n\000"
+ 328      73202534 
+GAS LISTING  			page 7
+
+
+ 328      64202537 
+ 328      64202537 
+ 328      64202537 
+ 329              	.text
+ 330              	.align 2
+ 331              	.p2align 3,,7
+ 332              	.ent _ProfLogPrintSummary
+ 333              	_ProfLogPrintSummary:
+ 334              	.frame $sp,80,$31
+ 335              	.mask 0x80070000,-16
+ 336              	.fmask 0x00000000,0
+ 337 0250 B0FFBD27 	subu $sp,$sp,80
+ 338 0254 1000B0FF 	sd $16,16($sp)
+ 339 0258 2D808000 	move $16,$4
+ 340 025c 0000043C 	lui $4,%hi($LC2)
+ 341 0260 2000B1FF 	sd $17,32($sp)
+ 342 0264 20008424 	addiu $4,$4,%lo($LC2)
+ 343 0268 4000BFFF 	sd $31,64($sp)
+ 344 026c 2D88A000 	move $17,$5
+ 345              	.set noreorder
+ 346              	.set nomacro
+ 347 0270 0000000C 	jal printf
+ 348 0274 3000B2FF 	sd $18,48($sp)
+ 349              	.set macro
+ 350              	.set reorder
+ 351              	
+ 352 0278 0000043C 	lui $4,%hi($LC3)
+ 353              	.set noreorder
+ 354              	.set nomacro
+ 355 027c 0000000C 	jal printf
+ 356 0280 28008424 	addiu $4,$4,%lo($LC3)
+ 357              	.set macro
+ 358              	.set reorder
+ 359              	
+ 360              	.set noreorder
+ 361              	.set nomacro
+ 362 0284 1800201A 	blez $17,$L34
+ 363 0288 0000123C 	lui $18,%hi($LC4)
+ 364              	.set macro
+ 365              	.set reorder
+ 366              	
+ 367 028c 00000000 	.p2align 3
+ 368              	$L32:
+ 369 0290 0400038E 	lw $3,4($16)
+ 370 0294 FFFF3126 	addu $17,$17,-1
+ 371 0298 40004426 	addiu $4,$18,%lo($LC4)
+ 372              	.set noreorder
+ 373              	.set nomacro
+ 374 029c 10006018 	blez $3,$L31
+ 375 02a0 2D306000 	move $6,$3
+ 376              	.set macro
+ 377              	.set reorder
+ 378              	
+ 379              	.set noreorder
+ 380 02a4 01006050 	beql $3,$0,1f
+ 381 02a8 CD010000 	break 7
+ 382              	1:
+GAS LISTING  			page 8
+
+
+ 383              	.set reorder
+ 384 02ac 0C00078E 	lw $7,12($16)
+ 385 02b0 1000088E 	lw $8,16($16)
+ 386 02b4 1A00E300 	div $0,$7,$3
+ 387 02b8 0800028E 	lw $2,8($16)
+ 388 02bc 0000058E 	lw $5,0($16)
+ 389 02c0 2D484000 	move $9,$2
+ 390 02c4 12500000 	mflo $10
+ 391              	
+ 392              	
+ 393 02c8 1A000301 	div $0,$8,$3
+ 394 02cc 12580000 	mflo $11
+ 395              	
+ 396              	
+ 397 02d0 1A004300 	div $0,$2,$3
+ 398 02d4 12100000 	mflo $2
+ 399              	
+ 400              	
+ 401              	.set noreorder
+ 402              	.set nomacro
+ 403 02d8 0000000C 	jal printf
+ 404 02dc 0000A2AF 	sw $2,0($sp)
+ 405              	.set macro
+ 406              	.set reorder
+ 407              	
+ 408              	$L31:
+ 409              	.set noreorder
+ 410              	.set nomacro
+ 411 02e0 EBFF2016 	bne $17,$0,$L32
+ 412 02e4 18001026 	addu $16,$16,24
+ 413              	.set macro
+ 414              	.set reorder
+ 415              	
+ 416              	$L34:
+ 417 02e8 4000BFDF 	ld $31,64($sp)
+ 418 02ec 3000B2DF 	ld $18,48($sp)
+ 419 02f0 2000B1DF 	ld $17,32($sp)
+ 420 02f4 1000B0DF 	ld $16,16($sp)
+ 421              	
+ 422              	.set noreorder
+ 423              	.set nomacro
+ 424 02f8 0800E003 	j $31
+ 425 02fc 5000BD27 	addu $sp,$sp,80
+ 426              	.set macro
+ 427              	.set reorder
+ 428              	
+ 429              	.end _ProfLogPrintSummary
+ 430              	$Lfe5:
+ 431              	.size _ProfLogPrintSummary,$Lfe5-_ProfLogPrintSummary
+ 432              	.align 2
+ 433              	.p2align 3,,7
+ 434              	.globl ProfLogNew
+ 435              	.ent ProfLogNew
+ 436              	ProfLogNew:
+ 437              	.frame $sp,32,$31
+ 438              	.mask 0x80010000,-16
+ 439              	.fmask 0x00000000,0
+GAS LISTING  			page 9
+
+
+ 440 0300 14000224 	li $2,20
+ 441 0304 E0FFBD27 	subu $sp,$sp,32
+ 442 0308 1810A200 	mult $2,$5,$2
+ 443 030c 000085AC 	sw $5,0($4)
+ 444 0310 040080AC 	sw $0,4($4)
+ 445 0314 0000B0FF 	sd $16,0($sp)
+ 446 0318 2D808000 	move $16,$4
+ 447 031c 1000BFFF 	sd $31,16($sp)
+ 448 0320 3C100200 	dsll $2,$2,32
+ 449 0324 3E100200 	dsrl $2,$2,32
+ 450              	.set noreorder
+ 451              	.set nomacro
+ 452 0328 0000000C 	jal malloc
+ 453 032c 2D204000 	move $4,$2
+ 454              	.set macro
+ 455              	.set reorder
+ 456              	
+ 457 0330 1000BFDF 	ld $31,16($sp)
+ 458 0334 080002AE 	sw $2,8($16)
+ 459 0338 0000B0DF 	ld $16,0($sp)
+ 460              	
+ 461              	.set noreorder
+ 462              	.set nomacro
+ 463 033c 0800E003 	j $31
+ 464 0340 2000BD27 	addu $sp,$sp,32
+ 465              	.set macro
+ 466              	.set reorder
+ 467              	
+ 468              	.end ProfLogNew
+ 469              	$Lfe6:
+ 470              	.size ProfLogNew,$Lfe6-ProfLogNew
+ 471              	.align 2
+ 472 0344 00000000 	.p2align 3,,7
+ 473              	.globl ProfLogDelete
+ 474              	.ent ProfLogDelete
+ 475              	ProfLogDelete:
+ 476              	.frame $sp,32,$31
+ 477              	.mask 0x80010000,-16
+ 478              	.fmask 0x00000000,0
+ 479 0348 E0FFBD27 	subu $sp,$sp,32
+ 480 034c 0000B0FF 	sd $16,0($sp)
+ 481 0350 2D808000 	move $16,$4
+ 482 0354 1000BFFF 	sd $31,16($sp)
+ 483 0358 0800828C 	lw $2,8($4)
+ 484              	
+ 485              	.set noreorder
+ 486              	.set nomacro
+ 487 035c 06004014 	bne $2,$0,$L38
+ 488 0360 2D204000 	move $4,$2
+ 489              	.set macro
+ 490              	.set reorder
+ 491              	
+ 492              	$L36:
+ 493 0364 1000BFDF 	ld $31,16($sp)
+ 494 0368 0000B0DF 	ld $16,0($sp)
+ 495              	
+ 496              	.set noreorder
+GAS LISTING  			page 10
+
+
+ 497              	.set nomacro
+ 498 036c 0800E003 	j $31
+ 499 0370 2000BD27 	addu $sp,$sp,32
+ 500              	.set macro
+ 501              	.set reorder
+ 502              	
+ 503 0374 00000000 	.p2align 3
+ 504              	$L38:
+ 505 0378 0000000C 	jal free
+ 505      00000000 
+ 506 0380 000000AE 	sw $0,0($16)
+ 507 0384 080000AE 	sw $0,8($16)
+ 508              	.set noreorder
+ 509              	.set nomacro
+ 510 0388 F6FF0010 	b $L36
+ 511 038c 040000AE 	sw $0,4($16)
+ 512              	.set macro
+ 513              	.set reorder
+ 514              	
+ 515              	.end ProfLogDelete
+ 516              	$Lfe7:
+ 517              	.size ProfLogDelete,$Lfe7-ProfLogDelete
+ 518              	.align 2
+ 519              	.p2align 3,,7
+ 520              	.globl ProfLogBegin
+ 521              	.ent ProfLogBegin
+ 522              	ProfLogBegin:
+ 523              	.frame $sp,0,$31
+ 524              	.mask 0x00000000,0
+ 525              	.fmask 0x00000000,0
+ 526              	.set noreorder
+ 527              	.set nomacro
+ 528 0390 0800E003 	j $31
+ 529 0394 0800828C 	lw $2,8($4)
+ 530              	.set macro
+ 531              	.set reorder
+ 532              	
+ 533              	.end ProfLogBegin
+ 534              	$Lfe8:
+ 535              	.size ProfLogBegin,$Lfe8-ProfLogBegin
+ 536              	.rdata
+ 537 0063 00000000 	.align 3
+ 537      00
+ 538              	$LC5:
+ 539 0068 2E2E2F2E 	.ascii "../../../Gep/Source/common/proflog.c\000"
+ 539      2E2F2E2E 
+ 539      2F476570 
+ 539      2F536F75 
+ 539      7263652F 
+ 540 008d 000000   	.align 3
+ 541              	$LC6:
+ 542 0090 704C6F67 	.ascii "pLog->nEntries <= pLog->MaxEntries\000"
+ 542      2D3E6E45 
+ 542      6E747269 
+ 542      6573203C 
+ 542      3D20704C 
+ 543              	.text
+GAS LISTING  			page 11
+
+
+ 544              	.align 2
+ 545              	.p2align 3,,7
+ 546              	.globl ProfLogEnd
+ 547              	.ent ProfLogEnd
+ 548              	ProfLogEnd:
+ 549              	.frame $sp,16,$31
+ 550              	.mask 0x80000000,-16
+ 551              	.fmask 0x00000000,0
+ 552 0398 F0FFBD27 	subu $sp,$sp,16
+ 553 039c CCCC063C 	li $6,-859045888
+ 554 03a0 0000BFFF 	sd $31,0($sp)
+ 555 03a4 CDCCC634 	ori $6,$6,0xcccd
+ 556              	.set noreorder
+ 557              	.set nomacro
+ 558 03a8 0E00A010 	beq $5,$0,$L40
+ 559 03ac 2D388000 	move $7,$4
+ 560              	.set macro
+ 561              	.set reorder
+ 562              	
+ 563 03b0 0800828C 	lw $2,8($4)
+ 564 03b4 0000838C 	lw $3,0($4)
+ 565 03b8 0000043C 	lui $4,%hi($LC5)
+ 566 03bc 2310A200 	subu $2,$5,$2
+ 567 03c0 68008424 	addiu $4,$4,%lo($LC5)
+ 568 03c4 83100200 	sra $2,$2,2
+ 569 03c8 A6000524 	li $5,166
+ 570 03cc 18104600 	mult $2,$2,$6
+ 571 03d0 0000063C 	lui $6,%hi($LC6)
+ 572 03d4 9000C624 	addiu $6,$6,%lo($LC6)
+ 573 03d8 2A186200 	slt $3,$3,$2
+ 574              	.set noreorder
+ 575              	.set nomacro
+ 576 03dc 04006014 	bne $3,$0,$L44
+ 577 03e0 0400E2AC 	sw $2,4($7)
+ 578              	.set macro
+ 579              	.set reorder
+ 580              	
+ 581              	$L40:
+ 582 03e4 0000BFDF 	ld $31,0($sp)
+ 583              	$L45:
+ 584              	.set noreorder
+ 585              	.set nomacro
+ 586 03e8 0800E003 	j $31
+ 587 03ec 1000BD27 	addu $sp,$sp,16
+ 588              	.set macro
+ 589              	.set reorder
+ 590              	
+ 591              	.p2align 3
+ 592              	$L44:
+ 593 03f0 0000000C 	jal __assert
+ 593      00000000 
+ 594              	.set noreorder
+ 595              	.set nomacro
+ 596 03f8 FBFF0010 	b $L45
+ 597 03fc 0000BFDF 	ld $31,0($sp)
+ 598              	.set macro
+ 599              	.set reorder
+GAS LISTING  			page 12
+
+
+ 600              	
+ 601              	.end ProfLogEnd
+ 602              	$Lfe9:
+ 603              	.size ProfLogEnd,$Lfe9-ProfLogEnd
+ 604              	.rdata
+ 605 00b3 00000000 	.align 3
+ 605      00
+ 606              	$LC7:
+ 607 00b8 3C756E6B 	.ascii "<unknown>\000"
+ 607      6E6F776E 
+ 607      3E00
+ 608 00c2 00000000 	.align 3
+ 608      0000
+ 609              	$LC13:
+ 610 00c8 4552524F 	.ascii "ERROR: Begin without matching end %s\n\000"
+ 610      523A2042 
+ 610      6567696E 
+ 610      20776974 
+ 610      686F7574 
+ 611 00ee 0000     	.align 3
+ 612              	$LC14:
+ 613 00f0 4552524F 	.ascii "ERROR: Stack not empty\n\000"
+ 613      523A2053 
+ 613      7461636B 
+ 613      206E6F74 
+ 613      20656D70 
+ 614              	.align 3
+ 615              	$LC12:
+ 616 0108 4552524F 	.ascii "ERROR: End without matching begin %s\n\000"
+ 616      523A2045 
+ 616      6E642077 
+ 616      6974686F 
+ 616      7574206D 
+ 617 012e 0000     	.align 3
+ 618              	$LC11:
+ 619 0130 4552524F 	.ascii "ERROR: Unbalanced enter/leave pair: %s %s\n\000"
+ 619      523A2055 
+ 619      6E62616C 
+ 619      616E6365 
+ 619      6420656E 
+ 620 015b 00000000 	.align 3
+ 620      00
+ 621              	$LC10:
+ 622 0160 4552524F 	.ascii "ERROR: Section stack underflow\n\000"
+ 622      523A2053 
+ 622      65637469 
+ 622      6F6E2073 
+ 622      7461636B 
+ 623              	.align 3
+ 624              	$LC9:
+ 625 0180 4552524F 	.ascii "ERROR: Section stack overflow\n\000"
+ 625      523A2053 
+ 625      65637469 
+ 625      6F6E2073 
+ 625      7461636B 
+ 626 019f 00       	.align 3
+ 627              	$LC8:
+GAS LISTING  			page 13
+
+
+ 628 01a0 25730A00 	.ascii "%s\n\000"
+ 629 01a4 00000000 	.text
+ 630              	.align 2
+ 631              	.p2align 3,,7
+ 632              	.globl ProfLogPrint
+ 633              	.ent ProfLogPrint
+ 634              	ProfLogPrint:
+ 635              	.frame $sp,240,$31
+ 636              	.mask 0xc0ff0000,-16
+ 637              	.fmask 0x00000000,0
+ 638 0400 10FFBD27 	subu $sp,$sp,240
+ 639 0404 0000023C 	lui $2,%hi(_ProfLog_nSections)
+ 640 0408 C000B7FF 	sd $23,192($sp)
+ 641 040c FF00C630 	andi $6,$6,0x00ff
+ 642 0410 A000B5FF 	sd $21,160($sp)
+ 643 0414 2DB88000 	move $23,$4
+ 644 0418 9000B4FF 	sd $20,144($sp)
+ 645 041c 2DA80000 	move $21,$0
+ 646 0420 8000B3FF 	sd $19,128($sp)
+ 647 0424 FF00B430 	andi $20,$5,0x00ff
+ 648 0428 7000B2FF 	sd $18,112($sp)
+ 649 042c 2D980000 	move $19,$0
+ 650 0430 6000B1FF 	sd $17,96($sp)
+ 651 0434 2D900000 	move $18,$0
+ 652 0438 E000BFFF 	sd $31,224($sp)
+ 653 043c 0000113C 	lui $17,%hi($LC7)
+ 654 0440 D000BEFF 	sd $fp,208($sp)
+ 655 0444 B8002426 	addiu $4,$17,%lo($LC7)
+ 656 0448 B000B6FF 	sd $22,176($sp)
+ 657 044c 5000B0FF 	sd $16,80($sp)
+ 658 0450 000040AC 	sw $0,%lo(_ProfLog_nSections)($2)
+ 659 0454 4000A6AF 	sw $6,64($sp)
+ 660              	.set noreorder
+ 661              	.set nomacro
+ 662 0458 1E00000C 	jal _ProfLogAddSection
+ 663 045c 0800F08E 	lw $16,8($23)
+ 664              	.set macro
+ 665              	.set reorder
+ 666              	
+ 667 0460 0400E28E 	lw $2,4($23)
+ 668              	
+ 669 0464 27004018 	blez $2,$L48
+ 669      00000000 
+ 670 046c 2DF02002 	move $fp,$17
+ 671 0470 2DB0A003 	move $22,$sp
+ 672 0474 00000000 	.p2align 3
+ 673              	$L62:
+ 674 0478 0000028E 	lw $2,0($16)
+ 675 047c 21000324 	li $3,33
+ 676 0480 00004480 	lb $4,0($2)
+ 677              	
+ 678 0484 56008310 	beq $4,$3,$L69
+ 678      00000000 
+ 679              	.set noreorder
+ 680              	.set nomacro
+ 681 048c 4D00401A 	blez $18,$L70
+ 682 0490 2D280002 	move $5,$16
+GAS LISTING  			page 14
+
+
+ 683              	.set macro
+ 684              	.set reorder
+ 685              	
+ 686 0494 FCFFD626 	addu $22,$22,-4
+ 687 0498 0000D18E 	lw $17,0($22)
+ 688 049c FFFF5226 	addu $18,$18,-1
+ 689              	.set noreorder
+ 690              	.set nomacro
+ 691 04a0 1200000C 	jal _ProfLogEntryEqual
+ 692 04a4 2D202002 	move $4,$17
+ 693              	.set macro
+ 694              	.set reorder
+ 695              	
+ 696              	.set noreorder
+ 697              	.set nomacro
+ 698 04a8 40004050 	beql $2,$0,$L71
+ 699 04ac 0000258E 	lw $5,0($17)
+ 700              	.set macro
+ 701              	.set reorder
+ 702              	
+ 703              	.set noreorder
+ 704              	.set nomacro
+ 705 04b0 3B003312 	beq $17,$19,$L72
+ 706 04b4 01004526 	addu $5,$18,1
+ 707              	.set macro
+ 708              	.set reorder
+ 709              	
+ 710 04b8 ECFF0726 	addu $7,$16,-20
+ 711 04bc 2D208002 	move $4,$20
+ 712 04c0 B800C627 	addiu $6,$fp,%lo($LC7)
+ 713              	.set noreorder
+ 714              	.set nomacro
+ 715 04c4 5400000C 	jal _ProfLogSection
+ 716 04c8 2D400002 	move $8,$16
+ 717              	.set macro
+ 718              	.set reorder
+ 719              	
+ 720              	.set noreorder
+ 721              	.set nomacro
+ 722 04cc 2E006016 	bne $19,$0,$L73
+ 723 04d0 2D382002 	move $7,$17
+ 724              	.set macro
+ 725              	.set reorder
+ 726              	
+ 727 04d4 0000068E 	lw $6,0($16)
+ 728              	$L67:
+ 729 04d8 2D208002 	move $4,$20
+ 730 04dc 2D284002 	move $5,$18
+ 731 04e0 0100C624 	addu $6,$6,1
+ 732              	.set noreorder
+ 733              	.set nomacro
+ 734 04e4 5400000C 	jal _ProfLogSection
+ 735 04e8 2D400002 	move $8,$16
+ 736              	.set macro
+ 737              	.set reorder
+ 738              	
+ 739 04ec 2D980000 	move $19,$0
+GAS LISTING  			page 15
+
+
+ 740              	$L56:
+ 741 04f0 0400E28E 	lw $2,4($23)
+ 742 04f4 0100B526 	addu $21,$21,1
+ 743 04f8 2A10A202 	slt $2,$21,$2
+ 744              	.set noreorder
+ 745              	.set nomacro
+ 746 04fc DEFF4014 	bne $2,$0,$L62
+ 747 0500 14001026 	addu $16,$16,20
+ 748              	.set macro
+ 749              	.set reorder
+ 750              	
+ 751              	$L48:
+ 752 0504 05006012 	beq $19,$0,$L63
+ 752      00000000 
+ 753 050c 0000043C 	lui $4,%hi($LC13)
+ 754 0510 0000658E 	lw $5,0($19)
+ 755              	.set noreorder
+ 756              	.set nomacro
+ 757 0514 0000000C 	jal printf
+ 758 0518 C8008424 	addiu $4,$4,%lo($LC13)
+ 759              	.set macro
+ 760              	.set reorder
+ 761              	
+ 762              	$L63:
+ 763              	.set noreorder
+ 764              	.set nomacro
+ 765 051c 16004056 	bnel $18,$0,$L74
+ 766 0520 0000043C 	lui $4,%hi($LC14)
+ 767              	.set macro
+ 768              	.set reorder
+ 769              	
+ 770 0524 4000A28F 	lw $2,64($sp)
+ 771              	$L79:
+ 772              	.set noreorder
+ 773              	.set nomacro
+ 774 0528 0D004014 	bne $2,$0,$L75
+ 775 052c 0000023C 	lui $2,%hi(_ProfLog_nSections)
+ 776              	.set macro
+ 777              	.set reorder
+ 778              	
+ 779 0530 E000BFDF 	ld $31,224($sp)
+ 780              	$L78:
+ 781 0534 D000BEDF 	ld $fp,208($sp)
+ 782 0538 C000B7DF 	ld $23,192($sp)
+ 783 053c B000B6DF 	ld $22,176($sp)
+ 784 0540 A000B5DF 	ld $21,160($sp)
+ 785 0544 9000B4DF 	ld $20,144($sp)
+ 786 0548 8000B3DF 	ld $19,128($sp)
+ 787 054c 7000B2DF 	ld $18,112($sp)
+ 788 0550 6000B1DF 	ld $17,96($sp)
+ 789 0554 5000B0DF 	ld $16,80($sp)
+ 790              	
+ 791              	.set noreorder
+ 792              	.set nomacro
+ 793 0558 0800E003 	j $31
+ 794 055c F000BD27 	addu $sp,$sp,240
+ 795              	.set macro
+GAS LISTING  			page 16
+
+
+ 796              	.set reorder
+ 797              	
+ 798              	$L75:
+ 799 0560 0000043C 	lui $4,%hi(_ProfLog_Section)
+ 800 0564 0000458C 	lw $5,%lo(_ProfLog_nSections)($2)
+ 801              	.set noreorder
+ 802              	.set nomacro
+ 803 0568 9400000C 	jal _ProfLogPrintSummary
+ 804 056c 08008424 	addiu $4,$4,%lo(_ProfLog_Section)
+ 805              	.set macro
+ 806              	.set reorder
+ 807              	
+ 808              	.set noreorder
+ 809              	.set nomacro
+ 810 0570 F0FF0010 	b $L78
+ 811 0574 E000BFDF 	ld $31,224($sp)
+ 812              	.set macro
+ 813              	.set reorder
+ 814              	
+ 815              	$L74:
+ 816              	
+ 817              	.set noreorder
+ 818              	.set nomacro
+ 819 0578 0000000C 	jal printf
+ 820 057c F0008424 	addiu $4,$4,%lo($LC14)
+ 821              	.set macro
+ 822              	.set reorder
+ 823              	
+ 824              	.set noreorder
+ 825              	.set nomacro
+ 826 0580 E9FF0010 	b $L79
+ 827 0584 4000A28F 	lw $2,64($sp)
+ 828              	.set macro
+ 829              	.set reorder
+ 830              	
+ 831              	$L73:
+ 832 0588 0000058E 	lw $5,0($16)
+ 833 058c 0000043C 	lui $4,%hi($LC12)
+ 834              	.set noreorder
+ 835              	.set nomacro
+ 836 0590 0000000C 	jal printf
+ 837 0594 08018424 	addiu $4,$4,%lo($LC12)
+ 838              	.set macro
+ 839              	.set reorder
+ 840              	
+ 841 0598 DAFF0010 	b $L48
+ 841      00000000 
+ 842              	.p2align 3
+ 843              	$L72:
+ 844 05a0 0000068E 	lw $6,0($16)
+ 845              	.set noreorder
+ 846              	.set nomacro
+ 847 05a4 CCFF0010 	b $L67
+ 848 05a8 2D386002 	move $7,$19
+ 849              	.set macro
+ 850              	.set reorder
+ 851              	
+GAS LISTING  			page 17
+
+
+ 852              	$L71:
+ 853 05ac 0000043C 	lui $4,%hi($LC11)
+ 854 05b0 0000068E 	lw $6,0($16)
+ 855              	.set noreorder
+ 856              	.set nomacro
+ 857 05b4 0000000C 	jal printf
+ 858 05b8 30018424 	addiu $4,$4,%lo($LC11)
+ 859              	.set macro
+ 860              	.set reorder
+ 861              	
+ 862 05bc D1FF0010 	b $L48
+ 862      00000000 
+ 863              	$L70:
+ 864 05c4 0000043C 	lui $4,%hi($LC10)
+ 865 05c8 60018424 	addiu $4,$4,%lo($LC10)
+ 866              	$L68:
+ 867 05cc 0000000C 	jal printf
+ 867      00000000 
+ 868 05d4 CBFF0010 	b $L48
+ 868      00000000 
+ 869 05dc 00000000 	.p2align 3
+ 870              	$L69:
+ 871 05e0 03006012 	beq $19,$0,$L52
+ 871      00000000 
+ 872 05e8 13008016 	bne $20,$0,$L76
+ 872      00000000 
+ 873              	$L52:
+ 874              	.set noreorder
+ 875              	.set nomacro
+ 876 05f0 0700A01A 	blez $21,$L54
+ 877 05f4 0000023C 	lui $2,%hi($LC7)
+ 878              	.set macro
+ 879              	.set reorder
+ 880              	
+ 881 05f8 ECFF0726 	addu $7,$16,-20
+ 882 05fc 2D208002 	move $4,$20
+ 883 0600 2D284002 	move $5,$18
+ 884 0604 B8004624 	addiu $6,$2,%lo($LC7)
+ 885              	.set noreorder
+ 886              	.set nomacro
+ 887 0608 5400000C 	jal _ProfLogSection
+ 888 060c 2D400002 	move $8,$16
+ 889              	.set macro
+ 890              	.set reorder
+ 891              	
+ 892              	$L54:
+ 893 0610 1000422A 	slt $2,$18,16
+ 894              	.set noreorder
+ 895              	.set nomacro
+ 896 0614 06004010 	beq $2,$0,$L77
+ 897 0618 0000043C 	lui $4,%hi($LC9)
+ 898              	.set macro
+ 899              	.set reorder
+ 900              	
+ 901 061c 0000D0AE 	sw $16,0($22)
+ 902 0620 01005226 	addu $18,$18,1
+ 903 0624 0400D626 	addu $22,$22,4
+GAS LISTING  			page 18
+
+
+ 904              	.set noreorder
+ 905              	.set nomacro
+ 906 0628 B1FF0010 	b $L56
+ 907 062c 2D980002 	move $19,$16
+ 908              	.set macro
+ 909              	.set reorder
+ 910              	
+ 911              	$L77:
+ 912              	.set noreorder
+ 913              	.set nomacro
+ 914 0630 E6FF0010 	b $L68
+ 915 0634 80018424 	addiu $4,$4,%lo($LC9)
+ 916              	.set macro
+ 917              	.set reorder
+ 918              	
+ 919              	.p2align 3
+ 920              	$L76:
+ 921              	.set noreorder
+ 922              	.set nomacro
+ 923 0638 0000000C 	jal _ProfLogTabify
+ 924 063c FFFF4426 	addu $4,$18,-1
+ 925              	.set macro
+ 926              	.set reorder
+ 927              	
+ 928 0640 0000658E 	lw $5,0($19)
+ 929 0644 0000023C 	lui $2,%hi($LC8)
+ 930 0648 A0014424 	addiu $4,$2,%lo($LC8)
+ 931              	.set noreorder
+ 932              	.set nomacro
+ 933 064c 0000000C 	jal printf
+ 934 0650 0100A524 	addu $5,$5,1
+ 935              	.set macro
+ 936              	.set reorder
+ 937              	
+ 938 0654 E6FF0010 	b $L52
+ 938      00000000 
+ 939              	.end ProfLogPrint
+ 940              	$Lfe10:
+ 941              	.size ProfLogPrint,$Lfe10-ProfLogPrint
+ 942              	.section .bss
+ 943              	_ProfLog_nSections:
+ 944              	.align 2
+ 945 0000 00000000 	.space 4
+ 946              	.previous
+ 947              	.section .bss
+ 948              	_ProfLog_Section:
+ 949 0004 00000000 	.align 3
+ 950 0008 00000000 	.space 1536
+ 950      00000000 
+ 950      00000000 
+ 950      00000000 
+ 950      00000000 
+ 951              	.previous
+ 952 065c 00000000 	.ident "GCC: (GNU) 3.2.2"

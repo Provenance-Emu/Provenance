@@ -1,0 +1,18 @@
+
+/* Class = "UIButton"; normalTitle = "Save"; ObjectID = "14h-CL-Ci1"; */
+"14h-CL-Ci1.normalTitle" = "保存";
+
+/* Class = "UILabel"; text = "Cheat Code (format: XXXXXXXX YYYYYYYY)"; ObjectID = "1GC-gQ-KwS"; */
+"1GC-gQ-KwS.text" = "作弊代码 (格式: XXXXXXXX YYYYYYYY)";
+
+/* Class = "UILabel"; text = "Name"; ObjectID = "3Mg-gr-fqk"; */
+"3Mg-gr-fqk.text" = "名称";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "M9s-rT-dPE"; */
+"M9s-rT-dPE.text" = "Label";
+
+/* Class = "UILabel"; text = "Enabled"; ObjectID = "QbW-LA-AaC"; */
+"QbW-LA-AaC.text" = "启用";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "k7a-sX-3Jb"; */
+"k7a-sX-3Jb.text" = "Label";

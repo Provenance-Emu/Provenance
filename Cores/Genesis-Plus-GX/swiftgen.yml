@@ -1,0 +1,13 @@
+input_dir: Sources/PVCoreGenesisPlus/Resources/
+output_dir: Sources/PVCoreGenesisPlus/
+# output_dir: ${DERIVED_SOURCES_DIR}
+
+plist:
+  inputs: Core.plist
+  outputs:
+    output: CorePlist-Generated.swift
+    templatePath: ../../Stencils/Plists/core-inline-swift6.stencil
+    params:
+        publicAccess: true
+        enumName: CorePlist
+        forceFileNameEnum: false

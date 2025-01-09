@@ -1,0 +1,12 @@
+//
+//  BuildFlags.xcconfig
+//  PVGB
+//
+//  Created by Joseph Mattiello on 02/19/22.
+//
+//
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
+OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules
+OTHER_CPLUSPLUS_FLAGS = $(inherited) $(OTHER_CFLAGS) -g -fmodules -fcxx-modules

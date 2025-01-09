@@ -9,8 +9,8 @@
 #import <PVPlay/PVPlayCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-@interface PVPlayCore (Video)
+PVCORE_DIRECT_MEMBERS
+@interface PVPlayCoreBridge (Video)
 
 - (void)videoInterrupt;
 

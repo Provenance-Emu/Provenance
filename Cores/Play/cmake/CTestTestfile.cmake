@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
-# Source directory: /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-
-# Build directory: /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake
+# Source directory: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-
+# Build directory: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
@@ -10,3 +10,5 @@ subdirs("tools/GsAreaTest")
 subdirs("tools/McServTest")
 subdirs("tools/SpuTest")
 subdirs("tools/VuTest")
+subdirs("deps/Framework/build_cmake/Tests")
+subdirs("tools/NamcoSys147NANDTools")

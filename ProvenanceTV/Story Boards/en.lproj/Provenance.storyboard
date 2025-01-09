@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="19529" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7Iz-AI-QKl">
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="23504" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7Iz-AI-QKl">
     <device id="appleTV" appearance="dark"/>
     <dependencies>
-        <deployment identifier="tvOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
@@ -13,7 +12,7 @@
         <!--Game More Info View Controller-->
         <scene sceneID="i5m-9e-CDL">
             <objects>
-                <viewController storyboardIdentifier="gameMoreInfoVC" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="rRL-5Z-sl7" customClass="PVGameMoreInfoViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="gameMoreInfoVC" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="rRL-5Z-sl7" customClass="PVGameMoreInfoViewController" customModule="PVUIBase" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Xfw-bG-EL0"/>
                         <viewControllerLayoutGuide type="bottom" id="q5j-gb-wzs"/>
@@ -49,7 +48,7 @@
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Super Mario World" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" enablesMarqueeWhenAncestorFocused="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KCC-IU-dJG" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Super Mario World" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" enablesMarqueeWhenAncestorFocused="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KCC-IU-dJG" customClass="LongPressLabel" customModule="PVUIBase">
                                                 <rect key="frame" x="308" y="0.0" width="633.5" height="46"/>
                                                 <gestureRecognizers/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
@@ -105,7 +104,7 @@
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nintendo" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pdc-6a-7AK" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nintendo" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pdc-6a-7AK" customClass="LongPressLabel" customModule="PVUIBase">
                                                 <rect key="frame" x="308" y="0.0" width="633.5" height="46"/>
                                                 <gestureRecognizers/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
@@ -126,7 +125,7 @@
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="May 5, 1984" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hLa-ri-Ljy" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="May 5, 1984" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hLa-ri-Ljy" customClass="LongPressLabel" customModule="PVUIBase">
                                                 <rect key="frame" x="308" y="0.0" width="633.5" height="46"/>
                                                 <gestureRecognizers/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
@@ -147,7 +146,7 @@
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="USA" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hpb-Rc-ffI" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="USA" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hpb-Rc-ffI" customClass="LongPressLabel" customModule="PVUIBase">
                                                 <rect key="frame" x="308" y="0.0" width="633.5" height="46"/>
                                                 <gestureRecognizers/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
@@ -168,7 +167,7 @@
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Action, Shooter" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q3T-0F-7F0" customClass="RegionLabel" customModule="Provenance" customModuleProvider="target">
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Action, Shooter" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q3T-0F-7F0" customClass="RegionLabel" customModule="PVUIBase">
                                                 <rect key="frame" x="308" y="0.0" width="633.5" height="46"/>
                                                 <gestureRecognizers/>
                                                 <constraints>
@@ -192,7 +191,7 @@
                                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOt-tY-FGg" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOt-tY-FGg" customClass="LongPressLabel" customModule="PVUIBase">
                                                 <rect key="frame" x="308" y="0.0" width="633.5" height="46"/>
                                                 <gestureRecognizers/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
@@ -213,7 +212,7 @@
                                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="None" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyf-rY-JwD" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="None" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyf-rY-JwD" customClass="LongPressLabel" customModule="PVUIBase">
                                                 <rect key="frame" x="308" y="0.0" width="633.5" height="46"/>
                                                 <gestureRecognizers/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
@@ -366,7 +365,7 @@
         <!--Game Library View Controller-->
         <scene sceneID="Cw2-p7-hai">
             <objects>
-                <viewController storyboardIdentifier="mainGameLibrary" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="In9-6L-5FX" customClass="PVGameLibraryViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="mainGameLibrary" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="In9-6L-5FX" customClass="PVGameLibraryViewController" customModule="PVUIBase" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Avm-Rx-1XD"/>
                         <viewControllerLayoutGuide type="bottom" id="X4Z-7U-xUA"/>
@@ -383,6 +382,12 @@
                                 <color key="tintColor" red="0.10000000000000001" green="0.5" blue="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="refresh" id="swX-Zy-hzD" userLabel="Refresh Roms">
+                                <color key="tintColor" red="0.10000000000000001" green="0.5" blue="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="refreshButtonTapped:" destination="In9-6L-5FX" id="2op-mo-lan"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem image="caution-icon" id="Dsv-oR-lbw">
@@ -418,6 +423,7 @@
                     <connections>
                         <outlet property="conflictsBarButtonItem" destination="Dsv-oR-lbw" id="Ztu-t8-0xP"/>
                         <outlet property="getMoreRomsBarButtonItem" destination="qjY-qw-buq" id="exm-wG-N87"/>
+                        <outlet property="refreshOptionBarButtonItem" destination="swX-Zy-hzD" id="7GU-31-EyC"/>
                         <outlet property="settingsBarButtonItem" destination="d3P-nN-WL5" id="J6I-TX-4u5"/>
                         <outlet property="sortOptionBarButtonItem" destination="d9C-DJ-Fuv" id="yHy-GM-GMA"/>
                         <outlet property="sortOptionsTableView" destination="YhY-ua-og3" id="hcg-6Z-b08"/>
@@ -519,9 +525,6 @@
         <image name="sort" width="42" height="42"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="tableCellGroupedBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>

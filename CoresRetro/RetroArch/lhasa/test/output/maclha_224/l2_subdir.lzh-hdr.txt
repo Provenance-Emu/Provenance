@@ -1,0 +1,11 @@
+path: subdir/subdir2/
+filename: hello.txt
+compress_method: -lh0-
+compressed_length: 256
+length: 256
+header_level: 2
+os_type: 109 ('m')
+crc: eda1
+timestamp: 1334859002
+common_crc: 0bc2
+--

@@ -1,0 +1,46 @@
+//
+//  BuildFlags.xcconfig
+//  PVPlay
+//
+//  Created by Joseph Mattiello on 11/1/18.
+//
+//
+
+// MARK: - GCC_PREPROCESSOR_DEFINITIONS
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) _IOP_EMULATE_MODULES=1 DISABLE_LOGGING=1 HAS_AMAZON_S3=0 HAS_GSH_VULKAN=1 GLES_COMPATIBILITY=1 TARGET_NO_NIXPROF=1 CMAKE_INTDIR="$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" PLAY_VERSION="1.3-2331-g0b8742f68"
+
+// MARK: - OTHER_CFLAGS
+
+OTHER_CFLAGS = $(inherited) -frtti -fno-operator-names -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fpermissive -fno-operator-names -fobjc-arc -fsingle-precision-constant -fmodules -fcxx-modules -fomit-frame-pointer -fvisibility-inlines-hidden -fvisibility=hidden -flto -funsafe-math-optimizations
+
+// MARK: Simulator
+
+OTHER_CFLAGS[sdk=iphonesimulator*][arch=*] = ""
+
+// MARK: Intel
+
+OTHER_CFLAGS[arch=x86_64] = $(inherited) -DHAVE_SSE
+
+// MARK: ARM
+
+OTHER_CFLAGS[arch=arm64] = $(inherited) -D__ARM_NEON__ -DHAVE_NEON -march=armv8-a+crc
+
+// MARK: - Excluded Sources
+
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = *
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
+
+// MARK: - Included Sources
+
+INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = PVDebug.c
+INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c
+OTHER_CFLAGS[sdk=appletvsimulator*][arch=*] = ""
+PROJECT_TEMP_DIR = $(SRCROOT)/lib/play/build/$(PROJECT_NAME).build
+DERIVED_FILE_DIR = $(SRCROOT)/lib/play/build/derived/$(PROJECT_NAME).build
+CACHE_ROOT = $(SRCROOT)/lib/cache
+
+// MARK: - Other XCode Flags
+
+GCC_ENABLE_CPP_EXCEPTIONS = YES
+VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES

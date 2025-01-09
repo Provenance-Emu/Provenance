@@ -3,29 +3,34 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B322A9742971437B00F0D876 /* sameduck-dylib */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B322A9752971437C00F0D876 /* Build configuration list for PBXAggregateTarget "sameduck-dylib" */;
+			buildPhases = (
+				B322A979297143A200F0D876 /* Build */,
+				B322A97A297143A400F0D876 /* Copy */,
+			);
+			dependencies = (
+			);
+			name = "sameduck-dylib";
+			productName = "sameduck-dylib";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
-		B301797F207C909E0051B93D /* libSameDuck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libSameDuck.a */; };
-		B3135B9B26E4CAD40047F338 /* PVSameDuckCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVSameDuckCore.mm */; };
+		B30E98EE2C6EF10800C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98ED2C6EF10800C1431E /* PVSupport */; };
+		B30E9A012C6F05F100C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9A002C6F05F100C1431E /* PVCoreBridge */; };
 		B3135B9C26E4CC290047F338 /* PVSameDuckCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVSameDuckCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVSameDuck.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVSameDuck.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3135BA226E4CC650047F338 /* PVSameDuck.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVSameDuck.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3135BA326E4CD080047F338 /* PVSameDuckCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVSameDuckCore.mm */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
-		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3423262286EBB4B0033EFA5 /* PVSameDuckCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVSameDuckCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
-		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
-		B3447EE2218BEDD200557ACE /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
+		B35AB4332CB6E389003273D4 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35AB4322CB6E389003273D4 /* PVCoreBridgeRetro.framework */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
@@ -48,58 +53,19 @@
 		B367033128962FEA00F75595 /* save_state.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831E2895FB8D003E465F /* save_state.c */; };
 		B367033228962FEA00F75595 /* rumble.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683162895FB8D003E465F /* rumble.c */; };
 		B367033328962FEA00F75595 /* apu.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830E2895FB8D003E465F /* apu.c */; };
-		B367033428962FEA00F75595 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830C2895FB8C003E465F /* memory.c */; };
-		B367033528962FEA00F75595 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683242895FB8D003E465F /* timing.c */; };
-		B367033628962FEA00F75595 /* sm83_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831C2895FB8D003E465F /* sm83_cpu.c */; };
-		B367033728962FEA00F75595 /* display.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830A2895FB8C003E465F /* display.c */; };
-		B367033828962FEA00F75595 /* workboy.c in Sources */ = {isa = PBXBuildFile; fileRef = B306832D2895FB8D003E465F /* workboy.c */; };
-		B367033928962FEA00F75595 /* cheats.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830B2895FB8C003E465F /* cheats.c */; };
-		B367033A28962FEA00F75595 /* joypad.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683122895FB8D003E465F /* joypad.c */; };
-		B367033B28962FEA00F75595 /* symbol_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683182895FB8D003E465F /* symbol_hash.c */; };
-		B367033C28962FEA00F75595 /* rewind.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683232895FB8D003E465F /* rewind.c */; };
-		B367033D28962FEA00F75595 /* sm83_disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683212895FB8D003E465F /* sm83_disassembler.c */; };
-		B367033E28962FEA00F75595 /* gb.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830F2895FB8D003E465F /* gb.c */; };
-		B367033F28962FEA00F75595 /* printer.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831B2895FB8D003E465F /* printer.c */; };
-		B367034028962FEA00F75595 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683252895FB8D003E465F /* camera.c */; };
-		B367034128962FEA00F75595 /* debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683132895FB8D003E465F /* debugger.c */; };
-		B367034228962FEA00F75595 /* random.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683172895FB8D003E465F /* random.c */; };
-		B367034328962FEA00F75595 /* save_state.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831E2895FB8D003E465F /* save_state.c */; };
-		B367034428962FEA00F75595 /* rumble.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683162895FB8D003E465F /* rumble.c */; };
-		B367034528962FEA00F75595 /* apu.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830E2895FB8D003E465F /* apu.c */; };
 		B367034628962FFA00F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683432895FB8D003E465F /* libretro.c */; };
-		B367034728962FFA00F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683432895FB8D003E465F /* libretro.c */; };
 		B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C2682894EB37007B76FD /* OpenGL.framework */; platformFilter = maccatalyst; };
-		B39768F82859E23200558958 /* libSameDuck-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libSameDuck-libretro.a */; };
-		B39768FB2859E23A00558958 /* libSameDuck-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libSameDuck-libretro.a */; };
-		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
-		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
-		B3B104AF218F26F400210C39 /* libSameDuck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libSameDuck.a */; };
-		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
-		B3C8A65E2877D62F0037A946 /* PVSameDuckCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVSameDuckCore+Controls.mm */; };
-		B3C8A65F2877D6350037A946 /* PVSameDuckCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVSameDuckCore+Controls.mm */; };
-		B3C8A6602877D6510037A946 /* PVSameDuckCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVSameDuckCore+Video.m */; };
-		B3C8A6612877D6B30037A946 /* PVSameDuckCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVSameDuckCore+Audio.m */; };
-		B3C8A6622877D6B40037A946 /* PVSameDuckCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVSameDuckCore+Audio.m */; };
-		B3EBB2032872B65700EAEB37 /* PVSameDuckCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVSameDuckCore+Video.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B39768F92859E23200558958 /* PBXContainerItemProxy */ = {
+		B322A97B2971442B00F0D876 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3344B522859E088006E6B3A;
-			remoteInfo = "dos-box-libretro-iOS";
-		};
-		B39768FC2859E23A00558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B39768ED2859E18B00558958;
-			remoteInfo = "dos-box-libretro-tvOS";
+			remoteGlobalIDString = B322A9742971437B00F0D876;
+			remoteInfo = "sameduck-dylib";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -114,24 +80,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3344BBE2859E088006E6B3A /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8D218BEE3F00557ACE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F22859E18B00558958 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -434,15 +382,13 @@
 		B3447EB1218BC69700557ACE /* PVSameDuckCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVSameDuckCore+Audio.h"; sourceTree = "<group>"; };
 		B3447EB2218BC69700557ACE /* PVSameDuckCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVSameDuckCore+Audio.m"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
-		B3447EE6218BEDD200557ACE /* PVSameDuck.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSameDuck.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libSameDuck.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSameDuck.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B35AB4322CB6E389003273D4 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B380C2682894EB37007B76FD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
-		B39768F72859E18B00558958 /* libSameDuck-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libSameDuck-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -475,56 +421,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447ECA218BEDD200557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3B104AF218F26F400210C39 /* libSameDuck.a in Frameworks */,
-				B39768FB2859E23A00558958 /* libSameDuck-libretro.a in Frameworks */,
-				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
-				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
-				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
-				B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */,
-				B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */,
-				B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */,
-				B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8C218BEE3F00557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F12859E18B00558958 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620C20783162009950E4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B35AB4332CB6E389003273D4 /* PVCoreBridgeRetro.framework in Frameworks */,
+				B30E98EE2C6EF10800C1431E /* PVSupport in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libSameDuck.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B39768F82859E23200558958 /* libSameDuck-libretro.a in Frameworks */,
+				B30E9A012C6F05F100C1431E /* PVCoreBridge in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -991,10 +904,7 @@
 			children = (
 				B3C7621020783162009950E4 /* PVSameDuck.framework */,
 				B30178D3207C901D0051B93D /* libSameDuck.a */,
-				B3447EE6218BEDD200557ACE /* PVSameDuck.framework */,
-				B3447F91218BEE3F00557ACE /* libSameDuck.a */,
 				B3344BC32859E088006E6B3A /* libSameDuck-libretro.a */,
-				B39768F72859E18B00558958 /* libSameDuck-libretro.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1012,6 +922,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B35AB4322CB6E389003273D4 /* PVCoreBridgeRetro.framework */,
 				B380C2682894EB37007B76FD /* OpenGL.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
@@ -1047,15 +958,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B3447ED5218BEDD200557ACE /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3423262286EBB4B0033EFA5 /* PVSameDuckCore.h in Headers */,
-				B3135BA226E4CC650047F338 /* PVSameDuck.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620D20783162009950E4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1068,9 +970,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B30178D2207C901D0051B93D /* SameDuck-iOS */ = {
+		B30178D2207C901D0051B93D /* SameDuck */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "SameDuck-iOS" */;
+			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "SameDuck" */;
 			buildPhases = (
 				B30178CF207C901D0051B93D /* Sources */,
 				B30178D0207C901D0051B93D /* Frameworks */,
@@ -1080,14 +982,14 @@
 			);
 			dependencies = (
 			);
-			name = "SameDuck-iOS";
+			name = SameDuck;
 			productName = reicast;
 			productReference = B30178D3207C901D0051B93D /* libSameDuck.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3344B522859E088006E6B3A /* SameDuck-libretro-iOS */ = {
+		B3344B522859E088006E6B3A /* SameDuck-libretro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "SameDuck-libretro-iOS" */;
+			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "SameDuck-libretro" */;
 			buildPhases = (
 				B3344B532859E088006E6B3A /* Sources */,
 				B3344BBD2859E088006E6B3A /* Frameworks */,
@@ -1097,67 +999,14 @@
 			);
 			dependencies = (
 			);
-			name = "SameDuck-libretro-iOS";
+			name = "SameDuck-libretro";
 			productName = reicast;
 			productReference = B3344BC32859E088006E6B3A /* libSameDuck-libretro.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3447EC0218BEDD200557ACE /* PVSameDuck-tvOS */ = {
+		B3C7620F20783162009950E4 /* PVSameDuck */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVSameDuck-tvOS" */;
-			buildPhases = (
-				B3447EC1218BEDD200557ACE /* Sources */,
-				B3447ECA218BEDD200557ACE /* Frameworks */,
-				B3447ED5218BEDD200557ACE /* Headers */,
-				B3447EDF218BEDD200557ACE /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B39768FD2859E23A00558958 /* PBXTargetDependency */,
-			);
-			name = "PVSameDuck-tvOS";
-			productName = PVReicast;
-			productReference = B3447EE6218BEDD200557ACE /* PVSameDuck.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3447EE8218BEE3F00557ACE /* SameDuck-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "SameDuck-tvOS" */;
-			buildPhases = (
-				B3447EE9218BEE3F00557ACE /* Sources */,
-				B3447F8C218BEE3F00557ACE /* Frameworks */,
-				B3447F8D218BEE3F00557ACE /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "SameDuck-tvOS";
-			productName = reicast;
-			productReference = B3447F91218BEE3F00557ACE /* libSameDuck.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B39768ED2859E18B00558958 /* SameDuck-libretro-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "SameDuck-libretro-tvOS" */;
-			buildPhases = (
-				B39768EE2859E18B00558958 /* Sources */,
-				B39768F12859E18B00558958 /* Frameworks */,
-				B39768F22859E18B00558958 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "SameDuck-libretro-tvOS";
-			productName = reicast;
-			productReference = B39768F72859E18B00558958 /* libSameDuck-libretro.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3C7620F20783162009950E4 /* PVSameDuck-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVSameDuck-iOS" */;
+			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVSameDuck" */;
 			buildPhases = (
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
@@ -1167,9 +1016,9 @@
 			buildRules = (
 			);
 			dependencies = (
-				B39768FA2859E23200558958 /* PBXTargetDependency */,
+				B322A97C2971442B00F0D876 /* PBXTargetDependency */,
 			);
-			name = "PVSameDuck-iOS";
+			name = PVSameDuck;
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVSameDuck.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1189,13 +1038,16 @@
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
 					};
+					B322A9742971437B00F0D876 = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
 					};
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVSameDuck" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1214,29 +1066,24 @@
 				nl,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E98EC2C6EF10800C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E99FF2C6F05F100C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3C7620F20783162009950E4 /* PVSameDuck-iOS */,
-				B3447EC0218BEDD200557ACE /* PVSameDuck-tvOS */,
-				B3344B522859E088006E6B3A /* SameDuck-libretro-iOS */,
-				B39768ED2859E18B00558958 /* SameDuck-libretro-tvOS */,
-				B30178D2207C901D0051B93D /* SameDuck-iOS */,
-				B3447EE8218BEE3F00557ACE /* SameDuck-tvOS */,
+				B3C7620F20783162009950E4 /* PVSameDuck */,
+				B3344B522859E088006E6B3A /* SameDuck-libretro */,
+				B30178D2207C901D0051B93D /* SameDuck */,
+				B322A9742971437B00F0D876 /* sameduck-dylib */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B3447EDF218BEDD200557ACE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3447EE2218BEDD200557ACE /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620E20783162009950E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1246,6 +1093,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B322A979297143A200F0D876 /* Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Build;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/SameBoy/sameboy.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\n#cd ${SRCROOT}/beetle-psx\n#git pull origin master\n#git checkout origin/master\n#git submodule update --init --recursive\n\n# Create Build Environment\n#if [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n#    mkdir ${SRCROOT}/cmake/build\n#fi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\n#cp -pR ${SRCROOT}/beetle-psx/* ${SRCROOT}/cmake/build/\n#cp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd \"${SRCROOT}/SameBoy\" #/cmake/build/\n#make clean\nmake -j4 platform=ios-arm64 \n";
+		};
+		B322A97A297143A400F0D876 /* Copy */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/SameBoy/build/bin/sameduck_libretro.dylib",
+			);
+			name = Copy;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/sameduck_libretro.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ${SRCROOT}/SameBoy #/cmake/build/\n\ncp build/bin/sameduck_libretro.dylib \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
@@ -1281,73 +1170,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447EC1218BEDD200557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3135BA326E4CD080047F338 /* PVSameDuckCore.mm in Sources */,
-				B3C8A6602877D6510037A946 /* PVSameDuckCore+Video.m in Sources */,
-				B3C8A6622877D6B40037A946 /* PVSameDuckCore+Audio.m in Sources */,
-				B3C8A65E2877D62F0037A946 /* PVSameDuckCore+Controls.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447EE9218BEE3F00557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B367033C28962FEA00F75595 /* rewind.c in Sources */,
-				B367033E28962FEA00F75595 /* gb.c in Sources */,
-				B367033F28962FEA00F75595 /* printer.c in Sources */,
-				B367033728962FEA00F75595 /* display.c in Sources */,
-				B367034428962FEA00F75595 /* rumble.c in Sources */,
-				B367033D28962FEA00F75595 /* sm83_disassembler.c in Sources */,
-				B367033628962FEA00F75595 /* sm83_cpu.c in Sources */,
-				B367033828962FEA00F75595 /* workboy.c in Sources */,
-				B367033928962FEA00F75595 /* cheats.c in Sources */,
-				B367033A28962FEA00F75595 /* joypad.c in Sources */,
-				B367034028962FEA00F75595 /* camera.c in Sources */,
-				B367034128962FEA00F75595 /* debugger.c in Sources */,
-				B367034528962FEA00F75595 /* apu.c in Sources */,
-				B367033428962FEA00F75595 /* memory.c in Sources */,
-				B367034328962FEA00F75595 /* save_state.c in Sources */,
-				B367033528962FEA00F75595 /* timing.c in Sources */,
-				B367034228962FEA00F75595 /* random.c in Sources */,
-				B367033B28962FEA00F75595 /* symbol_hash.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768EE2859E18B00558958 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B367034728962FFA00F75595 /* libretro.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3135B9B26E4CAD40047F338 /* PVSameDuckCore.mm in Sources */,
-				B3C8A65F2877D6350037A946 /* PVSameDuckCore+Controls.mm in Sources */,
-				B3C8A6612877D6B30037A946 /* PVSameDuckCore+Audio.m in Sources */,
-				B3EBB2032872B65700EAEB37 /* PVSameDuckCore+Video.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
+		B322A97C2971442B00F0D876 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* SameDuck-libretro-iOS */;
-			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
-		};
-		B39768FD2859E23A00558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B39768ED2859E18B00558958 /* SameDuck-libretro-tvOS */;
-			targetProxy = B39768FC2859E23A00558958 /* PBXContainerItemProxy */;
+			target = B322A9742971437B00F0D876 /* sameduck-dylib */;
+			targetProxy = B322A97B2971442B00F0D876 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1359,10 +1195,14 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = SameDuck;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -1373,12 +1213,40 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = SameDuck;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
+		};
+		B322A9762971437C00F0D876 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B322A9772971437C00F0D876 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B322A9782971437C00F0D876 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
 		};
 		B324C5012191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
@@ -1433,7 +1301,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-SameDuck/libretro-common/include\"",
 					"\"$(SRCROOT)/SameBoy\"",
 				);
@@ -1451,8 +1319,8 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1461,7 +1329,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVSameDuck/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1471,35 +1339,10 @@
 				PRODUCT_NAME = PVSameDuck;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5032191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/PVSameDuck/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSameDuck";
-				PRODUCT_NAME = PVSameDuck;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Archive;
 		};
@@ -1510,25 +1353,14 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = SameDuck;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5052191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = SameDuck;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Archive;
 		};
@@ -1539,10 +1371,13 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = "SameDuck-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 			};
 			name = Debug;
 		};
@@ -1553,10 +1388,13 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = "SameDuck-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 			};
 			name = Release;
 		};
@@ -1567,141 +1405,13 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = "SameDuck-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B3447EE4218BEDD200557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/PVSameDuck/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSameDuck";
-				PRODUCT_NAME = PVSameDuck;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447EE5218BEDD200557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/PVSameDuck/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSameDuck";
-				PRODUCT_NAME = PVSameDuck;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B3447F8F218BEE3F00557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = SameDuck;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447F90218BEE3F00557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = SameDuck;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F42859E18B00558958 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = "SameDuck-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B39768F52859E18B00558958 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = "SameDuck-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F62859E18B00558958 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = "SameDuck-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 			};
 			name = Archive;
 		};
@@ -1763,7 +1473,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-SameDuck/libretro-common/include\"",
 					"\"$(SRCROOT)/SameBoy\"",
 				);
@@ -1831,7 +1541,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-SameDuck/libretro-common/include\"",
 					"\"$(SRCROOT)/SameBoy\"",
 				);
@@ -1850,8 +1560,8 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1860,7 +1570,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVSameDuck/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1870,15 +1580,18 @@
 				PRODUCT_NAME = PVSameDuck;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Debug;
 		};
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1887,7 +1600,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PVSameDuck/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1897,14 +1610,17 @@
 				PRODUCT_NAME = PVSameDuck;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "SameDuck-iOS" */ = {
+		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "SameDuck" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B30178DA207C901D0051B93D /* Debug */,
@@ -1914,42 +1630,22 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "SameDuck-libretro-iOS" */ = {
+		B322A9752971437C00F0D876 /* Build configuration list for PBXAggregateTarget "sameduck-dylib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B322A9762971437C00F0D876 /* Debug */,
+				B322A9772971437C00F0D876 /* Release */,
+				B322A9782971437C00F0D876 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "SameDuck-libretro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3344BC02859E088006E6B3A /* Debug */,
 				B3344BC12859E088006E6B3A /* Release */,
 				B3344BC22859E088006E6B3A /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVSameDuck-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447EE4218BEDD200557ACE /* Debug */,
-				B3447EE5218BEDD200557ACE /* Release */,
-				B324C5032191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "SameDuck-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447F8F218BEE3F00557ACE /* Debug */,
-				B3447F90218BEE3F00557ACE /* Release */,
-				B324C5052191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "SameDuck-libretro-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B39768F42859E18B00558958 /* Debug */,
-				B39768F52859E18B00558958 /* Release */,
-				B39768F62859E18B00558958 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1964,7 +1660,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVSameDuck-iOS" */ = {
+		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVSameDuck" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C7621920783162009950E4 /* Debug */,
@@ -1975,6 +1671,28 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98EC2C6EF10800C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E99FF2C6F05F100C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E98ED2C6EF10800C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9A002C6F05F100C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

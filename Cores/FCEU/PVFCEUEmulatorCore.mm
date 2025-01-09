@@ -25,7 +25,12 @@
 */
 
 #import "PVFCEUEmulatorCore.h"
-#import <PVSupport/PVSupport-Swift.h>
+
+@import PVLoggingObjC;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVAudio;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -56,7 +61,7 @@
 extern uint8 *XBuf;
 static uint32_t palette[256];
 
-@interface PVFCEUEmulatorCore ()
+@interface PVFCEUEmulatorCoreBridge ()
 {
     uint32_t *videoBuffer;
     uint8_t *pXBuf;
@@ -68,9 +73,9 @@ static uint32_t palette[256];
 
 @end
 
-@implementation PVFCEUEmulatorCore
+@implementation PVFCEUEmulatorCoreBridge
 
-static __weak PVFCEUEmulatorCore *_current;
+static __weak PVFCEUEmulatorCoreBridge *_current;
 
 - (id)init
 {
@@ -190,7 +195,7 @@ static __weak PVFCEUEmulatorCore *_current;
     for (int i = 0; i < soundSize; i++)
         soundBuffer[i] = (soundBuffer[i] << 16) | (soundBuffer[i] & 0xffff);
 
-    [[self ringBufferAtIndex:0] write:soundBuffer maxLength:soundSize << 2];
+    [[self ringBufferAtIndex:0] write:soundBuffer size:soundSize << 2];
 }
 
 - (void)resetEmulation

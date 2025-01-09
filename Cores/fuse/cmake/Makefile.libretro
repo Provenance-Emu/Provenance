@@ -1,0 +1,569 @@
+CORE_DIR  = .
+BUILD_DIR = build
+platform=ios-arm64
+ifeq ($(platform),android_arm64-v8a)
+include $(BUILD_DIR)/Makefile.android_arm64-v8a
+else ifeq ($(platform),android_armeabi)
+include $(BUILD_DIR)/Makefile.android_armeabi
+else ifeq ($(platform),android_armeabi-v7a)
+include $(BUILD_DIR)/Makefile.android_armeabi-v7a
+else ifeq ($(platform),android_mips)
+include $(BUILD_DIR)/Makefile.android_mips
+else ifeq ($(platform),android_mips64)
+include $(BUILD_DIR)/Makefile.android_mips64
+else ifeq ($(platform),android_x86)
+include $(BUILD_DIR)/Makefile.android_x86
+else ifeq ($(platform),android_x86_64)
+include $(BUILD_DIR)/Makefile.android_x86_64
+else ifeq ($(platform),linux-portable_x86)
+include $(BUILD_DIR)/Makefile.linux-portable_x86
+else ifeq ($(platform),linux-portable_x86_64)
+include $(BUILD_DIR)/Makefile.linux-portable_x86_64
+else ifeq ($(platform),linux_x86)
+include $(BUILD_DIR)/Makefile.linux_x86
+else ifeq ($(platform),linux_x86_64)
+include $(BUILD_DIR)/Makefile.linux_x86_64
+else ifeq ($(platform),mingw_x86)
+include $(BUILD_DIR)/Makefile.mingw_x86
+else ifeq ($(platform),mingw_x86_64)
+include $(BUILD_DIR)/Makefile.mingw_x86_64
+else ifeq ($(platform),osx_x86)
+include $(BUILD_DIR)/Makefile.osx_x86
+else ifeq ($(platform),osx_x86_64)
+include $(BUILD_DIR)/Makefile.osx_x86_64
+else ifeq ($(platform),ps3_ppc)
+include $(BUILD_DIR)/Makefile.ps3_ppc
+else ifeq ($(platform),wii_ppc)
+include $(BUILD_DIR)/Makefile.wii_ppc
+else ifeq ($(platform),windows_x86)
+include $(BUILD_DIR)/Makefile.windows_x86
+else ifeq ($(platform),windows_x86_64)
+include $(BUILD_DIR)/Makefile.windows_x86_64
+else
+
+TARGET_NAME := fuse
+
+LOG_PERFORMANCE = 0
+HAVE_COMPAT = 0
+
+SOURCES_C   :=
+SOURCES_CXX :=
+LIBS    :=
+
+ifeq ($(platform),)
+	platform = unix
+	ifeq ($(shell uname -a),)
+		platform = win
+	else ifneq ($(findstring MINGW,$(shell uname -a)),)
+		platform = win
+	else ifneq ($(findstring Darwin,$(shell uname -a)),)
+		platform = osx
+	else ifneq ($(findstring win,$(shell uname -a)),)
+		platform = win
+	endif
+endif
+
+# system platform
+system_platform = unix
+ifeq ($(shell uname -a),)
+	EXE_EXT = .exe
+	system_platform = win
+else ifneq ($(findstring Darwin,$(shell uname -a)),)
+	system_platform = osx
+	arch = intel
+ifeq ($(shell uname -p),arm64)
+	arch = arm
+endif
+ifeq ($(shell uname -p),powerpc)
+	arch = ppc
+endif
+else ifneq ($(findstring MINGW,$(shell uname -a)),)
+	system_platform = win
+endif
+
+CC_AS ?= $(CC)
+LIBM := -lm
+
+# Unix
+ifneq (,$(findstring unix,$(platform)))
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic := -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T -Wl,-no-undefined
+
+else ifneq (,$(findstring linux-portable,$(platform)))
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic := -fPIC -nostdlib
+	LIBM :=
+	SHARED := -shared -Wl,-version-script=build/link.T
+
+# Raspberry Pi 1
+else ifeq ($(platform), rpi1)
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic = -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T -Wl,-no-undefined
+	PLATFORM_DEFINES += -marm -mfpu=vfp -mfloat-abi=hard -march=armv6j
+	PLATFORM_DEFINES += -fomit-frame-pointer -ffast-math
+	PLATFORM_DEFINES += -DARM
+
+# Raspberry Pi 2
+else ifeq ($(platform), rpi2)
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic = -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T -Wl,-no-undefined
+	PLATFORM_DEFINES += -marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+	PLATFORM_DEFINES += -fomit-frame-pointer -ffast-math
+	PLATFORM_DEFINES += -DARM
+	HAVE_NEON = 1
+
+# Raspberry Pi 3
+else ifeq ($(platform), rpi3)
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic = -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T -Wl,-no-undefined
+	PLATFORM_DEFINES += -marm -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard
+	PLATFORM_DEFINES += -fomit-frame-pointer -ffast-math
+	PLATFORM_DEFINES += -DARM
+	HAVE_NEON = 1
+
+# Raspberry Pi 3 (64 bits)
+else ifeq ($(platform), rpi3_64)
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic = -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T -Wl,-no-undefined
+	PLATFORM_DEFINES += -march=armv8-a+crc+simd -mtune=cortex-a53
+	PLATFORM_DEFINES += -fomit-frame-pointer -ffast-math
+	PLATFORM_DEFINES += -DARM
+	HAVE_NEON = 1
+
+# Raspberry Pi 4 (64 bits)
+else ifeq ($(platform), rpi4_64)
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic = -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T -Wl,-no-undefined
+	PLATFORM_DEFINES += -march=armv8-a+crc+simd -mtune=cortex-a72
+	PLATFORM_DEFINES += -fomit-frame-pointer -ffast-math
+	PLATFORM_DEFINES += -DARM
+	HAVE_NEON = 1
+
+# Classic Platforms ####################
+# Platform affix = classic_<ISA>_<µARCH>
+# Help at https://modmyclassic.com/comp
+
+# (armv7 a7, hard point, neon based) ### 
+# NESC, SNESC, C64 mini 
+else ifeq ($(platform), classic_armv7_a7)
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic := -fPIC
+    SHARED :=-shared -Wl,--version-script=build/link.T -Wl,--no-undefined
+	PLATFORM_DEFINES += -DARM -Ofast \
+	-flto=4 -fwhole-program -fuse-linker-plugin \
+	-fdata-sections -ffunction-sections -Wl,--gc-sections \
+	-fno-stack-protector -fno-ident -fomit-frame-pointer \
+	-falign-functions=1 -falign-jumps=1 -falign-loops=1 \
+	-fno-unwind-tables -fno-asynchronous-unwind-tables -fno-unroll-loops \
+	-fmerge-all-constants -fno-math-errno \
+	-marm -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+	CXXFLAGS += $(PLATFORM_DEFINES)
+	CPPFLAGS += $(PLATFORM_DEFINES)
+	ASFLAGS += $(PLATFORM_DEFINES)
+	HAVE_NEON = 1
+	ifeq ($(shell echo `$(CC) -dumpversion` "< 4.9" | bc -l), 1)
+	  CFLAGS += -march=armv7-a
+	else
+	  CFLAGS += -march=armv7ve
+	  # If gcc is 5.0 or later
+	  ifeq ($(shell echo `$(CC) -dumpversion` ">= 5" | bc -l), 1)
+	    LDFLAGS += -static-libgcc -static-libstdc++
+	  endif
+	endif
+#######################################
+
+# (armv8 a35, hard point, neon based) ###
+# PlayStation Classic 
+else ifeq ($(platform), classic_armv8_a35)
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic := -fPIC
+	SHARED := -shared -Wl,--version-script=build/link.T -Wl,--no-undefined
+	CFLAGS += -DARM -Ofast \
+	-fuse-linker-plugin \
+	-fno-stack-protector -fno-ident -fomit-frame-pointer \
+	-fmerge-all-constants -ffast-math -funroll-all-loops \
+	-marm -mcpu=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard
+	CXXFLAGS += $(CFLAGS)
+	CPPFLAGS += $(CFLAGS)
+	HAVE_NEON = 1
+	ARCH = arm
+	LDFLAGS += -lrt
+	LDFLAGS += -marm -mcpu=cortex-a35 -mfpu=neon-fp-armv8 -mfloat-abi=hard -Ofast -flto -fuse-linker-plugin
+#######################################
+
+# OS X
+else ifeq ($(platform), osx)
+	TARGET := $(TARGET_NAME)_libretro.dylib
+	fpic := -fPIC
+	SHARED := -dynamiclib
+	OSXVER = `sw_vers -productVersion | cut -d. -f 2`
+	OSX_LT_MAVERICKS = `(( $(OSXVER) <= 9)) && echo "YES"`
+   ifeq ($(OSX_LT_MAVERICKS),YES)
+   	   fpic += -mmacosx-version-min=10.2
+   endif
+ifeq ($(arch),ppc)
+	CFLAGS += -DWORDS_BIGENDIAN -DMSB_FIRST
+endif
+   ifeq ($(CROSS_COMPILE),1)
+		TARGET_RULE   = -target $(LIBRETRO_APPLE_PLATFORM) -isysroot $(LIBRETRO_APPLE_ISYSROOT)
+		CFLAGS   += $(TARGET_RULE)
+		LDFLAGS  += $(TARGET_RULE)
+   endif
+
+# iOS
+else ifneq (,$(findstring ios,$(platform)))
+
+	TARGET := $(TARGET_NAME)_libretro_ios.dylib
+	fpic := -fPIC
+	SHARED := -dynamiclib
+        MINVERSION :=
+
+	ifeq ($(IOSSDK),)
+		IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
+	endif
+
+ifeq ($(platform),ios-arm64)
+	CC = cc -arch arm64 -isysroot $(IOSSDK)
+	CXX = c++ -arch arm64 -isysroot $(IOSSDK)
+else
+	CC = cc -arch armv7 -isysroot $(IOSSDK)
+	CXX = c++ -arch armv7 -isysroot $(IOSSDK)
+endif
+	CC_AS = perl ./tools/gas-preprocessor.pl $(CC)
+
+ifeq ($(platform),$(filter $(platform),ios9 ios-arm64))
+	MINVERSION = -miphoneos-version-min=8.0
+else
+	MINVERSION = -miphoneos-version-min=5.0
+endif
+	PLATFORM_DEFINES := $(MINVERSION)
+
+ifeq ($(platform),ios-arm64)
+	PLATFORM_DEFINES += -D_IOS_ARM64
+endif
+
+else ifeq ($(platform), tvos-arm64)
+	TARGET := $(TARGET_NAME)_libretro_tvos.dylib
+	fpic := -fPIC
+	SHARED := -dynamiclib
+	ifeq ($(IOSSDK),)
+		IOSSDK := $(shell xcodebuild -version -sdk appletvos Path)
+	endif
+	PLATFORM_DEFINES += -D_IOS_ARM64
+	CC = cc -arch arm64 -isysroot $(IOSSDK)
+	CXX = c++ -arch arm64 -isysroot $(IOSSDK)
+
+# Theos
+else ifeq ($(platform), theos_ios)
+	DEPLOYMENT_IOSVERSION = 5.0
+	TARGET = iphone:latest:$(DEPLOYMENT_IOSVERSION)
+	ARCHS = armv7 armv7s
+	TARGET_IPHONEOS_DEPLOYMENT_VERSION=$(DEPLOYMENT_IOSVERSION)
+	THEOS_BUILD_DIR := objs
+	include $(THEOS)/makefiles/common.mk
+
+	LIBRARY_NAME = $(TARGET_NAME)_libretro_ios
+
+# QNX
+else ifeq ($(platform), qnx)
+	TARGET := $(TARGET_NAME)_libretro_qnx.so
+	fpic := -fPIC
+	SHARED := -lcpp -lm -shared -Wl,-version-script=build/link.T
+	CC = qcc -Vgcc_ntoarmv7le
+	CC_AS = qcc -Vgcc_ntoarmv7le
+	CXX = QCC -Vgcc_ntoarmv7le_cpp
+	AR = QCC -Vgcc_ntoarmv7le
+	PLATFORM_DEFINES := -D__BLACKBERRY_QNX__ -fexceptions -marm -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp
+
+# Lightweight PS3 Homebrew SDK
+else ifneq (,$(filter $(platform), ps3 psl1ght))
+	TARGET := $(TARGET_NAME)_libretro_$(platform).a
+	CC = $(PS3DEV)/ppu/bin/ppu-$(COMMONLV)gcc$(EXE_EXT)
+	CC_AS = $(PS3DEV)/ppu/bin/ppu-$(COMMONLV)gcc$(EXE_EXT)
+	CXX = $(PS3DEV)/ppu/bin/ppu-$(COMMONLV)g++$(EXE_EXT)
+	AR = $(PS3DEV)/ppu/bin/ppu-$(COMMONLV)ar$(EXE_EXT)
+	PLATFORM_DEFINES := -D__PS3__
+	STATIC_LINKING = 1
+	HAVE_COMPAT = 1
+	CFLAGS += -DWORDS_BIGENDIAN -DMSB_FIRST
+	ifeq ($(platform), psl1ght)
+		PLATFORM_DEFINES += -D__PSL1GHT__ 
+	endif
+	
+# PSP
+else ifeq ($(platform), psp1)
+	TARGET := $(TARGET_NAME)_libretro_$(platform).a
+	CC = psp-gcc$(EXE_EXT)
+	CC_AS = psp-gcc$(EXE_EXT)
+	CXX = psp-g++$(EXE_EXT)
+	AR = psp-ar$(EXE_EXT)
+	PLATFORM_DEFINES := -DPSP
+	CFLAGS += -G0
+	CXXFLAGS += -G0
+	STATIC_LINKING = 1
+	HAVE_COMPAT = 1
+	EXTRA_INCLUDES := -I$(shell psp-config --pspsdk-path)/include
+
+# Xbox 360
+else ifeq ($(platform), xenon)
+	TARGET := $(TARGET_NAME)_libretro_xenon360.a
+	CC = xenon-gcc$(EXE_EXT)
+	CC_AS = xenon-gcc$(EXE_EXT)
+	CXX = xenon-g++$(EXE_EXT)
+	AR = xenon-ar$(EXE_EXT)
+	PLATFORM_DEFINES := -D__LIBXENON__
+	STATIC_LINKING = 1
+
+# Nintendo Game Cube
+else ifeq ($(platform), ngc)
+	TARGET := $(TARGET_NAME)_libretro_$(platform).a
+	CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
+	CC_AS = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
+	CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
+	AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
+	PLATFORM_DEFINES += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float
+	PLATFORM_DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
+	STATIC_LINKING = 1
+	HAVE_COMPAT = 1
+	CFLAGS += -DWORDS_BIGENDIAN -DMSB_FIRST
+	
+# Nintendo Wii
+else ifeq ($(platform), wii)
+	TARGET := $(TARGET_NAME)_libretro_$(platform).a
+	CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
+	CC_AS = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
+	CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
+	AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
+	PLATFORM_DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
+	PLATFORM_DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
+	STATIC_LINKING = 1
+	HAVE_COMPAT = 1
+	CFLAGS += -DWORDS_BIGENDIAN -DMSB_FIRST
+	
+# Nintendo WiiU
+else ifeq ($(platform), wiiu)
+	TARGET := $(TARGET_NAME)_libretro_$(platform).a
+	CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
+	CC_AS = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
+	CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
+	AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
+	PLATFORM_DEFINES += -DGEKKO -DWIIU -DHW_RVL -mcpu=750 -meabi -mhard-float
+	PLATFORM_DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
+	STATIC_LINKING = 1
+	HAVE_COMPAT = 1
+	CFLAGS += -DWORDS_BIGENDIAN -DMSB_FIRST
+	
+# ARM
+else ifneq (,$(findstring armv,$(platform)))
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic := -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T
+	CC = gcc
+	CC_AS = gcc
+	CXX = g++
+	ifneq (,$(findstring cortexa8,$(platform)))
+		PLATFORM_DEFINES += -marm -mcpu=cortex-a8
+	else ifneq (,$(findstring cortexa9,$(platform)))
+		PLATFORM_DEFINES += -marm -mcpu=cortex-a9
+	endif
+	PLATFORM_DEFINES += -marm
+	ifneq (,$(findstring neon,$(platform)))
+		PLATFORM_DEFINES += -mfpu=neon
+		HAVE_NEON = 1
+	endif
+	ifneq (,$(findstring softfloat,$(platform)))
+		PLATFORM_DEFINES += -mfloat-abi=softfp
+	else ifneq (,$(findstring hardfloat,$(platform)))
+		PLATFORM_DEFINES += -mfloat-abi=hard
+	endif
+	PLATFORM_DEFINES += -DARM
+
+# Nintendo Switch (libnx)
+else ifeq ($(platform), libnx)
+	include $(DEVKITPRO)/libnx/switch_rules
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
+   DEFINES := -DSWITCH=1 -U__linux__ -U__linux -DRARCH_INTERNAL
+   CFLAGS  :=  $(DEFINES) -g \
+               -O3 \
+           -fPIE -I$(LIBNX)/include/ -ffunction-sections -fdata-sections -ftls-model=local-exec -Wl,--allow-multiple-definition -specs=$(LIBNX)/switch.specs
+   CFLAGS += $(INCDIRS)
+   CFLAGS  += $(INCLUDE)  -D__SWITCH__ -DHAVE_LIBNX -DARM -march=armv8-a -mtune=cortex-a57 -mtp=soft -fomit-frame-pointer -ffast-math
+   CXXFLAGS := $(ASFLAGS) $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+   CFLAGS += -std=gnu11
+   STATIC_LINKING = 1
+
+# emscripten
+else ifeq ($(platform), emscripten)
+	TARGET := $(TARGET_NAME)_libretro_emscripten.bc
+
+# CTR (3DS)
+else ifeq ($(platform), ctr)
+	TARGET := $(TARGET_NAME)_libretro_$(platform).a
+	CC = $(DEVKITARM)/bin/arm-none-eabi-gcc$(EXE_EXT)
+	CXX = $(DEVKITARM)/bin/arm-none-eabi-g++$(EXE_EXT)
+	AR = $(DEVKITARM)/bin/arm-none-eabi-ar$(EXE_EXT)
+	STATIC_LINKING = 1
+	CFLAGS += -D_3DS
+	CXXFLAGS += -D_3DS
+
+   CFLAGS += -DARM11
+   CFLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard
+   CFLAGS += -Wall -mword-relocations
+   CFLAGS += -fomit-frame-pointer -ffast-math
+
+   CXXFLAGS += -DARM11
+   CXXFLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard
+   CXXFLAGS += -Wall -mword-relocations
+   CXXFLAGS += -fomit-frame-pointer -ffast-math
+
+# Vita
+else ifeq ($(platform), vita)
+	TARGET := $(TARGET_NAME)_libretro_$(platform).a
+	CC = arm-vita-eabi-gcc$(EXE_EXT)
+	CXX = arm-vita-eabi-g++$(EXE_EXT)
+	AR = arm-vita-eabi-ar$(EXE_EXT)
+	STATIC_LINKING = 1
+	CFLAGS += -DVITA -ftree-vectorize -mfloat-abi=hard -ffast-math -fsingle-precision-constant -funroll-loops -fno-short-enums
+	CXXFLAGS += -DVITA -ftree-vectorize -mfloat-abi=hard -ffast-math -fsingle-precision-constant -funroll-loops -fno-short-enums
+	
+# RETROFW
+else ifeq ($(platform), retrofw)
+	TARGET := $(TARGET_NAME)_libretro.so
+	CC = /opt/retrofw-toolchain/usr/bin/mipsel-linux-gcc
+	CXX = /opt/retrofw-toolchain/usr/bin/mipsel-linux-g++
+	AR = /opt/retrofw-toolchain/usr/bin/mipsel-linux-ar
+	fpic := -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T -Wl,-no-undefined
+	CFLAGS += -fomit-frame-pointer -march=mips32 -mtune=mips32 -mhard-float
+	CXXFLAGS += -fomit-frame-pointer -march=mips32 -mtune=mips32 -mhard-float	
+
+# MIYOO
+else ifeq ($(platform), miyoo)
+	TARGET := $(TARGET_NAME)_libretro.so
+   CC = /opt/miyoo/usr/bin/arm-linux-gcc
+   CXX = /opt/miyoo/usr/bin/arm-linux-g++
+   AR = /opt/miyoo/usr/bin/arm-linux-ar
+	fpic := -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T -Wl,-no-undefined
+	CFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s
+	CXXFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s
+
+# GCW0 (OpenDingux and OpenDingux Beta)
+else ifeq ($(platform), gcw0)
+	TARGET := $(TARGET_NAME)_libretro.so
+	CC = /opt/gcw0-toolchain/usr/bin/mipsel-linux-gcc
+	CXX = /opt/gcw0-toolchain/usr/bin/mipsel-linux-g++
+	AR = /opt/gcw0-toolchain/usr/bin/mipsel-linux-ar
+	fpic := -fPIC
+	SHARED := -shared -Wl,-version-script=build/link.T -Wl,-no-undefined
+	CFLAGS += -fomit-frame-pointer -march=mips32 -mtune=mips32r2 -mhard-float
+	CXXFLAGS += -fomit-frame-pointer -march=mips32 -mtune=mips32r2 -mhard-float	
+
+# Windows
+else
+	TARGET := $(TARGET_NAME)_libretro.dll
+	CC ?= gcc
+	CC_AS ?= gcc
+	CXX ?= g++
+	SHARED := -shared -static-libgcc -static-libstdc++ -Wl,-no-undefined -Wl,-version-script=build/link.T
+
+endif
+
+
+ifeq ($(HAVE_COMPAT), 1)
+	PLATFORM_DEFINES += -DHAVE_COMPAT
+endif
+
+ifeq ($(DEBUG), 1)
+	CFLAGS += -O0 -g
+	CXXFLAGS += -O0 -g
+else ifeq ($(platform), emscripten)
+	CFLAGS += -O2
+	CXXFLAGS += -O2 -fno-exceptions -fno-rtti -DHAVE_STDINT_H
+else
+	CFLAGS += -O3
+	CXXFLAGS += -O3 -fno-exceptions -fno-rtti -DHAVE_STDINT_H
+endif
+
+ifeq ($(LOG_PERFORMANCE), 1)
+	CFLAGS += -DLOG_PERFORMANCE
+	CXXFLAGS += -DLOG_PERFORMANCE
+endif
+
+
+DEFINES := -D__LIBRETRO__ $(PLATFORM_DEFINES)
+DEFINES += -DHAVE_CONFIG_H
+
+CFLAGS   += $(fpic) $(DEFINES)
+CFLAGS   += -Wall
+
+CXXFLAGS += $(fpic) $(DEFINES)
+CXXFLAGS += -Wall
+
+LDFLAGS += $(LIBM)
+
+ROMS =
+SNAPS =
+
+include build/Makefile.common
+
+HEADERS += $(ROMS:.rom=.h) $(SNAPS:.szx=.h) $(CORE_DIR)/fuse/config.h $(CORE_DIR)/libspectrum/config.h
+OBJS += $(SOURCES_C:.c=.o) $(SOURCES_CXX:.cpp=.o)
+
+INCDIRS := $(EXTRA_INCLUDES) $(INCLUDES)
+
+%.o: %.cpp
+	$(CXX) -c -o $@ $< $(CXXFLAGS) $(INCDIRS)
+
+%.o: %.c
+	$(CC) -c -o $@ $< $(CFLAGS) $(INCDIRS)
+
+%.o: %.S
+	$(CC_AS) -c -o $@ $< $(CFLAGS) $(INCDIRS)
+
+ifeq ($(platform), theos_ios)
+COMMON_FLAGS := -DIOS $(COMMON_DEFINES) $(INCFLAGS) -I$(THEOS_INCLUDE_PATH) -Wno-error
+$(LIBRARY_NAME)_CFLAGS += $(CFLAGS) $(COMMON_FLAGS)
+$(LIBRARY_NAME)_CXXFLAGS += $(CXXFLAGS) $(COMMON_FLAGS)
+${LIBRARY_NAME}_FILES = $(SOURCES_CXX) $(SOURCES_C)
+${LIBRARY_NAME}_LIBRARIES = z
+include $(THEOS_MAKE_PATH)/library.mk
+else
+all: $(TARGET)
+
+$(TARGET): $(HEADERS) $(OBJS)
+ifeq ($(STATIC_LINKING), 1)
+	$(AR) rcs $@ $(OBJS)
+else
+	$(CC) -o $@ $(SHARED) $(OBJS) $(LDFLAGS) $(LIBS)
+endif
+
+$(CORE_DIR)/fuse/config.h:
+	cp $(CORE_DIR)/src/config_fuse.h $(CORE_DIR)/fuse/config.h
+
+$(CORE_DIR)/libspectrum/config.h:
+	cp $(CORE_DIR)/src/config_libspectrum.h $(CORE_DIR)/libspectrum/config.h
+
+$(CORE_DIR)/src/version.c: FORCE
+	cat $(CORE_DIR)/etc/version.c.templ | sed s/HASH/`git rev-parse HEAD | tr -d "\n"`/g > $@
+
+clean-objs:
+	rm -f $(OBJS)
+
+clean:
+	rm -f $(OBJS)
+	rm -f $(TARGET)
+
+.PHONY: clean clean-objs FORCE
+
+# Remove all built-in implicit rules
+.SUFFIXES:
+endif
+
+endif

@@ -21,7 +21,7 @@
 	<key>NSPrincipalClass</key>
 	<string>OEGameCoreController</string>
 	<key>OEGameCoreClass</key>
-	<string>ProSystemGameCore</string>
+	<string>PVProSystemGameCore</string>
 	<key>OEGameCoreOptions</key>
 	<dict>
 		<key>openemu.system.7800</key>

@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.duckstation</string>
 	<key>PVPrincipleClass</key>
-	<string>PVDuckStationCore</string>
+	<string>PVDuckStation.PVDuckStationCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.psx</string>
@@ -15,7 +15,7 @@
 	<key>PVProjectURL</key>
 	<string>https://github.com/stenzek/duckstation/</string>
 	<key>PVProjectVersion</key>
-	<string>0.0.0</string>
+	<string>2023.01.11</string>
 	<key>PVDisabled</key>
 	<true/>
 </dict>

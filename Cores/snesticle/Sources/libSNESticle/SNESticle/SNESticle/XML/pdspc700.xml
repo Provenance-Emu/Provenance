@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="pdspc700.xsl" ?>                       
+<cpu name="spc700">
+	<ops>
+		<op code="0x00" cycles="2">
+           <NOP/> 
+         </op>
+
+		<op code="0xA0" cycles="3">                                              
+		<EI/> 
+			SF		I,1
+		</op>
+		<op code="0xC0" cycles="3">                                              
+		<DI/> 
+			SF		I,0
+		</op>
+
+		<op code="0xE0" cycles="2">
+		<CLV/> 
+			SF		V,0
+			SF		H,0
+		</op>
+
+		<op code="0x60" cycles="2">                                              
+		<CLRC/> 
+			SF		C,0
+		</op>		
+		<op code="0x80" cycles="2">                                              
+		<SETC/> 
+			SF		C,1
+		</op>		
+
+		<op code="0xED" cycles="3">                                              
+		<NOTC/> 
+			LF		$0,C
+			XOR		$0,1
+			SF		C,$0
+		</op>		
+
+		<op code="0x20" cycles="2">                                              
+		<CLRP/> 
+			SF		P,0
+		</op>
+
+		<op code="0x40" cycles="2">                                              
+		<SETP/> 
+			SF		P,1
+			SF		I,0
+		</op>
+
+
+		<op code="0x2D" cycles="4">                                     
+		<PUSHA/> 
+			LR.8	$0,A
+			PUSH.8	$0
+		</op>
+
+
+		<op code="0x4D" cycles="4">                                     
+		<PUSHX/> 
+			LR.8	$0,X
+			PUSH.8	$0
+		</op>
+
+		<op code="0x6D" cycles="4">                                     
+		<PUSHY/> 
+			LR.8	$0,Y
+			PUSH.8	$0
+		</op>
+
+		<op code="0x0D" cycles="4">                                     
+		<PUSHPSW/> 
+			LR.8	$0,PSW
+			PUSH.8	$0
+		</op>
+
+
+		<op code="0xAE" cycles="4">                                     
+		<POPA/> 
+			POP.8	$0
+			SR.8	A,$0
+		</op>
+
+		<op code="0xCE" cycles="4">                                     
+		<POPX/> 
+			POP.8	$0
+			SR.8	X,$0
+		</op>
+
+		<op code="0xEE" cycles="4">                                     
+		<POPY/> 
+			POP.8	$0
+			SR.8	Y,$0
+		</op>
+
+
+		<op code="0x8E" cycles="4">                                     
+		<POPPSW/> 
+			POP.8	$0
+			SR.8	PSW,$0
+		</op>
+
+
+<!-- 7. SHIFT, ROTATION COMMANDS -->
+
+		<op code="0x1C" cycles="2" size="8"> 
+        <ASLA/>
+		; ASL A
+		    LR.x    $1,A     ; $1 = dddddddd
+		    SHL     $1,1     ; $1 = ddddddd0
+		    SR.x    A,$1
+		    SF.x    Z,$1
+		    SF.x    N,$1
+		    SHR     $1,8    ; set carry
+		    SF.x    C,$1
+        </op>
+
+		<op code="0x0B" cycles="4" size="8" > <addr_dp/>                  <read/> <ASL/> </op>
+		<op code="0x1B" cycles="5" size="8" > <addr_dp_ix/>               <read/> <ASL/> </op>
+		<op code="0x0C" cycles="5" size="8" > <addr_abs/>                 <read/> <ASL/> </op>
+
+
+		<op code="0x5C" cycles="2" size="8" > 
+		; LSR A 
+        <LSRA/>
+		    LR.x    $1,A     ; $1 = dddddddd
+		    SF.x    C,$1     ;  C = 0000000d
+		    SHR     $1,1     ; $1 = 0ddddddd
+		    SR.x    A,$1     ;  A = 0ddddddd
+		    SF.x    Z,$1
+		    SF.x    N,$1
+        </op>
+
+        
+		<op code="0x4B" cycles="4" size="8" > <addr_dp/>                  <read/> <LSR/> </op>
+		<op code="0x5B" cycles="5" size="8" > <addr_dp_ix/>               <read/> <LSR/> </op>
+		<op code="0x4C" cycles="5" size="8" > <addr_abs/>                 <read/> <LSR/> </op>
+        
+        
+		<op code="0x3C" cycles="2" size="8" > 
+        <ROLA/>
+			; ROL A 
+			    LR.x    $1,A
+			    LF      $2,C     ; $2 = 0000000c
+			    SHL     $1,1     ; $1 = ddddddd0
+			    OR      $1,$2    ; $1 = dddddddc
+			    SR.x    A,$1    ; A  = dddddddc
+			    SF.x    Z,$1
+			    SF.x    N,$1
+			    SHR     $1,8   ; set carry
+			    SF.x    C,$1
+        </op>
+
+
+
+		<op code="0x2B" cycles="4" size="8" > <addr_dp/>                  <read/> <ROL/> </op>
+		<op code="0x3B" cycles="5" size="8" > <addr_dp_ix/>               <read/> <ROL/> </op>
+		<op code="0x2C" cycles="5" size="8" > <addr_abs/>                 <read/> <ROL/> </op>
+
+
+		<op code="0x7C" cycles="2" size="8" > 
+        <RORA/>
+			; ROR A 
+			    LR.x    $1,A
+			    LF      $2,C     ; $2 = 0000000c
+			    SHL     $2,8     ; $2 = c0000000
+			    SF.x    C,$1     ;  C = 0000000d
+			    OR      $1,$2    ; $1 =cdddddddd
+			    SHR     $1,1     ; $1 = cddddddd
+			    SR.x    A,$1     ; A  = cddddddd
+			    SF.x    Z,$1
+			    SF.x    N,$1
+        </op>
+
+        
+		<op code="0x6B" cycles="4" size="8" > <addr_dp/>                  <read/> <ROR/> </op>
+		<op code="0x7B" cycles="5" size="8" > <addr_dp_ix/>               <read/> <ROR/> </op>
+		<op code="0x6C" cycles="5" size="8" > <addr_abs/>                 <read/> <ROR/> </op>
+
+
+		<op code="0x9F" cycles="5"> 
+        	<XCN/>
+            
+		    LR.8    $0,A
+		    LR.8    $1,A
+            SHL		$0,4
+            SHR		$1,4
+            OR		$1,$0
+
+		    SR.8    A,$1
+			SF.8    Z,$1
+			SF.8    N,$1
+        </op>
+
+
+<!-- 1. 8-bit Data Transmission Commands. Group I -->
+
+		<op code="0xE8" cycles="2"> <addr_imm8/>                        <LDA/> </op>
+		<op code="0xE6" cycles="3"> <addr_x_indirect/>         <read/> <LDA/> </op>
+		<op code="0xBF" cycles="4"> <addr_x_indirect_inc/>      <read/> <LDA/> </op>
+		<op code="0xE4" cycles="3"> <addr_dp/>                  <read/> <LDA/> </op>
+		<op code="0xF4" cycles="4"> <addr_dp_ix/>               <read/> <LDA/> </op>
+		<op code="0xE5" cycles="4"> <addr_abs/>				    <read/> <LDA/> </op>
+		<op code="0xF5" cycles="5"> <addr_abs_ix/>              <read/> <LDA/> </op>
+		<op code="0xF6" cycles="5"> <addr_abs_iy/>              <read/> <LDA/> </op>
+		<op code="0xE7" cycles="6"> <addr_dp_ix_indirect/>      <read/> <LDA/> </op>
+		<op code="0xF7" cycles="6"> <addr_dp_indirect_iy/>      <read/> <LDA/> </op>
+
+		<op code="0xCD" cycles="2"> <addr_imm8/>                        <LDX/> </op>
+		<op code="0xF8" cycles="3"> <addr_dp/>                  <read/> <LDX/> </op>
+		<op code="0xF9" cycles="4"> <addr_dp_iy/>               <read/> <LDX/> </op>
+		<op code="0xE9" cycles="4"> <addr_abs/>				    <read/> <LDX/> </op>
+
+		<op code="0x8D" cycles="2"> <addr_imm8/>                        <LDY/> </op>
+		<op code="0xEB" cycles="3"> <addr_dp/>                  <read/> <LDY/> </op>
+		<op code="0xFB" cycles="4"> <addr_dp_ix/>               <read/> <LDY/> </op>
+		<op code="0xEC" cycles="4"> <addr_abs/>				    <read/> <LDY/> </op>
+
+
+<!-- 2. 8-BIT DATA TRANSMISSION COMMANDS. GROUP 2. -->
+
+
+		<op code="0xC6" cycles="4"> <addr_x_indirect/>           <STA/> </op>
+		<op code="0xAF" cycles="4"> <addr_x_indirect_inc/>       <STA/> </op>
+		<op code="0xC4" cycles="4"> <addr_dp/>                   <STA/> </op>
+		<op code="0xD4" cycles="5"> <addr_dp_ix/>                <STA/> </op>
+		<op code="0xC5" cycles="5"> <addr_abs/>				     <STA/> </op>
+		<op code="0xD5" cycles="6"> <addr_abs_ix/>               <STA/> </op>
+		<op code="0xD6" cycles="6"> <addr_abs_iy/>               <STA/> </op>
+		<op code="0xC7" cycles="7"> <addr_dp_ix_indirect/>       <STA/> </op>
+		<op code="0xD7" cycles="7"> <addr_dp_indirect_iy/>       <STA/> </op>
+
+		<op code="0xD8" cycles="4"> <addr_dp/>                   <STX/> </op>
+		<op code="0xD9" cycles="5"> <addr_dp_iy/>                <STX/> </op>
+		<op code="0xC9" cycles="5"> <addr_abs/>				     <STX/> </op>
+
+		<op code="0xCB" cycles="4"> <addr_dp/>                   <STY/> </op>
+		<op code="0xDB" cycles="5"> <addr_dp_ix/>                <STY/> </op>
+		<op code="0xCC" cycles="5"> <addr_abs/>				     <STY/> </op>
+
+<!-- 3. 8-BIT DATA TRANSMISSIN COMMANDS, GROUP 3. -->
+
+
+		<op code="0x7D" cycles="2"> 
+			<MOV_A_X/>
+			LR.8	$0,X
+			SR.8	A,$0                                             
+			SF.8	N,$0
+			SF.8	Z,$0
+		</op>
+
+
+		<op code="0xDD" cycles="2"> 
+			<MOV_A_Y/>
+			LR.8	$0,Y
+			SR.8	A,$0                                             
+			SF.8	N,$0
+			SF.8	Z,$0
+		</op>
+
+		<op code="0x5D" cycles="2"> 
+			<MOV_X_A/>
+			LR.8	$0,A
+			SR.8	X,$0                                             
+			SF.8	N,$0
+			SF.8	Z,$0
+		</op>
+
+		<op code="0xFD" cycles="2"> 
+			<MOV_Y_A/>
+			LR.8	$0,A
+			SR.8	Y,$0                                             
+			SF.8	N,$0
+			SF.8	Z,$0
+		</op>
+
+
+		<op code="0x9D" cycles="2"> 
+			<MOV_X_SP/>
+			LR.8	$0,SP
+			SR.8	X,$0                                             
+			SF.8	N,$0
+			SF.8	Z,$0
+		</op>
+
+		<op code="0xBD" cycles="2"> 
+			<MOV_SP_X/>
+			LR.8	$0,X
+			SR.8	SP,$0                                             
+		</op>
+
+
+		<op code="0xFA" cycles="5"> 
+        	<addr_dp/>
+		    LM.8    $1,$0
+			<addr_dp/>
+		    SM.8    $0,$1
+        </op>
+
+
+		<op code="0x8F" cycles="5"> 
+        	<addr_imm8/>   ; 1 = imm data                
+	        <addr_dp/>	  ; 0 = dpaddr
+		    SM.8    $0,$1
+        </op>
+
+
+<!-- 4. 8-BIT ARITHMETIC OPERATION COMMANDS. -->
+
+
+
+
+		<op code="0x88" cycles="2" size="8"> <addr_imm8/>                        <ADC/> </op>
+		<op code="0x86" cycles="3" size="8"> <addr_x_indirect/>          <read/> <ADC/> </op>
+		<op code="0x84" cycles="3" size="8"> <addr_dp/>                  <read/> <ADC/> </op>
+		<op code="0x94" cycles="4" size="8"> <addr_dp_ix/>               <read/> <ADC/> </op>
+		<op code="0x85" cycles="4" size="8"> <addr_abs/>				 <read/> <ADC/> </op>
+		<op code="0x95" cycles="5" size="8"> <addr_abs_ix/>              <read/> <ADC/> </op>
+		<op code="0x96" cycles="5" size="8"> <addr_abs_iy/>              <read/> <ADC/> </op>
+		<op code="0x87" cycles="6" size="8"> <addr_dp_ix_indirect/>      <read/> <ADC/> </op>
+		<op code="0x97" cycles="6" size="8"> <addr_dp_indirect_iy/>      <read/> <ADC/> </op>
+
+
+		<op code="0x99" cycles="5" size="8"> 
+        	<addr_y_indirect/>
+		    LM.8    $1,$0
+        	<addr_x_indirect/>
+		    LM.8    $2,$0
+            <ADCM/> 
+         </op>
+
+		<op code="0x89" cycles="6" size="8"> 
+        	<addr_dp/>
+		    LM.8    $1,$0
+			<addr_dp/>
+		    LM.8    $2,$0
+            <ADCM/> 
+         </op>
+
+		<op code="0x98" cycles="5" size="8"> 
+        	<addr_imm8/>
+        	<addr_dp/>
+		    LM.8    $2,$0
+            <ADCM/> 
+         </op>
+
+
+
+		<op code="0xA8" cycles="2" size="8"> <addr_imm8/>                        <SBC/> </op>
+		<op code="0xA6" cycles="3" size="8"> <addr_x_indirect/>          <read/> <SBC/> </op>
+		<op code="0xA4" cycles="3" size="8"> <addr_dp/>                  <read/> <SBC/> </op>
+		<op code="0xB4" cycles="4" size="8"> <addr_dp_ix/>               <read/> <SBC/> </op>
+		<op code="0xA5" cycles="4" size="8"> <addr_abs/>				 <read/> <SBC/> </op>
+		<op code="0xB5" cycles="5" size="8"> <addr_abs_ix/>              <read/> <SBC/> </op>
+		<op code="0xB6" cycles="5" size="8"> <addr_abs_iy/>              <read/> <SBC/> </op>
+		<op code="0xA7" cycles="6" size="8"> <addr_dp_ix_indirect/>      <read/> <SBC/> </op>
+		<op code="0xB7" cycles="6" size="8"> <addr_dp_indirect_iy/>      <read/> <SBC/> </op>
+
+
+		<op code="0xB9" cycles="5" size="8"> 
+        	<addr_y_indirect/>
+		    LM.8    $1,$0
+        	<addr_x_indirect/>
+		    LM.8    $2,$0
+            <SBCM/> 
+         </op>
+
+		<op code="0xA9" cycles="6" size="8"> 
+        	<addr_dp/>
+		    LM.8    $1,$0
+			<addr_dp/>
+		    LM.8    $2,$0
+            <SBCM/> 
+         </op>
+
+		<op code="0xB8" cycles="5" size="8"> 
+        	<addr_imm8/>
+        	<addr_dp/>
+		    LM.8    $2,$0
+            <SBCM/> 
+         </op>
+
+
+
+
+
+
+		<op code="0x68" cycles="2" size="8"> <addr_imm8/>                        <CMPA/> </op>
+		<op code="0x66" cycles="3" size="8"> <addr_x_indirect/>          <read/> <CMPA/> </op>
+		<op code="0x64" cycles="3" size="8"> <addr_dp/>                  <read/> <CMPA/> </op>
+		<op code="0x74" cycles="4" size="8"> <addr_dp_ix/>               <read/> <CMPA/> </op>
+		<op code="0x65" cycles="4" size="8"> <addr_abs/>				    <read/> <CMPA/> </op>
+		<op code="0x75" cycles="5" size="8"> <addr_abs_ix/>              <read/> <CMPA/> </op>
+		<op code="0x76" cycles="5" size="8"> <addr_abs_iy/>              <read/> <CMPA/> </op>
+		<op code="0x67" cycles="6" size="8"> <addr_dp_ix_indirect/>      <read/> <CMPA/> </op>
+		<op code="0x77" cycles="6" size="8"> <addr_dp_indirect_iy/>      <read/> <CMPA/> </op>
+
+		<op code="0xC8" cycles="2" size="8"> <addr_imm8/>                        <CMPX/> </op>
+		<op code="0x3E" cycles="3" size="8"> <addr_dp/>                  <read/> <CMPX/> </op>
+		<op code="0x1E" cycles="4" size="8"> <addr_abs/>				    <read/> <CMPX/> </op>
+
+		<op code="0xAD" cycles="2" size="8"> <addr_imm8/>                        <CMPY/> </op>
+		<op code="0x7E" cycles="3" size="8"> <addr_dp/>                  <read/> <CMPY/> </op>
+		<op code="0x5E" cycles="4" size="8"> <addr_abs/>				    <read/> <CMPY/> </op>
+
+
+		<op code="0x79" cycles="5" size="8"> 
+        	<addr_y_indirect/>
+		    LM.8    $1,$0
+        	<addr_x_indirect/>
+		    LM.8    $2,$0
+            <CMP/> 
+         </op>
+
+		<op code="0x69" cycles="6" size="8"> 
+        	<addr_dp/>
+		    LM.8    $1,$0
+			<addr_dp/>
+		    LM.8    $2,$0
+            <CMP/> 
+         </op>
+
+		<op code="0x78" cycles="5" size="8"> 
+        	<addr_imm8/>
+        	<addr_dp/>
+		    LM.8    $2,$0
+            <CMP/> 
+         </op>
+
+
+
+		<op code="0x28" cycles="2" size="8"> <addr_imm8/>                        <AND/> </op>
+		<op code="0x26" cycles="3" size="8"> <addr_x_indirect/>          <read/> <AND/> </op>
+		<op code="0x24" cycles="3" size="8"> <addr_dp/>                  <read/> <AND/> </op>
+		<op code="0x34" cycles="4" size="8"> <addr_dp_ix/>               <read/> <AND/> </op>
+		<op code="0x25" cycles="4" size="8"> <addr_abs/>				 <read/> <AND/> </op>
+		<op code="0x35" cycles="5" size="8"> <addr_abs_ix/>              <read/> <AND/> </op>
+		<op code="0x36" cycles="5" size="8"> <addr_abs_iy/>              <read/> <AND/> </op>
+		<op code="0x27" cycles="6" size="8"> <addr_dp_ix_indirect/>      <read/> <AND/> </op>
+		<op code="0x37" cycles="6" size="8"> <addr_dp_indirect_iy/>      <read/> <AND/> </op>
+
+
+
+		<op code="0x39" cycles="5" size="8"> 
+        	<addr_y_indirect/>
+		    LM.8    $1,$0
+        	<addr_x_indirect/>
+		    LM.8    $2,$0
+            <ANDM/> 
+         </op>
+
+		<op code="0x29" cycles="6" size="8"> 
+        	<addr_dp/>
+		    LM.8    $1,$0
+			<addr_dp/>
+		    LM.8    $2,$0
+            <ANDM/> 
+         </op>
+
+		<op code="0x38" cycles="5" size="8"> 
+        	<addr_imm8/>
+        	<addr_dp/>
+		    LM.8    $2,$0
+            <ANDM/> 
+         </op>
+
+
+
+
+		<op code="0x08" cycles="2" size="8"> <addr_imm8/>                        <ORA/> </op>
+		<op code="0x06" cycles="3" size="8"> <addr_x_indirect/>          <read/> <ORA/> </op>
+		<op code="0x04" cycles="3" size="8"> <addr_dp/>                  <read/> <ORA/> </op>
+		<op code="0x14" cycles="4" size="8"> <addr_dp_ix/>               <read/> <ORA/> </op>
+		<op code="0x05" cycles="4" size="8"> <addr_abs/>				 <read/> <ORA/> </op>
+		<op code="0x15" cycles="5" size="8"> <addr_abs_ix/>              <read/> <ORA/> </op>
+		<op code="0x16" cycles="5" size="8"> <addr_abs_iy/>              <read/> <ORA/> </op>
+		<op code="0x07" cycles="6" size="8"> <addr_dp_ix_indirect/>      <read/> <ORA/> </op>
+		<op code="0x17" cycles="6" size="8"> <addr_dp_indirect_iy/>      <read/> <ORA/> </op>
+
+
+
+		<op code="0x19" cycles="5" size="8"> 
+        	<addr_y_indirect/>
+		    LM.8    $1,$0
+        	<addr_x_indirect/>
+		    LM.8    $2,$0
+            <ORM/> 
+         </op>
+
+		<op code="0x09" cycles="6" size="8"> 
+        	<addr_dp/>
+		    LM.8    $1,$0
+			<addr_dp/>
+		    LM.8    $2,$0
+            <ORM/> 
+         </op>
+
+		<op code="0x18" cycles="5" size="8"> 
+        	<addr_imm8/>
+        	<addr_dp/>
+		    LM.8    $2,$0
+            <ORM/> 
+         </op>
+
+
+		<op code="0x48" cycles="2" size="8"> <addr_imm8/>                        <EOR/> </op>
+		<op code="0x46" cycles="3" size="8"> <addr_x_indirect/>          <read/> <EOR/> </op>
+		<op code="0x44" cycles="3" size="8"> <addr_dp/>                  <read/> <EOR/> </op>
+		<op code="0x54" cycles="4" size="8"> <addr_dp_ix/>               <read/> <EOR/> </op>
+		<op code="0x45" cycles="4" size="8"> <addr_abs/>				 <read/> <EOR/> </op>
+		<op code="0x55" cycles="5" size="8"> <addr_abs_ix/>              <read/> <EOR/> </op>
+		<op code="0x56" cycles="5" size="8"> <addr_abs_iy/>              <read/> <EOR/> </op>
+		<op code="0x47" cycles="6" size="8"> <addr_dp_ix_indirect/>      <read/> <EOR/> </op>
+		<op code="0x57" cycles="6" size="8"> <addr_dp_indirect_iy/>      <read/> <EOR/> </op>
+
+
+		<op code="0x59" cycles="5" size="8"> 
+        	<addr_y_indirect/>
+		    LM.8    $1,$0
+        	<addr_x_indirect/>
+		    LM.8    $2,$0
+            <EORM/> 
+         </op>
+
+		<op code="0x49" cycles="6" size="8"> 
+        	<addr_dp/>
+		    LM.8    $1,$0
+			<addr_dp/>
+		    LM.8    $2,$0
+            <EORM/> 
+         </op>
+
+		<op code="0x58" cycles="5" size="8"> 
+        	<addr_imm8/>
+        	<addr_dp/>
+		    LM.8    $2,$0
+            <EORM/> 
+         </op>
+
+
+
+
+
+<!-- 6. ADDITION & SUBTRACTION COMMANDS. -->
+
+
+		<op code="0x9C" cycles="2"> 
+			<DECA/>
+		    LR.8    $1,A
+		    SUB	    $1,1
+		    SR.8    A,$1
+		    SF.8    Z,$1
+		    SF.8    N,$1
+		</op>
+
+		<op code="0x1D" cycles="2"> 
+			<DECX/>
+		    LR.8    $1,X
+		    SUB	    $1,1
+		    SR.8    X,$1
+		    SF.8    Z,$1
+		    SF.8    N,$1
+		</op>
+
+		<op code="0xDC" cycles="2"> 
+			<DECY/>
+		    LR.8    $1,Y
+		    SUB	    $1,1
+		    SR.8    Y,$1
+		    SF.8    Z,$1
+		    SF.8    N,$1
+		</op>
+
+		<op code="0xBC" cycles="2"> 
+			<INCA/>
+		    LR.8    $1,A
+		    ADD	    $1,1
+		    SR.8    A,$1
+		    SF.8    Z,$1
+		    SF.8    N,$1
+		</op>
+
+		<op code="0x3D" cycles="2"> 
+			<INCX/>
+		    LR.8    $1,X
+		    ADD	    $1,1
+		    SR.8    X,$1
+		    SF.8    Z,$1
+		    SF.8    N,$1
+		</op>
+
+		<op code="0xFC" cycles="2"> 
+			<INCY/>
+		    LR.8    $1,Y
+		    ADD	    $1,1
+		    SR.8    Y,$1
+		    SF.8    Z,$1
+		    SF.8    N,$1
+		</op>
+
+		<op code="0xAB" cycles="4" size="8" > <addr_dp/>                  <read/> <INC/> </op>
+		<op code="0xBB" cycles="5" size="8" > <addr_dp_ix/>               <read/> <INC/> </op>
+		<op code="0xAC" cycles="5" size="8" > <addr_abs/>                 <read/> <INC/> </op>
+
+		<op code="0x8B" cycles="4" size="8" > <addr_dp/>                  <read/> <DEC/> </op>
+		<op code="0x9B" cycles="5" size="8" > <addr_dp_ix/>               <read/> <DEC/> </op>
+		<op code="0x8C" cycles="5" size="8" > <addr_abs/>                 <read/> <DEC/> </op>
+
+
+
+<!--  8. 16-BIT TRANSMISION COMMANDS -->
+
+
+		<op code="0xBA" cycles="5" size="16"> 
+        	<addr_dp/>                  
+            <read16/> 
+            <LDYA/> 
+          </op>
+
+
+		<op code="0xDA" cycles="5" size="16"> 
+        	<addr_dp/>                  
+            <STYA/> 
+          </op>
+
+
+
+
+
+<!-- 9. 16-BIT OPERATION COMMANDS. -->
+
+
+		<op code="0x3A" cycles="6" size="16"> 
+        	<addr_dp/>                  
+            <read16/> 
+            <INC/> 
+          </op>
+
+
+		<op code="0x1A" cycles="6" size="16"> 
+        	<addr_dp/>                  
+            <read16/> 
+            <DEC/> 
+          </op>
+
+
+		<op code="0x7A" cycles="5" size="16"> 
+        	<addr_dp/>                  
+            <read16/> 
+            <ADC16/>
+
+		; ADC16 (A + B)
+			LR.x    $2,YA	; A
+			ADC.x   $2,$1	; A + value + carry
+			SR.x	YA,$2
+			SF.x    Z,$2
+			SF.x    N,$2
+		    SHR     $2,16  ; set carry
+			SF.x    C,$2
+          </op>
+
+
+		<op code="0x9A" cycles="5" size="16"> 
+        	<addr_dp/>                  
+            <read16/> 
+            <SBC16/>
+
+		; SBC16 (A + B)
+			NOT.x	$1			; invert operand
+			ADD     $1,1		; no carry
+
+			LR.x    $2,YA	; A
+			ADC.x   $2,$1	; A + value + carry
+			SR.x	YA,$2
+			SF.x    Z,$2
+			SF.x    N,$2
+		    SHR     $2,16  ; set carry
+			SF.x    C,$2
+          </op>
+
+
+		<op code="0x5A" cycles="4" size="16"> 
+        	<addr_dp/>                  
+            <read16/> 
+            <CMP16/>
+
+		; CMP16 (YA - dp)
+			LR.16    $2,YA	; A
+            SUB		$2,$1
+			SF.16    Z,$2
+			SF.16    N,$2
+
+		    SHR     $2,16   ; set carry
+		    XOR		$2,1
+			SF.x    C,$2
+          </op>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 10. MULTIPLICATION & DIVISON COMMANDS. -->
+
+		<op code="0xCF" cycles="9"> 
+        	<MUL/>
+            
+		    LR.8    $0,Y
+		    LR.8    $1,A
+            MUL		$1,$0
+
+		    SR.16    YA,$1
+			SF.16    Z,$1
+			SF.16    N,$1
+        </op>
+
+
+
+
+<!-- 13. SUB-ROUTINE CALL RETURN COMMANDS. -->
+
+		<op code="0x3F" cycles="8"> 
+        	<addr_abs/>           	
+            <CALL/> 	
+        </op>
+
+		<op code="0x6F" cycles="5">
+		<RTS/> 
+			POP.16		$0
+<!--			ADD			$0,1 -->
+			SR.16		PC,$0
+		</op>
+
+
+
+
+		<op code="0x5F" cycles="3"> 
+        	<addr_abs/>                      
+            <JMP/> 
+         </op>
+
+
+		<op code="0x1F" cycles="6"> 
+        	<addr_abs_ix_indirect/>                      
+            <JMP/> 
+         </op>
+
+
+
+
+<!-- 15. BIT OPERATION COMMANDS. -->
+
+		<op code="0x02" cycles="4"> <addr_dp/> <SET1 bit="0x01" /> </op>
+		<op code="0x22" cycles="4"> <addr_dp/> <SET1 bit="0x02" /> </op>
+		<op code="0x42" cycles="4"> <addr_dp/> <SET1 bit="0x04" /> </op>
+		<op code="0x62" cycles="4"> <addr_dp/> <SET1 bit="0x08" /> </op>
+		<op code="0x82" cycles="4"> <addr_dp/> <SET1 bit="0x10" /> </op>
+		<op code="0xA2" cycles="4"> <addr_dp/> <SET1 bit="0x20" /> </op>
+		<op code="0xC2" cycles="4"> <addr_dp/> <SET1 bit="0x40" /> </op>
+		<op code="0xE2" cycles="4"> <addr_dp/> <SET1 bit="0x80" /> </op>
+
+		<op code="0x12" cycles="4"> <addr_dp/> <CLR1 bit="0x01" /> </op>
+		<op code="0x32" cycles="4"> <addr_dp/> <CLR1 bit="0x02" /> </op>
+		<op code="0x52" cycles="4"> <addr_dp/> <CLR1 bit="0x04" /> </op>
+		<op code="0x72" cycles="4"> <addr_dp/> <CLR1 bit="0x08" /> </op>
+		<op code="0x92" cycles="4"> <addr_dp/> <CLR1 bit="0x10" /> </op>
+		<op code="0xB2" cycles="4"> <addr_dp/> <CLR1 bit="0x20" /> </op>
+		<op code="0xD2" cycles="4"> <addr_dp/> <CLR1 bit="0x40" /> </op>
+		<op code="0xF2" cycles="4"> <addr_dp/> <CLR1 bit="0x80" /> </op>
+
+
+
+
+		<op code="0x0E" cycles="6" size="8"> 
+        	<TSET1/>
+        	<addr_abs/>
+		    LM.8    $1,$0
+
+            LR.8	$2,A
+            AND		$2,$1
+			SF.8    Z,$2
+			SF.8    N,$2
+
+
+            LR.8	$2,A
+            OR		$1,$2
+            SM.8	$0,$1
+         </op>
+
+		<op code="0x4E" cycles="6" size="8"> 
+        	<TCLR1/>
+        	<addr_abs/>
+		    LM.8    $1,$0
+
+            LR.8	$2,A
+            AND		$2,$1
+			SF.8    Z,$2
+			SF.8    N,$2
+
+            LR.8	$2,A
+            OR		$1,$2
+            XOR		$1,$2
+            SM.8	$0,$1
+         </op>
+
+
+
+
+
+		<op code="0x4F" cycles="6" > 
+        	<PCALL/>
+
+        	LI.8	$0
+            ADD		$0,0xFF00
+            LR		$1,PC
+            PUSH.16	$1
+            SR.16	PC,$0
+         </op>
+
+
+
+		<op code="0xAA" cycles="4" > 
+        	<MOV1/>
+            ; mov1 c,mem.bit
+        	<addr_abs/>
+            MOVE	$2,$0
+            
+            AND		$0,0x1FFF
+            SHR		$2,13		; $2 = bit number
+            
+            LM.8	$1,$0
+            SHR		$1,$2		
+            AND		$1,1
+            SF		C,$1
+         </op>
+
+
+		<op code="0x8A" cycles="5" > 
+        	<EOR1/>
+            ; eor1 c,mem.bit
+        	<addr_abs/>
+            MOVE	$2,$0
+            
+            AND		$0,0x1FFF
+            SHR		$2,13		; $2 = bit number
+            
+            LM.8	$1,$0
+            SHR		$1,$2		
+            AND		$1,1		; $1 = bit data
+            LF		$2,C		; $2 = carry flag
+			XOR     $2,$1       ; $2 = 
+            SF		C,$2
+         </op>
+
+
+		<op code="0xEA" cycles="5" > 
+        	<NOT1/>
+            ; not1 mem.bit
+        	<addr_abs/>
+            MOVE	$1,$0
+            LR      $2,1
+            
+            AND		$0,0x1FFF
+            SHR		$1,13		; $1 = bit number
+            SHL     $2,$1     	; $2 = bit mask
+            
+            LM.8	$1,$0       ; load byte
+            XOR	    $1,$2       ; not bit
+            SM.8    $0,$1       ; store byte
+         </op>
+
+
+
+
+
+
+
+
+
+
+	</ops>
+</cpu>
+
+
+
+
+
+
+
+
+
+

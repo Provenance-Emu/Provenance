@@ -1,0 +1,29 @@
+Archives generated using LhA v1.22 for Amiga.
+
+lh0.lzh       - Archive containing uncompressed (stored) file.
+lh1.lzh       - Archive containing compressed file (-lh1- compression)
+lh4.lzh       - Archive containing compressed file (-lh4- compression)
+lh5.lzh       - Archive containing compressed file (-lh5- compression)
+lh4_long.lzh  - Archive containing large compressed file (-lh4- compression)
+subdir.lzh    - Archive containing subdirectories.
+
+This version of LHA has support for different header levels, but it seems
+to be buggy?
+
+level0.lzh    - Archive with level 0 header.
+level1.lzh    - Archive with level 1 header. Unix LHA can't read it?
+level2.lzh    - Archive with level 2 header. Unix LHA gets confused by path?
+
+Self extracting archive generated with LhASfx v1.2:
+
+sfx.run       - Self extracting archive containing lh4.lzh
+
+Bug test archive:
+
+lh0_dirs_bug.lzh - File where a directory entry is mistakenly encoded as a
+                   zero-length file with -lh0- compression method (Lhasa
+                   bug #31). Thanks to Github user @alfredone for supplying
+                   this. I don't actually know what version of the LhA tool
+                   generated this file and has this bug, this directory was
+                   just a convenient place to put it.
+

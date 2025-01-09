@@ -1,0 +1,32 @@
+language: generic
+os: linux
+dist: trusty
+sudo: required
+addons:
+  apt:
+    packages:
+      - g++-7
+    sources:
+      - ubuntu-toolchain-r-test
+env:
+  global:
+    - CORE=vecx
+    - COMPILER_NAME=gcc CXX=g++-7 CC=gcc-7
+  matrix:
+    - PLATFORM=linux_x64
+before_script:
+  - pwd
+  - mkdir -p ~/bin
+  - ln -s /usr/bin/gcc-7 ~/bin/gcc
+  - ln -s /usr/bin/g++-7 ~/bin/g++
+  - ln -s /usr/bin/cpp-7 ~/bin/cpp
+  - export PATH=~/bin:$PATH
+  - ls -l ~/bin
+  - echo $PATH
+  - g++-7 --version
+  - g++ --version
+script:
+  - cd ~/
+  - git clone --depth=50 https://github.com/libretro/libretro-super
+  - cd libretro-super/travis
+  - ./build.sh

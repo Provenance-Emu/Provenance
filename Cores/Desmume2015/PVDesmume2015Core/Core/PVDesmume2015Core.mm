@@ -14,7 +14,9 @@
 #import "PVDesmume2015+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+#import <PVLogging/PVLogging.h>
+
+@import PVCoreBridge;
 
 // Desmume2015 imports
 //#include "types.h"
@@ -68,7 +70,7 @@
 //    return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
 //}
 
-@implementation PVDesmume2015Core {
+@implementation PVDesmume2015CoreBridge {
 //	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
 //	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
 //    dispatch_semaphore_t coreWaitForExitSemaphore;
@@ -78,6 +80,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
+        pitch_shift = 1;
 //		mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
 //		coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
 //        coreWaitForExitSemaphore       = dispatch_semaphore_create(0);
@@ -436,7 +439,7 @@
             return value;
     } else if (V("desmume_hybrid_layout_scale")) {
             // 1|3
-            char * value = strdup("3");
+            char * value = strdup("1");
             return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);

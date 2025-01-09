@@ -14,8 +14,10 @@
 //
 //#import "PVEP128EmuCore+Audio.h"
 
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 #import <OpenGL/gl3.h>
@@ -27,7 +29,7 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVEP128EmuCore() {
+@interface PVEP128EmuCoreBridge() {
 
 }
 
@@ -35,7 +37,7 @@
 
 #pragma mark - PVEP128EmuCore Begin
 
-@implementation PVEP128EmuCore
+@implementation PVEP128EmuCoreBridge
 {
 }
 

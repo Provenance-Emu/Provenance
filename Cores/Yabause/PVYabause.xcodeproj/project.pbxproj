@@ -3,42 +3,32 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B301797F207C909E0051B93D /* libyabause.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libyabause.a */; };
+		B30E98A42C6EEEE200C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98A32C6EEEE200C1431E /* PVSupport */; };
+		B30E99DA2C6F046A00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99D92C6F046A00C1431E /* PVCoreBridge */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
-		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
-		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
+		B341206F297601A200F5F351 /* libyabause.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B341206B2975FEFF00F5F351 /* libyabause.a */; platformFilters = (ios, maccatalyst, tvos, ); };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B37022C72872553D00B3F6DA /* PVYabauseCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVYabauseCore.mm */; };
 		B37022C82872553E00B3F6DA /* PVYabauseCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVYabauseCore.mm */; };
 		B37022C92872554300B3F6DA /* PVYabauseCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVYabauseCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CA2872554300B3F6DA /* PVYabauseCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVYabauseCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
-		B37022CC2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVYabause.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVYabause.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CE2872558F00B3F6DA /* PVYabause.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVYabause.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B39768F82859E23200558958 /* libyabause-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libyabause-libretro.a */; };
-		B39768FB2859E23A00558958 /* libyabause-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libyabause-libretro.a */; };
-		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
-		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
-		B3B104AF218F26F400210C39 /* libyabause.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libyabause.a */; };
-		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		B3F8E0CB2CB3A81900017D1B /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E0CA2CB3A81900017D1B /* PVCoreBridgeRetro.framework */; };
+		B3F8E0D02CB3AAF300017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0CF2CB3AAF300017D1B /* PVCoreObjCBridge */; };
+		B3F8E0D32CB3AB3500017D1B /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0D22CB3AB3500017D1B /* PVEmulatorCore */; };
+		B3F8E0D72CB3B07500017D1B /* PVYabauseCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0D42CB3B07500017D1B /* PVYabauseCore.swift */; };
+		B3F8E0D82CB3B07500017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0D52CB3B07500017D1B /* CorePlist.swift */; };
+		B3F8E0D92CB3B07500017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E0D62CB3B07500017D1B /* CorePlist-Generated.swift */; };
+		B3F8E0DC2CB3B1E900017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0DB2CB3B1E900017D1B /* PVPlists */; };
 		B3FF63CA2873E37000829C14 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB22872965000EAEB37 /* error.c */; };
 		B3FF63CB2873E37000829C14 /* cs1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BB42872964D00EAEB37 /* cs1.c */; };
 		B3FF63CC2873E37000829C14 /* m68kd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0BA2872965100EAEB37 /* m68kd.c */; };
@@ -49,16 +39,6 @@
 		B3FF63D12873E37000829C14 /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9F812872964F00EAEB37 /* cheat.c */; };
 		B3FF63D22873E37000829C14 /* cs0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FAD2872965000EAEB37 /* cs0.c */; };
 		B3FF63D32873E37000829C14 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B8B2872964D00EAEB37 /* memory.c */; };
-		B3FF63D42873E37000829C14 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB22872965000EAEB37 /* error.c */; };
-		B3FF63D52873E37000829C14 /* cs1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BB42872964D00EAEB37 /* cs1.c */; };
-		B3FF63D62873E37000829C14 /* m68kd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0BA2872965100EAEB37 /* m68kd.c */; };
-		B3FF63D72873E37000829C14 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D902872964E00EAEB37 /* bios.c */; };
-		B3FF63D82873E37000829C14 /* cs2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B762872964D00EAEB37 /* cs2.c */; };
-		B3FF63D92873E37000829C14 /* cdbase.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BAD2872964D00EAEB37 /* cdbase.c */; };
-		B3FF63DA2873E37000829C14 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D922872964E00EAEB37 /* debug.c */; };
-		B3FF63DB2873E37000829C14 /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9F812872964F00EAEB37 /* cheat.c */; };
-		B3FF63DC2873E37000829C14 /* cs0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FAD2872965000EAEB37 /* cs0.c */; };
-		B3FF63DD2873E37000829C14 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B8B2872964D00EAEB37 /* memory.c */; };
 		B3FF63DE2873E3AA00829C14 /* vdp2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0B62872965100EAEB37 /* vdp2.c */; };
 		B3FF63DF2873E3AA00829C14 /* smpc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D862872964E00EAEB37 /* smpc.c */; };
 		B3FF63E02873E3AA00829C14 /* scsp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FAE2872965000EAEB37 /* scsp.c */; };
@@ -72,55 +52,25 @@
 		B3FF63E82873E3AA00829C14 /* netlink.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0AF2872965100EAEB37 /* netlink.c */; };
 		B3FF63E92873E3AA00829C14 /* sh2core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D8E2872964E00EAEB37 /* sh2core.c */; };
 		B3FF63EA2873E3AA00829C14 /* peripheral.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BAF2872964D00EAEB37 /* peripheral.c */; };
-		B3FF63EB2873E3AA00829C14 /* vdp2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0B62872965100EAEB37 /* vdp2.c */; };
-		B3FF63EC2873E3AA00829C14 /* smpc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D862872964E00EAEB37 /* smpc.c */; };
-		B3FF63ED2873E3AA00829C14 /* scsp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FAE2872965000EAEB37 /* scsp.c */; };
-		B3FF63EE2873E3AA00829C14 /* yabause.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D912872964E00EAEB37 /* yabause.c */; };
-		B3FF63EF2873E3AA00829C14 /* sh2d.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB52872965000EAEB37 /* sh2d.c */; };
-		B3FF63F02873E3AA00829C14 /* sh2int.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B8E2872964D00EAEB37 /* sh2int.c */; };
-		B3FF63F12873E3AA00829C14 /* sh2idle.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0602872965000EAEB37 /* sh2idle.c */; };
-		B3FF63F22873E3AA00829C14 /* vdp1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB92872965000EAEB37 /* vdp1.c */; };
-		B3FF63F32873E3AA00829C14 /* profile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0192872965000EAEB37 /* profile.c */; };
-		B3FF63F42873E3AA00829C14 /* scu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D7D2872964E00EAEB37 /* scu.c */; };
-		B3FF63F52873E3AA00829C14 /* netlink.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0AF2872965100EAEB37 /* netlink.c */; };
-		B3FF63F62873E3AA00829C14 /* sh2core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D8E2872964E00EAEB37 /* sh2core.c */; };
-		B3FF63F72873E3AA00829C14 /* peripheral.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BAF2872964D00EAEB37 /* peripheral.c */; };
 		B3FF63F82873E3BA00829C14 /* coffelf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0522872965000EAEB37 /* coffelf.c */; };
 		B3FF63F92873E3BA00829C14 /* m68kcore.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D882872964E00EAEB37 /* m68kcore.c */; };
-		B3FF63FA2873E3BA00829C14 /* coffelf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0522872965000EAEB37 /* coffelf.c */; };
-		B3FF63FB2873E3BA00829C14 /* m68kcore.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D882872964E00EAEB37 /* m68kcore.c */; };
 		B3FF64122873E52700829C14 /* yabause_griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D982872964E00EAEB37 /* yabause_griffin.c */; };
-		B3FF64132873E52700829C14 /* yabause_griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D982872964E00EAEB37 /* yabause_griffin.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B341206A2975FEFF00F5F351 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B341205F2975FEFF00F5F351 /* yabause.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0390D179E94142358445B0F0;
+			remoteInfo = yabause;
+		};
 		B39768F92859E23200558958 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B3344B522859E088006E6B3A;
 			remoteInfo = "dos-box-libretro-iOS";
-		};
-		B39768FC2859E23A00558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B39768ED2859E18B00558958;
-			remoteInfo = "dos-box-libretro-tvOS";
-		};
-		B3EBA0F62872965100EAEB37 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2A7D3A55115BA3E700DE3BD1;
-			remoteInfo = gen68k;
-		};
-		B3EBA0F82872965100EAEB37 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D1107320486CEB800E47090;
-			remoteInfo = Yabause;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -143,24 +93,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447F8D218BEE3F00557ACE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F22859E18B00558958 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -170,9 +102,8 @@
 		B3344BC32859E088006E6B3A /* libyabause-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libyabause-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B341205F2975FEFF00F5F351 /* yabause.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = yabause.xcodeproj; path = cmake/yabause.xcodeproj; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
-		B3447EE6218BEDD200557ACE /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libyabause.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libyabause.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -185,7 +116,6 @@
 		B37022C3287253B300B3F6DA /* PVYabause.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVYabause.h; sourceTree = "<group>"; };
 		B37022C5287253B300B3F6DA /* PVYabauseCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVYabauseCore.h; sourceTree = "<group>"; };
 		B37022C6287253B300B3F6DA /* PVYabauseCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVYabauseCore.mm; sourceTree = "<group>"; };
-		B39768F72859E18B00558958 /* libyabause-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libyabause-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1090,8 +1020,8 @@
 		B3EB9EFB2872964F00EAEB37 /* udp-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "udp-test.c"; sourceTree = "<group>"; };
 		B3EB9EFC2872964F00EAEB37 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B3EB9EFD2872964F00EAEB37 /* net_http_parse_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_http_parse_test.c; sourceTree = "<group>"; };
-		B3EB9EFE2872964F00EAEB37 /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = file; path = net_ifinfo; sourceTree = "<group>"; };
-		B3EB9EFF2872964F00EAEB37 /* http_test */ = {isa = PBXFileReference; lastKnownFileType = file; path = http_test; sourceTree = "<group>"; };
+		B3EB9EFE2872964F00EAEB37 /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = text; path = net_ifinfo; sourceTree = "<group>"; };
+		B3EB9EFF2872964F00EAEB37 /* http_test */ = {isa = PBXFileReference; lastKnownFileType = text; path = http_test; sourceTree = "<group>"; };
 		B3EB9F002872964F00EAEB37 /* net_http_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_http_test.c; sourceTree = "<group>"; };
 		B3EB9F032872964F00EAEB37 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B3EB9F042872964F00EAEB37 /* rpng_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rpng_test.c; sourceTree = "<group>"; };
@@ -1215,7 +1145,6 @@
 		B3EB9F962872965000EAEB37 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3EB9F982872965000EAEB37 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		B3EB9F992872965000EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Yabause.xcodeproj; sourceTree = "<group>"; };
 		B3EB9F9D2872965000EAEB37 /* YabauseController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YabauseController.m; sourceTree = "<group>"; };
 		B3EB9F9E2872965000EAEB37 /* PerCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PerCocoa.h; sourceTree = "<group>"; };
 		B3EB9F9F2872965000EAEB37 /* YabauseGLView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YabauseGLView.h; sourceTree = "<group>"; };
@@ -1525,6 +1454,10 @@
 		B3EBA0F12872965100EAEB37 /* bug_report.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = bug_report.md; sourceTree = "<group>"; };
 		B3EBA0F22872965100EAEB37 /* .gitlab-ci.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ".gitlab-ci.yml"; sourceTree = "<group>"; };
 		B3EBA0F32872965100EAEB37 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
+		B3F8E0CA2CB3A81900017D1B /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F8E0D42CB3B07500017D1B /* PVYabauseCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVYabauseCore.swift; sourceTree = "<group>"; };
+		B3F8E0D52CB3B07500017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3F8E0D62CB3B07500017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1542,61 +1475,39 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447ECA218BEDD200557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3B104AF218F26F400210C39 /* libyabause.a in Frameworks */,
-				B39768FB2859E23A00558958 /* libyabause-libretro.a in Frameworks */,
-				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
-				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
-				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
-				B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */,
-				B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */,
-				B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */,
-				B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8C218BEE3F00557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F12859E18B00558958 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620C20783162009950E4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B341206F297601A200F5F351 /* libyabause.a in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
-				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				B3F8E0D02CB3AAF300017D1B /* PVCoreObjCBridge in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B30E99DA2C6F046A00C1431E /* PVCoreBridge in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libyabause.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B39768F82859E23200558958 /* libyabause-libretro.a in Frameworks */,
+				B3F8E0DC2CB3B1E900017D1B /* PVPlists in Frameworks */,
+				B3F8E0D32CB3AB3500017D1B /* PVEmulatorCore in Frameworks */,
+				B3F8E0CB2CB3A81900017D1B /* PVCoreBridgeRetro.framework in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
+				B30E98A42C6EEEE200C1431E /* PVSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B34120602975FEFF00F5F351 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B341206B2975FEFF00F5F351 /* libyabause.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B37022BE287253B300B3F6DA /* PVYabause */ = {
 			isa = PBXGroup;
 			children = (
@@ -1612,6 +1523,9 @@
 			children = (
 				B37022C5287253B300B3F6DA /* PVYabauseCore.h */,
 				B37022C6287253B300B3F6DA /* PVYabauseCore.mm */,
+				B3F8E0D42CB3B07500017D1B /* PVYabauseCore.swift */,
+				B3F8E0D52CB3B07500017D1B /* CorePlist.swift */,
+				B3F8E0D62CB3B07500017D1B /* CorePlist-Generated.swift */,
 			);
 			path = PVYabauseCore;
 			sourceTree = "<group>";
@@ -1619,6 +1533,7 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				B341205F2975FEFF00F5F351 /* yabause.xcodeproj */,
 				B3EB9AF12872964C00EAEB37 /* yabause */,
 				B37022BE287253B300B3F6DA /* PVYabause */,
 				B37022C4287253B300B3F6DA /* PVYabauseCore */,
@@ -1635,10 +1550,7 @@
 			children = (
 				B3C7621020783162009950E4 /* PVYabause.framework */,
 				B30178D3207C901D0051B93D /* libyabause.a */,
-				B3447EE6218BEDD200557ACE /* PVYabause.framework */,
-				B3447F91218BEE3F00557ACE /* libyabause.a */,
 				B3344BC32859E088006E6B3A /* libyabause-libretro.a */,
-				B39768F72859E18B00558958 /* libyabause-libretro.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1646,6 +1558,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3F8E0CA2CB3A81900017D1B /* PVCoreBridgeRetro.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
@@ -4149,21 +4062,11 @@
 				B3EB9F932872964F00EAEB37 /* CMake-Info.plist */,
 				B3EB9FA52872965000EAEB37 /* Yabause-Info.plist */,
 				B3EB9F992872965000EAEB37 /* CMakeLists.txt */,
-				B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */,
 				B3EB9F952872965000EAEB37 /* InfoPlist.strings */,
 				B3EB9F972872965000EAEB37 /* MainMenu.xib */,
 				B3EB9FA22872965000EAEB37 /* resources */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		B3EB9F9B2872965000EAEB37 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B3EBA0F72872965100EAEB37 /* gen68k */,
-				B3EBA0F92872965100EAEB37 /* Yabause.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B3EB9FA22872965000EAEB37 /* resources */ = {
@@ -4656,15 +4559,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B3447ED5218BEDD200557ACE /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022CE2872558F00B3F6DA /* PVYabause.h in Headers */,
-				B37022CA2872554300B3F6DA /* PVYabauseCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620D20783162009950E4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -4677,9 +4571,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B30178D2207C901D0051B93D /* yabause-iOS */ = {
+		B30178D2207C901D0051B93D /* yabause */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "yabause-iOS" */;
+			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "yabause" */;
 			buildPhases = (
 				B30178CF207C901D0051B93D /* Sources */,
 				B30178D0207C901D0051B93D /* Frameworks */,
@@ -4689,14 +4583,14 @@
 			);
 			dependencies = (
 			);
-			name = "yabause-iOS";
+			name = yabause;
 			productName = reicast;
 			productReference = B30178D3207C901D0051B93D /* libyabause.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3344B522859E088006E6B3A /* yabause-libretro-iOS */ = {
+		B3344B522859E088006E6B3A /* yabause-libretro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "yabause-libretro-iOS" */;
+			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "yabause-libretro" */;
 			buildPhases = (
 				B3344B532859E088006E6B3A /* Sources */,
 				B3344BBD2859E088006E6B3A /* Frameworks */,
@@ -4706,67 +4600,14 @@
 			);
 			dependencies = (
 			);
-			name = "yabause-libretro-iOS";
+			name = "yabause-libretro";
 			productName = reicast;
 			productReference = B3344BC32859E088006E6B3A /* libyabause-libretro.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3447EC0218BEDD200557ACE /* PVYabause-tvOS */ = {
+		B3C7620F20783162009950E4 /* PVYabause */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVYabause-tvOS" */;
-			buildPhases = (
-				B3447EC1218BEDD200557ACE /* Sources */,
-				B3447ECA218BEDD200557ACE /* Frameworks */,
-				B3447ED5218BEDD200557ACE /* Headers */,
-				B3447EDF218BEDD200557ACE /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B39768FD2859E23A00558958 /* PBXTargetDependency */,
-			);
-			name = "PVYabause-tvOS";
-			productName = PVReicast;
-			productReference = B3447EE6218BEDD200557ACE /* PVYabause.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3447EE8218BEE3F00557ACE /* yabause-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "yabause-tvOS" */;
-			buildPhases = (
-				B3447EE9218BEE3F00557ACE /* Sources */,
-				B3447F8C218BEE3F00557ACE /* Frameworks */,
-				B3447F8D218BEE3F00557ACE /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "yabause-tvOS";
-			productName = reicast;
-			productReference = B3447F91218BEE3F00557ACE /* libyabause.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B39768ED2859E18B00558958 /* yabause-libretro-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "yabause-libretro-tvOS" */;
-			buildPhases = (
-				B39768EE2859E18B00558958 /* Sources */,
-				B39768F12859E18B00558958 /* Frameworks */,
-				B39768F22859E18B00558958 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "yabause-libretro-tvOS";
-			productName = reicast;
-			productReference = B39768F72859E18B00558958 /* libyabause-libretro.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3C7620F20783162009950E4 /* PVYabause-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVYabause-iOS" */;
+			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVYabause" */;
 			buildPhases = (
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
@@ -4778,7 +4619,7 @@
 			dependencies = (
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
-			name = "PVYabause-iOS";
+			name = PVYabause;
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVYabause.framework */;
 			productType = "com.apple.product-type.framework";
@@ -4791,8 +4632,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1300;
-				ORGANIZATIONNAME = "Provenance Emu";
+				LastUpgradeCheck = 1600;
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
@@ -4800,11 +4641,12 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVYabause" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -4824,52 +4666,42 @@
 				English,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E98A22C6EEEE200C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E99D82C6F046A00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3F8E0CE2CB3AAF300017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3F8E0D12CB3AB3500017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3F8E0DA2CB3B1E900017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = B3EB9F9B2872965000EAEB37 /* Products */;
-					ProjectRef = B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */;
+					ProductGroup = B34120602975FEFF00F5F351 /* Products */;
+					ProjectRef = B341205F2975FEFF00F5F351 /* yabause.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
-				B3C7620F20783162009950E4 /* PVYabause-iOS */,
-				B3447EC0218BEDD200557ACE /* PVYabause-tvOS */,
-				B3344B522859E088006E6B3A /* yabause-libretro-iOS */,
-				B39768ED2859E18B00558958 /* yabause-libretro-tvOS */,
-				B30178D2207C901D0051B93D /* yabause-iOS */,
-				B3447EE8218BEE3F00557ACE /* yabause-tvOS */,
+				B3C7620F20783162009950E4 /* PVYabause */,
+				B3344B522859E088006E6B3A /* yabause-libretro */,
+				B30178D2207C901D0051B93D /* yabause */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B3EBA0F72872965100EAEB37 /* gen68k */ = {
+		B341206B2975FEFF00F5F351 /* libyabause.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = gen68k;
-			remoteRef = B3EBA0F62872965100EAEB37 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3EBA0F92872965100EAEB37 /* Yabause.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Yabause.app;
-			remoteRef = B3EBA0F82872965100EAEB37 /* PBXContainerItemProxy */;
+			fileType = archive.ar;
+			path = libyabause.a;
+			remoteRef = B341206A2975FEFF00F5F351 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B3447EDF218BEDD200557ACE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022CC2872556600B3F6DA /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620E20783162009950E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4921,58 +4753,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447EC1218BEDD200557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022C72872553D00B3F6DA /* PVYabauseCore.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447EE9218BEE3F00557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3FF63ED2873E3AA00829C14 /* scsp.c in Sources */,
-				B3FF63F02873E3AA00829C14 /* sh2int.c in Sources */,
-				B3FF63F62873E3AA00829C14 /* sh2core.c in Sources */,
-				B3FF63FB2873E3BA00829C14 /* m68kcore.c in Sources */,
-				B3FF63D82873E37000829C14 /* cs2.c in Sources */,
-				B3FF63DA2873E37000829C14 /* debug.c in Sources */,
-				B3FF63EC2873E3AA00829C14 /* smpc.c in Sources */,
-				B3FF63DD2873E37000829C14 /* memory.c in Sources */,
-				B3FF63D92873E37000829C14 /* cdbase.c in Sources */,
-				B3FF63D72873E37000829C14 /* bios.c in Sources */,
-				B3FF63D62873E37000829C14 /* m68kd.c in Sources */,
-				B3FF63EE2873E3AA00829C14 /* yabause.c in Sources */,
-				B3FF63DB2873E37000829C14 /* cheat.c in Sources */,
-				B3FF63EF2873E3AA00829C14 /* sh2d.c in Sources */,
-				B3FF63EB2873E3AA00829C14 /* vdp2.c in Sources */,
-				B3FF63F42873E3AA00829C14 /* scu.c in Sources */,
-				B3FF63FA2873E3BA00829C14 /* coffelf.c in Sources */,
-				B3FF63F32873E3AA00829C14 /* profile.c in Sources */,
-				B3FF63DC2873E37000829C14 /* cs0.c in Sources */,
-				B3FF63D42873E37000829C14 /* error.c in Sources */,
-				B3FF63D52873E37000829C14 /* cs1.c in Sources */,
-				B3FF63F72873E3AA00829C14 /* peripheral.c in Sources */,
-				B3FF63F52873E3AA00829C14 /* netlink.c in Sources */,
-				B3FF63F22873E3AA00829C14 /* vdp1.c in Sources */,
-				B3FF63F12873E3AA00829C14 /* sh2idle.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768EE2859E18B00558958 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3FF64132873E52700829C14 /* yabause_griffin.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3F8E0D72CB3B07500017D1B /* PVYabauseCore.swift in Sources */,
+				B3F8E0D82CB3B07500017D1B /* CorePlist.swift in Sources */,
+				B3F8E0D92CB3B07500017D1B /* CorePlist-Generated.swift in Sources */,
 				B37022C82872553E00B3F6DA /* PVYabauseCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4982,13 +4769,8 @@
 /* Begin PBXTargetDependency section */
 		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* yabause-libretro-iOS */;
+			target = B3344B522859E088006E6B3A /* yabause-libretro */;
 			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
-		};
-		B39768FD2859E23A00558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B39768ED2859E18B00558958 /* yabause-libretro-tvOS */;
-			targetProxy = B39768FC2859E23A00558958 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -5017,18 +4799,27 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = yabause;
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -5037,18 +4828,27 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = yabause;
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -5056,7 +4856,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -5089,10 +4891,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -5105,13 +4909,16 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -5123,63 +4930,41 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVYabause";
 				PRODUCT_NAME = PVYabause;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5032191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVYabause";
-				PRODUCT_NAME = PVYabause;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Archive;
 		};
@@ -5188,39 +4973,27 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = yabause;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5052191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				OTHER_LDFLAGS = (
+					"-ObjC",
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = yabause;
-				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Archive;
 		};
@@ -5229,18 +5002,27 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/yabause/yabause\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "yabause-libretro";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -5249,18 +5031,27 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/yabause/yabause\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "yabause-libretro";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -5269,187 +5060,27 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/yabause/yabause\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "yabause-libretro";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B3447EE4218BEDD200557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVYabause";
-				PRODUCT_NAME = PVYabause;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447EE5218BEDD200557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVYabause";
-				PRODUCT_NAME = PVYabause;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B3447F8F218BEE3F00557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = yabause;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447F90218BEE3F00557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = yabause;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F42859E18B00558958 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "yabause-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B39768F52859E18B00558958 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "yabause-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F62859E18B00558958 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "yabause-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Archive;
 		};
@@ -5457,7 +5088,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -5490,10 +5123,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -5508,14 +5143,17 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -5527,7 +5165,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -5560,10 +5200,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -5576,14 +5218,17 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -5595,69 +5240,90 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVYabause";
 				PRODUCT_NAME = PVYabause;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVYabause";
 				PRODUCT_NAME = PVYabause;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "yabause-iOS" */ = {
+		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "yabause" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B30178DA207C901D0051B93D /* Debug */,
@@ -5667,42 +5333,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "yabause-libretro-iOS" */ = {
+		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "yabause-libretro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3344BC02859E088006E6B3A /* Debug */,
 				B3344BC12859E088006E6B3A /* Release */,
 				B3344BC22859E088006E6B3A /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVYabause-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447EE4218BEDD200557ACE /* Debug */,
-				B3447EE5218BEDD200557ACE /* Release */,
-				B324C5032191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "yabause-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447F8F218BEE3F00557ACE /* Debug */,
-				B3447F90218BEE3F00557ACE /* Release */,
-				B324C5052191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "yabause-libretro-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B39768F42859E18B00558958 /* Debug */,
-				B39768F52859E18B00558958 /* Release */,
-				B39768F62859E18B00558958 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -5717,7 +5353,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVYabause-iOS" */ = {
+		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVYabause" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C7621920783162009950E4 /* Debug */,
@@ -5728,6 +5364,52 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98A22C6EEEE200C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E99D82C6F046A00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B3F8E0CE2CB3AAF300017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3F8E0D12CB3AB3500017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B3F8E0DA2CB3B1E900017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E98A32C6EEEE200C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E99D92C6F046A00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B3F8E0CF2CB3AAF300017D1B /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3F8E0D22CB3AB3500017D1B /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B3F8E0DB2CB3B1E900017D1B /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

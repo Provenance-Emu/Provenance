@@ -1,0 +1,67 @@
+===============================================================================
+-------------------------------------------------------------------------------
+Mupen64plus-video-rice README                                              v2.5
+-------------------------------------------------------------------------------
+===============================================================================
+
+The latest version of this document can be found online at:
+https://mupen64plus.org/wiki/index.php/HighResolutionTextures
+
+-------------------------------------------------------------------------------
+ABOUT
+-------------------------------------------------------------------------------
+Mupen64Plus's Rice Video plugin supports a very nice feature which allows the
+user to replace all of the original textures used for 3D rendering in a game
+with high-resolution replacement textures drawn by graphic artists.
+
+-------------------------------------------------------------------------------
+Enable Hi-Res Texture Loading in Rice Video
+-------------------------------------------------------------------------------
+
+In order to begin using the hi-resolution texture feature, you must enable it
+by editing the Mupen64Plus config file. One option is to find the file and edit
+it directly with a text editor. On Linux or OSX, this is located at: "~/.config/
+mupen64plus/", and on Windows it is in the "Application Data" sub-folder of
+your user folder. On Windows XP and prior, this is "C:\Documents and Settings\
+<username>\Application Data\Mupen64Plus\", while on Windows Vista and newer
+this is "C:\Users\<username>\AppData\Mupen64Plus". You should find a section in
+this file labeled [Video-Rice], and within this section is a parameter called
+LoadHiResTextures. Set this to True to enable searching for and loading high-
+resolution textures.
+
+Another option to enable this feature is to use the --set option with the
+Mupen64Plus command-line user interface. To do this, run a game with a command
+similar to this:
+
+./mupen64plus --set Video-Rice[LoadHiResTextures]=True --saveoptions m64p_test_rom.v64
+
+-------------------------------------------------------------------------------
+Installing Hi-Res Texture Files
+-------------------------------------------------------------------------------
+
+To install a high-resolution texture pack for a game, all that you need to do
+is unzip the archive and put the extracted directory full of images into the
+right place. On Linux and OSX, this is usually "/home/<username>/.local/share/
+mupen64plus/hires_texture". On Windows it is in the "Application Data" sub-
+folder of your user folder. On Windows XP and prior, this is "C:\Documents and
+Settings\<username>\Application Data\Mupen64Plus\hires_texture", while on
+Windows Vista and newer this is "C:\Users\<username>\AppData\Mupen64Plus\
+   hires_texture". If this directory doesn't exist, create it and copy the
+hi-res texture directory inside.
+
+The folder containing hi-res textures must be named exactly the same as the
+ROM's name in the header of the ROM file. Usually this name is short with all
+capital letters, like "MARIOKART64" or "SMASH BROTHERS". The command-line UI
+prints out this ROM name when running a game, right after the Goodname and
+before the MD5.
+
+-------------------------------------------------------------------------------
+Running
+-------------------------------------------------------------------------------
+
+After setup, just run the game as usual. If using the command-line UI, you should
+see a line printed out which says:
+
+Video: Texture loading option is enabled. Finding all hires textures
+
+

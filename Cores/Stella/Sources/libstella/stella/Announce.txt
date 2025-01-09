@@ -1,0 +1,47 @@
+===========================================================================
+
+     SSSS    tt          lll  lll
+    SS  SS   tt           ll   ll
+    SS     tttttt  eeee   ll   ll   aaaa
+     SSSS    tt   ee  ee  ll   ll      aa
+        SS   tt   eeeeee  ll   ll   aaaaa  --  "An Atari 2600 VCS Emulator"
+    SS  SS   tt   ee      ll   ll  aa  aa
+     SSSS     ttt  eeeee llll llll  aaaaa
+
+===========================================================================
+                Release 6.7 for Linux, macOS and Windows
+===========================================================================
+
+The Atari 2600 Video Computer System (VCS), introduced in 1977, was the
+most popular home video game system of the early 1980's.  Now you can enjoy
+all of your favourite Atari 2600 games on your PC thanks to Stella!
+
+Stella is a multi-platform Atari 2600 VCS emulator.  It allows you to play
+all of your favourite Atari 2600 games again!  Stella was originally
+developed for Linux by Bradford W. Mott, however, it has been ported to a
+number of other platforms and is currently maintained by Stephen Anthony.
+
+This is the 6.7 release of Stella for Linux, macOS and Windows.  The
+distributions currently available are:
+
+  * Binaries for Windows 7/8/10/11 :
+      Stella-6.7-win32.exe   (32-bit EXE installer)
+      Stella-6.7-x64.exe     (64-bit EXE installer)
+      Stella-6.7-windows.zip (32/64 bit versions)
+
+  * Binary distribution for macOS 10.9 and above :
+      Stella-6.7-macos.dmg (ARM M1 and 64-bit Intel)
+
+  * Binary distribution for 64-bit Ubuntu :
+      stella_6.7-1_amd64.deb
+
+  * Source code distribution for all platforms :
+      stella-6.7-src.tar.xz
+
+
+Distribution Site
+=================
+
+The Stella distributions can be obtained from the Stella Website at:
+
+  https://stella-emu.github.io

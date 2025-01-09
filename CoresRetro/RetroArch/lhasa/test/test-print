@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+#
+# Copyright (c) 2013, Simon Howard
+#
+# Permission to use, copy, modify, and/or distribute this software
+# for any purpose with or without fee is hereby granted, provided
+# that the above copyright notice and this permission notice appear
+# in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+# WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+# AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+# LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+# NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+#
+# Test script that tests the print functionality functionality.
+#
+
+. test_common.sh
+
+# Run the program under test, comparing the output to the contents
+# of the specified file.
+
+lha_check_output() {
+	#echo "lha_check_output: $@"
+	local expected_output="$1"
+	shift
+
+	test_lha "$@" >"$wd/output.txt" 2>&1
+
+	if $GATHER && [ ! -e "$expected_output" ]; then
+		$LHA_TOOL "$@" > $expected_output
+	fi
+
+	if ! diff -u "$expected_output" "$wd/output.txt"; then
+		fail "Output not as expected for command:" \
+		     "    lha $*" >&2
+	fi
+
+	rm -f "$wd/output.txt"
+}
+
+test_archive() {
+	local archive_file="$1"
+	shift
+
+	# Normal outputs for test_archive just look like:
+	# output/lha_foo/filename.lzh-p.txt - but for special cases
+	# with particular filenames we want to be able to include
+	# a special test name in the filename, eg.
+	# output/lha_foo/filename.lzh-p-testname.txt
+
+	local suffix=""
+	if [ $# -gt 0 ]; then
+		suffix="-$1"
+		shift
+	fi
+
+	# Invoke test_lha to do the printing: test in quiet mode
+	# as well as normal mode, and -i (ignore case) mode.
+
+	lha_check_output "output/$archive_file$suffix-p.txt" \
+	    p "archives/$archive_file" "$@"
+	lha_check_output "output/$archive_file$suffix-pq.txt" \
+	    pq "archives/$archive_file" "$@"
+	lha_check_output "output/$archive_file$suffix-pi.txt" \
+	    pi "archives/$archive_file" "$@"
+}
+
+# Directories should be ignored:
+test_archive lha_unix114i/h1_subdir.lzh
+
+# Archive containing multiple files:
+test_archive regression/multiple.lzh
+
+# Test printing of a specific file:
+test_archive regression/multiple.lzh onefile file3.txt
+
+# Test printing with wildcards:
+test_archive regression/multiple.lzh wildcard "file2-*"
+
+# Archive containing file with bad characters:
+test_archive regression/badterm.lzh
+
+# Symlinks are printed:
+test_archive lha_unix114i/h1_symlink.lzh
+

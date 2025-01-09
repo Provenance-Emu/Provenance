@@ -1,0 +1,29 @@
+//
+//  Config.xcconfig
+//  PVPPSSPP
+//
+//  Created by Joseph Mattiello on 8/24/16.
+//
+//
+
+// Arm 32bit
+//OTHER_CFLAGS[sdk=iphoneos*][arch=armv7] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
+//OTHER_CFLAGS[sdk=iphoneos*][arch=armv7s] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
+//OTHER_CFLAGS[sdk=iphoneos*][arch=armv6] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
+//OTHER_CFLAGS[sdk=iphoneos*][arch=arm64] = $(inherited) -DDRC_SH2 -D_USE_CZ80
+//
+//OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited) -D_USE_CZ80
+//
+//// tv OS
+//OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DDRC_SH2 -D_USE_CZ80
+//OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited) -D_USE_CZ80
+//OTHER_CFLAGS = $(inherited) -DXXH_VECTOR=XXH_SCALAR -DMASKED_PSP_MEMORY=TRUE
+OTHER_CFLAGS = $(inherited) -fno-operator-names -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fpermissive -fno-operator-names -fobjc-arc -fsingle-precision-constant -fomit-frame-pointer -fvisibility-inlines-hidden -fvisibility=hidden -flto -funsafe-math-optimizations -DXXH_VECTOR=XXH_SCALAR -DGLES_SILENCE_DEPRECATION=1 -DGLES_SILENCE_DEPRECATION
+// Skip Simulator Build
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = *
+INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = PVDebug.m
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
+INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.m
+PROJECT_TEMP_DIR = $(SRCROOT)/lib/ppsspp/build/$(PROJECT_NAME).build
+DERIVED_FILE_DIR = $(SRCROOT)/lib/ppsspp/build/derived/$(PROJECT_NAME).build
+CACHE_ROOT = $(SRCROOT)/lib/cache

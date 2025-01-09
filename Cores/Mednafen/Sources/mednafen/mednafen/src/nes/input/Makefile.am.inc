@@ -1,0 +1,1 @@
+mednafen_SOURCES	+=	nes/input/cursor.cpp nes/input/zapper.cpp nes/input/powerpad.cpp nes/input/arkanoid.cpp nes/input/shadow.cpp nes/input/fkb.cpp nes/input/fkb.h nes/input/hypershot.cpp nes/input/mahjong.cpp nes/input/oekakids.cpp nes/input/ftrainer.cpp nes/input/partytap.cpp nes/input/toprider.cpp nes/input/bbattler2.cpp nes/input/suborkb.cpp

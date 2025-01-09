@@ -6,6 +6,7 @@
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
 
+#if canImport(UIKit) && canImport(GameController)
 import GameController
 
 public final class PViCadeAxisInput: GCControllerAxisInput {
@@ -21,3 +22,4 @@ public final class PViCadeAxisInput: GCControllerAxisInput {
         }
     }
 }
+#endif

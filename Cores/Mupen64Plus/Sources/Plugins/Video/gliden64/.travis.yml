@@ -1,0 +1,58 @@
+dist:     trusty
+sudo:     false
+
+language: cpp
+
+os:
+    - linux
+    - osx
+
+compiler:
+    - gcc
+    - clang
+
+env:
+    - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
+    - TARGET_CPU=amd64 BUILD_CONFIGURATION=Release
+    # - TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
+    # - TARGET_CPU=x86 BUILD_CONFIGURATION=Release
+
+matrix:
+    exclude:
+        - os:       osx
+          compiler: gcc
+
+        - os:  osx
+          env: TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
+
+        - os:  osx
+          env: TARGET_CPU=x86 BUILD_CONFIGURATION=Release
+
+script:
+    - src/getRevision.sh
+    - cd projects/cmake
+    - cmake -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DTARGET_CPU=$TARGET_CPU -DVEC4_OPT=On -DMUPENPLUSAPI=On ../../src/
+    - cmake --build .
+    - cd ../../
+
+before_deploy:
+    - export GLIGEN64_BUILD=GLideN64_"$TRAVIS_OS_NAME"_"$CC"_"$TARGET_CPU"_"$BUILD_CONFIGURATION".tar.gz
+    - PROJECT_HOME=`pwd`
+    - cd projects/cmake/plugin/$BUILD_CONFIGURATION/
+    - tar cfz $PROJECT_HOME/$GLIGEN64_BUILD mupen64plus-video-GLideN64.*
+    - cd $PROJECT_HOME
+
+deploy:
+    provider: releases
+
+    api_key:
+        secure: "TfoLzMQPryEd23ip+wREPsoHiqyIPmLodqNfSQmiydcMyVda1D+AFeq7pZOV4tqMQ9yl/Zx/Xyp4ThbsoK6Z6LWt92LWpqfweYSfykiX/tiFV3xU0fyrCkfLErnGnVIvkUAPoF+xHPSJ+if/Xv8ygZltGTF4/P39wxL8Fdi9tASPqrj274rEaf+YuHPgWumW9qAn73B10Z/+X7nIcJoDJZ14/I5QfwRzM7+geDAZnpWt4KE4BhHkkPxlQmuQtkyEbKThvPUnkjkLjHgpAWIKS88indldk8uDEJm32pXim2yrcdCz50kfYP52Zb506gSWvlhym2774GoLlkIrussq5LfRlyTMiv0V65mCz6wotuJGAHV6ZLKw5S4tpo3bKFnUyYmBSo+wrK4sM2I+kuD9/ZDeY6pmdmLz3UbLRf+3xv3+CcrZUMFXLcCIieIFyWMafDTO2fEYdRzDZPpDsQ44H1XZAmUP9ZQfG/KkhyfQAH8nyQmjQo60rBo17sXEkYNQXMoWzyfvxElB+srGmHUrP3E8773jLAGiTYzOgxWiKz8+F9fuIWfMXTzXj5tB2Okd9MOKqE4nbvsARYJKtje5JT88VNrAqw4sTJ6K7YKZUgBV2w42oPedG8karnHZ0TmKd6CT+n5n1JTzoyjJ2OH3t+rTXW+l3kFyPYS3faHSHvQ="
+
+    file: "$GLIGEN64_BUILD"
+
+    skip_cleanup: true
+
+    on:
+        repo: gonetz/GLideN64
+
+        tags: true

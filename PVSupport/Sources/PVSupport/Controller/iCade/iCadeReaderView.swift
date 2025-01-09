@@ -1,6 +1,6 @@
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 import UIKit
-
+import PVLogging
 /*
  EN      FR      DE
  UP ON,OFF  =   w,e     z,e     w,e
@@ -78,7 +78,7 @@ private let OFF_STATES_FR: [Character] = "ecwatrfn,pgv".map { $0 }
 private let ON_STATES_DE: [Character] = "wdxazhujikol".map { $0 }
 private let OFF_STATES_DE: [Character] = "ecyqtrfnmpgv".map { $0 }
 
-public final class iCadeReaderView: UIView {
+public final class iCadeReaderView: UIView, Sendable {
     #if os(tvOS)
         private let _inputView = UIInputView(frame: CGRect.zero)
     #else

@@ -1,0 +1,11 @@
+{
+    "features": {
+        "inAppFreeROMs": {
+            "enabled": true,
+            "minVersion": "1.0.0",
+            "minBuildNumber": "100",
+            "allowedAppTypes": ["standard", "lite"],
+            "description": "Allows downloading free ROMs directly in the app. Disabled for App Store builds."
+        }
+    }
+}

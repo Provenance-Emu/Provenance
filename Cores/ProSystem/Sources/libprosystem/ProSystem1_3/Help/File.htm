@@ -1,0 +1,26 @@
+<HTML>
+<HEAD>
+<TITLE>File</TITLE>
+</HEAD>
+<BODY>
+<BASEFONT FACE=verdana,arial SIZE=2>
+<TABLE WIDTH=100% BGCOLOR=7acafa><TD><FONT COLOR=white SIZE=2><B>ProSystem Emulator Documentation</B></FONT></TD></TABLE><BR>
+<FONT SIZE=4 FACE="arial"><B>File</B></FONT><BR>
+The file menu allows you to open and close rom images, save and load game states and exit the application.<BR>
+<BR>
+<B>Opening and closing rom images</B><BR>
+You can open rom images to play in the emulator by going to the file menu and selecting the Open menu item or using the shortcut <FONT COLOR=green><B>Ctrl+O</B></FONT>. A file dialog box will be displayed to allow you to select a rom image file. Select a rom image file and press the Open button. The emulator supports .a78 files with the proper header format, raw binary files if the database option is enabled (see the <A HREF="Options.htm">Options</A> section), and zip files that contain an archived rom image file. Once the rom image file has been loaded, it will start to play immediately. You can also open rom images through the recent sub-menu which contains the last ten rom images files that were opened in the emulator. Just select one of these menu items to load that rom image. The image files are ordered from latest (at the top of the recent sub-menu) to the oldest. You can also close the rom image when you are done by selecting the close menu item from the file menu.<BR>
+<BR>
+<IMG SRC="./images/FileDialog.jpg"><BR>
+<BR>
+Rom images can also be loaded from the command line as the first and only argument. You can also associate a file type (such as .a78) with ProSystem emulator executable so that you can double click the rom image file to launch ProSystem and load the selected rom image automatically.<BR>
+<BR>
+<B>Saving and loading game states</B><BR>
+You can save and load game states once a rom image has been opened in the emulator. To save a game state, go to the file menu and select the Save menu item or use the shortcut <FONT COLOR=green><B>Ctrl+S</B></FONT>. A file dialog box will be displayed to allow you to select the destination of the game state file. Once the destination folder has been selected, type a name for the save state and select the save type as a uncompressed .sav file or compressed .zip file. Press the Save button when you are ready to save the game. To load a game state, go to the file menu and select the Load menu item or use the shortcut <FONT COLOR=green><B>Ctrl+L</B></FONT>. A file dialog box will be displayed to allow you to select the game state file to load. Press the open button to load the game state file into the emulator. The load will only succeed if the game state file was saved with the same rom image that is currently loaded in the emulator. Once a game state file has been loaded, the game will start from that saved state immediately.<BR>
+<BR>
+<B>Exiting the emulator</B><BR>
+You can exit the emulator by going to the file menu and selecting the Exit menu item or the close button on the title bar in the far right corner of the window. The current configuration will be saved to the ProSystem.ini file.<BR>
+<BR>
+</BODY>
+</HTML>
+

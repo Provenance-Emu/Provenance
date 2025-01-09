@@ -14,11 +14,11 @@
 #import "PVFlycast+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 // Flycast imports
 #include "types.h"
-#include "profiler/profiler.h"
+//#include "profiler/profiler.h"
 #include "cfg/cfg.h"
 //#include "rend/rend.h"
 #include "rend/TexCache.h"
@@ -26,9 +26,9 @@
 #include "hw/maple/maple_if.h"
 #include "hw/maple/maple_cfg.h"
 
-//__weak PVFlycastCore *_current = 0;
+//__weak PVFlycastCoreBridge *_current = 0;
 
-@interface PVFlycastCore() {
+@interface PVFlycastCoreBridge() {
 
 }
 
@@ -54,13 +54,16 @@ volatile bool has_init = false;
 
 #pragma mark - PVFlycastCore Begin
 
-@implementation PVFlycastCore {
+@implementation PVFlycastCoreBridge {
+#ifndef LIBRETRO
 	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
 	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
     dispatch_semaphore_t coreWaitForExitSemaphore;
 
 	NSMutableDictionary *_callbackHandlers;
+#endif
 }
+#ifndef LIBRETRO
 
 - (instancetype)init {
 	if (self = [super init]) {
@@ -141,7 +144,7 @@ volatile bool has_init = false;
 
 	return YES;
 }
-
+#endif
 - (void)printSettings {
 //#define LIST_OF_VARIABLES \
 //X(dynarec.Enable) \

@@ -1,0 +1,1128 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Modules/netplay/Source/ps2/ee/netplay_ee.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 2
+   6              	.type netplay_inited,@object
+   7              	.size netplay_inited,4
+   8              	netplay_inited:
+   9 0000 00000000 	.word 0
+  10              	.text
+  11              	.align 2
+  12              	.p2align 3,,7
+  13              	.ent _NetPlayCallRPC
+  14              	_NetPlayCallRPC:
+  15              	.frame $sp,96,$31
+  16              	.mask 0x800f0000,-16
+  17              	.fmask 0x00000000,0
+  18 0000 A0FFBD27 	subu $sp,$sp,96
+  19 0004 0000023C 	lui $2,%hi(_netplay_sema)
+  20 0008 4000B3FF 	sd $19,64($sp)
+  21 000c 9CFF1324 	li $19,-100
+  22 0010 3000B2FF 	sd $18,48($sp)
+  23 0014 2D908000 	move $18,$4
+  24 0018 2000B1FF 	sd $17,32($sp)
+  25 001c 2D88A000 	move $17,$5
+  26 0020 1000B0FF 	sd $16,16($sp)
+  27 0024 2D80C000 	move $16,$6
+  28 0028 5000BFFF 	sd $31,80($sp)
+  29              	.set noreorder
+  30              	.set nomacro
+  31 002c 0000000C 	jal WaitSema
+  32 0030 9C14448C 	lw $4,%lo(_netplay_sema)($2)
+  33              	.set macro
+  34              	.set reorder
+  35              	
+  36 0034 2D580000 	move $11,$0
+  37 0038 0000023C 	lui $2,%hi(netplay_inited)
+  38 003c 0000073C 	lui $7,%hi(sbuff)
+  39 0040 0000438C 	lw $3,%lo(netplay_inited)($2)
+  40 0044 0010E724 	addiu $7,$7,%lo(sbuff)
+  41 0048 0000043C 	lui $4,%hi(cd0)
+  42 004c 2D500002 	move $10,$16
+  43 0050 00128424 	addiu $4,$4,%lo(cd0)
+  44 0054 2D284002 	move $5,$18
+  45 0058 2D402002 	move $8,$17
+  46 005c 2D300000 	move $6,$0
+  47              	.set noreorder
+  48              	.set nomacro
+  49 0060 0F006010 	beq $3,$0,$L2
+  50 0064 2D48E000 	move $9,$7
+  51              	.set macro
+  52              	.set reorder
+  53              	
+  54              	.set noreorder
+  55              	.set nomacro
+  56 0068 0000000C 	jal SifCallRpc
+  57 006c 0000A0AF 	sw $0,0($sp)
+GAS LISTING  			page 2
+
+
+  58              	.set macro
+  59              	.set reorder
+  60              	
+  61 0070 2D984000 	move $19,$2
+  62 0074 0000023C 	lui $2,%hi(_netplay_sema)
+  63              	$L4:
+  64              	.set noreorder
+  65              	.set nomacro
+  66 0078 0000000C 	jal SignalSema
+  67 007c 9C14448C 	lw $4,%lo(_netplay_sema)($2)
+  68              	.set macro
+  69              	.set reorder
+  70              	
+  71 0080 1000B0DF 	ld $16,16($sp)
+  72 0084 2D106002 	move $2,$19
+  73 0088 5000BFDF 	ld $31,80($sp)
+  74 008c 4000B3DF 	ld $19,64($sp)
+  75 0090 3000B2DF 	ld $18,48($sp)
+  76 0094 2000B1DF 	ld $17,32($sp)
+  77              	
+  78              	.set noreorder
+  79              	.set nomacro
+  80 0098 0800E003 	j $31
+  81 009c 6000BD27 	addu $sp,$sp,96
+  82              	.set macro
+  83              	.set reorder
+  84              	
+  85              	.p2align 3
+  86              	$L2:
+  87 00a0 0000043C 	lui $4,%hi(sbuff)
+  88 00a4 2D300002 	move $6,$16
+  89 00a8 00108424 	addiu $4,$4,%lo(sbuff)
+  90              	.set noreorder
+  91              	.set nomacro
+  92 00ac 0000000C 	jal memset
+  93 00b0 2D280000 	move $5,$0
+  94              	.set macro
+  95              	.set reorder
+  96              	
+  97              	.set noreorder
+  98              	.set nomacro
+  99 00b4 F0FF0010 	b $L4
+ 100 00b8 0000023C 	lui $2,%hi(_netplay_sema)
+ 101              	.set macro
+ 102              	.set reorder
+ 103              	
+ 104              	.end _NetPlayCallRPC
+ 105              	$Lfe1:
+ 106              	.size _NetPlayCallRPC,$Lfe1-_NetPlayCallRPC
+ 107              	.section .bss
+ 108              	buff.0:
+ 109              	.align 3
+ 110 0000 00000000 	.space 4096
+ 110      00000000 
+ 110      00000000 
+ 110      00000000 
+ 110      00000000 
+GAS LISTING  			page 3
+
+
+ 111              	.previous
+ 112              	.align 2
+ 113 00bc 00000000 	.p2align 3,,7
+ 114              	.globl NetPlayPuts
+ 115              	.ent NetPlayPuts
+ 116              	NetPlayPuts:
+ 117              	.frame $sp,128,$31
+ 118              	.mask 0x80010000,-112
+ 119              	.fmask 0x00000000,0
+ 120 00c0 80FFBD27 	subu $sp,$sp,128
+ 121 00c4 0000023C 	lui $2,%hi(netplay_inited)
+ 122 00c8 0000B0FF 	sd $16,0($sp)
+ 123 00cc 0000033C 	lui $3,%hi(buff.0)
+ 124 00d0 1000BFFF 	sd $31,16($sp)
+ 125 00d4 00007024 	addiu $16,$3,%lo(buff.0)
+ 126 00d8 2D188000 	move $3,$4
+ 127 00dc 2D200002 	move $4,$16
+ 128 00e0 00004C8C 	lw $12,%lo(netplay_inited)($2)
+ 129 00e4 4800A5FF 	sd $5,72($sp)
+ 130 00e8 00100524 	dli $5,0x1000
+ 131 00ec 5000A6FF 	sd $6,80($sp)
+ 132 00f0 2D306000 	move $6,$3
+ 133 00f4 6000A8FF 	sd $8,96($sp)
+ 134 00f8 6800A9FF 	sd $9,104($sp)
+ 135 00fc 7000AAFF 	sd $10,112($sp)
+ 136 0100 7800ABFF 	sd $11,120($sp)
+ 137 0104 3800ACE7 	s.s $f12,56($sp)
+ 138 0108 3C00AEE7 	s.s $f14,60($sp)
+ 139 010c 4000B0E7 	s.s $f16,64($sp)
+ 140 0110 4400B2E7 	s.s $f18,68($sp)
+ 141              	.set noreorder
+ 142              	.set nomacro
+ 143 0114 06008015 	bne $12,$0,$L7
+ 144 0118 5800A7FF 	sd $7,88($sp)
+ 145              	.set macro
+ 146              	.set reorder
+ 147              	
+ 148 011c 1000BFDF 	ld $31,16($sp)
+ 149              	$L8:
+ 150 0120 0000B0DF 	ld $16,0($sp)
+ 151              	
+ 152              	.set noreorder
+ 153              	.set nomacro
+ 154 0124 0800E003 	j $31
+ 155 0128 8000BD27 	addu $sp,$sp,128
+ 156              	.set macro
+ 157              	.set reorder
+ 158              	
+ 159 012c 00000000 	.p2align 3
+ 160              	$L7:
+ 161              	.set noreorder
+ 162              	.set nomacro
+ 163 0130 0000000C 	jal vsnprintf
+ 164 0134 4800A727 	addu $7,$sp,72
+ 165              	.set macro
+ 166              	.set reorder
+ 167              	
+GAS LISTING  			page 4
+
+
+ 168 0138 0000043C 	lui $4,%hi(sbuff)
+ 169 013c FC000624 	dli $6,0xfc
+ 170 0140 2D280002 	move $5,$16
+ 171              	.set noreorder
+ 172              	.set nomacro
+ 173 0144 0000000C 	jal memcpy
+ 174 0148 00108424 	addiu $4,$4,%lo(sbuff)
+ 175              	.set macro
+ 176              	.set reorder
+ 177              	
+ 178 014c FC000524 	li $5,252
+ 179 0150 FC000624 	li $6,252
+ 180              	.set noreorder
+ 181              	.set nomacro
+ 182 0154 0000000C 	jal _NetPlayCallRPC
+ 183 0158 03000424 	li $4,3
+ 184              	.set macro
+ 185              	.set reorder
+ 186              	
+ 187              	.set noreorder
+ 188              	.set nomacro
+ 189 015c F0FF0010 	b $L8
+ 190 0160 1000BFDF 	ld $31,16($sp)
+ 191              	.set macro
+ 192              	.set reorder
+ 193              	
+ 194              	.end NetPlayPuts
+ 195              	$Lfe2:
+ 196              	.size NetPlayPuts,$Lfe2-NetPlayPuts
+ 197              	.align 2
+ 198 0164 00000000 	.p2align 3,,7
+ 199              	.globl NetPlayRPCProcess
+ 200              	.ent NetPlayRPCProcess
+ 201              	NetPlayRPCProcess:
+ 202              	.frame $sp,32,$31
+ 203              	.mask 0x80010000,-16
+ 204              	.fmask 0x00000000,0
+ 205 0168 E0FFBD27 	subu $sp,$sp,32
+ 206 016c 0000B0FF 	sd $16,0($sp)
+ 207 0170 0000103C 	lui $16,%hi(qd)
+ 208 0174 1000BFFF 	sd $31,16($sp)
+ 209              	.p2align 3
+ 210              	$L10:
+ 211              	.set noreorder
+ 212              	.set nomacro
+ 213 0178 0000000C 	jal SifGetNextRequest
+ 214 017c 40140426 	addiu $4,$16,%lo(qd)
+ 215              	.set macro
+ 216              	.set reorder
+ 217              	
+ 218              	.set noreorder
+ 219              	.set nomacro
+ 220 0180 05004010 	beq $2,$0,$L14
+ 221 0184 2D204000 	move $4,$2
+ 222              	.set macro
+ 223              	.set reorder
+ 224              	
+GAS LISTING  			page 5
+
+
+ 225 0188 0000000C 	jal SifExecRequest
+ 225      00000000 
+ 226 0190 F9FF0010 	b $L10
+ 226      00000000 
+ 227              	$L14:
+ 228 0198 1000BFDF 	ld $31,16($sp)
+ 229 019c 0000B0DF 	ld $16,0($sp)
+ 230              	
+ 231              	.set noreorder
+ 232              	.set nomacro
+ 233 01a0 0800E003 	j $31
+ 234 01a4 2000BD27 	addu $sp,$sp,32
+ 235              	.set macro
+ 236              	.set reorder
+ 237              	
+ 238              	.end NetPlayRPCProcess
+ 239              	$Lfe3:
+ 240              	.size NetPlayRPCProcess,$Lfe3-NetPlayRPCProcess
+ 241              	.align 2
+ 242              	.p2align 3,,7
+ 243              	.globl NetPlayInit
+ 244              	.ent NetPlayInit
+ 245              	NetPlayInit:
+ 246              	.frame $sp,96,$31
+ 247              	.mask 0x80030000,-16
+ 248              	.fmask 0x00000000,0
+ 249 01a8 A0FFBD27 	subu $sp,$sp,96
+ 250 01ac 3000B0FF 	sd $16,48($sp)
+ 251 01b0 0000103C 	lui $16,%hi(qd)
+ 252 01b4 5000BFFF 	sd $31,80($sp)
+ 253 01b8 40141026 	addiu $16,$16,%lo(qd)
+ 254 01bc 4000B1FF 	sd $17,64($sp)
+ 255              	.set noreorder
+ 256              	.set nomacro
+ 257 01c0 0000000C 	jal GetThreadId
+ 258 01c4 2D888000 	move $17,$4
+ 259              	.set macro
+ 260              	.set reorder
+ 261              	
+ 262 01c8 2D200002 	move $4,$16
+ 263              	.set noreorder
+ 264              	.set nomacro
+ 265 01cc 0000000C 	jal SifSetRpcQueue
+ 266 01d0 2D284000 	move $5,$2
+ 267              	.set macro
+ 268              	.set reorder
+ 269              	
+ 270 01d4 2D480000 	move $9,$0
+ 271 01d8 DD00053C 	li $5,14483456
+ 272 01dc 0000043C 	lui $4,%hi(sd0)
+ 273 01e0 0000073C 	lui $7,%hi(buffer)
+ 274 01e4 2D500002 	move $10,$16
+ 275 01e8 58148424 	addiu $4,$4,%lo(sd0)
+ 276 01ec 2D302002 	move $6,$17
+ 277 01f0 4012E724 	addiu $7,$7,%lo(buffer)
+ 278 01f4 BC1BA534 	ori $5,$5,0x1bbc
+ 279              	.set noreorder
+GAS LISTING  			page 6
+
+
+ 280              	.set nomacro
+ 281 01f8 0000000C 	jal SifRegisterRpc
+ 282 01fc 2D400000 	move $8,$0
+ 283              	.set macro
+ 284              	.set reorder
+ 285              	
+ 286 0200 0000033C 	lui $3,%hi(cd0)
+ 287 0204 00127024 	addiu $16,$3,%lo(cd0)
+ 288 0208 DD00053C 	li $5,14483456
+ 289              	$L27:
+ 290 020c 2D200002 	move $4,$16
+ 291 0210 BB1BA534 	ori $5,$5,0x1bbb
+ 292              	.set noreorder
+ 293              	.set nomacro
+ 294 0214 0000000C 	jal SifBindRpc
+ 295 0218 2D300000 	move $6,$0
+ 296              	.set macro
+ 297              	.set reorder
+ 298              	
+ 299              	.set noreorder
+ 300              	.set nomacro
+ 301 021c 2B004004 	bltz $2,$L15
+ 302 0220 FFFF0424 	li $4,-1
+ 303              	.set macro
+ 304              	.set reorder
+ 305              	
+ 306 0224 2400028E 	lw $2,36($16)
+ 307              	
+ 308              	.set noreorder
+ 309              	.set nomacro
+ 310 0228 0D004014 	bne $2,$0,$L17
+ 311 022c 0100023C 	li $2,65536
+ 312              	.set macro
+ 313              	.set reorder
+ 314              	
+ 315 0230 FFFF0324 	li $3,-1
+ 316 0234 FFFF4224 	addu $2,$2,-1
+ 317              	$L28:
+ 318              	.set noreorder
+ 319 0238 00000000 	nop
+ 320              	.set reorder
+ 321              	.set noreorder
+ 322 023c 00000000 	nop
+ 323              	.set reorder
+ 324              	.set noreorder
+ 325 0240 00000000 	nop
+ 326              	.set reorder
+ 327              	.set noreorder
+ 328 0244 00000000 	nop
+ 329              	.set reorder
+ 330              	.set noreorder
+ 331 0248 00000000 	nop
+ 332              	.set reorder
+ 333              	.set noreorder
+ 334 024c 00000000 	nop
+ 335              	.set reorder
+ 336              	.set noreorder
+GAS LISTING  			page 7
+
+
+ 337              	.set nomacro
+ 338 0250 F9FF4314 	bne $2,$3,$L28
+ 339 0254 FFFF4224 	addu $2,$2,-1
+ 340              	.set macro
+ 341              	.set reorder
+ 342              	
+ 343              	.set noreorder
+ 344              	.set nomacro
+ 345 0258 ECFF0010 	b $L27
+ 346 025c DD00053C 	li $5,14483456
+ 347              	.set macro
+ 348              	.set reorder
+ 349              	
+ 350              	$L17:
+ 351 0260 0000073C 	lui $7,%hi(sbuff)
+ 352 0264 0000043C 	lui $4,%hi(cd0)
+ 353 0268 0010E724 	addiu $7,$7,%lo(sbuff)
+ 354 026c 01000524 	li $5,1
+ 355 0270 2D300000 	move $6,$0
+ 356 0274 40000824 	li $8,64
+ 357 0278 2D48E000 	move $9,$7
+ 358 027c 40000A24 	li $10,64
+ 359 0280 2D580000 	move $11,$0
+ 360 0284 00128424 	addiu $4,$4,%lo(cd0)
+ 361 0288 0000A0AF 	sw $0,0($sp)
+ 362              	.set noreorder
+ 363              	.set nomacro
+ 364 028c 0000000C 	jal SifCallRpc
+ 365 0290 01001024 	li $16,1
+ 366              	.set macro
+ 367              	.set reorder
+ 368              	
+ 369              	.set noreorder
+ 370              	.set nomacro
+ 371 0294 0000000C 	jal FlushCache
+ 372 0298 2D200000 	move $4,$0
+ 373              	.set macro
+ 374              	.set reorder
+ 375              	
+ 376 029c 2400A0AF 	sw $0,36($sp)
+ 377 02a0 1000A427 	addu $4,$sp,16
+ 378 02a4 1800B0AF 	sw $16,24($sp)
+ 379              	.set noreorder
+ 380              	.set nomacro
+ 381 02a8 0000000C 	jal CreateSema
+ 382 02ac 1400B0AF 	sw $16,20($sp)
+ 383              	.set macro
+ 384              	.set reorder
+ 385              	
+ 386 02b0 0000033C 	lui $3,%hi(_netplay_sema)
+ 387 02b4 FFFF0424 	li $4,-1
+ 388              	.set noreorder
+ 389              	.set nomacro
+ 390 02b8 04004004 	bltz $2,$L15
+ 391 02bc 9C1462AC 	sw $2,%lo(_netplay_sema)($3)
+ 392              	.set macro
+ 393              	.set reorder
+GAS LISTING  			page 8
+
+
+ 394              	
+ 395 02c0 0000023C 	lui $2,%hi(netplay_inited)
+ 396 02c4 2D200000 	move $4,$0
+ 397 02c8 000050AC 	sw $16,%lo(netplay_inited)($2)
+ 398              	$L15:
+ 399 02cc 5000BFDF 	ld $31,80($sp)
+ 400 02d0 2D108000 	move $2,$4
+ 401 02d4 4000B1DF 	ld $17,64($sp)
+ 402 02d8 3000B0DF 	ld $16,48($sp)
+ 403              	
+ 404              	.set noreorder
+ 405              	.set nomacro
+ 406 02dc 0800E003 	j $31
+ 407 02e0 6000BD27 	addu $sp,$sp,96
+ 408              	.set macro
+ 409              	.set reorder
+ 410              	
+ 411              	.end NetPlayInit
+ 412              	$Lfe4:
+ 413              	.size NetPlayInit,$Lfe4-NetPlayInit
+ 414              	.align 2
+ 415 02e4 00000000 	.p2align 3,,7
+ 416              	.globl NetPlayServerStart
+ 417              	.ent NetPlayServerStart
+ 418              	NetPlayServerStart:
+ 419              	.frame $sp,32,$31
+ 420              	.mask 0x80010000,-16
+ 421              	.fmask 0x00000000,0
+ 422 02e8 E0FFBD27 	subu $sp,$sp,32
+ 423 02ec 0000023C 	lui $2,%hi(netplay_inited)
+ 424 02f0 1000BFFF 	sd $31,16($sp)
+ 425 02f4 2D408000 	move $8,$4
+ 426 02f8 0000B0FF 	sd $16,0($sp)
+ 427 02fc 2D38A000 	move $7,$5
+ 428 0300 0000438C 	lw $3,%lo(netplay_inited)($2)
+ 429              	
+ 430              	.set noreorder
+ 431              	.set nomacro
+ 432 0304 06006014 	bne $3,$0,$L31
+ 433 0308 9CFF0224 	li $2,-100
+ 434              	.set macro
+ 435              	.set reorder
+ 436              	
+ 437              	$L29:
+ 438 030c 1000BFDF 	ld $31,16($sp)
+ 439 0310 0000B0DF 	ld $16,0($sp)
+ 440              	
+ 441              	.set noreorder
+ 442              	.set nomacro
+ 443 0314 0800E003 	j $31
+ 444 0318 2000BD27 	addu $sp,$sp,32
+ 445              	.set macro
+ 446              	.set reorder
+ 447              	
+ 448 031c 00000000 	.p2align 3
+ 449              	$L31:
+ 450 0320 0000103C 	lui $16,%hi(sbuff)
+GAS LISTING  			page 9
+
+
+ 451 0324 06000424 	li $4,6
+ 452 0328 00100226 	addiu $2,$16,%lo(sbuff)
+ 453 032c 04000524 	li $5,4
+ 454 0330 040047AC 	sw $7,4($2)
+ 455 0334 04000624 	li $6,4
+ 456              	.set noreorder
+ 457              	.set nomacro
+ 458 0338 0000000C 	jal _NetPlayCallRPC
+ 459 033c 001008AE 	sw $8,%lo(sbuff)($16)
+ 460              	.set macro
+ 461              	.set reorder
+ 462              	
+ 463              	.set noreorder
+ 464              	.set nomacro
+ 465 0340 F2FF0010 	b $L29
+ 466 0344 0010028E 	lw $2,%lo(sbuff)($16)
+ 467              	.set macro
+ 468              	.set reorder
+ 469              	
+ 470              	.end NetPlayServerStart
+ 471              	$Lfe5:
+ 472              	.size NetPlayServerStart,$Lfe5-NetPlayServerStart
+ 473              	.align 2
+ 474              	.p2align 3,,7
+ 475              	.globl NetPlayServerStop
+ 476              	.ent NetPlayServerStop
+ 477              	NetPlayServerStop:
+ 478              	.frame $sp,16,$31
+ 479              	.mask 0x80000000,-16
+ 480              	.fmask 0x00000000,0
+ 481 0348 F0FFBD27 	subu $sp,$sp,16
+ 482 034c 0000023C 	lui $2,%hi(netplay_inited)
+ 483 0350 0000BFFF 	sd $31,0($sp)
+ 484 0354 07000424 	li $4,7
+ 485 0358 2D280000 	move $5,$0
+ 486 035c 0000438C 	lw $3,%lo(netplay_inited)($2)
+ 487              	
+ 488              	.set noreorder
+ 489              	.set nomacro
+ 490 0360 05006014 	bne $3,$0,$L34
+ 491 0364 2D300000 	move $6,$0
+ 492              	.set macro
+ 493              	.set reorder
+ 494              	
+ 495 0368 0000BFDF 	ld $31,0($sp)
+ 496              	$L35:
+ 497              	.set noreorder
+ 498              	.set nomacro
+ 499 036c 0800E003 	j $31
+ 500 0370 1000BD27 	addu $sp,$sp,16
+ 501              	.set macro
+ 502              	.set reorder
+ 503              	
+ 504 0374 00000000 	.p2align 3
+ 505              	$L34:
+ 506 0378 0000000C 	jal _NetPlayCallRPC
+ 506      00000000 
+GAS LISTING  			page 10
+
+
+ 507              	.set noreorder
+ 508              	.set nomacro
+ 509 0380 FAFF0010 	b $L35
+ 510 0384 0000BFDF 	ld $31,0($sp)
+ 511              	.set macro
+ 512              	.set reorder
+ 513              	
+ 514              	.end NetPlayServerStop
+ 515              	$Lfe6:
+ 516              	.size NetPlayServerStop,$Lfe6-NetPlayServerStop
+ 517              	.align 2
+ 518              	.p2align 3,,7
+ 519              	.globl NetPlayClientConnect
+ 520              	.ent NetPlayClientConnect
+ 521              	NetPlayClientConnect:
+ 522              	.frame $sp,32,$31
+ 523              	.mask 0x80010000,-16
+ 524              	.fmask 0x00000000,0
+ 525 0388 E0FFBD27 	subu $sp,$sp,32
+ 526 038c 0000023C 	lui $2,%hi(netplay_inited)
+ 527 0390 1000BFFF 	sd $31,16($sp)
+ 528 0394 2D408000 	move $8,$4
+ 529 0398 0000B0FF 	sd $16,0($sp)
+ 530 039c 2D38A000 	move $7,$5
+ 531 03a0 0000438C 	lw $3,%lo(netplay_inited)($2)
+ 532              	
+ 533              	.set noreorder
+ 534              	.set nomacro
+ 535 03a4 06006014 	bne $3,$0,$L38
+ 536 03a8 9CFF0224 	li $2,-100
+ 537              	.set macro
+ 538              	.set reorder
+ 539              	
+ 540              	$L36:
+ 541 03ac 1000BFDF 	ld $31,16($sp)
+ 542 03b0 0000B0DF 	ld $16,0($sp)
+ 543              	
+ 544              	.set noreorder
+ 545              	.set nomacro
+ 546 03b4 0800E003 	j $31
+ 547 03b8 2000BD27 	addu $sp,$sp,32
+ 548              	.set macro
+ 549              	.set reorder
+ 550              	
+ 551 03bc 00000000 	.p2align 3
+ 552              	$L38:
+ 553 03c0 0000103C 	lui $16,%hi(sbuff)
+ 554 03c4 08000424 	li $4,8
+ 555 03c8 00100226 	addiu $2,$16,%lo(sbuff)
+ 556 03cc 08000524 	li $5,8
+ 557 03d0 040047AC 	sw $7,4($2)
+ 558 03d4 04000624 	li $6,4
+ 559              	.set noreorder
+ 560              	.set nomacro
+ 561 03d8 0000000C 	jal _NetPlayCallRPC
+ 562 03dc 001008AE 	sw $8,%lo(sbuff)($16)
+ 563              	.set macro
+GAS LISTING  			page 11
+
+
+ 564              	.set reorder
+ 565              	
+ 566              	.set noreorder
+ 567              	.set nomacro
+ 568 03e0 F2FF0010 	b $L36
+ 569 03e4 0010028E 	lw $2,%lo(sbuff)($16)
+ 570              	.set macro
+ 571              	.set reorder
+ 572              	
+ 573              	.end NetPlayClientConnect
+ 574              	$Lfe7:
+ 575              	.size NetPlayClientConnect,$Lfe7-NetPlayClientConnect
+ 576              	.align 2
+ 577              	.p2align 3,,7
+ 578              	.globl NetPlayClientDisconnect
+ 579              	.ent NetPlayClientDisconnect
+ 580              	NetPlayClientDisconnect:
+ 581              	.frame $sp,16,$31
+ 582              	.mask 0x80000000,-16
+ 583              	.fmask 0x00000000,0
+ 584 03e8 F0FFBD27 	subu $sp,$sp,16
+ 585 03ec 0000023C 	lui $2,%hi(netplay_inited)
+ 586 03f0 0000BFFF 	sd $31,0($sp)
+ 587 03f4 0000438C 	lw $3,%lo(netplay_inited)($2)
+ 588              	
+ 589              	.set noreorder
+ 590              	.set nomacro
+ 591 03f8 05006014 	bne $3,$0,$L41
+ 592 03fc 9CFF0424 	li $4,-100
+ 593              	.set macro
+ 594              	.set reorder
+ 595              	
+ 596              	$L39:
+ 597 0400 0000BFDF 	ld $31,0($sp)
+ 598 0404 2D108000 	move $2,$4
+ 599              	.set noreorder
+ 600              	.set nomacro
+ 601 0408 0800E003 	j $31
+ 602 040c 1000BD27 	addu $sp,$sp,16
+ 603              	.set macro
+ 604              	.set reorder
+ 605              	
+ 606              	.p2align 3
+ 607              	$L41:
+ 608 0410 09000424 	li $4,9
+ 609 0414 2D280000 	move $5,$0
+ 610              	.set noreorder
+ 611              	.set nomacro
+ 612 0418 0000000C 	jal _NetPlayCallRPC
+ 613 041c 04000624 	li $6,4
+ 614              	.set macro
+ 615              	.set reorder
+ 616              	
+ 617 0420 0000033C 	lui $3,%hi(sbuff)
+ 618              	.set noreorder
+ 619              	.set nomacro
+ 620 0424 F6FF0010 	b $L39
+GAS LISTING  			page 12
+
+
+ 621 0428 0010648C 	lw $4,%lo(sbuff)($3)
+ 622              	.set macro
+ 623              	.set reorder
+ 624              	
+ 625              	.end NetPlayClientDisconnect
+ 626              	$Lfe8:
+ 627              	.size NetPlayClientDisconnect,$Lfe8-NetPlayClientDisconnect
+ 628              	.align 2
+ 629 042c 00000000 	.p2align 3,,7
+ 630              	.globl NetPlayServerPingAll
+ 631              	.ent NetPlayServerPingAll
+ 632              	NetPlayServerPingAll:
+ 633              	.frame $sp,16,$31
+ 634              	.mask 0x80000000,-16
+ 635              	.fmask 0x00000000,0
+ 636 0430 F0FFBD27 	subu $sp,$sp,16
+ 637 0434 0000023C 	lui $2,%hi(netplay_inited)
+ 638 0438 0000BFFF 	sd $31,0($sp)
+ 639 043c 0000438C 	lw $3,%lo(netplay_inited)($2)
+ 640              	
+ 641              	.set noreorder
+ 642              	.set nomacro
+ 643 0440 05006014 	bne $3,$0,$L44
+ 644 0444 9CFF0424 	li $4,-100
+ 645              	.set macro
+ 646              	.set reorder
+ 647              	
+ 648              	$L42:
+ 649 0448 0000BFDF 	ld $31,0($sp)
+ 650 044c 2D108000 	move $2,$4
+ 651              	.set noreorder
+ 652              	.set nomacro
+ 653 0450 0800E003 	j $31
+ 654 0454 1000BD27 	addu $sp,$sp,16
+ 655              	.set macro
+ 656              	.set reorder
+ 657              	
+ 658              	.p2align 3
+ 659              	$L44:
+ 660 0458 10000424 	li $4,16
+ 661 045c 2D280000 	move $5,$0
+ 662              	.set noreorder
+ 663              	.set nomacro
+ 664 0460 0000000C 	jal _NetPlayCallRPC
+ 665 0464 2D300000 	move $6,$0
+ 666              	.set macro
+ 667              	.set reorder
+ 668              	
+ 669              	.set noreorder
+ 670              	.set nomacro
+ 671 0468 F7FF0010 	b $L42
+ 672 046c 2D200000 	move $4,$0
+ 673              	.set macro
+ 674              	.set reorder
+ 675              	
+ 676              	.end NetPlayServerPingAll
+ 677              	$Lfe9:
+GAS LISTING  			page 13
+
+
+ 678              	.size NetPlayServerPingAll,$Lfe9-NetPlayServerPingAll
+ 679              	.align 2
+ 680              	.p2align 3,,7
+ 681              	.globl NetPlayGetStatus
+ 682              	.ent NetPlayGetStatus
+ 683              	NetPlayGetStatus:
+ 684              	.frame $sp,32,$31
+ 685              	.mask 0x80010000,-16
+ 686              	.fmask 0x00000000,0
+ 687 0470 E0FFBD27 	subu $sp,$sp,32
+ 688 0474 2D280000 	move $5,$0
+ 689 0478 6C000624 	dli $6,0x6c
+ 690 047c 0000B0FF 	sd $16,0($sp)
+ 691 0480 1000BFFF 	sd $31,16($sp)
+ 692              	.set noreorder
+ 693              	.set nomacro
+ 694 0484 0000000C 	jal memset
+ 695 0488 2D808000 	move $16,$4
+ 696              	.set macro
+ 697              	.set reorder
+ 698              	
+ 699 048c 0000023C 	lui $2,%hi(netplay_inited)
+ 700 0490 0000438C 	lw $3,%lo(netplay_inited)($2)
+ 701              	
+ 702              	.set noreorder
+ 703              	.set nomacro
+ 704 0494 06006014 	bne $3,$0,$L47
+ 705 0498 2D200000 	move $4,$0
+ 706              	.set macro
+ 707              	.set reorder
+ 708              	
+ 709              	$L45:
+ 710 049c 1000BFDF 	ld $31,16($sp)
+ 711 04a0 2D108000 	move $2,$4
+ 712 04a4 0000B0DF 	ld $16,0($sp)
+ 713              	
+ 714              	.set noreorder
+ 715              	.set nomacro
+ 716 04a8 0800E003 	j $31
+ 717 04ac 2000BD27 	addu $sp,$sp,32
+ 718              	.set macro
+ 719              	.set reorder
+ 720              	
+ 721              	.p2align 3
+ 722              	$L47:
+ 723 04b0 0A000424 	li $4,10
+ 724 04b4 2D280000 	move $5,$0
+ 725              	.set noreorder
+ 726              	.set nomacro
+ 727 04b8 0000000C 	jal _NetPlayCallRPC
+ 728 04bc 6C000624 	li $6,108
+ 729              	.set macro
+ 730              	.set reorder
+ 731              	
+ 732 04c0 0000053C 	lui $5,%hi(sbuff)
+ 733 04c4 2D200002 	move $4,$16
+ 734 04c8 6C000624 	dli $6,0x6c
+GAS LISTING  			page 14
+
+
+ 735              	.set noreorder
+ 736              	.set nomacro
+ 737 04cc 0000000C 	jal memcpy
+ 738 04d0 0010A524 	addiu $5,$5,%lo(sbuff)
+ 739              	.set macro
+ 740              	.set reorder
+ 741              	
+ 742              	.set noreorder
+ 743              	.set nomacro
+ 744 04d4 F1FF0010 	b $L45
+ 745 04d8 01000424 	li $4,1
+ 746              	.set macro
+ 747              	.set reorder
+ 748              	
+ 749              	.end NetPlayGetStatus
+ 750              	$Lfe10:
+ 751              	.size NetPlayGetStatus,$Lfe10-NetPlayGetStatus
+ 752              	.rdata
+ 753              	.align 3
+ 754              	$LC0:
+ 755 0000 00       	.ascii "\000"
+ 756 0001 00000000 	.text
+ 756      000000
+ 757              	.align 2
+ 758 04dc 00000000 	.p2align 3,,7
+ 759              	.globl NetPlayClientSendLoadReq
+ 760              	.ent NetPlayClientSendLoadReq
+ 761              	NetPlayClientSendLoadReq:
+ 762              	.frame $sp,16,$31
+ 763              	.mask 0x80000000,-16
+ 764              	.fmask 0x00000000,0
+ 765 04e0 F0FFBD27 	subu $sp,$sp,16
+ 766 04e4 0000023C 	lui $2,%hi(netplay_inited)
+ 767 04e8 0000BFFF 	sd $31,0($sp)
+ 768 04ec 2D288000 	move $5,$4
+ 769 04f0 0000043C 	lui $4,%hi(sbuff)
+ 770 04f4 0000438C 	lw $3,%lo(netplay_inited)($2)
+ 771              	
+ 772              	.set noreorder
+ 773              	.set nomacro
+ 774 04f8 09006010 	beq $3,$0,$L48
+ 775 04fc 00108424 	addiu $4,$4,%lo(sbuff)
+ 776              	.set macro
+ 777              	.set reorder
+ 778              	
+ 779              	.set noreorder
+ 780              	.set nomacro
+ 781 0500 0A00A010 	beq $5,$0,$L51
+ 782 0504 0000023C 	lui $2,%hi($LC0)
+ 783              	.set macro
+ 784              	.set reorder
+ 785              	
+ 786              	$L50:
+ 787 0508 0000000C 	jal strcpy
+ 787      00000000 
+ 788 0510 80000524 	li $5,128
+ 789 0514 2D300000 	move $6,$0
+GAS LISTING  			page 15
+
+
+ 790              	.set noreorder
+ 791              	.set nomacro
+ 792 0518 0000000C 	jal _NetPlayCallRPC
+ 793 051c 0B000424 	li $4,11
+ 794              	.set macro
+ 795              	.set reorder
+ 796              	
+ 797              	$L48:
+ 798 0520 0000BFDF 	ld $31,0($sp)
+ 799              	
+ 800              	.set noreorder
+ 801              	.set nomacro
+ 802 0524 0800E003 	j $31
+ 803 0528 1000BD27 	addu $sp,$sp,16
+ 804              	.set macro
+ 805              	.set reorder
+ 806              	
+ 807              	$L51:
+ 808              	.set noreorder
+ 809              	.set nomacro
+ 810 052c F6FF0010 	b $L50
+ 811 0530 00004524 	addiu $5,$2,%lo($LC0)
+ 812              	.set macro
+ 813              	.set reorder
+ 814              	
+ 815              	.end NetPlayClientSendLoadReq
+ 816              	$Lfe11:
+ 817              	.size NetPlayClientSendLoadReq,$Lfe11-NetPlayClientSendLoadReq
+ 818              	.align 2
+ 819 0534 00000000 	.p2align 3,,7
+ 820              	.globl NetPlayClientSendLoadAck
+ 821              	.ent NetPlayClientSendLoadAck
+ 822              	NetPlayClientSendLoadAck:
+ 823              	.frame $sp,16,$31
+ 824              	.mask 0x80000000,-16
+ 825              	.fmask 0x00000000,0
+ 826 0538 F0FFBD27 	subu $sp,$sp,16
+ 827 053c 0000023C 	lui $2,%hi(netplay_inited)
+ 828 0540 0000BFFF 	sd $31,0($sp)
+ 829 0544 2D388000 	move $7,$4
+ 830 0548 04000524 	li $5,4
+ 831 054c 2D300000 	move $6,$0
+ 832 0550 0000438C 	lw $3,%lo(netplay_inited)($2)
+ 833              	
+ 834              	.set noreorder
+ 835              	.set nomacro
+ 836 0554 04006014 	bne $3,$0,$L54
+ 837 0558 0C000424 	li $4,12
+ 838              	.set macro
+ 839              	.set reorder
+ 840              	
+ 841 055c 0000BFDF 	ld $31,0($sp)
+ 842              	$L55:
+ 843              	.set noreorder
+ 844              	.set nomacro
+ 845 0560 0800E003 	j $31
+ 846 0564 1000BD27 	addu $sp,$sp,16
+GAS LISTING  			page 16
+
+
+ 847              	.set macro
+ 848              	.set reorder
+ 849              	
+ 850              	.p2align 3
+ 851              	$L54:
+ 852 0568 0000023C 	lui $2,%hi(sbuff)
+ 853              	.set noreorder
+ 854              	.set nomacro
+ 855 056c 0000000C 	jal _NetPlayCallRPC
+ 856 0570 001047AC 	sw $7,%lo(sbuff)($2)
+ 857              	.set macro
+ 858              	.set reorder
+ 859              	
+ 860              	.set noreorder
+ 861              	.set nomacro
+ 862 0574 FAFF0010 	b $L55
+ 863 0578 0000BFDF 	ld $31,0($sp)
+ 864              	.set macro
+ 865              	.set reorder
+ 866              	
+ 867              	.end NetPlayClientSendLoadAck
+ 868              	$Lfe12:
+ 869              	.size NetPlayClientSendLoadAck,$Lfe12-NetPlayClientSendLoadAck
+ 870              	.align 2
+ 871 057c 00000000 	.p2align 3,,7
+ 872              	.globl _Netplay_InputIntr
+ 873              	.ent _Netplay_InputIntr
+ 874              	_Netplay_InputIntr:
+ 875              	.frame $sp,16,$31
+ 876              	.mask 0x80000000,-16
+ 877              	.fmask 0x00000000,0
+ 878 0580 F0FFBD27 	subu $sp,$sp,16
+ 879 0584 0000023C 	lui $2,%hi(_netplay_sema)
+ 880 0588 0000BFFF 	sd $31,0($sp)
+ 881              	.set noreorder
+ 882              	.set nomacro
+ 883 058c 0000000C 	jal iSignalSema
+ 884 0590 9C14448C 	lw $4,%lo(_netplay_sema)($2)
+ 885              	.set macro
+ 886              	.set reorder
+ 887              	
+ 888 0594 0000BFDF 	ld $31,0($sp)
+ 889              	
+ 890              	.set noreorder
+ 891              	.set nomacro
+ 892 0598 0800E003 	j $31
+ 893 059c 1000BD27 	addu $sp,$sp,16
+ 894              	.set macro
+ 895              	.set reorder
+ 896              	
+ 897              	.end _Netplay_InputIntr
+ 898              	$Lfe13:
+ 899              	.size _Netplay_InputIntr,$Lfe13-_Netplay_InputIntr
+ 900              	.align 2
+ 901              	.p2align 3,,7
+ 902              	.globl NetPlayClientInput
+ 903              	.ent NetPlayClientInput
+GAS LISTING  			page 17
+
+
+ 904              	NetPlayClientInput:
+ 905              	.frame $sp,64,$31
+ 906              	.mask 0x80030000,-16
+ 907              	.fmask 0x00000000,0
+ 908 05a0 C0FFBD27 	subu $sp,$sp,64
+ 909 05a4 0000023C 	lui $2,%hi(netplay_inited)
+ 910 05a8 1000B0FF 	sd $16,16($sp)
+ 911 05ac 2D808000 	move $16,$4
+ 912 05b0 3000BFFF 	sd $31,48($sp)
+ 913 05b4 2000B1FF 	sd $17,32($sp)
+ 914 05b8 0000438C 	lw $3,%lo(netplay_inited)($2)
+ 915 05bc 06000224 	li $2,6
+ 916              	.set noreorder
+ 917              	.set nomacro
+ 918 05c0 07006014 	bne $3,$0,$L58
+ 919 05c4 040082AC 	sw $2,4($4)
+ 920              	.set macro
+ 921              	.set reorder
+ 922              	
+ 923 05c8 040080AC 	sw $0,4($4)
+ 924 05cc 3000BFDF 	ld $31,48($sp)
+ 925              	$L59:
+ 926 05d0 2000B1DF 	ld $17,32($sp)
+ 927 05d4 1000B0DF 	ld $16,16($sp)
+ 928              	
+ 929              	.set noreorder
+ 930              	.set nomacro
+ 931 05d8 0800E003 	j $31
+ 932 05dc 4000BD27 	addu $sp,$sp,64
+ 933              	.set macro
+ 934              	.set reorder
+ 935              	
+ 936              	.p2align 3
+ 937              	$L58:
+ 938 05e0 0000023C 	lui $2,%hi(_netplay_sema)
+ 939 05e4 0000113C 	lui $17,%hi(sbuff)
+ 940 05e8 9C14448C 	lw $4,%lo(_netplay_sema)($2)
+ 941              	.set noreorder
+ 942              	.set nomacro
+ 943 05ec 0000000C 	jal WaitSema
+ 944 05f0 00103126 	addiu $17,$17,%lo(sbuff)
+ 945              	.set macro
+ 946              	.set reorder
+ 947              	
+ 948 05f4 2D202002 	move $4,$17
+ 949 05f8 2D280002 	move $5,$16
+ 950              	.set noreorder
+ 951              	.set nomacro
+ 952 05fc 0000000C 	jal memcpy
+ 953 0600 3C000624 	dli $6,0x3c
+ 954              	.set macro
+ 955              	.set reorder
+ 956              	
+ 957 0604 2D200002 	move $4,$16
+ 958 0608 0000103C 	lui $16,%hi(rbuff)
+ 959 060c 3C000624 	dli $6,0x3c
+ 960 0610 00111026 	addiu $16,$16,%lo(rbuff)
+GAS LISTING  			page 18
+
+
+ 961              	.set noreorder
+ 962              	.set nomacro
+ 963 0614 0000000C 	jal memcpy
+ 964 0618 2D280002 	move $5,$16
+ 965              	.set macro
+ 966              	.set reorder
+ 967              	
+ 968 061c 0000B0AF 	sw $16,0($sp)
+ 969 0620 0000043C 	lui $4,%hi(cd0)
+ 970 0624 00000B3C 	lui $11,%hi(_Netplay_InputIntr)
+ 971 0628 3C000A24 	li $10,60
+ 972 062c 00128424 	addiu $4,$4,%lo(cd0)
+ 973 0630 2D382002 	move $7,$17
+ 974 0634 2D480002 	move $9,$16
+ 975 0638 00006B25 	addiu $11,$11,%lo(_Netplay_InputIntr)
+ 976 063c 0F000524 	li $5,15
+ 977 0640 01000624 	li $6,1
+ 978              	.set noreorder
+ 979              	.set nomacro
+ 980 0644 0000000C 	jal SifCallRpc
+ 981 0648 3C000824 	li $8,60
+ 982              	.set macro
+ 983              	.set reorder
+ 984              	
+ 985              	.set noreorder
+ 986              	.set nomacro
+ 987 064c E0FF0010 	b $L59
+ 988 0650 3000BFDF 	ld $31,48($sp)
+ 989              	.set macro
+ 990              	.set reorder
+ 991              	
+ 992              	.end NetPlayClientInput
+ 993              	$Lfe14:
+ 994              	.size NetPlayClientInput,$Lfe14-NetPlayClientInput
+ 995              	.section .bss
+ 996              	sbuff:
+ 997              	.align 6
+ 998 1000 00000000 	.space 256
+ 998      00000000 
+ 998      00000000 
+ 998      00000000 
+ 998      00000000 
+ 999              	.previous
+ 1000              	.section .bss
+ 1001              	rbuff:
+ 1002              	.align 6
+ 1003 1100 00000000 	.space 256
+ 1003      00000000 
+ 1003      00000000 
+ 1003      00000000 
+ 1003      00000000 
+ 1004              	.previous
+ 1005              	.section .bss
+ 1006              	cd0:
+ 1007              	.align 3
+ 1008 1200 00000000 	.space 40
+ 1008      00000000 
+GAS LISTING  			page 19
+
+
+ 1008      00000000 
+ 1008      00000000 
+ 1008      00000000 
+ 1009              	.previous
+ 1010              	.section .bss
+ 1011              	buffer:
+ 1012 1228 00000000 	.align 6
+ 1012      00000000 
+ 1012      00000000 
+ 1012      00000000 
+ 1012      00000000 
+ 1013 1240 00000000 	.space 512
+ 1013      00000000 
+ 1013      00000000 
+ 1013      00000000 
+ 1013      00000000 
+ 1014              	.previous
+ 1015              	.section .bss
+ 1016              	qd:
+ 1017              	.align 3
+ 1018 1440 00000000 	.space 24
+ 1018      00000000 
+ 1018      00000000 
+ 1018      00000000 
+ 1018      00000000 
+ 1019              	.previous
+ 1020              	.section .bss
+ 1021              	sd0:
+ 1022              	.align 3
+ 1023 1458 00000000 	.space 68
+ 1023      00000000 
+ 1023      00000000 
+ 1023      00000000 
+ 1023      00000000 
+ 1024              	.previous
+ 1025              	.section .bss
+ 1026              	_netplay_sema:
+ 1027              	.align 2
+ 1028 149c 00000000 	.space 4
+ 1029 14a0 00000000 	.previous
+ 1029      00000000 
+ 1029      00000000 
+ 1029      00000000 
+ 1029      00000000 
+ 1030 0654 00000000 	.ident "GCC: (GNU) 3.2.2"

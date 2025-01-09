@@ -1,0 +1,1601 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		35E138004C754BA89FCFF9F6 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = ACF4B33555974D04B47FC9DB /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				38B8E6256C25CC1E6C7FA775 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		492AF1C578C644C5851A69FB /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 13FE697A050D48C3831A91A0 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				A3503B4C53B943DCB128BB35 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		872B88AC16C241AEBBB9B138 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 09B9E92AB8EC4D0FB2D53387 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				84D7FE8A2435C29186D910BD /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				402E94F07B05411982E8FB3D /* PBXTargetDependency */,
+				0D3F2740F7D04B5498EA2D60 /* PBXTargetDependency */,
+				76A4080879C1470B858819A8 /* PBXTargetDependency */,
+				B42791D168B74C87AA2FAE15 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		FE9EA17B6F164179AF1C6707 /* RUN_TESTS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 01E478A6C95B4DA28B03746E /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildPhases = (
+				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+			);
+			name = RUN_TESTS;
+			productName = RUN_TESTS;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		01D8D1E62DAA40F1A6577C14 /* ../libretro_ppsspp/ext/cpu_features/include/cpuinfo_aarch64.h */ = {isa = PBXBuildFile; fileRef = 13754F8C10044D16A54B3987 /* ../libretro_ppsspp/ext/cpu_features/include/cpuinfo_aarch64.h */; };
+		0B281A8680124E518C5253CE /* ../libretro_ppsspp/ext/cpu_features/include/cpu_features_macros.h */ = {isa = PBXBuildFile; fileRef = 84AF567E579B414A83815AFE /* ../libretro_ppsspp/ext/cpu_features/include/cpu_features_macros.h */; };
+		0E141DD819D24204BAC735E2 /* ../libretro_ppsspp/ext/cpu_features/src/impl_arm_linux_or_android.c */ = {isa = PBXBuildFile; fileRef = 371D0D4D658443328E8EE5DE /* ../libretro_ppsspp/ext/cpu_features/src/impl_arm_linux_or_android.c */; };
+		133C6D142989464A95653962 /* ../libretro_ppsspp/ext/cpu_features/include/internal/hwcaps.h */ = {isa = PBXBuildFile; fileRef = F0B0D4661F37458AA45DA5C9 /* ../libretro_ppsspp/ext/cpu_features/include/internal/hwcaps.h */; };
+		27EEFA1FF5684213B37AB28A /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_windows.c */ = {isa = PBXBuildFile; fileRef = F4859F3C3D9D41E484D6E0F8 /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_windows.c */; };
+		2D4BFD492F30469C81BCD267 /* ../libretro_ppsspp/ext/cpu_features/src/string_view.c */ = {isa = PBXBuildFile; fileRef = 960DBC79D29C499EB0477C7B /* ../libretro_ppsspp/ext/cpu_features/src/string_view.c */; };
+		39A8EB8238B04F95B842EF70 /* ../libretro_ppsspp/ext/cpu_features/src/impl_mips_linux_or_android.c */ = {isa = PBXBuildFile; fileRef = DE82EB87A65C4D889D66A081 /* ../libretro_ppsspp/ext/cpu_features/src/impl_mips_linux_or_android.c */; };
+		3D44508B544E4046B8570FDD /* ../libretro_ppsspp/ext/cpu_features/include/internal/string_view.h */ = {isa = PBXBuildFile; fileRef = F42017757B6040D38330C0C0 /* ../libretro_ppsspp/ext/cpu_features/include/internal/string_view.h */; };
+		452DC33B6F34490BBD79AD63 /* ../libretro_ppsspp/ext/cpu_features/src/impl_s390x_linux.c */ = {isa = PBXBuildFile; fileRef = E852F87EDFFB4496BE756282 /* ../libretro_ppsspp/ext/cpu_features/src/impl_s390x_linux.c */; };
+		54785BAA141846BCB7C0AACB /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_freebsd.c */ = {isa = PBXBuildFile; fileRef = D997E576A5CD469BB25FC628 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_freebsd.c */; };
+		77D199E839294DDCB4469FEE /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_macos.c */ = {isa = PBXBuildFile; fileRef = FCDBB6514EA54D208310C075 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_macos.c */; };
+		901A774728444D79BBBB6AAE /* ../libretro_ppsspp/ext/cpu_features/include/internal/bit_utils.h */ = {isa = PBXBuildFile; fileRef = 8457C1A274584A2E889EEB47 /* ../libretro_ppsspp/ext/cpu_features/include/internal/bit_utils.h */; };
+		950F08EBEFF5487DB2D35E21 /* ../libretro_ppsspp/ext/cpu_features/include/cpu_features_cache_info.h */ = {isa = PBXBuildFile; fileRef = B3A1ECF6D01F4A75A4CBC942 /* ../libretro_ppsspp/ext/cpu_features/include/cpu_features_cache_info.h */; };
+		9BD1BE8CD9504CA2BFFC6971 /* ../libretro_ppsspp/ext/cpu_features/src/stack_line_reader.c */ = {isa = PBXBuildFile; fileRef = B828AE384DE341939D1E4465 /* ../libretro_ppsspp/ext/cpu_features/src/stack_line_reader.c */; };
+		9C25EA1F8B544E449AF08870 /* ../libretro_ppsspp/ext/cpu_features/src/hwcaps.c */ = {isa = PBXBuildFile; fileRef = E89507A2828A413A8608E3AA /* ../libretro_ppsspp/ext/cpu_features/src/hwcaps.c */; };
+		AEAF5D8D742A47EEA689C4A7 /* ../libretro_ppsspp/ext/cpu_features/src/impl_riscv_linux.c */ = {isa = PBXBuildFile; fileRef = EA5727B4E0A24CCAB2329A07 /* ../libretro_ppsspp/ext/cpu_features/src/impl_riscv_linux.c */; };
+		BFFF82C754E24E8C8A1396EB /* ../libretro_ppsspp/ext/cpu_features/src/impl_ppc_linux.c */ = {isa = PBXBuildFile; fileRef = 6EAAE427CA094A22828B2086 /* ../libretro_ppsspp/ext/cpu_features/src/impl_ppc_linux.c */; };
+		C2CE1C51EA3049F7A2C1E6BE /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 0D8A828675F64B8297F004C2 /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */; };
+		CED948E63A0E42AD9ADE3AD9 /* ../libretro_ppsspp/ext/cpu_features/include/internal/filesystem.h */ = {isa = PBXBuildFile; fileRef = 260FE812753D489D923BDC71 /* ../libretro_ppsspp/ext/cpu_features/include/internal/filesystem.h */; };
+		D01B5D5701CC4102B9651DCB /* ../cmake/ext/cmake/cpu_features/CMakeFiles/cpu_features.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = B774AC590AC64637B37FA1A9 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/cpu_features.dir/Info.plist */; };
+		D032CAA9309C450487F9A3A5 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_linux_or_android.c */ = {isa = PBXBuildFile; fileRef = C5369F87B0374C4B94E5A691 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_linux_or_android.c */; };
+		DF5DB5AFAF3641FE8E0280A3 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/unix_based_hardware_detection.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 9793671BEFBB4A7A84DD57B1 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/unix_based_hardware_detection.dir/Info.plist */; };
+		E359BA363DE04DD982F7F1A6 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/utils.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 444A2EE33267451392BDEC73 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/utils.dir/Info.plist */; };
+		E612933230434394929B0D9D /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 5B711196685A4A6CB461E7AF /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */; };
+		E94CA4FC1FDD45FA8CBC89B5 /* ../libretro_ppsspp/ext/cpu_features/include/internal/stack_line_reader.h */ = {isa = PBXBuildFile; fileRef = 9BE6D7884E0F42A794F8DE6D /* ../libretro_ppsspp/ext/cpu_features/include/internal/stack_line_reader.h */; };
+		E9D3F899DF6141BEB0E51D94 /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 8FEB9A6F10904E1A830EB42E /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */; };
+		EC0D2F20BC6641BEB85E54EB /* ../libretro_ppsspp/ext/cpu_features/src/filesystem.c */ = {isa = PBXBuildFile; fileRef = E139100861C24F0EBE8CC87D /* ../libretro_ppsspp/ext/cpu_features/src/filesystem.c */; };
+		F3F3DC7547944E06894971A0 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_windows.c */ = {isa = PBXBuildFile; fileRef = 4CAF6CE1F3504065B70F99CA /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_windows.c */; };
+		FEE50624828247A885071F2F /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_linux_or_android.c */ = {isa = PBXBuildFile; fileRef = 709604C8D0F647A7A0631AB0 /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_linux_or_android.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		2DFB73C620934056B949D04D /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		4AF6E0449CD74E518F007B97 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		5E01FE5854AB4DE9B985A984 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		DF3E6F6CB3CC4797B2CE9560 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		0FE5F2A2429D4DE8985B8FB3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FF96856397CC4E8F8DF6C23F;
+			remoteInfo = utils;
+		};
+		2F10C93BCB9D4A95A4289E1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B01694D1CD4425C85A7CD1E;
+			remoteInfo = unix_based_hardware_detection;
+		};
+		31C58325BC6C42BB9CB8E266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
+		};
+		35CA04B5684748EE910F6FFE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
+		};
+		6781AF24C0674962B86754CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B01694D1CD4425C85A7CD1E;
+			remoteInfo = unix_based_hardware_detection;
+		};
+		7A7B4B7E5D86414799CF1940 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
+		};
+		939B5B7906534D39A06888B6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 872B88AC16C241AEBBB9B138;
+			remoteInfo = ALL_BUILD;
+		};
+		9DAD4016A6AD445A81AEEC77 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E158F631A90347539AE08399;
+			remoteInfo = cpu_features;
+		};
+		AE1FA90D6F854FA7BF4A7F34 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FF96856397CC4E8F8DF6C23F;
+			remoteInfo = utils;
+		};
+		BE45665C3B7F4E9CB7CECF01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7D8D0E17440DB8D11D039 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0D68834DF0264F54910F1644 /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		0D8A828675F64B8297F004C2 /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		13754F8C10044D16A54B3987 /* ../libretro_ppsspp/ext/cpu_features/include/cpuinfo_aarch64.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpuinfo_aarch64.h; path = ../libretro_ppsspp/ext/cpu_features/include/cpuinfo_aarch64.h; sourceTree = "<absolute>"; };
+		260FE812753D489D923BDC71 /* ../libretro_ppsspp/ext/cpu_features/include/internal/filesystem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = filesystem.h; path = ../libretro_ppsspp/ext/cpu_features/include/internal/filesystem.h; sourceTree = "<absolute>"; };
+		371D0D4D658443328E8EE5DE /* ../libretro_ppsspp/ext/cpu_features/src/impl_arm_linux_or_android.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_arm_linux_or_android.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_arm_linux_or_android.c; sourceTree = "<absolute>"; };
+		444A2EE33267451392BDEC73 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/utils.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/cmake/cpu_features/CMakeFiles/utils.dir/Info.plist; sourceTree = "<absolute>"; };
+		4CAF6CE1F3504065B70F99CA /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_windows.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_x86_windows.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_x86_windows.c; sourceTree = "<absolute>"; };
+		5B711196685A4A6CB461E7AF /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		668BBEFADCF14C59856F6F0B /* unix_based_hardware_detection */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libunix_based_hardware_detection.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EAAE427CA094A22828B2086 /* ../libretro_ppsspp/ext/cpu_features/src/impl_ppc_linux.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_ppc_linux.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_ppc_linux.c; sourceTree = "<absolute>"; };
+		709604C8D0F647A7A0631AB0 /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_linux_or_android.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_aarch64_linux_or_android.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_linux_or_android.c; sourceTree = "<absolute>"; };
+		8457C1A274584A2E889EEB47 /* ../libretro_ppsspp/ext/cpu_features/include/internal/bit_utils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bit_utils.h; path = ../libretro_ppsspp/ext/cpu_features/include/internal/bit_utils.h; sourceTree = "<absolute>"; };
+		84AF567E579B414A83815AFE /* ../libretro_ppsspp/ext/cpu_features/include/cpu_features_macros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu_features_macros.h; path = ../libretro_ppsspp/ext/cpu_features/include/cpu_features_macros.h; sourceTree = "<absolute>"; };
+		8FEB9A6F10904E1A830EB42E /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		921E21F164D3459096D409ED /* cpu_features */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpu_features.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		960DBC79D29C499EB0477C7B /* ../libretro_ppsspp/ext/cpu_features/src/string_view.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = string_view.c; path = ../libretro_ppsspp/ext/cpu_features/src/string_view.c; sourceTree = "<absolute>"; };
+		9793671BEFBB4A7A84DD57B1 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/unix_based_hardware_detection.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/cmake/cpu_features/CMakeFiles/unix_based_hardware_detection.dir/Info.plist; sourceTree = "<absolute>"; };
+		9BE6D7884E0F42A794F8DE6D /* ../libretro_ppsspp/ext/cpu_features/include/internal/stack_line_reader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stack_line_reader.h; path = ../libretro_ppsspp/ext/cpu_features/include/internal/stack_line_reader.h; sourceTree = "<absolute>"; };
+		B3A1ECF6D01F4A75A4CBC942 /* ../libretro_ppsspp/ext/cpu_features/include/cpu_features_cache_info.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu_features_cache_info.h; path = ../libretro_ppsspp/ext/cpu_features/include/cpu_features_cache_info.h; sourceTree = "<absolute>"; };
+		B774AC590AC64637B37FA1A9 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/cpu_features.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/cmake/cpu_features/CMakeFiles/cpu_features.dir/Info.plist; sourceTree = "<absolute>"; };
+		B828AE384DE341939D1E4465 /* ../libretro_ppsspp/ext/cpu_features/src/stack_line_reader.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stack_line_reader.c; path = ../libretro_ppsspp/ext/cpu_features/src/stack_line_reader.c; sourceTree = "<absolute>"; };
+		C5369F87B0374C4B94E5A691 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_linux_or_android.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_x86_linux_or_android.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_x86_linux_or_android.c; sourceTree = "<absolute>"; };
+		D997E576A5CD469BB25FC628 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_freebsd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_x86_freebsd.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_x86_freebsd.c; sourceTree = "<absolute>"; };
+		DE82EB87A65C4D889D66A081 /* ../libretro_ppsspp/ext/cpu_features/src/impl_mips_linux_or_android.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_mips_linux_or_android.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_mips_linux_or_android.c; sourceTree = "<absolute>"; };
+		E139100861C24F0EBE8CC87D /* ../libretro_ppsspp/ext/cpu_features/src/filesystem.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filesystem.c; path = ../libretro_ppsspp/ext/cpu_features/src/filesystem.c; sourceTree = "<absolute>"; };
+		E852F87EDFFB4496BE756282 /* ../libretro_ppsspp/ext/cpu_features/src/impl_s390x_linux.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_s390x_linux.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_s390x_linux.c; sourceTree = "<absolute>"; };
+		E89507A2828A413A8608E3AA /* ../libretro_ppsspp/ext/cpu_features/src/hwcaps.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hwcaps.c; path = ../libretro_ppsspp/ext/cpu_features/src/hwcaps.c; sourceTree = "<absolute>"; };
+		E9BE482B062543B5B1D99B5E /* utils */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libutils.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA5727B4E0A24CCAB2329A07 /* ../libretro_ppsspp/ext/cpu_features/src/impl_riscv_linux.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_riscv_linux.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_riscv_linux.c; sourceTree = "<absolute>"; };
+		F0B0D4661F37458AA45DA5C9 /* ../libretro_ppsspp/ext/cpu_features/include/internal/hwcaps.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = hwcaps.h; path = ../libretro_ppsspp/ext/cpu_features/include/internal/hwcaps.h; sourceTree = "<absolute>"; };
+		F42017757B6040D38330C0C0 /* ../libretro_ppsspp/ext/cpu_features/include/internal/string_view.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = string_view.h; path = ../libretro_ppsspp/ext/cpu_features/include/internal/string_view.h; sourceTree = "<absolute>"; };
+		F4859F3C3D9D41E484D6E0F8 /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_windows.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_aarch64_windows.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_windows.c; sourceTree = "<absolute>"; };
+		FCDBB6514EA54D208310C075 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_macos.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = impl_x86_macos.c; path = ../libretro_ppsspp/ext/cpu_features/src/impl_x86_macos.c; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		346F5708CEA5461C82CA0DE8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7866CA8E996D4769B337219E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2A031FB1EC249DD8464AE05 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		10EFBF8CC37F433A8865ED3A /* unix_based_hardware_detection */ = {
+			isa = PBXGroup;
+			children = (
+				7F2FBC9CC70A45FC8B84E6BE /* Header Files */,
+				ED9DD0B746B242A6B889A496 /* Source Files */,
+				C571BA35FA38477DA6F197E3 /* Resources */,
+				8FEB9A6F10904E1A830EB42E /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */,
+			);
+			name = unix_based_hardware_detection;
+			sourceTree = "<group>";
+		};
+		38EABF4949A14319B087433D = {
+			isa = PBXGroup;
+			children = (
+				646FE87B5BD646CC85638501 /* utils */,
+				10EFBF8CC37F433A8865ED3A /* unix_based_hardware_detection */,
+				D0D80DD5F7504ED78CE4A884 /* cpu_features */,
+				E9F8E8898964412CAE3476B9 /* ALL_BUILD */,
+				5E3101B9E7504C55A481097A /* Products */,
+				DFE2FC7E98794415B74D6EBF /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		3DD6CD50D7EB4CAC93A6336C /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				8457C1A274584A2E889EEB47 /* ../libretro_ppsspp/ext/cpu_features/include/internal/bit_utils.h */,
+				260FE812753D489D923BDC71 /* ../libretro_ppsspp/ext/cpu_features/include/internal/filesystem.h */,
+				9BE6D7884E0F42A794F8DE6D /* ../libretro_ppsspp/ext/cpu_features/include/internal/stack_line_reader.h */,
+				F42017757B6040D38330C0C0 /* ../libretro_ppsspp/ext/cpu_features/include/internal/string_view.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		5E3101B9E7504C55A481097A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				921E21F164D3459096D409ED /* cpu_features */,
+				668BBEFADCF14C59856F6F0B /* unix_based_hardware_detection */,
+				E9BE482B062543B5B1D99B5E /* utils */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		646FE87B5BD646CC85638501 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				3DD6CD50D7EB4CAC93A6336C /* Header Files */,
+				F15FCDC9587C4F8EBB6D51B7 /* Source Files */,
+				9B4C836B043E4179A27B4400 /* Resources */,
+				0D8A828675F64B8297F004C2 /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */,
+			);
+			name = utils;
+			sourceTree = "<group>";
+		};
+		7F2FBC9CC70A45FC8B84E6BE /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				F0B0D4661F37458AA45DA5C9 /* ../libretro_ppsspp/ext/cpu_features/include/internal/hwcaps.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		9B4C836B043E4179A27B4400 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				444A2EE33267451392BDEC73 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/utils.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		B6B59C6D934C428E9D7A85B0 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				B3A1ECF6D01F4A75A4CBC942 /* ../libretro_ppsspp/ext/cpu_features/include/cpu_features_cache_info.h */,
+				84AF567E579B414A83815AFE /* ../libretro_ppsspp/ext/cpu_features/include/cpu_features_macros.h */,
+				13754F8C10044D16A54B3987 /* ../libretro_ppsspp/ext/cpu_features/include/cpuinfo_aarch64.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		BCB3BB229BE242A1BBA68528 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B774AC590AC64637B37FA1A9 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/cpu_features.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		C0DA813431A046F6BC2930B3 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		C571BA35FA38477DA6F197E3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9793671BEFBB4A7A84DD57B1 /* ../cmake/ext/cmake/cpu_features/CMakeFiles/unix_based_hardware_detection.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		D0D80DD5F7504ED78CE4A884 /* cpu_features */ = {
+			isa = PBXGroup;
+			children = (
+				B6B59C6D934C428E9D7A85B0 /* Header Files */,
+				D33542FBBD294D8B894BBDDD /* Source Files */,
+				BCB3BB229BE242A1BBA68528 /* Resources */,
+				5B711196685A4A6CB461E7AF /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */,
+			);
+			name = cpu_features;
+			sourceTree = "<group>";
+		};
+		D33542FBBD294D8B894BBDDD /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				709604C8D0F647A7A0631AB0 /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_linux_or_android.c */,
+				F4859F3C3D9D41E484D6E0F8 /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_windows.c */,
+				371D0D4D658443328E8EE5DE /* ../libretro_ppsspp/ext/cpu_features/src/impl_arm_linux_or_android.c */,
+				DE82EB87A65C4D889D66A081 /* ../libretro_ppsspp/ext/cpu_features/src/impl_mips_linux_or_android.c */,
+				6EAAE427CA094A22828B2086 /* ../libretro_ppsspp/ext/cpu_features/src/impl_ppc_linux.c */,
+				EA5727B4E0A24CCAB2329A07 /* ../libretro_ppsspp/ext/cpu_features/src/impl_riscv_linux.c */,
+				E852F87EDFFB4496BE756282 /* ../libretro_ppsspp/ext/cpu_features/src/impl_s390x_linux.c */,
+				D997E576A5CD469BB25FC628 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_freebsd.c */,
+				C5369F87B0374C4B94E5A691 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_linux_or_android.c */,
+				FCDBB6514EA54D208310C075 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_macos.c */,
+				4CAF6CE1F3504065B70F99CA /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_windows.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		DFE2FC7E98794415B74D6EBF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E9F8E8898964412CAE3476B9 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				C0DA813431A046F6BC2930B3 /* CMake Rules */,
+				0D68834DF0264F54910F1644 /* ../libretro_ppsspp/ext/cmake/cpu_features/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		ED9DD0B746B242A6B889A496 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				E89507A2828A413A8608E3AA /* ../libretro_ppsspp/ext/cpu_features/src/hwcaps.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		F15FCDC9587C4F8EBB6D51B7 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				E139100861C24F0EBE8CC87D /* ../libretro_ppsspp/ext/cpu_features/src/filesystem.c */,
+				B828AE384DE341939D1E4465 /* ../libretro_ppsspp/ext/cpu_features/src/stack_line_reader.c */,
+				960DBC79D29C499EB0477C7B /* ../libretro_ppsspp/ext/cpu_features/src/string_view.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1B01694D1CD4425C85A7CD1E /* unix_based_hardware_detection */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66C9DAF70DD64E0CA4480F44 /* Build configuration list for PBXNativeTarget "unix_based_hardware_detection" */;
+			buildPhases = (
+				F739319B45C04863BF493D71 /* Sources */,
+				D2A031FB1EC249DD8464AE05 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3B52E4B699224C579724091A /* PBXTargetDependency */,
+			);
+			name = unix_based_hardware_detection;
+			productName = unix_based_hardware_detection;
+			productReference = 668BBEFADCF14C59856F6F0B /* unix_based_hardware_detection */;
+			productType = "com.apple.product-type.library.static";
+		};
+		E158F631A90347539AE08399 /* cpu_features */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 51BB30AC09804BD486E2CA35 /* Build configuration list for PBXNativeTarget "cpu_features" */;
+			buildPhases = (
+				283E8B46F82A4C3E8E281D92 /* Sources */,
+				7866CA8E996D4769B337219E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9250E9C189C3466296157789 /* PBXTargetDependency */,
+				AE0AB672125F45399542B42E /* PBXTargetDependency */,
+				16A5501D509C4ECB8683F046 /* PBXTargetDependency */,
+			);
+			name = cpu_features;
+			productName = cpu_features;
+			productReference = 921E21F164D3459096D409ED /* cpu_features */;
+			productType = "com.apple.product-type.library.static";
+		};
+		FF96856397CC4E8F8DF6C23F /* utils */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9413DDF0BC8D4A3084DB9B27 /* Build configuration list for PBXNativeTarget "utils" */;
+			buildPhases = (
+				641B9624DB834A2E8AF24CFE /* Sources */,
+				346F5708CEA5461C82CA0DE8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7642304BD6E24C1F90B8AEDC /* PBXTargetDependency */,
+			);
+			name = utils;
+			productName = utils;
+			productReference = E9BE482B062543B5B1D99B5E /* utils */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D5C7D8D0E17440DB8D11D039 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = D9DB758CE73547ECADCD687C /* Build configuration list for PBXProject "CpuFeatures" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				DF3E6F6CB3CC4797B2CE9560 /* Debug */,
+				5E01FE5854AB4DE9B985A984 /* Release */,
+				4AF6E0449CD74E518F007B97 /* MinSizeRel */,
+				2DFB73C620934056B949D04D /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 38EABF4949A14319B087433D;
+			projectDirPath = ../libretro_ppsspp/ext/cmake/cpu_features;
+			projectRoot = "";
+			targets = (
+				872B88AC16C241AEBBB9B138 /* ALL_BUILD */,
+				FE9EA17B6F164179AF1C6707 /* RUN_TESTS */,
+				35E138004C754BA89FCFF9F6 /* ZERO_CHECK */,
+				E158F631A90347539AE08399 /* cpu_features */,
+				492AF1C578C644C5851A69FB /* install */,
+				1B01694D1CD4425C85A7CD1E /* unix_based_hardware_detection */,
+				FF96856397CC4E8F8DF6C23F /* utils */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		003C8D08B0008F35F218E126 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		38B8E6256C25CC1E6C7FA775 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+../cmake/ext/cmake/cpu_features/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  make -f ../cmake/ext/cmake/cpu_features/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  make -f ../cmake/ext/cmake/cpu_features/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  make -f ../cmake/ext/cmake/cpu_features/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  make -f ../cmake/ext/cmake/cpu_features/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		84D7FE8A2435C29186D910BD /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+../cmake/ext/cmake/cpu_features/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		87AF4882E018677E2624B544 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		910A41151295C5F9742C25BD = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/ext/cmake/cpu_features
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		283E8B46F82A4C3E8E281D92 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FEE50624828247A885071F2F /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_linux_or_android.c */,
+				27EEFA1FF5684213B37AB28A /* ../libretro_ppsspp/ext/cpu_features/src/impl_aarch64_windows.c */,
+				0E141DD819D24204BAC735E2 /* ../libretro_ppsspp/ext/cpu_features/src/impl_arm_linux_or_android.c */,
+				39A8EB8238B04F95B842EF70 /* ../libretro_ppsspp/ext/cpu_features/src/impl_mips_linux_or_android.c */,
+				BFFF82C754E24E8C8A1396EB /* ../libretro_ppsspp/ext/cpu_features/src/impl_ppc_linux.c */,
+				AEAF5D8D742A47EEA689C4A7 /* ../libretro_ppsspp/ext/cpu_features/src/impl_riscv_linux.c */,
+				452DC33B6F34490BBD79AD63 /* ../libretro_ppsspp/ext/cpu_features/src/impl_s390x_linux.c */,
+				54785BAA141846BCB7C0AACB /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_freebsd.c */,
+				D032CAA9309C450487F9A3A5 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_linux_or_android.c */,
+				77D199E839294DDCB4469FEE /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_macos.c */,
+				F3F3DC7547944E06894971A0 /* ../libretro_ppsspp/ext/cpu_features/src/impl_x86_windows.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		641B9624DB834A2E8AF24CFE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC0D2F20BC6641BEB85E54EB /* ../libretro_ppsspp/ext/cpu_features/src/filesystem.c */,
+				9BD1BE8CD9504CA2BFFC6971 /* ../libretro_ppsspp/ext/cpu_features/src/stack_line_reader.c */,
+				2D4BFD492F30469C81BCD267 /* ../libretro_ppsspp/ext/cpu_features/src/string_view.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F739319B45C04863BF493D71 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9C25EA1F8B544E449AF08870 /* ../libretro_ppsspp/ext/cpu_features/src/hwcaps.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0D3F2740F7D04B5498EA2D60 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B01694D1CD4425C85A7CD1E /* unix_based_hardware_detection */;
+			targetProxy = 6781AF24C0674962B86754CC /* PBXContainerItemProxy */;
+		};
+		16A5501D509C4ECB8683F046 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 35CA04B5684748EE910F6FFE /* PBXContainerItemProxy */;
+		};
+		3B52E4B699224C579724091A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = BE45665C3B7F4E9CB7CECF01 /* PBXContainerItemProxy */;
+		};
+		402E94F07B05411982E8FB3D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FF96856397CC4E8F8DF6C23F /* utils */;
+			targetProxy = 0FE5F2A2429D4DE8985B8FB3 /* PBXContainerItemProxy */;
+		};
+		7642304BD6E24C1F90B8AEDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 7A7B4B7E5D86414799CF1940 /* PBXContainerItemProxy */;
+		};
+		76A4080879C1470B858819A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E158F631A90347539AE08399 /* cpu_features */;
+			targetProxy = 9DAD4016A6AD445A81AEEC77 /* PBXContainerItemProxy */;
+		};
+		9250E9C189C3466296157789 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FF96856397CC4E8F8DF6C23F /* utils */;
+			targetProxy = AE1FA90D6F854FA7BF4A7F34 /* PBXContainerItemProxy */;
+		};
+		A3503B4C53B943DCB128BB35 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 872B88AC16C241AEBBB9B138 /* ALL_BUILD */;
+			targetProxy = 939B5B7906534D39A06888B6 /* PBXContainerItemProxy */;
+		};
+		AE0AB672125F45399542B42E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B01694D1CD4425C85A7CD1E /* unix_based_hardware_detection */;
+			targetProxy = 2F10C93BCB9D4A95A4289E1A /* PBXContainerItemProxy */;
+		};
+		B42791D168B74C87AA2FAE15 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 31C58325BC6C42BB9CB8E266 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		045ECD7104C74D458D00C28C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		0AFBB1800BFE45ED8A8E0FC5 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		0EA550224FD94F8C8FB685C2 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0        -DNDEBUG        -D_NDEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/filesystem.o","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/stack_line_reader.o","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/string_view.o","../cmake/build/unix_based_hardware_detection.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/hwcaps.o");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = cpu_features;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		0EA930D9FB724196AB954DE5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		18D6BC8CD01B4FDF8E43BEAA /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = MinSizeRel;
+		};
+		356FECF2609749FCA86F44E1 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'",HAVE_DLFCN_H,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0        -DNDEBUG        -D_NDEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = unix_based_hardware_detection;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		40F59A8756464887BED32D80 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		4BEA51D2BFF4449D97D47526 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		4CA3508BFB79467C9F726C17 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		4F5E6321F5A9481E969DD785 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'",HAVE_DLFCN_H,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0       -D_DEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = unix_based_hardware_detection;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		55A1309D4F254FEBB46218C1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		5BE6413F29FA463DA87FD9DF /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = utils;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		60FD4C23E1F244A4866AEA97 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		63B1E6C2C39C4217BF31F2BD /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/filesystem.o","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/stack_line_reader.o","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/string_view.o","../cmake/build/unix_based_hardware_detection.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/hwcaps.o");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = cpu_features;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		7313D1E456924814988061BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Debug;
+		};
+		782A5544364A4454A366C5E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		7BBFBEED97B349D4AEF7348A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'",HAVE_DLFCN_H,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = unix_based_hardware_detection;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		7F029BEE79EC4F9A968206F9 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		828B9C0FBDCF42609425682B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0       -D_DEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = utils;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		8DB505A769BD4A949B93E120 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		9363A6002D9A49D396AB9EFF /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		9BD46FA91FD841558716B195 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		B6FCD3D204B043CD9F378D9C /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'",HAVE_DLFCN_H,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = unix_based_hardware_detection;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		BDD3DB4666FB41C6839210DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = utils;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		BFBD66A4BFB249F78CA4E305 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		D9F01F6941584EF0A9CE5851 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0       -D_DEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/filesystem.o","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/stack_line_reader.o","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/string_view.o","../cmake/build/unix_based_hardware_detection.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/hwcaps.o");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = cpu_features;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		DBD7E0CDC6C64B67980788B0 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0        -DNDEBUG        -D_NDEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = utils;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		E5AC63836D73442A85E80663 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E6CCAC22EE06413E82D34621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'STACK_LINE_READER_BUFFER_SIZE=1024'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include/internal,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG '-std=gnu99' -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/filesystem.o","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/stack_line_reader.o","../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/string_view.o","../cmake/build/unix_based_hardware_detection.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/hwcaps.o");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = cpu_features;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		E8D64B3D5823437493B4EBDD /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		F26035921CC742B586454AF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Release;
+		};
+		FC70686F33DE4337BBD847EE /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = RelWithDebInfo;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		01E478A6C95B4DA28B03746E /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				045ECD7104C74D458D00C28C /* Debug */,
+				0EA930D9FB724196AB954DE5 /* Release */,
+				8DB505A769BD4A949B93E120 /* MinSizeRel */,
+				E8D64B3D5823437493B4EBDD /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		09B9E92AB8EC4D0FB2D53387 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFBD66A4BFB249F78CA4E305 /* Debug */,
+				55A1309D4F254FEBB46218C1 /* Release */,
+				9BD46FA91FD841558716B195 /* MinSizeRel */,
+				0AFBB1800BFE45ED8A8E0FC5 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		13FE697A050D48C3831A91A0 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E5AC63836D73442A85E80663 /* Debug */,
+				40F59A8756464887BED32D80 /* Release */,
+				7F029BEE79EC4F9A968206F9 /* MinSizeRel */,
+				9363A6002D9A49D396AB9EFF /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		51BB30AC09804BD486E2CA35 /* Build configuration list for PBXNativeTarget "cpu_features" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9F01F6941584EF0A9CE5851 /* Debug */,
+				E6CCAC22EE06413E82D34621 /* Release */,
+				63B1E6C2C39C4217BF31F2BD /* MinSizeRel */,
+				0EA550224FD94F8C8FB685C2 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		66C9DAF70DD64E0CA4480F44 /* Build configuration list for PBXNativeTarget "unix_based_hardware_detection" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F5E6321F5A9481E969DD785 /* Debug */,
+				7BBFBEED97B349D4AEF7348A /* Release */,
+				B6FCD3D204B043CD9F378D9C /* MinSizeRel */,
+				356FECF2609749FCA86F44E1 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9413DDF0BC8D4A3084DB9B27 /* Build configuration list for PBXNativeTarget "utils" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				828B9C0FBDCF42609425682B /* Debug */,
+				BDD3DB4666FB41C6839210DE /* Release */,
+				5BE6413F29FA463DA87FD9DF /* MinSizeRel */,
+				DBD7E0CDC6C64B67980788B0 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		ACF4B33555974D04B47FC9DB /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				782A5544364A4454A366C5E7 /* Debug */,
+				4BEA51D2BFF4449D97D47526 /* Release */,
+				60FD4C23E1F244A4866AEA97 /* MinSizeRel */,
+				4CA3508BFB79467C9F726C17 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D9DB758CE73547ECADCD687C /* Build configuration list for PBXProject "CpuFeatures" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7313D1E456924814988061BD /* Debug */,
+				F26035921CC742B586454AF9 /* Release */,
+				18D6BC8CD01B4FDF8E43BEAA /* MinSizeRel */,
+				FC70686F33DE4337BBD847EE /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D5C7D8D0E17440DB8D11D039 /* Project object */;
+}

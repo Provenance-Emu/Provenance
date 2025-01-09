@@ -1,0 +1,1997 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		27752D87E92A4D2AAF4559FB /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 66D11869F50D45F99D5DD844 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				D0586C1EA64978EBB81110A5 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				EAEC5E1BFDCF448C9F1321DC /* PBXTargetDependency */,
+				FFAE00DB25DD4B428E22C7B5 /* PBXTargetDependency */,
+				162DDE06312C463F9B0C1A11 /* PBXTargetDependency */,
+				093116E6E67244F7AFEA2CE2 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		37035854F5494840A21D2316 /* package */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 765C4D5A72CA4A378AA82CAA /* Build configuration list for PBXAggregateTarget "package" */;
+			buildPhases = (
+				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				A6102B4A004745428A35E6F2 /* PBXTargetDependency */,
+			);
+			name = package;
+			productName = package;
+		};
+		7630AC677345455B87A7BF33 /* lib */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 8F25E492DA6944D68AF3752C /* Build configuration list for PBXAggregateTarget "lib" */;
+			buildPhases = (
+				5A2C2C876FC899BF32DE3C7A /* Generate library/CMakeFiles/lib */,
+			);
+			dependencies = (
+				153A202632E440C89FA9C84A /* PBXTargetDependency */,
+				B8B073DF3303493E8C84BE2B /* PBXTargetDependency */,
+				6263B23FCC56480C97A239D4 /* PBXTargetDependency */,
+			);
+			name = lib;
+			productName = lib;
+		};
+		A7904E74C7BB45968F4D5EC8 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = CE6892DABA284FC38A489D33 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				0D2533DE19044B119A785019 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 4501E8DECC5D42588935380E /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				35748B9FE4E14E733EA5F30D /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		03CBD555DFA54A05B4F8E5FB /* ../dolphin-ios/Externals/mbedtls/library/blowfish.c */ = {isa = PBXBuildFile; fileRef = F46F7C0B32C04BFF81B99434 /* ../dolphin-ios/Externals/mbedtls/library/blowfish.c */; };
+		04E85F5E7A344A6DA1C28E8A /* ../dolphin-ios/Externals/mbedtls/library/timing.c */ = {isa = PBXBuildFile; fileRef = F210B7C7D4C240B9AF9A8AE2 /* ../dolphin-ios/Externals/mbedtls/library/timing.c */; };
+		0540F7BE6EA4413A966AFC36 /* ../dolphin-ios/Externals/mbedtls/library/x509.c */ = {isa = PBXBuildFile; fileRef = 98F7EB499926412698B5C993 /* ../dolphin-ios/Externals/mbedtls/library/x509.c */; };
+		06AA680241314A37B95AEBA9 /* ../dolphin-ios/Externals/mbedtls/library/x509write_crt.c */ = {isa = PBXBuildFile; fileRef = 6BEB14E08F47418E81C398C9 /* ../dolphin-ios/Externals/mbedtls/library/x509write_crt.c */; };
+		0B13220A892B43A9A8D828C6 /* ../dolphin-ios/Externals/mbedtls/library/x509_crl.c */ = {isa = PBXBuildFile; fileRef = 51DAF33D7DD04AE290281A7E /* ../dolphin-ios/Externals/mbedtls/library/x509_crl.c */; };
+		0CC80DC422DD4EB2B64DA7AB /* ../dolphin-ios/Externals/mbedtls/library/pkcs12.c */ = {isa = PBXBuildFile; fileRef = D3E824E552944FAC97FD50DC /* ../dolphin-ios/Externals/mbedtls/library/pkcs12.c */; };
+		0E020C5CCC154944A2FEB6CE /* ../dolphin-ios/Externals/mbedtls/library/x509_create.c */ = {isa = PBXBuildFile; fileRef = E5530CAEC9A849819E9B596C /* ../dolphin-ios/Externals/mbedtls/library/x509_create.c */; };
+		0EE7521970184C7A9D638FE4 /* ../dolphin-ios/Externals/mbedtls/library/sha512.c */ = {isa = PBXBuildFile; fileRef = 8FC717BD22FF4C6C85E20CC7 /* ../dolphin-ios/Externals/mbedtls/library/sha512.c */; };
+		10E585D7E10340D1B33A3AB3 /* ../dolphin-ios/Externals/mbedtls/library/hkdf.c */ = {isa = PBXBuildFile; fileRef = DDE676E939F244B583D93577 /* ../dolphin-ios/Externals/mbedtls/library/hkdf.c */; };
+		15AF9CF683954817B7899D13 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedtls.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 1D20E7C05E1B47D2B2BC7394 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedtls.dir/Info.plist */; };
+		1723079315CB4D8384FF3B1C /* ../dolphin-ios/Externals/mbedtls/library/poly1305.c */ = {isa = PBXBuildFile; fileRef = F93BCB990A4A4867A4ED46DA /* ../dolphin-ios/Externals/mbedtls/library/poly1305.c */; };
+		188B5F06C08C485A8F6A1808 /* ../dolphin-ios/Externals/mbedtls/library/pkwrite.c */ = {isa = PBXBuildFile; fileRef = 1FF6A0FB5C9E4C8B8372CD7E /* ../dolphin-ios/Externals/mbedtls/library/pkwrite.c */; };
+		1AA3591BC3E7457D8EAACA86 /* ../dolphin-ios/Externals/mbedtls/library/hmac_drbg.c */ = {isa = PBXBuildFile; fileRef = BB5DB4A7BFE542D58B01F344 /* ../dolphin-ios/Externals/mbedtls/library/hmac_drbg.c */; };
+		20A22FBA5BCC4F519CF07512 /* ../dolphin-ios/Externals/mbedtls/library/ssl_ciphersuites.c */ = {isa = PBXBuildFile; fileRef = D6165C355A6B4ECFBDF8361F /* ../dolphin-ios/Externals/mbedtls/library/ssl_ciphersuites.c */; };
+		262801AD202A4A8086616E84 /* ../dolphin-ios/Externals/mbedtls/library/gcm.c */ = {isa = PBXBuildFile; fileRef = B25FD47C8BED4DD49CBCDB47 /* ../dolphin-ios/Externals/mbedtls/library/gcm.c */; };
+		29BDDDF9E0F443288158679A /* ../dolphin-ios/Externals/mbedtls/library/bignum.c */ = {isa = PBXBuildFile; fileRef = E80F40FFF67648F38992C575 /* ../dolphin-ios/Externals/mbedtls/library/bignum.c */; };
+		2AE82AAAA1004E3992A6B9F0 /* ../dolphin-ios/Externals/mbedtls/library/net_sockets.c */ = {isa = PBXBuildFile; fileRef = 5F83CF6F96ED48E49CF00626 /* ../dolphin-ios/Externals/mbedtls/library/net_sockets.c */; };
+		2B9915CEF71B464AAFE7061A /* ../dolphin-ios/Externals/mbedtls/library/pkcs11.c */ = {isa = PBXBuildFile; fileRef = 31AA16336BB144068EFB8387 /* ../dolphin-ios/Externals/mbedtls/library/pkcs11.c */; };
+		2E69071A50E242DE96ACCE89 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 957946EA70DB4D119F7FE341 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */; };
+		2E6B70FCB21B4DFC93BFC7FE /* ../dolphin-ios/Externals/mbedtls/library/cmac.c */ = {isa = PBXBuildFile; fileRef = E2D6D1C4BB8F4BEE854CE2ED /* ../dolphin-ios/Externals/mbedtls/library/cmac.c */; };
+		2EFBC66475A14196862E5973 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedcrypto.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 1FFEB35C7C6847D6821F3A27 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedcrypto.dir/Info.plist */; };
+		2F2D6811112D40C3BECF7191 /* ../dolphin-ios/Externals/mbedtls/library/cipher_wrap.c */ = {isa = PBXBuildFile; fileRef = 62E5F7CB00D3449F97B18E49 /* ../dolphin-ios/Externals/mbedtls/library/cipher_wrap.c */; };
+		3C481B02FFE6481998949F98 /* ../dolphin-ios/Externals/mbedtls/library/aesni.c */ = {isa = PBXBuildFile; fileRef = 61403D27418D4C1CA5B1755D /* ../dolphin-ios/Externals/mbedtls/library/aesni.c */; };
+		402D6F74949C4C7EB8864C71 /* ../dolphin-ios/Externals/mbedtls/library/rsa_internal.c */ = {isa = PBXBuildFile; fileRef = E2D75D331E844E55A9BF7BF1 /* ../dolphin-ios/Externals/mbedtls/library/rsa_internal.c */; };
+		41B80774D63146B7B3B91832 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = E980710D432943F5A8C1CAA3 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */; };
+		42C722488AB8497690DD8FA8 /* ../dolphin-ios/Externals/mbedtls/library/ssl_ticket.c */ = {isa = PBXBuildFile; fileRef = 1CAA6DC499CB4D66B73E687A /* ../dolphin-ios/Externals/mbedtls/library/ssl_ticket.c */; };
+		4D4F022680264B0FA86CCE97 /* ../dolphin-ios/Externals/mbedtls/library/pk_wrap.c */ = {isa = PBXBuildFile; fileRef = AB8E143A9C5F4BA684F874C7 /* ../dolphin-ios/Externals/mbedtls/library/pk_wrap.c */; };
+		4F5C420020B440E5967CAEC6 /* ../dolphin-ios/Externals/mbedtls/library/ecp_curves.c */ = {isa = PBXBuildFile; fileRef = FEB5DEAFFFED49AFA28714CE /* ../dolphin-ios/Externals/mbedtls/library/ecp_curves.c */; };
+		4FEE34B931B045D79B456C05 /* ../dolphin-ios/Externals/mbedtls/library/threading.c */ = {isa = PBXBuildFile; fileRef = 243133EF3A204861863B3808 /* ../dolphin-ios/Externals/mbedtls/library/threading.c */; };
+		54FAD2141AA445AB87C1113C /* ../dolphin-ios/Externals/mbedtls/library/version.c */ = {isa = PBXBuildFile; fileRef = 297710B3994F4D54AD0D312C /* ../dolphin-ios/Externals/mbedtls/library/version.c */; };
+		59CB9C3C7B3D4E54ADE6C6C3 /* ../dolphin-ios/Externals/mbedtls/library/arc4.c */ = {isa = PBXBuildFile; fileRef = A7AED7CF80DF4BBDA060218B /* ../dolphin-ios/Externals/mbedtls/library/arc4.c */; };
+		5D53365F820B45E2A48AA365 /* ../dolphin-ios/Externals/mbedtls/library/chachapoly.c */ = {isa = PBXBuildFile; fileRef = 4D91B88353204653B907C126 /* ../dolphin-ios/Externals/mbedtls/library/chachapoly.c */; };
+		5F2A89B58AD2490AB9BB2A66 /* ../dolphin-ios/Externals/mbedtls/library/entropy_poll.c */ = {isa = PBXBuildFile; fileRef = C67F9F4E8EEA48B9988B2554 /* ../dolphin-ios/Externals/mbedtls/library/entropy_poll.c */; };
+		6945A8FBE46A435D98415E39 /* ../dolphin-ios/Externals/mbedtls/library/md4.c */ = {isa = PBXBuildFile; fileRef = BE0640C6FEE842C8A1AA1C9B /* ../dolphin-ios/Externals/mbedtls/library/md4.c */; };
+		6A25ED13F333427598049AF9 /* ../dolphin-ios/Externals/mbedtls/library/md5.c */ = {isa = PBXBuildFile; fileRef = A9201F05A5E94F269EE8EAFC /* ../dolphin-ios/Externals/mbedtls/library/md5.c */; };
+		6DC299DF58C2400BAE13190F /* ../dolphin-ios/Externals/mbedtls/library/platform_util.c */ = {isa = PBXBuildFile; fileRef = A556C1D7B77D41C19DABD686 /* ../dolphin-ios/Externals/mbedtls/library/platform_util.c */; };
+		6E85878D694F4C729CD42C68 /* ../dolphin-ios/Externals/mbedtls/library/ecjpake.c */ = {isa = PBXBuildFile; fileRef = 99C8989CE79C439B99A87A15 /* ../dolphin-ios/Externals/mbedtls/library/ecjpake.c */; };
+		714894E21CE64DAC88F827A7 /* ../dolphin-ios/Externals/mbedtls/library/certs.c */ = {isa = PBXBuildFile; fileRef = C7AFC89091A84AE4A06EE437 /* ../dolphin-ios/Externals/mbedtls/library/certs.c */; };
+		7387B1982F4C429C8ACFBE28 /* ../dolphin-ios/Externals/mbedtls/library/md.c */ = {isa = PBXBuildFile; fileRef = B512FF44F3B8421CAA32AC8B /* ../dolphin-ios/Externals/mbedtls/library/md.c */; };
+		740AF8B1386E453091770A74 /* ../dolphin-ios/Externals/mbedtls/library/asn1write.c */ = {isa = PBXBuildFile; fileRef = 1D291D4FAD7C4B6AA243C15A /* ../dolphin-ios/Externals/mbedtls/library/asn1write.c */; };
+		7A69F0CF918D4D5586F746F9 /* ../dolphin-ios/Externals/mbedtls/library/pkcs5.c */ = {isa = PBXBuildFile; fileRef = 5738D40012A5491194259561 /* ../dolphin-ios/Externals/mbedtls/library/pkcs5.c */; };
+		7DF3BB46D94F483C8E92AEC2 /* ../dolphin-ios/Externals/mbedtls/library/x509write_csr.c */ = {isa = PBXBuildFile; fileRef = F5BCF07F061F48A8ACC0FCEF /* ../dolphin-ios/Externals/mbedtls/library/x509write_csr.c */; };
+		804A3C8BBDCF49D6B48A5BC6 /* ../dolphin-ios/Externals/mbedtls/library/pem.c */ = {isa = PBXBuildFile; fileRef = 9A2D0365989448938117FFEA /* ../dolphin-ios/Externals/mbedtls/library/pem.c */; };
+		833C000482504F2BB777DE39 /* ../dolphin-ios/Externals/mbedtls/library/des.c */ = {isa = PBXBuildFile; fileRef = F1F6775E57EC4C6191BA0A79 /* ../dolphin-ios/Externals/mbedtls/library/des.c */; };
+		84BC95F8B7CD47A781917AF2 /* ../dolphin-ios/Externals/mbedtls/library/entropy.c */ = {isa = PBXBuildFile; fileRef = 845BC3D954EF48378F504F1B /* ../dolphin-ios/Externals/mbedtls/library/entropy.c */; };
+		881805C370E3460FA34573C0 /* ../dolphin-ios/Externals/mbedtls/library/ssl_cache.c */ = {isa = PBXBuildFile; fileRef = 17A47EC8DF91453DBA7E946B /* ../dolphin-ios/Externals/mbedtls/library/ssl_cache.c */; };
+		88E920822DCA4C84A267108F /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedx509.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 8265220057A64C389E2433A5 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedx509.dir/Info.plist */; };
+		8959938D175C4D84BFF5BDBD /* ../dolphin-ios/Externals/mbedtls/library/oid.c */ = {isa = PBXBuildFile; fileRef = D183BDCBB1074A2D852CC744 /* ../dolphin-ios/Externals/mbedtls/library/oid.c */; };
+		8A3773979CB34366B4FC0B24 /* ../dolphin-ios/Externals/mbedtls/library/ssl_cookie.c */ = {isa = PBXBuildFile; fileRef = CE6DDCCA77614FBC806A8B4D /* ../dolphin-ios/Externals/mbedtls/library/ssl_cookie.c */; };
+		97C4892382D14BF590A66AA5 /* ../dolphin-ios/Externals/mbedtls/library/base64.c */ = {isa = PBXBuildFile; fileRef = 03C0E1231AA849DABCC165BE /* ../dolphin-ios/Externals/mbedtls/library/base64.c */; };
+		A34CDA6BF78C43279FD3561E /* ../dolphin-ios/Externals/mbedtls/library/ecdh.c */ = {isa = PBXBuildFile; fileRef = 05AD08245F204CF3B0BF00D4 /* ../dolphin-ios/Externals/mbedtls/library/ecdh.c */; };
+		A39B30973DE84BE8BDBD559F /* ../dolphin-ios/Externals/mbedtls/library/aes.c */ = {isa = PBXBuildFile; fileRef = 605C6F1FEF1146AA91EC62DD /* ../dolphin-ios/Externals/mbedtls/library/aes.c */; };
+		A8577E71CDBC464898740837 /* ../dolphin-ios/Externals/mbedtls/library/x509_crt.c */ = {isa = PBXBuildFile; fileRef = 9048411E79C0417B90A50671 /* ../dolphin-ios/Externals/mbedtls/library/x509_crt.c */; };
+		A9C3166D038B49C291E3B518 /* ../dolphin-ios/Externals/mbedtls/library/chacha20.c */ = {isa = PBXBuildFile; fileRef = 2E6B90B6BE1547B58F9CAC41 /* ../dolphin-ios/Externals/mbedtls/library/chacha20.c */; };
+		A9D923353DF748B0A21234BE /* ../dolphin-ios/Externals/mbedtls/library/ecdsa.c */ = {isa = PBXBuildFile; fileRef = 9C11CB7157B942C89982F64A /* ../dolphin-ios/Externals/mbedtls/library/ecdsa.c */; };
+		AA5A87EA8F804208B70093E9 /* ../dolphin-ios/Externals/mbedtls/library/ssl_srv.c */ = {isa = PBXBuildFile; fileRef = 9895426095F94D129E95A510 /* ../dolphin-ios/Externals/mbedtls/library/ssl_srv.c */; };
+		AD48C43882564D35A7A9F61C /* ../dolphin-ios/Externals/mbedtls/library/dhm.c */ = {isa = PBXBuildFile; fileRef = B8E95E2D58F841DD8CC32431 /* ../dolphin-ios/Externals/mbedtls/library/dhm.c */; };
+		B0BD5CFFE81F4B95B4C8BC66 /* ../dolphin-ios/Externals/mbedtls/library/platform.c */ = {isa = PBXBuildFile; fileRef = B0F5997F8E12434BBD8DD995 /* ../dolphin-ios/Externals/mbedtls/library/platform.c */; };
+		B0F64F8206A2474CB7923DB8 /* ../dolphin-ios/Externals/mbedtls/library/sha256.c */ = {isa = PBXBuildFile; fileRef = 89D65A2D485E460C9E3A998F /* ../dolphin-ios/Externals/mbedtls/library/sha256.c */; };
+		B6AEEE10AE8D4D0081D0844F /* ../dolphin-ios/Externals/mbedtls/library/asn1parse.c */ = {isa = PBXBuildFile; fileRef = 43F93D3644FF4DEC91E55A27 /* ../dolphin-ios/Externals/mbedtls/library/asn1parse.c */; };
+		B78475A3486C450DBD136B6A /* ../dolphin-ios/Externals/mbedtls/library/xtea.c */ = {isa = PBXBuildFile; fileRef = 59406EB9F2754F6EA1166090 /* ../dolphin-ios/Externals/mbedtls/library/xtea.c */; };
+		B7E12F249B874F42A4DA2056 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = F4EBED71A1E24C908F0FC8B5 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */; };
+		BBDAA0671D1B427B86D18A14 /* ../dolphin-ios/Externals/mbedtls/library/nist_kw.c */ = {isa = PBXBuildFile; fileRef = 4F7CB2E53F424227864350FA /* ../dolphin-ios/Externals/mbedtls/library/nist_kw.c */; };
+		BD0109B335474C3B8521A33A /* ../dolphin-ios/Externals/mbedtls/library/ctr_drbg.c */ = {isa = PBXBuildFile; fileRef = 78288B933C374565B1358387 /* ../dolphin-ios/Externals/mbedtls/library/ctr_drbg.c */; };
+		BD93EE6B08E04A2D9F097296 /* ../dolphin-ios/Externals/mbedtls/library/havege.c */ = {isa = PBXBuildFile; fileRef = D2DAD08C52AC4EDAA8B9485D /* ../dolphin-ios/Externals/mbedtls/library/havege.c */; };
+		BEC30EB6DDA44A1AB0088BFB /* ../dolphin-ios/Externals/mbedtls/library/memory_buffer_alloc.c */ = {isa = PBXBuildFile; fileRef = 0A6BC8C530924B308F911749 /* ../dolphin-ios/Externals/mbedtls/library/memory_buffer_alloc.c */; };
+		C9B2D5281ACF447DB4FF1783 /* ../dolphin-ios/Externals/mbedtls/library/error.c */ = {isa = PBXBuildFile; fileRef = 81891005FAE74B2AAAD835AF /* ../dolphin-ios/Externals/mbedtls/library/error.c */; };
+		CBFAE883AB324F1694F26030 /* ../dolphin-ios/Externals/mbedtls/library/aria.c */ = {isa = PBXBuildFile; fileRef = C99D9B2D585A4CADBC56C18E /* ../dolphin-ios/Externals/mbedtls/library/aria.c */; };
+		CDBE1311508349148EF658B3 /* ../dolphin-ios/Externals/mbedtls/library/pkparse.c */ = {isa = PBXBuildFile; fileRef = 9E1D9488311444A0858B5629 /* ../dolphin-ios/Externals/mbedtls/library/pkparse.c */; };
+		CE2360FD88F94E70A8AA5B00 /* ../dolphin-ios/Externals/mbedtls/library/sha1.c */ = {isa = PBXBuildFile; fileRef = 3707B69C61244AC69D6BAA60 /* ../dolphin-ios/Externals/mbedtls/library/sha1.c */; };
+		D0F3BADFA52D40868DFF06E3 /* ../dolphin-ios/Externals/mbedtls/library/version_features.c */ = {isa = PBXBuildFile; fileRef = 5AC46462A62A4CCD9CDB3069 /* ../dolphin-ios/Externals/mbedtls/library/version_features.c */; };
+		D1575D3100104954BC1C3681 /* ../dolphin-ios/Externals/mbedtls/library/padlock.c */ = {isa = PBXBuildFile; fileRef = D9242E5B68D147DAB2131BFD /* ../dolphin-ios/Externals/mbedtls/library/padlock.c */; };
+		D1BC7EA99717482BA5D57684 /* ../dolphin-ios/Externals/mbedtls/library/md_wrap.c */ = {isa = PBXBuildFile; fileRef = B8FC8AC014C44AD3AF0E0616 /* ../dolphin-ios/Externals/mbedtls/library/md_wrap.c */; };
+		D225E13B447B410AAD0587A0 /* ../dolphin-ios/Externals/mbedtls/library/ssl_tls.c */ = {isa = PBXBuildFile; fileRef = 963F51D07E9445F4B1670B97 /* ../dolphin-ios/Externals/mbedtls/library/ssl_tls.c */; };
+		D591533C9CB9461DBD4A0F41 /* ../dolphin-ios/Externals/mbedtls/library/ccm.c */ = {isa = PBXBuildFile; fileRef = A8160F513FEF4485B7E33B87 /* ../dolphin-ios/Externals/mbedtls/library/ccm.c */; };
+		D7009628C26343CD9F2000AC /* ../dolphin-ios/Externals/mbedtls/library/x509_csr.c */ = {isa = PBXBuildFile; fileRef = F447BBFE6A5A48099F5D17C8 /* ../dolphin-ios/Externals/mbedtls/library/x509_csr.c */; };
+		D8B72632920C4029B9F14CDB /* ../dolphin-ios/Externals/mbedtls/library/camellia.c */ = {isa = PBXBuildFile; fileRef = 62CE83910CB743A4818D4F0A /* ../dolphin-ios/Externals/mbedtls/library/camellia.c */; };
+		DBECEE671C9D4C49A588D444 /* ../dolphin-ios/Externals/mbedtls/library/ecp.c */ = {isa = PBXBuildFile; fileRef = 1CA785BC88C3428D8A8A6064 /* ../dolphin-ios/Externals/mbedtls/library/ecp.c */; };
+		DDED6C366C034B3A8E09A1E1 /* ../dolphin-ios/Externals/mbedtls/library/md2.c */ = {isa = PBXBuildFile; fileRef = 13F559C3B62E459CB0767014 /* ../dolphin-ios/Externals/mbedtls/library/md2.c */; };
+		DF62F14B8029495189BCFB9F /* ../dolphin-ios/Externals/mbedtls/library/ripemd160.c */ = {isa = PBXBuildFile; fileRef = 2435C497FDAA4D93BA12B3F7 /* ../dolphin-ios/Externals/mbedtls/library/ripemd160.c */; };
+		EB663556D22C4FBFA1E20A48 /* ../dolphin-ios/Externals/mbedtls/library/pk.c */ = {isa = PBXBuildFile; fileRef = CB00F5E2C93E4A098F248861 /* ../dolphin-ios/Externals/mbedtls/library/pk.c */; };
+		F307A12384844554B1876D5F /* ../dolphin-ios/Externals/mbedtls/library/rsa.c */ = {isa = PBXBuildFile; fileRef = ACD9DC48DA4B43A5A91F493C /* ../dolphin-ios/Externals/mbedtls/library/rsa.c */; };
+		F59FB63C8A294803A0C92E01 /* ../dolphin-ios/Externals/mbedtls/library/debug.c */ = {isa = PBXBuildFile; fileRef = EE149462DE2F47EBAF23EB76 /* ../dolphin-ios/Externals/mbedtls/library/debug.c */; };
+		F8147C8A3D88493B9ED3EE06 /* ../dolphin-ios/Externals/mbedtls/library/ssl_cli.c */ = {isa = PBXBuildFile; fileRef = B29B656EF7E64B76851541BF /* ../dolphin-ios/Externals/mbedtls/library/ssl_cli.c */; };
+		FC5B524F67634BA682EC1D4B /* ../dolphin-ios/Externals/mbedtls/library/cipher.c */ = {isa = PBXBuildFile; fileRef = EAEB915AAFAF4B10BA6E24E8 /* ../dolphin-ios/Externals/mbedtls/library/cipher.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		238BC5F0ACD447C99D921B68 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		43E64DD742534813AD101AEA /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		6AB3E7C1AF4F4D5DBD30E118 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		7B73E613429549DDBF6A784F /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		0B57DC82FEF94609894FAD8F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 74710D29352D45F688AF1321;
+			remoteInfo = mbedx509;
+		};
+		2252F062D40640219E7F85E3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A9FADB726A3F4823AF69920A;
+			remoteInfo = mbedcrypto;
+		};
+		46CD1283B085417F98205790 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7ADE35EC9B4B4D95B62A8E7D;
+			remoteInfo = mbedtls;
+		};
+		5397F5D02F13413693E5FFA9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 27752D87E92A4D2AAF4559FB;
+			remoteInfo = ALL_BUILD;
+		};
+		54AC07B3F4D5437BB67CCAE1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 74710D29352D45F688AF1321;
+			remoteInfo = mbedx509;
+		};
+		707F9BB2023C4595BC6B248B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A9FADB726A3F4823AF69920A;
+			remoteInfo = mbedcrypto;
+		};
+		74029F4EF1B2409B84AEF84E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 27752D87E92A4D2AAF4559FB;
+			remoteInfo = ALL_BUILD;
+		};
+		B2E97642F329407C8B714BC8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A9FADB726A3F4823AF69920A;
+			remoteInfo = mbedcrypto;
+		};
+		B9AC6BF2C6514274A8707DB9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0BDA0649EAD45849C6A8AD3;
+			remoteInfo = ZERO_CHECK;
+		};
+		C400CC324AA746EDAB80D94A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A9FADB726A3F4823AF69920A;
+			remoteInfo = mbedcrypto;
+		};
+		C713AA1AAEFE462B8A2773DC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 74710D29352D45F688AF1321;
+			remoteInfo = mbedx509;
+		};
+		DA824A31B0034FDC92D0C449 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15FC2B48E6104995A7F13E7D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7ADE35EC9B4B4D95B62A8E7D;
+			remoteInfo = mbedtls;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		03C0E1231AA849DABCC165BE /* ../dolphin-ios/Externals/mbedtls/library/base64.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = base64.c; path = library/base64.c; sourceTree = SOURCE_ROOT; };
+		05AD08245F204CF3B0BF00D4 /* ../dolphin-ios/Externals/mbedtls/library/ecdh.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ecdh.c; path = library/ecdh.c; sourceTree = SOURCE_ROOT; };
+		0A6BC8C530924B308F911749 /* ../dolphin-ios/Externals/mbedtls/library/memory_buffer_alloc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = memory_buffer_alloc.c; path = library/memory_buffer_alloc.c; sourceTree = SOURCE_ROOT; };
+		13F559C3B62E459CB0767014 /* ../dolphin-ios/Externals/mbedtls/library/md2.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = md2.c; path = library/md2.c; sourceTree = SOURCE_ROOT; };
+		17A47EC8DF91453DBA7E946B /* ../dolphin-ios/Externals/mbedtls/library/ssl_cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ssl_cache.c; path = library/ssl_cache.c; sourceTree = SOURCE_ROOT; };
+		1CA785BC88C3428D8A8A6064 /* ../dolphin-ios/Externals/mbedtls/library/ecp.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ecp.c; path = library/ecp.c; sourceTree = SOURCE_ROOT; };
+		1CAA6DC499CB4D66B73E687A /* ../dolphin-ios/Externals/mbedtls/library/ssl_ticket.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ssl_ticket.c; path = library/ssl_ticket.c; sourceTree = SOURCE_ROOT; };
+		1D20E7C05E1B47D2B2BC7394 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedtls.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/mbedtls/library/CMakeFiles/mbedtls.dir/Info.plist; sourceTree = "<absolute>"; };
+		1D291D4FAD7C4B6AA243C15A /* ../dolphin-ios/Externals/mbedtls/library/asn1write.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = asn1write.c; path = library/asn1write.c; sourceTree = SOURCE_ROOT; };
+		1FF6A0FB5C9E4C8B8372CD7E /* ../dolphin-ios/Externals/mbedtls/library/pkwrite.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pkwrite.c; path = library/pkwrite.c; sourceTree = SOURCE_ROOT; };
+		1FFEB35C7C6847D6821F3A27 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedcrypto.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/mbedtls/library/CMakeFiles/mbedcrypto.dir/Info.plist; sourceTree = "<absolute>"; };
+		243133EF3A204861863B3808 /* ../dolphin-ios/Externals/mbedtls/library/threading.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = threading.c; path = library/threading.c; sourceTree = SOURCE_ROOT; };
+		2435C497FDAA4D93BA12B3F7 /* ../dolphin-ios/Externals/mbedtls/library/ripemd160.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ripemd160.c; path = library/ripemd160.c; sourceTree = SOURCE_ROOT; };
+		297710B3994F4D54AD0D312C /* ../dolphin-ios/Externals/mbedtls/library/version.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = version.c; path = library/version.c; sourceTree = SOURCE_ROOT; };
+		2A7B4E6ED5234593BCA96E97 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = library/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		2E6B90B6BE1547B58F9CAC41 /* ../dolphin-ios/Externals/mbedtls/library/chacha20.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = chacha20.c; path = library/chacha20.c; sourceTree = SOURCE_ROOT; };
+		31AA16336BB144068EFB8387 /* ../dolphin-ios/Externals/mbedtls/library/pkcs11.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pkcs11.c; path = library/pkcs11.c; sourceTree = SOURCE_ROOT; };
+		3707B69C61244AC69D6BAA60 /* ../dolphin-ios/Externals/mbedtls/library/sha1.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sha1.c; path = library/sha1.c; sourceTree = SOURCE_ROOT; };
+		43F93D3644FF4DEC91E55A27 /* ../dolphin-ios/Externals/mbedtls/library/asn1parse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = asn1parse.c; path = library/asn1parse.c; sourceTree = SOURCE_ROOT; };
+		4737D4F093054C1D8D3D040B /* ../dolphin-ios/Externals/mbedtls/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		4D91B88353204653B907C126 /* ../dolphin-ios/Externals/mbedtls/library/chachapoly.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = chachapoly.c; path = library/chachapoly.c; sourceTree = SOURCE_ROOT; };
+		4F7CB2E53F424227864350FA /* ../dolphin-ios/Externals/mbedtls/library/nist_kw.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = nist_kw.c; path = library/nist_kw.c; sourceTree = SOURCE_ROOT; };
+		51DAF33D7DD04AE290281A7E /* ../dolphin-ios/Externals/mbedtls/library/x509_crl.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = x509_crl.c; path = library/x509_crl.c; sourceTree = SOURCE_ROOT; };
+		5738D40012A5491194259561 /* ../dolphin-ios/Externals/mbedtls/library/pkcs5.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pkcs5.c; path = library/pkcs5.c; sourceTree = SOURCE_ROOT; };
+		59406EB9F2754F6EA1166090 /* ../dolphin-ios/Externals/mbedtls/library/xtea.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xtea.c; path = library/xtea.c; sourceTree = SOURCE_ROOT; };
+		5AC46462A62A4CCD9CDB3069 /* ../dolphin-ios/Externals/mbedtls/library/version_features.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = version_features.c; path = library/version_features.c; sourceTree = SOURCE_ROOT; };
+		5F83CF6F96ED48E49CF00626 /* ../dolphin-ios/Externals/mbedtls/library/net_sockets.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = net_sockets.c; path = library/net_sockets.c; sourceTree = SOURCE_ROOT; };
+		605C6F1FEF1146AA91EC62DD /* ../dolphin-ios/Externals/mbedtls/library/aes.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = aes.c; path = library/aes.c; sourceTree = SOURCE_ROOT; };
+		61403D27418D4C1CA5B1755D /* ../dolphin-ios/Externals/mbedtls/library/aesni.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = aesni.c; path = library/aesni.c; sourceTree = SOURCE_ROOT; };
+		62CE83910CB743A4818D4F0A /* ../dolphin-ios/Externals/mbedtls/library/camellia.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = camellia.c; path = library/camellia.c; sourceTree = SOURCE_ROOT; };
+		62E5F7CB00D3449F97B18E49 /* ../dolphin-ios/Externals/mbedtls/library/cipher_wrap.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cipher_wrap.c; path = library/cipher_wrap.c; sourceTree = SOURCE_ROOT; };
+		6BEB14E08F47418E81C398C9 /* ../dolphin-ios/Externals/mbedtls/library/x509write_crt.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = x509write_crt.c; path = library/x509write_crt.c; sourceTree = SOURCE_ROOT; };
+		78288B933C374565B1358387 /* ../dolphin-ios/Externals/mbedtls/library/ctr_drbg.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ctr_drbg.c; path = library/ctr_drbg.c; sourceTree = SOURCE_ROOT; };
+		81891005FAE74B2AAAD835AF /* ../dolphin-ios/Externals/mbedtls/library/error.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = error.c; path = library/error.c; sourceTree = SOURCE_ROOT; };
+		8265220057A64C389E2433A5 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedx509.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/mbedtls/library/CMakeFiles/mbedx509.dir/Info.plist; sourceTree = "<absolute>"; };
+		845BC3D954EF48378F504F1B /* ../dolphin-ios/Externals/mbedtls/library/entropy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = entropy.c; path = library/entropy.c; sourceTree = SOURCE_ROOT; };
+		89D65A2D485E460C9E3A998F /* ../dolphin-ios/Externals/mbedtls/library/sha256.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sha256.c; path = library/sha256.c; sourceTree = SOURCE_ROOT; };
+		8FC717BD22FF4C6C85E20CC7 /* ../dolphin-ios/Externals/mbedtls/library/sha512.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sha512.c; path = library/sha512.c; sourceTree = SOURCE_ROOT; };
+		9048411E79C0417B90A50671 /* ../dolphin-ios/Externals/mbedtls/library/x509_crt.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = x509_crt.c; path = library/x509_crt.c; sourceTree = SOURCE_ROOT; };
+		957946EA70DB4D119F7FE341 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = library/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		963F51D07E9445F4B1670B97 /* ../dolphin-ios/Externals/mbedtls/library/ssl_tls.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ssl_tls.c; path = library/ssl_tls.c; sourceTree = SOURCE_ROOT; };
+		9895426095F94D129E95A510 /* ../dolphin-ios/Externals/mbedtls/library/ssl_srv.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ssl_srv.c; path = library/ssl_srv.c; sourceTree = SOURCE_ROOT; };
+		98F7EB499926412698B5C993 /* ../dolphin-ios/Externals/mbedtls/library/x509.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = x509.c; path = library/x509.c; sourceTree = SOURCE_ROOT; };
+		99C8989CE79C439B99A87A15 /* ../dolphin-ios/Externals/mbedtls/library/ecjpake.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ecjpake.c; path = library/ecjpake.c; sourceTree = SOURCE_ROOT; };
+		9A2D0365989448938117FFEA /* ../dolphin-ios/Externals/mbedtls/library/pem.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pem.c; path = library/pem.c; sourceTree = SOURCE_ROOT; };
+		9C11CB7157B942C89982F64A /* ../dolphin-ios/Externals/mbedtls/library/ecdsa.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ecdsa.c; path = library/ecdsa.c; sourceTree = SOURCE_ROOT; };
+		9E1D9488311444A0858B5629 /* ../dolphin-ios/Externals/mbedtls/library/pkparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pkparse.c; path = library/pkparse.c; sourceTree = SOURCE_ROOT; };
+		A556C1D7B77D41C19DABD686 /* ../dolphin-ios/Externals/mbedtls/library/platform_util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = platform_util.c; path = library/platform_util.c; sourceTree = SOURCE_ROOT; };
+		A7AED7CF80DF4BBDA060218B /* ../dolphin-ios/Externals/mbedtls/library/arc4.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = arc4.c; path = library/arc4.c; sourceTree = SOURCE_ROOT; };
+		A8160F513FEF4485B7E33B87 /* ../dolphin-ios/Externals/mbedtls/library/ccm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ccm.c; path = library/ccm.c; sourceTree = SOURCE_ROOT; };
+		A9201F05A5E94F269EE8EAFC /* ../dolphin-ios/Externals/mbedtls/library/md5.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = md5.c; path = library/md5.c; sourceTree = SOURCE_ROOT; };
+		AB8E143A9C5F4BA684F874C7 /* ../dolphin-ios/Externals/mbedtls/library/pk_wrap.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pk_wrap.c; path = library/pk_wrap.c; sourceTree = SOURCE_ROOT; };
+		ACD9DC48DA4B43A5A91F493C /* ../dolphin-ios/Externals/mbedtls/library/rsa.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = rsa.c; path = library/rsa.c; sourceTree = SOURCE_ROOT; };
+		B0F5997F8E12434BBD8DD995 /* ../dolphin-ios/Externals/mbedtls/library/platform.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = platform.c; path = library/platform.c; sourceTree = SOURCE_ROOT; };
+		B25FD47C8BED4DD49CBCDB47 /* ../dolphin-ios/Externals/mbedtls/library/gcm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = gcm.c; path = library/gcm.c; sourceTree = SOURCE_ROOT; };
+		B29B656EF7E64B76851541BF /* ../dolphin-ios/Externals/mbedtls/library/ssl_cli.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ssl_cli.c; path = library/ssl_cli.c; sourceTree = SOURCE_ROOT; };
+		B512FF44F3B8421CAA32AC8B /* ../dolphin-ios/Externals/mbedtls/library/md.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = md.c; path = library/md.c; sourceTree = SOURCE_ROOT; };
+		B8E95E2D58F841DD8CC32431 /* ../dolphin-ios/Externals/mbedtls/library/dhm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = dhm.c; path = library/dhm.c; sourceTree = SOURCE_ROOT; };
+		B8FC8AC014C44AD3AF0E0616 /* ../dolphin-ios/Externals/mbedtls/library/md_wrap.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = md_wrap.c; path = library/md_wrap.c; sourceTree = SOURCE_ROOT; };
+		BB5DB4A7BFE542D58B01F344 /* ../dolphin-ios/Externals/mbedtls/library/hmac_drbg.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hmac_drbg.c; path = library/hmac_drbg.c; sourceTree = SOURCE_ROOT; };
+		BE0640C6FEE842C8A1AA1C9B /* ../dolphin-ios/Externals/mbedtls/library/md4.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = md4.c; path = library/md4.c; sourceTree = SOURCE_ROOT; };
+		C67F9F4E8EEA48B9988B2554 /* ../dolphin-ios/Externals/mbedtls/library/entropy_poll.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = entropy_poll.c; path = library/entropy_poll.c; sourceTree = SOURCE_ROOT; };
+		C7AFC89091A84AE4A06EE437 /* ../dolphin-ios/Externals/mbedtls/library/certs.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = certs.c; path = library/certs.c; sourceTree = SOURCE_ROOT; };
+		C99D9B2D585A4CADBC56C18E /* ../dolphin-ios/Externals/mbedtls/library/aria.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = aria.c; path = library/aria.c; sourceTree = SOURCE_ROOT; };
+		CB00F5E2C93E4A098F248861 /* ../dolphin-ios/Externals/mbedtls/library/pk.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pk.c; path = library/pk.c; sourceTree = SOURCE_ROOT; };
+		CBE139221EF448979DB6EDE0 /* mbedtls */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libmbedtls.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE6DDCCA77614FBC806A8B4D /* ../dolphin-ios/Externals/mbedtls/library/ssl_cookie.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ssl_cookie.c; path = library/ssl_cookie.c; sourceTree = SOURCE_ROOT; };
+		D183BDCBB1074A2D852CC744 /* ../dolphin-ios/Externals/mbedtls/library/oid.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = oid.c; path = library/oid.c; sourceTree = SOURCE_ROOT; };
+		D2DAD08C52AC4EDAA8B9485D /* ../dolphin-ios/Externals/mbedtls/library/havege.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = havege.c; path = library/havege.c; sourceTree = SOURCE_ROOT; };
+		D3E824E552944FAC97FD50DC /* ../dolphin-ios/Externals/mbedtls/library/pkcs12.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pkcs12.c; path = library/pkcs12.c; sourceTree = SOURCE_ROOT; };
+		D6165C355A6B4ECFBDF8361F /* ../dolphin-ios/Externals/mbedtls/library/ssl_ciphersuites.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ssl_ciphersuites.c; path = library/ssl_ciphersuites.c; sourceTree = SOURCE_ROOT; };
+		D9242E5B68D147DAB2131BFD /* ../dolphin-ios/Externals/mbedtls/library/padlock.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = padlock.c; path = library/padlock.c; sourceTree = SOURCE_ROOT; };
+		DDE676E939F244B583D93577 /* ../dolphin-ios/Externals/mbedtls/library/hkdf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hkdf.c; path = library/hkdf.c; sourceTree = SOURCE_ROOT; };
+		DEFE9A5A5D82487DAE06CCB0 /* mbedcrypto */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libmbedcrypto.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2D6D1C4BB8F4BEE854CE2ED /* ../dolphin-ios/Externals/mbedtls/library/cmac.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cmac.c; path = library/cmac.c; sourceTree = SOURCE_ROOT; };
+		E2D75D331E844E55A9BF7BF1 /* ../dolphin-ios/Externals/mbedtls/library/rsa_internal.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = rsa_internal.c; path = library/rsa_internal.c; sourceTree = SOURCE_ROOT; };
+		E5530CAEC9A849819E9B596C /* ../dolphin-ios/Externals/mbedtls/library/x509_create.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = x509_create.c; path = library/x509_create.c; sourceTree = SOURCE_ROOT; };
+		E80F40FFF67648F38992C575 /* ../dolphin-ios/Externals/mbedtls/library/bignum.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = bignum.c; path = library/bignum.c; sourceTree = SOURCE_ROOT; };
+		E980710D432943F5A8C1CAA3 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = library/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		EAEB915AAFAF4B10BA6E24E8 /* ../dolphin-ios/Externals/mbedtls/library/cipher.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cipher.c; path = library/cipher.c; sourceTree = SOURCE_ROOT; };
+		EE149462DE2F47EBAF23EB76 /* ../dolphin-ios/Externals/mbedtls/library/debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = library/debug.c; sourceTree = SOURCE_ROOT; };
+		F1F6775E57EC4C6191BA0A79 /* ../dolphin-ios/Externals/mbedtls/library/des.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = des.c; path = library/des.c; sourceTree = SOURCE_ROOT; };
+		F210B7C7D4C240B9AF9A8AE2 /* ../dolphin-ios/Externals/mbedtls/library/timing.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timing.c; path = library/timing.c; sourceTree = SOURCE_ROOT; };
+		F447BBFE6A5A48099F5D17C8 /* ../dolphin-ios/Externals/mbedtls/library/x509_csr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = x509_csr.c; path = library/x509_csr.c; sourceTree = SOURCE_ROOT; };
+		F46F7C0B32C04BFF81B99434 /* ../dolphin-ios/Externals/mbedtls/library/blowfish.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = blowfish.c; path = library/blowfish.c; sourceTree = SOURCE_ROOT; };
+		F4EBED71A1E24C908F0FC8B5 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = library/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F5BCF07F061F48A8ACC0FCEF /* ../dolphin-ios/Externals/mbedtls/library/x509write_csr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = x509write_csr.c; path = library/x509write_csr.c; sourceTree = SOURCE_ROOT; };
+		F93BCB990A4A4867A4ED46DA /* ../dolphin-ios/Externals/mbedtls/library/poly1305.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = poly1305.c; path = library/poly1305.c; sourceTree = SOURCE_ROOT; };
+		F998E78A5610460F8F75E62C /* mbedx509 */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libmbedx509.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FEB5DEAFFFED49AFA28714CE /* ../dolphin-ios/Externals/mbedtls/library/ecp_curves.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ecp_curves.c; path = library/ecp_curves.c; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3A1AE9BB056A41DA9150027D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6C416D096C6248BEBEBE4417 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9AC93364D28441FA4B6A4D7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		083FC3929E9440FCA1C9FD92 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		1551D201C3F1492CB26B0457 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		1C3F8B7852054CF39558D15E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1D20E7C05E1B47D2B2BC7394 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedtls.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		366FBD272ADC4AD18664DB9A /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				1551D201C3F1492CB26B0457 /* CMake Rules */,
+				4737D4F093054C1D8D3D040B /* ../dolphin-ios/Externals/mbedtls/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		36A28AFD0C9C40A9B25327B9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1FFEB35C7C6847D6821F3A27 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedcrypto.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		39B0E291DA1F45C38CF619F2 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				C7AFC89091A84AE4A06EE437 /* ../dolphin-ios/Externals/mbedtls/library/certs.c */,
+				31AA16336BB144068EFB8387 /* ../dolphin-ios/Externals/mbedtls/library/pkcs11.c */,
+				98F7EB499926412698B5C993 /* ../dolphin-ios/Externals/mbedtls/library/x509.c */,
+				E5530CAEC9A849819E9B596C /* ../dolphin-ios/Externals/mbedtls/library/x509_create.c */,
+				51DAF33D7DD04AE290281A7E /* ../dolphin-ios/Externals/mbedtls/library/x509_crl.c */,
+				9048411E79C0417B90A50671 /* ../dolphin-ios/Externals/mbedtls/library/x509_crt.c */,
+				F447BBFE6A5A48099F5D17C8 /* ../dolphin-ios/Externals/mbedtls/library/x509_csr.c */,
+				6BEB14E08F47418E81C398C9 /* ../dolphin-ios/Externals/mbedtls/library/x509write_crt.c */,
+				F5BCF07F061F48A8ACC0FCEF /* ../dolphin-ios/Externals/mbedtls/library/x509write_csr.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		3B969ECEEFAD4014A47B3FE2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DEFE9A5A5D82487DAE06CCB0 /* mbedcrypto */,
+				CBE139221EF448979DB6EDE0 /* mbedtls */,
+				F998E78A5610460F8F75E62C /* mbedx509 */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		522A56BDB50046FEAF024965 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8265220057A64C389E2433A5 /* ../cmake/Externals/mbedtls/library/CMakeFiles/mbedx509.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		56A1DCF73FA14C4DA3966DA8 /* mbedx509 */ = {
+			isa = PBXGroup;
+			children = (
+				39B0E291DA1F45C38CF619F2 /* Source Files */,
+				522A56BDB50046FEAF024965 /* Resources */,
+				E980710D432943F5A8C1CAA3 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */,
+			);
+			name = mbedx509;
+			sourceTree = "<group>";
+		};
+		5A04E0DA9BED4679B42CB94F = {
+			isa = PBXGroup;
+			children = (
+				366FBD272ADC4AD18664DB9A /* ALL_BUILD */,
+				9ACC3077FED14893B9C898C5 /* mbedcrypto */,
+				56A1DCF73FA14C4DA3966DA8 /* mbedx509 */,
+				85A2FEB1678C42A99FF6F8FF /* mbedtls */,
+				64847E7AB4D74392B7169FD7 /* lib */,
+				3B969ECEEFAD4014A47B3FE2 /* Products */,
+				5C576D6FBF3E4ACF86457E94 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		5C576D6FBF3E4ACF86457E94 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		64847E7AB4D74392B7169FD7 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				083FC3929E9440FCA1C9FD92 /* CMake Rules */,
+				2A7B4E6ED5234593BCA96E97 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */,
+			);
+			name = lib;
+			sourceTree = "<group>";
+		};
+		7C7E0A0D567A414CAFC5F6CE /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				605C6F1FEF1146AA91EC62DD /* ../dolphin-ios/Externals/mbedtls/library/aes.c */,
+				61403D27418D4C1CA5B1755D /* ../dolphin-ios/Externals/mbedtls/library/aesni.c */,
+				A7AED7CF80DF4BBDA060218B /* ../dolphin-ios/Externals/mbedtls/library/arc4.c */,
+				C99D9B2D585A4CADBC56C18E /* ../dolphin-ios/Externals/mbedtls/library/aria.c */,
+				43F93D3644FF4DEC91E55A27 /* ../dolphin-ios/Externals/mbedtls/library/asn1parse.c */,
+				1D291D4FAD7C4B6AA243C15A /* ../dolphin-ios/Externals/mbedtls/library/asn1write.c */,
+				03C0E1231AA849DABCC165BE /* ../dolphin-ios/Externals/mbedtls/library/base64.c */,
+				E80F40FFF67648F38992C575 /* ../dolphin-ios/Externals/mbedtls/library/bignum.c */,
+				F46F7C0B32C04BFF81B99434 /* ../dolphin-ios/Externals/mbedtls/library/blowfish.c */,
+				62CE83910CB743A4818D4F0A /* ../dolphin-ios/Externals/mbedtls/library/camellia.c */,
+				A8160F513FEF4485B7E33B87 /* ../dolphin-ios/Externals/mbedtls/library/ccm.c */,
+				2E6B90B6BE1547B58F9CAC41 /* ../dolphin-ios/Externals/mbedtls/library/chacha20.c */,
+				4D91B88353204653B907C126 /* ../dolphin-ios/Externals/mbedtls/library/chachapoly.c */,
+				EAEB915AAFAF4B10BA6E24E8 /* ../dolphin-ios/Externals/mbedtls/library/cipher.c */,
+				62E5F7CB00D3449F97B18E49 /* ../dolphin-ios/Externals/mbedtls/library/cipher_wrap.c */,
+				E2D6D1C4BB8F4BEE854CE2ED /* ../dolphin-ios/Externals/mbedtls/library/cmac.c */,
+				78288B933C374565B1358387 /* ../dolphin-ios/Externals/mbedtls/library/ctr_drbg.c */,
+				F1F6775E57EC4C6191BA0A79 /* ../dolphin-ios/Externals/mbedtls/library/des.c */,
+				B8E95E2D58F841DD8CC32431 /* ../dolphin-ios/Externals/mbedtls/library/dhm.c */,
+				05AD08245F204CF3B0BF00D4 /* ../dolphin-ios/Externals/mbedtls/library/ecdh.c */,
+				9C11CB7157B942C89982F64A /* ../dolphin-ios/Externals/mbedtls/library/ecdsa.c */,
+				99C8989CE79C439B99A87A15 /* ../dolphin-ios/Externals/mbedtls/library/ecjpake.c */,
+				1CA785BC88C3428D8A8A6064 /* ../dolphin-ios/Externals/mbedtls/library/ecp.c */,
+				FEB5DEAFFFED49AFA28714CE /* ../dolphin-ios/Externals/mbedtls/library/ecp_curves.c */,
+				845BC3D954EF48378F504F1B /* ../dolphin-ios/Externals/mbedtls/library/entropy.c */,
+				C67F9F4E8EEA48B9988B2554 /* ../dolphin-ios/Externals/mbedtls/library/entropy_poll.c */,
+				81891005FAE74B2AAAD835AF /* ../dolphin-ios/Externals/mbedtls/library/error.c */,
+				B25FD47C8BED4DD49CBCDB47 /* ../dolphin-ios/Externals/mbedtls/library/gcm.c */,
+				D2DAD08C52AC4EDAA8B9485D /* ../dolphin-ios/Externals/mbedtls/library/havege.c */,
+				DDE676E939F244B583D93577 /* ../dolphin-ios/Externals/mbedtls/library/hkdf.c */,
+				BB5DB4A7BFE542D58B01F344 /* ../dolphin-ios/Externals/mbedtls/library/hmac_drbg.c */,
+				B512FF44F3B8421CAA32AC8B /* ../dolphin-ios/Externals/mbedtls/library/md.c */,
+				13F559C3B62E459CB0767014 /* ../dolphin-ios/Externals/mbedtls/library/md2.c */,
+				BE0640C6FEE842C8A1AA1C9B /* ../dolphin-ios/Externals/mbedtls/library/md4.c */,
+				A9201F05A5E94F269EE8EAFC /* ../dolphin-ios/Externals/mbedtls/library/md5.c */,
+				B8FC8AC014C44AD3AF0E0616 /* ../dolphin-ios/Externals/mbedtls/library/md_wrap.c */,
+				0A6BC8C530924B308F911749 /* ../dolphin-ios/Externals/mbedtls/library/memory_buffer_alloc.c */,
+				4F7CB2E53F424227864350FA /* ../dolphin-ios/Externals/mbedtls/library/nist_kw.c */,
+				D183BDCBB1074A2D852CC744 /* ../dolphin-ios/Externals/mbedtls/library/oid.c */,
+				D9242E5B68D147DAB2131BFD /* ../dolphin-ios/Externals/mbedtls/library/padlock.c */,
+				9A2D0365989448938117FFEA /* ../dolphin-ios/Externals/mbedtls/library/pem.c */,
+				CB00F5E2C93E4A098F248861 /* ../dolphin-ios/Externals/mbedtls/library/pk.c */,
+				AB8E143A9C5F4BA684F874C7 /* ../dolphin-ios/Externals/mbedtls/library/pk_wrap.c */,
+				D3E824E552944FAC97FD50DC /* ../dolphin-ios/Externals/mbedtls/library/pkcs12.c */,
+				5738D40012A5491194259561 /* ../dolphin-ios/Externals/mbedtls/library/pkcs5.c */,
+				9E1D9488311444A0858B5629 /* ../dolphin-ios/Externals/mbedtls/library/pkparse.c */,
+				1FF6A0FB5C9E4C8B8372CD7E /* ../dolphin-ios/Externals/mbedtls/library/pkwrite.c */,
+				B0F5997F8E12434BBD8DD995 /* ../dolphin-ios/Externals/mbedtls/library/platform.c */,
+				A556C1D7B77D41C19DABD686 /* ../dolphin-ios/Externals/mbedtls/library/platform_util.c */,
+				F93BCB990A4A4867A4ED46DA /* ../dolphin-ios/Externals/mbedtls/library/poly1305.c */,
+				2435C497FDAA4D93BA12B3F7 /* ../dolphin-ios/Externals/mbedtls/library/ripemd160.c */,
+				ACD9DC48DA4B43A5A91F493C /* ../dolphin-ios/Externals/mbedtls/library/rsa.c */,
+				E2D75D331E844E55A9BF7BF1 /* ../dolphin-ios/Externals/mbedtls/library/rsa_internal.c */,
+				3707B69C61244AC69D6BAA60 /* ../dolphin-ios/Externals/mbedtls/library/sha1.c */,
+				89D65A2D485E460C9E3A998F /* ../dolphin-ios/Externals/mbedtls/library/sha256.c */,
+				8FC717BD22FF4C6C85E20CC7 /* ../dolphin-ios/Externals/mbedtls/library/sha512.c */,
+				243133EF3A204861863B3808 /* ../dolphin-ios/Externals/mbedtls/library/threading.c */,
+				F210B7C7D4C240B9AF9A8AE2 /* ../dolphin-ios/Externals/mbedtls/library/timing.c */,
+				297710B3994F4D54AD0D312C /* ../dolphin-ios/Externals/mbedtls/library/version.c */,
+				5AC46462A62A4CCD9CDB3069 /* ../dolphin-ios/Externals/mbedtls/library/version_features.c */,
+				59406EB9F2754F6EA1166090 /* ../dolphin-ios/Externals/mbedtls/library/xtea.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		85A2FEB1678C42A99FF6F8FF /* mbedtls */ = {
+			isa = PBXGroup;
+			children = (
+				FE318D4640234E6BAC7AB00A /* Source Files */,
+				1C3F8B7852054CF39558D15E /* Resources */,
+				957946EA70DB4D119F7FE341 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */,
+			);
+			name = mbedtls;
+			sourceTree = "<group>";
+		};
+		9ACC3077FED14893B9C898C5 /* mbedcrypto */ = {
+			isa = PBXGroup;
+			children = (
+				7C7E0A0D567A414CAFC5F6CE /* Source Files */,
+				36A28AFD0C9C40A9B25327B9 /* Resources */,
+				F4EBED71A1E24C908F0FC8B5 /* ../dolphin-ios/Externals/mbedtls/library/CMakeLists.txt */,
+			);
+			name = mbedcrypto;
+			sourceTree = "<group>";
+		};
+		FE318D4640234E6BAC7AB00A /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				EE149462DE2F47EBAF23EB76 /* ../dolphin-ios/Externals/mbedtls/library/debug.c */,
+				5F83CF6F96ED48E49CF00626 /* ../dolphin-ios/Externals/mbedtls/library/net_sockets.c */,
+				17A47EC8DF91453DBA7E946B /* ../dolphin-ios/Externals/mbedtls/library/ssl_cache.c */,
+				D6165C355A6B4ECFBDF8361F /* ../dolphin-ios/Externals/mbedtls/library/ssl_ciphersuites.c */,
+				B29B656EF7E64B76851541BF /* ../dolphin-ios/Externals/mbedtls/library/ssl_cli.c */,
+				CE6DDCCA77614FBC806A8B4D /* ../dolphin-ios/Externals/mbedtls/library/ssl_cookie.c */,
+				9895426095F94D129E95A510 /* ../dolphin-ios/Externals/mbedtls/library/ssl_srv.c */,
+				1CAA6DC499CB4D66B73E687A /* ../dolphin-ios/Externals/mbedtls/library/ssl_ticket.c */,
+				963F51D07E9445F4B1670B97 /* ../dolphin-ios/Externals/mbedtls/library/ssl_tls.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		74710D29352D45F688AF1321 /* mbedx509 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D3000D7654C44B389C87151B /* Build configuration list for PBXNativeTarget "mbedx509" */;
+			buildPhases = (
+				EA29AE82464249B5BB910220 /* Sources */,
+				F9AC93364D28441FA4B6A4D7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F0906FE9D49246CBBEEC1DEF /* PBXTargetDependency */,
+			);
+			name = mbedx509;
+			productName = mbedx509;
+			productReference = F998E78A5610460F8F75E62C /* mbedx509 */;
+			productType = "com.apple.product-type.library.static";
+		};
+		7ADE35EC9B4B4D95B62A8E7D /* mbedtls */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 661FA92EE2264C3D9E9774A5 /* Build configuration list for PBXNativeTarget "mbedtls" */;
+			buildPhases = (
+				F80E7C6AF58448269240A35D /* Sources */,
+				6C416D096C6248BEBEBE4417 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6926A103239446F4A11F87CE /* PBXTargetDependency */,
+				D730C4EA3DD747FD9548D02E /* PBXTargetDependency */,
+			);
+			name = mbedtls;
+			productName = mbedtls;
+			productReference = CBE139221EF448979DB6EDE0 /* mbedtls */;
+			productType = "com.apple.product-type.library.static";
+		};
+		A9FADB726A3F4823AF69920A /* mbedcrypto */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 699D4BC39DB94698A7393ACA /* Build configuration list for PBXNativeTarget "mbedcrypto" */;
+			buildPhases = (
+				6DED081A16474121A42F7B16 /* Sources */,
+				3A1AE9BB056A41DA9150027D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mbedcrypto;
+			productName = mbedcrypto;
+			productReference = DEFE9A5A5D82487DAE06CCB0 /* mbedcrypto */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		15FC2B48E6104995A7F13E7D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1420;
+			};
+			buildConfigurationList = 3073BBB769794842BED7391D /* Build configuration list for PBXProject "mbed TLS" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				43E64DD742534813AD101AEA /* Debug */,
+				7B73E613429549DDBF6A784F /* Release */,
+				238BC5F0ACD447C99D921B68 /* MinSizeRel */,
+				6AB3E7C1AF4F4D5DBD30E118 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 5A04E0DA9BED4679B42CB94F;
+			projectDirPath = "../dolphin-ios";
+			projectRoot = "";
+			targets = (
+				27752D87E92A4D2AAF4559FB /* ALL_BUILD */,
+				D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */,
+				A7904E74C7BB45968F4D5EC8 /* install */,
+				7630AC677345455B87A7BF33 /* lib */,
+				A9FADB726A3F4823AF69920A /* mbedcrypto */,
+				7ADE35EC9B4B4D95B62A8E7D /* mbedtls */,
+				74710D29352D45F688AF1321 /* mbedx509 */,
+				37035854F5494840A21D2316 /* package */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		35748B9FE4E14E733EA5F30D /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+../cmake/Externals/mbedtls/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Externals/mbedtls
+  make -f ../cmake/Externals/mbedtls/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Externals/mbedtls
+  make -f ../cmake/Externals/mbedtls/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Externals/mbedtls
+  make -f ../cmake/Externals/mbedtls/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Externals/mbedtls
+  make -f ../cmake/Externals/mbedtls/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		5120145D4CE4ADE43A812C12 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		5A2C2C876FC899BF32DE3C7A /* Generate library/CMakeFiles/lib */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+"../cmake/Externals/mbedtls/library/Debug${EFFECTIVE_PLATFORM_NAME}/libmbedcrypto.a","../cmake/Externals/mbedtls/library/Debug${EFFECTIVE_PLATFORM_NAME}/libmbedtls.a","../cmake/Externals/mbedtls/library/Debug${EFFECTIVE_PLATFORM_NAME}/libmbedx509.a","../cmake/Externals/mbedtls/library/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libmbedcrypto.a","../cmake/Externals/mbedtls/library/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libmbedtls.a","../cmake/Externals/mbedtls/library/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libmbedx509.a","../cmake/Externals/mbedtls/library/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libmbedcrypto.a","../cmake/Externals/mbedtls/library/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libmbedtls.a","../cmake/Externals/mbedtls/library/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libmbedx509.a","../cmake/Externals/mbedtls/library/Release${EFFECTIVE_PLATFORM_NAME}/libmbedcrypto.a","../cmake/Externals/mbedtls/library/Release${EFFECTIVE_PLATFORM_NAME}/libmbedtls.a","../cmake/Externals/mbedtls/library/Release${EFFECTIVE_PLATFORM_NAME}/libmbedx509.a"			);
+			name = "Generate library/CMakeFiles/lib";
+			outputPaths = (
+../cmake/Externals/mbedtls/library/CMakeFiles/lib			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Externals/mbedtls/library
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Externals/mbedtls/library
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Externals/mbedtls/library
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Externals/mbedtls/library
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		661D9C604B3B91332E7543CC = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		87AF4882E018677E2624B544 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Externals/mbedtls
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Externals/mbedtls
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Externals/mbedtls
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Externals/mbedtls
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		D0586C1EA64978EBB81110A5 /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+../cmake/Externals/mbedtls/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Externals/mbedtls
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Externals/mbedtls
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Externals/mbedtls
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Externals/mbedtls
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6DED081A16474121A42F7B16 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A39B30973DE84BE8BDBD559F /* ../dolphin-ios/Externals/mbedtls/library/aes.c */,
+				3C481B02FFE6481998949F98 /* ../dolphin-ios/Externals/mbedtls/library/aesni.c */,
+				59CB9C3C7B3D4E54ADE6C6C3 /* ../dolphin-ios/Externals/mbedtls/library/arc4.c */,
+				CBFAE883AB324F1694F26030 /* ../dolphin-ios/Externals/mbedtls/library/aria.c */,
+				B6AEEE10AE8D4D0081D0844F /* ../dolphin-ios/Externals/mbedtls/library/asn1parse.c */,
+				740AF8B1386E453091770A74 /* ../dolphin-ios/Externals/mbedtls/library/asn1write.c */,
+				97C4892382D14BF590A66AA5 /* ../dolphin-ios/Externals/mbedtls/library/base64.c */,
+				29BDDDF9E0F443288158679A /* ../dolphin-ios/Externals/mbedtls/library/bignum.c */,
+				03CBD555DFA54A05B4F8E5FB /* ../dolphin-ios/Externals/mbedtls/library/blowfish.c */,
+				D8B72632920C4029B9F14CDB /* ../dolphin-ios/Externals/mbedtls/library/camellia.c */,
+				D591533C9CB9461DBD4A0F41 /* ../dolphin-ios/Externals/mbedtls/library/ccm.c */,
+				A9C3166D038B49C291E3B518 /* ../dolphin-ios/Externals/mbedtls/library/chacha20.c */,
+				5D53365F820B45E2A48AA365 /* ../dolphin-ios/Externals/mbedtls/library/chachapoly.c */,
+				FC5B524F67634BA682EC1D4B /* ../dolphin-ios/Externals/mbedtls/library/cipher.c */,
+				2F2D6811112D40C3BECF7191 /* ../dolphin-ios/Externals/mbedtls/library/cipher_wrap.c */,
+				2E6B70FCB21B4DFC93BFC7FE /* ../dolphin-ios/Externals/mbedtls/library/cmac.c */,
+				BD0109B335474C3B8521A33A /* ../dolphin-ios/Externals/mbedtls/library/ctr_drbg.c */,
+				833C000482504F2BB777DE39 /* ../dolphin-ios/Externals/mbedtls/library/des.c */,
+				AD48C43882564D35A7A9F61C /* ../dolphin-ios/Externals/mbedtls/library/dhm.c */,
+				A34CDA6BF78C43279FD3561E /* ../dolphin-ios/Externals/mbedtls/library/ecdh.c */,
+				A9D923353DF748B0A21234BE /* ../dolphin-ios/Externals/mbedtls/library/ecdsa.c */,
+				6E85878D694F4C729CD42C68 /* ../dolphin-ios/Externals/mbedtls/library/ecjpake.c */,
+				DBECEE671C9D4C49A588D444 /* ../dolphin-ios/Externals/mbedtls/library/ecp.c */,
+				4F5C420020B440E5967CAEC6 /* ../dolphin-ios/Externals/mbedtls/library/ecp_curves.c */,
+				84BC95F8B7CD47A781917AF2 /* ../dolphin-ios/Externals/mbedtls/library/entropy.c */,
+				5F2A89B58AD2490AB9BB2A66 /* ../dolphin-ios/Externals/mbedtls/library/entropy_poll.c */,
+				C9B2D5281ACF447DB4FF1783 /* ../dolphin-ios/Externals/mbedtls/library/error.c */,
+				262801AD202A4A8086616E84 /* ../dolphin-ios/Externals/mbedtls/library/gcm.c */,
+				BD93EE6B08E04A2D9F097296 /* ../dolphin-ios/Externals/mbedtls/library/havege.c */,
+				10E585D7E10340D1B33A3AB3 /* ../dolphin-ios/Externals/mbedtls/library/hkdf.c */,
+				1AA3591BC3E7457D8EAACA86 /* ../dolphin-ios/Externals/mbedtls/library/hmac_drbg.c */,
+				7387B1982F4C429C8ACFBE28 /* ../dolphin-ios/Externals/mbedtls/library/md.c */,
+				DDED6C366C034B3A8E09A1E1 /* ../dolphin-ios/Externals/mbedtls/library/md2.c */,
+				6945A8FBE46A435D98415E39 /* ../dolphin-ios/Externals/mbedtls/library/md4.c */,
+				6A25ED13F333427598049AF9 /* ../dolphin-ios/Externals/mbedtls/library/md5.c */,
+				D1BC7EA99717482BA5D57684 /* ../dolphin-ios/Externals/mbedtls/library/md_wrap.c */,
+				BEC30EB6DDA44A1AB0088BFB /* ../dolphin-ios/Externals/mbedtls/library/memory_buffer_alloc.c */,
+				BBDAA0671D1B427B86D18A14 /* ../dolphin-ios/Externals/mbedtls/library/nist_kw.c */,
+				8959938D175C4D84BFF5BDBD /* ../dolphin-ios/Externals/mbedtls/library/oid.c */,
+				D1575D3100104954BC1C3681 /* ../dolphin-ios/Externals/mbedtls/library/padlock.c */,
+				804A3C8BBDCF49D6B48A5BC6 /* ../dolphin-ios/Externals/mbedtls/library/pem.c */,
+				EB663556D22C4FBFA1E20A48 /* ../dolphin-ios/Externals/mbedtls/library/pk.c */,
+				4D4F022680264B0FA86CCE97 /* ../dolphin-ios/Externals/mbedtls/library/pk_wrap.c */,
+				0CC80DC422DD4EB2B64DA7AB /* ../dolphin-ios/Externals/mbedtls/library/pkcs12.c */,
+				7A69F0CF918D4D5586F746F9 /* ../dolphin-ios/Externals/mbedtls/library/pkcs5.c */,
+				CDBE1311508349148EF658B3 /* ../dolphin-ios/Externals/mbedtls/library/pkparse.c */,
+				188B5F06C08C485A8F6A1808 /* ../dolphin-ios/Externals/mbedtls/library/pkwrite.c */,
+				B0BD5CFFE81F4B95B4C8BC66 /* ../dolphin-ios/Externals/mbedtls/library/platform.c */,
+				6DC299DF58C2400BAE13190F /* ../dolphin-ios/Externals/mbedtls/library/platform_util.c */,
+				1723079315CB4D8384FF3B1C /* ../dolphin-ios/Externals/mbedtls/library/poly1305.c */,
+				DF62F14B8029495189BCFB9F /* ../dolphin-ios/Externals/mbedtls/library/ripemd160.c */,
+				F307A12384844554B1876D5F /* ../dolphin-ios/Externals/mbedtls/library/rsa.c */,
+				402D6F74949C4C7EB8864C71 /* ../dolphin-ios/Externals/mbedtls/library/rsa_internal.c */,
+				CE2360FD88F94E70A8AA5B00 /* ../dolphin-ios/Externals/mbedtls/library/sha1.c */,
+				B0F64F8206A2474CB7923DB8 /* ../dolphin-ios/Externals/mbedtls/library/sha256.c */,
+				0EE7521970184C7A9D638FE4 /* ../dolphin-ios/Externals/mbedtls/library/sha512.c */,
+				4FEE34B931B045D79B456C05 /* ../dolphin-ios/Externals/mbedtls/library/threading.c */,
+				04E85F5E7A344A6DA1C28E8A /* ../dolphin-ios/Externals/mbedtls/library/timing.c */,
+				54FAD2141AA445AB87C1113C /* ../dolphin-ios/Externals/mbedtls/library/version.c */,
+				D0F3BADFA52D40868DFF06E3 /* ../dolphin-ios/Externals/mbedtls/library/version_features.c */,
+				B78475A3486C450DBD136B6A /* ../dolphin-ios/Externals/mbedtls/library/xtea.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA29AE82464249B5BB910220 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				714894E21CE64DAC88F827A7 /* ../dolphin-ios/Externals/mbedtls/library/certs.c */,
+				2B9915CEF71B464AAFE7061A /* ../dolphin-ios/Externals/mbedtls/library/pkcs11.c */,
+				0540F7BE6EA4413A966AFC36 /* ../dolphin-ios/Externals/mbedtls/library/x509.c */,
+				0E020C5CCC154944A2FEB6CE /* ../dolphin-ios/Externals/mbedtls/library/x509_create.c */,
+				0B13220A892B43A9A8D828C6 /* ../dolphin-ios/Externals/mbedtls/library/x509_crl.c */,
+				A8577E71CDBC464898740837 /* ../dolphin-ios/Externals/mbedtls/library/x509_crt.c */,
+				D7009628C26343CD9F2000AC /* ../dolphin-ios/Externals/mbedtls/library/x509_csr.c */,
+				06AA680241314A37B95AEBA9 /* ../dolphin-ios/Externals/mbedtls/library/x509write_crt.c */,
+				7DF3BB46D94F483C8E92AEC2 /* ../dolphin-ios/Externals/mbedtls/library/x509write_csr.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F80E7C6AF58448269240A35D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F59FB63C8A294803A0C92E01 /* ../dolphin-ios/Externals/mbedtls/library/debug.c */,
+				2AE82AAAA1004E3992A6B9F0 /* ../dolphin-ios/Externals/mbedtls/library/net_sockets.c */,
+				881805C370E3460FA34573C0 /* ../dolphin-ios/Externals/mbedtls/library/ssl_cache.c */,
+				20A22FBA5BCC4F519CF07512 /* ../dolphin-ios/Externals/mbedtls/library/ssl_ciphersuites.c */,
+				F8147C8A3D88493B9ED3EE06 /* ../dolphin-ios/Externals/mbedtls/library/ssl_cli.c */,
+				8A3773979CB34366B4FC0B24 /* ../dolphin-ios/Externals/mbedtls/library/ssl_cookie.c */,
+				AA5A87EA8F804208B70093E9 /* ../dolphin-ios/Externals/mbedtls/library/ssl_srv.c */,
+				42C722488AB8497690DD8FA8 /* ../dolphin-ios/Externals/mbedtls/library/ssl_ticket.c */,
+				D225E13B447B410AAD0587A0 /* ../dolphin-ios/Externals/mbedtls/library/ssl_tls.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		093116E6E67244F7AFEA2CE2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7ADE35EC9B4B4D95B62A8E7D /* mbedtls */;
+			targetProxy = 46CD1283B085417F98205790 /* PBXContainerItemProxy */;
+		};
+		0D2533DE19044B119A785019 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 27752D87E92A4D2AAF4559FB /* ALL_BUILD */;
+			targetProxy = 74029F4EF1B2409B84AEF84E /* PBXContainerItemProxy */;
+		};
+		153A202632E440C89FA9C84A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A9FADB726A3F4823AF69920A /* mbedcrypto */;
+			targetProxy = B2E97642F329407C8B714BC8 /* PBXContainerItemProxy */;
+		};
+		162DDE06312C463F9B0C1A11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 74710D29352D45F688AF1321 /* mbedx509 */;
+			targetProxy = C713AA1AAEFE462B8A2773DC /* PBXContainerItemProxy */;
+		};
+		6263B23FCC56480C97A239D4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7ADE35EC9B4B4D95B62A8E7D /* mbedtls */;
+			targetProxy = DA824A31B0034FDC92D0C449 /* PBXContainerItemProxy */;
+		};
+		6926A103239446F4A11F87CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A9FADB726A3F4823AF69920A /* mbedcrypto */;
+			targetProxy = 2252F062D40640219E7F85E3 /* PBXContainerItemProxy */;
+		};
+		A6102B4A004745428A35E6F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 27752D87E92A4D2AAF4559FB /* ALL_BUILD */;
+			targetProxy = 5397F5D02F13413693E5FFA9 /* PBXContainerItemProxy */;
+		};
+		B8B073DF3303493E8C84BE2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 74710D29352D45F688AF1321 /* mbedx509 */;
+			targetProxy = 54AC07B3F4D5437BB67CCAE1 /* PBXContainerItemProxy */;
+		};
+		D730C4EA3DD747FD9548D02E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 74710D29352D45F688AF1321 /* mbedx509 */;
+			targetProxy = 0B57DC82FEF94609894FAD8F /* PBXContainerItemProxy */;
+		};
+		EAEC5E1BFDCF448C9F1321DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */;
+			targetProxy = B9AC6BF2C6514274A8707DB9 /* PBXContainerItemProxy */;
+		};
+		F0906FE9D49246CBBEEC1DEF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A9FADB726A3F4823AF69920A /* mbedcrypto */;
+			targetProxy = 707F9BB2023C4595BC6B248B /* PBXContainerItemProxy */;
+		};
+		FFAE00DB25DD4B428E22C7B5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A9FADB726A3F4823AF69920A /* mbedcrypto */;
+			targetProxy = C400CC324AA746EDAB80D94A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0600CF5DB1754C8FA321F7C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code         '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden'    ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedcrypto;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		0F1B5AA47725418FA078DCA7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code     '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedtls;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		1055E1DB99854013B4CE7319 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		10EA4DEDEEF14E9599012E7D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = dolphin-build;
+			};
+			name = Release;
+		};
+		143765991EA64895B108FEF7 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code     -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedcrypto;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		19B8048837F344B8A63C3A5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code         '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden'    ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedx509;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		265D7668725D46C3B33C8280 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code        -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedx509;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		2B47DD6849A44E5D9D24DEBC /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		2B72B09D784E422D87E7DE4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		52BCE430D8764ECF8BCF38B7 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		530A1821D4BA4C65BC45F73D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code     '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedx509;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		640388F86FFD4B219428082C /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		7F110D2F0A144AFF976BD2D0 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code     -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedx509;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		80214E12E95140498DD10978 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code        -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedcrypto;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		99064722F365468A93A1721F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code     '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedcrypto;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		A1D1B03D36064586AD901639 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = dolphin-build;
+			};
+			name = MinSizeRel;
+		};
+		A65A97CEBC2E474BB186845D /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lib;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		A6FB23AE3FFD454592B26CE3 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code     -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedtls;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		AB2F262E5B6B4CA7B6387203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		ADC4F437A3C94CA48460995F /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		AE94A9EB4BB84463AA438D65 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		AFE1B5966AA24951B24B1D32 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lib;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		B472B5DF8EBA4A15A2C3C6F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		BAEFDE6087CD4575A613075D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code         '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden'    ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedtls;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		BBC7801D69C5431685B8EB57 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lib;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		C717D976ED414AC291ACF223 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lib;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		C74513519EDA4A60B99108EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		CC605DC5E398433F880AF3A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		CFA61BAB5AC24B53B4B198F0 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = dolphin-build;
+			};
+			name = RelWithDebInfo;
+		};
+		D3FF97EF303A4201AB4B0BFE /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		D501A75FC5E045978E0DCF09 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		D8986587088047A5A235587B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		E95672C16DB94961B65AE3AA /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		EF7800AA31A041CF9E131836 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,SFML_STATIC,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Externals/SFML/include","../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/External/minizip","../dolphin-ios/Externals/ed25519","../dolphin-ios/Externals/soundtouch","../dolphin-ios/Externals/mbedtls/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wall -Wextra -W -Wdeclaration-after-statement -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wmissing-declarations -Wmissing-prototypes -Wdocumentation -Wno-documentation-deprecated-sync -Wunreachable-code        -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mbedtls;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		F915A0AC1BB74A83B1CFC1B9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = dolphin-build;
+			};
+			name = Debug;
+		};
+		FF7A1AF1A004467E9F20DB31 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3073BBB769794842BED7391D /* Build configuration list for PBXProject "mbed TLS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F915A0AC1BB74A83B1CFC1B9 /* Debug */,
+				10EA4DEDEEF14E9599012E7D /* Release */,
+				A1D1B03D36064586AD901639 /* MinSizeRel */,
+				CFA61BAB5AC24B53B4B198F0 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4501E8DECC5D42588935380E /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE94A9EB4BB84463AA438D65 /* Debug */,
+				D8986587088047A5A235587B /* Release */,
+				D501A75FC5E045978E0DCF09 /* MinSizeRel */,
+				640388F86FFD4B219428082C /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		661FA92EE2264C3D9E9774A5 /* Build configuration list for PBXNativeTarget "mbedtls" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BAEFDE6087CD4575A613075D /* Debug */,
+				0F1B5AA47725418FA078DCA7 /* Release */,
+				A6FB23AE3FFD454592B26CE3 /* MinSizeRel */,
+				EF7800AA31A041CF9E131836 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		66D11869F50D45F99D5DD844 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC605DC5E398433F880AF3A6 /* Debug */,
+				AB2F262E5B6B4CA7B6387203 /* Release */,
+				52BCE430D8764ECF8BCF38B7 /* MinSizeRel */,
+				E95672C16DB94961B65AE3AA /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		699D4BC39DB94698A7393ACA /* Build configuration list for PBXNativeTarget "mbedcrypto" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0600CF5DB1754C8FA321F7C6 /* Debug */,
+				99064722F365468A93A1721F /* Release */,
+				143765991EA64895B108FEF7 /* MinSizeRel */,
+				80214E12E95140498DD10978 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		765C4D5A72CA4A378AA82CAA /* Build configuration list for PBXAggregateTarget "package" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF7A1AF1A004467E9F20DB31 /* Debug */,
+				C74513519EDA4A60B99108EF /* Release */,
+				D3FF97EF303A4201AB4B0BFE /* MinSizeRel */,
+				ADC4F437A3C94CA48460995F /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8F25E492DA6944D68AF3752C /* Build configuration list for PBXAggregateTarget "lib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C717D976ED414AC291ACF223 /* Debug */,
+				AFE1B5966AA24951B24B1D32 /* Release */,
+				A65A97CEBC2E474BB186845D /* MinSizeRel */,
+				BBC7801D69C5431685B8EB57 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CE6892DABA284FC38A489D33 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B472B5DF8EBA4A15A2C3C6F6 /* Debug */,
+				2B72B09D784E422D87E7DE4A /* Release */,
+				1055E1DB99854013B4CE7319 /* MinSizeRel */,
+				2B47DD6849A44E5D9D24DEBC /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D3000D7654C44B389C87151B /* Build configuration list for PBXNativeTarget "mbedx509" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				19B8048837F344B8A63C3A5F /* Debug */,
+				530A1821D4BA4C65BC45F73D /* Release */,
+				7F110D2F0A144AFF976BD2D0 /* MinSizeRel */,
+				265D7668725D46C3B33C8280 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 15FC2B48E6104995A7F13E7D /* Project object */;
+}

@@ -1,0 +1,44 @@
+--- SDL2-2.28.5.orig/src/video/windows/SDL_windowsevents.c	2023-11-02 10:03:38.000000000 -0700
++++ SDL2-2.28.5/src/video/windows/SDL_windowsevents.c	2023-12-02 15:28:00.182952415 -0800
+@@ -614,6 +614,7 @@ WIN_KeyboardHookProc(int nCode, WPARAM w
+     KBDLLHOOKSTRUCT *hookData = (KBDLLHOOKSTRUCT *)lParam;
+     SDL_VideoData *data = SDL_GetVideoDevice()->driverdata;
+     SDL_Scancode scanCode;
++    int is_altgr_synlctrl = (hookData->vkCode == VK_LCONTROL) && (hookData->scanCode & 0x200);
+ 
+     if (nCode < 0 || nCode != HC_ACTION) {
+         return CallNextHookEx(NULL, nCode, wParam, lParam);
+@@ -652,18 +653,22 @@ WIN_KeyboardHookProc(int nCode, WPARAM w
+     }
+ 
+     if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) {
+-        SDL_SendKeyboardKey(SDL_PRESSED, scanCode);
++        if (!is_altgr_synlctrl) {
++            SDL_SendKeyboardKey(SDL_PRESSED, scanCode);
++        }
+     } else {
+-        SDL_SendKeyboardKey(SDL_RELEASED, scanCode);
++        if (!is_altgr_synlctrl || data->pre_hook_key_state[hookData->vkCode]) {
++            SDL_SendKeyboardKey(SDL_RELEASED, scanCode);
+ 
+-        /* If the key was down prior to our hook being installed, allow the
+-           key up message to pass normally the first time. This ensures other
+-           windows have a consistent view of the key state, and avoids keys
+-           being stuck down in those windows if they are down when the grab
+-           happens and raised while grabbed. */
+-        if (hookData->vkCode <= 0xFF && data->pre_hook_key_state[hookData->vkCode]) {
+-            data->pre_hook_key_state[hookData->vkCode] = 0;
+-            return CallNextHookEx(NULL, nCode, wParam, lParam);
++            /* If the key was down prior to our hook being installed, allow the
++               key up message to pass normally the first time. This ensures other
++               windows have a consistent view of the key state, and avoids keys
++               being stuck down in those windows if they are down when the grab
++               happens and raised while grabbed. */
++            if (hookData->vkCode <= 0xFF && data->pre_hook_key_state[hookData->vkCode]) {
++                data->pre_hook_key_state[hookData->vkCode] = 0;
++                return CallNextHookEx(NULL, nCode, wParam, lParam);
++            }
+         }
+     }
+ 
+

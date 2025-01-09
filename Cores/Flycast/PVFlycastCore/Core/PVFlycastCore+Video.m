@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 11/1/18.
 //  Copyright © 2018 Provenance. All rights reserved.
 //
+#ifndef LIBRETRO
 
 #import "PVFlycastCore+Video.h"
 #import "PVFlycastCore.h"
@@ -19,7 +20,7 @@
 #import <GLKit/GLKit.h>
 #endif
 
-@implementation PVFlycastCore (Video)
+@implementation PVFlycastCoreBridge (Video)
 
 # pragma mark - Methods
 
@@ -86,3 +87,4 @@
     return GL_DEPTH_COMPONENT24;
 }
 @end
+#endif

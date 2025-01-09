@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'PVTGBDual' in project 'PVTGBDual'
+➜ Explicit dependency on target 'tgbdual' in project 'PVTGBDual'
+Target 'tgbdual' in project 'PVTGBDual' (no dependencies)

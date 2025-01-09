@@ -1,0 +1,13 @@
+path: SUBDIR/SUBDIR2/
+filename: hello.txt
+compress_method: -lh0-
+compressed_length: 12
+length: 12
+header_level: 2
+os_type: 57 ('9')
+crc: 9778
+timestamp: 1348347541
+unix_perms: 0644
+os9_perms: 013
+common_crc: 2f0d
+--

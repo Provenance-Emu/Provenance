@@ -1,0 +1,4 @@
+module PVStellaBridge {
+    header "../PVStellaBridge.h"
+    export *
+}

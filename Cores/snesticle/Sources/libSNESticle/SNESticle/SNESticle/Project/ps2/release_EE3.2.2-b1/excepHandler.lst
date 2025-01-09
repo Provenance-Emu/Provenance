@@ -1,0 +1,469 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/excepHandler.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.rdata
+   5              	.align 3
+   6              	.type regName,@object
+   7              	.size regName,160
+   8              	regName:
+   9 0000 7A65726F 	.ascii "zero\000"
+   9      00
+  10 0005 617400   	.ascii "at\000"
+  11 0008 0000     	.space 2
+  12 000a 763000   	.ascii "v0\000"
+  13 000d 0000     	.space 2
+  14 000f 763100   	.ascii "v1\000"
+  15 0012 0000     	.space 2
+  16 0014 613000   	.ascii "a0\000"
+  17 0017 0000     	.space 2
+  18 0019 613100   	.ascii "a1\000"
+  19 001c 0000     	.space 2
+  20 001e 613200   	.ascii "a2\000"
+  21 0021 0000     	.space 2
+  22 0023 613300   	.ascii "a3\000"
+  23 0026 0000     	.space 2
+  24 0028 743000   	.ascii "t0\000"
+  25 002b 0000     	.space 2
+  26 002d 743100   	.ascii "t1\000"
+  27 0030 0000     	.space 2
+  28 0032 743200   	.ascii "t2\000"
+  29 0035 0000     	.space 2
+  30 0037 743300   	.ascii "t3\000"
+  31 003a 0000     	.space 2
+  32 003c 743400   	.ascii "t4\000"
+  33 003f 0000     	.space 2
+  34 0041 743500   	.ascii "t5\000"
+  35 0044 0000     	.space 2
+  36 0046 743600   	.ascii "t6\000"
+  37 0049 0000     	.space 2
+  38 004b 743700   	.ascii "t7\000"
+  39 004e 0000     	.space 2
+  40 0050 743800   	.ascii "t8\000"
+  41 0053 0000     	.space 2
+  42 0055 743900   	.ascii "t9\000"
+  43 0058 0000     	.space 2
+  44 005a 733000   	.ascii "s0\000"
+  45 005d 0000     	.space 2
+  46 005f 733100   	.ascii "s1\000"
+  47 0062 0000     	.space 2
+  48 0064 733200   	.ascii "s2\000"
+  49 0067 0000     	.space 2
+  50 0069 733300   	.ascii "s3\000"
+  51 006c 0000     	.space 2
+  52 006e 733400   	.ascii "s4\000"
+  53 0071 0000     	.space 2
+  54 0073 733500   	.ascii "s5\000"
+  55 0076 0000     	.space 2
+  56 0078 733600   	.ascii "s6\000"
+GAS LISTING  			page 2
+
+
+  57 007b 0000     	.space 2
+  58 007d 733700   	.ascii "s7\000"
+  59 0080 0000     	.space 2
+  60 0082 6B3000   	.ascii "k0\000"
+  61 0085 0000     	.space 2
+  62 0087 6B3100   	.ascii "k1\000"
+  63 008a 0000     	.space 2
+  64 008c 677000   	.ascii "gp\000"
+  65 008f 0000     	.space 2
+  66 0091 737000   	.ascii "sp\000"
+  67 0094 0000     	.space 2
+  68 0096 667000   	.ascii "fp\000"
+  69 0099 0000     	.space 2
+  70 009b 726100   	.ascii "ra\000"
+  71 009e 0000     	.space 2
+  72              	.data
+  73              	.align 3
+  74              	.type codeTxt,@object
+  75              	.size codeTxt,312
+  76              	codeTxt:
+  77 0000 496E7465 	.ascii "Interrupt\000"
+  77      72727570 
+  77      7400
+  78 000a 00000000 	.space 14
+  78      00000000 
+  78      00000000 
+  78      0000
+  79 0018 544C4220 	.ascii "TLB modification\000"
+  79      6D6F6469 
+  79      66696361 
+  79      74696F6E 
+  79      00
+  80 0029 00000000 	.space 7
+  80      000000
+  81 0030 544C4220 	.ascii "TLB load/inst fetch\000"
+  81      6C6F6164 
+  81      2F696E73 
+  81      74206665 
+  81      74636800 
+  82 0044 00000000 	.space 4
+  83 0048 544C4220 	.ascii "TLB store\000"
+  83      73746F72 
+  83      6500
+  84 0052 00000000 	.space 14
+  84      00000000 
+  84      00000000 
+  84      0000
+  85 0060 41646472 	.ascii "Address load/inst fetch\000"
+  85      65737320 
+  85      6C6F6164 
+  85      2F696E73 
+  85      74206665 
+  86 0078 41646472 	.ascii "Address store\000"
+  86      65737320 
+  86      73746F72 
+  86      6500
+  87 0086 00000000 	.space 10
+GAS LISTING  			page 3
+
+
+  87      00000000 
+  87      0000
+  88 0090 42757320 	.ascii "Bus error (instr)\000"
+  88      6572726F 
+  88      72202869 
+  88      6E737472 
+  88      2900
+  89 00a2 00000000 	.space 6
+  89      0000
+  90 00a8 42757320 	.ascii "Bus error (data)\000"
+  90      6572726F 
+  90      72202864 
+  90      61746129 
+  90      00
+  91 00b9 00000000 	.space 7
+  91      000000
+  92 00c0 53797363 	.ascii "Syscall\000"
+  92      616C6C00 
+  93 00c8 00000000 	.space 16
+  93      00000000 
+  93      00000000 
+  93      00000000 
+  94 00d8 42726561 	.ascii "Breakpoint\000"
+  94      6B706F69 
+  94      6E7400
+  95 00e3 00000000 	.space 13
+  95      00000000 
+  95      00000000 
+  95      00
+  96 00f0 52657365 	.ascii "Reserved instruction\000"
+  96      72766564 
+  96      20696E73 
+  96      74727563 
+  96      74696F6E 
+  97 0105 000000   	.space 3
+  98 0108 436F7072 	.ascii "Coprocessor unusable\000"
+  98      6F636573 
+  98      736F7220 
+  98      756E7573 
+  98      61626C65 
+  99 011d 000000   	.space 3
+ 100 0120 41726974 	.ascii "Arithmetic overflow\000"
+ 100      686D6574 
+ 100      6963206F 
+ 100      76657266 
+ 100      6C6F7700 
+ 101 0134 00000000 	.space 4
+ 102              	.section .bss
+ 103              	excpPrintf.0:
+ 104              	.align 2
+ 105 0000 00000000 	.space 4
+ 106              	.previous
+ 107              	.rdata
+ 108              	.align 3
+ 109              	$LC2:
+ 110 00a0 2534733A 	.ascii "%4s: %016lX%016lX %4s: %016lX%016lX\n\000"
+ 110      20253031 
+GAS LISTING  			page 4
+
+
+ 110      366C5825 
+ 110      3031366C 
+ 110      58202534 
+ 111 00c5 000000   	.align 3
+ 112              	$LC0:
+ 113 00c8 0A0A     	.ascii "\n\n"
+ 114 00ca 20202020 	.ascii "             Exception handler: %s exception\n\n\000"
+ 114      20202020 
+ 114      20202020 
+ 114      20457863 
+ 114      65707469 
+ 115 00f9 00000000 	.align 3
+ 115      000000
+ 116              	$LC1:
+ 117 0100 20202020 	.ascii "      Cause %08x  BadVAddr %08x  Status %08x  EPC %08x\n"
+ 117      20204361 
+ 117      75736520 
+ 117      25303878 
+ 117      20204261 
+ 118 0137 0A00     	.ascii "\n\000"
+ 119 0139 00000000 	.align 3
+ 119      000000
+ 120              	$LC3:
+ 121 0140 0A00     	.ascii "\n\000"
+ 122 0142 00000000 	.text
+ 122      0000
+ 123              	.align 2
+ 124              	.p2align 3,,7
+ 125              	.globl pkoDebug
+ 126              	.ent pkoDebug
+ 127              	pkoDebug:
+ 128              	.frame $sp,176,$31
+ 129              	.mask 0xc0ff0000,-16
+ 130              	.fmask 0x00000000,0
+ 131 0000 50FFBD27 	subu $sp,$sp,176
+ 132 0004 4000B3FF 	sd $19,64($sp)
+ 133 0008 2D988000 	move $19,$4
+ 134 000c 2D200000 	move $4,$0
+ 135 0010 A000BFFF 	sd $31,160($sp)
+ 136 0014 0000A6AF 	sw $6,0($sp)
+ 137 0018 9000BEFF 	sd $fp,144($sp)
+ 138 001c 00001E3C 	lui $fp,%hi($LC2)
+ 139 0020 8000B7FF 	sd $23,128($sp)
+ 140 0024 0F001724 	li $23,15
+ 141 0028 7000B6FF 	sd $22,112($sp)
+ 142 002c 6000B5FF 	sd $21,96($sp)
+ 143 0030 2DA8E000 	move $21,$7
+ 144 0034 5000B4FF 	sd $20,80($sp)
+ 145 0038 2DA0A000 	move $20,$5
+ 146 003c 3000B2FF 	sd $18,48($sp)
+ 147 0040 2D900001 	move $18,$8
+ 148 0044 2000B1FF 	sd $17,32($sp)
+ 149 0048 0000113C 	lui $17,%hi(excpPrintf.0)
+ 150 004c 1000B0FF 	sd $16,16($sp)
+ 151              	.set noreorder
+ 152              	.set nomacro
+ 153 0050 0000000C 	jal FlushCache
+GAS LISTING  			page 5
+
+
+ 154 0054 2DB02002 	move $22,$17
+ 155              	.set macro
+ 156              	.set reorder
+ 157              	
+ 158 0058 7C007032 	andi $16,$19,0x7c
+ 159 005c 02000424 	li $4,2
+ 160              	.set noreorder
+ 161              	.set nomacro
+ 162 0060 0000000C 	jal FlushCache
+ 163 0064 83801000 	sra $16,$16,2
+ 164              	.set macro
+ 165              	.set reorder
+ 166              	
+ 167 0068 0000000C 	jal init_scr
+ 167      00000000 
+ 168 0070 0000023C 	lui $2,%hi(codeTxt)
+ 169 0074 18000424 	li $4,24
+ 170 0078 00004224 	addiu $2,$2,%lo(codeTxt)
+ 171 007c 18180402 	mult $3,$16,$4
+ 172 0080 0000043C 	lui $4,%hi($LC0)
+ 173 0084 C8008424 	addiu $4,$4,%lo($LC0)
+ 174 0088 21806200 	addu $16,$3,$2
+ 175 008c 0000033C 	lui $3,%hi(scr_printf)
+ 176 0090 00006324 	addiu $3,$3,%lo(scr_printf)
+ 177 0094 2D280002 	move $5,$16
+ 178 0098 000023AE 	sw $3,%lo(excpPrintf.0)($17)
+ 179              	.set noreorder
+ 180              	.set nomacro
+ 181 009c 09F86000 	jal $31,$3
+ 182 00a0 2D800000 	move $16,$0
+ 183              	.set macro
+ 184              	.set reorder
+ 185              	
+ 186 00a4 2D40A002 	move $8,$21
+ 187 00a8 0000238E 	lw $3,%lo(excpPrintf.0)($17)
+ 188 00ac 0000043C 	lui $4,%hi($LC1)
+ 189 00b0 0000A78F 	lw $7,0($sp)
+ 190 00b4 2D286002 	move $5,$19
+ 191 00b8 00018424 	addiu $4,$4,%lo($LC1)
+ 192              	.set noreorder
+ 193              	.set nomacro
+ 194 00bc 09F86000 	jal $31,$3
+ 195 00c0 2D308002 	move $6,$20
+ 196              	.set macro
+ 197              	.set reorder
+ 198              	
+ 199 00c4 0000023C 	lui $2,%hi(regName)
+ 200 00c8 00005324 	addiu $19,$2,%lo(regName)
+ 201 00cc 50007126 	addu $17,$19,80
+ 202 00d0 080046DE 	ld $6,8($18)
+ 203              	$L9:
+ 204 00d4 21281302 	addu $5,$16,$19
+ 205 00d8 000047DE 	ld $7,0($18)
+ 206 00dc 21401102 	addu $8,$16,$17
+ 207 00e0 080149DE 	ld $9,264($18)
+ 208 00e4 FFFFF726 	addu $23,$23,-1
+ 209 00e8 00014ADE 	ld $10,256($18)
+GAS LISTING  			page 6
+
+
+ 210 00ec A000C427 	addiu $4,$fp,%lo($LC2)
+ 211 00f0 0000C28E 	lw $2,%lo(excpPrintf.0)($22)
+ 212 00f4 10005226 	addu $18,$18,16
+ 213              	.set noreorder
+ 214              	.set nomacro
+ 215 00f8 09F84000 	jal $31,$2
+ 216 00fc 05001026 	addu $16,$16,5
+ 217              	.set macro
+ 218              	.set reorder
+ 219              	
+ 220              	.set noreorder
+ 221              	.set nomacro
+ 222 0100 F4FFE306 	bgezl $23,$L9
+ 223 0104 080046DE 	ld $6,8($18)
+ 224              	.set macro
+ 225              	.set reorder
+ 226              	
+ 227 0108 0000023C 	lui $2,%hi(excpPrintf.0)
+ 228 010c 0000043C 	lui $4,%hi($LC3)
+ 229 0110 0000438C 	lw $3,%lo(excpPrintf.0)($2)
+ 230              	
+ 231              	.set noreorder
+ 232              	.set nomacro
+ 233 0114 09F86000 	jal $31,$3
+ 234 0118 40018424 	addiu $4,$4,%lo($LC3)
+ 235              	.set macro
+ 236              	.set reorder
+ 237              	
+ 238 011c 0000000C 	jal SleepThread
+ 238      00000000 
+ 239 0124 1000B0DF 	ld $16,16($sp)
+ 240 0128 A000BFDF 	ld $31,160($sp)
+ 241 012c 9000BEDF 	ld $fp,144($sp)
+ 242 0130 8000B7DF 	ld $23,128($sp)
+ 243 0134 7000B6DF 	ld $22,112($sp)
+ 244 0138 6000B5DF 	ld $21,96($sp)
+ 245 013c 5000B4DF 	ld $20,80($sp)
+ 246 0140 4000B3DF 	ld $19,64($sp)
+ 247 0144 3000B2DF 	ld $18,48($sp)
+ 248 0148 2000B1DF 	ld $17,32($sp)
+ 249              	
+ 250              	.set noreorder
+ 251              	.set nomacro
+ 252 014c 0800E003 	j $31
+ 253 0150 B000BD27 	addu $sp,$sp,176
+ 254              	.set macro
+ 255              	.set reorder
+ 256              	
+ 257              	.end pkoDebug
+ 258              	$Lfe1:
+ 259              	.size pkoDebug,$Lfe1-pkoDebug
+ 260              	.align 2
+ 261 0154 00000000 	.p2align 3,,7
+ 262              	.globl installExceptionHandlers
+ 263              	.ent installExceptionHandlers
+ 264              	installExceptionHandlers:
+ 265              	.frame $sp,48,$31
+GAS LISTING  			page 7
+
+
+ 266              	.mask 0x80030000,-16
+ 267              	.fmask 0x00000000,0
+ 268 0158 D0FFBD27 	subu $sp,$sp,48
+ 269 015c 2000BFFF 	sd $31,32($sp)
+ 270 0160 1000B1FF 	sd $17,16($sp)
+ 271 0164 0000113C 	lui $17,%hi(pkoExceptionHandler)
+ 272 0168 0000B0FF 	sd $16,0($sp)
+ 273 016c 01001024 	li $16,1
+ 274 0170 2D200002 	move $4,$16
+ 275              	$L32:
+ 276 0174 00002526 	addiu $5,$17,%lo(pkoExceptionHandler)
+ 277              	.set noreorder
+ 278              	.set nomacro
+ 279 0178 0000000C 	jal SetVTLBRefillHandler
+ 280 017c 01001026 	addu $16,$16,1
+ 281              	.set macro
+ 282              	.set reorder
+ 283              	
+ 284 0180 0400022A 	slt $2,$16,4
+ 285              	.set noreorder
+ 286              	.set nomacro
+ 287 0184 FBFF4014 	bne $2,$0,$L32
+ 288 0188 2D200002 	move $4,$16
+ 289              	.set macro
+ 290              	.set reorder
+ 291              	
+ 292 018c 04001024 	li $16,4
+ 293 0190 0000113C 	lui $17,%hi(pkoExceptionHandler)
+ 294 0194 2D200002 	move $4,$16
+ 295              	$L33:
+ 296 0198 00002526 	addiu $5,$17,%lo(pkoExceptionHandler)
+ 297              	.set noreorder
+ 298              	.set nomacro
+ 299 019c 0000000C 	jal SetVCommonHandler
+ 300 01a0 01001026 	addu $16,$16,1
+ 301              	.set macro
+ 302              	.set reorder
+ 303              	
+ 304 01a4 0800022A 	slt $2,$16,8
+ 305              	.set noreorder
+ 306              	.set nomacro
+ 307 01a8 FBFF4014 	bne $2,$0,$L33
+ 308 01ac 2D200002 	move $4,$16
+ 309              	.set macro
+ 310              	.set reorder
+ 311              	
+ 312 01b0 0A001024 	li $16,10
+ 313 01b4 0000113C 	lui $17,%hi(pkoExceptionHandler)
+ 314 01b8 2D200002 	move $4,$16
+ 315              	$L34:
+ 316 01bc 00002526 	addiu $5,$17,%lo(pkoExceptionHandler)
+ 317              	.set noreorder
+ 318              	.set nomacro
+ 319 01c0 0000000C 	jal SetVCommonHandler
+ 320 01c4 01001026 	addu $16,$16,1
+ 321              	.set macro
+ 322              	.set reorder
+GAS LISTING  			page 8
+
+
+ 323              	
+ 324 01c8 0E00022A 	slt $2,$16,14
+ 325              	.set noreorder
+ 326              	.set nomacro
+ 327 01cc FBFF4014 	bne $2,$0,$L34
+ 328 01d0 2D200002 	move $4,$16
+ 329              	.set macro
+ 330              	.set reorder
+ 331              	
+ 332 01d4 2000BFDF 	ld $31,32($sp)
+ 333 01d8 1000B1DF 	ld $17,16($sp)
+ 334 01dc 0000B0DF 	ld $16,0($sp)
+ 335              	
+ 336              	.set noreorder
+ 337              	.set nomacro
+ 338 01e0 0800E003 	j $31
+ 339 01e4 3000BD27 	addu $sp,$sp,48
+ 340              	.set macro
+ 341              	.set reorder
+ 342              	
+ 343              	.end installExceptionHandlers
+ 344              	$Lfe2:
+ 345              	.size installExceptionHandlers,$Lfe2-installExceptionHandlers
+ 346              	.globl _exceptionStack
+ 347              	.data
+ 348 0138 00000000 	.align 4
+ 348      00000000 
+ 349              	.type _exceptionStack,@object
+ 350              	.size _exceptionStack,8192
+ 351              	_exceptionStack:
+ 352 0140 00000000 	.space 8192
+ 352      00000000 
+ 352      00000000 
+ 352      00000000 
+ 352      00000000 
+ 353              	.globl _savedRegs
+ 354              	.align 4
+ 355              	.type _savedRegs,@object
+ 356              	.size _savedRegs,576
+ 357              	_savedRegs:
+ 358 2140 00000000 	.space 576
+ 358      00000000 
+ 358      00000000 
+ 358      00000000 
+ 358      00000000 
+ 359              	.ident "GCC: (GNU) 3.2.2"

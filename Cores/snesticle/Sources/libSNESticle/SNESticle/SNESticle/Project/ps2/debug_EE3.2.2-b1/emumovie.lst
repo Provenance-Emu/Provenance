@@ -1,0 +1,718 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/emumovie.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN13CEmuMovieClipC2Ejj
+   8              	.ent _ZN13CEmuMovieClipC2Ejj
+   9              	_ZN13CEmuMovieClipC2Ejj:
+  10              	.frame $sp,48,$31
+  11              	.mask 0x80030000,-16
+  12              	.fmask 0x00000000,0
+  13 0000 D0FFBD27 	subu $sp,$sp,48
+  14 0004 0000B0FF 	sd $16,0($sp)
+  15 0008 2D808000 	move $16,$4
+  16 000c 040005AE 	sw $5,4($16)
+  17 0010 3C200500 	dsll $4,$5,32
+  18 0014 080000AE 	sw $0,8($16)
+  19 0018 3E200400 	dsrl $4,$4,32
+  20 001c 2000BFFF 	sd $31,32($sp)
+  21 0020 1000B1FF 	sd $17,16($sp)
+  22              	.set noreorder
+  23              	.set nomacro
+  24 0024 0000000C 	jal malloc
+  25 0028 2D88C000 	move $17,$6
+  26              	.set macro
+  27              	.set reorder
+  28              	
+  29 002c 0A000424 	li $4,10
+  30 0030 18202402 	mult $4,$17,$4
+  31 0034 000002AE 	sw $2,0($16)
+  32 0038 3C200400 	dsll $4,$4,32
+  33              	.set noreorder
+  34              	.set nomacro
+  35 003c 0000000C 	jal malloc
+  36 0040 3E200400 	dsrl $4,$4,32
+  37              	.set macro
+  38              	.set reorder
+  39              	
+  40 0044 2000BFDF 	ld $31,32($sp)
+  41 0048 100011AE 	sw $17,16($16)
+  42 004c 1C0000AE 	sw $0,28($16)
+  43 0050 0C0002AE 	sw $2,12($16)
+  44 0054 140000A2 	sb $0,20($16)
+  45 0058 180000AE 	sw $0,24($16)
+  46 005c 150000A2 	sb $0,21($16)
+  47 0060 1000B1DF 	ld $17,16($sp)
+  48 0064 0000B0DF 	ld $16,0($sp)
+  49              	
+  50              	.set noreorder
+  51              	.set nomacro
+  52 0068 0800E003 	j $31
+  53 006c 3000BD27 	addu $sp,$sp,48
+  54              	.set macro
+  55              	.set reorder
+  56              	
+  57              	.end _ZN13CEmuMovieClipC2Ejj
+GAS LISTING  			page 2
+
+
+  58              	$Lfe1:
+  59              	.size _ZN13CEmuMovieClipC2Ejj,$Lfe1-_ZN13CEmuMovieClipC2Ejj
+  60              	.align 2
+  61              	.p2align 3,,7
+  62              	.globl _ZN13CEmuMovieClipC1Ejj
+  63              	.ent _ZN13CEmuMovieClipC1Ejj
+  64              	_ZN13CEmuMovieClipC1Ejj:
+  65              	.frame $sp,48,$31
+  66              	.mask 0x80030000,-16
+  67              	.fmask 0x00000000,0
+  68 0070 D0FFBD27 	subu $sp,$sp,48
+  69 0074 0000B0FF 	sd $16,0($sp)
+  70 0078 2D808000 	move $16,$4
+  71 007c 040005AE 	sw $5,4($16)
+  72 0080 3C200500 	dsll $4,$5,32
+  73 0084 080000AE 	sw $0,8($16)
+  74 0088 3E200400 	dsrl $4,$4,32
+  75 008c 2000BFFF 	sd $31,32($sp)
+  76 0090 1000B1FF 	sd $17,16($sp)
+  77              	.set noreorder
+  78              	.set nomacro
+  79 0094 0000000C 	jal malloc
+  80 0098 2D88C000 	move $17,$6
+  81              	.set macro
+  82              	.set reorder
+  83              	
+  84 009c 0A000424 	li $4,10
+  85 00a0 18202402 	mult $4,$17,$4
+  86 00a4 000002AE 	sw $2,0($16)
+  87 00a8 3C200400 	dsll $4,$4,32
+  88              	.set noreorder
+  89              	.set nomacro
+  90 00ac 0000000C 	jal malloc
+  91 00b0 3E200400 	dsrl $4,$4,32
+  92              	.set macro
+  93              	.set reorder
+  94              	
+  95 00b4 2000BFDF 	ld $31,32($sp)
+  96 00b8 100011AE 	sw $17,16($16)
+  97 00bc 1C0000AE 	sw $0,28($16)
+  98 00c0 0C0002AE 	sw $2,12($16)
+  99 00c4 140000A2 	sb $0,20($16)
+ 100 00c8 180000AE 	sw $0,24($16)
+ 101 00cc 150000A2 	sb $0,21($16)
+ 102 00d0 1000B1DF 	ld $17,16($sp)
+ 103 00d4 0000B0DF 	ld $16,0($sp)
+ 104              	
+ 105              	.set noreorder
+ 106              	.set nomacro
+ 107 00d8 0800E003 	j $31
+ 108 00dc 3000BD27 	addu $sp,$sp,48
+ 109              	.set macro
+ 110              	.set reorder
+ 111              	
+ 112              	.end _ZN13CEmuMovieClipC1Ejj
+ 113              	$Lfe2:
+ 114              	.size _ZN13CEmuMovieClipC1Ejj,$Lfe2-_ZN13CEmuMovieClipC1Ejj
+GAS LISTING  			page 3
+
+
+ 115              	.align 2
+ 116              	.p2align 3,,7
+ 117              	.globl _ZN13CEmuMovieClipD2Ev
+ 118              	.ent _ZN13CEmuMovieClipD2Ev
+ 119              	_ZN13CEmuMovieClipD2Ev:
+ 120              	.frame $sp,16,$31
+ 121              	.mask 0x80000000,-16
+ 122              	.fmask 0x00000000,0
+ 123 00e0 F0FFBD27 	subu $sp,$sp,16
+ 124 00e4 0000BFFF 	sd $31,0($sp)
+ 125              	.set noreorder
+ 126              	.set nomacro
+ 127 00e8 0000000C 	jal free
+ 128 00ec 0000848C 	lw $4,0($4)
+ 129              	.set macro
+ 130              	.set reorder
+ 131              	
+ 132 00f0 0000BFDF 	ld $31,0($sp)
+ 133              	
+ 134              	.set noreorder
+ 135              	.set nomacro
+ 136 00f4 0800E003 	j $31
+ 137 00f8 1000BD27 	addu $sp,$sp,16
+ 138              	.set macro
+ 139              	.set reorder
+ 140              	
+ 141              	.end _ZN13CEmuMovieClipD2Ev
+ 142              	$Lfe3:
+ 143              	.size _ZN13CEmuMovieClipD2Ev,$Lfe3-_ZN13CEmuMovieClipD2Ev
+ 144              	.align 2
+ 145 00fc 00000000 	.p2align 3,,7
+ 146              	.globl _ZN13CEmuMovieClipD1Ev
+ 147              	.ent _ZN13CEmuMovieClipD1Ev
+ 148              	_ZN13CEmuMovieClipD1Ev:
+ 149              	.frame $sp,16,$31
+ 150              	.mask 0x80000000,-16
+ 151              	.fmask 0x00000000,0
+ 152 0100 F0FFBD27 	subu $sp,$sp,16
+ 153 0104 0000BFFF 	sd $31,0($sp)
+ 154              	.set noreorder
+ 155              	.set nomacro
+ 156 0108 0000000C 	jal free
+ 157 010c 0000848C 	lw $4,0($4)
+ 158              	.set macro
+ 159              	.set reorder
+ 160              	
+ 161 0110 0000BFDF 	ld $31,0($sp)
+ 162              	
+ 163              	.set noreorder
+ 164              	.set nomacro
+ 165 0114 0800E003 	j $31
+ 166 0118 1000BD27 	addu $sp,$sp,16
+ 167              	.set macro
+ 168              	.set reorder
+ 169              	
+ 170              	.end _ZN13CEmuMovieClipD1Ev
+ 171              	$Lfe4:
+GAS LISTING  			page 4
+
+
+ 172              	.size _ZN13CEmuMovieClipD1Ev,$Lfe4-_ZN13CEmuMovieClipD1Ev
+ 173              	.rdata
+ 174              	.align 3
+ 175              	$LC1:
+ 176 0000 21497352 	.ascii "!IsRecording()\000"
+ 176      65636F72 
+ 176      64696E67 
+ 176      282900
+ 177 000f 00       	.align 3
+ 178              	$LC0:
+ 179 0010 2E2E2F2E 	.ascii "../../../Gep/Source/common/emumovie.cpp\000"
+ 179      2E2F2E2E 
+ 179      2F476570 
+ 179      2F536F75 
+ 179      7263652F 
+ 180              	.align 3
+ 181              	$LC2:
+ 182 0038 21497350 	.ascii "!IsPlaying()\000"
+ 182      6C617969 
+ 182      6E672829 
+ 182      00
+ 183 0045 000000   	.align 3
+ 184              	$LC3:
+ 185 0048 6D5F7553 	.ascii "m_uStateSize <= m_uMaxStateSize\000"
+ 185      74617465 
+ 185      53697A65 
+ 185      203C3D20 
+ 185      6D5F754D 
+ 186              	.text
+ 187              	.align 2
+ 188 011c 00000000 	.p2align 3,,7
+ 189              	.globl _ZN13CEmuMovieClip11RecordBeginEP10CEmuSystem
+ 190              	.ent _ZN13CEmuMovieClip11RecordBeginEP10CEmuSystem
+ 191              	_ZN13CEmuMovieClip11RecordBeginEP10CEmuSystem:
+ 192              	.frame $sp,48,$31
+ 193              	.mask 0x80030000,-16
+ 194              	.fmask 0x00000000,0
+ 195 0120 D0FFBD27 	subu $sp,$sp,48
+ 196 0124 0000063C 	lui $6,%hi($LC1)
+ 197 0128 1000B1FF 	sd $17,16($sp)
+ 198 012c 0000C624 	addiu $6,$6,%lo($LC1)
+ 199 0130 0000B0FF 	sd $16,0($sp)
+ 200 0134 2D88A000 	move $17,$5
+ 201 0138 2000BFFF 	sd $31,32($sp)
+ 202 013c 2D808000 	move $16,$4
+ 203 0140 14008290 	lbu $2,20($4)
+ 204 0144 0000043C 	lui $4,%hi($LC0)
+ 205              	.set noreorder
+ 206              	.set nomacro
+ 207 0148 2B004014 	bne $2,$0,$L18
+ 208 014c 10008424 	addiu $4,$4,%lo($LC0)
+ 209              	.set macro
+ 210              	.set reorder
+ 211              	
+ 212 0150 15000292 	lbu $2,21($16)
+ 213              	$L23:
+ 214 0154 0000063C 	lui $6,%hi($LC2)
+GAS LISTING  			page 5
+
+
+ 215 0158 0000043C 	lui $4,%hi($LC0)
+ 216 015c 24000524 	li $5,36
+ 217 0160 3800C624 	addiu $6,$6,%lo($LC2)
+ 218              	.set noreorder
+ 219              	.set nomacro
+ 220 0164 20004014 	bne $2,$0,$L19
+ 221 0168 10008424 	addiu $4,$4,%lo($LC0)
+ 222              	.set macro
+ 223              	.set reorder
+ 224              	
+ 225 016c 0000238E 	lw $3,0($17)
+ 226              	$L22:
+ 227 0170 2000628C 	lw $2,32($3)
+ 228              	
+ 229              	.set noreorder
+ 230              	.set nomacro
+ 231 0174 09F84000 	jal $31,$2
+ 232 0178 2D202002 	move $4,$17
+ 233              	.set macro
+ 234              	.set reorder
+ 235              	
+ 236 017c 27000524 	li $5,39
+ 237 0180 0400038E 	lw $3,4($16)
+ 238 0184 0000043C 	lui $4,%hi($LC0)
+ 239 0188 0000063C 	lui $6,%hi($LC3)
+ 240 018c 10008424 	addiu $4,$4,%lo($LC0)
+ 241 0190 2B186200 	sltu $3,$3,$2
+ 242 0194 4800C624 	addiu $6,$6,%lo($LC3)
+ 243              	.set noreorder
+ 244              	.set nomacro
+ 245 0198 0F006014 	bne $3,$0,$L20
+ 246 019c 080002AE 	sw $2,8($16)
+ 247              	.set macro
+ 248              	.set reorder
+ 249              	
+ 250 01a0 0000228E 	lw $2,0($17)
+ 251              	$L21:
+ 252 01a4 2D202002 	move $4,$17
+ 253 01a8 0000058E 	lw $5,0($16)
+ 254 01ac 1800438C 	lw $3,24($2)
+ 255              	
+ 256              	.set noreorder
+ 257              	.set nomacro
+ 258 01b0 09F86000 	jal $31,$3
+ 259 01b4 0800068E 	lw $6,8($16)
+ 260              	.set macro
+ 261              	.set reorder
+ 262              	
+ 263 01b8 1000B1DF 	ld $17,16($sp)
+ 264 01bc 01000224 	li $2,1
+ 265 01c0 180000AE 	sw $0,24($16)
+ 266 01c4 140002A2 	sb $2,20($16)
+ 267 01c8 2000BFDF 	ld $31,32($sp)
+ 268 01cc 0000B0DF 	ld $16,0($sp)
+ 269              	
+ 270              	.set noreorder
+ 271              	.set nomacro
+GAS LISTING  			page 6
+
+
+ 272 01d0 0800E003 	j $31
+ 273 01d4 3000BD27 	addu $sp,$sp,48
+ 274              	.set macro
+ 275              	.set reorder
+ 276              	
+ 277              	.p2align 3
+ 278              	$L20:
+ 279 01d8 0000000C 	jal __assert
+ 279      00000000 
+ 280              	.set noreorder
+ 281              	.set nomacro
+ 282 01e0 F0FF0010 	b $L21
+ 283 01e4 0000228E 	lw $2,0($17)
+ 284              	.set macro
+ 285              	.set reorder
+ 286              	
+ 287              	.p2align 3
+ 288              	$L19:
+ 289 01e8 0000000C 	jal __assert
+ 289      00000000 
+ 290              	.set noreorder
+ 291              	.set nomacro
+ 292 01f0 DFFF0010 	b $L22
+ 293 01f4 0000238E 	lw $3,0($17)
+ 294              	.set macro
+ 295              	.set reorder
+ 296              	
+ 297              	.p2align 3
+ 298              	$L18:
+ 299              	.set noreorder
+ 300              	.set nomacro
+ 301 01f8 0000000C 	jal __assert
+ 302 01fc 23000524 	li $5,35
+ 303              	.set macro
+ 304              	.set reorder
+ 305              	
+ 306              	.set noreorder
+ 307              	.set nomacro
+ 308 0200 D4FF0010 	b $L23
+ 309 0204 15000292 	lbu $2,21($16)
+ 310              	.set macro
+ 311              	.set reorder
+ 312              	
+ 313              	.end _ZN13CEmuMovieClip11RecordBeginEP10CEmuSystem
+ 314              	$Lfe5:
+ 315              	.size _ZN13CEmuMovieClip11RecordBeginEP10CEmuSystem,$Lfe5-_ZN13CEmuMovieClip11RecordBeginEP10CEmuSystem
+ 316              	.rdata
+ 317              	.align 3
+ 318              	$LC4:
+ 319 0068 49735265 	.ascii "IsRecording()\000"
+ 319      636F7264 
+ 319      696E6728 
+ 319      2900
+ 320              	.text
+ 321              	.align 2
+ 322              	.p2align 3,,7
+ 323              	.globl _ZN13CEmuMovieClip9RecordEndEv
+GAS LISTING  			page 7
+
+
+ 324              	.ent _ZN13CEmuMovieClip9RecordEndEv
+ 325              	_ZN13CEmuMovieClip9RecordEndEv:
+ 326              	.frame $sp,32,$31
+ 327              	.mask 0x80010000,-16
+ 328              	.fmask 0x00000000,0
+ 329 0208 E0FFBD27 	subu $sp,$sp,32
+ 330 020c 0000063C 	lui $6,%hi($LC4)
+ 331 0210 0000B0FF 	sd $16,0($sp)
+ 332 0214 6800C624 	addiu $6,$6,%lo($LC4)
+ 333 0218 1000BFFF 	sd $31,16($sp)
+ 334 021c 2D808000 	move $16,$4
+ 335 0220 32000524 	li $5,50
+ 336 0224 14008290 	lbu $2,20($4)
+ 337 0228 0000043C 	lui $4,%hi($LC0)
+ 338              	.set noreorder
+ 339              	.set nomacro
+ 340 022c 06004010 	beq $2,$0,$L28
+ 341 0230 10008424 	addiu $4,$4,%lo($LC0)
+ 342              	.set macro
+ 343              	.set reorder
+ 344              	
+ 345 0234 140000A2 	sb $0,20($16)
+ 346              	$L29:
+ 347 0238 1000BFDF 	ld $31,16($sp)
+ 348 023c 0000B0DF 	ld $16,0($sp)
+ 349              	
+ 350              	.set noreorder
+ 351              	.set nomacro
+ 352 0240 0800E003 	j $31
+ 353 0244 2000BD27 	addu $sp,$sp,32
+ 354              	.set macro
+ 355              	.set reorder
+ 356              	
+ 357              	.p2align 3
+ 358              	$L28:
+ 359 0248 0000000C 	jal __assert
+ 359      00000000 
+ 360              	.set noreorder
+ 361              	.set nomacro
+ 362 0250 F9FF0010 	b $L29
+ 363 0254 140000A2 	sb $0,20($16)
+ 364              	.set macro
+ 365              	.set reorder
+ 366              	
+ 367              	.end _ZN13CEmuMovieClip9RecordEndEv
+ 368              	$Lfe6:
+ 369              	.size _ZN13CEmuMovieClip9RecordEndEv,$Lfe6-_ZN13CEmuMovieClip9RecordEndEv
+ 370              	.align 2
+ 371              	.p2align 3,,7
+ 372              	.globl _ZN13CEmuMovieClip11RecordFrameER12EmuSysInputT
+ 373              	.ent _ZN13CEmuMovieClip11RecordFrameER12EmuSysInputT
+ 374              	_ZN13CEmuMovieClip11RecordFrameER12EmuSysInputT:
+ 375              	.frame $sp,0,$31
+ 376              	.mask 0x00000000,0
+ 377              	.fmask 0x00000000,0
+ 378 0258 1800868C 	lw $6,24($4)
+ 379 025c 1000828C 	lw $2,16($4)
+GAS LISTING  			page 8
+
+
+ 380              	
+ 381 0260 2B10C200 	sltu $2,$6,$2
+ 382              	.set noreorder
+ 383              	.set nomacro
+ 384 0264 10004010 	beq $2,$0,$L31
+ 385 0268 01000724 	li $7,1
+ 386              	.set macro
+ 387              	.set reorder
+ 388              	
+ 389 026c 0A000324 	li $3,10
+ 390 0270 0C00828C 	lw $2,12($4)
+ 391 0274 1840C300 	mult $8,$6,$3
+ 392 0278 21180201 	addu $3,$8,$2
+ 393 027c 0700A968 	ldl $9,7($5)
+ 394 0280 0000A96C 	ldr $9,0($5)
+ 395 0284 0800A284 	lh $2,8($5)
+ 396 0288 070069B0 	sdl $9,7($3)
+ 397 028c 000069B4 	sdr $9,0($3)
+ 398 0290 080062A4 	sh $2,8($3)
+ 399 0294 1800828C 	lw $2,24($4)
+ 400              	
+ 401 0298 01004224 	addu $2,$2,1
+ 402 029c 180082AC 	sw $2,24($4)
+ 403              	$L30:
+ 404              	.set noreorder
+ 405              	.set nomacro
+ 406 02a0 0800E003 	j $31
+ 407 02a4 2D10E000 	move $2,$7
+ 408              	.set macro
+ 409              	.set reorder
+ 410              	
+ 411              	.p2align 3
+ 412              	$L31:
+ 413              	.set noreorder
+ 414              	.set nomacro
+ 415 02a8 FDFF0010 	b $L30
+ 416 02ac 2D380000 	move $7,$0
+ 417              	.set macro
+ 418              	.set reorder
+ 419              	
+ 420              	.end _ZN13CEmuMovieClip11RecordFrameER12EmuSysInputT
+ 421              	$Lfe7:
+ 422              	.size _ZN13CEmuMovieClip11RecordFrameER12EmuSysInputT,$Lfe7-_ZN13CEmuMovieClip11RecordFrameER12EmuSysInputT
+ 423              	.rdata
+ 424 0076 0000     	.align 3
+ 425              	$LC5:
+ 426 0078 6D5F7553 	.ascii "m_uStateSize > 0\000"
+ 426      74617465 
+ 426      53697A65 
+ 426      203E2030 
+ 426      00
+ 427              	.text
+ 428              	.align 2
+ 429              	.p2align 3,,7
+ 430              	.globl _ZN13CEmuMovieClip9PlayBeginEP10CEmuSystem
+ 431              	.ent _ZN13CEmuMovieClip9PlayBeginEP10CEmuSystem
+ 432              	_ZN13CEmuMovieClip9PlayBeginEP10CEmuSystem:
+GAS LISTING  			page 9
+
+
+ 433              	.frame $sp,48,$31
+ 434              	.mask 0x80030000,-16
+ 435              	.fmask 0x00000000,0
+ 436 02b0 D0FFBD27 	subu $sp,$sp,48
+ 437 02b4 0000063C 	lui $6,%hi($LC1)
+ 438 02b8 1000B1FF 	sd $17,16($sp)
+ 439 02bc 0000C624 	addiu $6,$6,%lo($LC1)
+ 440 02c0 0000B0FF 	sd $16,0($sp)
+ 441 02c4 2D88A000 	move $17,$5
+ 442 02c8 2000BFFF 	sd $31,32($sp)
+ 443 02cc 2D808000 	move $16,$4
+ 444 02d0 14008290 	lbu $2,20($4)
+ 445 02d4 0000043C 	lui $4,%hi($LC0)
+ 446              	.set noreorder
+ 447              	.set nomacro
+ 448 02d8 25004014 	bne $2,$0,$L41
+ 449 02dc 10008424 	addiu $4,$4,%lo($LC0)
+ 450              	.set macro
+ 451              	.set reorder
+ 452              	
+ 453 02e0 15000292 	lbu $2,21($16)
+ 454              	$L46:
+ 455 02e4 0000043C 	lui $4,%hi($LC0)
+ 456 02e8 0000063C 	lui $6,%hi($LC2)
+ 457 02ec 47000524 	li $5,71
+ 458 02f0 10008424 	addiu $4,$4,%lo($LC0)
+ 459              	.set noreorder
+ 460              	.set nomacro
+ 461 02f4 1A004014 	bne $2,$0,$L42
+ 462 02f8 3800C624 	addiu $6,$6,%lo($LC2)
+ 463              	.set macro
+ 464              	.set reorder
+ 465              	
+ 466 02fc 0800028E 	lw $2,8($16)
+ 467              	$L45:
+ 468 0300 0000043C 	lui $4,%hi($LC0)
+ 469 0304 0000063C 	lui $6,%hi($LC5)
+ 470 0308 48000524 	li $5,72
+ 471 030c 10008424 	addiu $4,$4,%lo($LC0)
+ 472              	.set noreorder
+ 473              	.set nomacro
+ 474 0310 0F004010 	beq $2,$0,$L43
+ 475 0314 7800C624 	addiu $6,$6,%lo($LC5)
+ 476              	.set macro
+ 477              	.set reorder
+ 478              	
+ 479 0318 0000228E 	lw $2,0($17)
+ 480              	$L44:
+ 481 031c 2D202002 	move $4,$17
+ 482 0320 0000058E 	lw $5,0($16)
+ 483 0324 1C00438C 	lw $3,28($2)
+ 484              	
+ 485              	.set noreorder
+ 486              	.set nomacro
+ 487 0328 09F86000 	jal $31,$3
+ 488 032c 0800068E 	lw $6,8($16)
+ 489              	.set macro
+GAS LISTING  			page 10
+
+
+ 490              	.set reorder
+ 491              	
+ 492 0330 1000B1DF 	ld $17,16($sp)
+ 493 0334 01000224 	li $2,1
+ 494 0338 1C0000AE 	sw $0,28($16)
+ 495 033c 150002A2 	sb $2,21($16)
+ 496 0340 2000BFDF 	ld $31,32($sp)
+ 497 0344 0000B0DF 	ld $16,0($sp)
+ 498              	
+ 499              	.set noreorder
+ 500              	.set nomacro
+ 501 0348 0800E003 	j $31
+ 502 034c 3000BD27 	addu $sp,$sp,48
+ 503              	.set macro
+ 504              	.set reorder
+ 505              	
+ 506              	.p2align 3
+ 507              	$L43:
+ 508 0350 0000000C 	jal __assert
+ 508      00000000 
+ 509              	.set noreorder
+ 510              	.set nomacro
+ 511 0358 F0FF0010 	b $L44
+ 512 035c 0000228E 	lw $2,0($17)
+ 513              	.set macro
+ 514              	.set reorder
+ 515              	
+ 516              	.p2align 3
+ 517              	$L42:
+ 518 0360 0000000C 	jal __assert
+ 518      00000000 
+ 519              	.set noreorder
+ 520              	.set nomacro
+ 521 0368 E5FF0010 	b $L45
+ 522 036c 0800028E 	lw $2,8($16)
+ 523              	.set macro
+ 524              	.set reorder
+ 525              	
+ 526              	.p2align 3
+ 527              	$L41:
+ 528              	.set noreorder
+ 529              	.set nomacro
+ 530 0370 0000000C 	jal __assert
+ 531 0374 46000524 	li $5,70
+ 532              	.set macro
+ 533              	.set reorder
+ 534              	
+ 535              	.set noreorder
+ 536              	.set nomacro
+ 537 0378 DAFF0010 	b $L46
+ 538 037c 15000292 	lbu $2,21($16)
+ 539              	.set macro
+ 540              	.set reorder
+ 541              	
+ 542              	.end _ZN13CEmuMovieClip9PlayBeginEP10CEmuSystem
+ 543              	$Lfe8:
+ 544              	.size _ZN13CEmuMovieClip9PlayBeginEP10CEmuSystem,$Lfe8-_ZN13CEmuMovieClip9PlayBeginEP10CEmuSystem
+GAS LISTING  			page 11
+
+
+ 545              	.rdata
+ 546 0089 00000000 	.align 3
+ 546      000000
+ 547              	$LC6:
+ 548 0090 4973506C 	.ascii "IsPlaying()\000"
+ 548      6179696E 
+ 548      67282900 
+ 549 009c 00000000 	.text
+ 550              	.align 2
+ 551              	.p2align 3,,7
+ 552              	.globl _ZN13CEmuMovieClip7PlayEndEv
+ 553              	.ent _ZN13CEmuMovieClip7PlayEndEv
+ 554              	_ZN13CEmuMovieClip7PlayEndEv:
+ 555              	.frame $sp,32,$31
+ 556              	.mask 0x80010000,-16
+ 557              	.fmask 0x00000000,0
+ 558 0380 E0FFBD27 	subu $sp,$sp,32
+ 559 0384 0000063C 	lui $6,%hi($LC6)
+ 560 0388 0000B0FF 	sd $16,0($sp)
+ 561 038c 9000C624 	addiu $6,$6,%lo($LC6)
+ 562 0390 1000BFFF 	sd $31,16($sp)
+ 563 0394 2D808000 	move $16,$4
+ 564 0398 53000524 	li $5,83
+ 565 039c 15008290 	lbu $2,21($4)
+ 566 03a0 0000043C 	lui $4,%hi($LC0)
+ 567              	.set noreorder
+ 568              	.set nomacro
+ 569 03a4 06004010 	beq $2,$0,$L51
+ 570 03a8 10008424 	addiu $4,$4,%lo($LC0)
+ 571              	.set macro
+ 572              	.set reorder
+ 573              	
+ 574 03ac 150000A2 	sb $0,21($16)
+ 575              	$L52:
+ 576 03b0 1000BFDF 	ld $31,16($sp)
+ 577 03b4 0000B0DF 	ld $16,0($sp)
+ 578              	
+ 579              	.set noreorder
+ 580              	.set nomacro
+ 581 03b8 0800E003 	j $31
+ 582 03bc 2000BD27 	addu $sp,$sp,32
+ 583              	.set macro
+ 584              	.set reorder
+ 585              	
+ 586              	.p2align 3
+ 587              	$L51:
+ 588 03c0 0000000C 	jal __assert
+ 588      00000000 
+ 589              	.set noreorder
+ 590              	.set nomacro
+ 591 03c8 F9FF0010 	b $L52
+ 592 03cc 150000A2 	sb $0,21($16)
+ 593              	.set macro
+ 594              	.set reorder
+ 595              	
+ 596              	.end _ZN13CEmuMovieClip7PlayEndEv
+ 597              	$Lfe9:
+GAS LISTING  			page 12
+
+
+ 598              	.size _ZN13CEmuMovieClip7PlayEndEv,$Lfe9-_ZN13CEmuMovieClip7PlayEndEv
+ 599              	.align 2
+ 600              	.p2align 3,,7
+ 601              	.globl _ZN13CEmuMovieClip9PlayFrameER12EmuSysInputT
+ 602              	.ent _ZN13CEmuMovieClip9PlayFrameER12EmuSysInputT
+ 603              	_ZN13CEmuMovieClip9PlayFrameER12EmuSysInputT:
+ 604              	.frame $sp,0,$31
+ 605              	.mask 0x00000000,0
+ 606              	.fmask 0x00000000,0
+ 607 03d0 1C00868C 	lw $6,28($4)
+ 608 03d4 1800828C 	lw $2,24($4)
+ 609              	
+ 610 03d8 2B10C200 	sltu $2,$6,$2
+ 611              	.set noreorder
+ 612              	.set nomacro
+ 613 03dc 10004010 	beq $2,$0,$L54
+ 614 03e0 01000724 	li $7,1
+ 615              	.set macro
+ 616              	.set reorder
+ 617              	
+ 618 03e4 0A000324 	li $3,10
+ 619 03e8 0C00828C 	lw $2,12($4)
+ 620 03ec 1840C300 	mult $8,$6,$3
+ 621 03f0 21180201 	addu $3,$8,$2
+ 622 03f4 07006968 	ldl $9,7($3)
+ 623 03f8 0000696C 	ldr $9,0($3)
+ 624 03fc 08006284 	lh $2,8($3)
+ 625 0400 0700A9B0 	sdl $9,7($5)
+ 626 0404 0000A9B4 	sdr $9,0($5)
+ 627 0408 0800A2A4 	sh $2,8($5)
+ 628 040c 1C00828C 	lw $2,28($4)
+ 629              	
+ 630 0410 01004224 	addu $2,$2,1
+ 631 0414 1C0082AC 	sw $2,28($4)
+ 632              	$L53:
+ 633              	.set noreorder
+ 634              	.set nomacro
+ 635 0418 0800E003 	j $31
+ 636 041c 2D10E000 	move $2,$7
+ 637              	.set macro
+ 638              	.set reorder
+ 639              	
+ 640              	.p2align 3
+ 641              	$L54:
+ 642              	.set noreorder
+ 643              	.set nomacro
+ 644 0420 FDFF0010 	b $L53
+ 645 0424 2D380000 	move $7,$0
+ 646              	.set macro
+ 647              	.set reorder
+ 648              	
+ 649              	.end _ZN13CEmuMovieClip9PlayFrameER12EmuSysInputT
+ 650              	$Lfe10:
+ 651              	.size _ZN13CEmuMovieClip9PlayFrameER12EmuSysInputT,$Lfe10-_ZN13CEmuMovieClip9PlayFrameER12EmuSysInputT
+ 652              	.ident "GCC: (GNU) 3.2.2"

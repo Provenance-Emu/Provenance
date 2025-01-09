@@ -1,0 +1,270 @@
+#!/usr/bin/env bash
+#
+# Copyright (c) 2011, 2012, Simon Howard
+#
+# Permission to use, copy, modify, and/or distribute this software
+# for any purpose with or without fee is hereby granted, provided
+# that the above copyright notice and this permission notice appear
+# in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+# WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+# AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+# LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+# NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+#
+# Check the output of the lha tool matches the expected output given
+# by the Unix LHA tool exactly.
+#
+
+set -eu
+
+. test_common.sh
+
+test_archive() {
+	local archive=$1
+
+	# Gather output from Unix LHA tool?
+
+	if $GATHER; then
+		if [ ! -e output/$archive-t.txt ]; then
+			$LHA_TOOL t archives/$archive > output/$archive-t.txt
+		fi
+	fi
+
+	# CRC test:
+
+	test_lha t archives/$archive > "$wd/t.txt"
+
+	if ! diff -u output/$archive-t.txt "$wd/t.txt"; then
+		fail "Output not as expected for lha t $archive"
+	fi
+
+	rm -f "$wd/t.txt"
+
+	# Perform the same test, reading from stdin.
+
+	test_lha t - < archives/$archive > "$wd/t.txt"
+
+	if ! diff -u output/$archive-t.txt "$wd/t.txt"; then
+		fail "Output not as expected for lha t - < $archive"
+	fi
+
+	rm -f "$wd/t.txt"
+}
+
+# Length-specific tests:
+
+test_archive lengths/lh1-0.lzh
+test_archive lengths/lh1-1.lzh
+test_archive lengths/lh1-64k.lzh
+test_archive lengths/lh1-1m.lzh
+test_archive lengths/lh1-2m.lzh
+
+test_archive lengths/lz5-0.lzs
+test_archive lengths/lz5-1.lzs
+test_archive lengths/lz5-64k.lzs
+test_archive lengths/lz5-1m.lzs
+
+# All other archives:
+
+test_archive explzh_723/h0_lh0.lzh
+test_archive explzh_723/h0_lh5.lzh
+test_archive explzh_723/h0_lh6.lzh
+test_archive explzh_723/h0_lh7.lzh
+test_archive explzh_723/h0_subdir.lzh
+test_archive explzh_723/h1_lh0.lzh
+test_archive explzh_723/h1_lh5.lzh
+test_archive explzh_723/h1_lh6.lzh
+test_archive explzh_723/h1_lh7.lzh
+test_archive explzh_723/h1_subdir.lzh
+test_archive explzh_723/h2_lh0.lzh
+test_archive explzh_723/h2_lh5.lzh
+test_archive explzh_723/h2_lh6.lzh
+test_archive explzh_723/h2_lh7.lzh
+test_archive explzh_723/h2_subdir.lzh
+test_archive explzh_723/declha_sfx_ansi.exe
+test_archive explzh_723/declha_sfx_unicode.exe
+
+test_archive larc333/lz4.lzs
+test_archive larc333/lz5.lzs
+test_archive larc333/sfx.com
+test_archive larc333/subdir.lzs
+test_archive larc333/long.lzs
+
+test_archive lharc113/lh0.lzh
+test_archive lharc113/lh1.lzh
+test_archive lharc113/sfx.com
+test_archive lharc113/subdir.lzh
+test_archive lharc113/long.lzh
+
+test_archive lha213/lh0.lzh
+test_archive lha213/lh5.lzh
+test_archive lha213/lh5_long.lzh
+test_archive lha213/sfx.exe
+test_archive lha213/subdir.lzh
+
+test_archive lha255e/lh0.lzh
+test_archive lha255e/lh5.lzh
+test_archive lha255e/sfx.exe
+test_archive lha255e/subdir.lzh
+
+test_archive lhark04d/lh0.lzh
+test_archive lhark04d/lh5.lzh
+test_archive lhark04d/lh7.lzh
+
+test_archive lha_unix114i/h0_lh0.lzh
+test_archive lha_unix114i/h0_lh5.lzh
+test_archive lha_unix114i/h0_lh6.lzh
+test_archive lha_unix114i/h0_lh7.lzh
+#test_archive lha_unix114i/h0_subdir.lzh
+test_archive lha_unix114i/h1_lh0.lzh
+test_archive lha_unix114i/h1_lh5.lzh
+test_archive lha_unix114i/h1_lh6.lzh
+test_archive lha_unix114i/h1_lh7.lzh
+test_archive lha_unix114i/h1_subdir.lzh
+test_archive lha_unix114i/h2_lh0.lzh
+test_archive lha_unix114i/h2_lh5.lzh
+test_archive lha_unix114i/h2_lh6.lzh
+test_archive lha_unix114i/h2_lh7.lzh
+test_archive lha_unix114i/h2_subdir.lzh
+test_archive lha_unix114i/lh6_long.lzh
+test_archive lha_unix114i/lh7_long.lzh
+
+test_archive lha_os2_208/lh0.lzh
+test_archive lha_os2_208/lh5.lzh
+test_archive lha_os2_208/lfn.lzh
+test_archive lha_os2_208/subdir.lzh
+test_archive lha_os2_208/lh1.lzh
+test_archive lha_os2_208/h3_lh0.lzh
+test_archive lha_os2_208/h3_lh5.lzh
+test_archive lha_os2_208/h3_lfn.lzh
+test_archive lha_os2_208/h3_subdir.lzh
+
+test_archive pmarc124/pm0.pma
+test_archive pmarc124/pm1.pma
+test_archive pmarc124/pm1_long.pma
+test_archive pmarc124/mtcd.pma
+
+test_archive pmarc2/pm0.pma
+test_archive pmarc2/pm2.pma
+test_archive pmarc2/comment.pma
+test_archive pmarc2/sfx.com
+test_archive pmarc2/long.pma
+
+test_archive lha_amiga_122/level0.lzh
+test_archive lha_amiga_122/level1.lzh
+test_archive lha_amiga_122/level2.lzh
+test_archive lha_amiga_122/lh0.lzh
+test_archive lha_amiga_122/lh1.lzh
+test_archive lha_amiga_122/lh4_long.lzh
+test_archive lha_amiga_122/lh4.lzh
+test_archive lha_amiga_122/lh5.lzh
+test_archive lha_amiga_122/subdir.lzh
+test_archive lha_amiga_122/sfx.run
+test_archive lha_amiga_122/lh0_dirs_bug.lzh
+
+test_archive lha_amiga_212/level0.lzh
+test_archive lha_amiga_212/level1.lzh
+test_archive lha_amiga_212/level2.lzh
+test_archive lha_amiga_212/lh1.lzh
+test_archive lha_amiga_212/lh6.lzh
+
+test_archive lharc_atari_313a/lh0.lzh
+test_archive lharc_atari_313a/lh5.lzh
+test_archive lharc_atari_313a/lz5.lzh
+test_archive lharc_atari_313a/subdir.lzh
+test_archive lharc_atari_313a/sfx.tos
+test_archive lharc_atari_313a/shorter.lzh
+test_archive lharc_atari_313a/h1_lh5.lzh
+test_archive lharc_atari_313a/h1_lz5.lzh
+test_archive lharc_atari_313a/h1_subdir.lzh
+test_archive lharc_atari_313a/h2_lh5.lzh
+test_archive lharc_atari_313a/h2_lz5.lzh
+test_archive lharc_atari_313a/h2_subdir.lzh
+
+test_archive lha_x68k_213/h0_lh0.lzh
+test_archive lha_x68k_213/h0_lh5.lzh
+test_archive lha_x68k_213/h0_subdir.lzh
+test_archive lha_x68k_213/h1_lh0.lzh
+test_archive lha_x68k_213/h1_lh5.lzh
+test_archive lha_x68k_213/h1_subdir.lzh
+test_archive lha_x68k_213/h2_lh0.lzh
+test_archive lha_x68k_213/h2_lh5.lzh
+test_archive lha_x68k_213/h2_subdir.lzh
+test_archive lha_x68k_213/sfx.x
+
+test_archive maclha_224/l0_lh0.lzh
+test_archive maclha_224/l0_lh1.lzh
+test_archive maclha_224/l0_lh5.lzh
+test_archive maclha_224/l0_nm_lh5.lzh
+test_archive maclha_224/l1_full_subdir.lzh
+test_archive maclha_224/l1_lh0.lzh
+test_archive maclha_224/l1_lh1.lzh
+test_archive maclha_224/l1_lh5.lzh
+test_archive maclha_224/l1_nm_lh5.lzh
+test_archive maclha_224/l1_subdir.lzh
+test_archive maclha_224/l2_full_subdir.lzh
+test_archive maclha_224/l2_lh0.lzh
+test_archive maclha_224/l2_lh1.lzh
+test_archive maclha_224/l2_lh5.lzh
+test_archive maclha_224/l2_nm_lh5.lzh
+test_archive maclha_224/l2_subdir.lzh
+
+test_archive lhmelt_16536/h0_lh0.lzh
+test_archive lhmelt_16536/h0_lh1.lzh
+test_archive lhmelt_16536/h0_lh5.lzh
+test_archive lhmelt_16536/h0_lh6.lzh
+test_archive lhmelt_16536/h0_lh7.lzh
+test_archive lhmelt_16536/h0_subdir.lzh
+test_archive lhmelt_16536/h1_lh0.lzh
+test_archive lhmelt_16536/h1_lh1.lzh
+test_archive lhmelt_16536/h1_lh5.lzh
+test_archive lhmelt_16536/h1_subdir.lzh
+test_archive lhmelt_16536/h2_lh0.lzh
+test_archive lhmelt_16536/h2_lh1.lzh
+test_archive lhmelt_16536/h2_lh5.lzh
+test_archive lhmelt_16536/h2_subdir.lzh
+test_archive lhmelt_16536/sfx_winsfx_213.exe
+test_archive lhmelt_16536/sfx_winsfx32_213.exe
+test_archive lhmelt_16536/sfx_winsfx32m_250.exe
+test_archive lhmelt_16536/sfx_winsfxm_250.exe
+
+test_archive lha_osk_201/h0_lh0.lzh
+test_archive lha_osk_201/h0_lh1.lzh
+test_archive lha_osk_201/h0_lh5.lzh
+#test_archive lha_osk_201/h0_subdir.lzh
+test_archive lha_osk_201/h1_lh0.lzh
+test_archive lha_osk_201/h1_lh1.lzh
+test_archive lha_osk_201/h1_lh5.lzh
+test_archive lha_osk_201/h1_subdir.lzh
+test_archive lha_osk_201/h2_lh0.lzh
+test_archive lha_osk_201/h2_lh1.lzh
+test_archive lha_osk_201/h2_lh5.lzh
+test_archive lha_osk_201/h2_subdir.lzh
+
+test_archive lha_os9_211c/h0_lh0.lzh
+test_archive lha_os9_211c/h0_lh1.lzh
+test_archive lha_os9_211c/h0_subdir.lzh
+test_archive lha_os9_211c/h1_lh0.lzh
+test_archive lha_os9_211c/h1_lh1.lzh
+test_archive lha_os9_211c/h1_subdir.lzh
+test_archive lha_os9_211c/h2_lh0.lzh
+test_archive lha_os9_211c/h2_lh1.lzh
+test_archive lha_os9_211c/h2_subdir.lzh
+
+test_archive unlha32/h2_lhx.lzh
+test_archive unlha32/lhx_long.lzh
+
+test_archive regression/abspath.lzh
+test_archive regression/badterm.lzh
+SUCCESS_EXPECTED=false test_archive regression/truncated.lzh
+
+test_archive generated/lzs/lzs.lzs
+test_archive generated/lzs/long.lzs
+test_archive generated/pm1/pm1.pma
+

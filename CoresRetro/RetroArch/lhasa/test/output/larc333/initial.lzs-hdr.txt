@@ -1,0 +1,8 @@
+filename: initial.bin
+compress_method: -lz5-
+compressed_length: 640
+length: 4234
+header_level: 0
+os_type: 0
+crc: 6005
+--

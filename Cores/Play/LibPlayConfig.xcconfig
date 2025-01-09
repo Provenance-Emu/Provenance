@@ -1,0 +1,7 @@
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = *
+INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = PVDebug.c
+OTHER_CFLAGS[sdk=iphonesimulator*][arch=*] = ""
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
+INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c
+OTHER_CFLAGS[sdk=appletvsimulator*][arch=*] = ""
+

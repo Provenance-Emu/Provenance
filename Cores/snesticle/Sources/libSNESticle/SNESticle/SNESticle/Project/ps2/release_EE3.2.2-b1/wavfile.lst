@@ -1,0 +1,749 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/wavfile.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN8CWavFileC2Ev
+   8              	.ent _ZN8CWavFileC2Ev
+   9              	_ZN8CWavFileC2Ev:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 0000023C 	lui $2,%hi(_ZTV8CWavFile+8)
+  14 0004 040080AC 	sw $0,4($4)
+  15 0008 08004224 	addiu $2,$2,%lo(_ZTV8CWavFile+8)
+  16              	.set noreorder
+  17              	.set nomacro
+  18 000c 0800E003 	j $31
+  19 0010 000082AC 	sw $2,0($4)
+  20              	.set macro
+  21              	.set reorder
+  22              	
+  23              	.end _ZN8CWavFileC2Ev
+  24              	$Lfe1:
+  25              	.size _ZN8CWavFileC2Ev,$Lfe1-_ZN8CWavFileC2Ev
+  26              	.align 2
+  27 0014 00000000 	.p2align 3,,7
+  28              	.globl _ZN8CWavFileC1Ev
+  29              	.ent _ZN8CWavFileC1Ev
+  30              	_ZN8CWavFileC1Ev:
+  31              	.frame $sp,0,$31
+  32              	.mask 0x00000000,0
+  33              	.fmask 0x00000000,0
+  34 0018 0000023C 	lui $2,%hi(_ZTV8CWavFile+8)
+  35 001c 040080AC 	sw $0,4($4)
+  36 0020 08004224 	addiu $2,$2,%lo(_ZTV8CWavFile+8)
+  37              	.set noreorder
+  38              	.set nomacro
+  39 0024 0800E003 	j $31
+  40 0028 000082AC 	sw $2,0($4)
+  41              	.set macro
+  42              	.set reorder
+  43              	
+  44              	.end _ZN8CWavFileC1Ev
+  45              	$Lfe2:
+  46              	.size _ZN8CWavFileC1Ev,$Lfe2-_ZN8CWavFileC1Ev
+  47              	.align 2
+  48 002c 00000000 	.p2align 3,,7
+  49              	.globl _ZN8CWavFileD2Ev
+  50              	.ent _ZN8CWavFileD2Ev
+  51              	_ZN8CWavFileD2Ev:
+  52              	.frame $sp,16,$31
+  53              	.mask 0x80000000,-16
+  54              	.fmask 0x00000000,0
+  55 0030 F0FFBD27 	subu $sp,$sp,16
+  56 0034 0000033C 	lui $3,%hi(_ZTV8CWavFile+8)
+  57 0038 0000BFFF 	sd $31,0($sp)
+GAS LISTING  			page 2
+
+
+  58 003c 08006324 	addiu $3,$3,%lo(_ZTV8CWavFile+8)
+  59 0040 000083AC 	sw $3,0($4)
+  60 0044 0400858C 	lw $5,4($4)
+  61              	
+  62 0048 0500A014 	bne $5,$0,$L11
+  62      00000000 
+  63 0050 0000BFDF 	ld $31,0($sp)
+  64              	$L12:
+  65              	.set noreorder
+  66              	.set nomacro
+  67 0054 0800E003 	j $31
+  68 0058 1000BD27 	addu $sp,$sp,16
+  69              	.set macro
+  70              	.set reorder
+  71              	
+  72 005c 00000000 	.p2align 3
+  73              	$L11:
+  74 0060 0000000C 	jal _ZN8CWavFile5CloseEv
+  74      00000000 
+  75              	.set noreorder
+  76              	.set nomacro
+  77 0068 FAFF0010 	b $L12
+  78 006c 0000BFDF 	ld $31,0($sp)
+  79              	.set macro
+  80              	.set reorder
+  81              	
+  82              	.end _ZN8CWavFileD2Ev
+  83              	$Lfe3:
+  84              	.size _ZN8CWavFileD2Ev,$Lfe3-_ZN8CWavFileD2Ev
+  85              	.align 2
+  86              	.p2align 3,,7
+  87              	.globl _ZN8CWavFileD1Ev
+  88              	.ent _ZN8CWavFileD1Ev
+  89              	_ZN8CWavFileD1Ev:
+  90              	.frame $sp,16,$31
+  91              	.mask 0x80000000,-16
+  92              	.fmask 0x00000000,0
+  93 0070 F0FFBD27 	subu $sp,$sp,16
+  94 0074 0000033C 	lui $3,%hi(_ZTV8CWavFile+8)
+  95 0078 0000BFFF 	sd $31,0($sp)
+  96 007c 08006324 	addiu $3,$3,%lo(_ZTV8CWavFile+8)
+  97 0080 000083AC 	sw $3,0($4)
+  98 0084 0400858C 	lw $5,4($4)
+  99              	
+ 100 0088 0500A014 	bne $5,$0,$L19
+ 100      00000000 
+ 101 0090 0000BFDF 	ld $31,0($sp)
+ 102              	$L20:
+ 103              	.set noreorder
+ 104              	.set nomacro
+ 105 0094 0800E003 	j $31
+ 106 0098 1000BD27 	addu $sp,$sp,16
+ 107              	.set macro
+ 108              	.set reorder
+ 109              	
+ 110 009c 00000000 	.p2align 3
+ 111              	$L19:
+GAS LISTING  			page 3
+
+
+ 112 00a0 0000000C 	jal _ZN8CWavFile5CloseEv
+ 112      00000000 
+ 113              	.set noreorder
+ 114              	.set nomacro
+ 115 00a8 FAFF0010 	b $L20
+ 116 00ac 0000BFDF 	ld $31,0($sp)
+ 117              	.set macro
+ 118              	.set reorder
+ 119              	
+ 120              	.end _ZN8CWavFileD1Ev
+ 121              	$Lfe4:
+ 122              	.size _ZN8CWavFileD1Ev,$Lfe4-_ZN8CWavFileD1Ev
+ 123              	.align 2
+ 124              	.p2align 3,,7
+ 125              	.globl _ZN8CWavFileD0Ev
+ 126              	.ent _ZN8CWavFileD0Ev
+ 127              	_ZN8CWavFileD0Ev:
+ 128              	.frame $sp,32,$31
+ 129              	.mask 0x80010000,-16
+ 130              	.fmask 0x00000000,0
+ 131 00b0 E0FFBD27 	subu $sp,$sp,32
+ 132 00b4 0000023C 	lui $2,%hi(_ZTV8CWavFile+8)
+ 133 00b8 0000B0FF 	sd $16,0($sp)
+ 134 00bc 08004224 	addiu $2,$2,%lo(_ZTV8CWavFile+8)
+ 135 00c0 1000BFFF 	sd $31,16($sp)
+ 136 00c4 000082AC 	sw $2,0($4)
+ 137 00c8 0400838C 	lw $3,4($4)
+ 138              	
+ 139              	.set noreorder
+ 140              	.set nomacro
+ 141 00cc 08006014 	bne $3,$0,$L27
+ 142 00d0 2D808000 	move $16,$4
+ 143              	.set macro
+ 144              	.set reorder
+ 145              	
+ 146              	$L25:
+ 147              	.set noreorder
+ 148              	.set nomacro
+ 149 00d4 0000000C 	jal _ZdlPv
+ 150 00d8 2D200002 	move $4,$16
+ 151              	.set macro
+ 152              	.set reorder
+ 153              	
+ 154 00dc 0000B0DF 	ld $16,0($sp)
+ 155 00e0 1000BFDF 	ld $31,16($sp)
+ 156              	
+ 157              	.set noreorder
+ 158              	.set nomacro
+ 159 00e4 0800E003 	j $31
+ 160 00e8 2000BD27 	addu $sp,$sp,32
+ 161              	.set macro
+ 162              	.set reorder
+ 163              	
+ 164 00ec 00000000 	.p2align 3
+ 165              	$L27:
+ 166 00f0 0000000C 	jal _ZN8CWavFile5CloseEv
+ 166      00000000 
+GAS LISTING  			page 4
+
+
+ 167 00f8 F6FF0010 	b $L25
+ 167      00000000 
+ 168              	.end _ZN8CWavFileD0Ev
+ 169              	$Lfe5:
+ 170              	.size _ZN8CWavFileD0Ev,$Lfe5-_ZN8CWavFileD0Ev
+ 171              	.align 2
+ 172              	.p2align 3,,7
+ 173              	.globl _ZN8CWavFile16OutputSampleDataEPhj
+ 174              	.ent _ZN8CWavFile16OutputSampleDataEPhj
+ 175              	_ZN8CWavFile16OutputSampleDataEPhj:
+ 176              	.frame $sp,48,$31
+ 177              	.mask 0x80030000,-16
+ 178              	.fmask 0x00000000,0
+ 179 0100 D0FFBD27 	subu $sp,$sp,48
+ 180 0104 1000B1FF 	sd $17,16($sp)
+ 181 0108 2D88C000 	move $17,$6
+ 182 010c 0000B0FF 	sd $16,0($sp)
+ 183 0110 3C101100 	dsll $2,$17,32
+ 184 0114 2000BFFF 	sd $31,32($sp)
+ 185 0118 3E100200 	dsrl $2,$2,32
+ 186 011c 2D808000 	move $16,$4
+ 187 0120 01000624 	dli $6,0x1
+ 188 0124 0400838C 	lw $3,4($4)
+ 189 0128 2D20A000 	move $4,$5
+ 190 012c 2D284000 	move $5,$2
+ 191              	.set noreorder
+ 192              	.set nomacro
+ 193 0130 07006014 	bne $3,$0,$L31
+ 194 0134 2D386000 	move $7,$3
+ 195              	.set macro
+ 196              	.set reorder
+ 197              	
+ 198              	$L28:
+ 199 0138 2000BFDF 	ld $31,32($sp)
+ 200 013c 1000B1DF 	ld $17,16($sp)
+ 201 0140 0000B0DF 	ld $16,0($sp)
+ 202              	
+ 203              	.set noreorder
+ 204              	.set nomacro
+ 205 0144 0800E003 	j $31
+ 206 0148 3000BD27 	addu $sp,$sp,48
+ 207              	.set macro
+ 208              	.set reorder
+ 209              	
+ 210 014c 00000000 	.p2align 3
+ 211              	$L31:
+ 212 0150 0000000C 	jal fwrite
+ 212      00000000 
+ 213 0158 3400038E 	lw $3,52($16)
+ 214              	
+ 215 015c 21187100 	addu $3,$3,$17
+ 216              	.set noreorder
+ 217              	.set nomacro
+ 218 0160 F5FF0010 	b $L28
+ 219 0164 340003AE 	sw $3,52($16)
+ 220              	.set macro
+ 221              	.set reorder
+GAS LISTING  			page 5
+
+
+ 222              	
+ 223              	.end _ZN8CWavFile16OutputSampleDataEPhj
+ 224              	$Lfe6:
+ 225              	.size _ZN8CWavFile16OutputSampleDataEPhj,$Lfe6-_ZN8CWavFile16OutputSampleDataEPhj
+ 226              	.align 2
+ 227              	.p2align 3,,7
+ 228              	.globl _ZN8CWavFile17OutputSamplesMonoEPsi
+ 229              	.ent _ZN8CWavFile17OutputSamplesMonoEPsi
+ 230              	_ZN8CWavFile17OutputSamplesMonoEPsi:
+ 231              	.frame $sp,16,$31
+ 232              	.mask 0x80000000,-16
+ 233              	.fmask 0x00000000,0
+ 234 0168 F0FFBD27 	subu $sp,$sp,16
+ 235 016c 01000224 	li $2,1
+ 236 0170 0000BFFF 	sd $31,0($sp)
+ 237 0174 1E008384 	lh $3,30($4)
+ 238              	
+ 239              	.set noreorder
+ 240              	.set nomacro
+ 241 0178 05006210 	beq $3,$2,$L34
+ 242 017c 40300600 	sll $6,$6,1
+ 243              	.set macro
+ 244              	.set reorder
+ 245              	
+ 246 0180 0000BFDF 	ld $31,0($sp)
+ 247              	$L35:
+ 248              	.set noreorder
+ 249              	.set nomacro
+ 250 0184 0800E003 	j $31
+ 251 0188 1000BD27 	addu $sp,$sp,16
+ 252              	.set macro
+ 253              	.set reorder
+ 254              	
+ 255 018c 00000000 	.p2align 3
+ 256              	$L34:
+ 257 0190 0000000C 	jal _ZN8CWavFile16OutputSampleDataEPhj
+ 257      00000000 
+ 258              	.set noreorder
+ 259              	.set nomacro
+ 260 0198 FAFF0010 	b $L35
+ 261 019c 0000BFDF 	ld $31,0($sp)
+ 262              	.set macro
+ 263              	.set reorder
+ 264              	
+ 265              	.end _ZN8CWavFile17OutputSamplesMonoEPsi
+ 266              	$Lfe7:
+ 267              	.size _ZN8CWavFile17OutputSamplesMonoEPsi,$Lfe7-_ZN8CWavFile17OutputSamplesMonoEPsi
+ 268              	.align 2
+ 269              	.p2align 3,,7
+ 270              	.globl _ZN8CWavFile16InterleaveStereoEPsS0_S0_i
+ 271              	.ent _ZN8CWavFile16InterleaveStereoEPsS0_S0_i
+ 272              	_ZN8CWavFile16InterleaveStereoEPsS0_S0_i:
+ 273              	.frame $sp,0,$31
+ 274              	.mask 0x00000000,0
+ 275              	.fmask 0x00000000,0
+ 276 01a0 0A00E018 	blez $7,$L43
+ 276      00000000 
+GAS LISTING  			page 6
+
+
+ 277              	.p2align 3
+ 278              	$L40:
+ 279 01a8 0000A394 	lhu $3,0($5)
+ 280 01ac FFFFE724 	addu $7,$7,-1
+ 281 01b0 0200A524 	addu $5,$5,2
+ 282 01b4 000083A4 	sh $3,0($4)
+ 283 01b8 0000C294 	lhu $2,0($6)
+ 284 01bc 0200C624 	addu $6,$6,2
+ 285 01c0 020082A4 	sh $2,2($4)
+ 286              	.set noreorder
+ 287              	.set nomacro
+ 288 01c4 F8FFE01C 	bgtz $7,$L40
+ 289 01c8 04008424 	addu $4,$4,4
+ 290              	.set macro
+ 291              	.set reorder
+ 292              	
+ 293              	$L43:
+ 294 01cc 0800E003 	j $31
+ 294      00000000 
+ 295              	.end _ZN8CWavFile16InterleaveStereoEPsS0_S0_i
+ 296              	$Lfe8:
+ 297              	.size _ZN8CWavFile16InterleaveStereoEPsS0_S0_i,$Lfe8-_ZN8CWavFile16InterleaveStereoEPsS0_S0_i
+ 298              	.align 2
+ 299 01d4 00000000 	.p2align 3,,7
+ 300              	.globl _ZN8CWavFile19OutputSamplesStereoEPsS0_i
+ 301              	.ent _ZN8CWavFile19OutputSamplesStereoEPsS0_i
+ 302              	_ZN8CWavFile19OutputSamplesStereoEPsS0_i:
+ 303              	.frame $sp,8304,$31
+ 304              	.mask 0x803f0000,-16
+ 305              	.fmask 0x00000000,0
+ 306 01d8 90DFBD27 	subu $sp,$sp,8304
+ 307 01dc 02000224 	li $2,2
+ 308 01e0 4020B4FF 	sd $20,8256($sp)
+ 309 01e4 2DA0A000 	move $20,$5
+ 310 01e8 3020B3FF 	sd $19,8240($sp)
+ 311 01ec 2D98C000 	move $19,$6
+ 312 01f0 2020B2FF 	sd $18,8224($sp)
+ 313 01f4 2D908000 	move $18,$4
+ 314 01f8 1020B1FF 	sd $17,8208($sp)
+ 315 01fc 6020BFFF 	sd $31,8288($sp)
+ 316 0200 5020B5FF 	sd $21,8272($sp)
+ 317 0204 0020B0FF 	sd $16,8192($sp)
+ 318 0208 1E008384 	lh $3,30($4)
+ 319              	
+ 320              	.set noreorder
+ 321              	.set nomacro
+ 322 020c 0A006210 	beq $3,$2,$L52
+ 323 0210 2D88E000 	move $17,$7
+ 324              	.set macro
+ 325              	.set reorder
+ 326              	
+ 327              	$L44:
+ 328 0214 6020BFDF 	ld $31,8288($sp)
+ 329              	$L53:
+ 330 0218 5020B5DF 	ld $21,8272($sp)
+ 331 021c 4020B4DF 	ld $20,8256($sp)
+ 332 0220 3020B3DF 	ld $19,8240($sp)
+GAS LISTING  			page 7
+
+
+ 333 0224 2020B2DF 	ld $18,8224($sp)
+ 334 0228 1020B1DF 	ld $17,8208($sp)
+ 335 022c 0020B0DF 	ld $16,8192($sp)
+ 336              	
+ 337              	.set noreorder
+ 338              	.set nomacro
+ 339 0230 0800E003 	j $31
+ 340 0234 7020BD27 	addu $sp,$sp,8304
+ 341              	.set macro
+ 342              	.set reorder
+ 343              	
+ 344              	.p2align 3
+ 345              	$L52:
+ 346              	.set noreorder
+ 347              	.set nomacro
+ 348 0238 F6FFE018 	blez $7,$L44
+ 349 023c 00081524 	li $21,2048
+ 350              	.set macro
+ 351              	.set reorder
+ 352              	
+ 353 0240 0108222A 	slt $2,$17,2049
+ 354              	$L54:
+ 355 0244 2D80A002 	move $16,$21
+ 356 0248 0B802202 	movn $16,$17,$2
+ 357 024c 2D20A003 	move $4,$sp
+ 358 0250 2D288002 	move $5,$20
+ 359 0254 2D306002 	move $6,$19
+ 360 0258 2D380002 	move $7,$16
+ 361 025c 23883002 	subu $17,$17,$16
+ 362              	.set noreorder
+ 363              	.set nomacro
+ 364 0260 0000000C 	jal _ZN8CWavFile16InterleaveStereoEPsS0_S0_i
+ 365 0264 80801000 	sll $16,$16,2
+ 366              	.set macro
+ 367              	.set reorder
+ 368              	
+ 369 0268 2D204002 	move $4,$18
+ 370 026c 2D300002 	move $6,$16
+ 371              	.set noreorder
+ 372              	.set nomacro
+ 373 0270 0000000C 	jal _ZN8CWavFile16OutputSampleDataEPhj
+ 374 0274 2D28A003 	move $5,$sp
+ 375              	.set macro
+ 376              	.set reorder
+ 377              	
+ 378              	.set noreorder
+ 379              	.set nomacro
+ 380 0278 F2FF201E 	bgtz $17,$L54
+ 381 027c 0108222A 	slt $2,$17,2049
+ 382              	.set macro
+ 383              	.set reorder
+ 384              	
+ 385              	.set noreorder
+ 386              	.set nomacro
+ 387 0280 E5FF0010 	b $L53
+ 388 0284 6020BFDF 	ld $31,8288($sp)
+ 389              	.set macro
+GAS LISTING  			page 8
+
+
+ 390              	.set reorder
+ 391              	
+ 392              	.end _ZN8CWavFile19OutputSamplesStereoEPsS0_i
+ 393              	$Lfe9:
+ 394              	.size _ZN8CWavFile19OutputSamplesStereoEPsS0_i,$Lfe9-_ZN8CWavFile19OutputSamplesStereoEPsS0_i
+ 395              	.align 2
+ 396              	.p2align 3,,7
+ 397              	.globl _ZN8CWavFile5CloseEv
+ 398              	.ent _ZN8CWavFile5CloseEv
+ 399              	_ZN8CWavFile5CloseEv:
+ 400              	.frame $sp,32,$31
+ 401              	.mask 0x80010000,-16
+ 402              	.fmask 0x00000000,0
+ 403 0288 E0FFBD27 	subu $sp,$sp,32
+ 404 028c 2D280000 	move $5,$0
+ 405 0290 0000B0FF 	sd $16,0($sp)
+ 406 0294 2D300000 	move $6,$0
+ 407 0298 1000BFFF 	sd $31,16($sp)
+ 408 029c 2D808000 	move $16,$4
+ 409 02a0 0400828C 	lw $2,4($4)
+ 410              	
+ 411              	.set noreorder
+ 412              	.set nomacro
+ 413 02a4 06004014 	bne $2,$0,$L57
+ 414 02a8 2D204000 	move $4,$2
+ 415              	.set macro
+ 416              	.set reorder
+ 417              	
+ 418              	$L55:
+ 419 02ac 1000BFDF 	ld $31,16($sp)
+ 420 02b0 0000B0DF 	ld $16,0($sp)
+ 421              	
+ 422              	.set noreorder
+ 423              	.set nomacro
+ 424 02b4 0800E003 	j $31
+ 425 02b8 2000BD27 	addu $sp,$sp,32
+ 426              	.set macro
+ 427              	.set reorder
+ 428              	
+ 429 02bc 00000000 	.p2align 3
+ 430              	$L57:
+ 431 02c0 3400028E 	lw $2,52($16)
+ 432              	
+ 433 02c4 2C004324 	addu $3,$2,44
+ 434 02c8 300002AE 	sw $2,48($16)
+ 435              	.set noreorder
+ 436              	.set nomacro
+ 437 02cc 0000000C 	jal fseek
+ 438 02d0 0C0003AE 	sw $3,12($16)
+ 439              	.set macro
+ 440              	.set reorder
+ 441              	
+ 442 02d4 01000624 	dli $6,0x1
+ 443 02d8 0400078E 	lw $7,4($16)
+ 444 02dc 08000426 	addu $4,$16,8
+ 445              	.set noreorder
+ 446              	.set nomacro
+GAS LISTING  			page 9
+
+
+ 447 02e0 0000000C 	jal fwrite
+ 448 02e4 2C000524 	dli $5,0x2c
+ 449              	.set macro
+ 450              	.set reorder
+ 451              	
+ 452              	.set noreorder
+ 453              	.set nomacro
+ 454 02e8 0000000C 	jal fclose
+ 455 02ec 0400048E 	lw $4,4($16)
+ 456              	.set macro
+ 457              	.set reorder
+ 458              	
+ 459              	.set noreorder
+ 460              	.set nomacro
+ 461 02f0 EEFF0010 	b $L55
+ 462 02f4 040000AE 	sw $0,4($16)
+ 463              	.set macro
+ 464              	.set reorder
+ 465              	
+ 466              	.end _ZN8CWavFile5CloseEv
+ 467              	$Lfe10:
+ 468              	.size _ZN8CWavFile5CloseEv,$Lfe10-_ZN8CWavFile5CloseEv
+ 469              	.rdata
+ 470              	.align 3
+ 471              	$LC0:
+ 472 0000 776200   	.ascii "wb\000"
+ 473 0003 00000000 	.align 3
+ 473      00
+ 474              	$LC1:
+ 475 0008 52494646 	.ascii "RIFF\000"
+ 475      00
+ 476 000d 000000   	.align 3
+ 477              	$LC2:
+ 478 0010 57415645 	.ascii "WAVE\000"
+ 478      00
+ 479 0015 000000   	.align 3
+ 480              	$LC3:
+ 481 0018 666D7420 	.ascii "fmt \000"
+ 481      00
+ 482 001d 000000   	.align 3
+ 483              	$LC4:
+ 484 0020 64617461 	.ascii "data\000"
+ 484      00
+ 485 0025 000000   	.text
+ 486              	.align 2
+ 487              	.p2align 3,,7
+ 488              	.globl _ZN8CWavFile4OpenEPcjjj
+ 489              	.ent _ZN8CWavFile4OpenEPcjjj
+ 490              	_ZN8CWavFile4OpenEPcjjj:
+ 491              	.frame $sp,96,$31
+ 492              	.mask 0x801f0000,-16
+ 493              	.fmask 0x00000000,0
+ 494 02f8 A0FFBD27 	subu $sp,$sp,96
+ 495 02fc FEFF0324 	li $3,-2
+ 496 0300 4000B4FF 	sd $20,64($sp)
+ 497 0304 2DA0E000 	move $20,$7
+ 498 0308 3000B3FF 	sd $19,48($sp)
+GAS LISTING  			page 10
+
+
+ 499 030c 2D98C000 	move $19,$6
+ 500 0310 2000B2FF 	sd $18,32($sp)
+ 501 0314 2D900001 	move $18,$8
+ 502 0318 1000B1FF 	sd $17,16($sp)
+ 503 031c 0000B0FF 	sd $16,0($sp)
+ 504 0320 2D808000 	move $16,$4
+ 505 0324 5000BFFF 	sd $31,80($sp)
+ 506 0328 08001126 	addu $17,$16,8
+ 507 032c 0400028E 	lw $2,4($16)
+ 508              	
+ 509              	.set noreorder
+ 510              	.set nomacro
+ 511 0330 0B004010 	beq $2,$0,$L62
+ 512 0334 2D20A000 	move $4,$5
+ 513              	.set macro
+ 514              	.set reorder
+ 515              	
+ 516              	$L58:
+ 517 0338 5000BFDF 	ld $31,80($sp)
+ 518 033c 2D106000 	move $2,$3
+ 519 0340 4000B4DF 	ld $20,64($sp)
+ 520 0344 3000B3DF 	ld $19,48($sp)
+ 521 0348 2000B2DF 	ld $18,32($sp)
+ 522 034c 1000B1DF 	ld $17,16($sp)
+ 523 0350 0000B0DF 	ld $16,0($sp)
+ 524              	
+ 525              	.set noreorder
+ 526              	.set nomacro
+ 527 0354 0800E003 	j $31
+ 528 0358 6000BD27 	addu $sp,$sp,96
+ 529              	.set macro
+ 530              	.set reorder
+ 531              	
+ 532 035c 00000000 	.p2align 3
+ 533              	$L62:
+ 534 0360 0000053C 	lui $5,%hi($LC0)
+ 535              	.set noreorder
+ 536              	.set nomacro
+ 537 0364 0000000C 	jal fopen
+ 538 0368 0000A524 	addiu $5,$5,%lo($LC0)
+ 539              	.set macro
+ 540              	.set reorder
+ 541              	
+ 542 036c FFFF0324 	li $3,-1
+ 543              	.set noreorder
+ 544              	.set nomacro
+ 545 0370 F1FF4010 	beq $2,$0,$L58
+ 546 0374 040002AE 	sw $2,4($16)
+ 547              	.set macro
+ 548              	.set reorder
+ 549              	
+ 550 0378 2D202002 	move $4,$17
+ 551 037c 2D280000 	move $5,$0
+ 552              	.set noreorder
+ 553              	.set nomacro
+ 554 0380 0000000C 	jal memset
+ 555 0384 2C000624 	dli $6,0x2c
+GAS LISTING  			page 11
+
+
+ 556              	.set macro
+ 557              	.set reorder
+ 558              	
+ 559 0388 0000053C 	lui $5,%hi($LC1)
+ 560 038c 04000624 	dli $6,0x4
+ 561 0390 2D202002 	move $4,$17
+ 562              	.set noreorder
+ 563              	.set nomacro
+ 564 0394 0000000C 	jal memcpy
+ 565 0398 0800A524 	addiu $5,$5,%lo($LC1)
+ 566              	.set macro
+ 567              	.set reorder
+ 568              	
+ 569 039c 0000053C 	lui $5,%hi($LC2)
+ 570 03a0 04000624 	dli $6,0x4
+ 571 03a4 10000426 	addu $4,$16,16
+ 572              	.set noreorder
+ 573              	.set nomacro
+ 574 03a8 0000000C 	jal memcpy
+ 575 03ac 1000A524 	addiu $5,$5,%lo($LC2)
+ 576              	.set macro
+ 577              	.set reorder
+ 578              	
+ 579 03b0 0000053C 	lui $5,%hi($LC3)
+ 580 03b4 04000624 	dli $6,0x4
+ 581 03b8 14000426 	addu $4,$16,20
+ 582              	.set noreorder
+ 583              	.set nomacro
+ 584 03bc 0000000C 	jal memcpy
+ 585 03c0 1800A524 	addiu $5,$5,%lo($LC3)
+ 586              	.set macro
+ 587              	.set reorder
+ 588              	
+ 589 03c4 220034A6 	sh $20,34($17)
+ 590 03c8 18285402 	mult $5,$18,$20
+ 591 03cc 10000224 	li $2,16
+ 592 03d0 100022AE 	sw $2,16($17)
+ 593 03d4 01000324 	li $3,1
+ 594 03d8 140023A6 	sh $3,20($17)
+ 595 03dc 04000624 	dli $6,0x4
+ 596 03e0 160032A6 	sh $18,22($17)
+ 597 03e4 2C000426 	addu $4,$16,44
+ 598 03e8 C2280500 	srl $5,$5,3
+ 599 03ec 180033AE 	sw $19,24($17)
+ 600 03f0 FFFFA230 	andi $2,$5,0xffff
+ 601 03f4 200025A6 	sh $5,32($17)
+ 602 03f8 18106202 	mult $2,$19,$2
+ 603 03fc 0000053C 	lui $5,%hi($LC4)
+ 604 0400 2000A524 	addiu $5,$5,%lo($LC4)
+ 605              	.set noreorder
+ 606              	.set nomacro
+ 607 0404 0000000C 	jal memcpy
+ 608 0408 1C0022AE 	sw $2,28($17)
+ 609              	.set macro
+ 610              	.set reorder
+ 611              	
+ 612 040c 01000624 	dli $6,0x1
+GAS LISTING  			page 12
+
+
+ 613 0410 0400078E 	lw $7,4($16)
+ 614 0414 2D202002 	move $4,$17
+ 615              	.set noreorder
+ 616              	.set nomacro
+ 617 0418 0000000C 	jal fwrite
+ 618 041c 2C000524 	dli $5,0x2c
+ 619              	.set macro
+ 620              	.set reorder
+ 621              	
+ 622 0420 340000AE 	sw $0,52($16)
+ 623              	.set noreorder
+ 624              	.set nomacro
+ 625 0424 C4FF0010 	b $L58
+ 626 0428 2D180000 	move $3,$0
+ 627              	.set macro
+ 628              	.set reorder
+ 629              	
+ 630              	.end _ZN8CWavFile4OpenEPcjjj
+ 631              	$Lfe11:
+ 632              	.size _ZN8CWavFile4OpenEPcjjj,$Lfe11-_ZN8CWavFile4OpenEPcjjj
+ 633              	.align 2
+ 634 042c 00000000 	.p2align 3,,7
+ 635              	.globl _ZN8CWavFile16GetOutputSamplesEv
+ 636              	.ent _ZN8CWavFile16GetOutputSamplesEv
+ 637              	_ZN8CWavFile16GetOutputSamplesEv:
+ 638              	.frame $sp,0,$31
+ 639              	.mask 0x00000000,0
+ 640              	.fmask 0x00000000,0
+ 641 0430 2000828C 	lw $2,32($4)
+ 642 0434 3C000324 	li $3,60
+ 643              	.set noreorder
+ 644 0438 01006050 	beql $3,$0,1f
+ 645 043c CD010000 	break 7
+ 646              	1:
+ 647              	.set reorder
+ 648 0440 1B004300 	divu $0,$2,$3
+ 649 0444 0800E003 	mflo $2
+ 650              	
+ 651 0448 12100000 	j $31
+ 652              	.end _ZN8CWavFile16GetOutputSamplesEv
+ 653              	$Lfe12:
+ 654              	.size _ZN8CWavFile16GetOutputSamplesEv,$Lfe12-_ZN8CWavFile16GetOutputSamplesEv
+ 655              	.align 2
+ 656 044c 00000000 	.p2align 3,,7
+ 657              	.globl _ZN8CWavFile9GetFormatEPjS0_S0_
+ 658              	.ent _ZN8CWavFile9GetFormatEPjS0_S0_
+ 659              	_ZN8CWavFile9GetFormatEPjS0_S0_:
+ 660              	.frame $sp,0,$31
+ 661              	.mask 0x00000000,0
+ 662              	.fmask 0x00000000,0
+ 663 0450 2000838C 	lw $3,32($4)
+ 664              	
+ 665 0454 0000A3AC 	sw $3,0($5)
+ 666 0458 2A008294 	lhu $2,42($4)
+ 667              	
+ 668 045c 0000C2AC 	sw $2,0($6)
+ 669 0460 1E008384 	lh $3,30($4)
+GAS LISTING  			page 13
+
+
+ 670              	.set noreorder
+ 671              	.set nomacro
+ 672 0464 0800E003 	j $31
+ 673 0468 0000E3AC 	sw $3,0($7)
+ 674              	.set macro
+ 675              	.set reorder
+ 676              	
+ 677              	.end _ZN8CWavFile9GetFormatEPjS0_S0_
+ 678              	$Lfe13:
+ 679              	.size _ZN8CWavFile9GetFormatEPjS0_S0_,$Lfe13-_ZN8CWavFile9GetFormatEPjS0_S0_
+ 680              	.weak _ZTV8CWavFile
+ 681 046c 00000000 	.section .gnu.linkonce.d._ZTV8CWavFile,"aw",@progbits
+ 682              	.align 3
+ 683              	.type _ZTV8CWavFile,@object
+ 684              	.size _ZTV8CWavFile,36
+ 685              	_ZTV8CWavFile:
+ 686 0000 00000000 	.word 0
+ 687 0004 00000000 	.word 0
+ 688 0008 00000000 	.word _ZN8CWavFile9GetFormatEPjS0_S0_
+ 689 000c 00000000 	.word _ZN8CWavFile16GetOutputSamplesEv
+ 690 0010 00000000 	.word _ZN8CWavFile17OutputSamplesMonoEPsi
+ 691 0014 00000000 	.word _ZN8CWavFile19OutputSamplesStereoEPsS0_i
+ 692 0018 00000000 	.word _ZN10CMixBuffer5FlushEv
+ 693 001c 00000000 	.word _ZN8CWavFileD1Ev
+ 694 0020 00000000 	.word _ZN8CWavFileD0Ev
+ 695 0024 00000000 	.ident "GCC: (GNU) 3.2.2"

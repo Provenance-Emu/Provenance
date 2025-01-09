@@ -1,5 +1,0 @@
-Checking whether the ASM compiler is GNU using "--version" did not match "(GNU assembler)|(GCC)|(Free Software Foundation)":
-Apple clang version 13.0.0 (clang-1300.0.29.3)
-Target: arm64-apple-darwin21.1.0
-Thread model: posix
-InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin

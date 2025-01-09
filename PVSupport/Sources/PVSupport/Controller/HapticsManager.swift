@@ -7,8 +7,11 @@ The class that manages the app's haptics playback.
 
 #if canImport(CoreHaptics)
 import Foundation
+#if canImport(GameController)
 import GameController
+#endif
 import CoreHaptics
+import PVLogging
 
 @available(iOS 14.0, tvOS 14.0, *)
 public protocol HapticsManagerDelegate: AnyObject {
@@ -151,7 +154,7 @@ public final class HapticsManager {
         }
 
         // Get the AHAP file URL.
-		let bundle = Bundle.init(for: Self.self)
+        let bundle = Bundle.module
 		guard let url = bundle.url(forResource: filename, withExtension: "ahap") else {
             ELOG("Unable to find haptics file named '\(filename)'.")
             return
@@ -165,7 +168,7 @@ public final class HapticsManager {
             try engine.playPattern(from: url)
 
         } catch { // Engine startup errors
-			ELOG("An error occured playing \(filename): \(error).")
+			ELOG("An error occurred playing \(filename): \(error).")
         }
     }
 }

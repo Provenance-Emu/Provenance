@@ -1,4 +1,4 @@
-# Install script for directory: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang
+# Install script for directory: ../libretro_ppsspp/ext/glslang
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -37,7 +37,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/objdump")
 endif()
 
-set(CMAKE_BINARY_DIR "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake")
+set(CMAKE_BINARY_DIR "../cmake")
 
 if(NOT PLATFORM_NAME)
   if(NOT "$ENV{PLATFORM_NAME}" STREQUAL "")
@@ -58,12 +58,32 @@ if(NOT EFFECTIVE_PLATFORM_NAME)
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
-  include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/External/cmake_install.cmake")
-  include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/glslang/cmake_install.cmake")
-  include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/OGLCompilersDLL/cmake_install.cmake")
-  include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/SPIRV/cmake_install.cmake")
-  include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/hlsl/cmake_install.cmake")
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/External/cmake_install.cmake")
+endif()
 
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/glslang/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/OGLCompilersDLL/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/SPIRV/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/hlsl/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/gtests/cmake_install.cmake")
 endif()
 

@@ -1,0 +1,620 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Modules/libcdvd/ee/cdvd_rpc.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.globl cdvd_inited
+   5              	.data
+   6              	.align 2
+   7              	.type cdvd_inited,@object
+   8              	.size cdvd_inited,4
+   9              	cdvd_inited:
+  10 0000 00000000 	.word 0
+  11              	.text
+  12              	.align 2
+  13              	.p2align 3,,7
+  14              	.globl CDVD_Init
+  15              	.ent CDVD_Init
+  16              	CDVD_Init:
+  17              	.frame $sp,32,$31
+  18              	.mask 0x80010000,-16
+  19              	.fmask 0x00000000,0
+  20 0000 E0FFBD27 	subu $sp,$sp,32
+  21 0004 0000023C 	lui $2,%hi(cd0)
+  22 0008 1000BFFF 	sd $31,16($sp)
+  23 000c 0000B0FF 	sd $16,0($sp)
+  24 0010 004C5024 	addiu $16,$2,%lo(cd0)
+  25 0014 000B053C 	li $5,184549376
+  26              	$L11:
+  27 0018 2D200002 	move $4,$16
+  28 001c 3713A534 	ori $5,$5,0x1337
+  29              	.set noreorder
+  30              	.set nomacro
+  31 0020 0000000C 	jal SifBindRpc
+  32 0024 2D300000 	move $6,$0
+  33              	.set macro
+  34              	.set reorder
+  35              	
+  36              	.set noreorder
+  37              	.set nomacro
+  38 0028 14004004 	bltz $2,$L1
+  39 002c FFFF0324 	li $3,-1
+  40              	.set macro
+  41              	.set reorder
+  42              	
+  43 0030 2400028E 	lw $2,36($16)
+  44              	
+  45              	.set noreorder
+  46              	.set nomacro
+  47 0034 0D004014 	bne $2,$0,$L3
+  48 0038 0100023C 	li $2,65536
+  49              	.set macro
+  50              	.set reorder
+  51              	
+  52 003c FFFF0324 	li $3,-1
+  53 0040 FFFF4224 	addu $2,$2,-1
+  54              	$L12:
+  55              	.set noreorder
+  56 0044 00000000 	nop
+  57              	.set reorder
+GAS LISTING  			page 2
+
+
+  58              	.set noreorder
+  59 0048 00000000 	nop
+  60              	.set reorder
+  61              	.set noreorder
+  62 004c 00000000 	nop
+  63              	.set reorder
+  64              	.set noreorder
+  65 0050 00000000 	nop
+  66              	.set reorder
+  67              	.set noreorder
+  68 0054 00000000 	nop
+  69              	.set reorder
+  70              	.set noreorder
+  71 0058 00000000 	nop
+  72              	.set reorder
+  73              	.set noreorder
+  74              	.set nomacro
+  75 005c F9FF4314 	bne $2,$3,$L12
+  76 0060 FFFF4224 	addu $2,$2,-1
+  77              	.set macro
+  78              	.set reorder
+  79              	
+  80              	.set noreorder
+  81              	.set nomacro
+  82 0064 ECFF0010 	b $L11
+  83 0068 000B053C 	li $5,184549376
+  84              	.set macro
+  85              	.set reorder
+  86              	
+  87              	$L3:
+  88 006c 01000324 	li $3,1
+  89 0070 0000023C 	lui $2,%hi(cdvd_inited)
+  90 0074 000043AC 	sw $3,%lo(cdvd_inited)($2)
+  91 0078 2D180000 	move $3,$0
+  92              	$L1:
+  93 007c 1000BFDF 	ld $31,16($sp)
+  94 0080 2D106000 	move $2,$3
+  95 0084 0000B0DF 	ld $16,0($sp)
+  96              	
+  97              	.set noreorder
+  98              	.set nomacro
+  99 0088 0800E003 	j $31
+ 100 008c 2000BD27 	addu $sp,$sp,32
+ 101              	.set macro
+ 102              	.set reorder
+ 103              	
+ 104              	.end CDVD_Init
+ 105              	$Lfe1:
+ 106              	.size CDVD_Init,$Lfe1-CDVD_Init
+ 107              	.align 2
+ 108              	.p2align 3,,7
+ 109              	.globl CDVD_DiskReady
+ 110              	.ent CDVD_DiskReady
+ 111              	CDVD_DiskReady:
+ 112              	.frame $sp,48,$31
+ 113              	.mask 0x80010000,-16
+ 114              	.fmask 0x00000000,0
+GAS LISTING  			page 3
+
+
+ 115 0090 D0FFBD27 	subu $sp,$sp,48
+ 116 0094 0000023C 	lui $2,%hi(cdvd_inited)
+ 117 0098 2000BFFF 	sd $31,32($sp)
+ 118 009c 2D608000 	move $12,$4
+ 119 00a0 1000B0FF 	sd $16,16($sp)
+ 120 00a4 0000438C 	lw $3,%lo(cdvd_inited)($2)
+ 121              	
+ 122              	.set noreorder
+ 123              	.set nomacro
+ 124 00a8 05006014 	bne $3,$0,$L15
+ 125 00ac FFFF0224 	li $2,-1
+ 126              	.set macro
+ 127              	.set reorder
+ 128              	
+ 129              	$L13:
+ 130 00b0 2000BFDF 	ld $31,32($sp)
+ 131 00b4 1000B0DF 	ld $16,16($sp)
+ 132              	
+ 133              	.set noreorder
+ 134              	.set nomacro
+ 135 00b8 0800E003 	j $31
+ 136 00bc 3000BD27 	addu $sp,$sp,48
+ 137              	.set macro
+ 138              	.set reorder
+ 139              	
+ 140              	.p2align 3
+ 141              	$L15:
+ 142 00c0 0000103C 	lui $16,%hi(sbuff)
+ 143 00c4 0000043C 	lui $4,%hi(cd0)
+ 144 00c8 00000726 	addiu $7,$16,%lo(sbuff)
+ 145 00cc 004C8424 	addiu $4,$4,%lo(cd0)
+ 146 00d0 06000524 	li $5,6
+ 147 00d4 2D300000 	move $6,$0
+ 148 00d8 04000824 	li $8,4
+ 149 00dc 2D48E000 	move $9,$7
+ 150 00e0 04000A24 	li $10,4
+ 151 00e4 2D580000 	move $11,$0
+ 152 00e8 00000CAE 	sw $12,%lo(sbuff)($16)
+ 153              	.set noreorder
+ 154              	.set nomacro
+ 155 00ec 0000000C 	jal SifCallRpc
+ 156 00f0 0000A0AF 	sw $0,0($sp)
+ 157              	.set macro
+ 158              	.set reorder
+ 159              	
+ 160              	.set noreorder
+ 161              	.set nomacro
+ 162 00f4 EEFF0010 	b $L13
+ 163 00f8 0000028E 	lw $2,%lo(sbuff)($16)
+ 164              	.set macro
+ 165              	.set reorder
+ 166              	
+ 167              	.end CDVD_DiskReady
+ 168              	$Lfe2:
+ 169              	.size CDVD_DiskReady,$Lfe2-CDVD_DiskReady
+ 170              	.align 2
+ 171 00fc 00000000 	.p2align 3,,7
+GAS LISTING  			page 4
+
+
+ 172              	.globl CDVD_FindFile
+ 173              	.ent CDVD_FindFile
+ 174              	CDVD_FindFile:
+ 175              	.frame $sp,80,$31
+ 176              	.mask 0x80070000,-16
+ 177              	.fmask 0x00000000,0
+ 178 0100 B0FFBD27 	subu $sp,$sp,80
+ 179 0104 0000023C 	lui $2,%hi(cdvd_inited)
+ 180 0108 3000B2FF 	sd $18,48($sp)
+ 181 010c 2D90A000 	move $18,$5
+ 182 0110 4000BFFF 	sd $31,64($sp)
+ 183 0114 2000B1FF 	sd $17,32($sp)
+ 184 0118 1000B0FF 	sd $16,16($sp)
+ 185 011c 0000438C 	lw $3,%lo(cdvd_inited)($2)
+ 186              	
+ 187              	.set noreorder
+ 188              	.set nomacro
+ 189 0120 07006014 	bne $3,$0,$L18
+ 190 0124 FFFF0224 	li $2,-1
+ 191              	.set macro
+ 192              	.set reorder
+ 193              	
+ 194              	$L16:
+ 195 0128 4000BFDF 	ld $31,64($sp)
+ 196 012c 3000B2DF 	ld $18,48($sp)
+ 197 0130 2000B1DF 	ld $17,32($sp)
+ 198 0134 1000B0DF 	ld $16,16($sp)
+ 199              	
+ 200              	.set noreorder
+ 201              	.set nomacro
+ 202 0138 0800E003 	j $31
+ 203 013c 5000BD27 	addu $sp,$sp,80
+ 204              	.set macro
+ 205              	.set reorder
+ 206              	
+ 207              	.p2align 3
+ 208              	$L18:
+ 209 0140 0000113C 	lui $17,%hi(sbuff)
+ 210 0144 2D288000 	move $5,$4
+ 211 0148 00003026 	addiu $16,$17,%lo(sbuff)
+ 212 014c 00040624 	dli $6,0x400
+ 213              	.set noreorder
+ 214              	.set nomacro
+ 215 0150 0000000C 	jal strncpy
+ 216 0154 2D200002 	move $4,$16
+ 217              	.set macro
+ 218              	.set reorder
+ 219              	
+ 220 0158 0000A0AF 	sw $0,0($sp)
+ 221 015c 0000043C 	lui $4,%hi(cd0)
+ 222 0160 2D380002 	move $7,$16
+ 223 0164 2D480002 	move $9,$16
+ 224 0168 2D580000 	move $11,$0
+ 225 016c 01000524 	li $5,1
+ 226 0170 2D300000 	move $6,$0
+ 227 0174 004C8424 	addiu $4,$4,%lo(cd0)
+ 228 0178 00040824 	li $8,1024
+GAS LISTING  			page 5
+
+
+ 229 017c 90040A24 	li $10,1168
+ 230              	.set noreorder
+ 231              	.set nomacro
+ 232 0180 0000000C 	jal SifCallRpc
+ 233 0184 00041026 	addu $16,$16,1024
+ 234              	.set macro
+ 235              	.set reorder
+ 236              	
+ 237 0188 2D280002 	move $5,$16
+ 238 018c 90000624 	dli $6,0x90
+ 239              	.set noreorder
+ 240              	.set nomacro
+ 241 0190 0000000C 	jal memcpy
+ 242 0194 2D204002 	move $4,$18
+ 243              	.set macro
+ 244              	.set reorder
+ 245              	
+ 246              	.set noreorder
+ 247              	.set nomacro
+ 248 0198 E3FF0010 	b $L16
+ 249 019c 0000228E 	lw $2,%lo(sbuff)($17)
+ 250              	.set macro
+ 251              	.set reorder
+ 252              	
+ 253              	.end CDVD_FindFile
+ 254              	$Lfe3:
+ 255              	.size CDVD_FindFile,$Lfe3-CDVD_FindFile
+ 256              	.align 2
+ 257              	.p2align 3,,7
+ 258              	.globl CDVD_Stop
+ 259              	.ent CDVD_Stop
+ 260              	CDVD_Stop:
+ 261              	.frame $sp,32,$31
+ 262              	.mask 0x80000000,-16
+ 263              	.fmask 0x00000000,0
+ 264 01a0 E0FFBD27 	subu $sp,$sp,32
+ 265 01a4 0000023C 	lui $2,%hi(cdvd_inited)
+ 266 01a8 1000BFFF 	sd $31,16($sp)
+ 267 01ac 0000073C 	lui $7,%hi(sbuff)
+ 268 01b0 0000E724 	addiu $7,$7,%lo(sbuff)
+ 269 01b4 0000043C 	lui $4,%hi(cd0)
+ 270 01b8 0000438C 	lw $3,%lo(cdvd_inited)($2)
+ 271 01bc 004C8424 	addiu $4,$4,%lo(cd0)
+ 272 01c0 04000524 	li $5,4
+ 273 01c4 2D300000 	move $6,$0
+ 274 01c8 2D400000 	move $8,$0
+ 275 01cc 2D48E000 	move $9,$7
+ 276 01d0 2D500000 	move $10,$0
+ 277              	.set noreorder
+ 278              	.set nomacro
+ 279 01d4 04006014 	bne $3,$0,$L21
+ 280 01d8 2D580000 	move $11,$0
+ 281              	.set macro
+ 282              	.set reorder
+ 283              	
+ 284 01dc 1000BFDF 	ld $31,16($sp)
+ 285              	$L22:
+GAS LISTING  			page 6
+
+
+ 286              	.set noreorder
+ 287              	.set nomacro
+ 288 01e0 0800E003 	j $31
+ 289 01e4 2000BD27 	addu $sp,$sp,32
+ 290              	.set macro
+ 291              	.set reorder
+ 292              	
+ 293              	.p2align 3
+ 294              	$L21:
+ 295              	.set noreorder
+ 296              	.set nomacro
+ 297 01e8 0000000C 	jal SifCallRpc
+ 298 01ec 0000A0AF 	sw $0,0($sp)
+ 299              	.set macro
+ 300              	.set reorder
+ 301              	
+ 302              	.set noreorder
+ 303              	.set nomacro
+ 304 01f0 FBFF0010 	b $L22
+ 305 01f4 1000BFDF 	ld $31,16($sp)
+ 306              	.set macro
+ 307              	.set reorder
+ 308              	
+ 309              	.end CDVD_Stop
+ 310              	$Lfe4:
+ 311              	.size CDVD_Stop,$Lfe4-CDVD_Stop
+ 312              	.align 2
+ 313              	.p2align 3,,7
+ 314              	.globl CDVD_TrayReq
+ 315              	.ent CDVD_TrayReq
+ 316              	CDVD_TrayReq:
+ 317              	.frame $sp,48,$31
+ 318              	.mask 0x80010000,-16
+ 319              	.fmask 0x00000000,0
+ 320 01f8 D0FFBD27 	subu $sp,$sp,48
+ 321 01fc 0000023C 	lui $2,%hi(cdvd_inited)
+ 322 0200 2000BFFF 	sd $31,32($sp)
+ 323 0204 1000B0FF 	sd $16,16($sp)
+ 324 0208 0000438C 	lw $3,%lo(cdvd_inited)($2)
+ 325              	
+ 326              	.set noreorder
+ 327              	.set nomacro
+ 328 020c 06006014 	bne $3,$0,$L25
+ 329 0210 FFFF0424 	li $4,-1
+ 330              	.set macro
+ 331              	.set reorder
+ 332              	
+ 333              	$L23:
+ 334 0214 2000BFDF 	ld $31,32($sp)
+ 335 0218 2D108000 	move $2,$4
+ 336 021c 1000B0DF 	ld $16,16($sp)
+ 337              	
+ 338              	.set noreorder
+ 339              	.set nomacro
+ 340 0220 0800E003 	j $31
+ 341 0224 3000BD27 	addu $sp,$sp,48
+ 342              	.set macro
+GAS LISTING  			page 7
+
+
+ 343              	.set reorder
+ 344              	
+ 345              	.p2align 3
+ 346              	$L25:
+ 347 0228 0000103C 	lui $16,%hi(sbuff)
+ 348 022c 0000043C 	lui $4,%hi(cd0)
+ 349 0230 00000726 	addiu $7,$16,%lo(sbuff)
+ 350 0234 004C8424 	addiu $4,$4,%lo(cd0)
+ 351 0238 05000524 	li $5,5
+ 352 023c 2D300000 	move $6,$0
+ 353 0240 04000824 	li $8,4
+ 354 0244 2D48E000 	move $9,$7
+ 355 0248 04000A24 	li $10,4
+ 356 024c 2D580000 	move $11,$0
+ 357              	.set noreorder
+ 358              	.set nomacro
+ 359 0250 0000000C 	jal SifCallRpc
+ 360 0254 0000A0AF 	sw $0,0($sp)
+ 361              	.set macro
+ 362              	.set reorder
+ 363              	
+ 364              	.set noreorder
+ 365              	.set nomacro
+ 366 0258 EEFF0010 	b $L23
+ 367 025c 0000048E 	lw $4,%lo(sbuff)($16)
+ 368              	.set macro
+ 369              	.set reorder
+ 370              	
+ 371              	.end CDVD_TrayReq
+ 372              	$Lfe5:
+ 373              	.size CDVD_TrayReq,$Lfe5-CDVD_TrayReq
+ 374              	.align 2
+ 375              	.p2align 3,,7
+ 376              	.globl CDVD_getdir
+ 377              	.ent CDVD_getdir
+ 378              	CDVD_getdir:
+ 379              	.frame $sp,128,$31
+ 380              	.mask 0x803f0000,-16
+ 381              	.fmask 0x00000000,0
+ 382 0260 80FFBD27 	subu $sp,$sp,128
+ 383 0264 0000023C 	lui $2,%hi(cdvd_inited)
+ 384 0268 6000B5FF 	sd $21,96($sp)
+ 385 026c 2DA82001 	move $21,$9
+ 386 0270 5000B4FF 	sd $20,80($sp)
+ 387 0274 2DA0C000 	move $20,$6
+ 388 0278 4000B3FF 	sd $19,64($sp)
+ 389 027c 2D980001 	move $19,$8
+ 390 0280 3000B2FF 	sd $18,48($sp)
+ 391 0284 2D90E000 	move $18,$7
+ 392 0288 2000B1FF 	sd $17,32($sp)
+ 393 028c 2D88A000 	move $17,$5
+ 394 0290 7000BFFF 	sd $31,112($sp)
+ 395 0294 1000B0FF 	sd $16,16($sp)
+ 396 0298 0000438C 	lw $3,%lo(cdvd_inited)($2)
+ 397              	
+ 398              	.set noreorder
+ 399              	.set nomacro
+GAS LISTING  			page 8
+
+
+ 400 029c 0A006014 	bne $3,$0,$L31
+ 401 02a0 FFFF0224 	li $2,-1
+ 402              	.set macro
+ 403              	.set reorder
+ 404              	
+ 405              	$L26:
+ 406 02a4 7000BFDF 	ld $31,112($sp)
+ 407 02a8 6000B5DF 	ld $21,96($sp)
+ 408 02ac 5000B4DF 	ld $20,80($sp)
+ 409 02b0 4000B3DF 	ld $19,64($sp)
+ 410 02b4 3000B2DF 	ld $18,48($sp)
+ 411 02b8 2000B1DF 	ld $17,32($sp)
+ 412 02bc 1000B0DF 	ld $16,16($sp)
+ 413              	
+ 414              	.set noreorder
+ 415              	.set nomacro
+ 416 02c0 0800E003 	j $31
+ 417 02c4 8000BD27 	addu $sp,$sp,128
+ 418              	.set macro
+ 419              	.set reorder
+ 420              	
+ 421              	.p2align 3
+ 422              	$L31:
+ 423 02c8 0000023C 	lui $2,%hi(sbuff)
+ 424 02cc 2D288000 	move $5,$4
+ 425 02d0 00005024 	addiu $16,$2,%lo(sbuff)
+ 426 02d4 FF030624 	dli $6,0x3ff
+ 427              	.set noreorder
+ 428              	.set nomacro
+ 429 02d8 0000000C 	jal strncpy
+ 430 02dc 2D200002 	move $4,$16
+ 431              	.set macro
+ 432              	.set reorder
+ 433              	
+ 434 02e0 2D282002 	move $5,$17
+ 435 02e4 7F000624 	dli $6,0x7f
+ 436              	.set noreorder
+ 437              	.set nomacro
+ 438 02e8 21002012 	beq $17,$0,$L32
+ 439 02ec 00040426 	addu $4,$16,1024
+ 440              	.set macro
+ 441              	.set reorder
+ 442              	
+ 443 02f0 0000000C 	jal strncpy
+ 443      00000000 
+ 444              	$L29:
+ 445 02f8 90000524 	li $5,144
+ 446 02fc 0000113C 	lui $17,%hi(sbuff)
+ 447 0300 18286502 	mult $5,$19,$5
+ 448 0304 00003026 	addiu $16,$17,%lo(sbuff)
+ 449 0308 800414AE 	sw $20,1152($16)
+ 450 030c 2D204002 	move $4,$18
+ 451 0310 840412AE 	sw $18,1156($16)
+ 452              	.set noreorder
+ 453              	.set nomacro
+ 454 0314 0000000C 	jal SifWriteBackDCache
+ 455 0318 880413AE 	sw $19,1160($16)
+GAS LISTING  			page 9
+
+
+ 456              	.set macro
+ 457              	.set reorder
+ 458              	
+ 459 031c 0000A0AF 	sw $0,0($sp)
+ 460 0320 0000043C 	lui $4,%hi(cd0)
+ 461 0324 02000524 	li $5,2
+ 462 0328 2D300000 	move $6,$0
+ 463 032c 004C8424 	addiu $4,$4,%lo(cd0)
+ 464 0330 2D380002 	move $7,$16
+ 465 0334 2D480002 	move $9,$16
+ 466 0338 2D580000 	move $11,$0
+ 467 033c 8C040824 	li $8,1164
+ 468 0340 04040A24 	li $10,1028
+ 469              	.set noreorder
+ 470              	.set nomacro
+ 471 0344 0000000C 	jal SifCallRpc
+ 472 0348 04001026 	addu $16,$16,4
+ 473              	.set macro
+ 474              	.set reorder
+ 475              	
+ 476 034c FF030624 	dli $6,0x3ff
+ 477 0350 0000318E 	lw $17,%lo(sbuff)($17)
+ 478 0354 2D20A002 	move $4,$21
+ 479              	.set noreorder
+ 480              	.set nomacro
+ 481 0358 0300A012 	beq $21,$0,$L30
+ 482 035c 2D280002 	move $5,$16
+ 483              	.set macro
+ 484              	.set reorder
+ 485              	
+ 486 0360 0000000C 	jal strncpy
+ 486      00000000 
+ 487              	$L30:
+ 488              	.set noreorder
+ 489              	.set nomacro
+ 490 0368 CEFF0010 	b $L26
+ 491 036c 2D102002 	move $2,$17
+ 492              	.set macro
+ 493              	.set reorder
+ 494              	
+ 495              	.p2align 3
+ 496              	$L32:
+ 497              	.set noreorder
+ 498              	.set nomacro
+ 499 0370 E1FF0010 	b $L29
+ 500 0374 000400AE 	sw $0,1024($16)
+ 501              	.set macro
+ 502              	.set reorder
+ 503              	
+ 504              	.end CDVD_getdir
+ 505              	$Lfe6:
+ 506              	.size CDVD_getdir,$Lfe6-CDVD_getdir
+ 507              	.align 2
+ 508              	.p2align 3,,7
+ 509              	.globl CDVD_FlushCache
+ 510              	.ent CDVD_FlushCache
+ 511              	CDVD_FlushCache:
+GAS LISTING  			page 10
+
+
+ 512              	.frame $sp,32,$31
+ 513              	.mask 0x80000000,-16
+ 514              	.fmask 0x00000000,0
+ 515 0378 E0FFBD27 	subu $sp,$sp,32
+ 516 037c 0000023C 	lui $2,%hi(cdvd_inited)
+ 517 0380 1000BFFF 	sd $31,16($sp)
+ 518 0384 0000073C 	lui $7,%hi(sbuff)
+ 519 0388 0000E724 	addiu $7,$7,%lo(sbuff)
+ 520 038c 0000043C 	lui $4,%hi(cd0)
+ 521 0390 0000438C 	lw $3,%lo(cdvd_inited)($2)
+ 522 0394 004C8424 	addiu $4,$4,%lo(cd0)
+ 523 0398 07000524 	li $5,7
+ 524 039c 2D300000 	move $6,$0
+ 525 03a0 2D400000 	move $8,$0
+ 526 03a4 2D48E000 	move $9,$7
+ 527 03a8 2D500000 	move $10,$0
+ 528              	.set noreorder
+ 529              	.set nomacro
+ 530 03ac 04006014 	bne $3,$0,$L35
+ 531 03b0 2D580000 	move $11,$0
+ 532              	.set macro
+ 533              	.set reorder
+ 534              	
+ 535 03b4 1000BFDF 	ld $31,16($sp)
+ 536              	$L36:
+ 537              	.set noreorder
+ 538              	.set nomacro
+ 539 03b8 0800E003 	j $31
+ 540 03bc 2000BD27 	addu $sp,$sp,32
+ 541              	.set macro
+ 542              	.set reorder
+ 543              	
+ 544              	.p2align 3
+ 545              	$L35:
+ 546              	.set noreorder
+ 547              	.set nomacro
+ 548 03c0 0000000C 	jal SifCallRpc
+ 549 03c4 0000A0AF 	sw $0,0($sp)
+ 550              	.set macro
+ 551              	.set reorder
+ 552              	
+ 553              	.set noreorder
+ 554              	.set nomacro
+ 555 03c8 FBFF0010 	b $L36
+ 556 03cc 1000BFDF 	ld $31,16($sp)
+ 557              	.set macro
+ 558              	.set reorder
+ 559              	
+ 560              	.end CDVD_FlushCache
+ 561              	$Lfe7:
+ 562              	.size CDVD_FlushCache,$Lfe7-CDVD_FlushCache
+ 563              	.section .bss
+ 564              	sbuff:
+ 565              	.align 6
+ 566 0000 00000000 	.space 19456
+ 566      00000000 
+ 566      00000000 
+GAS LISTING  			page 11
+
+
+ 566      00000000 
+ 566      00000000 
+ 567              	.previous
+ 568              	.section .bss
+ 569              	cd0:
+ 570              	.align 3
+ 571 4c00 00000000 	.space 40
+ 571      00000000 
+ 571      00000000 
+ 571      00000000 
+ 571      00000000 
+ 572 4c28 00000000 	.previous
+ 572      00000000 
+ 572      00000000 
+ 572      00000000 
+ 572      00000000 
+ 573              	.ident "GCC: (GNU) 3.2.2"

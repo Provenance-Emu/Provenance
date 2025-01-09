@@ -1,0 +1,16 @@
+TGB Dual is an open source (GPLv2) GB/GBC emulator with game link cable support.
+
+This is a port of it to libretro.  To emulate two units side by side, use
+the core options in your frontend.  In older frontends, you'll need to use
+your frontend's "Sufami Turbo" interface, placing the ROMs in "slots" A and B.
+The Sufami Turbo BIOS itself can be any file; it is ignored by the emulator.
+Use the Player 1 and Player 2 controllers to control each unit.
+
+In addition, some of the Japanese comments in the source code have been run
+through Google Translate to English, and CP932 and EUC-JP encoded files have
+been converted to UTF-8.
+
+Original sources from
+http://gigo.retrogames.com/download.html#tgb-dual
+http://shinh.skr.jp/tgbdualsdl/
+

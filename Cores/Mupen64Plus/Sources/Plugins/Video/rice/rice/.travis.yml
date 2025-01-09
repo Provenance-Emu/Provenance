@@ -1,0 +1,23 @@
+sudo: false
+dist: trusty
+language: cpp
+compiler:
+  - gcc
+  - clang
+addons:
+  apt:
+    packages:
+    - git
+    - libsdl1.2-dev
+    - libsdl2-dev
+    - libgl1-mesa-dev
+    - libpng-dev
+    - pkg-config
+before_install:
+  - git clone --depth=1 --branch=master git://github.com/mupen64plus/mupen64plus-core.git deps/mupen64plus-core
+env:
+ - NO_ASM=0
+ - NO_ASM=1
+script:
+ - make -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 clean && LDFLAGS="-Wl,--no-add-needed -Wl,--no-undefined" OPTFLAGS="-O2" make SDL_CONFIG=sdl-config CC="${CC}" CXX="${CXX}" -j$(nproc) -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 all
+ - make -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 clean && LDFLAGS="-Wl,--no-add-needed -Wl,--no-undefined" OPTFLAGS="-O2" make SDL_CONFIG=sdl2-config CC="${CC}" CXX="${CXX}" -j$(nproc) -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 all

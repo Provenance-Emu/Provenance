@@ -1,0 +1,724 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/gpprim.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl GPPrimRect
+   8              	.ent GPPrimRect
+   9              	GPPrimRect:
+  10              	.frame $sp,128,$31
+  11              	.mask 0x807f0000,-16
+  12              	.fmask 0x00000000,0
+  13 0000 80FFBD27 	subu $sp,$sp,128
+  14 0004 2000B2FF 	sd $18,32($sp)
+  15 0008 2D908000 	move $18,$4
+  16 000c 00010424 	li $4,256
+  17 0010 7000BFFF 	sd $31,112($sp)
+  18 0014 6000B6FF 	sd $22,96($sp)
+  19 0018 2DB04001 	move $22,$10
+  20 001c 5000B5FF 	sd $21,80($sp)
+  21 0020 FFFFD632 	andi $22,$22,0xffff
+  22 0024 2DA8C000 	move $21,$6
+  23 0028 4000B4FF 	sd $20,64($sp)
+  24 002c 3000B3FF 	sd $19,48($sp)
+  25 0030 2DA00001 	move $20,$8
+  26 0034 2D98E000 	move $19,$7
+  27 0038 1000B1FF 	sd $17,16($sp)
+  28 003c 0000B0FF 	sd $16,0($sp)
+  29 0040 2D88A000 	move $17,$5
+  30 0044 2D806001 	move $16,$11
+  31              	.set noreorder
+  32              	.set nomacro
+  33 0048 0000000C 	jal GSListSpace
+  34 004c 3CA81500 	dsll $21,$21,32
+  35              	.set macro
+  36              	.set reorder
+  37              	
+  38 0050 3C801000 	dsll $16,$16,32
+  39 0054 00800234 	li $2,32768
+  40 0058 10550524 	dli $5,0x5510
+  41 005c 21882202 	addu $17,$17,$2
+  42 0060 0044043C 	dli $4,0x4400000000008001
+  42      3C200400 
+  42      01808434 
+  43 006c 21A08202 	addu $20,$20,$2
+  44 0070 21904202 	addu $18,$18,$2
+  45 0074 21986202 	addu $19,$19,$2
+  46              	.set noreorder
+  47              	.set nomacro
+  48 0078 0000000C 	jal GSGifTagOpen
+  49 007c BA861000 	dsrl $16,$16,26
+  50              	.set macro
+  51              	.set reorder
+  52              	
+  53 0080 FFFF3132 	andi $17,$17,0xffff
+  54 0084 06010224 	dli $2,0x106
+  55 0088 388C1100 	dsll $17,$17,16
+GAS LISTING  			page 2
+
+
+  56 008c 25800202 	or $16,$16,$2
+  57 0090 FFFF5232 	andi $18,$18,0xffff
+  58 0094 FFFF9432 	andi $20,$20,0xffff
+  59 0098 2D200002 	move $4,$16
+  60 009c 3CB01600 	dsll $22,$22,32
+  61 00a0 3EA81500 	dsrl $21,$21,32
+  62 00a4 25905102 	or $18,$18,$17
+  63 00a8 38A41400 	dsll $20,$20,16
+  64              	.set noreorder
+  65              	.set nomacro
+  66 00ac 0000000C 	jal GSGifReg
+  67 00b0 FFFF7332 	andi $19,$19,0xffff
+  68              	.set macro
+  69              	.set reorder
+  70              	
+  71 00b4 25905602 	or $18,$18,$22
+  72 00b8 25987402 	or $19,$19,$20
+  73 00bc 2D20A002 	move $4,$21
+  74              	.set noreorder
+  75              	.set nomacro
+  76 00c0 0000000C 	jal GSGifReg
+  77 00c4 25987602 	or $19,$19,$22
+  78              	.set macro
+  79              	.set reorder
+  80              	
+  81              	.set noreorder
+  82              	.set nomacro
+  83 00c8 0000000C 	jal GSGifReg
+  84 00cc 2D204002 	move $4,$18
+  85              	.set macro
+  86              	.set reorder
+  87              	
+  88              	.set noreorder
+  89              	.set nomacro
+  90 00d0 0000000C 	jal GSGifReg
+  91 00d4 2D206002 	move $4,$19
+  92              	.set macro
+  93              	.set reorder
+  94              	
+  95 00d8 0000000C 	jal GSGifTagClose
+  95      00000000 
+  96 00e0 0000B0DF 	ld $16,0($sp)
+  97 00e4 7000BFDF 	ld $31,112($sp)
+  98 00e8 6000B6DF 	ld $22,96($sp)
+  99 00ec 5000B5DF 	ld $21,80($sp)
+ 100 00f0 4000B4DF 	ld $20,64($sp)
+ 101 00f4 3000B3DF 	ld $19,48($sp)
+ 102 00f8 2000B2DF 	ld $18,32($sp)
+ 103 00fc 1000B1DF 	ld $17,16($sp)
+ 104              	
+ 105              	.set noreorder
+ 106              	.set nomacro
+ 107 0100 0800E003 	j $31
+ 108 0104 8000BD27 	addu $sp,$sp,128
+ 109              	.set macro
+ 110              	.set reorder
+ 111              	
+GAS LISTING  			page 3
+
+
+ 112              	.end GPPrimRect
+ 113              	$Lfe1:
+ 114              	.size GPPrimRect,$Lfe1-GPPrimRect
+ 115              	.align 2
+ 116              	.p2align 3,,7
+ 117              	.globl GPPrimEnableZBuf
+ 118              	.ent GPPrimEnableZBuf
+ 119              	GPPrimEnableZBuf:
+ 120              	.frame $sp,16,$31
+ 121              	.mask 0x80000000,-16
+ 122              	.fmask 0x00000000,0
+ 123 0108 F0FFBD27 	subu $sp,$sp,16
+ 124 010c 0000BFFF 	sd $31,0($sp)
+ 125              	.set noreorder
+ 126              	.set nomacro
+ 127 0110 0000000C 	jal GSListSpace
+ 128 0114 80000424 	li $4,128
+ 129              	.set macro
+ 130              	.set reorder
+ 131              	
+ 132 0118 0000000C 	jal GSGifTagOpenAD
+ 132      00000000 
+ 133 0120 47000424 	li $4,71
+ 134              	.set noreorder
+ 135              	.set nomacro
+ 136 0124 0000000C 	jal GSGifRegAD
+ 137 0128 0700053C 	dli $5,0x70000
+ 138              	.set macro
+ 139              	.set reorder
+ 140              	
+ 141 012c 0000000C 	jal GSGifTagCloseAD
+ 141      00000000 
+ 142 0134 0000BFDF 	ld $31,0($sp)
+ 143              	
+ 144              	.set noreorder
+ 145              	.set nomacro
+ 146 0138 0800E003 	j $31
+ 147 013c 1000BD27 	addu $sp,$sp,16
+ 148              	.set macro
+ 149              	.set reorder
+ 150              	
+ 151              	.end GPPrimEnableZBuf
+ 152              	$Lfe2:
+ 153              	.size GPPrimEnableZBuf,$Lfe2-GPPrimEnableZBuf
+ 154              	.align 2
+ 155              	.p2align 3,,7
+ 156              	.globl GPPrimDisableZBuf
+ 157              	.ent GPPrimDisableZBuf
+ 158              	GPPrimDisableZBuf:
+ 159              	.frame $sp,16,$31
+ 160              	.mask 0x80000000,-16
+ 161              	.fmask 0x00000000,0
+ 162 0140 F0FFBD27 	subu $sp,$sp,16
+ 163 0144 0000BFFF 	sd $31,0($sp)
+ 164              	.set noreorder
+ 165              	.set nomacro
+ 166 0148 0000000C 	jal GSListSpace
+GAS LISTING  			page 4
+
+
+ 167 014c 80000424 	li $4,128
+ 168              	.set macro
+ 169              	.set reorder
+ 170              	
+ 171 0150 0000000C 	jal GSGifTagOpenAD
+ 171      00000000 
+ 172 0158 47000424 	li $4,71
+ 173              	.set noreorder
+ 174              	.set nomacro
+ 175 015c 0000000C 	jal GSGifRegAD
+ 176 0160 0300053C 	dli $5,0x30000
+ 177              	.set macro
+ 178              	.set reorder
+ 179              	
+ 180 0164 0000000C 	jal GSGifTagCloseAD
+ 180      00000000 
+ 181 016c 0000BFDF 	ld $31,0($sp)
+ 182              	
+ 183              	.set noreorder
+ 184              	.set nomacro
+ 185 0170 0800E003 	j $31
+ 186 0174 1000BD27 	addu $sp,$sp,16
+ 187              	.set macro
+ 188              	.set reorder
+ 189              	
+ 190              	.end GPPrimDisableZBuf
+ 191              	$Lfe3:
+ 192              	.size GPPrimDisableZBuf,$Lfe3-GPPrimDisableZBuf
+ 193              	.align 2
+ 194              	.p2align 3,,7
+ 195              	.globl GPPrimTexRect
+ 196              	.ent GPPrimTexRect
+ 197              	GPPrimTexRect:
+ 198              	.frame $sp,144,$31
+ 199              	.mask 0x80ff0000,-16
+ 200              	.fmask 0x00000000,0
+ 201 0178 70FFBD27 	subu $sp,$sp,144
+ 202 017c 1000B1FF 	sd $17,16($sp)
+ 203 0180 2D888000 	move $17,$4
+ 204 0184 00010424 	li $4,256
+ 205 0188 8000BFFF 	sd $31,128($sp)
+ 206 018c 7000B7FF 	sd $23,112($sp)
+ 207 0190 2DB84001 	move $23,$10
+ 208 0194 6000B6FF 	sd $22,96($sp)
+ 209 0198 FFFFF732 	andi $23,$23,0xffff
+ 210 019c 2DB06001 	move $22,$11
+ 211 01a0 5000B5FF 	sd $21,80($sp)
+ 212 01a4 4000B4FF 	sd $20,64($sp)
+ 213 01a8 2DA8C000 	move $21,$6
+ 214 01ac 2DA02001 	move $20,$9
+ 215 01b0 3000B3FF 	sd $19,48($sp)
+ 216 01b4 2000B2FF 	sd $18,32($sp)
+ 217 01b8 2D98E000 	move $19,$7
+ 218 01bc 2D900001 	move $18,$8
+ 219 01c0 0000B0FF 	sd $16,0($sp)
+ 220 01c4 2D80A000 	move $16,$5
+ 221              	.set noreorder
+GAS LISTING  			page 5
+
+
+ 222              	.set nomacro
+ 223 01c8 0000000C 	jal GSListSpace
+ 224 01cc FFFF7332 	andi $19,$19,0xffff
+ 225              	.set macro
+ 226              	.set reorder
+ 227              	
+ 228 01d0 389C1300 	dsll $19,$19,16
+ 229 01d4 530F053C 	dli $5,0xf535310
+ 229      1053A534 
+ 230 01dc 00800234 	li $2,32768
+ 231 01e0 0064043C 	dli $4,0x6400000000008001
+ 231      3C200400 
+ 231      01808434 
+ 232 01ec 21A08202 	addu $20,$20,$2
+ 233 01f0 21882202 	addu $17,$17,$2
+ 234 01f4 21800202 	addu $16,$16,$2
+ 235 01f8 21904202 	addu $18,$18,$2
+ 236              	.set noreorder
+ 237              	.set nomacro
+ 238 01fc 0000000C 	jal GSGifTagOpen
+ 239 0200 FFFFB532 	andi $21,$21,0xffff
+ 240              	.set macro
+ 241              	.set reorder
+ 242              	
+ 243 0204 25A8B302 	or $21,$21,$19
+ 244 0208 A000A48F 	lw $4,160($sp)
+ 245 020c 16010224 	dli $2,0x116
+ 246 0210 FFFF1032 	andi $16,$16,0xffff
+ 247 0214 FFFF3132 	andi $17,$17,0xffff
+ 248 0218 3C200400 	dsll $4,$4,32
+ 249 021c 38841000 	dsll $16,$16,16
+ 250 0220 BA260400 	dsrl $4,$4,26
+ 251 0224 25883002 	or $17,$17,$16
+ 252 0228 25208200 	or $4,$4,$2
+ 253              	.set noreorder
+ 254              	.set nomacro
+ 255 022c 0000000C 	jal GSGifReg
+ 256 0230 FFFFD632 	andi $22,$22,0xffff
+ 257              	.set macro
+ 258              	.set reorder
+ 259              	
+ 260 0234 FFFF9432 	andi $20,$20,0xffff
+ 261 0238 9800A48F 	lw $4,152($sp)
+ 262 023c 38B41600 	dsll $22,$22,16
+ 263 0240 38A41400 	dsll $20,$20,16
+ 264 0244 FFFF5232 	andi $18,$18,0xffff
+ 265 0248 3C200400 	dsll $4,$4,32
+ 266 024c 25B8F602 	or $23,$23,$22
+ 267 0250 3E200400 	dsrl $4,$4,32
+ 268              	.set noreorder
+ 269              	.set nomacro
+ 270 0254 0000000C 	jal GSGifReg
+ 271 0258 25905402 	or $18,$18,$20
+ 272              	.set macro
+ 273              	.set reorder
+ 274              	
+ 275              	.set noreorder
+GAS LISTING  			page 6
+
+
+ 276              	.set nomacro
+ 277 025c 0000000C 	jal GSGifReg
+ 278 0260 2D20A002 	move $4,$21
+ 279              	.set macro
+ 280              	.set reorder
+ 281              	
+ 282 0264 9000B397 	lhu $19,144($sp)
+ 283              	
+ 284 0268 3C981300 	dsll $19,$19,32
+ 285 026c 25883302 	or $17,$17,$19
+ 286 0270 25905302 	or $18,$18,$19
+ 287              	.set noreorder
+ 288              	.set nomacro
+ 289 0274 0000000C 	jal GSGifReg
+ 290 0278 2D202002 	move $4,$17
+ 291              	.set macro
+ 292              	.set reorder
+ 293              	
+ 294              	.set noreorder
+ 295              	.set nomacro
+ 296 027c 0000000C 	jal GSGifReg
+ 297 0280 2D20E002 	move $4,$23
+ 298              	.set macro
+ 299              	.set reorder
+ 300              	
+ 301              	.set noreorder
+ 302              	.set nomacro
+ 303 0284 0000000C 	jal GSGifReg
+ 304 0288 2D204002 	move $4,$18
+ 305              	.set macro
+ 306              	.set reorder
+ 307              	
+ 308 028c 0000000C 	jal GSGifTagClose
+ 308      00000000 
+ 309 0294 0000B0DF 	ld $16,0($sp)
+ 310 0298 8000BFDF 	ld $31,128($sp)
+ 311 029c 7000B7DF 	ld $23,112($sp)
+ 312 02a0 6000B6DF 	ld $22,96($sp)
+ 313 02a4 5000B5DF 	ld $21,80($sp)
+ 314 02a8 4000B4DF 	ld $20,64($sp)
+ 315 02ac 3000B3DF 	ld $19,48($sp)
+ 316 02b0 2000B2DF 	ld $18,32($sp)
+ 317 02b4 1000B1DF 	ld $17,16($sp)
+ 318              	
+ 319              	.set noreorder
+ 320              	.set nomacro
+ 321 02b8 0800E003 	j $31
+ 322 02bc 9000BD27 	addu $sp,$sp,144
+ 323              	.set macro
+ 324              	.set reorder
+ 325              	
+ 326              	.end GPPrimTexRect
+ 327              	$Lfe4:
+ 328              	.size GPPrimTexRect,$Lfe4-GPPrimTexRect
+ 329              	.align 2
+ 330              	.p2align 3,,7
+ 331              	.globl GPPrimSetTex
+GAS LISTING  			page 7
+
+
+ 332              	.ent GPPrimSetTex
+ 333              	GPPrimSetTex:
+ 334              	.frame $sp,128,$31
+ 335              	.mask 0x807f0000,-16
+ 336              	.fmask 0x00000000,0
+ 337 02c0 80FFBD27 	subu $sp,$sp,128
+ 338 02c4 4000B4FF 	sd $20,64($sp)
+ 339 02c8 2DA08000 	move $20,$4
+ 340 02cc 80000424 	li $4,128
+ 341 02d0 7000BFFF 	sd $31,112($sp)
+ 342 02d4 6000B6FF 	sd $22,96($sp)
+ 343 02d8 2DB0C000 	move $22,$6
+ 344 02dc 5000B5FF 	sd $21,80($sp)
+ 345 02e0 2DA8E000 	move $21,$7
+ 346 02e4 3000B3FF 	sd $19,48($sp)
+ 347 02e8 2D986001 	move $19,$11
+ 348 02ec 2000B2FF 	sd $18,32($sp)
+ 349 02f0 2D902001 	move $18,$9
+ 350 02f4 1000B1FF 	sd $17,16($sp)
+ 351 02f8 2D880001 	move $17,$8
+ 352 02fc 0000B0FF 	sd $16,0($sp)
+ 353              	.set noreorder
+ 354              	.set nomacro
+ 355 0300 0000000C 	jal GSListSpace
+ 356 0304 2D80A000 	move $16,$5
+ 357              	.set macro
+ 358              	.set reorder
+ 359              	
+ 360 0308 0000000C 	jal GSGifTagOpenAD
+ 360      00000000 
+ 361 0310 1C000424 	li $4,28
+ 362              	.set noreorder
+ 363              	.set nomacro
+ 364 0314 0000000C 	jal GSGifRegAD
+ 365 0318 04000524 	dli $5,0x4
+ 366              	.set macro
+ 367              	.set reorder
+ 368              	
+ 369 031c 3F000424 	li $4,63
+ 370              	.set noreorder
+ 371              	.set nomacro
+ 372 0320 0000000C 	jal GSGifRegAD
+ 373 0324 2D280000 	move $5,$0
+ 374              	.set macro
+ 375              	.set reorder
+ 376              	
+ 377 0328 3B000424 	li $4,59
+ 378              	.set noreorder
+ 379              	.set nomacro
+ 380 032c 0000000C 	jal GSGifRegAD
+ 381 0330 80800534 	dli $5,0x8080
+ 382              	.set macro
+ 383              	.set reorder
+ 384              	
+ 385 0334 8000A28F 	lw $2,128($sp)
+ 386 0338 60000524 	dli $5,0x60
+ 387              	.set noreorder
+GAS LISTING  			page 8
+
+
+ 388              	.set nomacro
+ 389 033c 03004014 	bne $2,$0,$L8
+ 390 0340 14000424 	li $4,20
+ 391              	.set macro
+ 392              	.set reorder
+ 393              	
+ 394 0344 15000424 	li $4,21
+ 395 0348 40000524 	dli $5,0x40
+ 396              	$L8:
+ 397 034c 0000000C 	jal GSGifRegAD
+ 397      00000000 
+ 398 0354 06000424 	li $4,6
+ 399 0358 82111000 	srl $2,$16,6
+ 400 035c 3C281400 	dsll $5,$20,32
+ 401 0360 3C100200 	dsll $2,$2,32
+ 402 0364 3C181100 	dsll $3,$17,32
+ 403 0368 BA140200 	dsrl $2,$2,18
+ 404 036c 3E280500 	dsrl $5,$5,32
+ 405 0370 3A1B0300 	dsrl $3,$3,12
+ 406 0374 3C301600 	dsll $6,$22,32
+ 407 0378 2528A200 	or $5,$5,$2
+ 408 037c BA310600 	dsrl $6,$6,6
+ 409 0380 2528A300 	or $5,$5,$3
+ 410 0384 3C381500 	dsll $7,$21,32
+ 411 0388 BA380700 	dsrl $7,$7,2
+ 412 038c 2528A600 	or $5,$5,$6
+ 413 0390 7C411200 	dsll $8,$18,37
+ 414 0394 2528A700 	or $5,$5,$7
+ 415 0398 FC4C1300 	dsll $9,$19,51
+ 416 039c 2528A800 	or $5,$5,$8
+ 417 03a0 2528A900 	or $5,$5,$9
+ 418 03a4 8020023C 	dli $2,0x2080000400000000
+ 418      04004234 
+ 418      3C100200 
+ 419              	.set noreorder
+ 420              	.set nomacro
+ 421 03b0 0000000C 	jal GSGifRegAD
+ 422 03b4 2528A200 	or $5,$5,$2
+ 423              	.set macro
+ 424              	.set reorder
+ 425              	
+ 426 03b8 08000424 	li $4,8
+ 427              	.set noreorder
+ 428              	.set nomacro
+ 429 03bc 0000000C 	jal GSGifRegAD
+ 430 03c0 2D280000 	move $5,$0
+ 431              	.set macro
+ 432              	.set reorder
+ 433              	
+ 434 03c4 7F000524 	dli $5,0x7f00000044
+ 434      3C280500 
+ 434      4400A534 
+ 435              	.set noreorder
+ 436              	.set nomacro
+ 437 03d0 0000000C 	jal GSGifRegAD
+ 438 03d4 42000424 	li $4,66
+ 439              	.set macro
+GAS LISTING  			page 9
+
+
+ 440              	.set reorder
+ 441              	
+ 442 03d8 49000424 	li $4,73
+ 443              	.set noreorder
+ 444              	.set nomacro
+ 445 03dc 0000000C 	jal GSGifRegAD
+ 446 03e0 2D280000 	move $5,$0
+ 447              	.set macro
+ 448              	.set reorder
+ 449              	
+ 450 03e4 0000000C 	jal GSGifTagCloseAD
+ 450      00000000 
+ 451 03ec 0000B0DF 	ld $16,0($sp)
+ 452 03f0 7000BFDF 	ld $31,112($sp)
+ 453 03f4 6000B6DF 	ld $22,96($sp)
+ 454 03f8 5000B5DF 	ld $21,80($sp)
+ 455 03fc 4000B4DF 	ld $20,64($sp)
+ 456 0400 3000B3DF 	ld $19,48($sp)
+ 457 0404 2000B2DF 	ld $18,32($sp)
+ 458 0408 1000B1DF 	ld $17,16($sp)
+ 459              	
+ 460              	.set noreorder
+ 461              	.set nomacro
+ 462 040c 0800E003 	j $31
+ 463 0410 8000BD27 	addu $sp,$sp,128
+ 464              	.set macro
+ 465              	.set reorder
+ 466              	
+ 467              	.end GPPrimSetTex
+ 468              	$Lfe5:
+ 469              	.size GPPrimSetTex,$Lfe5-GPPrimSetTex
+ 470              	.align 2
+ 471 0414 00000000 	.p2align 3,,7
+ 472              	.globl GPPrimUploadTexture
+ 473              	.ent GPPrimUploadTexture
+ 474              	GPPrimUploadTexture:
+ 475              	.frame $sp,160,$31
+ 476              	.mask 0xc0ff0000,-16
+ 477              	.fmask 0x00000000,0
+ 478 0418 60FFBD27 	subu $sp,$sp,160
+ 479 041c 02000224 	li $2,2
+ 480 0420 8000BEFF 	sd $fp,128($sp)
+ 481 0424 2DF02001 	move $fp,$9
+ 482 0428 7000B7FF 	sd $23,112($sp)
+ 483 042c 2DB8E000 	move $23,$7
+ 484 0430 6000B6FF 	sd $22,96($sp)
+ 485 0434 2DB0C000 	move $22,$6
+ 486 0438 5000B5FF 	sd $21,80($sp)
+ 487 043c 2DA84001 	move $21,$10
+ 488 0440 4000B4FF 	sd $20,64($sp)
+ 489 0444 2DA06001 	move $20,$11
+ 490 0448 3000B3FF 	sd $19,48($sp)
+ 491 044c 2D988000 	move $19,$4
+ 492 0450 2000B2FF 	sd $18,32($sp)
+ 493 0454 18904B01 	mult $18,$10,$11
+ 494 0458 1000B1FF 	sd $17,16($sp)
+ 495 045c 2D880001 	move $17,$8
+GAS LISTING  			page 10
+
+
+ 496 0460 0000B0FF 	sd $16,0($sp)
+ 497 0464 2D80A000 	move $16,$5
+ 498              	.set noreorder
+ 499              	.set nomacro
+ 500 0468 4B000211 	beq $8,$2,$L12
+ 501 046c 9000BFFF 	sd $31,144($sp)
+ 502              	.set macro
+ 503              	.set reorder
+ 504              	
+ 505 0470 03000229 	slt $2,$8,3
+ 506              	.set noreorder
+ 507              	.set nomacro
+ 508 0474 3C004010 	beq $2,$0,$L17
+ 509 0478 13000224 	li $2,19
+ 510              	.set macro
+ 511              	.set reorder
+ 512              	
+ 513 047c 03004226 	addu $2,$18,3
+ 514              	.set noreorder
+ 515              	.set nomacro
+ 516 0480 02000011 	beq $8,$0,$L10
+ 517 0484 83900200 	sra $18,$2,2
+ 518              	.set macro
+ 519              	.set reorder
+ 520              	
+ 521 0488 2D900000 	move $18,$0
+ 522              	$L10:
+ 523              	$L20:
+ 524              	.set noreorder
+ 525              	.set nomacro
+ 526 048c 0000000C 	jal GSListSpace
+ 527 0490 80000424 	li $4,128
+ 528              	.set macro
+ 529              	.set reorder
+ 530              	
+ 531 0494 0000000C 	jal GSGifTagOpenAD
+ 531      00000000 
+ 532 049c 3C381300 	dsll $7,$19,32
+ 533 04a0 3F000326 	addu $3,$16,63
+ 534 04a4 0000022A 	slt $2,$16,0
+ 535 04a8 0B806200 	movn $16,$3,$2
+ 536 04ac 2D302002 	move $6,$17
+ 537 04b0 83111000 	sra $2,$16,6
+ 538 04b4 381E0600 	dsll $3,$6,24
+ 539 04b8 3C360600 	dsll $6,$6,56
+ 540 04bc 382C0200 	dsll $5,$2,16
+ 541 04c0 50000424 	li $4,80
+ 542 04c4 2528A300 	or $5,$5,$3
+ 543 04c8 3C140200 	dsll $2,$2,48
+ 544 04cc 2528A700 	or $5,$5,$7
+ 545 04d0 2528A200 	or $5,$5,$2
+ 546              	.set noreorder
+ 547              	.set nomacro
+ 548 04d4 0000000C 	jal GSGifRegAD
+ 549 04d8 2528A600 	or $5,$5,$6
+ 550              	.set macro
+ 551              	.set reorder
+GAS LISTING  			page 11
+
+
+ 552              	
+ 553 04dc 3C141700 	dsll $2,$23,48
+ 554 04e0 3C281600 	dsll $5,$22,32
+ 555 04e4 51000424 	li $4,81
+ 556              	.set noreorder
+ 557              	.set nomacro
+ 558 04e8 0000000C 	jal GSGifRegAD
+ 559 04ec 2528A200 	or $5,$5,$2
+ 560              	.set macro
+ 561              	.set reorder
+ 562              	
+ 563 04f0 3C281400 	dsll $5,$20,32
+ 564 04f4 2528A502 	or $5,$21,$5
+ 565              	.set noreorder
+ 566              	.set nomacro
+ 567 04f8 0000000C 	jal GSGifRegAD
+ 568 04fc 52000424 	li $4,82
+ 569              	.set macro
+ 570              	.set reorder
+ 571              	
+ 572 0500 53000424 	li $4,83
+ 573              	.set noreorder
+ 574              	.set nomacro
+ 575 0504 0000000C 	jal GSGifRegAD
+ 576 0508 2D280000 	move $5,$0
+ 577              	.set macro
+ 578              	.set reorder
+ 579              	
+ 580 050c 0000000C 	jal GSGifTagCloseAD
+ 580      00000000 
+ 581              	.set noreorder
+ 582              	.set nomacro
+ 583 0514 0000000C 	jal GSGifTagImage
+ 584 0518 2D204002 	move $4,$18
+ 585              	.set macro
+ 586              	.set reorder
+ 587              	
+ 588 051c 0000000C 	jal GSDmaCntClose
+ 588      00000000 
+ 589 0524 2D284002 	move $5,$18
+ 590              	.set noreorder
+ 591              	.set nomacro
+ 592 0528 0000000C 	jal GSDmaRef
+ 593 052c 2D20C003 	move $4,$fp
+ 594              	.set macro
+ 595              	.set reorder
+ 596              	
+ 597 0530 0000000C 	jal GSDmaCntOpen
+ 597      00000000 
+ 598 0538 0000B0DF 	ld $16,0($sp)
+ 599 053c 9000BFDF 	ld $31,144($sp)
+ 600 0540 8000BEDF 	ld $fp,128($sp)
+ 601 0544 7000B7DF 	ld $23,112($sp)
+ 602 0548 6000B6DF 	ld $22,96($sp)
+ 603 054c 5000B5DF 	ld $21,80($sp)
+ 604 0550 4000B4DF 	ld $20,64($sp)
+ 605 0554 3000B3DF 	ld $19,48($sp)
+GAS LISTING  			page 12
+
+
+ 606 0558 2000B2DF 	ld $18,32($sp)
+ 607 055c 1000B1DF 	ld $17,16($sp)
+ 608              	
+ 609              	.set noreorder
+ 610              	.set nomacro
+ 611 0560 0800E003 	j $31
+ 612 0564 A000BD27 	addu $sp,$sp,160
+ 613              	.set macro
+ 614              	.set reorder
+ 615              	
+ 616              	.p2align 3
+ 617              	$L17:
+ 618              	.set noreorder
+ 619              	.set nomacro
+ 620 0568 07000211 	beq $8,$2,$L13
+ 621 056c 1F004326 	addu $3,$18,31
+ 622              	.set macro
+ 623              	.set reorder
+ 624              	
+ 625 0570 14000224 	li $2,20
+ 626              	.set noreorder
+ 627              	.set nomacro
+ 628 0574 C5FF0211 	beq $8,$2,$L10
+ 629 0578 43910300 	sra $18,$3,5
+ 630              	.set macro
+ 631              	.set reorder
+ 632              	
+ 633              	.set noreorder
+ 634              	.set nomacro
+ 635 057c C3FF0010 	b $L20
+ 636 0580 2D900000 	move $18,$0
+ 637              	.set macro
+ 638              	.set reorder
+ 639              	
+ 640 0584 00000000 	.p2align 3
+ 641              	$L13:
+ 642 0588 0F004226 	addu $2,$18,15
+ 643              	.set noreorder
+ 644              	.set nomacro
+ 645 058c BFFF0010 	b $L10
+ 646 0590 03910200 	sra $18,$2,4
+ 647              	.set macro
+ 648              	.set reorder
+ 649              	
+ 650 0594 00000000 	.p2align 3
+ 651              	$L12:
+ 652 0598 07004226 	addu $2,$18,7
+ 653              	.set noreorder
+ 654              	.set nomacro
+ 655 059c BBFF0010 	b $L10
+ 656 05a0 C3900200 	sra $18,$2,3
+ 657              	.set macro
+ 658              	.set reorder
+ 659              	
+ 660              	.end GPPrimUploadTexture
+ 661              	$Lfe6:
+ 662              	.size GPPrimUploadTexture,$Lfe6-GPPrimUploadTexture
+GAS LISTING  			page 13
+
+
+ 663 05a4 00000000 	.ident "GCC: (GNU) 3.2.2"

@@ -24,8 +24,7 @@ public final class ServiceProvider: NSObject, TVTopShelfProvider {
         super.init()
 
         if RealmConfiguration.supportsAppGroups {
-            let database = RomDatabase.sharedInstance
-            database.refresh()
+            RomDatabase.refresh()
         } else {
             ELOG("App doesn't support groups. Check \(PVAppGroupId) is a valid group id")
         }

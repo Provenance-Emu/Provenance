@@ -3,13 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B324C63921920DAC009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63821920DAC009F4EDC /* PVSupport.framework */; };
+		938E5BB3298B308700F8596C /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 938E5BB2298B308700F8596C /* PVDebug.c */; };
+		B30E99112C6EF1F100C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99102C6EF1F100C1431E /* PVSupport */; };
+		B30E9AF92C6FBA3200C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AF82C6FBA3200C1431E /* PVEmulatorCore */; };
+		B30E9AFC2C6FBA3E00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AFB2C6FBA3E00C1431E /* PVCoreBridge */; };
 		B3547B542058587300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B532058587300CFF7D8 /* Core.plist */; };
 		B3AF47E121072B63002211EE /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47E021072B63002211EE /* vba-over.ini */; };
+		B3AFCF802977A71200A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF7F2977A71200A01010 /* PVLogging */; };
 		B3C9D4BC1DEA77DF0068D057 /* PVGBA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D4BA1DEA77DF0068D057 /* PVGBA.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4DA1DEA782C0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE0A1ABD1289004E778B /* Foundation.framework */; };
 		B3C9D4DC1DEA78550068D057 /* GBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9A1ABD0FEF004E778B /* GBA.cpp */; };
@@ -135,6 +139,8 @@
 		1A9FBE0A1ABD1289004E778B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A9FBE141ABD1B41004E778B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A9FBE161ABD1B46004E778B /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildConfig.xcconfig; sourceTree = "<group>"; };
+		938E5BB2298B308700F8596C /* PVDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PVDebug.c; path = ../../Debug/PVDebug.c; sourceTree = "<group>"; };
 		B324C63821920DAC009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C63B21920DCD009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B532058587300CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -153,8 +159,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B324C63921920DAC009F4EDC /* PVSupport.framework in Frameworks */,
+				B30E9AF92C6FBA3200C1431E /* PVEmulatorCore in Frameworks */,
+				B30E99112C6EF1F100C1431E /* PVSupport in Frameworks */,
 				B3C9D5271DEA7C410068D057 /* libz.tbd in Frameworks */,
+				B3AFCF802977A71200A01010 /* PVLogging in Frameworks */,
+				B30E9AFC2C6FBA3E00C1431E /* PVCoreBridge in Frameworks */,
 				B3C9D4DA1DEA782C0068D057 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -165,6 +174,7 @@
 		1A9FBC111ABD0DA7004E778B = {
 			isa = PBXGroup;
 			children = (
+				938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */,
 				1A9FBC1C1ABD0DA7004E778B /* PVGBA */,
 				B3C9D4B91DEA77DF0068D057 /* PVGBA */,
 				1A9FBE131ABD133E004E778B /* Frameworks */,
@@ -199,6 +209,7 @@
 		1A9FBC351ABD0EF1004E778B /* GBA */ = {
 			isa = PBXGroup;
 			children = (
+				938E5BB2298B308700F8596C /* PVDebug.c */,
 				1A9FBC371ABD0FE2004E778B /* PVGBAEmulatorCore.h */,
 				1A9FBC381ABD0FE2004E778B /* PVGBAEmulatorCore.mm */,
 				1A9FBC3A1ABD0FEF004E778B /* GBACore */,
@@ -372,6 +383,12 @@
 			dependencies = (
 			);
 			name = PVGBA;
+			packageProductDependencies = (
+				B3AFCF7F2977A71200A01010 /* PVLogging */,
+				B30E99102C6EF1F100C1431E /* PVSupport */,
+				B30E9AF82C6FBA3200C1431E /* PVEmulatorCore */,
+				B30E9AFB2C6FBA3E00C1431E /* PVCoreBridge */,
+			);
 			productName = PVGBA;
 			productReference = B3C9D4B81DEA77DF0068D057 /* PVGBA.framework */;
 			productType = "com.apple.product-type.framework";
@@ -385,7 +402,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				LastUpgradeCheck = 1300;
-				ORGANIZATIONNAME = "Provenance Emu";
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B3C9D4B71DEA77DF0068D057 = {
 						CreatedOnToolsVersion = 8.1;
@@ -393,7 +410,7 @@
 				};
 			};
 			buildConfigurationList = 1A9FBC151ABD0DA7004E778B /* Build configuration list for PBXProject "PVGBA" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -401,6 +418,11 @@
 				Base,
 			);
 			mainGroup = 1A9FBC111ABD0DA7004E778B;
+			packageReferences = (
+				B30E990F2C6EF1F100C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E9AF72C6FBA3200C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B30E9AFA2C6FBA3E00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = 1A9FBC1B1ABD0DA7004E778B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -432,6 +454,7 @@
 				B3C9D4DE1DEA78550068D057 /* EEprom.cpp in Sources */,
 				B3C9D4DF1DEA78550068D057 /* Gb_Apu.cpp in Sources */,
 				B3C9D4E01DEA78550068D057 /* GBA-arm.cpp in Sources */,
+				938E5BB3298B308700F8596C /* PVDebug.c in Sources */,
 				B3C9D4E11DEA78550068D057 /* Globals.cpp in Sources */,
 				B3C9D4E21DEA78550068D057 /* Util.cpp in Sources */,
 				B3C9D4E31DEA78550068D057 /* Multi_Buffer.cpp in Sources */,
@@ -469,7 +492,9 @@
 /* Begin XCBuildConfiguration section */
 		1A9FBC2C1ABD0DA7004E778B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -518,14 +543,19 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/build";
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
 		};
 		1A9FBC2D1ABD0DA7004E778B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -567,7 +597,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/build";
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
@@ -575,7 +608,9 @@
 		};
 		B324C5172191A3CF009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -617,7 +652,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/build";
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
@@ -629,13 +667,12 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -653,6 +690,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_CFLAGS = (
 					"-DC_CORE",
 					"-DFINAL_VERSION",
@@ -664,7 +705,6 @@
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
@@ -680,13 +720,12 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -704,6 +743,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_CFLAGS = (
 					"-DC_CORE",
 					"-DFINAL_VERSION",
@@ -715,7 +758,6 @@
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
@@ -731,13 +773,12 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -755,6 +796,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_CFLAGS = (
 					"-DC_CORE",
 					"-DFINAL_VERSION",
@@ -766,7 +811,6 @@
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
@@ -800,6 +844,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E990F2C6EF1F100C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E9AF72C6FBA3200C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B30E9AFA2C6FBA3E00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E99102C6EF1F100C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9AF82C6FBA3200C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B30E9AFB2C6FBA3E00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B3AFCF7F2977A71200A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A9FBC121ABD0DA7004E778B /* Project object */;
 }

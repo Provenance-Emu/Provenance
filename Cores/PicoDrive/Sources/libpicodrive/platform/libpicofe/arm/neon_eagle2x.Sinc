@@ -1,0 +1,778 @@
+@@
+@@  Copyright (C) 2012 Roman Pauer
+@@
+@@  Permission is hereby granted, free of charge, to any person obtaining a copy of
+@@  this software and associated documentation files (the "Software"), to deal in
+@@  the Software without restriction, including without limitation the rights to
+@@  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+@@  of the Software, and to permit persons to whom the Software is furnished to do
+@@  so, subject to the following conditions:
+@@
+@@  The above copyright notice and this permission notice shall be included in all
+@@  copies or substantial portions of the Software.
+@@
+@@  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+@@  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+@@  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+@@  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+@@  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+@@  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+@@  SOFTWARE.
+@@
+
+
+@ S T U  --\ E1 E2
+@ V C W  --/ E3 E4
+@ X Y Z
+
+@ q0  = S1sl    < S >
+@ q1  = S2sl    < V >
+@ q2  = S3sl    < X >
+@ q3  = S1sr    < U >
+@ q4  = S2sr    < W >
+@ q5  = S3sr    < Z >
+@ q6  = E3
+@ q7  = E4
+@ q8  = S1
+@ q9  = S2
+@ q10 = S3
+@ q11 = S1prev  < T >
+@ q12 = S2prev  < C >
+@ q13 = S3prev  < Y >
+@ q14 = E1
+@ q15 = E2
+
+
+.macro __neon_eagle2x_8_8_line src1, src2, src3, counter, dst1, dst2, reg1, qT, qY, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+
+    .ifeqs "\qT", "q11"
+        vld1.8 {d23[7]}, [\src1]        @ S1prev[15] = src[-srcstride]
+    .endif
+        vld1.8 {d25[7]}, [\src2]        @ S2prev[15] = src[0]
+    .ifeqs "\qY", "q13"
+        vld1.8 {d27[7]}, [\src3]        @ S3prev[15] = src[srcstride]
+    .endif
+        andS \reg1, \counter, #15       @ reg1 = counter & 15
+
+    .ifnes "\qT", "q11"
+        add \src1, \src1, \counter      @ src1 += counter
+    .endif
+    .ifnes "\qY", "q13"
+        add \src3, \src3, \counter      @ src3 += counter
+    .endif
+        beq 1f
+
+    @ first 1-15 pixels - align counter to 16 bytes
+
+@ q0  = S1sl    < S >
+@ q2  = S3sl    < X >
+@ q7  = tmp2
+@ q15 = tmp1
+
+    .ifeqs "\qT", "q11"
+        vld1.8 {q8}, [\src1], \reg1     @ S1 = [src - srcstride]; src1 += counter & 15
+    .endif
+
+        vld1.8 {q9}, [\src2], \reg1     @ S2 = [src            ]; src2 += counter & 15
+
+    .ifeqs "\qY", "q13"
+        vld1.8 {q10}, [\src3], \reg1    @ S3 = [src + srcstride]; src3 += counter & 15
+    .endif
+    .ifeqs "\qT", "q11"
+        vext.8 q0, \qT, q8, #15         @ S1sl = S1prev[15] | (S1 << 8)     < S >
+
+        vmov \qT, q8                    @ S1prev = S1       < T >
+    .endif
+        vext.8 q1, q12, q9, #15         @ S2sl = S2prev[15] | (S2 << 8)     < V >
+
+        vmov q12, q9                    @ S2prev = S2       < C >
+    .ifeqs "\qY", "q13"
+        vext.8 q2, \qY, q10, #15        @ S3sl = S3prev[15] | (S3 << 8)     < X >
+
+        vmov \qY, q10                   @ S3prev = S3       < Y >
+    .endif
+    .ifeqs "\qT", "q11"
+        vext.8 q3, \qT, q8, #1          @ S1sr = (S1prev >> 8) | ...        < U >
+    .endif
+
+        vext.8 q4, q12, q9, #1          @ S2sr = (S2prev >> 8) | ...        < W >
+
+    .ifeqs "\qY", "q13"
+        vext.8 q5, \qY, q10, #1         @ S3sr = (S3prev >> 8) | ...        < Z >
+    .else
+        vmov q2, q1                     @ S3sl = S2sl       < X >
+
+        vmov q5, q4                     @ S3sr = S2sr       < Z >
+    .endif
+
+    .ifnes "\qT", "q11"
+        vmov q0, q1                     @ S1sl = S2sl       < S >
+
+        vmov q3, q4                     @ S1sr = S2sr       < U >
+    .endif
+
+        vceq.i8 q14, q0, \qT            @ E1 = < S == T >
+
+        vceq.i8 q15, q0, q1             @ tmp1 = < S == V >
+
+        vceq.i8 q6, q2, \qY             @ E3 = < X == Y >
+
+        vceq.i8 q7, q2, q1              @ tmp2 = < X == V >
+
+        vand q14, q14, q15              @ E1 = < S == T && S == V >
+
+@ q0 = tmp3
+@ q15 = E2
+
+        vceq.i8 q15, q3, \qT            @ E2 = < U == T >
+
+        vceq.i8 q0, q3, q4              @ tmp3 = < U == W >
+
+        vand q6, q6, q7                 @ E3 = < X == Y && X == V >
+
+@ q2 = tmp4
+@ q7 = E4
+        vceq.i8 q7, q5, \qY             @ E4 = < Z == Y >
+
+        vceq.i8 q2, q5, q4              @ tmp4 = < Z == W >
+
+        vand q15, q15, q0               @ E2 = < U == T && U == W >
+
+        vbsl q14, \qT, q12              @ E1 = < (S == T && S == V) ? T : C >
+
+        vbsl q15, \qT, q12              @ E2 = < (U == T && U == W) ? T : C >
+
+        vand q7, q7, q2                 @ E4 = < Z == Y && Z == W >
+
+        vbsl q6, \qY, q12               @ E3 = < (X == Y && X == V) ? Y : C >
+
+    .ifeqs "\qT", "q11"
+        sub \reg1, \src1, #1
+    .else
+        sub \reg1, \src2, #1
+    .endif
+
+        vbsl q7, \qY, q12               @ E4 = < (Z == Y && Z == W) ? Y : C >
+    .ifeqs "\qT", "q11"
+        vld1.8 {d23[7]}, [\reg1]        @ S1prev[15] = src[counter & 15 - 1 - srcstride]
+
+        sub \reg1, \src2, #1
+    .endif
+
+        vld1.8 {d25[7]}, [\reg1]        @ S2prev[15] = src[counter & 15 - 1]
+
+    .ifeqs "\qY", "q13"
+        sub \reg1, \src3, #1
+
+        vld1.8 {d27[7]}, [\reg1]        @ S3prev[15] = src[counter & 15 - 1 + srcstride]
+    .endif
+
+        ubfx \reg1, \counter, #0, #4    @ reg1 = counter & 15
+
+        lsl \reg1, #1
+
+        vst2.8 {q14-q15}, [\dst1],\reg1 @ [dst] = E1,E2; dst1 += reg1
+
+        bic \counter, \counter, #15
+
+        vst2.8 {q6-q7}, [\dst2], \reg1  @ [dst + dststride] = E3,E4; dst2 += reg1
+
+    @ counter is aligned to 16 bytes
+
+    1:
+    .ifeqs "\qT", "q11"
+        vld1.8 {q8}, [\alsrc1]!         @ S1 = [src - srcstride]; src1 += 16
+    .endif
+        vld1.8 {q9}, [\alsrc2]!         @ S2 = [src            ]; src2 += 16
+    .ifeqs "\qY", "q13"
+        vld1.8 {q10}, [\alsrc3]!        @ S3 = [src + srcstride]; src3 += 16
+    .endif
+
+    @ inner loop (16 pixels per iteration)
+    2:
+
+@ q0  = S1sl    < S >
+@ q2  = S3sl    < X >
+@ q7  = tmp2
+@ q15 = tmp1
+
+    .ifeqs "\qT", "q11"
+        vext.8 q0, \qT, q8, #15         @ S1sl = S1prev[15] | (S1 << 8)     < S >
+        vmov \qT, q8                    @ S1prev = S1       < T >
+    .endif
+
+        vext.8 q1, q12, q9, #15         @ S2sl = S2prev[15] | (S2 << 8)     < V >
+        vmov q12, q9                    @ S2prev = S2       < C >
+
+    .ifeqs "\qY", "q13"
+        vext.8 q2, \qY, q10, #15        @ S3sl = S3prev[15] | (S3 << 8)     < X >
+        vmov \qY, q10                   @ S3prev = S3       < Y >
+    .endif
+
+    .ifeqs "\qT", "q11"
+        vld1.8 {q8}, [\alsrc1]!         @ S1 = [src - srcstride]; src1 += 16
+        vext.8 q3, \qT, q8, #1          @ S1sr = (S1prev >> 8) | S1[0]      < U >
+    .endif
+
+        vld1.8 {q9}, [\alsrc2]!         @ S2 = [src            ]; src2 += 16
+        vext.8 q4, q12, q9, #1          @ S2sr = (S2prev >> 8) | S2[0]      < W >
+
+    .ifeqs "\qY", "q13"
+        vld1.8 {q10}, [\alsrc3]!        @ S3 = [src + srcstride]; src3 += 16
+        vext.8 q5, \qY, q10, #1         @ S3sr = (S3prev >> 8) | S3[0]      < Z >
+    .else
+        vmov q2, q1                     @ S3sl = S2sl       < X >
+
+        vmov q5, q4                     @ S3sr = S2sr       < Z >
+    .endif
+
+    .ifnes "\qT", "q11"
+        vmov q0, q1                     @ S1sl = S2sl       < S >
+
+        vmov q3, q4                     @ S1sr = S2sr       < U >
+    .endif
+
+        sub \counter, \counter, #16     @ counter -= 16
+        vceq.i8 q14, q0, \qT            @ E1 = < S == T >
+
+        vceq.i8 q15, q0, q1             @ tmp1 = < S == V >
+
+        vceq.i8 q6, q2, \qY             @ E3 = < X == Y >
+
+        vceq.i8 q7, q2, q1              @ tmp2 = < X == V >
+
+        vand q14, q14, q15              @ E1 = < S == T && S == V >
+
+@ q0 = tmp3
+@ q15 = E2
+
+        vceq.i8 q15, q3, \qT            @ E2 = < U == T >
+
+        vceq.i8 q0, q3, q4              @ tmp3 = < U == W >
+
+        vand q6, q6, q7                 @ E3 = < X == Y && X == V >
+
+@ q2 = tmp4
+@ q7 = E4
+        vceq.i8 q7, q5, \qY             @ E4 = < Z == Y >
+
+        vceq.i8 q2, q5, q4              @ tmp4 = < Z == W >
+
+        vand q15, q15, q0               @ E2 = < U == T && U == W >
+
+        vbsl q14, \qT, q12              @ E1 = < (S == T && S == V) ? T : C >
+
+        vbsl q15, \qT, q12              @ E2 = < (U == T && U == W) ? T : C >
+
+        vand q7, q7, q2                 @ E4 = < Z == Y && Z == W >
+
+        vbsl q6, \qY, q12               @ E3 = < (X == Y && X == V) ? Y : C >
+
+        vbsl q7, \qY, q12               @ E4 = < (Z == Y && Z == W) ? Y : C >
+        vst2.8 {q14-q15}, [\aldst1]!    @ [dst] = E1,E2; dst1 += 2*16
+
+        cmp \counter, #16
+
+        vst2.8 {q6-q7}, [\aldst2]!      @ [dst + dststride] = E3,E4; dst2 += 2*16
+        bhi 2b
+
+    @ last 16 pixels
+
+@ q0  = S1sl    < S >
+@ q2  = S3sl    < X >
+@ q7  = tmp2
+@ q15 = tmp1
+
+    .ifeqs "\qT", "q11"
+        vext.8 q0, \qT, q8, #15         @ S1sl = S1prev[15] | (S1 << 8)     < S >
+        vmov \qT, q8                    @ S1prev = S1       < T >
+    .endif
+
+        vext.8 q1, q12, q9, #15         @ S2sl = S2prev[15] | (S2 << 8)     < V >
+        vmov q12, q9                    @ S2prev = S2       < C >
+
+    .ifeqs "\qY", "q13"
+        vext.8 q2, \qY, q10, #15        @ S3sl = S3prev[15] | (S3 << 8)     < X >
+        vmov \qY, q10                   @ S3prev = S3       < Y >
+    .endif
+
+    .ifeqs "\qT", "q11"
+        vshr.u64 d16, d17, #(64-8)      @ S1[0] = S1[15] | ...
+    .endif
+
+        vshr.u64 d18, d19, #(64-8)      @ S2[0] = S2[15] | ...
+
+    .ifeqs "\qY", "q13"
+        vshr.u64 d20, d21, #(64-8)      @ S3[0] = S3[15] | ...
+    .endif
+    .ifeqs "\qT", "q11"
+        vext.8 q3, \qT, q8, #1          @ S1sr = (S1prev >> 8) | S1[0]      < U >
+    .endif
+
+        vext.8 q4, q12, q9, #1          @ S2sr = (S2prev >> 8) | S2[0]      < W >
+
+    .ifeqs "\qY", "q13"
+        vext.8 q5, \qY, q10, #1         @ S3sr = (S3prev >> 8) | S3[0]      < Z >
+    .else
+        vmov q2, q1                     @ S3sl = S2sl       < X >
+
+        vmov q5, q4                     @ S3sr = S2sr       < Z >
+    .endif
+
+    .ifnes "\qT", "q11"
+        vmov q0, q1                     @ S1sl = S2sl       < S >
+
+        vmov q3, q4                     @ S1sr = S2sr       < U >
+    .endif
+
+        vceq.i8 q14, q0, \qT            @ E1 = < S == T >
+
+        vceq.i8 q15, q0, q1             @ tmp1 = < S == V >
+
+        vceq.i8 q6, q2, \qY             @ E3 = < X == Y >
+
+        vceq.i8 q7, q2, q1              @ tmp2 = < X == V >
+
+        vand q14, q14, q15              @ E1 = < S == T && S == V >
+
+@ q0 = tmp3
+@ q15 = E2
+
+        vceq.i8 q15, q3, \qT            @ E2 = < U == T >
+
+        vceq.i8 q0, q3, q4              @ tmp3 = < U == W >
+
+        vand q6, q6, q7                 @ E3 = < X == Y && X == V >
+
+@ q2 = tmp4
+@ q7 = E4
+        vceq.i8 q7, q5, \qY             @ E4 = < Z == Y >
+
+        vceq.i8 q2, q5, q4              @ tmp4 = < Z == W >
+
+        vand q15, q15, q0               @ E2 = < U == T && U == W >
+
+        vbsl q14, \qT, q12              @ E1 = < (S == T && S == V) ? T : C >
+
+        vbsl q15, \qT, q12              @ E2 = < (U == T && U == W) ? T : C >
+
+        vand q7, q7, q2                 @ E4 = < Z == Y && Z == W >
+
+        vbsl q6, \qY, q12               @ E3 = < (X == Y && X == V) ? Y : C >
+
+        vbsl q7, \qY, q12               @ E4 = < (Z == Y && Z == W) ? Y : C >
+        vst2.8 {q14-q15}, [\aldst1]!    @ [dst] = E1,E2; dst1 += 2*16
+
+        vst2.8 {q6-q7}, [\aldst2]!      @ [dst + dststride] = E3,E4; dst2 += 2*16
+
+.endm
+
+.macro _neon_eagle2x_8_8_line_first src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_eagle2x_8_8_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q12, q13, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro _neon_eagle2x_8_8_line_middle src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_eagle2x_8_8_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q11, q13, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro _neon_eagle2x_8_8_line_last src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_eagle2x_8_8_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q11, q12, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro neon_eagle2x_8_8_line part, src1, src2, src3, counter, dst1, dst2, reg1, srcalign16, dstalign32
+    .ifeq \srcalign16
+
+    .ifeq \dstalign32
+        _neon_eagle2x_8_8_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1, \src2, \src3, \dst1, \dst2
+    .else
+        _neon_eagle2x_8_8_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1, \src2, \src3, \dst1:256, \dst2:256
+    .endif
+
+    .else
+
+    .ifeq \dstalign32
+        _neon_eagle2x_8_8_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1:128, \src2:128, \src3:128, \dst1, \dst2
+    .else
+        _neon_eagle2x_8_8_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1:128, \src2:128, \src3:128, \dst1:256, \dst2:256
+    .endif
+
+    .endif
+.endm
+
+
+.macro __neon_eagle2x_16_16_line src1, src2, src3, counter, dst1, dst2, reg1, qT, qY, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+
+    .ifeqs "\qT", "q11"
+        vld1.16 {d23[3]}, [\src1]       @ S1prev[7] = src[-srcstride]
+    .endif
+        vld1.16 {d25[3]}, [\src2]       @ S2prev[7] = src[0]
+    .ifeqs "\qY", "q13"
+        vld1.16 {d27[3]}, [\src3]       @ S3prev[7] = src[srcstride]
+    .endif
+        andS \reg1, \counter, #7        @ reg1 = counter & 7
+
+    .ifnes "\qT", "q11"
+        add \src1, \src1, \counter, lsl #1  @ src1 += 2 * counter
+    .endif
+    .ifnes "\qY", "q13"
+        add \src3, \src3, \counter, lsl #1  @ src3 += 2 * counter
+    .endif
+        beq 1f
+
+    @ first 1-7 pixels - align counter to 16 bytes
+
+@ q0  = S1sl    < S >
+@ q2  = S3sl    < X >
+@ q7  = tmp2
+@ q15 = tmp1
+
+    .ifeqs "\qT", "q11"
+        vld1.16 {q8}, [\src1]           @ S1 = [src - srcstride]
+        add \src1, \src1, \reg1, lsl #1 @ src1 += 2 * (counter & 7)
+    .endif
+
+        vld1.16 {q9}, [\src2]           @ S2 = [src            ]
+        add \src2, \src2, \reg1, lsl #1 @ src2 += 2 * (counter & 7)
+
+    .ifeqs "\qY", "q13"
+        vld1.16 {q10}, [\src3]          @ S3 = [src + srcstride]
+        add \src3, \src3, \reg1, lsl #1 @ src3 += 2 * (counter & 7)
+    .endif
+    .ifeqs "\qT", "q11"
+        vext.8 q0, \qT, q8, #14         @ S1sl = S1prev[7] | (S1 << 16)     < S >
+
+        vmov \qT, q8                    @ S1prev = S1       < T >
+    .endif
+        vext.8 q1, q12, q9, #14         @ S2sl = S2prev[7] | (S2 << 16)     < V >
+
+        vmov q12, q9                    @ S2prev = S2       < C >
+    .ifeqs "\qY", "q13"
+        vext.8 q2, \qY, q10, #14        @ S3sl = S3prev[7] | (S3 << 16)     < X >
+
+        vmov \qY, q10                   @ S3prev = S3       < Y >
+    .endif
+    .ifeqs "\qT", "q11"
+        vext.8 q3, \qT, q8, #2          @ S1sr = (S1prev >> 16) | ...        < U >
+    .endif
+
+        vext.8 q4, q12, q9, #2          @ S2sr = (S2prev >> 16) | ...        < W >
+
+    .ifeqs "\qY", "q13"
+        vext.8 q5, \qY, q10, #2         @ S3sr = (S3prev >> 16) | ...        < Z >
+    .else
+        vmov q2, q1                     @ S3sl = S2sl       < X >
+
+        vmov q5, q4                     @ S3sr = S2sr       < Z >
+    .endif
+
+    .ifnes "\qT", "q11"
+        vmov q0, q1                     @ S1sl = S2sl       < S >
+
+        vmov q3, q4                     @ S1sr = S2sr       < U >
+    .endif
+
+        vceq.i16 q14, q0, \qT           @ E1 = < S == T >
+
+        vceq.i16 q15, q0, q1            @ tmp1 = < S == V >
+
+        vceq.i16 q6, q2, \qY            @ E3 = < X == Y >
+
+        vceq.i16 q7, q2, q1             @ tmp2 = < X == V >
+
+        vand q14, q14, q15              @ E1 = < S == T && S == V >
+
+@ q0 = tmp3
+@ q15 = E2
+
+        vceq.i16 q15, q3, \qT           @ E2 = < U == T >
+
+        vceq.i16 q0, q3, q4             @ tmp3 = < U == W >
+
+        vand q6, q6, q7                 @ E3 = < X == Y && X == V >
+
+@ q2 = tmp4
+@ q7 = E4
+        vceq.i16 q7, q5, \qY            @ E4 = < Z == Y >
+
+        vceq.i16 q2, q5, q4             @ tmp4 = < Z == W >
+
+        vand q15, q15, q0               @ E2 = < U == T && U == W >
+
+        vbsl q14, \qT, q12              @ E1 = < (S == T && S == V) ? T : C >
+
+        vbsl q15, \qT, q12              @ E2 = < (U == T && U == W) ? T : C >
+
+        vand q7, q7, q2                 @ E4 = < Z == Y && Z == W >
+
+        vbsl q6, \qY, q12               @ E3 = < (X == Y && X == V) ? Y : C >
+
+    .ifeqs "\qT", "q11"
+        sub \reg1, \src1, #2
+    .else
+        sub \reg1, \src2, #2
+    .endif
+
+        vbsl q7, \qY, q12               @ E4 = < (Z == Y && Z == W) ? Y : C >
+    .ifeqs "\qT", "q11"
+        vld1.16 {d23[3]}, [\reg1]       @ S1prev[7] = src[2 * (counter & 7) - 2 - srcstride]
+
+        sub \reg1, \src2, #2
+    .endif
+
+        vld1.16 {d25[3]}, [\reg1]       @ S2prev[7] = src[2 * (counter & 7) - 2]
+
+    .ifeqs "\qY", "q13"
+        sub \reg1, \src3, #2
+
+        vld1.16 {d27[3]}, [\reg1]       @ S3prev[7] = src[2 * (counter & 7) - 2 + srcstride]
+    .endif
+
+    #ifdef DO_BGR_TO_RGB
+        bgr1555_to_rgb565 q14, q15, q8, q9, q10, \reg1
+        bgr1555_to_rgb565 q6, q7, q8, q9, q10, \reg1
+    #endif
+
+        ubfx \reg1, \counter, #0, #3    @ reg1 = counter & 7
+
+        lsl \reg1, #2
+
+        vst2.16 {q14-q15}, [\dst1], \reg1   @ [dst] = E1,E2; dst1 += reg1
+
+        bic \counter, \counter, #7
+
+        vst2.16 {q6-q7}, [\dst2], \reg1     @ [dst + dststride] = E3,E4; dst2 += reg1
+
+    @ counter is aligned to 16 bytes
+
+    1:
+    .ifeqs "\qT", "q11"
+        vld1.16 {q8}, [\alsrc1]!        @ S1 = [src - srcstride]; src1 += 2*8
+    .endif
+        vld1.16 {q9}, [\alsrc2]!        @ S2 = [src            ]; src2 += 2*8
+    .ifeqs "\qY", "q13"
+        vld1.16 {q10}, [\alsrc3]!       @ S3 = [src + srcstride]; src3 += 2*8
+    .endif
+
+    @ inner loop (8 pixels per iteration)
+    2:
+
+@ q0  = S1sl    < S >
+@ q2  = S3sl    < X >
+@ q7  = tmp2
+@ q15 = tmp1
+
+    .ifeqs "\qT", "q11"
+        vext.8 q0, \qT, q8, #14         @ S1sl = S1prev[7] | (S1 << 16)     < S >
+        vmov \qT, q8                    @ S1prev = S1       < T >
+    .endif
+
+        vext.8 q1, q12, q9, #14         @ S2sl = S2prev[7] | (S2 << 16)     < V >
+        vmov q12, q9                    @ S2prev = S2       < C >
+
+    .ifeqs "\qY", "q13"
+        vext.8 q2, \qY, q10, #14        @ S3sl = S3prev[7] | (S3 << 16)     < X >
+        vmov \qY, q10                   @ S3prev = S3       < Y >
+    .endif
+
+    .ifeqs "\qT", "q11"
+        vld1.16 {q8}, [\alsrc1]!        @ S1 = [src - srcstride]; src1 += 2*8
+        vext.8 q3, \qT, q8, #2          @ S1sr = (S1prev >> 16) | S1[0]      < U >
+    .endif
+
+        vld1.16 {q9}, [\alsrc2]!        @ S2 = [src            ]; src2 += 2*8
+        vext.8 q4, q12, q9, #2          @ S2sr = (S2prev >> 16) | S2[0]      < W >
+
+    .ifeqs "\qY", "q13"
+        vld1.16 {q10}, [\alsrc3]!       @ S3 = [src + srcstride]; src3 += 2*8
+        vext.8 q5, \qY, q10, #2         @ S3sr = (S3prev >> 16) | S3[0]      < Z >
+    .else
+        vmov q2, q1                     @ S3sl = S2sl       < X >
+
+        vmov q5, q4                     @ S3sr = S2sr       < Z >
+    .endif
+
+    .ifnes "\qT", "q11"
+        vmov q0, q1                     @ S1sl = S2sl       < S >
+
+        vmov q3, q4                     @ S1sr = S2sr       < U >
+    .endif
+
+        sub \counter, \counter, #8      @ counter -= 8
+        vceq.i16 q14, q0, \qT           @ E1 = < S == T >
+
+        vceq.i16 q15, q0, q1            @ tmp1 = < S == V >
+
+        vceq.i16 q6, q2, \qY            @ E3 = < X == Y >
+
+        vceq.i16 q7, q2, q1             @ tmp2 = < X == V >
+
+        vand q14, q14, q15              @ E1 = < S == T && S == V >
+
+@ q0 = tmp3
+@ q15 = E2
+
+        vceq.i16 q15, q3, \qT           @ E2 = < U == T >
+
+        vceq.i16 q0, q3, q4             @ tmp3 = < U == W >
+
+        vand q6, q6, q7                 @ E3 = < X == Y && X == V >
+
+@ q2 = tmp4
+@ q7 = E4
+        vceq.i16 q7, q5, \qY            @ E4 = < Z == Y >
+
+        vceq.i16 q2, q5, q4             @ tmp4 = < Z == W >
+
+        vand q15, q15, q0               @ E2 = < U == T && U == W >
+
+        vbsl q14, \qT, q12              @ E1 = < (S == T && S == V) ? T : C >
+
+        vbsl q15, \qT, q12              @ E2 = < (U == T && U == W) ? T : C >
+
+        vand q7, q7, q2                 @ E4 = < Z == Y && Z == W >
+
+        vbsl q6, \qY, q12               @ E3 = < (X == Y && X == V) ? Y : C >
+
+        vbsl q7, \qY, q12               @ E4 = < (Z == Y && Z == W) ? Y : C >
+
+    #ifdef DO_BGR_TO_RGB
+        bgr1555_to_rgb565 q14, q15, q0, q1, q2, \reg1
+        bgr1555_to_rgb565 q6, q7, q0, q1, q2, \reg1
+    #endif
+
+        vst2.16 {q14-q15}, [\aldst1]!   @ [dst] = E1,E2; dst1 += 2*2*8
+
+        cmp \counter, #8
+
+        vst2.16 {q6-q7}, [\aldst2]!     @ [dst + dststride] = E3,E4; dst2 += 2*2*8
+        bhi 2b
+
+    @ last 8 pixels
+
+@ q0  = S1sl    < S >
+@ q2  = S3sl    < X >
+@ q7  = tmp2
+@ q15 = tmp1
+
+    .ifeqs "\qT", "q11"
+        vext.8 q0, \qT, q8, #14         @ S1sl = S1prev[7] | (S1 << 16)     < S >
+        vmov \qT, q8                    @ S1prev = S1       < T >
+    .endif
+
+        vext.8 q1, q12, q9, #14         @ S2sl = S2prev[7] | (S2 << 16)     < V >
+        vmov q12, q9                    @ S2prev = S2       < C >
+
+    .ifeqs "\qY", "q13"
+        vext.8 q2, \qY, q10, #14        @ S3sl = S3prev[7] | (S3 << 16)     < X >
+        vmov \qY, q10                   @ S3prev = S3       < Y >
+    .endif
+
+    .ifeqs "\qT", "q11"
+        vshr.u64 d16, d17, #(64-16)     @ S1[0] = S1[7] | ...
+    .endif
+
+        vshr.u64 d18, d19, #(64-16)     @ S2[0] = S2[7] | ...
+
+    .ifeqs "\qY", "q13"
+        vshr.u64 d20, d21, #(64-16)     @ S3[0] = S3[7] | ...
+    .endif
+    .ifeqs "\qT", "q11"
+        vext.8 q3, \qT, q8, #2          @ S1sr = (S1prev >> 16) | S1[0]      < U >
+    .endif
+
+        vext.8 q4, q12, q9, #2          @ S2sr = (S2prev >> 16) | S2[0]      < W >
+
+    .ifeqs "\qY", "q13"
+        vext.8 q5, \qY, q10, #2         @ S3sr = (S3prev >> 16) | S3[0]      < Z >
+    .else
+        vmov q2, q1                     @ S3sl = S2sl       < X >
+
+        vmov q5, q4                     @ S3sr = S2sr       < Z >
+    .endif
+
+    .ifnes "\qT", "q11"
+        vmov q0, q1                     @ S1sl = S2sl       < S >
+
+        vmov q3, q4                     @ S1sr = S2sr       < U >
+    .endif
+
+        vceq.i16 q14, q0, \qT           @ E1 = < S == T >
+
+        vceq.i16 q15, q0, q1            @ tmp1 = < S == V >
+
+        vceq.i16 q6, q2, \qY            @ E3 = < X == Y >
+
+        vceq.i16 q7, q2, q1             @ tmp2 = < X == V >
+
+        vand q14, q14, q15              @ E1 = < S == T && S == V >
+
+@ q0 = tmp3
+@ q15 = E2
+
+        vceq.i16 q15, q3, \qT           @ E2 = < U == T >
+
+        vceq.i16 q0, q3, q4             @ tmp3 = < U == W >
+
+        vand q6, q6, q7                 @ E3 = < X == Y && X == V >
+
+@ q2 = tmp4
+@ q7 = E4
+        vceq.i16 q7, q5, \qY            @ E4 = < Z == Y >
+
+        vceq.i16 q2, q5, q4             @ tmp4 = < Z == W >
+
+        vand q15, q15, q0               @ E2 = < U == T && U == W >
+
+        vbsl q14, \qT, q12              @ E1 = < (S == T && S == V) ? T : C >
+
+        vbsl q15, \qT, q12              @ E2 = < (U == T && U == W) ? T : C >
+
+        vand q7, q7, q2                 @ E4 = < Z == Y && Z == W >
+
+        vbsl q6, \qY, q12               @ E3 = < (X == Y && X == V) ? Y : C >
+
+        vbsl q7, \qY, q12               @ E4 = < (Z == Y && Z == W) ? Y : C >
+
+    #ifdef DO_BGR_TO_RGB
+        bgr1555_to_rgb565 q14, q15, q8, q9, q10, \reg1
+        bgr1555_to_rgb565 q6, q7, q8, q9, q10, \reg1
+    #endif
+
+        vst2.16 {q14-q15}, [\aldst1]!   @ [dst] = E1,E2; dst1 += 2*2*8
+
+        vst2.16 {q6-q7}, [\aldst2]!     @ [dst + dststride] = E3,E4; dst2 += 2*2*8
+
+.endm
+
+.macro _neon_eagle2x_16_16_line_first src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_eagle2x_16_16_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q12, q13, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro _neon_eagle2x_16_16_line_middle src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_eagle2x_16_16_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q11, q13, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro _neon_eagle2x_16_16_line_last src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_eagle2x_16_16_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q11, q12, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro neon_eagle2x_16_16_line part, src1, src2, src3, counter, dst1, dst2, reg1, srcalign16, dstalign32
+    .ifeq \srcalign16
+
+    .ifeq \dstalign32
+        _neon_eagle2x_16_16_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1, \src2, \src3, \dst1, \dst2
+    .else
+        _neon_eagle2x_16_16_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1, \src2, \src3, \dst1:256, \dst2:256
+    .endif
+
+    .else
+
+    .ifeq \dstalign32
+        _neon_eagle2x_16_16_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1 A128, \src2 A128, \src3 A128, \dst1, \dst2
+    .else
+        _neon_eagle2x_16_16_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1 A128, \src2 A128, \src3 A128, \dst1 A256, \dst2 A256
+    .endif
+
+    .endif
+.endm
+

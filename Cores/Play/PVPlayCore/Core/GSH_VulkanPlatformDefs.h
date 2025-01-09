@@ -1,0 +1,13 @@
+#pragma once
+
+#define GSH_VULKAN_FLAVOR_DESKTOP 0
+#define GSH_VULKAN_FLAVOR_MOBILE 1
+
+#define GSH_VULKAN_FLAVOR GSH_VULKAN_FLAVOR_MOBILE
+
+#define GSH_VULKAN_IS_DESKTOP false
+#define GSH_VULKAN_IS_MOBILE true
+
+#if !GSH_VULKAN_IS_DESKTOP && !GSH_VULKAN_IS_MOBILE
+#error Unknown Vulkan flavor.
+#endif

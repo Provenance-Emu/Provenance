@@ -1,0 +1,48 @@
+////module PVLogging {
+////    header "PVLoggingObjC.h"
+////}
+//
+//module PVLoggingC {
+////    umbrella header "PVLogging.h"
+//    header "PVLoggingObjC.h"
+//
+//    export *
+////    module * { export * }
+////    requires objc
+//}
+//
+////module PVSupport.Swift {
+////    header "PVSupport-Swift.h"
+////    requires objc
+////}
+
+//framework module PVLogging {
+//    umbrella header "PVLogging.h"
+//
+//    header "PVLoggingObjC.h"
+//
+//    export *
+//    module * { export * }
+//
+//    explicit module PVLoggingPrivate {
+//        header "PVLoggingObjC.h"
+//        export *
+//    }
+//}
+
+//module PVLogging {
+//    header "PVLoggingObjC.h"
+//    export *
+//}
+
+//PVLoggingObjC?
+framework module PVLogging {
+    umbrella header "PVLogging.h"
+
+    export *
+    module * { export * }
+    explicit module PVLoggingObjC {
+        header "PVLoggingObjC.h"
+        export *
+    }
+}

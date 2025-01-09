@@ -5,12 +5,13 @@
 //  Created by Joseph Mattiello on 11/1/18.
 //  Copyright © 2018 Provenance. All rights reserved.
 //
+#ifndef LIBRETRO
 
 #import "PVFlycast+Audio.h"
 #import "PVFlycast+CoreAudio.h"
 #import "PVFlycast+AudioTypes.h"
 
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 #include "oslib/audiobackend_coreaudio.h"
 
@@ -465,3 +466,4 @@ coreaudio_push8(void* frame, u32 samples, bool wait) {
 
     return 1;
 }
+#endif

@@ -19,6 +19,16 @@
 #import <OpenGL/OpenGL.h>
 #import <GLKit/GLKit.h>
 #endif
+#include "../AppConfig.h"
+#include "PreferenceDefs.h"
+#include "PH_Generic.h"
+#include "PS2VM.h"
+#include "CGSH_Provenance_OGL.h"
+
+extern CGSH_Provenance_OGL *gsHandler;
+extern CPH_Generic *padHandler;
+extern UIView *m_view;
+extern CPS2VM *_ps2VM;
 
 //#import "PS2VM.h"
 //#import "gs/GSH_OpenGL/GSH_OpenGL.h"
@@ -27,8 +37,9 @@
 //#import "PS2VM_Preferences.h"
 //#import "AppConfig.h"
 //#import "StdStream.h"
+void MakeCurrentThreadRealTime();
 
-@implementation PVPlayCore (Video)
+@implementation PVPlayCoreBridge (Video)
 
 # pragma mark - Methods
 
@@ -40,13 +51,27 @@
 }
 
 - (void)swapBuffers {
-    [self.renderDelegate didRenderFrameOnAlternateThread];
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
-        //dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-
-        //dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
+    // The Play! handles the loop (Set GS Handler constructor to false, will manually step)
+    //dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+    /*
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        MakeCurrentThreadRealTime();
+    });
+    //dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
+    if (_ps2VM
+        && _ps2VM->GetStatus() != CVirtualMachine::PAUSED
+        && !shouldStop
+        && _ps2VM->GetPadHandler()
+        && _ps2VM->GetGSHandler()) {
+        [self pollControllers];
+        if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL)
+            gsHandler->ProcessSingleFrame();
+    }
+    */
 }
 
 - (void)executeFrame {
@@ -56,15 +81,15 @@
 # pragma mark - Properties
 
 - (CGSize)bufferSize {
-    return CGSizeMake(640, 480);
+    return CGSizeMake(0,0);
 }
 
 - (CGRect)screenRect {
-    return CGRectMake(0, 0, self.videoWidth, self.videoHeight);
+    return CGRectMake(0, 0, self.videoWidth * self.resFactor, self.videoHeight * self.resFactor);
 }
 
 - (CGSize)aspectSize {
-    return CGSizeMake(self.videoWidth, self.videoHeight);
+    return CGSizeMake(self.videoWidth * self.resFactor, self.videoHeight * self.resFactor);
 }
 
 - (BOOL)rendersToOpenGL {

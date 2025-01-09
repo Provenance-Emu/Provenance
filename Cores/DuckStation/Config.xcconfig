@@ -3,10 +3,16 @@
 //  PVDuckStation
 //
 //  Created by Joseph Mattiello on 8/28/21.
-//
+// 
 //
 
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GL_SILENCE_DEPRECATION=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GL_SILENCE_DEPRECATION=1 SI_CONVERT_GENERIC WITH_RECOMPILER=1 WITH_VULKAN=1 WITH_OPENGL=1
+// USE_EGL=1
+// WITH_MMAP_FASTMEM=1
+// WITH_CUBEB
+// WITH_RECOMPILER=1  IPHONEOS=1
+
+OTHER_CFLAGS = $(inherited) -Wno-module-import-in-extern-c
 
 // Arm 32bit
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=armv7] = $(inherited) cpu_recompiler_code_generator_x64.cpp cpu_recompiler_code_generator_aarch64.cpp *arch64.cpp *arch64.cc xxh_x86dispatch.c
@@ -24,3 +30,5 @@ OTHER_CFLAGS[sdk=iphoneos*][arch=armv7] = $(inherited) -DVIXL_INCLUDE_TARGET_A32
 OTHER_CFLAGS[sdk=iphoneos*][arch=armv7s] = $(inherited) -DVIXL_INCLUDE_TARGET_A32
 OTHER_CFLAGS[sdk=iphoneos*][arch=armv6] = $(inherited) -DVIXL_INCLUDE_TARGET_A32
 OTHER_CFLAGS[sdk=iphoneos*][arch=arm64] = $(inherited) -DVIXL_INCLUDE_TARGET_A64
+PROJECT_TEMP_DIR = $(SRCROOT)/lib/duckstation/build/$(PROJECT_NAME).build
+DERIVED_FILE_DIR = $(SRCROOT)/lib/duckstation/build/derived/$(PROJECT_NAME).build

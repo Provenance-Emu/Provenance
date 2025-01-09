@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 11/1/18.
 //  Copyright © 2018 Provenance. All rights reserved.
 //
+#ifndef LIBRETRO
 
 #import "PVFlycast+CoreAudio.h"
 #import "PVFlycast+Audio.h"
@@ -493,3 +494,4 @@ CheckError(OSStatus error, const char *operation)
 
     exit(1);
 }
+#endif
