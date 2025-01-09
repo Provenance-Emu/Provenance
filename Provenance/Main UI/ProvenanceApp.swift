@@ -3,6 +3,7 @@ import Foundation
 import PVLogging
 import PVSwiftUI
 import PVFeatureFlags
+import PVThemes
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -36,7 +37,8 @@ struct ProvenanceApp: App {
                        WhatsNewEnvironment(
                            // Specify in which way the presented WhatsNew Versions are stored.
                            // In default the `UserDefaultsWhatsNewVersionStore` is used.
-                           versionStore: NSUbiquitousKeyValueWhatsNewVersionStore(), // UserDefaultsWhatsNewVersionStore(),
+                           versionStore: // InMemoryWhatsNewVersionStore(),
+                           NSUbiquitousKeyValueWhatsNewVersionStore(), // UserDefaultsWhatsNewVersionStore(),
                            // Pass a `WhatsNewCollectionProvider` or an array of WhatsNew instances
                            whatsNewCollection: self
                        )
@@ -158,8 +160,8 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
             ],
             primaryAction: .init(
                 title: "Continue",
-                backgroundColor: .accentColor,
-                foregroundColor: .white,
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
                 hapticFeedback: .notification(.success)
             )
         )
