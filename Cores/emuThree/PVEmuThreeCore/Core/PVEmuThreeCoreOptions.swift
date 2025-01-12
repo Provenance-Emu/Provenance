@@ -6,8 +6,8 @@ import PVCoreBridge
     
     static var resolutionOption: CoreOption {
         .enumeration(.init(title: "Resolution Upscaling",
-                           description: "(Requires Restart)",
-                           requiresRestart: true),
+                           description: nil,
+                           requiresRestart: false),
                      values: [
                         .init(title: "1X", description: "1X", value: 1),
                         .init(title: "2X", description: "2X", value: 2),
@@ -32,9 +32,9 @@ import PVCoreBridge
     }
     
     static var cpuClockOption: CoreOption {
-        .enumeration(.init(title: "CPU Clock",
-                           description: "(Requires Restart) Underclocking can increase performance but may cause the game to freeze. Overclocking may reduce in game lag but also might cause freezes",
-                           requiresRestart: true),
+        .enumeration(.init(title: "CPU Clock Speed",
+                           description: "Underclocking can increase performance but may cause the game to freeze. Overclocking may reduce in game lag but also might cause freezes",
+                           requiresRestart: false),
                      values: [
                         .init(title: "10%", description: "10%", value: 10),
                         .init(title: "20%", description: "20%", value: 20),
@@ -65,7 +65,7 @@ import PVCoreBridge
         .bool(.init(
             title: "Enable Logging",
             description: "May affect performance",
-            requiresRestart: true),
+            requiresRestart: false),
               defaultValue: false)
     }
     
@@ -73,7 +73,7 @@ import PVCoreBridge
         .bool(.init(
             title: "Enable New 3DS",
             description: nil,
-            requiresRestart: true),
+            requiresRestart: false),
               defaultValue: true)
     }
     
@@ -91,7 +91,7 @@ import PVCoreBridge
         .bool(.init(
             title: "Enable Async Shader Compilation",
             description: nil,
-            requiresRestart: true),
+            requiresRestart: false),
               defaultValue: false)
     }
     
@@ -127,8 +127,8 @@ import PVCoreBridge
     static var enableShaderAccurateMulOption: CoreOption {
         .bool(.init(
             title: "Enable Shader Accurate Mul",
-            description: nil,
-            requiresRestart: true),
+            description: "Some games require this to be enabled to render properly, but slightly reduces performance",
+            requiresRestart: false),
               defaultValue: true)
     }
     
