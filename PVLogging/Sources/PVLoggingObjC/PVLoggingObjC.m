@@ -30,3 +30,32 @@ void PVLog(NSUInteger level, NSUInteger flag, const char *file,
     
     va_end(args);
 }
+
+// ClassFinder.m
+#import <objc/runtime.h>
+
+@implementation ClassFinderObjC
+
++ (NSArray<Class> *)findSubclassesOf:(Class)parentClass {
+    NSMutableArray<Class> *result = [NSMutableArray array];
+    unsigned int count = 0;
+    Class *classes = NULL;
+    
+    @try {
+        classes = objc_copyClassList(&count);
+        for (unsigned int i = 0; i < count; i++) {
+            Class superClass = class_getSuperclass(classes[i]);
+            if (superClass == parentClass) {
+                [result addObject:classes[i]];
+            }
+        }
+    } @finally {
+        if (classes) {
+            free(classes);
+        }
+    }
+    
+    return [result copy];
+}
+
+@end

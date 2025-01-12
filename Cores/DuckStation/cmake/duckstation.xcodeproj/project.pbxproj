@@ -4121,7 +4121,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\n";
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.31.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.31.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.31.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.31.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		01184BFB05ADCF4A41EC285E /* Generate CMakeFiles/ALL_BUILD */ = {
@@ -4169,7 +4169,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake/src/frontend-common\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E copy_directory ../duckstation/data ../cmake/bin\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake/src/frontend-common\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E copy_directory ../duckstation/data ../cmake/bin\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake/src/frontend-common\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E copy_directory ../duckstation/data ../cmake/bin\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake/src/frontend-common\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E copy_directory ../duckstation/data ../cmake/bin\nfi\n";
+			shellScript = "#set -e\n#if test \"$CONFIGURATION\" = \"Debug\"; then :\n#  cd ../cmake/src/frontend-common\n#  /opt/homebrew/Cellar/cmake/3.31.2/bin/cmake -E copy_directory ../duckstation/data ../cmake/bin\n#fi\n#if test \"$CONFIGURATION\" = \"Release\"; then :\n#  cd ../cmake/src/frontend-common\n#  /opt/homebrew/Cellar/cmake/3.31.2/bin/cmake -E copy_directory ../duckstation/data ../cmake/bin\n#fi\n#if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n#  cd ../cmake/src/frontend-common\n#  /opt/homebrew/Cellar/cmake/3.31.2/bin/cmake -E copy_directory ../duckstation/data ../cmake/bin\n#fi\n#if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n#  cd ../cmake/src/frontend-common\n#  /opt/homebrew/Cellar/cmake/3.31.2/bin/cmake -E copy_directory ../duckstation/data ../cmake/bin\n#fi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -5364,7 +5364,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = coreDuckstation;
 				SECTORDER_FLAGS = "";
@@ -5463,7 +5462,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = coreDuckstation;
 				SECTORDER_FLAGS = "";
@@ -6180,7 +6178,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "frontend-commonDuckstation";
 				SECTORDER_FLAGS = "";
@@ -6452,7 +6449,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "frontend-commonDuckstation";
 				SECTORDER_FLAGS = "";
@@ -6563,7 +6559,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = commonDuckstation;
 				SECTORDER_FLAGS = "";
@@ -7612,7 +7607,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = commonDuckstation;
 				SECTORDER_FLAGS = "";
@@ -8027,7 +8021,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = commonDuckstation;
 				SECTORDER_FLAGS = "";
@@ -8868,7 +8861,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "frontend-commonDuckstation";
 				SECTORDER_FLAGS = "";
@@ -9551,7 +9543,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = coreDuckstation;
 				SECTORDER_FLAGS = "";
@@ -9920,7 +9911,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = coreDuckstation;
 				SECTORDER_FLAGS = "";
@@ -10309,7 +10299,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "frontend-commonDuckstation";
 				SECTORDER_FLAGS = "";
@@ -10418,7 +10407,6 @@
 					"-fvisibility=hidden",
 					"'-std=gnu++17'",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = commonDuckstation;
 				SECTORDER_FLAGS = "";

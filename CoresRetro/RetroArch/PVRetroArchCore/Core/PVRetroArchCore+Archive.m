@@ -1,14 +1,14 @@
 #import <Foundation/Foundation.h>
-#import "PVRetroArchCore+Archive.h"
+#import "PVRetroArchCoreBridge+Archive.h"
 
 #import "ZipArchive.h"
 #import "LzhArchive.h"
 #import "URKArchive.h"
 
-@interface PVRetroArchCore (Archive)
+@interface PVRetroArchCoreBridge (Archive)
 @end
 
-@implementation PVRetroArchCore (Archive)
+@implementation PVRetroArchCoreBridge (Archive)
 - (NSString *)checkROM:(NSString*)romFile {
     NSLog(@"Core %@ System %@ Rom %@\n", [self coreIdentifier], [self systemIdentifier], romFile);
     if([[self systemIdentifier] containsString:@"com.provenance.pc98"]) {

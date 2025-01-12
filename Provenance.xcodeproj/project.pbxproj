@@ -279,8 +279,9 @@
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
+		B33A09342D2D0B0C00BFB6C9 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B33A09332D2D0B0C00BFB6C9 /* PVJIT */; };
 		B33A763B2CC5168C00FC746F /* SiriusRating in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B33A763A2CC5168C00FC746F /* SiriusRating */; };
-		B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, tvos, ); productRef = B33B4F3F2C198F32007371C5 /* MBProgressHUD */; };
+		B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F3F2C198F32007371C5 /* MBProgressHUD */; };
 		B33B4F4B2C1A5B4B007371C5 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F4A2C1A5B4B007371C5 /* RealmSwift */; };
 		B33B4F4C2C1A5B4B007371C5 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F4A2C1A5B4B007371C5 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B33B4F4E2C1A5D31007371C5 /* PVAltKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33B4F4D2C1A5D31007371C5 /* PVAltKitService.swift */; };
@@ -552,6 +553,9 @@
 		B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF82C6C6D1A00EBD1A8 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
+		B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E02D2F71450016E633 /* WhatsNewKit */; };
+		B35F93E32D2F811B0016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E22D2F811B0016E633 /* WhatsNewKit */; };
+		B35F93E52D2F8E560016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E42D2F8E560016E633 /* WhatsNewKit */; };
 		B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B36A8D442CCD5480002357DD /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D432CCD5480002357DD /* Defaults */; };
@@ -583,8 +587,6 @@
 		B37321A72C900B1E00CF59EF /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; };
 		B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
-		B377EBE52CB2B34C00E9B750 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; platformFilters = (ios, maccatalyst, ); };
-		B377EBE62CB2B34C00E9B750 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377ECA82CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */; };
 		B377ECA92CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377ECC92CB3533C00E9B750 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; platformFilters = (ios, tvos, ); };
@@ -608,15 +610,15 @@
 		B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B38FB4A12CBEF57B006786C6 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */; };
 		B38FB4A22CBEF57C006786C6 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4A82CBEF6B0006786C6 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4A82CBEF6B0006786C6 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4A92CBEF6B0006786C6 /* libavcodec.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4AA2CBEF6B0006786C6 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4AA2CBEF6B0006786C6 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4AB2CBEF6B0006786C6 /* libavformat.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4AC2CBEF6B0006786C6 /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4AC2CBEF6B0006786C6 /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4AD2CBEF6B0006786C6 /* libavutil.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4AE2CBEF6B1006786C6 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4AE2CBEF6B1006786C6 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4AF2CBEF6B1006786C6 /* libswresample.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4B02CBEF6B1006786C6 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4B02CBEF6B1006786C6 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38FB4B22CBEF961006786C6 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -628,7 +630,7 @@
 		B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilter = ios; };
 		B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		B394CD782BDEE53A006B63E8 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
-		B394CD7A2BDEE53A006B63E8 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
+		B394CD7A2BDEE53A006B63E8 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		B394CD7C2BDEE53A006B63E8 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
 		B394CD892BDEE53A006B63E8 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */; };
@@ -656,7 +658,6 @@
 		B3952F562C697A02000B0308 /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B3952F552C697A02000B0308 /* PVUI */; };
 		B3952F582C698F54000B0308 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3952F572C698F54000B0308 /* Defaults */; };
 		B395958F2BF47033004C5AA9 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B395958E2BF47033004C5AA9 /* RxDataSources */; };
-		B396208B2C66E14C0094F6F0 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B396208E2C66E14C0094F6F0 /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B39620922C66E1BE0094F6F0 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B39620912C66E1BE0094F6F0 /* PVCoreBridge */; };
 		B39620942C66E1C70094F6F0 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B39620932C66E1C70094F6F0 /* PVLogging */; };
@@ -790,8 +791,6 @@
 		B3E264DA2CA548E3002BB0FE /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E264D82CA548E2002BB0FE /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2A9FA2CB60F1200E2636D /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2A9F92CB60F1200E2636D /* PVPPSSPP.framework */; };
 		B3E2A9FB2CB60F1200E2636D /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2A9F92CB60F1200E2636D /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E2AA212CB6306600E2636D /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA202CB6306600E2636D /* PVYabause.framework */; platformFilters = (maccatalyst, macos, ); };
-		B3E2AA222CB6306600E2636D /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA202CB6306600E2636D /* PVYabause.framework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA252CB6328100E2636D /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA242CB6328100E2636D /* PVVecX.framework */; };
 		B3E2AA262CB6328100E2636D /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA242CB6328100E2636D /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA302CB6346900E2636D /* PVOpera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA2F2CB6346900E2636D /* PVOpera.framework */; };
@@ -1158,13 +1157,6 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
-		B396208C2C66E14C0094F6F0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E21D6A203211BE009939D3;
-			remoteInfo = Spotlight;
-		};
 		B396208F2C66E14C0094F6F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1511,7 +1503,6 @@
 				B38FB4A22CBEF57C006786C6 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
 				B38A68C12CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
 				B318E28B2CAB512F00D0E599 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
-				B3E2AA222CB6306600E2636D /* PVYabause.framework in Embed Frameworks */,
 				B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */,
 				B3E2AA522CB63A6200E2636D /* PVBeetlePSX.framework in Embed Frameworks */,
 				B3E2AA312CB6346900E2636D /* PVOpera.framework in Embed Frameworks */,
@@ -1522,7 +1513,6 @@
 				B33B4F4C2C1A5B4B007371C5 /* RealmSwift in Embed Frameworks */,
 				B318E2902CAB51EE00D0E599 /* PVEmuThree.framework in Embed Frameworks */,
 				B318E2782CAB4B3F00D0E599 /* PVGenesis.framework in Embed Frameworks */,
-				B377EBE62CB2B34C00E9B750 /* PVDesmume2015.framework in Embed Frameworks */,
 				B318E29E2CAB58A300D0E599 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */,
 				B318E2962CAB571100D0E599 /* PVBliss-Dynamic in Embed Frameworks */,
@@ -1548,7 +1538,6 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed Foundation Extensions */,
-				B396208B2C66E14C0094F6F0 /* Spotlight.appex in Embed Foundation Extensions */,
 				B396208E2C66E14C0094F6F0 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -2795,6 +2784,7 @@
 				B35EEFB22C6C6D1A00EBD1A8 /* RealmSwift in Frameworks */,
 				B37228CC2CCDC7D300E6F627 /* FreemiumKit in Frameworks */,
 				B35EEFB32C6C6D1A00EBD1A8 /* libc.tbd in Frameworks */,
+				B35F93E32D2F811B0016E633 /* WhatsNewKit in Frameworks */,
 				B351E7D42CBE072D0000E087 /* libavutil.xcframework in Frameworks */,
 				B3C65E5E2CA53667000E37B0 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3C65E602CA53667000E37B0 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
@@ -2885,6 +2875,7 @@
 				B3E77F842D1F57E6004A3AD2 /* PVFeatureFlags in Frameworks */,
 				B318E28F2CAB51EE00D0E599 /* PVEmuThree.framework in Frameworks */,
 				B38FB4AC2CBEF6B0006786C6 /* libavutil.xcframework in Frameworks */,
+				B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */,
 				B38FB4A12CBEF57B006786C6 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B3EF26F02BE7F9690066D4B6 /* libc.tbd in Frameworks */,
 				B3EF26EE2BE7F8EC0066D4B6 /* libc++.tbd in Frameworks */,
@@ -2902,7 +2893,6 @@
 				B38FB4B02CBEF6B1006786C6 /* libswscale.xcframework in Frameworks */,
 				B318E2A02CAB5A2600D0E599 /* PVProSystem-Dynamic in Frameworks */,
 				B34A20152C62F96100E34059 /* PVPlists in Frameworks */,
-				B377EBE52CB2B34C00E9B750 /* PVDesmume2015.framework in Frameworks */,
 				B30585692C0C14EE00B91D7A /* PVWebServer in Frameworks */,
 				B3A186852CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */,
 				B38A68C02CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
@@ -2919,8 +2909,8 @@
 				B35B17812CCCDFD1007059CA /* PVAudio in Frameworks */,
 				B35573742CC4843600A4BA16 /* MoltenVK in Frameworks */,
 				B3E2A9FA2CB60F1200E2636D /* PVPPSSPP.framework in Frameworks */,
+				B33A09342D2D0B0C00BFB6C9 /* PVJIT in Frameworks */,
 				B32D45C72CB7310C006B76C2 /* PVGambatte in Frameworks */,
-				B3E2AA212CB6306600E2636D /* PVYabause.framework in Frameworks */,
 				B3E2AA302CB6346900E2636D /* PVOpera.framework in Frameworks */,
 				B394CD7C2BDEE53A006B63E8 /* CoreServices.framework in Frameworks */,
 				B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */,
@@ -3011,6 +3001,7 @@
 				B3F7E37A297736BE00362B92 /* Photos.framework in Frameworks */,
 				B3F7E37D297736BE00362B92 /* GameController.framework in Frameworks */,
 				B3F7E37E297736BE00362B92 /* libxml2.dylib in Frameworks */,
+				B35F93E52D2F8E560016E633 /* WhatsNewKit in Frameworks */,
 				B3F7E37F297736BE00362B92 /* MetalKit.framework in Frameworks */,
 				B3E77F862D1F57F3004A3AD2 /* PVFeatureFlags in Frameworks */,
 				B36A8D502CCD5518002357DD /* PVJIT in Frameworks */,
@@ -4435,6 +4426,7 @@
 				B39680482CE720E300E1AB6D /* Perception */,
 				B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */,
 				B3E77F8B2D1F5819004A3AD2 /* PVFeatureFlags */,
+				B35F93E22D2F811B0016E633 /* WhatsNewKit */,
 			);
 			productName = Provenance;
 			productReference = B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */;
@@ -4458,7 +4450,6 @@
 			dependencies = (
 				B394CC572BDEE53A006B63E8 /* PBXTargetDependency */,
 				B38C69B62BEB2CB300AE4F86 /* PBXTargetDependency */,
-				B396208D2C66E14C0094F6F0 /* PBXTargetDependency */,
 				B39620902C66E14C0094F6F0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
@@ -4502,6 +4493,8 @@
 				B38A68BF2CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic */,
 				B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */,
 				B3E77F832D1F57E6004A3AD2 /* PVFeatureFlags */,
+				B33A09332D2D0B0C00BFB6C9 /* PVJIT */,
+				B35F93E02D2F71450016E633 /* WhatsNewKit */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -4645,6 +4638,7 @@
 				B36A8D4F2CCD5518002357DD /* PVJIT */,
 				B3250A2E2CCEE29800E6D7CE /* FreemiumKit */,
 				B3E77F852D1F57F3004A3AD2 /* PVFeatureFlags */,
+				B35F93E42D2F8E560016E633 /* WhatsNewKit */,
 			);
 			productName = Provenance;
 			productReference = B3F7E421297736BE00362B92 /* Provenance-Lite.app */;
@@ -4908,6 +4902,7 @@
 				B38A68BA2CCEFB73001C57D0 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */,
 				B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */,
 				B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */,
+				B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -6015,16 +6010,6 @@
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B394CC582BDEE53A006B63E8 /* PBXContainerItemProxy */;
 		};
-		B396208D2C66E14C0094F6F0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-				macos,
-			);
-			target = B3E21D6A203211BE009939D3 /* Spotlight */;
-			targetProxy = B396208C2C66E14C0094F6F0 /* PBXContainerItemProxy */;
-		};
 		B39620902C66E14C0094F6F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilters = (
@@ -6365,7 +6350,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6434,7 +6420,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6731,7 +6718,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-UnderDevelopment-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6801,7 +6789,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-UnderDevelopment-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6872,7 +6861,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-UnderDevelopment-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -7514,7 +7504,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -7590,7 +7580,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -7664,7 +7654,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -7720,7 +7710,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -7776,7 +7766,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -7830,7 +7820,7 @@
 				SDKROOT = appletvos;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Archive;
 		};
@@ -8331,7 +8321,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
@@ -8429,7 +8419,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
@@ -8528,7 +8518,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
@@ -8673,7 +8663,8 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8889,7 +8880,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Extensions/Spotlight/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -9011,7 +9002,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
@@ -9109,7 +9100,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
@@ -9207,7 +9198,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
@@ -9727,7 +9718,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Extensions/Spotlight/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -9780,7 +9771,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = Extensions/Spotlight/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10207,7 +10198,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10282,7 +10274,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10358,7 +10351,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11050,6 +11044,14 @@
 				kind = branch;
 			};
 		};
+		B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SvenTiigi/WhatsNewKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.1;
+			};
+		};
 		B37228C82CCDC7A700E6F627 /* XCRemoteSwiftPackageReference "FreemiumKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/FlineDev/FreemiumKit.git";
@@ -11352,6 +11354,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
 			productName = PVGambatte;
+		};
+		B33A09332D2D0B0C00BFB6C9 /* PVJIT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B305856A2C0C150100B91D7A /* XCLocalSwiftPackageReference "PVJIT" */;
+			productName = PVJIT;
 		};
 		B33A763A2CC5168C00FC746F /* SiriusRating */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -11753,6 +11760,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B35EEF792C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		B35F93E02D2F71450016E633 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
+		};
+		B35F93E22D2F811B0016E633 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
+		};
+		B35F93E42D2F8E560016E633 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
 		};
 		B36A8D432CCD5480002357DD /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;

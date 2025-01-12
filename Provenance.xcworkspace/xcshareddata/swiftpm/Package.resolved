@@ -371,6 +371,15 @@
         }
       },
       {
+        "package": "WhatsNewKit",
+        "repositoryURL": "https://github.com/SvenTiigi/WhatsNewKit.git",
+        "state": {
+          "branch": null,
+          "revision": "6157c77e8be9b3d2310bc680681b61a8d9e290ac",
+          "version": "2.2.1"
+        }
+      },
+      {
         "package": "xctest-dynamic-overlay",
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {

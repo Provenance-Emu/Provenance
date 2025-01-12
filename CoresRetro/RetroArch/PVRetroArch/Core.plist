@@ -98,9 +98,9 @@
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mupen64plus-libretro-nx</string>
 			<key>PVProjectVersion</key>
-			<string>2022.12.12</string>
+			<string>2024.10.29</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>

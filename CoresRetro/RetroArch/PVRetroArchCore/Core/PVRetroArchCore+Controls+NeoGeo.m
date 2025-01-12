@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (NeoGeoControls) <PVNeoGeoSystemResponderClient>
+@interface PVRetroArchCoreBridge (NeoGeoControls) <PVNeoGeoSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (NeoGeoControls)
+@implementation PVRetroArchCoreBridge (NeoGeoControls)
 #pragma mark - Control
 - (void)didPushNeoGeoButton:(PVNeoGeoButton)button forPlayer:(NSInteger)player {
     [self handleNeoGeoButton:button forPlayer:player pressed:true value:1];

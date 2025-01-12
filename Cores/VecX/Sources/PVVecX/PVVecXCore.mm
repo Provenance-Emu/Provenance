@@ -112,8 +112,11 @@
     
 #define V(x) strcmp(variable, x) == 0
     if (V("vecx_use_hw") || V("vecx_render")) {
-//        char *value = strdup("Hardware");
+#if HAS_GPU
+        char *value = strdup("Hardware");
+#else
         char *value = strdup("Software");
+#endif
         return value;
     } else if (V("vecx_res_multi")) {
         // Internal Resolution Multiplier

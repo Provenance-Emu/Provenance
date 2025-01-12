@@ -784,7 +784,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 }
 
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player {
-    player -= 1;
+//    player -= 1;
     
     switch (g_settings.controller_types[player]) {
         case ControllerType::DigitalController:
@@ -825,7 +825,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 }
 
 - (oneway void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player {
-    player -= 1;
+//    player -= 1;
     
     switch (g_settings.controller_types[player]) {
         case ControllerType::DigitalController:
@@ -1007,7 +1007,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
         }
 
         MAKEWEAK(self);
-//        Host::RunOnCPUThread([params = std::move(params), weakself]() {
+        Host::RunOnCPUThread([params = std::move(params), weakself]() {
             MAKESTRONG_RETURN_IF_NIL(self);
             BOOL isInitialized = System::BootSystem(params);
             strongself->isInitialized = isInitialized;
@@ -1018,7 +1018,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
                 [strongself stopEmulation];
                 return;
             }
-//        });
+        });
     }
 
     System::RunFrame();
@@ -1507,9 +1507,9 @@ std::optional<std::string> Host::ReadResourceFileToString(const char* filename)
         }
         NSURL *aURL;
         if (upperName) {
-            aURL = [[NSBundle bundleForClass:[PVEmulatorCore class]] URLForResource:baseName withExtension:baseExt subdirectory:upperName];
+            aURL = [[NSBundle bundleForClass:[PVDuckStationCore class]] URLForResource:baseName withExtension:baseExt subdirectory:upperName];
         } else {
-            aURL = [[NSBundle bundleForClass:[PVEmulatorCore class]] URLForResource:baseName withExtension:baseExt];
+            aURL = [[NSBundle bundleForClass:[PVDuckStationCore class]] URLForResource:baseName withExtension:baseExt];
         }
         if (!aURL) {
             return std::nullopt;
@@ -1540,9 +1540,9 @@ std::optional<std::time_t> Host::GetResourceFileTimestamp(const char* filename)
         }
         NSURL *aURL;
         if (upperName) {
-            aURL = [[NSBundle bundleForClass:[PVEmulatorCore class]] URLForResource:baseName withExtension:baseExt subdirectory:upperName];
+            aURL = [[NSBundle bundleForClass:[PVDuckStationCore class]] URLForResource:baseName withExtension:baseExt subdirectory:upperName];
         } else {
-            aURL = [[NSBundle bundleForClass:[PVEmulatorCore class]] URLForResource:baseName withExtension:baseExt];
+            aURL = [[NSBundle bundleForClass:[PVDuckStationCore class]] URLForResource:baseName withExtension:baseExt];
         }
         if (!aURL) {
             return std::nullopt;

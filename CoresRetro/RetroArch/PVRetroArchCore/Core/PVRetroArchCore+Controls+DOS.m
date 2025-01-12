@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (DOSControls) <PVDOSSystemResponderClient>
+@interface PVRetroArchCoreBridge (DOSControls) <PVDOSSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (DOSControls)
+@implementation PVRetroArchCoreBridge (DOSControls)
 #pragma mark - Control
 - (void)didPushDOSButton:(PVDOSButton)button forPlayer:(NSInteger)player {
     [self handleDOSButton:button forPlayer:player pressed:true];

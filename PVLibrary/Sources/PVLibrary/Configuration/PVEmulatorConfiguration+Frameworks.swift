@@ -23,10 +23,10 @@ import UIKit
 public extension PVEmulatorConfiguration {
     class func registerCore(_ core: EmulatorCoreInfoProvider) async throws {
         let database = RomDatabase.sharedInstance
-
+        
         let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.supportedSystems]))
         let unsupportedCoresAvailable: Bool = Defaults[.unsupportedCores]
-
+        
         if core.disabled, unsupportedCoresAvailable {
             // Do nothing
             ILOG("Skipping disabled core \(core.identifier)")
@@ -38,8 +38,9 @@ public extension PVEmulatorConfiguration {
                                  name: core.projectName,
                                  url: core.projectURL,
                                  version: core.projectVersion,
-                                 disabled: core.disabled)
-//            database.refresh()
+                                 disabled: core.disabled,
+                                 appStoreDisabled: core.appStoreDisabled)
+            //            database.refresh()
             try newCore.add(update: true)
         }
         if let subCorescores = core.subCores {
@@ -55,7 +56,7 @@ public extension PVEmulatorConfiguration {
                                         version: subCore.projectVersion,
                                         disabled: subCore.disabled,
                                         appStoreDisabled: subCore.appStoreDisabled)
-//                database.refresh()
+                //                database.refresh()
                 try newSubCore.add(update: true)
             } catch let error as DecodingError {
                 ELOG("Failed to parse plist \(core.projectName) : \(error)")
@@ -63,11 +64,11 @@ public extension PVEmulatorConfiguration {
             }
         }
     }
-
+    
     /// Parse all core classes
     class func updateCores(fromPlists plists: [EmulatorCoreInfoPlist]) async {
         typealias CorePlistEntries = [CorePlistEntry]
-
+        
         await plists.concurrentForEach { corePlist in
             do {
                 try await registerCore(corePlist)
@@ -77,14 +78,16 @@ public extension PVEmulatorConfiguration {
         }
         //this calls refresh anyway
         RomDatabase.reloadCache(force: true)
+        #if DEBUG
         printListOfSystems()
+        #endif
     }
-
+    
     /// Parse plists to update PVSystems
     class func updateSystems(fromPlists plists: [URL]) async {
         typealias SystemPlistEntries = [SystemPlistEntry]
         let decoder = PropertyListDecoder()
-
+        
         await plists.asyncForEach { plist in
             await processSystemPlist(plist, using: decoder)
         }
@@ -104,7 +107,7 @@ public extension PVEmulatorConfiguration {
                 \(systemsList)
                 """)
     }
-
+    
     private static func processSystemPlist(_ plist: URL, using decoder: PropertyListDecoder) async {
         do {
             let systems = try loadSystemEntries(from: plist, using: decoder)
@@ -113,28 +116,28 @@ public extension PVEmulatorConfiguration {
             handlePlistError(error, for: plist)
         }
     }
-
+    
     private static func loadSystemEntries(from url: URL, using decoder: PropertyListDecoder) throws -> [SystemPlistEntry] {
         let data = try Data(contentsOf: url)
         return try decoder.decode([SystemPlistEntry].self, from: data)
     }
-
+    
     private static func updateSystemEntries(_ systems: [SystemPlistEntry]?) async {
         await systems?.concurrentForEach(priority: .userInitiated) { system in
             await updateOrCreateSystem(system)
         }
     }
-
+    
     private static func updateOrCreateSystem(_ system: SystemPlistEntry) async {
         let database = RomDatabase.sharedInstance
-
+        
         if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier), !existingSystem.isInvalidated {
             await updateExistingSystem(existingSystem, with: system, using: database)
         } else {
             await createNewSystem(from: system, using: database)
         }
     }
-
+    
     private static func updateExistingSystem(_ existingSystem: PVSystem, with system: SystemPlistEntry, using database: RomDatabase) async {
         do {
             RomDatabase.refresh()
@@ -146,12 +149,12 @@ public extension PVEmulatorConfiguration {
             ELOG("Failed to update system: \(error)")
         }
     }
-
+    
     private static func createNewSystem(from system: SystemPlistEntry, using database: RomDatabase) async {
         let newSystem = PVSystem()
         newSystem.identifier = system.PVSystemIdentifier
         setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
-
+        
         do {
             RomDatabase.refresh()
             try database.add(newSystem, update: true)
@@ -160,7 +163,7 @@ public extension PVEmulatorConfiguration {
             ELOG("Failed to create new system: \(error)")
         }
     }
-
+    
     private static func handlePlistError(_ error: Error, for plist: URL) {
         if let decodingError = error as? DecodingError {
             switch decodingError {
@@ -178,7 +181,7 @@ public extension PVEmulatorConfiguration {
             ELOG("Failed to parse plist \(plist.path): \(error)")
         }
     }
-
+    
     class func setPropertiesTo(pvSystem: PVSystem, fromSystemPlistEntry system: SystemPlistEntry) {
         guard !pvSystem.isInvalidated else { return }
         pvSystem.openvgDatabaseID = Int(system.PVDatabaseID) ?? -1
@@ -199,18 +202,18 @@ public extension PVEmulatorConfiguration {
         pvSystem.supportsRumble = system.PVSupportsRumble ?? false
         pvSystem.headerByteSize = system.PVHeaderByteSize ?? 0
         pvSystem.appStoreDisabled = system.PVAppStoreDisabled ?? false
-
+        
         if let screenType = system.PVScreenType {
             pvSystem.screenType = ScreenType(rawValue: screenType) ?? .unknown
         } else {
             pvSystem.screenType = .unknown
         }
-
+        
         // Iterate extensions and add to Realm object
         pvSystem.supportedExtensions.removeAll()
         pvSystem.supportedExtensions.append(objectsIn: system.PVSupportedExtensions)
         let database = RomDatabase.sharedInstance
-
+        
         system.PVBIOSNames?.forEach { entry in
             if let existingBIOS = database.object(ofType: PVBIOS.self, wherePrimaryKeyEquals: entry.Name) {
                 if database.realm.isInWriteTransaction {

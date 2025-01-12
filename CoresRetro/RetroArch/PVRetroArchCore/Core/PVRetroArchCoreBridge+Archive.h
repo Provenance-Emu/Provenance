@@ -1,7 +1,7 @@
-#import <PVRetroArch/PVRetroArchCore.h>
+#import <PVRetroArch/PVRetroArchCoreBridge.h>
 
 NS_ASSUME_NONNULL_BEGIN
-@interface PVRetroArchCore (Archive)
+@interface PVRetroArchCoreBridge (Archive)
 - (NSString *)checkROM_MAME:(NSString*)romFile;
 - (NSString *)checkROM_AppleII:(NSString*)romFile;
 - (NSString *)checkROM_PC98:(NSString*)romFile;

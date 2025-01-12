@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Audio.h
+//  PVRetroArchCoreBridge+Audio.h
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVRetroArchCore (Audio)
+@interface PVRetroArchCoreBridge (Audio)
 
 @end
 

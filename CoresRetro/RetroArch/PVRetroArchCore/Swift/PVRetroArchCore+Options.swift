@@ -5,12 +5,16 @@ import PVCoreBridge
 import PVLogging
 
 extension PVRetroArchCoreCore: CoreOptional {
+    @MainActor
     public static var options: [PVCoreBridge.CoreOption] {
-        PVRetroArchCore.options
+        PVRetroArchCoreBridge.coreClassName = self.coreClassName
+        PVRetroArchCoreBridge.systemName = self.systemName
+
+        return PVRetroArchCoreBridge.options
     }
 }
 
-extension PVRetroArchCore: CoreOptional {
+extension PVRetroArchCoreBridge: CoreOptional {
     static var gsOption: CoreOption {
          .enumeration(.init(title: "Graphics Handler",
                description: "(Requires Restart)",
@@ -208,26 +212,26 @@ extension PVRetroArchCore: CoreOptional {
     }
 }
 
-@objc public extension PVRetroArchCore {
+@objc public extension PVRetroArchCoreBridge {
     @objc var gs: Int {
-        PVRetroArchCore.valueForOption(PVRetroArchCore.gsOption).asInt ?? 0
+        PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.gsOption).asInt ?? 0
     }
     @objc var retroControl: Bool {
-        PVRetroArchCore.valueForOption(PVRetroArchCore.retroArchControllerOption).asBool
+        PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.retroArchControllerOption).asBool
     }
     @objc var secondScreen: Bool {
-        PVRetroArchCore.valueForOption(PVRetroArchCore.secondScreenOption).asBool
+        PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.secondScreenOption).asBool
     }
     @objc func parseOptions() {
         var optionValues:String = ""
         var optionValuesFile: String = ""
         var optionOverwrite: Bool = false
         self.gsPreference = NSNumber(value: gs).int8Value
-        self.volume = NSNumber(value: PVRetroArchCore.valueForOption(PVRetroArchCore.volumeOption).asInt ?? 100).int32Value
-        self.ffSpeed = NSNumber(value: PVRetroArchCore.valueForOption(PVRetroArchCore.ffOption).asInt ?? 300).int32Value
-        self.smSpeed = NSNumber(value: PVRetroArchCore.valueForOption(PVRetroArchCore.smOption).asInt ?? 300).int32Value
-        self.bindAnalogKeys = PVRetroArchCore.valueForOption(PVRetroArchCore.analogKeyControllerOption).asBool
-        self.bindAnalogDpad = PVRetroArchCore.valueForOption(PVRetroArchCore.analogDpadControllerOption).asBool
+        self.volume = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.volumeOption).asInt ?? 100).int32Value
+        self.ffSpeed = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.ffOption).asInt ?? 300).int32Value
+        self.smSpeed = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.smOption).asInt ?? 300).int32Value
+        self.bindAnalogKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.analogKeyControllerOption).asBool
+        self.bindAnalogDpad = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.analogDpadControllerOption).asBool
         self.bindNumKeys = false
         self.retroArchControls = true
         self.hasTouchControls=false
@@ -266,14 +270,14 @@ extension PVRetroArchCore: CoreOptional {
                 optionValues += "input_auto_game_focus = \"1\"\n"
                 self.retroArchControls = retroControl
                 self.hasTouchControls = true
-                self.bindNumKeys = PVRetroArchCore.valueForOption(PVRetroArchCore.numKeyControllerOption).asBool
+                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.numKeyControllerOption).asBool
             }
             if (systemIdentifier.contains("appleII")) {
                 optionValues += "input_auto_game_focus = \"1\"\n"
-                self.machineType = NSNumber(value: PVRetroArchCore.valueForOption(PVRetroArchCore.apple2MachineOption).asInt ?? 201).int32Value
+                self.machineType = NSNumber(value: PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.apple2MachineOption).asInt ?? 201).int32Value
                 self.retroArchControls = retroControl
                 self.hasTouchControls = true
-                self.bindNumKeys = PVRetroArchCore.valueForOption(PVRetroArchCore.numKeyControllerOption).asBool
+                self.bindNumKeys = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.numKeyControllerOption).asBool
                 var bios:[String:[String:Int]] = [:]
                 if (self.machineType == 210) {
                     bios["apple2.zip"]=["4ae2d493f4729d38e66fdace56a73f6c":11870]
@@ -309,7 +313,7 @@ extension PVRetroArchCore: CoreOptional {
                 optionOverwrite = false
             }
             if (coreIdentifier.contains("mupen")) {
-                let rdpOpt = PVRetroArchCore.valueForOption(PVRetroArchCore.mupenRDPOption).asInt ?? 0
+                let rdpOpt = PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.mupenRDPOption).asInt ?? 0
                 if (rdpOpt == 0) {
                     optionValues += "mupen64plus-rdp-plugin = \"angrylion\"\n"
                 } else {
@@ -330,7 +334,7 @@ extension PVRetroArchCore: CoreOptional {
                 optionValues += "mame_write_config = \"enabled\"\n"
                 optionValues += "mame_boot_to_bios = \"enabled\"\n"
                 optionValues += "mame_mame_paths_enable = \"enabled\"\n"
-                optionValues += "mame_boot_to_osd = \"" + (PVRetroArchCore.valueForOption(PVRetroArchCore.mameOSDOption).asBool  ? "enabled" :
+                optionValues += "mame_boot_to_osd = \"" + (PVRetroArchCoreBridge.valueForOption(PVRetroArchCoreBridge.mameOSDOption).asBool  ? "enabled" :
                 "disabled") + "\"\n"
                 optionValues += "mame_boot_from_cli = \"enabled\"\n"
                 optionValues += "mame_cheats_enable = \"enabled\"\n"
@@ -387,7 +391,7 @@ extension PVRetroArchCoreCore: GameWithCheat {
     public var cheatCodeTypes: [String] { return [] }
 }
 
-@objc public extension PVRetroArchCore {
+@objc public extension PVRetroArchCoreBridge {
     @objc func useSecondaryScreen() {
         if UIScreen.screens.count > 1 {
             let secondaryScreen:UIScreen = UIScreen.screens[1]

@@ -54,15 +54,17 @@
 		B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924526DEFFD8003CB9D4 /* GLKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924C26DEFFE8003CB9D4 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924826DEFFE7003CB9D4 /* MetalKit.framework */; };
 		B3C2924E26DEFFE8003CB9D4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924A26DEFFE8003CB9D4 /* Metal.framework */; };
+		B3CB25CC2D24E97A00D5224E /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3CB25CB2D24E97A00D5224E /* PVLogging */; };
 		B3D0143A26E05F6500860FF9 /* OEOverrides.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3D0143926E05F6500860FF9 /* OEOverrides.ini */; };
 		B3D8A52B26BE48CA0096A354 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52226BE48C90096A354 /* InfoPlist.strings */; };
 		B3D8A52D26BE48CA0096A354 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52426BE48C90096A354 /* Core.plist */; };
-		B3D8A52F26BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52526BE48C90096A354 /* PVDuckStation.h */; };
+		B3D8A52F26BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52526BE48C90096A354 /* PVDuckStation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D8A53126BE48CA0096A354 /* DuckStation-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */; };
 		B3D8A53326BE48CA0096A354 /* PVDuckStationCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52826BE48C90096A354 /* PVDuckStationCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3E2A9FD2CB619B100E2636D /* PVDuckStationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2A9FC2CB619B100E2636D /* PVDuckStationOptions.swift */; };
 		B3E2AA002CB61A5900E2636D /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2A9FE2CB61A5900E2636D /* CorePlist.swift */; };
 		B3E2AA012CB61A5900E2636D /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E2A9FF2CB61A5900E2636D /* CorePlist-Generated.swift */; };
+		B3FA8AC82D24F08500505165 /* duck_resources in Resources */ = {isa = PBXBuildFile; fileRef = B3FA8AC72D24F08500505165 /* duck_resources */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -542,6 +544,7 @@
 		B3E2A9FC2CB619B100E2636D /* PVDuckStationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDuckStationOptions.swift; sourceTree = "<group>"; };
 		B3E2A9FE2CB61A5900E2636D /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3E2A9FF2CB61A5900E2636D /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
+		B3FA8AC72D24F08500505165 /* duck_resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = duck_resources; path = duckstation/data/duck_resources; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -555,6 +558,7 @@
 				B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */,
 				B30E9B192C6FD0FE00C1431E /* PVCoreBridge in Frameworks */,
 				B30E9B162C6FD0F200C1431E /* PVEmulatorCore in Frameworks */,
+				B3CB25CC2D24E97A00D5224E /* PVLogging in Frameworks */,
 				B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */,
 				B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */,
 				B37CDB1F2CAA1EB40026E901 /* PVPlists in Frameworks */,
@@ -606,6 +610,7 @@
 		02695356143169EA003A07D4 = {
 			isa = PBXGroup;
 			children = (
+				B3FA8AC72D24F08500505165 /* duck_resources */,
 				B3203C2226DB19CC00B016C6 /* Config.xcconfig */,
 				B373CD21296F9818005D110B /* duckstation.xcodeproj */,
 				B3D8A52126BE48C90096A354 /* PVDuckStation */,
@@ -942,6 +947,7 @@
 				B37CDB1D2CAA1EB40026E901 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 				B37CDB202CAA1EEF0026E901 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B37CDB232CAA1F2A0026E901 /* XCLocalSwiftPackageReference "../../PVSettings" */,
+				B3CB25CA2D24E97A00D5224E /* XCLocalSwiftPackageReference "../../PVLogging" */,
 			);
 			productRefGroup = 02695362143169EB003A07D4 /* Products */;
 			projectDirPath = "";
@@ -1151,6 +1157,7 @@
 			files = (
 				B3D0143A26E05F6500860FF9 /* OEOverrides.ini in Resources */,
 				B3D8A52B26BE48CA0096A354 /* InfoPlist.strings in Resources */,
+				B3FA8AC82D24F08500505165 /* duck_resources in Resources */,
 				B3D8A52D26BE48CA0096A354 /* Core.plist in Resources */,
 				B3D8A53126BE48CA0096A354 /* DuckStation-Info.plist in Resources */,
 			);
@@ -2176,6 +2183,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVSettings;
 		};
+		B3CB25CA2D24E97A00D5224E /* XCLocalSwiftPackageReference "../../PVLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLogging;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2202,6 +2213,10 @@
 		B37CDB242CAA1F2A0026E901 /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSettings;
+		};
+		B3CB25CB2D24E97A00D5224E /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

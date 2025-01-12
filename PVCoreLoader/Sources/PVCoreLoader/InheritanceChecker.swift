@@ -7,77 +7,96 @@
 
 import Foundation
 import ObjectiveC
+import PVLogging
+import Darwin
 
 internal
 struct ClassFinder {
     static func findSubclasses(of parentClass: AnyClass, excluding exceptions: [AnyClass] = []) -> [AnyClass] {
-        var result: [AnyClass] = []
+        guard #available(iOS 16.0, macOS 13.0, *) else {
+            ELOG("objc_enumerateClasses is not available on this iOS version")
+            return []
+        }
 
-        // Get the count of all registered classes
-        let classCount = objc_getClassList(nil, 0)
-        let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
-        defer { classes.deallocate() }
+        let exceptionsSet = Set(exceptions.map { ObjectIdentifier($0) })
 
-        let bufferSize = Int(classCount)
-        objc_getClassList(AutoreleasingUnsafeMutablePointer(classes), Int32(bufferSize))
+        var allSubclasses = [AnyClass]()
 
-        for index in 0..<bufferSize {
-            if let currentClass: AnyClass = classes[index] {
-                // Check if the current class is a subclass of parentClass excluding itself
-                if class_getSuperclass(currentClass) == parentClass && !exceptions.contains(where: { $0 == currentClass }) && currentClass != parentClass {
-                    result.append(currentClass)
+        // Scan dynamic classes
+        let dynamicClasses = objc_enumerateClasses(fromImage: .dynamicClasses, subclassing: parentClass)
+        allSubclasses.append(contentsOf: dynamicClasses)
+
+        // Scan main executable
+        let mainClasses = objc_enumerateClasses(fromImage: .machHeader(#dsohandle), subclassing: parentClass)
+        allSubclasses.append(contentsOf: mainClasses)
+
+        // Get all loaded images
+        var imageCount: UInt32 = 0
+        let imageList = objc_copyImageNames(&imageCount)
+        defer {
+            free(UnsafeMutableRawPointer(mutating: imageList))
+        }
+
+        // Scan each image
+        for i in 0..<Int(imageCount) {
+            if let imageName = String(cString: imageList[i], encoding: .utf8) {
+                // Get image handle using dlopen
+                if let handle = dlopen(imageName, RTLD_NOLOAD) {
+                    defer { dlclose(handle) }
+                    let classes = objc_enumerateClasses(fromImage: .image(handle), subclassing: parentClass)
+                    allSubclasses.append(contentsOf: classes)
                 }
             }
         }
 
-        return result
+        // Filter and return
+        return allSubclasses.filter { aClass in
+            let classIdentifier = ObjectIdentifier(aClass)
+            return !exceptionsSet.contains(classIdentifier)
+        }
     }
 
-//    static func findClasses(ofProtocol parentProtocol: Protocol, excluding exceptions: [AnyClass] = []) -> [AnyClass] {
-//        var result: [AnyClass] = []
-//
-//        // Get the count of all registered classes
-//        let classCount = objc_getClassList(nil, 0)
-//        let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
-//        defer { classes.deallocate() }
-//
-//        let bufferSize = Int(classCount)
-//        objc_getClassList(AutoreleasingUnsafeMutablePointer(classes), Int32(bufferSize))
-//
-//        for index in 0..<bufferSize {
-//            if let currentClass: AnyClass = classes[index] {
-//                // Check if the current class is a subclass of parentClass excluding itself
-//                if class_getSuperclass(currentClass) is parentProtocol && !exceptions.contains(where: { $0 == currentClass }) {
-//                    result.append(currentClass)
-//                }
-//            }
-//        }
-//
-//        return result
-//    }
-
-    static func findClassesImplementing<P>(_ protocolToImpliment: P, excluding exceptions: [AnyClass] = []) -> [AnyClass] where P: Protocol {
-        var classesImplementingProtocol: [AnyClass] = []
-        let expectedClassCount = objc_getClassList(nil, 0)
-
-        guard expectedClassCount > 0 else {
+    static func findClassesImplementing<P>(_ protocolToImplement: P, excluding exceptions: [AnyClass] = []) -> [AnyClass] where P: Protocol {
+        guard #available(iOS 16.0, macOS 13.0, *) else {
+            ELOG("objc_enumerateClasses is not available on this iOS version")
             return []
         }
 
-        let allClasses = UnsafeMutablePointer<AnyClass>.allocate(capacity: Int(expectedClassCount))
-        let autoreleasingAllClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(allClasses)
-        let actualClassCount = objc_getClassList(autoreleasingAllClasses, expectedClassCount)
+        let exceptionsSet = Set(exceptions.map { ObjectIdentifier($0) })
 
-        for i in 0..<actualClassCount {
-            let currentClass: AnyClass = allClasses[Int(i)]
-            if class_conformsToProtocol(currentClass, protocolToImpliment),
-               !exceptions.contains(where: { $0 == currentClass }){
-                classesImplementingProtocol.append(currentClass)
+        var allImplementingClasses = [AnyClass]()
+
+        // Scan dynamic classes
+        let dynamicClasses = objc_enumerateClasses(fromImage: .dynamicClasses, conformingTo: protocolToImplement)
+        allImplementingClasses.append(contentsOf: dynamicClasses)
+
+        // Scan main executable
+        let mainClasses = objc_enumerateClasses(fromImage: .machHeader(#dsohandle), conformingTo: protocolToImplement)
+        allImplementingClasses.append(contentsOf: mainClasses)
+
+        // Get all loaded images
+        var imageCount: UInt32 = 0
+        let imageList = objc_copyImageNames(&imageCount)
+        defer {
+            free(UnsafeMutableRawPointer(mutating: imageList))
+        }
+
+        // Scan each image
+        for i in 0..<Int(imageCount) {
+            if let imageName = String(cString: imageList[i], encoding: .utf8) {
+                // Get image handle using dlopen
+                if let handle = dlopen(imageName, RTLD_NOLOAD) {
+                    defer { dlclose(handle) }
+                    let classes = objc_enumerateClasses(fromImage: .image(handle), conformingTo: protocolToImplement)
+                    allImplementingClasses.append(contentsOf: classes)
+                }
             }
         }
 
-        allClasses.deallocate()
-
-        return classesImplementingProtocol
+        // Filter and return
+        return allImplementingClasses.filter { aClass in
+            let classIdentifier = ObjectIdentifier(aClass)
+            return !exceptionsSet.contains(classIdentifier)
+        }
     }
 }

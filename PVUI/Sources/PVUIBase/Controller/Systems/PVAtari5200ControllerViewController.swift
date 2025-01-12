@@ -43,24 +43,21 @@ final class PVAtari5200ControllerViewController: PVControllerViewController<PV52
         var left:CGFloat = value.x < 0.5 ? CGFloat(1 - (value.x * 2)) : 0.0
         var right:CGFloat = value.x > 0.5 ? CGFloat((value.x - 0.5) * 2) : 0.0
 
-        up = min(up, 1.0)
-        down = min(down, 1.0)
-        left = min(left, 1.0)
-        right = min(right, 1.0)
-
-        up = max(up, 0.0)
-        down = max(down, 0.0)
-        left = max(left, 0.0)
-        right = max(right, 0.0)
-
-        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
-        emulatorCore.didMoveJoystick(.up, withValue: up, forPlayer: 0)
-        if down != 0 {
-            emulatorCore.didMoveJoystick(.down, withValue: down, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
+        if up != 0 {
+            emulatorCore.didPush(.up, forPlayer: 0)
         }
-        emulatorCore.didMoveJoystick(.left, withValue: left, forPlayer: 0)
+        if left != 0 {
+            emulatorCore.didPush(.left, forPlayer: 0)
+        }
+        if down != 0 {
+            emulatorCore.didPush(.down, forPlayer: 0)
+        }
         if right != 0 {
-            emulatorCore.didMoveJoystick(.right, withValue: right, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
         }
     }
 

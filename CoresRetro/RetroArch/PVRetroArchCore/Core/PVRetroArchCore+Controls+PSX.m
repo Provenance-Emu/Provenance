@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (PSXControls) <PVPSXSystemResponderClient>
+@interface PVRetroArchCoreBridge (PSXControls) <PVPSXSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (PSXControls)
+@implementation PVRetroArchCoreBridge (PSXControls)
 #pragma mark - Control
 - (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player {
     [self handlePSXButton:button forPlayer:player pressed:true value:1];

@@ -1,5 +1,5 @@
 // Local Changes:
-// Add PVRetroArchCore.h
+// Add PVRetroArchCoreBridge.h
 #import <Foundation/Foundation.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
@@ -7,7 +7,7 @@
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
-#import <PVRetroArch/PVRetroArchCore.h>
+#import <PVRetroArch/PVRetroArchCoreBridge.h>
 
 #include "../gfx/video_driver.h"
 

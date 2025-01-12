@@ -254,10 +254,11 @@ public extension PVEmulatorViewController {
     }
 
     @objc func showSaveStateMenu() {
+        let frozenGame = game.freeze()
         Task.detached { [weak self] in
             guard let self = self else { return }
-            await try RomDatabase.sharedInstance.updateSaveStates(forGame: game)
-            await try RomDatabase.sharedInstance.recoverSaveStates(forGame: game, core: core)
+            await try RomDatabase.sharedInstance.updateSaveStates(forGame: frozenGame)
+            await try RomDatabase.sharedInstance.recoverSaveStates(forGame: frozenGame, core: core)
         }
         guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
             return

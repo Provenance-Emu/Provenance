@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import PVThemes
 
 struct ArtworkImageBaseView: SwiftUI.View {
+    /// Observe theme changes to trigger re-renders
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     var artwork: SwiftImage?
     var gameTitle: String
@@ -25,9 +28,11 @@ struct ArtworkImageBaseView: SwiftUI.View {
                 .resizable()
                 .aspectRatio(artwork.size.width / artwork.size.height, contentMode: .fit)
         } else {
+            /// Use id modifier with theme to force re-render when theme changes
             SwiftUI.Image(uiImage: UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: boxartAspectRatio.rawValue))
                 .resizable()
                 .aspectRatio(boxartAspectRatio.rawValue, contentMode: .fit)
+                .id(themeManager.currentPalette.name)
         }
     }
 }

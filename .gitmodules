@@ -162,7 +162,7 @@
 	url = https://github.com/libretro/beetle-supergrafx-libretro.git
 [submodule "Cores/melonDS/melonds-libretro"]
 	path = Cores/melonDS/melonds-libretro
-	url = https://github.com/libretro/melonDS.git
+	url = https://github.com/JesseTG/melonds-ds.git
 [submodule "Cores/PPSSPP/libretro_ppsspp"]
 	path = Cores/PPSSPP/libretro_ppsspp
 	url = https://github.com/hrydgard/ppsspp.git

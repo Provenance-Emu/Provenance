@@ -14,5 +14,5 @@ FOUNDATION_EXPORT double PVRetroArchVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVRetroArchVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVRetroArch/PublicHeader.h>
-#import <PVRetroArch/PVRetroArchCore.h>
+#import <PVRetroArch/PVRetroArchCoreBridge.h>
 #import <PVRetroArch/libretro.h>

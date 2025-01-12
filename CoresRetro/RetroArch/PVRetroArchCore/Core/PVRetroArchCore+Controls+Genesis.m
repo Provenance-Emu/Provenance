@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (GenesisControls) <PVGenesisSystemResponderClient>
+@interface PVRetroArchCoreBridge (GenesisControls) <PVGenesisSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (GenesisControls)
+@implementation PVRetroArchCoreBridge (GenesisControls)
 #pragma mark - Control
 - (void)didPushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player {
     [self handleGenesisButton:button forPlayer:player pressed:true value:1];

@@ -1,5 +1,5 @@
 //
-//  PVRetroArchCore+Controls.m
+//  PVRetroArchCoreBridge+Controls.m
 //  PVRetroArch
 //
 //  Created by Joseph Mattiello on 11/1/18.
@@ -30,10 +30,10 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCore (_3DOControls) <PV3DOSystemResponderClient>
+@interface PVRetroArchCoreBridge (_3DOControls) <PV3DOSystemResponderClient>
 @end
 
-@implementation PVRetroArchCore (_3DOControls)
+@implementation PVRetroArchCoreBridge (_3DOControls)
 #pragma mark - Control
 - (void)didPush3DOButton:(PV3DOButton)button forPlayer:(NSInteger)player {
     [self handle3DOButton:button forPlayer:player pressed:true value:1];

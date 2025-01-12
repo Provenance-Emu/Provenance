@@ -189,7 +189,19 @@ public final class RealmConfiguration {
                 let twentyMB = 20 * 1024 * 1024
                 return (totalBytes > twentyMB) && (Double(usedBytes) / Double(totalBytes)) < 0.6
             },
-            objectTypes: nil
+            objectTypes: [
+                PVBIOS.self,
+                PVCheats.self,
+                PVCore.self,
+                PVGame.self,
+                PVLibrary.self,
+                PVRecentGame.self,
+                PVSaveState.self,
+                PVSystem.self,
+                PVUser.self,
+                PVFile.self,
+                PVImageFile.self
+            ]
         )
 
         return config
