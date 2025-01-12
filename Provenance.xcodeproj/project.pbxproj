@@ -553,8 +553,9 @@
 		B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF82C6C6D1A00EBD1A8 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
-		B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = B35F93E02D2F71450016E633 /* WhatsNewKit */; };
-		B35F93E32D2F811B0016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = B35F93E22D2F811B0016E633 /* WhatsNewKit */; };
+		B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E02D2F71450016E633 /* WhatsNewKit */; };
+		B35F93E32D2F811B0016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E22D2F811B0016E633 /* WhatsNewKit */; };
+		B35F93E52D2F8E560016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E42D2F8E560016E633 /* WhatsNewKit */; };
 		B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B36A8D442CCD5480002357DD /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36A8D432CCD5480002357DD /* Defaults */; };
@@ -609,15 +610,15 @@
 		B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B38FB4A12CBEF57B006786C6 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */; };
 		B38FB4A22CBEF57C006786C6 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B38FB4A02CBEF57B006786C6 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4A82CBEF6B0006786C6 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4A82CBEF6B0006786C6 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4A92CBEF6B0006786C6 /* libavcodec.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4AA2CBEF6B0006786C6 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4AA2CBEF6B0006786C6 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4AB2CBEF6B0006786C6 /* libavformat.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7C92CBE072C0000E087 /* libavformat.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4AC2CBEF6B0006786C6 /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4AC2CBEF6B0006786C6 /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4AD2CBEF6B0006786C6 /* libavutil.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CC2CBE072D0000E087 /* libavutil.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4AE2CBEF6B1006786C6 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4AE2CBEF6B1006786C6 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4AF2CBEF6B1006786C6 /* libswresample.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CA2CBE072C0000E087 /* libswresample.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B38FB4B02CBEF6B1006786C6 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilters = (ios, maccatalyst, ); };
+		B38FB4B02CBEF6B1006786C6 /* libswscale.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B38FB4B12CBEF6B1006786C6 /* libswscale.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B351E7CD2CBE072D0000E087 /* libswscale.xcframework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38FB4B22CBEF961006786C6 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B38FB4B32CBEF961006786C6 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -629,7 +630,7 @@
 		B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilter = ios; };
 		B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		B394CD782BDEE53A006B63E8 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
-		B394CD7A2BDEE53A006B63E8 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
+		B394CD7A2BDEE53A006B63E8 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		B394CD7C2BDEE53A006B63E8 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
 		B394CD892BDEE53A006B63E8 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */; };
@@ -3000,6 +3001,7 @@
 				B3F7E37A297736BE00362B92 /* Photos.framework in Frameworks */,
 				B3F7E37D297736BE00362B92 /* GameController.framework in Frameworks */,
 				B3F7E37E297736BE00362B92 /* libxml2.dylib in Frameworks */,
+				B35F93E52D2F8E560016E633 /* WhatsNewKit in Frameworks */,
 				B3F7E37F297736BE00362B92 /* MetalKit.framework in Frameworks */,
 				B3E77F862D1F57F3004A3AD2 /* PVFeatureFlags in Frameworks */,
 				B36A8D502CCD5518002357DD /* PVJIT in Frameworks */,
@@ -4636,6 +4638,7 @@
 				B36A8D4F2CCD5518002357DD /* PVJIT */,
 				B3250A2E2CCEE29800E6D7CE /* FreemiumKit */,
 				B3E77F852D1F57F3004A3AD2 /* PVFeatureFlags */,
+				B35F93E42D2F8E560016E633 /* WhatsNewKit */,
 			);
 			productName = Provenance;
 			productReference = B3F7E421297736BE00362B92 /* Provenance-Lite.app */;
@@ -11764,6 +11767,11 @@
 			productName = WhatsNewKit;
 		};
 		B35F93E22D2F811B0016E633 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
+		};
+		B35F93E42D2F8E560016E633 /* WhatsNewKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
 			productName = WhatsNewKit;
