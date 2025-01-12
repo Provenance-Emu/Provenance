@@ -1395,7 +1395,7 @@
 				<key>MD5</key>
 				<string>00dad01abdbf8ea9e79ad2fe11bdb182</string>
 				<key>Name</key>
-				<string>neogeo.zip|com.provenance.mame/neogeo.zip|hide</string>
+				<string>neogeo.zip</string>
 				<key>Size</key>
 				<integer>1859335</integer>
 			</dict>
@@ -1644,7 +1644,7 @@
 				<key>MD5</key>
 				<string>00dad01abdbf8ea9e79ad2fe11bdb182</string>
 				<key>Name</key>
-				<string>neogeo.zip|com.provenance.neogeo/neogeo.zip|hide</string>
+				<string>neogeo.zip</string>
 				<key>Size</key>
 				<integer>1859335</integer>
 			</dict>
