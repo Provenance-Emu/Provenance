@@ -123,3 +123,5 @@ Cores/DuckStation/lib/
 Cores/PPSSPP/lib/
 build
 /PVLookup/Sources/ShiraGame/Resources/shiragame.sqlite3
+
+.sentryclirc
