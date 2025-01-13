@@ -19,21 +19,21 @@ public extension RomDatabase {
 
     /// Reload all caches
     /// - Parameter force: force a reload even if cache sizes match
-    static func reloadCaches(force: Bool = false) {
-        Task {
+    static func reloadCaches(force: Bool = false) async {
+//        Task {
             self.reloadSystemsCache(force: force)
             self.reloadBIOSCache()
             self.reloadCoresCache(force: force)
             self.reloadGamesCache(force: force)
-        }
+//        }
     }
 
     /// Refreash Realm and reload caches
     /// - Parameter force: force a reload even if cache sizes match
-    static func reloadCache(force: Bool = false) {
+    static func reloadCache(force: Bool = false) async {
         VLOG("RomDatabase:reloadCache")
         self.refresh()
-        self.reloadCaches(force: force)
+        await self.reloadCaches(force: force)
     }
 
     /// Reload BIOS cache
@@ -117,7 +117,7 @@ public extension RomDatabase {
     static func addGamesCache(_ game:PVGame) {
         Task {
             if await RomDatabase.gamesCache == nil {
-                self.reloadCache()
+                await self.reloadCache()
             }
             _gamesCache = await addGameCache(game, cache: RomDatabase.gamesCache ?? [:])
         }

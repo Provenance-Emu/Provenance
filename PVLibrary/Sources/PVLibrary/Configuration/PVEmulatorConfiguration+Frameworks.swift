@@ -77,7 +77,7 @@ public extension PVEmulatorConfiguration {
             }
         }
         //this calls refresh anyway
-        RomDatabase.reloadCache(force: true)
+        await RomDatabase.reloadCache(force: true)
         #if DEBUG
         printListOfSystems()
         #endif

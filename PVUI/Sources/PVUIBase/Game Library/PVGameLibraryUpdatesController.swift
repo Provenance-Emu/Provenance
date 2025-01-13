@@ -318,7 +318,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     /// auto scans ROM directories and adds to the import queue
     public func importROMDirectories() async {
         ILOG("PVGameLibrary: Starting Import")
-        RomDatabase.reloadCache(force: true)
+        await RomDatabase.reloadCache(force: true)
         RomDatabase.reloadFileSystemROMCache()
         let dbGames: [AnyHashable: PVGame] = await RomDatabase.gamesCache
         let dbSystems: [AnyHashable: PVSystem] = RomDatabase.systemCache
