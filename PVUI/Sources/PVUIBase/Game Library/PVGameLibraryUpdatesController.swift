@@ -446,11 +446,13 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
 
         //it seems reasonable to kick off the queue here
-//        gameImporter.startProcessing()
+        gameImporter.startProcessing()
     }
 
+    var biosTask: Task<Void, Never>?
     private func setupBIOSObserver() {
-        Task {
+        biosTask?.cancel()
+        biosTask = Task {
             for await newBIOSFiles in biosWatcher.newBIOSFilesSequence {
                 await processBIOSFiles(newBIOSFiles)
             }

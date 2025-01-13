@@ -37,10 +37,12 @@ public final class BIOSWatcher: ObservableObject {
         setupDirectoryWatcher()
     }
 
+    var directoryWatchingTask: Task<Void, Never>?
     private func setupDirectoryWatcher() {
-        directoryWatcher = DirectoryWatcher(directory: biosPath)
-
-        Task {
+        let options = DirectoryWatcherOptions(includeSubdirectories: true)
+        directoryWatcher = DirectoryWatcher(directory: biosPath, options: options)
+        directoryWatchingTask?.cancel()
+        directoryWatchingTask = Task {
             await watchForNewBIOSFiles()
         }
     }
