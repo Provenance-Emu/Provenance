@@ -216,7 +216,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
-                let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)//TODO: test without .iCloud
                 game.originalArtworkFile = file
                 return game
             }
@@ -240,7 +240,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             if let artwork = NSImage(data: data) {
                 do {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
-                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)//TODO: test without .iCloud
                     game.originalArtworkFile = file
                 } catch { ELOG("\(error.localizedDescription)") }
             }
@@ -248,7 +248,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             if let artwork = UIImage(data: data) {
                 do {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
-                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)//TODO: test without .iCloud
                     game.originalArtworkFile = file
                 } catch { ELOG("\(error.localizedDescription)") }
             }
