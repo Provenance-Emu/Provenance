@@ -20,7 +20,7 @@ struct ProvenanceApp: App {
     @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
-    
+
     init() {
 #if canImport(Sentry)
         if appState.isAppStore {
@@ -183,6 +183,38 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                     image: .init(systemName: "plus.circle.fill", foregroundColor: .blue),
                     title: "New Addition",
                     subtitle: "Added support for the RetroArch Mupen-Next core for enhanced N64 emulation"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
+        WhatsNew(
+            version: "3.0.2",
+            title: "Stability & Performance",
+            features: [
+                .init(
+                    image: .init(systemName: "shield.lefthalf.filled", foregroundColor: .blue),
+                    title: "Enhanced Stability",
+                    subtitle: "Added crash reporting and fixed several startup-related issues for a more reliable experience"
+                ),
+                .init(
+                    image: .init(systemName: "gauge.with.dots.needle.bottom.50percent", foregroundColor: .green),
+                    title: "Performance Optimizations",
+                    subtitle: "Improved app startup speed and fixed cache-related delays"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller", foregroundColor: .orange),
+                    title: "Controller Improvements",
+                    subtitle: "Updated Saturn and Jaguar controller support for better gameplay experience"
+                ),
+                .init(
+                    image: .init(systemName: "gearshape.2", foregroundColor: .purple),
+                    title: "Core Enhancements",
+                    subtitle: "Improved 3DS core options with instant updates for settings like upscaling and CPU clock speed"
                 )
             ],
             primaryAction: .init(
