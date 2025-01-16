@@ -79,6 +79,14 @@ public final class BIOSWatcher: ObservableObject {
             // Then start watching for changes
             await watchForNewBIOSFiles()
         }
+
+        // Add notification observer
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleBIOSFileFound(_:)),
+            name: .BIOSFileFound,
+            object: nil
+        )
     }
 
     /// Scans for BIOS files and updates database entries
@@ -291,6 +299,14 @@ public final class BIOSWatcher: ObservableObject {
             } catch {
                 ELOG("Failed to scan directory \(directoryToScan.path): \(error)")
             }
+        }
+    }
+
+    @objc private func handleBIOSFileFound(_ notification: Notification) {
+        guard let fileURL = notification.object as? URL else { return }
+
+        Task {
+            await processBIOSFiles([fileURL])
         }
     }
 }

@@ -327,6 +327,43 @@ public final class DirectoryWatcher: ObservableObject {
         }
         ILOG("Finished cleanup of nonexistent file watchers")
     }
+
+    private func processArchive(at url: URL) {
+        ILOG("Processing archive: \(url.lastPathComponent)")
+        Task {
+            try? await extractArchive(at: url)
+        }
+    }
+
+    private func processNonArchive(at url: URL) {
+        ILOG("Processing non-archive file: \(url.lastPathComponent)")
+        completedFilesContinuation?.yield([url])
+    }
+
+    private func processFile(at url: URL) {
+        ILOG("Processing file: \(url.path)")
+
+        // Check if this is a BIOS file first
+        if isBIOSFile(url) {
+            ILOG("Found BIOS file: \(url.lastPathComponent)")
+            // Don't decompress, just notify the BIOS watcher
+            NotificationCenter.default.post(name: .BIOSFileFound, object: url)
+            completedFilesContinuation?.yield([url])
+            return
+        }
+
+        // Handle archives and other files
+        if isArchive(url) {
+            processArchive(at: url)
+        } else {
+            processNonArchive(at: url)
+        }
+    }
+
+    private func handleCompletedFile(at path: URL) {
+        ILOG("Handling completed file: \(path.lastPathComponent)")
+        processFile(at: path)
+    }
 }
 
 public extension DirectoryWatcher {
@@ -523,29 +560,15 @@ fileprivate extension DirectoryWatcher {
 
         // If file size hasn't changed for a while, process it
         if currentSize > 0 && currentSize == status.size {
-            if isArchive(path) {
-                ILOG("Archive file appears complete, starting extraction: \(path.lastPathComponent)")
-                try? await extractArchive(at: path)
-            } else {
-                ILOG("Non-archive file appears complete: \(path.lastPathComponent)")
-                completedFilesContinuation?.yield([path])
-            }
+            ILOG("File appears complete, starting processing: \(path.lastPathComponent)")
+            processFile(at: path)
             await watcherManager.removeWatcher(for: path)
         }
     }
 
-    private func handleCompletedFile(at path: URL) {
-        ILOG("Handling completed file: \(path.lastPathComponent)")
-        if Extensions.archiveExtensions.contains(path.pathExtension.lowercased()) {
-            ILOG("Completed file is an archive, starting extraction: \(path.lastPathComponent)")
-            Task {
-                try await extractArchive(at: path)
-            }
-        } else {
-            ILOG("Completed file is not an archive: \(path.lastPathComponent)")
-            updateExtractionStatus(.completed(paths: [path]))
-            completedFilesContinuation?.yield([path])
-        }
+    private func isBIOSFile(_ url: URL) -> Bool {
+        let filename = url.lastPathComponent.lowercased()
+        return RomDatabase.biosFilenamesCache.contains(filename)
     }
 }
 
@@ -745,4 +768,8 @@ private actor FileWatcherManager {
 
         return source
     }
+}
+
+extension Notification.Name {
+    static let BIOSFileFound = Notification.Name("BIOSFileFound")
 }

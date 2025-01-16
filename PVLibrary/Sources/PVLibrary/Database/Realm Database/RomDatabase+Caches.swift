@@ -11,6 +11,7 @@ import PVLogging
 import PVLookup
 import PVSystems
 import AsyncAlgorithms
+import RealmSwift
 
 public extension RomDatabase {
 
@@ -36,14 +37,39 @@ public extension RomDatabase {
         await self.reloadCaches(force: force)
     }
 
-    /// Reload BIOS cache
-    /// - Parameter force: force a reload even if cache sizes match
-    static func reloadBIOSCache() {
-        var files:[String:[String]]=[:]
+    // MARK: - BIOS Cache
+
+    // Internal storage
+    internal static var _biosFilenamesCache: Set<String>?
+
+    // Public interface
+    static var biosFilenamesCache: Set<String> {
+        guard let cache = _biosFilenamesCache else {
+            reloadBIOSFilenamesCache()
+            return biosFilenamesCache
+        }
+        return cache
+    }
+
+    // Internal helper
+    internal static func reloadBIOSFilenamesCache() {
+        let realm = try! Realm()
+        let biosEntries = realm.objects(PVBIOS.self)
+        _biosFilenamesCache = Set(biosEntries.map { $0.expectedFilename.lowercased() })
+        ILOG("Reloaded BIOS filenames cache with \(_biosFilenamesCache?.count ?? 0) entries")
+    }
+
+    /// Reloads all BIOS-related caches
+    @objc static func reloadBIOSCache() {
+        reloadBIOSFilenamesCache()
+
+        var files:[String:[String]] = [:]
         systemCache.values.forEach { system in
             files = addFileSystemBIOSCache(system, files:files)
         }
         _biosCache = files
+
+        ILOG("All BIOS caches reloaded")
     }
 
     /// Reload Cores cache
@@ -127,7 +153,7 @@ public extension RomDatabase {
         similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)
         return (systemIdentifier as NSString).appendingPathComponent(similarName)
     }
-    
+
     static func altName(_ romPath:URL, systemIdentifier:SystemIdentifier) -> String {
         var similarName = romPath.deletingPathExtension().lastPathComponent
         similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)
