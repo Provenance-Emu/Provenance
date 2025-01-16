@@ -1166,6 +1166,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
             // Calculate the actual bytes per row of the source buffer
             let actualBytesPerRow = Int(bufferSize.width) * bytesPerPixel
+            // Align it for Metal and match the core's pitch
+            let alignedSourceBytesPerRow = Int(emulatorCore.bufferSize.width) * bytesPerPixel  // Use videoWidth instead of bufferSize.width
 
             // Calculate offsets
             let xOffset = Int(screenRect.origin.x)
@@ -1180,6 +1182,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             - Screen rect: \(screenRect)
             - Source offset: (\(xOffset), \(yOffset))
             - Bytes per pixel: \(bytesPerPixel)
+            - Core pitch: \(emulatorCore.bufferSize.width * CGFloat(bytesPerPixel))
             - Actual bytes per row: \(actualBytesPerRow)
             - Buffer size: \(totalBufferSize)
             - Source size: \(sourceSize)
@@ -1188,7 +1191,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
             blitEncoder.copy(from: uploadBuffer,
                             sourceOffset: sourceOffset,
-                            sourceBytesPerRow: actualBytesPerRow,
+                            sourceBytesPerRow: Int(emulatorCore.bufferSize.width) * bytesPerPixel,  // Use core's buffer width
                             sourceBytesPerImage: totalBufferSize,
                             sourceSize: sourceSize,
                             to: inputTexture!,
