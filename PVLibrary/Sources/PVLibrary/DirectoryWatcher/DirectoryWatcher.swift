@@ -64,10 +64,17 @@ import Perception
 public struct DirectoryWatcherOptions {
     /// Whether to scan subdirectories for changes
     public let includeSubdirectories: Bool
+    let allowedPaths: [URL]      // Only watch these paths and their subdirectories (if enabled)
+    let excludedPaths: [URL]     // Explicitly exclude these paths
 
-    /// Create DirectoryWatcher options with default values
-    public init(includeSubdirectories: Bool = false) {
+    public init(
+        includeSubdirectories: Bool = false,
+        allowedPaths: [URL] = [],
+        excludedPaths: [URL] = []
+    ) {
         self.includeSubdirectories = includeSubdirectories
+        self.allowedPaths = allowedPaths
+        self.excludedPaths = excludedPaths
     }
 }
 
@@ -772,4 +779,22 @@ private actor FileWatcherManager {
 
 extension Notification.Name {
     static let BIOSFileFound = Notification.Name("BIOSFileFound")
+}
+
+extension DirectoryWatcher {
+    /// Check if a path should be watched based on the options
+    func shouldWatchPath(_ path: URL) -> Bool {
+        // First check exclusions
+        if options.excludedPaths.contains(where: { path.path.hasPrefix($0.path) }) {
+            return false
+        }
+
+        // If we have allowed paths, check if this path is under one of them
+        if !options.allowedPaths.isEmpty {
+            return options.allowedPaths.contains(where: { path.path.hasPrefix($0.path) })
+        }
+
+        // If no allowed paths specified, watch everything (except excluded)
+        return true
+    }
 }

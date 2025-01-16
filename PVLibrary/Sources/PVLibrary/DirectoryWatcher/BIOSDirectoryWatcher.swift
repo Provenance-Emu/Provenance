@@ -48,7 +48,14 @@ public final class BIOSWatcher: ObservableObject {
             directoryWatcher = nil
         }
 
-        let options = DirectoryWatcherOptions(includeSubdirectories: true)
+        // Watch BIOS directory and its subdirectories, but exclude sibling directories
+        let options = DirectoryWatcherOptions(
+            includeSubdirectories: true,  // We do want to watch BIOS subdirectories
+            allowedPaths: [biosPath],     // Only watch paths under the BIOS directory
+            excludedPaths: []             // No need to explicitly exclude Imports since we're using allowedPaths
+        )
+
+        ILOG("BIOSWatcher root path: \(biosPath.path)")
         directoryWatcher = DirectoryWatcher(directory: biosPath, options: options)
         ILOG("Created new DirectoryWatcher for path: \(biosPath.path)")
 
@@ -145,7 +152,7 @@ public final class BIOSWatcher: ObservableObject {
 
     /// Process a collection of potential BIOS files
     @MainActor
-    private func processBIOSFiles(_ files: [URL]) async {
+    public func processBIOSFiles(_ files: [URL]) async {
         ILOG("Processing BIOS files: \(files.map { $0.lastPathComponent })")
         let realm = try! await Realm()
 
