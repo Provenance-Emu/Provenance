@@ -405,7 +405,7 @@
 			<key>PVProjectVersion</key>
 			<string>v0.258</string>
 			<key>PVAppStoreDisabled</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
