@@ -146,7 +146,7 @@ public final class BIOSWatcher: ObservableObject {
         ILOG("Found \(biosEntries.count) BIOS entries without files")
 
         // Log all expected filenames for debugging
-        ILOG("Expected BIOS filenames: \(biosEntries.map { $0.expectedFilename })")
+//        DLOG("Expected BIOS filenames: \(biosEntries.map { $0.expectedFilename })")
 
         for file in files {
             let filename = file.lastPathComponent
