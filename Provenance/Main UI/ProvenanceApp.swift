@@ -207,6 +207,11 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                     subtitle: "Improved app startup speed and fixed cache-related delays"
                 ),
                 .init(
+                    image: .init(systemName: "cpu", foregroundColor: .purple),
+                    title: "BIOS Management",
+                    subtitle: "Improved BIOS file detection and automatic matching across all systems"
+                ),
+                .init(
                     image: .init(systemName: "gamecontroller", foregroundColor: .orange),
                     title: "Controller Improvements",
                     subtitle: "Updated Saturn and Jaguar controller support for better gameplay experience"
