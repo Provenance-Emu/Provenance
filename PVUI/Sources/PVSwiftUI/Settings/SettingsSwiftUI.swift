@@ -114,6 +114,7 @@ public struct PVSettingsView: View {
             )
             #endif
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
