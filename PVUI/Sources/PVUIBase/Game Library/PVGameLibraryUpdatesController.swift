@@ -29,9 +29,9 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
     public var gameImporter: any GameImporting
 
-    private let directoryWatcher: DirectoryWatcher
-    private let conflictsWatcher: ConflictsWatcher
-    private let biosWatcher: BIOSWatcher
+    public let directoryWatcher: DirectoryWatcher
+    public let conflictsWatcher: ConflictsWatcher
+    public let biosWatcher: BIOSWatcher
 
     private var statusCheckTimer: Timer?
 
@@ -48,6 +48,12 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
         self.conflictsWatcher = .shared
         self.biosWatcher = .shared
+
+        // Perform initial BIOS scan
+        Task {
+            ILOG("Performing initial BIOS scan")
+            await biosWatcher.scanForBIOSFiles()
+        }
 
         setupObservers()
         handleFileImports(importPath: importPath)
@@ -318,6 +324,12 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     /// auto scans ROM directories and adds to the import queue
     public func importROMDirectories() async {
         ILOG("PVGameLibrary: Starting Import")
+
+        // Scan for BIOS files first
+        ILOG("Starting BIOS directory scan from importROMDirectories")
+        await BIOSWatcher.shared.scanForBIOSFiles()
+        ILOG("Completed BIOS directory scan")
+
         await RomDatabase.reloadCache(force: true)
         RomDatabase.reloadFileSystemROMCache()
         let dbGames: [AnyHashable: PVGame] = await RomDatabase.gamesCache
@@ -446,11 +458,13 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
 
         //it seems reasonable to kick off the queue here
-//        gameImporter.startProcessing()
+        gameImporter.startProcessing()
     }
 
+    var biosTask: Task<Void, Never>?
     private func setupBIOSObserver() {
-        Task {
+        biosTask?.cancel()
+        biosTask = Task {
             for await newBIOSFiles in biosWatcher.newBIOSFilesSequence {
                 await processBIOSFiles(newBIOSFiles)
             }

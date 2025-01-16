@@ -312,6 +312,11 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
             )
+            .task {
+                // Rescan specific system directory
+                let systemPath = Paths.biosesPath.appendingPathComponent(console.identifier)
+                await BIOSWatcher.shared.rescanDirectory(systemPath)
+            }
         }
         .ignoresSafeArea(.all)
     }

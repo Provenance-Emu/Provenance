@@ -60,6 +60,17 @@ public extension NSNotification.Name {
 
 import Perception
 
+/// Options for configuring the DirectoryWatcher
+public struct DirectoryWatcherOptions {
+    /// Whether to scan subdirectories for changes
+    public let includeSubdirectories: Bool
+
+    /// Create DirectoryWatcher options with default values
+    public init(includeSubdirectories: Bool = false) {
+        self.includeSubdirectories = includeSubdirectories
+    }
+}
+
 /// A class that watches a directory for changes and handles file operations
 ///
 /// The DirectoryWatcher monitors a specified directory for new files and changes,
@@ -69,6 +80,7 @@ public final class DirectoryWatcher: ObservableObject {
 
     private let watcherManager: FileWatcherManager
     private let watchedDirectory: URL
+    private let options: DirectoryWatcherOptions
 
     /// The dispatch source for the file system object
     private var dispatchSource: DispatchSourceFileSystemObject?
@@ -121,11 +133,12 @@ public final class DirectoryWatcher: ObservableObject {
         }
     }
 
-    /// Initialize the directory watcher with a directory
-    public init(directory: URL) {
+    /// Initialize the directory watcher with a directory and options
+    public init(directory: URL, options: DirectoryWatcherOptions = DirectoryWatcherOptions()) {
         self.watchedDirectory = directory
+        self.options = options
         self.watcherManager = FileWatcherManager(label: "org.provenance-emu.provenance.fileWatcherManager")
-        ILOG("DirectoryWatcher initialized with directory: \(directory.path)")
+        ILOG("DirectoryWatcher initialized with directory: \(directory.path), includeSubdirectories: \(options.includeSubdirectories)")
         createDirectoryIfNeeded()
         Task {
             processExistingArchives()
@@ -367,10 +380,15 @@ fileprivate extension DirectoryWatcher {
     private func handleFileSystemEvent() async {
         ILOG("Handling file system event for directory: \(watchedDirectory.path)")
         do {
-            let contents = try FileManager.default.contentsOfDirectory(at: watchedDirectory,
-                                                                       includingPropertiesForKeys: nil,
-                                                                       options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
-            ILOG("Found \(contents.count) items in directory after file system event")
+            let contents = try FileManager.default.contentsOfDirectory(
+                at: watchedDirectory,
+                includingPropertiesForKeys: nil,
+                options: [
+                    .skipsHiddenFiles,
+                    options.includeSubdirectories ? [] : .skipsSubdirectoryDescendants
+                ]
+            )
+            ILOG("Found \(contents.count) items in directory after file system event (including subdirectories: \(options.includeSubdirectories))")
             await contents.filter(isValidFile).asyncForEach { file in
                 if await !isWatchingFile(at: file) {
                     ILOG("Starting to watch new file: \(file.lastPathComponent)")
