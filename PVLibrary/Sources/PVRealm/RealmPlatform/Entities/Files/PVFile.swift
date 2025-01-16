@@ -186,7 +186,7 @@ public extension PVFile {
                 fileSize = attr.fileSize()
 
                 // Cache the size only if we're not frozen
-                if !self.isFrozen, let realm = self.realm {
+                if !self.isFrozen, let realm = self.realm, !realm.isInWriteTransaction {
                     do {
                         try realm.write {
                             self.sizeCache = Int(fileSize)

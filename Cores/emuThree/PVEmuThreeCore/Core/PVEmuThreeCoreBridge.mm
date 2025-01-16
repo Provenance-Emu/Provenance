@@ -164,8 +164,10 @@ static bool _isOff = false;
     [super setPauseEmulation:flag];
     if (flag)
         [CitraWrapper.sharedInstance pauseEmulation];
-    else
+    else {
+        [self setOptionValues];
         [CitraWrapper.sharedInstance resumeEmulation];
+    }
 }
 
 - (void)resetEmulation {
@@ -357,7 +359,11 @@ static bool _isOff = false;
         },
     };
     Process action=[actions objectForKey:key];
-    if (action)
+    if (action) {
         action();
+    } else {
+        [self setOptionValues];
+        [CitraWrapper.sharedInstance setOptions:false];
+    }
 }
 @end

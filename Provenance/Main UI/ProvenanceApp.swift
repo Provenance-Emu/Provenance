@@ -10,6 +10,9 @@ import FreemiumKit
 #if canImport(WhatsNewKit)
 import WhatsNewKit
 #endif
+#if canImport(Sentry)
+import Sentry
+#endif
 
 @main
 struct ProvenanceApp: App {
@@ -17,6 +20,30 @@ struct ProvenanceApp: App {
     @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
+
+    init() {
+#if canImport(Sentry)
+        if appState.isAppStore {
+            SentrySDK.start { options in
+                options.dsn = "https://f9976bad538343d59606a8ef312d4720@o199354.ingest.us.sentry.io/1309415"
+                #if DEBUG
+                options.debug = true // Enabled debug when first installing is always helpful
+                // Enable tracing to capture 100% of transactions for tracing.
+                // Use 'options.tracesSampleRate' to set the sampling rate.
+                // We recommend setting a sample rate in production.
+                options.tracesSampleRate = 1.0 // tracing must be enabled for profiling
+                options.profilesSampleRate = 1.0 // see also `profilesSampler` if you need custom sampling logic
+                options.enableAppLaunchProfiling = true // experimental new feature to start profiling in the pre-main launch phase
+                options.sessionReplay.onErrorSampleRate = 1.0
+                options.sessionReplay.sessionSampleRate = 0.1
+                #else
+                options.tracesSampleRate = 0.5
+                options.sessionReplay.onErrorSampleRate = 1.0
+                #endif
+            }
+        }
+#endif
+      }
 
     var body: some Scene {
         WindowGroup {
@@ -156,6 +183,43 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                     image: .init(systemName: "plus.circle.fill", foregroundColor: .blue),
                     title: "New Addition",
                     subtitle: "Added support for the RetroArch Mupen-Next core for enhanced N64 emulation"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
+        WhatsNew(
+            version: "3.0.2",
+            title: "Stability & Performance",
+            features: [
+                .init(
+                    image: .init(systemName: "shield.lefthalf.filled", foregroundColor: .blue),
+                    title: "Enhanced Stability",
+                    subtitle: "Added crash reporting and fixed several startup-related issues for a more reliable experience"
+                ),
+                .init(
+                    image: .init(systemName: "gauge.with.dots.needle.bottom.50percent", foregroundColor: .green),
+                    title: "Performance Optimizations",
+                    subtitle: "Improved app startup speed and fixed cache-related delays"
+                ),
+                .init(
+                    image: .init(systemName: "cpu", foregroundColor: .purple),
+                    title: "BIOS Management",
+                    subtitle: "Improved BIOS file detection and automatic matching across all systems"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller", foregroundColor: .orange),
+                    title: "Controller Improvements",
+                    subtitle: "Updated Saturn and Jaguar controller support for better gameplay experience"
+                ),
+                .init(
+                    image: .init(systemName: "gearshape.2", foregroundColor: .purple),
+                    title: "Core Enhancements",
+                    subtitle: "Improved 3DS core options with instant updates for settings like upscaling and CPU clock speed"
                 )
             ],
             primaryAction: .init(

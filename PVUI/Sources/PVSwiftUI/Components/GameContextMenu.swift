@@ -39,9 +39,9 @@ struct GameContextMenu: View {
         self.contextMenuDelegate = contextMenuDelegate
 
         // Initialize computed properties
-        _availableCores = State(initialValue: game.system.cores.filter {
+        _availableCores = State(initialValue: game.system?.cores.filter {
             !(AppState.shared.isAppStore && $0.appStoreDisabled)
-        })
+        } ?? [])
         _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
     }
 

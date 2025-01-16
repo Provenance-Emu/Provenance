@@ -247,7 +247,7 @@ extension PVRetroArchCoreBridge: CoreOptional {
                 systemIdentifier.contains("nes")  ||
                 systemIdentifier.contains("dreamcast")  ||
                 systemIdentifier.contains("genesis")  ||
-                systemIdentifier.contains("saturn")  ||
+//                systemIdentifier.contains("saturn")  ||
                 systemIdentifier.contains("3do")  ||
                 systemIdentifier.contains("gb")  ||
                 systemIdentifier.contains("segacd")  ||
