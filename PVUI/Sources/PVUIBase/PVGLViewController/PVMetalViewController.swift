@@ -534,11 +534,31 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             let textureDescriptor = MTLTextureDescriptor()
             textureDescriptor.width = Int(screenRect.width)
             textureDescriptor.height = Int(screenRect.height)
-            textureDescriptor.pixelFormat = .bgra8Unorm
+
+            // Handle different pixel formats
+            if emulatorCore.pixelFormat == GLenum(GL_RGB565) ||
+               emulatorCore.pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
+                textureDescriptor.pixelFormat = .b5g6r5Unorm  // Use BGR565 for RGB565 input
+                ILOG("Using B5G6R5 format for RGB565 input")
+            } else if emulatorCore.pixelFormat == GLenum(GL_BGRA) {
+                textureDescriptor.pixelFormat = .bgra8Unorm
+                ILOG("Using BGRA8 format")
+            } else {
+                textureDescriptor.pixelFormat = .rgba8Unorm
+                ILOG("Using RGBA8 format")
+            }
+
             textureDescriptor.usage = [.shaderRead, .shaderWrite, .pixelFormatView]
             textureDescriptor.storageMode = .private
 
-            ILOG("Creating new input texture: \(screenRect.width)x\(screenRect.height)")
+            ILOG("""
+            Creating new input texture:
+            - Size: \(screenRect.width)x\(screenRect.height)
+            - Core pixel format: \(emulatorCore.pixelFormat.toString)
+            - Core pixel type: \(emulatorCore.pixelType.toString)
+            - MTL pixel format: \(textureDescriptor.pixelFormat)
+            """)
+
             inputTexture = device?.makeTexture(descriptor: textureDescriptor)
         }
     }
@@ -1135,12 +1155,19 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                     height: Int(screenRect.height),
                                     depth: 1)
 
+            // Calculate bytes per pixel based on format
+            let bytesPerPixel: Int
+            if emulatorCore.pixelFormat == GLenum(GL_RGB565) ||
+               emulatorCore.pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
+                bytesPerPixel = 2  // RGB565 is 16-bit (2 bytes) per pixel
+            } else {
+                bytesPerPixel = 4  // RGBA/BGRA is 32-bit (4 bytes) per pixel
+            }
+
             // Calculate the actual bytes per row of the source buffer
             let actualBytesPerRow = Int(bufferSize.width) * bytesPerPixel
-            // Align it for Metal
-            let alignedSourceBytesPerRow = alignedBytesPerRow(Int(bufferSize.width), bytesPerPixel: bytesPerPixel)
 
-            // For Genesis core, we need to handle the offset differently
+            // Calculate offsets
             let xOffset = Int(screenRect.origin.x)
             let yOffset = Int(screenRect.origin.y)
 
@@ -1152,17 +1179,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             - Buffer size: \(bufferSize)
             - Screen rect: \(screenRect)
             - Source offset: (\(xOffset), \(yOffset))
+            - Bytes per pixel: \(bytesPerPixel)
             - Actual bytes per row: \(actualBytesPerRow)
-            - Aligned bytes per row: \(alignedSourceBytesPerRow)
             - Buffer size: \(totalBufferSize)
             - Source size: \(sourceSize)
             - Source offset in bytes: \(sourceOffset)
             """)
 
-            // Use the actual bytes per row from the source buffer
             blitEncoder.copy(from: uploadBuffer,
                             sourceOffset: sourceOffset,
-                            sourceBytesPerRow: actualBytesPerRow,  // Use actual bytes per row
+                            sourceBytesPerRow: actualBytesPerRow,
                             sourceBytesPerImage: totalBufferSize,
                             sourceSize: sourceSize,
                             to: inputTexture!,
