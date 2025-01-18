@@ -38,8 +38,9 @@ struct GameContextMenu: View {
         self.rootDelegate = rootDelegate
         self.contextMenuDelegate = contextMenuDelegate
 
-        // Initialize computed properties
+        //when syncing the system may be nil
         if let currentSystem = game.system {
+            // Initialize computed properties
             _availableCores = State(initialValue: currentSystem.cores.filter {
                 !(AppState.shared.isAppStore && $0.appStoreDisabled)
             })

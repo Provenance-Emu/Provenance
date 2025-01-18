@@ -24,7 +24,7 @@ extension PVRecentGame {
         item.title = game.title
         let imageURl = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
         item.setImageURL(imageURl, forTraits: [.screenScale1x, .screenScale2x, .userInterfaceStyleDark, .userInterfaceStyleLight])
-        item.imageShape = game.system.imageType
+        item.imageShape = game.system?.imageType ?? .square
         item.displayURL = displayURL
         item.lastAccessedDate = lastPlayedDate
 

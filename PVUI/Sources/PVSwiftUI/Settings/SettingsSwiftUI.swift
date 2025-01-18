@@ -114,6 +114,7 @@ public struct PVSettingsView: View {
             )
             #endif
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
@@ -307,19 +308,15 @@ private struct SocialLinksSection: View {
                                 icon: .named("patreon", PVUIBase.BundleLoader.myBundle))
                 }
             }
-            if !isAppStore {
-                Link(destination: URL(string: "https://discord.gg/4TK7PU5")!) {
-                    SettingsRow(title: "Discord",
-                                subtitle: "Join our Discord server for help and community chat.",
-                                icon: .named("discord", PVUIBase.BundleLoader.myBundle))
-                }
+            Link(destination: URL(string: "https://discord.gg/4TK7PU5")!) {
+                SettingsRow(title: "Discord",
+                            subtitle: "Join our Discord server for help and community chat.",
+                            icon: .named("discord", PVUIBase.BundleLoader.myBundle))
             }
-            if !isAppStore {
-                Link(destination: URL(string: "https://twitter.com/provenanceapp")!) {
-                    SettingsRow(title: "X",
-                                subtitle: "Follow us on X for release and other announcements.",
-                                icon: .named("x", PVUIBase.BundleLoader.myBundle))
-                }
+            Link(destination: URL(string: "https://twitter.com/provenanceapp")!) {
+                SettingsRow(title: "X",
+                            subtitle: "Follow us on X for release and other announcements.",
+                            icon: .named("x", PVUIBase.BundleLoader.myBundle))
             }
             if !isAppStore {
                 Link(destination: URL(string: "https://www.youtube.com/channel/UCKeN6unYKdayfgLWulXgB1w")!) {

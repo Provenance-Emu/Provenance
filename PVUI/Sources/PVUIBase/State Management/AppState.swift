@@ -150,7 +150,7 @@ public class AppState: ObservableObject {
         await GameImporter.shared.initSystems()
         ILOG("AppState: GameImporter.shared.initSystems() completed")
         ILOG("AppState: Reloading RomDatabase cache")
-        RomDatabase.reloadCache()
+        await RomDatabase.reloadCache()
         ILOG("AppState: RomDatabase cache reloaded")
 
         // Initialize gameLibrary
