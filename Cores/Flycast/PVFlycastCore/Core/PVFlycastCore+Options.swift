@@ -227,7 +227,7 @@ extension PVFlycastEmuCore: CoreOptional {
     }
 }
 
-@objc public extension PVFlycastCore {
+//@objc public extension PVFlycastCoreBridge {
 //    @objc var resolution: Int{
 //        PVFlycastCore.valueForOption(PVPlayCore.resolutionOption).asInt ?? 0
 //    }
@@ -237,11 +237,11 @@ extension PVFlycastEmuCore: CoreOptional {
 //    @objc var bilinearFiltering: Bool {
 //        PVFlycastCore.valueForOption(PVPlayCore.forceBilinearFilteringOption).asBool
 //    }
-    func parseOptions() {
+//    func parseOptions() {
 //        self.gsPreference = NSNumber(value: gs).int8Value
 //        self.resFactor = NSNumber(value: resolution).int8Value
-    }
-}
+//    }
+//}
 //
 //extension PVFlycastCore: GameWithCheat {
 //    @objc public func setCheat(

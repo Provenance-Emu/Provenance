@@ -170,6 +170,8 @@
 		B312805F274C60EC00550720 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
 		B313647C2970095B00C34FED /* PVPCSXRearmed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */; };
 		B313647D2970095B00C34FED /* PVPCSXRearmed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B31428502CFFED5E009FB8B3 /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314284F2CFFED5E009FB8B3 /* PVFlycast.framework */; };
+		B31428512CFFED5E009FB8B3 /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B314284F2CFFED5E009FB8B3 /* PVFlycast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31553622CC2FD5500C472CA /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B31553612CC2FD5500C472CA /* PVPPSSPP.framework */; };
 		B31553632CC2FD5500C472CA /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B31553612CC2FD5500C472CA /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E2772CAB4B3F00D0E599 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2762CAB4B3F00D0E599 /* PVGenesis.framework */; };
@@ -1473,6 +1475,7 @@
 				B3E2AA552CB63A7B00E2636D /* PVBeetlePSX.framework in Embed Frameworks */,
 				B3F8E0C92CB3996200017D1B /* PVPotator.framework in Embed Frameworks */,
 				B3816E162CA92AC700DBA1A0 /* PVGenesis.framework in Embed Frameworks */,
+				B31428512CFFED5E009FB8B3 /* PVFlycast.framework in Embed Frameworks */,
 				B351E7D52CBE072D0000E087 /* libavutil.xcframework in Embed Frameworks */,
 				B36C8E7C2C7ECE6200BD4377 /* PVStella-Dynamic in Embed Frameworks */,
 				B351E7D12CBE072D0000E087 /* libswresample.xcframework in Embed Frameworks */,
@@ -1853,6 +1856,9 @@
 		B313544926E4C3B90047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B31364762970092D00C34FED /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B314284F2CFFED5E009FB8B3 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B31428572CFFEFF2009FB8B3 /* libflycast_libretro.a */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libflycast_libretro.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B314285A2CFFF0A1009FB8B3 /* libflycast_libretro.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libflycast_libretro.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		B31553612CC2FD5500C472CA /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D12192652000693472 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D62192659900693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2864,6 +2870,7 @@
 				B35EEFCF2C6C6D1A00EBD1A8 /* CoreData.framework in Frameworks */,
 				B39CE2882C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Frameworks */,
 				B35EEFD02C6C6D1A00EBD1A8 /* AudioToolbox.framework in Frameworks */,
+				B31428502CFFED5E009FB8B3 /* PVFlycast.framework in Frameworks */,
 				B3FC97302CB8B6BA00C6DB31 /* PVVisualBoyAdvance-Dynamic in Frameworks */,
 				B35EEFD12C6C6D1A00EBD1A8 /* PVSettings in Frameworks */,
 				B36C8E7B2C7ECE6100BD4377 /* PVStella-Dynamic in Frameworks */,
@@ -3248,6 +3255,9 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B314285A2CFFF0A1009FB8B3 /* libflycast_libretro.dylib */,
+				B31428572CFFEFF2009FB8B3 /* libflycast_libretro.a */,
+				B314284F2CFFED5E009FB8B3 /* PVFlycast.framework */,
 				B35197FB2D1A5EF100D2B413 /* PVGenesis.framework */,
 				B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */,
 				B32C08EB2D053DD50024A3E2 /* PVEmuThree.framework */,

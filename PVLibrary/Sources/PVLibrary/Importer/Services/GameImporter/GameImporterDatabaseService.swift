@@ -93,35 +93,48 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     internal func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws {
-        guard let destinationUrl = queueItem.destinationUrl,
-            let md5 = queueItem.md5?.uppercased() else {
-            //how did we get here, throw?
+        guard let destinationUrl = queueItem.destinationUrl else {
             throw GameImporterError.incorrectDestinationURL
         }
 
-        // Get all BIOS entries that match this MD5
-        let matchingBIOSEntries:[PVBIOS] = PVEmulatorConfiguration.biosArray.filter { biosEntry in
-            let frozenBiosEntry = biosEntry.isFrozen ? biosEntry : biosEntry.freeze()
-            return frozenBiosEntry.expectedMD5.uppercased() == md5
+        var matchingBIOSEntries: [PVBIOS] = []
+
+        // Try matching by MD5 first
+        if let md5 = queueItem.md5?.uppercased() {
+            matchingBIOSEntries = PVEmulatorConfiguration.biosArray.filter { biosEntry in
+                let frozenBiosEntry = biosEntry.isFrozen ? biosEntry : biosEntry.freeze()
+                return frozenBiosEntry.expectedMD5.uppercased() == md5
+            }
         }
 
-        for biosEntry in matchingBIOSEntries {
-            // Get the first matching system
+        // If no MD5 matches, try matching by filename
+        if matchingBIOSEntries.isEmpty {
+            let filename = queueItem.url.lastPathComponent.lowercased()
+            matchingBIOSEntries = PVEmulatorConfiguration.biosArray.filter { biosEntry in
                 let frozenBiosEntry = biosEntry.isFrozen ? biosEntry : biosEntry.freeze()
+                return frozenBiosEntry.expectedFilename.lowercased() == filename
+            }
+        }
 
-                // Update BIOS entry in Realm
-                try await MainActor.run {
-                    let realm = try Realm()
-                    try realm.write {
-                        if let thawedBios = frozenBiosEntry.thaw() {
-                            let biosFile = PVFile(withURL: destinationUrl)
-                            thawedBios.file = biosFile
-                        }
+        // If we still have no matches, throw an error
+        guard !matchingBIOSEntries.isEmpty else {
+            throw GameImporterError.noSystemMatched
+        }
+
+        // Update each matching BIOS entry in Realm
+        for biosEntry in matchingBIOSEntries {
+            let frozenBiosEntry = biosEntry.isFrozen ? biosEntry : biosEntry.freeze()
+
+            try await MainActor.run {
+                let realm = try Realm()
+                try realm.write {
+                    if let thawedBios = frozenBiosEntry.thaw() {
+                        let biosFile = PVFile(withURL: destinationUrl)
+                        thawedBios.file = biosFile
                     }
                 }
+            }
         }
-
-        return
     }
 
     /// Imports a ROM to the database

@@ -17,13 +17,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Control
 
-- (void)didPushDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player;
-- (void)didReleaseDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player;
-- (void)didMoveDreamcastJoystickDirection:(enum PVDreamcastButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
-- (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
-
-- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;
-- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player;
+//- (void)didPushDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player;
+//- (void)didReleaseDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player;
+//- (void)didMoveDreamcastJoystickDirection:(enum PVDreamcastButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+//- (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+//
+//- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;
+//- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player;
 @end
 
 NS_ASSUME_NONNULL_END

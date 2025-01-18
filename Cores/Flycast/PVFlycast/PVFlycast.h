@@ -16,4 +16,7 @@ FOUNDATION_EXPORT const unsigned char PVFlycastVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVFlycast/PublicHeader.h>
 #import <PVFlycast/PVFlycastCore.h>
-
+#import <PVFlycast/PVFlycastCore+Audio.h>
+#import <PVFlycast/PVFlycastCore+Video.h>
+#import <PVFlycast/PVFlycastCore+Saves.h>
+#import <PVFlycast/PVFlycastCore+Controls.h>
