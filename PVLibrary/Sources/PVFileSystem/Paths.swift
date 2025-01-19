@@ -78,11 +78,11 @@ public extension URL {
 
 public struct Paths {
     public struct Legacy {
-        public static var batterySavesPath: URL {//TODO: review encoded space %20
+        public static var batterySavesPath: URL {
             URL.documentsPath.appendingPathComponent("Battery States", isDirectory: true)
         }
 
-        public static var saveSavesPath: URL {//TODO: review encoded space %20
+        public static var saveSavesPath: URL {
             URL.documentsPath.appendingPathComponent("Save States", isDirectory: true)
         }
 
@@ -105,12 +105,12 @@ public struct Paths {
     }}
 
     /// Should be called on BG Thread, iCloud blocks
-    public static var batterySavesPath: URL { get {//TODO: review encoded space %20
+    public static var batterySavesPath: URL { get {
         return URL.documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
     }}
 
     /// Should be called on BG Thread, iCloud blocks
-    public static var saveSavesPath: URL { get {//TODO: review encoded space %20
+    public static var saveSavesPath: URL { get {
         return URL.documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true)
     }}
 
