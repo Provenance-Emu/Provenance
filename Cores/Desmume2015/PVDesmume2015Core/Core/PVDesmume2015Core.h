@@ -20,6 +20,8 @@ __attribute__((visibility("default")))
 @interface PVDesmume2015CoreBridge : PVLibRetroCoreBridge <PVDSSystemResponderClient>
 {
     uint8_t padData[4][14]; //[PVDSButton.count];
+    
+    NSMutableDictionary *_variables;
 @public
     dispatch_queue_t _callbackQueue;
 }

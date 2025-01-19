@@ -10,6 +10,14 @@
 #import "PVDesmume2015Core.h"
 
 #import <PVLogging/PVLoggingObjC.h>
+#include "libretro.h"
+
+extern retro_environment_t environ_cb;
+extern unsigned GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
+extern unsigned GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
+extern int current_layout;
+extern int hybrid_layout_scale;
+extern unsigned scale;
 
 #if !__has_include(<OpenGL/OpenGL.h>)
 #import <OpenGLES/ES3/glext.h>
@@ -19,6 +27,7 @@
 #import <OpenGL/OpenGL.h>
 #import <GLUT/GLUT.h>
 #endif
+
 @implementation PVDesmume2015CoreBridge (Video)
 
 # pragma mark - Methods
@@ -45,61 +54,94 @@
 
 # pragma mark - Properties
 
-//- (CGSize)bufferSize {
-//    CGSize size = CGSizeMake(av_info.geometry.max_width, av_info.geometry.max_height);
-//    DLOG(@"<%i, %i>", size.width, size.height);
-//    return size;
-//}
-//- (CGRect)screenRect {
-//    CGRect rect = CGRectMake(0, 0, av_info.geometry.base_width, av_info.geometry.base_height);
-//    DLOG(@"<%i, %i>", rect.size.width, rect.size.height * 2);
-//    return rect;
-//}
+- (CGRect)screenRect {
+    static NSString *lastLayout = nil;
+    NSString *layoutValue = _variables[@"desmume_screens_layout"];
 
-//- (CGSize)aspectSize {
-//    CGSize size = CGSizeMake(1, av_info.geometry.aspect_ratio);
-//    DLOG(@"<%i, %i>", size.width, size.height);
-//    return size;
-//}
-//
+    CGRect rect = CGRectMake(0, 0, self.bufferSize.width, self.bufferSize.height);
+
+    if (layoutValue && (!lastLayout || ![layoutValue isEqualToString:lastLayout])) {
+        ILOG(@"Screen rect changed:");
+        ILOG(@"Layout: %@", layoutValue);
+        ILOG(@"Rect: %@", NSStringFromCGRect(rect));
+        lastLayout = layoutValue;
+    }
+
+    return rect;
+}
+
 - (CGSize)bufferSize {
-    return CGSizeMake(2048, 2048);
-}
-////
-/// 1024 / 1536
-//- (CGRect)screenRect {
-//    return CGRectMake(0, 0, 256, 512);
-//}
-////
-- (CGSize)aspectSize {
-    return CGSizeMake(1, 2);
-}
-//
-//- (BOOL)rendersToOpenGL {
-//    return YES;
-//}
-//
-//- (void)swapBuffers
-//{
-//    if (bitmap.data == (uint8_t*)videoBufferA)
-//    {
-//        videoBuffer = videoBufferA;
-//        bitmap.data = (uint8_t*)videoBufferB;
-//    }
-//    else
-//    {
-//        videoBuffer = videoBufferB;
-//        bitmap.data = (uint8_t*)videoBufferA;
-//    }
-//}
-//
-//-(BOOL)isDoubleBuffered {
-//    return YES;
-//}
+    static NSString *lastLayout = nil;
 
-//- (const void *)videoBuffer {
-//    return videoBuffer;
-//}
+    /// Get current resolution and layout from our dictionary
+    NSString *resolution = _variables[@"desmume_internal_resolution"];
+    NSString *layoutValue = _variables[@"desmume_screens_layout"];
+
+    /// Base dimensions for a single DS screen
+    unsigned width = GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
+    unsigned height = GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
+
+    CGSize size;
+    if (layoutValue) {
+        if ([layoutValue containsString:@"hybrid"]) {
+            /// Hybrid layout needs extra width for the small screen
+            int awidth = width/3;
+            size = CGSizeMake(width + awidth, height);
+        } else if ([layoutValue containsString:@"left/right"] || [layoutValue containsString:@"right/left"]) {
+            /// Side by side layout - double width
+            size = CGSizeMake(width * 2, height);
+        } else if ([layoutValue containsString:@"top/bottom"] || [layoutValue containsString:@"bottom/top"]) {
+            /// Vertical layout - double height
+            size = CGSizeMake(width, height * 2);
+        } else {
+            /// Single screen layout
+            size = CGSizeMake(width, height);
+        }
+
+        /// Only log if layout changed
+        if (!lastLayout || ![layoutValue isEqualToString:lastLayout]) {
+            ILOG(@"Layout changed:");
+            ILOG(@"Layout: %@", layoutValue);
+            ILOG(@"Resolution: %ux%u", width, height);
+            ILOG(@"Final size: %.0fx%.0f", size.width, size.height);
+            lastLayout = layoutValue;
+        }
+    } else {
+        size = CGSizeMake(width, height);
+    }
+
+    return size;
+}
+
+- (CGSize)aspectSize {
+    static NSString *lastLayout = nil;
+    NSString *layoutValue = _variables[@"desmume_screens_layout"];
+
+    CGSize aspect;
+    if (layoutValue) {
+        if ([layoutValue containsString:@"left/right"] || [layoutValue containsString:@"right/left"]) {
+            aspect = CGSizeMake(2, 1);  /// 2:1 aspect for horizontal layout
+        } else if ([layoutValue containsString:@"top/bottom"] || [layoutValue containsString:@"bottom/top"]) {
+            aspect = CGSizeMake(1, 2);  /// 1:2 aspect for vertical layout
+        } else if ([layoutValue containsString:@"hybrid"]) {
+            aspect = CGSizeMake(4, 3);  /// 4:3 aspect for hybrid layout
+        } else {
+            aspect = CGSizeMake(1, 1);  /// Square aspect for single screen
+        }
+
+        /// Only log if layout changed
+        if (!lastLayout || ![layoutValue isEqualToString:lastLayout]) {
+            ILOG(@"Aspect changed:");
+            ILOG(@"Layout: %@", layoutValue);
+            ILOG(@"Aspect: %.0f:%.0f", aspect.width, aspect.height);
+            lastLayout = layoutValue;
+        }
+    } else {
+        aspect = CGSizeMake(1, 1);
+    }
+
+    return aspect;
+}
 
 #define USE_565 0
 
@@ -163,8 +205,4 @@
 #endif
 }
 
-//- (GLenum)depthFormat {
-//        // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
-//    return GL_DEPTH_COMPONENT24;
-//}
 @end
