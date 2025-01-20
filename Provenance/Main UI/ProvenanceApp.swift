@@ -22,27 +22,27 @@ struct ProvenanceApp: App {
     @StateObject private var featureFlags = PVFeatureFlagsManager.shared
 
     init() {
-#if canImport(Sentry)
-        if appState.isAppStore {
-            SentrySDK.start { options in
-                options.dsn = "https://f9976bad538343d59606a8ef312d4720@o199354.ingest.us.sentry.io/1309415"
-                #if DEBUG
-                options.debug = true // Enabled debug when first installing is always helpful
-                // Enable tracing to capture 100% of transactions for tracing.
-                // Use 'options.tracesSampleRate' to set the sampling rate.
-                // We recommend setting a sample rate in production.
-                options.tracesSampleRate = 1.0 // tracing must be enabled for profiling
-                options.profilesSampleRate = 1.0 // see also `profilesSampler` if you need custom sampling logic
-                options.enableAppLaunchProfiling = true // experimental new feature to start profiling in the pre-main launch phase
-                options.sessionReplay.onErrorSampleRate = 1.0
-                options.sessionReplay.sessionSampleRate = 0.1
-                #else
-                options.tracesSampleRate = 0.5
-                options.sessionReplay.onErrorSampleRate = 1.0
-                #endif
-            }
-        }
-#endif
+//#if canImport(Sentry)
+//        if appState.isAppStore {
+//            SentrySDK.start { options in
+//                options.dsn = "https://f9976bad538343d59606a8ef312d4720@o199354.ingest.us.sentry.io/1309415"
+//                #if DEBUG
+//                options.debug = true // Enabled debug when first installing is always helpful
+//                // Enable tracing to capture 100% of transactions for tracing.
+//                // Use 'options.tracesSampleRate' to set the sampling rate.
+//                // We recommend setting a sample rate in production.
+//                options.tracesSampleRate = 1.0 // tracing must be enabled for profiling
+//                options.profilesSampleRate = 1.0 // see also `profilesSampler` if you need custom sampling logic
+//                options.enableAppLaunchProfiling = true // experimental new feature to start profiling in the pre-main launch phase
+//                options.sessionReplay.onErrorSampleRate = 1.0
+//                options.sessionReplay.sessionSampleRate = 0.1
+//                #else
+//                options.tracesSampleRate = 0.5
+//                options.sessionReplay.onErrorSampleRate = 1.0
+//                #endif
+//            }
+//        }
+//#endif
       }
 
     var body: some Scene {

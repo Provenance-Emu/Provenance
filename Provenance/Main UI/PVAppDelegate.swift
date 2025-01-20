@@ -28,6 +28,12 @@ import SwiftUI
 import Defaults
 import PVFeatureFlags
 
+#if canImport(FirebaseCore)
+import FirebaseCore
+import FirebaseCrashlyticsSwift
+import FirebaseAnalytics
+#endif
+
 // Conditionally import PVJIT and JITManager if available
 #if canImport(PVJIT)
 import PVJIT
@@ -277,6 +283,10 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate, UIApplicationD
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        #if canImport(FirebaseCore)
+        FirebaseApp.configure()
+        #endif
+        
         ILOG("PVAppDelegate: Application did finish launching")
         
         initializeAppComponents()
