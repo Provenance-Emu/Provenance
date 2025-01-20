@@ -48,9 +48,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     var romsPath:URL?
     private let lookup: PVLookup
+    private let gameImporterFileService: GameImporterFileServicing
 
-    init(lookup: PVLookup = .shared) {
+    init(lookup: PVLookup = .shared,
+         gameImporterFileService: GameImporterFileServicing = GameImporterFileService()) {
         self.lookup = lookup
+        self.gameImporterFileService = gameImporterFileService
     }
 
     func setRomsPath(url: URL) {
@@ -92,36 +95,22 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
     }
 
-    internal func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws {
-        guard let destinationUrl = queueItem.destinationUrl,
-            let md5 = queueItem.md5?.uppercased() else {
-            //how did we get here, throw?
+    @MainActor
+    func importBIOSIntoDatabase(queueItem: ImportQueueItem) async throws {
+        ILOG("Starting BIOS database import for: \(queueItem.url.lastPathComponent)")
+
+        // First move the file to the correct location
+        try await gameImporterFileService.moveImportItem(toAppropriateSubfolder: queueItem)
+        ILOG("Moved BIOS file to destination: \(queueItem.destinationUrl?.path ?? "unknown")")
+
+        // Now let BIOSWatcher handle the database update
+        if let destinationUrl = queueItem.destinationUrl {
+            await BIOSWatcher.shared.processBIOSFiles([destinationUrl])
+            ILOG("BIOS file processed by BIOSWatcher")
+        } else {
+            ELOG("No destination URL for BIOS file")
             throw GameImporterError.incorrectDestinationURL
         }
-
-        // Get all BIOS entries that match this MD5
-        let matchingBIOSEntries:[PVBIOS] = PVEmulatorConfiguration.biosArray.filter { biosEntry in
-            let frozenBiosEntry = biosEntry.isFrozen ? biosEntry : biosEntry.freeze()
-            return frozenBiosEntry.expectedMD5.uppercased() == md5
-        }
-
-        for biosEntry in matchingBIOSEntries {
-            // Get the first matching system
-                let frozenBiosEntry = biosEntry.isFrozen ? biosEntry : biosEntry.freeze()
-
-                // Update BIOS entry in Realm
-                try await MainActor.run {
-                    let realm = try Realm()
-                    try realm.write {
-                        if let thawedBios = frozenBiosEntry.thaw() {
-                            let biosFile = PVFile(withURL: destinationUrl)
-                            thawedBios.file = biosFile
-                        }
-                    }
-                }
-        }
-
-        return
     }
 
     /// Imports a ROM to the database
