@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.dosbox</string>
 	<key>PVPrincipleClass</key>
-	<string>PVDosBoxCore</string>
+	<string>PVDosBox.PVDosBoxCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.dos</string>

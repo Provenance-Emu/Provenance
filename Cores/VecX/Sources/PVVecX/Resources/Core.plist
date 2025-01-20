@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.VecX</string>
 	<key>PVPrincipleClass</key>
-	<string>PVVecXCore</string>
+	<string>PVVecX.PVVecXCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.vectrex</string>
