@@ -524,42 +524,67 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 #endif
         if emulatorCore.rendersToOpenGL {
             mtlPixelFormat = .rgba8Unorm
-        }
+            // TODO: Part of this is a copy paste,
+            // one version was working with gles cores,
+            // the but crashed on jaguar non-gl, so i made
+            // it the gles only version
+            if inputTexture == nil ||
+                inputTexture?.width != Int(screenRect.width) ||
+                inputTexture?.height != Int(screenRect.height) ||
+                inputTexture?.pixelFormat != mtlPixelFormat {
 
-        if inputTexture == nil ||
-            inputTexture?.width != Int(screenRect.width) ||
-            inputTexture?.height != Int(screenRect.height) ||
-            inputTexture?.pixelFormat != mtlPixelFormat {
+                let desc = MTLTextureDescriptor()
+                desc.textureType = .type2D
+                desc.pixelFormat = mtlPixelFormat
+                desc.width = Int(screenRect.width)
+                desc.height = Int(screenRect.height)
+                desc.storageMode = .private
+                desc.usage = .shaderRead
 
-            let textureDescriptor = MTLTextureDescriptor()
-            textureDescriptor.width = Int(screenRect.width)
-            textureDescriptor.height = Int(screenRect.height)
+                inputTexture = device?.makeTexture(descriptor: desc)
 
-            // Handle different pixel formats
-            if emulatorCore.pixelFormat == GLenum(GL_RGB565) ||
-               emulatorCore.pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
-                textureDescriptor.pixelFormat = .b5g6r5Unorm  // Use BGR565 for RGB565 input
-                ILOG("Using B5G6R5 format for RGB565 input")
-            } else if emulatorCore.pixelFormat == GLenum(GL_BGRA) {
-                textureDescriptor.pixelFormat = .bgra8Unorm
-                ILOG("Using BGRA8 format")
-            } else {
-                textureDescriptor.pixelFormat = .rgba8Unorm
-                ILOG("Using RGBA8 format")
+                if let inputTexture = inputTexture {
+                    ILOG("Created new input texture with size: \(inputTexture.width)x\(inputTexture.height), format: \(inputTexture.pixelFormat)")
+                } else {
+                    ELOG("Failed to create input texture")
+                }
             }
+        } else {
+            if inputTexture == nil ||
+                inputTexture?.width != Int(screenRect.width) ||
+                inputTexture?.height != Int(screenRect.height) ||
+                inputTexture?.pixelFormat != mtlPixelFormat {
 
-            textureDescriptor.usage = [.shaderRead, .shaderWrite, .pixelFormatView]
-            textureDescriptor.storageMode = .private
+                let textureDescriptor = MTLTextureDescriptor()
+                textureDescriptor.width = Int(screenRect.width)
+                textureDescriptor.height = Int(screenRect.height)
 
-            ILOG("""
-            Creating new input texture:
-            - Size: \(screenRect.width)x\(screenRect.height)
-            - Core pixel format: \(emulatorCore.pixelFormat.toString)
-            - Core pixel type: \(emulatorCore.pixelType.toString)
-            - MTL pixel format: \(textureDescriptor.pixelFormat)
-            """)
+                // Handle different pixel formats
+                if emulatorCore.pixelFormat == GLenum(GL_RGB565) ||
+                   emulatorCore.pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
+                    textureDescriptor.pixelFormat = .b5g6r5Unorm  // Use BGR565 for RGB565 input
+                    ILOG("Using B5G6R5 format for RGB565 input")
+                } else if emulatorCore.pixelFormat == GLenum(GL_BGRA) {
+                    textureDescriptor.pixelFormat = .bgra8Unorm
+                    ILOG("Using BGRA8 format")
+                } else {
+                    textureDescriptor.pixelFormat = .rgba8Unorm
+                    ILOG("Using RGBA8 format")
+                }
 
-            inputTexture = device?.makeTexture(descriptor: textureDescriptor)
+                textureDescriptor.usage = [.shaderRead, .shaderWrite, .pixelFormatView]
+                textureDescriptor.storageMode = .private
+
+//                ILOG("""
+//                Creating new input texture:
+//                - Size: \(screenRect.width)x\(screenRect.height)
+//                - Core pixel format: \(emulatorCore.pixelFormat.toString)
+//                - Core pixel type: \(emulatorCore.pixelType.toString)
+//                - MTL pixel format: \(textureDescriptor.pixelFormat)
+//                """)
+
+                inputTexture = device?.makeTexture(descriptor: textureDescriptor)
+            }
         }
     }
 
