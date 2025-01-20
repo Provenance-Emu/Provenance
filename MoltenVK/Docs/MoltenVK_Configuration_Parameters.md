@@ -325,6 +325,19 @@ You can also use the `MVK_CONFIG_ACTIVITY_PERFORMANCE_LOGGING_STYLE` and
 
 
 ---------------------------------------
+#### MVK_CONFIG_PREALLOCATE_DESCRIPTORS
+
+##### Type: Boolean
+##### Default: `1`
+
+Controls whether **MoltenVK** should preallocate memory in each `VkDescriptorPool` according
+to the values of the `VkDescriptorPoolSize` parameters. Doing so may improve descriptor set
+allocation performance and memory stability at a cost of preallocated application memory.
+If this setting is disabled, the descriptors required for a descriptor set will be individually
+dynamically allocated in application memory when the descriptor set itself is allocated.
+
+
+---------------------------------------
 #### MVK_CONFIG_PREFILL_METAL_COMMAND_BUFFERS
 
 ##### Type: Enumeration
@@ -423,28 +436,6 @@ flip the Y-axis of each vertex, as the _Vulkan_ Y-axis is the inverse of *OpenGL
 
 An alternate way to reverse the Y-axis is to employ a negative Y-axis value on
 the viewport, in which case this parameter can be disabled.
-
-
----------------------------------------
-#### MVK_CONFIG_SHADER_DUMP_DIR
-
-##### Type: String
-##### Default: `""`
-
-_(The default value is an empty string)._
-
-If not empty, **MoltenVK** will dump all SPIR-V shaders, compiled MSL shaders, and pipeline shader lists to the given directory.
-The directory will be non-recursively created if it doesn't already exist.
-
-
----------------------------------------
-#### MVK_CONFIG_SHADER_LOG_ESTIMATED_GLSL
-
-##### Type: Boolean
-##### Default: `0`
-
-If the `MVK_CONFIG_DEBUG` parameter is enabled, and this parameter is enabled, when 
-SPIR-V code is converted to MSL, an estimate of the equivalent GLSL shader will be logged.
 
 
 ---------------------------------------
@@ -635,20 +626,6 @@ cases improves performance.
 
 
 ---------------------------------------
-#### MVK_CONFIG_USE_METAL_PRIVATE_API
-
-##### Type: Boolean
-##### Default: Value of `MVK_USE_METAL_PRIVATE_API`
-
-If enabled, **MoltenVK** will _use_ private interfaces exposed by _Metal_ to implement _Vulkan_
-features that are difficult to support otherwise.
-
-Unlike `MVK_USE_METAL_PRIVATE_API`, this setting may be overridden at run time.
-
-This option is not available unless **MoltenVK** was built with `MVK_USE_METAL_PRIVATE_API` set to `1`.
-
-
----------------------------------------
 #### MVK_CONFIG_USE_MTLHEAP
 
 ##### Type: Boolean
@@ -684,3 +661,29 @@ Determines the style used to implement _Vulkan_ semaphore (`VkSemaphore`) functi
 
 In the special case of `VK_SEMAPHORE_TYPE_TIMELINE` semaphores, **MoltenVK** will always use
 `MTLSharedEvent` if it is available on the platform, regardless of the value of this parameter.
+
+
+---------------------------------------
+#### MVK_CONFIG_USE_METAL_PRIVATE_API
+
+##### Type: Boolean
+##### Default: Value of `MVK_USE_METAL_PRIVATE_API`
+
+If enabled, **MoltenVK** will _use_ private interfaces exposed by _Metal_ to implement _Vulkan_
+features that are difficult to support otherwise.
+
+Unlike `MVK_USE_METAL_PRIVATE_API`, this setting may be overridden at run time.
+
+This option is not available unless **MoltenVK** was built with `MVK_USE_METAL_PRIVATE_API` set to `1`.
+
+
+---------------------------------------
+#### MVK_CONFIG_SHADER_DUMP_DIR
+
+##### Type: String
+##### Default: `""`
+
+_(The default value is an empty string)._
+
+If not empty, **MoltenVK** will dump all SPIR-V shaders, compiled MSL shaders, and pipeline shader lists to the given directory.
+The directory will be non-recursively created if it doesn't already exist.
